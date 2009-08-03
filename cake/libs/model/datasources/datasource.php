@@ -102,7 +102,7 @@ class DataSource extends Object {
  * Enter description here...
  *
  * @var array
- * @access private
+ * @access protected
  */
 	var $_result = null;
 
@@ -110,7 +110,7 @@ class DataSource extends Object {
  * Queries count.
  *
  * @var int
- * @access private
+ * @access protected
  */
 	var $_queriesCnt = 0;
 
@@ -118,7 +118,7 @@ class DataSource extends Object {
  * Total duration of all queries.
  *
  * @var unknown_type
- * @access private
+ * @access protected
  */
 	var $_queriesTime = null;
 
@@ -126,7 +126,7 @@ class DataSource extends Object {
  * Log of queries executed by this DataSource
  *
  * @var unknown_type
- * @access private
+ * @access protected
  */
 	var $_queriesLog = array();
 
@@ -136,7 +136,7 @@ class DataSource extends Object {
  * >6000 queries on one system.
  *
  * @var int Maximum number of queries in the queries log.
- * @access private
+ * @access protected
  */
 	var $_queriesLogMax = 200;
 
@@ -144,7 +144,7 @@ class DataSource extends Object {
  * Caches serialzed results of executed queries
  *
  * @var array Maximum number of queries in the queries log.
- * @access private
+ * @access protected
  */
 	var $_queryCache = array();
 
@@ -152,7 +152,7 @@ class DataSource extends Object {
  * The default configuration of a specific DataSource
  *
  * @var array
- * @access public
+ * @access protected
  */
 	var $_baseConfig = array();
 

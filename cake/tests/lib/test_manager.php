@@ -620,7 +620,7 @@ class HtmlTestManager extends TestManager {
 }
 if (function_exists('caketestsgetreporter')) {
 	echo "You need a new test.php. \n";
-	echo "Try this one: " . CONSOLE_LIBS . "templates" . DS . "skel" . DS . "webroot" . DS . "test.php";
+	echo "Try this one: " . dirname(CONSOLE_LIBS) . "templates" . DS . "skel" . DS . "webroot" . DS . "test.php";
 	exit();
 } else {
 

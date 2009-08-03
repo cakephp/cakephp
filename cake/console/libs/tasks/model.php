@@ -20,7 +20,6 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Model', 'ConnectionManager');
 
 /**
  * Task class for creating and updating model files.
@@ -82,7 +81,7 @@ class ModelTask extends Shell {
  * @return void
  **/
 	function startup() {
-		App::import('Core', 'Model');
+		App::import('Model', 'Model', false);
 		parent::startup();
 	}
 
@@ -405,7 +404,7 @@ class ModelTask extends Shell {
 				} elseif ($metaData['type'] == 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] == 'boolean') {
-					$guess = $methods['numeric'];
+					$guess = $methods['boolean'];
 				} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {

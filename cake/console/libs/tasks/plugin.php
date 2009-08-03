@@ -60,8 +60,8 @@ class PluginTask extends Shell {
 	function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
-			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel') === true) {
-				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'skel';
+			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
+				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 			}
 		}
 		$plugin = null;
@@ -111,7 +111,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . $pluginPath));
+			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . Inflector::underscore($pluginPath)));
 		}
 	}
 
@@ -129,7 +129,6 @@ class PluginTask extends Shell {
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
-
 		$this->hr();
 		$this->out(sprintf(__("Plugin Name: %s", true),  $plugin));
 		$this->out(sprintf(__("Plugin Directory: %s", true), $this->path . $pluginPath));
@@ -142,8 +141,9 @@ class PluginTask extends Shell {
 
 			$Folder =& new Folder($this->path . $pluginPath);
 			$directories = array(
-				'config' . DS . 'sql',
+				'config' . DS . 'schema',
 				'models' . DS . 'behaviors',
+				'models' . DS . 'datasources',
 				'controllers' . DS . 'components',
 				'views' . DS . 'helpers',
 				'tests' . DS . 'cases' . DS . 'components',
@@ -156,7 +156,7 @@ class PluginTask extends Shell {
 				'vendors' . DS . 'img',
 				'vendors' . DS . 'js',
 				'vendors' . DS . 'css',
-				'vendors' . DS . 'shells'
+				'vendors' . DS . 'shells' . DS . 'tasks'
 			);
 
 			foreach ($directories as $directory) {

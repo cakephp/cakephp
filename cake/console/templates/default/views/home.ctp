@@ -1,5 +1,5 @@
 <?php
-$output = "<h2>Sweet, \"".Inflector::humanize($app)."\" got Baked by CakePHP!</h2>\n";
+$output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP!</h2>\n";
 $output .="
 <?php
 if (Configure::read() > 0):
@@ -52,7 +52,9 @@ endif;
 </p>
 <?php
 if (!empty(\$filePresent)):
- 	uses('model' . DS . 'connection_manager');
+	if (!class_exists('ConnectionManager')) {
+		require LIBS . 'model' . DS . 'connection_manager.php';
+	}
 	\$db = ConnectionManager::getInstance();
  	\$connected = \$db->getDataSource('default');
 ?>

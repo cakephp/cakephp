@@ -100,7 +100,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testFindingInstalledThemesForBake() {
-		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS;
+		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS;
 		$this->Task->Dispatch->shellPaths = array($consoleLibs);
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
@@ -113,7 +113,7 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGetThemePath() {
-		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS . 'templates' . DS . 'default' .DS;
+		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
 		$this->Task->expectCallCount('in', 1);
 
@@ -138,10 +138,13 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGenerate() {
-		$this->Task->Dispatch->shellPaths = array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS
-		);
+		App::build(array(
+			'shells' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS
+			)
+		));
 		$this->Task->initialize();
+		$this->Task->setReturnValue('in', 1);
 		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
 		$this->assertEqual($result, $expected);
@@ -154,10 +157,12 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGenerateWithTemplateFallbacks() {
-		$this->Task->Dispatch->shellPaths = array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS,
-			CAKE_CORE_INCLUDE_PATH . DS . CONSOLE_LIBS
-		);
+		App::build(array(
+			'shells' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS,
+				CAKE_CORE_INCLUDE_PATH . DS . 'console' . DS
+			)
+		));
 		$this->Task->initialize();
 		$this->Task->params['theme'] = 'test';
 		$this->Task->set(array(

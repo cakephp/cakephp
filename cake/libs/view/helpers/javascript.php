@@ -598,6 +598,15 @@ class JavascriptHelper extends AppHelper {
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array
  *
+ * ### Options
+ *
+ * - block - Wraps the return value in a script tag if true. Default is false
+ * - prefix - Prepends the string to the returned data. Default is ''
+ * - postfix - Appends the string to the returned data. Default is ''
+ * - stringKeys - A list of array keys to be treated as a string.
+ * - quoteKeys - If false treats $stringKeys as a list of keys **not** to be quoted. Default is true.
+ * - q - The type of quote to use. Default is "'"
+ *
  * @param array $data Data to be converted
  * @param array $options Set of options: block, prefix, postfix, stringKeys, quoteKeys, q
  * @param string $prefix DEPRECATED, use $options['prefix'] instead. Prepends the string to the returned data

@@ -27,7 +27,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('File');
-App::import('Model', 'CakeSchema');
+App::import('Model', 'CakeSchema', false);
 
 /**
  * Schema is a command-line database management utility for automating programmer chores.
@@ -208,7 +208,7 @@ class SchemaShell extends Shell {
 			}
 		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "#". $Schema->name ." sql generated on: " . date('Y-m-d H:i:s') . " : ". time()."\n\n";
+		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 		if ($write) {
 			if (strpos($write, '.sql') === false) {

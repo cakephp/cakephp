@@ -107,7 +107,7 @@ class Configure extends Object {
 
 		if (isset($config['debug'])) {
 			if ($_this->debug) {
-				error_reporting(E_ALL);
+				error_reporting(E_ALL & ~E_DEPRECATED);
 
 				if (function_exists('ini_set')) {
 					ini_set('display_errors', 1);
@@ -630,9 +630,9 @@ class App extends Object {
 			'views' => array(VIEWS),
 			'helpers' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
-			'shells' => array(APP . 'vendors' . DS . 'shells', VENDORS . 'shells'),
+			'shells' => array(APP . 'vendors' . DS . 'shells' . DS, VENDORS . 'shells' . DS),
 			'vendors' => array(APP . 'vendors' . DS, VENDORS),
-			'plugins' => array(APP . 'plugins' . DS),
+			'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS),
 		);
 
 		if ($reset == true) {
@@ -844,7 +844,7 @@ class App extends Object {
 					}
 				}
 
-				if (!App::import($tempType, $plugin . $class)) {
+				if (!App::import($tempType, $plugin . $class, $parent)) {
 					return false;
 				}
 			}
@@ -866,7 +866,7 @@ class App extends Object {
 		if ($name != null && !class_exists($name . $ext['class'])) {
 			if ($load = $_this->__mapped($name . $ext['class'], $type, $plugin)) {
 				if ($_this->__load($load)) {
-					$_this->__overload($type, $name . $ext['class']);
+					$_this->__overload($type, $name . $ext['class'], $parent);
 
 					if ($_this->return) {
 						$value = include $load;
@@ -908,7 +908,7 @@ class App extends Object {
 			if ($directory !== null) {
 				$_this->__cache = true;
 				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
-				$_this->__overload($type, $name . $ext['class']);
+				$_this->__overload($type, $name . $ext['class'], $parent);
 
 				if ($_this->return) {
 					$value = include $directory . $file;
@@ -1058,8 +1058,8 @@ class App extends Object {
  * @param string $name Class name to overload
  * @access private
  */
-	function __overload($type, $name) {
-		if (($type === 'Model' || $type === 'Helper') && strtolower($name) != 'schema') {
+	function __overload($type, $name, $parent) {
+		if (($type === 'Model' || $type === 'Helper') && $parent !== false) {
 			Overloadable::overload($name);
 		}
 	}
@@ -1088,10 +1088,10 @@ class App extends Object {
 		switch ($load) {
 			case 'model':
 				if (!class_exists('Model')) {
-					App::import('Model', 'Model', false, App::core('models'));
+					require LIBS . 'model' . DS . 'model.php';
 				}
 				if (!class_exists('AppModel')) {
-					App::import($type, 'AppModel', false, App::path('models'));
+					App::import($type, 'AppModel', false);
 				}
 				if ($plugin) {
 					if (!class_exists($plugin . 'AppModel')) {

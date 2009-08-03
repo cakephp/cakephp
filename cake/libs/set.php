@@ -422,7 +422,7 @@ class Set extends Object {
 					$context['key'] = array_pop($context['trace']);
 					if (isset($context['trace'][1]) && $context['trace'][1] > 0) {
 						$context['item'] = $context['item'][0];
-					} else if(!empty($context['item'][$key])){
+					} elseif (!empty($context['item'][$key])) {
 						$context['item'] = $context['item'][$key];
 					} else {
 						$context['item'] = array_shift($context['item']);

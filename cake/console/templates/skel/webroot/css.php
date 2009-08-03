@@ -34,7 +34,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
  * Enter description here...
  */
 if (!class_exists('File')) {
-	uses('file');
+	require LIBS . 'file.php';
 }
 
 /**

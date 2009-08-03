@@ -235,8 +235,9 @@ class TestSuiteShell extends Shell {
 				if ($this->category == 'app' && file_exists($folder.DS.'cases'.DS.$this->file.'.test.php')) {
 					return true;
 				}
-
-				if ($this->category == 'core' && file_exists($folder.DS.'cases'.DS.'libs'.DS.$this->file.'.test.php')) {
+				$coreCaseExists = file_exists($folder.DS.'cases'.DS.$this->file.'.test.php');
+				$coreLibCaseExists = file_exists($folder.DS.'cases'.DS.'libs'.DS.$this->file.'.test.php');
+				if ($this->category == 'core' && ($coreCaseExists || $coreLibCaseExists)) {
 					return true;
 				}
 
@@ -291,9 +292,14 @@ class TestSuiteShell extends Shell {
 			}
 			return $result;
 		}
-
-		$case = 'libs'.DS.$this->file.'.test.php';
-		if ($this->category == 'app') {
+		if ($this->category === 'core') {
+			$coreCaseExists = file_exists(CORE_TEST_CASES.DS.$this->file.'.test.php');
+			if ($coreCaseExists) {
+				$case = $this->file . '.test.php';
+			} else {
+				$case = 'libs' . DS . $this->file . '.test.php';
+			}
+		} elseif ($this->category === 'app') {
 			$case = $this->file.'.test.php';
 		} elseif ($this->isPluginTest) {
 			$case = $this->file.'.test.php';

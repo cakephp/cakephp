@@ -26,7 +26,8 @@
 App::import('Core', array(
 	'ClassRegistry', 'Overloadable', 'Validation', 'Set', 'String'
 ));
-App::import('Model', array('ModelBehavior', 'ConnectionManager'), false);
+App::import('Model', 'ModelBehavior', false);
+App::import('Model', 'ConnectionManager', false);
 
 /**
  * Object-relational mapper.
@@ -2574,8 +2575,8 @@ class Model extends Overloadable {
  * rule (in case of multiple validation for field) that was broken.
  *
  * @param string $field The name of the field to invalidate
- * @param mixed $value Name of validation rule that was not failed. If no validation key
- * 						is provided, defaults to true.
+ * @param mixed $value Name of validation rule that was not failed, or validation message to
+ *                     be returned. If no validation key is provided, defaults to true.
  * @access public
  */
 	function invalidate($field, $value = true) {

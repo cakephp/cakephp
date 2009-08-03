@@ -29,7 +29,7 @@
  *
  */
 if (!class_exists('Object')) {
-	uses('object');
+	require LIBS . 'object.php';
 }
 
 /**
@@ -163,6 +163,9 @@ class Folder extends Object {
 	function read($sort = true, $exceptions = false, $fullPath = false) {
 		$dirs = $files = array();
 
+		if (!$this->pwd()) {
+			return array($dirs, $files);
+		}
 		if (is_array($exceptions)) {
 			$exceptions = array_flip($exceptions);
 		}
@@ -214,6 +217,9 @@ class Folder extends Object {
  * @access public
  */
 	function findRecursive($pattern = '.*', $sort = false) {
+		if (!$this->pwd()) {
+			return array();
+		}
 		$startsOn = $this->path;
 		$out = $this->_findRecursive($pattern, $sort);
 		$this->cd($startsOn);
@@ -425,6 +431,9 @@ class Folder extends Object {
  * @access public
  */
 	function tree($path, $exceptions = true, $type = null) {
+		if (!$this->pwd()) {
+			return array();
+		}
 		$original = $this->path;
 		$path = rtrim($path, DS);
 		$this->__files = array();
@@ -554,6 +563,9 @@ class Folder extends Object {
 		if (!$path) {
 			$path = $this->pwd();
 		}
+		if (!$path) {
+			return null;
+		}
 		$path = Folder::slashTerm($path);
 		if (is_dir($path) === true) {
 			$normalFiles = glob($path . '*');
@@ -598,6 +610,9 @@ class Folder extends Object {
  * @access public
  */
 	function copy($options = array()) {
+		if (!$this->pwd()) {
+			return false;
+		}
 		$to = null;
 		if (is_string($options)) {
 			$to = $options;

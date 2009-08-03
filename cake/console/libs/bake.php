@@ -56,6 +56,12 @@ class BakeShell extends Shell {
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
+			foreach($this->args as $i => $arg) {
+				if (strpos($arg, '.')) {
+					list($this->params['plugin'], $this->args[$i]) = explode('.', $arg);
+					break;
+				}
+			}
 			if (isset($this->params['plugin'])) {
 				$this->{$task}->plugin = $this->params['plugin'];
 			}
@@ -157,7 +163,7 @@ class BakeShell extends Shell {
 			$object = new $model();
 			$modelExists = true;
 		} else {
-			App::import('Model');
+			App::import('Model', 'Model', false);
 			$object = new Model(array('name' => $name, 'ds' => $this->connection));
 		}
 

@@ -33,7 +33,6 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'db_config.php';
 //require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-
 Mock::generatePartial(
 	'ShellDispatcher', 'TestDbConfigTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
@@ -54,7 +53,7 @@ class TEST_DATABASE_CONFIG {
 		'database' => 'database_name',
 		'prefix' => '',
 	);
-	
+
 	var $otherOne = array(
 		'driver' => 'mysql',
 		'persistent' => false,
@@ -73,6 +72,7 @@ class TEST_DATABASE_CONFIG {
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class DbConfigTaskTest extends CakeTestCase {
+
 /**
  * startTest method
  *
@@ -82,12 +82,13 @@ class DbConfigTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestDbConfigTaskMockShellDispatcher();
 		$this->Task =& new MockDbConfigTask($this->Dispatcher);
-		$this->Task->Dispatch =& new $this->Dispatcher;
+		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 
 		$this->Task->params['working'] = rtrim(APP, '/');
 		$this->Task->databaseClassName = 'TEST_DATABASE_CONFIG';
 	}
+
 /**
  * endTest method
  *
@@ -98,6 +99,7 @@ class DbConfigTaskTest extends CakeTestCase {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
+
 /**
  * Test the getConfig method.
  *
@@ -108,6 +110,7 @@ class DbConfigTaskTest extends CakeTestCase {
 		$result = $this->Task->getConfig();
 		$this->assertEqual($result, 'otherOne');
 	}
+
 /**
  * test that initialize sets the path up.
  *
@@ -118,8 +121,9 @@ class DbConfigTaskTest extends CakeTestCase {
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
 		$this->assertEqual($this->Task->path, APP . 'config' . DS);
-		
+
 	}
+
 /**
  * test execute and by extension __interactive
  *

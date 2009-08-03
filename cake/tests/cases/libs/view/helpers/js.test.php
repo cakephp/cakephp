@@ -421,7 +421,6 @@ class JsBaseEngineTestCase extends CakeTestCase {
 	function startTest() {
 		$this->JsEngine = new JsBaseEngineHelper();
 	}
-
 /**
  * tearDown method
  *

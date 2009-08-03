@@ -52,18 +52,40 @@ class TemplateTask extends Shell {
  * @return array Array of bake themes that are installed.
  **/
 	function _findThemes() {
-		$paths = $this->Dispatch->shellPaths;
+		$paths = App::path('shells');
+		$core = array_pop($paths);
+		$core = str_replace('libs' . DS, '', $core);
+		$paths[] = $core;
+		$Folder =& new Folder($core . 'templates' . DS . 'default');
+		$contents = $Folder->read();
+		$themeFolders = $contents[0];
+
+		$plugins = App::objects('plugin');
+		foreach ($plugins as $plugin) {
+			$paths[] = $this->_pluginPath($plugin) . 'vendors' . DS . 'shells' . DS;
+		}
+
+		// TEMPORARY TODO remove when all paths are DS terminated
+		foreach ($paths as $i => $path) {
+			$paths[$i] = rtrim($path, DS) . DS;
+		}
+
 		$themes = array();
 		foreach ($paths as $path) {
 			$Folder =& new Folder($path . 'templates', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
-				if (empty($dir) || $dir == 'skel') {
+				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
 					continue;
 				}
-				$templateDir = $path . 'templates' . DS . $dir . DS;
-				$themes[$dir] = $templateDir;
+				$Folder =& new Folder($path . 'templates' . DS . $dir);
+				$contents = $Folder->read();
+				$subDirs = $contents[0];
+				if (array_intersect($contents[0], $themeFolders)) {
+					$templateDir = $path . 'templates' . DS . $dir . DS;
+					$themes[$dir] = $templateDir;
+				}
 			}
 		}
 		return $themes;
@@ -184,7 +206,6 @@ class TemplateTask extends Shell {
 			}
 		}
 		$this->err(sprintf(__('Could not find template for %s', true), $filename));
-		$this->_stop();
 		return false;
 	}
 }
