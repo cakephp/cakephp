@@ -64,7 +64,7 @@ class ApiShellTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new ApiShellMockShellDispatcher();
 		$this->Shell =& new MockApiShell($this->Dispatcher);
-		$this->Shell->Dispatch = new $this->Dispatcher;
+		$this->Shell->Dispatch =& $this->Dispatcher;
 	}
 /**
  * tearDown method
@@ -107,7 +107,7 @@ class ApiShellTest extends CakeTestCase {
 			)
 		);
 		$this->Shell->expectAt(1, 'out', $expected);
-	
+
 		$this->Shell->args = array('controller');
 		$this->Shell->paths['controller'] = CAKE_CORE_INCLUDE_PATH . DS . LIBS . 'controller' . DS;
 		$this->Shell->main();
