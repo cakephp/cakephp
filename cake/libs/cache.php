@@ -136,8 +136,8 @@ class Cache extends Object {
 				return false;
 			}
 			$settings = $_this->__config[$name] = $_this->settings($engine);
-		} else {
-			$settings = $_this->__config[$name] = $_this->set($_this->__config[$name]);
+		} else if ($settings = $_this->set($_this->__config[$name])) {
+			$_this->__config[$name] = $settings;
 		}
 		return compact('engine', 'settings');
 	}
@@ -188,7 +188,6 @@ class Cache extends Object {
 		}
 
 		$engine = $_this->__config[$_this->__name]['engine'];
-
 		if (!empty($settings)) {
 			$_this->__reset = true;
 		}
