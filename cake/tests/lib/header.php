@@ -30,7 +30,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv='content-Type' content='text/html; <?php echo $characterSet; ?>' />
-		<title>CakePHP Test Suite v 1.3.0.0</title>
+		<title>CakePHP Test Suite 1.3</title>
 		<style type="text/css">
 			h3 {font-size: 170%; padding-top: 1em}
 			a {font-size: 120%}
