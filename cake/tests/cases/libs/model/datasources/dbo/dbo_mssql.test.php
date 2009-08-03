@@ -55,13 +55,6 @@ class DboMssqlTestDb extends DboMssql {
  */
 	var $simulate = true;
 /**
- * simalate property
- *
- * @var array
- * @access public
- */
-	var $simulate = true;
-/**
  * fetchAllResultsStack
  *
  * @var array
@@ -205,17 +198,6 @@ class MssqlTestModel extends Model {
 		)
 	);
 /**
- * belongsTo property
- *
- * @var array
- * @access public
- */
-	var $belongsTo = array(
-		'MssqlClientTestModel' => array(
-			'foreignKey' => 'client_id'
-		)
-	);
-/**
  * find method
  *
  * @param mixed $conditions
@@ -291,41 +273,6 @@ class MssqlClientTestModel extends Model {
 	);
 }
 /**
- * MssqlClientTestModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
- */
-class MssqlClientTestModel extends Model {
-/**
- * name property
- *
- * @var string 'MssqlAssociatedTestModel'
- * @access public
- */
-	var $name = 'MssqlClientTestModel';
-/**
- * useTable property
- *
- * @var bool false
- * @access public
- */
-	var $useTable = false;
-/**
- * _schema property
- *
- * @var array
- * @access protected
- */
-	var $_schema = array(
-		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
-		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-		'created'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-	);
-}
-/**
  * DboMssqlTest class
  *
  * @package       cake
@@ -356,20 +303,6 @@ class DboMssqlTest extends CakeTestCase {
  */
 	var $fixtures = array('core.category');
 /**
- * autoFixtures property
- *
- * @var bool false
- * @access public
- */
-	var $autoFixtures = false;
-/**
- * fixtures property
- *
- * @var array
- * @access public
- */
-	var $fixtures = array('core.category');
-/**
  * Skip if cannot connect to mssql
  *
  * @access public
@@ -379,26 +312,6 @@ class DboMssqlTest extends CakeTestCase {
 		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
 	}
 
-/**
- * Make sure all fixtures tables are being created
- *
- * @access public
- */
-	function start() {
-		$this->db->simulate = false;
-		parent::start();
-		$this->db->simulate = true;
-	}
-/**
- * Make sure all fixtures tables are being dropped
- *
- * @access public
- */
-	function end() {
-		$this->db->simulate = false;
-		parent::end();
-		$this->db->simulate = true;
-	}
 /**
  * Make sure all fixtures tables are being created
  *
@@ -571,65 +484,6 @@ class DboMssqlTest extends CakeTestCase {
 				'length' => 4
 			)
 		);
-		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testBuildColumn
- *
- * @return unknown_type
- * @access public
- */
-	function testBuildColumn() {
-		$column = array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary');
-		$result = $this->db->buildColumn($column);
-		$expected = '[id] int IDENTITY (1, 1) NOT NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11');
-		$result = $this->db->buildColumn($column);
-		$expected = '[client_id] int DEFAULT 0 NOT NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'client_id', 'type' => 'integer', 'null' => true);
-		$result = $this->db->buildColumn($column);
-		$expected = '[client_id] int NULL';
-		$this->assertEqual($result, $expected);
-
-		// 'name' => 'type' format for columns
-		$column = array('type' => 'integer', 'name' => 'client_id');
-		$result = $this->db->buildColumn($column);
-		$expected = '[client_id] int NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('type' => 'string', 'name' => 'name');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'name', 'type' => 'string', 'null' => '', 'default' => '', 'length' => '255');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT \'\' NOT NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'length' => '255');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) NOT NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'name', 'type' => 'string', 'null' => false, 'default' => null, 'length' => '255');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) NOT NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => null, 'length' => '255');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) NULL';
-		$this->assertEqual($result, $expected);
-
-		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
-		$result = $this->db->buildColumn($column);
-		$expected = '[name] varchar(255) DEFAULT \'\'';
 		$this->assertEqual($result, $expected);
 	}
 /**
