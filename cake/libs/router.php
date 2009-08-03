@@ -311,9 +311,9 @@ class Router extends Object {
 /**
  * Builds a route regular expression
  *
- * @param string $route			An empty string, or a route string "/"
- * @param array $default		NULL or an array describing the default route
- * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @param string $route An empty string, or a route string "/"
+ * @param array $default NULL or an array describing the default route
+ * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
  * @return array
  * @see routes
  * @access public
@@ -460,8 +460,6 @@ class Router extends Object {
 
 					if (isset($names[$key])) {
 						$out[$names[$key]] = $_this->stripEscape($found);
-					} elseif (isset($names[$key]) && empty($names[$key]) && empty($out[$names[$key]])) {
-						break;
 					} else {
 						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
 						extract($_this->getArgs($found, $argOptions));
@@ -535,10 +533,7 @@ class Router extends Object {
 	function compile($i) {
 		$route = $this->routes[$i];
 
-		if (!list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2])) {
-			unset($this->routes[$i]);
-			return array();
-		}
+		list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2]);
 		$this->routes[$i] = array(
 			$route[0], $pattern, $names,
 			array_merge(array('plugin' => null, 'controller' => null), (array)$route[1]),
@@ -1082,7 +1077,7 @@ class Router extends Object {
 			if (isset($params[$key])) {
 				$string = $params[$key];
 				unset($params[$key]);
-			} else {
+			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
 				$key = $key . '/';
 			}
 			$out = str_replace(':' . $key, $string, $out);
@@ -1200,7 +1195,7 @@ class Router extends Object {
 		$paths = Router::getPaths();
 
 		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = preg_replace('/' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
+			$url = preg_replace('/^' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
 		}
 		$url = '/' . $url;
 
@@ -1245,7 +1240,7 @@ class Router extends Object {
  * @access public
  * @static
  */
-	function stripPlugin($base, $plugin) {
+	function stripPlugin($base, $plugin = null) {
 		if ($plugin != null) {
 			$base = preg_replace('/(?:' . $plugin . ')/', '', $base);
 			$base = str_replace('//', '', $base);
@@ -1258,7 +1253,6 @@ class Router extends Object {
 		}
 		return $base;
 	}
-
 /**
  * Strip escape characters from parameter values.
  *
@@ -1274,9 +1268,9 @@ class Router extends Object {
 				return $param;
 			}
 
-			$return = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
-			return $return;
+			return preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
 		}
+
 		foreach ($param as $key => $value) {
 			if (is_string($value)) {
 				$return[$key] = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $value);
@@ -1349,7 +1343,9 @@ class Router extends Object {
 				continue;
 			}
 			$param = $_this->stripEscape($param);
-			if ((!isset($options['named']) || !empty($options['named'])) && strpos($param, $_this->named['separator']) !== false) {
+
+			$separatorIsPresent = strpos($param, $_this->named['separator']) !== false;
+			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));

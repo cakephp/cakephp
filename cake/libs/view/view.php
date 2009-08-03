@@ -417,6 +417,10 @@ class View extends Object {
  */
 	function renderLayout($content_for_layout, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
+		if (empty($layoutFileName)) {
+			return $this->output;
+		}
+
 		$debug = '';
 
 		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
@@ -800,7 +804,7 @@ class View extends Object {
 			}
 		}
 
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
@@ -840,7 +844,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths($this->plugin);
+		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
 
 		$exts = array($this->ext, '.ctp', '.thtml');
@@ -892,7 +896,7 @@ class View extends Object {
 		$paths = array();
 		$viewPaths = Configure::read('viewPaths');
 
-		if ($plugin !== null) {
+		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;

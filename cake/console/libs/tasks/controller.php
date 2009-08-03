@@ -120,7 +120,7 @@ class ControllerTask extends Shell {
 		$this->out("Baking {$controllerName}Controller");
 		$this->hr();
 
-		$controllerFile = low(Inflector::underscore($controllerName));
+		$controllerFile = strtolower(Inflector::underscore($controllerName));
 
 		$question[] = __("Would you like to build your controller interactively?", true);
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
@@ -128,29 +128,29 @@ class ControllerTask extends Shell {
 		}
 		$doItInteractive = $this->in(join("\n", $question), array('y','n'), 'y');
 
-		if (low($doItInteractive) == 'y' || low($doItInteractive) == 'yes') {
+		if (strtolower($doItInteractive) == 'y' || strtolower($doItInteractive) == 'yes') {
 			$this->interactive = true;
 
 			$wannaUseScaffold = $this->in(__("Would you like to use scaffolding?", true), array('y','n'), 'n');
 
-			if (low($wannaUseScaffold) == 'n' || low($wannaUseScaffold) == 'no') {
+			if (strtolower($wannaUseScaffold) == 'n' || strtolower($wannaUseScaffold) == 'no') {
 
 				$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'n');
 
-				if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
+				if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 					$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'n');
 				}
 
 				$wannaDoHelpers = $this->in(__("Would you like this controller to use other helpers besides HtmlHelper and FormHelper?", true), array('y','n'), 'n');
 
-				if (low($wannaDoHelpers) == 'y' || low($wannaDoHelpers) == 'yes') {
+				if (strtolower($wannaDoHelpers) == 'y' || strtolower($wannaDoHelpers) == 'yes') {
 					$helpersList = $this->in(__("Please provide a comma separated list of the other helper names you'd like to use.\nExample: 'Ajax, Javascript, Time'", true));
 					$helpersListTrimmed = str_replace(' ', '', $helpersList);
 					$helpers = explode(',', $helpersListTrimmed);
 				}
 				$wannaDoComponents = $this->in(__("Would you like this controller to use any components?", true), array('y','n'), 'n');
 
-				if (low($wannaDoComponents) == 'y' || low($wannaDoComponents) == 'yes') {
+				if (strtolower($wannaDoComponents) == 'y' || strtolower($wannaDoComponents) == 'yes') {
 					$componentsList = $this->in(__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'", true));
 					$componentsListTrimmed = str_replace(' ', '', $componentsList);
 					$components = explode(',', $componentsListTrimmed);
@@ -163,20 +163,20 @@ class ControllerTask extends Shell {
 		} else {
 			$wannaDoScaffolding = $this->in(__("Would you like to include some basic class methods (index(), add(), view(), edit())?", true), array('y','n'), 'y');
 
-			if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
+			if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
 				$wannaDoAdmin = $this->in(__("Would you like to create the methods for admin routing?", true), array('y','n'), 'y');
 			}
 		}
 		$admin = false;
 
-		if ((low($wannaDoAdmin) == 'y' || low($wannaDoAdmin) == 'yes')) {
+		if ((strtolower($wannaDoAdmin) == 'y' || strtolower($wannaDoAdmin) == 'yes')) {
 			$admin = $this->getAdmin();
 		}
 
-		if (low($wannaDoScaffolding) == 'y' || low($wannaDoScaffolding) == 'yes') {
-			$actions = $this->bakeActions($controllerName, null, in_array(low($wannaUseSession), array('y', 'yes')));
+		if (strtolower($wannaDoScaffolding) == 'y' || strtolower($wannaDoScaffolding) == 'yes') {
+			$actions = $this->bakeActions($controllerName, null, in_array(strtolower($wannaUseSession), array('y', 'yes')));
 			if ($admin) {
-				$actions .= $this->bakeActions($controllerName, $admin, in_array(low($wannaUseSession), array('y', 'yes')));
+				$actions .= $this->bakeActions($controllerName, $admin, in_array(strtolower($wannaUseSession), array('y', 'yes')));
 			}
 		}
 
@@ -187,7 +187,7 @@ class ControllerTask extends Shell {
 			$this->hr();
 			$this->out("Controller Name:  $controllerName");
 
-			if (low($wannaUseScaffold) == 'y' || low($wannaUseScaffold) == 'yes') {
+			if (strtolower($wannaUseScaffold) == 'y' || strtolower($wannaUseScaffold) == 'yes') {
 				$this->out("		   var \$scaffold;");
 				$actions = 'scaffold';
 			}
@@ -218,7 +218,7 @@ class ControllerTask extends Shell {
 			$this->hr();
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
 
-			if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+			if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
 				$baked = $this->bake($controllerName, $actions, $helpers, $components, $uses);
 				if ($baked && $this->_checkUnitTest()) {
 					$this->bakeTest($controllerName);
@@ -243,8 +243,11 @@ class ControllerTask extends Shell {
  * @access private
  */
 	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
-		$currentModelName = $this->_modelName($controllerName);
-		if (!App::import('Model', $currentModelName)) {
+		$currentModelName = $modelImport = $this->_modelName($controllerName);
+		if ($this->plugin) {
+			$modelImport = $this->plugin . '.' . $modelImport;
+		}
+		if (!App::import('Model', $modelImport)) {
 			$this->err(__('You must have a model for this class to build scaffold methods. Please try again.', true));
 			exit;
 		}
@@ -270,7 +273,7 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->flash(__('Invalid {$singularHumanName}', true), array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t}\n";
-		$actions .= "\t\t\$this->set('".$singularName."', \$this->{$currentModelName}->read(null, \$id));\n";
+		$actions .= "\t\t\$this->set('" . $singularName . "', \$this->{$currentModelName}->read(null, \$id));\n";
 		$actions .= "\t}\n";
 		$actions .= "\n";
 
@@ -281,7 +284,7 @@ class ControllerTask extends Shell {
 		$actions .= "\t\t\t\$this->{$currentModelName}->create();\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
-			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The ".$singularHumanName." has been saved', true));\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The " . $singularHumanName . " has been saved', true));\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
 			$actions .= "\t\t\t\t\$this->flash(__('{$currentModelName} saved.', true), array('action'=>'index'));\n";
@@ -310,7 +313,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
+			$actions .= "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
@@ -329,10 +332,10 @@ class ControllerTask extends Shell {
 		$actions .= "\t\tif (!empty(\$this->data)) {\n";
 		$actions .= "\t\t\tif (\$this->{$currentModelName}->save(\$this->data)) {\n";
 		if ($wannaUseSession) {
-			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The ".$singularHumanName." has been saved', true));\n";
+			$actions .= "\t\t\t\t\$this->Session->setFlash(__('The " . $singularHumanName . " has been saved', true));\n";
 			$actions .= "\t\t\t\t\$this->redirect(array('action'=>'index'));\n";
 		} else {
-			$actions .= "\t\t\t\t\$this->flash(__('The ".$singularHumanName." has been saved.', true), array('action'=>'index'));\n";
+			$actions .= "\t\t\t\t\$this->flash(__('The " . $singularHumanName . " has been saved.', true), array('action'=>'index'));\n";
 		}
 		$actions .= "\t\t\t} else {\n";
 		if ($wannaUseSession) {
@@ -362,7 +365,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(".join(',', $compact)."));\n";
+			$actions .= "\t\t\$this->set(compact(" . join(',', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
@@ -405,7 +408,7 @@ class ControllerTask extends Shell {
 		$out .= "class $controllerName" . "Controller extends {$this->plugin}AppController {\n\n";
 		$out .= "\tvar \$name = '$controllerName';\n";
 
-		if (low($actions) == 'scaffold') {
+		if (strtolower($actions) == 'scaffold') {
 			$out .= "\tvar \$scaffold;\n";
 		} else {
 			if (count($uses)) {
@@ -481,7 +484,7 @@ class ControllerTask extends Shell {
 		$this->out("\nBaking unit test for $className...");
 
 		$header = '$Id';
-		$content = "<?php \n/* SVN FILE: $header$ */\n/* ". $className ."Controller Test cases generated on: " . date('Y-m-d H:m:s') . " : ". time() . "*/\n{$out}?>";
+		$content = "<?php \n/* SVN FILE: $header$ */\n/* " . $className . "Controller Test cases generated on: " . date('Y-m-d H:i:s') . " : ". time() . "*/\n{$out}?>";
 		return $this->createFile($path . $filename, $content);
 	}
 /**

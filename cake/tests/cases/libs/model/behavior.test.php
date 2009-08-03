@@ -257,7 +257,7 @@ class TestBehavior extends ModelBehavior {
 		}
 		echo "onError trigger success";
 	}
-		/**
+/**
  * beforeTest method
  *
  * @param mixed $model
@@ -265,8 +265,8 @@ class TestBehavior extends ModelBehavior {
  * @return void
  */
 	function beforeTest(&$model) {
-		$model->beforeTestResult[] = get_class($this);
-		return get_class($this);
+		$model->beforeTestResult[] = strtolower(get_class($this));
+		return strtolower(get_class($this));
 	}
 /**
  * testMethod method
@@ -338,6 +338,58 @@ class Test2Behavior extends TestBehavior{
 class Test3Behavior extends TestBehavior{
 }
 /**
+ * Test4Behavior class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class Test4Behavior extends ModelBehavior{
+	function setup(&$model, $config = null) {
+		$model->bindModel(
+			array('hasMany' => array('Comment'))
+		);
+	}
+}
+/**
+ * Test5Behavior class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class Test5Behavior extends ModelBehavior{
+	function setup(&$model, $config = null) {
+		$model->bindModel(
+			array('belongsTo' => array('User'))
+		);
+	}
+}
+/**
+ * Test6Behavior class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class Test6Behavior extends ModelBehavior{
+	function setup(&$model, $config = null) {
+		$model->bindModel(
+			array('hasAndBelongsToMany' => array('Tag'))
+		);
+	}
+}
+/**
+ * Test7Behavior class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class Test7Behavior extends ModelBehavior{
+	function setup(&$model, $config = null) {
+		$model->bindModel(
+			array('hasOne' => array('Attachment'))
+		);
+	}
+}
+/**
  * BehaviorTest class
  *
  * @package       cake
@@ -350,7 +402,10 @@ class BehaviorTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.apple', 'core.sample');
+	var $fixtures = array(
+		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
+		'core.attachment', 'core.tag', 'core.articles_tag'
+	);
 /**
  * tearDown method
  *
@@ -928,25 +983,72 @@ class BehaviorTest extends CakeTestCase {
  * @return void
  */
 	function testBehaviorTrigger() {
-		$Apple = new Apple();
+		$Apple =& new Apple();
 		$Apple->Behaviors->attach('Test');
 		$Apple->Behaviors->attach('Test2');
 		$Apple->Behaviors->attach('Test3');
 
 		$Apple->beforeTestResult = array();
 		$Apple->Behaviors->trigger($Apple, 'beforeTest');
-		$expected = array('TestBehavior', 'Test2Behavior', 'Test3Behavior');
+		$expected = array('testbehavior', 'test2behavior', 'test3behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
 		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => 'Test2Behavior'));
-		$expected = array('TestBehavior', 'Test2Behavior');
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => 'test2behavior'));
+		$expected = array('testbehavior', 'test2behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
 
 		$Apple->beforeTestResult = array();
-		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => array('Test2Behavior', 'Test3Behavior')));
-		$expected = array('TestBehavior', 'Test2Behavior');
+		$Apple->Behaviors->trigger($Apple, 'beforeTest', array(), array('break' => true, 'breakOn' => array('test2behavior', 'test3behavior')));
+		$expected = array('testbehavior', 'test2behavior');
 		$this->assertIdentical($Apple->beforeTestResult, $expected);
+	}
+/**
+ * undocumented function
+ *
+ * @return void
+ * @access public
+ */
+	function testBindModelCallsInBehaviors() {
+		$this->loadFixtures('Article', 'Comment');
+
+		// hasMany
+		$Article = new Article();
+		$Article->unbindModel(array('hasMany' => array('Comment')));
+		$result = $Article->find('first');
+		$this->assertFalse(array_key_exists('Comment', $result));
+
+		$Article->Behaviors->attach('Test4');
+		$result = $Article->find('first');
+		$this->assertTrue(array_key_exists('Comment', $result));
+
+		// belongsTo
+		$Article->unbindModel(array('belongsTo' => array('User')));
+		$result = $Article->find('first');
+		$this->assertFalse(array_key_exists('User', $result));
+
+		$Article->Behaviors->attach('Test5');
+		$result = $Article->find('first');
+		$this->assertTrue(array_key_exists('User', $result));
+
+		// hasAndBelongsToMany
+		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
+		$result = $Article->find('first');
+		$this->assertFalse(array_key_exists('Tag', $result));
+
+		$Article->Behaviors->attach('Test6');
+		$result = $Article->find('first');
+		$this->assertTrue(array_key_exists('Comment', $result));
+
+		// hasOne
+		$Comment = new Comment();
+		$Comment->unbindModel(array('hasOne' => array('Attachment')));
+		$result = $Comment->find('first');
+		$this->assertFalse(array_key_exists('Attachment', $result));
+
+		$Comment->Behaviors->attach('Test7');
+		$result = $Comment->find('first');
+		$this->assertTrue(array_key_exists('Attachment', $result));
 	}
 /**
  * Test attach and detaching

@@ -199,7 +199,7 @@ class SchemaShell extends Shell {
 			}
 		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$contents = "#". $Schema->name ." sql generated on: " . date('Y-m-d H:m:s') . " : ". time()."\n\n";
+		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 		if ($write) {
 			if (strpos($write, '.sql') === false) {

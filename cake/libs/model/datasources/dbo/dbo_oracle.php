@@ -465,11 +465,12 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
+		$table = $model->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
-			$this->_sequenceMap[$model->table] = $model->sequence;
+			$this->_sequenceMap[$table] = $model->sequence;
 		} elseif (!empty($model->table)) {
-			$this->_sequenceMap[$model->table] = $model->table . '_seq';
+			$this->_sequenceMap[$table] = $model->table . '_seq';
 		}
 
 		$cache = parent::describe($model);
@@ -477,12 +478,14 @@ class DboOracle extends DboSource {
 		if ($cache != null) {
 			return $cache;
 		}
+
 		$sql = 'SELECT COLUMN_NAME, DATA_TYPE, DATA_LENGTH FROM all_tab_columns WHERE table_name = \'';
 		$sql .= strtoupper($this->fullTableName($model)) . '\'';
 
 		if (!$this->execute($sql)) {
 			return false;
 		}
+
 		$fields = array();
 
 		for ($i = 0; $row = $this->fetchRow(); $i++) {
@@ -952,11 +955,11 @@ class DboOracle extends DboSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
-					e('<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ');
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
-						e($this->error);
+						echo $this->error;
 					}
-					e('</div>');
+					echo '</div>';
 				}
 				return null;
 			}

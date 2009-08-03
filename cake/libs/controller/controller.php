@@ -393,7 +393,9 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($app, $normal);
+						if ($app !== $normal) {
+							$this->{$var} = Set::merge($app, $normal);
+						}
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}
@@ -415,7 +417,9 @@ class Controller extends Object {
 					if ($var === 'components') {
 						$normal = Set::normalize($this->{$var});
 						$app = Set::normalize($appVars[$var]);
-						$this->{$var} = Set::merge($normal, array_diff_assoc($app, $normal));
+						if ($app !== $normal) {
+							$this->{$var} = Set::merge($app, $normal);
+						}
 					} else {
 						$this->{$var} = Set::merge($this->{$var}, array_diff($appVars[$var], $this->{$var}));
 					}
@@ -943,17 +947,17 @@ class Controller extends Object {
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object = $this->{$object}->{$assoc};
+				$object =& $this->{$object}->{$assoc};
 			} elseif ($assoc && isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$assoc})) {
-				$object = $this->{$this->modelClass}->{$assoc};
+				$object =& $this->{$this->modelClass}->{$assoc};
 			} elseif (isset($this->{$object})) {
-				$object = $this->{$object};
+				$object =& $this->{$object};
 			} elseif (isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object})) {
-				$object = $this->{$this->modelClass}->{$object};
+				$object =& $this->{$this->modelClass}->{$object};
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
-				$object = $this->{$this->modelClass};
+				$object =& $this->{$this->modelClass};
 			} else {
 				$className = null;
 				$name = $this->uses[0];
@@ -961,9 +965,9 @@ class Controller extends Object {
 					list($name, $className) = explode('.', $this->uses[0]);
 				}
 				if ($className) {
-					$object = $this->{$className};
+					$object =& $this->{$className};
 				} else {
-					$object = $this->{$name};
+					$object =& $this->{$name};
 				}
 			}
 		}

@@ -958,7 +958,7 @@ class AjaxHelper extends AppHelper {
 			$keys = array_keys($this->__ajaxBuffer);
 
 			if (count($divs) == 1 && in_array($divs[0], $keys)) {
-				e($this->__ajaxBuffer[$divs[0]]);
+				echo $this->__ajaxBuffer[$divs[0]];
 			} else {
 				foreach ($this->__ajaxBuffer as $key => $val) {
 					if (in_array($key, $divs)) {
@@ -969,14 +969,13 @@ class AjaxHelper extends AppHelper {
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string"';
 				$out .= ' && $(n)) Element.update($(n), unescape(decodeURIComponent(';
 				$out .= '__ajaxUpdater__[n]))); }';
-				e($this->Javascript->codeBlock($out, false));
+				echo $this->Javascript->codeBlock($out, false);
 			}
 			$scripts = $this->Javascript->getCache();
 
 			if (!empty($scripts)) {
-				e($this->Javascript->codeBlock($scripts, false));
+				echo $this->Javascript->codeBlock($scripts, false);
 			}
-
 			$this->_stop();
 		}
 	}

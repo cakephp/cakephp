@@ -65,7 +65,7 @@ class TestTaskTest extends CakeTestCase {
 	function setUp() {
 		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
 		$this->Task =& new MockTestTask($this->Dispatcher);
-		$this->Task->Dispatch = new $this->Dispatcher;
+		$this->Task->Dispatch =& $this->Dispatcher;
 	}
 /**
  * tearDown method

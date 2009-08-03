@@ -144,7 +144,7 @@ class ProjectTask extends Shell {
 
 		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
 
-		if (low($looksGood) == 'y' || low($looksGood) == 'yes') {
+		if (strtolower($looksGood) == 'y' || strtolower($looksGood) == 'yes') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
@@ -153,18 +153,18 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
 				$this->hr();
 			} else {
-				$this->err(" '".$app."' could not be created properly");
+				$this->err(" '" . $app . "' could not be created properly");
 				return false;
 			}
 
-			if (low($verbose) == 'y' || low($verbose) == 'yes') {
+			if (strtolower($verbose) == 'y' || strtolower($verbose) == 'yes') {
 				foreach ($Folder->messages() as $message) {
 					$this->out($message);
 				}
 			}
 
 			return true;
-		} elseif (low($looksGood) == 'q' || low($looksGood) == 'quit') {
+		} elseif (strtolower($looksGood) == 'q' || strtolower($looksGood) == 'quit') {
 			$this->out('Bake Aborted.');
 		} else {
 			$this->execute(false);
@@ -219,7 +219,7 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}
@@ -230,7 +230,7 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'test.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '".CAKE_CORE_INCLUDE_PATH."');", $contents);
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}

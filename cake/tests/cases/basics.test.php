@@ -55,6 +55,36 @@ class BasicsTest extends CakeTestCase {
 		Configure::write('Config.language', $this->_language);
 	}
 /**
+ * test the array_diff_key compatibility function.
+ *
+ * @return void
+ **/
+	function testArrayDiffKey() {
+		$one = array('one' => 1, 'two' => 2, 'three' => 3);
+		$two = array('one' => 'one', 'two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('three' => 3);
+		$this->assertEqual($result, $expected);
+
+		$one = array('one' => array('value', 'value-two'), 'two' => 2, 'three' => 3);
+		$two = array('two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('one' => array('value', 'value-two'), 'three' => 3);
+		$this->assertEqual($result, $expected);
+
+		$one = array('one' => null, 'two' => 2, 'three' => '', 'four' => 0);
+		$two = array('two' => 'two');
+		$result = array_diff_key($one, $two);
+		$expected = array('one' => null, 'three' => '', 'four' => 0);
+		$this->assertEqual($result, $expected);
+
+		$one = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
+		$two = array('minYear' => null, 'maxYear' => null, 'separator' => '-', 'interval' => 1, 'monthNames' => true);
+		$result = array_diff_key($one, $two);
+		$this->assertEqual($result, array());
+
+	}
+/**
  * testHttpBase method
  *
  * @return void
@@ -94,10 +124,27 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER = $_ENV = array();
 
+		$this->assertFalse(env('HTTPS'));
+
 		$_SERVER['HTTPS'] = 'on';
 		$this->assertTrue(env('HTTPS'));
 
+		$_SERVER['HTTPS'] = '1';
+		$this->assertTrue(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = 'I am not empty';
+		$this->assertTrue(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = 1;
+		$this->assertTrue(env('HTTPS'));
+
 		$_SERVER['HTTPS'] = 'off';
+		$this->assertFalse(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = false;
+		$this->assertFalse(env('HTTPS'));
+
+		$_SERVER['HTTPS'] = '';
 		$this->assertFalse(env('HTTPS'));
 
 		$_SERVER = array();
@@ -388,16 +435,16 @@ class BasicsTest extends CakeTestCase {
 	function test__c() {
 		Configure::write('Config.language', 'rule_1_po');
 
-		$result = __c('Plural Rule 1', 5, true);
+		$result = __c('Plural Rule 1', 6, true);
 		$expected = 'Plural Rule 1 (translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __c('Plural Rule 1 (from core)', 5, true);
+		$result = __c('Plural Rule 1 (from core)', 6, true);
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 
 		ob_start();
-			__c('Plural Rule 1 (from core)', 5);
+			__c('Plural Rule 1 (from core)', 6);
 		$result = ob_get_clean();
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
@@ -411,24 +458,24 @@ class BasicsTest extends CakeTestCase {
 	function test__dc() {
 		Configure::write('Config.language', 'rule_1_po');
 
-		$result = __dc('default', 'Plural Rule 1', 5, true);
+		$result = __dc('default', 'Plural Rule 1', 6, true);
 		$expected = 'Plural Rule 1 (translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __dc('default', 'Plural Rule 1 (from core)', 5, true);
+		$result = __dc('default', 'Plural Rule 1 (from core)', 6, true);
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __dc('core', 'Plural Rule 1', 5, true);
+		$result = __dc('core', 'Plural Rule 1', 6, true);
 		$expected = 'Plural Rule 1';
 		$this->assertEqual($result, $expected);
 
-		$result = __dc('core', 'Plural Rule 1 (from core)', 5, true);
+		$result = __dc('core', 'Plural Rule 1 (from core)', 6, true);
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 
 		ob_start();
-			__dc('default', 'Plural Rule 1 (from core)', 5);
+			__dc('default', 'Plural Rule 1 (from core)', 6);
 		$result = ob_get_clean();
 		$expected = 'Plural Rule 1 (from core translated)';
 		$this->assertEqual($result, $expected);
@@ -442,20 +489,20 @@ class BasicsTest extends CakeTestCase {
 	function test__dcn() {
 		Configure::write('Config.language', 'rule_1_po');
 
-		$result = __dcn('default', '%d = 1', '%d = 0 or > 1', 0, 5, true);
+		$result = __dcn('default', '%d = 1', '%d = 0 or > 1', 0, 6, true);
 		$expected = '%d = 0 or > 1 (translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __dcn('default', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 1, 5, true);
+		$result = __dcn('default', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 1, 6, true);
 		$expected = '%d = 1 (from core translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __dcn('core', '%d = 1', '%d = 0 or > 1', 0, 5, true);
+		$result = __dcn('core', '%d = 1', '%d = 0 or > 1', 0, 6, true);
 		$expected = '%d = 0 or > 1';
 		$this->assertEqual($result, $expected);
 
 		ob_start();
-			__dcn('default', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 1, 5);
+			__dcn('default', '%d = 1 (from core)', '%d = 0 or > 1 (from core)', 1, 6);
 		$result = ob_get_clean();
 		$expected = '%d = 1 (from core translated)';
 		$this->assertEqual($result, $expected);

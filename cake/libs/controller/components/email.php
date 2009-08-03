@@ -346,6 +346,7 @@ class EmailComponent extends Object{
 		$this->subject = null;
 		$this->additionalParams = null;
 		$this->smtpError = null;
+		$this->attachments = array();
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
@@ -490,7 +491,6 @@ class EmailComponent extends Object{
 			$this->__header[] = 'Content-Type: text/html; charset=' . $this->charset;
 		} elseif ($this->sendAs === 'both') {
 			$this->__header[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"';
-			$this->__header[] = '';
 		}
 
 		$this->__header[] = 'Content-Transfer-Encoding: 7bit';
@@ -503,12 +503,16 @@ class EmailComponent extends Object{
  */
 	function __formatMessage($message) {
 		if (!empty($this->attachments)) {
-			$prefix = array(
-				'--' . $this->__boundary,
-				'Content-Type: text/plain; charset=' . $this->charset,
-				'Content-Transfer-Encoding: 7bit',
-				''
-			);
+			$prefix = array('--' . $this->__boundary);
+			if ($this->sendAs === 'text') {
+				$prefix[] = 'Content-Type: text/plain; charset=' . $this->charset;
+			} elseif ($this->sendAs === 'html') {
+				$prefix[] = 'Content-Type: text/html; charset=' . $this->charset;
+			} elseif ($this->sendAs === 'both') {
+				$prefix[] = 'Content-Type: multipart/alternative; boundary="alt-' . $this->__boundary . '"';
+			}
+			$prefix[] = 'Content-Transfer-Encoding: 7bit';
+			$prefix[] = '';
 			$message = array_merge($prefix, $message);
 		}
 		return $message;
@@ -632,7 +636,9 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __strip($value, $message = false) {
-		$search = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:|charset\=|mime-version\:|multipart/mixed|(?:to|b?cc)\:.*';
+		$search  = '%0a|%0d|Content-(?:Type|Transfer-Encoding)\:';
+		$search .= '|charset\=|mime-version\:|multipart/mixed|(?:[^a-z]to|b?cc)\:.*';
+
 		if ($message !== true) {
 			$search .= '|\r|\n';
 		}
@@ -674,8 +680,8 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (isset($this->smtpOptions['host'])) {
-			$host = $this->smtpOptions['host'];
+		if (isset($this->smtpOptions['client'])) {
+			$host = $this->smtpOptions['client'];
 		} else {
 			$host = env('HTTP_HOST');
 		}

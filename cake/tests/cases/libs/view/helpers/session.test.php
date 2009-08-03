@@ -27,6 +27,26 @@
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
+if (!class_exists('AppError')) {
+App::import('Error');
+	/**
+	 * AppController class
+	 *
+	 * @package       cake
+	 * @subpackage    cake.tests.cases.libs
+	 */
+	class AppError extends ErrorHandler {
+	/**
+	 * _stop method
+	 *
+	 * @access public
+	 * @return void
+	 */
+		function _stop() {
+			return;
+		}
+	}
+}
 App::import('Core', array('Helper', 'AppHelper', 'Controller', 'View'));
 App::import('Helper', array('Session'));
 /**
@@ -143,7 +163,9 @@ class SessionHelperTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual($result, $expected);
 
+		$_viewPaths = Configure::read('viewPaths');
 		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
 
@@ -165,6 +187,36 @@ class SessionHelperTest extends CakeTestCase {
 		$expected = 'Bare message';
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.bare'));
+
+		Configure::write('viewPaths', $_viewPaths);
+	}
+/**
+ * testFlash method
+ *
+ * @access public
+ * @return void
+ */
+	function testFlashMissingLayout() {
+		$_SESSION = array(
+			'Message' => array(
+				'notification' => array(
+					'layout' => 'does_not_exist',
+					'params' => array('title' => 'Notice!', 'name' => 'Alert!'),
+					'message' => 'This is a test of the emergency broadcasting system',
+				)
+			)
+		);
+
+		$controller = new Controller();
+		$this->Session->view = new View($controller);
+
+		ob_start();
+		$this->Session->flash('notification');
+		$result = ob_get_contents();
+		ob_clean();
+
+		$this->assertPattern("/Missing Layout/", $result);
+		$this->assertPattern("/layouts\/does_not_exist.ctp/", $result);
 	}
 /**
  * testID method

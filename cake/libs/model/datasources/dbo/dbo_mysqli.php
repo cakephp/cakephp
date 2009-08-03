@@ -105,9 +105,8 @@ class DboMysqli extends DboMysqlBase {
 	function _execute($sql) {
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
-		} else {
-			return mysqli_query($this->connection, $sql);
 		}
+		return mysqli_query($this->connection, $sql);
 	}
 /**
  * Executes given SQL statement (procedure call).
@@ -140,15 +139,15 @@ class DboMysqli extends DboMysqlBase {
 
 		if (!$result) {
 			return array();
-		} else {
-			$tables = array();
-
-			while ($line = mysqli_fetch_array($result)) {
-				$tables[] = $line[0];
-			}
-			parent::listSources($tables);
-			return $tables;
 		}
+
+		$tables = array();
+
+		while ($line = mysqli_fetch_array($result)) {
+			$tables[] = $line[0];
+		}
+		parent::listSources($tables);
+		return $tables;
 	}
 /**
  * Returns an array of the fields in given table name.
@@ -201,18 +200,19 @@ class DboMysqli extends DboMysqlBase {
 		if ($parent != null) {
 			return $parent;
 		}
-
-		if ($data === null) {
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		}
-
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
+			return "''";
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {
 			case 'boolean':
-				$data = $this->boolean((bool)$data);
+				return $this->boolean((bool)$data);
 			break;
 			case 'integer' :
 			case 'float' :
@@ -231,20 +231,6 @@ class DboMysqli extends DboMysqlBase {
 		}
 
 		return $data;
-	}
-/**
- * Begin a transaction
- *
- * @param unknown_type $model
- * @return boolean True on success, false on fail
- * (i.e. if the database/model does not support transactions).
- */
-	function begin(&$model) {
-		if (parent::begin($model) && $this->execute('START TRANSACTION')) {
-			$this->_transactionStarted = true;
-			return true;
-		}
-		return false;
 	}
 /**
  * Returns a formatted error message from previous database operation.
@@ -292,7 +278,6 @@ class DboMysqli extends DboMysqlBase {
 		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
 			return $id[0]['insertID'];
 		}
-
 		return null;
 	}
 /**
@@ -351,11 +336,11 @@ class DboMysqli extends DboMysqlBase {
 	function length($real) {
 		$col = str_replace(array(')', 'unsigned'), '', $real);
 		$limit = null;
-
+	
 		if (strpos($col, '(') !== false) {
 			list($col, $limit) = explode('(', $col);
 		}
-
+	
 		if ($limit != null) {
 			return intval($limit);
 		}
@@ -403,9 +388,8 @@ class DboMysqli extends DboMysqlBase {
 				$i++;
 			}
 			return $resultRow;
-		} else {
-			return false;
 		}
+		return false;
 	}
 /**
  * Gets the database encoding

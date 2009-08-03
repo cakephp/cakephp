@@ -97,6 +97,57 @@ class XmlTest extends CakeTestCase {
 		$result = preg_replace("/\n/",'', $xml->toString(false));
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * testSerializeOnMultiDimensionalArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testSerializeOnMultiDimensionalArray() {
+		$data = array(
+			'Statuses' => array(
+				array('Status' => array('id' => 1)),
+				array('Status' => array('id' => 2))
+			)
+		);
+		$result =& new Xml($data, array('format' => 'tags'));
+		$expected = '<statuses><status><id>1</id></status><status><id>2</id></status></statuses>';
+		$this->assertIdentical($result->toString(), $expected);
+
+	}
+
+/**
+ * test serialization of boolean and null values.  false = 0, true = 1, null = ''
+ *
+ * @return void
+ **/
+	function testSerializationOfBooleanAndBooleanishValues() {
+		$xml =& new Xml(array('data' => array('example' => false)));
+		$result = $xml->toString(false);
+		$expected = '<data example="0" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => true)));
+		$result = $xml->toString(false);
+		$expected = '<data example="1" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => null)));
+		$result = $xml->toString(false);
+		$expected = '<data example="" />';
+		$this->assertEqual($result, $expected, 'Boolean values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => 0)));
+		$result = $xml->toString(false);
+		$expected = '<data example="0" />';
+		$this->assertEqual($result, $expected, 'Boolean-ish values incorrectly handled. %s');
+
+		$xml =& new Xml(array('data' => array('example' => 1)));
+		$result = $xml->toString(false);
+		$expected = '<data example="1" />';
+		$this->assertEqual($result, $expected, 'Boolean-ish values incorrectly handled. %s');
+	}
 /**
  * testSimpleArray method
  *
@@ -646,6 +697,67 @@ class XmlTest extends CakeTestCase {
 		$xml = new Xml($source);
 		$result = $xml->toString();
 		$this->assertEqual($source, $result);
+	}
+/**
+ * test that elements with empty tag values do not collapse and corrupt data structures
+ *
+ * @access public
+ * @return void
+ **/
+	function testElementCollapsing() {
+		$xmlDataThatFails = '<resultpackage>
+		<result qid="46b1c46ed6208"><![CDATA[46b1c46ed3af9]]></result>
+		<result qid="46b1c46ed332a"><![CDATA[]]></result>
+		<result qid="46b1c46ed90e6"><![CDATA[46b1c46ed69d8]]></result>
+		<result qid="46b1c46ed71a7"><![CDATA[46b1c46ed5a38]]></result>
+		<result qid="46b1c46ed8146"><![CDATA[46b1c46ed98b6]]></result>
+		<result qid="46b1c46ed7978"><![CDATA[]]></result>
+		<result qid="46b1c46ed4a98"><![CDATA[]]></result>
+		<result qid="46b1c46ed42c8"><![CDATA[]]></result>
+		<result qid="46b1c46ed5268"><![CDATA[46b1c46ed8917]]></result>
+		</resultpackage>';
+
+		$Xml = new Xml();
+		$Xml->load('<?xml version="1.0" encoding="UTF-8" ?>' . $xmlDataThatFails);
+		$result = $Xml->toArray(false);
+
+		$this->assertTrue(is_array($result));
+		$expected = array(
+			'resultpackage' => array(
+				'result' => array(
+					0 => array(
+						'value' => '46b1c46ed3af9',
+						'qid' => '46b1c46ed6208'),
+					1 => array(
+						'qid' => '46b1c46ed332a'),
+					2 => array(
+						'value' => '46b1c46ed69d8',
+						'qid' => '46b1c46ed90e6'),
+					3 => array(
+						'value' => '46b1c46ed5a38',
+						'qid' => '46b1c46ed71a7'),
+					4 => array(
+						'value' => '46b1c46ed98b6',
+						'qid' => '46b1c46ed8146'),
+					5 => array(
+						'qid' => '46b1c46ed7978'),
+					6 => array(
+						'qid' => '46b1c46ed4a98'),
+					7 => array(
+						'qid' => '46b1c46ed42c8'),
+					8 => array(
+						'value' => '46b1c46ed8917',
+						'qid' => '46b1c46ed5268'),
+				)
+		));
+		$this->assertEqual(
+			count($result['resultpackage']['result']), count($expected['resultpackage']['result']),
+			'Incorrect array length %s');
+
+		$this->assertFalse(
+			isset($result['resultpackage']['result'][0][0]['qid']), 'Nested array exists, data is corrupt. %s');
+
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testMixedParsing method

@@ -366,12 +366,13 @@ class File extends Object {
 	function md5($maxsize = 5) {
 		if ($maxsize === true) {
 			return md5_file($this->path);
-		} else {
-			$size = $this->size();
-			if ($size && $size < ($maxsize * 1024) * 1024) {
-				return md5_file($this->path);
-			}
 		}
+
+		$size = $this->size();
+		if ($size && $size < ($maxsize * 1024) * 1024) {
+			return md5_file($this->path);
+		}
+
 		return false;
 	}
 /**

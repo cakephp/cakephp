@@ -167,7 +167,7 @@ class Scaffold extends Object {
 		$associations = $this->__associations();
 
 		$this->controller->set(compact('modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
-								'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
+			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'));
 
 		if ($this->controller->view && $this->controller->view !== 'Theme') {
 			$this->controller->view = 'scaffold';
@@ -378,7 +378,7 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffold($params) {
-		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
+		$db =& ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 		$admin = Configure::read('Routing.admin');
 
 		if (isset($db)) {
