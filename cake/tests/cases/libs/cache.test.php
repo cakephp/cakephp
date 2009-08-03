@@ -78,6 +78,26 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * testInvalidConfig method
+ *
+ * Test that the cache class doesn't cause fatal errors with a partial path
+ *
+ * @access public
+ * @return void
+ */
+	function testInvaidConfig() {
+		Cache::config('Invalid', array(
+			'engine' => 'File',
+			'duration' => '+1 year',
+			'prefix' => 'testing_invalid_',
+			'path' => 'data/',
+			'serialize' => true
+		));
+		$read = Cache::read('Test', 'Invalid');
+		$this->assertEqual($read, null);
+	}
+
+/**
  * testConfigChange method
  *
  * @access public
