@@ -161,11 +161,11 @@ class Folder extends Object {
  * @access public
  */
 	function read($sort = true, $exceptions = false, $fullPath = false) {
-		if (!$this->pwd()) {
-			return array();
-		}
 		$dirs = $files = array();
 
+		if (!$this->pwd()) {
+			return array($dirs, $files);
+		}
 		if (is_array($exceptions)) {
 			$exceptions = array_flip($exceptions);
 		}
