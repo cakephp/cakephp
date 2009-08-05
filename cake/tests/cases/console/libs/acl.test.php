@@ -234,7 +234,7 @@ class AclShellTest extends CakeTestCase {
 	}
 
 /**
- * test dent
+ * test deny
  *
  * @return void
  **/
