@@ -19,7 +19,6 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
 /**
  * Task class for creating new project apps and plugins
  *
@@ -56,13 +55,13 @@ class ProjectTask extends Shell {
 
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
-			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
-				$this->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
+			if (is_dir(CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
+				$this->params['skel'] = CAKE . 'console' . DS . 'templates' . DS . 'skel';
 			}
 		}
 
 		while (!$project) {
-			$prompt = __("What is the full path for this app including the app directory name?\b Example:", true);
+			$prompt = __("What is the full path for this app including the app directory name?\n Example:", true);
 			$default = $this->params['working'] . DS . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
