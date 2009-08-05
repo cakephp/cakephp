@@ -232,5 +232,43 @@ class AclShellTest extends CakeTestCase {
 		$this->assertFalse(empty($node['Aco'][0]));
 		$this->assertEqual($node['Aco'][0]['Permission']['_create'], 1);
 	}
+
+/**
+ * test dent
+ *
+ * @return void
+ **/
+	function testDeny() {
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission denied/'), true));
+		$this->Task->deny();
+
+		$node = $this->Task->Acl->Aro->read(null, 4);
+		$this->assertFalse(empty($node['Aco'][0]));
+		$this->assertEqual($node['Aco'][0]['Permission']['_create'], -1);
+	}
+
+/**
+ * test checking allowed and denied perms
+ *
+ * @return void
+ **/
+	function testCheck() {
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', '*');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/not allowed/'), true));
+		$this->Task->check();
+
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
+		$this->Task->expectAt(1, 'out', array(new PatternExpectation('/Permission granted/'), true));
+		$this->Task->grant();
+
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
+		$this->Task->expectAt(2, 'out', array(new PatternExpectation('/is allowed/'), true));
+		$this->Task->check();
+
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', '*');
+		$this->Task->expectAt(3, 'out', array(new PatternExpectation('/not allowed/'), true));
+		$this->Task->check();
+	}
 }
 ?>
