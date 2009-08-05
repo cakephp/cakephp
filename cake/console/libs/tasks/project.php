@@ -46,7 +46,6 @@ class ProjectTask extends Shell {
 		if ($project === null) {
 			if (isset($this->args[0])) {
 				$project = $this->args[0];
-				$this->Dispatch->shiftArgs();
 			}
 		}
 
@@ -63,13 +62,16 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$project = $this->in("What is the full path for this app including the app directory name?\nExample: ".$this->params['working'] . DS . "myapp", null, $this->params['working'] . DS . 'myapp');
+			$prompt = __("What is the full path for this app including the app directory name?\b Example:", true);
+			$default = $this->params['working'] . DS . 'myapp';
+			$project = $this->in($prompt . $default, null, $default);
 		}
 
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$response = $this->in('A project already exists in this location: ' . $project . ' Overwrite?', array('y','n'), 'n');
+				$prompt = sprintf(__('A project already exists in this location: %s Overwrite?', true), $project);
+				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
 				}
@@ -138,12 +140,12 @@ class ProjectTask extends Shell {
 
 		$app = basename($path);
 
-		$this->out('Bake Project');
-		$this->out("Skel Directory: $skel");
-		$this->out("Will be copied to: {$path}");
+		$this->out(__('Bake Project', true));
+		$this->out(__("Skel Directory: ", true) . $skel);
+		$this->out(__("Will be copied to: ", true) . $path);
 		$this->hr();
 
-		$looksGood = $this->in('Look okay?', array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__('Look okay?', true), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
@@ -154,7 +156,7 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
 				$this->hr();
 			} else {
-				$this->err(" '" . $app . "' could not be created properly");
+				$this->err(sprintf(__(" '%s' could not be created properly", true), $app));
 				return false;
 			}
 
@@ -166,7 +168,7 @@ class ProjectTask extends Shell {
 
 			return true;
 		} elseif (strtolower($looksGood) == 'q') {
-			$this->out('Bake Aborted.');
+			$this->out(__('Bake Aborted.', true));
 		} else {
 			$this->execute(false);
 			return false;
@@ -284,13 +286,13 @@ class ProjectTask extends Shell {
 		 	return $adminRoute . '_';
 		}
 		$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-		$this->out('What would you like the admin route to be?');
-		$this->out('Example: www.example.com/admin/controller');
+		$this->out(__('What would you like the admin route to be?', true));
+		$this->out(__('Example: www.example.com/admin/controller', true));
 		while ($admin == '') {
-			$admin = $this->in("What would you like the admin route to be?", null, 'admin');
+			$admin = $this->in(__("What would you like the admin route to be?", true), null, 'admin');
 		}
 		if ($this->cakeAdmin($admin) !== true) {
-			$this->out('Unable to write to /app/config/core.php.');
+			$this->out(__('Unable to write to /app/config/core.php.', true));
 			$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
 			$this->_stop();
 		}
