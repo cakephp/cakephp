@@ -217,5 +217,20 @@ class AclShellTest extends CakeTestCase {
 		$result = $Aro->read(null, 4);
 		$this->assertEqual($result['Aro']['parent_id'], null);
 	}
+
+/**
+ * test grant
+ *
+ * @return void
+ **/
+	function testGrant() {
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission granted/'), true));
+		$this->Task->grant();
+
+		$node = $this->Task->Acl->Aro->read(null, 4);
+		$this->assertFalse(empty($node['Aco'][0]));
+		$this->assertEqual($node['Aco'][0]['Permission']['_create'], 1);
+	}
 }
 ?>

@@ -530,23 +530,15 @@ class AclShell extends Shell {
  * @access private
  */
 	function __getParams() {
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
-
-		if (is_string($aro) && preg_match('/^([\w]+)\.(.*)$/', $aro, $matches)) {
-			$aro = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
+		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
+		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
+		
+		if (is_string($aro)) {
+			$aro = $this->parseIdentifier($aro);
 		}
-
-		if (is_string($aco) && preg_match('/^([\w]+)\.(.*)$/', $aco, $matches)) {
-			$aco = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
+		if (is_string($aco)) {
+			$aco = $this->parseIdentifier($aco);
 		}
-
 		$action = null;
 		if (isset($this->args[2])) {
 			$action = $this->args[2];
