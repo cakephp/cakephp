@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * AclShell Test file
  *
@@ -269,6 +267,38 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', '*');
 		$this->Task->expectAt(3, 'out', array(new PatternExpectation('/not allowed/'), true));
 		$this->Task->check();
+	}
+
+/**
+ * test inherit and that it 0's the permission fields.
+ *
+ * @return void
+ **/
+	function testInherit() {
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission granted/'), true));
+		$this->Task->grant();
+
+		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'all');
+		$this->Task->expectAt(1, 'out', array(new PatternExpectation('/permission inherited/i'), true));
+		$this->Task->inherit();
+
+		$node = $this->Task->Acl->Aro->read(null, 4);
+		$this->assertFalse(empty($node['Aco'][0]));
+		$this->assertEqual($node['Aco'][0]['Permission']['_create'], 0);
+	}
+
+/**
+ * test getting the path for an aro/aco
+ *
+ * @return void
+ **/
+	function testGetPath() {
+		$this->Task->args = array('aro', 'AuthUser.2');
+		$this->Task->expectAt(0, 'out', array('[1] ROOT'));
+		$this->Task->expectAt(1, 'out', array('  [2] admins'));
+		$this->Task->expectAt(2, 'out', array('    [4] Elrond'));
+		$this->Task->getPath();
 	}
 }
 ?>

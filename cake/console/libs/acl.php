@@ -1,10 +1,6 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
- * Short description for file.
- *
- * Long description for file
+ * Acl Shell provides Acl access in the CLI environment 
  *
  * PHP versions 4 and 5
  *
@@ -220,13 +216,38 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$id = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		$identifier = $this->parseIdentifier($this->args[1]);
+
+		$id = $this->_getNodeId($class, $identifier);
 		$nodes = $this->Acl->{$class}->getPath($id);
+
 		if (empty($nodes)) {
-			$this->error(sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), __("No tree returned.", true));
+			$this->error(
+				sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), 
+				__("No tree returned.", true)
+			);
 		}
 		for ($i = 0; $i < count($nodes); $i++) {
-			$this->out(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
+			$this->_outputNode($class, $nodes[$i], $i);
+		}
+	}
+
+/**
+ * Outputs a single node, Either using the alias or Model.key
+ *
+ * @param string $class Class name that is being used.
+ * @param array $node Array of node information.
+ * @param integer $indent indent level.
+ * @return void
+ * @access protected
+ **/
+	function _outputNode($class, $node, $indent) {
+		$indent = str_repeat('  ', $indent);
+		$data = $node[$class];
+		if ($data['alias']) {
+			$this->out($indent . "[" . $data['id'] . "] " . $data['alias']);
+		 } else {
+			$this->out($indent . "[" . $data['id'] . "] " . $data['model'] . '.' . $data['foreign_key']);
 		}
 	}
 
