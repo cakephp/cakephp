@@ -391,7 +391,8 @@ class TestTask extends Shell {
 			return "ClassRegistry::init('$fullClassName');\n";
 		}
 		if ($type == 'controller') {
-			return "new Test$fullClassName();\n\t\t\$this->{$fullClassName}->constructClasses();\n";
+			$className = substr($fullClassName, 0, strlen($fullClassName) - 10);
+			return "new Test$fullClassName();\n\t\t\$this->{$className}->constructClasses();\n";
 		}
 		return "new $fullClassName()\n";
 	}

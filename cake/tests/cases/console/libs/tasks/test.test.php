@@ -362,7 +362,8 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
 
 		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController()/", $result);
+		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController\(\)/", $result);
+		$this->assertPattern("/\\\$this->TestTaskComments->constructClasses\(\)/", $result);
 
 		$this->assertPattern('/function endTest\(\)/', $result);
 		$this->assertPattern('/unset\(\$this->TestTaskComments\)/', $result);
@@ -382,7 +383,7 @@ class TestTaskTest extends CakeTestCase {
  **/
 	function testGenerateContsructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
-		$expected = "new TestPostsController();\n\t\t\$this->PostsController->constructClasses();\n";
+		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->generateConstructor('model', 'Post');
