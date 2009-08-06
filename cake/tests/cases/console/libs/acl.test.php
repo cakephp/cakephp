@@ -125,9 +125,9 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args[0] = 'aro';
 
 		$this->Task->expectAt(0, 'out', array('Aro tree:'));
-		$this->Task->expectAt(1, 'out', array(new PatternExpectation('/\[1\]ROOT/')));
-		$this->Task->expectAt(3, 'out', array(new PatternExpectation('/\[3\]Gandalf/')));
-		$this->Task->expectAt(5, 'out', array(new PatternExpectation('/\[5\]MyModel.2/')));
+		$this->Task->expectAt(1, 'out', array(new PatternExpectation('/\[1\] ROOT/')));
+		$this->Task->expectAt(3, 'out', array(new PatternExpectation('/\[3\] Gandalf/')));
+		$this->Task->expectAt(5, 'out', array(new PatternExpectation('/\[5\] MyModel.2/')));
 
 		$this->Task->view();
 	}
@@ -295,9 +295,9 @@ class AclShellTest extends CakeTestCase {
  **/
 	function testGetPath() {
 		$this->Task->args = array('aro', 'AuthUser.2');
-		$this->Task->expectAt(0, 'out', array('[1] ROOT'));
-		$this->Task->expectAt(1, 'out', array('  [2] admins'));
-		$this->Task->expectAt(2, 'out', array('    [4] Elrond'));
+		$this->Task->expectAt(1, 'out', array('[1] ROOT'));
+		$this->Task->expectAt(2, 'out', array('  [2] admins'));
+		$this->Task->expectAt(3, 'out', array('    [4] Elrond'));
 		$this->Task->getPath();
 	}
 }
