@@ -2,8 +2,6 @@
 /**
  * Bake Template for Controller action generation.
  *
- *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -125,7 +123,7 @@
 			$this->flash(__('Invalid <?php echo $singularHumanName; ?>', true), array('action' => 'index'));
 <?php endif; ?>
 		}
-		if ($this-><?php echo $currentModelName; ?>->del($id)) {
+		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('<?php echo $singularHumanName; ?> deleted', true));
 			$this->redirect(array('action'=>'index'));
