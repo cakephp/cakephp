@@ -128,6 +128,21 @@ class AclShellTest extends CakeTestCase {
 
 		$this->Task->view();
 	}
+
+/**
+ * test view with an argument
+ *
+ * @return void
+ **/
+	function testViewWithArgument() {
+		$this->Task->args = array('aro', 'admins');
+		$this->Task->expectAt(0, 'out', array('Aro tree:'));
+		$this->Task->expectAt(1, 'out', array('  [2] admins'));
+		$this->Task->expectAt(2, 'out', array('    [3] Gandalf'));
+		$this->Task->expectAt(3, 'out', array('    [4] Elrond'));
+		$this->Task->view();
+	}
+
 /**
  * test the method that splits model.foreign key. and that it returns an array.
  *
@@ -297,5 +312,6 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->expectAt(3, 'out', array('    [4] Elrond'));
 		$this->Task->getPath();
 	}
+
 }
 ?>
