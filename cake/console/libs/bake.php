@@ -99,7 +99,7 @@ class BakeShell extends Shell {
 		$this->out('[F]ixture');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
+		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'F', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -123,7 +123,7 @@ class BakeShell extends Shell {
 				exit(0);
 				break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.', true));
+				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, or C.', true));
 		}
 		$this->hr();
 		$this->main();
