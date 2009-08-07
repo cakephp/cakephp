@@ -1,6 +1,6 @@
 <?php
 /**
- * Acl Shell provides Acl access in the CLI environment 
+ * Acl Shell provides Acl access in the CLI environment
  *
  * PHP versions 4 and 5
  *
@@ -218,7 +218,7 @@ class AclShell extends Shell {
 
 		if (empty($nodes)) {
 			$this->error(
-				sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), 
+				sprintf(__("Supplied Node '%s' not found", true), $this->args[1]),
 				__("No tree returned.", true)
 			);
 		}
@@ -322,14 +322,24 @@ class AclShell extends Shell {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 
-		if (isset($this->args[1]) && !is_null($this->args[1])) {
-			$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
-			$conditions = array($class . '.' . $key => $this->args[1]);
+		if (isset($this->args[1])) {
+			$identity = $this->parseIdentifier($this->args[1]);
+
+			$topNode = $this->Acl->{$class}->find('first', array(
+				'conditions' => array($class . '.id' => $this->_getNodeId($class, $identity))
+			));
+
+			$nodes = $this->Acl->{$class}->find('all', array(
+				'conditions' => array(
+					$class . '.lft >=' => $topNode[$class]['lft'],
+					$class . '.lft <=' => $topNode[$class]['rght']
+				),
+				'order' => $class . '.lft ASC'
+			));
 		} else {
-			$conditions = null;
+			$nodes = $this->Acl->{$class}->find('all', array('order' => $class . '.lft ASC'));
 		}
 
-		$nodes = $this->Acl->{$class}->find('all', array('conditions' => $conditions, 'order' => 'lft ASC'));
 		if (empty($nodes)) {
 			if (isset($this->args[1])) {
 				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
@@ -447,7 +457,7 @@ class AclShell extends Shell {
 			'view' => "view aro|aco [<node>]\n" .
 				"\t" . __("The view command will return the ARO or ACO tree.", true) . "\n" .
 				"\t" . __("The optional node parameter allows you to return", true) . "\n" .
-				"\t" . __("only a portion of the requested tree.", true) . "\n" . 
+				"\t" . __("only a portion of the requested tree.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
@@ -480,7 +490,7 @@ class AclShell extends Shell {
 			return false;
 		}
 		if ($this->args[0] != 'aco' && $this->args[0] != 'aro') {
-			$this->error(sprintf(__("Missing/Unknown node type: '%s'", true), $this->args[1]), __('Please specify which ACL object type you wish to create. Either "aro" or "aco"', true));
+			$this->error(sprintf(__("Missing/Unknown node type: '%s'", true), $this->args[0]), __('Please specify which ACL object type you wish to create. Either "aro" or "aco"', true));
 		}
 	}
 
@@ -551,7 +561,7 @@ class AclShell extends Shell {
 	function __getParams() {
 		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
 		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
-		
+
 		if (is_string($aro)) {
 			$aro = $this->parseIdentifier($aro);
 		}
