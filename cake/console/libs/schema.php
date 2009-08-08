@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Command-line database management utility to automate programmer chores.
  *
@@ -26,7 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('File');
+App::import('Core', 'File', false);
 App::import('Model', 'CakeSchema', false);
 
 /**

@@ -52,7 +52,6 @@ Mock::generatePartial(
  */
 class SchemaShellTest extends CakeTestCase {
 
-
 /**
  * startTest method
  *
@@ -75,6 +74,39 @@ class SchemaShellTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 
+/**
+ * test startup method
+ *
+ * @return void
+ **/
+	function testStartup() {
+		$this->Task->startup();
+		$this->assertTrue(isset($this->Task->Schema));
+		$this->assertTrue(is_a($this->Task->Schema, 'CakeSchema'));
+		$this->assertEqual($this->Task->Schema->name, 'App');
+		$this->assertEqual($this->Task->Schema->file, 'schema.php');
 
+		unset($this->Task->Schema);
+		$this->Task->params = array(
+			'name' => 'TestSchema'
+		);
+		$this->Task->startup();
+		$this->assertEqual($this->Task->Schema->name, 'TestSchema');
+		$this->assertEqual($this->Task->Schema->file, 'test_schema.php');
+		$this->assertEqual($this->Task->Schema->connection, 'default');
+		$this->assertEqual($this->Task->Schema->path, APP . 'config' . DS . 'schema');
+		
+		unset($this->Task->Schema);
+		$this->Task->params = array(
+			'file' => 'other_file.php',
+			'connection' => 'test_suite',
+			'path' => '/test/path'
+		);
+		$this->Task->startup();
+		$this->assertEqual($this->Task->Schema->name, 'App');
+		$this->assertEqual($this->Task->Schema->file, 'other_file.php');
+		$this->assertEqual($this->Task->Schema->connection, 'test_suite');
+		$this->assertEqual($this->Task->Schema->path, '/test/path');
+	}
 }
 ?>
