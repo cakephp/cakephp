@@ -41,7 +41,7 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'SchemaShell', 'MockSchemaShell',
-	array('in', 'out', 'hr', 'createFile', 'error', 'err')
+	array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop')
 );
 
 /**
@@ -52,6 +52,7 @@ Mock::generatePartial(
  */
 class SchemaShellTest extends CakeTestCase {
 
+	var $fixtures = array('core.article', 'core.user');
 /**
  * startTest method
  *
@@ -107,6 +108,30 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Task->Schema->file, 'other_file.php');
 		$this->assertEqual($this->Task->Schema->connection, 'test_suite');
 		$this->assertEqual($this->Task->Schema->path, '/test/path');
+	}
+
+/**
+ * Test View - and that it dumps the schema file to stdout
+ *
+ * @return void
+ **/
+	function testView() {
+		$this->Task->startup();
+		$this->Task->Schema->path = APP . 'config' . DS . 'schema';
+		$this->Task->params['file'] = 'i18n.php';
+		$this->Task->expectOnce('_stop');
+		$this->Task->expectOnce('out');
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/class i18nSchema extends CakeSchema/')));
+		$this->Task->view();
+	}
+
+/**
+ * undocumented function
+ *
+ * @return void
+ **/
+	function () {
+		
 	}
 }
 ?>
