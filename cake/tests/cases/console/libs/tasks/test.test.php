@@ -259,7 +259,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGetClassName() {
-		$objects = Configure::listObjects('model');
+		$objects = App::objects('model');
 		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
 		if ($skip) {
 			return;
@@ -270,7 +270,7 @@ class TestTaskTest extends CakeTestCase {
 
 		$this->Task->setReturnValueAt(1, 'in', 1);
 		$result = $this->Task->getClassName('Model');
-		$options = Configure::listObjects('model');
+		$options = App::objects('model');
 		$this->assertEqual($result, $options[0]);
 	}
 

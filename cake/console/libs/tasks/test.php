@@ -191,7 +191,7 @@ class TestTask extends Shell {
  * @return string Class name the user chose.
  **/
 	function getClassName($objectType) {
-		$options = Configure::listObjects(strtolower($objectType));
+		$options = App::objects(strtolower($objectType));
 		$this->out(sprintf(__('Choose a %s class', true), $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {
