@@ -27,7 +27,6 @@
 if (!defined('E_DEPRECATED')) {
 	define('E_DEPRECATED', 8192);
 }
-
 /**
  * Shell dispatcher
  *
@@ -403,7 +402,6 @@ class ShellDispatcher {
 		$this->stderr($title . "\n" . $message . "\n");
 		return false;
 	}
-
 /**
  * Get shell to use, either plugin shell or application shell
  *
@@ -608,56 +606,26 @@ class ShellDispatcher {
 		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
 
 		$this->stdout("\nAvailable Shells:");
-		$shellList = array();
+		$_shells = array();
 		foreach ($this->shellPaths as $path) {
-			if (!is_dir($path)) {
-				continue;
-			}
- 			$shells = App::objects('file', $path);
-			if (empty($shells)) {
-				continue;
-			}
-			if (preg_match('@plugins[\\\/]([^\\\/]*)@', $path, $matches)) {
-				$type = Inflector::camelize($matches[1]);
-			} elseif (preg_match('@([^\\\/]*)[\\\/]vendors[\\\/]@', $path, $matches)) {
-				$type = $matches[1];
-			} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH . DS . 'cake') === 0) {
-				$type = 'CORE';
-			} else {
-				$type = 'app';
-			}
-			foreach ($shells as $shell) {
-				if ($shell !== 'shell.php') {
-					$shell = str_replace('.php', '', $shell);
-					$shellList[$shell][$type] = $type;
-				}
-			}
-		}
-		if ($shellList) {
-			ksort($shellList);
-			if (DS === '/') {
-				$width = exec('tput cols') - 2;
-			}
-			if (empty($width)) {
-				$width = 80;
-			}
-			$columns = max(1, floor($width / 30));
-			$rows = ceil(count($shellList) / $columns);
+			if (is_dir($path)) {
+				$shells = App::objects('file', $path);
+				$path = str_replace(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS, 'CORE' . DS, $path);
+				$path = str_replace(APP, 'APP' . DS, $path);
+				$path = str_replace(ROOT, 'ROOT', $path);
+				$path = rtrim($path, DS);
+				$this->stdout("\n " . $path . ":");
+				if (empty($shells)) {
+					$this->stdout("\t - none");
+				} else {
+					sort($shells);
+					foreach ($shells as $shell) {
 
-			foreach($shellList as $shell => $types) {
-				sort($types);
-				$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
-			}
-			$out = array_chunk($shellList, $rows);
-			for($i = 0; $i < $rows; $i++) {
-				$row = '';
-				for($j = 0; $j < $columns; $j++) {
-					if (!isset($out[$j][$i])) {
-						continue;
- 					}
-					$row .= $out[$j][$i];
- 				}
-				$this->stdout(" " . $row);
+						if ($shell !== 'shell.php') {
+							$this->stdout("\t " . str_replace('.php', '', $shell));
+						}
+					}
+				}
 			}
 		}
 		$this->stdout("\nTo run a command, type 'cake shell_name [args]'");
