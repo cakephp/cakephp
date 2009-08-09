@@ -431,9 +431,6 @@ class Folder extends Object {
  * @access public
  */
 	function tree($path, $exceptions = true, $type = null) {
-		if (!$this->pwd()) {
-			return array();
-		}
 		$original = $this->path;
 		$path = rtrim($path, DS);
 		$this->__files = array();
