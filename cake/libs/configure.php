@@ -632,7 +632,7 @@ class App extends Object {
 			'locales' => array(APP . 'locale' . DS),
 			'shells' => array(APP . 'vendors' . DS . 'shells' . DS, VENDORS . 'shells' . DS),
 			'vendors' => array(APP . 'vendors' . DS, VENDORS),
-			'plugins' => array(APP . 'plugins' . DS, CAKE_CORE_INCLUDE_PATH . DS . 'plugins' . DS),
+			'plugins' => array(APP . 'plugins' . DS)
 		);
 
 		if ($reset == true) {
@@ -709,6 +709,7 @@ class App extends Object {
 					$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
 					$paths['views'][] = $libs . 'view' . DS;
 					$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
+					$paths['plugins'][] = $path . DS . 'plugins' . DS;
 					$paths['vendors'][] = $path . DS . 'vendors' . DS;
 					$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
 					break;
