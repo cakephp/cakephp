@@ -36,8 +36,8 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-
 require_once CONSOLE_LIBS . 'shell.php';
+
 /**
  * TestShellDispatcher class
  *
@@ -85,6 +85,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $TestShell;
+
 /**
  * _initEnvironment method
  *
@@ -138,6 +139,7 @@ class TestShellDispatcher extends ShellDispatcher {
 		$this->stopped = 'Stopped with status: ' . $status;
 		return $status;
 	}
+
 /**
  * getShell
  *
@@ -148,6 +150,7 @@ class TestShellDispatcher extends ShellDispatcher {
 	function getShell($plugin = null) {
 		return $this->_getShell($plugin);
 	}
+
 /**
  * _getShell
  *
@@ -439,7 +442,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
-
 		$params = array(
 			'cake.php',
 			'-working',
@@ -510,6 +512,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->getShell('test_plugin');
 		$this->assertIsA($result, 'ExampleShell');
 	}
+
 /**
  * Verify correct dispatch of Shell subclasses with a main method
  *
@@ -600,6 +603,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of Shell subclasses without a main method
  *
@@ -671,6 +675,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of custom classes with a main method
  *
@@ -750,6 +755,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of custom classes without a main method
  *
@@ -819,6 +825,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify that a task is called instead of the shell if the first arg equals
  * the name of the task
@@ -867,6 +874,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
 	}
+
 /**
  * Verify shifting of arguments
  *
@@ -906,39 +914,34 @@ class ShellDispatcherTest extends CakeTestCase {
 	function testHelpCommand() {
 		$Dispatcher =& new TestShellDispatcher();
 
-		$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t example";
-	 	$expected .= "\n/";
+		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin_two(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t example";
-	 	$expected .= "\n\t welcome";
-	 	$expected .= "\n/";
+		$expected = "/welcome \[.*TestPluginTwo.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ APP(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n/";
+		$expected = "/acl \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ ROOT(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n/";
+		$expected = "/api \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)console(\\\|\/)libs:";
-	 	$expected .= "\n\t acl";
-	 	$expected .= "\n\t api";
-	 	$expected .= "\n\t bake";
-	 	$expected .= "\n\t console";
-	 	$expected .= "\n\t i18n";
-	 	$expected .= "\n\t schema";
-	 	$expected .= "\n\t testsuite";
-	 	$expected .= "\n/";
+		$expected = "/bake \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t sample";
-	 	$expected .= "\n/";
+		$expected = "/console \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/i18n \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/schema \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/testsuite \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/sample \[.*test_app.*\]/";
 		$this->assertPattern($expected, $Dispatcher->stdout);
 	}
 }
