@@ -532,13 +532,25 @@ TEXTBLOC;
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
-		$this->Controller->EmailTest->subject = 'Cake SMTP test';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
 
 		$this->Controller->EmailTest->delivery = 'debug';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/To: postmaster@localhost/', $result);
+		$this->assertPattern('/Subject: Cake Debug Test/', $result);
+		$this->assertPattern('/Reply-To: noreply@example.com/', $result);
+		$this->assertPattern('/From: noreply@example.com/', $result);
+		$this->assertPattern('/X-Mailer: CakePHP Email Component/', $result);
+		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:/', $result);
+		$this->assertPattern('/This is the body of the message/', $result);
+
 	}
+
 
 /**
  * testContentStripping method
