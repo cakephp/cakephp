@@ -191,5 +191,48 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->Shell->generate();
 	}
+
+/**
+ * test generate without a snapshot.
+ *
+ * @return void
+ **/
+	function testGenerateNoOverwrite() {
+		touch(TMP . 'schema.php');
+		$this->Shell->params['file'] = 'schema.php';
+		$this->Shell->args = array();
+
+		$this->Shell->setReturnValue('in', 'q');
+		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->Schema->path = TMP;
+		$this->Shell->Schema->expectNever('read');
+
+		$result = $this->Shell->generate();
+		unlink(TMP . 'schema.php');
+	}
+
+/**
+ * test generate with overwriting of the schema files.
+ *
+ * @return void
+ **/
+	function testGenerateOverwrite() {
+		touch(TMP . 'schema.php');
+		$this->Shell->params['file'] = 'schema.php';
+		$this->Shell->args = array();
+
+		$this->Shell->setReturnValue('in', 'o');
+		$this->Shell->expectAt(1, 'out', array(new PatternExpectation('/Schema file:\s[a-z\.]+\sgenerated/')));
+		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->Schema->path = TMP;
+		$this->Shell->Schema->setReturnValue('read', array('schema data'));
+		$this->Shell->Schema->setReturnValue('write', true);
+
+		$this->Shell->Schema->expectOnce('read');
+		$this->Shell->Schema->expectOnce('write', array(array('schema data', 'file' => 'schema.php')));
+
+		$this->Shell->generate();
+		unlink(TMP . 'schema.php');
+	}
 }
 ?>

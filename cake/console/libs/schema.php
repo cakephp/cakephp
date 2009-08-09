@@ -137,7 +137,7 @@ class SchemaShell extends Shell {
 			$snapshot = true;
 			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
 			if ($result === 'q') {
-				$this->_stop();
+				return $this->_stop();
 			}
 			if ($result === 'o') {
 				$snapshot = false;
