@@ -25,7 +25,9 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript'));
+App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript', 'Js'));
+
+Mock::generate('JsHelper', 'PaginatorMockJsHelper');
 
 /**
  * PaginatorHelperTest class
@@ -1612,6 +1614,29 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that mock classes injected into paginatorHelper are called when using link()
+ *
+ * @return void
+ **/
+	function testMockAjaxProviderClassInjection() {
+		$Paginator =& new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
+		$Paginator->params['paging'] = array(
+			'Article' => array(
+				'current' => 9,
+				'count' => 62,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 7,
+				'defaults' => array(),
+				'options' => array()
+			)
+		);
+		$Paginator->PaginatorMockJs =& new PaginatorMockJsHelper();
+		$Paginator->PaginatorMockJs->expectOnce('link');
+		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 	}
 }
 ?>
