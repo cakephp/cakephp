@@ -33,7 +33,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @var array
  */
-	var $helpers = array('Html', 'Ajax');
+	var $helpers = array('Html');
 
 /**
  * Holds the default model for paged recordsets
@@ -41,6 +41,13 @@ class PaginatorHelper extends AppHelper {
  * @var string
  */
 	var $__defaultModel = null;
+
+/**
+ * The class used for 'Ajax' pagination links.
+ *
+ * @var string
+ **/
+	var $_ajaxHelperClass = 'Js';
 
 /**
  * Holds the default options for pagination links
@@ -65,6 +72,21 @@ class PaginatorHelper extends AppHelper {
  * @var array
  */
 	var $options = array();
+
+/**
+ * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
+ *
+ * Use `var $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
+ * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its 
+ * adapter before including PaginatorHelper in your helpers array.
+ *
+ * @return void
+ **/
+	function __construct($config = array()) {
+		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
+		$this->helpers[] = $ajaxProvider;
+		$this->_ajaxHelperClass = $ajaxProvider;
+	}
 
 /**
  * Gets the current paging parameters from the resultset for the given model
@@ -271,7 +293,7 @@ class PaginatorHelper extends AppHelper {
 		}
 		$url = $this->url($url, true, $model);
 
-		$obj = isset($options['update']) ? 'Ajax' : 'Html';
+		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
 		$url = array_merge(array('page' => $this->current($model)), $url);
 		$url = array_merge(Set::filter($url, true), array_intersect_key($url, array('plugin'=>true)));
 		return $this->{$obj}->link($title, $url, $options);

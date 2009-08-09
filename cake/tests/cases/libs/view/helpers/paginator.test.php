@@ -42,7 +42,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Paginator = new PaginatorHelper();
+		$this->Paginator = new PaginatorHelper(array('ajax' => 'Ajax'));
 		$this->Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
