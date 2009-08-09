@@ -80,12 +80,21 @@ class PaginatorHelper extends AppHelper {
  * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its 
  * adapter before including PaginatorHelper in your helpers array.
  *
+ * The chosen custom helper must implement a `link()` method.
+ *
  * @return void
  **/
 	function __construct($config = array()) {
 		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
+		if (!method_exists($ajaxProvider . 'Helper', 'link')) {
+			$message = sprintf(
+				__('%s does not implement a link() method, it is incompatible with PaginatorHelper', true),
+				$ajaxProvider . 'Helper'
+			);
+			trigger_error($message, E_USER_WARNING);
+		}
 	}
 
 /**

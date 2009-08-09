@@ -1637,6 +1637,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		$Paginator->PaginatorMockJs =& new PaginatorMockJsHelper();
 		$Paginator->PaginatorMockJs->expectOnce('link');
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
+
+		$this->expectError();
+		$Paginator =& new PaginatorHelper(array('ajax' => 'Form'));
 	}
 }
 ?>
