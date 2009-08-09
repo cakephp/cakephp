@@ -247,14 +247,6 @@ class EmailComponent extends Object{
 	var $smtpError = null;
 
 /**
- * If set to true, the mail method will be auto-set to 'debug'
- *
- * @var string
- * @access protected
- */
-	var $_debug = false;
-
-/**
  * Temporary store of message header lines
  *
  * @var array
@@ -351,9 +343,7 @@ class EmailComponent extends Object{
 			$this->__message[] = '';
 		}
 
-		if ($this->_debug) {
-			return $this->_debug();
-		}
+
 		$_method = '_' . $this->delivery;
 		$sent = $this->$_method();
 
