@@ -230,6 +230,17 @@ class EmailComponentTest extends CakeTestCase {
 	}
 
 /**
+ * osFix method
+ *
+ * @param string $string
+ * @access private
+ * @return string
+ */
+	function __osFix($string) {
+		return str_replace(array("\r\n", "\r"), "\n", $string);
+	}
+
+/**
  * testBadSmtpSend method
  *
  * @access public
@@ -692,14 +703,14 @@ TEXTBLOC;
 	}
 
 /**
- * osFix method
+ * testStartup method
  *
- * @param string $string
- * @access private
- * @return string
+ * @access public
+ * @return void
  */
-	function __osFix($string) {
-		return str_replace(array("\r\n", "\r"), "\n", $string);
+	function testStartup() {
+		$this->assertNull($this->Controller->EmailTest->startup($this->Controller));
 	}
+
 }
 ?>
