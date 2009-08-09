@@ -126,12 +126,49 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
- * undocumented function
+ * test dumping a schema file.
  *
  * @return void
  **/
-	function () {
-		
+	function testDump() {
+		$this->Task->params = array('name' => 'i18n');
+		$this->Task->startup();
+		$this->Task->Schema->path = APP . 'config' . DS . 'schema';
+		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/create table `i18n`/i')));
+		$this->Task->dump();
+	}
+
+/**
+ * test dump() with sql file generation
+ *
+ * @return void
+ **/
+	function testDumpWithFileWriting() {
+		//copy file.
+		$file =& new File(APP . 'config' . DS . 'schema' . DS . 'i18n.php');
+		$contents = $file->read();
+		$file =& new File(TMP . 'tests' . DS . 'i18n.php');
+		$file->write($contents);
+
+		$this->Task->params = array('name' => 'i18n');
+		$this->Task->args = array('write');
+		$this->Task->startup();
+		$this->Task->Schema->path = TMP . 'tests';
+		$this->Task->dump();
+
+		$sql =& new File(TMP . 'tests' . DS . 'i18n.sql');
+		$contents = $sql->read();
+		$this->assertPattern('/DROP TABLE/', $contents);
+		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
+		$this->assertPattern('/id/', $contents);
+		$this->assertPattern('/model/', $contents);
+		$this->assertPattern('/field/', $contents);
+		$this->assertPattern('/locale/', $contents);
+		$this->assertPattern('/foreign_key/', $contents);
+		$this->assertPattern('/content/', $contents);
+
+		$sql->delete();
+		$file->delete();
 	}
 }
 ?>
