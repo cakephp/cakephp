@@ -325,11 +325,13 @@ class EmailComponent extends Object{
 		}
 
 		$message = $this->_wrap($content);
+
 		if ($this->template === null) {
 			$message = $this->_formatMessage($message);
 		} else {
 			$message = $this->_render($message);
 		}
+
 		$message[] = '';
 		$this->__message = $message;
 

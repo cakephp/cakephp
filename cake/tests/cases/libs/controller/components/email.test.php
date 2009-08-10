@@ -262,7 +262,7 @@ class EmailComponentTest extends CakeTestCase {
 		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
 			return;
 		}
-		$this->Controller->EmailTest->reset();
+
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -310,7 +310,6 @@ TEMPDOC;
 	function testAuthenticatedSmtpSend() {
 		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -335,7 +334,6 @@ TEMPDOC;
  * @return void
  */
 	function testSendFormats() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -386,7 +384,6 @@ MSGBLOC;
  * @return void
  */
 	function testTemplates() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake SMTP test';
@@ -507,7 +504,6 @@ TEXTBLOC;
 	function testSmtpSendSocket() {
 		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
-		$this->Controller->EmailTest->reset();
 		$socket =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
 		$this->Controller->EmailTest->setConnectionSocket($socket);
 
@@ -529,7 +525,6 @@ TEXTBLOC;
  * @return void
  */
 	function testSendDebug() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake Debug Test';
@@ -558,7 +553,6 @@ TEXTBLOC;
  * @return void
  */
 	function testSendContentArray() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Cake Debug Test';
@@ -617,7 +611,6 @@ TEXTBLOC;
  * @return void
  */
 	function testMultibyte() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';
@@ -650,7 +643,6 @@ TEXTBLOC;
  * @access public
  */
 	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Attachment Test';
@@ -688,7 +680,6 @@ TEXTBLOC;
  * @access public
  */
 	function testNoDoubleNewlinesInHeaders() {
-		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Attachment Test';
@@ -745,34 +736,25 @@ TEXTBLOC;
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 	}
 
-	function testCustomViewClass() {
+	function testPluginCustomViewClass() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
-
-		$this->Controller->EmailTest->reset();
 
 		$this->Controller->view = 'TestPlugin.Email';
 
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'CustomViewClass test';
-		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
-
-		$this->Controller->EmailTest->template = 'default';
-		$this->Controller->EmailTest->layout = 'default';
-
 		$this->Controller->EmailTest->delivery = 'debug';
 		$body = 'Body of message';
 
-		$this->Controller->EmailTest->sendAs = 'text';
 		$this->assertTrue($this->Controller->EmailTest->send($body));
 		$result = $this->Controller->Session->read('Message.email.message');
 
 		$this->assertPattern('/Body of message/', $result);
 
-		debug($result, true);
 	}
 
 /**
