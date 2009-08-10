@@ -540,13 +540,13 @@ TEXTBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
 		$result = $this->Controller->Session->read('Message.email.message');
 
-		$this->assertPattern('/To: postmaster@localhost/', $result);
-		$this->assertPattern('/Subject: Cake Debug Test/', $result);
-		$this->assertPattern('/Reply-To: noreply@example.com/', $result);
-		$this->assertPattern('/From: noreply@example.com/', $result);
-		$this->assertPattern('/X-Mailer: CakePHP Email Component/', $result);
-		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8/', $result);
-		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:/', $result);
+		$this->assertPattern('/To: postmaster@localhost\n/', $result);
+		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
+		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
+		$this->assertPattern('/From: noreply@example.com\n/', $result);
+		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
+		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
 		$this->assertPattern('/This is the body of the message/', $result);
 
 	}
@@ -570,13 +570,13 @@ TEXTBLOC;
 		$this->assertTrue($this->Controller->EmailTest->send($content));
 		$result = $this->Controller->Session->read('Message.email.message');
 
-		$this->assertPattern('/To: postmaster@localhost/', $result);
-		$this->assertPattern('/Subject: Cake Debug Test/', $result);
-		$this->assertPattern('/Reply-To: noreply@example.com/', $result);
-		$this->assertPattern('/From: noreply@example.com/', $result);
-		$this->assertPattern('/X-Mailer: CakePHP Email Component/', $result);
-		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8/', $result);
-		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:/', $result);
+		$this->assertPattern('/To: postmaster@localhost\n/', $result);
+		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
+		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
+		$this->assertPattern('/From: noreply@example.com\n/', $result);
+		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
+		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
 		$this->assertPattern('/First line\n/', $result);
 		$this->assertPattern('/Second line\n/', $result);
 		$this->assertPattern('/Third line\n/', $result);
