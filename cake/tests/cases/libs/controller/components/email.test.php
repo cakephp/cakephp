@@ -745,6 +745,36 @@ TEXTBLOC;
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 	}
 
+	function testCustomViewClass() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+
+		$this->Controller->EmailTest->reset();
+
+		$this->Controller->view = 'TestPlugin.Email';
+
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'CustomViewClass test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+
+		$this->Controller->EmailTest->template = 'default';
+		$this->Controller->EmailTest->layout = 'default';
+
+		$this->Controller->EmailTest->delivery = 'debug';
+		$body = 'Body of message';
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/Body of message/', $result);
+
+		debug($result, true);
+	}
+
 /**
  * testStartup method
  *
