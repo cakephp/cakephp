@@ -328,7 +328,7 @@ class EmailComponent extends Object{
 		if ($this->template === null) {
 			$message = $this->_formatMessage($message);
 		} else {
-			$message = $this->_renderTemplate($message);
+			$message = $this->_render($message);
 		}
 		$message[] = '';
 		$this->__message = $message;
@@ -382,7 +382,7 @@ class EmailComponent extends Object{
  * @return array Email ready to be sent
  * @access private
  */
-	function _renderTemplate($content) {
+	function _render($content) {
 		$viewClass = $this->Controller->view;
 
 		if ($viewClass != 'View') {
@@ -392,6 +392,7 @@ class EmailComponent extends Object{
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->Controller->view);
 		}
+
 		$View = new $viewClass($this->Controller, false);
 		$View->layout = $this->layout;
 		$msg = array();
