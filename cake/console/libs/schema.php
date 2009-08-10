@@ -129,7 +129,7 @@ class SchemaShell extends Shell {
 
 		if (!$snapshot && file_exists($this->Schema->path . DS . $this->params['file'])) {
 			$snapshot = true;
-			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
+			$result = strtolower($this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's'));
 			if ($result === 'q') {
 				$this->_stop();
 			}
