@@ -232,7 +232,7 @@ class SchemaShell extends Shell {
  */
 	function run() {
 		if (!isset($this->args[0])) {
-			$this->err('command not found');
+			$this->err(__('Command not found', true));
 			$this->_stop();
 		}
 
@@ -279,7 +279,7 @@ class SchemaShell extends Shell {
 				$this->__update($Schema, $table);
 			break;
 			default:
-				$this->err(__('command not found', true));
+				$this->err(__('Command not found', true));
 			$this->_stop();
 		}
 	}
@@ -313,7 +313,7 @@ class SchemaShell extends Shell {
 		$this->out(array_keys($drop));
 
 		if ('y' == $this->in(__('Are you sure you want to drop the table(s)?', true), array('y', 'n'), 'n')) {
-			$this->out('Dropping table(s).');
+			$this->out(__('Dropping table(s).', true));
 			$this->__run($drop, 'drop', $Schema);
 		}
 
@@ -321,7 +321,7 @@ class SchemaShell extends Shell {
 		$this->out(array_keys($create));
 
 		if ('y' == $this->in(__('Are you sure you want to create the table(s)?', true), array('y', 'n'), 'y')) {
-			$this->out('Creating table(s).');
+			$this->out(__('Creating table(s).', true));
 			$this->__run($create, 'create', $Schema);
 		}
 
@@ -337,7 +337,7 @@ class SchemaShell extends Shell {
 	function __update($Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
-		$this->out('Comparing Database to Schema...');
+		$this->out(__('Comparing Database to Schema...', true));
 		$Old = $this->Schema->read();
 		$compare = $this->Schema->compare($Old, $Schema);
 
@@ -415,7 +415,8 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function help() {
-		$this->out("The Schema Shell generates a schema object from \n\t\tthe database and updates the database from the schema.");
+		$this->out("The Schema Shell generates a schema object from");
+		$this->out("the database and updates the database from the schema.");
 		$this->hr();
 		$this->out("Usage: cake schema <command> <arg1> <arg2>...");
 		$this->hr();
