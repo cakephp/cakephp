@@ -234,5 +234,50 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->generate();
 		unlink(TMP . 'schema.php');
 	}
+
+/**
+ * Test schema run create with no table args.
+ *
+ * @return void
+ **/
+	function testRunCreateNoArgs() {
+		$this->Shell->params = array(
+			'connection' => 'test_suite',
+			'name' => 'i18n',
+			'path' => APP . 'config' . DS . 'schema'
+		);
+		$this->Shell->args = array('create');
+		$this->Shell->startup();
+		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->run();
+		
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$sources = $db->listSources();
+		$this->assertTrue(in_array('i18n', $sources));
+	}
+
+/**
+ * Test schema run create with no table args.
+ *
+ * @return void
+ **/
+	function testRunCreateWithTableArgs() {
+		$this->Shell->params = array(
+			'connection' => 'test_suite',
+			'name' => 'DbAcl',
+			'path' => APP . 'config' . DS . 'schema'
+		);
+		$this->Shell->args = array('create', 'acos');
+		$this->Shell->startup();
+		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->run();
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$sources = $db->listSources();
+		$this->assertTrue(in_array('acos', $sources));
+		$this->assertFalse(in_array('aros', $sources));
+		$this->assertFalse(in_array('aros_acos', $sources));
+	}
+
 }
 ?>

@@ -122,7 +122,7 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function generate() {
-		$this->out('Generating Schema...');
+		$this->out(__('Generating Schema...', true));
 		$options = array();
 		if (isset($this->params['f'])) {
 			$options = array('models' => false);
@@ -280,7 +280,7 @@ class SchemaShell extends Shell {
 			break;
 			default:
 				$this->err(__('Command not found', true));
-			$this->_stop();
+				$this->_stop();
 		}
 	}
 
