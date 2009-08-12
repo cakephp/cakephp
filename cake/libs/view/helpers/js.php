@@ -215,7 +215,7 @@ class JsHelper extends AppHelper {
 /**
  * Get all the cached scripts
  *
- * @param boolean $clear Whether or not to clear the script caches
+ * @param boolean $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
  **/
 	function getBuffer($clear = true) {
