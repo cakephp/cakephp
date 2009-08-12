@@ -152,7 +152,7 @@ class JsHelper extends AppHelper {
 
 /**
  * Workaround for Object::Object() existing. Since Object::object exists, it does not
- * fall into call__ and is not passed onto the engine helper. See JsBaseEngineHelper::object() for 
+ * fall into call__ and is not passed onto the engine helper. See JsBaseEngineHelper::object() for
  * more information on this method.
  *
  * @param mixed $data Data to convert into JSON
@@ -927,10 +927,10 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Prepare callbacks and wrap them with function ([args]) { } as defined in 
+ * Prepare callbacks and wrap them with function ([args]) { } as defined in
  * _callbackArgs array.
  *
- * @param string $method Name of the method you are preparing callbacks for. 
+ * @param string $method Name of the method you are preparing callbacks for.
  * @param array $options Array of options being parsed
  * @param string $callbacks Additional Keys that contain callbacks
  * @access protected
