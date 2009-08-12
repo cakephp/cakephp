@@ -160,11 +160,11 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
 		$this->assertEqual($result, $expected);
 
-        $result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1), array(
-            'update' => '#content'
-        ));
-        $expected = '$.ajax({success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
-        $this->assertEqual($result, $expected);
+		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1), array(
+			'update' => '#content'
+		));
+		$expected = '$.ajax({success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
+		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
 			'method' => 'post',
