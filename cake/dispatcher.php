@@ -619,7 +619,7 @@ class Dispatcher extends Object {
 
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos - 1);
-					$url = str_replace($plugin . '/', '', $url);
+					$url = preg_replace('/^' . preg_quote($plugin) . '\//i', '', $url);
 					$pluginPaths = Configure::read('pluginPaths');
 					$count = count($pluginPaths);
 					for ($i = 0; $i < $count; $i++) {
@@ -627,7 +627,6 @@ class Dispatcher extends Object {
 					}
 				}
 				$paths = array_merge($paths, Configure::read('vendorPaths'));
-
 				foreach ($paths as $path) {
 					if (is_file($path . $url) && file_exists($path . $url)) {
 						$assetFile = $path . $url;

@@ -1700,12 +1700,27 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual('this is the test asset css file', $result);
 
 
+		ob_start();
+		$Dispatcher->cached('test_plugin/js/test_plugin/test.js');
+		$result = ob_get_clean();
+		$this->assertEqual('alert("Test App");', $result);
+
+
+		Configure::write('debug', 0);
+		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/js/test_plugin/test.js');
+		ob_start();
+		$Dispatcher->cached('test_plugin/js/test_plugin/test.js');
+		$result = ob_get_clean();
+		$this->assertEqual('alert("Test App");', $result);
+
+
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		ob_start();
 		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test plugin asset css file', $result);
+
 
 		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/img/cake.icon.gif');
