@@ -240,7 +240,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		$options['url'] = $url;
 		if (isset($options['update'])) {
-			$options['success'] = 'function (msg, status) {$("' . $options['update'] . '").html(msg);}';
+			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
+			if ($wrapCallbacks) {
+				$success = '$("' . $options['update'] . '").html(data);';
+			} else {
+				$success = 'function (data, textStatus) {$("' . $options['update'] . '").html(data);}';
+			}
+			$options['success'] = $success;
 			unset($options['update']);
 		}
 		$callbacks = array('success', 'error', 'beforeSend', 'complete');
