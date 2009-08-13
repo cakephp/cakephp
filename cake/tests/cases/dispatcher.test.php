@@ -883,6 +883,32 @@ class DispatcherTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result['data'], $expected);
+
+
+		$_FILES = array(
+			'data' => array(
+				'name' => array('birth_cert' => 'born on.txt'),
+				'type' => array('birth_cert' => 'application/octet-stream'),
+				'tmp_name' => array('birth_cert' => '/private/var/tmp/phpbsUWfH'),
+				'error' => array('birth_cert' => 0),
+				'size' => array('birth_cert' => 123)
+			)
+		);
+
+		$Dispatcher =& new Dispatcher();
+		$result = $Dispatcher->parseParams('/');
+
+		$expected = array(
+			'birth_cert' => array(
+				'name' => 'born on.txt',
+				'type' => 'application/octet-stream',
+				'tmp_name' => '/private/var/tmp/phpbsUWfH',
+				'error' => 0,
+				'size' => 123
+			)
+		);
+
+		$this->assertEqual($result['data'], $expected);
 	}
 /**
  * testGetUrl method
