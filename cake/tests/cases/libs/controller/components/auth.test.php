@@ -272,6 +272,7 @@ class AuthTestController extends Controller {
  * @return void
  */
 	function beforeFilter() {
+		$this->Auth->userModel = 'AuthUser';
 	}
 
 /**
@@ -495,6 +496,8 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller =& new AuthTestController();
 		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
 
 		ClassRegistry::addObject('view', new View($this->Controller));
 
@@ -1258,6 +1261,53 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
 		Configure::write('Routing.admin', $admin);
+	}
+
+/**
+ * testPluginModel method
+ *
+ * @access public
+ * @return void
+ */
+	function testPluginModel() {
+		// Adding plugins
+		Cache::delete('object_map', '_cake_core_');
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		), true);
+		App::objects('plugin', null, false);
+
+		$PluginModel =& ClassRegistry::init('TestPlugin.TestPluginAuthUser');
+		$user['id'] = 1;
+		$user['username'] = 'gwoo';
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$PluginModel->save($user, false);
+
+		$authUser = $PluginModel->find();
+
+		$this->Controller->data['TestPluginAuthUser']['username'] = $authUser['TestPluginAuthUser']['username'];
+		$this->Controller->data['TestPluginAuthUser']['password'] = 'cake';
+
+		$this->Controller->params = Router::parse('auth_test/login');
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'TestPlugin.TestPluginAuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$expected = array('TestPluginAuthUser' => array(
+			'id' => 1, 'username' => 'gwoo', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
+		));
+		$this->assertEqual($user, $expected);
+
+		// Reverting changes
+		Cache::delete('object_map', '_cake_core_');
+		App::build();
+		App::objects('plugin', null, false);
 	}
 
 /**
