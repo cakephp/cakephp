@@ -591,7 +591,7 @@ class AuthComponent extends Object {
  * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
- * @param string $action Controller action name
+ * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
  * @param string ... etc.
  * @return void
@@ -612,7 +612,7 @@ class AuthComponent extends Object {
 /**
  * Removes items from the list of allowed actions.
  *
- * @param string $action Controller action name
+ * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
  * @param string ... etc.
  * @return void
@@ -621,6 +621,9 @@ class AuthComponent extends Object {
  */
 	function deny() {
 		$args = func_get_args();
+		if (isset($args[0]) && is_array($args[0])) {
+			$args = $args[0];
+		}
 		foreach ($args as $arg) {
 			$i = array_search($arg, $this->allowedActions);
 			if (is_int($i)) {

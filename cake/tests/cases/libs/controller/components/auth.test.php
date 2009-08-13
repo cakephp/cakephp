@@ -777,7 +777,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->allow('*');
-		$this->Controller->Auth->deny('add');
+		$this->Controller->Auth->deny('add', 'camelcase');
 
 		$this->Controller->params['action'] = 'delete';
 		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
@@ -786,6 +786,15 @@ class AuthTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
 		$this->Controller->params['action'] = 'Add';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->params['action'] = 'camelCase';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->deny(array('add', 'camelcase'));
+
+		$this->Controller->params['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 
