@@ -1,28 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
- * Short description for file.
- *
- * Long description for file
+ * Acl Shell provides Acl access in the CLI environment
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Component', 'Acl');
@@ -58,7 +51,7 @@ class AclShell extends Shell {
  * @var string
  * @access public
  */
-	var $dataSource = 'default';
+	var $connection = 'default';
 
 /**
  * Contains tasks to load and instantiate
@@ -74,10 +67,8 @@ class AclShell extends Shell {
  * @access public
  */
 	function startup() {
-		$this->dataSource = 'default';
-
-		if (isset($this->params['datasource'])) {
-			$this->dataSource = $this->params['datasource'];
+		if (isset($this->params['connection'])) {
+			$this->connection = $this->params['connection'];
 		}
 
 		if (!in_array(Configure::read('Acl.classname'), array('DbAcl', 'DB_ACL'))) {
@@ -220,13 +211,40 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$id = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		$identifier = $this->parseIdentifier($this->args[1]);
+
+		$id = $this->_getNodeId($class, $identifier);
 		$nodes = $this->Acl->{$class}->getPath($id);
+
 		if (empty($nodes)) {
-			$this->error(sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), __("No tree returned.", true));
+			$this->error(
+				sprintf(__("Supplied Node '%s' not found", true), $this->args[1]),
+				__("No tree returned.", true)
+			);
 		}
+		$this->out(__('Path:', true));
+		$this->hr();
 		for ($i = 0; $i < count($nodes); $i++) {
-			$this->out(str_repeat('  ', $i) . "[" . $nodes[$i][$class]['id'] . "]" . $nodes[$i][$class]['alias'] . "\n");
+			$this->_outputNode($class, $nodes[$i], $i);
+		}
+	}
+
+/**
+ * Outputs a single node, Either using the alias or Model.key
+ *
+ * @param string $class Class name that is being used.
+ * @param array $node Array of node information.
+ * @param integer $indent indent level.
+ * @return void
+ * @access protected
+ **/
+	function _outputNode($class, $node, $indent) {
+		$indent = str_repeat('  ', $indent);
+		$data = $node[$class];
+		if ($data['alias']) {
+			$this->out($indent . "[" . $data['id'] . "] " . $data['alias']);
+		 } else {
+			$this->out($indent . "[" . $data['id'] . "] " . $data['model'] . '.' . $data['foreign_key']);
 		}
 	}
 
@@ -303,13 +321,25 @@ class AclShell extends Shell {
 		$this->_checkArgs(1, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		if (isset($this->args[1]) && !is_null($this->args[1])) {
-			$key = ife(is_numeric($this->args[1]), $secondary_id, 'alias');
-			$conditions = array($class . '.' . $key => $this->args[1]);
+
+		if (isset($this->args[1])) {
+			$identity = $this->parseIdentifier($this->args[1]);
+
+			$topNode = $this->Acl->{$class}->find('first', array(
+				'conditions' => array($class . '.id' => $this->_getNodeId($class, $identity))
+			));
+
+			$nodes = $this->Acl->{$class}->find('all', array(
+				'conditions' => array(
+					$class . '.lft >=' => $topNode[$class]['lft'],
+					$class . '.lft <=' => $topNode[$class]['rght']
+				),
+				'order' => $class . '.lft ASC'
+			));
 		} else {
-			$conditions = null;
+			$nodes = $this->Acl->{$class}->find('all', array('order' => $class . '.lft ASC'));
 		}
-		$nodes = $this->Acl->{$class}->find('all', array('conditions' => $conditions, 'order' => 'lft ASC'));
+
 		if (empty($nodes)) {
 			if (isset($this->args[1])) {
 				$this->error(sprintf(__("%s not found", true), $this->args[1]), __("No tree returned.", true));
@@ -319,8 +349,10 @@ class AclShell extends Shell {
 		}
 		$this->out($class . " tree:");
 		$this->hr();
+
 		$stack = array();
 		$last  = null;
+
 		foreach ($nodes as $n) {
 			$stack[] = $n;
 			if (!empty($last)) {
@@ -334,14 +366,10 @@ class AclShell extends Shell {
 					}
 				}
 			}
-			$last   = $n[$class]['rght'];
-			$count  = count($stack);
-			$indent = str_repeat('  ', $count);
-			if ($n[$class]['alias']) {
-				$this->out($indent . "[" . $n[$class]['id'] . "]" . $n[$class]['alias']."\n");
-			 } else {
-				$this->out($indent . "[" . $n[$class]['id'] . "]" . $n[$class]['model'] . '.' . $n[$class]['foreign_key'] . "\n");
-			}
+			$last = $n[$class]['rght'];
+			$count = count($stack);
+
+			$this->_outputNode($class, $n, $count);
 		}
 		$this->hr();
 	}
@@ -388,7 +416,7 @@ class AclShell extends Shell {
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'setparent' => "setParent aro|aco <node> <parent>\n" .
+			'setparent' => "setParent aro|aco <node> <parent node>\n" .
 				"\t" . __("Moves the ACL object specified by <node> beneath", true) . "\n" .
 				"\t" . __("the parent ACL object specified by <parent>.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
@@ -401,26 +429,26 @@ class AclShell extends Shell {
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'check' => "check <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+			'check' => "check <node> <node> [<aco_action>] " . __("or", true) . " all\n" .
 				"\t" . __("Use this command to check ACL permissions.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'grant' => "grant <aro_id> <aco_id> [<aco_action>] " . __("or", true) . " all\n" .
+			'grant' => "grant <node> <node> [<aco_action>] " . __("or", true) . " all\n" .
 				"\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
 				"\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
 				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'deny' => "deny <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
+			'deny' => "deny <node> <node> [<aco_action>]" . __("or", true) . " all\n" .
 				"\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
 				"\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
 				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'inherit' => "inherit <aro_id> <aco_id> [<aco_action>]" . __("or", true) . " all\n" .
+			'inherit' => "inherit <node> <node> [<aco_action>]" . __("or", true) . " all\n" .
 				"\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
 				"\t" . __("permissions settings from its parent.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
@@ -428,7 +456,8 @@ class AclShell extends Shell {
 
 			'view' => "view aro|aco [<node>]\n" .
 				"\t" . __("The view command will return the ARO or ACO tree.", true) . "\n" .
-				"\t" . __("The optional id/alias parameter allows you to return\n\tonly a portion of the requested tree.", true) . "\n" .
+				"\t" . __("The optional node parameter allows you to return", true) . "\n" .
+				"\t" . __("only a portion of the requested tree.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
@@ -461,7 +490,7 @@ class AclShell extends Shell {
 			return false;
 		}
 		if ($this->args[0] != 'aco' && $this->args[0] != 'aro') {
-			$this->error(sprintf(__("Missing/Unknown node type: '%s'", true), $this->args[1]), __('Please specify which ACL object type you wish to create.', true));
+			$this->error(sprintf(__("Missing/Unknown node type: '%s'", true), $this->args[0]), __('Please specify which ACL object type you wish to create. Either "aro" or "aco"', true));
 		}
 	}
 
@@ -530,23 +559,15 @@ class AclShell extends Shell {
  * @access private
  */
 	function __getParams() {
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
+		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
 
-		if (is_string($aro) && preg_match('/^([\w]+)\.(.*)$/', $aro, $matches)) {
-			$aro = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
+		if (is_string($aro)) {
+			$aro = $this->parseIdentifier($aro);
 		}
-
-		if (is_string($aco) && preg_match('/^([\w]+)\.(.*)$/', $aco, $matches)) {
-			$aco = array(
-				'model' => $matches[1],
-				'foreign_key' => $matches[2],
-			);
+		if (is_string($aco)) {
+			$aco = $this->parseIdentifier($aco);
 		}
-
 		$action = null;
 		if (isset($this->args[2])) {
 			$action = $this->args[2];
