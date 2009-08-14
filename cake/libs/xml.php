@@ -676,7 +676,6 @@ class XmlNode extends Object {
 				if ($child->attributes) {
 					$value = array_merge(array('value' => $value), $child->attributes);
 				}
-
 				if (isset($out[$child->name]) || isset($multi[$key])) {
 					if (!isset($multi[$key])) {
 						$multi[$key] = array($out[$child->name]);
@@ -689,15 +688,16 @@ class XmlNode extends Object {
 				continue;
 			} elseif (count($child->children) === 0 && $child->value == '') {
 				$value = $child->attributes;
-
 				if (isset($out[$child->name]) || isset($multi[$key])) {
 					if (!isset($multi[$key])) {
 						$multi[$key] = array($out[$child->name]);
 						unset($out[$child->name]);
 					}
 					$multi[$key][] = $value;
-				} else {
+				} elseif (!empty($value)) {
 					$out[$key] = $value;
+				} else {
+					$out[$child->name] = $value;
 				}
 				continue;
 			} else {
@@ -909,7 +909,6 @@ class Xml extends XmlNode {
 		for ($i = 0; $i < $count; $i++) {
 			$data = $vals[$i];
 			$data += array('tag' => null, 'value' => null, 'attributes' => array());
-
 			switch ($data['type']) {
 				case "open" :
 					$xml =& $xml->createElement($data['tag'], $data['value'], $data['attributes']);
