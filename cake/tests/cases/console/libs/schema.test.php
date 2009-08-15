@@ -48,6 +48,67 @@ Mock::generatePartial(
 Mock::generate('CakeSchema', 'MockSchemaCakeSchema');
 
 /**
+ * Test for Schema database management
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class SchemaShellTestSchema extends CakeSchema {
+
+/**
+ * name property
+ *
+ * @var string 'MyApp'
+ * @access public
+ */
+	var $name = 'SchemaShellTest';
+
+/**
+ * connection property
+ *
+ * @var string 'test_suite'
+ * @access public
+ */
+	var $connection = 'test_suite';
+
+/**
+ * comments property
+ *
+ * @var array
+ * @access public
+ */
+	var $comments = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+		'user_id' => array('type' => 'integer', 'null' => false),
+		'title' => array('type' => 'string', 'null' => false, 'length' => 100),
+		'comment' => array('type' => 'text', 'null' => false, 'default' => null),
+		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
+
+/**
+ * posts property
+ *
+ * @var array
+ * @access public
+ */
+	var $articles = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'user_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
+		'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
+		'body' => array('type' => 'text', 'null' => true, 'default' => null),
+		'summary' => array('type' => 'text', 'null' => true),
+		'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
+}
+
+/**
  * SchemaShellTest class
  *
  * @package       cake
@@ -277,6 +338,30 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertTrue(in_array('acos', $sources));
 		$this->assertFalse(in_array('aros', $sources));
 		$this->assertFalse(in_array('aros_acos', $sources));
+	}
+
+/**
+ * test run update with a table arg.
+ *
+ * @return void
+ **/
+	function testRunUpdateWithTable() {
+		$this->Shell->params = array(
+			'name' => 'SchemaShellTest',
+			'connection' => 'test_suite',
+			'f' => true
+		);
+		$this->Shell->args = array('update', 'articles');
+		$this->Shell->startup();
+		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->run();
+
+		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
+		$fields = $article->schema();
+		$this->assertTrue(isset($fields['summary']));
+
+		$this->_fixtures['core.article']->drop($this->db);
+		$this->_fixtures['core.article']->create($this->db);
 	}
 
 }

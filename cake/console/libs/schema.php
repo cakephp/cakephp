@@ -287,7 +287,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __create($Schema, $table = null) {
+	function __create(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -331,11 +331,15 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __update($Schema, $table = null) {
+	function __update(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__('Comparing Database to Schema...', true));
-		$Old = $this->Schema->read();
+		$options = array();
+		if (isset($this->params['f'])) {
+			$options['models'] = false;
+		}
+		$Old = $this->Schema->read($options);
 		$compare = $this->Schema->compare($Old, $Schema);
 
 		$contents = array();
@@ -369,7 +373,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __run($contents, $event, $Schema) {
+	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {
 			$this->err(__('Sql could not be run', true));
 			return;
