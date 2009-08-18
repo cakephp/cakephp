@@ -239,8 +239,6 @@ class CakeSchema extends Object {
 							foreach ($Object->hasAndBelongsToMany as $Assoc => $assocData) {
 								if (isset($assocData['with'])) {
 									$class = $assocData['with'];
-								} elseif ($assocData['_with']) {
-									$class = $assocData['_with'];
 								}
 								if (is_object($Object->$class)) {
 									$table = $db->fullTableName($Object->$class, false);
