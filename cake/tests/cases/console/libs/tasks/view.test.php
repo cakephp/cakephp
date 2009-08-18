@@ -33,12 +33,10 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'view.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
-
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestViewTaskMockShellDispatcher',
@@ -120,6 +118,8 @@ class ViewTaskTest extends CakeTestCase {
 /**
  * startTest method
  *
+ * Ensure that the default theme is used
+ *
  * @return void
  * @access public
  */
@@ -132,6 +132,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Controller =& new ViewTaskMockControllerTask();
 		$this->Task->Project =& new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
+		$this->Task->Template->params['theme'] = 'default';
 	}
 
 /**
