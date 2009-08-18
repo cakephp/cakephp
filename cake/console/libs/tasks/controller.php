@@ -92,7 +92,7 @@ class ControllerTask extends Shell {
 					$actions= $this->bakeActions($controller, $admin);
 				}
 			}
-			
+
 			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
 				$admin = $this->Project->getAdmin();
 				if ($admin) {
@@ -294,8 +294,8 @@ class ControllerTask extends Shell {
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
-		$singularHumanName = Inflector::humanize($currentModelName);
-		$pluralHumanName = Inflector::humanize($controllerName);
+		$singularHumanName = $this->_singularHumanName($currentModelName);
+		$pluralHumanName = $this->_pluralName($controllerName);
 
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
