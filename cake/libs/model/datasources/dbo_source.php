@@ -78,8 +78,8 @@ class DboSource extends DataSource {
  * @access protected
  */
 	var $_commands = array(
-		'begin'	   => 'BEGIN',
-		'commit'   => 'COMMIT',
+		'begin' => 'BEGIN',
+		'commit' => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
 /**
@@ -409,14 +409,15 @@ class DboSource extends DataSource {
 			$data[$i] = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data[$i]);
 			$data[$i] = str_replace($this->startQuote . '(', '(', $data[$i]);
 			$data[$i] = str_replace(')' . $this->startQuote, ')', $data[$i]);
+			$alias = !empty($this->alias) ? $this->alias : 'AS ';
 
-			if (preg_match('/\s+AS\s+/', $data[$i])) {
-				if (preg_match('/\w+\s+AS\s+/', $data[$i])) {
-					$quoted = $this->endQuote . ' AS ' . $this->startQuote;
-					$data[$i] = str_replace(' AS ', $quoted, $data[$i]);
+			if (preg_match('/\s+' . $alias . '\s*/', $data[$i])) {
+				if (preg_match('/\w+\s+' . $alias . '\s*/', $data[$i])) {
+					$quoted = $this->endQuote . ' ' . $alias . $this->startQuote;
+					$data[$i] = str_replace(' ' . $alias, $quoted, $data[$i]);
 				} else {
-					$quoted = ' AS ' . $this->startQuote;
-					$data[$i] = str_replace(' AS ', $quoted, $data[$i]) . $this->endQuote;
+					$quoted = $alias . $this->startQuote;
+					$data[$i] = str_replace($alias, $quoted, $data[$i]) . $this->endQuote;
 				}
 			}
 
@@ -1680,7 +1681,9 @@ class DboSource extends DataSource {
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
-				if (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
+				if (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
+					continue;
+				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';
 
 					if (strpos($fields[$i], 'DISTINCT') !== false) {
