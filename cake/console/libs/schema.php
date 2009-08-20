@@ -58,18 +58,12 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function startup() {
-		$name = null;
+		$name = $file = $path = $connection = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
 			$this->params['file'] = Inflector::underscore($name);
 		}
-
-		$path = null;
-		if (!empty($this->params['path'])) {
-			$path = $this->params['path'];
-		}
-
-		$file = null;
+		$path = $this->_getPath();
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
 		}
@@ -78,12 +72,28 @@ class SchemaShell extends Shell {
 		}
 		$file = $this->params['file'];
 
-		$connection = null;
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
 
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
+	}
+
+/**
+ * Get the correct path for the params. Uses path, and plugin to find the correct path.
+ * path param takes precedence over any plugins specified.
+ *
+ * @return mixed string to correct path or null.
+ **/
+	function _getPath() {
+		if (!empty($this->params['path'])) {
+			return $this->params['path'];
+		}
+		if (!empty($this->params['plugin'])) {
+			$pluginPath = $this->_pluginPath($this->params['plugin']);
+			return $pluginPath . 'config' . DS . 'schema' . DS;
+		}
+		return null;
 	}
 
 /**

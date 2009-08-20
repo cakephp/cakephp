@@ -160,7 +160,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->Schema->file, 'test_schema.php');
 		$this->assertEqual($this->Shell->Schema->connection, 'default');
 		$this->assertEqual($this->Shell->Schema->path, APP . 'config' . DS . 'schema');
-		
+
 		unset($this->Shell->Schema);
 		$this->Shell->params = array(
 			'file' => 'other_file.php',
@@ -311,7 +311,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->setReturnValue('in', 'y');
 		$this->Shell->run();
-		
+
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array('i18n', $sources));
@@ -362,6 +362,34 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->_fixtures['core.article']->drop($this->db);
 		$this->_fixtures['core.article']->create($this->db);
+	}
+
+/**
+ * test that the plugin param creates the correct path in the schema object.
+ *
+ * @return void
+ **/
+	function testPluginParam() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test_suite'
+		);
+		$this->Shell->startup();
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema' . DS;
+		$this->assertEqual($this->Shell->Schema->path, $expected);
+
+		unset($this->Shell->Schema);
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test_suite',
+			'path' => '/some/path'
+		);
+		$this->Shell->startup();
+		$expected = '/some/path';
+		$this->assertEqual($this->Shell->Schema->path, $expected);
 	}
 
 }
