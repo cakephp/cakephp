@@ -326,7 +326,7 @@ class View extends Object {
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
  *                      view (i.e. the Element)
- *    Special params:
+ *  Special params:
  *		cache - enable caching for this element accepts boolean or strtotime compatible string.
  *      Can also be an array
  *				if an array,'time' is used to specify duration of cache.  'key' can be used to
@@ -413,11 +413,7 @@ class View extends Object {
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
-			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
-				$out = View::_render($viewFileName, $this->viewVars);
-			} else {
-				$out = $this->_render($viewFileName, $this->viewVars);
-			}
+			$out = $this->_render($viewFileName, $this->viewVars);
 		}
 
 		if ($layout === null) {
@@ -449,10 +445,11 @@ class View extends Object {
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
  * Several variables are created for use in layout.
- *	title_for_layout - contains page title
- *	content_for_layout - contains rendered view file
- *	scripts_for_layout - contains scripts added to header
- *  cakeDebug - if debug is on, cake debug information is added.
+ *
+ * - `title_for_layout` - contains page title
+ * - `content_for_layout` - contains rendered view file
+ * - `scripts_for_layout` - contains scripts added to header
+ * - `cakeDebug` - if debug is on, cake debug information is added.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
@@ -491,12 +488,7 @@ class View extends Object {
 		}
 
 		$this->_triggerHelpers('beforeLayout');
-
-		if (substr($layoutFileName, -3) === 'ctp' || substr($layoutFileName, -5) === 'thtml') {
-			$this->output = View::_render($layoutFileName, $data_for_layout, $loadHelpers, true);
-		} else {
-			$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
-		}
+		$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
