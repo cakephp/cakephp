@@ -323,15 +323,16 @@ class View extends Object {
  * and the $params array is used to send data to be used in the
  * Element.  Elements can be cached through use of the cache key.
  *
+ * ### Special params
+ *
+ * - cache - enable caching for this element accepts boolean or strtotime compatible string.
+ *   Can also be an array. If `cache` is an array,
+ *   `time` is used to specify duration of cache.
+ *   `key` can be used to create unique cache files.
+ *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
- *                      view (i.e. the Element)
- *  Special params:
- *		cache - enable caching for this element accepts boolean or strtotime compatible string.
- *      Can also be an array
- *				if an array,'time' is used to specify duration of cache.  'key' can be used to
- *              create unique cache files.
- *
+ *    view (i.e. the Element)
  * @return string Rendered Element
  * @access public
  */
@@ -503,7 +504,8 @@ class View extends Object {
 	}
 
 /**
- * Fire a callback on all loaded Helpers
+ * Fire a callback on all loaded Helpers. All helpers must implement this method, 
+ * it is not checked before being called.  You can add additional helper callbacks in AppHelper.
  *
  * @param string $callback name of callback fire.
  * @access protected
