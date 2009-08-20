@@ -965,14 +965,6 @@ class View extends Object {
 		}
 		return $paths;
 	}
-
-/**
- * @deprecated
- * @see View::element
- */
-	function renderElement($name, $params = array(), $loadHelpers = false) {
-		return $this->element($name, $params, $loadHelpers);
-	}
 }
 
 ?>
