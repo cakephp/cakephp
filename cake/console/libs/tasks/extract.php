@@ -280,13 +280,13 @@ class ExtractTask extends Shell{
 				}
 			}
 			unset($allTokens);
-			$this->basic();
-			$this->basic('__c');
-			$this->extended();
-			$this->extended('__dc', 2);
-			$this->extended('__n', 0, true);
-			$this->extended('__dn', 2, true);
-			$this->extended('__dcn', 4, true);
+			$this->__parse('__', array('singular'));
+			$this->__parse('__n', array('singular', 'plural'));
+			$this->__parse('__d', array('domain', 'singular'));
+			$this->__parse('__c', array('singular'));
+			$this->__parse('__dc', array('domain', 'singular'));
+			$this->__parse('__dn', array('domain', 'singular', 'plural'));
+			$this->__parse('__dcn', array('domain', 'singular', 'plural'));
 		}
 		$this->__buildFiles();
 		$this->__writeFiles();
@@ -294,50 +294,13 @@ class ExtractTask extends Shell{
 	}
 
 /**
- * Will parse  __(), __c() functions
+ * Parse tokens
  *
  * @param string $functionName Function name that indicates translatable string (e.g: '__')
+ * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
  * @access public
  */
-	function basic($functionName = '__') {
-		$count = 0;
-		$tokenCount = count($this->__tokens);
-
-		while (($tokenCount - $count) > 3) {
-			list($countToken, $parenthesis, $middle, $right) = array($this->__tokens[$count], $this->__tokens[$count + 1], $this->__tokens[$count + 2], $this->__tokens[$count + 3]);
-			if (!is_array($countToken)) {
-				$count++;
-				continue;
-			}
-
-			list($type, $string, $line) = $countToken;
-			if (($type == T_STRING) && ($string == $functionName) && ($parenthesis == '(')) {
-
-				if (in_array($right, array(')', ','))
-				&& (is_array($middle) && ($middle[0] == T_CONSTANT_ENCAPSED_STRING))) {
-
-					if ($this->__oneFile === true) {
-						$this->__strings[$this->__formatString($middle[1])][$this->__file][] = $line;
-					} else {
-						$this->__strings[$this->__file][$this->__formatString($middle[1])][] = $line;
-					}
-				} else {
-					$this->__markerError($this->__file, $line, $functionName, $count);
-				}
-			}
-			$count++;
-		}
-	}
-
-/**
- * Will parse __d(), __dc(), __n(), __dn(), __dcn()
- *
- * @param string $functionName Function name that indicates translatable string (e.g: '__')
- * @param integer $shift Number of parameters to shift to find translateable string
- * @param boolean $plural Set to true if function supports plural format, false otherwise
- * @access public
- */
-	function extended($functionName = '__d', $shift = 0, $plural = false) {
+	function __parse($functionName, $map) {
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
@@ -362,50 +325,28 @@ class ExtractTask extends Shell{
 					$position++;
 				}
 
-				if ($plural) {
-					$end = $position + $shift + 7;
-
-					if ($this->__tokens[$position + $shift + 5] === ')') {
-						$end = $position + $shift + 5;
+				$mapCount = count($map);
+				$strings = array();
+				while (count($strings) < $mapCount && ($this->__tokens[$position] == ',' || $this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING)) {
+					if ($this->__tokens[$position][0] == T_CONSTANT_ENCAPSED_STRING) {
+						$strings[] = $this->__tokens[$position][1];
 					}
-
-					if (empty($shift)) {
-						list($singular, $firstComma, $plural, $seoncdComma, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $this->__tokens[$position + 3], $this->__tokens[$end]);
-						$condition = ($seoncdComma == ',');
-					} else {
-						list($domain, $firstComma, $singular, $seoncdComma, $plural, $comma3, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $this->__tokens[$position + 3], $this->__tokens[$position + 4], $this->__tokens[$position + 5], $this->__tokens[$end]);
-						$condition = ($comma3 == ',');
-					}
-					$condition = $condition &&
-						(is_array($singular) && ($singular[0] == T_CONSTANT_ENCAPSED_STRING)) &&
-						(is_array($plural) && ($plural[0] == T_CONSTANT_ENCAPSED_STRING));
-				} else {
-					if ($this->__tokens[$position + $shift + 5] === ')') {
-						$comma = $this->__tokens[$position + $shift + 3];
-						$end = $position + $shift + 5;
-					} else {
-						$comma = null;
-						$end = $position + $shift + 3;
-					}
-
-					list($domain, $firstComma, $text, $seoncdComma, $endParenthesis) = array($this->__tokens[$position], $this->__tokens[$position + 1], $this->__tokens[$position + 2], $comma, $this->__tokens[$end]);
-					$condition = ($seoncdComma == ',' || $seoncdComma === null) &&
-						(is_array($domain) && ($domain[0] == T_CONSTANT_ENCAPSED_STRING)) &&
-						(is_array($text) && ($text[0] == T_CONSTANT_ENCAPSED_STRING));
+					$position++;
 				}
 
-				if (($endParenthesis == ')') && $condition) {
+				if ($mapCount == count($strings)) {
+					extract(array_combine($map, $strings));
 					if ($this->__oneFile === true) {
-						if ($plural) {
-							$this->__strings[$this->__formatString($singular[1]) . "\0" . $this->__formatString($plural[1])][$this->__file][] = $line;
+						if (isset($plural)) {
+							$this->__strings[$this->__formatString($singular) . "\0" . $this->__formatString($plural)][$this->__file][] = $line;
 						} else {
-							$this->__strings[$this->__formatString($text[1])][$this->__file][] = $line;
+							$this->__strings[$this->__formatString($singular)][$this->__file][] = $line;
 						}
 					} else {
 						if ($plural) {
-							$this->__strings[$this->__file][$this->__formatString($singular[1]) . "\0" . $this->__formatString($plural[1])][] = $line;
+							$this->__strings[$this->__file][$this->__formatString($singular) . "\0" . $this->__formatString($plural)][] = $line;
 						} else {
-							$this->__strings[$this->__file][$this->__formatString($text[1])][] = $line;
+							$this->__strings[$this->__file][$this->__formatString($singular)][] = $line;
 						}
 					}
 				} else {

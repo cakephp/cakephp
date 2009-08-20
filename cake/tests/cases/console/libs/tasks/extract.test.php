@@ -107,6 +107,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/"Plural-Forms\: nplurals\=INTEGER; plural\=EXPRESSION;/';
 		$this->assertPattern($pattern, $result);
 
+		// home.ctp
 		$pattern = '/msgid "Your tmp directory is writable."\nmsgstr ""\n/';
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
@@ -132,6 +133,17 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "To change the content of this page, edit: %s.*To change its layout, ';
 		$pattern .= 'edit: %s.*You can also add some CSS styles for your pages at: %s"\nmsgstr ""/s';
+		$this->assertPattern($pattern, $result);
+
+		// extract.ctp
+		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+		$this->assertPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
+		$this->assertPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertPattern($pattern, $result);
 
 		$Folder = new Folder($path);
