@@ -369,8 +369,7 @@ class SchemaShell extends Shell {
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
-
-		$errors = array();
+		
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
 				$this->out(sprintf(__('%s is up to date.', true), $table));
@@ -382,15 +381,16 @@ class SchemaShell extends Shell {
 					if (!$Schema->before(array($event => $table))) {
 						return false;
 					}
-					if (!$db->_execute($sql)) {
+					$error = null;
+					if (!$db->execute($sql)) {
 						$error = $table . ': '  . $db->lastError();
 					}
 
-					$Schema->after(array($event => $table, 'errors'=> $errors));
+					$Schema->after(array($event => $table, 'errors' => $error));
 
-					if (isset($error)) {
+					if (!empty($error)) {
 						$this->out($error);
-					} elseif ($this->__dry !== true) {
+					} else {
 						$this->out(sprintf(__('%s updated.', true), $table));
 					}
 				}
