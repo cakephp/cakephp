@@ -373,9 +373,6 @@ class View extends Object {
 			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
 				break;
-			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
-				$file = $path . 'elements' . DS . $name . '.thtml';
-				break;
 			}
 		}
 
@@ -859,8 +856,6 @@ class View extends Object {
 				return $path . $name . $this->ext;
 			} elseif (file_exists($path . $name . '.ctp')) {
 				return $path . $name . '.ctp';
-			} elseif (file_exists($path . $name . '.thtml')) {
-				return $path . $name . '.thtml';
 			}
 		}
 		$defaultPath = $paths[0];
@@ -895,12 +890,11 @@ class View extends Object {
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
 
-		$exts = array($this->ext, '.ctp', '.thtml');
 		foreach ($paths as $path) {
-			foreach ($exts as $ext) {
-				if (file_exists($path . $file . $ext)) {
-					return $path . $file . $ext;
-				}
+			if (file_exists($path . $file . $this->ext)) {
+				return $path . $file . $this->ext;
+			} elseif (file_exists($path . $file . '.ctp')) {
+				return $path . $file . '.ctp';
 			}
 		}
 		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
