@@ -111,18 +111,6 @@ class ViewTestErrorHandler extends ErrorHandler {
 class TestView extends View {
 
 /**
- * renderElement method
- *
- * @param mixed $name
- * @param array $params
- * @access public
- * @return void
- */
-	function renderElement($name, $params = array()) {
-		return $name;
-	}
-
-/**
  * getViewFileName method
  *
  * @param mixed $name
@@ -155,6 +143,18 @@ class TestView extends View {
  */
 	function loadHelpers(&$loaded, $helpers, $parent = null) {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
+	}
+
+/**
+ * paths method
+ *
+ * @param string $plugin
+ * @param boolean $cached
+ * @access public
+ * @return void
+ */
+	function paths($plugin = null, $cached = true) {
+		return $this->_paths($plugin, $cached);
 	}
 
 /**
@@ -292,6 +292,32 @@ class ViewTest extends CakeTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'layouts' . DS .'default.ctp';
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that plugin/$plugin_name is only appended to the paths it should be.
+ *
+ * @return void
+ **/
+	function testPluginPathGeneration() {
+		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->name = 'TestPlugin';
+		$this->Controller->viewPath = 'tests';
+		$this->Controller->action = 'index';
+
+		$View = new TestView($this->Controller);
+		$paths = $View->paths();
+		$this->assertEqual($paths, App::path('views'));
+
+		$paths = $View->paths('test_plugin');
+
+		$expected = array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'plugins' . DS . 'test_plugin' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+		);
+		$this->assertEqual($paths, $expected);
 	}
 
 /**
