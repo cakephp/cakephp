@@ -895,11 +895,14 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = Configure::read('viewPaths');
+		$corePaths = array_flip(Configure::corePaths('view'));
 
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+				if (!isset($corePaths[$viewPaths[$i]])) {
+					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+				}
 			}
 			$pluginPaths = Configure::read('pluginPaths');
 			$count = count($pluginPaths);
