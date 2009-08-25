@@ -31,32 +31,10 @@
  * @subpackage    cake.cake.libs.view
  */
 class ThemeView extends View {
-
 /**
- * System path to themed element: themed . DS . theme . DS . elements . DS
+ * Constructor for ThemeView sets $this->theme.
  *
- * @var string
- */
-	var $themeElement = null;
-
-/**
- * System path to themed layout: themed . DS . theme . DS . layouts . DS
- *
- * @var string
- */
-	var $themeLayout = null;
-
-/**
- * System path to themed: themed . DS . theme . DS
- *
- * @var string
- */
-	var $themePath = null;
-
-/**
- * Enter description here...
- *
- * @param unknown_type $controller
+ * @param Controller $controller
  */
 	function __construct(&$controller) {
 		parent::__construct($controller);
@@ -66,10 +44,6 @@ class ThemeView extends View {
 			if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
 				$this->themeWeb = 'themed/'. $this->theme .'/';
 			}
-			/* deprecated: as of 6128 the following properties are no longer needed */
-			$this->themeElement = 'themed'. DS . $this->theme . DS .'elements'. DS;
-			$this->themeLayout =  'themed'. DS . $this->theme . DS .'layouts'. DS;
-			$this->themePath = 'themed'. DS . $this->theme . DS;
 		}
 	}
 
@@ -94,7 +68,6 @@ class ThemeView extends View {
 		if (empty($this->__paths)) {
 			$this->__paths = $paths;
 		}
-
 		return $paths;
 	}
 }
