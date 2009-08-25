@@ -22,6 +22,13 @@
 /**
  * Theme view class
  *
+ * Allows the creation of multiple themes to be used in an app. Theme views are regular view files
+ * that can provide unique HTML and static assets.  If theme views are not found for the current view
+ * the default app view files will be used. You can set `$this->theme` and `$this->view = 'Theme'` 
+ * in your Controller to use the ThemeView.
+ *
+ * Example of theme path with `$this->theme = 'super_hot';` Would be `app/views/themed/super_hot/posts`
+ *
  * @package       cake
  * @subpackage    cake.cake.libs.view
  */
