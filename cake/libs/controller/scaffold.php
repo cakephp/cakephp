@@ -237,6 +237,10 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffoldForm($action = 'edit') {
+		$this->controller->viewVars['scaffoldFields'] = array_merge(
+			$this->controller->viewVars['scaffoldFields'],
+			array_keys($this->ScaffoldModel->hasAndBelongsToMany)
+		);
 		$this->controller->render($action, $this->layout);
 		$this->_output();
 	}
