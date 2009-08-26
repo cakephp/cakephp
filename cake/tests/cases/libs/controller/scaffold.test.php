@@ -155,6 +155,19 @@ class ScaffoldMock extends CakeTestModel {
 			'foreignKey' => 'article_id',
 		)
 	);
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var string
+ **/
+	var $hasAndBelongsToMany = array(
+		'ScaffoldTag' => array(
+			'className' => 'ScaffoldTag',
+			'foreignKey' => 'post_id',
+			'associationForeignKey' => 'tag_id',
+			'joinTable' => 'posts_tags'
+		)
+	);
 }
 
 /**
@@ -218,6 +231,21 @@ class ScaffoldComment extends CakeTestModel {
 }
 
 /**
+ * ScaffoldTag class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.controller
+ */
+class ScaffoldTag extends CakeTestModel {
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ * @access public
+ */
+	var $useTable = 'tags';
+}
+/**
  * TestScaffoldView class
  *
  * @package       cake
@@ -251,7 +279,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment');
+	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.posts_tag', 'core.tag');
 
 /**
  * startTest method
@@ -592,7 +620,7 @@ class ScaffoldTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment');
+	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.posts_tag', 'core.tag');
 
 /**
  * startTest method
@@ -685,6 +713,40 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
 	}
 
+/**
+ * test that habtm relationship keys get added to scaffoldFields.
+ *
+ * @see http://code.cakephp.org/tickets/view/48
+ * @return void
+ **/
+	function testHabtmFieldAdditionWithScaffoldForm() {
+		$this->Controller->action = 'edit';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(1),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'edit',
+		);
+		//set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->constructClasses();
+		ob_start();
+		$Scaffold = new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+		$this->assertPattern('/name="data\[ScaffoldTag\]\[ScaffoldTag\]"/', $result);
+
+		$result = $Scaffold->controller->viewVars;
+		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'ScaffoldTag'));
+	}
 /**
  * test that the proper names and variable values are set by Scaffold
  *
