@@ -336,6 +336,40 @@ class ErrorHandler extends Object {
 	}
 
 /**
+ * Renders the Missing Behavior file web page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ */
+	function missingBehaviorFile($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		$this->controller->set(array(
+			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
+			'file' => $file,
+			'title' => __('Missing Behavior File', true)
+		));
+		$this->_outputMessage('missingBehaviorFile');
+	}
+
+/**
+ * Renders the Missing Behavior class web page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ */
+	function missingBehaviorClass($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		$this->controller->set(array(
+			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
+			'file' => $file,
+			'title' => __('Missing Behavior Class', true)
+		));
+		$this->_outputMessage('missingBehaviorClass');
+	}
+
+/**
  * Renders the Missing Component file web page.
  *
  * @param array $params Parameters for controller
