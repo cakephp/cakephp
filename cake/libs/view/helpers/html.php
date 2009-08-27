@@ -708,7 +708,10 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function tag($name, $text = null, $attributes = array(), $escape = false) {
-		if ($escape) {
+		if ($escape || isset($attributes['escape']) && $attributes['escape']) {
+			if (is_array($attributes)) {
+				unset($attributes['escape']);
+			}
 			$text = h($text);
 		}
 		if (!is_array($attributes)) {
