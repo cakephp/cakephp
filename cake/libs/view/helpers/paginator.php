@@ -237,10 +237,17 @@ class PaginatorHelper extends AppHelper {
 		$sortKey = $this->sortKey($options['model']);
 		$isSorted = ($sortKey === $key || $sortKey === $this->defaultModel() . '.' . $key);
 
-		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
-			$dir = 'desc';
+		if ($isSorted) {
+			if ($this->sortDir($options['model']) === 'asc') {
+				$dir = 'desc';
+			}
+			$class = $dir === 'asc' ? 'desc' : 'asc';
+			if (!empty($options['class'])) {
+				$options['class'] .= $class;
+			} else {
+				$options['class'] = $class;
+			}
 		}
-
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
