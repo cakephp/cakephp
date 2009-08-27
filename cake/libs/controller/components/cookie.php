@@ -277,6 +277,13 @@ class CookieComponent extends Object {
 	}
 
 /**
+ * @deprecated use delete()
+ **/
+	function del($key) {
+		return $this->delete($key);
+	}
+
+/**
  * Delete a cookie value
  *
  * Optional [Name.], reguired key
@@ -289,7 +296,7 @@ class CookieComponent extends Object {
  * @return void
  * @access public
  */
-	function del($key) {
+	function delete($key) {
 		if (empty($this->__values)) {
 			$this->read();
 		}
