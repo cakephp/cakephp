@@ -292,6 +292,21 @@ class BehaviorCollection extends Object {
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
+			$this->cakeError('missingBehaviorFile', array(array(
+				'behavior' => $behavior,
+				'file' => Inflector::underscore($behavior) . '.php',
+				'code' => 500,
+				'base' => '/'
+			)));
+			return false;
+		}
+		if (!class_exists($behavior . 'Behavior')) {
+			$this->cakeError('missingBehaviorClass', array(array(
+				'behavior' => $behavior,
+				'file' => Inflector::underscore($behavior) . '.php',
+				'code' => 500,
+				'base' => '/'
+			)));
 			return false;
 		}
 
