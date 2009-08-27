@@ -199,6 +199,41 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 	}
 
+
+/** 
+ * testSortLinksUsingDirectionOption method
+ *
+ * @access public
+ * @return void
+ */
+	function testSortLinksUsingDirectionOption(){
+		Router::reload();
+		Router::parse('/');
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 
+				'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/', 'here' => '/accounts/',
+				'webroot' => '/', 'passedArgs' => array())
+		));
+		$this->Paginator->options(array('url' => array('param')));
+
+		$result = $this->Paginator->sort('TestTitle', 'title', array('direction' => 'desc'));
+		$expected = array(
+			'a' => array('href' => '/accounts/index/param/page:1/sort:title/direction:desc'),
+			'TestTitle',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title', array('direction' => 'desc'));
+		$expected = array(
+			'a' => array('href' => '/accounts/index/param/page:1/sort:title/direction:desc'),
+			'descending',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 /**
  * testSortLinksUsingDotNotation method
  *

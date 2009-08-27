@@ -233,7 +233,9 @@ class PaginatorHelper extends AppHelper {
 			$key = $title;
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
 		}
-		$dir = 'asc';
+		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		unset($options['direction']);
+
 		$sortKey = $this->sortKey($options['model']);
 		$isSorted = ($sortKey === $key || $sortKey === $this->defaultModel() . '.' . $key);
 
