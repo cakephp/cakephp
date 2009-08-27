@@ -725,6 +725,7 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see read
+ * @deprecated use read
  * @access public
  */
 	function ls($sort = true, $exceptions = false) {
@@ -735,6 +736,7 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see create
+ * @deprecated use create
  * @access public
  */
 	function mkdir($pathname, $mode = 0755) {
@@ -745,6 +747,7 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see copy
+ * @deprecated use copy
  * @access public
  */
 	function cp($options) {
@@ -755,6 +758,7 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see move
+ * @deprecated use move
  * @access public
  */
 	function mv($options) {
@@ -765,6 +769,7 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see delete
+ * @deprecated use delete
  * @access public
  */
 	function rm($path) {
