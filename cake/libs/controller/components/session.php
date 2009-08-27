@@ -167,13 +167,7 @@ class SessionComponent extends CakeSession {
 	}
 
 /**
- * Used to delete a session variable.
- *
- * In your controller: $this->Session->del('Controller.sessKey');
- *
- * @param string $name the name of the session key you want to delete
- * @return boolean true is session variable is set and can be deleted, false is variable was not set.
- * @access public
+ * @deprecated use delete
  */
 	function del($name) {
 		if ($this->__active === true) {
@@ -195,7 +189,7 @@ class SessionComponent extends CakeSession {
 	function delete($name) {
 		if ($this->__active === true) {
 			$this->__start();
-			return $this->del($name);
+			return parent::del($name);
 		}
 		return false;
 	}
