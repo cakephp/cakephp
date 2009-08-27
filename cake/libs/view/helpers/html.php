@@ -699,11 +699,15 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted block tag, i.e DIV, SPAN, P.
  *
+ * ## Attributes
+ *
+ * - `escape` Whether or not the contents should be html_entity escaped.
+ *
  * @param string $name Tag name.
  * @param string $text String content that will appear inside the div element.
  *   If null, only a start tag will be printed
- * @param array $attributes Additional HTML attributes of the DIV tag
- * @param boolean $escape If true, $text will be HTML-escaped
+ * @param array $attributes Additional HTML attributes of the DIV tag, see above.
+ * @param boolean $escape If true, $text will be HTML-escaped (Deprecated, use $attributes[escape])
  * @return string The formatted tag element
  * @access public
  */
