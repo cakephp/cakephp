@@ -528,16 +528,16 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$actionName = __('New', true);
+			$actionName = __('New %s', true);
 			$isEdit = (
 				strpos($this->action, 'update') !== false ||
 				strpos($this->action, 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __('Edit', true);
+				$actionName = __('Edit %s', true);
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($this->model()));
-			$legend = $actionName .' '. __($modelName, true);
+			$legend = sprintf($actionName, __($modelName, true));
 		}
 
 		$out = null;
