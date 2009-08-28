@@ -117,7 +117,8 @@ class SchemaShell extends Shell {
 			$this->out($File->read());
 			$this->_stop();
 		} else {
-			$this->err(__('Schema could not be found', true));
+			$file = $this->Schema->path . DS . $this->params['file'];
+			$this->err(sprintf(__('Schema file (%s) could not be found.', true), $file));
 			$this->_stop();
 		}
 	}
