@@ -66,6 +66,13 @@ class CakeSchema extends Object {
 	var $connection = 'default';
 
 /**
+ * plugin name.
+ *
+ * @var string
+ **/
+	var $plugin = null;
+
+/**
  * Set of tables
  *
  * @var array
@@ -83,6 +90,9 @@ class CakeSchema extends Object {
 
 		if (empty($options['name'])) {
 			$this->name = preg_replace('/schema$/i', '', get_class($this));
+		}
+		if (!empty($options['plugin'])) {
+			$this->plugin = $options['plugin'];
 		}
 
 		if (strtolower($this->name) === 'cake') {
@@ -112,7 +122,7 @@ class CakeSchema extends Object {
 		$file = null;
 		foreach ($data as $key => $val) {
 			if (!empty($val)) {
-				if (!in_array($key, array('name', 'path', 'file', 'connection', 'tables', '_log'))) {
+				if (!in_array($key, array('plugin', 'name', 'path', 'file', 'connection', 'tables', '_log'))) {
 					$this->tables[$key] = $val;
 					unset($this->{$key});
 				} elseif ($key !== 'tables') {
@@ -207,6 +217,9 @@ class CakeSchema extends Object {
 		$db =& ConnectionManager::getDataSource($connection);
 
 		App::import('Model', 'AppModel');
+		if (isset($this->plugin)) {
+			App::import('Model', Inflector::camelize($this->plugin) . 'AppModel');
+		}
 
 		$tables = array();
 		$currentTables = $db->listSources();
@@ -217,11 +230,18 @@ class CakeSchema extends Object {
 		}
 
 		if (!is_array($models) && $models !== false) {
-			$models = App::objects('model');
+			if (isset($this->plugin)) {
+				$models = App::objects('model', App::pluginPath($this->plugin) . 'models' . DS, false);
+			} else {
+				$models = App::objects('model');
+			}
 		}
 
 		if (is_array($models)) {
 			foreach ($models as $model) {
+				if (isset($this->plugin)) {
+					$model = $this->plugin . '.' . $model;
+				}
 				if (PHP5) {
 					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				} else {
@@ -230,7 +250,7 @@ class CakeSchema extends Object {
 
 				if (is_object($Object) && $Object->useTable !== false) {
 					$Object->setDataSource($connection);
-					$table = $db->fullTableName($Object, false);
+					$table = $db->fullTableName($Object->useTable, false);
 
 					if (in_array($table, $currentTables)) {
 						$key = array_search($table, $currentTables);

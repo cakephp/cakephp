@@ -58,7 +58,7 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function startup() {
-		$name = $file = $path = $connection = null;
+		$name = $file = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
 			$this->params['file'] = Inflector::underscore($name);
@@ -75,8 +75,11 @@ class SchemaShell extends Shell {
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
+		if (!empty($this->params['plugin'])) {
+			$plugin = $this->params['plugin'];
+		}
 
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
+		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**

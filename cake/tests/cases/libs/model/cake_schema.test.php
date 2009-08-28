@@ -454,6 +454,28 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 
 /**
+ * test reading schema from plugins.
+ *
+ * @return void
+ **/
+	function testSchemaReadWithPlugins() {
+		App::objects('model', null, false);
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$Schema =& new CakeSchema();
+		$Schema->plugin = 'TestPlugin';
+		$read = $Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => true
+		));
+		$this->assertTrue(isset($read['tables']['posts']));
+
+		App::build();
+	}
+
+/**
  * testSchemaWrite method
  *
  * @access public
