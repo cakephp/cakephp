@@ -917,17 +917,18 @@ class Controller extends Object {
  * @param string $message Message to display to the user
  * @param mixed $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
+ * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
  * @access public
  * @link http://book.cakephp.org/view/426/flash
  */
-	function flash($message, $url, $pause = 1) {
+	function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->render(false, 'flash');
+		$this->render(false, $layout);
 	}
 
 /**

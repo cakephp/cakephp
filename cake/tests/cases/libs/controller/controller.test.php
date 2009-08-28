@@ -721,6 +721,13 @@ class ControllerTest extends CakeTestCase {
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
+
+		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
+		$Controller =& new Controller();
+		$Controller->flash('this should work', '/flash', 1, 'ajax2');
+		$result = $Controller->output;
+		$this->assertPattern('/Ajax!/', $result);
+		App::build();
 	}
 
 /**
