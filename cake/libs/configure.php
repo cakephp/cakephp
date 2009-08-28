@@ -681,8 +681,8 @@ class App extends Object {
 			if (is_dir($path . $pluginDir)) {
 				return $path . $pluginDir . DS ;
 			}
-			return $_this->plugins[0] . $pluginDir . DS;
 		}
+		return $_this->plugins[0] . $pluginDir . DS;
 	}
 
 /**
