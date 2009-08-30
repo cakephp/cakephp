@@ -854,7 +854,7 @@ class View extends Object {
 		foreach ($paths as $path) {
 			if (file_exists($path . $name . $this->ext)) {
 				return $path . $name . $this->ext;
-			} elseif (file_exists($path . $name . '.ctp')) {
+			} elseif ($this->ext != '.ctp' && file_exists($path . $name . '.ctp')) {
 				return $path . $name . '.ctp';
 			}
 		}
