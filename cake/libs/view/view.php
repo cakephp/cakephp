@@ -850,12 +850,16 @@ class View extends Object {
 		}
 
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
-
-		foreach ($paths as $path) {
-			if (file_exists($path . $name . $this->ext)) {
-				return $path . $name . $this->ext;
-			} elseif ($this->ext != '.ctp' && file_exists($path . $name . '.ctp')) {
-				return $path . $name . '.ctp';
+		
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . $name . $ext)) {
+					return $path . $name . $ext;
+				}
 			}
 		}
 		$defaultPath = $paths[0];
@@ -889,12 +893,16 @@ class View extends Object {
 		}
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
-
-		foreach ($paths as $path) {
-			if (file_exists($path . $file . $this->ext)) {
-				return $path . $file . $this->ext;
-			} elseif (file_exists($path . $file . '.ctp')) {
-				return $path . $file . '.ctp';
+		
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . $file . $ext)) {
+					return $path . $file . $ext;
+				}
 			}
 		}
 		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
