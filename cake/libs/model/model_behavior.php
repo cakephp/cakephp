@@ -300,10 +300,10 @@ class BehaviorCollection extends Object {
 			)));
 			return false;
 		}
-		if (!class_exists($behavior . 'Behavior')) {
+		if (!class_exists($class)) {
 			$this->cakeError('missingBehaviorClass', array(array(
-				'behavior' => $behavior,
-				'file' => Inflector::underscore($behavior) . '.php',
+				'behavior' => $class,
+				'file' => Inflector::underscore($class) . '.php',
 				'code' => 500,
 				'base' => '/'
 			)));
