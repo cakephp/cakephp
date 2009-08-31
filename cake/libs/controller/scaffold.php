@@ -267,11 +267,12 @@ class Scaffold extends Object {
 				}
 
 				if (!$this->ScaffoldModel->exists()) {
+					$message = sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey));
 					if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
-						$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
+						$this->controller->Session->setFlash($message);
 						$this->controller->redirect($this->redirect);
 					} else {
-						return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+						return $this->controller->flash($message, $this->redirect);
 					}
 				}
 			}
@@ -283,11 +284,16 @@ class Scaffold extends Object {
 
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
+						$message = sprintf(__('The %1$s has been %2$s', true), 
+							Inflector::humanize($this->modelKey),
+							$success
+						);
 						if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
-							$this->controller->Session->setFlash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success));
+							$this->controller->Session->setFlash($message);
 							$this->controller->redirect($this->redirect);
 						} else {
-							return $this->controller->flash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success), $this->redirect);
+							$this->controller->flash($message, $this->redirect);
+							return $this->_output();
 						}
 					} else {
 						return $this->controller->_afterScaffoldSaveError($action);
@@ -336,8 +342,8 @@ class Scaffold extends Object {
 				$this->controller->Session->setFlash(sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)));
 				$this->controller->redirect($this->redirect);
 			} else {
-				return $this->controller->flash(sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)),
-																	'/' . Inflector::underscore($this->controller->viewPath));
+				$this->controller->flash(sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)), '/' . Inflector::underscore($this->controller->viewPath));
+				return $this->_output();
 			}
 
 			if ($this->ScaffoldModel->del($id)) {
@@ -345,14 +351,16 @@ class Scaffold extends Object {
 					$this->controller->Session->setFlash(sprintf(__('The %1$s with id: %2$d has been deleted.', true), Inflector::humanize($this->modelClass), $id));
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(__('The %1$s with id: %2$d has been deleted.', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
+					$this->controller->flash(sprintf(__('The %1$s with id: %2$d has been deleted.', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
+					return $this->_output();
 				}
 			} else {
 				if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
 					$this->controller->Session->setFlash(sprintf(__('There was an error deleting the %1$s with id: %2$d', true), Inflector::humanize($this->modelClass), $id));
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(__('There was an error deleting the %1$s with id: %2$d', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
+					$this->controller->flash(sprintf(__('There was an error deleting the %1$s with id: %2$d', true), Inflector::humanize($this->modelClass), $id), '/' . $this->viewPath);
+					return $this->_output();
 				}
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
