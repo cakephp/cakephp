@@ -197,10 +197,10 @@ class Scaffold extends Object {
 		if ($this->controller->view && $this->controller->view !== 'Theme') {
 			$this->controller->view = 'scaffold';
 		}
-		$this->__scaffold($params);
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
+		$this->__scaffold($params);
 	}
 
 /**
@@ -223,20 +223,15 @@ class Scaffold extends Object {
  */
 	function __scaffoldView($params) {
 		if ($this->controller->_beforeScaffold('view')) {
-
+			
+			$message = sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey));
 			if (isset($params['pass'][0])) {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash(sprintf(
-					__("No id set for %s::view()", true),
-					Inflector::humanize($this->modelKey
-				)));
+				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
 			} else {
-				return $this->controller->flash(sprintf(
-					__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
-					'/' . Inflector::underscore($this->controller->viewPath
-				));
+				return $this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
 			}
 			$this->ScaffoldModel->recursive = 1;
 			$this->controller->data = $this->ScaffoldModel->read();
@@ -327,7 +322,7 @@ class Scaffold extends Object {
 
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
-						$message = sprintf(__('The %1$s has been %2$s', true), 
+						$message = sprintf(__('The %1$s has been %2$s', true),
 							Inflector::humanize($this->modelKey),
 							$success
 						);
@@ -384,46 +379,39 @@ class Scaffold extends Object {
  */
 	function __scaffoldDelete($params = array()) {
 		if ($this->controller->_beforeScaffold('delete')) {
+			$message = sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey));
 			if (isset($params['pass'][0])) {
 				$id = $params['pass'][0];
 			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash(sprintf(
-					__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)
-				));
+				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
 			} else {
-				$this->controller->flash(sprintf(
-					__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)
-				), '/' . Inflector::underscore($this->controller->viewPath));
+				$this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
 				return $this->_output();
 			}
 
 			if ($this->ScaffoldModel->delete($id)) {
+				$message = sprintf(
+					__('The %1$s with id: %2$d has been deleted.', true),
+					Inflector::humanize($this->modelClass), $id
+				);
 				if ($this->_validSession) {
-					$this->controller->Session->setFlash(sprintf(
-						__('The %1$s with id: %2$d has been deleted.', true),
-						Inflector::humanize($this->modelClass), $id
-					));
+					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					$this->controller->flash(sprintf(
-						__('The %1$s with id: %2$d has been deleted.', true),
-						Inflector::humanize($this->modelClass), $id
-					), '/' . $this->viewPath);
+					$this->controller->flash($message, '/' . $this->viewPath);
 					return $this->_output();
 				}
 			} else {
+				$message = sprintf(
+					__('There was an error deleting the %1$s with id: %2$d', true),
+					Inflector::humanize($this->modelClass), $id
+				);
 				if ($this->_validSession) {
-					$this->controller->Session->setFlash(sprintf(
-						__('There was an error deleting the %1$s with id: %2$d', true),
-						Inflector::humanize($this->modelClass), $id
-					));
+					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					$this->controller->flash(sprintf(
-						__('There was an error deleting the %1$s with id: %2$d', true),
-						Inflector::humanize($this->modelClass), $id
-					), '/' . $this->viewPath);
+					$this->controller->flash($message, '/' . $this->viewPath);
 					return $this->_output();
 				}
 			}
