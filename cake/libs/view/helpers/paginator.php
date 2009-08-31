@@ -233,14 +233,23 @@ class PaginatorHelper extends AppHelper {
 			$key = $title;
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
 		}
-		$dir = 'asc';
+		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		unset($options['direction']);
+
 		$sortKey = $this->sortKey($options['model']);
 		$isSorted = ($sortKey === $key || $sortKey === $this->defaultModel() . '.' . $key);
 
-		if ($isSorted && $this->sortDir($options['model']) === 'asc') {
-			$dir = 'desc';
+		if ($isSorted) {
+			if ($this->sortDir($options['model']) === 'asc') {
+				$dir = 'desc';
+			}
+			$class = $dir === 'asc' ? 'desc' : 'asc';
+			if (!empty($options['class'])) {
+				$options['class'] .= $class;
+			} else {
+				$options['class'] = $class;
+			}
 		}
-
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
@@ -312,7 +321,10 @@ class PaginatorHelper extends AppHelper {
  */
 	function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
-		$_defaults = array('url' => array(), 'step' => 1, 'escape' => true, 'model' => null, 'tag' => 'div');
+		$_defaults = array(
+			'url' => array(), 'step' => 1, 'escape' => true,
+			'model' => null, 'tag' => 'span', 'class' => strtolower($which)
+		);
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
 
@@ -332,9 +344,9 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}($model)) {
-			return $this->link($title, $url, array_merge($options, array('escape' => $escape)));
+			return $this->link($title, $url, array_merge($options, array('escape' => $escape, 'class' => $class)));
 		} else {
-			return $this->Html->tag($tag, $title, $options, $escape);
+			return $this->Html->tag($tag, $title, array_merge($options, array('class' => $class, 'escape' => $escape)));
 		}
 	}
 

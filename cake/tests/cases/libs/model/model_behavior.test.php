@@ -22,6 +22,8 @@
 App::import('Model', 'AppModel');
 require_once dirname(__FILE__) . DS . 'models.php';
 
+Mock::generatePartial('BehaviorCollection', 'MockModelBehaviorCollection', array('cakeError', '_stop'));
+
 /**
  * TestBehavior class
  *
@@ -432,7 +434,7 @@ class BehaviorTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		ClassRegistry::flush();
 	}
 
@@ -449,7 +451,8 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Behaviors->attach('Test', array('key' => 'value'));
 		$this->assertIdentical($Apple->Behaviors->attached(), array('Test'));
 		$this->assertEqual(strtolower(get_class($Apple->Behaviors->Test)), 'testbehavior');
-		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], array('beforeFind' => 'on', 'afterFind' => 'off', 'key' => 'value'));
+		$expected = array('beforeFind' => 'on', 'afterFind' => 'off', 'key' => 'value');
+		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
 		$this->assertEqual(array_keys($Apple->Behaviors->Test->settings), array('Apple'));
 
 		$this->assertIdentical($Apple->Sample->Behaviors->attached(), array());
@@ -480,8 +483,6 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Parent->Behaviors->attach('Test', array('key' => 'value', 'key2' => 'value', 'key3' => 'value', 'beforeFind' => 'off'));
 		$this->assertNotEqual($Apple->Parent->Behaviors->Test->settings['Parent'], $Apple->Sample->Behaviors->Test->settings['Sample']);
 
-		$this->assertFalse($Apple->Behaviors->attach('NoSuchBehavior'));
-
 		$Apple->Behaviors->attach('Plugin.Test', array('key' => 'new value'));
 		$expected = array(
 			'beforeFind' => 'off', 'afterFind' => 'off', 'key' => 'new value',
@@ -501,6 +502,19 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->Behaviors->attach('Test', array('mangle' => 'trigger'));
 		$expected = array_merge($current, array('mangle' => 'trigger mangled'));
 		$this->assertEqual($Apple->Behaviors->Test->settings['Apple'], $expected);
+	}
+
+/**
+ * test that attaching a non existant Behavior triggers a cake error.
+ *
+ * @return void
+ **/
+	function testInvalidBehaviorCausingCakeError() {
+		$Apple =& new Apple();
+		$Apple->Behaviors =& new MockModelBehaviorCollection();
+		$Apple->Behaviors->expectOnce('cakeError');
+		$Apple->Behaviors->expectAt(0, 'cakeError', array('missingBehaviorFile', '*'));
+		$this->assertFalse($Apple->Behaviors->attach('NoSuchBehavior'));
 	}
 
 /**

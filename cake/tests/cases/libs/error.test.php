@@ -453,6 +453,36 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test missingBehaviorFile method
+ *
+ * @access public
+ * @return void
+ */
+	function testMissingBehaviorFile() {
+		ob_start();
+		$TestErrorHandler = new TestErrorHandler('missingBehaviorFile', array('behavior' => 'MyCustom', 'file' => 'my_custom.php'));
+		$result = ob_get_clean();
+		$this->assertPattern('/<h2>Missing Behavior File<\/h2>/', $result);
+		$this->assertPattern('/Create the class below in file:/', $result);
+		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
+	}
+
+/**
+ * test MissingBehaviorClass method
+ *
+ * @access public
+ * @return void
+ */
+	function testMissingBehaviorClass() {
+		ob_start();
+		$TestErrorHandler = new TestErrorHandler('missingBehaviorClass', array('behavior' => 'MyCustom', 'file' => 'my_custom.php'));
+		$result = ob_get_clean();
+		$this->assertPattern('/<h2>Missing Behavior Class<\/h2>/', $result);
+		$this->assertPattern('/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./', $result);
+		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
+	}
+
+/**
  * testMissingComponentFile method
  *
  * @access public

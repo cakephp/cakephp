@@ -323,15 +323,16 @@ class View extends Object {
  * and the $params array is used to send data to be used in the
  * Element.  Elements can be cached through use of the cache key.
  *
+ * ### Special params
+ *
+ * - cache - enable caching for this element accepts boolean or strtotime compatible string.
+ *   Can also be an array. If `cache` is an array,
+ *   `time` is used to specify duration of cache.
+ *   `key` can be used to create unique cache files.
+ *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
- *                      view (i.e. the Element)
- *    Special params:
- *		cache - enable caching for this element accepts boolean or strtotime compatible string.
- *      Can also be an array
- *				if an array,'time' is used to specify duration of cache.  'key' can be used to
- *              create unique cache files.
- *
+ *    view (i.e. the Element)
  * @return string Rendered Element
  * @access public
  */
@@ -372,9 +373,6 @@ class View extends Object {
 			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
 				$file = $path . 'elements' . DS . $name . $this->ext;
 				break;
-			} elseif (file_exists($path . 'elements' . DS . $name . '.thtml')) {
-				$file = $path . 'elements' . DS . $name . '.thtml';
-				break;
 			}
 		}
 
@@ -413,11 +411,7 @@ class View extends Object {
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
-			if (substr($viewFileName, -3) === 'ctp' || substr($viewFileName, -5) === 'thtml') {
-				$out = View::_render($viewFileName, $this->viewVars);
-			} else {
-				$out = $this->_render($viewFileName, $this->viewVars);
-			}
+			$out = $this->_render($viewFileName, $this->viewVars);
 		}
 
 		if ($layout === null) {
@@ -449,10 +443,11 @@ class View extends Object {
 /**
  * Renders a layout. Returns output from _render(). Returns false on error.
  * Several variables are created for use in layout.
- *	title_for_layout - contains page title
- *	content_for_layout - contains rendered view file
- *	scripts_for_layout - contains scripts added to header
- *  cakeDebug - if debug is on, cake debug information is added.
+ *
+ * - `title_for_layout` - contains page title
+ * - `content_for_layout` - contains rendered view file
+ * - `scripts_for_layout` - contains scripts added to header
+ * - `cakeDebug` - if debug is on, cake debug information is added.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
@@ -491,12 +486,7 @@ class View extends Object {
 		}
 
 		$this->_triggerHelpers('beforeLayout');
-
-		if (substr($layoutFileName, -3) === 'ctp' || substr($layoutFileName, -5) === 'thtml') {
-			$this->output = View::_render($layoutFileName, $data_for_layout, $loadHelpers, true);
-		} else {
-			$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
-		}
+		$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
@@ -511,7 +501,8 @@ class View extends Object {
 	}
 
 /**
- * Fire a callback on all loaded Helpers
+ * Fire a callback on all loaded Helpers. All helpers must implement this method, 
+ * it is not checked before being called.  You can add additional helper callbacks in AppHelper.
  *
  * @param string $callback name of callback fire.
  * @access protected
@@ -859,14 +850,16 @@ class View extends Object {
 		}
 
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
-
-		foreach ($paths as $path) {
-			if (file_exists($path . $name . $this->ext)) {
-				return $path . $name . $this->ext;
-			} elseif (file_exists($path . $name . '.ctp')) {
-				return $path . $name . '.ctp';
-			} elseif (file_exists($path . $name . '.thtml')) {
-				return $path . $name . '.thtml';
+		
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
+				if (file_exists($path . $name . $ext)) {
+					return $path . $name . $ext;
+				}
 			}
 		}
 		$defaultPath = $paths[0];
@@ -900,10 +893,13 @@ class View extends Object {
 		}
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		$file = 'layouts' . DS . $subDir . $name;
-
-		$exts = array($this->ext, '.ctp', '.thtml');
-		foreach ($paths as $path) {
-			foreach ($exts as $ext) {
+		
+		$exts = array($this->ext);
+		if ($this->ext !== '.ctp') {
+			array_push($exts, '.ctp');
+		}
+		foreach ($exts as $ext) {
+			foreach ($paths as $path) {
 				if (file_exists($path . $file . $ext)) {
 					return $path . $file . $ext;
 				}
@@ -951,11 +947,14 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = App::path('views');
+		$corePaths = array_flip(App::core('views'));
 
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
-				$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+				if (!isset($corePaths[$viewPaths[$i]])) {
+					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
+				}
 			}
 			$pluginPaths = App::path('plugins');
 			$count = count($pluginPaths);
@@ -970,14 +969,6 @@ class View extends Object {
 			$this->__paths = $paths;
 		}
 		return $paths;
-	}
-
-/**
- * @deprecated
- * @see View::element
- */
-	function renderElement($name, $params = array(), $loadHelpers = false) {
-		return $this->element($name, $params, $loadHelpers);
 	}
 }
 

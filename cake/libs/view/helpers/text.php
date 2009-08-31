@@ -64,28 +64,30 @@ class TextHelper extends AppHelper {
 		}
 
 		if (is_array($phrase)) {
+
 			$replace = array();
 			$with = array();
 
-			foreach ($phrase as $key => $value) {
-				$key = $value;
-				$value = $highlighter;
-				$key = '(' . $key . ')';
+			foreach ($phrase as $key => $segment) {
+				$segment = "($segment)";
+
 				if ($considerHtml) {
-					$key = '(?![^<]+>)' . $key . '(?![^<]+>)';
+					$segment = "(?![^<]+>)$segment(?![^<]+>)";
 				}
-				$replace[] = '|' . $key . '|iu';
-				$with[] = empty($value) ? $highlighter : $value;
+
+				$with[] = (is_array($highlighter)) ? $highlighter[$key] : $highlighter;
+				$replace[] = "|$segment|iu";
 			}
 
 			return preg_replace($replace, $with, $text);
+
 		} else {
-			$phrase = '(' . $phrase . ')';
+			$phrase = "($phrase)";
 			if ($considerHtml) {
-				$phrase = '(?![^<]+>)' . $phrase . '(?![^<]+>)';
+				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
 			}
 
-			return preg_replace('|'.$phrase.'|iu', $highlighter, $text);
+			return preg_replace("|$phrase|iu", $highlighter, $text);
 		}
 	}
 

@@ -165,6 +165,21 @@ class TextHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testHighlightMulti method
+ *
+ * @access public
+ * @return void
+ */
+	function testHighlightMulti() {
+		$text = 'This is a test text';
+		$phrases = array('This', 'text');
+		$result = $this->Text->highlight($text, $phrases, array('<b>\1</b>', '<em>\1</em>'));
+		$expected = '<b>This</b> is a test <em>text</em>';
+		$this->assertEqual($expected, $result);
+
+	}
+
+/**
  * testStripLinks method
  *
  * @access public
