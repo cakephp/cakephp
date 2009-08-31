@@ -88,10 +88,13 @@ class PaginatorHelper extends AppHelper {
 		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
-		if (!method_exists($ajaxProvider . 'Helper', 'link')) {
+
+		App::import('Helper', $ajaxProvider);
+		$classname = $ajaxProvider . 'Helper';
+		if (!method_exists($classname, 'link')) {
 			$message = sprintf(
 				__('%s does not implement a link() method, it is incompatible with PaginatorHelper', true),
-				$ajaxProvider . 'Helper'
+				$classname
 			);
 			trigger_error($message, E_USER_WARNING);
 		}
