@@ -605,7 +605,7 @@ class AuthComponent extends Object {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
 			}
-			$this->allowedActions = array_merge($this->allowedActions, $args);
+			$this->allowedActions = array_merge($this->allowedActions, array_map($args, 'strtolower'));
 		}
 	}
 
@@ -625,7 +625,7 @@ class AuthComponent extends Object {
 			$args = $args[0];
 		}
 		foreach ($args as $arg) {
-			$i = array_search($arg, $this->allowedActions);
+			$i = array_search(strtolower($arg), $this->allowedActions);
 			if (is_int($i)) {
 				unset($this->allowedActions[$i]);
 			}

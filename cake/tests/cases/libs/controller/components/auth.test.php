@@ -799,6 +799,23 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test that deny() converts camel case inputs to lowercase.
+ *
+ * @return void
+ **/
+	function testDenyWithCamelCaseMethods() {
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->deny('add', 'camelCase');
+
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+	}
+
+/**
  * test that allow() and allowedActions work with camelCase method names.
  *
  * @return void
