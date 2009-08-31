@@ -714,6 +714,45 @@ class ScaffoldTest extends CakeTestCase {
 	}
 
 /**
+ * test that scaffold outputs flash messages when sessions are unset.
+ *
+ * @return void
+ **/
+	function testScaffoldFlashMessages() {
+		$this->Controller->action = 'edit';
+		$this->Controller->here = '/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$params = array(
+			'plugin' => null,
+			'pass' => array(1),
+			'form' => array(),
+			'named' => array(),
+			'url' => array('url' =>'scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'edit',
+		);
+		//set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->data = array(
+			'ScaffoldMock' => array(
+				'id' => 1,
+				'title' => 'New title',
+				'body' => 'new body'
+			)
+		);
+		$this->Controller->constructClasses();
+		unset($this->Controller->Session);
+
+		ob_start();
+		new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+		$this->assertPattern('/Scaffold Mock has been updated/', $result);
+	}
+/**
  * test that habtm relationship keys get added to scaffoldFields.
  *
  * @see http://code.cakephp.org/tickets/view/48
