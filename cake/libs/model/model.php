@@ -1789,8 +1789,6 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteLinks($id) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			$records = $this->{$data['with']}->find('all', array(
 				'conditions' => array_merge(array($this->{$data['with']}->escapeField($data['foreignKey']) => $id)),
