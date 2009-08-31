@@ -267,11 +267,12 @@ class Scaffold extends Object {
 				}
 
 				if (!$this->ScaffoldModel->exists()) {
+					$message = sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey));
 					if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
-						$this->controller->Session->setFlash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)));
+						$this->controller->Session->setFlash($message);
 						$this->controller->redirect($this->redirect);
 					} else {
-						return $this->controller->flash(sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey)), $this->redirect);
+						return $this->controller->flash($message, $this->redirect);
 					}
 				}
 			}
@@ -283,11 +284,15 @@ class Scaffold extends Object {
 
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
+						$message = sprintf(__('The %1$s has been %2$s', true), 
+							Inflector::humanize($this->modelKey),
+							$success
+						);
 						if (isset($this->controller->Session) && $this->controller->Session->valid() != false) {
-							$this->controller->Session->setFlash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success));
+							$this->controller->Session->setFlash($message);
 							$this->controller->redirect($this->redirect);
 						} else {
-							$this->controller->flash(sprintf(__('The %1$s has been %2$s', true), Inflector::humanize($this->modelClass), $success), $this->redirect);
+							$this->controller->flash($message, $this->redirect);
 							return $this->_output();
 						}
 					} else {
