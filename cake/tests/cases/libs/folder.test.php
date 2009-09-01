@@ -110,7 +110,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
-		$result = $Folder->cp($copy);
+		$result = $Folder->copy($copy);
 		$this->assertTrue($result);
 
 		$copy = TMP . 'test_folder_copy';
@@ -125,7 +125,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$mv = TMP . 'test_folder_mv_2';
-		$result = $Folder->mv($mv);
+		$result = $Folder->move($mv);
 		$this->assertTrue($result);
 
 		$result = $Folder->delete($new);
@@ -134,7 +134,7 @@ class FolderTest extends CakeTestCase {
 		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
 
-		$result = $Folder->rm($mv);
+		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
 
 		$new = APP . 'index.php';
@@ -452,7 +452,7 @@ class FolderTest extends CakeTestCase {
 
 		$Folder->cd(TMP);
 		$file = new File($Folder->pwd() . DS . 'paths.php', true);
-		$Folder->mkdir($Folder->pwd() . DS . 'testme');
+		$Folder->create($Folder->pwd() . DS . 'testme');
 		$Folder->cd('testme');
 		$result = $Folder->find('paths\.php');
 		$expected = array();
@@ -493,7 +493,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 
 		$Folder->cd(TMP);
-		$Folder->mkdir($Folder->pwd() . DS . 'testme');
+		$Folder->create($Folder->pwd() . DS . 'testme');
 		$Folder->cd('testme');
 		$File =& new File($Folder->pwd() . DS . 'paths.php');
 		$File->create();

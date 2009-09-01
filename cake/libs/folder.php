@@ -627,7 +627,7 @@ class Folder extends Object {
 		}
 
 		if (!is_dir($toDir)) {
-			$this->mkdir($toDir, $mode);
+			$this->create($toDir, $mode);
 		}
 
 		if (!is_writable($toDir)) {
