@@ -499,7 +499,7 @@ class Model extends Overloadable {
  * @param boolean $permanent Set to true to make the binding permanent
  * @return void
  * @access public
- * @todo
+ * @deprecated Use Model::bindModel() instead.
  */
 	function bind($model, $options = array(), $permanent = true) {
 		if (!is_array($model)) {
