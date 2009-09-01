@@ -453,7 +453,7 @@ class HttpSocket extends CakeSocket {
 		if (empty($encoding)) {
 			return array('body' => $body, 'header' => false);
 		}
-		$decodeMethod = 'decode'.Inflector::camelize(str_replace('-', '_', $encoding)).'Body';
+		$decodeMethod = '_decode'.Inflector::camelize(str_replace('-', '_', $encoding)).'Body';
 
 		if (!is_callable(array(&$this, $decodeMethod))) {
 			if (!$this->quirksMode) {
