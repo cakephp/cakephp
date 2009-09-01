@@ -1,8 +1,6 @@
 <?php
 /**
- * Short description for file.
- *
- * Long description for file
+ * SessionComponent.  Provides access to Sessions from the Controller layer
  *
  * PHP versions 4 and 5
  *
@@ -231,15 +229,15 @@ class SessionComponent extends CakeSession {
  * Additional params below can be passed to customize the output, or the Message.[key]
  *
  * @param string $message Message to be flashed
- * @param string $layout Layout to wrap flash message in
+ * @param string $element Element to wrap flash message in.
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
  * @access public
  */
-	function setFlash($message, $layout = 'default', $params = array(), $key = 'flash') {
+	function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
 		if ($this->__active === true) {
 			$this->__start();
-			$this->write('Message.' . $key, compact('message', 'layout', 'params'));
+			$this->write('Message.' . $key, compact('message', 'element', 'params'));
 		}
 	}
 
