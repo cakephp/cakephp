@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.0.1232
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('cakesession')) {
@@ -167,15 +162,10 @@ class SessionComponent extends CakeSession {
 	}
 
 /**
- * Used to delete a session variable.
- *
- * In your controller: $this->Session->del('Controller.sessKey');
- *
- * @param string $name the name of the session key you want to delete
- * @return boolean true is session variable is set and can be deleted, false is variable was not set.
- * @access public
+ * @deprecated use delete
  */
 	function del($name) {
+		trigger_error('Deprecated method, use SessionComponent::delete instead', E_USER_WARNING);
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::del($name);
@@ -195,7 +185,7 @@ class SessionComponent extends CakeSession {
 	function delete($name) {
 		if ($this->__active === true) {
 			$this->__start();
-			return $this->del($name);
+			return parent::del($name);
 		}
 		return false;
 	}
