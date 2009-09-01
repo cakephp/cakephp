@@ -993,6 +993,24 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
+
+		$hasMany = array(
+			'Node' => array(
+				'id' => 1,
+				'name' => 'First',
+				'state' => 50
+			),
+			'ParentNode' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Second',
+					'state' => 60,
+				)
+			)
+		);
+		$result = Set::extract('/ParentNode/name', $hasMany);
+		$expected = array('Second');
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testMatches method
