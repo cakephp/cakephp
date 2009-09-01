@@ -609,14 +609,9 @@ class JavascriptHelper extends AppHelper {
  *
  * @param array $data Data to be converted
  * @param array $options Set of options: block, prefix, postfix, stringKeys, quoteKeys, q
- * @param string $prefix DEPRECATED, use $options['prefix'] instead. Prepends the string to the returned data
- * @param string $postfix DEPRECATED, use $options['postfix'] instead. Appends the string to the returned data
- * @param array $stringKeys DEPRECATED, use $options['stringKeys'] instead. A list of array keys to be treated as a string
- * @param boolean $quoteKeys DEPRECATED, use $options['quoteKeys'] instead. If false, treats $stringKey as a list of keys *not* to be quoted
- * @param string $q DEPRECATED, use $options['q'] instead. The type of quote to use
  * @return string A JSON code block
  */
-	function object($data = array(), $options = array(), $prefix = null, $postfix = null, $stringKeys = null, $quoteKeys = null, $q = null) {
+	function object($data = array(), $options = array()) {
 		if (!empty($options) && !is_array($options)) {
 			$options = array('block' => $options);
 		} else if (empty($options)) {
