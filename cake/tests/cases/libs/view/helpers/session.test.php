@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * SessionHelperTest file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -53,22 +48,22 @@ class SessionHelperTest extends CakeTestCase {
 			'test' => 'info',
 			'Message' => array(
 				'flash' => array(
-					'layout' => 'default',
+					'element' => 'default',
 					'params' => array(),
 					'message' => 'This is a calling'
 				),
 				'notification' => array(
-					'layout' => 'session_helper',
+					'element' => 'session_helper',
 					'params' => array('title' => 'Notice!', 'name' => 'Alert!'),
 					'message' => 'This is a test of the emergency broadcasting system',
 				),
 				'classy' => array(
-					'layout' => 'default',
+					'element' => 'default',
 					'params' => array('class' => 'positive'),
 					'message' => 'Recorded'
 				),
 				'bare' => array(
-					'layout' => null,
+					'element' => null,
 					'message' => 'Bare message',
 					'params' => array(),
 				),
@@ -121,7 +116,7 @@ class SessionHelperTest extends CakeTestCase {
 	function testCheck() {
 		$this->assertTrue($this->Session->check('test'));
 
-		$this->assertTrue($this->Session->check('Message.flash.layout'));
+		$this->assertTrue($this->Session->check('Message.flash.element'));
 
 		$this->assertFalse($this->Session->check('Does.not.exist'));
 

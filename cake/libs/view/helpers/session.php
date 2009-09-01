@@ -1,8 +1,6 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
- * Short description for file.
+ * Session Helper provides access to the Session in the Views.
  *
  * Long description for file
  *
@@ -15,14 +13,11 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 1.1.7.3328
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 if (!class_exists('cakesession')) {
@@ -139,21 +134,20 @@ class SessionHelper extends CakeSession {
 			if (parent::check('Message.' . $key)) {
 				$flash = parent::read('Message.' . $key);
 
-				if ($flash['layout'] == 'default') {
+				if ($flash['element'] == 'default') {
 					if (!empty($flash['params']['class'])) {
 						$class = $flash['params']['class'];
 					} else {
 						$class = 'message';
 					}
 					$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
-				} elseif ($flash['layout'] == '' || $flash['layout'] == null) {
+				} elseif ($flash['element'] == '' || $flash['element'] == null) {
 					$out = $flash['message'];
 				} else {
 					$view =& ClassRegistry::getObject('view');
-					list($tmpVars, $tmpTitle) = array($view->viewVars, $view->pageTitle);
-					list($view->viewVars, $view->pageTitle) = array($flash['params'], '');
-					$out = $view->renderLayout($flash['message'], $flash['layout']);
-					list($view->viewVars, $view->pageTitle) = array($tmpVars, $tmpTitle);
+					$tmpVars = $flash['params'];
+					$tmpVars['message'] = $flash['message'];
+					$out = $view->element($flash['element'], $tmpVars);
 				}
 				echo($out);
 				parent::del('Message.' . $key);
