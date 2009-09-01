@@ -502,6 +502,7 @@ class Model extends Overloadable {
  * @deprecated Use Model::bindModel() instead.
  */
 	function bind($model, $options = array(), $permanent = true) {
+		trigger_error('Deprecated method, use Model::bindModel instead', E_USER_WARNING);
 		if (!is_array($model)) {
 			$model = array($model => $options);
 		}
@@ -1745,6 +1746,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/691/remove
  */
 	function remove($id = null, $cascade = true) {
+		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -1798,6 +1800,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function del($id = null, $cascade = true) {
+		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -2613,6 +2616,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function getDisplayField() {
+		trigger_error('Deprecated method, use Model::$displayField instead', E_USER_WARNING);
 		return $this->displayField;
 	}
 

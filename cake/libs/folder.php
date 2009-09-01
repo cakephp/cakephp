@@ -729,6 +729,7 @@ class Folder extends Object {
  * @access public
  */
 	function ls($sort = true, $exceptions = false) {
+		trigger_error('Deprecated method, use Folder::read instead', E_USER_WARNING);
 		return $this->read($sort, $exceptions);
 	}
 
@@ -740,6 +741,7 @@ class Folder extends Object {
  * @access public
  */
 	function mkdir($pathname, $mode = 0755) {
+		trigger_error('Deprecated method, use Folder::create instead', E_USER_WARNING);
 		return $this->create($pathname, $mode);
 	}
 
@@ -751,6 +753,7 @@ class Folder extends Object {
  * @access public
  */
 	function cp($options) {
+		trigger_error('Deprecated method, use Folder::copy instead', E_USER_WARNING);
 		return $this->copy($options);
 	}
 
@@ -762,6 +765,7 @@ class Folder extends Object {
  * @access public
  */
 	function mv($options) {
+		trigger_error('Deprecated method, use Folder::move instead', E_USER_WARNING);
 		return $this->move($options);
 	}
 
@@ -773,6 +777,7 @@ class Folder extends Object {
  * @access public
  */
 	function rm($path) {
+		trigger_error('Deprecated method, use Folder::delete instead', E_USER_WARNING);
 		return $this->delete($path);
 	}
 
