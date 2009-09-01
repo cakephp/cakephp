@@ -200,7 +200,9 @@ class ModelWriteTest extends BaseModelTest {
 	function testNonNumericHabtmJoinKey() {
 		$this->loadFixtures('Post', 'Tag', 'PostsTag');
 		$Post =& new Post();
-		$Post->bind('Tag', array('type' => 'hasAndBelongsToMany'));
+		$Post->bindModel(array(
+			'hasAndBelongsToMany' => array('Tag')
+		));
 		$Post->Tag->primaryKey = 'tag';
 
 		$result = $Post->find('all');
@@ -423,7 +425,7 @@ class ModelWriteTest extends BaseModelTest {
 		$User = new CounterCacheUser();
 		$Post = new CounterCachePost();
 
-		$Post->del(2);
+		$Post->delete(2);
 		$user = $User->find('first', array(
 			'conditions' => array('id' => 66),
 			'recursive' => -1
@@ -3086,7 +3088,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$model->validate = array('comment' => 'notEmpty');
 		$model->Attachment->validate = array('attachment' => 'notEmpty');
-		$model->Attachment->bind('Comment');
+		$model->Attachment->bindModel(array('belongsTo' => array('Comment')));
 
 		$this->assertFalse($model->saveAll(
 			array(

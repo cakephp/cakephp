@@ -4519,25 +4519,39 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array(
-			'conditions' => array('active' => true)
+		$TestModel2->bindModel(array(
+			'belongsTo' => array(
+				'FeatureSet' => array(
+					'className' => 'FeatureSet',
+					'conditions' => array('active' => true)
+				)
+			)
 		));
 		$expected['conditions'] = array('active' => true);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array(
-			'foreignKey' => false,
-			'conditions' => array('Feature.name' => 'DeviceType.name')
+		$TestModel2->bindModel(array(
+			'belongsTo' => array(
+				'FeatureSet' => array(
+					'className' => 'FeatureSet',
+					'foreignKey' => false,
+					'conditions' => array('Feature.name' => 'DeviceType.name')
+				)
+			)
 		));
 		$expected['conditions'] = array('Feature.name' => 'DeviceType.name');
 		$expected['foreignKey'] = false;
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('NewFeatureSet', array(
-			'type' => 'hasMany',
-			'className' => 'FeatureSet',
-			'conditions' => array('active' => true)
+		$TestModel2->bindModel(array(
+			'hasMany' => array(
+				'NewFeatureSet' => array(
+					'className' => 'FeatureSet',
+					'conditions' => array('active' => true)
+				)
+			)
 		));
+
 		$expected = array(
 			'className' => 'FeatureSet',
 			'conditions' => array('active' => true),

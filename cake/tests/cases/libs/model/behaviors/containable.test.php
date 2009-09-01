@@ -57,17 +57,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->Article =& ClassRegistry::init('Article');
 		$this->Tag =& ClassRegistry::init('Tag');
 
-		$this->User->bind(array(
-			'Article' => array('type' => 'hasMany'),
-			'ArticleFeatured' => array('type' => 'hasMany'),
-			'Comment' => array('type' => 'hasMany')
-		));
+		$this->User->bindModel(array(
+			'hasMany' => array('Article', 'ArticleFeatured', 'Comment')
+		), false);
 		$this->User->ArticleFeatured->unbindModel(array('belongsTo' => array('Category')), false);
 		$this->User->ArticleFeatured->hasMany['Comment']['foreignKey'] = 'article_id';
 
-		$this->Tag->bind(array(
-			'Article' => array('type' => 'hasAndBelongsToMany')
-		));
+		$this->Tag->bindModel(array(
+			'hasAndBelongsToMany' => array('Article')
+		), false);
 
 		$this->User->Behaviors->attach('Containable');
 		$this->Article->Behaviors->attach('Containable');
