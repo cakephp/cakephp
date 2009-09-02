@@ -476,16 +476,27 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Outputs the contents of the queries log.
+ * Get the query log as an array.
  *
- * @param boolean $sorted
- */
-	function showLog($sorted = false) {
+ * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
+ * @return array Array of queries run as an array
+ **/
+	function getLog($sorted = false) {
 		if ($sorted) {
 			$log = sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC);
 		} else {
 			$log = $this->_queriesLog;
 		}
+		return $log;
+	}
+
+/**
+ * Outputs the contents of the queries log.
+ *
+ * @param boolean $sorted Get the queries sorted by time taken, defaults to false
+ */
+	function showLog($sorted = false) {
+		$log = $this->getLog($sorted);
 
 		if ($this->_queriesCnt > 1) {
 			$text = 'queries';

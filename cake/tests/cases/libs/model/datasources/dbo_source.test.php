@@ -3620,11 +3620,11 @@ class DboSourceTest extends CakeTestCase {
 	function testHasAny() {
 		$this->testDb->hasAny($this->Model, array());
 		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
-		$this->assertEqual($this->testDb->simulated[0], $expected);
+		$this->assertEqual($this->testDb->simulated[1], $expected);
 
 		$this->testDb->hasAny($this->Model, array('TestModel.name' => 'harry'));
 		$expected = "SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = 'harry'";
-		$this->assertEqual($this->testDb->simulated[1], $expected);
+		$this->assertEqual($this->testDb->simulated[2], $expected);
 	}
 
 /**
@@ -3967,6 +3967,30 @@ class DboSourceTest extends CakeTestCase {
 
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
+	}
+
+/**
+ * test getting the query log as an array.
+ *
+ * @return void
+ **/
+	function testGetLog() {
+		$this->testDb->logQuery('Query 1');
+		$this->testDb->logQuery('Query 2');
+
+		$oldError = $this->testDb->error;
+		$this->testDb->error = true;
+		$result = $this->testDb->logQuery('Error 1');
+		$this->assertFalse($result);
+		$this->testDb->error = $oldError;
+
+		$log = $this->testDb->getLog();
+		$expected = array('query' => 'Query 1', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEqual($log[0], $expected);
+		$expected = array('query' => 'Query 2', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEqual($log[1], $expected);
+		$expected = array('query' => 'Error 1', 'error' => true, 'affected' => '', 'numRows' => '', 'took' => '');
+		$this->assertEqual($log[2], $expected);
 	}
 
 /**
