@@ -696,8 +696,13 @@ class View extends Object {
 			$helperNames = array_map(array('Inflector', 'variable'), $helpers);
 
 			for ($i = count($helpers) - 1; $i >= 0; $i--) {
-				${$helperNames[$i]} =& $loadedHelpers[$helpers[$i]];
-				$this->loaded[$helperNames[$i]] =& ${$helperNames[$i]};
+				$name = $helperNames[$i];
+
+				${$name} =& $loadedHelpers[$helpers[$i]];
+				$this->loaded[$name] =& ${$name};
+
+				$memberName = Inflector::camelize($name);
+				$this->{$memberName} =& ${$name};
 			}
 			$this->_triggerHelpers('beforeRender');
 		}

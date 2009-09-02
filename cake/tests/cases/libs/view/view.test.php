@@ -653,6 +653,11 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['form']->Html));
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 		$this->assertTrue(is_object($helpers['pluggedHelper']->OtherHelper));
+
+		$this->assertTrue(is_object($View->Html));
+		$this->assertTrue(is_object($View->Form));
+		$this->assertTrue(is_object($View->Form->Html));
+		$this->assertTrue(is_object($View->PluggedHelper->OtherHelper));
 	}
 
 /**
