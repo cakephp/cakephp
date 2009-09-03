@@ -453,7 +453,7 @@ class Model extends Overloadable {
  *
  * @param mixed $model A model or association name (string) or set of binding options (indexed by model name type)
  * @param array $options If $model is a string, this is the list of association properties with which $model will
- * 						 be bound
+ *    be bound
  * @param boolean $permanent Set to true to make the binding permanent
  * @return void
  * @access public
@@ -1114,8 +1114,8 @@ class Model extends Overloadable {
  *
  * @param array $data Data to save.
  * @param mixed $validate Either a boolean, or an array.
- * 			If a boolean, indicates whether or not to validate before saving.
- *			If an array, allows control of validate, callbacks, and fieldList
+ *   If a boolean, indicates whether or not to validate before saving.
+ *   If an array, allows control of validate, callbacks, and fieldList
  * @param array $fieldList List of fields to allow to be written
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @access public
@@ -1459,17 +1459,20 @@ class Model extends Overloadable {
  * Saves multiple individual records for a single model; Also works with a single record, as well as
  * all its associated records.
  *
+ * #### Options
+ *
+ * - validate: Set to false to disable validation, true to validate each record before
+ *   saving, 'first' to validate *all* records before any are saved, or 'only' to only
+ *   validate the records, but not save them.
+ * - atomic: If true (default), will attempt to save all records in a single transaction.
+ *   Should be set to false if database/table does not support transactions.
+ *   If false, we return an array similar to the $data array passed, but values are set to true/false
+ *   depending on whether each record saved successfully.
+ * - fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *
  * @param array $data Record data to save.  This can be either a numerically-indexed array (for saving multiple
- * 						records of the same type), or an array indexed by association name.
- * @param array $options Options to use when saving record data, which are as follows:
- * 							- validate: Set to false to disable validation, true to validate each record before
- * 							  saving, 'first' to validate *all* records before any are saved, or 'only' to only
- * 							  validate the records, but not save them.
- * 							- atomic: If true (default), will attempt to save all records in a single transaction.
- *							  Should be set to false if database/table does not support transactions.
- *								If false, we return an array similar to the $data array passed, but values are set to true/false
- *								depending on whether each record saved successfully.
- *							- fieldList: Equivalent to the $fieldList parameter in Model::save()
+ *     records of the same type), or an array indexed by association name.
+ * @param array $options Options to use when saving record data, See $options above.
  * @return mixed True on success, or false on failure
  * @access public
  * @link http://book.cakephp.org/view/84/Saving-Related-Model-Data-hasOne-hasMany-belongsTo
@@ -1664,7 +1667,7 @@ class Model extends Overloadable {
  * Updates multiple model records based on a set of conditions.
  *
  * @param array $fields Set of fields and values, indexed by fields.
- * 						Fields are treated as SQL snippets, to insert literal values manually escape your data.
+ *    Fields are treated as SQL snippets, to insert literal values manually escape your data.
  * @param mixed $conditions Conditions to match, true for all records
  * @return boolean True on success, false on failure
  * @access public
