@@ -88,7 +88,7 @@ class HtmlHelper extends AppHelper {
 		'error' => '<div%s>%s</div>',
 		'javascriptblock' => '<script type="text/javascript">%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
-		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
 		'javascriptend' => '</script>'
 	);
 
@@ -416,26 +416,34 @@ class HtmlHelper extends AppHelper {
  *
  * Can include one or many Javascript files.
  *
- * @param mixed $url String or array of javascript files to include
- * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
- * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be
+ * #### Options
+ *
+ * - `inline` - Whether script should be output inline or into scripts_for_layout.
+ * - `once` - Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
+ *
+ * @param mixed $url String or array of javascript files to include
+ * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
  *   included before.
  **/
-	function script($url, $inline = true, $once = true) {
+	function script($url, $options = array()) {
+		if (is_bool($options)) {
+			list($inline, $options) = array($options, array());
+			$options['inline'] = $inline;
+		}
+		$options = array_merge(array('inline' => true, 'once' => true), $options);
 		if (is_array($url)) {
 			$out = '';
 			foreach ($url as $i) {
-				$out .= "\n\t" . $this->script($i, $inline, $once);
+				$out .= "\n\t" . $this->script($i, $options);
 			}
-			if ($inline)  {
+			if ($options['inline'])  {
 				return $out . "\n";
 			}
 			return null;
 		}
-
-		if ($once && isset($this->__includedScripts[$url])) {
+		if ($options['once'] && isset($this->__includedScripts[$url])) {
 			return null;
 		}
 		$this->__includedScripts[$url] = true;
@@ -464,7 +472,10 @@ class HtmlHelper extends AppHelper {
 				$url = str_replace(JS_URL, 'cjs/', $url);
 			}
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+		$inline = $options['inline'];
+		unset($options['inline'], $options['once']);
+		$attributes = $this->_parseAttributes($options, ' ', ' ');
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url, $attributes));
 
 		if ($inline) {
 			return $out;

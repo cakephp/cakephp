@@ -448,16 +448,17 @@ class HtmlHelperTest extends CakeTestCase {
 		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('__cake_js_test', true, false);
+		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('__cake_js_test', true, false);
+		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
 	}
+
 /**
  * test that scripts added with uses() are only ever included once.
  * test script tag generation
@@ -498,8 +499,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->script(array('foo', 'bar', 'baz'));
 		$this->assertNoPattern('/foo.js/', $result);
 
-		$result = $this->Html->script('foo', true, false);
+		$result = $this->Html->script('foo', array('inline' => true, 'once' => false));
 		$this->assertNotNull($result);
+
+		$result = $this->Html->script('jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * test Script block generation
