@@ -703,8 +703,8 @@ class DboMssql extends DboSource {
 
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
-				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
-			} else {
+				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
+			} else if (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
@@ -713,8 +713,8 @@ class DboMssql extends DboSource {
 					$value['column'] = $this->name($value['column']);
 				}
 				$out .= "({$value['column']});";
+				$join[] = $out;
 			}
-			$join[] = $out;
 		}
 		return $join;
 	}

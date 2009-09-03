@@ -520,6 +520,33 @@ class DboMssqlTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * testBuildIndex method
+ *
+ * @return void
+ * @access public
+ */
+	function testBuildIndex() {
+		$indexes = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'client_id' => array('column' => 'client_id', 'unique' => 1)
+		);
+		$result = $this->db->buildIndex($indexes, 'items');
+		$expected = array(
+			'PRIMARY KEY ([id])',
+			'ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id]);'
+		);
+		$this->assertEqual($result, $expected);
+
+		$indexes = array('client_id' => array('column' => 'client_id'));
+		$result = $this->db->buildIndex($indexes, 'items');
+		$this->assertEqual($result, array());
+
+		$indexes = array('client_id' => array('column' => array('client_id', 'period_id'), 'unique' => 1));
+		$result = $this->db->buildIndex($indexes, 'items');
+		$expected = array('ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id], [period_id]);');
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testUpdateAllSyntax method
  *
  * @return void
