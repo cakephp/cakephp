@@ -86,7 +86,7 @@ class HtmlHelper extends AppHelper {
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
 		'error' => '<div%s>%s</div>',
-		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptblock' => '<script type="text/javascript"%s>%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
 		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
 		'javascriptend' => '</script>'
@@ -502,11 +502,14 @@ class HtmlHelper extends AppHelper {
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
-		if ($options['inline']) {
-			return sprintf($this->tags['javascriptblock'], $script);
+		$inline = $options['inline'];
+		unset($options['inline'], $options['safe']);
+		$attributes = $this->_parseAttributes($options, ' ', ' ');
+		if ($inline) {
+			return sprintf($this->tags['javascriptblock'], $attributes, $script);
 		} else {
 			$view =& ClassRegistry::getObject('view');
-			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
+			$view->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}

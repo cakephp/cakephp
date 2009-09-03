@@ -391,7 +391,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
-		
+
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
 
@@ -492,7 +492,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Html->script('foo');
 		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
 
@@ -523,7 +523,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
@@ -541,13 +541,21 @@ class HtmlHelperTest extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$view =& ClassRegistry::getObject('view');
 		$view =& new HtmlHelperMockView();
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/window\.foo\s\=\s2;/')));
-		
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
 		$this->assertNull($result);
+
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false, 'encoding' => 'utf-8'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'encoding' => 'utf-8'),
+			'window.foo = 2;',
+			'/script',
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * test script tag output buffering when using scriptStart() and scriptEnd();
