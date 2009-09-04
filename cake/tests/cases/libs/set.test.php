@@ -336,6 +336,21 @@ class SetTest extends CakeTestCase {
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'ASC');
 		$this->assertIdentical($a, $b);
+
+		$names = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$result = Set::sort($names, '{n}.employees.0.name', 'asc', 1);
+		$expected = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testExtract method
