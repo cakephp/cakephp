@@ -3675,6 +3675,18 @@ class FormHelperTest extends CakeTestCase {
 			':',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('published', array(
+			'timeFormat' => 24,
+			'interval' => 5,
+			'selected' => strtotime('2009-09-03 13:37:00'),
+			'type' => 'datetime'
+		));
+		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="09"[^<>]+selected="selected"[^>]*>September<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="03"[^<>]+selected="selected"[^>]*>3<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="13"[^<>]+selected="selected"[^>]*>13<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="35"[^<>]+selected="selected"[^>]*>35<\/option>/', $result);
 	}
 /**
  * testFormDateTimeMulti method

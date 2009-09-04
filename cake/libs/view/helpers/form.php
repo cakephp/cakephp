@@ -1610,15 +1610,16 @@ class FormHelper extends AppHelper {
 			}
 			$opt = implode($separator, $selects);
 		}
-
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$min = round($min * (1 / $interval)) * $interval;
+		}
+		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':
-				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
 			break;
 			case '12':
-				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
 				$this->meridian($fieldName, $meridian, $selectMeridianAttr, $showEmpty);
