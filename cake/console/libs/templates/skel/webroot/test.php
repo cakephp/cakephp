@@ -24,14 +24,6 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-/**
- * PHP 5.3 raises many notices in bootstrap.
- */
-if (!defined('E_DEPRECATED')) {
-   define('E_DEPRECATED', 8192);
-}
-error_reporting(E_ALL & ~E_DEPRECATED);
-
 set_time_limit(0);
 ini_set('memory_limit','128M');
 ini_set('display_errors', 1);
