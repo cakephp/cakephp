@@ -259,6 +259,9 @@ class DboMssql extends DboSource {
 		if ($data === null) {
 			return 'NULL';
 		}
+		if (in_array($column, array('integer', 'float', 'binary')) && $data === '') {
+			return 'NULL';
+		}
 		if ($data === '') {
 			return "''";
 		}

@@ -345,6 +345,18 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = "'1,2'";
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'integer');
+		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'float');
+		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'binary');
+		$this->assertIdentical($expected, $result);
 	}
 /**
  * testFields method
