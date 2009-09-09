@@ -42,7 +42,7 @@ class Configure extends Object {
  * @var integer
  * @access public
  */
-	var $debug = null;
+	var $debug = 0;
 
 /**
  * Returns a singleton instance of the Configure class.
@@ -106,24 +106,30 @@ class Configure extends Object {
 		}
 
 		if (isset($config['debug'])) {
+			$reporting = 0;
 			if ($_this->debug) {
-				error_reporting(E_ALL & ~E_DEPRECATED);
-
-				if (function_exists('ini_set')) {
-					ini_set('display_errors', 1);
-				}
-
 				if (!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
+				$reporting = E_ALL & ~E_DEPRECATED;
+				if (function_exists('ini_set')) {
+					ini_set('display_errors', 1);
+				}
+			} elseif (function_exists('ini_set')) {
+				ini_set('display_errors', 0);
+			}
+
+			if (isset($_this->log) && $_this->log) {
 				if (!class_exists('CakeLog')) {
 					require LIBS . 'cake_log.php';
 				}
-				Configure::write('log', LOG_NOTICE);
-			} else {
-				error_reporting(0);
-				Configure::write('log', LOG_NOTICE);
+				if (is_integer($_this->log) && !$_this->debug) {
+					$reporting = $_this->log;
+				} else {
+					$reporting = E_ALL & ~E_DEPRECATED;
+				}
 			}
+			error_reporting($reporting);
 		}
 	}
 
@@ -143,13 +149,6 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 
 		if ($var === 'debug') {
-			if (!isset($_this->debug)) {
-				if (defined('DEBUG')) {
-					$_this->debug = DEBUG;
-				} else {
-					$_this->debug = 0;
-				}
-			}
 			return $_this->debug;
 		}
 
