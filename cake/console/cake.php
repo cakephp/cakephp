@@ -207,7 +207,7 @@ class ShellDispatcher {
 		}
 
 		foreach ($pluginPaths as $pluginPath) {
-			$Folder =& new Folder($pluginPath);
+			$Folder = new Folder($pluginPath);
 			list($plugins,) = $Folder->read(false, true);
 			foreach ((array)$plugins as $plugin) {
 				$path = $pluginPath . Inflector::underscore($plugin) . DS . 'vendors' . DS . 'shells' . DS;
