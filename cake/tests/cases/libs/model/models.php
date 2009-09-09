@@ -3014,4 +3014,16 @@ class UuidTagNoWith extends CakeTestModel {
 	);
 }
 
+class ProductUpdateAll extends CakeTestModel {
+	var $name = 'ProductUpdateAll';
+	var $useTable = 'product_update_all';
+
+}
+
+class GroupUpdateAll extends CakeTestModel {
+	var $name = 'GroupUpdateAll';
+	var $useTable = 'group_update_all';
+
+}
+
 ?>
