@@ -50,9 +50,8 @@ if (!function_exists('clone')) {
  * Loads configuration files. Receives a set of configuration files
  * to load.
  * Example:
- * <code>
- * config('config1', 'config2');
- * </code>
+ *
+ * `config('config1', 'config2');`
  *
  * @return boolean Success
  */
@@ -79,9 +78,8 @@ if (!function_exists('clone')) {
  * Loads component/components from LIBS. Takes optional number of parameters.
  *
  * Example:
- * <code>
- * uses('flay', 'time');
- * </code>
+ *
+ * `uses('flay', 'time');`
  *
  * @param string $name Filename without the .php part
  */
@@ -212,14 +210,12 @@ if (!function_exists('array_combine')) {
  * Returns an array of all the given parameters.
  *
  * Example:
- * <code>
- * a('a', 'b')
- * </code>
+ *
+ * `a('a', 'b')`
  *
  * Would return:
- * <code>
- * array('a', 'b')
- * </code>
+ *
+ * `array('a', 'b')`
  *
  * @return array Array of given parameters
  * @link http://book.cakephp.org/view/694/a
@@ -232,14 +228,12 @@ if (!function_exists('array_combine')) {
  * Constructs associative array from pairs of arguments.
  *
  * Example:
- * <code>
- * aa('a','b')
- * </code>
+ *
+ * `aa('a','b')`
  *
  * Would return:
- * <code>
- * array('a'=>'b')
- * </code>
+ *
+ * `array('a'=>'b')`
  *
  * @return array Associative array
  * @link http://book.cakephp.org/view/695/aa
@@ -507,10 +501,9 @@ if (!function_exists('file_put_contents')) {
 /**
  * Used to delete files in the cache directories, or clear contents of cache directories
  *
- * @param mixed $params As String name to be searched for deletion, if name is a directory all files in directory will be deleted.
- *              If array, names to be searched for deletion.
- *              If clearCache() without params, all files in app/tmp/cache/views will be deleted
- *
+ * @param mixed $params As String name to be searched for deletion, if name is a directory all files in
+ *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
+ *   all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory
  * @param string $ext The file extension you are deleting
  * @return true if files found and deleted false otherwise
@@ -685,13 +678,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
@@ -723,13 +717,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_ALL       0
- * LC_COLLATE   1
- * LC_CTYPE     2
- * LC_MONETARY  3
- * LC_NUMERIC   4
- * LC_TIME      5
- * LC_MESSAGES  6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -758,13 +753,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $msg String to translate
  * @param integer $category Category
@@ -926,9 +922,8 @@ if (!function_exists('file_put_contents')) {
  * Wraps ternary operations. If $condition is a non-empty value, $val1 is returned, otherwise $val2.
  * Don't use for isset() conditions, or wrap your variable with @ operator:
  * Example:
- * <code>
- * ife(isset($variable), @$variable, 'default');
- * </code>
+ *
+ * `ife(isset($variable), @$variable, 'default');`
  *
  * @param mixed $condition Conditional expression
  * @param mixed $val1 Value to return in case condition matches

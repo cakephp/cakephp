@@ -25,7 +25,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
-require_once dirname(__FILE__) . DS . 'model_write.test.php';
 /**
  * ModelWriteTest
  *
@@ -3884,6 +3883,167 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
 	}
+/**
+ * TestFindAllWithoutForeignKey
+ *
+ * @link http://code.cakephp.org/tickets/view/69
+ * @access public
+ * @return void
+ */
+	function testFindAllForeignKey() {
+		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
+		$ProductUpdateAll =& new ProductUpdateAll();
+
+		$conditions = array('Group.name' => 'group one');
+
+        $ProductUpdateAll->bindModel(array(
+			'belongsTo' => array(
+				'Group' => array('className' => 'GroupUpdateAll')
+			)
+		));
+
+        $ProductUpdateAll->belongsTo = array(
+			'Group' => array('className' => 'GroupUpdateAll', 'foreignKey' => 'group_id')
+		);
+
+        $results = $ProductUpdateAll->find('all', compact('conditions'));
+		$this->assertTrue(!empty($results));
+
+        $ProductUpdateAll->bindModel(array('belongsTo'=>array('Group')));
+        $ProductUpdateAll->belongsTo = array(
+            'Group' => array(
+				'className' => 'GroupUpdateAll',
+				'foreignKey' => false,
+				'conditions' => 'ProductUpdateAll.groupcode = Group.code'
+			));
+
+        $resultsFkFalse = $ProductUpdateAll->find('all', compact('conditions'));
+        $this->assertTrue(!empty($resultsFkFalse));
+        $expected = array(
+            '0' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 1,
+                    'name'  => 'product one',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)
+                ),
+            '1' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 2,
+                    'name'  => 'product two',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)
+                )
+
+            );
+        $this->assertEqual($results, $expected);
+        $this->assertEqual($resultsFkFalse, $expected);
+    }
+/**
+ * testProductUpdateAllWithForeignKey
+ *
+ * @link http://code.cakephp.org/tickets/view/69
+ * @access public
+ * @return void
+ */
+    function testProductUpdateAll() {
+		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
+		$ProductUpdateAll =& new ProductUpdateAll();
+
+		$conditions = array('Group.name' => 'group one');
+
+        $ProductUpdateAll->bindModel(array('belongsTo' => array(
+			'Group' => array('className' => 'GroupUpdateAll')))
+		);
+
+        $ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
+        $results = $ProductUpdateAll->find('all', array(
+			'conditions' => array('ProductUpdateAll.name' => 'new product')
+		));
+        $expected = array(
+            '0' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 1,
+                    'name'  => 'new product',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)
+                ),
+            '1' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 2,
+                    'name'  => 'new product',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)));
+
+        $this->assertEqual($results, $expected);
+    }
+/**
+ * testProductUpdateAllWithoutForeignKey
+ *
+ * @link http://code.cakephp.org/tickets/view/69
+ * @access public
+ * @return void
+ */
+    function testProductUpdateAllWithoutForeignKey() {
+		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
+		$ProductUpdateAll =& new ProductUpdateAll();
+
+		$conditions = array('Group.name' => 'group one');
+
+        $ProductUpdateAll->bindModel(array('belongsTo' => array(
+			'Group' => array('className' => 'GroupUpdateAll')
+		)));
+
+        $ProductUpdateAll->belongsTo = array(
+            'Group' => array(
+				'className' => 'GroupUpdateAll',
+				'foreignKey' => false,
+				'conditions' => 'ProductUpdateAll.groupcode = Group.code'
+			)
+		);
+
+        $ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
+        $resultsFkFalse = $ProductUpdateAll->find('all', array('conditions' => array('ProductUpdateAll.name'=>'new product')));
+        $expected = array(
+            '0' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 1,
+                    'name'  => 'new product',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)
+                ),
+            '1' => array(
+                'ProductUpdateAll' => array(
+                    'id'  => 2,
+                    'name'  => 'new product',
+                    'groupcode'  => 120,
+                    'group_id'  => 1),
+                'Group' => array(
+                    'id' => 1,
+                    'name' => 'group one',
+                    'code' => 120)));
+        $this->assertEqual($resultsFkFalse, $expected);
+    }
 
 }
 

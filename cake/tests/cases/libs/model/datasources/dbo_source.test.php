@@ -2696,6 +2696,10 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->fields($this->Model, null, "(`Provider`.`star_total` / `Provider`.`total_ratings`) as `rating`");
+		$expected = array("(`Provider`.`star_total` / `Provider`.`total_ratings`) as `rating`");
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->fields($this->Model, 'Post');
 		$expected = array(
 			'`Post`.`id`', '`Post`.`client_id`', '`Post`.`name`', '`Post`.`login`',
@@ -2773,7 +2777,7 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array(
 			'`Foo`.`id`',
 			'`Foo`.`title`',
-			'(user_count + discussion_count + post_count) AS `score`'
+			'(user_count + discussion_count + post_count) AS score'
 		);
 		$this->assertEqual($result, $expected);
 	}

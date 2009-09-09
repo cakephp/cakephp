@@ -345,6 +345,18 @@ class DboMssqlTest extends CakeTestCase {
 		$expected = "'1,2'";
 		$result = $this->db->value('1,2', 'float');
 		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'integer');
+		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'float');
+		$this->assertIdentical($expected, $result);
+
+		$expected = 'NULL';
+		$result = $this->db->value('', 'binary');
+		$this->assertIdentical($expected, $result);
 	}
 /**
  * testFields method
@@ -517,6 +529,33 @@ class DboMssqlTest extends CakeTestCase {
 		$column = array('name' => 'name', 'type' => 'string', 'null' => true, 'default' => '', 'length' => '255');
 		$result = $this->db->buildColumn($column);
 		$expected = '[name] varchar(255) DEFAULT \'\'';
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testBuildIndex method
+ *
+ * @return void
+ * @access public
+ */
+	function testBuildIndex() {
+		$indexes = array(
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'client_id' => array('column' => 'client_id', 'unique' => 1)
+		);
+		$result = $this->db->buildIndex($indexes, 'items');
+		$expected = array(
+			'PRIMARY KEY ([id])',
+			'ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id]);'
+		);
+		$this->assertEqual($result, $expected);
+
+		$indexes = array('client_id' => array('column' => 'client_id'));
+		$result = $this->db->buildIndex($indexes, 'items');
+		$this->assertEqual($result, array());
+
+		$indexes = array('client_id' => array('column' => array('client_id', 'period_id'), 'unique' => 1));
+		$result = $this->db->buildIndex($indexes, 'items');
+		$expected = array('ALTER TABLE items ADD CONSTRAINT client_id UNIQUE([client_id], [period_id]);');
 		$this->assertEqual($result, $expected);
 	}
 /**

@@ -386,7 +386,10 @@ class Set extends Object {
 		$contexts = $data;
 		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
-			$contexts = array($data);
+			$current = current($data);
+			if ((is_array($current) && count($data) <= 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
+				$contexts = array($data);
+			}
 		}
 		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-]*\])/', $path), 1);
 
@@ -1070,7 +1073,7 @@ class Set extends Object {
 			if (!is_null($key)) {
 				$id = $key;
 			}
-			if (is_array($r)) {
+			if (is_array($r) && count($r)) {
 				$stack = array_merge($stack, Set::__flatten($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);

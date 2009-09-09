@@ -144,6 +144,18 @@ class TestView extends View {
 		return $this->_loadHelpers($loaded, $helpers, $parent);
 	}
 /**
+ * paths method
+ *
+ * @param string $plugin
+ * @param boolean $cached
+ * @access public
+ * @return void
+ */
+	function paths($plugin = null, $cached = true) {
+		return $this->_paths($plugin, $cached);
+	}
+
+/**
  * cakeError method
  *
  * @param mixed $method
@@ -237,7 +249,10 @@ class ViewTest extends CakeTestCase {
 
 		$View = new TestView($this->Controller);
 		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS));
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		Configure::write('viewPaths', array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS,
+		));
 
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS .'tests' . DS .'index.ctp';
 		$result = $View->getViewFileName('index');
@@ -247,6 +262,36 @@ class ViewTest extends CakeTestCase {
 		$result = $View->getLayoutFileName();
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * test that plugin/$plugin_name is only appended to the paths it should be.
+ *
+ * @return void
+ **/
+	function testPluginPathGeneration() {
+		$this->Controller->plugin = 'test_plugin';
+		$this->Controller->name = 'TestPlugin';
+		$this->Controller->viewPath = 'tests';
+		$this->Controller->action = 'index';
+
+		Configure::write('viewPaths', array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS,
+		));
+
+		$View = new TestView($this->Controller);
+		$paths = $View->paths();
+		$this->assertEqual($paths, Configure::read('viewPaths'));
+
+		$paths = $View->paths('test_plugin');
+		$expected = array(
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'plugins' . DS . 'test_plugin' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS,
+			TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+		);
+		$this->assertEqual($paths, $expected);
+	}
+
 /**
  * test that CamelCase plugins still find their view files.
  *

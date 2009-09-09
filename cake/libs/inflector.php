@@ -318,7 +318,8 @@ class Inflector extends Object {
 			'nexus', 'Niasese', 'Pekingese', 'Piedmontese', 'pincers', 'Pistoiese', 'pliers', 'Portuguese', 'proceedings',
 			'rabies', 'rice', 'rhinoceros', 'salmon', 'Sarawakese', 'scissors', 'sea[- ]bass', 'series', 'Shavese', 'shears',
 			'siemens', 'species', 'swine', 'testes', 'trousers', 'trout', 'tuna', 'Vermontese', 'Wenchowese',
-			'whiting', 'wildebeest', 'Yengeese');
+			'whiting', 'wildebeest', 'Yengeese'
+		);
 
 		$coreIrregularSingular = array(
 			'atlases' => 'atlas',
@@ -349,7 +350,9 @@ class Inflector extends Object {
 			'soliloquies' => 'soliloquy',
 			'testes' => 'testis',
 			'trilbys' => 'trilby',
-			'turfs' => 'turf');
+			'turfs' => 'turf',
+			'waves' => 'wave'
+		);
 
 		$singularRules = Set::pushDiff($this->__singularRules, $coreSingularRules);
 		$uninflected = Set::pushDiff($this->__uninflectedSingular, $coreUninflectedSingular);

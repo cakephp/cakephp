@@ -465,7 +465,7 @@ class DboOracle extends DboSource {
  * @access public
  */
 	function describe(&$model) {
-		$table = $model->fullTableName($model, false);
+		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
 			$this->_sequenceMap[$table] = $model->sequence;

@@ -171,6 +171,11 @@
 	Configure::write('Acl.classname', 'DbAcl');
 	Configure::write('Acl.database', 'default');
 /**
+ * If you are on PHP 5.3 uncomment this line and correct your server timezone
+ * to fix the date & time related errors.
+ */
+	//date_default_timezone_set('UTC');
+/**
  *
  * Cache Engine Configuration
  * Default settings provided below
