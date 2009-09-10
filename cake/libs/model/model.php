@@ -2020,7 +2020,6 @@ class Model extends Overloadable {
 			list($type, $query) = array($conditions, $fields);
 		}
 
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->findQueryType = $type;
 		$this->id = $this->getID();
 
@@ -2067,6 +2066,9 @@ class Model extends Overloadable {
 			}
 		}
 
+		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
+			return false;
+		}
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
 		$this->findQueryType = null;
