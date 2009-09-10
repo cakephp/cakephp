@@ -60,14 +60,13 @@ class CakeLogTest extends CakeTestCase {
 		Configure::write('log', E_ALL & ~E_DEPRECATED);
 		Configure::write('debug', 0);
 
-		$logger = new CakeLog();
-		Debugger::invoke($logger);
+		set_error_handler(array('CakeLog', 'handleError'));
 		$out .= '';
 
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: \(8\) Undefined variable: out in \[.+ line \d{2}\]$/', 
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Debug: Notice \(8\): Undefined variable: out in \[.+ line \d{2}\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');

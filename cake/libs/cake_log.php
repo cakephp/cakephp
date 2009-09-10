@@ -118,23 +118,26 @@ class CakeLog {
 			case E_CORE_ERROR:
 			case E_COMPILE_ERROR:
 			case E_USER_ERROR:
+				$error = 'Fatal Error';
 				$level = LOG_ERROR;
 			break;
 			case E_WARNING:
 			case E_USER_WARNING:
 			case E_COMPILE_WARNING:
 			case E_RECOVERABLE_ERROR:
+				$error = 'Warning';
 				$level = LOG_WARNING;
 			break;
 			case E_NOTICE:
 			case E_USER_NOTICE:
+				$error = 'Notice';
 				$level = LOG_NOTICE;
 			break;
 			default:
-				return false;
+				return;
 			break;
 		}
-		$message = '(' . $code . ') ' . $description . ' in [' . $file . ', line ' . $line . ']';
+		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		CakeLog::write($level, $message);
 	}
 }

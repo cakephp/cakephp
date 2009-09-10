@@ -1,6 +1,5 @@
 <?php
 /* SVN FILE: $Id$ */
-
 /**
  * This is core configuration file.
  *
@@ -41,6 +40,21 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
+
+/**
+ * CakePHP Log Level:
+ *
+ * In case of Production Mode CakePHP gives you the possibility to continue logging errors.
+ *
+ * The following parameters can be used:
+ *  Boolean: Set true/false to activate/deactivate logging
+ *    Configure::write('log', true);
+ *
+ *  Integer: Use built-in PHP constants to set the error level (see error_reporting)
+ *    Configure::write('log', E_ERROR | E_WARNING);
+ *    Configure::write('log', E_ALL ^ E_NOTICE);
+ */
+	Configure::write('log', true);
 
 /**
  * Application wide charset encoding
@@ -104,10 +118,20 @@
  * To define a custom session handler, save it at /app/config/<name>.php.
  * Set the value of 'Session.save' to <name> to utilize it in CakePHP.
  *
- * To use database sessions, execute the SQL file found at /app/config/sql/sessions.sql.
+ * To use database sessions, run the app/config/schema/sessions.php schema using
+ * the cake shell command: cake schema run create Sessions
  *
  */
 	Configure::write('Session.save', 'php');
+
+/**
+ * The model name to be used for the session model.
+ *
+ * 'Session.save' must be set to 'database' in order to utilize this constant.
+ *
+ * The model name set here should *not* be used elsewhere in your application.
+ */
+	//Configure::write('Session.model', 'Session');
 
 /**
  * The name of the table used to store CakePHP database sessions.
@@ -115,6 +139,11 @@
  * 'Session.save' must be set to 'database' in order to utilize this constant.
  *
  * The table name set here should *not* include any table prefix defined elsewhere.
+ *
+ * Please note that if you set a value for Session.model (above), any value set for
+ * Session.table will be ignored.
+ *
+ * [Note: Session.table is deprecated as of CakePHP 1.3]
  */
 	//Configure::write('Session.table', 'cake_sessions');
 
@@ -195,6 +224,7 @@
  * to fix the date & time related errors.
  */
 	//date_default_timezone_set('UTC');
+
 /**
  *
  * Cache Engine Configuration
