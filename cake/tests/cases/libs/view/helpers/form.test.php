@@ -2235,14 +2235,14 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'data[Model][field]', 'value' => 'default value', 'id' => 'ModelField')));
 	}
 /**
- * testFieldError method
+ * testError method
  *
  * Test field error generation
  *
  * @access public
  * @return void
  */
-	function testFieldError() {
+	function testError() {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$result = $this->Form->error('Model.field');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field Field', '/div'));
@@ -2269,6 +2269,15 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
 		$this->assertEqual($result, '<strong>Badness!</strong>');
+
+		$this->Form->validationErrors['Model']['field'] = "email";
+		$result = $this->Form->error('Model.field', array('class' => 'field-error', 'email' => 'No good!'));
+		$expected = array(
+			'div' => array('class' => 'field-error'),
+			'No good!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * testPassword method
