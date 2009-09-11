@@ -678,8 +678,8 @@ class AuthComponent extends Object {
  */
 	function logout() {
 		$this->__setDefaults();
-		$this->Session->del($this->sessionKey);
-		$this->Session->del('Auth.redirect');
+		$this->Session->delete($this->sessionKey);
+		$this->Session->delete('Auth.redirect');
 		$this->_loggedIn = false;
 		return Router::normalize($this->logoutRedirect);
 	}
@@ -915,7 +915,7 @@ class AuthComponent extends Object {
  */
 	function shutdown(&$controller) {
 		if ($this->_loggedIn) {
-			$this->Session->del('Auth.redirect');
+			$this->Session->delete('Auth.redirect');
 		}
 	}
 }
