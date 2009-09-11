@@ -32,6 +32,39 @@
 class NumberHelper extends AppHelper {
 
 /**
+ * Currencies supported by the helper.  You can add additional currency formats
+ * with NumberHelper::addFormat
+ *
+ * @var array
+ * @access protected
+ **/
+	var $_currencies = array(
+		'USD' => array(
+			'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
+			'decimals' => '.', 'negative' => '()', 'escape' => true
+		),
+		'GBP' => array(
+			'before'=>'&#163;', 'after' => 'p', 'zero' => 0, 'places' => 2, 'thousands' => ',',
+			'decimals' => '.', 'negative' => '()','escape' => false
+		),
+		'EUR' => array(
+			'before'=>'&#8364;', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => '.',
+			'decimals' => ',', 'negative' => '()', 'escape' => false
+		)
+	);
+
+/**
+ * Default options for currency formats
+ *
+ * @var array
+ * @access protected
+ **/
+	var $_currencyDefaults = array(
+		'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
+		'decimals' => '.','negative' => '()', 'escape' => true
+	);
+
+/**
  * Formats a number with a level of precision.
  *
  * @param  float	$number	A floating point number.
@@ -127,27 +160,10 @@ class NumberHelper extends AppHelper {
  * @return string Number formatted as a currency.
  */
 	function currency($number, $currency = 'USD', $options = array()) {
-		$default = array(
-			'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
-			'decimals' => '.','negative' => '()', 'escape' => true
-		);
-		$currencies = array(
-			'USD' => array(
-				'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
-				'decimals' => '.', 'negative' => '()', 'escape' => true
-			),
-			'GBP' => array(
-				'before'=>'&#163;', 'after' => 'p', 'zero' => 0, 'places' => 2, 'thousands' => ',',
-				'decimals' => '.', 'negative' => '()','escape' => false
-			),
-			'EUR' => array(
-				'before'=>'&#8364;', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => '.',
-				'decimals' => ',', 'negative' => '()', 'escape' => false
-			)
-		);
+		$default = $this->_currencyDefaults;
 
-		if (isset($currencies[$currency])) {
-			$default = $currencies[$currency];
+		if (isset($this->_currencies[$currency])) {
+			$default = $this->_currencies[$currency];
 		} elseif (is_string($currency)) {
 			$options['before'] = $currency;
 		}
@@ -184,5 +200,33 @@ class NumberHelper extends AppHelper {
 		}
 		return $result;
 	}
+
+/**
+ * Add a currency format to the Number helper.  Makes reusing
+ * currency formats easier.
+ *
+ * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ * 
+ * You can now use `NOK` as a shortform when formatting currency amounts.
+ *
+ * {{{ $number->currency($value, 'NOK'); }}}
+ *
+ * Added formats are merged with the following defaults.
+ *
+ * {{{
+ *	array(
+ *		'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
+ *		'decimals' => '.', 'negative' => '()', 'escape' => true
+ *	)
+ * }}}
+ *
+ * @param string $formatName The format name to be used in the future.
+ * @param array $options The array of options for this format.
+ * @return void
+ **/
+	function addFormat($formatName, $options) {
+		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;
+	}
+
 }
 ?>

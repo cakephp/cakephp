@@ -64,7 +64,7 @@ class NumberHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFormatAndCurrency() {
+	function testFormat() {
 		$value = '100100100';
 
 		$result = $this->Number->format($value, '#');
@@ -91,6 +91,8 @@ class NumberHelperTest extends CakeTestCase {
  * @return void
  */
 	function testCurrency() {
+		$value = '100100100';
+
 		$result = $this->Number->currency($value);
 		$expected = '$100,100,100.00';
 		$this->assertEqual($expected, $result);
@@ -139,12 +141,18 @@ class NumberHelperTest extends CakeTestCase {
  * @return void
  */
 	function testCurrencyAddFormat() {
-		if ($this->skipIf(true, 'NumberHelper::addFormat Not implemented')) {
-			return;
-		}
-		$this->Number->addFormat('NOK',array('before'=>'Kr. '));
-		$result = $this->Number->currency(1000,'NOK');
+		$this->Number->addFormat('NOK', array('before' => 'Kr. '));
+		$result = $this->Number->currency(1000, 'NOK');
 		$expected = 'Kr. 1,000.00';
+		$this->assertEqual($expected,$result);
+
+		$this->Number->addFormat('Other', array('before' => '$$ ', 'after' => 'c!'));
+		$result = $this->Number->currency(0.22, 'Other');
+		$expected = '22c!';
+		$this->assertEqual($expected,$result);
+
+		$result = $this->Number->currency(-10, 'Other');
+		$expected = '($$ 10.00)';
 		$this->assertEqual($expected,$result);
 	}
 
