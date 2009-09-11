@@ -168,7 +168,7 @@ class ExtractTask extends Shell{
 		} else {
 			$response = '';
 			while ($response == '') {
-				$response = $this->in("What is the full path you would like to output?\nExample: " . $this->path . DS . "locale\n[Q]uit", null, $this->path . DS . "locale");
+				$response = $this->in("What is the full path you would like to output?\nExample: " . $this->path . DS . "locale\n[Q]uit", null, $this->path . DS . 'locale');
 				if (strtoupper($response) === 'Q') {
 					$this->out('Extract Aborted');
 					$this->_stop();
@@ -199,14 +199,14 @@ class ExtractTask extends Shell{
 		$this->out('');
 		$this->out(__('Extracting...', true));
 		$this->hr();
-		$this->out(__('Path: ', true). $this->path);
-		$this->out(__('Output Directory: ', true). $this->__output);
+		$this->out(__('Path: ', true) . $this->path);
+		$this->out(__('Output Directory: ', true) . $this->__output);
 		$this->hr();
 
 		$response = '';
 		$filename = '';
 		while ($response == '') {
-			$response = $this->in(__('Would you like to merge all translations into one file?', true), array('y','n'), 'y');
+			$response = $this->in(__('Would you like to merge all translations into one file?', true), array('y', 'n'), 'y');
 			if (strtolower($response) == 'n') {
 				$this->__oneFile = false;
 			} else {
@@ -343,7 +343,7 @@ class ExtractTask extends Shell{
 							$this->__strings[$this->__formatString($singular)][$this->__file][] = $line;
 						}
 					} else {
-						if ($plural) {
+						if (isset($plural)) {
 							$this->__strings[$this->__file][$this->__formatString($singular) . "\0" . $this->__formatString($plural)][] = $line;
 						} else {
 							$this->__strings[$this->__file][$this->__formatString($singular)][] = $line;
@@ -458,9 +458,9 @@ class ExtractTask extends Shell{
 		$output = $this->__mergeFiles($output);
 
 		foreach ($output as $file => $content) {
-			$tmp = str_replace(array($this->path, '.php','.ctp','.thtml', '.inc','.tpl' ), '', $file);
+			$tmp = str_replace(array($this->path, '.php', '.ctp', '.thtml', '.inc', '.tpl'), '', $file);
 			$tmp = str_replace(DS, '.', $tmp);
-			$file = str_replace('.', '-', $tmp) .'.pot';
+			$file = str_replace('.', '-', $tmp) . '.pot';
 			$fileList = $content[1];
 
 			unset($content[1]);
@@ -478,14 +478,14 @@ class ExtractTask extends Shell{
 			if (is_file($this->__output . $file)) {
 				$response = '';
 				while ($response == '') {
-					$response = $this->in("\n\nError: ".$file . ' already exists in this location. Overwrite?', array('y','n', 'q'), 'n');
+					$response = $this->in("\n\nError: ".$file . ' already exists in this location. Overwrite?', array('y', 'n', 'q'), 'n');
 					if (strtoupper($response) === 'Q') {
 						$this->out('Extract Aborted');
 						$this->_stop();
 					} elseif (strtoupper($response) === 'N') {
 						$response = '';
 						while ($response == '') {
-							$response = $this->in("What would you like to name this file?\nExample: new_" . $file, null, "new_" . $file);
+							$response = $this->in("What would you like to name this file?\nExample: new_" . $file, null, 'new_' . $file);
 							$file = $response;
 						}
 					}
@@ -626,7 +626,7 @@ class ExtractTask extends Shell{
  */
 	function __searchDirectory($path = null) {
 		if ($path === null) {
-			$path = $this->path .DS;
+			$path = $this->path . DS;
 		}
 		$files = glob("$path*.{php,ctp,thtml,inc,tpl}", GLOB_BRACE);
 		$dirs = glob("$path*", GLOB_ONLYDIR);
@@ -636,7 +636,7 @@ class ExtractTask extends Shell{
 
 		foreach ($dirs as $dir) {
 			if (!preg_match("!(^|.+/)(CVS|.svn)$!", $dir)) {
-				$files = array_merge($files, $this->__searchDirectory("$dir" . DS));
+				$files = array_merge($files, $this->__searchDirectory($dir . DS));
 				if (($id = array_search($dir . DS . 'extract.php', $files)) !== FALSE) {
 					unset($files[$id]);
 				}
