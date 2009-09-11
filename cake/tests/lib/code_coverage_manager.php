@@ -498,7 +498,7 @@ class CodeCoverageManager {
 
 		$folder =& new Folder();
 		$folder->cd(ROOT . DS . CAKE_TESTS_LIB);
-		$contents = $folder->ls();
+		$contents = $folder->read();
 
 		if (in_array(basename($testFile), $contents[1])) {
 			$testFile = basename($testFile);

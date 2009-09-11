@@ -510,12 +510,14 @@ class CakeSession extends Object {
 						ini_set('session.auto_start', 0);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('CakeSession', '__read'),
-													array('CakeSession', '__write'),
-													array('CakeSession', '__destroy'),
-													array('CakeSession', '__gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('CakeSession', '__read'),
+					array('CakeSession', '__write'),
+					array('CakeSession', '__destroy'),
+					array('CakeSession', '__gc')
+				);
 			break;
 			case 'php':
 				if (empty($_SESSION)) {
@@ -542,12 +544,14 @@ class CakeSession extends Object {
 						ini_set('session.cookie_path', $this->path);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('Cache', 'read'),
-													array('Cache', 'write'),
-													array('Cache', 'delete'),
-													array('Cache', 'gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('Cache', 'read'),
+					array('Cache', 'write'),
+					array('Cache', 'delete'),
+					array('Cache', 'gc')
+				);
 			break;
 			default:
 				if (empty($_SESSION)) {

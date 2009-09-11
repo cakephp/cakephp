@@ -857,6 +857,18 @@ class Post extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array('Author');
+
+	function beforeFind($queryData) {
+		if (isset($queryData['connection'])) {
+			$this->useDbConfig = $queryData['connection'];
+		}
+		return true;
+	}
+
+	function afterFind($results) {
+		$this->useDbConfig = 'test_suite';
+		return $results;
+	}
 }
 
 /**

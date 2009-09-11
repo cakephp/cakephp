@@ -274,7 +274,6 @@ class Debugger extends Object {
 			return;
 		}
 
-		$level = LOG_DEBUG;
 		switch ($code) {
 			case E_PARSE:
 			case E_ERROR:
@@ -297,7 +296,7 @@ class Debugger extends Object {
 				$level = LOG_NOTICE;
 			break;
 			default:
-				return false;
+				return;
 			break;
 		}
 

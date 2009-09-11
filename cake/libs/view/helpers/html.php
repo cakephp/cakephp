@@ -1,25 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * Html Helper class file.
  *
  * Simplifies the construction of HTML elements.
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.9.1
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
@@ -90,9 +86,9 @@ class HtmlHelper extends AppHelper {
 		'ol' => '<ol%s>%s</ol>',
 		'li' => '<li%s>%s</li>',
 		'error' => '<div%s>%s</div>',
-		'javascriptblock' => '<script type="text/javascript">%s</script>',
+		'javascriptblock' => '<script type="text/javascript"%s>%s</script>',
 		'javascriptstart' => '<script type="text/javascript">',
-		'javascriptlink' => '<script type="text/javascript" src="%s"></script>',
+		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
 		'javascriptend' => '</script>'
 	);
 
@@ -420,26 +416,34 @@ class HtmlHelper extends AppHelper {
  *
  * Can include one or many Javascript files.
  *
- * @param mixed $url String or array of javascript files to include
- * @param boolean $inline Whether script should be output inline or into scripts_for_layout.
- * @param boolean $once Whether or not the script should be checked for uniqueness. If true scripts will only be
+ * #### Options
+ *
+ * - `inline` - Whether script should be output inline or into scripts_for_layout.
+ * - `once` - Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
+ *
+ * @param mixed $url String or array of javascript files to include
+ * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
  *   included before.
  **/
-	function script($url, $inline = true, $once = true) {
+	function script($url, $options = array()) {
+		if (is_bool($options)) {
+			list($inline, $options) = array($options, array());
+			$options['inline'] = $inline;
+		}
+		$options = array_merge(array('inline' => true, 'once' => true), $options);
 		if (is_array($url)) {
 			$out = '';
 			foreach ($url as $i) {
-				$out .= "\n\t" . $this->script($i, $inline, $once);
+				$out .= "\n\t" . $this->script($i, $options);
 			}
-			if ($inline)  {
+			if ($options['inline'])  {
 				return $out . "\n";
 			}
 			return null;
 		}
-
-		if ($once && isset($this->__includedScripts[$url])) {
+		if ($options['once'] && isset($this->__includedScripts[$url])) {
 			return null;
 		}
 		$this->__includedScripts[$url] = true;
@@ -468,7 +472,10 @@ class HtmlHelper extends AppHelper {
 				$url = str_replace(JS_URL, 'cjs/', $url);
 			}
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+		$inline = $options['inline'];
+		unset($options['inline'], $options['once']);
+		$attributes = $this->_parseAttributes($options, ' ', ' ');
+		$out = $this->output(sprintf($this->tags['javascriptlink'], $url, $attributes));
 
 		if ($inline) {
 			return $out;
@@ -495,11 +502,14 @@ class HtmlHelper extends AppHelper {
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
-		if ($options['inline']) {
-			return sprintf($this->tags['javascriptblock'], $script);
+		$inline = $options['inline'];
+		unset($options['inline'], $options['safe']);
+		$attributes = $this->_parseAttributes($options, ' ', ' ');
+		if ($inline) {
+			return sprintf($this->tags['javascriptblock'], $attributes, $script);
 		} else {
 			$view =& ClassRegistry::getObject('view');
-			$view->addScript(sprintf($this->tags['javascriptblock'], $script));
+			$view->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}
