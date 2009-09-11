@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Number Helper.
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -42,7 +37,6 @@ class NumberHelper extends AppHelper {
  * @param  float	$number	A floating point number.
  * @param  integer $precision The precision of the returned number.
  * @return float Enter description here...
- * @static
  */
 	function precision($number, $precision = 3) {
 		return sprintf("%01.{$precision}f", $number);
@@ -53,7 +47,6 @@ class NumberHelper extends AppHelper {
  *
  * @param integer $length Size in bytes
  * @return string Human readable size
- * @static
  */
 	function toReadableSize($size) {
 		switch (true) {
@@ -76,7 +69,6 @@ class NumberHelper extends AppHelper {
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
  * @return string Percentage string
- * @static
  */
 	function toPercentage($number, $precision = 2) {
 		return $this->precision($number, $precision) . '%';
@@ -89,7 +81,6 @@ class NumberHelper extends AppHelper {
  * @param integer $options if int then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
- * @static
  */
 	function format($number, $options = false) {
 		$places = 0;
