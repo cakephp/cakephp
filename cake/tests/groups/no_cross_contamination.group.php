@@ -36,7 +36,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class NoCrossContaminationGroupTest extends GroupTest {
+class NoCrossContaminationGroupTest extends TestSuite {
 
 /**
  * label property

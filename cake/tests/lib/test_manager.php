@@ -86,11 +86,11 @@ class TestManager {
 
 		$testCases =& $manager->_getTestFileList($manager->_getTestsPath());
 		if ($manager->appTest) {
-			$test =& new GroupTest('All App Tests');
+			$test =& new TestSuite('All App Tests');
 		} else if ($manager->pluginTest) {
-			$test =& new GroupTest('All ' . Inflector::humanize($manager->pluginTest) . ' Plugin Tests');
+			$test =& new TestSuite('All ' . Inflector::humanize($manager->pluginTest) . ' Plugin Tests');
 		} else {
-			$test =& new GroupTest('All Core Tests');
+			$test =& new TestSuite('All Core Tests');
 		}
 
 		if ($testing) {
@@ -126,7 +126,7 @@ class TestManager {
 			return true;
 		}
 
-		$test =& new GroupTest("Individual test case: " . $testCaseFile);
+		$test =& new TestSuite("Individual test case: " . $testCaseFile);
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
@@ -148,7 +148,7 @@ class TestManager {
 		}
 
 		require_once $filePath;
-		$test =& new GroupTest($groupTestName . ' group test');
+		$test =& new TestSuite($groupTestName . ' group test');
 		foreach ($manager->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
@@ -273,12 +273,13 @@ class TestManager {
  */
 	function &_getGroupTestClassNames($groupTestFile) {
 		$file = implode("\n", file($groupTestFile));
-		preg_match("~lass\s+?(.*)\s+?extends GroupTest~", $file, $matches);
+		preg_match("~lass\s+?(.*)\s+?extends TestSuite~", $file, $matches);
 		if (!empty($matches)) {
 			unset($matches[0]);
 			return $matches;
 		}
-		return array();
+		$matches = array();
+		return $matches;
 	}
 
 /**
