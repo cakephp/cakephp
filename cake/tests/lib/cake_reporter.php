@@ -27,20 +27,22 @@
  */
 
 /**
- * Short description for class.
+ * CakeHtmlReporter Reports Results of TestSuites and Test Cases
+ * in an HTML format / context.
  *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package cake
+ * @subpackage cake.cake.tests.lib
  */
 class CakeHtmlReporter extends SimpleReporter {
 	var $_character_set;
 	var $_show_passes = false;
 
 /**
- *    Does nothing yet. The first output will
- *    be sent on the first test start. For use
- *    by a web browser.
- *    @access public
+ * Does nothing yet. The first output will
+ * be sent on the first test start. For use
+ * by a web browser.
+ *
+ * @access public
  */
 	function CakeHtmlReporter($character_set = 'ISO-8859-1') {
 		if (isset($_GET['show_passes']) && $_GET['show_passes']) {
@@ -53,7 +55,8 @@ class CakeHtmlReporter extends SimpleReporter {
 /**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
- * @param string $test_name      Name class of test.
+ *
+ * @param string $test_name Name class of test.
  * @access public
  */
 	function paintHeader($testName) {
@@ -66,6 +69,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Send the headers necessary to ensure the page is
  * reloaded on every request. Otherwise you could be
  * scratching your head over out of date test data.
+ *
  * @access public
  * @static
  */
@@ -82,7 +86,8 @@ class CakeHtmlReporter extends SimpleReporter {
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
- * @param string $test_name        Name class of test.
+ *
+ * @param string $test_name Name class of test.
  * @access public
  */
 	function paintFooter($test_name) {
@@ -103,8 +108,9 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints the test failure with a breadcrumbs
  * trail of the nesting test suites below the
  * top level test.
+ *
  * @param string $message Failure message displayed in
- *                       the context of the other tests.
+ *   the context of the other tests.
  * @access public
  */
 	function paintFail($message) {
@@ -122,8 +128,8 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints the test pass with a breadcrumbs
  * trail of the nesting test suites below the
  * top level test.
- * @param string $message Pass message displayed in
- *                        the context of the other tests.
+ *
+ * @param string $message Pass message displayed in the context of the other tests.
  * @access public
  */
 	function paintPass($message) {
@@ -142,6 +148,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints a PHP error.
+ *
  * @param string $message Message is ignored.
  * @access public
  */
@@ -158,6 +165,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints a PHP exception.
+ *
  * @param Exception $exception Exception to display.
  * @access public
  */
@@ -178,6 +186,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Prints the message for skipping tests.
+ *
  * @param string $message    Text of skip condition.
  * @access public
  */
@@ -191,6 +200,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints formatted text such as dumped variables.
+ *
  * @param string $message Text to show.
  * @access public
  */
@@ -200,6 +210,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Character set adjusted entity conversion.
+ *
  * @param string $message Plain text or Unicode message.
  * @return string Browser readable message.
  * @access protected
