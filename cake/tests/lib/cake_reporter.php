@@ -37,6 +37,10 @@ class CakeHtmlReporter extends SimpleReporter {
 	var $_character_set;
 	var $_show_passes = false;
 
+	var $_timeStart = 0;
+	var $_timeEnd = 0;
+	var $_timeDuration = 0;
+
 /**
  * Does nothing yet. The first output will
  * be sent on the first test start. For use
@@ -50,6 +54,41 @@ class CakeHtmlReporter extends SimpleReporter {
 		}
 		$this->SimpleReporter();
 		$this->_character_set = $character_set;
+	}
+
+/**
+ * Signals / Paints the beginning of a TestSuite executing.
+ * Starts the timer for the TestSuite execution time.
+ *
+ * @param 
+ * @return void
+ **/
+	function paintGroupStart($test_name, $size) {
+		$this->_timeStart = $this->_getTime();
+		parent::paintGroupStart($test_name, $size);
+	}
+
+/**
+ * Signals/Paints the end of a TestSuite. All test cases have run
+ * and timers are stopped.
+ *
+ * @return void
+ **/
+	function paintGroupEnd($test_name) {
+		$this->_timeEnd = $this->_getTime();
+		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
+		parent::paintGroupEnd($test_name);
+	}
+
+/**
+ * Get the current time in microseconds. Similar to getMicrotime in basics.php
+ * but in a separate function to reduce dependancies.
+ *
+ * @return float Time in microseconds
+ **/
+	function _getTime() {
+		list($usec, $sec) = explode(' ', microtime());
+		return ((float)$sec + (float)$usec);
 	}
 
 /**
@@ -102,6 +141,12 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<strong>" . $this->getFailCount() . "</strong> fails and ";
 		echo "<strong>" . $this->getExceptionCount() . "</strong> exceptions.";
 		echo "</div>\n";
+		echo '<div style="padding:0 0 5px;">';
+		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $this->_timeDuration . '</p>';
+		if (function_exists('memory_get_peak_usage')) {
+			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
+		}
+		echo '</div>';
 	}
 
 /**
