@@ -265,6 +265,9 @@ class BasicsTest extends CakeTestCase {
  */
 	function testCache() {
 		$_cacheDisable = Configure::read('Cache.disable');
+		if ($this->skipIf($_cacheDisable, 'Cache is disabled, skipping cache() tests. %s')) {
+			return;
+		}
 
 		Configure::write('Cache.disable', true);
 		$result = cache('basics_test', 'simple cache write');
@@ -297,6 +300,11 @@ class BasicsTest extends CakeTestCase {
  * @return void
  */
 	function testClearCache() {
+		$cacheOff = Configure::read('Cache.disable');
+		if ($this->skipIf($cacheOff, 'Cache is disabled, skipping clearCache() tests. %s')) {
+			return;
+		}
+
 		cache('views' . DS . 'basics_test.cache', 'simple cache write');
 		$this->assertTrue(file_exists(CACHE . 'views' . DS . 'basics_test.cache'));
 
