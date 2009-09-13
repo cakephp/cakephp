@@ -545,6 +545,30 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/User/@*', $tricky);
 		$this->assertEqual($r, $expected);
 
+		$nonZero = array(
+			1 => array(
+				'User' => array(
+					'id' => 1,
+					'name' => 'John',
+				)
+			),
+			2 => array(
+				'User' => array(
+					'id' => 2,
+					'name' => 'Bob',
+				)
+			),
+			3 => array(
+				'User' => array(
+					'id' => 3,
+					'name' => 'Tony',
+				)
+			)
+		);
+		$expected = array(1, 2, 3);
+		$r = Set::extract('/User/id', $nonZero);
+		$this->assertEqual($r, $expected);
+
 		$common = array(
 			array(
 				'Article' => array(
@@ -979,7 +1003,6 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
-
 	}
 
 /**
@@ -2423,7 +2446,7 @@ class SetTest extends CakeTestCase {
 			array(
 				'Item' => array(
 					'title' => 'An example of a correctly reversed XMLNode',
-					'Desc' => array(),
+					'desc' => array(),
 				)
 			)
 		);

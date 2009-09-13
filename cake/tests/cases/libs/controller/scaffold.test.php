@@ -621,7 +621,6 @@ class ScaffoldTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.posts_tag', 'core.tag');
-
 /**
  * startTest method
  *

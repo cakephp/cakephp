@@ -121,7 +121,7 @@ class ApiShell extends Shell {
 				$this->out($list);
 
 				$methods = array_keys($parsed);
-				while ($number = $this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.', true), null, 'q')) {
+				while ($number = strtolower($this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.', true), null, 'q'))) {
 					if ($number === 'q') {
 						$this->out(__('Done', true));
 						$this->_stop();
