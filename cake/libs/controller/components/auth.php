@@ -772,10 +772,11 @@ class AuthComponent extends Object {
  * @return boolean ACO node path
  * @access public
  */
-	function action($action = ':controller/:action') {
+	function action($action = ':plugin/:controller/:action') {
+		$plugin = empty($this->params['plugin']) ? null : Inflector::camelize($this->params['plugin']) . '/';
 		return str_replace(
-			array(':controller', ':action'),
-			array(Inflector::camelize($this->params['controller']), $this->params['action']),
+			array(':controller', ':action', ':plugin/'),
+			array(Inflector::camelize($this->params['controller']), $this->params['action'], $plugin),
 			$this->actionPath . $action
 		);
 	}

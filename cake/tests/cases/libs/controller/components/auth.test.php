@@ -825,6 +825,35 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test the action() method
+ *
+ * @return void
+ **/
+	function testActionMethod() {
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->actionPath = 'ROOT/';
+
+		$result = $this->Controller->Auth->action();
+		$this->assertEqual($result, 'ROOT/AuthTest/add');
+
+		$result = $this->Controller->Auth->action(':controller');
+		$this->assertEqual($result, 'ROOT/AuthTest');
+
+		$result = $this->Controller->Auth->action(':controller');
+		$this->assertEqual($result, 'ROOT/AuthTest');
+		
+		$this->Controller->params['plugin'] = 'test_plugin';
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+		$this->Controller->Auth->initialize($this->Controller);
+		$result = $this->Controller->Auth->action();
+		$this->assertEqual($result, 'ROOT/TestPlugin/AuthTest/add');
+	}
+
+/**
  * test that deny() converts camel case inputs to lowercase.
  *
  * @return void
