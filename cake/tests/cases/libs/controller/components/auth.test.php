@@ -24,6 +24,8 @@ App::import('Component', array('Auth', 'Acl'));
 App::import('Model', 'DbAcl');
 App::import('Core', 'Xml');
 
+Mock::generate('AclComponent', 'AuthTestMockAclComponent');
+
 /**
 * TestAuthComponent class
 *
@@ -735,7 +737,7 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Controller->Acl->Aco->create(array('alias'=>'Root'));
+		$this->Controller->Acl->Aco->create(array('alias' => 'Root'));
 		$result = $this->Controller->Acl->Aco->save();
 		$this->assertTrue($result);
 
@@ -760,6 +762,35 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->del('Auth');
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($this->Controller->Session->check('Message.auth'));
+	}
+
+/**
+ * test authorize = 'actions' setting.
+ *
+ * @return void
+ **/
+	function testAuthorizeActions() {
+		$this->AuthUser =& new AuthUser();
+		$user = $this->AuthUser->find();
+		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+
+		$this->Controller->Acl =& new AuthTestMockAclComponent();
+		$this->Controller->Acl->setReturnValue('check', true);
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->authorize = 'actions';
+		$this->Controller->Auth->actionPath = 'Root/';
+
+		$this->Controller->Acl->expectAt(0, 'check', array(
+			$user, 'Root/AuthTest/add'
+		));
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($this->Controller->Auth->isAuthorized());
 	}
 
 /**
