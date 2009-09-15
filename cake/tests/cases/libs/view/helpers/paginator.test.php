@@ -679,6 +679,42 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that __pagingLink methods use $options when $disabledOptions is an empty value.
+ * allowing you to use shortcut syntax
+ *
+ * @return void
+ **/
+	function testPagingLinksOptionsReplaceEmptyDisabledOptions() {
+		$this->Paginator->params['paging'] = array(
+			'Client' => array(
+				'page' => 1, 'current' => 3, 'count' => 13, 'prevPage' => false, 
+				'nextPage' => true, 'pageCount' => 5, 
+				'defaults' => array(
+					'limit' => 3, 'step' => 1, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()
+				),
+				'options' => array(
+					'page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()
+				)
+			)
+		);
+		$result = $this->Paginator->prev('<< Previous', array('escape' => false));
+		$expected = array(
+			'span' => array('class' => 'prev'),
+			'preg:/<< Previous/',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->next('Next >>', array('escape' => false));
+		$expected = array(
+			'a' => array('href' => '/index/page:2', 'class' => 'next'),
+			'preg:/Next >>/',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testPagingLinksNotDefaultModel
  *
  * Test the creation of paging links when the non default model is used.

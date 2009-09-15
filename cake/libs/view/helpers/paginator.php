@@ -327,6 +327,9 @@ class PaginatorHelper extends AppHelper {
 		);
 		$options = array_merge($_defaults, (array)$options);
 		$paging = $this->params($options['model']);
+		if (empty($disabledOptions)) {
+			$disabledOptions = $options;
+		}
 
 		if (!$this->{$check}($options['model']) && (!empty($disabledTitle) || !empty($disabledOptions))) {
 			if (!empty($disabledTitle) && $disabledTitle !== true) {
