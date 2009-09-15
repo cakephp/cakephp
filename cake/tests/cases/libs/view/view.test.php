@@ -774,7 +774,10 @@ class ViewTest extends CakeTestCase {
 		ob_start();
 		$View->renderCache($path, '+1 second');
 		$result = ob_get_clean();
-		$this->assertFalse(empty($result));
+
+		$expected = 'some cacheText';
+		$this->assertPattern('/^some cacheText/', $result);
+
 		@unlink($path);
 	}
 

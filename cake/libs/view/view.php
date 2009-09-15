@@ -481,7 +481,7 @@ class View extends Object {
 		}
 
 		$this->_triggerHelpers('beforeLayout');
-		$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers);
+		$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers, true);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
