@@ -27,20 +27,26 @@
  */
 
 /**
- * Short description for class.
+ * CakeHtmlReporter Reports Results of TestSuites and Test Cases
+ * in an HTML format / context.
  *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
+ * @package cake
+ * @subpackage cake.cake.tests.lib
  */
 class CakeHtmlReporter extends SimpleReporter {
 	var $_character_set;
 	var $_show_passes = false;
 
+	var $_timeStart = 0;
+	var $_timeEnd = 0;
+	var $_timeDuration = 0;
+
 /**
- *    Does nothing yet. The first output will
- *    be sent on the first test start. For use
- *    by a web browser.
- *    @access public
+ * Does nothing yet. The first output will
+ * be sent on the first test start. For use
+ * by a web browser.
+ *
+ * @access public
  */
 	function CakeHtmlReporter($character_set = 'ISO-8859-1') {
 		if (isset($_GET['show_passes']) && $_GET['show_passes']) {
@@ -51,9 +57,45 @@ class CakeHtmlReporter extends SimpleReporter {
 	}
 
 /**
+ * Signals / Paints the beginning of a TestSuite executing.
+ * Starts the timer for the TestSuite execution time.
+ *
+ * @param 
+ * @return void
+ **/
+	function paintGroupStart($test_name, $size) {
+		$this->_timeStart = $this->_getTime();
+		parent::paintGroupStart($test_name, $size);
+	}
+
+/**
+ * Signals/Paints the end of a TestSuite. All test cases have run
+ * and timers are stopped.
+ *
+ * @return void
+ **/
+	function paintGroupEnd($test_name) {
+		$this->_timeEnd = $this->_getTime();
+		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
+		parent::paintGroupEnd($test_name);
+	}
+
+/**
+ * Get the current time in microseconds. Similar to getMicrotime in basics.php
+ * but in a separate function to reduce dependancies.
+ *
+ * @return float Time in microseconds
+ **/
+	function _getTime() {
+		list($usec, $sec) = explode(' ', microtime());
+		return ((float)$sec + (float)$usec);
+	}
+
+/**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
- * @param string $test_name      Name class of test.
+ *
+ * @param string $test_name Name class of test.
  * @access public
  */
 	function paintHeader($testName) {
@@ -66,6 +108,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Send the headers necessary to ensure the page is
  * reloaded on every request. Otherwise you could be
  * scratching your head over out of date test data.
+ *
  * @access public
  * @static
  */
@@ -82,7 +125,8 @@ class CakeHtmlReporter extends SimpleReporter {
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
- * @param string $test_name        Name class of test.
+ *
+ * @param string $test_name Name class of test.
  * @access public
  */
 	function paintFooter($test_name) {
@@ -97,14 +141,21 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<strong>" . $this->getFailCount() . "</strong> fails and ";
 		echo "<strong>" . $this->getExceptionCount() . "</strong> exceptions.";
 		echo "</div>\n";
+		echo '<div style="padding:0 0 5px;">';
+		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $this->_timeDuration . '</p>';
+		if (function_exists('memory_get_peak_usage')) {
+			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
+		}
+		echo '</div>';
 	}
 
 /**
  * Paints the test failure with a breadcrumbs
  * trail of the nesting test suites below the
  * top level test.
+ *
  * @param string $message Failure message displayed in
- *                       the context of the other tests.
+ *   the context of the other tests.
  * @access public
  */
 	function paintFail($message) {
@@ -122,8 +173,8 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints the test pass with a breadcrumbs
  * trail of the nesting test suites below the
  * top level test.
- * @param string $message Pass message displayed in
- *                        the context of the other tests.
+ *
+ * @param string $message Pass message displayed in the context of the other tests.
  * @access public
  */
 	function paintPass($message) {
@@ -142,6 +193,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints a PHP error.
+ *
  * @param string $message Message is ignored.
  * @access public
  */
@@ -158,6 +210,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints a PHP exception.
+ *
  * @param Exception $exception Exception to display.
  * @access public
  */
@@ -178,6 +231,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Prints the message for skipping tests.
+ *
  * @param string $message    Text of skip condition.
  * @access public
  */
@@ -191,6 +245,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Paints formatted text such as dumped variables.
+ *
  * @param string $message Text to show.
  * @access public
  */
@@ -200,6 +255,7 @@ class CakeHtmlReporter extends SimpleReporter {
 
 /**
  * Character set adjusted entity conversion.
+ *
  * @param string $message Plain text or Unicode message.
  * @return string Browser readable message.
  * @access protected

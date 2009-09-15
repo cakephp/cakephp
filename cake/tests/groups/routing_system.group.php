@@ -34,7 +34,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class RoutingSystemGroupTest extends GroupTest {
+class RoutingSystemGroupTest extends TestSuite {
 
 /**
  * label property

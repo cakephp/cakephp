@@ -34,7 +34,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class XmlGroupTest extends GroupTest {
+class XmlGroupTest extends TestSuite {
 
 /**
  * label property
