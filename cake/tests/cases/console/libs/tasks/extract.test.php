@@ -84,15 +84,12 @@ class ExtractTaskTest extends CakeTestCase {
  * @access public
  */
 	function testExecute() {
-		$path = TMP . 'extract_task_test';
-		$folder1 = $path . DS . 'locale';
-
-		new Folder($path, true);
-		new Folder($folder1, true);
+		$path = TMP . 'tests' . DS . 'extract_task_test';
+		new Folder($path . DS . 'locale', true);
 
 		$this->Task->interactive = false;
 
-		$this->Task->params['path'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
+		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
 		$this->Task->params['output'] = $path . DS;
 		$this->Task->Dispatch->expectNever('stderr');
 		$this->Task->Dispatch->expectNever('_stop');
@@ -145,6 +142,20 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertPattern($pattern, $result);
+
+		// extract.ctp - reading the domain.pot
+		$result = file_get_contents($path . DS . 'domain.pot');
+
+		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+		$this->assertNoPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+		$this->assertNoPattern($pattern, $result);
+
+		$pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
+		$this->assertPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
+		$this->assertPattern($pattern, $result);
+
 
 		$Folder = new Folder($path);
 		$Folder->delete();
