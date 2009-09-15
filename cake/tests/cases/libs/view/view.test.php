@@ -21,12 +21,13 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('View', 'Controller'));
+App::import('Helper', 'Cache');
+
+Mock::generate('Helper', 'CallbackMockHelper');
+Mock::generate('CacheHelper', 'ViewTestMockCacheHelper');
 
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
-}
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
 /**
@@ -203,7 +204,7 @@ class TestAfterHelper extends Helper {
 		$View->output .= 'modified in the afterlife';
 	}
 }
-Mock::generate('Helper', 'CallbackMockHelper');
+
 
 /**
  * ViewTest class
@@ -696,6 +697,27 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+	}
+
+/**
+ * test rendering layout with cache helper loaded
+ *
+ * @return void
+ **/
+	function testRenderLayoutWithMockCacheHelper() {
+		$_check = Configure::read('Cache.check');
+		Configure::write('Cache.check', true);
+
+		$Controller = new ViewPostsController();
+		$Controller->cacheAction = '1 day';
+		$View = new View($Controller);
+		$View->loaded['cache'] = new ViewTestMockCacheHelper();
+		$View->loaded['cache']->expectCallCount('cache', 2);
+
+		$result = $View->render('index');
+		$this->assertPattern('/posts index/', $result);
+
+		Configure::write('Cache.check', $_check);
 	}
 
 /**
