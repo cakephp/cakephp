@@ -175,7 +175,9 @@ class JsHelper extends AppHelper {
 			$script = $this->{$this->__engineName}->domReady($script);
 		}
 		if (!$options['cache'] && $options['inline']) {
-			return $this->Html->scriptBlock($script, $options);
+			$opts = $options;
+			unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
+			return $this->Html->scriptBlock($script, $opts);
 		}
 		if ($options['cache'] && $options['inline']) {
 			$filename = md5($script);
@@ -247,7 +249,11 @@ class JsHelper extends AppHelper {
 			$event = $this->event('click', $requestString, $options);
 		}
 		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$out .= $this->Html->scriptBlock($event, $options);
+			$opts = array();
+			if (isset($options['safe'])) {
+				$opts['safe'] = $options['safe'];
+			}
+			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
 	}
