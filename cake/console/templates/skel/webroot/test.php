@@ -1,28 +1,23 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
- * Short description for file.
+ * Web Access Frontend for TestSuite
  *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4433
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 set_time_limit(0);
@@ -47,7 +42,6 @@ ini_set('display_errors', 1);
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
-
 /**
  * The actual directory name for the "app".
  *
@@ -55,7 +49,6 @@ ini_set('display_errors', 1);
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
-
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
@@ -107,7 +100,6 @@ if (!isset($_SERVER['SERVER_NAME'])) {
 if (empty( $_GET['output'])) {
 	$_GET['output'] = 'html';
 }
-
 /**
  *
  * Used to determine output to display
