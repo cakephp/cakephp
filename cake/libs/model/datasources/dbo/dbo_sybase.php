@@ -143,7 +143,7 @@ class DboSybase extends DboSource {
 			return $cache;
 		}
 
-		$result = $this->_execute("select name from sysobjects where type='U'");
+		$result = $this->_execute("SELECT name FROM sysobjects WHERE type IN ('U', 'V')");
 		if (!$result) {
 			return array();
 		} else {
@@ -180,10 +180,11 @@ class DboSybase extends DboSource {
 				$column[0] = $column[$colKey[0]];
 			}
 			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array('type' => $this->column($column[0]['Type']),
-													'null' => $column[0]['Null'],
-													'length' => $this->length($column[0]['Type']),
-													);
+				$fields[$column[0]['Field']] = array(
+					'type' => $this->column($column[0]['Type']),
+					'null' => $column[0]['Null'],
+					'length' => $this->length($column[0]['Type']),
+				);
 			}
 		}
 
