@@ -345,6 +345,21 @@ class SetTest extends CakeTestCase {
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'ASC');
 		$this->assertIdentical($a, $b);
+
+		$names = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$result = Set::sort($names, '{n}.employees.0.name', 'asc', 1);
+		$expected = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -1003,6 +1018,24 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'));
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
+
+		$hasMany = array(
+			'Node' => array(
+				'id' => 1,
+				'name' => 'First',
+				'state' => 50
+			),
+			'ParentNode' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Second',
+					'state' => 60,
+				)
+			)
+		);
+		$result = Set::extract('/ParentNode/name', $hasMany);
+		$expected = array('Second');
+		$this->assertEqual($result, $expected);
 	}
 
 /**

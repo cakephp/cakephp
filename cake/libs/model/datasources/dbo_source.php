@@ -1563,7 +1563,7 @@ class DboSource extends DataSource {
 					'alias' => $assoc,
 					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
 					'conditions' => trim($this->conditions(
-						$this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData),
+						$this->__mergeConditions($assocData['conditions'], $this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData)),
 						true, false, $model
 					))
 				));

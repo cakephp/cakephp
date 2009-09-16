@@ -2331,14 +2331,14 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testFieldError method
+ * testError method
  *
  * Test field error generation
  *
  * @access public
  * @return void
  */
-	function testFieldError() {
+	function testError() {
 		$this->Form->validationErrors['Model']['field'] = 1;
 		$result = $this->Form->error('Model.field');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field Field', '/div'));
@@ -2365,6 +2365,15 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->error('Model.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
 		$this->assertEqual($result, '<strong>Badness!</strong>');
+
+		$this->Form->validationErrors['Model']['field'] = "email";
+		$result = $this->Form->error('Model.field', array('class' => 'field-error', 'email' => 'No good!'));
+		$expected = array(
+			'div' => array('class' => 'field-error'),
+			'No good!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3782,6 +3791,18 @@ class FormHelperTest extends CakeTestCase {
 			':',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('published', array(
+			'timeFormat' => 24,
+			'interval' => 5,
+			'selected' => strtotime('2009-09-03 13:37:00'),
+			'type' => 'datetime'
+		));
+		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="09"[^<>]+selected="selected"[^>]*>September<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="03"[^<>]+selected="selected"[^>]*>3<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="13"[^<>]+selected="selected"[^>]*>13<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="35"[^<>]+selected="selected"[^>]*>35<\/option>/', $result);
 	}
 
 /**

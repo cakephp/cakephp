@@ -398,7 +398,7 @@ class Set extends Object {
 		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
 			$current = current($data);
-			if ((is_array($current) && count($data) <= 1) || !is_array($current)) {
+			if ((is_array($current) && count($data) <= 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
 				$contexts = array($data);
 			}
 		}
@@ -1098,7 +1098,7 @@ class Set extends Object {
 			if (!is_null($key)) {
 				$id = $key;
 			}
-			if (is_array($r)) {
+			if (is_array($r) && count($r)) {
 				$stack = array_merge($stack, Set::__flatten($r, $id));
 			} else {
 				$stack[] = array('id' => $id, 'value' => $r);

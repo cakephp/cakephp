@@ -706,6 +706,20 @@ class RouterTest extends CakeTestCase {
 		));
 		$expected = '/admin/shows/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
+
+		Router::reload();
+
+		Router::setRequestInfo(array(
+			array('pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'posts', 'prefix' => 'admin', 'admin' => true, 'url' => array('url' => 'admin/posts')),
+			array('base' => '', 'here' => '/admin/posts', 'webroot' => '/')
+		));
+
+		Router::connect('/admin/posts/*', array('controller' => 'posts', 'action' => 'index', 'admin' => true));
+		Router::parse('/');
+
+		$result = Router::url(array('all'));
+		$expected = '/admin/posts/all';
+		$this->assertEqual($result, $expected);
 	}
 
 /**

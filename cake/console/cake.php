@@ -27,7 +27,6 @@
 if (!defined('E_DEPRECATED')) {
 	define('E_DEPRECATED', 8192);
 }
-
 /**
  * Shell dispatcher
  *
@@ -161,7 +160,7 @@ class ShellDispatcher {
 	function __initConstants() {
 		if (function_exists('ini_set')) {
 			ini_set('display_errors', '1');
-			ini_set('error_reporting', E_ALL);
+			ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
@@ -228,7 +227,7 @@ class ShellDispatcher {
 			require LIBS . 'folder.php';
 		}
 		foreach ($pluginPaths as $pluginPath) {
-			$Folder =& new Folder($pluginPath);
+			$Folder = new Folder($pluginPath);
 			list($plugins,) = $Folder->read(false, true);
 			foreach ((array)$plugins as $plugin) {
 				$path = $pluginPath . Inflector::underscore($plugin) . DS . 'vendors' . DS . 'shells' . DS;

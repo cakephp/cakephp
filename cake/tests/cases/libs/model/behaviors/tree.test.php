@@ -1174,12 +1174,12 @@ class NumberTreeTest extends CakeTestCase {
 		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
 		$this->Tree->id= $data[$modelClass]['id'];
 
-		$direct = $this->Tree->children(null, true, array('id', 'name', $parentField, $leftField, $rightField), null, null, null, 1);
+		$direct = $this->Tree->children(null, true, array('id', 'name', $parentField, $leftField, $rightField));
 		$expects = array(array($modelClass => array('id' => 2, 'name' => '1.1', $parentField => 1, $leftField => 2, $rightField => 7)),
 			array($modelClass => array('id' => 5, 'name' => '1.2', $parentField => 1, $leftField => 8, $rightField => 13)));
 		$this->assertEqual($direct, $expects);
 
-		$total = $this->Tree->children(null, null, array('id', 'name', $parentField, $leftField, $rightField), null, null, null, 1);
+		$total = $this->Tree->children(null, null, array('id', 'name', $parentField, $leftField, $rightField));
 		$expects = array(
 			array($modelClass => array('id' => 2, 'name' => '1.1', $parentField => 1, $leftField => 2, $rightField => 7)),
 			array($modelClass => array('id' => 3, 'name' => '1.1.1', $parentField => 2, $leftField => 3, $rightField => 4)),
@@ -1790,7 +1790,7 @@ class UuidTreeTest extends NumberTreeTest {
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
-		$this->Tree->id= $data[$modelClass]['id'];
+		$this->Tree->id = $data[$modelClass]['id'];
 
 		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField));
 		$expects = array(array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 7)),
@@ -1816,19 +1816,20 @@ class UuidTreeTest extends NumberTreeTest {
 	function testNoAmbiguousColumn() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
-		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
-			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);
 
-		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
-		$this->Tree->id= $data[$modelClass]['id'];
+		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
+			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 
-		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField), null, null, null, 1);
+		$data = $this->Tree->find(array($modelClass . '.name' => '1. Root'));
+		$this->Tree->id = $data[$modelClass]['id'];
+
+		$direct = $this->Tree->children(null, true, array('name', $leftField, $rightField));
 		$expects = array(array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 7)),
 			array($modelClass => array('name' => '1.2', $leftField => 8, $rightField => 13)));
 		$this->assertEqual($direct, $expects);
 
-		$total = $this->Tree->children(null, null, array('name', $leftField, $rightField), null, null, null, 1);
+		$total = $this->Tree->children(null, null, array('name', $leftField, $rightField));
 		$expects = array(
 			array($modelClass => array('name' => '1.1', $leftField => 2, $rightField => 7)),
 			array($modelClass => array('name' => '1.1.1', $leftField => 3, $rightField => 4)),

@@ -8,20 +8,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5550
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'File', false);
@@ -208,6 +205,7 @@ class SchemaShell extends Shell {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
 				$write .= '.sql';
@@ -290,7 +288,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __create($Schema, $table = null) {
+	function __create(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -334,11 +332,15 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __update($Schema, $table = null) {
+	function __update(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__('Comparing Database to Schema...', true));
-		$Old = $this->Schema->read();
+		$options = array();
+		if (isset($this->params['f'])) {
+			$options['models'] = false;
+		}
+		$Old = $this->Schema->read($options);
 		$compare = $this->Schema->compare($Old, $Schema);
 
 		$contents = array();
@@ -372,7 +374,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __run($contents, $event, $Schema) {
+	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {
 			$this->err(__('Sql could not be run', true));
 			return;
@@ -380,7 +382,7 @@ class SchemaShell extends Shell {
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
-		
+
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
 				$this->out(sprintf(__('%s is up to date.', true), $table));

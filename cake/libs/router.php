@@ -799,6 +799,9 @@ class Router extends Object {
 			} else {
 				$params = end($_this->__params);
 			}
+			if (isset($params['prefix']) && strpos($params['action'], $params['prefix']) === 0) {
+				$params['action'] = substr($params['action'], strlen($params['prefix']) + 1);
+			}
 		}
 		$path = array('base' => null);
 
