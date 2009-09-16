@@ -300,6 +300,9 @@ class SchemaShellTest extends CakeTestCase {
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
+
+		$schema =& new i18nSchema();
+		$db->execute($db->dropSchema($schema));
 	}
 
 /**
@@ -311,7 +314,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
 			'name' => 'DbAcl',
-			'path' => APP . 'config' . DS . 'sql'
+			'path' => APP . 'config' . DS . 'schema'
 		);
 		$this->Shell->args = array('create', 'acos');
 		$this->Shell->startup();
@@ -323,6 +326,8 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
 		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources));
 		$this->assertFalse(in_array('aros_acos', $sources));
+
+		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
 	}
 
 /**
