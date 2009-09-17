@@ -62,9 +62,8 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Session = new SessionHelper();
-		$this->Session->__start();
 
 		$_SESSION = array(
 			'test' => 'info',
@@ -102,6 +101,15 @@ class SessionHelperTest extends CakeTestCase {
 	function tearDown() {
 		$_SESSION = array();
 		unset($this->Session);
+	}
+/**
+ * test construction and initial property settings
+ *
+ * @return void
+ **/
+	function testConstruct() {
+		$this->assertFalse(empty($this->Session->sessionTime));
+		$this->assertFalse(empty($this->Session->security));
 	}
 /**
  * testRead method
