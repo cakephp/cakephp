@@ -64,7 +64,9 @@ class CakeHtmlReporter extends SimpleReporter {
  * @return void
  **/
 	function paintGroupStart($test_name, $size) {
-		$this->_timeStart = $this->_getTime();
+		if (empty($this->_timeStart)) {
+			$this->_timeStart = $this->_getTime();
+		}
 		parent::paintGroupStart($test_name, $size);
 	}
 
