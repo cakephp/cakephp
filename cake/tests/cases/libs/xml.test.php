@@ -177,6 +177,19 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 /**
+ * testSimpleArrayWithZeroValues method
+ *
+ * @access public
+ * @return void
+ */
+	function testSimpleArrayWithZeroValues() {
+		$xml = new Xml(array('zero_string' => '0', 'zero_integer' => 0), array('format' => 'tags'));
+
+		$result = $xml->toString(false);
+		$expected = '<zero_string>0</zero_string><zero_integer>0</zero_integer>';
+		$this->assertEqual($expected, $result);
+	}
+/**
  * testHeader method
  *
  * @access public
@@ -761,7 +774,7 @@ class XmlTest extends CakeTestCase {
 	}
 /**
  * test that empty values do not casefold collapse
- * 
+ *
  * @see http://code.cakephp.org/tickets/view/8
  * @return void
  **/
@@ -797,7 +810,7 @@ class XmlTest extends CakeTestCase {
 				<name>varchar(45)</name>
 			</User>
 		</method>';
-		
+
 		$xml =& new XML($emptyValue);
 		$expected = array(
 			'Method' => array(
