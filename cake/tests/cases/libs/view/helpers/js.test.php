@@ -81,6 +81,9 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
+		$this->_asset = Configure::read('Asset.timestamp');
+		Configure::write('Asset.timestamp', false);
+
 		$this->Js =& new JsHelper('JsBase');
 		$this->Js->Html =& new HtmlHelper();
 		$this->Js->Form =& new FormHelper();
@@ -98,6 +101,7 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function endTest() {
+		Configure::write('Asset.timestamp', $this->_asset);
 		ClassRegistry::removeObject('view');
 		unset($this->Js);
 	}
@@ -145,9 +149,9 @@ class JsHelperTestCase extends CakeTestCase {
 
 		$this->Js->methodOne();
 
-	/*	$this->Js->TestEngine =& new StdClass();
+		$this->Js->TestEngine =& new StdClass();
 		$this->expectError();
-		$this->Js->someMethodThatSurelyDoesntExist();*/
+		$this->Js->someMethodThatSurelyDoesntExist();
 	}
 
 /**
