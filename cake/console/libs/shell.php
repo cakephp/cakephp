@@ -346,11 +346,7 @@ class Shell extends Object {
  */
 	function out($string, $newline = true) {
 		if (is_array($string)) {
-			$str = '';
-			foreach ($string as $message) {
-				$str .= $message ."\n";
-			}
-			$string = $str;
+			$string = implode("\n", $string) . "\n";
 		}
 		return $this->Dispatch->stdout($string, $newline);
 	}
