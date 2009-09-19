@@ -90,22 +90,22 @@ class AclBehavior extends ModelBehavior {
  * @access public
  */
 	function afterSave(&$model, $created) {
-		if ($created) {
-			$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
-			$parent = $model->parentNode();
-			if (!empty($parent)) {
-				$parent = $this->node($model, $parent);
-			} else {
-				$parent = null;
-			}
-
-			$model->{$type}->create();
-			$model->{$type}->save(array(
-				'parent_id'		=> Set::extract($parent, "0.{$type}.id"),
-				'model'			=> $model->name,
-				'foreign_key'	=> $model->id
-			));
+		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
+		$parent = $model->parentNode();
+		if (!empty($parent)) {
+			$parent = $this->node($model, $parent);
 		}
+		$data = array(
+			'parent_id' => isset($parent[0][$type]['id']) ? $parent[0][$type]['id'] : null,
+			'model' => $model->alias,
+			'foreign_key' => $model->id
+		);
+		if (!$created) {
+			$node = $this->node($model);
+			$data['id'] = isset($node[0][$type]['id']) ? $node[0][$type]['id'] : null;
+		}
+		$model->{$type}->create();
+		$model->{$type}->save($data);
 	}
 
 /**
