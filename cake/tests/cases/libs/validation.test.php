@@ -1755,6 +1755,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
+		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
 	}
 
 /**
