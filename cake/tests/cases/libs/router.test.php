@@ -1093,7 +1093,8 @@ class RouterTest extends CakeTestCase {
 			'plugins' =>  array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			)
-		), false);
+		), true);
+		App::objects('plugin', null, false);
 
 		Router::reload();
 		Router::setRequestInfo(array(
