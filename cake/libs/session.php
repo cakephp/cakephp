@@ -152,7 +152,7 @@ class CakeSession extends Object {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
 		}
-		if (isset($_SESSION)) {
+		if (isset($_SESSION) || $start === true) {
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
