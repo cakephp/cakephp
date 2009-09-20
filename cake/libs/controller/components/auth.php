@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Authentication component
  *
@@ -9,24 +7,21 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-App::import(array('Router', 'Security'));
+App::import('Core', array('Router', 'Security'), false);
 
 /**
  * Authentication control component class
@@ -83,6 +78,14 @@ class AuthComponent extends Object {
  * @access public
  */
 	var $ajaxLogin = null;
+
+/**
+ * The name of the layout element used on Session::setFlash
+ *
+ * @var string
+ * @access public
+ */
+	var $flashLayout = 'default';
 
 /**
  * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
@@ -330,23 +333,24 @@ class AuthComponent extends Object {
 		}
 
 		if ($loginAction == $url) {
-			if (empty($controller->data) || !isset($controller->data[$this->userModel])) {
+			$model =& $this->getModel();
+			if (empty($controller->data) || !isset($controller->data[$model->alias])) {
 				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
 				return false;
 			}
 
-			$isValid = !empty($controller->data[$this->userModel][$this->fields['username']]) &&
-				!empty($controller->data[$this->userModel][$this->fields['password']]);
+			$isValid = !empty($controller->data[$model->alias][$this->fields['username']]) &&
+				!empty($controller->data[$model->alias][$this->fields['password']]);
 
 			if ($isValid) {
-				$username = $controller->data[$this->userModel][$this->fields['username']];
-				$password = $controller->data[$this->userModel][$this->fields['password']];
+				$username = $controller->data[$model->alias][$this->fields['username']];
+				$password = $controller->data[$model->alias][$this->fields['password']];
 
 				$data = array(
-					$this->userModel . '.' . $this->fields['username'] => $username,
-					$this->userModel . '.' . $this->fields['password'] => $password
+					$model->alias . '.' . $this->fields['username'] => $username,
+					$model->alias . '.' . $this->fields['password'] => $password
 				);
 
 				if ($this->login($data)) {
@@ -357,13 +361,13 @@ class AuthComponent extends Object {
 				}
 			}
 
-			$this->Session->setFlash($this->loginError, 'default', array(), 'auth');
-			$controller->data[$this->userModel][$this->fields['password']] = null;
+			$this->Session->setFlash($this->loginError, $this->flashLayout, array(), 'auth');
+			$controller->data[$model->alias][$this->fields['password']] = null;
 			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
-					$this->Session->setFlash($this->authError, 'default', array(), 'auth');
+					$this->Session->setFlash($this->authError, $this->flashLayout, array(), 'auth');
 					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
 						$query = $controller->params['url'];
 						unset($query['url'], $query['ext']);
@@ -427,7 +431,7 @@ class AuthComponent extends Object {
 			return true;
 		}
 
-		$this->Session->setFlash($this->authError, 'default', array(), 'auth');
+		$this->Session->setFlash($this->authError, $this->flashLayout, array(), 'auth');
 		$controller->redirect($controller->referer(), null, true);
 		return false;
 	}
@@ -582,7 +586,7 @@ class AuthComponent extends Object {
  * Takes a list of actions in the current controller for which authentication is not required, or
  * no parameters to allow all actions.
  *
- * @param string $action Controller action name
+ * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
  * @param string ... etc.
  * @return void
@@ -596,14 +600,14 @@ class AuthComponent extends Object {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
 			}
-			$this->allowedActions = array_merge($this->allowedActions, $args);
+			$this->allowedActions = array_merge($this->allowedActions, array_map($args, 'strtolower'));
 		}
 	}
 
 /**
  * Removes items from the list of allowed actions.
  *
- * @param string $action Controller action name
+ * @param mixed $action Controller action name or array of actions
  * @param string $action Controller action name
  * @param string ... etc.
  * @return void
@@ -612,8 +616,11 @@ class AuthComponent extends Object {
  */
 	function deny() {
 		$args = func_get_args();
+		if (isset($args[0]) && is_array($args[0])) {
+			$args = $args[0];
+		}
 		foreach ($args as $arg) {
-			$i = array_search($arg, $this->allowedActions);
+			$i = array_search(strtolower($arg), $this->allowedActions);
 			if (is_int($i)) {
 				unset($this->allowedActions[$i]);
 			}
@@ -698,7 +705,8 @@ class AuthComponent extends Object {
 		}
 
 		if ($key == null) {
-			return array($this->userModel => $this->Session->read($this->sessionKey));
+			$model =& $this->getModel();
+			return array($model->alias => $this->Session->read($this->sessionKey));
 		} else {
 			$user = $this->Session->read($this->sessionKey);
 			if (isset($user[$key])) {
@@ -764,10 +772,11 @@ class AuthComponent extends Object {
  * @return boolean ACO node path
  * @access public
  */
-	function action($action = ':controller/:action') {
+	function action($action = ':plugin/:controller/:action') {
+		$plugin = empty($this->params['plugin']) ? null : Inflector::camelize($this->params['plugin']) . '/';
 		return str_replace(
-			array(':controller', ':action'),
-			array(Inflector::camelize($this->params['controller']), $this->params['action']),
+			array(':controller', ':action', ':plugin/'),
+			array(Inflector::camelize($this->params['controller']), $this->params['action'], $plugin),
 			$this->actionPath . $action
 		);
 	}
@@ -817,6 +826,7 @@ class AuthComponent extends Object {
 		} else {
 			$conditions = $this->userScope;
 		}
+		$model =& $this->getModel();
 		if (empty($user)) {
 			$user = $this->user();
 			if (empty($user)) {
@@ -827,51 +837,47 @@ class AuthComponent extends Object {
 				return null;
 			}
 			$user = $user->read();
-			$user = $user[$this->userModel];
-		} elseif (is_array($user) && isset($user[$this->userModel])) {
-			$user = $user[$this->userModel];
+			$user = $user[$model->alias];
+		} elseif (is_array($user) && isset($user[$model->alias])) {
+			$user = $user[$model->alias];
 		}
 
-		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$this->userModel . '.' . $this->fields['username']]))) {
-
+		if (is_array($user) && (isset($user[$this->fields['username']]) || isset($user[$model->alias . '.' . $this->fields['username']]))) {
 			if (isset($user[$this->fields['username']]) && !empty($user[$this->fields['username']])  && !empty($user[$this->fields['password']])) {
 				if (trim($user[$this->fields['username']]) == '=' || trim($user[$this->fields['password']]) == '=') {
 					return false;
 				}
 				$find = array(
-					$this->userModel.'.'.$this->fields['username'] => $user[$this->fields['username']],
-					$this->userModel.'.'.$this->fields['password'] => $user[$this->fields['password']]
+					$model->alias.'.'.$this->fields['username'] => $user[$this->fields['username']],
+					$model->alias.'.'.$this->fields['password'] => $user[$this->fields['password']]
 				);
-			} elseif (isset($user[$this->userModel . '.' . $this->fields['username']]) && !empty($user[$this->userModel . '.' . $this->fields['username']])) {
-				if (trim($user[$this->userModel . '.' . $this->fields['username']]) == '=' || trim($user[$this->userModel . '.' . $this->fields['password']]) == '=') {
+			} elseif (isset($user[$model->alias . '.' . $this->fields['username']]) && !empty($user[$model->alias . '.' . $this->fields['username']])) {
+				if (trim($user[$model->alias . '.' . $this->fields['username']]) == '=' || trim($user[$model->alias . '.' . $this->fields['password']]) == '=') {
 					return false;
 				}
 				$find = array(
-					$this->userModel.'.'.$this->fields['username'] => $user[$this->userModel . '.' . $this->fields['username']],
-					$this->userModel.'.'.$this->fields['password'] => $user[$this->userModel . '.' . $this->fields['password']]
+					$model->alias.'.'.$this->fields['username'] => $user[$model->alias . '.' . $this->fields['username']],
+					$model->alias.'.'.$this->fields['password'] => $user[$model->alias . '.' . $this->fields['password']]
 				);
 			} else {
 				return false;
 			}
-			$model =& $this->getModel();
 			$data = $model->find(array_merge($find, $conditions), null, null, 0);
-			if (empty($data) || empty($data[$this->userModel])) {
+			if (empty($data) || empty($data[$model->alias])) {
 				return null;
 			}
 		} elseif (!empty($user) && is_string($user)) {
-			$model =& $this->getModel();
 			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
-
-			if (empty($data) || empty($data[$this->userModel])) {
+			if (empty($data) || empty($data[$model->alias])) {
 				return null;
 			}
 		}
 
 		if (!empty($data)) {
-			if (!empty($data[$this->userModel][$this->fields['password']])) {
-				unset($data[$this->userModel][$this->fields['password']]);
+			if (!empty($data[$model->alias][$this->fields['password']])) {
+				unset($data[$model->alias][$this->fields['password']]);
 			}
-			return $data[$this->userModel];
+			return $data[$model->alias];
 		}
 		return null;
 	}
@@ -888,9 +894,10 @@ class AuthComponent extends Object {
 			return $this->authenticate->hashPasswords($data);
 		}
 
-		if (is_array($data) && isset($data[$this->userModel])) {
-			if (isset($data[$this->userModel][$this->fields['username']]) && isset($data[$this->userModel][$this->fields['password']])) {
-				$data[$this->userModel][$this->fields['password']] = $this->password($data[$this->userModel][$this->fields['password']]);
+		$model =& $this->getModel();
+		if (is_array($data) && isset($data[$model->alias])) {
+			if (isset($data[$model->alias][$this->fields['username']]) && isset($data[$model->alias][$this->fields['password']])) {
+				$data[$model->alias][$this->fields['password']] = $this->password($data[$model->alias][$this->fields['password']]);
 			}
 		}
 		return $data;

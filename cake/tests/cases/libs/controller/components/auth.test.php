@@ -1,33 +1,30 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
- * AutComponentTest file
+ * AuthComponentTest file
  *
  * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import(array('controller' . DS . 'components' . DS .'auth', 'controller' . DS . 'components' . DS .'acl'));
-App::import(array('controller' . DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
+App::import('Component', array('Auth', 'Acl'));
+App::import('Model', 'DbAcl');
 App::import('Core', 'Xml');
+
+Mock::generate('AclComponent', 'AuthTestMockAclComponent');
 
 /**
 * TestAuthComponent class
@@ -272,6 +269,7 @@ class AuthTestController extends Controller {
  * @return void
  */
 	function beforeFilter() {
+		$this->Auth->userModel = 'AuthUser';
 	}
 
 /**
@@ -495,6 +493,8 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller =& new AuthTestController();
 		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->beforeFilter();
 
 		ClassRegistry::addObject('view', new View($this->Controller));
 
@@ -737,7 +737,7 @@ class AuthTest extends CakeTestCase {
 		$result = $this->Controller->Acl->Aro->save();
 		$this->assertTrue($result);
 
-		$this->Controller->Acl->Aco->create(array('alias'=>'Root'));
+		$this->Controller->Acl->Aco->create(array('alias' => 'Root'));
 		$result = $this->Controller->Acl->Aco->save();
 		$this->assertTrue($result);
 
@@ -765,6 +765,35 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test authorize = 'actions' setting.
+ *
+ * @return void
+ **/
+	function testAuthorizeActions() {
+		$this->AuthUser =& new AuthUser();
+		$user = $this->AuthUser->find();
+		$this->Controller->Session->write('Auth', $user);
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+
+		$this->Controller->Acl =& new AuthTestMockAclComponent();
+		$this->Controller->Acl->setReturnValue('check', true);
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->userModel = 'AuthUser';
+		$this->Controller->Auth->authorize = 'actions';
+		$this->Controller->Auth->actionPath = 'Root/';
+
+		$this->Controller->Acl->expectAt(0, 'check', array(
+			$user, 'Root/AuthTest/add'
+		));
+
+		$this->Controller->Auth->startup($this->Controller);
+		$this->assertTrue($this->Controller->Auth->isAuthorized());
+	}
+
+/**
  * Tests that deny always takes precedence over allow
  *
  * @access public
@@ -774,7 +803,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->allow('*');
-		$this->Controller->Auth->deny('add');
+		$this->Controller->Auth->deny('add', 'camelcase');
 
 		$this->Controller->params['action'] = 'delete';
 		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
@@ -783,6 +812,61 @@ class AuthTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
 		$this->Controller->params['action'] = 'Add';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->params['action'] = 'camelCase';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+
+		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->deny(array('add', 'camelcase'));
+
+		$this->Controller->params['action'] = 'camelCase';
+		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
+	}
+
+/**
+ * test the action() method
+ *
+ * @return void
+ **/
+	function testActionMethod() {
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->actionPath = 'ROOT/';
+
+		$result = $this->Controller->Auth->action();
+		$this->assertEqual($result, 'ROOT/AuthTest/add');
+
+		$result = $this->Controller->Auth->action(':controller');
+		$this->assertEqual($result, 'ROOT/AuthTest');
+
+		$result = $this->Controller->Auth->action(':controller');
+		$this->assertEqual($result, 'ROOT/AuthTest');
+		
+		$this->Controller->params['plugin'] = 'test_plugin';
+		$this->Controller->params['controller'] = 'auth_test';
+		$this->Controller->params['action'] = 'add';
+		$this->Controller->Auth->initialize($this->Controller);
+		$result = $this->Controller->Auth->action();
+		$this->assertEqual($result, 'ROOT/TestPlugin/AuthTest/add');
+	}
+
+/**
+ * test that deny() converts camel case inputs to lowercase.
+ *
+ * @return void
+ **/
+	function testDenyWithCamelCaseMethods() {
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->allow('*');
+		$this->Controller->Auth->deny('add', 'camelCase');
+
+		$url = '/auth_test/camelCase';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 	}
 
@@ -1258,6 +1342,53 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
 		Configure::write('Routing.admin', $admin);
+	}
+
+/**
+ * testPluginModel method
+ *
+ * @access public
+ * @return void
+ */
+	function testPluginModel() {
+		// Adding plugins
+		Cache::delete('object_map', '_cake_core_');
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		), true);
+		App::objects('plugin', null, false);
+
+		$PluginModel =& ClassRegistry::init('TestPlugin.TestPluginAuthUser');
+		$user['id'] = 1;
+		$user['username'] = 'gwoo';
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$PluginModel->save($user, false);
+
+		$authUser = $PluginModel->find();
+
+		$this->Controller->data['TestPluginAuthUser']['username'] = $authUser['TestPluginAuthUser']['username'];
+		$this->Controller->data['TestPluginAuthUser']['password'] = 'cake';
+
+		$this->Controller->params = Router::parse('auth_test/login');
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'TestPlugin.TestPluginAuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$user = $this->Controller->Auth->user();
+		$expected = array('TestPluginAuthUser' => array(
+			'id' => 1, 'username' => 'gwoo', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
+		));
+		$this->assertEqual($user, $expected);
+
+		// Reverting changes
+		Cache::delete('object_map', '_cake_core_');
+		App::build();
+		App::objects('plugin', null, false);
 	}
 
 /**
