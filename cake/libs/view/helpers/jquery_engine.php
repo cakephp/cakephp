@@ -160,7 +160,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
-		
+
 		$function = 'function (event) {%s}';
 		if ($options['wrap'] && $options['stop']) {
 			$callback .= "\nreturn false;";
@@ -240,7 +240,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		$options['url'] = $url;
 		if (isset($options['update'])) {
-			$options['success'] = 'function (msg, status) {$("' . $options['update'] . '").html(msg);}';
+			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
+			if ($wrapCallbacks) {
+				$success = '$("' . $options['update'] . '").html(data);';
+			} else {
+				$success = 'function (data, textStatus) {$("' . $options['update'] . '").html(data);}';
+			}
+			$options['success'] = $success;
 			unset($options['update']);
 		}
 		$callbacks = array('success', 'error', 'beforeSend', 'complete');
@@ -269,7 +275,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 
 /**
  * Create a Draggable element
- * 
+ *
  * Requires both Ui.Core and Ui.Draggable to be loaded.
  *
  * @param array $options Array of options for the draggable element.
@@ -283,7 +289,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 
 /**
  * Create a Droppable element
- * 
+ *
  * Requires both Ui.Core and Ui.Droppable to be loaded.
  *
  * @param array $options Array of options for the droppable element.
@@ -297,7 +303,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 
 /**
  * Create a Slider element
- * 
+ *
  * Requires both Ui.Core and Ui.Slider to be loaded.
  *
  * @param array $options Array of options for the droppable element.
@@ -311,9 +317,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Serialize a form attached to $selector. If the current selection is not an input or 
+ * Serialize a form attached to $selector. If the current selection is not an input or
  * form, errors will be created in the Javascript.
- * 
+ *
  * @param array $options Options for the serialization
  * @return string completed form serialization script
  * @see JsHelper::serializeForm() for option list.
