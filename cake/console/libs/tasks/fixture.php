@@ -419,7 +419,7 @@ class FixtureTask extends Shell {
 		$this->out('Parameters:');
 		$this->out("\t-count       When using generated data, the number of records to include in the fixture(s).");
 		$this->out("\t-connection  Which database configuration to use for baking.");
-		$this->out("\t-plugin      lowercased_underscored name of plugin to bake fixtures for.");
+		$this->out("\t-plugin      CamelCased name of plugin to bake fixtures for.");
 		$this->out("");
 		$this->_stop();
 	}

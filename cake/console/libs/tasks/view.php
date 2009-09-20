@@ -284,9 +284,7 @@ class ViewTask extends Shell {
 			$primaryKey = $modelObj->primaryKey;
 			$displayField = $modelObj->displayField;
 			$singularVar = Inflector::variable($modelClass);
-			$pluralVar = Inflector::variable($this->controllerName);
-			$singularHumanName = Inflector::humanize($modelClass);
-			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$singularHumanName = $this->_singularHumanName($modelClass);
 			$schema = $modelObj->schema();
 			$fields = array_keys($schema);
 			$associations = $this->__associations($modelObj);
@@ -294,13 +292,13 @@ class ViewTask extends Shell {
 			$primaryKey = null;
 			$displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
-			$pluralVar = Inflector::variable($this->controllerName);
-			$singularHumanName = Inflector::humanize(Inflector::singularize($this->controllerName));
-			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$fields = array();
 			$schema = array();
 			$associations = array();
 		}
+		$pluralVar = Inflector::variable($this->controllerName);
+		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
 
 		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
