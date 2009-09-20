@@ -519,7 +519,7 @@ class TimeHelper extends AppHelper {
 		return $return;
 	}
 /**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
  *
  * @param string $format date format string. defaults to 'd-m-Y'
  * @param string $dateString Datetime string
