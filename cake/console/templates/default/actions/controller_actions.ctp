@@ -128,13 +128,13 @@
 			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted', true));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(__('<?php echo strtolower($singularHumanName); ?> deleted', true), array('action' => 'index'));
+			$this->flash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted', true), array('action' => 'index'));
 <?php endif; ?>
 		}
 <?php if ($wannaUseSession): ?>
 		$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> was not deleted', true));
 <?php else: ?>
-		$this->flash(__('<?php echo strtolower($singularHumanName); ?> was not deleted', true), array('action' => 'index'));
+		$this->flash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> was not deleted', true), array('action' => 'index'));
 <?php endif; ?>
 		$this->redirect(array('action' => 'index'));
 	}
