@@ -844,7 +844,7 @@ class AuthTest extends CakeTestCase {
 
 		$result = $this->Controller->Auth->action(':controller');
 		$this->assertEqual($result, 'ROOT/AuthTest');
-		
+
 		$this->Controller->params['plugin'] = 'test_plugin';
 		$this->Controller->params['controller'] = 'auth_test';
 		$this->Controller->params['action'] = 'add';
@@ -899,6 +899,17 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->allowedActions = array('delete', 'add');
 		$result = $this->Controller->Auth->startup($this->Controller);
 		$this->assertFalse($result, 'startup() should return false, as action is not allowed. %s');
+
+	}
+
+	function testAllowedActionsSetWithAllowMethod() {
+		$url = '/auth_test/action_name';
+		$this->Controller->params = Router::parse($url);
+		$this->Controller->params['url']['url'] = Router::normalize($url);
+		$this->Controller->Auth->initialize($this->Controller);
+		$this->Controller->Auth->allow('action_name', 'anotherAction');
+		$this->assertEqual($this->Controller->Auth->allowedActions, array('action_name', 'anotheraction'));
+
 	}
 
 /**

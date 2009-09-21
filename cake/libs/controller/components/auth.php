@@ -600,7 +600,7 @@ class AuthComponent extends Object {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
 			}
-			$this->allowedActions = array_merge($this->allowedActions, array_map($args, 'strtolower'));
+			$this->allowedActions = array_merge($this->allowedActions, array_map('strtolower', $args));
 		}
 	}
 
