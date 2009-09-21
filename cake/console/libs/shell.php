@@ -366,60 +366,53 @@ class Shell extends Object {
  * Outputs a single or multiple messages to stdout.
  *
  * @param mixed $message A string or a an array of strings to output
- * @param mixed $after Appended to message, if true a newline is used
+ * @param integer $newlines Number of newlines to append
  * @access public
  */
-	function out($message, $after = true) {
+	function out($message, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
-		$this->Dispatch->stdout($message . $this->nl($after), false);
+		$this->Dispatch->stdout($message . $this->nl($newlines), false);
 	}
 
 /**
  * Outputs a single or multiple error messages to stderr.
  *
  * @param mixed $message A string or a an array of strings to output
- * @param mixed $after Appended to message, if true a newline is used
+ * @param integer $newlines Number of newlines to append
  * @access public
  */
-	function err($message, $after = true) {
+	function err($message, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
-		$this->Dispatch->stderr($message . $this->nl($after));
+		$this->Dispatch->stderr($message . $this->nl($newlines));
 	}
 
 /**
  * Returns a single or multiple linefeeds sequences.
  *
- * @param mixed $format If true returns a linefeed sequence, if false null,
- *	if a string is given that is returned,
- *	if an integer is given it is used as a multiplier to return multiple linefeed sequences
+ * @param integer $multiplier Number of times the linefeed sequence should be repeated
  * @access public
  * @return string
  */
-	function nl($format = true) {
-		if (is_string($format)) {
-			return $format . "\n";
-		}
-		if (is_int($format)) {
-			return str_repeat("\n", $format);
-		}
-		return $format ? "\n" : null;
+	function nl($multiplier = 1) {
+		return str_repeat("\n", $multiplier);
 	}
 
 /**
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
- * @param mixed $surround If true, the outputs gets surrounded by newlines.
+ * @param integer $newlines Number of newlines to pre- and append
  * @access public
  */
-	function hr($surround = false) {
-		$this->out(null, $surround);
+	function hr($newlines = 0) {
+		$this->out(null, $newlines);
 		$this->out('---------------------------------------------------------------');
-		$this->out(null, $surround);
+		$this->out(null, $newlines);
 	}
+
 /**
  * Displays a formatted error message
  * and exits the application with status code 1
