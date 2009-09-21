@@ -206,7 +206,7 @@ class Shell extends Object {
 	function _welcome() {
 		$this->Dispatch->clear();
 		$this->out("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		$this->out("---------------------------------------------------------------");
+		$this->hr();
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
 		$this->hr();
@@ -456,14 +456,14 @@ class Shell extends Object {
  */
 	function createFile ($path, $contents) {
 		$path = str_replace(DS . DS, DS, $path);
-		$this->out("\n" . sprintf(__("Creating file %s", true), $path));
+		$this->out($this->nl() . sprintf(__("Creating file %s", true), $path));
 		if (is_file($path) && $this->interactive === true) {
 			$key = $this->in(__("File exists, overwrite?", true). " {$path}",  array('y', 'n', 'q'), 'n');
 			if (strtolower($key) == 'q') {
-				$this->out(__("Quitting.", true) ."\n");
+				$this->out(__("Quitting.", true), 2);
 				exit;
 			} elseif (strtolower($key) != 'y') {
-				$this->out(__("Skip", true) ." {$path}\n");
+				$this->out(__("Skip", true) ." {$path}", 2);
 				return false;
 			}
 		}
@@ -477,7 +477,7 @@ class Shell extends Object {
 			$this->out(__("Wrote", true) ." {$path}");
 			return true;
 		} else {
-			$this->err(__("Error! Could not write to", true)." {$path}.\n");
+			$this->err(__("Error! Could not write to", true)." {$path}", 2);
 			return false;
 		}
 	}
@@ -489,7 +489,8 @@ class Shell extends Object {
  */
 	function help() {
 		if ($this->command != null) {
-			$this->err("Unknown {$this->name} command '$this->command'.\nFor usage, try 'cake {$this->shell} help'.\n\n");
+			$this->err("Unknown {$this->name} command '$this->command'.");
+			$this->err("For usage, try 'cake {$this->shell} help'.", 2);
 		} else {
 			$this->Dispatch->help();
 		}
