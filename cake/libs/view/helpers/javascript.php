@@ -214,11 +214,11 @@ class JavascriptHelper extends AppHelper {
 		$options = $this->_blockOptions;
 		$this->_blockOptions = array();
 		$this->inBlock = false;
-		
+
 		if (empty($script)) {
 			return null;
 		}
-		
+
 		return $this->codeBlock($script, $options);
 	}
 /**
@@ -254,14 +254,10 @@ class JavascriptHelper extends AppHelper {
 				}
 			}
 
-			$url = $this->webroot($url);
-			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
-				Configure::read('Asset.timestamp') === 'force'
-			);
-
-			if (strpos($url, '?') === false && $timestampEnabled) {
-				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			if (strpos($url, '?') === false && ((Configure::read('Asset.timestamp') === true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force')) {
+				$url = $this->webroot($url) . '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
+			} else {
+				$url = $this->webroot($url);
 			}
 
 			if (Configure::read('Asset.filter.js')) {
