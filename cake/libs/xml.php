@@ -704,7 +704,6 @@ class XmlNode extends Object {
 				continue;
 			} elseif (isset($child->children[0]) && is_a($child->children[0], 'XmlTextNode')) {
 				$value = $child->children[0]->value;
-
 				if ($child->attributes) {
 					$value = array_merge(array('value' => $value), $child->attributes);
 				}
@@ -720,10 +719,10 @@ class XmlNode extends Object {
 				continue;
 			} elseif (count($child->children) === 0 && $child->value == '') {
 				$value = $child->attributes;
-				if (isset($out[$child->name]) || isset($multi[$key])) {
+				if (isset($out[$key]) || isset($multi[$key])) {
 					if (!isset($multi[$key])) {
-						$multi[$key] = array($out[$child->name]);
-						unset($out[$child->name]);
+						$multi[$key] = array($out[$key]);
+						unset($out[$key]);
 					}
 					$multi[$key][] = $value;
 				} elseif (!empty($value)) {
