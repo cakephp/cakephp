@@ -1188,7 +1188,29 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		));
+		$this->assertEqual($result, $expected);
 
+		$text = '<?xml version="1.0" encoding="UTF-8"?>
+		<root>
+			<child id="1" other="1" />
+			<child id="2" other="1" />
+			<child id="3" other="1" />
+			<child id="4" other="1" />
+			<child id="5" other="1" />
+		</root>';
+		$xml = new Xml($text);
+		$result = $xml->toArray();
+		$expected = array(
+			'Root' => array(
+				'Child' => array(
+					array('id' => 1, 'other' => 1),
+					array('id' => 2, 'other' => 1),
+					array('id' => 3, 'other' => 1),
+					array('id' => 4, 'other' => 1),
+					array('id' => 5, 'other' => 1)
+				)
+			)
+		);
 		$this->assertEqual($result, $expected);
 	}
 /**
