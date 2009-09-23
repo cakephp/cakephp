@@ -390,7 +390,7 @@ class ViewTask extends Shell {
 		}
 		return false;
 	}
-	
+
 /**
  * Gets the template name based on the action name
  *
@@ -414,7 +414,6 @@ class ViewTask extends Shell {
 		}
 		return $template;
 	}
-	
 
 /**
  * Displays help contents

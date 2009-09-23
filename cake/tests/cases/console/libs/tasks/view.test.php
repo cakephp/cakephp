@@ -400,6 +400,24 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test `cake bake view posts index list`
+ *
+ * @return void
+ **/
+	function testExecuteWithAlternateTemplates() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->args = array('ViewTaskComments', 'index', 'list');
+		$this->Task->params = array();
+		
+		$this->Task->expectCallCount('createFile', 1);
+		$this->Task->expectAt(0, 'createFile', array(
+			TMP . 'view_task_comments' . DS . 'list.ctp',
+			new PatternExpectation('/ViewTaskComment/')
+		));
+		$this->Task->execute();
+	}
+
+/**
  * test execute into interactive() with admin methods.
  *
  * @return void
