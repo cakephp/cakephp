@@ -370,28 +370,12 @@ class ViewTask extends Shell {
 /**
  * Builds content from template and variables
  *
- * @param string $template file to use
+ * @param string $action name to generate content to
  * @param array $vars passed for use in templates
  * @return string content from template
  * @access public
  */
-	function getContent($template = null, $vars = null) {
-		if (!$template) {
-			$template = $this->template;
-		}
-		$action = $template;
-
-		$adminRoute = Configure::read('Routing.admin');
-		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
-			$template = str_replace($adminRoute . '_', '', $template);
-		}
-		if (in_array($template, array('add', 'edit'))) {
-			$action = $template;
-			$template = 'form';
-		} elseif (preg_match('@(_add|_edit)$@', $template)) {
-			$action = $template;
-			$template = str_replace(array('_add', '_edit'), '_form', $template);
-		}
+	function getContent($action, $vars = null) {
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
@@ -399,13 +383,38 @@ class ViewTask extends Shell {
 		$this->Template->set('action', $action);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);
-		$output = $this->Template->generate('views', $template);
+		$output = $this->Template->generate('views', $this->getTemplate($action));
 
 		if (!empty($output)) {
 			return $output;
 		}
 		return false;
 	}
+	
+/**
+ * Gets the template name based on the action name
+ *
+ * @param string $action name
+ * @return string template name
+ * @access public
+ */
+	function getTemplate($action) {
+		if (!empty($this->template) && $action != $this->template) {
+			return $this->template;
+		} 
+		$template = $action;
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
+			$template = str_replace($adminRoute . '_', '', $template);
+		}
+		if (in_array($template, array('add', 'edit'))) {
+			$template = 'form';
+		} elseif (preg_match('@(_add|_edit)$@', $template)) {
+			$template = str_replace(array('_add', '_edit'), '_form', $template);
+		}
+		return $template;
+	}
+	
 
 /**
  * Displays help contents
