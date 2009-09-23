@@ -206,6 +206,7 @@ class EmailComponent extends Object{
  * - timeout
  * - username
  * - password
+ * - client
  *
  * @var array
  * @access public
