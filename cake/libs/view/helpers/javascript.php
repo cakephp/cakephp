@@ -270,16 +270,7 @@ class JavascriptHelper extends AppHelper {
 					$url .= '.js';
 				}
 			}
-			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
-				Configure::read('Asset.timestamp') === 'force'
-			);
-
-			if (strpos($url, '?') === false && $timestampEnabled) {
-				$url = $this->webroot($url) . '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
-			} else {
-				$url = $this->webroot($url);
-			}
+			$url = $this->webroot($this->assetTimestamp($url));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
