@@ -189,6 +189,8 @@ class ConnectionManager extends Object {
 			trigger_error(sprintf($error, $conn['filename']), E_USER_ERROR);
 			return null;
 		}
+
+		return true;
 	}
 
 /**
