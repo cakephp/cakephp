@@ -114,7 +114,8 @@ class ConnectionManager extends Object {
 			$_this->_dataSources[$name]->configKeyName = $name;
 		} else {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s", true), $name), E_USER_ERROR);
-			return null;
+			$null = null;
+			return $null;
 		}
 
 		$return =& $_this->_dataSources[$name];
