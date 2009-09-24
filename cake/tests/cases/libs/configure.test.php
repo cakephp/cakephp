@@ -487,6 +487,10 @@ class AppImportTest extends UnitTestCase {
 
 			$file = App::import('Model', 'NonExistingModel');
 			$this->assertFalse($file);
+
+			$file = App::import('Datasource', 'DboSource');
+			$this->assertTrue($file);
+			$this->assertTrue(class_exists('DboSource'));
 		}
 
 		App::build(array(
@@ -501,6 +505,10 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
+
+		$result = App::import('Datasource', 'TestPlugin.TestSource');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestSource'));
 
 		App::build();
 	}
