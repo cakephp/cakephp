@@ -474,13 +474,24 @@ class FormHelper extends AppHelper {
 		));
 	}
 /**
- * Will display all the fields passed in an array expects fieldName as an array key
- * replaces generateFields
+ * Generate a set of inputs for `$fields`.  If $fields is null the current model
+ * will be used.
  *
+ * In addition to controller fields output, `$fields` can be used to control legend
+ * and fieldset rendering with the `fieldset` and `legend` keys. 
+ * `$form->inputs(array('legend' => 'My legend'));` Would generate an input set with 
+ * a custom legend.  You can customize individual inputs through `$fields` as well.
+ * 
+ * {{{
+ *	$form->inputs(array(
+ *		'name' => array('label' => 'custom label')
+ *	));
+ * }}}
+ *
+ * @param mixed $fields An array of fields to generate inputs for, or null.
+ * @param array $blacklist a simple array of fields to skip.
+ * @return string Completed form inputs.
  * @access public
- * @param array $fields works well with Controller::generateFields() or on its own;
- * @param array $blacklist a simple array of fields to skip
- * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
 		$fieldset = $legend = true;
