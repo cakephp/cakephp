@@ -2403,6 +2403,56 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * testSetApply method
+ * @access public
+ * @return void
+ *
+ */
+	function testApply() {
+		$data = array(
+			array('Movie' => array('id' => 1, 'title' => 'movie 3', 'rating' => 5)),
+			array('Movie' => array('id' => 1, 'title' => 'movie 1', 'rating' => 1)),
+			array('Movie' => array('id' => 1, 'title' => 'movie 2', 'rating' => 3))
+		);
+
+		$result = Set::apply('/Movie/rating', $data, 'array_sum');
+		$expected = 9;
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/rating', $data, 'array_product');
+		$expected = 15;
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/title', $data, 'ucfirst', array('type' => 'map'));
+		$expected = array('Movie 3', 'Movie 1', 'Movie 2');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/title', $data, 'strtoupper', array('type' => 'map'));
+		$expected = array('MOVIE 3', 'MOVIE 1', 'MOVIE 2');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/rating', $data, array('self', '_method'), array('type' => 'reduce'));
+		$expected = 9;
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/rating', $data, 'strtoupper', array('type' => 'non existing type'));
+		$expected = null;
+		$this->assertEqual($result, $expected);
+
+	}
+
+/**
+ * Helper method to test Set::apply()
+ *
+ * @access protected
+ * @return void
+ */
+	function _method($val1, $val2) {
+		$val1 += $val2;
+		return $val1;
+	}
+
+/**
  * testXmlSetReverse method
  *
  * @access public

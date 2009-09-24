@@ -1138,6 +1138,40 @@ class Set extends Object {
 	}
 
 /**
+ * Allows the application of a callback method to elements of an
+ * array extracted by a Set::extract() compatible path.
+ *
+ * @param string $path A Set-compatible path to the array value
+ * @param array $data
+ * @param mixed $callback Callback method to be applied to extracted data.
+ * See http://ca2.php.net/manual/en/language.pseudo-types.php#language.types.callback for examples
+ * of callback formats.
+ * @param array $options
+ * @return mixed Result of the callback when applied to extracted data
+ *
+ */
+	function apply($path, $data, $callback, $options = array()) {
+		$defaults = array('type' => 'pass');
+		$options = array_merge($defaults, $options);
+
+		$extracted = Set::extract($path, $data);
+
+		if ($options['type'] === 'map') {
+			$result = array_map($callback, &$extracted);
+
+		} elseif ($options['type'] === 'reduce') {
+			$result = array_reduce(&$extracted, $callback);
+
+		} elseif ($options['type'] === 'pass') {
+			$result = call_user_func_array($callback, array($extracted));
+		} else {
+			return null;
+		}
+
+		return  $result;
+	}
+
+/**
  * Deprecated, Set class should be called statically
  *
  */
