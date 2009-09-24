@@ -373,17 +373,7 @@ class HtmlHelper extends AppHelper {
 					$path .= '.css';
 				}
 			}
-
-			$path = $this->webroot($path);
-
-			$url = $path;
-			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
-				Configure::read('Asset.timestamp') === 'force'
-			);
-			if (strpos($path, '?') === false && $timestampEnabled) {
-				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
-			}
+			$url = $this->webroot($this->assetTimestamp($path));
 
 			if (Configure::read('Asset.filter.css')) {
 				$url = str_replace(CSS_URL, 'ccss/', $url);
@@ -452,21 +442,10 @@ class HtmlHelper extends AppHelper {
 			if ($url[0] !== '/') {
 				$url = JS_URL . $url;
 			}
-			$url = $this->webroot($url);
-			if (strpos($url, '?') === false) {
-				if (strpos($url, '.js') === false) {
-					$url .= '.js';
-				}
+			if (strpos($url, '?') === false && strpos($url, '.js') === false) {
+				$url .= '.js';
 			}
-
-			$timestampEnabled = (
-				(Configure::read('Asset.timestamp') === true && Configure::read('debug') > 0) ||
-				Configure::read('Asset.timestamp') === 'force'
-			);
-
-			if (strpos($url, '?') === false && $timestampEnabled) {
-				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $url));
-			}
+			$url = $this->webroot($this->assetTimestamp($url));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
@@ -607,13 +586,11 @@ class HtmlHelper extends AppHelper {
 	function image($path, $options = array()) {
 		if (is_array($path)) {
 			$path = $this->url($path);
-		} elseif ($path[0] === '/') {
-			$path = $this->webroot($path);
 		} elseif (strpos($path, '://') === false) {
-			$path = $this->webroot(IMAGES_URL . $path);
-			if ((Configure::read('Asset.timestamp') == true && Configure::read() > 0) || Configure::read('Asset.timestamp') === 'force') {
-				$path .= '?' . @filemtime(str_replace('/', DS, WWW_ROOT . $path));
+			if ($path[0] !== '/') {
+				$path = IMAGES_URL . $path;
 			}
+			$path = $this->webroot($this->assetTimestamp($path));
 		}
 
 		if (!isset($options['alt'])) {

@@ -308,6 +308,15 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+
+		$webroot = $this->Html->webroot;
+		$this->Html->webroot = '/testing/longer/';
+		$result = $this->Html->image('cake.icon.gif');
+		$expected = array(
+			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.gif\?[0-9]+/', 'alt' => '')
+		);
+		$this->assertTags($result, $expected);
+		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -332,6 +341,16 @@ class HtmlHelperTest extends CakeTestCase {
 				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
+
+		$webroot = $this->Html->webroot;
+		$this->Html->webroot = '/testing/';
+		$result = $this->Html->image('cake.power.gif');
+		$this->assertTags($result, array(
+			'img' => array(
+				'src' => 'preg:/\/testing\/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'alt' => ''
+		)));
+		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -420,14 +439,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?/';
+		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/longer/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?/';
+		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 	}

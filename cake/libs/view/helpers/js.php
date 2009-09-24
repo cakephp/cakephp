@@ -115,7 +115,7 @@ class JsHelper extends AppHelper {
  * @param string $method Method to be called
  * @param array $params Parameters for the method being called.
  * @access public
- * @return mixed
+ * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
  **/
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
@@ -148,6 +148,20 @@ class JsHelper extends AppHelper {
 			return $this->dispatchMethod($method . '_', $params);
 		}
 		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
+	}
+
+/**
+ * Workaround for Object::Object() existing. Since Object::object exists, it does not
+ * fall into call__ and is not passed onto the engine helper. See JsBaseEngineHelper::object() for
+ * more information on this method.
+ *
+ * @param mixed $data Data to convert into JSON
+ * @param array $options Options to use for encoding JSON.  See JsBaseEngineHelper::object() for more details.
+ * @return string encoded JSON
+ * @deprecated Remove when support for PHP4 and Object::object are removed.
+ **/
+	function object($data = array(), $options = array()) {
+		return $this->{$this->__engineName}->object($data, $options);
 	}
 
 /**
@@ -203,7 +217,7 @@ class JsHelper extends AppHelper {
 /**
  * Get all the cached scripts
  *
- * @param boolean $clear Whether or not to clear the script caches
+ * @param boolean $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
  **/
 	function getBuffer($clear = true) {
@@ -919,10 +933,10 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Prepare callbacks and wrap them with function ([args]) { } as defined in 
+ * Prepare callbacks and wrap them with function ([args]) { } as defined in
  * _callbackArgs array.
  *
- * @param string $method Name of the method you are preparing callbacks for. 
+ * @param string $method Name of the method you are preparing callbacks for.
  * @param array $options Array of options being parsed
  * @param string $callbacks Additional Keys that contain callbacks
  * @access protected

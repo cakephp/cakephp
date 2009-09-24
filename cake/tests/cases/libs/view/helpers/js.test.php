@@ -419,6 +419,17 @@ CODE;
 		);
 		$this->assertTags($result, $expected);
 	}
+
+/**
+ * Test that Object::Object() is not breaking json output in JsHelper
+ *
+ * @return void
+ **/
+	function testObjectPassThrough() {
+		$result = $this->Js->object(array('one' => 'first', 'two' => 'second'));
+		$expected = '{"one":"first","two":"second"}';
+		$this->assertEqual($result, $expected);
+	}
 }
 
 

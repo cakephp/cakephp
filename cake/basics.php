@@ -490,7 +490,7 @@ if (!function_exists('file_put_contents')) {
 			$expires = strtotime($expires, $now);
 		}
 
-		switch (low($target)) {
+		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
 			break;
