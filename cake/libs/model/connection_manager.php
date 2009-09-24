@@ -179,6 +179,8 @@ class ConnectionManager extends Object {
 			trigger_error(sprintf($error, $conn['filename']), E_USER_ERROR);
 			return null;
 		}
+
+		return true;
 	}
 /**
  * Gets a list of class and file names associated with the user-defined DataSource connections
