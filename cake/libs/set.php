@@ -373,8 +373,8 @@ class Set extends Object {
  * Bugs as you find them. Suggestions for additional features to imlement are also very welcome!
  *
  * @param string $path An absolute XPath 2.0 path
- * @param string $data An array of data to extract from
- * @param string $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
+ * @param array $data An array of data to extract from
+ * @param array $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
  * @return array An array of matched items
  * @access public
  * @static
@@ -1141,14 +1141,16 @@ class Set extends Object {
  * Allows the application of a callback method to elements of an
  * array extracted by a Set::extract() compatible path.
  *
- * @param string $path A Set-compatible path to the array value
- * @param array $data
+ * @param mixed $path Set-compatible path to the array value
+ * @param array $data An array of data to extract from & then process with the $callback.
  * @param mixed $callback Callback method to be applied to extracted data.
  * See http://ca2.php.net/manual/en/language.pseudo-types.php#language.types.callback for examples
  * of callback formats.
- * @param array $options
+ * @param array $options Options are:
+ *                       - type : can be pass, map, or reduce. Map will handoff the given callback
+ *                                to array_map, reduce will handoff to array_reduce, and pass will
+ *                                use call_user_func_array().
  * @return mixed Result of the callback when applied to extracted data
- *
  */
 	function apply($path, $data, $callback, $options = array()) {
 		$defaults = array('type' => 'pass');
@@ -1169,14 +1171,6 @@ class Set extends Object {
 		}
 
 		return  $result;
-	}
-
-/**
- * Deprecated, Set class should be called statically
- *
- */
-	function &get() {
-		trigger_error('get() is deprecated. Set class should be called statically', E_USER_WARNING);
 	}
 }
 ?>
