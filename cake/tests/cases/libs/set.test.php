@@ -1451,29 +1451,6 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
- * testIsEqual method
- *
- * @access public
- * @return void
- */
-	function testIsEqual() {
-		$a = array(
-			0 => array('name' => 'main'),
-			1 => array('name' => 'about')
-		);
-		$b = array(
-			0 => array('name' => 'main'),
-			1 => array('name' => 'about'),
-			2 => array('name' => 'contact')
-		);
-
-		$this->assertTrue(Set::isEqual($a, $a));
-		$this->assertTrue(Set::isEqual($b, $b));
-		$this->assertFalse(Set::isEqual($a, $b));
-		$this->assertFalse(Set::isEqual($b, $a));
-	}
-
-/**
  * testContains method
  *
  * @access public

@@ -820,14 +820,17 @@ class Set extends Object {
 
 /**
  * Determines if two Sets or arrays are equal
+ * This method is deprecated, and will be removed in a future release.
  *
  * @param array $val1 First value
  * @param array $val2 Second value
  * @return boolean true if they are equal, false otherwise
  * @access public
  * @static
+ * @deprecated
  */
 	function isEqual($val1, $val2 = null) {
+		trigger_error('Set::isEqual() is deprecated. Please use standard comparison operators instead.', E_USER_WARNING);
 		return ($val1 == $val2);
 	}
 
@@ -1002,11 +1005,10 @@ class Set extends Object {
 	}
 
 /**
- * Converts an object into an array. If $object is no object, reverse
- * will return the same value.
- *
+ * Converts an object into an array.
  * @param object $object Object to reverse
- * @return array
+ * @return array Array representation of given object
+ * @public
  * @static
  */
 	function reverse($object) {
@@ -1110,10 +1112,10 @@ class Set extends Object {
 /**
  * Sorts an array by any value, determined by a Set-compatible path
  *
- * @param array $data
+ * @param array $data An array of data to sort
  * @param string $path A Set-compatible path to the array value
- * @param string $dir asc/desc
- * @return array
+ * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
+ * @return array Sorted array of data
  * @static
  */
 	function sort($data, $path, $dir) {
@@ -1151,6 +1153,8 @@ class Set extends Object {
  *                                to array_map, reduce will handoff to array_reduce, and pass will
  *                                use call_user_func_array().
  * @return mixed Result of the callback when applied to extracted data
+ * @access public
+ * @static
  */
 	function apply($path, $data, $callback, $options = array()) {
 		$defaults = array('type' => 'pass');
