@@ -131,6 +131,10 @@ class XmlHelperTest extends CakeTestCase {
 		$result = $this->Xml->elem('count', null, 0);
 		$expected = '<count>0</count>';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Xml->elem('count', null, array('cdata' => true, 'value' => null));
+		$expected = '<count />';
+		$this->assertEqual($result, $expected);
 	}
 /**
  * testRenderElementWithNamespace method

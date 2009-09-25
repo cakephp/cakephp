@@ -112,7 +112,7 @@ class XmlHelper extends AppHelper {
 			$cdata = true;
 			unset($content['cdata']);
 		}
-		if (is_array($content) && isset($content['value'])) {
+		if (is_array($content) && array_key_exists('value', $content)) {
 			$content = $content['value'];
 		}
 		$children = array();
