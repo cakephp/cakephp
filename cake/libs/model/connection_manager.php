@@ -106,17 +106,31 @@ class ConnectionManager extends Object {
 		}
 
 		$connections = $_this->enumConnectionObjects();
-		if (!empty($connections[$name])) {
-			$conn = $connections[$name];
-			$class = $conn['classname'];
-			$_this->loadDataSource($name);
-			$_this->_dataSources[$name] =& new $class($_this->config->{$name});
-			$_this->_dataSources[$name]->configKeyName = $name;
-		} else {
+
+		if (empty($connections[$name])) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s", true), $name), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
+
+		$conn = $connections[$name];
+
+		if (strpos($conn['classname'], '.') !== false) {
+			list($plugin, $class) = explode('.', $conn['classname']);
+		} else {
+			$class = $conn['classname'];
+		}
+
+		$class = Inflector::classify($class);
+
+		if ($_this->loadDataSource($name) === null) {
+			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s", true), $class), E_USER_ERROR);
+			$null = null;
+			return $null;
+		}
+
+		$_this->_dataSources[$name] =& new $class($_this->config->{$name});
+		$_this->_dataSources[$name]->configKeyName = $name;
 
 		$return =& $_this->_dataSources[$name];
 		return $return;
@@ -181,13 +195,12 @@ class ConnectionManager extends Object {
 			return false;
 		}
 
-		if (file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
-		} elseif (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
-		} else {
-		    $error = __('Unable to load DataSource file %s.php', true);
-			trigger_error(sprintf($error, $conn['filename']), E_USER_ERROR);
+		$conn = array_merge(array('plugin' => null, 'classname' => null, 'parent' => null), $conn);
+		$class = "{$conn['plugin']}.{$conn['classname']}";
+
+		if (!App::import('Datasource', $class)) {
+			$error = __('ConnectionManager::loadDataSource - Unable to import DataSource class %s', true);
+			trigger_error(sprintf($error, $class), E_USER_ERROR);
 			return null;
 		}
 
@@ -254,16 +267,24 @@ class ConnectionManager extends Object {
 			$config['datasource'] = 'dbo';
 		}
 
+		$filename = $classname = $parent = $plugin = null;
+
 		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
 			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
 			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
 			$parent = $this->__getDriver(array('datasource' => $config['datasource']));
 		} else {
-			$filename = $config['datasource'] . '_source';
-			$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
-			$parent = null;
+			if (strpos($config['datasource'], '.') !== false) {
+				list($plugin, $classname) = explode('.', $config['datasource']);
+				$filename = Inflector::underscore($classname);
+			} else {
+				$filename = $config['datasource'] . '_source';
+				$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
+			}
 		}
-		return array('filename'  => $filename, 'classname' => $classname, 'parent' => $parent);
+
+		$driver = compact('filename', 'classname', 'parent', 'plugin');
+		return $driver;
 	}
 
 /**

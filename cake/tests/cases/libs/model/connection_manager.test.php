@@ -89,6 +89,28 @@ class ConnectionManagerTest extends CakeTestCase {
 	}
 
 /**
+ * testGetPluginDataSource method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetPluginDataSource() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+
+		$name = 'test_source';
+		$config = array('datasource' => 'TestPlugin.TestSource');
+		$connection = ConnectionManager::create($name, $config);
+
+		$this->assertTrue(class_exists('TestSource'));
+		$this->assertEqual($connection->configKeyName, $name);
+		$this->assertEqual($connection->config, $config);
+
+		App::build();
+	}
+
+/**
  * testSourceList method
  *
  * @access public
@@ -138,7 +160,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		}
 
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');
-		$this->expectError(new PatternExpectation('/Unable to load DataSource file/i'));
+		$this->expectError(new PatternExpectation('/Unable to import DataSource class/i'));
 
 		$loaded = ConnectionManager::loadDataSource($connection);
 		$this->assertEqual($loaded, null);
