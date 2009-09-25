@@ -412,6 +412,41 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * test assetTimestamp application
+ *
+ * @return void
+ **/
+	function testAssetTimestamp() {
+		$_timestamp = Configure::read('Asset.timestamp');
+		$_debug = Configure::read('debug');
+
+		Configure::write('Asset.timestamp', false);
+		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
+		$this->assertEqual($result, CSS_URL . 'cake.generic.css');
+
+		Configure::write('Asset.timestamp', true);
+		Configure::write('debug', 0);
+		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
+		$this->assertEqual($result, CSS_URL . 'cake.generic.css');
+
+		Configure::write('Asset.timestamp', true);
+		Configure::write('debug', 2);
+		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
+		$this->assertPattern('/' . preg_quote(CSS_URL . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+
+		Configure::write('Asset.timestamp', 'force');
+		Configure::write('debug', 0);
+		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css');
+		$this->assertPattern('/' . preg_quote(CSS_URL . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+		
+		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css?someparam');
+		$this->assertEqual($result, CSS_URL . 'cake.generic.css?someparam');
+
+		Configure::write('debug', $_debug);
+		Configure::write('Asset.timestamp', $_timestamp);
+	}
+
+/**
  * testFieldsWithSameName method
  *
  * @access public

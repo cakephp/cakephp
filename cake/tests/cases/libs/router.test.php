@@ -1088,11 +1088,13 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.admin', 'admin');
-		$paths = Configure::read('pluginPaths');
-		Configure::write('pluginPaths', array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
-		));
-		Configure::write('__objects.plugin', array('test_plugin'));
+		$paths = App::path('plugins');
+		App::build(array(
+			'plugins' =>  array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			)
+		), true);
+		App::objects('plugin', null, false);
 
 		Router::reload();
 		Router::setRequestInfo(array(
@@ -1107,7 +1109,7 @@ class RouterTest extends CakeTestCase {
 		$expected = '/admin/test_plugin';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('pluginPaths', $paths);
+		App::build(array('plugins' => $paths));
 	}
 
 /**

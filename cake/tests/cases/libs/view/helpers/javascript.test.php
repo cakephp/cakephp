@@ -278,11 +278,11 @@ class JavascriptTest extends CakeTestCase {
 
 		$this->Javascript->webroot = '/testing/';
 		$result = $this->Javascript->link('__cake_js_test');
-		$this->assertPattern('/^<script[^<>]+src="\/testing\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/js\/__cake_js_test\.js\?\d+"[^<>]*>/', $result);
 
 		$this->Javascript->webroot = '/testing/longer/';
 		$result = $this->Javascript->link('__cake_js_test');
-		$this->assertPattern('/^<script[^<>]+src="\/testing\/longer\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/longer\/js\/__cake_js_test\.js\?\d+"[^<>]*>/', $result);
 
 		$this->Javascript->webroot = $webroot;
 		Configure::write('debug', $debug);

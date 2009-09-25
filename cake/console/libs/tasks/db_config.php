@@ -108,7 +108,7 @@ class DbConfigTask extends Shell {
 			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
 
 			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
-			if (low($persistent) == 'n') {
+			if (strtolower($persistent) == 'n') {
 				$persistent = 'false';
 			} else {
 				$persistent = 'true';
@@ -124,7 +124,7 @@ class DbConfigTask extends Shell {
 				$port = $this->in('Port?', null, 'n');
 			}
 
-			if (low($port) == 'n') {
+			if (strtolower($port) == 'n') {
 				$port = null;
 			}
 
@@ -155,7 +155,7 @@ class DbConfigTask extends Shell {
 			while ($prefix == '') {
 				$prefix = $this->in('Table Prefix?', null, 'n');
 			}
-			if (low($prefix) == 'n') {
+			if (strtolower($prefix) == 'n') {
 				$prefix = null;
 			}
 
@@ -163,7 +163,7 @@ class DbConfigTask extends Shell {
 			while ($encoding == '') {
 				$encoding = $this->in('Table encoding?', null, 'n');
 			}
-			if (low($encoding) == 'n') {
+			if (strtolower($encoding) == 'n') {
 				$encoding = null;
 			}
 
@@ -173,7 +173,7 @@ class DbConfigTask extends Shell {
 					$schema = $this->in('Table schema?', null, 'n');
 				}
 			}
-			if (low($schema) == 'n') {
+			if (strtolower($schema) == 'n') {
 				$schema = null;
 			}
 
@@ -185,7 +185,7 @@ class DbConfigTask extends Shell {
 			$dbConfigs[] = $config;
 			$doneYet = $this->in('Do you wish to add another database configuration?', null, 'n');
 
-			if (low($doneYet == 'n')) {
+			if (strtolower($doneYet == 'n')) {
 				$done = true;
 			}
 		}
