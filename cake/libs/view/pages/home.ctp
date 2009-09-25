@@ -26,7 +26,7 @@ if (Configure::read() == 0):
 endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="https://trac.cakephp.org/wiki/changelog/1.2.x.x"><?php __('Read the changelog'); ?> </a>
+<a href="http://code.cakephp.org/wiki/changelog/1_2_x_x"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
@@ -136,8 +136,8 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<ul><li><?php __('Community mailing list'); ?></li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
 	<ul><li><?php __('Live chat about CakePHP'); ?></li></ul></li>
-	<li><a href="https://trac.cakephp.org/"><?php __('CakePHP Trac'); ?> </a>
-	<ul><li><?php __('For the Development of CakePHP (Tickets, SVN browser, Roadmap, Changelogs)'); ?></li></ul></li>
+	<li><a href="https://code.cakephp.org/"><?php __('CakePHP Code'); ?> </a>
+	<ul><li><?php __('For the Development of CakePHP (Tickets, Git browser, Roadmap, Changelogs)'); ?></li></ul></li>
 	<li><a href="http://www.cakeforge.org"><?php __('CakeForge'); ?> </a>
 	<ul><li><?php __('Open Development for CakePHP'); ?></li></ul></li>
 	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __('Book Store'); ?> </a>
