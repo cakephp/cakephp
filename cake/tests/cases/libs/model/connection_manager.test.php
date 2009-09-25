@@ -86,6 +86,11 @@ class ConnectionManagerTest extends CakeTestCase {
 		$source = ConnectionManager::getDataSource(key($connections));
 		$this->assertTrue(is_object($source));
 
+		$this->expectError(new PatternExpectation('/Non-existent data source/i'));
+
+		$source = ConnectionManager::getDataSource('non_existent_source');
+		$this->assertEqual($source, null);
+
 	}
 
 /**
@@ -137,6 +142,10 @@ class ConnectionManagerTest extends CakeTestCase {
 		$result = ConnectionManager::getSourceName($source);
 
 		$this->assertEqual($result, $name);
+
+		$source =& new StdClass();
+		$result = ConnectionManager::getSourceName($source);
+		$this->assertEqual($result, null);
 	}
 
 /**

@@ -25,8 +25,8 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-uses ('model' . DS . 'datasources' . DS . 'datasource');
-config('database');
+require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
+include_once CONFIGS . 'database.php';
 
 /**
  * Manages loaded instances of DataSource objects
@@ -104,7 +104,6 @@ class ConnectionManager extends Object {
 			$return =& $_this->_dataSources[$name];
 			return $return;
 		}
-
 		$connections = $_this->enumConnectionObjects();
 
 		if (empty($connections[$name])) {
@@ -112,23 +111,14 @@ class ConnectionManager extends Object {
 			$null = null;
 			return $null;
 		}
-
 		$conn = $connections[$name];
-
-		if (strpos($conn['classname'], '.') !== false) {
-			list($plugin, $class) = explode('.', $conn['classname']);
-		} else {
-			$class = $conn['classname'];
-		}
-
-		$class = Inflector::classify($class);
+		$class = $conn['classname'];
 
 		if ($_this->loadDataSource($name) === null) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s", true), $class), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
-
 		$_this->_dataSources[$name] =& new $class($_this->config->{$name});
 		$_this->_dataSources[$name]->configKeyName = $name;
 
@@ -152,19 +142,14 @@ class ConnectionManager extends Object {
  * Gets a DataSource name from an object reference
  *
  * @param object $source DataSource object
- * @return string Datasource name
+ * @return string Datasource name, or null if source is not present
+ *                in the ConnectionManager.
  * @access public
  * @static
  */
 	function getSourceName(&$source) {
 		$_this =& ConnectionManager::getInstance();
-		$names = array_keys($_this->_dataSources);
-		for ($i = 0; $i < count($names); $i++) {
-			if ($_this->_dataSources[$names[$i]] === $source) {
-				return $names[$i];
-			}
-		}
-		return null;
+		return array_search($source, $_this->_dataSources);
 	}
 
 /**
@@ -187,23 +172,22 @@ class ConnectionManager extends Object {
 			$conn = $connections[$connName];
 		}
 
-		if (!empty($conn['parent'])) {
-			$_this->loadDataSource($conn['parent']);
-		}
-
 		if (class_exists($conn['classname'])) {
 			return false;
+		}
+
+		if (!empty($conn['parent'])) {
+			$_this->loadDataSource($conn['parent']);
 		}
 
 		$conn = array_merge(array('plugin' => null, 'classname' => null, 'parent' => null), $conn);
 		$class = "{$conn['plugin']}.{$conn['classname']}";
 
-		if (!App::import('Datasource', $class)) {
+		if (!App::import('Datasource', $class, false)) {
 			$error = __('ConnectionManager::loadDataSource - Unable to import DataSource class %s', true);
 			trigger_error(sprintf($error, $class), E_USER_ERROR);
 			return null;
 		}
-
 		return true;
 	}
 
@@ -249,7 +233,6 @@ class ConnectionManager extends Object {
 			$null = null;
 			return $null;
 		}
-
 		$_this->config->{$name} = $config;
 		$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
 		$return =& $_this->getDataSource($name);
@@ -282,7 +265,6 @@ class ConnectionManager extends Object {
 				$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
 			}
 		}
-
 		$driver = compact('filename', 'classname', 'parent', 'plugin');
 		return $driver;
 	}
