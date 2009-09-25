@@ -405,7 +405,7 @@ class ModelTask extends Shell {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] == 'boolean') {
 					$guess = $methods['boolean'];
-				} elseif ($metaData['type'] == 'datetime' || $metaData['type'] == 'date') {
+				} elseif ($metaData['type'] == 'date') {
 					$guess = $methods['date'];
 				} elseif ($metaData['type'] == 'time') {
 					$guess = $methods['time'];
@@ -614,7 +614,7 @@ class ModelTask extends Shell {
 					$prompt = "{$model->name} {$type} {$associations[$type][$i]['alias']}";
 					$response = $this->in("{$prompt}?", array('y','n'), 'y');
 
-					if ('n' == low($response)) {
+					if ('n' == strtolower($response)) {
 						unset($associations[$type][$i]);
 					} elseif ($type == 'hasMany') {
 						unset($associations['hasOne'][$i]);
@@ -637,7 +637,7 @@ class ModelTask extends Shell {
 		$prompt = __('Would you like to define some additional model associations?', true);
 		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
-		while (low($wannaDoMoreAssoc) == 'y') {
+		while (strtolower($wannaDoMoreAssoc) == 'y') {
 			$assocs = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 			$this->out(__('What is the association type?', true));
 			$assocType = intval($this->inOptions($assocs, __('Enter a number',true)));

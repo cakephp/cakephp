@@ -66,7 +66,7 @@ class CakeLogTest extends CakeTestCase {
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Debug: Notice \(8\): Undefined variable: out in \[.+ line \d{2}\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable: out in \[.+ line \d{2}\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');
