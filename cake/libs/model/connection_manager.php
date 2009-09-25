@@ -209,7 +209,7 @@ class ConnectionManager extends Object {
 
 		if ($connections != null) {
 			foreach ($connections as $name => $config) {
-				$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
+				$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
 			}
 			return $_this->_connectionsEnum;
 		} else {
@@ -234,7 +234,7 @@ class ConnectionManager extends Object {
 			return $null;
 		}
 		$_this->config->{$name} = $config;
-		$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
+		$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
 		$return =& $_this->getDataSource($name);
 		return $return;
 	}
@@ -242,31 +242,31 @@ class ConnectionManager extends Object {
 /**
  * Returns the file, class name, and parent for the given driver.
  *
- * @return array An indexed array with: filename, classname, and parent
+ * @return array An indexed array with: filename, classname, plugin and parent
  * @access private
  */
-	function __getDriver($config) {
+	function __connectionData($config) {
 		if (!isset($config['datasource'])) {
 			$config['datasource'] = 'dbo';
 		}
-
 		$filename = $classname = $parent = $plugin = null;
 
-		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
-			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
-			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
-			$parent = $this->__getDriver(array('datasource' => $config['datasource']));
+		if (!empty($config['driver'])) {
+			$source = $config['datasource'] . '_' . $config['driver'];
+
+			$filename = $config['datasource'] . DS . $source;
+			$classname = Inflector::camelize(strtolower($source));
+			$parent = $this->__connectionData(array('datasource' => $config['datasource']));
 		} else {
 			if (strpos($config['datasource'], '.') !== false) {
 				list($plugin, $classname) = explode('.', $config['datasource']);
 				$filename = Inflector::underscore($classname);
 			} else {
 				$filename = $config['datasource'] . '_source';
-				$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
+				$classname = Inflector::camelize(strtolower($filename));
 			}
 		}
-		$driver = compact('filename', 'classname', 'parent', 'plugin');
-		return $driver;
+		return compact('filename', 'classname', 'parent', 'plugin');
 	}
 
 /**
