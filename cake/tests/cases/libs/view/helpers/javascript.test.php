@@ -250,6 +250,10 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '<script type="text/javascript" src="cjs/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Javascript->link('folderjs/jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="cjs/folderjs/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected);
+
 		if ($old === null) {
 			Configure::delete('Asset.filter.js');
 		}

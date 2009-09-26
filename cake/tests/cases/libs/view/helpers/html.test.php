@@ -370,12 +370,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css/';
-		$this->assertTags($result, $expected);
-		Configure::write('Asset.filter.css', false);
-
 		$result = explode("\n", trim($this->Html->css(array('cake.generic', 'vendor.generic'))));
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
 		$this->assertTags($result[0], $expected);
@@ -384,12 +378,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertEqual(count($result), 2);
 
 		Configure::write('Asset.timestamp', true);
-
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
-		Configure::write('Asset.filter.css', false);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
@@ -420,6 +408,40 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
+	}
+/**
+ * test css() with Asset.Css.filter
+ *
+ * @return void
+ **/
+	function testCssFiltering() {
+		$this->Html->webroot = '/';
+
+		Configure::write('Asset.filter.css', 'css.php');
+		$result = $this->Html->css('cake.generic');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/\/ccss\/cake\.generic\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.timestamp', true);
+		Configure::write('Asset.filter.css', 'css.php');
+
+		$result = $this->Html->css('cake.generic');
+		$expected['link']['href'] = 'preg:/\/ccss\/cake\.generic\.css\?[0-9]+/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.timestamp', false);
+		$result = $this->Html->css('myfoldercss/cake.generic');
+		$expected['link']['href'] = 'preg:/\/ccss\/myfoldercss\/cake\.generic\.css/';
+		$this->assertTags($result, $expected);
+		
+		$this->Html->webroot = '/testing/longer/';
+		$result = $this->Html->css('myfoldercss/cake.generic');
+		$expected['link']['href'] = 'preg:/\/testing\/longer\/ccss\/myfoldercss\/cake\.generic\.css/';
+		$this->assertTags($result, $expected);
+
+		Configure::write('Asset.filter.css', false);
 	}
 /**
  * testCharsetTag method

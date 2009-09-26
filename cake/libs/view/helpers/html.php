@@ -352,13 +352,16 @@ class HtmlHelper extends AppHelper {
 				(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
 				Configure::read('Asset.timestamp') === 'force'
 			);
+
 			$url = $this->webroot($path);
 			if (strpos($path, '?') === false && $timestampEnabled) {
 				$url .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
 			}
-
 			if (Configure::read('Asset.filter.css')) {
-				$url = str_replace(CSS_URL, 'ccss/', $url);
+				$pos = strpos($url, CSS_URL);
+				if ($pos !== false) {
+					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(CSS_URL));
+				}
 			}
 		}
 
