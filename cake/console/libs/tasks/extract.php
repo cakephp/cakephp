@@ -106,7 +106,7 @@ class ExtractTask extends Shell {
 					$this->out(__('Extract Aborted', true));
 					$this->_stop();
 				} elseif (strtoupper($response) === 'D') {
-					$this->out('');
+					$this->out();
 					break;
 				} elseif (is_dir($response)) {
 					$this->__paths[] = $response;
@@ -114,7 +114,7 @@ class ExtractTask extends Shell {
 				} else {
 					$this->err(__('The directory path you supplied was not found. Please try again.', true));
 				}
-				$this->out('');
+				$this->out();
 			}
 		}
 
@@ -133,7 +133,7 @@ class ExtractTask extends Shell {
 				} else {
 					$this->err(__('The directory path you supplied was not found. Please try again.', true));
 				}
-				$this->out('');
+				$this->out();
 			}
 		}
 
@@ -150,8 +150,8 @@ class ExtractTask extends Shell {
  * @access private
  */
 	function __extract() {
-		$this->out('');
-		$this->out('');
+		$this->out();
+		$this->out();
 		$this->out(__('Extracting...', true));
 		$this->hr();
 		$this->out(__('Paths:', true));
@@ -177,7 +177,7 @@ class ExtractTask extends Shell {
 		$this->out(__('By default -app is ROOT/app', true));
 		$this->hr();
 		$this->out(__('Usage: cake i18n extract [command] [path...]', true));
-		$this->out('');
+		$this->out();
 		$this->out(__('Commands:', true));
 		$this->out(__('   -app [path...]: directory where your application is located', true));
 		$this->out(__('   -root [path...]: path to install', true));
@@ -186,7 +186,7 @@ class ExtractTask extends Shell {
 		$this->out(__('   -output [path...]: Full path to output directory', true));
 		$this->out(__('   -files: [comma separated list of files, full path to file is needed]', true));
 		$this->out(__('   cake i18n extract help: Shows this help message.', true));
-		$this->out('');
+		$this->out();
 	}
 
 /**
@@ -230,7 +230,7 @@ class ExtractTask extends Shell {
 		}
 		$this->__buildFiles();
 		$this->__writeFiles();
-		$this->out('');
+		$this->out();
 		$this->out(__('Done.', true));
 	}
 
@@ -364,7 +364,7 @@ class ExtractTask extends Shell {
 			if ($File->exists()) {
 				$response = '';
 				while ($response == '') {
-					$this->out('');
+					$this->out();
 					$response = $this->in(sprintf(__('Error: %s already exists in this location. Overwrite?', true), $filename), array('y', 'n'), 'y');
 					if (strtoupper($response) === 'N') {
 						$response = '';

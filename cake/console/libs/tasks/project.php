@@ -308,11 +308,11 @@ class ProjectTask extends Shell {
 		$this->out("Usage: cake bake project <arg1>");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("project <name>");
 		$this->out("\tbakes app directory structure.");
 		$this->out("\tif <name> begins with '/' path is absolute.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 

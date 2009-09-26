@@ -220,7 +220,7 @@ class ModelTask extends Shell {
 			$associations = $this->doAssociations($tempModel);
 		}
 
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following Model will be created:', true));
 		$this->hr();
@@ -379,7 +379,7 @@ class ModelTask extends Shell {
 		$anotherValidator = 'y';
 		while ($anotherValidator == 'y') {
 			if ($this->interactive) {
-				$this->out('');
+				$this->out();
 				$this->out(sprintf(__('Field: %s', true), $fieldName));
 				$this->out(sprintf(__('Type: %s', true), $metaData['type']));
 				$this->hr();
@@ -801,7 +801,7 @@ class ModelTask extends Shell {
 		$tableIsGood = false;
 
 		if (array_search($useTable, $this->__tables) === false) {
-			$this->out('');
+			$this->out();
 			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'", true), $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
 		}
@@ -883,16 +883,16 @@ class ModelTask extends Shell {
 		$this->out("Usage: cake bake model <arg1>");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("model");
 		$this->out("\tbakes model in interactive mode.");
-		$this->out('');
+		$this->out();
 		$this->out("model <name>");
 		$this->out("\tbakes model file with no associations or validation");
-		$this->out('');
+		$this->out();
 		$this->out("model all");
 		$this->out("\tbakes all model files with associations and validation");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 
