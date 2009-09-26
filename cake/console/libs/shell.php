@@ -363,13 +363,14 @@ class Shell extends Object {
 	}
 
 /**
- * Outputs a single or multiple messages to stdout.
+ * Outputs a single or multiple messages to stdout. If no parameters
+ * are passed outputs just a newline.
  *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @access public
  */
-	function out($message, $newlines = 1) {
+	function out($message = null, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
@@ -377,13 +378,14 @@ class Shell extends Object {
 	}
 
 /**
- * Outputs a single or multiple error messages to stderr.
+ * Outputs a single or multiple error messages to stderr. If no parameters
+ * are passed outputs just a newline.
  *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @access public
  */
-	function err($message, $newlines = 1) {
+	function err($message = null, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
