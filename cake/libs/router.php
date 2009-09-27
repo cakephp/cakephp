@@ -165,6 +165,31 @@ class Router {
 	var $__defaultsMapped = false;
 
 /**
+ * Constructor for Router.
+ * Builds __prefixes
+ *
+ * @return void
+ **/
+	function Router() {
+		$this->__setPrefixes();
+	}
+
+/**
+ * Sets the Routing prefixes.
+ *
+ * @return void
+ * @access private
+ **/
+	function __setPrefixes() {
+		$routing = Configure::read('Routing');
+		if (isset($routing['admin'])) {
+			$this->__prefixes[] = $this->__admin = $routing['admin'];
+		}
+		if (isset($routing['prefixes'])) {
+			$this->__prefixes = array_merge($this->__prefixes, $routing['prefixes']);
+		}
+	}
+/**
  * Gets a reference to the Router object instance
  *
  * @return object Object instance
@@ -176,7 +201,6 @@ class Router {
 
 		if (!$instance) {
 			$instance[0] =& new Router();
-			$instance[0]->__admin = Configure::read('Routing.admin');
 		}
 		return $instance[0];
 	}
@@ -722,7 +746,7 @@ class Router {
 		foreach (get_class_vars('Router') as $key => $val) {
 			$_this->{$key} = $val;
 		}
-		$_this->__admin = Configure::read('Routing.admin');
+		$_this->__setPrefixes();
 	}
 
 /**

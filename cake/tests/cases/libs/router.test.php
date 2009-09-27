@@ -1655,7 +1655,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::prefixes();
-		$expected = array('protected', 'admin');
+		$expected = array('admin', 'protected');
 		$this->assertEqual($result, $expected);
 	}
 
