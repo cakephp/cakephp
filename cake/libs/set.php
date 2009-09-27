@@ -1163,10 +1163,10 @@ class Set extends Object {
 		$extracted = Set::extract($path, $data);
 
 		if ($options['type'] === 'map') {
-			$result = array_map($callback, &$extracted);
+			$result = array_map($callback, $extracted);
 
 		} elseif ($options['type'] === 'reduce') {
-			$result = array_reduce(&$extracted, $callback);
+			$result = array_reduce($extracted, $callback);
 
 		} elseif ($options['type'] === 'pass') {
 			$result = call_user_func_array($callback, array($extracted));
