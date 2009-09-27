@@ -229,7 +229,7 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
 		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
-		$this->out("");
+		$this->out();
 
 	}
 }

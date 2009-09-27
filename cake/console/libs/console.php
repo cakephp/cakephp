@@ -238,7 +238,7 @@ class ConsoleShell extends Shell {
 													$this->out("\t$field2: $value2");
 												}
 
-												$this->out("");
+												$this->out();
 											} else {
 												$this->out("\t$field: $value");
 											}
@@ -253,7 +253,7 @@ class ConsoleShell extends Shell {
 												$this->out("\t$field2: $value2");
 											}
 
-											$this->out("");
+											$this->out();
 										} else {
 											$this->out("\t$field: $value");
 										}
