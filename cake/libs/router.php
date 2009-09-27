@@ -186,7 +186,7 @@ class Router {
 			$this->__prefixes[] = $this->__admin = $routing['admin'];
 		}
 		if (isset($routing['prefixes'])) {
-			$this->__prefixes = array_merge($this->__prefixes, $routing['prefixes']);
+			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
 		}
 	}
 /**

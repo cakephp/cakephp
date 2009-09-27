@@ -1018,6 +1018,31 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Test that Routing.prefixes and Routing.admin are used when a Router instance is created
+ * or reset
+ *
+ * @return void
+ **/
+	function testRoutingPrefixesSetting() {
+		$restore = Configure::read('Routing');
+
+		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('member', 'super_user'));
+		Router::reload();
+		$result = Router::prefixes();
+		$expected = array('admin', 'member', 'super_user');
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Routing.prefixes', 'member');
+		Router::reload();
+		$result = Router::prefixes();
+		$expected = array('admin', 'member');
+		$this->assertEqual($result, $expected);
+
+		Configure::write('Routing', $restore);
+	}
+
+/**
  * testAdminRouting method
  *
  * @access public
