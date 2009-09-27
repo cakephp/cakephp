@@ -256,7 +256,7 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->Dispatch->expectAt(2, 'stderr', array("Just\na\ntest\n\n"));
 		$this->Shell->err(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expectAt(3, 'stderr', array("\n", false));
+		$this->Shell->Dispatch->expectAt(3, 'stderr', array("\n"));
 		$this->Shell->err();
 	}
 
