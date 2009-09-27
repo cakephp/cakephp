@@ -22,20 +22,12 @@
  */
 
 /**
- * Included libraries.
- *
- */
-if (!class_exists('Object')) {
-	require LIBS . 'object.php';
-}
-
-/**
  * Parses the request URL into controller, action, and parameters.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Router extends Object {
+class Router {
 
 /**
  * Array of routes
