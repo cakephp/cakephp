@@ -1050,15 +1050,13 @@ class RouterTest extends CakeTestCase {
  */
 	function testAdminRouting() {
 		Configure::write('Routing.admin', 'admin');
-		Router::reload();
-		Router::parse('/');
 
 		Router::reload();
 		Router::connect('/admin', array('admin' => true, 'controller' => 'users'));
 		$result = Router::parse('/admin');
+
 		$expected = array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'users', 'action' => 'index', 'admin' => true, 'prefix' => 'admin');
 		$this->assertEqual($result, $expected);
-
 
 		$result = Router::url(array('admin' => true, 'controller' => 'posts', 'action' => 'index', '0', '?' => 'var=test&var2=test2'));
 		$expected = '/admin/posts/index/0?var=test&var2=test2';

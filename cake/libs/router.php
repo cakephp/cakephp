@@ -38,15 +38,8 @@ class Router {
 	var $routes = array();
 
 /**
- * Caches admin setting from Configure class
- *
- * @var array
- * @access private
- */
-	var $__admin = null;
-
-/**
- * List of action prefixes used in connected routes
+ * List of action prefixes used in connected routes.
+ * Includes admin prefix
  *
  * @var array
  * @access private
@@ -175,15 +168,17 @@ class Router {
 	}
 
 /**
- * Sets the Routing prefixes.
+ * Sets the Routing prefixes. Includes compatibilty for existing Routing.admin
+ * configurations.
  *
  * @return void
  * @access private
+ * @todo Remove support for Routing.admin in future versions.
  **/
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');
 		if (isset($routing['admin'])) {
-			$this->__prefixes[] = $this->__admin = $routing['admin'];
+			$this->__prefixes[] = $routing['admin'];
 		}
 		if (isset($routing['prefixes'])) {
 			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
@@ -221,11 +216,11 @@ class Router {
 /**
  * Returns this object's routes array. Returns false if there are no routes available.
  *
- * @param string $route			An empty string, or a route string "/"
- * @param array $default		NULL or an array describing the default route
- * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @param string $route An empty string, or a route string "/"
+ * @param array $default NULL or an array describing the default route
+ * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
  * @see routes
- * @return array			Array of routes
+ * @return array Array of routes
  * @access public
  * @static
  */
@@ -235,8 +230,10 @@ class Router {
 		if (!isset($default['action'])) {
 			$default['action'] = 'index';
 		}
-		if (isset($default[$_this->__admin])) {
-			$default['prefix'] = $_this->__admin;
+		foreach ($_this->__prefixes as $prefix) {
+			if (isset($default[$prefix])) {
+				$default['prefix'] = $prefix;
+			}
 		}
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
@@ -624,10 +621,6 @@ class Router {
 			return;
 		}
 
-		if ($this->__admin) {
-			$params = array('prefix' => $this->__admin, $this->__admin => true);
-		}
-
 		if ($plugins = App::objects('plugin')) {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
@@ -636,15 +629,17 @@ class Router {
 			$match = array('plugin' => implode('|', $plugins));
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 
-			if ($this->__admin) {
-				$this->connect("/{$this->__admin}/:plugin/:controller", $params, $match);
-				$this->connect("/{$this->__admin}/:plugin/:controller/:action/*", $params, $match);
+			foreach ($this->__prefixes as $prefix) {
+				$params = array('prefix' => $prefix, $prefix => true);
+				$this->connect("/{$prefix}/:plugin/:controller", $params, $match);
+				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
 		}
 
-		if ($this->__admin) {
-			$this->connect("/{$this->__admin}/:controller", $params);
-			$this->connect("/{$this->__admin}/:controller/:action/*", $params);
+		foreach ($this->__prefixes as $prefix) {
+			$params = array('prefix' => $prefix, $prefix => true);
+			$this->connect("/{$prefix}/:controller", $params);
+			$this->connect("/{$prefix}/:controller/:action/*", $params);
 		}
 		$this->connect('/:controller', array('action' => 'index'));
 		$this->connect('/:controller/:action/*');
@@ -850,11 +845,12 @@ class Router {
 					$url['action'] = 'index';
 				}
 			}
-			if ($_this->__admin) {
-				if (!isset($url[$_this->__admin]) && !empty($params[$_this->__admin])) {
-					$url[$_this->__admin] = true;
-				} elseif ($_this->__admin && isset($url[$_this->__admin]) && !$url[$_this->__admin]) {
-					unset($url[$_this->__admin]);
+
+			foreach ($_this->__prefixes as $prefix) {
+				if (!isset($url[$prefix]) && !empty($params[$prefix])) {
+					$url[$prefix] = true;
+				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
+					unset($url[$prefix]);
 				}
 			}
 			$plugin = false;
@@ -893,8 +889,9 @@ class Router {
 			}
 
 			$named = $args = array();
-			$skip = array(
-				'bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $_this->__admin
+			$skip = array_merge(
+				array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix'), 
+				$_this->__prefixes
 			);
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
@@ -913,8 +910,10 @@ class Router {
 
 			if ($match === false) {
 				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
-				if (!empty($url[$_this->__admin])) {
-					$url['action'] = str_replace($_this->__admin . '_', '', $url['action']);
+				foreach ($_this->__prefixes as $prefix) {
+					if (!empty($url[$prefix])) {
+						$url['action'] = str_replace($prefix . '_', '', $url['action']);
+					}
 				}
 
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
@@ -926,9 +925,11 @@ class Router {
 				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 					array_unshift($urlOut, $url['plugin']);
 				}
-
-				if ($_this->__admin && isset($url[$_this->__admin])) {
-					array_unshift($urlOut, $_this->__admin);
+				
+				foreach ($_this->__prefixes as $prefix) {
+					if (isset($url[$prefix])) {
+						array_unshift($urlOut, $prefix);
+					}
 				}
 				$output = join('/', $urlOut) . '/';
 			}
@@ -960,8 +961,10 @@ class Router {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
-				if ($_this->__admin && isset($params[$_this->__admin])) {
-					$output .= $_this->__admin . '/';
+				foreach ($_this->__prefixes as $prefix) {
+					if (isset($params[$prefix])) {
+						$output .= $prefix . '/';
+					}
 				}
 				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
 					$output .= Inflector::underscore($params['plugin']) . '/';
