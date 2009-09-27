@@ -1413,7 +1413,7 @@ class Router {
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$_this->matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
 					$pass[] = $param;
 				} else {
