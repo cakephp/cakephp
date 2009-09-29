@@ -599,5 +599,66 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->db->query($this->db->dropSchema($schema1));
 	}
+
+/**
+ * testReadTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testReadTableParameters() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci',
+			'engine' => 'InnoDB');
+		$this->assertEqual($result, $expected);
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'cp1250',
+			'collate' => 'cp1250_general_ci',
+			'engine' => 'MyISAM');
+		$this->assertEqual($result, $expected);
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+	}
+
+/**
+ * testBuildTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildTableParameters() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$data = array(
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci',
+			'engine' => 'InnoDB');
+		$result = $this->db->buildTableParameters($data);
+		$expected = array(
+			'DEFAULT CHARSET=utf8',
+			'COLLATE=utf8_unicode_ci',
+			'ENGINE=InnoDB');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testBuildTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetCharsetName() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$result = $this->db->getCharsetName('utf8_unicode_ci');
+		$this->assertEqual($result, 'utf8');
+		$result = $this->db->getCharsetName('cp1250_general_ci');
+		$this->assertEqual($result, 'cp1250');
+	}
+
 }
 ?>
