@@ -913,6 +913,7 @@ class Router {
 				foreach ($_this->__prefixes as $prefix) {
 					if (!empty($url[$prefix])) {
 						$url['action'] = str_replace($prefix . '_', '', $url['action']);
+						break;
 					}
 				}
 
@@ -929,6 +930,7 @@ class Router {
 				foreach ($_this->__prefixes as $prefix) {
 					if (isset($url[$prefix])) {
 						array_unshift($urlOut, $prefix);
+						break;
 					}
 				}
 				$output = join('/', $urlOut) . '/';
@@ -964,6 +966,7 @@ class Router {
 				foreach ($_this->__prefixes as $prefix) {
 					if (isset($params[$prefix])) {
 						$output .= $prefix . '/';
+						break;
 					}
 				}
 				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
