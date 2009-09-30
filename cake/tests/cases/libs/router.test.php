@@ -1872,7 +1872,7 @@ class RouterTest extends CakeTestCase {
  * testCurentRoute
  *
  * This test needs some improvement and actual requestAction() usage
- * 
+ *
  * @return void
  * @access public
  */
@@ -1938,4 +1938,96 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual(Router::getparams(true), $expected);
 	}
 }
+
+/**
+ * Test case for RouterRoute
+ *
+ * @package cake.tests.cases.libs.
+ **/
+class RouterRouteTestCase extends CakeTestCase {
+/**
+ * setUp method
+ *
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		$this->_routing = Configure::read('Routing');
+		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
+		Router::reload();
+	}
+
+/**
+ * end the test and reset the environment
+ *
+ * @return void
+ **/
+	function endTest() {
+		Configure::write('Routing', $this->_routing);
+	}
+
+/**
+ * Test the construction of a RouterRoute
+ *
+ * @return void
+ **/
+	function testConstruction() {
+		$route =& new RouterRoute('/:controller/:action/:id', array('controller' => 'posts', 'id' => null), array('id' => '[0-9]+'));
+
+		$this->assertEqual($route->pattern, '/:controller/:action/:id');
+		$this->assertEqual($route->defaults, array('controller' => 'posts', 'id' => null));
+		$this->assertEqual($route->params, array('id' => '[0-9]+'));
+		$this->assertFalse($route->compiled());
+	}
+
+/**
+ * test Route compiling.
+ *
+ * @return void
+ **/
+	function testCompiling() {
+		extract(Router::getNamedExpressions());
+
+		$route =& new RouterRoute('/:controller/:action/:id', array('controller' => 'posts', 'id' => null), array('id' => '[0-9]+'));
+		$result = $route->compile();
+		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#';
+		$this->assertEqual($result, $expected);
+
+		$route = new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$result = $route->compile();
+		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#';
+		$this->assertEqual($result, $expected);
+
+		$this->assertEqual($route->names, array('controller', 'action', 'id'));
+
+		$route =& new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $ID));
+		$result = $route->compile();
+		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#';
+		$this->assertEqual($result, $expected);
+
+		$this->assertEqual($route->names, array('controller', 'action', 'id'));
+
+		$route =& new RouterRoute('/posts/foo:id');
+		$result = $route->compile();
+		$expected = '#^/posts(?:/foo([^\/]+))?[\/]*$#';
+		$this->assertEqual($result, $expected);
+
+		$this->assertEqual($route->names, array('id'));
+		
+		foreach (array(':', '@', ';', '$', '-') as $delim) {
+			$route =& new RouterRoute('/posts/:id'.$delim.':title');
+			$result = $route->compile();
+			$expected = '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#';
+			$this->assertEqual($result, $expected);
+
+			$this->assertEqual($route->names, array('id', 'title'));
+		}
+		
+		$route =& new RouterRoute('/posts/:id::title/:year');
+		$result = $route->compile();
+		$this->assertEqual($result, '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
+		$this->assertEqual($route->names, array('id', 'title', 'year'));
+	}
+}
+
 ?>

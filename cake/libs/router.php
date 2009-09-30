@@ -99,18 +99,6 @@ class Router {
 	var $__currentRoute = array();
 
 /**
- * HTTP header shortcut map.  Used for evaluating header-based route expressions.
- *
- * @var array
- * @access private
- */
-	var $__headerMap = array(
-		'type'		=> 'content_type',
-		'method'	=> 'request_method',
-		'server'	=> 'server_name'
-	);
-
-/**
  * Default HTTP request method => controller action map.
  *
  * @var array
@@ -123,6 +111,18 @@ class Router {
 		array('action' => 'edit',	'method' => 'PUT', 		'id' => true),
 		array('action' => 'delete',	'method' => 'DELETE',	'id' => true),
 		array('action' => 'edit',	'method' => 'POST', 	'id' => true)
+	);
+
+/**
+ * HTTP header shortcut map.  Used for evaluating header-based route expressions.
+ *
+ * @var array
+ * @access private
+ */
+	var $__headerMap = array(
+		'type'		=> 'content_type',
+		'method'	=> 'request_method',
+		'server'	=> 'server_name'
 	);
 
 /**
@@ -1426,6 +1426,206 @@ class Router {
 			}
 		}
 		return compact('pass', 'named');
+	}
+}
+
+/**
+ * A single Route used by the Router to connect requests to 
+ * parameter maps.
+ * 
+ * Not normally created as a standalone.  Use Router::connect() to create
+ * Routes for your application.
+ *
+ * @package cake.libs
+ * @since 1.3.0
+ * @see Router::connect
+ */
+class RouterRoute {
+/**
+ * An array of named segments in a Route.
+ * `/:controller/:action/:id` has 3 named elements
+ *
+ * @var array
+ **/
+	var $names = array();
+/**
+ * An array of additional parameters for the Route.
+ *
+ * @var array
+ **/
+	var $params = array();
+/**
+ * Default parameters for a Route
+ *
+ * @var array
+ */
+	var $defaults = array();
+/**
+ * The routes pattern string.
+ *
+ * @var string
+ **/
+	var $pattern = null;
+/**
+ * The compiled route regular expresssion
+ *
+ * @var string
+ **/
+	var $_compiledRoute = null;
+/**
+ * HTTP header shortcut map.  Used for evaluating header-based route expressions.
+ *
+ * @var array
+ * @access private
+ */
+	var $__headerMap = array(
+		'type'		=> 'content_type',
+		'method'	=> 'request_method',
+		'server'	=> 'server_name'
+	);
+/**
+ * Constructor for a Route
+ *
+ * @param string $pattern Pattern string with parameter placeholders
+ * @param array $defaults Array of defaults for the route.
+ * @param string $params Array of parameters and additional options for the Route
+ * @return void
+ */
+	function RouterRoute($pattern, $defaults = array(), $params = array()) {
+		$this->pattern = $pattern;
+		$this->defaults = (array)$defaults;
+		$this->params = (array)$params;
+	}
+/**
+ * Check if a Route has been compiled into a regular expression.
+ *
+ * @return boolean
+ **/
+	function compiled() {
+		return !empty($this->_compiledRoute);
+	}
+/**
+ * Compiles the routes regular expression.  Modifies defaults property so all necessary keys are set
+ * and populates $this->names with the named routing elements.
+ *
+ * @return array Returns a string regular expression of the compiled route.
+ * @access public
+ */
+	function compile() {
+		$this->_writeRoute($this->pattern, $this->defaults, $this->params);
+		$this->defaults += array('plugin' => null, 'controller' => null);
+		return $this->_compiledRoute;
+	}
+/**
+ * Builds a route regular expression
+ *
+ * @param string $route An empty string, or a route string "/"
+ * @param array $default NULL or an array describing the default route
+ * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
+ * @return array
+ * @access protected
+ */
+	function _writeRoute($route, $default, $params) {
+		if (empty($route) || ($route === '/')) {
+			return array('/^[\/]*$/', array());
+		}
+		$names = array();
+		$elements = explode('/', $route);
+
+		foreach ($elements as $element) {
+			if (empty($element)) {
+				continue;
+			}
+			$q = null;
+			$element = trim($element);
+			$namedParam = strpos($element, ':') !== false;
+
+			if ($namedParam && preg_match('/^:([^:]+)$/', $element, $r)) {
+				if (isset($params[$r[1]])) {
+					if ($r[1] != 'plugin' && array_key_exists($r[1], $default)) {
+						$q = '?';
+					}
+					$parsed[] = '(?:/(' . $params[$r[1]] . ')' . $q . ')' . $q;
+				} else {
+					$parsed[] = '(?:/([^\/]+))?';
+				}
+				$names[] = $r[1];
+			} elseif ($element === '*') {
+				$parsed[] = '(?:/(.*))?';
+			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
+				$matchCount = count($matches[1]);
+
+				foreach ($matches[1] as $i => $name) {
+					$pos = strpos($element, ':' . $name);
+					$before = substr($element, 0, $pos);
+					$element = substr($element, $pos + strlen($name) + 1);
+					$after = null;
+
+					if ($i + 1 === $matchCount && $element) {
+						$after = preg_quote($element);
+					}
+
+					if ($i === 0) {
+						$before = '/' . $before;
+					}
+					$before = preg_quote($before, '#');
+
+					if (isset($params[$name])) {
+						if (isset($default[$name]) && $name != 'plugin') {
+							$q = '?';
+						}
+						$parsed[] = '(?:' . $before . '(' . $params[$name] . ')' . $q . $after . ')' . $q;
+					} else {
+						$parsed[] = '(?:' . $before . '([^\/]+)' . $after . ')?';
+					}
+					$names[] = $name;
+				}
+			} else {
+				$parsed[] = '/' . $element;
+			}
+		}
+		$this->_compiledRoute = '#^' . join('', $parsed) . '[\/]*$#';
+		$this->names = $names;
+	}
+
+/**
+ * Checks to see if the given URL matches the given route
+ *
+ * @param array $route
+ * @param string $url
+ * @return mixed Boolean false on failure, otherwise array
+ */
+	function match($url) {
+		if (!$this->compiled()) {
+			$this->compile();
+		}
+
+		if (!preg_match($this->_compiledRoute, $url, $r)) {
+			return false;
+		} else {
+			foreach ($this->defaults as $key => $val) {
+				if ($key{0} === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
+					if (isset($this->__headerMap[$header[1]])) {
+						$header = $this->__headerMap[$header[1]];
+					} else {
+						$header = 'http_' . $header[1];
+					}
+
+					$val = (array)$val;
+					$h = false;
+
+					foreach ($val as $v) {
+						if (env(strtoupper($header)) === $v) {
+							$h = true;
+						}
+					}
+					if (!$h) {
+						return false;
+					}
+				}
+			}
+		}
+		return $r;
 	}
 }
 ?>
