@@ -1540,6 +1540,34 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that setting a prefix override the current one
+ * 
+ * @return void
+ */
+	function testPrefixOverride() {
+		Configure::write('Routing.prefixes', array('protected', 'admin'));
+		Router::reload();
+		Router::parse('/');
+
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'protected', 'protected' => true, 'form' => array(), 'url' => array('url' => 'protected/images/index')),
+			array('base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
+		));
+
+		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'admin' => true));
+		$expected = '/admin/images/add';
+		$this->assertEqual($result, $expected);
+		
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/images/index')),
+			array('base' => '', 'here' => '/admin/images/index', 'webroot' => '/')
+		));
+		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
+		$expected = '/protected/images/add';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testRemoveBase method
  *
  * @access public

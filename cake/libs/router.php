@@ -846,8 +846,9 @@ class Router {
 				}
 			}
 
+			$prefixExists = (array_intersect_key($url, array_flip($_this->__prefixes)));
 			foreach ($_this->__prefixes as $prefix) {
-				if (!isset($url[$prefix]) && !empty($params[$prefix])) {
+				if (!isset($url[$prefix]) && !empty($params[$prefix]) && !$prefixExists) {
 					$url[$prefix] = true;
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
 					unset($url[$prefix]);
@@ -926,7 +927,7 @@ class Router {
 				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 					array_unshift($urlOut, $url['plugin']);
 				}
-				
+
 				foreach ($_this->__prefixes as $prefix) {
 					if (isset($url[$prefix])) {
 						array_unshift($urlOut, $prefix);
