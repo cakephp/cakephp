@@ -32,7 +32,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Set extends Object {
+class Set {
 
 /**
  * Deprecated
