@@ -204,7 +204,7 @@ class DbConfigTask extends Shell {
 	function __verify($config) {
 		$config = array_merge($this->__defaultConfig, $config);
 		extract($config);
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out('The following database configuration will be created:');
 		$this->hr();

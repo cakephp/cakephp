@@ -372,7 +372,7 @@ class SchemaShell extends Shell {
 		$this->out("\n" . __('The following statements will run.', true));
 		$this->out(array_map('trim', $contents));
 		if ('y' == $this->in(__('Are you sure you want to alter the tables?', true), array('y', 'n'), 'n')) {
-			$this->out('');
+			$this->out();
 			$this->out(__('Updating Database...', true));
 			$this->__run($contents, 'update', $Schema);
 		}
@@ -448,7 +448,7 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema dump <filename>\n\t\tDump database sql based on schema file to <filename>. \n\t\tIf <filename> is write, schema dump will be written to a file\n\t\tthat has the same name as the app directory.");
 		$this->out("\n\tschema run create <schema> <table>\n\t\tDrop and create tables based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

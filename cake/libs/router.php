@@ -177,10 +177,10 @@ class Router {
  **/
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');
-		if (isset($routing['admin'])) {
+		if (!empty($routing['admin'])) {
 			$this->__prefixes[] = $routing['admin'];
 		}
-		if (isset($routing['prefixes'])) {
+		if (!empty($routing['prefixes'])) {
 			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
 		}
 	}
@@ -899,9 +899,7 @@ class Router {
 
 			// Remove this once parsed URL parameters can be inserted into 'pass'
 			for ($i = 0; $i < $count; $i++) {
-				if ($i === 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
-					$args[0] = $url[$keys[$i]];
-				} elseif (is_numeric($keys[$i]) || $keys[$i] === 'id') {
+				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
 				} else {
 					$named[$keys[$i]] = $url[$keys[$i]];
@@ -1413,7 +1411,7 @@ class Router {
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$_this->matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
 					$pass[] = $param;
 				} else {
