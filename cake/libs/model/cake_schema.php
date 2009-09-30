@@ -237,6 +237,7 @@ class CakeSchema extends Object {
 						if (empty($tables[$Object->table])) {
 							$tables[$Object->table] = $this->__columns($Object);
 							$tables[$Object->table]['indexes'] = $db->index($Object);
+							$tables[$Object->table]['tableParameters'] = $db->readTableParameters($table);
 							unset($currentTables[$key]);
 						}
 						if (!empty($Object->hasAndBelongsToMany)) {
@@ -250,6 +251,7 @@ class CakeSchema extends Object {
 										$key = array_search($table, $currentTables);
 										$tables[$Object->$class->table] = $this->__columns($Object->$class);
 										$tables[$Object->$class->table]['indexes'] = $db->index($Object->$class);
+										$tables[$Object->$class->table]['tableParameters'] = $db->readTableParameters($table);
 										unset($currentTables[$key]);
 									}
 								}
@@ -279,12 +281,15 @@ class CakeSchema extends Object {
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
+					$tables[$Object->table]['tableParameters'] = $db->readTableParameters($table);
 				} elseif ($models === false) {
 					$tables[$table] = $this->__columns($Object);
 					$tables[$table]['indexes'] = $db->index($Object);
+					$tables[$table]['tableParameters'] = $db->readTableParameters($table);
 				} else {
 					$tables['missing'][$table] = $this->__columns($Object);
 					$tables['missing'][$table]['indexes'] = $db->index($Object);
+					$tables['missing'][$table]['tableParameters'] = $db->readTableParameters($table);
 				}
 			}
 		}
