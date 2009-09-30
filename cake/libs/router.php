@@ -899,9 +899,7 @@ class Router {
 
 			// Remove this once parsed URL parameters can be inserted into 'pass'
 			for ($i = 0; $i < $count; $i++) {
-				if ($i === 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
-					$args[0] = $url[$keys[$i]];
-				} elseif (is_numeric($keys[$i]) || $keys[$i] === 'id') {
+				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
 				} else {
 					$named[$keys[$i]] = $url[$keys[$i]];
