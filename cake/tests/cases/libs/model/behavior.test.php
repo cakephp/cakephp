@@ -975,6 +975,8 @@ class BehaviorTest extends CakeTestCase {
 		$Apple->set('field', 'value');
 		$this->assertTrue($Apple->testData());
 		$this->assertTrue($Apple->data['Apple']['field_2']);
+
+		$this->assertTrue($Apple->testData('one', 'two', 'three', 'four', 'five', 'six'));
 	}
 /**
  * testBehaviorTrigger method
