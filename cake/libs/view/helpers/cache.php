@@ -156,27 +156,30 @@ class CacheHelper extends AppHelper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-
-		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $oresult, PREG_PATTERN_ORDER);
-		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $result, PREG_PATTERN_ORDER);
+		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $fileResult, PREG_PATTERN_ORDER);
+		$fileResult = $fileResult[0];
+		$outputResult = $outputResult[0];
 
 		if (!empty($this->__replace)) {
-			foreach ($oresult['0'] as $k => $element) {
+			foreach ($outputResult as $i => $element) {
 				$index = array_search($element, $this->__match);
 				if ($index !== false) {
-					array_splice($oresult[0], $k, 1);
+					unset($outputResult[$i]);
 				}
 			}
+			$outputResult = array_values($outputResult);
 		}
 
-		if (!empty($result['0'])) {
-			$count = 0;
-			foreach ($result['0'] as $block) {
-				if (isset($oresult['0'][$count])) {
-					$this->__replace[] = $block;
-					$this->__match[] = $oresult['0'][$count];
+
+		if (!empty($fileResult)) {
+			$i = 0;
+			foreach ($fileResult as $cacheBlock) {
+				if (isset($outputResult[$i])) {
+					$this->__replace[] = $cacheBlock;
+					$this->__match[] = $outputResult[$i];
 				}
-				$count++;
+				$i++;
 			}
 		}
 	}
