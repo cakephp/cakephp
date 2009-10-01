@@ -1,9 +1,7 @@
 <?php
 /* SVN FILE: $Id$ */
 /**
- * Short description for file.
- *
- * Long description for file
+ * CacheHelper helps create full page view caching.
  *
  * PHP versions 4 and 5
  *
@@ -25,9 +23,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 /**
- * Short description for file.
+ * CacheHelper helps create full page view caching.
  *
- * Long description for file
+ * When using CacheHelper you don't call any of its methods, they are all automatically
+ * called by View, and use the $cacheAction settings set in the controller.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
