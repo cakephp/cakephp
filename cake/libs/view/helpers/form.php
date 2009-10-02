@@ -198,7 +198,7 @@ class FormHelper extends AppHelper {
 				'plugin' => $this->plugin,
 				'controller' => $view->viewPath,
 				'action' => $options['action'],
-				'id' => $id
+				0 => $id
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';

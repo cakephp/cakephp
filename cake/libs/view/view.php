@@ -134,14 +134,6 @@ class View extends Object {
 	var $layoutPath = null;
 
 /**
- * Title HTML element of this View.
- *
- * @var string
- * @access public
- */
-	var $pageTitle = false;
-
-/**
  * Turns on or off Cake's conventional mode of rendering views. On by default.
  *
  * @var boolean
@@ -272,7 +264,7 @@ class View extends Object {
  */
 	var $__passedVars = array(
 		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
-		'helpers', 'here', 'layout', 'name', 'pageTitle', 'layoutPath', 'viewPath',
+		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
 		'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -461,27 +453,25 @@ class View extends Object {
 			unset($this->viewVars['cakeDebug']);
 		}
 
-		if ($this->pageTitle !== false) {
-			$pageTitle = $this->pageTitle;
-		} else {
-			$pageTitle = Inflector::humanize($this->viewPath);
-		}
-		$data_for_layout = array_merge($this->viewVars, array(
-			'title_for_layout' => $pageTitle,
+		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
 			'scripts_for_layout' => join("\n\t", $this->__scripts),
 			'cakeDebug' => $debug
 		));
 
+		if (!isset($dataForLayout['title_for_layout'])) {
+			$dataForLayout['title_for_layout'] = Inflector::humanize($this->viewPath);
+		}
+
 		if (empty($this->loaded) && !empty($this->helpers)) {
 			$loadHelpers = true;
 		} else {
 			$loadHelpers = false;
-			$data_for_layout = array_merge($data_for_layout, $this->loaded);
+			$dataForLayout = array_merge($dataForLayout, $this->loaded);
 		}
 
 		$this->_triggerHelpers('beforeLayout');
-		$this->output = $this->_render($layoutFileName, $data_for_layout, $loadHelpers, true);
+		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
@@ -630,9 +620,8 @@ class View extends Object {
  *
  * @param mixed $one A string or an array of data.
  * @param mixed $two Value in case $one is a string (which then works as the key).
- *              Unused if $one is an associative array, otherwise serves as the
- *              values to $one's keys.
- * @return unknown
+ *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
+ * @return void
  */
 	function set($one, $two = null) {
 		$data = null;
@@ -645,18 +634,10 @@ class View extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-
 		if ($data == null) {
 			return false;
 		}
-
-		foreach ($data as $name => $value) {
-			if ($name == 'title') {
-				$this->pageTitle = $value;
-			} else {
-				$this->viewVars[$name] = $value;
-			}
-		}
+		$this->viewVars = array_merge($this->viewVars, $data);
 	}
 
 /**

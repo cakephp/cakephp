@@ -76,6 +76,30 @@ class DboMysqlBase extends DboSource {
 	);
 
 /**
+ * List of engine specific additional field parameters used on table creating
+ *
+ * @var array
+ * @access public
+ */
+	var $fieldParameters = array(
+		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
+		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault')
+	);
+
+/**
+ * List of table engine specific parameters used on table creating
+ *
+ * @var array
+ * @access public
+ */
+	var $tableParameters = array(
+		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),
+		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => '=', 'column' => 'Collation'),
+		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine')
+	);
+
+/**
  * MySQL column definition
  *
  * @var array
@@ -345,6 +369,52 @@ class DboMysqlBase extends DboSource {
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
 	}
+/**
+ * Returns an detailed array of sources (tables) in the database.
+ *
+ * @param string $name Table name to get parameters 
+ * @return array Array of tablenames in the database
+ */
+	function listDetailedSources($name = null) {
+		$condition = '';
+		if (is_string($name)) {
+			$condition = ' WHERE Name = ' . $this->value($name);
+		}
+		$result = $this->query('SHOW TABLE STATUS FROM ' . $this->name($this->config['database']) . $condition . ';');
+		if (!$result) {
+			return array();
+		} else {
+			$tables = array();
+			foreach ($result as $row) {
+				$tables[$row['TABLES']['Name']] = $row['TABLES'];
+				if (!empty($row['TABLES']['Collation'])) {
+					$charset = $this->getCharsetName($row['TABLES']['Collation']);
+					if ($charset) {
+						$tables[$row['TABLES']['Name']]['charset'] = $charset;
+					}
+				}
+			}
+			if (is_string($name)) {
+				return $tables[$name];
+			}
+			return $tables;
+		}
+	}
+
+/**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	function getCharsetName($name) {
+		$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+		if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+			return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+		}
+		return false;
+	}
+
 }
 
 /**
@@ -469,7 +539,7 @@ class DboMysql extends DboMysqlBase {
 			return $cache;
 		}
 		$fields = false;
-		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
+		$cols = $this->query('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
 
 		foreach ($cols as $column) {
 			$colKey = array_keys($column);
@@ -478,13 +548,24 @@ class DboMysql extends DboMysqlBase {
 			}
 			if (isset($column[0])) {
 				$fields[$column[0]['Field']] = array(
-					'type'		=> $this->column($column[0]['Type']),
-					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
-					'default'	=> $column[0]['Default'],
-					'length'	=> $this->length($column[0]['Type']),
+					'type' => $this->column($column[0]['Type']),
+					'null' => ($column[0]['Null'] == 'YES' ? true : false),
+					'default' => $column[0]['Default'],
+					'length' => $this->length($column[0]['Type']),
 				);
 				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
-					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
+					$fields[$column[0]['Field']]['key'] = $this->index[$column[0]['Key']];
+				}
+				foreach ($this->fieldParameters as $name => $value) {
+					if (!empty($column[0][$value['column']])) {
+						$fields[$column[0]['Field']][$name] = $column[0][$value['column']];
+					}
+				}
+				if (isset($fields[$column[0]['Field']]['collate'])) {
+					$charset = $this->getCharsetName($fields[$column[0]['Field']]['collate']);
+					if ($charset) {
+						$fields[$column[0]['Field']]['charset'] = $charset;
+					}
 				}
 			}
 		}
