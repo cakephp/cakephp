@@ -239,7 +239,7 @@ class Router {
 			$_this->__prefixes[] = $default['prefix'];
 			$_this->__prefixes = array_keys(array_flip($_this->__prefixes));
 		}
-		$_this->routes[] = array($route, $default, $params);
+		$_this->routes[] =& new RouterRoute($route, $default, $params);
 		return $_this->routes;
 	}
 
@@ -453,14 +453,16 @@ class Router {
 		}
 		extract($_this->__parseExtension($url));
 
-		foreach ($_this->routes as $i => $route) {
-			if (count($route) === 3) {
-				$route = $_this->compile($i);
-			}
-			//switches to parse() in RouterRoute
-			if (($r = $_this->__matchRoute($route, $url)) !== false) {
-				$_this->__currentRoute[] = $route;
-				list($route, $regexp, $names, $defaults, $params) = $route;
+		for ($i = 0, $len = count($_this->routes); $i < $len; $i++) {
+			$route =& $_this->routes[$i];
+			$route->compile();
+			if (($r = $route->parse($url)) !== false) {
+				$_this->__currentRoute[] =& $route;
+				
+				$params = $route->params;
+				$names = $route->keys;
+				$defaults = $route->defaults;
+
 				$argOptions = array();
 
 				if (array_key_exists('named', $params)) {
@@ -516,45 +518,6 @@ class Router {
 			$out['url']['ext'] = $ext;
 		}
 		return $out;
-	}
-
-/**
- * Checks to see if the given URL matches the given route
- *
- * @param array $route
- * @param string $url
- * @return mixed Boolean false on failure, otherwise array
- * @access private
- */
-	function __matchRoute($route, $url) {
-		list($route, $regexp, $names, $defaults) = $route;
-
-		if (!preg_match($regexp, $url, $r)) {
-			return false;
-		} else {
-			foreach ($defaults as $key => $val) {
-				if ($key{0} === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
-					if (isset($this->__headerMap[$header[1]])) {
-						$header = $this->__headerMap[$header[1]];
-					} else {
-						$header = 'http_' . $header[1];
-					}
-
-					$val = (array)$val;
-					$h = false;
-
-					foreach ($val as $v) {
-						if (env(strtoupper($header)) === $v) {
-							$h = true;
-						}
-					}
-					if (!$h) {
-						return false;
-					}
-				}
-			}
-		}
-		return $r;
 	}
 
 /**
@@ -871,18 +834,18 @@ class Router {
 				unset($url['ext']);
 			}
 			$match = false;
+			
+			for ($i = 0, $len = count($_this->routes); $i < $len; $i++) {
+				$route =& $_this->routes[$i];
+				$route->compile();
 
-			foreach ($_this->routes as $i => $route) {
-				if (count($route) === 3) {
-					$route = $_this->compile($i);
-				}
 				$originalUrl = $url;
 
-				if (isset($route[4]['persist'], $_this->__params[0])) {
-					$url = array_merge(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
+				if (isset($route->params['persist'], $_this->__params[0])) {
+					$url = array_merge(array_intersect_key($params, Set::combine($route->params['persist'], '/')), $url);
 				}
 				// replace with RouterRoute::match
-				if ($match = $_this->mapRouteElements($route, $url)) {
+				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
 					$url = array();
 					break;
@@ -984,168 +947,6 @@ class Router {
 		}
 
 		return $output . $extension . $_this->queryString($q, array(), $escape) . $frag;
-	}
-
-/**
- * Maps a URL array onto a route and returns the string result, or false if no match
- *
- * @param array $route Route Route
- * @param array $url URL URL to map
- * @return mixed Result (as string) or false if no match
- * @access public
- * @static
- */
-	function mapRouteElements($route, $url) {
-		if (isset($route[3]['prefix'])) {
-			$prefix = $route[3]['prefix'];
-			unset($route[3]['prefix']);
-		}
-
-		$pass = array();
-		$defaults = $route[3];
-		$routeParams = $route[2];
-		$params = Set::diff($url, $defaults);
-		$urlInv = array_combine(array_values($url), array_keys($url));
-
-		$i = 0;
-		while (isset($defaults[$i])) {
-			if (isset($urlInv[$defaults[$i]])) {
-				if (!in_array($defaults[$i], $url) && is_int($urlInv[$defaults[$i]])) {
-					return false;
-				}
-				unset($urlInv[$defaults[$i]], $defaults[$i]);
-			} else {
-				return false;
-			}
-			$i++;
-		}
-
-		foreach ($params as $key => $value) {
-			if (is_int($key)) {
-				$pass[] = $value;
-				unset($params[$key]);
-			}
-		}
-		list($named, $params) = Router::getNamedElements($params);
-
-		if (!strpos($route[0], '*') && (!empty($pass) || !empty($named))) {
-			return false;
-		}
-
-		$urlKeys = array_keys($url);
-		$paramsKeys = array_keys($params);
-		$defaultsKeys = array_keys($defaults);
-
-		if (!empty($params)) {
-			if (array_diff($paramsKeys, $routeParams) != array()) {
-				return false;
-			}
-			$required = array_values(array_diff($routeParams, $urlKeys));
-			$reqCount = count($required);
-
-			for ($i = 0; $i < $reqCount; $i++) {
-				if (array_key_exists($required[$i], $defaults) && $defaults[$required[$i]] === null) {
-					unset($required[$i]);
-				}
-			}
-		}
-		$isFilled = true;
-
-		if (!empty($routeParams)) {
-			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
-			$isFilled = (array_diff($routeParams, array_keys($filled)) === array());
-			if (!$isFilled && empty($params)) {
-				return false;
-			}
-		}
-
-		if (empty($params)) {
-			return Router::__mapRoute($route, array_merge($url, compact('pass', 'named', 'prefix')));
-		} elseif (!empty($routeParams) && !empty($route[3])) {
-
-			if (!empty($required)) {
-				return false;
-			}
-			foreach ($params as $key => $val) {
-				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
-					if (!isset($defaults[$key])) {
-						continue;
-					}
-					return false;
-				}
-			}
-		} else {
-			if (empty($required) && $defaults['plugin'] === $url['plugin'] && $defaults['controller'] === $url['controller'] && $defaults['action'] === $url['action']) {
-				return Router::__mapRoute($route, array_merge($url, compact('pass', 'named', 'prefix')));
-			}
-			return false;
-		}
-
-		if (!empty($route[4])) {
-			foreach ($route[4] as $key => $reg) {
-				if (array_key_exists($key, $url) && !preg_match('#' . $reg . '#', $url[$key])) {
-					return false;
-				}
-			}
-		}
-		return Router::__mapRoute($route, array_merge($filled, compact('pass', 'named', 'prefix')));
-	}
-
-/**
- * Merges URL parameters into a route string
- *
- * @param array $route Route
- * @param array $params Parameters
- * @return string Merged URL with parameters
- * @access private
- */
-	function __mapRoute($route, $params = array()) {
-		if (isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
-			unset($params['controller']);
-		}
-
-		if (isset($params['prefix']) && isset($params['action'])) {
-			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
-			unset($params['prefix']);
-		}
-
-		if (isset($params['pass']) && is_array($params['pass'])) {
-			$params['pass'] = implode('/', Set::filter($params['pass'], true));
-		} elseif (!isset($params['pass'])) {
-			$params['pass'] = '';
-		}
-
-		if (isset($params['named'])) {
-			if (is_array($params['named'])) {
-				$count = count($params['named']);
-				$keys = array_keys($params['named']);
-				$named = array();
-
-				for ($i = 0; $i < $count; $i++) {
-					$named[] = $keys[$i] . $this->named['separator'] . $params['named'][$keys[$i]];
-				}
-				$params['named'] = join('/', $named);
-			}
-			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
-		}
-		$out = $route[0];
-
-		foreach ($route[2] as $key) {
-			$string = null;
-			if (isset($params[$key])) {
-				$string = $params[$key];
-				unset($params[$key]);
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key = $key . '/';
-			}
-			$out = str_replace(':' . $key, $string, $out);
-		}
-
-		if (strpos($route[0], '*')) {
-			$out = str_replace('*', $params['pass'], $out);
-		}
-
-		return $out;
 	}
 
 /**
@@ -1487,9 +1288,9 @@ class RouterRoute {
  * @access private
  */
 	var $__headerMap = array(
-		'type'		=> 'content_type',
-		'method'	=> 'request_method',
-		'server'	=> 'server_name'
+		'type' => 'content_type',
+		'method' => 'request_method',
+		'server' => 'server_name'
 	);
 /**
  * Constructor for a Route
@@ -1520,6 +1321,9 @@ class RouterRoute {
  * @access public
  */
 	function compile() {
+		if ($this->compiled()) {
+			return $this->_compiledRoute;
+		}
 		$this->_writeRoute($this->template, $this->defaults, $this->params);
 		$this->defaults += array('plugin' => null, 'controller' => null, 'action' => null);
 		return $this->_compiledRoute;
@@ -1538,7 +1342,7 @@ class RouterRoute {
 			$this->_compiledRoute = '/^[\/]*$/';
 			$this->keys = array();
 		}
-		$names = array();
+		$names = $parsed = array();
 		$elements = explode('/', $route);
 
 		foreach ($elements as $element) {
@@ -1744,7 +1548,7 @@ class RouterRoute {
 		return $this->__mapRoute(array_merge($filled, compact('pass', 'named', 'prefix')));
 	}
 /**
- * Map route..
+ * Converts Route arrays into strings.
  *
  * @return void
  **/
@@ -1764,6 +1568,9 @@ class RouterRoute {
 			$params['pass'] = '';
 		}
 
+		$instance = Router::getInstance();
+		$separator = $instance->named['separator'];
+
 		if (isset($params['named'])) {
 			if (is_array($params['named'])) {
 				$count = count($params['named']);
@@ -1771,7 +1578,7 @@ class RouterRoute {
 				$named = array();
 
 				for ($i = 0; $i < $count; $i++) {
-					$named[] = $keys[$i] . $this->named['separator'] . $params['named'][$keys[$i]];
+					$named[] = $keys[$i] . $separator . $params['named'][$keys[$i]];
 				}
 				$params['named'] = join('/', $named);
 			}
