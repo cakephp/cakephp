@@ -344,7 +344,7 @@ class HtmlHelper extends AppHelper {
 			}
 
 			if (strpos($path, '?') === false) {
-				if (strpos($path, '.css') === false) {
+				if (substr($path, -4) !== '.css') {
 					$path .= '.css';
 				}
 			}
