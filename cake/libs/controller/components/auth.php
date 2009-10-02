@@ -862,12 +862,17 @@ class AuthComponent extends Object {
 			} else {
 				return false;
 			}
-			$data = $model->find(array_merge($find, $conditions), null, null, 0);
+			$data = $model->find('first', array(
+				'conditions' => array_merge($find, $conditions),
+				'recursive' => 0
+			));
 			if (empty($data) || empty($data[$model->alias])) {
 				return null;
 			}
 		} elseif (!empty($user) && is_string($user)) {
-			$data = $model->find(array_merge(array($model->escapeField() => $user), $conditions));
+			$data = $model->find('first', array(
+				'conditions' => array_merge(array($model->escapeField() => $user), $conditions),
+			));
 			if (empty($data) || empty($data[$model->alias])) {
 				return null;
 			}
