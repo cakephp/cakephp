@@ -1974,7 +1974,7 @@ class RouterRouteTestCase extends CakeTestCase {
 	function testConstruction() {
 		$route =& new RouterRoute('/:controller/:action/:id', array('controller' => 'posts', 'id' => null), array('id' => '[0-9]+'));
 
-		$this->assertEqual($route->pattern, '/:controller/:action/:id');
+		$this->assertEqual($route->template, '/:controller/:action/:id');
 		$this->assertEqual($route->defaults, array('controller' => 'posts', 'id' => null));
 		$this->assertEqual($route->params, array('id' => '[0-9]+'));
 		$this->assertFalse($route->compiled());
@@ -1998,36 +1998,48 @@ class RouterRouteTestCase extends CakeTestCase {
 		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#';
 		$this->assertEqual($result, $expected);
 
-		$this->assertEqual($route->names, array('controller', 'action', 'id'));
+		$this->assertEqual($route->keys, array('controller', 'action', 'id'));
 
 		$route =& new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4'), array('id' => $ID));
 		$result = $route->compile();
 		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#';
 		$this->assertEqual($result, $expected);
 
-		$this->assertEqual($route->names, array('controller', 'action', 'id'));
+		$this->assertEqual($route->keys, array('controller', 'action', 'id'));
 
 		$route =& new RouterRoute('/posts/foo:id');
 		$result = $route->compile();
 		$expected = '#^/posts(?:/foo([^\/]+))?[\/]*$#';
 		$this->assertEqual($result, $expected);
 
-		$this->assertEqual($route->names, array('id'));
-		
+		$this->assertEqual($route->keys, array('id'));
+
 		foreach (array(':', '@', ';', '$', '-') as $delim) {
 			$route =& new RouterRoute('/posts/:id'.$delim.':title');
 			$result = $route->compile();
 			$expected = '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#';
 			$this->assertEqual($result, $expected);
 
-			$this->assertEqual($route->names, array('id', 'title'));
+			$this->assertEqual($route->keys, array('id', 'title'));
 		}
-		
+
 		$route =& new RouterRoute('/posts/:id::title/:year');
 		$result = $route->compile();
 		$this->assertEqual($result, '#^/posts(?:/([^\/]+))?(?:\\:([^\/]+))?(?:/([^\/]+))?[\/]*$#');
-		$this->assertEqual($route->names, array('id', 'title', 'year'));
+		$this->assertEqual($route->keys, array('id', 'title', 'year'));
 	}
+
+/**
+ * test that routes match their pattern.
+ *
+ * @return void
+ **/
+	function testMatching() {
+		$route =& new RouterRoute('/blog/:action', array('controller' => 'posts'));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
+		$this->assertEqual($result, '/blog/view');
+	}
+
 }
 
 ?>

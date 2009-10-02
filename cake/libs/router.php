@@ -457,7 +457,7 @@ class Router {
 			if (count($route) === 3) {
 				$route = $_this->compile($i);
 			}
-
+			//switches to parse() in RouterRoute
 			if (($r = $_this->__matchRoute($route, $url)) !== false) {
 				$_this->__currentRoute[] = $route;
 				list($route, $regexp, $names, $defaults, $params) = $route;
@@ -881,6 +881,7 @@ class Router {
 				if (isset($route[4]['persist'], $_this->__params[0])) {
 					$url = array_merge(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
 				}
+				// replace with RouterRoute::match
 				if ($match = $_this->mapRouteElements($route, $url)) {
 					$output = trim($match, '/');
 					$url = array();
@@ -1447,7 +1448,7 @@ class RouterRoute {
  *
  * @var array
  **/
-	var $names = array();
+	var $keys = array();
 /**
  * An array of additional parameters for the Route.
  *
@@ -1461,11 +1462,18 @@ class RouterRoute {
  */
 	var $defaults = array();
 /**
- * The routes pattern string.
+ * The routes template string.
  *
  * @var string
  **/
-	var $pattern = null;
+	var $template = null;
+/**
+ * Is this route a greedy route?  Greedy routes have a `/*` in their
+ * template
+ *
+ * @var string
+ **/
+	var $_greedy = false;
 /**
  * The compiled route regular expresssion
  *
@@ -1486,13 +1494,13 @@ class RouterRoute {
 /**
  * Constructor for a Route
  *
- * @param string $pattern Pattern string with parameter placeholders
+ * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
  * @param string $params Array of parameters and additional options for the Route
  * @return void
  */
-	function RouterRoute($pattern, $defaults = array(), $params = array()) {
-		$this->pattern = $pattern;
+	function RouterRoute($template, $defaults = array(), $params = array()) {
+		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->params = (array)$params;
 	}
@@ -1512,8 +1520,8 @@ class RouterRoute {
  * @access public
  */
 	function compile() {
-		$this->_writeRoute($this->pattern, $this->defaults, $this->params);
-		$this->defaults += array('plugin' => null, 'controller' => null);
+		$this->_writeRoute($this->template, $this->defaults, $this->params);
+		$this->defaults += array('plugin' => null, 'controller' => null, 'action' => null);
 		return $this->_compiledRoute;
 	}
 /**
@@ -1527,7 +1535,8 @@ class RouterRoute {
  */
 	function _writeRoute($route, $default, $params) {
 		if (empty($route) || ($route === '/')) {
-			return array('/^[\/]*$/', array());
+			$this->_compiledRoute = '/^[\/]*$/';
+			$this->keys = array();
 		}
 		$names = array();
 		$elements = explode('/', $route);
@@ -1585,17 +1594,18 @@ class RouterRoute {
 			}
 		}
 		$this->_compiledRoute = '#^' . join('', $parsed) . '[\/]*$#';
-		$this->names = $names;
+		$this->keys = $names;
 	}
 
 /**
- * Checks to see if the given URL matches the given route
+ * Checks to see if the given URL can be parsed by this route.
+ * If the route can be parsed an array of parameters will be returned if not
+ * false will be returned.
  *
- * @param array $route
- * @param string $url
- * @return mixed Boolean false on failure, otherwise array
+ * @param string $url The url to attempt to parse.
+ * @return mixed Boolean false on failure, otherwise an array or parameters
  */
-	function match($url) {
+	function parse($url) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
@@ -1626,6 +1636,164 @@ class RouterRoute {
 			}
 		}
 		return $r;
+	}
+
+/**
+ * Attempt to match a url array.  If the url matches the routes pattern, then
+ * return an array of parsed params.  If the url doesn't match the routes compiled pattern
+ * returns false.
+ *
+ * @param array $url An array of parameters to check matching with.
+ * @return mixed Either a string url for the parameters if they match or false.
+ **/
+	function match($url) {
+		if (!$this->compiled()) {
+			$this->compile();
+		}
+		if (isset($this->defaults['prefix'])) {
+			$prefix = $this->defaults['prefix'];
+		}
+		$url += array('plugin' => null, 'controller' => null);
+
+		$pass = array();
+		$params = Set::diff($url, $this->defaults);
+		$urlInv = array_combine(array_values($url), array_keys($url));
+
+		$i = 0;
+		while (isset($this->defaults[$i])) {
+			if (isset($urlInv[$this->defaults[$i]])) {
+				if (!in_array($this->defaults[$i], $url) && is_int($urlInv[$this->defaults[$i]])) {
+					return false;
+				}
+				unset($urlInv[$this->defaults[$i]], $this->defaults[$i]);
+			} else {
+				return false;
+			}
+			$i++;
+		}
+
+		foreach ($params as $key => $value) {
+			if (is_int($key)) {
+				$pass[] = $value;
+				unset($params[$key]);
+			}
+		}
+		list($named, $params) = Router::getNamedElements($params);
+
+		if (!strpos($this->template, '*') && (!empty($pass) || !empty($named))) {
+			return false;
+		}
+
+		$urlKeys = array_keys($url);
+		$paramsKeys = array_keys($params);
+		$defaultsKeys = array_keys($this->defaults);
+
+		if (!empty($params)) {
+			if (array_diff($paramsKeys, $this->keys) != array()) {
+				return false;
+			}
+	
+			$required = array_values(array_diff($this->keys, $urlKeys));
+			$reqCount = count($required);
+
+			for ($i = 0; $i < $reqCount; $i++) {
+				if (array_key_exists($required[$i], $this->defaults) && $this->defaults[$required[$i]] === null) {
+					unset($required[$i]);
+				}
+			}
+		}
+		$isFilled = true;
+
+		if (!empty($this->keys)) {
+			$filled = array_intersect_key($url, array_combine($this->keys, array_keys($this->keys)));
+			$isFilled = (array_diff($this->keys, array_keys($filled)) === array());
+			if (!$isFilled && empty($params)) {
+				return false;
+			}
+		}
+
+		if (empty($params)) {
+			return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
+		} elseif (!empty($this->keys) && !empty($this->defaults)) {
+
+			if (!empty($required)) {
+				return false;
+			}
+			foreach ($params as $key => $val) {
+				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($this->defaults[$key]) || $this->defaults[$key] != $val) && !in_array($key, $this->keys)) {
+					if (!isset($this->defaults[$key])) {
+						continue;
+					}
+					return false;
+				}
+			}
+		} else {
+			if (empty($required) && $this->defaults['plugin'] === $url['plugin'] && $this->defaults['controller'] === $url['controller'] && $this->defaults['action'] === $url['action']) {
+				return $this->__mapRoute($route, array_merge($url, compact('pass', 'named', 'prefix')));
+			}
+			return false;
+		}
+
+		if (!empty($this->params)) {
+			foreach ($this->params as $key => $reg) {
+				if (array_key_exists($key, $url) && !preg_match('#' . $reg . '#', $url[$key])) {
+					return false;
+				}
+			}
+		}
+		return $this->__mapRoute(array_merge($filled, compact('pass', 'named', 'prefix')));
+	}
+/**
+ * Map route..
+ *
+ * @return void
+ **/
+	function __mapRoute($params) {
+		if (isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
+			unset($params['controller']);
+		}
+
+		if (isset($params['prefix']) && isset($params['action'])) {
+			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
+			unset($params['prefix']);
+		}
+
+		if (isset($params['pass']) && is_array($params['pass'])) {
+			$params['pass'] = implode('/', Set::filter($params['pass'], true));
+		} elseif (!isset($params['pass'])) {
+			$params['pass'] = '';
+		}
+
+		if (isset($params['named'])) {
+			if (is_array($params['named'])) {
+				$count = count($params['named']);
+				$keys = array_keys($params['named']);
+				$named = array();
+
+				for ($i = 0; $i < $count; $i++) {
+					$named[] = $keys[$i] . $this->named['separator'] . $params['named'][$keys[$i]];
+				}
+				$params['named'] = join('/', $named);
+			}
+			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
+		}
+		$out = $this->template;
+
+		foreach ($this->keys as $key) {
+			$string = null;
+			if (isset($params[$key])) {
+				$string = $params[$key];
+				unset($params[$key]);
+			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+				$key = $key . '/';
+			}
+			$out = str_replace(':' . $key, $string, $out);
+		}
+
+		if (strpos($this->template, '*')) {
+			$out = str_replace('*', $params['pass'], $out);
+		}
+		return $out;
 	}
 }
 ?>
