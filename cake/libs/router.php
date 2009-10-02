@@ -844,7 +844,6 @@ class Router {
 				if (isset($route->params['persist'], $_this->__params[0])) {
 					$url = array_merge(array_intersect_key($params, Set::combine($route->params['persist'], '/')), $url);
 				}
-				// replace with RouterRoute::match
 				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
 					$url = array();
@@ -896,7 +895,7 @@ class Router {
 						break;
 					}
 				}
-				$output = join('/', $urlOut) . '/';
+				$output = join('/', $urlOut);
 			}
 
 			if (!empty($args)) {
@@ -1454,22 +1453,27 @@ class RouterRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-		if (isset($this->defaults['prefix'])) {
-			$prefix = $this->defaults['prefix'];
+		$url += array('controller' => null, 'plugin' => null);
+		$defaults = $this->defaults;
+		$routeParams = $this->keys;
+		$routeOptions = $this->params;
+
+		if (isset($defaults['prefix'])) {
+			$prefix = $defaults['prefix'];
+			unset($defaults['prefix']);
 		}
-		$url += array('plugin' => null, 'controller' => null);
 
 		$pass = array();
-		$params = Set::diff($url, $this->defaults);
+		$params = Set::diff($url, $defaults);
 		$urlInv = array_combine(array_values($url), array_keys($url));
 
 		$i = 0;
-		while (isset($this->defaults[$i])) {
-			if (isset($urlInv[$this->defaults[$i]])) {
-				if (!in_array($this->defaults[$i], $url) && is_int($urlInv[$this->defaults[$i]])) {
+		while (isset($defaults[$i])) {
+			if (isset($urlInv[$defaults[$i]])) {
+				if (!in_array($defaults[$i], $url) && is_int($urlInv[$defaults[$i]])) {
 					return false;
 				}
-				unset($urlInv[$this->defaults[$i]], $this->defaults[$i]);
+				unset($urlInv[$defaults[$i]], $defaults[$i]);
 			} else {
 				return false;
 			}
@@ -1490,27 +1494,26 @@ class RouterRoute {
 
 		$urlKeys = array_keys($url);
 		$paramsKeys = array_keys($params);
-		$defaultsKeys = array_keys($this->defaults);
+		$defaultsKeys = array_keys($defaults);
 
 		if (!empty($params)) {
-			if (array_diff($paramsKeys, $this->keys) != array()) {
+			if (array_diff($paramsKeys, $routeParams) != array()) {
 				return false;
 			}
-	
-			$required = array_values(array_diff($this->keys, $urlKeys));
+			$required = array_values(array_diff($routeParams, $urlKeys));
 			$reqCount = count($required);
 
 			for ($i = 0; $i < $reqCount; $i++) {
-				if (array_key_exists($required[$i], $this->defaults) && $this->defaults[$required[$i]] === null) {
+				if (array_key_exists($required[$i], $defaults) && $defaults[$required[$i]] === null) {
 					unset($required[$i]);
 				}
 			}
 		}
 		$isFilled = true;
 
-		if (!empty($this->keys)) {
-			$filled = array_intersect_key($url, array_combine($this->keys, array_keys($this->keys)));
-			$isFilled = (array_diff($this->keys, array_keys($filled)) === array());
+		if (!empty($routeParams)) {
+			$filled = array_intersect_key($url, array_combine($routeParams, array_keys($routeParams)));
+			$isFilled = (array_diff($routeParams, array_keys($filled)) === array());
 			if (!$isFilled && empty($params)) {
 				return false;
 			}
@@ -1518,28 +1521,28 @@ class RouterRoute {
 
 		if (empty($params)) {
 			return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
-		} elseif (!empty($this->keys) && !empty($this->defaults)) {
+		} elseif (!empty($routeParams) && !empty($defaults)) {
 
 			if (!empty($required)) {
 				return false;
 			}
 			foreach ($params as $key => $val) {
-				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($this->defaults[$key]) || $this->defaults[$key] != $val) && !in_array($key, $this->keys)) {
-					if (!isset($this->defaults[$key])) {
+				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
+					if (!isset($defaults[$key])) {
 						continue;
 					}
 					return false;
 				}
 			}
 		} else {
-			if (empty($required) && $this->defaults['plugin'] === $url['plugin'] && $this->defaults['controller'] === $url['controller'] && $this->defaults['action'] === $url['action']) {
-				return $this->__mapRoute($route, array_merge($url, compact('pass', 'named', 'prefix')));
+			if (empty($required) && $defaults['plugin'] === $url['plugin'] && $defaults['controller'] === $url['controller'] && $defaults['action'] === $url['action']) {
+				return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
 			}
 			return false;
 		}
 
-		if (!empty($this->params)) {
-			foreach ($this->params as $key => $reg) {
+		if (!empty($routeOptions)) {
+			foreach ($routeOptions as $key => $reg) {
 				if (array_key_exists($key, $url) && !preg_match('#' . $reg . '#', $url[$key])) {
 					return false;
 				}

@@ -636,7 +636,7 @@ class RouterTest extends CakeTestCase {
 		));
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'myothercontroller'));
-		$expected = '/myothercontroller/';
+		$expected = '/myothercontroller';
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.admin', 'admin');
@@ -1582,11 +1582,11 @@ class RouterTest extends CakeTestCase {
 		));
 
 		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action'));
-		$expected = '/base/my_controller/my_action/';
+		$expected = '/base/my_controller/my_action';
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => false));
-		$expected = '/my_controller/my_action/';
+		$expected = '/my_controller/my_action';
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => true));
@@ -1789,11 +1789,11 @@ class RouterTest extends CakeTestCase {
 		$expected = '/test2/whatever';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'admin' => false,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
+			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'protected' => true,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
 		));
 
@@ -1843,7 +1843,7 @@ class RouterTest extends CakeTestCase {
 		));
 
 		$result = Router::url(array('action' => 'test_another_action'));
-		$expected = '/test/test_another_action/';
+		$expected = '/test/test_another_action';
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('action' => 'test_another_action', 'locale' => 'eng'));
@@ -2040,8 +2040,18 @@ class RouterRouteTestCase extends CakeTestCase {
 		$route =& new RouterRoute('/blog/:action', array('controller' => 'posts'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEqual($result, '/blog/view');
+		
+		$route =& new RouterRoute('/admin/subscriptions/:action/*', array(
+			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
+		));
+
+		$url = array('plugin' => null, 'controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
+		$result = $route->match($url);
+		$expected = '/admin/subscriptions/edit/1/';
+		$this->assertEqual($result, $expected);
 	}
 
 }
+
 
 ?>
