@@ -496,7 +496,11 @@ class CakeSchema extends Object {
 				}
 			}
 			if (isset($old[$table]['tableParameters']) && isset($new[$table]['tableParameters'])) {
-				
+				$diff = $this->_compareTableParameters($new[$table]['tableParameters'], $old[$table]['tableParameters']);
+				if ($diff) {
+					$tables[$table]['drop']['tableParameters'] = $diff['drop'];
+					$tables[$table]['add']['tableParameters'] = $diff['add'];
+				}
 			}
 		}
 		return $tables;
@@ -565,6 +569,17 @@ class CakeSchema extends Object {
 		}
 
 		return $columns;
+	}
+
+/**
+ * Compare two schema files table Parameters
+ *
+ * @param array $new New indexes
+ * @param array $old Old indexes
+ * @return mixed False on failure, or an array of parameters to add & drop.
+ **/
+	function _compareTableParameters($new, $old) {
+		
 	}
 
 /**
