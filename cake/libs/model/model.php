@@ -499,9 +499,10 @@ class Model extends Overloadable {
  * @param boolean $permanent Set to true to make the binding permanent
  * @return void
  * @access public
- * @todo
+ * @deprecated Use Model::bindModel() instead.
  */
 	function bind($model, $options = array(), $permanent = true) {
+		trigger_error('Deprecated method, use Model::bindModel instead', E_USER_WARNING);
 		if (!is_array($model)) {
 			$model = array($model => $options);
 		}
@@ -1745,6 +1746,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/691/remove
  */
 	function remove($id = null, $cascade = true) {
+		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -1798,6 +1800,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function del($id = null, $cascade = true) {
+		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -1852,8 +1855,6 @@ class Model extends Overloadable {
  * @access protected
  */
 	function _deleteLinks($id) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			$with = $data['with'];
 			$records = $this->{$data['with']}->find('all', array(
@@ -2017,7 +2018,6 @@ class Model extends Overloadable {
 			list($type, $query) = array($conditions, $fields);
 		}
 
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$this->findQueryType = $type;
 		$this->id = $this->getID();
 
@@ -2064,6 +2064,9 @@ class Model extends Overloadable {
 			}
 		}
 
+		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
+			return false;
+		}
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
 		$this->findQueryType = null;
@@ -2544,6 +2547,13 @@ class Model extends Overloadable {
 							$valid = $Validation->dispatchMethod($rule, $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
+						} elseif (Configure::read('debug') > 0) {
+							$error = sprintf(
+								__('Could not find validation handler %s for %s', true), 
+								$rule,
+								$fieldName
+							);
+							trigger_error($error, E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
@@ -2613,6 +2623,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function getDisplayField() {
+		trigger_error('Deprecated method, use Model::$displayField instead', E_USER_WARNING);
 		return $this->displayField;
 	}
 

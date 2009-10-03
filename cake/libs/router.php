@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Parses the request URL into controller, action, and parameters.
  *
@@ -20,19 +18,8 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
- * Included libraries.
- *
- */
-if (!class_exists('Object')) {
-	require LIBS . 'object.php';
-}
 
 /**
  * Parses the request URL into controller, action, and parameters.
@@ -40,7 +27,7 @@ if (!class_exists('Object')) {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Router extends Object {
+class Router {
 
 /**
  * Array of routes
@@ -51,15 +38,8 @@ class Router extends Object {
 	var $routes = array();
 
 /**
- * Caches admin setting from Configure class
- *
- * @var array
- * @access private
- */
-	var $__admin = null;
-
-/**
- * List of action prefixes used in connected routes
+ * List of action prefixes used in connected routes.
+ * Includes admin prefix
  *
  * @var array
  * @access private
@@ -178,6 +158,33 @@ class Router extends Object {
 	var $__defaultsMapped = false;
 
 /**
+ * Constructor for Router.
+ * Builds __prefixes
+ *
+ * @return void
+ **/
+	function Router() {
+		$this->__setPrefixes();
+	}
+
+/**
+ * Sets the Routing prefixes. Includes compatibilty for existing Routing.admin
+ * configurations.
+ *
+ * @return void
+ * @access private
+ * @todo Remove support for Routing.admin in future versions.
+ **/
+	function __setPrefixes() {
+		$routing = Configure::read('Routing');
+		if (!empty($routing['admin'])) {
+			$this->__prefixes[] = $routing['admin'];
+		}
+		if (!empty($routing['prefixes'])) {
+			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
+		}
+	}
+/**
  * Gets a reference to the Router object instance
  *
  * @return object Object instance
@@ -189,7 +196,6 @@ class Router extends Object {
 
 		if (!$instance) {
 			$instance[0] =& new Router();
-			$instance[0]->__admin = Configure::read('Routing.admin');
 		}
 		return $instance[0];
 	}
@@ -210,11 +216,11 @@ class Router extends Object {
 /**
  * Returns this object's routes array. Returns false if there are no routes available.
  *
- * @param string $route			An empty string, or a route string "/"
- * @param array $default		NULL or an array describing the default route
- * @param array $params			An array matching the named elements in the route to regular expressions which that element should match.
+ * @param string $route An empty string, or a route string "/"
+ * @param array $default NULL or an array describing the default route
+ * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
  * @see routes
- * @return array			Array of routes
+ * @return array Array of routes
  * @access public
  * @static
  */
@@ -224,8 +230,10 @@ class Router extends Object {
 		if (!isset($default['action'])) {
 			$default['action'] = 'index';
 		}
-		if (isset($default[$_this->__admin])) {
-			$default['prefix'] = $_this->__admin;
+		foreach ($_this->__prefixes as $prefix) {
+			if (isset($default[$prefix])) {
+				$default['prefix'] = $prefix;
+			}
 		}
 		if (isset($default['prefix'])) {
 			$_this->__prefixes[] = $default['prefix'];
@@ -613,10 +621,6 @@ class Router extends Object {
 			return;
 		}
 
-		if ($this->__admin) {
-			$params = array('prefix' => $this->__admin, $this->__admin => true);
-		}
-
 		if ($plugins = App::objects('plugin')) {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
@@ -625,15 +629,17 @@ class Router extends Object {
 			$match = array('plugin' => implode('|', $plugins));
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 
-			if ($this->__admin) {
-				$this->connect("/{$this->__admin}/:plugin/:controller", $params, $match);
-				$this->connect("/{$this->__admin}/:plugin/:controller/:action/*", $params, $match);
+			foreach ($this->__prefixes as $prefix) {
+				$params = array('prefix' => $prefix, $prefix => true);
+				$this->connect("/{$prefix}/:plugin/:controller", $params, $match);
+				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
 		}
 
-		if ($this->__admin) {
-			$this->connect("/{$this->__admin}/:controller", $params);
-			$this->connect("/{$this->__admin}/:controller/:action/*", $params);
+		foreach ($this->__prefixes as $prefix) {
+			$params = array('prefix' => $prefix, $prefix => true);
+			$this->connect("/{$prefix}/:controller", $params);
+			$this->connect("/{$prefix}/:controller/:action/*", $params);
 		}
 		$this->connect('/:controller', array('action' => 'index'));
 		$this->connect('/:controller/:action/*');
@@ -735,7 +741,7 @@ class Router extends Object {
 		foreach (get_class_vars('Router') as $key => $val) {
 			$_this->{$key} = $val;
 		}
-		$_this->__admin = Configure::read('Routing.admin');
+		$_this->__setPrefixes();
 	}
 
 /**
@@ -799,6 +805,9 @@ class Router extends Object {
 			} else {
 				$params = end($_this->__params);
 			}
+			if (isset($params['prefix']) && strpos($params['action'], $params['prefix']) === 0) {
+				$params['action'] = substr($params['action'], strlen($params['prefix']) + 1);
+			}
 		}
 		$path = array('base' => null);
 
@@ -836,11 +845,12 @@ class Router extends Object {
 					$url['action'] = 'index';
 				}
 			}
-			if ($_this->__admin) {
-				if (!isset($url[$_this->__admin]) && !empty($params[$_this->__admin])) {
-					$url[$_this->__admin] = true;
-				} elseif ($_this->__admin && isset($url[$_this->__admin]) && !$url[$_this->__admin]) {
-					unset($url[$_this->__admin]);
+
+			foreach ($_this->__prefixes as $prefix) {
+				if (!isset($url[$prefix]) && !empty($params[$prefix])) {
+					$url[$prefix] = true;
+				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
+					unset($url[$prefix]);
 				}
 			}
 			$plugin = false;
@@ -879,8 +889,9 @@ class Router extends Object {
 			}
 
 			$named = $args = array();
-			$skip = array(
-				'bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix', $_this->__admin
+			$skip = array_merge(
+				array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix'), 
+				$_this->__prefixes
 			);
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
@@ -888,9 +899,7 @@ class Router extends Object {
 
 			// Remove this once parsed URL parameters can be inserted into 'pass'
 			for ($i = 0; $i < $count; $i++) {
-				if ($i === 0 && is_numeric($keys[$i]) && in_array('id', $keys)) {
-					$args[0] = $url[$keys[$i]];
-				} elseif (is_numeric($keys[$i]) || $keys[$i] === 'id') {
+				if (is_numeric($keys[$i])) {
 					$args[] = $url[$keys[$i]];
 				} else {
 					$named[$keys[$i]] = $url[$keys[$i]];
@@ -899,8 +908,10 @@ class Router extends Object {
 
 			if ($match === false) {
 				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
-				if (!empty($url[$_this->__admin])) {
-					$url['action'] = str_replace($_this->__admin . '_', '', $url['action']);
+				foreach ($_this->__prefixes as $prefix) {
+					if (!empty($url[$prefix])) {
+						$url['action'] = str_replace($prefix . '_', '', $url['action']);
+					}
 				}
 
 				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
@@ -912,9 +923,11 @@ class Router extends Object {
 				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 					array_unshift($urlOut, $url['plugin']);
 				}
-
-				if ($_this->__admin && isset($url[$_this->__admin])) {
-					array_unshift($urlOut, $_this->__admin);
+				
+				foreach ($_this->__prefixes as $prefix) {
+					if (isset($url[$prefix])) {
+						array_unshift($urlOut, $prefix);
+					}
 				}
 				$output = join('/', $urlOut) . '/';
 			}
@@ -946,8 +959,10 @@ class Router extends Object {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
-				if ($_this->__admin && isset($params[$_this->__admin])) {
-					$output .= $_this->__admin . '/';
+				foreach ($_this->__prefixes as $prefix) {
+					if (isset($params[$prefix])) {
+						$output .= $prefix . '/';
+					}
 				}
 				if (!empty($params['plugin']) && $params['plugin'] !== $params['controller']) {
 					$output .= Inflector::underscore($params['plugin']) . '/';
@@ -1396,7 +1411,7 @@ class Router extends Object {
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($_this->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !Router::matchNamed($key, $val, $rules[$key], $context));
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$_this->matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
 					$pass[] = $param;
 				} else {

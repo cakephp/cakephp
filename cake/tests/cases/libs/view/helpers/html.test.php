@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * HtmlHelperTest file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
@@ -302,7 +297,14 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+	}
 
+/**
+ * test image() with Asset.timestamp
+ *
+ * @return void
+ **/
+	function testImageTagWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.gif');
@@ -313,6 +315,15 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('cake.icon.gif');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+
+		$webroot = $this->Html->webroot;
+		$this->Html->webroot = '/testing/longer/';
+		$result = $this->Html->image('cake.icon.gif');
+		$expected = array(
+			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.gif\?[0-9]+/', 'alt' => '')
+		);
+		$this->assertTags($result, $expected);
+		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -337,6 +348,16 @@ class HtmlHelperTest extends CakeTestCase {
 				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
+
+		$webroot = $this->Html->webroot;
+		$this->Html->webroot = '/testing/';
+		$result = $this->Html->image('cake.power.gif');
+		$this->assertTags($result, array(
+			'img' => array(
+				'src' => 'preg:/\/testing\/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'alt' => ''
+		)));
+		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -396,15 +417,20 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
-		
+	}
+
+/**
+ * test use of css() and timestamping
+ *
+ * @return void
+ **/
+	function testCssTimestamping() {
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
 
-		Configure::write('Asset.filter.css', 'css.php');
-		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/.*ccss\/cake\.generic\.css\?[0-9]+/';
-		$this->assertTags($result, $expected);
-		Configure::write('Asset.filter.css', false);
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => '')
+		);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
@@ -425,14 +451,14 @@ class HtmlHelperTest extends CakeTestCase {
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?/';
+		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/longer/';
 		$result = $this->Html->css('cake.generic');
-		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?/';
+		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
 	}
@@ -453,16 +479,17 @@ class HtmlHelperTest extends CakeTestCase {
 		touch(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('__cake_js_test', true, false);
+		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('__cake_js_test', true, false);
+		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
 		$this->assertPattern('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink(WWW_ROOT . 'js' . DS. '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
 	}
+
 /**
  * test that scripts added with uses() are only ever included once.
  * test script tag generation
@@ -496,16 +523,23 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Html->script('foo');
 		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
 
 		$result = $this->Html->script(array('foo', 'bar', 'baz'));
 		$this->assertNoPattern('/foo.js/', $result);
 
-		$result = $this->Html->script('foo', true, false);
+		$result = $this->Html->script('foo', array('inline' => true, 'once' => false));
 		$this->assertNotNull($result);
+
+		$result = $this->Html->script('jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
+		);
+		$this->assertTags($result, $expected);
 	}
+
 /**
  * test Script block generation
  *
@@ -521,7 +555,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false));
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
@@ -539,14 +573,23 @@ class HtmlHelperTest extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$view =& ClassRegistry::getObject('view');
 		$view =& new HtmlHelperMockView();
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/window\.foo\s\=\s2;/')));
-		
+
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
 		$this->assertNull($result);
+
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('safe' => false, 'encoding' => 'utf-8'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'encoding' => 'utf-8'),
+			'window.foo = 2;',
+			'/script',
+		);
+		$this->assertTags($result, $expected);
 	}
+
 /**
  * test script tag output buffering when using scriptStart() and scriptEnd();
  *
@@ -593,6 +636,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->scriptEnd();
 		$this->assertNull($result);
 	}
+
 /**
  * testCharsetTag method
  *

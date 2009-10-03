@@ -103,34 +103,6 @@ class MysqliTestModel extends Model {
 	var $useTable = false;
 
 /**
- * find method
- *
- * @param mixed $conditions
- * @param mixed $fields
- * @param mixed $order
- * @param mixed $recursive
- * @access public
- * @return void
- */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
-	}
-
-/**
- * findAll method
- *
- * @param mixed $conditions
- * @param mixed $fields
- * @param mixed $order
- * @param mixed $recursive
- * @access public
- * @return void
- */
-	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
-	}
-
-/**
  * schema method
  *
  * @access public
@@ -318,20 +290,48 @@ class DboMysqliTest extends CakeTestCase {
 	}
 
 /**
- * undocumented function
+ * test transaction commands.
  *
  * @return void
  * @access public
  */
 	function testTransactions() {
-		$this->db->begin($this->model);
-		$this->assertTrue($this->db->_transactionStarted);
+		$this->db->testing = false;
+		$result = $this->db->begin($this->model);
+		$this->assertTrue($result);
 
 		$beginSqlCalls = Set::extract('/.[query=START TRANSACTION]', $this->db->_queriesLog);
 		$this->assertEqual(1, count($beginSqlCalls));
 
-		$this->db->commit($this->model);
-		$this->assertFalse($this->db->_transactionStarted);
+		$result = $this->db->commit($this->model);
+		$this->assertTrue($result);
+	}
+
+/**
+ * test that tableParameters like collation, charset and engine are functioning.
+ *
+ * @access public
+ * @return void
+ */
+	function testReadTableParameters() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci',
+			'engine' => 'InnoDB');
+		$this->assertEqual($result, $expected);
+
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'cp1250',
+			'collate' => 'cp1250_general_ci',
+			'engine' => 'MyISAM');
+		$this->assertEqual($result, $expected);
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
 	}
 }
 ?>

@@ -783,6 +783,60 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * test that empty values do not casefold collapse
+ *
+ * @see http://code.cakephp.org/tickets/view/8
+ * @return void
+ **/
+	function testCaseFoldingWithEmptyValues() {
+		$filledValue = '<method name="set_user_settings">
+			<title>update user information</title>
+			<user>1</user>
+			<User>
+				<id>1</id>
+				<name>varchar(45)</name>
+			</User>
+		</method>';
+		$xml =& new XML($filledValue);
+		$expected = array(
+			'Method' => array(
+				'name' => 'set_user_settings',
+				'title' => 'update user information',
+				'user' => '1',
+				'User' => array(
+					'id' => 1,
+					'name' => 'varchar(45)',
+				),
+			)
+		);
+		$result = $xml->toArray();
+		$this->assertEqual($result, $expected);
+
+		$emptyValue ='<method name="set_user_settings">
+			<title>update user information</title>
+			<user></user>
+			<User>
+				<id>1</id>
+				<name>varchar(45)</name>
+			</User>
+		</method>';
+
+		$xml =& new XML($emptyValue);
+		$expected = array(
+			'Method' => array(
+				'name' => 'set_user_settings',
+				'title' => 'update user information',
+				'user' => array(),
+				'User' => array(
+					'id' => 1,
+					'name' => 'varchar(45)',
+				),
+			)
+		);
+		$result = $xml->toArray();
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testMixedParsing method
  *
  * @access public
@@ -950,7 +1004,7 @@ class XmlTest extends CakeTestCase {
 			'Example' => array(
 				'Item' => array(
 					'title' => 'An example of a correctly reversed XMLNode',
-					'Desc' => array(),
+					'desc' => array(),
 				)
 			)
 		);
@@ -1150,7 +1204,29 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		));
+		$this->assertEqual($result, $expected);
 
+		$text = '<?xml version="1.0" encoding="UTF-8"?>
+		<root>
+			<child id="1" other="1" />
+			<child id="2" other="1" />
+			<child id="3" other="1" />
+			<child id="4" other="1" />
+			<child id="5" other="1" />
+		</root>';
+		$xml = new Xml($text);
+		$result = $xml->toArray();
+		$expected = array(
+			'Root' => array(
+				'Child' => array(
+					array('id' => 1, 'other' => 1),
+					array('id' => 2, 'other' => 1),
+					array('id' => 3, 'other' => 1),
+					array('id' => 4, 'other' => 1),
+					array('id' => 5, 'other' => 1)
+				)
+			)
+		);
 		$this->assertEqual($result, $expected);
 	}
 

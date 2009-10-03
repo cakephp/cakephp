@@ -857,6 +857,18 @@ class Post extends CakeTestModel {
  * @access public
  */
 	var $belongsTo = array('Author');
+
+	function beforeFind($queryData) {
+		if (isset($queryData['connection'])) {
+			$this->useDbConfig = $queryData['connection'];
+		}
+		return true;
+	}
+
+	function afterFind($results) {
+		$this->useDbConfig = 'test_suite';
+		return $results;
+	}
 }
 
 /**
@@ -3375,6 +3387,18 @@ class UuidTagNoWith extends CakeTestModel {
 			'associationForeignKey' => 'fruit_id',
 		)
 	);
+}
+
+class ProductUpdateAll extends CakeTestModel {
+	var $name = 'ProductUpdateAll';
+	var $useTable = 'product_update_all';
+
+}
+
+class GroupUpdateAll extends CakeTestModel {
+	var $name = 'GroupUpdateAll';
+	var $useTable = 'group_update_all';
+
 }
 
 ?>

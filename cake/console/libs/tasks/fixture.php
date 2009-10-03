@@ -260,14 +260,22 @@ class FixtureTask extends Shell {
 		$out = "array(\n";
 		foreach ($tableInfo as $field => $fieldInfo) {
 			if (is_array($fieldInfo)) {
-				if ($field != 'indexes') {
+				if (!in_array($field, array('indexes', 'tableParameters'))) {
 					$col = "\t\t'{$field}' => array('type'=>'" . $fieldInfo['type'] . "', ";
 					$col .= join(', ',  $this->_Schema->__values($fieldInfo));
-				} else {
+				} elseif ($field == 'indexes') {
 					$col = "\t\t'indexes' => array(";
 					$props = array();
 					foreach ((array)$fieldInfo as $key => $index) {
 						$props[] = "'{$key}' => array(".join(', ',  $this->_Schema->__values($index)).")";
+					}
+					$col .= join(', ', $props);
+				} elseif ($field == 'tableParameters') {
+					//@todo add charset, collate and engine here
+					$col = "\t\t'tableParameters' => array(";
+					$props = array();
+					foreach ((array)$fieldInfo as $key => $param) {
+						$props[] = "'{$key}' => '$param'";
 					}
 					$col .= join(', ', $props);
 				}
@@ -415,12 +423,12 @@ class FixtureTask extends Shell {
 		$this->out('Commands:');
 		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
 		$this->out("\nfixture all\n\tbakes all fixtures.");
-		$this->out("");
+		$this->out();
 		$this->out('Parameters:');
 		$this->out("\t-count       When using generated data, the number of records to include in the fixture(s).");
 		$this->out("\t-connection  Which database configuration to use for baking.");
-		$this->out("\t-plugin      lowercased_underscored name of plugin to bake fixtures for.");
-		$this->out("");
+		$this->out("\t-plugin      CamelCased name of plugin to bake fixtures for.");
+		$this->out();
 		$this->_stop();
 	}
 }

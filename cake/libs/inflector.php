@@ -21,14 +21,6 @@
  */
 
 /**
- * Included libraries.
- *
- */
-if (!class_exists('Object')) {
-	require_once(LIBS . 'object.php');
-}
-
-/**
  * Pluralize and singularize English words.
  *
  * Inflector pluralizes and singularizes English nouns.
@@ -38,7 +30,7 @@ if (!class_exists('Object')) {
  * @subpackage    cake.cake.libs
  * @link          http://book.cakephp.org/view/491/Inflector
  */
-class Inflector extends Object {
+class Inflector {
 
 /**
  * Plural inflector rules
@@ -152,8 +144,10 @@ class Inflector extends Object {
 		),
 		'uninflected' => array(
 			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
-	),
-		'irregular' => array()
+		),
+		'irregular' => array(
+			'waves' => 'wave'
+		)
 	);
 
 /**

@@ -8,20 +8,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5550
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', 'File', false);
@@ -61,18 +58,12 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function startup() {
-		$name = null;
+		$name = $file = $path = $connection = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
 			$this->params['file'] = Inflector::underscore($name);
 		}
-
-		$path = null;
-		if (!empty($this->params['path'])) {
-			$path = $this->params['path'];
-		}
-
-		$file = null;
+		$path = $this->_getPath();
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
 		}
@@ -81,12 +72,28 @@ class SchemaShell extends Shell {
 		}
 		$file = $this->params['file'];
 
-		$connection = null;
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
 
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
+	}
+
+/**
+ * Get the correct path for the params. Uses path, and plugin to find the correct path.
+ * path param takes precedence over any plugins specified.
+ *
+ * @return mixed string to correct path or null.
+ **/
+	function _getPath() {
+		if (!empty($this->params['path'])) {
+			return $this->params['path'];
+		}
+		if (!empty($this->params['plugin'])) {
+			$pluginPath = $this->_pluginPath($this->params['plugin']);
+			return $pluginPath . 'config' . DS . 'schema' . DS;
+		}
+		return null;
 	}
 
 /**
@@ -110,7 +117,8 @@ class SchemaShell extends Shell {
 			$this->out($File->read());
 			$this->_stop();
 		} else {
-			$this->err(__('Schema could not be found', true));
+			$file = $this->Schema->path . DS . $this->params['file'];
+			$this->err(sprintf(__('Schema file (%s) could not be found.', true), $file));
 			$this->_stop();
 		}
 	}
@@ -135,7 +143,7 @@ class SchemaShell extends Shell {
 
 		if (!$snapshot && file_exists($this->Schema->path . DS . $this->params['file'])) {
 			$snapshot = true;
-			$result = $this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's');
+			$result = strtolower($this->in("Schema file exists.\n [O]verwrite\n [S]napshot\n [Q]uit\nWould you like to do?", array('o', 's', 'q'), 's'));
 			if ($result === 'q') {
 				return $this->_stop();
 			}
@@ -208,6 +216,7 @@ class SchemaShell extends Shell {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
+
 		if ($write) {
 			if (strpos($write, '.sql') === false) {
 				$write .= '.sql';
@@ -290,7 +299,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __create($Schema, $table = null) {
+	function __create(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
@@ -334,11 +343,15 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __update($Schema, $table = null) {
+	function __update(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__('Comparing Database to Schema...', true));
-		$Old = $this->Schema->read();
+		$options = array();
+		if (isset($this->params['f'])) {
+			$options['models'] = false;
+		}
+		$Old = $this->Schema->read($options);
 		$compare = $this->Schema->compare($Old, $Schema);
 
 		$contents = array();
@@ -359,7 +372,7 @@ class SchemaShell extends Shell {
 		$this->out("\n" . __('The following statements will run.', true));
 		$this->out(array_map('trim', $contents));
 		if ('y' == $this->in(__('Are you sure you want to alter the tables?', true), array('y', 'n'), 'n')) {
-			$this->out('');
+			$this->out();
 			$this->out(__('Updating Database...', true));
 			$this->__run($contents, 'update', $Schema);
 		}
@@ -372,7 +385,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __run($contents, $event, $Schema) {
+	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {
 			$this->err(__('Sql could not be run', true));
 			return;
@@ -381,7 +394,6 @@ class SchemaShell extends Shell {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 		$db->fullDebug = true;
 
-		$errors = array();
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
 				$this->out(sprintf(__('%s is up to date.', true), $table));
@@ -393,15 +405,16 @@ class SchemaShell extends Shell {
 					if (!$Schema->before(array($event => $table))) {
 						return false;
 					}
-					if (!$db->_execute($sql)) {
+					$error = null;
+					if (!$db->execute($sql)) {
 						$error = $table . ': '  . $db->lastError();
 					}
 
-					$Schema->after(array($event => $table, 'errors'=> $errors));
+					$Schema->after(array($event => $table, 'errors' => $error));
 
-					if (isset($error)) {
+					if (!empty($error)) {
 						$this->out($error);
-					} elseif ($this->__dry !== true) {
+					} else {
 						$this->out(sprintf(__('%s updated.', true), $table));
 					}
 				}
@@ -435,7 +448,7 @@ class SchemaShell extends Shell {
 		$this->out("\n\tschema dump <filename>\n\t\tDump database sql based on schema file to <filename>. \n\t\tIf <filename> is write, schema dump will be written to a file\n\t\tthat has the same name as the app directory.");
 		$this->out("\n\tschema run create <schema> <table>\n\t\tDrop and create tables based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
 		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

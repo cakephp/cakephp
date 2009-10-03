@@ -92,7 +92,7 @@ class ControllerTask extends Shell {
 					$actions= $this->bakeActions($controller, $admin);
 				}
 			}
-			
+
 			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
 				$admin = $this->Project->getAdmin();
 				if ($admin) {
@@ -222,7 +222,7 @@ class ControllerTask extends Shell {
  * @return void
  **/
 	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following controller will be created:', true));
 		$this->hr();
@@ -294,8 +294,8 @@ class ControllerTask extends Shell {
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
-		$singularHumanName = Inflector::humanize($currentModelName);
-		$pluralHumanName = Inflector::humanize($controllerName);
+		$singularHumanName = $this->_singularHumanName($currentModelName);
+		$pluralHumanName = $this->_pluralName($controllerName);
 
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
@@ -457,27 +457,27 @@ class ControllerTask extends Shell {
 		$this->out("Usage: cake bake controller <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("controller <name>");
 		$this->out("\tbakes controller with var \$scaffold");
-		$this->out('');
+		$this->out();
 		$this->out("controller <name> public");
 		$this->out("\tbakes controller with basic crud actions");
 		$this->out("\t(index, view, add, edit, delete)");
-		$this->out('');
+		$this->out();
 		$this->out("controller <name> admin");
 		$this->out("\tbakes a controller with basic crud actions for");
 		$this->out("\tConfigure::read('Routing.admin') methods.");
-		$this->out('');
+		$this->out();
 		$this->out("controller <name> public admin");
 		$this->out("\tbakes a controller with basic crud actions for");
 		$this->out("\tConfigure::read('Routing.admin') and non admin methods.");
 		$this->out("\t(index, view, add, edit, delete,");
 		$this->out("\tadmin_index, admin_view, admin_edit, admin_add, admin_delete)");
-		$this->out('');
+		$this->out();
 		$this->out("controller all");
 		$this->out("\tbakes all controllers with CRUD methods.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

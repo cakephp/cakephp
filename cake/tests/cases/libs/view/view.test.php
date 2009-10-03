@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ViewTest file
  *
@@ -9,29 +7,27 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('View', 'Controller'));
+App::import('Helper', 'Cache');
+
+Mock::generate('Helper', 'CallbackMockHelper');
+Mock::generate('CacheHelper', 'ViewTestMockCacheHelper');
 
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
-}
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
 /**
@@ -208,7 +204,7 @@ class TestAfterHelper extends Helper {
 		$View->output .= 'modified in the afterlife';
 	}
 }
-Mock::generate('Helper', 'CallbackMockHelper');
+
 
 /**
  * ViewTest class
@@ -653,6 +649,14 @@ class ViewTest extends CakeTestCase {
 		$this->assertTrue(is_object($helpers['form']->Html));
 		$this->assertTrue(is_object($helpers['ajax']->Html));
 		$this->assertTrue(is_object($helpers['pluggedHelper']->OtherHelper));
+
+		$this->assertTrue(is_object($View->Html));
+		$this->assertTrue(is_object($View->Form));
+		$this->assertTrue(is_object($View->Form->Html));
+		$this->assertTrue(is_object($View->PluggedHelper->OtherHelper));
+		$this->assertReference($View->Form, $View->loaded['form']);
+		$this->assertReference($View->Html, $View->loaded['html']);
+		$this->assertReference($View->PluggedHelper->OtherHelper, $View->loaded['otherHelper']);
 	}
 
 /**
@@ -693,6 +697,27 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+	}
+
+/**
+ * test rendering layout with cache helper loaded
+ *
+ * @return void
+ **/
+	function testRenderLayoutWithMockCacheHelper() {
+		$_check = Configure::read('Cache.check');
+		Configure::write('Cache.check', true);
+
+		$Controller = new ViewPostsController();
+		$Controller->cacheAction = '1 day';
+		$View = new View($Controller);
+		$View->loaded['cache'] = new ViewTestMockCacheHelper();
+		$View->loaded['cache']->expectCallCount('cache', 2);
+
+		$result = $View->render('index');
+		$this->assertPattern('/posts index/', $result);
+
+		Configure::write('Cache.check', $_check);
 	}
 
 /**
@@ -749,7 +774,10 @@ class ViewTest extends CakeTestCase {
 		ob_start();
 		$View->renderCache($path, '+1 second');
 		$result = ob_get_clean();
-		$this->assertFalse(empty($result));
+
+		$expected = 'some cacheText';
+		$this->assertPattern('/^some cacheText/', $result);
+
 		@unlink($path);
 	}
 
@@ -804,9 +832,6 @@ class ViewTest extends CakeTestCase {
 		$View->set('somekey', 'someValue');
 		$this->assertIdentical($View->viewVars, array('somekey' => 'someValue'));
 		$this->assertIdentical($View->getVars(), array('somekey'));
-
-		$View->set('title', 'my_title');
-		$this->assertIdentical($View->pageTitle, 'my_title');
 
 		$View->viewVars = array();
 		$keys = array('key1', 'key2');

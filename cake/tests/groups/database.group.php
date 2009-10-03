@@ -35,7 +35,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class DatabaseGroupTest extends GroupTest {
+class DatabaseGroupTest extends TestSuite {
 
 /**
  * label property
@@ -54,6 +54,7 @@ class DatabaseGroupTest extends GroupTest {
 	function DatabaseGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'db_acl');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'cake_schema');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'connection_manager');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'datasources' . DS . 'dbo_source');
 	}
 }

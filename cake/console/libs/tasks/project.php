@@ -184,7 +184,7 @@ class ProjectTask extends Shell {
 	function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
-		$source = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
+		$source = CAKE . 'console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
 		include($source);
 		return $this->createFile($path.'home.ctp', $output);
 	}
@@ -309,11 +309,11 @@ class ProjectTask extends Shell {
 		$this->out("Usage: cake bake project <arg1>");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("project <name>");
 		$this->out("\tbakes app directory structure.");
 		$this->out("\tif <name> begins with '/' path is absolute.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 

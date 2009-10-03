@@ -48,6 +48,67 @@ Mock::generatePartial(
 Mock::generate('CakeSchema', 'MockSchemaCakeSchema');
 
 /**
+ * Test for Schema database management
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class SchemaShellTestSchema extends CakeSchema {
+
+/**
+ * name property
+ *
+ * @var string 'MyApp'
+ * @access public
+ */
+	var $name = 'SchemaShellTest';
+
+/**
+ * connection property
+ *
+ * @var string 'test_suite'
+ * @access public
+ */
+	var $connection = 'test_suite';
+
+/**
+ * comments property
+ *
+ * @var array
+ * @access public
+ */
+	var $comments = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+		'user_id' => array('type' => 'integer', 'null' => false),
+		'title' => array('type' => 'string', 'null' => false, 'length' => 100),
+		'comment' => array('type' => 'text', 'null' => false, 'default' => null),
+		'published' => array('type' => 'string', 'null' => true, 'default' => 'N', 'length' => 1),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
+
+/**
+ * posts property
+ *
+ * @var array
+ * @access public
+ */
+	var $articles = array(
+		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+		'user_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
+		'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
+		'body' => array('type' => 'text', 'null' => true, 'default' => null),
+		'summary' => array('type' => 'text', 'null' => true),
+		'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1),
+		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
+		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
+	);
+}
+
+/**
  * SchemaShellTest class
  *
  * @package       cake
@@ -87,7 +148,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
 		$this->assertTrue(is_a($this->Shell->Schema, 'CakeSchema'));
-		$this->assertEqual($this->Shell->Schema->name, 'App');
+		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
 		$this->assertEqual($this->Shell->Schema->file, 'schema.php');
 
 		unset($this->Shell->Schema);
@@ -99,7 +160,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->Schema->file, 'test_schema.php');
 		$this->assertEqual($this->Shell->Schema->connection, 'default');
 		$this->assertEqual($this->Shell->Schema->path, APP . 'config' . DS . 'schema');
-		
+
 		unset($this->Shell->Schema);
 		$this->Shell->params = array(
 			'file' => 'other_file.php',
@@ -107,7 +168,7 @@ class SchemaShellTest extends CakeTestCase {
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
-		$this->assertEqual($this->Shell->Schema->name, 'App');
+		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
 		$this->assertEqual($this->Shell->Schema->file, 'other_file.php');
 		$this->assertEqual($this->Shell->Schema->connection, 'test_suite');
 		$this->assertEqual($this->Shell->Schema->path, '/test/path');
@@ -123,22 +184,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
 		$this->Shell->params['file'] = 'i18n.php';
 		$this->Shell->expectOnce('_stop');
-		$this->Shell->expectOnce('out');
-		$this->Shell->expectAt(0, 'out', array(new PatternExpectation('/class i18nSchema extends CakeSchema/')));
 		$this->Shell->view();
-	}
-
-/**
- * test dumping a schema file.
- *
- * @return void
- **/
-	function testDump() {
-		$this->Shell->params = array('name' => 'i18n');
-		$this->Shell->startup();
-		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
-		$this->Shell->expectAt(0, 'out', array(new PatternExpectation('/create table `i18n`/i')));
-		$this->Shell->dump();
 	}
 
 /**
@@ -244,16 +290,19 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
 			'name' => 'i18n',
-			'path' => APP . 'config' . DS . 'schema'
+			'path' => APP . 'config' . DS . 'sql'
 		);
 		$this->Shell->args = array('create');
 		$this->Shell->startup();
 		$this->Shell->setReturnValue('in', 'y');
 		$this->Shell->run();
-		
+
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
-		$this->assertTrue(in_array('i18n', $sources));
+		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
+
+		$schema =& new i18nSchema();
+		$db->execute($db->dropSchema($schema));
 	}
 
 /**
@@ -274,9 +323,63 @@ class SchemaShellTest extends CakeTestCase {
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
-		$this->assertTrue(in_array('acos', $sources));
-		$this->assertFalse(in_array('aros', $sources));
+		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
+		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources));
 		$this->assertFalse(in_array('aros_acos', $sources));
+
+		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
+	}
+
+/**
+ * test run update with a table arg.
+ *
+ * @return void
+ **/
+	function testRunUpdateWithTable() {
+		$this->Shell->params = array(
+			'name' => 'SchemaShellTest',
+			'connection' => 'test_suite',
+			'f' => true
+		);
+		$this->Shell->args = array('update', 'articles');
+		$this->Shell->startup();
+		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->run();
+
+		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
+		$fields = $article->schema();
+		$this->assertTrue(isset($fields['summary']));
+
+		$this->_fixtures['core.article']->drop($this->db);
+		$this->_fixtures['core.article']->create($this->db);
+	}
+
+/**
+ * test that the plugin param creates the correct path in the schema object.
+ *
+ * @return void
+ **/
+	function testPluginParam() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test_suite'
+		);
+		$this->Shell->startup();
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema' . DS;
+		$this->assertEqual($this->Shell->Schema->path, $expected);
+
+		unset($this->Shell->Schema);
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test_suite',
+			'path' => '/some/path'
+		);
+		$this->Shell->startup();
+		$expected = '/some/path';
+		$this->assertEqual($this->Shell->Schema->path, $expected);
 	}
 
 }

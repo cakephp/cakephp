@@ -24,6 +24,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
+
 /**
  * CakePHP Debug Level:
  *
@@ -39,10 +40,27 @@
  * In development mode, you need to click the flash message to continue.
  */
 	Configure::write('debug', 2);
+
+/**
+ * CakePHP Log Level:
+ *
+ * In case of Production Mode CakePHP gives you the possibility to continue logging errors.
+ *
+ * The following parameters can be used:
+ *  Boolean: Set true/false to activate/deactivate logging
+ *    Configure::write('log', true);
+ *
+ *  Integer: Use built-in PHP constants to set the error level (see error_reporting)
+ *    Configure::write('log', E_ERROR | E_WARNING);
+ *    Configure::write('log', E_ALL ^ E_NOTICE);
+ */
+	Configure::write('log', true);
+
 /**
  * Application wide charset encoding
  */
 	Configure::write('App.encoding', 'UTF-8');
+
 /**
  * To configure CakePHP *not* to use mod_rewrite and to
  * use CakePHP pretty URLs, remove these .htaccess
@@ -55,22 +73,40 @@
  * And uncomment the App.baseUrl below:
  */
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+
 /**
  * Uncomment the define below to use CakePHP admin routes.
  *
  * The value of the define determines the name of the route
  * and its associated controller actions:
  *
- * 'admin' 		-> admin_index() and /admin/controller/index
+ * 'admin' -> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
+ *
+ * [Note Routing.admin is deprecated in 1.3.  Use Routing.prefixes instead]
  */
 	//Configure::write('Routing.admin', 'admin');
+
+/**
+ * Uncomment the define below to use CakePHP prefix routes.
+ *
+ * Set to an array of prefixes you want to use in your application. Use for 
+ * admin or other prefixed routes.
+ *
+ * 	Routing.prefixes = array('admin', 'manager');
+ *
+ * Enables:
+ *	`admin_index()` and `/admin/controller/index`
+ *	`manager_index()` and `/manager/controller/index`
+ */
+	//Configure::write('Routing.prefixes', array('admin'));
 
 /**
  * Turn off all caching application-wide.
  *
  */
 	//Configure::write('Cache.disable', true);
+
 /**
  * Enable cache checking.
  *
@@ -81,11 +117,13 @@
  *
  */
 	//Configure::write('Cache.check', true);
+
 /**
  * Defines the default error type when using the log() function. Used for
  * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
  */
 	define('LOG_ERROR', 2);
+
 /**
  * The preferred session handling method. Valid values:
  *
@@ -101,6 +139,7 @@
  *
  */
 	Configure::write('Session.save', 'php');
+
 /**
  * The model name to be used for the session model.
  *
@@ -109,6 +148,7 @@
  * The model name set here should *not* be used elsewhere in your application.
  */
 	//Configure::write('Session.model', 'Session');
+
 /**
  * The name of the table used to store CakePHP database sessions.
  *
@@ -122,30 +162,36 @@
  * [Note: Session.table is deprecated as of CakePHP 1.3]
  */
 	//Configure::write('Session.table', 'cake_sessions');
+
 /**
  * The DATABASE_CONFIG::$var to use for database session handling.
  *
  * 'Session.save' must be set to 'database' in order to utilize this constant.
  */
 	//Configure::write('Session.database', 'default');
+
 /**
  * The name of CakePHP's session cookie.
  */
 	Configure::write('Session.cookie', 'CAKEPHP');
+
 /**
  * Session time out time (in seconds).
  * Actual value depends on 'Security.level' setting.
  */
 	Configure::write('Session.timeout', '120');
+
 /**
  * If set to false, sessions are not automatically started.
  */
 	Configure::write('Session.start', true);
+
 /**
  * When set to false, HTTP_USER_AGENT will not be checked
  * in the session
  */
 	Configure::write('Session.checkAgent', true);
+
 /**
  * The level of CakePHP security. The session timeout time defined
  * in 'Session.timeout' is multiplied according to the settings here.
@@ -159,10 +205,12 @@
  * 'Security.level' is set to 'high'.
  */
 	Configure::write('Security.level', 'high');
+
 /**
  * A random string used in security hashing methods.
  */
 	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
@@ -171,6 +219,7 @@
  * To use, prefix the CSS link URL with '/ccss/' instead of '/css/' or use HtmlHelper::css().
  */
 	//Configure::write('Asset.filter.css', 'css.php');
+
 /**
  * Plug in your own custom JavaScript compressor by dropping a script in your webroot to handle the
  * output, and setting the config below to the name of the script.
@@ -178,12 +227,20 @@
  * To use, prefix your JavaScript link URLs with '/cjs/' instead of '/js/' or use JavaScriptHelper::link().
  */
 	//Configure::write('Asset.filter.js', 'custom_javascript_output_filter.php');
+
 /**
  * The classname and database used in CakePHP's
  * access control lists.
  */
 	Configure::write('Acl.classname', 'DbAcl');
 	Configure::write('Acl.database', 'default');
+
+/**
+ * If you are on PHP 5.3 uncomment this line and correct your server timezone
+ * to fix the date & time related errors.
+ */
+	//date_default_timezone_set('UTC');
+
 /**
  * If you are on PHP 5.3 uncomment this line and correct your server timezone
  * to fix the date & time related errors.

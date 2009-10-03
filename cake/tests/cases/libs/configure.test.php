@@ -144,13 +144,15 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  **/
 	function testSetErrorReportingLevel() {
+		Configure::write('log', false);
+
 		Configure::write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
 
 		Configure::write('debug', 2);
 		$result = ini_get('error_reporting');
-		$this->assertEqual($result, E_ALL);
+		$this->assertEqual($result, E_ALL & ~E_DEPRECATED);
 
 		$result = ini_get('display_errors');
 		$this->assertEqual($result, 1);
@@ -158,6 +160,28 @@ class ConfigureTest extends CakeTestCase {
 		Configure::write('debug', 0);
 		$result = ini_get('error_reporting');
 		$this->assertEqual($result, 0);
+	}
+
+/**
+ * test that log and debug configure values interact well.
+ *
+ * @return void
+ **/
+	function testInteractionOfDebugAndLog() {
+		Configure::write('log', false);
+
+		Configure::write('debug', 0);
+		$this->assertEqual(ini_get('error_reporting'), 0);
+		$this->assertEqual(ini_get('display_errors'), 0);
+
+		Configure::write('log', E_WARNING);
+		Configure::write('debug', 0);
+		$this->assertEqual(ini_get('error_reporting'), E_WARNING);
+		$this->assertEqual(ini_get('display_errors'), 0);
+
+		Configure::write('debug', 2);
+		$this->assertEqual(ini_get('error_reporting'), E_ALL & ~E_DEPRECATED);
+		$this->assertEqual(ini_get('display_errors'), 1);
 	}
 
 /**
@@ -385,21 +409,26 @@ class AppImportTest extends UnitTestCase {
 
 		$file = App::import('Model', 'Model', false);
 		$this->assertTrue($file);
+		$this->assertTrue(class_exists('Model'));
 
 		$file = App::import('Controller', 'Controller', false);
 		$this->assertTrue($file);
+		$this->assertTrue(class_exists('Controller'));
 
 		$file = App::import('Component', 'Component', false);
 		$this->assertTrue($file);
+		$this->assertTrue(class_exists('Component'));
 
 		$file = App::import('Shell', 'Shell', false);
 		$this->assertTrue($file);
+		$this->assertTrue(class_exists('Shell'));
 
 		$file = App::import('Model', 'SomeRandomModelThatDoesNotExist', false);
 		$this->assertFalse($file);
 
 		$file = App::import('Model', 'AppModel', false);
 		$this->assertTrue($file);
+		$this->assertTrue(class_exists('AppModel'));
 
 		$file = App::import('WrongType', null, true, array(), '');
 		$this->assertTrue($file);
@@ -432,6 +461,7 @@ class AppImportTest extends UnitTestCase {
 
 			$file = App::import('Controller', 'Pages');
 			$this->assertTrue($file);
+			$this->assertTrue(class_exists('PagesController'));
 
 			$classes = array_flip(get_declared_classes());
 
@@ -445,15 +475,22 @@ class AppImportTest extends UnitTestCase {
 
 			$file = App::import('Behavior', 'Containable');
 			$this->assertTrue($file);
+			$this->assertTrue(class_exists('ContainableBehavior'));
 
 			$file = App::import('Component', 'RequestHandler');
 			$this->assertTrue($file);
+			$this->assertTrue(class_exists('RequestHandlerComponent'));
 
 			$file = App::import('Helper', 'Form');
 			$this->assertTrue($file);
+			$this->assertTrue(class_exists('FormHelper'));
 
 			$file = App::import('Model', 'NonExistingModel');
 			$this->assertFalse($file);
+
+			$file = App::import('Datasource', 'DboSource');
+			$this->assertTrue($file);
+			$this->assertTrue(class_exists('DboSource'));
 		}
 
 		App::build(array(
@@ -468,6 +505,10 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
+
+		$result = App::import('Datasource', 'TestPlugin.TestSource');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestSource'));
 
 		App::build();
 	}

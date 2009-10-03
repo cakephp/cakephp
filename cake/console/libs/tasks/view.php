@@ -242,7 +242,7 @@ class ViewTask extends Shell {
 				$this->bakeActions($adminActions, $vars);
 			}
 			$this->hr();
-			$this->out('');
+			$this->out();
 			$this->out(__("View Scaffolding Complete.\n", true));
 		} else {
 			$this->customAction();
@@ -284,9 +284,7 @@ class ViewTask extends Shell {
 			$primaryKey = $modelObj->primaryKey;
 			$displayField = $modelObj->displayField;
 			$singularVar = Inflector::variable($modelClass);
-			$pluralVar = Inflector::variable($this->controllerName);
-			$singularHumanName = Inflector::humanize($modelClass);
-			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$singularHumanName = $this->_singularHumanName($modelClass);
 			$schema = $modelObj->schema();
 			$fields = array_keys($schema);
 			$associations = $this->__associations($modelObj);
@@ -294,13 +292,13 @@ class ViewTask extends Shell {
 			$primaryKey = null;
 			$displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
-			$pluralVar = Inflector::variable($this->controllerName);
-			$singularHumanName = Inflector::humanize(Inflector::singularize($this->controllerName));
-			$pluralHumanName = Inflector::humanize($this->controllerName);
+			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$fields = array();
 			$schema = array();
 			$associations = array();
 		}
+		$pluralVar = Inflector::variable($this->controllerName);
+		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
 
 		return compact('modelClass', 'schema', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 				'singularHumanName', 'pluralHumanName', 'fields','associations');
@@ -332,7 +330,7 @@ class ViewTask extends Shell {
 				$this->out(__('The action name you supplied was empty. Please try again.', true));
 			}
 		}
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following view will be created:', true));
 		$this->hr();
@@ -372,28 +370,12 @@ class ViewTask extends Shell {
 /**
  * Builds content from template and variables
  *
- * @param string $template file to use
+ * @param string $action name to generate content to
  * @param array $vars passed for use in templates
  * @return string content from template
  * @access public
  */
-	function getContent($template = null, $vars = null) {
-		if (!$template) {
-			$template = $this->template;
-		}
-		$action = $template;
-
-		$adminRoute = Configure::read('Routing.admin');
-		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
-			$template = str_replace($adminRoute . '_', '', $template);
-		}
-		if (in_array($template, array('add', 'edit'))) {
-			$action = $template;
-			$template = 'form';
-		} elseif (preg_match('@(_add|_edit)$@', $template)) {
-			$action = $template;
-			$template = str_replace(array('_add', '_edit'), '_form', $template);
-		}
+	function getContent($action, $vars = null) {
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
@@ -401,12 +383,36 @@ class ViewTask extends Shell {
 		$this->Template->set('action', $action);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);
-		$output = $this->Template->generate('views', $template);
+		$output = $this->Template->generate('views', $this->getTemplate($action));
 
 		if (!empty($output)) {
 			return $output;
 		}
 		return false;
+	}
+
+/**
+ * Gets the template name based on the action name
+ *
+ * @param string $action name
+ * @return string template name
+ * @access public
+ */
+	function getTemplate($action) {
+		if (!empty($this->template) && $action != $this->template) {
+			return $this->template;
+		} 
+		$template = $action;
+		$adminRoute = Configure::read('Routing.admin');
+		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
+			$template = str_replace($adminRoute . '_', '', $template);
+		}
+		if (in_array($template, array('add', 'edit'))) {
+			$template = 'form';
+		} elseif (preg_match('@(_add|_edit)$@', $template)) {
+			$template = str_replace(array('_add', '_edit'), '_form', $template);
+		}
+		return $template;
 	}
 
 /**
@@ -419,7 +425,7 @@ class ViewTask extends Shell {
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("view <controller>");
 		$this->out("\tWill read the given controller for methods");
 		$this->out("\tand bake corresponding views.");
@@ -427,14 +433,14 @@ class ViewTask extends Shell {
 		$this->out("\tthat begin with Routing.admin.");
 		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
 		$this->out("\t(index,view,add,edit)");
-		$this->out('');
+		$this->out();
 		$this->out("view <controller> <action>");
 		$this->out("\tWill bake a template. core templates: (index, add, edit, view)");
-		$this->out('');
+		$this->out();
 		$this->out("view <controller> <template> <alias>");
 		$this->out("\tWill use the template specified");
 		$this->out("\tbut name the file based on the alias");
-		$this->out('');
+		$this->out();
 		$this->out("view all");
 		$this->out("\tBake all CRUD action views for all controllers.");
 		$this->out("\tRequires that models and controllers exist.");

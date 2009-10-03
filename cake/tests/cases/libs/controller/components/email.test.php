@@ -505,10 +505,9 @@ TEXTBLOC;
 		$response = $this->Controller->EmailTest->smtpSend('HELO', '250');
 		$this->assertPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
 
-		$this->Controller->EmailTest->smtpError = null;
+		$this->Controller->EmailTest->reset();
 		$response = $this->Controller->EmailTest->smtpSend('HELO somehostname', '250');
 		$this->assertNoPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
-
 	}
 
 /**

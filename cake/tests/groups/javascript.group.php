@@ -28,7 +28,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreJavascriptHelpersGroupTest extends GroupTest {
+class AllCoreJavascriptHelpersGroupTest extends TestSuite {
 /**
  * label property
  *

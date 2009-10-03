@@ -4519,25 +4519,39 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array(
-			'conditions' => array('active' => true)
+		$TestModel2->bindModel(array(
+			'belongsTo' => array(
+				'FeatureSet' => array(
+					'className' => 'FeatureSet',
+					'conditions' => array('active' => true)
+				)
+			)
 		));
 		$expected['conditions'] = array('active' => true);
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('FeatureSet', array(
-			'foreignKey' => false,
-			'conditions' => array('Feature.name' => 'DeviceType.name')
+		$TestModel2->bindModel(array(
+			'belongsTo' => array(
+				'FeatureSet' => array(
+					'className' => 'FeatureSet',
+					'foreignKey' => false,
+					'conditions' => array('Feature.name' => 'DeviceType.name')
+				)
+			)
 		));
 		$expected['conditions'] = array('Feature.name' => 'DeviceType.name');
 		$expected['foreignKey'] = false;
 		$this->assertEqual($TestModel2->belongsTo['FeatureSet'], $expected);
 
-		$TestModel2->bind('NewFeatureSet', array(
-			'type' => 'hasMany',
-			'className' => 'FeatureSet',
-			'conditions' => array('active' => true)
+		$TestModel2->bindModel(array(
+			'hasMany' => array(
+				'NewFeatureSet' => array(
+					'className' => 'FeatureSet',
+					'conditions' => array('active' => true)
+				)
+			)
 		));
+
 		$expected = array(
 			'className' => 'FeatureSet',
 			'conditions' => array('active' => true),
@@ -4861,6 +4875,22 @@ class ModelReadTest extends BaseModelTest {
 		$result = Set::extract($TestModel->find('all', array('callbacks' => false)), '/Author/user');
 		$expected = array('mariano', 'nate', 'larry', 'garrett');
 		$this->assertEqual($result, $expected);
+	}
+
+	/**
+	 * Tests that the database configuration assigned to the model can be changed using
+	 * (before|after)Find callbacks
+	 *
+	 * @return void
+	 */
+	function testCallbackSourceChange() {
+		$this->loadFixtures('Post');
+		$TestModel = new Post();
+		$this->assertEqual(3, count($TestModel->find('all')));
+
+		$this->expectError(new PatternExpectation('/Non-existent data source foo/i'));
+		$this->expectError(new PatternExpectation('/Only variable references/i'));
+		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
 
 /**

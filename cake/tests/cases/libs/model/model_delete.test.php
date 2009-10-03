@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
-
 /**
  * ModelDeleteTest file
  *
@@ -26,7 +24,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
-require_once dirname(__FILE__) . DS . 'model_delete.test.php';
 
 /**
  * ModelDeleteTest
@@ -168,7 +165,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$Cd =& new Cd();
 		$OverallFavorite =& new OverallFavorite();
 
-		$Cd->del(1);
+		$Cd->delete(1);
 
 		$result = $OverallFavorite->find('all', array(
 			'fields' => array('model_type', 'model_id', 'priority')
@@ -191,11 +188,11 @@ class ModelDeleteTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testDel() {
+	function testDelete() {
 		$this->loadFixtures('Article');
 		$TestModel =& new Article();
 
-		$result = $TestModel->del(2);
+		$result = $TestModel->delete(2);
 		$this->assertTrue($result);
 
 		$result = $TestModel->read(null, 2);
@@ -216,7 +213,7 @@ class ModelDeleteTest extends BaseModelTest {
 		)));
 		$this->assertEqual($result, $expected);
 
-		$result = $TestModel->del(3);
+		$result = $TestModel->delete(3);
 		$this->assertTrue($result);
 
 		$result = $TestModel->read(null, 3);
@@ -245,8 +242,8 @@ class ModelDeleteTest extends BaseModelTest {
 		foreach ($data as $id) {
 			$Uuid->save(array('id' => $id));
 		}
-		$Uuid->del('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
-		$Uuid->del('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
+		$Uuid->delete('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
+		$Uuid->delete('52C8865C-10EE-4302-AE6C-6E7D8E12E2C8');
 		foreach ($data as $id) {
 			$Uuid->save(array('id' => $id));
 		}
@@ -416,7 +413,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'Comment', 'Attachment');
 		$TestModel =& new Article();
 
-		$result = $TestModel->del(2);
+		$result = $TestModel->delete(2);
 		$this->assertTrue($result);
 
 		$TestModel->recursive = 2;

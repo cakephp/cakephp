@@ -198,7 +198,7 @@ class FormHelper extends AppHelper {
 				'plugin' => $this->plugin,
 				'controller' => $view->viewPath,
 				'action' => $options['action'],
-				'id' => $id
+				0 => $id
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
@@ -421,11 +421,10 @@ class FormHelper extends AppHelper {
 			if (is_array($text) && is_numeric($error) && $error > 0) {
 				$error--;
 			}
-			if (is_array($text) && isset($text[$error])) {
-				$text = $text[$error];
-			} elseif (is_array($text)) {
+			if (is_array($text)) {
 				$options = array_merge($options, $text);
-				$text = null;
+				$text = isset($text[$error]) ? $text[$error] : null;
+				unset($options[$error]);
 			}
 
 			if ($text != null) {
@@ -1647,15 +1646,16 @@ class FormHelper extends AppHelper {
 			}
 			$opt = implode($separator, $selects);
 		}
-
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$min = round($min * (1 / $interval)) * $interval;
+		}
+		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':
-				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
 			break;
 			case '12':
-				$selectMinuteAttr['interval'] = $interval;
 				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
 				$this->meridian($fieldName, $meridian, $selectMeridianAttr, $showEmpty);
