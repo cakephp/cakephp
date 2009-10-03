@@ -368,7 +368,7 @@ class CakeSchema extends Object {
 				$out .= $this->generateTable($table, $fields);
 			}
 		}
-		$out .="}\n";
+		$out .= "}\n";
 
 		$File =& new File($path . DS . $file, true);
 		$header = '$Id';
@@ -430,7 +430,7 @@ class CakeSchema extends Object {
  */
 	function compare($old, $new = null) {
 		if (empty($new)) {
-			$new = $this;
+			$new =& $this;
 		}
 		if (is_array($new)) {
 			if (isset($new['tables'])) {
@@ -467,7 +467,7 @@ class CakeSchema extends Object {
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
 					$diff = array_diff_assoc($value, $old[$table][$field]);
-					if (!empty($diff) && $field !== 'indexes') {
+					if (!empty($diff) && $field !== 'indexes' && $field !== 'tableParameters') {
 						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
 					}
 				}
@@ -488,6 +488,9 @@ class CakeSchema extends Object {
 					$tables[$table]['drop']['indexes'] = $diff['drop'];
 					$tables[$table]['add']['indexes'] = $diff['add'];
 				}
+			}
+			if (isset($old[$table]['tableParameters']) && isset($new[$table]['tableParameters'])) {
+				
 			}
 		}
 		return $tables;

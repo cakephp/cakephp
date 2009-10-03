@@ -195,7 +195,7 @@ class TestAppSchema extends CakeSchema {
  */
 	var $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
-		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
+		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => ''),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()
 	);
@@ -389,7 +389,9 @@ class CakeSchemaTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype');
+	var $fixtures = array(
+		'core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype', 'core.auth_user'
+	);
 
 /**
  * setUp method
@@ -445,12 +447,12 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$expected = array('comments', 'datatypes', 'posts', 'posts_tags', 'tags');
 		$this->assertEqual(array_keys($read['tables']), $expected);
-		
+
 		foreach ($read['tables'] as $table => $fields) {
 			$this->assertEqual(array_keys($fields), array_keys($this->Schema->tables[$table]));
 		}
 
-		$this->assertIdentical(
+		$this->assertEqual(
 			$read['tables']['datatypes']['float_field'],
 			$this->Schema->tables['datatypes']['float_field']
 		);
@@ -468,7 +470,7 @@ class CakeSchemaTest extends CakeTestCase {
  *
  * @return void
  **/
-	function XXtestSchemaReadWithPlugins() {
+	function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -480,7 +482,11 @@ class CakeSchemaTest extends CakeTestCase {
 			'name' => 'TestApp',
 			'models' => true
 		));
+		unset($read['tables']['missing']);
 		$this->assertTrue(isset($read['tables']['posts']));
+		$this->assertTrue(isset($read['tables']['auth_users']));
+		$this->assertEqual(count($read['tables']), 2);
+
 
 		App::build();
 	}
@@ -538,13 +544,17 @@ class CakeSchemaTest extends CakeTestCase {
 					'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 					'title' => array('type' => 'string', 'null' => false, 'length' => 100)
 				),
-				'drop' => array('article_id' => array('type' => 'integer', 'null' => false)),
+				'drop' => array(
+					'article_id' => array('type' => 'integer', 'null' => false),
+					'tableParameters' => array()
+				),
 				'change' => array(
 					'comment' => array('type' => 'text', 'null' => false, 'default' => null)
 				)
 			),
 			'posts' => array(
 				'add' => array('summary' => array('type' => 'text', 'null' => 1)),
+				'drop' => array('tableParameters' => array()),
 				'change' => array(
 					'author_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
 					'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
