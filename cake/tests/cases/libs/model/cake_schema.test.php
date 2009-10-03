@@ -484,9 +484,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 		App::build();
 	}
-function getTests() {
-	return array('start', 'startCase', 'testGenerateTable', 'endCase', 'end');
-}
+
 /**
  * test that tables are generated correctly
  *
@@ -509,7 +507,6 @@ function getTests() {
 		eval(substr($result, 4));
 		$this->assertEqual($posts, $fields);
 	}
-
 /**
  * testSchemaWrite method
  *

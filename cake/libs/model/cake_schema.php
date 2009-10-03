@@ -409,7 +409,7 @@ class CakeSchema extends Object {
 					}
 					$col .= join(', ', $props);
 				} elseif ($field == 'tableParameters') {
-					
+					$col = "\t\t'tableParameters' => array(";
 				}
 				$col .= ")";
 				$cols[] = $col;
