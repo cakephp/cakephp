@@ -23,7 +23,7 @@
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Model', 'ConnectionManager');
+App::import('Core', array('Model', 'ConnectionManager'));
 
 /**
  * Base Class for Schema management
@@ -365,32 +365,7 @@ class CakeSchema extends Object {
 
 		foreach ($tables as $table => $fields) {
 			if (!is_numeric($table) && $table !== 'missing') {
-				$out .= "\tvar \${$table} = array(\n";
-				if (is_array($fields)) {
-					$cols = array();
-					foreach ($fields as $field => $value) {
-						if ($field != 'indexes') {
-							if (is_string($value)) {
-								$type = $value;
-								$value = array('type'=> $type);
-							}
-							$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
-							unset($value['type']);
-							$col .= join(', ',  $this->__values($value));
-						} else {
-							$col = "\t\t'indexes' => array(";
-							$props = array();
-							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(" . join(', ',  $this->__values($index)) . ")";
-							}
-							$col .= join(', ', $props);
-						}
-						$col .= ")";
-						$cols[] = $col;
-					}
-					$out .= join(",\n", $cols);
-				}
-				$out .= "\n\t);\n";
+				$out .= $this->generateTable($table, $fields);
 			}
 		}
 		$out .="}\n";
@@ -403,6 +378,46 @@ class CakeSchema extends Object {
 			return $content;
 		}
 		return false;
+	}
+
+/**
+ * Generate the code for a table. Takes a table name and $fields array
+ * Returns a completed variable declaration to be used in schema classes
+ *
+ * @param string $table Table name you want returned.
+ * @param array $fields Array of field information to generate the table with.
+ * @return string Variable declaration for a schema class
+ **/
+	function generateTable($table, $fields) {
+		$out = "\tvar \${$table} = array(\n";
+		if (is_array($fields)) {
+			$cols = array();
+			foreach ($fields as $field => $value) {
+				if ($field != 'indexes' && $field != 'tableParameters') {
+					if (is_string($value)) {
+						$type = $value;
+						$value = array('type'=> $type);
+					}
+					$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
+					unset($value['type']);
+					$col .= join(', ',  $this->__values($value));
+				} elseif ($field == 'indexes') {
+					$col = "\t\t'indexes' => array(";
+					$props = array();
+					foreach ((array)$value as $key => $index) {
+						$props[] = "'{$key}' => array(" . join(', ',  $this->__values($index)) . ")";
+					}
+					$col .= join(', ', $props);
+				} elseif ($field == 'tableParameters') {
+					
+				}
+				$col .= ")";
+				$cols[] = $col;
+			}
+			$out .= join(",\n", $cols);
+		}
+		$out .= "\n\t);\n";
+		return $out;
 	}
 
 /**
