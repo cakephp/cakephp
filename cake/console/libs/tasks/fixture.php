@@ -391,6 +391,12 @@ class FixtureTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake fixture <arg1> <params>");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<name>");
+		$this->out("\tName of the fixture to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
 		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
 		$this->out("\nfixture all\n\tbakes all fixtures.");

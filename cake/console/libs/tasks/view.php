@@ -424,6 +424,12 @@ class ViewTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<controller>");
+		$this->out("\tName of the controller views to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
 		$this->out();
 		$this->out("view <controller>");
