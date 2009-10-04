@@ -61,18 +61,29 @@ class SchemaShell extends Shell {
 		$name = $file = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
+		} elseif (!empty($this->args[0])) {
+			$name = $this->params['name'] = $this->args[0];
+		}
+		if (strpos($name, '.')) {
+			list($this->params['plugin'], $this->params['name']) = explode('.', $name);
+			$name = $this->params['name'];
+		}
+
+		if ($name) {
 			$this->params['file'] = Inflector::underscore($name);
 		}
+
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
-		}
-		if (!empty($this->params['path'])) {
-			$path = $this->params['path'];
 		}
 		if (strpos($this->params['file'], '.php') === false) {
 			$this->params['file'] .= '.php';
 		}
 		$file = $this->params['file'];
+
+		if (!empty($this->params['path'])) {
+			$path = $this->params['path'];
+		}
 
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
@@ -80,7 +91,6 @@ class SchemaShell extends Shell {
 		if (!empty($this->params['plugin'])) {
 			$plugin = $this->params['plugin'];
 		}
-
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 

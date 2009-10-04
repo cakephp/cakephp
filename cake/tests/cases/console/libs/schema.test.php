@@ -184,7 +184,31 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
 		$this->Shell->params['file'] = 'i18n.php';
 		$this->Shell->expectOnce('_stop');
+		$this->Shell->expectOnce('out');
 		$this->Shell->view();
+	}
+
+/**
+ * test that view() can find plugin schema files.
+ *
+ * @return void
+ **/
+	function testViewWithPlugins() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->args = array('TestPlugin.schema');
+		$this->Shell->startup();
+		$this->Shell->expectCallCount('_stop', 2);
+		$this->Shell->expectCallCount('out', 2);
+		$this->Shell->view();
+
+		$this->Shell->args = array();
+		$this->Shell->params = array('plugin' => 'TestPlugin');
+		$this->Shell->startup();
+		$this->Shell->view();
+
+		App::build();
 	}
 
 /**
