@@ -430,70 +430,74 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function help() {
-		$this->out("The Schema Shell generates a schema object from");
-		$this->out("the database and updates the database from the schema.");
-		$this->hr();
-		$this->out("Usage: cake schema <command> <arg1> <arg2>...");
-		$this->hr();
-		$this->out('Params:');
-		$this->out();
-		$this->out("\t-connection <config>");
-		$this->out("\t\tset db config <config>. uses 'default' if none is specified");
-		$this->out();
-		$this->out("\t-path <dir>");
-		$this->out("\t\tpath <dir> to read and write schema.php.");
-		$this->out("\t\tdefault path: ". $this->Schema->path);
-		$this->out();
-		$this->out("\t-name <name>");
-		$this->out("\t\tclassname to use.");
-		$this->out();
-		$this->out("\t-file <name>");
-		$this->out("\t\tfile <name> to read and write.");
-		$this->out("\t\tdefault file: ". $this->Schema->file);
-		$this->out();
-		$this->out("\t-s <number>");
-		$this->out("\t\tsnapshot <number> to use for run.");
-		$this->out();
-		$this->out("\t-dry");
-		$this->out("\t\tPerform a dry run on 'run' commands.");
-		$this->out("\t\tQueries will be output to window instead of executed.");
-		$this->out();
-		$this->out("\t-f");
-		$this->out("\t\tforce 'generate' to create a new schema.");
-		$this->out();
-		$this->out('Commands:');
-		$this->out();
-		$this->out("\tschema help");
-		$this->out("\t\tshows this help message.");
-		$this->out();
-		$this->out("\tschema view");
-		$this->out("\t\tread and output contents of schema file");
-		$this->out();
-		$this->out("\tschema generate");
-		$this->out("\t\treads from 'connection' writes to 'path'");
-		$this->out("\t\tTo force generation of all tables into the schema, use the -f param.");
-		$this->out("\t\tUse 'schema generate snapshot <number>' to generate snapshots");
-		$this->out("\t\twhich you can use with the -s parameter in the other operations.");
-		$this->out();
-		$this->out("\tschema dump <filename>");
-		$this->out("\t\tDump database sql based on schema file to <filename>.");
-		$this->out("\t\tIf <filename> is write, schema dump will be written to a file");
-		$this->out("\t\tthat has the same name as the app directory.");
-		$this->out();
-		$this->out("\tschema run create <schema> <table>");
-		$this->out("\t\tDrop and create tables based on schema file");
-		$this->out("\t\toptional <schema> arg for selecting schema name");
-		$this->out("\t\toptional <table> arg for creating only one table");
-		$this->out("\t\tpass the -s param with a number to use a snapshot");
-		$this->out("\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out();
-		$this->out("\tschema run update <schema> <table>");
-		$this->out("\t\talter tables based on schema file");
-		$this->out("\t\toptional <schema> arg for selecting schema name.");
-		$this->out("\t\toptional <table> arg for altering only one table.");
-		$this->out("\t\tTo use a snapshot, pass the -s param with the snapshot number");
-		$this->out("\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out();
+		$help = <<<TEXT
+The Schema Shell generates a schema object from
+the database and updates the database from the schema.
+---------------------------------------------------------------
+Usage: cake schema <command> <arg1> <arg2>...
+---------------------------------------------------------------
+Params:
+	-connection <config>
+		set db config <config>. uses 'default' if none is specified
+
+	-path <dir>
+		path <dir> to read and write schema.php.
+		default path: {$this->Schema->path}
+
+	-name <name>
+		Classname to use. If <name> is Plugin.className, it will
+		set the plugin and name params.
+
+	-file <name>
+		file <name> to read and write.
+		default file: {$this->Schema->file}
+
+	-s <number>
+		snapshot <number> to use for run.
+
+	-dry
+		Perform a dry run on create + update commands.
+		Queries will be output to window instead of executed.
+
+	-f
+		force 'generate' to create a new schema.
+
+	-plugin
+		Indicate the plugin to use.
+
+Commands:
+
+	schema help
+		shows this help message.
+
+	schema view <name>
+		read and output contents of schema file.
+
+	schema generate
+		reads from 'connection' writes to 'path'
+		To force generation of all tables into the schema, use the -f param.
+		Use 'schema generate snapshot <number>' to generate snapshots
+		which you can use with the -s parameter in the other operations.
+
+	schema dump <name>
+		Dump database sql based on schema file to stdout.
+		If you use the `-write` param is used a .sql will be generated.
+		If `-write` is a filename, then that file name will be generate.
+		If `-write` is a full path, the schema will be written there.
+
+	schema create <name> <table>
+		Drop and create tables based on schema file
+		optional <table> argument can be used to create only a single 
+		table in the schema. Pass the -s param with a number to use a snapshot.
+		Use the `-dry` param to preview the changes.
+
+	schema update <name> <table>
+		Alter the tables based on schema file. Optional <table>
+		parameter will only update one table. 
+		To use a snapshot pass the `-s` param with the snapshot number.
+		To preview the changes that will be done use `-dry`.
+TEXT;
+		$this->out($help);
 		$this->_stop();
 	}
 }
