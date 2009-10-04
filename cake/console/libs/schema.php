@@ -63,9 +63,11 @@ class SchemaShell extends Shell {
 			$name = $this->params['name'];
 			$this->params['file'] = Inflector::underscore($name);
 		}
-		$path = $this->_getPath();
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
+		}
+		if (!empty($this->params['path'])) {
+			$path = $this->params['path'];
 		}
 		if (strpos($this->params['file'], '.php') === false) {
 			$this->params['file'] .= '.php';
@@ -263,12 +265,15 @@ class SchemaShell extends Shell {
  * @return void
  **/
 	function _loadSchema() {
-		$name = null;
+		$name = $plugin = null;
 		if (isset($this->args[0])) {
 			$name = $this->args[0];
 		}
 		if (isset($this->params['name'])) {
 			$name = $this->params['name'];
+		}
+		if (strpos($name, '.') !== false) {
+			list($plugin, $name) = explode('.', $name);
 		}
 
 		if (isset($this->params['dry'])) {
@@ -276,7 +281,7 @@ class SchemaShell extends Shell {
 			$this->out(__('Performing a dry run.', true));
 		}
 
-		$options = array('name' => $name);
+		$options = array('name' => $name, 'plugin' => $plugin);
 		if (isset($this->params['s'])) {
 			$fileName = rtrim($this->Schema->file, '.php');
 			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
@@ -285,7 +290,7 @@ class SchemaShell extends Shell {
 		$Schema =& $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
+			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->path . DS . $this->Schema->file));
 			$this->_stop();
 		}
 		$table = null;

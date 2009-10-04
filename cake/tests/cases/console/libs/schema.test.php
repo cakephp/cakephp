@@ -366,19 +366,35 @@ class SchemaShellTest extends CakeTestCase {
 			'connection' => 'test_suite'
 		);
 		$this->Shell->startup();
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema' . DS;
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema';
 		$this->assertEqual($this->Shell->Schema->path, $expected);
-
-		unset($this->Shell->Schema);
-		$this->Shell->params = array(
-			'plugin' => 'TestPlugin',
-			'connection' => 'test_suite',
-			'path' => '/some/path'
-		);
-		$this->Shell->startup();
-		$expected = '/some/path';
-		$this->assertEqual($this->Shell->Schema->path, $expected);
+		
+		App::build();
 	}
 
+/**
+ * test that using Plugin.name with write.
+ *
+ * @return void
+ **/
+	function testPluginDotSyntax() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->params = array(
+			'connection' => 'test_suite'
+		);
+		$this->Shell->args = array('TestPlugin.TestPluginApp');
+		$this->Shell->startup();
+		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->create();
+
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$sources = $db->listSources();
+		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
+
+		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
+		App::build();
+	}
 }
 ?>

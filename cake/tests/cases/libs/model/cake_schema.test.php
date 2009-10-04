@@ -574,9 +574,25 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaLoading() {
-		$Other = $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
+		$Other =& $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
 		$this->assertEqual($Other->name, 'MyOtherApp');
 		$this->assertEqual($Other->tables, $this->Schema->tables);
+	}
+
+/**
+ * test loading schema files inside of plugins.
+ *
+ * @return void
+ **/
+	function testSchemaLoadingFromPlugin() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$Other =& $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
+		$this->assertEqual($Other->name, 'TestPluginApp');
+		$this->assertEqual(array_keys($Other->tables), array('acos'));
+
+		App::build();
 	}
 
 /**
