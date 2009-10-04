@@ -85,23 +85,6 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Get the correct path for the params. Uses path, and plugin to find the correct path.
- * path param takes precedence over any plugins specified.
- *
- * @return mixed string to correct path or null.
- **/
-	function _getPath() {
-		if (!empty($this->params['path'])) {
-			return $this->params['path'];
-		}
-		if (!empty($this->params['plugin'])) {
-			$pluginPath = $this->_pluginPath($this->params['plugin']);
-			return $pluginPath . 'config' . DS . 'schema' . DS;
-		}
-		return null;
-	}
-
-/**
  * Override main
  *
  * @access public
