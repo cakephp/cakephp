@@ -546,6 +546,7 @@ class CakeSchemaTest extends CakeTestCase {
 				),
 				'drop' => array(
 					'article_id' => array('type' => 'integer', 'null' => false),
+					'tableParameters' => array()
 				),
 				'change' => array(
 					'comment' => array('type' => 'text', 'null' => false, 'default' => null)
