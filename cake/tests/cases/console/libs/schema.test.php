@@ -289,13 +289,12 @@ class SchemaShellTest extends CakeTestCase {
 	function testRunCreateNoArgs() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
-			'name' => 'i18n',
 			'path' => APP . 'config' . DS . 'sql'
 		);
-		$this->Shell->args = array('create');
+		$this->Shell->args = array('i18n');
 		$this->Shell->startup();
 		$this->Shell->setReturnValue('in', 'y');
-		$this->Shell->run();
+		$this->Shell->create();
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
@@ -316,10 +315,10 @@ class SchemaShellTest extends CakeTestCase {
 			'name' => 'DbAcl',
 			'path' => APP . 'config' . DS . 'schema'
 		);
-		$this->Shell->args = array('create', 'acos');
+		$this->Shell->args = array('DbAcl', 'acos');
 		$this->Shell->startup();
 		$this->Shell->setReturnValue('in', 'y');
-		$this->Shell->run();
+		$this->Shell->create();
 
 		$db =& ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
@@ -337,14 +336,13 @@ class SchemaShellTest extends CakeTestCase {
  **/
 	function testRunUpdateWithTable() {
 		$this->Shell->params = array(
-			'name' => 'SchemaShellTest',
 			'connection' => 'test_suite',
 			'f' => true
 		);
-		$this->Shell->args = array('update', 'articles');
+		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
 		$this->Shell->setReturnValue('in', 'y');
-		$this->Shell->run();
+		$this->Shell->update();
 
 		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
 		$fields = $article->schema();

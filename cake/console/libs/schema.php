@@ -238,20 +238,31 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Run database commands: create, update
+ * Run database create commands.  Alias for run create.
  *
- * @access public
- */
-	function run() {
-		if (!isset($this->args[0])) {
-			$this->err(__('Command not found', true));
-			$this->_stop();
-		}
+ * @return void
+ **/
+	function create() {
+		list($Schema, $table) = $this->_loadSchema();
+		$this->__create($Schema, $table);
+	}
 
-		$command = $this->args[0];
+/**
+ * Run database create commands.  Alias for run create.
+ *
+ * @return void
+ **/
+	function update() {
+		list($Schema, $table) = $this->_loadSchema();
+		$this->__update($Schema, $table);
+	}
 
-		$this->Dispatch->shiftArgs();
-
+/**
+ * Prepares the Schema objects for database operations.
+ *
+ * @return void
+ **/
+	function _loadSchema() {
 		$name = null;
 		if (isset($this->args[0])) {
 			$name = $this->args[0];
@@ -271,29 +282,17 @@ class SchemaShell extends Shell {
 			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
 		}
 
-		$Schema = $this->Schema->load($options);
+		$Schema =& $this->Schema->load($options);
 
 		if (!$Schema) {
 			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
 			$this->_stop();
 		}
-
 		$table = null;
 		if (isset($this->args[1])) {
 			$table = $this->args[1];
 		}
-
-		switch ($command) {
-			case 'create':
-				$this->__create($Schema, $table);
-			break;
-			case 'update':
-				$this->__update($Schema, $table);
-			break;
-			default:
-				$this->err(__('Command not found', true));
-				$this->_stop();
-		}
+		return array(&$Schema, $table);
 	}
 
 /**
@@ -336,7 +335,6 @@ class SchemaShell extends Shell {
 			$this->out(__('Creating table(s).', true));
 			$this->__run($create, 'create', $Schema);
 		}
-
 		$this->out(__('End create.', true));
 	}
 
@@ -395,7 +393,6 @@ class SchemaShell extends Shell {
 		}
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$db->fullDebug = true;
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
