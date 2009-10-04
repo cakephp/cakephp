@@ -192,8 +192,10 @@ class SchemaShell extends Shell {
 
 /**
  * Dump Schema object to sql file
- * if first arg == write, file will be written to sql file
- * or it will output sql
+ * Use the `write` param to enable and control SQL file output location.
+ * Simply using -write will write the sql file to the same dir as the schema file.
+ * If -write contains a full path name the file will be saved there. If -write only
+ * contains no DS, that will be used as the file name, in the same dir as the schema file.
  *
  * @access public
  */
@@ -204,11 +206,11 @@ class SchemaShell extends Shell {
 			$this->err(__('Schema could not be loaded', true));
 			$this->_stop();
 		}
-		if (!empty($this->args[0])) {
-			if ($this->args[0] == 'write') {
+		if (isset($this->params['write'])) {
+			if ($this->params['write'] == 1) {
 				$write = Inflector::underscore($this->Schema->name);
 			} else {
-				$write = $this->args[0];
+				$write = $this->params['write'];
 			}
 		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
@@ -219,7 +221,12 @@ class SchemaShell extends Shell {
 			if (strpos($write, '.sql') === false) {
 				$write .= '.sql';
 			}
-			$File = new File($this->Schema->path . DS . $write, true);
+			if (strpos($write, DS) !== false) {
+				$File =& new File($write, true);
+			} else {
+				$File =& new File($this->Schema->path . DS . $write, true);
+			}
+
 			if ($File->write($contents)) {
 				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
 				$this->_stop();
@@ -259,16 +266,13 @@ class SchemaShell extends Shell {
  **/
 	function _loadSchema() {
 		$name = $plugin = null;
-		if (isset($this->args[0])) {
-			$name = $this->args[0];
-		}
 		if (isset($this->params['name'])) {
 			$name = $this->params['name'];
 		}
-		if (strpos($name, '.') !== false) {
-			list($plugin, $name) = explode('.', $name);
+		if (isset($this->params['plugin'])) {
+			$plugin = $this->params['plugin'];
 		}
-
+		
 		if (isset($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.', true));

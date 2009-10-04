@@ -217,15 +217,12 @@ class SchemaShellTest extends CakeTestCase {
  * @return void
  **/
 	function testDumpWithFileWriting() {
-		$file =& new File(APP . 'config' . DS . 'schema' . DS . 'i18n.php');
-		$contents = $file->read();
-		$file =& new File(TMP . 'tests' . DS . 'i18n.php');
-		$file->write($contents);
-
-		$this->Shell->params = array('name' => 'i18n');
-		$this->Shell->args = array('write');
+		$this->Shell->params = array(
+			'name' => 'i18n',
+			'write' => TMP . 'tests' . DS . 'i18n.sql'
+		);
+		$this->Shell->expectOnce('_stop');
 		$this->Shell->startup();
-		$this->Shell->Schema->path = TMP . 'tests';
 		$this->Shell->dump();
 
 		$sql =& new File(TMP . 'tests' . DS . 'i18n.sql');
@@ -240,7 +237,35 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertPattern('/content/', $contents);
 
 		$sql->delete();
+	}
+
+/**
+ * test that dump() can find and work with plugin schema files.
+ *
+ * @return void
+ **/
+	function testDumpFileWritingWithPlugins() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->args = array('TestPlugin.TestPluginApp');
+		$this->Shell->params = array(
+			'connection' => 'test_suite',
+			'write' => TMP . 'tests' . DS . 'dump_test.sql'
+		);
+		$this->Shell->startup();
+		$this->Shell->expectOnce('_stop');
+		$this->Shell->dump();
+
+		$file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
+		$contents = $file->read();
+
+		$this->assertPattern('/CREATE TABLE `acos`/', $contents);
+		$this->assertPattern('/id/', $contents);
+		$this->assertPattern('/model/', $contents);
+
 		$file->delete();
+		App::build();
 	}
 
 /**
@@ -310,7 +335,7 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testRunCreateNoArgs() {
+	function testCreateNoArgs() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
 			'path' => APP . 'config' . DS . 'sql'
@@ -333,7 +358,7 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testRunCreateWithTableArgs() {
+	function testCreateWithTableArgs() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
 			'name' => 'DbAcl',
@@ -358,7 +383,7 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testRunUpdateWithTable() {
+	function testUpdateWithTable() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
 			'f' => true
@@ -401,7 +426,7 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  **/
-	function testPluginDotSyntax() {
+	function testPluginDotSyntaxWithCreate() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
