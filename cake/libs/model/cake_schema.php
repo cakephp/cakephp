@@ -486,8 +486,10 @@ class CakeSchema extends Object {
 
 			if (isset($old[$table]['indexes']) && isset($new[$table]['indexes'])) {
 				$diff = $this->_compareIndexes($new[$table]['indexes'], $old[$table]['indexes']);
-				if ($diff) {
+				if ($diff && isset($diff['drop'])) {
 					$tables[$table]['drop']['indexes'] = $diff['drop'];
+				}
+				if ($diff && isset($diff['add'])) {
 					$tables[$table]['add']['indexes'] = $diff['add'];
 				}
 			}
@@ -577,9 +579,6 @@ class CakeSchema extends Object {
 		if (!is_array($new) || !is_array($old)) {
 			return false;
 		}
-
-		$change = array();
-
 		$change = array_diff_assoc($new, $old);
 		return $change;
 	}
@@ -632,7 +631,7 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-		return compact('add', 'drop');
+		return array_filter(compact('add', 'drop'));
 	}
 }
 ?>

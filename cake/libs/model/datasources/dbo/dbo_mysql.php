@@ -326,6 +326,9 @@ class DboMysqlBase extends DboSource {
  * @todo Implement this method.
  **/
 	function _alterTableParameters($table, $parameters) {
+		if (isset($parameters['change'])) {
+			return $this->buildTableParameters($parameters['change']);
+		}
 		return array();
 	}
 

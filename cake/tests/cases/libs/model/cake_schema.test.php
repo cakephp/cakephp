@@ -538,12 +538,10 @@ class CakeSchemaTest extends CakeTestCase {
 				'add' => array(
 					'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 					'title' => array('type' => 'string', 'null' => false, 'length' => 100),
-					'indexes' => array(),
 				),
 				'drop' => array(
 					'article_id' => array('type' => 'integer', 'null' => false),
 					'tableParameters' => array(),
-					'indexes' => array(),
 				),
 				'change' => array(
 					'comment' => array('type' => 'text', 'null' => false, 'default' => null),
@@ -552,11 +550,9 @@ class CakeSchemaTest extends CakeTestCase {
 			'posts' => array(
 				'add' => array(
 					'summary' => array('type' => 'text', 'null' => 1),
-					'indexes' => array(),
 				),
 				'drop' => array(
 					'tableParameters' => array(),
-					'indexes' => array(),
 				),
 				'change' => array(
 					'author_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
@@ -633,7 +629,6 @@ class CakeSchemaTest extends CakeTestCase {
 		$compare = $this->Schema->compare($old, $new);
 		$expected = array(
 			'posts' => array(
-				'drop' => array('indexes' => array()),
 				'add' => array(
 					'indexes' => array('author_id' => array('column' => 'author_id')),
 				),
@@ -646,7 +641,6 @@ class CakeSchemaTest extends CakeTestCase {
 				)
 			),
 			'comments' => array(
-				'add' => array('indexes' => array()),
 				'drop' => array(
 					'indexes' => array('post_id' => array('column' => 'post_id')),
 				),
