@@ -4883,7 +4883,9 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual(3, count($TestModel->find('all')));
 
 		$this->expectError(new PatternExpectation('/Non-existent data source foo/i'));
-		$this->expectError(new PatternExpectation('/Only variable references/i'));
+		if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 50300) {
+			$this->expectError(new PatternExpectation('/Only variable references/i'));
+		}
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
 
