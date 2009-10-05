@@ -19,7 +19,7 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'CakeSchema');
+App::import('Model', 'CakeSchema', false);
 
 /**
  * Test for Schema database management
@@ -537,29 +537,128 @@ class CakeSchemaTest extends CakeTestCase {
 			'comments' => array(
 				'add' => array(
 					'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
-					'title' => array('type' => 'string', 'null' => false, 'length' => 100)
+					'title' => array('type' => 'string', 'null' => false, 'length' => 100),
+					'indexes' => array(),
 				),
 				'drop' => array(
 					'article_id' => array('type' => 'integer', 'null' => false),
-					'tableParameters' => array()
+					'tableParameters' => array(),
+					'indexes' => array(),
 				),
 				'change' => array(
-					'comment' => array('type' => 'text', 'null' => false, 'default' => null)
+					'comment' => array('type' => 'text', 'null' => false, 'default' => null),
 				)
 			),
 			'posts' => array(
-				'add' => array('summary' => array('type' => 'text', 'null' => 1)),
-				'drop' => array('tableParameters' => array()),
+				'add' => array(
+					'summary' => array('type' => 'text', 'null' => 1),
+					'indexes' => array(),
+				),
+				'drop' => array(
+					'tableParameters' => array(),
+					'indexes' => array(),
+				),
 				'change' => array(
 					'author_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
 					'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
-					'published' => array(
-						'type' => 'string', 'null' => true, 'default' => 'Y', 'length' => '1'
-					)
+					'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => '1')
 				)
 			),
 		);
 		$this->assertEqual($expected, $compare);
+	}
+
+/**
+ * Test comparing tableParameters and indexes.
+ *
+ * @return void
+ **/
+	function testTableParametersAndIndexComparison() {
+		$old = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
+				),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			),
+			'comments' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'comment' => array('type' => 'text'),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true),
+					'post_id' => array('column' => 'post_id'),
+				),
+				'tableParameters' => array(
+					'engine' => 'InnoDB',
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci'
+				)
+			)
+		);
+		$new = array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'author_id' => array('type' => 'integer', 'null' => false),
+				'title' => array('type' => 'string', 'null' => false),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true),
+					'author_id' => array('column' => 'author_id'),
+				),
+				'tableParameters' => array(
+					'charset' => 'utf8',
+					'collate' => 'utf8_general_ci',
+					'engine' => 'MyISAM'
+				)
+			),
+			'comments' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
+				'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'comment' => array('type' => 'text'),
+				'indexes' => array(
+					'PRIMARY' => array('column' => 'id', 'unique' => true),
+				),
+				'tableParameters' => array(
+					'charset' => 'utf8',
+					'collate' => 'utf8_general_ci'
+				)
+			)
+		);
+		$compare = $this->Schema->compare($old, $new);
+		$expected = array(
+			'posts' => array(
+				'drop' => array('indexes' => array()),
+				'add' => array(
+					'indexes' => array('author_id' => array('column' => 'author_id')),
+				),
+				'change' => array(
+					'tableParameters' => array(
+						'charset' => 'utf8', 
+						'collate' => 'utf8_general_ci',
+						'engine' => 'MyISAM'
+					)
+				)
+			),
+			'comments' => array(
+				'add' => array('indexes' => array()),
+				'drop' => array(
+					'indexes' => array('post_id' => array('column' => 'post_id')),
+				),
+				'change' => array(
+					'tableParameters' => array(
+						'charset' => 'utf8', 
+						'collate' => 'utf8_general_ci',
+					)
+				)
+			)
+		);
+		$this->assertEqual($compare, $expected);
 	}
 
 /**

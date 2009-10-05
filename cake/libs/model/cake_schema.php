@@ -494,8 +494,7 @@ class CakeSchema extends Object {
 			if (isset($old[$table]['tableParameters']) && isset($new[$table]['tableParameters'])) {
 				$diff = $this->_compareTableParameters($new[$table]['tableParameters'], $old[$table]['tableParameters']);
 				if ($diff) {
-					$tables[$table]['drop']['tableParameters'] = $diff['drop'];
-					$tables[$table]['add']['tableParameters'] = $diff['add'];
+					$tables[$table]['change']['tableParameters'] = $diff;
 				}
 			}
 		}
@@ -575,7 +574,14 @@ class CakeSchema extends Object {
  * @return mixed False on failure, or an array of parameters to add & drop.
  **/
 	function _compareTableParameters($new, $old) {
-		
+		if (!is_array($new) || !is_array($old)) {
+			return false;
+		}
+
+		$change = array();
+
+		$change = array_diff_assoc($new, $old);
+		return $change;
 	}
 
 /**
@@ -626,7 +632,7 @@ class CakeSchema extends Object {
 				}
 			}
 		}
-		return array_filter(compact('add', 'drop'));
+		return compact('add', 'drop');
 	}
 }
 ?>
