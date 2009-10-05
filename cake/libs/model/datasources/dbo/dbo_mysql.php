@@ -264,9 +264,9 @@ class DboMysqlBase extends DboSource {
 						case 'add':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$alter = 'ADD '.$this->buildColumn($col);
+								$alter = 'ADD ' . $this->buildColumn($col);
 								if (isset($col['after'])) {
-									$alter .= ' AFTER '. $this->name($col['after']);
+									$alter .= ' AFTER ' . $this->name($col['after']);
 								}
 								$colList[] = $alter;
 							}
@@ -274,7 +274,7 @@ class DboMysqlBase extends DboSource {
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$colList[] = 'DROP '.$this->name($field);
+								$colList[] = 'DROP ' . $this->name($field);
 							}
 						break;
 						case 'change':
@@ -282,7 +282,7 @@ class DboMysqlBase extends DboSource {
 								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
-								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
+								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
 							}
 						break;
 					}
