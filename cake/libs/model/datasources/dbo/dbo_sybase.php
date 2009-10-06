@@ -95,9 +95,9 @@ class DboSybase extends DboSource {
 			$port = ':' . $config['port'];
 		}
 		if ($config['persistent']) {
-			$this->connection = sybase_connect($config['host'] . $port, $config['login'], $config['password'], true);
-		} else {
 			$this->connection = sybase_pconnect($config['host'] . $port, $config['login'], $config['password']);
+		} else {
+			$this->connection = sybase_connect($config['host'] . $port, $config['login'], $config['password'], true);
 		}
 		$this->connected = sybase_select_db($config['database'], $this->connection);
 		return $this->connected;
