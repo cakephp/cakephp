@@ -453,7 +453,7 @@ class Model extends Overloadable {
  *
  * @param mixed $model A model or association name (string) or set of binding options (indexed by model name type)
  * @param array $options If $model is a string, this is the list of association properties with which $model will
- *    be bound
+ *   be bound
  * @param boolean $permanent Set to true to make the binding permanent
  * @return void
  * @access public
@@ -757,10 +757,12 @@ class Model extends Overloadable {
 		$this->schema();
 	}
 /**
- * This function does two things: 1) it scans the array $one for the primary key,
+ * This function does two things: 
+ *
+ * 1. it scans the array $one for the primary key,
  * and if that's found, it sets the current id to the value of $one[id].
  * For all other keys than 'id' the keys and values of $one are copied to the 'data' property of this object.
- * 2) Returns an array with all of $one's keys and values.
+ * 2. Returns an array with all of $one's keys and values.
  * (Alternative indata: two strings, which are mangled to
  * a one-item, two-dimensional array using $one for a key and $two as its value.)
  *
@@ -1377,7 +1379,7 @@ class Model extends Overloadable {
  *
  * @param array $keys Optional foreign key data, defaults to the information $this->data
  * @param boolean $created True if a new record was created, otherwise only associations with
- *				  'counterScope' defined get updated
+ *   'counterScope' defined get updated
  * @return void
  * @access public
  */
@@ -1912,14 +1914,19 @@ class Model extends Overloadable {
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
- * Eg: find('all', array(
- * 					'conditions' => array('name' => 'Thomas Anderson'),
- * 					'fields' => array('name', 'email'),
- * 					'order' => 'field3 DESC',
- * 					'recursive' => 2,
- * 					'group' => 'type'));
+ * Eg: 
+ * {{{
+ *	find('all', array(
+ *		'conditions' => array('name' => 'Thomas Anderson'),
+ * 		'fields' => array('name', 'email'),
+ * 		'order' => 'field3 DESC',
+ * 		'recursive' => 2,
+ * 		'group' => 'type'
+ * ));
+ * }}}
  *
  * Specifying 'fields' for new-notation 'list':
+ *
  *  - If no fields are specified, then 'id' is used for key and 'model->displayField' is used for value.
  *  - If a single field is specified, 'id' is used for key and specified field is used for value.
  *  - If three fields are specified, they are used (in order) for key, value and group.
