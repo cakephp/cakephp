@@ -181,8 +181,8 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testGetContentWithAdminAction() {
-		$_back = Configure::read('Routing.admin');
-		Configure::write('Routing.admin', 'admin');
+		$_back = Configure::read('Routing');
+		Configure::write('Routing.prefixes', array('admin'));
 		$vars = array(
 			'modelClass' => 'TestViewModel',
 			'schema' => array(),
@@ -206,7 +206,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 
-		Configure::write('Routing.admin', $_back);
+		Configure::write('Routing', $_back);
 	}
 
 /**
@@ -347,10 +347,11 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteWithControllerAndAdminFlag() {
-		$_back = Configure::read('Routing.admin');
-		Configure::write('Routing.admin', 'admin');
+		$_back = Configure::read('Routing');
+		Configure::write('Routing.prefixes', array('admin'));
 		$this->Task->args[0] = 'ViewTaskArticles';
 		$this->Task->params['admin'] = 1;
+		$this->Task->Project->setReturnValue('getPrefix', 'admin_');
 
 		$this->Task->expectCallCount('createFile', 4);
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_index.ctp', '*'));
@@ -359,7 +360,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(3, 'createFile', array(TMP . 'view_task_articles' . DS . 'admin_edit.ctp', '*'));
 
 		$this->Task->execute();
-		Configure::write('Routing.admin', $_back);
+		Configure::write('Routing', $_back);
 	}
 
 /**
@@ -423,7 +424,7 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  **/
 	function testExecuteInteractiveWithAdmin() {
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		$this->Task->connection = 'test_suite';
 		$this->Task->args = array();
 

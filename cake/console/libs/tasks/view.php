@@ -156,13 +156,13 @@ class ViewTask extends Shell {
 			$scaffoldActions = true;
 			$methods = $this->scaffoldActions;
 		}
-		$adminRoute = Configure::read('Routing.admin');
+		$adminRoute = $this->Project->getPrefix();
 		foreach ($methods as $i => $method) {
 			if ($adminRoute && isset($this->params['admin'])) {
 				if ($scaffoldActions) {
-					$methods[$i] = $adminRoute . '_' . $method;
+					$methods[$i] = $adminRoute . $method;
 					continue;
-				} elseif (strpos($method, $adminRoute . '_') === false) {
+				} elseif (strpos($method, $adminRoute) === false) {
 					unset($methods[$i]);
 				}
 			}
@@ -403,9 +403,11 @@ class ViewTask extends Shell {
 			return $this->template;
 		} 
 		$template = $action;
-		$adminRoute = Configure::read('Routing.admin');
-		if (!empty($adminRoute) && strpos($template, $adminRoute) !== false) {
-			$template = str_replace($adminRoute . '_', '', $template);
+		$prefixes = Configure::read('Routing.prefixes');
+		foreach ((array)$prefixes as $prefix) {
+			if (strpos($template, $prefix) !== false) {
+				$template = str_replace($prefix . '_', '', $template);
+			}
 		}
 		if (in_array($template, array('add', 'edit'))) {
 			$template = 'form';

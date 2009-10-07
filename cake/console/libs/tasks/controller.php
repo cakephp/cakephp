@@ -88,15 +88,15 @@ class ControllerTask extends Shell {
 			} elseif (!empty($this->args[1]) && $this->args[1] == 'admin') {
 				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
-					$actions= $this->bakeActions($controller, $admin);
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
+					$actions = $this->bakeActions($controller, $admin);
 				}
 			}
 
 			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
 				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
 			}
