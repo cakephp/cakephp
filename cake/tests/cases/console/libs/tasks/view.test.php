@@ -428,7 +428,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->args = array();
 
 		$this->Task->Controller->setReturnValue('getName', 'ViewTaskComments');
-		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
+		$this->Task->Project->setReturnValue('getPrefix', 'admin_');
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'n');
 		$this->Task->setReturnValueAt(2, 'in', 'y');

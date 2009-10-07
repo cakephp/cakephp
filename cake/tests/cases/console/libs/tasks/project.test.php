@@ -132,22 +132,60 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * test getAdmin method, and that it returns Routing.admin or writes to config file.
+ * test getPrefix method, and that it returns Routing.prefix or writes to config file.
  *
  * @return void
  **/
-	function testGetAdmin() {
-		Configure::write('Routing.admin', 'admin');
-		$result = $this->Task->getAdmin();
+	function testGetPrefix() {
+		Configure::write('Routing.prefixes', array('admin'));
+		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'admin_');
 
-		Configure::write('Routing.admin', null);
+		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
 		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
 		$this->Task->setReturnValue('in', 'super_duper_admin');
 
-		$result = $this->Task->getAdmin();
+		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'super_duper_admin_');
+
+		$file =& new File($this->Task->configPath . 'core.php');
+		$file->delete();
+	}
+
+/**
+ * test cakeAdmin() writing core.php
+ *
+ * @return void
+ **/
+	function testCakeAdmin() {
+		$file =& new File(CONFIGS . 'core.php');
+		$contents = $file->read();;
+		$file =& new File(TMP . 'tests' . DS . 'core.php');
+		$file->write($contents);
+
+		Configure::write('Routing.prefixes', null);
+		$this->Task->configPath = TMP . 'tests' . DS;
+		$result = $this->Task->cakeAdmin('my_prefix');
+		$this->assertTrue($result);
+
+		$this->assertEqual(Configure::read('Routing.prefixes'), array('my_prefix'));
+		$file->delete();
+	}
+
+/**
+ * test getting the prefix with more than one prefix setup
+ *
+ * @return void
+ **/
+	function testGetPrefixWithMultiplePrefixes() {
+		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
+		$this->_setupTestProject();
+		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
+		$this->Task->setReturnValue('in', 2);
+
+		$result = $this->Task->getPrefix();
+		$this->assertEqual($result, 'ninja_');
 	}
 
 /**

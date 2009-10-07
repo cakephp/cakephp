@@ -258,10 +258,10 @@ class ProjectTask extends Shell {
 		$path = (empty($this->configPath)) ? CONFIGS : $this->configPath;
 		$File =& new File($path . 'core.php');
 		$contents = $File->read();
-		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.admin\',[\\t\\x20\'a-z]*\\);)%', $contents, $match)) {
-			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.admin\', \''.$name.'\');', $contents);
+		if (preg_match('%([/\\t\\x20]*Configure::write\(\'Routing.prefixes\',[\\t\\x20\'a-z,\)\(]*\\);)%', $contents, $match)) {
+			$result = str_replace($match[0], "\t" . 'Configure::write(\'Routing.prefixes\', array(\''.$name.'\'));', $contents);
 			if ($File->write($result)) {
-				Configure::write('Routing.admin', $name);
+				Configure::write('Routing.prefixes', array($name));
 				return true;
 			} else {
 				return false;
@@ -277,22 +277,31 @@ class ProjectTask extends Shell {
  * @return string Admin route to use
  * @access public
  */
-	function getAdmin() {
+	function getPrefix() {
 		$admin = '';
-		$cakeAdmin = null;
-		$adminRoute = Configure::read('Routing.admin');
-		if (!empty($adminRoute)) {
-		 	return $adminRoute . '_';
+		$prefixes = Configure::read('Routing.prefixes');
+		if (!empty($prefixes)) {
+			if (count($prefixes) == 1) {
+				return $prefixes[0] . '_';
+			}
+			$options = array();
+			foreach ($prefixes as $i => $prefix) {
+				$options[] = $i + 1;
+				$this->out($i + 1 . '. ' . $prefix);
+			}
+			$selection = $this->in(__('Please choose a prefix to bake with.', true), $options, 1);
+			return $prefixes[$selection - 1] . '_';
 		}
-		$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
-		$this->out(__('What would you like the admin route to be?', true));
+
+		$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
+		$this->out(__('What would you like the prefix route to be?', true));
 		$this->out(__('Example: www.example.com/admin/controller', true));
 		while ($admin == '') {
-			$admin = $this->in(__("What would you like the admin route to be?", true), null, 'admin');
+			$admin = $this->in(__("What would you like the prefix route to be?", true), null, 'admin');
 		}
 		if ($this->cakeAdmin($admin) !== true) {
 			$this->out(__('Unable to write to /app/config/core.php.', true));
-			$this->out('You need to enable Configure::write(\'Routing.admin\',\'admin\') in /app/config/core.php to use admin routing.');
+			$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
 			$this->_stop();
 		}
 		return $admin . '_';
