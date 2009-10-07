@@ -242,7 +242,7 @@ class ViewTask extends Shell {
 				$this->bakeActions($adminActions, $vars);
 			}
 			$this->hr();
-			$this->out('');
+			$this->out();
 			$this->out(__("View Scaffolding Complete.\n", true));
 		} else {
 			$this->customAction();
@@ -330,7 +330,7 @@ class ViewTask extends Shell {
 				$this->out(__('The action name you supplied was empty. Please try again.', true));
 			}
 		}
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following view will be created:', true));
 		$this->hr();
@@ -425,7 +425,7 @@ class ViewTask extends Shell {
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("view <controller>");
 		$this->out("\tWill read the given controller for methods");
 		$this->out("\tand bake corresponding views.");
@@ -433,14 +433,14 @@ class ViewTask extends Shell {
 		$this->out("\tthat begin with Routing.admin.");
 		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
 		$this->out("\t(index,view,add,edit)");
-		$this->out('');
+		$this->out();
 		$this->out("view <controller> <action>");
 		$this->out("\tWill bake a template. core templates: (index, add, edit, view)");
-		$this->out('');
+		$this->out();
 		$this->out("view <controller> <template> <alias>");
 		$this->out("\tWill use the template specified");
 		$this->out("\tbut name the file based on the alias");
-		$this->out('');
+		$this->out();
 		$this->out("view all");
 		$this->out("\tBake all CRUD action views for all controllers.");
 		$this->out("\tRequires that models and controllers exist.");

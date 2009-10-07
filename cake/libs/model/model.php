@@ -2547,6 +2547,13 @@ class Model extends Overloadable {
 							$valid = $Validation->dispatchMethod($rule, $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
+						} elseif (Configure::read('debug') > 0) {
+							$error = sprintf(
+								__('Could not find validation handler %s for %s', true), 
+								$rule,
+								$fieldName
+							);
+							trigger_error($error, E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {

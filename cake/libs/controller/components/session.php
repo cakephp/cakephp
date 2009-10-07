@@ -183,7 +183,7 @@ class SessionComponent extends CakeSession {
 	function delete($name) {
 		if ($this->__active === true) {
 			$this->__start();
-			return parent::del($name);
+			return parent::delete($name);
 		}
 		return false;
 	}

@@ -150,7 +150,7 @@ class SessionHelper extends CakeSession {
 					$out = $view->element($flash['element'], $tmpVars);
 				}
 				echo($out);
-				parent::del('Message.' . $key);
+				parent::delete('Message.' . $key);
 				return true;
 			}
 		}

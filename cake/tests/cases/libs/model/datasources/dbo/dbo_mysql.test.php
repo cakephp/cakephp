@@ -649,6 +649,7 @@ class DboMysqlTest extends CakeTestCase {
 			'collate' => 'utf8_unicode_ci',
 			'engine' => 'InnoDB');
 		$this->assertEqual($result, $expected);
+
 		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
 		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
 		$result = $this->db->readTableParameters('tinyint');

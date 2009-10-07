@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Session class for Cake.
  *
@@ -12,20 +10,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v .0.10.0.1222
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -244,13 +239,24 @@ class CakeSession extends Object {
 	}
 
 /**
+ * Remove a variable from the session
+ *
+ * @return boolean
+ * @deprecated Use CakeSession::delete instead
+ **/
+	function del($name) {
+		trigger_error('CakeSession::del() is deprecated, use CakeSession::delete() instead.', E_USER_WARNING);
+		return $this->delete($name);
+	}
+
+/**
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove
  * @return boolean Success
  * @access public
  */
-	function del($name) {
+	function delete($name) {
 		if ($this->check($name)) {
 			if ($var = $this->__validateKeys($name)) {
 				if (in_array($var, $this->watchKeys)) {

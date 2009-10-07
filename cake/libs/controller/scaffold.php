@@ -386,7 +386,7 @@ class Scaffold extends Object {
 				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
 			} else {
-				$this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
+				$this->controller->flash($message, $this->redirect);
 				return $this->_output();
 			}
 
@@ -399,7 +399,7 @@ class Scaffold extends Object {
 					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					$this->controller->flash($message, '/' . $this->viewPath);
+					$this->controller->flash($message, $this->redirect);
 					return $this->_output();
 				}
 			} else {
@@ -411,7 +411,7 @@ class Scaffold extends Object {
 					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					$this->controller->flash($message, '/' . $this->viewPath);
+					$this->controller->flash($message, $this->redirect);
 					return $this->_output();
 				}
 			}
