@@ -1771,33 +1771,6 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testValidNumber method
- *
- * @access public
- * @return void
- */
-	function testValidNumber() {
-		$this->assertTrue(Validation::custom('12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('--12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('++12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('a12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-a12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('123-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+1.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('+1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345.', VALID_NUMBER));
-	}
-
-/**
  * testRange method
  *
  * @access public
