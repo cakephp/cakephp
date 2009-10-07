@@ -225,6 +225,7 @@ class String {
 		);
 		$options += $defaults;
 		$format = $options['format'];
+		$data = (array)$data;
 
 		if (!isset($format)) {
 			$format = sprintf(
@@ -234,42 +235,39 @@ class String {
 				str_replace('%', '%%', preg_quote($options['after'], '/'))
 			);
 		}
-		if (!is_array($data)) {
-			$data = array($data);
-		}
 
-		if (array_keys($data) === array_keys(array_values($data))) {
+		if (strpos($str, '?') !== false) {
 			$offset = 0;
 			while (($pos = strpos($str, '?', $offset)) !== false) {
 				$val = array_shift($data);
 				$offset = $pos + strlen($val);
 				$str = substr_replace($str, $val, $pos, 1);
 			}
+			return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
 		} else {
 			asort($data);
 
-			$hashKeys = array_map('md5', array_keys($data));
+			$hashKeys = array();
+			foreach ($data as $key => $value) {
+				$hashKeys[] = crc32($key);
+			}
+
 			$tempData = array_combine(array_keys($data), array_values($hashKeys));
 			foreach ($tempData as $key => $hashVal) {
 				$key = sprintf($format, preg_quote($key, '/'));
 				$str = preg_replace($key, $hashVal, $str);
 			}
 			$dataReplacements = array_combine($hashKeys, array_values($data));
-			foreach ($dataReplacements as $tmpHash => $data) {
-				if (is_array($data)) {
-					$data = '';
-				}
-				$str = str_replace($tmpHash, $data, $str);
+			foreach ($dataReplacements as $tmpHash => $tmpValue) {
+				$tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
+				$str = str_replace($tmpHash, $tmpValue, $str);
 			}
 		}
 
 		if (!isset($options['format']) && isset($options['before'])) {
 			$str = str_replace($options['escape'].$options['before'], $options['before'], $str);
 		}
-		if (!$options['clean']) {
-			return $str;
-		}
-		return String::cleanInsert($str, $options);
+		return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
 	}
 
 /**
