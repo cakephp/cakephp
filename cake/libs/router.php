@@ -1334,14 +1334,16 @@ class RouterRoute {
  *
  * @param string $route An empty string, or a route string "/"
  * @param array $default NULL or an array describing the default route
- * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
- * @return array
+ * @param array $params An array matching the named elements in the route to regular expressions 
+ *    which that element should match.
+ * @return void
  * @access protected
  */
 	function _writeRoute($route, $default, $params) {
 		if (empty($route) || ($route === '/')) {
-			$this->_compiledRoute = '/^[\/]*$/';
+			$this->_compiledRoute = '#^/*$#';
 			$this->keys = array();
+			return;
 		}
 		$names = $parsed = array();
 		$elements = explode('/', $route);
