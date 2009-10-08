@@ -818,12 +818,14 @@ class Router {
 				}
 			}
 			$plugin = false;
-
 			if (array_key_exists('plugin', $url)) {
 				$plugin = $url['plugin'];
 			}
 
-			$url = array_merge(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
+			$url = array_merge(
+				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
+				Set::filter($url, true)
+			);
 
 			if ($plugin !== false) {
 				$url['plugin'] = $plugin;
@@ -834,7 +836,7 @@ class Router {
 				unset($url['ext']);
 			}
 			$match = false;
-			
+
 			for ($i = 0, $len = count($_this->routes); $i < $len; $i++) {
 				$route =& $_this->routes[$i];
 				$route->compile();
@@ -854,7 +856,7 @@ class Router {
 
 			$named = $args = array();
 			$skip = array_merge(
-				array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix'), 
+				array('bare', 'action', 'controller', 'plugin', 'prefix'), 
 				$_this->__prefixes
 			);
 
