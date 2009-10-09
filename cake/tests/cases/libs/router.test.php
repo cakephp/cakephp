@@ -1955,12 +1955,12 @@ class RouterTest extends CakeTestCase {
  **/
 class RouterRouteTestCase extends CakeTestCase {
 /**
- * setUp method
+ * startTest method
  *
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->_routing = Configure::read('Routing');
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
 		Router::reload();
