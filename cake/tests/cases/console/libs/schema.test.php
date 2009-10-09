@@ -116,7 +116,7 @@ class SchemaShellTestSchema extends CakeSchema {
  */
 class SchemaShellTest extends CakeTestCase {
 
-	var $fixtures = array('core.article', 'core.user');
+	var $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user');
 /**
  * startTest method
  *
@@ -328,6 +328,36 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->Shell->generate();
 		unlink(TMP . 'schema.php');
+	}
+
+/**
+ * test that generate() can read plugin dirs and generate schema files for the models
+ * in a plugin.
+ *
+ * @return void
+ **/
+	function testGenerateWithPlugins() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test_suite'
+		);
+		$this->Shell->startup();
+		$this->Shell->Schema->path = TMP . 'tests' . DS;
+
+		$this->Shell->generate();
+		$file =& new File(TMP . 'tests' . DS . 'schema.php');
+		$contents = $file->read();
+
+		$this->assertPattern('/var \$posts/', $contents);
+		$this->assertPattern('/var \$auth_users/', $contents);
+		$this->assertNoPattern('/var \$users/', $contents);
+		$this->assertNoPattern('/var \$articles/', $contents);
+
+		$file->delete();
+		App::build();
 	}
 
 /**
