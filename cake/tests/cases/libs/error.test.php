@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ErrorHandlerTest file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (class_exists('TestErrorHandler')) {
@@ -261,9 +256,10 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_clean();
 		ob_start();
 		$TestErrorHandler->error(array(
-				'code' => 404,
-				'message' => 'Page not Found',
-				'name' => "Couldn't find what you were looking for"));
+			'code' => 404,
+			'message' => 'Page not Found',
+			'name' => "Couldn't find what you were looking for"
+		));
 		$result = ob_get_clean();
 		$this->assertPattern("/<h2>Couldn't find what you were looking for<\/h2>/", $result);
 		$this->assertPattern('/Page not Found/', $result);
