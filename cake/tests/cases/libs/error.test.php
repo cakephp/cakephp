@@ -208,6 +208,34 @@ class BlueberryController extends AppController {
 }
 
 /**
+ * MyCustomErrorHandler class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class MyCustomErrorHandler extends ErrorHandler {
+
+/**
+ * custom error message type.
+ *
+ * @return void
+ **/
+	function missingWidgetThing() {
+		echo 'widget thing is missing';
+	}
+
+/**
+ * stop method
+ *
+ * @access public
+ * @return void
+ */
+	function _stop() {
+		return;
+	}
+}
+
+/**
  * TestErrorHandler class
  *
  * @package       cake
@@ -242,6 +270,35 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function skip() {
 		$this->skipIf(PHP_SAPI === 'cli', '%s Cannot be run from console');
+	}
+
+/**
+ * test that methods declared in an ErrorHandler subclass are not converted
+ * into error404 when debug == 0
+ *
+ * @return void
+ **/
+	function testSubclassMethodsNotBeingConvertedToError() {
+		$back = Configure::read('debug');
+		Configure::write('debug', 2);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'widget thing is missing');
+
+		Configure::write('debug', 0);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
+		
+		Configure::write('debug', 0);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingController', array('message' => 'Page not found'));
+		$result = ob_get_clean();
+		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error404. %s');
+
+		Configure::write('debug', $back);
 	}
 
 /**
