@@ -27,7 +27,7 @@
 <h2><?php echo $pluralHumanName;?></h2>
 <p><?php
 echo $paginator->counter(array(
-	'format' => 'Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%'
+	'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
 ));
 ?></p>
 <table cellpadding="0" cellspacing="0">
@@ -81,7 +81,7 @@ echo "\n";
 </div>
 <div class="actions">
 	<ul>
-		<li><?php echo $html->link('New '.$singularHumanName, array('action' => 'add')); ?></li>
+		<li><?php echo $html->link(sprintf(__('New %s', true), $singularHumanName), array('action' => 'add')); ?></li>
 <?php
 		$done = array();
 		foreach ($associations as $_type => $_data) {
