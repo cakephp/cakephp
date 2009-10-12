@@ -256,36 +256,7 @@ class FixtureTask extends Shell {
  * @return string fields definitions
  **/
 	function _generateSchema($tableInfo) {
-		$cols = array();
-		$out = "array(\n";
-		foreach ($tableInfo as $field => $fieldInfo) {
-			if (is_array($fieldInfo)) {
-				if (!in_array($field, array('indexes', 'tableParameters'))) {
-					$col = "\t\t'{$field}' => array('type'=>'" . $fieldInfo['type'] . "', ";
-					$col .= join(', ',  $this->_Schema->__values($fieldInfo));
-				} elseif ($field == 'indexes') {
-					$col = "\t\t'indexes' => array(";
-					$props = array();
-					foreach ((array)$fieldInfo as $key => $index) {
-						$props[] = "'{$key}' => array(".join(', ',  $this->_Schema->__values($index)).")";
-					}
-					$col .= join(', ', $props);
-				} elseif ($field == 'tableParameters') {
-					//@todo add charset, collate and engine here
-					$col = "\t\t'tableParameters' => array(";
-					$props = array();
-					foreach ((array)$fieldInfo as $key => $param) {
-						$props[] = "'{$key}' => '$param'";
-					}
-					$col .= join(', ', $props);
-				}
-				$col .= ")";
-				$cols[] = $col;
-			}
-		}
-		$out .= join(",\n", $cols);
-		$out .= "\n\t)";
-		return $out;
+		return $this->_Schema->generateTable('table', $tableInfo);
 	}
 
 /**
@@ -420,6 +391,12 @@ class FixtureTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake fixture <arg1> <params>");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<name>");
+		$this->out("\tName of the fixture to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
 		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
 		$this->out("\nfixture all\n\tbakes all fixtures.");

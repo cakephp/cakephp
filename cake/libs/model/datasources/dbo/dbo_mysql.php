@@ -248,7 +248,7 @@ class DboMysqlBase extends DboSource {
 		$out = '';
 		$colList = array();
 		foreach ($compare as $curTable => $types) {
-			$indexes = array();
+			$indexes = $tableParameters = array();
 			if (!$table || $table == $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
 				foreach ($types as $type => $column) {
@@ -256,13 +256,17 @@ class DboMysqlBase extends DboSource {
 						$indexes[$type] = $column['indexes'];
 						unset($column['indexes']);
 					}
+					if (isset($column['tableParameters'])) {
+						$tableParameters[$type] = $column['tableParameters'];
+						unset($column['tableParameters']);
+					}
 					switch ($type) {
 						case 'add':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$alter = 'ADD '.$this->buildColumn($col);
+								$alter = 'ADD ' . $this->buildColumn($col);
 								if (isset($col['after'])) {
-									$alter .= ' AFTER '. $this->name($col['after']);
+									$alter .= ' AFTER ' . $this->name($col['after']);
 								}
 								$colList[] = $alter;
 							}
@@ -270,7 +274,7 @@ class DboMysqlBase extends DboSource {
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
-								$colList[] = 'DROP '.$this->name($field);
+								$colList[] = 'DROP ' . $this->name($field);
 							}
 						break;
 						case 'change':
@@ -278,12 +282,13 @@ class DboMysqlBase extends DboSource {
 								if (!isset($col['name'])) {
 									$col['name'] = $field;
 								}
-								$colList[] = 'CHANGE '. $this->name($field).' '.$this->buildColumn($col);
+								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
 							}
 						break;
 					}
 				}
 				$colList = array_merge($colList, $this->_alterIndexes($curTable, $indexes));
+				$colList = array_merge($colList, $this->_alterTableParameters($curTable, $tableParameters));
 				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
 			}
 		}
@@ -310,6 +315,21 @@ class DboMysqlBase extends DboSource {
 			}
 		}
 		return $out;
+	}
+
+/**
+ * Generate MySQL table parameter alteration statementes for a table.
+ *
+ * @param string $table Table to alter parameters for.
+ * @param array $parameters Parameters to add & drop.
+ * @return array Array of table property alteration statementes.
+ * @todo Implement this method.
+ **/
+	function _alterTableParameters($table, $parameters) {
+		if (isset($parameters['change'])) {
+			return $this->buildTableParameters($parameters['change']);
+		}
+		return array();
 	}
 
 /**

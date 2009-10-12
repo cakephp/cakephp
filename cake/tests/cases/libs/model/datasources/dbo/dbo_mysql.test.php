@@ -1,26 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * DboMysqlTest file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
@@ -190,7 +185,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @access public
  */
-	function setUp() {
+	function startTest() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();
@@ -201,7 +196,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @access public
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->db);
 	}
 
@@ -568,7 +563,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchemaIndexes() {
-		App::import('Core', 'CakeSchema');
+		App::import('Model', 'CakeSchema');
 		$this->db->cacheSources = $this->db->testing = false;
 
 		$schema1 =& new CakeSchema(array(
@@ -630,6 +625,56 @@ class DboMysqlTest extends CakeTestCase {
 
 		$indexes = $this->db->index('altertest');
 		$this->assertEqual(array(), $indexes);
+
+		$this->db->query($this->db->dropSchema($schema1));
+	}
+
+/**
+ * test altering the table settings with schema.
+ *
+ * @return void
+ **/
+	function testAlteringTableParameters() {
+		App::import('Model', 'CakeSchema');
+		$this->db->cacheSources = $this->db->testing = false;
+
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci',
+					'engine' => 'MyISAM'
+				)
+			)
+		));
+		$this->db->query($this->db->createSchema($schema1));
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'tableParameters' => array(
+					'charset' => 'utf8',
+					'collate' => 'utf8_general_ci',
+					'engine' => 'InnoDB'
+				)
+			)
+		));
+		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$this->assertPattern('/DEFAULT CHARSET=utf8/', $result);
+		$this->assertPattern('/ENGINE=InnoDB/', $result);
+		$this->assertPattern('/COLLATE=utf8_general_ci/', $result);
+
+		$this->db->query($result);
+		$result = $this->db->listDetailedSources('altertest');
+		$this->assertEqual($result['Collation'], 'utf8_general_ci');
+		$this->assertEqual($result['Engine'], 'InnoDB');
+		$this->assertEqual($result['charset'], 'utf8');
 
 		$this->db->query($this->db->dropSchema($schema1));
 	}

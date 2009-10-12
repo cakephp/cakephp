@@ -58,12 +58,21 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function startup() {
-		$name = $file = $path = $connection = null;
+		$name = $file = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
+		} elseif (!empty($this->args[0])) {
+			$name = $this->params['name'] = $this->args[0];
+		}
+		if (strpos($name, '.')) {
+			list($this->params['plugin'], $this->params['name']) = explode('.', $name);
+			$name = $this->params['name'];
+		}
+
+		if ($name) {
 			$this->params['file'] = Inflector::underscore($name);
 		}
-		$path = $this->_getPath();
+
 		if (empty($this->params['file'])) {
 			$this->params['file'] = 'schema.php';
 		}
@@ -72,28 +81,17 @@ class SchemaShell extends Shell {
 		}
 		$file = $this->params['file'];
 
+		if (!empty($this->params['path'])) {
+			$path = $this->params['path'];
+		}
+
 		if (!empty($this->params['connection'])) {
 			$connection = $this->params['connection'];
 		}
-
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection'));
-	}
-
-/**
- * Get the correct path for the params. Uses path, and plugin to find the correct path.
- * path param takes precedence over any plugins specified.
- *
- * @return mixed string to correct path or null.
- **/
-	function _getPath() {
-		if (!empty($this->params['path'])) {
-			return $this->params['path'];
-		}
 		if (!empty($this->params['plugin'])) {
-			$pluginPath = $this->_pluginPath($this->params['plugin']);
-			return $pluginPath . 'config' . DS . 'schema' . DS;
+			$plugin = $this->params['plugin'];
 		}
-		return null;
+		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -194,8 +192,10 @@ class SchemaShell extends Shell {
 
 /**
  * Dump Schema object to sql file
- * if first arg == write, file will be written to sql file
- * or it will output sql
+ * Use the `write` param to enable and control SQL file output location.
+ * Simply using -write will write the sql file to the same dir as the schema file.
+ * If -write contains a full path name the file will be saved there. If -write only
+ * contains no DS, that will be used as the file name, in the same dir as the schema file.
  *
  * @access public
  */
@@ -206,11 +206,11 @@ class SchemaShell extends Shell {
 			$this->err(__('Schema could not be loaded', true));
 			$this->_stop();
 		}
-		if (!empty($this->args[0])) {
-			if ($this->args[0] == 'write') {
+		if (isset($this->params['write'])) {
+			if ($this->params['write'] == 1) {
 				$write = Inflector::underscore($this->Schema->name);
 			} else {
-				$write = $this->args[0];
+				$write = $this->params['write'];
 			}
 		}
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
@@ -221,7 +221,12 @@ class SchemaShell extends Shell {
 			if (strpos($write, '.sql') === false) {
 				$write .= '.sql';
 			}
-			$File = new File($this->Schema->path . DS . $write, true);
+			if (strpos($write, DS) !== false) {
+				$File =& new File($write, true);
+			} else {
+				$File =& new File($this->Schema->path . DS . $write, true);
+			}
+
 			if ($File->write($contents)) {
 				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
 				$this->_stop();
@@ -235,62 +240,61 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Run database commands: create, update
+ * Run database create commands.  Alias for run create.
  *
- * @access public
- */
-	function run() {
-		if (!isset($this->args[0])) {
-			$this->err(__('Command not found', true));
-			$this->_stop();
-		}
+ * @return void
+ **/
+	function create() {
+		list($Schema, $table) = $this->_loadSchema();
+		$this->__create($Schema, $table);
+	}
 
-		$command = $this->args[0];
+/**
+ * Run database create commands.  Alias for run create.
+ *
+ * @return void
+ **/
+	function update() {
+		list($Schema, $table) = $this->_loadSchema();
+		$this->__update($Schema, $table);
+	}
 
-		$this->Dispatch->shiftArgs();
-
-		$name = null;
-		if (isset($this->args[0])) {
-			$name = $this->args[0];
-		}
+/**
+ * Prepares the Schema objects for database operations.
+ *
+ * @return void
+ **/
+	function _loadSchema() {
+		$name = $plugin = null;
 		if (isset($this->params['name'])) {
 			$name = $this->params['name'];
 		}
-
+		if (isset($this->params['plugin'])) {
+			$plugin = $this->params['plugin'];
+		}
+		
 		if (isset($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.', true));
 		}
 
-		$options = array('name' => $name);
+		$options = array('name' => $name, 'plugin' => $plugin);
 		if (isset($this->params['s'])) {
 			$fileName = rtrim($this->Schema->file, '.php');
 			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
 		}
 
-		$Schema = $this->Schema->load($options);
+		$Schema =& $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->file));
+			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->path . DS . $this->Schema->file));
 			$this->_stop();
 		}
-
 		$table = null;
 		if (isset($this->args[1])) {
 			$table = $this->args[1];
 		}
-
-		switch ($command) {
-			case 'create':
-				$this->__create($Schema, $table);
-			break;
-			case 'update':
-				$this->__update($Schema, $table);
-			break;
-			default:
-				$this->err(__('Command not found', true));
-				$this->_stop();
-		}
+		return array(&$Schema, $table);
 	}
 
 /**
@@ -333,7 +337,6 @@ class SchemaShell extends Shell {
 			$this->out(__('Creating table(s).', true));
 			$this->__run($create, 'create', $Schema);
 		}
-
 		$this->out(__('End create.', true));
 	}
 
@@ -392,7 +395,6 @@ class SchemaShell extends Shell {
 		}
 		Configure::write('debug', 2);
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
-		$db->fullDebug = true;
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
@@ -428,27 +430,74 @@ class SchemaShell extends Shell {
  * @access public
  */
 	function help() {
-		$this->out("The Schema Shell generates a schema object from");
-		$this->out("the database and updates the database from the schema.");
-		$this->hr();
-		$this->out("Usage: cake schema <command> <arg1> <arg2>...");
-		$this->hr();
-		$this->out('Params:');
-		$this->out("\n\t-connection <config>\n\t\tset db config <config>. uses 'default' if none is specified");
-		$this->out("\n\t-path <dir>\n\t\tpath <dir> to read and write schema.php.\n\t\tdefault path: ". $this->Schema->path);
-		$this->out("\n\t-name <name>\n\t\tclassname to use.");
-		$this->out("\n\t-file <name>\n\t\tfile <name> to read and write.\n\t\tdefault file: ". $this->Schema->file);
-		$this->out("\n\t-s <number>\n\t\tsnapshot <number> to use for run.");
-		$this->out("\n\t-dry\n\t\tPerform a dry run on 'run' commands.\n\t\tQueries will be output to window instead of executed.");
-		$this->out("\n\t-f\n\t\tforce 'generate' to create a new schema.");
-		$this->out('Commands:');
-		$this->out("\n\tschema help\n\t\tshows this help message.");
-		$this->out("\n\tschema view\n\t\tread and output contents of schema file");
-		$this->out("\n\tschema generate\n\t\treads from 'connection' writes to 'path'\n\t\tTo force generation of all tables into the schema, use the -f param.\n\t\tUse 'schema generate snapshot <number>' to generate snapshots\n\t\twhich you can use with the -s parameter in the other operations.");
-		$this->out("\n\tschema dump <filename>\n\t\tDump database sql based on schema file to <filename>. \n\t\tIf <filename> is write, schema dump will be written to a file\n\t\tthat has the same name as the app directory.");
-		$this->out("\n\tschema run create <schema> <table>\n\t\tDrop and create tables based on schema file\n\t\toptional <schema> arg for selecting schema name\n\t\toptional <table> arg for creating only one table\n\t\tpass the -s param with a number to use a snapshot\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out("\n\tschema run update <schema> <table>\n\t\talter tables based on schema file\n\t\toptional <schema> arg for selecting schema name.\n\t\toptional <table> arg for altering only one table.\n\t\tTo use a snapshot, pass the -s param with the snapshot number\n\t\tTo see the changes, perform a dry run with the -dry param");
-		$this->out();
+		$help = <<<TEXT
+The Schema Shell generates a schema object from
+the database and updates the database from the schema.
+---------------------------------------------------------------
+Usage: cake schema <command> <arg1> <arg2>...
+---------------------------------------------------------------
+Params:
+	-connection <config>
+		set db config <config>. uses 'default' if none is specified
+
+	-path <dir>
+		path <dir> to read and write schema.php.
+		default path: {$this->Schema->path}
+
+	-name <name>
+		Classname to use. If <name> is Plugin.className, it will
+		set the plugin and name params.
+
+	-file <name>
+		file <name> to read and write.
+		default file: {$this->Schema->file}
+
+	-s <number>
+		snapshot <number> to use for run.
+
+	-dry
+		Perform a dry run on create + update commands.
+		Queries will be output to window instead of executed.
+
+	-f
+		force 'generate' to create a new schema.
+
+	-plugin
+		Indicate the plugin to use.
+
+Commands:
+
+	schema help
+		shows this help message.
+
+	schema view <name>
+		read and output contents of schema file.
+
+	schema generate
+		reads from 'connection' writes to 'path'
+		To force generation of all tables into the schema, use the -f param.
+		Use 'schema generate snapshot <number>' to generate snapshots
+		which you can use with the -s parameter in the other operations.
+
+	schema dump <name>
+		Dump database sql based on schema file to stdout.
+		If you use the `-write` param is used a .sql will be generated.
+		If `-write` is a filename, then that file name will be generate.
+		If `-write` is a full path, the schema will be written there.
+
+	schema create <name> <table>
+		Drop and create tables based on schema file
+		optional <table> argument can be used to create only a single 
+		table in the schema. Pass the -s param with a number to use a snapshot.
+		Use the `-dry` param to preview the changes.
+
+	schema update <name> <table>
+		Alter the tables based on schema file. Optional <table>
+		parameter will only update one table. 
+		To use a snapshot pass the `-s` param with the snapshot number.
+		To preview the changes that will be done use `-dry`.
+TEXT;
+		$this->out($help);
 		$this->_stop();
 	}
 }

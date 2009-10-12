@@ -669,6 +669,23 @@ class App extends Object {
 	}
 
 /**
+ * Get the path that a plugin is on.  Searches through the defined plugin paths.
+ *
+ * @param string $plugin CamelCased plugin name to find the path of.
+ * @return string full path to the plugin.
+ **/
+	function pluginPath($plugin) {
+		$_this =& App::getInstance();
+		$pluginDir = Inflector::underscore($plugin);
+		foreach ($_this->plugins as $path) {
+			if (is_dir($path . $pluginDir)) {
+				return $path . $pluginDir . DS ;
+			}
+		}
+		return $_this->plugins[0] . $pluginDir . DS;
+	}
+
+/**
  * Returns a key/value list of all paths where core libs are found.
  * Passing $type only returns the values for a given value of $key.
  *
