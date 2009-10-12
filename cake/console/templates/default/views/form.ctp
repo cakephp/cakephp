@@ -26,7 +26,7 @@
 <div class="<?php echo $pluralVar;?> form">
 <?php echo "<?php echo \$form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php __('" . Inflector::humanize($action) . " {$singularHumanName}');?>";?></legend>
+ 		<legend><?php echo "<?php printf(__('" . Inflector::humanize($action) . " %s', true), __('{$singularHumanName}', true)); ?>";?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
@@ -45,7 +45,7 @@
 ?>
 	</fieldset>
 <?php
-	echo "<?php echo \$form->end('Submit');?>\n";
+	echo "<?php echo \$form->end(__('Submit', true));?>\n";
 ?>
 </div>
 <div class="actions">
@@ -53,14 +53,14 @@
 <?php if ($action != 'add'):?>
 		<li><?php echo "<?php echo \$html->link(__('Delete', true), array('action' => 'delete', \$form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?', true), \$form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
 <?php endif;?>
-		<li><?php echo "<?php echo \$html->link(__('List {$pluralHumanName}', true), array('action' => 'index'));?>";?></li>
+		<li><?php echo "<?php echo \$html->link(sprintf(__('List %s', true), __('{$pluralHumanName}', true)), array('action' => 'index'));?>";?></li>
 <?php
 		$done = array();
 		foreach ($associations as $type => $data) {
 			foreach ($data as $alias => $details) {
 				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-					echo "\t\t<li><?php echo \$html->link(__('List " . Inflector::humanize($details['controller']) . "', true), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-					echo "\t\t<li><?php echo \$html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "', true), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+					echo "\t\t<li><?php echo \$html->link(sprintf(__('List %s', true), __('" . Inflector::humanize($details['controller']) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+					echo "\t\t<li><?php echo \$html->link(sprintf(__('New %s', true), __('" . Inflector::humanize(Inflector::underscore($alias)) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 					$done[] = $details['controller'];
 				}
 			}

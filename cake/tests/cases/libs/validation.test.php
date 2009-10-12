@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ValidationTest file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Validation');
@@ -177,7 +172,10 @@ class ValidationTest extends CakeTestCase {
 	function testBetween() {
 		$this->assertTrue(Validation::between('abcdefg', 1, 7));
 		$this->assertTrue(Validation::between('', 0, 7));
+		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
+
 		$this->assertFalse(Validation::between('abcdefg', 1, 6));
+		$this->assertFalse(Validation::between('ÆΔΩЖÇ', 1, 3));
 	}
 
 /**
@@ -1698,7 +1696,10 @@ class ValidationTest extends CakeTestCase {
 	function testMaxLength() {
 		$this->assertTrue(Validation::maxLength('ab', 3));
 		$this->assertTrue(Validation::maxLength('abc', 3));
+		$this->assertTrue(Validation::maxLength('ÆΔΩЖÇ', 10));
+
 		$this->assertFalse(Validation::maxLength('abcd', 3));
+		$this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
 	}
 
 /**
@@ -1709,8 +1710,11 @@ class ValidationTest extends CakeTestCase {
  */
 	function testMinLength() {
 		$this->assertFalse(Validation::minLength('ab', 3));
+		$this->assertFalse(Validation::minLength('ÆΔΩЖÇ', 10));
+
 		$this->assertTrue(Validation::minLength('abc', 3));
 		$this->assertTrue(Validation::minLength('abcd', 3));
+		$this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
 	}
 
 /**
@@ -1768,33 +1772,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::inList('one', array('one', 'two')));
 		$this->assertTrue(Validation::inList('two', array('one', 'two')));
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
-	}
-
-/**
- * testValidNumber method
- *
- * @access public
- * @return void
- */
-	function testValidNumber() {
-		$this->assertTrue(Validation::custom('12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('--12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('++12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('a12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-a12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('123-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+1.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('+1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345.', VALID_NUMBER));
 	}
 
 /**

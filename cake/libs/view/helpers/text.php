@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Text Helper
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
@@ -114,8 +109,8 @@ class TextHelper extends AppHelper {
 	function autoLinkUrls($text, $htmlOptions = array()) {
 		$options = 'array(';
 		foreach ($htmlOptions as $option => $value) {
-				$value = var_export($value, true);
-				$options .= "'$option' => $value, ";
+			$value = var_export($value, true);
+			$options .= "'$option' => $value, ";
 		}
 		$options .= ')';
 
@@ -138,7 +133,8 @@ class TextHelper extends AppHelper {
 		$options = 'array(';
 
 		foreach ($htmlOptions as $option => $value) {
-			$options .= "'$option' => '$value', ";
+			$value = var_export($value, true);
+			$options .= "'$option' => $value, ";
 		}
 		$options .= ')';
 
@@ -226,7 +222,7 @@ class TextHelper extends AppHelper {
 			if (mb_strlen($text) <= $length) {
 				return $text;
 			} else {
-				$truncate = mb_substr($text, 0, $length - strlen($ending));
+				$truncate = mb_substr($text, 0, $length - mb_strlen($ending));
 			}
 		}
 		if (!$exact) {
@@ -265,6 +261,7 @@ class TextHelper extends AppHelper {
  * @access public
  */
 	function trim() {
+		trigger_error('TextHelper::trim() is deprecated.  Use TextHelper::truncate() instead', E_USER_WARNING);
 		$args = func_get_args();
 		return call_user_func_array(array(&$this, 'truncate'), $args);
 	}
@@ -284,26 +281,26 @@ class TextHelper extends AppHelper {
 			return $this->truncate($text, $radius * 2, $ending);
 		}
 
-		$phraseLen = strlen($phrase);
+		$phraseLen = mb_strlen($phrase);
 		if ($radius < $phraseLen) {
 			$radius = $phraseLen;
 		}
 
-		$pos = strpos(strtolower($text), strtolower($phrase));
+		$pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
 
 		$startPos = 0;
 		if ($pos > $radius) {
 			$startPos = $pos - $radius;
 		}
 
-		$textLen = strlen($text);
+		$textLen = mb_strlen($text);
 
 		$endPos = $pos + $phraseLen + $radius;
 		if ($endPos >= $textLen) {
 			$endPos = $textLen;
 		}
 
-		$excerpt = substr($text, $startPos, $endPos - $startPos);
+		$excerpt = mb_substr($text, $startPos, $endPos - $startPos);
 		if ($startPos != 0) {
 			$excerpt = substr_replace($excerpt, $ending, 0, $phraseLen);
 		}

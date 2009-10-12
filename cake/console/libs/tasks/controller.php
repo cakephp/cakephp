@@ -86,17 +86,17 @@ class ControllerTask extends Shell {
 				$this->out(__('Baking basic crud methods for ', true) . $controller);
 				$actions = $this->bakeActions($controller);
 			} elseif (!empty($this->args[1]) && $this->args[1] == 'admin') {
-				$admin = $this->Project->getAdmin();
+				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
-					$actions= $this->bakeActions($controller, $admin);
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
+					$actions = $this->bakeActions($controller, $admin);
 				}
 			}
 
 			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
-				$admin = $this->Project->getAdmin();
+				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
 			}
@@ -194,7 +194,7 @@ class ControllerTask extends Shell {
 			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
 		}
 		if (strtolower($wannaBakeAdminCrud) == 'y') {
-			$admin = $this->Project->getAdmin();
+			$admin = $this->Project->getPrefix();
 			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
 		}
 

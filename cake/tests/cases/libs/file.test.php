@@ -417,6 +417,35 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
+ * testCopy method
+ *
+ * @access public
+ * @return void
+ */
+	function testCopy() {
+		$dest = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
+		$file = __FILE__;
+		$this->File =& new File($file);
+		$result = $this->File->copy($dest);
+		$this->assertTrue($result);
+
+		$result = $this->File->copy($dest, true);
+		$this->assertTrue($result);
+
+		$result = $this->File->copy($dest, false);
+		$this->assertFalse($result);
+
+		$this->File->close();
+		unlink($dest);
+
+		$TmpFile =& new File('/this/does/not/exist');
+		$result = $TmpFile->copy($dest);
+		$this->assertFalse($result);
+
+		$TmpFile->close();
+	}
+
+/**
  * getTmpFile method
  *
  * @param bool $paintSkip

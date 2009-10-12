@@ -680,6 +680,7 @@ class View extends Object {
 				$this->{$helpers[$i]} =& ${$name};
 			}
 			$this->_triggerHelpers('beforeRender');
+			unset($name, $loadedHelpers, $helpers, $i, $helperNames);
 		}
 
 		extract($___dataForView, EXTR_SKIP);

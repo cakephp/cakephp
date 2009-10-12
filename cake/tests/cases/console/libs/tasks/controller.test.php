@@ -55,7 +55,7 @@ Mock::generatePartial(
 
 Mock::generatePartial(
 	'ProjectTask', 'ControllerMockProjectTask',
-	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getAdmin')
+	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix')
 );
 
 Mock::generate('TestTask', 'ControllerMockTestTask');
@@ -485,7 +485,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
+		$this->Task->Project->setReturnValue('getPrefix', 'admin_');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('Articles', 'public', 'admin');
@@ -509,7 +509,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->Project->setReturnValue('getAdmin', 'admin_');
+		$this->Task->Project->setReturnValue('getPrefix', 'admin_');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('Articles', 'admin');

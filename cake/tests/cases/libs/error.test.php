@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ErrorHandlerTest file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (class_exists('TestErrorHandler')) {
@@ -213,6 +208,34 @@ class BlueberryController extends AppController {
 }
 
 /**
+ * MyCustomErrorHandler class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class MyCustomErrorHandler extends ErrorHandler {
+
+/**
+ * custom error message type.
+ *
+ * @return void
+ **/
+	function missingWidgetThing() {
+		echo 'widget thing is missing';
+	}
+
+/**
+ * stop method
+ *
+ * @access public
+ * @return void
+ */
+	function _stop() {
+		return;
+	}
+}
+
+/**
  * TestErrorHandler class
  *
  * @package       cake
@@ -250,6 +273,35 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test that methods declared in an ErrorHandler subclass are not converted
+ * into error404 when debug == 0
+ *
+ * @return void
+ **/
+	function testSubclassMethodsNotBeingConvertedToError() {
+		$back = Configure::read('debug');
+		Configure::write('debug', 2);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'widget thing is missing');
+
+		Configure::write('debug', 0);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
+		
+		Configure::write('debug', 0);
+		ob_start();
+		$ErrorHandler = new MyCustomErrorHandler('missingController', array('message' => 'Page not found'));
+		$result = ob_get_clean();
+		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error404. %s');
+
+		Configure::write('debug', $back);
+	}
+
+/**
  * testError method
  *
  * @access public
@@ -261,9 +313,10 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_clean();
 		ob_start();
 		$TestErrorHandler->error(array(
-				'code' => 404,
-				'message' => 'Page not Found',
-				'name' => "Couldn't find what you were looking for"));
+			'code' => 404,
+			'message' => 'Page not Found',
+			'name' => "Couldn't find what you were looking for"
+		));
 		$result = ob_get_clean();
 		$this->assertPattern("/<h2>Couldn't find what you were looking for<\/h2>/", $result);
 		$this->assertPattern('/Page not Found/', $result);

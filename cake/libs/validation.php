@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Validation Class.  Used for validation of model data
  *
@@ -9,47 +7,22 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0.3830
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-
-/**
- * Deprecated
- */
-
-/**
- * Not empty.
- */
-	define('VALID_NOT_EMPTY', '/.+/');
-
-/**
- * Numbers [0-9] only.
- */
-	define('VALID_NUMBER', '/^[-+]?\\b[0-9]*\\.?[0-9]+\\b$/');
-
-/**
- * A valid email address.
- */
-	define('VALID_EMAIL', "/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2,4}|museum|travel)$/i");
-
-/**
- * A valid year (1000-2999).
- */
-	define('VALID_YEAR', '/^[12][0-9]{3}$/');
-
+if (!class_exists('Multibyte')) {
+	App::import('Core', 'Multibyte', false);
+}
 /**
  * Offers different validation methods.
  *
@@ -207,7 +180,7 @@ class Validation extends Object {
  * @access public
  */
 	function between($check, $min, $max) {
-		$length = strlen($check);
+		$length = mb_strlen($check);
 		return ($length >= $min && $length <= $max);
 	}
 
@@ -262,7 +235,7 @@ class Validation extends Object {
 		}
 		$_this->check = str_replace(array('-', ' '), '', $_this->check);
 
-		if (strlen($_this->check) < 13) {
+		if (mb_strlen($_this->check) < 13) {
 			return false;
 		}
 
@@ -271,20 +244,24 @@ class Validation extends Object {
 				return $_this->_luhn();
 			}
 		}
-		$cards = array('all' => array('amex' => '/^3[4|7]\\d{13}$/',
-									'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
-									'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
-									'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
-									'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
-									'enroute'  => '/^2(?:014|149)\\d{11}$/',
-									'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
-									'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
-									'mc'       => '/^5[1-5]\\d{14}$/',
-									'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
-									'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
-									'visa'     => '/^4\\d{12}(\\d{3})?$/',
-									'voyager'  => '/^8699[0-9]{11}$/'),
-							'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/');
+		$cards = array(
+			'all' => array(
+				'amex' => '/^3[4|7]\\d{13}$/',
+				'bankcard' => '/^56(10\\d\\d|022[1-5])\\d{10}$/',
+				'diners'   => '/^(?:3(0[0-5]|[68]\\d)\\d{11})|(?:5[1-5]\\d{14})$/',
+				'disc'     => '/^(?:6011|650\\d)\\d{12}$/',
+				'electron' => '/^(?:417500|4917\\d{2}|4913\\d{2})\\d{10}$/',
+				'enroute'  => '/^2(?:014|149)\\d{11}$/',
+				'jcb'      => '/^(3\\d{4}|2100|1800)\\d{11}$/',
+				'maestro'  => '/^(?:5020|6\\d{3})\\d{12}$/',
+				'mc'       => '/^5[1-5]\\d{14}$/',
+				'solo'     => '/^(6334[5-9][0-9]|6767[0-9]{2})\\d{10}(\\d{2,3})?$/',
+				'switch'   => '/^(?:49(03(0[2-9]|3[5-9])|11(0[1-2]|7[4-9]|8[1-2])|36[0-9]{2})\\d{10}(\\d{2,3})?)|(?:564182\\d{10}(\\d{2,3})?)|(6(3(33[0-4][0-9])|759[0-9]{2})\\d{10}(\\d{2,3})?)$/',
+				'visa'     => '/^4\\d{12}(\\d{3})?$/',
+				'voyager'  => '/^8699[0-9]{11}$/'
+			),
+			'fast'   => '/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6011[0-9]{12}|3(?:0[0-5]|[68][0-9])[0-9]{11}|3[47][0-9]{13})$/'
+		);
 
 		if (is_array($_this->type)) {
 			foreach ($_this->type as $value) {
@@ -315,10 +292,10 @@ class Validation extends Object {
  * Used to compare 2 numeric values.
  *
  * @param mixed $check1 if string is passed for a string must also be passed for $check2
- * 							used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
+ *    used as an array it must be passed as array('check1' => value, 'operator' => 'value', 'check2' -> value)
  * @param string $operator Can be either a word or operand
- * 								is greater >, is less <, greater or equal >=
- * 								less or equal <=, is less <, equal to ==, not equal !=
+ *    is greater >, is less <, greater or equal >=
+ *    less or equal <=, is less <, equal to ==, not equal !=
  * @param integer $check2 only needed if $check1 is a string
  * @return boolean Success
  * @access public
@@ -612,7 +589,7 @@ class Validation extends Object {
  * @access public
  */
 	function minLength($check, $min) {
-		$length = strlen($check);
+		$length = mb_strlen($check);
 		return ($length >= $min);
 	}
 
@@ -625,7 +602,7 @@ class Validation extends Object {
  * @access public
  */
 	function maxLength($check, $max) {
-		$length = strlen($check);
+		$length = mb_strlen($check);
 		return ($length <= $max);
 	}
 
@@ -914,7 +891,7 @@ class Validation extends Object {
 			$_this->regex = $regex;
 		}
 		if (isset($country)) {
-			$_this->country = strtolower($country);
+			$_this->country = mb_strtolower($country);
 		}
 		if (isset($deep)) {
 			$_this->deep = $deep;
