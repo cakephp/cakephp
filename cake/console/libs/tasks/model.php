@@ -350,7 +350,9 @@ class ModelTask extends Shell {
 	function initValidations() {
 		$options = $choices = array();
 		if (class_exists('Validation')) {
+			$parent = get_class_methods(get_parent_class('Validation'));
 			$options = get_class_methods('Validation');
+			$options = array_diff($options, $parent);
 		}
 		sort($options);
 		$default = 1;
