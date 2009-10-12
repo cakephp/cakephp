@@ -144,7 +144,7 @@ echo "\t<?php endforeach; ?>\n";
 <?php echo "<?php endif; ?>\n\n";?>
 	<div class="actions">
 		<ul>
-			<li><?php echo "<?php echo \$html->link(sprintf(__('New %s', true), __('" . Inflector::humanize(Inflector::underscore($alias)) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'add'));?>";?> </li>
+			<li><?php echo "<?php echo \$html->link(sprintf(__('New %s, true), __('" . Inflector::humanize(Inflector::underscore($alias)) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'add'));?>";?> </li>
 		</ul>
 	</div>
 </div>
