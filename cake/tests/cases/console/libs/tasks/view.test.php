@@ -165,10 +165,10 @@ class ViewTaskTest extends CakeTestCase {
 		);
 		$result = $this->Task->getContent('view', $vars);
 
-		$this->assertPattern('/Delete Test View Model/', $result);
-		$this->assertPattern('/Edit Test View Model/', $result);
-		$this->assertPattern('/List Test View Models/', $result);
-		$this->assertPattern('/New Test View Model/', $result);
+		$this->assertPattern('/Delete .+Test View Model/', $result);
+		$this->assertPattern('/Edit .+Test View Model/', $result);
+		$this->assertPattern('/List .+Test View Models/', $result);
+		$this->assertPattern('/New .+Test View Model/', $result);
 
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
@@ -197,10 +197,10 @@ class ViewTaskTest extends CakeTestCase {
 		);
 		$result = $this->Task->getContent('admin_view', $vars);
 
-		$this->assertPattern('/Delete Test View Model/', $result);
-		$this->assertPattern('/Edit Test View Model/', $result);
-		$this->assertPattern('/List Test View Models/', $result);
-		$this->assertPattern('/New Test View Model/', $result);
+		$this->assertPattern('/Delete .+Test View Model/', $result);
+		$this->assertPattern('/Edit .+Test View Model/', $result);
+		$this->assertPattern('/List .+Test View Models/', $result);
+		$this->assertPattern('/New .+Test View Model/', $result);
 
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'id\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
@@ -264,7 +264,7 @@ class ViewTaskTest extends CakeTestCase {
 		));
 		$this->Task->expectAt(1, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'edit.ctp',
-			new PatternExpectation('/Edit View Task Comment/')
+			new PatternExpectation('/Edit .+View Task Comment/')
 		));
 		$this->Task->expectAt(2, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'index.ctp',
@@ -390,11 +390,11 @@ class ViewTaskTest extends CakeTestCase {
 		));
 		$this->Task->expectAt(2, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'add.ctp',
-			new PatternExpectation('/Add View Task Comment/')
+			new PatternExpectation('/Add .+View Task Comment/')
 		));
 		$this->Task->expectAt(3, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'edit.ctp',
-			new PatternExpectation('/Edit View Task Comment/')
+			new PatternExpectation('/Edit .+View Task Comment/')
 		));
 
 		$this->Task->execute();
@@ -445,11 +445,11 @@ class ViewTaskTest extends CakeTestCase {
 		));
 		$this->Task->expectAt(2, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'admin_add.ctp',
-			new PatternExpectation('/Add View Task Comment/')
+			new PatternExpectation('/Add .+View Task Comment/')
 		));
 		$this->Task->expectAt(3, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'admin_edit.ctp',
-			new PatternExpectation('/Edit View Task Comment/')
+			new PatternExpectation('/Edit .+View Task Comment/')
 		));
 
 		$this->Task->execute();
