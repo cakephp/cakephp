@@ -100,7 +100,7 @@ class CacheHelperTest extends CakeTestCase {
 	function startCase() {
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		));
+		), true);
 	}
 
 /**
