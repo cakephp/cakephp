@@ -238,7 +238,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$viewVars = array
 		View::$layout = "default"
 		View::$layoutPath = NULL
-		View::$pageTitle = false
 		View::$autoRender = true
 		View::$autoLayout = true
 		View::$ext = ".ctp"
