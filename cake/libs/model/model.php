@@ -985,11 +985,11 @@ class Model extends Overloadable {
 	}
 /**
  * Initializes the model for writing a new record, loading the default values
- * for those fields that are not defined in $data. Especially helpful for
- * saving data in loops.
+ * for those fields that are not defined in $data, and clearing previous validation errors. 
+ * Especially helpful for saving data in loops.
  *
  * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
- *                    schema data defaults are not merged.
+ *   schema data defaults are not merged.
  * @param boolean $filterKey If true, overwrites any primary key input with an empty value
  * @return array The current Model::data; after merging $data and/or defaults from database
  * @access public
@@ -2656,7 +2656,7 @@ class Model extends Overloadable {
 			$this->tablePrefix = $db->config['prefix'];
 		}
 
-		if (empty($db) || $db == null || !is_object($db)) {
+		if (empty($db) || !is_object($db)) {
 			return $this->cakeError('missingConnection', array(array('className' => $this->alias)));
 		}
 	}
