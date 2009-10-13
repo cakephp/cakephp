@@ -2408,7 +2408,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('MOVIE 3', 'MOVIE 1', 'MOVIE 2');
 		$this->assertEqual($result, $expected);
 
-		$result = Set::apply('/Movie/rating', $data, array('self', '_method'), array('type' => 'reduce'));
+		$result = Set::apply('/Movie/rating', $data, array('SetTest', '_method'), array('type' => 'reduce'));
 		$expected = 9;
 		$this->assertEqual($result, $expected);
 
