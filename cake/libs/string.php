@@ -236,7 +236,7 @@ class String {
 			);
 		}
 
-		if (strpos($str, '?') !== false) {
+		if (strpos($str, '?') !== false && is_numeric(key($data))) {
 			$offset = 0;
 			while (($pos = strpos($str, '?', $offset)) !== false) {
 				$val = array_shift($data);
