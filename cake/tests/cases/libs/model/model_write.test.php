@@ -564,9 +564,9 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel =& new TestValidate();
 
 		$TestModel->validate = array(
-			'user_id' => VALID_NUMBER,
-			'title' => VALID_NOT_EMPTY,
-			'body' => VALID_NOT_EMPTY
+			'user_id' => 'numeric',
+			'title' => 'notEmpty',
+			'body' => 'notEmpty'
 		);
 
 		$data = array('TestValidate' => array(
