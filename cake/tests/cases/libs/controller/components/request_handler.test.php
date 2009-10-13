@@ -258,6 +258,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertFalse(in_array('Xml', $this->Controller->helpers));
 		$this->RequestHandler->renderAs($this->Controller, 'xml');
 		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
+
+		$this->Controller->viewPath = 'request_handler_test\\xml';
+		$this->RequestHandler->renderAs($this->Controller, 'js');
+		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'js');
 	}
 /**
  * test that calling renderAs() more than once continues to work.
