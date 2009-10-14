@@ -648,11 +648,7 @@ class Dispatcher extends Object {
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos - 1);
 					$url = preg_replace('/^' . preg_quote($plugin, '/') . '\//i', '', $url);
-					$pluginPaths = App::path('plugins');
-					$count = count($pluginPaths);
-					for ($i = 0; $i < $count; $i++) {
-						$paths[] = $pluginPaths[$i] . $plugin . DS . 'vendors' . DS;
-					}
+					$paths[] = App::pluginPath($plugin) . 'vendors' . DS;
 				}
 				$paths = array_merge($paths, App::path('vendors'));
 
