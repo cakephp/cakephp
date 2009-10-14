@@ -80,12 +80,12 @@ class AuthComponent extends Object {
 	var $ajaxLogin = null;
 
 /**
- * The name of the layout element used on Session::setFlash
+ * The name of the element used for SessionComponent::setFlash
  *
  * @var string
  * @access public
  */
-	var $flashLayout = 'default';
+	var $flashElement = 'default';
 
 /**
  * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
@@ -361,13 +361,13 @@ class AuthComponent extends Object {
 				}
 			}
 
-			$this->Session->setFlash($this->loginError, $this->flashLayout, array(), 'auth');
+			$this->Session->setFlash($this->loginError, $this->flashElement, array(), 'auth');
 			$controller->data[$model->alias][$this->fields['password']] = null;
 			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
-					$this->Session->setFlash($this->authError, $this->flashLayout, array(), 'auth');
+					$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
 					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
 						$query = $controller->params['url'];
 						unset($query['url'], $query['ext']);
@@ -431,7 +431,7 @@ class AuthComponent extends Object {
 			return true;
 		}
 
-		$this->Session->setFlash($this->authError, $this->flashLayout, array(), 'auth');
+		$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
 		$controller->redirect($controller->referer(), null, true);
 		return false;
 	}
