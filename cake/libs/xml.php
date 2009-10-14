@@ -242,7 +242,7 @@ class XmlNode extends Object {
 			$chldObjs = get_object_vars($object);
 		} elseif (is_array($object)) {
 			$chldObjs = $object;
-		} elseif (!empty($object) || $object === 0) {
+		} elseif (!empty($object) || $object === 0 || $object === '0') {
 			$node->createTextNode($object);
 		}
 		$attr = array();
@@ -283,7 +283,7 @@ class XmlNode extends Object {
 							$node->normalize($val, $n, $options);
 						} elseif ($options['format'] == 'tags' && $this->__tagOptions($key) !== false) {
 							$tmp =& $node->createElement($key);
-							if (!empty($val) || $val === 0) {
+							if (!empty($val) || $val === 0 || $val === '0') {
 								$tmp->createTextNode($val);
 							}
 						} elseif ($options['format'] == 'attributes') {

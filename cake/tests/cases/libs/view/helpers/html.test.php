@@ -396,6 +396,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->css('screen.css');
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->css('my.css.library');
+		$expected['link']['href'] = 'preg:/.*css\/my\.css\.library\.css/';
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->css('screen.css?1234');
 		$expected['link']['href'] = 'preg:/.*css\/screen\.css\?1234/';
 		$this->assertTags($result, $expected);

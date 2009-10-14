@@ -182,6 +182,10 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '<script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Javascript->link('some.json.libary');
+		$expected = '<script type="text/javascript" src="js/some.json.libary.js"></script>';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
@@ -264,6 +268,10 @@ class JavascriptTest extends CakeTestCase {
 		Configure::write('Asset.filter.js', true);
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="cjs/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Javascript->link('folderjs/jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="cjs/folderjs/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 
 		if ($old === null) {
