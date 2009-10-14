@@ -272,14 +272,10 @@ class I18n extends Object {
 		$plugins = App::objects('plugin');
 
 		if (!empty($plugins)) {
-			$pluginPaths = App::path('plugins');
-
 			foreach ($plugins as $plugin) {
 				$plugin = Inflector::underscore($plugin);
 				if ($plugin === $domain) {
-					foreach ($pluginPaths as $pluginPath) {
-						$searchPaths[] = $pluginPath . $plugin . DS . 'locale' . DS;
-					}
+					$searchPaths[] = App::pluginPath($plugin) . DS . 'locale' . DS;
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}

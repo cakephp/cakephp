@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * CakeTestCase file
  *
@@ -9,20 +7,17 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4667
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('dispatcher')) {
@@ -67,7 +62,7 @@ class CakeTestDispatcher extends Dispatcher {
  * @param array $params
  * @param boolean $missingAction
  * @return Controller
- * @access proptected
+ * @access protected
  */
 	function _invoke(&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
@@ -775,13 +770,7 @@ class CakeTestCase extends UnitTestCase {
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures'
 				);
-				$pluginPaths = App::path('plugins');
-				foreach ($pluginPaths as $path) {
-					if (file_exists($path . $pluginName . DS . 'tests' . DS. 'fixtures')) {
-						$fixturePaths[0] = $path . $pluginName . DS . 'tests' . DS. 'fixtures';
-						break;
-					}
-				}
+				$fixturesPaths[0] = App::pluginPath($pluginName) . DS . 'tests' . DS . 'fixtures';
 			} else {
 				$fixturePaths = array(
 					TESTS . 'fixtures',
