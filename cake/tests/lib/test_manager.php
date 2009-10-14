@@ -357,12 +357,9 @@ class TestManager {
 			}
 		} else if (!empty($this->pluginTest)) {
 			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
-			$pluginPaths = App::path('plugins');
-			foreach ($pluginPaths as $path) {
-				if (file_exists($path . $this->pluginTest . DS . 'tests')) {
-					$_pluginBasePath = $path . $this->pluginTest . DS . 'tests';
-					break;
-				}
+			$pluginPath = App::pluginPath($this->pluginTest);
+			if (file_exists($pluginPath . DS . 'tests')) {
+				$_pluginBasePath = $pluginPath . DS . 'tests';
 			}
 			$result = $_pluginBasePath . DS . $type;
 		} else {

@@ -649,15 +649,7 @@ class Shell extends Object {
  * @return string $path path to the correct plugin.
  **/
 	function _pluginPath($pluginName) {
-		$pluginPaths = App::path('plugins');
-		$pluginDirName = Inflector::underscore($pluginName);
-
-		foreach ($pluginPaths as $path) {
-			if (is_dir($path . $pluginDirName)) {
-				return $path . $pluginDirName . DS ;
-			}
-		}
-		return $pluginPaths[0] . $pluginDirName . DS;
+		return App::pluginPath($pluginName);
 	}
 }
 ?>

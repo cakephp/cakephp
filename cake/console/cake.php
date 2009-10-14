@@ -222,18 +222,15 @@ class ShellDispatcher {
  */
 	function __buildPaths() {
 		$paths = array();
-		$pluginPaths = App::path('plugins');
 		if (!class_exists('Folder')) {
 			require LIBS . 'folder.php';
 		}
-		foreach ($pluginPaths as $pluginPath) {
-			$Folder = new Folder($pluginPath);
-			list($plugins,) = $Folder->read(false, true);
-			foreach ((array)$plugins as $plugin) {
-				$path = $pluginPath . Inflector::underscore($plugin) . DS . 'vendors' . DS . 'shells' . DS;
-				if (file_exists($path)) {
-					$paths[] = $path;
-				}
+		$plugins = App::objects('plugin', null, false);
+		foreach ((array)$plugins as $plugin) {
+			$pluginPath = App::pluginPath($plugin);
+			$path = $pluginPath . 'vendors' . DS . 'shells' . DS;
+			if (file_exists($path)) {
+				$paths[] = $path;
 			}
 		}
 
