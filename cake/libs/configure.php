@@ -677,9 +677,9 @@ class App extends Object {
 	function pluginPath($plugin) {
 		$_this =& App::getInstance();
 		$pluginDir = Inflector::underscore($plugin);
-		foreach ($_this->plugins as $path) {
-			if (is_dir($path . $pluginDir)) {
-				return $path . $pluginDir . DS ;
+		for ($i = 0, $length = count($_this->plugins); $i < $length; $i++) {
+			if (is_dir($_this->plugins[$i] . $pluginDir)) {
+				return $_this->plugins[$i] . $pluginDir . DS ;
 			}
 		}
 		return $_this->plugins[0] . $pluginDir . DS;
