@@ -369,14 +369,17 @@ class HtmlHelper extends AppHelper {
 			}
 
 			if (strpos($path, '?') === false) {
-				if (strpos($path, '.css') === false) {
+				if (substr($path, -4) !== '.css') {
 					$path .= '.css';
 				}
 			}
 			$url = $this->webroot($this->assetTimestamp($path));
 
 			if (Configure::read('Asset.filter.css')) {
-				$url = str_replace(CSS_URL, 'ccss/', $url);
+				$pos = strpos($url, CSS_URL);
+				if ($pos !== false) {
+					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(CSS_URL));
+				}
 			}
 		}
 

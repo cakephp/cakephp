@@ -215,9 +215,9 @@ class DboSource extends DataSource {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 
+		$t = getMicrotime();
+		$this->_result = $this->_execute($sql);
 		if ($options['stats']) {
-			$t = getMicrotime();
-			$this->_result = $this->_execute($sql);
 			$this->took = round((getMicrotime() - $t) * 1000, 0);
 			$this->affected = $this->lastAffected();
 			$this->error = $this->lastError();

@@ -67,6 +67,8 @@ class CacheTestController extends Controller {
 		$this->layout = 'cache_layout';
 		$this->set('variable', 'variableValue');
 		$this->set('superman', 'clark kent');
+		$this->set('batman', 'bruce wayne');
+		$this->set('spiderman', 'peter parker');
 	}
 }
 
@@ -196,7 +198,33 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertPattern('/if \(is_writable\(TMP\)\)\:/', $contents);
 		$this->assertPattern('/php echo \$variable/', $contents);
 		$this->assertPattern('/php echo microtime()/', $contents);
+		$this->assertNoPattern('/cake:nocache/', $contents);
 
+		@unlink($filename);
+	}
+
+/**
+ * test that multiple <cake:nocache> tags function with multiple nocache tags in the layout.
+ *
+ * @return void
+ **/
+	function testMultipleNoCacheTagsInViewfile() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = 21600;
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('multiple_nocache');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+
+		$contents = file_get_contents($filename);
+		$this->assertNoPattern('/cake:nocache/', $contents);
 		@unlink($filename);
 	}
 

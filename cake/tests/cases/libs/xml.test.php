@@ -185,6 +185,19 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testSimpleArrayWithZeroValues method
+ *
+ * @access public
+ * @return void
+ */
+	function testSimpleArrayWithZeroValues() {
+		$xml = new Xml(array('zero_string' => '0', 'zero_integer' => 0), array('format' => 'tags'));
+
+		$result = $xml->toString(false);
+		$expected = '<zero_string>0</zero_string><zero_integer>0</zero_integer>';
+		$this->assertEqual($expected, $result);
+	}
+/**
  * testHeader method
  *
  * @access public

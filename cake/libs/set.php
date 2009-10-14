@@ -351,9 +351,11 @@ class Set {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call is delegated to Set::classicExtract.
+ * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call 
+ * is delegated to Set::classicExtract.
  *
- * Currently implemented selectors:
+ * #### Currently implemented selectors:
+ *
  * - /User/id (similar to the classic {n}.User.id)
  * - /User[2]/name (selects the name of the second User)
  * - /User[id>2] (selects all Users with an id > 2)
@@ -366,11 +368,13 @@ class Set {
  * - /Comment[text=/cakephp/i] (Selects the all comments that have a text matching the regex /cakephp/i)
  * - /Comment/@* (Selects the all key names of all comments)
  *
- * Other limitations:
+ * #### Other limitations:
+ *
  * - Only absolute paths starting with a single '/' are supported right now
  *
- * Warning: Even so it has plenty of unit tests the XPath support has not gone through a lot of real-world testing. Please report
- * Bugs as you find them. Suggestions for additional features to imlement are also very welcome!
+ * **Warning**: Even so it has plenty of unit tests the XPath support has not gone through a lot of 
+ * real-world testing. Please report Bugs as you find them. Suggestions for additional features to 
+ * implement are also very welcome!
  *
  * @param string $path An absolute XPath 2.0 path
  * @param array $data An array of data to extract from
