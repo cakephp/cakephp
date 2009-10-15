@@ -708,9 +708,13 @@ class FormHelper extends AppHelper {
 
 		if ($label !== false) {
 			$labelAttributes = $this->domId(array(), 'for');
-			if (in_array($options['type'], array('date', 'datetime'))) {
-				$labelAttributes['for'] .= 'Month';
-			} else if ($options['type'] === 'time') {
+			if ($options['type'] === 'date' || $options['type'] === 'datetime') {
+				if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
+					$labelAttributes['for'] .= 'Hour';
+				} else {
+					$labelAttributes['for'] .= 'Month';
+				}
+			} elseif ($options['type'] === 'time') {
 				$labelAttributes['for'] .= 'Hour';
 			}
 
@@ -764,10 +768,10 @@ class FormHelper extends AppHelper {
 			unset($options['dateFormat']);
 		}
 
-		$type	 = $options['type'];
-		$before	 = $options['before'];
+		$type = $options['type'];
+		$before = $options['before'];
 		$between = $options['between'];
-		$after	 = $options['after'];
+		$after = $options['after'];
 		unset($options['type'], $options['before'], $options['between'], $options['after']);
 
 		switch ($type) {

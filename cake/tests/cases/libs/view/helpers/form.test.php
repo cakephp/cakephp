@@ -1769,6 +1769,14 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Contact' => array('created' => null));
+		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'dateFormat' => 'NONE'));
+		$this->assertPattern('/for\="ContactCreatedHour"/', $result);
+		
+		$this->Form->data = array('Contact' => array('created' => null));
+		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'timeFormat' => 'NONE'));
+		$this->assertPattern('/for\="ContactCreatedMonth"/', $result);
 	}
 /**
  * Test generating checkboxes in a loop.
