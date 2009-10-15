@@ -477,13 +477,14 @@ class ShellDispatcher {
  *
  * @param string $string String to output.
  * @param boolean $newline If true, the outputs gets an added newline.
+ * @return integer Returns the number of bytes output to stdout.
  * @access public
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
-			fwrite($this->stdout, $string . "\n");
+			return fwrite($this->stdout, $string . "\n");
 		} else {
-			fwrite($this->stdout, $string);
+			return fwrite($this->stdout, $string);
 		}
 	}
 
