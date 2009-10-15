@@ -44,6 +44,14 @@ class JsHelper extends AppHelper {
 	var $helpers = array('Html', 'Form');
 
 /**
+ * Variables to pass to Javascript.
+ *
+ * @var array
+ * @see JsHelper::set()
+ **/
+	var $__jsVars = array();
+
+/**
  * Scripts that are queued for output
  *
  * @var array
@@ -59,19 +67,11 @@ class JsHelper extends AppHelper {
 	var $__engineName;
 
 /**
- * __objects
- *
- * @var array
- * @access private
- **/
-	var $__objects = array();
-
-/**
- * output
+ * The javascript variable created by set() variables.
  *
  * @var string
  **/
-	var $output = false;
+	var $setVariable = APP_DIR;
 
 /**
  * Constructor - determines engine helper
@@ -221,11 +221,24 @@ class JsHelper extends AppHelper {
  * @return array Array of scripts added to the request.
  **/
 	function getBuffer($clear = true) {
+		$this->_createVars();
 		$scripts = $this->__bufferedScripts;
 		if ($clear) {
 			$this->__bufferedScripts = array();
+			$this->__jsVars = array();
 		}
 		return $scripts;
+	}
+
+/**
+ * Generates the object string for variables passed to javascript.
+ *
+ * @return string
+ **/
+	function _createVars() {
+		if (!empty($this->__jsVars)) {
+			$this->buffer('var ' . $this->setVariable . ' = ' . $this->object($this->__jsVars) . ';');
+		}
 	}
 
 /**
@@ -270,6 +283,32 @@ class JsHelper extends AppHelper {
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
+	}
+
+/**
+ * Pass variables into Javascript.  Allows you to set variables that will be
+ * output when the buffer is fetched with `JsHelper::getBuffer()` or `JsHelper::writeBuffer()`
+ * The Javascript variable used to output set variables can be controlled with `JsHelper::$setVariable`
+ *
+ * @param mixed $one
+ * @param mixed $two
+ * @return void
+ **/
+	function set($one, $two = null) {
+		$data = null;
+		if (is_array($one)) {
+			if (is_array($two)) {
+				$data = array_combine($one, $two);
+			} else {
+				$data = $one;
+			}
+		} else {
+			$data = array($one => $two);
+		}
+		if ($data == null) {
+			return false;
+		}
+		$this->__jsVars = array_merge($this->__jsVars, $data);
 	}
 
 /**
