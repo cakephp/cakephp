@@ -75,7 +75,7 @@ class FormHelper extends AppHelper {
 /**
  * Persistent default options used by input(). Set by FormHelper::create().
  *
- * @var string
+ * @var array
  * @access protected
  */
 	var $_inputDefaults = array();
