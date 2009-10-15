@@ -227,7 +227,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:$("element").serialize()});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
 			'before' => 'doBefore();',
@@ -236,6 +236,17 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 			'error' => 'handleError();',
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->request('/people/edit/1', array(
+			'async' => false,
+			'method' => 'post',
+			'before' => 'doBefore();',
+			'success' => 'doSuccess();',
+			'complete' => 'doComplete();',
+			'error' => 'handleError();',
+		));
+		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {asynchronous:false, method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
 		$this->assertEqual($result, $expected);
 	}
 
