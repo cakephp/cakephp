@@ -442,12 +442,19 @@ CODE;
 		$result = $this->Js->getBuffer();
 		$expected = 'var app = {"loggedIn":true,"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
-		
+
 		$this->Js->set('loggedIn', true);
 		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
 		$this->Js->setVariable = 'WICKED';
-		$result = $this->Js->getBuffer(false);
+		$result = $this->Js->getBuffer();
 		$expected = 'var WICKED = {"loggedIn":true,"height":"tall","color":"purple"};';
+		$this->assertEqual($result[0], $expected);
+		
+		$this->Js->set('loggedIn', true);
+		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
+		$this->Js->setVariable = 'Application.variables';
+		$result = $this->Js->getBuffer();
+		$expected = 'Application.variables = {"loggedIn":true,"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
 	}
 }
