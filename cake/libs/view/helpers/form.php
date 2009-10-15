@@ -73,6 +73,14 @@ class FormHelper extends AppHelper {
 	var $requestType = null;
 
 /**
+ * Persistent default options used by input(). Set by FormHelper::create().
+ *
+ * @var string
+ * @access protected
+ */
+	var $_inputDefaults = array();
+
+/**
  * Returns an HTML FORM element.
  *
  * Options:
@@ -82,6 +90,7 @@ class FormHelper extends AppHelper {
  * - 'url'  The url the form submits to. Can be a string or a url array,
  * - 'default'  Allows for the creation of Ajax forms.
  * - 'onsubmit' Used in conjunction with 'default' to create ajax forms.
+ * - 'inputDefaults' set the default $options for FormHelper::input()
  *
  * @access public
  * @param string $model The model object which the form is being defined for
@@ -173,8 +182,11 @@ class FormHelper extends AppHelper {
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
-			'default' => true),
+			'default' => true,
+			'inputDefaults' => array()),
 		$options);
+		$this->_inputDefaults = $options['inputDefaults'];
+		unset($options['inputDefaults']);
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
@@ -601,8 +613,11 @@ class FormHelper extends AppHelper {
 		$this->setEntity($fieldName);
 		$entity = join('.', $view->entity());
 
-		$defaults = array('before' => null, 'between' => null, 'after' => null);
-		$options = array_merge($defaults, $options);
+		$options = array_merge(
+			array('before' => null, 'between' => null, 'after' => null),
+			$this->_inputDefaults,
+			$options
+		);
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
@@ -778,10 +793,10 @@ class FormHelper extends AppHelper {
 			unset($options['dateFormat']);
 		}
 
-		$type	 = $options['type'];
-		$before	 = $options['before'];
+		$type = $options['type'];
+		$before  = $options['before'];
 		$between = $options['between'];
-		$after	 = $options['after'];
+		$after = $options['after'];
 		unset($options['type'], $options['before'], $options['between'], $options['after']);
 
 		switch ($type) {

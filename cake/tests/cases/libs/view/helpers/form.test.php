@@ -4712,6 +4712,31 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that inputDefaults are stored and used.
+ *
+ * @return void
+ **/
+	function testCreateWithInputDefaults() {
+		$this->Form->create('User', array(
+			'inputDefaults' => array('div' => false, 'label' => false)
+		));
+		$result = $this->Form->input('username');
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername', 'value' => '')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('username', array('div' => true, 'label' => 'username'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'UserUsername'), 'username', '/label',
+			'input' => array('type' => 'text', 'name' => 'data[User][username]', 'id' => 'UserUsername', 'value' => ''),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test base form url when url param is passed with multiple parameters (&)
  *
  */
