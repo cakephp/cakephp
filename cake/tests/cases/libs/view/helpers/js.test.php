@@ -430,6 +430,26 @@ CODE;
 		$expected = '{"one":"first","two":"second"}';
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test set()'ing variables to the Javascript buffer and controlling the output var name.
+ *
+ * @return void
+ **/
+	function testSet() {
+		$this->Js->set('loggedIn', true);
+		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
+		$result = $this->Js->getBuffer();
+		$expected = 'var app = {"loggedIn":true,"height":"tall","color":"purple"};';
+		$this->assertEqual($result[0], $expected);
+		
+		$this->Js->set('loggedIn', true);
+		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
+		$this->Js->setVariable = 'WICKED';
+		$result = $this->Js->getBuffer(false);
+		$expected = 'var WICKED = {"loggedIn":true,"height":"tall","color":"purple"};';
+		$this->assertEqual($result[0], $expected);
+	}
 }
 
 
