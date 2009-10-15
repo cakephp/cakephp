@@ -224,7 +224,7 @@ class SessionHelperTest extends CakeTestCase {
 		ob_clean();
 
 		$this->assertPattern("/Missing Layout/", $result);
-		$this->assertPattern("/layouts\/does_not_exist.ctp/", $result);
+		$this->assertPattern("/layouts(\\\|\/)does_not_exist.ctp/", $result);
 	}
 /**
  * testID method
