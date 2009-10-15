@@ -370,13 +370,14 @@ class Shell extends Object {
  *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
+ * @return integer Returns the number of bytes returned from writing to stdout.
  * @access public
  */
 	function out($message = null, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
-		$this->Dispatch->stdout($message . $this->nl($newlines), false);
+		return $this->Dispatch->stdout($message . $this->nl($newlines), false);
 	}
 
 /**
