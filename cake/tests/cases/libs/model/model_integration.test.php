@@ -1,7 +1,7 @@
 <?php
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
 /**
- * ModelDeleteTest file
+ * ModelIntegrationTest file
  *
  * Long description for file
  *
@@ -25,7 +25,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
-require_once dirname(__FILE__) . DS . 'model_integration.test.php';
 
 /**
  * ModelIntegrationTest
