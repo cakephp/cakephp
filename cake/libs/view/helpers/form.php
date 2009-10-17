@@ -602,11 +602,12 @@ class FormHelper extends AppHelper {
  * Options - See each field type method for more information. Any options that are part of
  * $attributes or $options for the different type methods can be included in $options for input().
  *
- * - 'type' - Force the type of widget you want. e.g. `type => 'select'`
- * - 'label' - control the label
- * - 'div' - control the wrapping div element
- * - 'options' - for widgets that take options e.g. radio, select
- * - 'error' - control the error message that is produced
+ * - `type` - Force the type of widget you want. e.g. `type => 'select'`
+ * - `label` - control the label
+ * - `div` - control the wrapping div element
+ * - `options` - for widgets that take options e.g. radio, select
+ * - `error` - control the error message that is produced
+ * - `empty` - String or boolean to enable empty select box options.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
@@ -779,12 +780,6 @@ class FormHelper extends AppHelper {
 			$options['type'] = 'textarea';
 		}
 
-		$empty = false;
-		if (isset($options['empty'])) {
-			$empty = $options['empty'];
-			unset($options['empty']);
-		}
-
 		$timeFormat = 12;
 		if (isset($options['timeFormat'])) {
 			$timeFormat = $options['timeFormat'];
@@ -795,6 +790,10 @@ class FormHelper extends AppHelper {
 		if (isset($options['dateFormat'])) {
 			$dateFormat = $options['dateFormat'];
 			unset($options['dateFormat']);
+		}
+
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
+			$options += array('empty' => false);
 		}
 
 		$type = $options['type'];
@@ -826,22 +825,22 @@ class FormHelper extends AppHelper {
 				$list = $options['options'];
 				unset($options['options']);
 				$out = $before . $out . $between . $this->select(
-					$fieldName, $list, $selected, $options, $empty
+					$fieldName, $list, $selected, $options
 				);
 			break;
 			case 'time':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, null, $timeFormat, $selected, $options, $empty
+					$fieldName, null, $timeFormat, $selected, $options
 				);
 			break;
 			case 'date':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, null, $selected, $options, $empty
+					$fieldName, $dateFormat, null, $selected, $options
 				);
 			break;
 			case 'datetime':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, $timeFormat, $selected, $options, $empty
+					$fieldName, $dateFormat, $timeFormat, $selected, $options
 				);
 			break;
 			case 'textarea':
@@ -1209,6 +1208,8 @@ class FormHelper extends AppHelper {
  *   will be added for the parent of each option group.
  * - `multiple` - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
  *   created instead.
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
@@ -1216,20 +1217,23 @@ class FormHelper extends AppHelper {
  * @param mixed $selected The option selected by default.  If null, the default value
  *   from POST data will be used when available.
  * @param array $attributes The HTML attributes of the select element.
- * @param mixed $showEmpty If true, the empty select option is shown.  If a string,
- *   that string is displayed as the empty element.
  * @return string Formatted SELECT element
  */
-	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+	function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
 		$select = array();
 		$showParents = false;
 		$escapeOptions = true;
 		$style = null;
 		$tag = null;
+		$showEmpty = '';
 
 		if (isset($attributes['escape'])) {
 			$escapeOptions = $attributes['escape'];
 			unset($attributes['escape']);
+		}
+		if (isset($attributes['empty'])) {
+			$showEmpty = $attributes['empty'];
+			unset($attributes['empty']);
 		}
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
@@ -1297,20 +1301,25 @@ class FormHelper extends AppHelper {
 /**
  * Returns a SELECT element for days.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param array $attributes HTML attributes for the select element
- * @param mixed $showEmpty Show/hide the empty select option
  * @return string
  */
-	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function day($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $day;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty) {
+					if (!$attributes['empty']) {
 						$selected = 'now';
 					}
 				} else {
@@ -1324,33 +1333,36 @@ class FormHelper extends AppHelper {
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		return $this->select(
-			$fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty
-		);
+		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes);
 	}
 
 /**
  * Returns a SELECT element for years
+ *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
- * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
+	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $year;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty && !$maxYear) {
+					if (!$attributes['empty'] && !$maxYear) {
 						$selected = 'now';
 
-					} elseif (!$showEmpty && $maxYear && !$selected) {
+					} elseif (!$attributes['empty'] && $maxYear && !$selected) {
 						$selected = $maxYear;
 					}
 				} else {
@@ -1367,7 +1379,7 @@ class FormHelper extends AppHelper {
 		$yearOptions = array('min' => $minYear, 'max' => $maxYear);
 		return $this->select(
 			$fieldName . ".year", $this->__generateOptions('year', $yearOptions),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
@@ -1377,21 +1389,23 @@ class FormHelper extends AppHelper {
  * Attributes:
  *
  * - `monthNames` is set and false 2 digit numbers will be used instead of text.
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param array $attributes Attributes for the select element
- * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function month($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $month;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty) {
+					if (!$attributes['empty']) {
 						$selected = 'now';
 					}
 				} else {
@@ -1413,21 +1427,26 @@ class FormHelper extends AppHelper {
 		return $this->select(
 			$fieldName . ".month",
 			$this->__generateOptions('month', array('monthNames' => $monthNames)),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
 /**
  * Returns a SELECT element for hours.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
- * @param mixed $showEmpty True to show an empty element, or a string to provide default empty element text
  * @return string
  */
-	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
+	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1457,27 +1476,32 @@ class FormHelper extends AppHelper {
 		return $this->select(
 			$fieldName . ".hour",
 			$this->__generateOptions($format24Hours ? 'hour24' : 'hour'),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
 /**
  * Returns a SELECT element for minutes.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
- * @param bool $showEmpty True to show an empty element, or a string to provide default empty element text
  * @return string
  */
-	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function minute($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $min;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty) {
+					if (!$attributes['empty']) {
 						$selected = 'now';
 					}
 				} else {
@@ -1499,12 +1523,17 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".min", $this->__generateOptions('minute', $minuteOptions),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
 /**
  * Returns a SELECT element for AM or PM.
+ *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
@@ -1512,14 +1541,15 @@ class FormHelper extends AppHelper {
  * @param bool $showEmpty Show/Hide an empty option
  * @return string
  */
-	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function meridian($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $meridian;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty) {
+					if (!$attribues['empty']) {
 						$selected = date('a');
 					}
 				} else {
@@ -1533,7 +1563,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".meridian", $this->__generateOptions('meridian'),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
@@ -1547,23 +1577,25 @@ class FormHelper extends AppHelper {
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
  * - `separator` The contents of the string between select elements. Defaults to '-'
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD.
  * @param string $timeFormat 12, 24.
  * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
- * @param bool $showEmpty Whether or not to show an empty default value.
  * @return string The HTML formatted OPTION element
  */
-	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
+	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($selected)) {
 			$selected = $this->value($fieldName);
 		}
 
-		if ($selected === null && $showEmpty != true) {
+		if ($selected === null && $attributes['empty'] != true) {
 			$selected = time();
 		}
 
@@ -1653,15 +1685,15 @@ class FormHelper extends AppHelper {
 			switch ($char) {
 				case 'Y':
 					$selects[] = $this->year(
-						$fieldName, $minYear, $maxYear, $year, $selectYearAttr, $showEmpty
+						$fieldName, $minYear, $maxYear, $year, $selectYearAttr
 					);
 				break;
 				case 'M':
 					$selectMonthAttr['monthNames'] = $monthNames;
-					$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
+					$selects[] = $this->month($fieldName, $month, $selectMonthAttr);
 				break;
 				case 'D':
-					$selects[] = $this->day($fieldName, $day, $selectDayAttr, $showEmpty);
+					$selects[] = $this->day($fieldName, $day, $selectDayAttr);
 				break;
 			}
 		}
@@ -1673,13 +1705,13 @@ class FormHelper extends AppHelper {
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':
-				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
+				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr) . ':' .
+				$this->minute($fieldName, $min, $selectMinuteAttr);
 			break;
 			case '12':
-				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
-				$this->meridian($fieldName, $meridian, $selectMeridianAttr, $showEmpty);
+				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr) . ':' .
+				$this->minute($fieldName, $min, $selectMinuteAttr) . ' ' .
+				$this->meridian($fieldName, $meridian, $selectMeridianAttr);
 			break;
 			default:
 				$opt .= '';
