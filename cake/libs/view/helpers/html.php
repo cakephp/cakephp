@@ -209,15 +209,21 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
+ * #### Options
+ *
+ * - `inline` Whether or not the link element should be output inline, or in scripts_for_layout.
+ *
  * @param string $type The title of the external resource
  * @param mixed $url The address of the external resource or string for content attribute
- * @param array $attributes Other attributes for the generated tag. If the type attribute is html, 
+ * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
- * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string A completed <link /> element.
  * @access public
  */
-	function meta($type, $url = null, $attributes = array(), $inline = true) {
+	function meta($type, $url = null, $options = array()) {
+		$inline = isset($options['inline']) ? $options['inline'] : true;
+		unset($options['inline']);
+
 		if (!is_array($type)) {
 			$types = array(
 				'rss'	=> array('type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $url),
@@ -233,34 +239,34 @@ class HtmlHelper extends AppHelper {
 
 			if (isset($types[$type])) {
 				$type = $types[$type];
-			} elseif (!isset($attributes['type']) && $url !== null) {
+			} elseif (!isset($options['type']) && $url !== null) {
 				if (is_array($url) && isset($url['ext'])) {
 					$type = $types[$url['ext']];
 				} else {
 					$type = $types['rss'];
 				}
-			} elseif (isset($attributes['type']) && isset($types[$attributes['type']])) {
-				$type = $types[$attributes['type']];
-				unset($attributes['type']);
+			} elseif (isset($options['type']) && isset($types[$options['type']])) {
+				$type = $types[$options['type']];
+				unset($options['type']);
 			} else {
 				$type = array();
 			}
 		} elseif ($url !== null) {
 			$inline = $url;
 		}
-		$attributes = array_merge($type, $attributes);
+		$options = array_merge($type, $options);
 		$out = null;
 
-		if (isset($attributes['link'])) {
-			if (isset($attributes['rel']) && $attributes['rel'] === 'icon') {
-				$out = sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link'), ' ', ' '));
-				$attributes['rel'] = 'shortcut icon';
+		if (isset($options['link'])) {
+			if (isset($options['rel']) && $options['rel'] === 'icon') {
+				$out = sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
+				$options['rel'] = 'shortcut icon';
 			} else {
-				$attributes['link'] = $this->url($attributes['link'], true);
+				$options['link'] = $this->url($options['link'], true);
 			}
-			$out .= sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link'), ' ', ' '));
+			$out .= sprintf($this->tags['metalink'], $options['link'], $this->_parseAttributes($options, array('link'), ' ', ' '));
 		} else {
-			$out = sprintf($this->tags['meta'], $this->_parseAttributes($attributes, array('type')));
+			$out = sprintf($this->tags['meta'], $this->_parseAttributes($options, array('type')));
 		}
 
 		if ($inline) {
