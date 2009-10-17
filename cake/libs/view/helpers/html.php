@@ -761,72 +761,75 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted P tag.
  *
+ * #### Options
+ *
+ * - `escape` Whether or not the contents should be html_entity escaped.
+ *
  * @param string $class CSS class name of the p element.
  * @param string $text String content that will appear inside the p element.
  * @param array $attributes Additional HTML attributes of the P tag
- * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted P element
  * @access public
  */
-	function para($class, $text, $attributes = array(), $escape = false) {
-		if ($escape) {
+	function para($class, $text, $options = array()) {
+		if (isset($options['escape'])) {
 			$text = h($text);
 		}
 		if ($class != null && !empty($class)) {
-			$attributes['class'] = $class;
+			$options['class'] = $class;
 		}
 		if ($text === null) {
 			$tag = 'parastart';
 		} else {
 			$tag = 'para';
 		}
-		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $text));
+		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text));
 	}
 
 /**
  * Build a nested list (UL/OL) out of an associative array.
  *
  * @param array $list Set of elements to list
- * @param array $attributes Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
- * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param array $options Additional HTML attributes of the list (ol/ul) tag or if ul/ol use that as tag
+ * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list
  * @access public
  */
-	function nestedList($list, $attributes = array(), $itemAttributes = array(), $tag = 'ul') {
-		if (is_string($attributes)) {
-			$tag = $attributes;
-			$attributes = array();
+	function nestedList($list, $options = array(), $itemOptions = array(), $tag = 'ul') {
+		if (is_string($options)) {
+			$tag = $options;
+			$options = array();
 		}
-		$items = $this->__nestedListItem($list, $attributes, $itemAttributes, $tag);
-		return sprintf($this->tags[$tag], $this->_parseAttributes($attributes, null, ' ', ''), $items);
+		$items = $this->__nestedListItem($list, $options, $itemOptions, $tag);
+		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
 	}
 
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *
  * @param array $list Set of elements to list
- * @param array $attributes Additional HTML attributes of the list (ol/ul) tag
- * @param array $itemAttributes Additional HTML attributes of the list item (LI) tag
+ * @param array $options Additional HTML attributes of the list (ol/ul) tag
+ * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list element
  * @access private
  * @see HtmlHelper::nestedList()
  */
-	function __nestedListItem($items, $attributes, $itemAttributes, $tag) {
+	function __nestedListItem($items, $options, $itemOptions, $tag) {
 		$out = '';
 
 		$index = 1;
 		foreach ($items as $key => $item) {
 			if (is_array($item)) {
-				$item = $key . $this->nestedList($item, $attributes, $itemAttributes, $tag);
+				$item = $key . $this->nestedList($item, $options, $itemOptions, $tag);
 			}
-			if (isset($itemAttributes['even']) && $index % 2 == 0) {
-				$itemAttributes['class'] = $itemAttributes['even'];
-			} else if (isset($itemAttributes['odd']) && $index % 2 != 0) {
-				$itemAttributes['class'] = $itemAttributes['odd'];
+			if (isset($itemOptions['even']) && $index % 2 == 0) {
+				$itemOptions['class'] = $itemOptions['even'];
+			} else if (isset($itemOptions['odd']) && $index % 2 != 0) {
+				$itemOptions['class'] = $itemOptions['odd'];
 			}
-			$out .= sprintf($this->tags['li'], $this->_parseAttributes(array_diff_key($itemAttributes, array_flip(array('even', 'odd'))), null, ' ', ''), $item);
+			$out .= sprintf($this->tags['li'], $this->_parseAttributes(array_diff_key($itemOptions, array_flip(array('even', 'odd'))), null, ' ', ''), $item);
 			$index++;
 		}
 		return $out;
