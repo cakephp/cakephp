@@ -550,7 +550,7 @@ class HtmlHelper extends AppHelper {
  * Builds CSS style data from an array of CSS properties
  *
  * @param array $data Style data array
- * @param boolean $online Whether or not the style block should be displayed on one line.
+ * @param boolean $oneline Whether or not the style block should be displayed on one line.
  * @return string CSS styling data
  * @access public
  */
@@ -747,7 +747,7 @@ class HtmlHelper extends AppHelper {
  * @param string $class CSS class name of the div element.
  * @param string $text String content that will appear inside the div element.
  *   If null, only a start tag will be printed
- * @param array $attributes Additional HTML attributes of the DIV tag
+ * @param array $options Additional HTML attributes of the DIV tag
  * @return string The formatted DIV element
  * @access public
  */
@@ -767,7 +767,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $class CSS class name of the p element.
  * @param string $text String content that will appear inside the p element.
- * @param array $attributes Additional HTML attributes of the P tag
+ * @param array $options Additional HTML attributes of the P tag
  * @return string The formatted P element
  * @access public
  */
