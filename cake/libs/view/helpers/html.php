@@ -300,15 +300,19 @@ class HtmlHelper extends AppHelper {
  *
  * If the $url is empty, $title is used instead.
  *
+ * #### Options
+ *
+ * - `escape` Set to false to disable escaping of title and attributes.
+ *
  * @param string $title The content to be wrapped by <a> tags.
  * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
- * @param array $htmlAttributes Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
- * @param boolean $escapeTitle	Whether or not $title should be HTML escaped.
  * @return string An <a /> element.
  * @access public
  */
-	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
+	function link($title, $url = null, $options = array(), $confirmMessage = false) {
+		$escapeTitle = true;
 		if ($url !== null) {
 			$url = $this->url($url);
 		} else {
@@ -317,8 +321,8 @@ class HtmlHelper extends AppHelper {
 			$escapeTitle = false;
 		}
 
-		if (isset($htmlAttributes['escape']) && $escapeTitle == true) {
-			$escapeTitle = $htmlAttributes['escape'];
+		if (isset($options['escape'])) {
+			$escapeTitle = $options['escape'];
 		}
 
 		if ($escapeTitle === true) {
@@ -327,23 +331,23 @@ class HtmlHelper extends AppHelper {
 			$title = htmlentities($title, ENT_QUOTES, $escapeTitle);
 		}
 
-		if (!empty($htmlAttributes['confirm'])) {
-			$confirmMessage = $htmlAttributes['confirm'];
-			unset($htmlAttributes['confirm']);
+		if (!empty($options['confirm'])) {
+			$confirmMessage = $options['confirm'];
+			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
 			$confirmMessage = str_replace("'", "\'", $confirmMessage);
 			$confirmMessage = str_replace('"', '\"', $confirmMessage);
-			$htmlAttributes['onclick'] = "return confirm('{$confirmMessage}');";
-		} elseif (isset($htmlAttributes['default']) && $htmlAttributes['default'] == false) {
-			if (isset($htmlAttributes['onclick'])) {
-				$htmlAttributes['onclick'] .= ' event.returnValue = false; return false;';
+			$options['onclick'] = "return confirm('{$confirmMessage}');";
+		} elseif (isset($options['default']) && $options['default'] == false) {
+			if (isset($options['onclick'])) {
+				$options['onclick'] .= ' event.returnValue = false; return false;';
 			} else {
-				$htmlAttributes['onclick'] = 'event.returnValue = false; return false;';
+				$options['onclick'] = 'event.returnValue = false; return false;';
 			}
-			unset($htmlAttributes['default']);
+			unset($options['default']);
 		}
-		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($htmlAttributes), $title));
+		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($options), $title));
 	}
 
 /**

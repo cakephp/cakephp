@@ -222,10 +222,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->link('Next >', '#', array(
 			'title' => 'to escape &#8230; or not escape?',
 			'escape' => true
-		), false, false);
+		));
 		$expected = array(
 			'a' => array('href' => '#', 'title' => 'to escape &amp;#8230; or not escape?'),
-			'Next >',
+			'Next &gt;',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
@@ -242,7 +242,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', false);
 
-		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
+		$result = $this->Html->link($this->Html->image('test.gif'), '#', array('escape' => false));
 		$expected = array(
 			'a' => array('href' => '#'),
 			'img' => array('src' => 'img/test.gif', 'alt' => ''),
@@ -260,7 +260,7 @@ class HtmlHelperTest extends CakeTestCase {
 
 		Configure::write('Asset.timestamp', 'force');
 
- 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(), false, false, false);
+ 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array('escape' => false));
  		$expected = array(
  			'a' => array('href' => '#'),
 			'img' => array('src' => 'preg:/img\/test\.gif\?\d*/', 'alt' => ''),
