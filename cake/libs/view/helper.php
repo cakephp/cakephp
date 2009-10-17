@@ -269,33 +269,38 @@ class Helper extends Overloadable {
 /**
  * Returns a space-delimited string with items of the $options array. If a
  * key of $options array happens to be one of:
- *	+ 'compact'
- *	+ 'checked'
- *	+ 'declare'
- *	+ 'readonly'
- *	+ 'disabled'
- *	+ 'selected'
- *	+ 'defer'
- *	+ 'ismap'
- *	+ 'nohref'
- *	+ 'noshade'
- *	+ 'nowrap'
- *	+ 'multiple'
- *	+ 'noresize'
+ *
+ * - 'compact'
+ * - 'checked'
+ * - 'declare'
+ * - 'readonly'
+ * - 'disabled'
+ * - 'selected'
+ * - 'defer'
+ * - 'ismap'
+ * - 'nohref'
+ * - 'noshade'
+ * - 'nowrap'
+ * - 'multiple'
+ * - 'noresize'
  *
  * And its value is one of:
- *	+ 1
- *	+ true
- *	+ 'true'
+ *
+ * - 1
+ * - true
+ * - 'true'
  *
  * Then the value will be reset to be identical with key's name.
  * If the value is not one of these 3, the parameter is not output.
  *
- * @param  array  $options Array of options.
- * @param  array  $exclude Array of options to be excluded.
- * @param  string $insertBefore String to be inserted before options.
- * @param  string $insertAfter  String to be inserted ater options.
- * @return string
+ * 'escape' is a special option in that it controls the conversion of
+ *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
+ *
+ * @param array $options Array of options.
+ * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
+ * @param string $insertBefore String to be inserted before options.
+ * @param string $insertAfter String to be inserted ater options.
+ * @return string Composed attributes.
  */
 	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
@@ -320,9 +325,11 @@ class Helper extends Overloadable {
 	}
 
 /**
- * @param  string $key
- * @param  string $value
- * @return string
+ * Formats an individual attribute, and returns the string value of the composed attribute.
+ *
+ * @param string $key The name of the attribute to create
+ * @param string $value The value of the attribute to create.
+ * @return string The composed attribute.
  * @access private
  */
 	function __formatAttribute($key, $value, $escape = true) {
