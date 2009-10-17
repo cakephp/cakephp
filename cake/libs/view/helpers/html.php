@@ -175,6 +175,7 @@ class HtmlHelper extends AppHelper {
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param mixed $options Link attributes e.g. array('id'=>'selected')
+ * @return void
  * @see HtmlHelper::link() for details on $options that can be used.
  * @access public
  */
@@ -213,7 +214,7 @@ class HtmlHelper extends AppHelper {
  * @param array $attributes Other attributes for the generated tag. If the type attribute is html, 
  *    rss, atom, or icon, the mime-type is returned.
  * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
- * @return string
+ * @return string A completed <link /> element.
  * @access public
  */
 	function meta($type, $url = null, $attributes = array(), $inline = true) {
@@ -478,7 +479,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $script The script to wrap
  * @param array $options The options to use.
- * @return mixed string or null
+ * @return mixed string or null depending on the value of `$options['inline']`
  **/
 	function scriptBlock($script, $options = array()) {
 		$defaultOptions = array('safe' => true, 'inline' => true);
@@ -581,7 +582,8 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Creates a formatted IMG element.
+ * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be 
+ * generated with the link pointed at `$options['url']`
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.
@@ -642,8 +644,9 @@ class HtmlHelper extends AppHelper {
  * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
  * @param array $evenTrOptions HTML options for even TR elements
  * @param bool $useCount adds class "column-$i"
- * @param bool $continueOddEven If false, will use a non-static $count variable, so that the odd/even count is reset to zero just for that call
- * @return string	Formatted HTML
+ * @param bool $continueOddEven If false, will use a non-static $count variable,
+ *    so that the odd/even count is reset to zero just for that call.
+ * @return string Formatted HTML
  * @access public
  */
 	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
@@ -792,7 +795,7 @@ class HtmlHelper extends AppHelper {
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list element
  * @access private
- * @see nestedList()
+ * @see HtmlHelper::nestedList()
  */
 	function __nestedListItem($items, $attributes, $itemAttributes, $tag) {
 		$out = '';
