@@ -1166,13 +1166,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->tag('div', 'text');
 		$this->assertTags($result, '<div', 'text', '/div');
 
-		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name'), true);
-		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
+		$result = $this->Html->tag('div', '<text>', 'class-name');
+		$this->assertTags($result, array('div' => array('class' => 'class-name'), 'preg:/<text>/', '/div'));
 
 		$result = $this->Html->tag('div', '<text>', array('class' => 'class-name', 'escape' => true));
-		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
-
-		$result = $this->Html->tag('div', '<text>', 'class-name', true);
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
 
@@ -1189,7 +1186,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->div('class-name', 'text');
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), 'text', '/div'));
 
-		$result = $this->Html->div('class-name', '<text>', array(), true);
+		$result = $this->Html->div('class-name', '<text>', array('escape' => true));
 		$this->assertTags($result, array('div' => array('class' => 'class-name'), '&lt;text&gt;', '/div'));
 	}
 

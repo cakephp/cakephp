@@ -187,15 +187,16 @@ class HtmlHelper extends AppHelper {
  * Returns a doctype string.
  *
  * Possible doctypes:
- *   + html4-strict:  HTML4 Strict.
- *   + html4-trans:  HTML4 Transitional.
- *   + html4-frame:  HTML4 Frameset.
- *   + xhtml-strict: XHTML1 Strict.
- *   + xhtml-trans: XHTML1 Transitional.
- *   + xhtml-frame: XHTML1 Frameset.
- *   + xhtml11: XHTML1.1.
  *
- * @param  string $type Doctype to use.
+ *  - html4-strict:  HTML4 Strict.
+ *  - html4-trans:  HTML4 Transitional.
+ *  - html4-frame:  HTML4 Frameset.
+ *  - xhtml-strict: XHTML1 Strict.
+ *  - xhtml-trans: XHTML1 Transitional.
+ *  - xhtml-frame: XHTML1 Frameset.
+ *  - xhtml11: XHTML1.1.
+ *
+ * @param string $type Doctype to use.
  * @return string Doctype string
  * @access public
  */
@@ -361,7 +362,7 @@ class HtmlHelper extends AppHelper {
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
- * @param array $htmlAttributes Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  * @access public
  */
@@ -549,11 +550,11 @@ class HtmlHelper extends AppHelper {
  * Builds CSS style data from an array of CSS properties
  *
  * @param array $data Style data array
- * @param boolean $inline Whether or not the style block should be displayed inline
+ * @param boolean $online Whether or not the style block should be displayed on one line.
  * @return string CSS styling data
  * @access public
  */
-	function style($data, $inline = true) {
+	function style($data, $oneline = true) {
 		if (!is_array($data)) {
 			return $data;
 		}
@@ -561,7 +562,7 @@ class HtmlHelper extends AppHelper {
 		foreach ($data as $key=> $value) {
 			$out[] = $key.':'.$value.';';
 		}
-		if ($inline) {
+		if ($oneline) {
 			return join(' ', $out);
 		}
 		return join("\n", $out);
@@ -597,7 +598,8 @@ class HtmlHelper extends AppHelper {
 
 /**
  * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be 
- * generated with the link pointed at `$options['url']`
+ * generated with the link pointed at `$options['url']`.  This method will set an empty
+ * alt attribute if one is not supplied.
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.
@@ -629,7 +631,6 @@ class HtmlHelper extends AppHelper {
 		if ($url) {
 			return $this->output(sprintf($this->tags['link'], $this->url($url), null, $image));
 		}
-
 		return $this->output($image);
 	}
 
@@ -708,52 +709,53 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted block tag, i.e DIV, SPAN, P.
  *
- * ## Attributes
+ * #### Options
  *
  * - `escape` Whether or not the contents should be html_entity escaped.
  *
  * @param string $name Tag name.
  * @param string $text String content that will appear inside the div element.
  *   If null, only a start tag will be printed
- * @param array $attributes Additional HTML attributes of the DIV tag, see above.
+ * @param array $options Additional HTML attributes of the DIV tag, see above.
  * @param boolean $escape If true, $text will be HTML-escaped (Deprecated, use $attributes[escape])
  * @return string The formatted tag element
  * @access public
  */
-	function tag($name, $text = null, $attributes = array(), $escape = false) {
-		if ($escape || isset($attributes['escape']) && $attributes['escape']) {
-			if (is_array($attributes)) {
-				unset($attributes['escape']);
-			}
+	function tag($name, $text = null, $options = array()) {
+		if (is_array($options) && isset($options['escape']) && $options['escape']) {
 			$text = h($text);
+			unset($options['escape']);
 		}
-		if (!is_array($attributes)) {
-			$attributes = array('class' => $attributes);
+		if (!is_array($options)) {
+			$options = array('class' => $options);
 		}
 		if ($text === null) {
 			$tag = 'tagstart';
 		} else {
 			$tag = 'tag';
 		}
-		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($attributes, null, ' ', ''), $text, $name));
+		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name));
 	}
 
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
+ * #### Options
+ *
+ * - `escape` Whether or not the contents should be html_entity escaped.
+ *
  * @param string $class CSS class name of the div element.
  * @param string $text String content that will appear inside the div element.
  *   If null, only a start tag will be printed
  * @param array $attributes Additional HTML attributes of the DIV tag
- * @param boolean $escape If true, $text will be HTML-escaped
  * @return string The formatted DIV element
  * @access public
  */
-	function div($class = null, $text = null, $attributes = array(), $escape = false) {
-		if ($class != null && !empty($class)) {
-			$attributes['class'] = $class;
+	function div($class = null, $text = null, $options = array()) {
+		if (!empty($class)) {
+			$options['class'] = $class;
 		}
-		return $this->tag('div', $text, $attributes, $escape);
+		return $this->tag('div', $text, $options);
 	}
 
 /**
