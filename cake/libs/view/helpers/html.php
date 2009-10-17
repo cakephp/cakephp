@@ -175,6 +175,7 @@ class HtmlHelper extends AppHelper {
  * @param string $name Text for link
  * @param string $link URL for link (if empty it won't be a link)
  * @param mixed $options Link attributes e.g. array('id'=>'selected')
+ * @see HtmlHelper::link() for details on $options that can be used.
  * @access public
  */
 	function addCrumb($name, $link = null, $options = null) {
@@ -207,10 +208,11 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
- * @param  string  $type The title of the external resource
- * @param  mixed   $url   The address of the external resource or string for content attribute
- * @param  array   $attributes Other attributes for the generated tag. If the type attribute is html, rss, atom, or icon, the mime-type is returned.
- * @param  boolean $inline If set to false, the generated tag appears in the head tag of the layout.
+ * @param string $type The title of the external resource
+ * @param mixed $url The address of the external resource or string for content attribute
+ * @param array $attributes Other attributes for the generated tag. If the type attribute is html, 
+ *    rss, atom, or icon, the mime-type is returned.
+ * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string
  * @access public
  */
@@ -291,12 +293,12 @@ class HtmlHelper extends AppHelper {
  *
  * If the $url is empty, $title is used instead.
  *
- * @param  string  $title The content to be wrapped by <a> tags.
- * @param  mixed   $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
- * @param  array   $htmlAttributes Array of HTML attributes.
- * @param  string  $confirmMessage JavaScript confirmation message.
- * @param  boolean $escapeTitle	Whether or not $title should be HTML escaped.
- * @return string	An <a /> element.
+ * @param string $title The content to be wrapped by <a> tags.
+ * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param array $htmlAttributes Array of HTML attributes.
+ * @param string $confirmMessage JavaScript confirmation message.
+ * @param boolean $escapeTitle	Whether or not $title should be HTML escaped.
+ * @return string An <a /> element.
  * @access public
  */
 	function link($title, $url = null, $htmlAttributes = array(), $confirmMessage = false, $escapeTitle = true) {
@@ -553,8 +555,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns the breadcrumb trail as a sequence of &raquo;-separated links.
  *
- * @param  string  $separator Text to separate crumbs.
- * @param  string  $startText This will be the first crumb, if false it defaults to first crumb in array
+ * @param string $separator Text to separate crumbs.
+ * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
  * @return string
  * @access public
  */
@@ -582,7 +584,7 @@ class HtmlHelper extends AppHelper {
  * Creates a formatted IMG element.
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
- * @param array	$options Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string completed img tag
  * @access public
  */
@@ -636,7 +638,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted string of table rows (TR's with TD's in them).
  *
- * @param array $data		Array of table data
+ * @param array $data Array of table data
  * @param array $oddTrOptions HTML options for odd TR elements if true useCount is used
  * @param array $evenTrOptions HTML options for even TR elements
  * @param bool $useCount adds class "column-$i"
