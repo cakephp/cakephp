@@ -829,7 +829,7 @@ class HtmlHelper extends AppHelper {
 			} else if (isset($itemOptions['odd']) && $index % 2 != 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
-			$out .= sprintf($this->tags['li'], $this->_parseAttributes(array_diff_key($itemOptions, array_flip(array('even', 'odd'))), null, ' ', ''), $item);
+			$out .= sprintf($this->tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
 			$index++;
 		}
 		return $out;
