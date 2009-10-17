@@ -268,16 +268,18 @@ class FormHelper extends AppHelper {
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
  * input fields where appropriate.
  *
- * If $options is set a form submit button will be created.
+ * If $options is set a form submit button will be created. Options can be either a string or an array.
+ *
+ * {{{
+ * array usage:
+ * array('label' => 'save'); value="save"
+ * array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
+ * array('name' => 'Whatever'); value="Submit" name="Whatever"
+ * array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
+ * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
+ * }}}
  *
  * @param mixed $options as a string will use $options as the value of button,
- * 	array usage:
- * 		array('label' => 'save'); value="save"
- * 		array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
- * 		array('name' => 'Whatever'); value="Submit" name="Whatever"
- * 		array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
- * 		array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
- *
  * @return string a closing FORM tag optional submit button.
  * @access public
  */
@@ -405,9 +407,9 @@ class FormHelper extends AppHelper {
  *   string, will be used as the HTML tag to use.
  * - 'class'  string  The classname for the error message
  *
- * @param string $field  A field name, like "Modelname.fieldname"
- * @param mixed $text  Error message or array of $options
- * @param array $options  Rendering options for <div /> wrapper tag
+ * @param string $field A field name, like "Modelname.fieldname"
+ * @param mixed $text Error message or array of $options
+ * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
  */
@@ -461,10 +463,10 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field.
- * @param Mixed $attributes An array of HTML attributes, or a string, to be used as a class name.
+ * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
  */
-	function label($fieldName = null, $text = null, $attributes = array()) {
+	function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
 			$view = ClassRegistry::getObject('view');
 			$fieldName = implode('.', $view->entity());
@@ -482,13 +484,13 @@ class FormHelper extends AppHelper {
 			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
 		}
 
-		if (is_string($attributes)) {
-			$attributes = array('class' => $attributes);
+		if (is_string($options)) {
+			$options = array('class' => $options);
 		}
 
-		if (isset($attributes['for'])) {
-			$labelFor = $attributes['for'];
-			unset($attributes['for']);
+		if (isset($options['for'])) {
+			$labelFor = $options['for'];
+			unset($options['for']);
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
@@ -496,7 +498,7 @@ class FormHelper extends AppHelper {
 		return $this->output(sprintf(
 			$this->Html->tags['label'],
 			$labelFor,
-			$this->_parseAttributes($attributes), $text
+			$this->_parseAttributes($options), $text
 		));
 	}
 
@@ -600,7 +602,7 @@ class FormHelper extends AppHelper {
  * Options - See each field type method for more information. Any options that are part of
  * $attributes or $options for the different type methods can be included in $options for input().
  *
- * - 'type' - Force the type of widget you want. e.g. ```type => 'select'```
+ * - 'type' - Force the type of widget you want. e.g. `type => 'select'`
  * - 'label' - control the label
  * - 'div' - control the wrapping div element
  * - 'options' - for widgets that take options e.g. radio, select
@@ -873,8 +875,8 @@ class FormHelper extends AppHelper {
  *
  * Options:
  *
- * - 'value' - the value of the checkbox
- * - checked' - boolean indicate that this checkbox is checked.
+ * - `value` - the value of the checkbox
+ * - `checked` - boolean indicate that this checkbox is checked.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
@@ -912,10 +914,10 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'separator' - define the string in between the radio buttons
- * - 'legend' - control whether or not the widget set has a fieldset & legend
- * - 'value' - indicate a value that is should be checked
- * - 'label' - boolean to indicate whether or not labels for widgets show be displayed
+ * - `separator` - define the string in between the radio buttons
+ * - `legend` - control whether or not the widget set has a fieldset & legend
+ * - `value` - indicate a value that is should be checked
+ * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -996,7 +998,7 @@ class FormHelper extends AppHelper {
  * Creates a text input widget.
  *
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
- * @param array  $options Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
@@ -1013,8 +1015,8 @@ class FormHelper extends AppHelper {
 /**
  * Creates a password input widget.
  *
- * @param  string  $fieldName Name of a field, like in the form "Modelname.fieldname"
- * @param  array	$options Array of HTML attributes.
+ * @param string $fieldName Name of a field, like in the form "Modelname.fieldname"
+ * @param array $options Array of HTML attributes.
  * @return string
  */
 	function password($fieldName, $options = array()) {
@@ -1203,9 +1205,9 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'showParents' - If included in the array and set to true, an additional option element
+ * - `showParents` - If included in the array and set to true, an additional option element
  *   will be added for the parent of each option group.
- * - 'multiple' - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
+ * - `multiple` - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
  *   created instead.
  *
  * @param string $fieldName Name attribute of the SELECT
@@ -1297,7 +1299,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array	 $attributes HTML attributes for the select element
+ * @param array $attributes HTML attributes for the select element
  * @param mixed $showEmpty Show/hide the empty select option
  * @return string
  */
@@ -1374,7 +1376,7 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'monthNames' is set and false 2 digit numbers will be used instead of text.
+ * - `monthNames` is set and false 2 digit numbers will be used instead of text.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
@@ -1540,11 +1542,11 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'monthNames' If set and false numbers will be used for month select instead of text.
- * - 'minYear' The lowest year to use in the year select
- * - 'maxYear' The maximum year to use in the year select
- * - 'interval' The interval for the minutes select. Defaults to 1
- * - 'separator' The contents of the string between select elements. Defaults to '-'
+ * - `monthNames` If set and false numbers will be used for month select instead of text.
+ * - `minYear` The lowest year to use in the year select
+ * - `maxYear` The maximum year to use in the year select
+ * - `interval` The interval for the minutes select. Defaults to 1
+ * - `separator` The contents of the string between select elements. Defaults to '-'
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD.
@@ -1913,7 +1915,8 @@ class FormHelper extends AppHelper {
  * Sets field defaults and adds field to form security input hash
  *
  * Options
- *  - secure - boolean whether or not the the field should be added to the security fields.
+ *
+ *  - `secure` - boolean whether or not the the field should be added to the security fields.
  *
  * @param string $field
  * @param array $options
