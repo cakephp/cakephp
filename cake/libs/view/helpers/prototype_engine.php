@@ -37,7 +37,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  **/
 	var $_optionMap = array(
 		'request' => array(
-			'async' => 'asyncrhronous',
+			'async' => 'asynchronous',
 			'data' => 'parameters',
 			'before' => 'onCreate',
 			'success' => 'onSuccess',
