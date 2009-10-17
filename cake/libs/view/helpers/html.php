@@ -353,20 +353,24 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link element for CSS stylesheets.
  *
+ * #### Options 
+ *
+ * - `inline` If set to false, the generated tag appears in the head tag of the layout.
+ *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
  * @param array $htmlAttributes Array of HTML attributes.
- * @param boolean $inline If set to false, the generated tag appears in the head tag of the layout.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  * @access public
  */
-	function css($path, $rel = null, $htmlAttributes = array(), $inline = true) {
+	function css($path, $rel = null, $options = array()) {
+		$inline = isset($options['inline']) ? $options['inline'] : true;
 		if (is_array($path)) {
 			$out = '';
 			foreach ($path as $i) {
-				$out .= "\n\t" . $this->css($i, $rel, $htmlAttributes, $inline);
+				$out .= "\n\t" . $this->css($i, $rel, $options, $inline);
 			}
 			if ($inline)  {
 				return $out . "\n";
@@ -397,12 +401,12 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->_parseAttributes($htmlAttributes, null, '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, null, '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($htmlAttributes, null, '', ' '));
+			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, null, '', ' '));
 		}
 		$out = $this->output($out);
 
