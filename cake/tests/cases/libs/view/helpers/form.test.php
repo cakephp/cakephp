@@ -2687,6 +2687,23 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Model' => array('contact_id' => 228));
+		$result = $this->Form->select(
+			'Model.contact_id',
+			array('228' => '228 value', '228-1' => '228-1 value', '228-2' => '228-2 value'),
+			null, array('escape' => false), 'pick something'
+		);
+
+		$expected = array(
+			'select' => array('name' => 'data[Model][contact_id]', 'id' => 'ModelContactId'),
+			array('option' => array('value' => '')), 'pick something', '/option',
+			array('option' => array('value' => '228', 'selected' => 'selected')), '228 value', '/option',
+			array('option' => array('value' => '228-1')), '228-1 value', '/option',
+			array('option' => array('value' => '228-2')), '228-2 value', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 /**
  * Tests that FormHelper::select() allows null to be passed in the $attributes parameter

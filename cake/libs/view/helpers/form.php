@@ -1721,7 +1721,7 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($name !== null) {
-				if ((!$selectedIsEmpty && $selected == $name) || ($selectedIsArray && in_array($name, $selected))) {
+				if ((!$selectedIsEmpty && (string)$selected == (string)$name) || ($selectedIsArray && in_array($name, $selected))) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
 					} else {
