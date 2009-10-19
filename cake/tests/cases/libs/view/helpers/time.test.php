@@ -639,6 +639,8 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	function testUserOffset() {
+		$this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.');
+
 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer);
 		$yourTimezone = $timezoneServer->getOffset($timeServer) / HOUR;
