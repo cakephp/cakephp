@@ -1313,20 +1313,7 @@ class FormHelper extends AppHelper {
  */
 	function day($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $day;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+		$selected = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('d', strtotime($selected));
@@ -1399,20 +1386,7 @@ class FormHelper extends AppHelper {
  */
 	function month($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $month;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+		$selected = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('m', strtotime($selected));
@@ -1447,28 +1421,13 @@ class FormHelper extends AppHelper {
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $hour;
-			} else {
-				if (empty($value)) {
-					if (!$showEmpty) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		} else {
-			$value = $selected;
-		}
+		$selected = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			if ($format24Hours) {
-				$selected = date('H', strtotime($value));
+				$selected = date('H', strtotime($selected));
 			} else {
-				$selected = date('g', strtotime($value));
+				$selected = date('g', strtotime($selected));
 			}
 		} elseif ($selected === false) {
 			$selected = null;
@@ -1495,20 +1454,7 @@ class FormHelper extends AppHelper {
  */
 	function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $min;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+		$selected = $this->__dateTimeSelected('minute', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('i', strtotime($selected));
@@ -1525,6 +1471,32 @@ class FormHelper extends AppHelper {
 			$fieldName . ".min", $this->__generateOptions('minute', $minuteOptions),
 			$selected, $attributes
 		);
+	}
+
+/**
+ * Selects values for dateTime selects.
+ *
+ * @param string $select Name of element field. ex. 'day'
+ * @param string $fieldName Name of fieldName being generated ex. Model.created
+ * @param mixed $selected The current selected value.
+ * @param array $attributes Array of attributes, must contain 'empty' key.
+ * @return string Currently selected value.
+ */
+	function __dateTimeSelected($select, $fieldName, $selected, $attributes) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
+			if (is_array($value) && isset($value[$select])) {
+				$selected = $value[$select];
+			} else {
+				if (empty($value)) {
+					if (!$attributes['empty']) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
+			}
+		}
+		return $selected;
 	}
 
 /**
