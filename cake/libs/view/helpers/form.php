@@ -1107,28 +1107,27 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a button tag.
+ * Creates a <button> tag.
  *
- * @param string $title  The button's caption
- * @param array $options Array of options.
+ * Options:
+ *
+ * - `escape` - HTML entity encode the $title of the button. Defaults to false. 
+ *
+ * @param string $title  The button's caption. Not automatically HTML encoded
+ * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
  * @access public
  */
 	function button($title, $options = array()) {
-		$options = array_merge(array('type' => 'button', 'value' => $title), $options);
-
-		if (isset($options['name']) && strpos($options['name'], '.') !== false) {
-			if ($this->value($options['name'])) {
-				$options['checked'] = 'checked';
-			}
-			$name = $options['name'];
-			unset($options['name']);
-			$options = $this->_initInputField($name, $options);
+		$options += array('type' => 'submit', 'escape' => false);
+		if ($options['escape']) {
+			$title = h($title);
 		}
 		return $this->output(sprintf(
 			$this->Html->tags['button'],
 			$options['type'],
-			$this->_parseAttributes($options, array('type'), '', ' ')
+			$this->_parseAttributes($options, array('type'), '', ' '),
+			$title
 		));
 	}
 

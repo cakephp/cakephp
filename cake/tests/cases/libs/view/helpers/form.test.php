@@ -4491,19 +4491,13 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testButton() {
 		$result = $this->Form->button('Hi');
-		$this->assertTags($result, array('input' => array('type' => 'button', 'value' => 'Hi')));
+		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
 
-		$result = $this->Form->button('Clear Form', array('type' => 'clear'));
-		$this->assertTags($result, array('input' => array('type' => 'clear', 'value' => 'Clear Form')));
+		$result = $this->Form->button('Clear Form >', array('type' => 'reset'));
+		$this->assertTags($result, array('button' => array('type' => 'reset'), 'Clear Form >', '/button'));
 
-		$result = $this->Form->button('Reset Form', array('type' => 'reset'));
-		$this->assertTags($result, array('input' => array('type' => 'reset', 'value' => 'Reset Form')));
-
-		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options'));
-		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'PostOptions', 'value' => 'Options')));
-
-		$result = $this->Form->button('Options', array('type' => 'reset', 'name' => 'Post.options', 'id' => 'Opt'));
-		$this->assertTags($result, array('input' => array('type' => 'reset', 'name' => 'data[Post][options]', 'id' => 'Opt', 'value' => 'Options')));
+		$result = $this->Form->button('<Clear Form>', array('type' => 'reset', 'escape' => true));
+		$this->assertTags($result, array('button' => array('type' => 'reset'), '&lt;Clear Form&gt;', '/button'));
 
 		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
 		$this->assertNoPattern('/\&039/', $result);
