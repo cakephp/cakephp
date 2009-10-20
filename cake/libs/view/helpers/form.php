@@ -44,7 +44,7 @@ class FormHelper extends AppHelper {
  *
  * @access public
  */
-	var $fieldset = array('fields' => array(), 'key' => 'id', 'validates' => array());
+	var $fieldset = array();
 
 /**
  * Options used by DateTime fields
@@ -71,6 +71,56 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	var $requestType = null;
+	
+	var $defaultModel = null;
+	
+	function &_introspectModel($model) {
+		$object = null;
+		if (is_string($model) && strpos($model, '.') !== false) {
+			$path = explode('.', $model);
+			$model = end($path);
+		}
+
+		if (ClassRegistry::isKeySet($model)) {
+			$object =& ClassRegistry::getObject($model);
+		}
+
+		if (!empty($object)) {
+			$fields = $object->schema();
+			foreach ($fields as $key => $value) {
+				unset($fields[$key]);
+				$fields[$key] = $value;
+			}
+
+			if (!empty($object->hasAndBelongsToMany)) {
+				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
+					$fields[$alias] = array('type' => 'multiple');
+				}
+			}
+			$validates = array();
+			if (!empty($object->validate)) {
+				foreach ($object->validate as $validateField => $validateProperties) {
+					if (is_array($validateProperties)) {
+						$dims = Set::countDim($validateProperties);
+						if (($dims == 1 && !isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
+							$validates[] = $validateField;
+						} elseif ($dims > 1) {
+							foreach ($validateProperties as $rule => $validateProp) {
+								if (is_array($validateProp) && (array_key_exists('required', $validateProp) && $validateProp['required'] !== false)) {
+									$validates[] = $validateField;
+								}
+							}
+						}
+					}
+				}
+			}
+			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
+			$key = $object->primaryKey;
+			$this->fieldset[$object->name] = array_merge($defaults,compact('fields', 'key', 'validates'));
+		}
+		
+		return $object;
+	}
 
 /**
  * Persistent default options used by input(). Set by FormHelper::create().
@@ -100,28 +150,20 @@ class FormHelper extends AppHelper {
  * @return string An formatted opening FORM tag.
  */
 	function create($model = null, $options = array()) {
-		$defaultModel = null;
+		$created = $id = false;
+		$append = '';
 		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 			$model = null;
-		}
-
-		if (empty($model) && $model !== false && !empty($this->params['models'])) {
+		} elseif (empty($model) && $model !== false && !empty($this->params['models'])) {
 			$model = $this->params['models'][0];
-			$defaultModel = $this->params['models'][0];
+			$this->defaultModel = $this->params['models'][0];
 		} elseif (empty($model) && empty($this->params['models'])) {
 			$model = false;
-		} elseif (is_string($model) && strpos($model, '.') !== false) {
-			$path = explode('.', $model);
-			$model = $path[count($path) - 1];
 		}
-
-		if (ClassRegistry::isKeySet($model)) {
-			$object =& ClassRegistry::getObject($model);
-		}
-
+		
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
 			if (ClassRegistry::isKeySet($currentModel)) {
@@ -132,53 +174,21 @@ class FormHelper extends AppHelper {
 			}
 		}
 
+		$object =& $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
-		$append = '';
-		$created = $id = false;
-
-		if (isset($object)) {
-			$fields = $object->schema();
-			foreach ($fields as $key => $value) {
-				unset($fields[$key]);
-				$fields[$model . '.' . $key] = $value;
+		
+		if (isset($this->fieldset[$this->model()]['key'])) {
+			$data = $this->fieldset[$this->model()];
+			$recordExists = (
+				isset($this->data[$model]) &&
+				isset($this->data[$model][$data['key']]) &&
+				!empty($this->data[$model][$data['key']])
+			);
+		
+			if ($recordExists) {
+				$created = true;
+				$id = $this->data[$model][$data['key']];
 			}
-
-			if (!empty($object->hasAndBelongsToMany)) {
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-					$fields[$alias] = array('type' => 'multiple');
-				}
-			}
-			$validates = array();
-			if (!empty($object->validate)) {
-				foreach ($object->validate as $validateField => $validateProperties) {
-					if (is_array($validateProperties)) {
-						$dims = Set::countDim($validateProperties);
-						if (($dims == 1 && !isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
-							$validates[] = $validateField;
-						} elseif ($dims > 1) {
-							foreach ($validateProperties as $rule => $validateProp) {
-								if (is_array($validateProp) && (array_key_exists('required', $validateProp) && $validateProp['required'] !== false)) {
-									$validates[] = $validateField;
-								}
-							}
-						}
-					}
-				}
-			}
-			$key = $object->primaryKey;
-			$this->fieldset = compact('fields', 'key', 'validates');
-		}
-
-		$data = $this->fieldset;
-		$recordExists = (
-			isset($this->data[$model]) &&
-			isset($this->data[$model][$data['key']]) &&
-			!empty($this->data[$model][$data['key']])
-		);
-
-		if ($recordExists) {
-			$created = true;
-			$id = $this->data[$model][$data['key']];
 		}
 		$options = array_merge(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
@@ -192,7 +202,7 @@ class FormHelper extends AppHelper {
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
-				if (!empty($model) && $model != $defaultModel) {
+				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
 				} elseif (!empty($this->params['controller'])) {
 					$options['url']['controller'] = Inflector::underscore($this->params['controller']);
@@ -544,7 +554,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (empty($fields)) {
-			$fields = array_keys($this->fieldset['fields']);
+			$fields = array_keys($this->fieldset[$this->model()]['fields']);
 		}
 
 		if ($legend === true) {
@@ -616,36 +626,31 @@ class FormHelper extends AppHelper {
 	function input($fieldName, $options = array()) {
 		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
-		$entity = join('.', $view->entity());
 
 		$options = array_merge(
 			array('before' => null, 'between' => null, 'after' => null),
 			$this->_inputDefaults,
 			$options
 		);
+		$defaults = array('before' => null, 'between' => null, 'after' => null);
+		$options = array_merge($defaults, $options);
+		
+		if (!isset($this->fieldset[$this->model()])) {
+			//Try to load fieldset for this model
+			$this->_introspectModel($this->model());
+		}
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
-
+			$fieldDef = array();
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
-			} elseif (isset($this->fieldset['fields'][$entity])) {
-				$fieldDef = $this->fieldset['fields'][$entity];
+			} elseif (isset($this->fieldset[$this->model()]['fields'][$this->field()])) {
+				$fieldDef = $this->fieldset[$this->model()]['fields'][$this->field()];
 				$type = $fieldDef['type'];
-				$primaryKey = $this->fieldset['key'];
-			} elseif (ClassRegistry::isKeySet($this->model())) {
-				$model =& ClassRegistry::getObject($this->model());
-				$type = $model->getColumnType($this->field());
-				$fieldDef = $model->schema();
-
-				if (isset($fieldDef[$this->field()])) {
-					$fieldDef = $fieldDef[$this->field()];
-				} else {
-					$fieldDef = array();
-				}
-				$primaryKey = $model->primaryKey;
+				$primaryKey = $this->fieldset[$this->model()]['key'];
 			}
 
 			if (isset($type)) {
@@ -714,7 +719,11 @@ class FormHelper extends AppHelper {
 			} elseif (is_array($div)) {
 				$divOptions = array_merge($divOptions, $div);
 			}
-			if (in_array($this->field(), $this->fieldset['validates'])) {
+			/* FIX: To have a validation rule does not mean that it is required */
+			if (
+				isset($this->fieldset[$this->model()]) &&
+				in_array($this->field(), $this->fieldset[$this->model()]['validates'])
+				) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
