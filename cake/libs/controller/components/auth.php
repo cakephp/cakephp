@@ -421,10 +421,10 @@ class AuthComponent extends Object {
 			return false;
 		}
 		$defaults = array(
-			'loginAction' => Router::normalize(array(
-				'controller'=> Inflector::underscore(Inflector::pluralize($this->userModel)),
+			'loginAction' => array(
+				'controller' => Inflector::underscore(Inflector::pluralize($this->userModel)),
 				'action' => 'login'
-			)),
+			),
 			'sessionKey' => 'Auth.' . $this->userModel,
 			'logoutRedirect' => $this->loginAction,
 			'loginError' => __('Login failed. Invalid username or password.', true),
