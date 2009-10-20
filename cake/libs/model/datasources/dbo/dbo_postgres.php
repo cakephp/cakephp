@@ -123,6 +123,14 @@ class DboPostgres extends DboSource {
 		return $this->connected;
 	}
 /**
+ * Check if PostgreSQL is enabled/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('pgsql');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false

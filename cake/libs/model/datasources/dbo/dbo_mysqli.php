@@ -84,6 +84,14 @@ class DboMysqli extends DboMysqlBase {
 		return $this->connected;
 	}
 /**
+ * Check that MySQLi is installed/enabled
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('mysqli');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false

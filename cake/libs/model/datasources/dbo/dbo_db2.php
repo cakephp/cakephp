@@ -137,6 +137,14 @@ class DboDb2 extends DboSource {
 		return $this->connected;
 	}
 /**
+ * Check that the DB2 extension is installed/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('ibm_db2');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false

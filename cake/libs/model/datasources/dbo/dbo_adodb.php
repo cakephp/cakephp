@@ -102,7 +102,9 @@ class DboAdodb extends DboSource {
 			$adodb_driver = substr($config['connect'], 0, $persistent);
 			$connect = 'PConnect';
 		}
-
+		if (!$this->enabled()) {
+			return false;
+		}
 		$this->_adodb = NewADOConnection($adodb_driver);
 
 		$this->_adodbDataDict = NewDataDictionary($this->_adodb, $adodb_driver);
@@ -113,6 +115,14 @@ class DboAdodb extends DboSource {
 		$this->connected = $this->_adodb->$connect($config['host'], $config['login'], $config['password'], $config['database']);
 		$this->_adodbMetatyper = &$this->_adodb->execute('Select 1');
 		return $this->connected;
+	}
+/**
+ * Check that AdoDB is available.
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return function_exists('NewADOConnection');
 	}
 /**
  * Disconnects from database.

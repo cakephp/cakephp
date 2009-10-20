@@ -114,6 +114,14 @@ class DboSqlite extends DboSource {
 		return $this->connected;
 	}
 /**
+ * Check that SQLite is enabled/installed
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('sqlite');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
