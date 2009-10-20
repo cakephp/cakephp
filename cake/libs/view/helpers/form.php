@@ -1153,6 +1153,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
+		$options += array('type' => 'submit');
 		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
@@ -1166,12 +1167,14 @@ class FormHelper extends AppHelper {
 		}
 
 		if (strpos($caption, '://') !== false) {
+			unset($options['type']);
 			$out .= $this->output(sprintf(
 				$this->Html->tags['submitimage'],
 				$caption,
 				$this->_parseAttributes($options, null, '', ' ')
 			));
 		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
+			unset($options['type']);
 			if ($caption{0} !== '/') {
 				$url = $this->webroot(IMAGES_URL . $caption);
 			} else {

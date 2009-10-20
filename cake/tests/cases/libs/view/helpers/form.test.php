@@ -4560,6 +4560,29 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->submit('Next >', array('escape' => false));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Next >'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('Reset!', array('type' => 'reset'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'reset', 'value' => 'Reset!'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test image submit types.
+ *
+ * @return void
+ **/
+	function testSubmitImage() {
 		$result = $this->Form->submit('http://example.com/cake.power.gif');
 		$expected = array(
 			'div' => array('class' => 'submit'),
