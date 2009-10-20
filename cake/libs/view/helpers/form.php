@@ -1336,7 +1336,7 @@ class FormHelper extends AppHelper {
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
- * @return string
+ * @return string Completed year select input
  */
 	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1417,7 +1417,7 @@ class FormHelper extends AppHelper {
  * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
- * @return string
+ * @return string Completed hour select input
  */
 	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1450,7 +1450,7 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
- * @return string
+ * @return string Completed minute select input
  */
 	function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1511,7 +1511,7 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @param bool $showEmpty Show/Hide an empty option
- * @return string
+ * @return string Completed meridian select input
  */
 	function meridian($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
