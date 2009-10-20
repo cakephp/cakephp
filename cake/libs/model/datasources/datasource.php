@@ -365,6 +365,16 @@ class DataSource extends Object {
 		return false;
 	}
 /**
+ * Check whether the conditions for the Datasource being available
+ * are satisfied.  Often used from connect() to check for support
+ * before establishing a connection.
+ *
+ * @return boolean Whether or not the Datasources conditions for use are met.
+ **/
+	function enabled() {
+		return true;
+	}
+/**
  * Returns true if the DataSource supports the given interface (method)
  *
  * @param string $interface The name of the interface (method)

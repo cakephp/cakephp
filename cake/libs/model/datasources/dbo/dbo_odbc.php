@@ -106,6 +106,14 @@ class DboOdbc extends DboSource {
 		return $this->connected;
 	}
 /**
+ * Check if the ODBC extension is installed/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('odbc');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false

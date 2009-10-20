@@ -389,6 +389,14 @@ class DboMysql extends DboMysqlBase {
 		return $this->connected;
 	}
 /**
+ * Check whether the MySQL extension is installed/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('mysql');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
