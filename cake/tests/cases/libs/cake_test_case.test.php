@@ -78,6 +78,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$this->_debug = Configure::read('debug');
 		$this->Case =& new SubjectCakeTestCase();
 		$reporter =& new MockCakeHtmlReporter();
 		$this->Case->setReporter($reporter);
@@ -90,6 +91,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		Configure::write('debug', $this->_debug);
 		unset($this->Case);
 		unset($this->Reporter);
 	}
@@ -239,6 +241,8 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  **/
 	function testTestAction() {
+		Configure::write('debug', 2);
+
 		$_back = array(
 			'controller' => Configure::read('controllerPaths'),
 			'view' => Configure::read('viewPaths'),
