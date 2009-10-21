@@ -168,7 +168,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('Security.salt', $this->oldSalt);
-		$this->Controller->Session->del('_Token');
+		$this->Controller->Session->delete('_Token');
 		unset($this->Controller->Security);
 		unset($this->Controller->Component);
 		unset($this->Controller);
