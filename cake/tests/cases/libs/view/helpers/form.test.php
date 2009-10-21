@@ -1477,7 +1477,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'preg:/[^<]+/',
 			'/label',
-			'input' => array('type' => 'text', 'name', 'value' => '', 'id', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name', 'value' => '', 'id'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1602,7 +1602,7 @@ class FormHelperTest extends CakeTestCase {
 			'/option',
 			'/select',
 			'/div'
-		);
+		); debug($result,true);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('email', array(
@@ -5474,6 +5474,20 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+	}
+	
+	function testMultiRecordForm() {
+			$this->Form->create('ValidateProfile');
+			$this->Form->validationErrors['ValidateProfile'][2]['ValidateItem'][1]['name'] = 'Error in field name';
+			$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
+			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
+			
+			$this->Form->validationErrors['ValidateProfile'][2]['city'] = 'Error in field city';
+			$result = $this->Form->error('ValidateProfile.2.city');
+			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+			
+			$result = $this->Form->error('2.city');
+			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 }
 ?>

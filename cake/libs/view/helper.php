@@ -362,7 +362,7 @@ class Helper extends Overloadable {
 
 		if ($setScope) {
 			$view->modelScope = false;
-		} elseif (join('.', $view->entity()) == $entity) {
+		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
 			return;
 		}
 		
@@ -371,9 +371,11 @@ class Helper extends Overloadable {
 			$view->association = null;
 			$view->modelId = null;
 			$view->modelScope = false;
+			$view->entityPath = null;
 			return;
 		}
-
+		
+		$view->entityPath = $entity;
 		$model = $view->model;
 		$sameScope = $hasField = false;
 		$parts = array_values(Set::filter(explode('.', $entity), true));
@@ -538,14 +540,24 @@ class Helper extends Overloadable {
  * @return boolean True on errors.
  */
 	function tagIsInvalid($model = null, $field = null, $modelID = null) {
+		$view =& ClassRegistry::getObject('view');
 		foreach (array('model', 'field', 'modelID') as $key) {
 			if (empty(${$key})) {
 				${$key} = $this->{$key}();
 			}
 		}
-		$view =& ClassRegistry::getObject('view');
+		
 		$errors = $this->validationErrors;
-
+		
+		if (!empty($view->entityPath)) {
+			$check = $view->entityPath;
+			$path = explode('.',$check);
+			if (count($path) == 1 || is_numeric($path[0]))  {
+				$check = $model . '.' . $check;
+			}
+			return Set::extract($errors,$check);
+		}
+		
 		if ($view->model !== $model && isset($errors[$view->model][$model])) {
 			$errors = $errors[$view->model];
 		}
@@ -594,7 +606,6 @@ class Helper extends Overloadable {
  */
 	function __name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
-
 		if ($options === null) {
 			$options = array();
 		} elseif (is_string($options)) {
@@ -615,7 +626,18 @@ class Helper extends Overloadable {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . join('][', $view->entity()) . ']';
+				$entity = $view->entity();
+				if (!empty($view->entityPath)) {
+					$check = $view->entityPath;
+					$path = explode('.',$check);
+					$model = $this->model();
+					if ((count($path) == 1 && $model != $this->field()) || is_numeric($path[0])) {
+						debug($model); debug($this->field());
+						array_unshift($path,$model);
+					}
+					$entity = $path;
+				}
+				$name = 'data[' . join('][', $path) . ']';
 			break;
 		}
 
@@ -643,25 +665,35 @@ class Helper extends Overloadable {
 			$options = 0;
 		}
 
-		if (!empty($field)) {
-			$this->setEntity($field);
-		}
-
 		if (is_array($options) && isset($options[$key])) {
 			return $options;
 		}
-
+		
+		if (!empty($field)) {
+			$this->setEntity($field);
+		}
+		
+		$view =& ClassRegistry::getObject('view');
 		$result = null;
-
+		
 		$modelName = $this->model();
 		$fieldName = $this->field();
 		$modelID = $this->modelID();
+		
+		if (!empty($this->data) && !empty($view->entityPath)) {
+			$check = $view->entityPath;
+			$path = explode('.',$check);
+			if ((count($path) == 1 && $this->model() != $this->field()) || is_numeric($path[0])) {
+				$field =  $this->model() . '.' . $check;
+			}
+			$result = Set::extract($this->data,$check);
+		}
 
 		if (is_null($fieldName)) {
 			$fieldName = $modelName;
 			$modelName = null;
 		}
-
+		
 		if (isset($this->data[$fieldName]) && $modelName === null) {
 			$result = $this->data[$fieldName];
 		} elseif (isset($this->data[$modelName][$fieldName])) {
@@ -676,7 +708,6 @@ class Helper extends Overloadable {
 		}
 
 		if (is_array($result)) {
-			$view =& ClassRegistry::getObject('view');
 			if (array_key_exists($view->fieldSuffix, $result)) {
 				$result = $result[$view->fieldSuffix];
 			}

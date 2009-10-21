@@ -629,6 +629,22 @@ class HelperTest extends CakeTestCase {
 			$this->assertEqual($this->View->field,'created');
 			$this->assertEqual($this->View->modelId,1);
 			$this->assertEqual($this->View->fieldSuffix,'year');
+			
+			$this->Helper->data['HelperTestPost'][2]['HelperTestComment'][1]['title'] = 'My Title';
+			$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.title');
+			$this->assertEqual($result,'My Title');
+			
+			$this->Helper->data['HelperTestPost'][2]['HelperTestComment'][1]['created']['year'] = 2008;
+			$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
+			$this->assertEqual($result,2008);
+			
+			$this->Helper->data[2]['HelperTestComment'][1]['created']['year'] = 2008;
+			$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
+			$this->assertEqual($result,2008);
+			
+			$this->Helper->data['HelperTestPost']['title'] = 'My Title';
+			$result = $this->Helper->value('title');
+			$this->assertEqual($result,'My Title');
 		}
 		
 		
