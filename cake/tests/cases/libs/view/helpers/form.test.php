@@ -574,7 +574,7 @@ class ValidateItem extends CakeTestModel {
  */
 	var $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'profile_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'text', 'null' => '', 'default' => '', 'length' => '255'),
 		'description' => array(
 			'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'
