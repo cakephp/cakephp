@@ -365,7 +365,7 @@ class Helper extends Overloadable {
 		} elseif (join('.', $view->entity()) == $entity) {
 			return;
 		}
-
+		
 		if ($entity === null) {
 			$view->model = null;
 			$view->association = null;
@@ -381,18 +381,31 @@ class Helper extends Overloadable {
 		if (empty($parts)) {
 			return;
 		}
-
-		if (count($parts) === 1 || is_numeric($parts[0])) {
+		
+		$count = count($parts);
+		if ($count === 1) {
 			$sameScope = true;
 		} else {
-			if (ClassRegistry::isKeySet($parts[0])) {
-				$model = $parts[0];
+			if (is_numeric($parts[0])) {
+				$sameScope = true;
+			}
+			$reverse = array_reverse($parts);
+			$field = array_shift($reverse);
+			while(!empty($reverse)) {
+				$subject = array_shift($reverse);
+				if (is_numeric($subject)) {
+					continue;
+				}
+				if (ClassRegistry::isKeySet($subject)) {
+					$model = $subject;
+					break;
+				}
 			}
 		}
-
+		
 		if (ClassRegistry::isKeySet($model)) {
 			$ModelObj =& ClassRegistry::getObject($model);
-			for ($i = 0; $i < count($parts); $i++) {
+			for ($i = 0; $i < $count; $i++) {
 				if ($ModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $ModelObj->validate)) {
 					$hasField = $i;
 					if ($hasField === 0 || ($hasField === 1 && is_numeric($parts[0]))) {
@@ -450,6 +463,23 @@ class Helper extends Overloadable {
 				} else {
 					list($view->association, $view->modelId, $view->field, $view->fieldSuffix) = $parts;
 				}
+			break;
+			default:
+				$reverse = array_reverse($parts);
+				
+				if ($hasField) {
+						$view->field = $field;
+						if (!is_numeric($reverse[1]) && $reverse[1] != $model) {
+							$view->field = $reverse[1];
+							$view->fieldSuffix = $field;
+						}
+				}
+				if (is_numeric($parts[0])) {
+					$view->modelId = $parts[0];
+				} elseif ($view->model == $parts[0] && is_numeric($parts[1])) {
+					$view->modelId = $parts[1];
+				}
+				$view->association = $model;
 			break;
 		}
 
