@@ -364,7 +364,7 @@ class Configure extends Object {
  * @access private
  */
 	function __loadBootstrap($boot) {
-		$modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
+		$libPaths = $modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
 
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR));
@@ -418,7 +418,7 @@ class Configure extends Object {
 					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
 					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
 					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
-					'shells' => $shellPaths
+					'shells' => $shellPaths, 'libs' => $libPaths
 				));
 			}
 		}
@@ -448,6 +448,7 @@ class App extends Object {
 		'behavior' => array('suffix' => '.php', 'extends' => 'ModelBehavior', 'core' => true),
 		'controller' => array('suffix' => '_controller.php', 'extends' => 'AppController', 'core' => true),
 		'component' => array('suffix' => '.php', 'extends' => null, 'core' => true),
+		'lib' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'view' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'helper' => array('suffix' => '.php', 'extends' => 'AppHelper', 'core' => true),
 		'vendor' => array('suffix' => '', 'extends' => null, 'core' => true),
@@ -487,6 +488,13 @@ class App extends Object {
  */
 	var $components = array();
 
+/**
+ * List of additional path(s) where libs files reside.
+ *
+ * @var array
+ * @access public
+ */
+	var $libs = array();
 /**
  * List of additional path(s) where view files reside.
  *
@@ -626,6 +634,7 @@ class App extends Object {
 			'datasources' => array(MODELS . 'datasources'),
 			'controllers' => array(CONTROLLERS),
 			'components' => array(COMPONENTS),
+			'libs' => array(APPLIBS),
 			'views' => array(VIEWS),
 			'helpers' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
@@ -879,7 +888,6 @@ class App extends Object {
 			$file = Inflector::underscore($name) . ".{$ext}";
 		}
 		$ext = $_this->__settings($type, $plugin, $parent);
-
 		if ($name != null && !class_exists($name . $ext['class'])) {
 			if ($load = $_this->__mapped($name . $ext['class'], $type, $plugin)) {
 				if ($_this->__load($load)) {
@@ -1137,6 +1145,12 @@ class App extends Object {
 					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
+			case 'lib':
+				if ($plugin) {
+					$path = $pluginPath . DS . 'libs' . DS;
+				}
+				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
 				if ($plugin) {

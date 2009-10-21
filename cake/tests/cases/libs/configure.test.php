@@ -502,6 +502,10 @@ class AppImportTest extends UnitTestCase {
 		$this->assertTrue(class_exists('TestPluginAppController'));
 		$this->assertTrue(class_exists('TestsController'));
 
+		$result = App::import('Lib', 'TestPlugin.TestPluginLibrary');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestPluginLibrary'));
+		
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
