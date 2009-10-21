@@ -574,7 +574,7 @@ class ValidateItem extends CakeTestModel {
  */
 	var $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'profile_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
+		'' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'text', 'null' => '', 'default' => '', 'length' => '255'),
 		'description' => array(
 			'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'
@@ -709,6 +709,8 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
+	
+
 
 /**
  * testFormCreateWithSecurity method
@@ -1602,7 +1604,7 @@ class FormHelperTest extends CakeTestCase {
 			'/option',
 			'/select',
 			'/div'
-		); debug($result,true);
+		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('email', array(
@@ -5477,17 +5479,95 @@ class FormHelperTest extends CakeTestCase {
 	}
 	
 	function testMultiRecordForm() {
-			$this->Form->create('ValidateProfile');
-			$this->Form->validationErrors['ValidateProfile'][2]['ValidateItem'][1]['name'] = 'Error in field name';
-			$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
-			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-			
-			$this->Form->validationErrors['ValidateProfile'][2]['city'] = 'Error in field city';
-			$result = $this->Form->error('ValidateProfile.2.city');
-			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-			
-			$result = $this->Form->error('2.city');
-			$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+		$this->Form->create('ValidateProfile');
+		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['name'] = 'Value';
+		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.name');
+		$expected = array(
+			'div' => array('class' => 'input textarea'),
+				'label' => array('for' => 'ValidateProfile1ValidateItem2Name'),
+					'Name',
+				'/label',
+				'textarea' => array(
+					'id' => 'ValidateProfile1ValidateItem2Name',
+					'name' => 'data[ValidateProfile][1][ValidateItem][2][name]',
+					'cols' => 30,
+					'rows' => 6
+				),
+				'Value',
+				'/textarea',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created',array('empty' => true));
+		$expected = array(
+			'div' => array('class' => 'input date'),
+			'label' => array('for' => 'ValidateProfile1ValidateItem2CreatedMonth'),
+			'Created',
+			'/label',
+			array('select' => array(
+				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][month]',
+				'id' => 'ValidateProfile1ValidateItem2CreatedMonth'
+				)
+			),
+			array('option' => array('value' => '')), '', '/option',
+			$this->dateRegex['monthsRegex'],
+			'/select', '-',
+			array('select' => array(
+				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][day]',
+				'id' => 'ValidateProfile1ValidateItem2CreatedDay'
+				)
+			),
+			array('option' => array('value' => '')), '', '/option',
+			$this->dateRegex['daysRegex'],
+			'/select', '-',
+			array('select' => array(
+				'name' => 'data[ValidateProfile][1][ValidateItem][2][created][year]',
+				'id' => 'ValidateProfile1ValidateItem2CreatedYear'
+				)
+			),
+			array('option' => array('value' => '')), '', '/option',
+			$this->dateRegex['yearsRegex'],
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$this->Form->validationErrors['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = 'Error';
+		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
+		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
+		$expected = array(
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'ValidateProfile1ValidateItem2ProfileId'),
+			'Profile',
+			'/label',
+			'input' => array(
+				'name' => 'data[ValidateProfile][1][ValidateItem][2][profile_id]', 'type' => 'text',
+				'value' => '1',
+				'id' => 'ValidateProfile1ValidateItem2ProfileId',
+				'maxlength' => 8,
+				'class' => 'form-error'
+			),
+			array('div' => array('class' => 'error-message')),
+			'Error',
+			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected,true);
+	}
+	
+	function testMultiRecordFormValidationErrors() {
+		$this->Form->create('ValidateProfile');
+		$this->Form->validationErrors['ValidateProfile'][2]['ValidateItem'][1]['name'] = 'Error in field name';
+		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
+		
+		$this->Form->validationErrors['ValidateProfile'][2]['city'] = 'Error in field city';
+		$result = $this->Form->error('ValidateProfile.2.city');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+		
+		$result = $this->Form->error('2.city');
+		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 }
 ?>

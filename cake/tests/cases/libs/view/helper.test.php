@@ -645,6 +645,10 @@ class HelperTest extends CakeTestCase {
 			$this->Helper->data['HelperTestPost']['title'] = 'My Title';
 			$result = $this->Helper->value('title');
 			$this->assertEqual($result,'My Title');
+			
+			$this->Helper->data['My']['title'] = 'My Title';
+			$result = $this->Helper->value('My.title');
+			$this->assertEqual($result,'My Title');
 		}
 		
 		
