@@ -224,7 +224,7 @@ class EmailComponentTest extends CakeTestCase {
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
 		App::build();
-		$this->Controller->Session->del('Message');
+		$this->Controller->Session->delete('Message');
 		restore_error_handler();
 		ClassRegistry::flush();
 	}
