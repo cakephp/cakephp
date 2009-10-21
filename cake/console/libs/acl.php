@@ -225,7 +225,7 @@ class AclShell extends Shell {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
-		$id = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		$id = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
 		$nodes = $this->Acl->{$class}->getPath($id);
 		if (empty($nodes)) {
 			$this->error(sprintf(__("Supplied Node '%s' not found", true), $this->args[1]), __("No tree returned.", true));
@@ -304,7 +304,7 @@ class AclShell extends Shell {
 		$this->checkNodeType();
 		extract($this->__dataVars());
 		if (isset($this->args[1]) && !is_null($this->args[1])) {
-			$key = ife(is_numeric($this->args[1]), $secondary_id, 'alias');
+			$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
 			$conditions = array($class . '.' . $key => $this->args[1]);
 		} else {
 			$conditions = null;
@@ -425,8 +425,8 @@ class AclShell extends Shell {
 			foreach ($commands as $cmd) {
 				$this->out("{$cmd}\n\n");
 			}
-		} elseif (isset($commands[low($this->args[0])])) {
-			$this->out($commands[low($this->args[0])] . "\n\n");
+		} elseif (isset($commands[strtolower($this->args[0])])) {
+			$this->out($commands[strtolower($this->args[0])] . "\n\n");
 		} else {
 			$this->out(sprintf(__("Command '%s' not found", true), $this->args[0]));
 		}
@@ -457,7 +457,7 @@ class AclShell extends Shell {
 			return false;
 		}
 		extract($this->__dataVars($this->args[0]));
-		$key = (ife(is_numeric($this->args[1]), $secondary_id, 'alias'));
+		$key = is_numeric($this->args[1]) ? $secondary_id : 'alias';
 		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
 		if (empty($possibility)) {
@@ -472,8 +472,8 @@ class AclShell extends Shell {
  * @access private
  */
 	function __getParams() {
-		$aro = ife(is_numeric($this->args[0]), intval($this->args[0]), $this->args[0]);
-		$aco = ife(is_numeric($this->args[1]), intval($this->args[1]), $this->args[1]);
+		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
+		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
 
 		if (is_string($aro) && preg_match('/^([\w]+)\.(.*)$/', $aro, $matches)) {
 			$aro = array(
@@ -512,7 +512,7 @@ class AclShell extends Shell {
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = ife(strtolower($class) == 'aro', 'foreign_key', 'object_id');
+		$vars['secondary_id'] = strtolower($class) == 'aro' ? 'foreign_key' : 'object_id';
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;
