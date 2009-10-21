@@ -494,6 +494,7 @@ class AppImportTest extends UnitTestCase {
 		}
 
 		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
@@ -505,7 +506,11 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Lib', 'TestPlugin.TestPluginLibrary');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestPluginLibrary'));
-		
+
+		$result = App::import('Lib', 'Library');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('Library'));
+
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
