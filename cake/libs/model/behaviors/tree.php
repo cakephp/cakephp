@@ -460,7 +460,7 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => array($Model->primaryKey, $left, $right), 'recursive' => $recursive)
 		);
 		if ($nextNode) {
-			list($nextNode)= array_values($nextNode);
+			list($nextNode) = array_values($nextNode);
 		} else {
 			return false;
 		}
@@ -640,6 +640,8 @@ class TreeBehavior extends ModelBehavior {
 		$sort = $field . ' ' . $order;
 		$nodes = $this->children($Model, $id, true, $fields, $sort, null, null, $recursive);
 
+		$cacheQueries = $Model->cacheQueries;
+		$Model->cacheQueries = false;
 		if ($nodes) {
 			foreach ($nodes as $node) {
 				$id = $node[$Model->alias][$Model->primaryKey];
@@ -649,6 +651,7 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 		}
+		$Model->cacheQueries = $cacheQueries;
 		return true;
 	}
 /**
