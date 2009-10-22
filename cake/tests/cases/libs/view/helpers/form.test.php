@@ -5477,7 +5477,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	
+
 	function testMultiRecordForm() {
 		$this->Form->create('ValidateProfile');
 		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['name'] = 'Value';
@@ -5510,7 +5510,7 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ValidateProfile1ValidateItem2CreatedMonth'
 				)
 			),
-			array('option' => array('value' => '')), '', '/option',
+			array('option' => array('value' => '')), '/option',
 			$this->dateRegex['monthsRegex'],
 			'/select', '-',
 			array('select' => array(
@@ -5518,7 +5518,7 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ValidateProfile1ValidateItem2CreatedDay'
 				)
 			),
-			array('option' => array('value' => '')), '', '/option',
+			array('option' => array('value' => '')), '/option',
 			$this->dateRegex['daysRegex'],
 			'/select', '-',
 			array('select' => array(
@@ -5526,7 +5526,7 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ValidateProfile1ValidateItem2CreatedYear'
 				)
 			),
-			array('option' => array('value' => '')), '', '/option',
+			array('option' => array('value' => '')), '/option',
 			$this->dateRegex['yearsRegex'],
 			'/select',
 			'/div'

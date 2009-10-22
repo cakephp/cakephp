@@ -71,9 +71,9 @@ class FormHelper extends AppHelper {
  * @access public
  */
 	var $requestType = null;
-	
+
 	var $defaultModel = null;
-	
+
 	function &_introspectModel($model) {
 		$object = null;
 		if (is_string($model) && strpos($model, '.') !== false) {
@@ -118,7 +118,7 @@ class FormHelper extends AppHelper {
 			$key = $object->primaryKey;
 			$this->fieldset[$object->name] = array_merge($defaults,compact('fields', 'key', 'validates'));
 		}
-		
+
 		return $object;
 	}
 
@@ -140,7 +140,7 @@ class FormHelper extends AppHelper {
  * - 'url'  The url the form submits to. Can be a string or a url array,
  * - 'default'  Allows for the creation of Ajax forms.
  * - 'onsubmit' Used in conjunction with 'default' to create ajax forms.
- * - 'inputDefaults' set the default $options for FormHelper::input(). Any options that would 
+ * - 'inputDefaults' set the default $options for FormHelper::input(). Any options that would
  *    be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
  *    can be overridden when calling input()
  *
@@ -163,7 +163,7 @@ class FormHelper extends AppHelper {
 		} elseif (empty($model) && empty($this->params['models'])) {
 			$model = false;
 		}
-		
+
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
 			if (ClassRegistry::isKeySet($currentModel)) {
@@ -176,7 +176,7 @@ class FormHelper extends AppHelper {
 
 		$object =& $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
-		
+
 		if (isset($this->fieldset[$this->model()]['key'])) {
 			$data = $this->fieldset[$this->model()];
 			$recordExists = (
@@ -184,7 +184,7 @@ class FormHelper extends AppHelper {
 				isset($this->data[$model][$data['key']]) &&
 				!empty($this->data[$model][$data['key']])
 			);
-		
+
 			if ($recordExists) {
 				$created = true;
 				$id = $this->data[$model][$data['key']];
@@ -517,10 +517,10 @@ class FormHelper extends AppHelper {
  * will be used.
  *
  * In addition to controller fields output, `$fields` can be used to control legend
- * and fieldset rendering with the `fieldset` and `legend` keys. 
- * `$form->inputs(array('legend' => 'My legend'));` Would generate an input set with 
+ * and fieldset rendering with the `fieldset` and `legend` keys.
+ * `$form->inputs(array('legend' => 'My legend'));` Would generate an input set with
  * a custom legend.  You can customize individual inputs through `$fields` as well.
- * 
+ *
  * {{{
  *	$form->inputs(array(
  *		'name' => array('label' => 'custom label')
@@ -634,7 +634,7 @@ class FormHelper extends AppHelper {
 		);
 		$defaults = array('before' => null, 'between' => null, 'after' => null);
 		$options = array_merge($defaults, $options);
-		
+
 		if (!isset($this->fieldset[$this->model()])) {
 			//Try to load fieldset for this model
 			$this->_introspectModel($this->model());
@@ -1119,7 +1119,7 @@ class FormHelper extends AppHelper {
  *
  * Options:
  *
- * - `escape` - HTML entity encode the $title of the button. Defaults to false. 
+ * - `escape` - HTML entity encode the $title of the button. Defaults to false.
  *
  * @param string $title  The button's caption. Not automatically HTML encoded
  * @param array $options Array of options and HTML attributes.
