@@ -719,7 +719,6 @@ class FormHelper extends AppHelper {
 			} elseif (is_array($div)) {
 				$divOptions = array_merge($divOptions, $div);
 			}
-			/* FIX: To have a validation rule does not mean that it is required */
 			if (
 				isset($this->fieldset[$this->model()]) &&
 				in_array($this->field(), $this->fieldset[$this->model()]['validates'])
