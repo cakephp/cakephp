@@ -81,6 +81,14 @@ class CacheTestController extends Controller {
 class CacheHelperTest extends CakeTestCase {
 
 /**
+ * Checks if TMP/views is writable, and skips the case if it is not.
+ *
+ * @return void
+ **/
+	function skip() {
+		$this->skipUnless(is_writable(TMP . 'cache' . DS . 'views' . DS), 'TMP/views is not writable %s');
+	}
+/**
  * setUp method
  *
  * @access public
