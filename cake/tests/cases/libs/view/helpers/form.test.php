@@ -709,7 +709,7 @@ class FormHelperTest extends CakeTestCase {
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
-	
+
 
 
 /**
@@ -5478,6 +5478,11 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test the generation of fields for a multi record form.
+ *
+ * @return void
+ */
 	function testMultiRecordForm() {
 		$this->Form->create('ValidateProfile');
 		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['name'] = 'Value';
@@ -5498,7 +5503,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created',array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input date'),
@@ -5532,7 +5537,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$this->Form->validationErrors['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = 'Error';
 		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
@@ -5555,17 +5560,22 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected,true);
 	}
-	
+
+/**
+ * test the correct display of multi-record form validation errors.
+ *
+ * @return void
+ */
 	function testMultiRecordFormValidationErrors() {
 		$this->Form->create('ValidateProfile');
 		$this->Form->validationErrors['ValidateProfile'][2]['ValidateItem'][1]['name'] = 'Error in field name';
 		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-		
+
 		$this->Form->validationErrors['ValidateProfile'][2]['city'] = 'Error in field city';
 		$result = $this->Form->error('ValidateProfile.2.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-		
+
 		$result = $this->Form->error('2.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
