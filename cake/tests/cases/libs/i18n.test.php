@@ -2557,7 +2557,7 @@ class I18nTest extends CakeTestCase {
  * @access private
  * @return void
  */
-	function __domainCategorySingular($domain = 'test_plugin', $category = LC_MONETARY) {
+	function __domainCategorySingular($domain = 'test_plugin', $category = 3) {
 		$singular = __dc($domain, 'Plural Rule 1', $category, true);
 		return $singular;
 	}
@@ -2567,7 +2567,7 @@ class I18nTest extends CakeTestCase {
  * @access private
  * @return void
  */
-	function __domainCategoryPlural($domain = 'test_plugin', $category = LC_MONETARY) {
+	function __domainCategoryPlural($domain = 'test_plugin', $category = 3) {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
 			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category, true), (float)$number);
@@ -2603,7 +2603,7 @@ class I18nTest extends CakeTestCase {
  * @access private
  * @return void
  */
-	function __category($category = LC_MONETARY) {
+	function __category($category = 3) {
 		$singular = __c('Plural Rule 1', $category, true);
 		return $singular;
 	}
