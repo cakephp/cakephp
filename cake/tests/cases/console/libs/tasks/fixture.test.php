@@ -186,6 +186,27 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test using all() with -count and -records
+ *
+ * @return void
+ **/
+	function testAllWithCountAndRecordsFlags() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->params = array('count' => 10, 'records' => true);
+		$this->Task->Model->setReturnValue('listAll', array('articles', 'comments'));
+
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+
+		$filename = '/my/path/comment_fixture.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class CommentFixture/')));
+		$this->Task->expectCallCount('createFile', 2);
+		$this->Task->all();
+	}
+
+/**
  * test interactive mode of execute
  *
  * @return void
