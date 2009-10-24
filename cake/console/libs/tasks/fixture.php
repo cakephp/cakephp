@@ -256,7 +256,8 @@ class FixtureTask extends Shell {
  * @return string fields definitions
  **/
 	function _generateSchema($tableInfo) {
-		return $this->_Schema->generateTable('table', $tableInfo);
+		$schema = $this->_Schema->generateTable('f', $tableInfo);
+		return substr($schema, 10, -2);
 	}
 
 /**

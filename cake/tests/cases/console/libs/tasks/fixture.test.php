@@ -243,6 +243,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
 		$this->assertPattern('/var \$name \= \'Article\';/', $result);
 		$this->assertPattern('/var \$table \= \'comments\';/', $result);
+		$this->assertPattern('/var \$fields = array\(/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
 		$this->assertPattern("/var \\\$import \= array\('records' \=\> true\);/", $result);
