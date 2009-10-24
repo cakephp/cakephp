@@ -154,6 +154,7 @@ class MysqliTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqliTest extends CakeTestCase {
+	var $fixtures = array('core.datatype');
 /**
  * The Dbo instance to be tested
  *
@@ -176,8 +177,6 @@ class DboMysqliTest extends CakeTestCase {
  * @access public
  */
 	function setUp() {
-		$db = ConnectionManager::getDataSource('test_suite');
-		$this->db = new DboMysqliTestDb($db->config);
 		$this->model = new MysqliTestModel();
 	}
 /**
@@ -186,7 +185,8 @@ class DboMysqliTest extends CakeTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->db);
+		unset($this->model);
+		ClassRegistry::flush();
 	}
 /**
  * testIndexDetection method
@@ -195,7 +195,7 @@ class DboMysqliTest extends CakeTestCase {
  * @access public
  */
 	function testIndexDetection() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 
 		$name = $this->db->fullTableName('simple');
 		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
@@ -298,12 +298,14 @@ class DboMysqliTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
- * undocumented function
+ * test mysqli transactions
  *
  * @return void
  * @access public
  */
 	function testTransactions() {
+		$this->db->cacheSources = false;
+
 		$this->db->begin($this->model);
 		$this->assertTrue($this->db->_transactionStarted);
 
@@ -312,6 +314,16 @@ class DboMysqliTest extends CakeTestCase {
 
 		$this->db->commit($this->model);
 		$this->assertFalse($this->db->_transactionStarted);
+	}
+/**
+ * test that float values are correctly identified
+ *
+ * @return void
+ **/
+	function testFloatParsing() {
+		$model =& new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
+		$result = $this->db->describe($model);
+		$this->assertEqual((string)$result['float_field']['length'], '5,2');
 	}
 }
 ?>

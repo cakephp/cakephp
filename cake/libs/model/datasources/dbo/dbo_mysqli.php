@@ -299,25 +299,6 @@ class DboMysqli extends DboMysqlBase {
 		return 'text';
 	}
 /**
- * Gets the length of a database-native column description, or null if no length
- *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return integer An integer representing the length of the column
- */
-	function length($real) {
-		$col = str_replace(array(')', 'unsigned'), '', $real);
-		$limit = null;
-	
-		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
-		}
-	
-		if ($limit != null) {
-			return intval($limit);
-		}
-		return null;
-	}
-/**
  * Enter description here...
  *
  * @param unknown_type $results
