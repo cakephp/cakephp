@@ -99,6 +99,7 @@ class ModelTask extends Shell {
 		if (count($connections) > 1) {
 			$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
 		}
+		$this->useDbConfig = $useDbConfig;
 
 		$currentModelName = $this->getName($useDbConfig);
 		$db =& ConnectionManager::getDataSource($useDbConfig);
@@ -843,7 +844,7 @@ class ModelTask extends Shell {
 			$out .= "\tvar \$table = '$useTable';\n";
 		}
 		$schema = new CakeSchema();
-		$data = $schema->read(array('models' => false));
+		$data = $schema->read(array('models' => false, 'connection' => $this->useDbConfig));
 
 		if (!isset($data['tables'][$useTable])) {
 			return false;
@@ -865,6 +866,7 @@ class ModelTask extends Shell {
 							$col = "\t\t'{$field}' => array('type'=>'" . $value['type'] . "', ";
 
 							switch ($value['type']) {
+								case 'float':
 								case 'integer':
 									$insert = 1;
 								break;
@@ -898,7 +900,7 @@ class ModelTask extends Shell {
 									$insert .= "feugiat in taciti enim proin nibh, tempor dignissim, rhoncus duis vestibulum nunc mattis convallis.'";
 								break;
 							}
-							$records[] = "\t\t'$field'  => $insert";
+							$records[] = "\t\t'$field' => $insert";
 							unset($value['type']);
 							$col .= join(', ',  $schema->__values($value));
 						} else {
