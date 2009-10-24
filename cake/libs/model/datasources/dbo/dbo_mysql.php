@@ -86,6 +86,40 @@ class DboMysqlBase extends DboSource {
 		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
 /**
+ * Returns an array of the fields in given table name.
+ *
+ * @param string $tableName Name of database table to inspect
+ * @return array Fields in table. Keys are name and type
+ */
+	function describe(&$model) {
+		$cache = parent::describe($model);
+		if ($cache != null) {
+			return $cache;
+		}
+		$fields = false;
+		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
+
+		foreach ($cols as $column) {
+			$colKey = array_keys($column);
+			if (isset($column[$colKey[0]]) && !isset($column[0])) {
+				$column[0] = $column[$colKey[0]];
+			}
+			if (isset($column[0])) {
+				$fields[$column[0]['Field']] = array(
+					'type' => $this->column($column[0]['Type']),
+					'null' => ($column[0]['Null'] == 'YES' ? true : false),
+					'default' => $column[0]['Default'],
+					'length' => $this->length($column[0]['Type']),
+				);
+				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
+					$fields[$column[0]['Field']]['key'] = $this->index[$column[0]['Key']];
+				}
+			}
+		}
+		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		return $fields;
+	}
+/**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
  * @param Model $model
@@ -441,40 +475,6 @@ class DboMysql extends DboMysqlBase {
 			parent::listSources($tables);
 			return $tables;
 		}
-	}
-/**
- * Returns an array of the fields in given table name.
- *
- * @param string $tableName Name of database table to inspect
- * @return array Fields in table. Keys are name and type
- */
-	function describe(&$model) {
-		$cache = parent::describe($model);
-		if ($cache != null) {
-			return $cache;
-		}
-		$fields = false;
-		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
-
-		foreach ($cols as $column) {
-			$colKey = array_keys($column);
-			if (isset($column[$colKey[0]]) && !isset($column[0])) {
-				$column[0] = $column[$colKey[0]];
-			}
-			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array(
-					'type'		=> $this->column($column[0]['Type']),
-					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
-					'default'	=> $column[0]['Default'],
-					'length'	=> $this->length($column[0]['Type']),
-				);
-				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
-					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
-				}
-			}
-		}
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
-		return $fields;
 	}
 /**
  * Returns a quoted and escaped string of $data for use in an SQL statement.
