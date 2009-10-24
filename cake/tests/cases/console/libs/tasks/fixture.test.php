@@ -198,10 +198,10 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->Model->setReturnValue('listAll', array('articles', 'comments'));
 
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/title\' => \'Third Article\'/')));
 
 		$filename = '/my/path/comment_fixture.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class CommentFixture/')));
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/comment\' => \'First Comment for First Article/')));
 		$this->Task->expectCallCount('createFile', 2);
 		$this->Task->all();
 	}

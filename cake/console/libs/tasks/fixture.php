@@ -90,6 +90,7 @@ class FixtureTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			$this->interactive = false;
 			if (!isset($this->connection)) {
 				$this->connection = 'default';
 			}
@@ -109,6 +110,7 @@ class FixtureTask extends Shell {
  **/
 	function all() {
 		$this->interactive = false;
+		$this->Model->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
@@ -215,7 +217,7 @@ class FixtureTask extends Shell {
 			}
 			$records = $this->_makeRecordString($this->_generateRecords($tableInfo, $recordCount));
 		}
-		if (isset($importOptions['fromTable'])) {
+		if (isset($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
@@ -359,10 +361,14 @@ class FixtureTask extends Shell {
  * @return array Array of records.
  **/
 	function _getRecordsFromTable($modelName, $useTable = null) {
-		$condition = null;
-		$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
-		while (!$condition) {
-			$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
+		if ($this->interactive) {
+			$condition = null;
+			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
+			while (!$condition) {
+				$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
+			}
+		} else {
+			$condition = 'WHERE 1=1 ' . isset($this->params['count']) ? $this->params['count'] : 10;
 		}
 		App::import('Model', 'Model', false);
 		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
