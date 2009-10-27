@@ -286,6 +286,7 @@ class DboPostgres extends DboSource {
 			case 'date':
 			case 'datetime':
 			case 'timestamp':
+			case 'time':
 				if ($data === '') {
 					return $read ? 'NULL' : 'DEFAULT';
 				}
