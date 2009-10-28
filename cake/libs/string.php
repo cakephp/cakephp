@@ -34,8 +34,10 @@ class String {
  * @return object String instance
  * @access public
  * @static
+ * @deprecated
  */
 	function &getInstance() {
+		trigger_error('String::getInstance() is deprecated.  All String methods are called statically.', E_USER_WARNING);
 		static $instance = array();
 
 		if (!$instance) {
