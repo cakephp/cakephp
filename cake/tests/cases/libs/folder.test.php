@@ -216,6 +216,18 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($result);
 	}
 /**
+ * test Adding path elements to a path
+ *
+ * @return void
+ **/
+	function testAddPathElement() {
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
+		$this->assertEqual($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
+
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
+		$this->assertEqual($result, DS . 'some' . DS . 'dir' . DS . 'another_path');
+	}
+/**
  * testFolderRead method
  *
  * @access public
