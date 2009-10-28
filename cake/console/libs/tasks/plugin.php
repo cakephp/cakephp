@@ -145,6 +145,7 @@ class PluginTask extends Shell {
 				'models' . DS . 'behaviors',
 				'models' . DS . 'datasources',
 				'controllers' . DS . 'components',
+				'libs',
 				'views' . DS . 'helpers',
 				'tests' . DS . 'cases' . DS . 'components',
 				'tests' . DS . 'cases' . DS . 'helpers',

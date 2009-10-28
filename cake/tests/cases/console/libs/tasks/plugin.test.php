@@ -183,6 +183,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells'), 'No vendors shells dir %s');
 		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks'), 'No vendors shells tasks dir %s');
 		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file %s');
+		$this->assertTrue(is_dir($path . DS . 'libs'), 'No libs dir %s');
 
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
