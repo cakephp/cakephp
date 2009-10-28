@@ -302,7 +302,7 @@ class Folder extends Object {
  * @static
  */
 	function addPathElement($path, $element) {
-		return Folder::slashTerm($path) . $element;
+		return rtrim($path, DS) . DS . $element;
 	}
 /**
  * Returns true if the File is in a given CakePath.
