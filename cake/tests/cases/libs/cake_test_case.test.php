@@ -164,6 +164,57 @@ class CakeTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * testNumericValuesInExpectationForAssertTags
+ *
+ * @access public
+ * @return void
+ */
+ 
+	function testNumericValuesInExpectationForAssertTags() {
+		$value = 220985;
+
+		$input = '<p><strong>' . $value . '</strong></p>';
+		$pattern = array(
+			'p' => array(),
+				'strong' => array(),
+					$value,
+				'/strong',
+			'/p'
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern));
+		
+		$input = '<p><strong>' . $value . '</strong></p><p><strong>' . $value . '</strong></p>';
+		$pattern = array(
+			array('p' => array()),
+				array('strong' => array()),
+					$value,
+				'/strong',
+			'/p',
+			array('p' => array()),
+				array('strong' => array()),
+					$value,
+				'/strong',
+			'/p',
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern));
+		
+		$input = '<p><strong>' . $value . '</strong></p><p id="' . $value . '"><strong>' . $value . '</strong></p>';
+		$pattern = array(
+			array('p' => array()),
+				array('strong' => array()),
+					$value,
+				'/strong',
+			'/p',
+			array('p' => array('id' => $value)),
+				array('strong' => array()),
+					$value,
+				'/strong',
+			'/p',
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern));
+	}
+ 
+ /**
  * testBadAssertTags
  *
  * @access public
