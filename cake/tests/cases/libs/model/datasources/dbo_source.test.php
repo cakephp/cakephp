@@ -3591,16 +3591,16 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->testDb->buildColumn($data);
 
-		$this->testDb->columns = array('varchar(255)' => 1);
 		$data = array(
 			'name' => 'testName',
-			'type' => 'varchar(255)',
+			'type' => 'string',
+			'length' => 255,
 			'default',
 			'null' => true,
 			'key'
 		);
 		$result = $this->testDb->buildColumn($data);
-		$expected = '`testName`  DEFAULT NULL';
+		$expected = '`testName` varchar(255) DEFAULT NULL';
 		$this->assertEqual($result, $expected);
 
 		$data = array(
@@ -3653,11 +3653,11 @@ class DboSourceTest extends CakeTestCase {
 	function testHasAny() {
 		$this->testDb->hasAny($this->Model, array());
 		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
-		$this->assertEqual($this->testDb->simulated[1], $expected);
+		$this->assertEqual(end($this->testDb->simulated), $expected);
 
 		$this->testDb->hasAny($this->Model, array('TestModel.name' => 'harry'));
 		$expected = "SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = 'harry'";
-		$this->assertEqual($this->testDb->simulated[2], $expected);
+		$this->assertEqual(end($this->testDb->simulated), $expected);
 	}
 
 /**
