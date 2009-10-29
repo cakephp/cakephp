@@ -110,56 +110,55 @@ class TextHelper extends AppHelper {
  * strings like http:// and ftp://.
  *
  * @param string $text Text to add links to
- * @param array $htmlOptions Array of HTML options.
+ * @param array $options Array of HTML options.
  * @return string The text with links
  * @access public
  */
-	function autoLinkUrls($text, $htmlOptions = array()) {
-		$options = 'array(';
-		foreach ($htmlOptions as $option => $value) {
+	function autoLinkUrls($text, $options = array()) {
+		$linkOptions = 'array(';
+		foreach ($options as $option => $value) {
 			$value = var_export($value, true);
-			$options .= "'$option' => $value, ";
+			$linkOptions .= "'$option' => $value, ";
 		}
-		$options .= ')';
+		$linkOptions .= ')';
 
 		$text = preg_replace_callback('#(?<!href="|">)((?:http|https|ftp|nntp)://[^ <]+)#i', create_function('$matches',
-			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $options . ');'), $text);
+			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $linkOptions . ');'), $text);
 
 		return preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
-			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . strtolower($matches[0]),' . $options . ');'), $text);
+			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . strtolower($matches[0]),' . $linkOptions . ');'), $text);
 	}
 
 /**
  * Adds email links (<a href="mailto:....) to a given text.
  *
  * @param string $text Text
- * @param array $htmlOptions Array of HTML options.
+ * @param array $options Array of HTML options.
  * @return string The text with links
  * @access public
  */
-	function autoLinkEmails($text, $htmlOptions = array()) {
-		$options = 'array(';
-
-		foreach ($htmlOptions as $option => $value) {
+	function autoLinkEmails($text, $options = array()) {
+		$linkOptions = 'array(';
+		foreach ($options as $option => $value) {
 			$value = var_export($value, true);
-			$options .= "'$option' => $value, ";
+			$linkOptions .= "'$option' => $value, ";
 		}
-		$options .= ')';
+		$linkOptions .= ')';
 
 		return preg_replace_callback('#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
-						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $options . ');'), $text);
+						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $linkOptions . ');'), $text);
 	}
 
 /**
  * Convert all links and email adresses to HTML links.
  *
  * @param string $text Text
- * @param array $htmlOptions Array of HTML options.
+ * @param array $options Array of HTML options.
  * @return string The text with links
  * @access public
  */
-	function autoLink($text, $htmlOptions = array()) {
-		return $this->autoLinkEmails($this->autoLinkUrls($text, $htmlOptions), $htmlOptions);
+	function autoLink($text, $options = array()) {
+		return $this->autoLinkEmails($this->autoLinkUrls($text, $options), $options);
 	}
 
 /**
