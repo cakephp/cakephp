@@ -114,7 +114,16 @@ class DboSqlite extends DboSource {
  * @access public
  */
 	var $fieldParameters = array(
-		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collate', 'position' => 'afterDefault'),
+		'collate' => array(
+			'value' => 'COLLATE',
+			'quote' => false,
+			'join' => ' ', 
+			'column' => 'Collate', 
+			'position' => 'afterDefault',
+			'options' => array(
+				'BINARY', 'NOCASE', 'RTRIM'
+			)
+		),
 	);
 
 /**

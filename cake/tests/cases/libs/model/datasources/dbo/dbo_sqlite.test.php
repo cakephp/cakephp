@@ -280,6 +280,18 @@ class DboSqliteTest extends CakeTestCase {
 		$result = $this->db->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
 		$this->assertEqual($result, $expected);
+		
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'length' => 10,
+			'default' => 10,
+			'null' => false,
+			'collate' => 'BADVALUE'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
+		$this->assertEqual($result, $expected);
 	}
 
 /**
