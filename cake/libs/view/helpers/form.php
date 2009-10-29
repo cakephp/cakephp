@@ -632,8 +632,6 @@ class FormHelper extends AppHelper {
 			$this->_inputDefaults,
 			$options
 		);
-		$defaults = array('before' => null, 'between' => null, 'after' => null);
-		$options = array_merge($defaults, $options);
 
 		if (!isset($this->fieldset[$this->model()])) {
 			//Try to load fieldset for this model
