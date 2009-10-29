@@ -226,6 +226,7 @@ class DebuggerTest extends CakeTestCase {
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
 		$this->assertPattern('/DebuggerTest\:\:testLog/', $result);
+		$this->assertPattern('/\[main\]/', $result);
 		$this->assertPattern('/array/', $result);
 		$this->assertPattern('/"whatever",/', $result);
 		$this->assertPattern('/"here"/', $result);
