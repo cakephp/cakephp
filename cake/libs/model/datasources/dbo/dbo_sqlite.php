@@ -108,6 +108,25 @@ class DboSqlite extends DboSource {
 	);
 
 /**
+ * List of engine specific additional field parameters used on table creating
+ *
+ * @var array
+ * @access public
+ */
+	var $fieldParameters = array(
+		'collate' => array(
+			'value' => 'COLLATE',
+			'quote' => false,
+			'join' => ' ', 
+			'column' => 'Collate', 
+			'position' => 'afterDefault',
+			'options' => array(
+				'BINARY', 'NOCASE', 'RTRIM'
+			)
+		),
+	);
+
+/**
  * Connects to the database using config['database'] as a filename.
  *
  * @param array $config Configuration array for connecting
@@ -481,32 +500,7 @@ class DboSqlite extends DboSource {
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}
-		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-			if (isset($column['length'])) {
-				$length = $column['length'];
-			} elseif (isset($column['limit'])) {
-				$length = $column['limit'];
-			} elseif (isset($real['length'])) {
-				$length = $real['length'];
-			} else {
-				$length = $real['limit'];
-			}
-			$out .= '(' . $length . ')';
-		}
-		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
-			$out .= ' ' . $this->columns['primary_key']['name'];
-		} elseif (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= ' NOT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
+		return parent::buildColumn($column);
 	}
 
 /**
