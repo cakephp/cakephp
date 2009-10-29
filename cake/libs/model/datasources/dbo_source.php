@@ -2489,6 +2489,9 @@ class DboSource extends DataSource {
 	function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
 			if (isset($columnData[$paramName]) && $value['position'] == $position) {
+				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'])) {
+					continue;
+				}
 				$val = $columnData[$paramName];
 				if ($value['quote']) {
 					$val = $this->value($val);

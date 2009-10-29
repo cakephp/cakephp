@@ -3612,7 +3612,37 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
 		$result = $this->testDb->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
-		$this->assertTrue($result, $expected);
+		$this->assertEqual($result, $expected);
+
+		$this->testDb->fieldParameters['param'] = array(
+			'value' => 'COLLATE',
+			'quote' => false,
+			'join' => ' ', 
+			'column' => 'Collate', 
+			'position' => 'beforeDefault',
+			'options' => array('GOOD', 'OK')
+		);
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+			'param' => 'BAD'
+		);
+		$result = $this->testDb->buildColumn($data);
+		$expected = '`int_field` int(11) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+			'param' => 'GOOD'
+		);
+		$result = $this->testDb->buildColumn($data);
+		$expected = '`int_field` int(11) COLLATE GOOD NOT NULL';
+		$this->assertEqual($result, $expected);
 	}
 
 /**
