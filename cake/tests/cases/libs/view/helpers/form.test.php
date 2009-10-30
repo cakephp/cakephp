@@ -723,10 +723,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormCreateWithSecurity() {
 		$this->Form->params['_Token'] = array('key' => 'testKey');
-
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add'),
+			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
 			'fieldset' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
@@ -734,7 +734,7 @@ class FormHelperTest extends CakeTestCase {
 			)),
 			'/fieldset'
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($result, $expected,true);
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add', 'id' => 'MyForm'));
 		$expected['form']['id'] = 'MyForm';
@@ -1078,8 +1078,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->params['_Token']['key'] = 'testKey';
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add'),
+			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
 			'fieldset' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
@@ -1275,9 +1276,11 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->UserForm->OpenidUrl->validates());
 
 		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm'
+				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -1318,8 +1321,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id'),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id','accept-charset' => $encoding),
 			'fieldset' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
@@ -1361,8 +1365,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
 
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id'),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id','accept-charset' => $encoding),
 			'fieldset' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
@@ -4636,9 +4641,11 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormCreate() {
 		$result = $this->Form->create('Contact');
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -4648,20 +4655,23 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->create('Contact', array('type' => 'GET'));
 		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/'
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/'
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'put'));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -4674,7 +4684,8 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1'
+				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -4687,7 +4698,7 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
-				'action' => '/contact_non_standard_pks/edit/1'
+				'action' => '/contact_non_standard_pks/edit/1','accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -4697,7 +4708,10 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->create('Contact', array('id' => 'TestId'));
 		$expected = array(
-			'form' => array('id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1'),
+			'form' => array(
+				'id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding
+			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/fieldset'
@@ -4707,7 +4721,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->params['action'] = 'add';
 		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
 		$expected = array(
-			'form' => array('id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login/'),
+			'form' => array(
+				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login/',
+				'accept-charset' => $encoding
+			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
@@ -4717,7 +4734,8 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('User', array('action' => 'login'));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login/'
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -4727,7 +4745,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->create('User', array('url' => '/users/login'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/users/login'),
+			'form' => array('method' => 'post', 'action' => '/users/login','accept-charset' => $encoding),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
@@ -4739,7 +4757,8 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('User', array('action' => 'signup'));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup/'
+				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -4778,6 +4797,7 @@ class FormHelperTest extends CakeTestCase {
  *
  */
 	function testFormCreateQuerystringParams() {
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array(
 			'type' => 'post',
 			'escape' => false,
@@ -4791,7 +4811,8 @@ class FormHelperTest extends CakeTestCase {
 			'form' => array(
 				'id' => 'ContactAddForm',
 				'method' => 'post',
-				'action' => '/controller/action/?param1=value1&amp;param2=value2'
+				'action' => '/controller/action/?param1=value1&amp;param2=value2',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -4807,14 +4828,16 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testGetFormCreate() {
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$this->assertTags($result, array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/'
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'accept-charset' => $encoding
 		)));
 
 		$result = $this->Form->text('Contact.name');
 		$this->assertTags($result, array('input' => array(
-			'name' => 'name', 'type' => 'text', 'value' => '', 'id' => 'ContactName'
+			'name' => 'name', 'type' => 'text', 'value' => '', 'id' => 'ContactName',
 		)));
 
 		$result = $this->Form->password('password');
@@ -4875,10 +4898,12 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormMagicInput() {
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -5101,10 +5126,12 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testForMagicInputNonExistingNorValidated() {
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -5161,10 +5188,12 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormMagicInputLabel() {
+		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
@@ -5596,6 +5625,33 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->error('2.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
+	}
+
+	function testInputErrorEscape() {
+		$this->Form->create('ValidateProfile');
+		$this->Form->validationErrors['ValidateProfile']['city'] = 'required<br>';
+		$result = $this->Form->input('city',array('error' => array('escape' => true)));
+		$this->assertPattern('/required&lt;br&gt;/', $result);
+		
+		$result = $this->Form->input('city',array('error' => array('escape' => false)));
+		$this->assertPattern('/required<br>/', $result);
+	}
+	
+	function testFormEncoding() {
+		$result = $this->Form->create('UserForm', array(
+				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
+			)
+		);
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
+				'accept-charset' => 'iso-8859-1'
+			),
+			'fieldset' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 }
 ?>

@@ -195,6 +195,7 @@ class FormHelper extends AppHelper {
 			'action' => null,
 			'url' => null,
 			'default' => true,
+			'encoding' => strtolower(Configure::read('App.encoding')),
 			'inputDefaults' => array()),
 		$options);
 		$this->_inputDefaults = $options['inputDefaults'];
@@ -256,6 +257,12 @@ class FormHelper extends AppHelper {
 				$htmlAttributes['onsubmit'] = 'event.returnValue = false; return false;';
 			}
 		}
+
+		if (!empty($options['encoding'])) {
+			$htmlAttributes['accept-charset'] = $options['encoding'];
+			unset($options['encoding']);
+		}
+
 		unset($options['default']);
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
