@@ -3296,7 +3296,7 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
 		);
-		$this->assertTags($result, $expected);
+		$this->assertTags($result, $expected,true);
 	}
 
 /**
@@ -5636,7 +5636,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('city',array('error' => array('escape' => false)));
 		$this->assertPattern('/required<br>/', $result);
 	}
-	
+
 	function testFormEncoding() {
 		$result = $this->Form->create('UserForm', array(
 				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
@@ -5652,6 +5652,39 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+	function testDisableHiddenField() {
+		$result = $this->Form->input('UserForm.something', array(
+			'type' => 'checkbox', 'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'value' => '1', 'id' => 'UserFormSomething'
+			)),
+			'label' => array('for' => 'UserFormSomething'),
+			'Something',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->input('Model.1.field', array(
+			'type' => 'radio','options' => 'option A', 'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
+			'label' => array('for' => 'Model1Field0'),
+			'option A',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected,true);
 	}
 }
 ?>

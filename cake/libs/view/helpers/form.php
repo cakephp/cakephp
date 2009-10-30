@@ -899,20 +899,24 @@ class FormHelper extends AppHelper {
 	function checkbox($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
 		$value = current($this->value());
+		$output = "";
 
 		if (!isset($options['value']) || empty($options['value'])) {
 			$options['value'] = 1;
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-		$hiddenOptions = array(
-			'id' => $options['id'] . '_', 'name' => $options['name'],
-			'value' => '0', 'secure' => false
-		);
-		if (isset($options['disabled']) && $options['disabled'] == true) {
-			$hiddenOptions['disabled'] = 'disabled';
+		if (!isset($options['hiddenField']) || $options['hiddenField'] != false) {
+			$hiddenOptions = array(
+				'id' => $options['id'] . '_', 'name' => $options['name'],
+				'value' => '0', 'secure' => false
+			);
+			if (isset($options['disabled']) && $options['disabled'] == true) {
+				$hiddenOptions['disabled'] = 'disabled';
+			}
+			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
-		$output = $this->hidden($fieldName, $hiddenOptions);
+		unset($options['hiddenField']);
 
 		return $this->output($output . sprintf(
 			$this->Html->tags['checkbox'],
@@ -972,6 +976,8 @@ class FormHelper extends AppHelper {
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
+			$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
+			unset($attributes['hiddenField']);
 			$parsedOptions = $this->_parseAttributes(
 				array_merge($attributes, $optionsHere),
 				array('name', 'type', 'id'), '', ' '
@@ -990,10 +996,12 @@ class FormHelper extends AppHelper {
 		}
 		$hidden = null;
 
-		if (!isset($value) || $value === '') {
-			$hidden = $this->hidden($fieldName, array(
-				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
-			));
+		if ($hiddenField) {
+			if (!isset($value) || $value === '') {
+				$hidden = $this->hidden($fieldName, array(
+					'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
+				));
+			}
 		}
 		$out = $hidden . join($inbetween, $out);
 
