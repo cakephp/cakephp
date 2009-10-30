@@ -383,8 +383,10 @@ class DboSource extends DataSource {
 					$this->_queryCache[$sql] = $out;
 				}
 			}
+			if (empty($out) && is_bool($this->_result)) {
+				return $this->_result;
+			}
 			return $out;
-
 		} else {
 			return false;
 		}

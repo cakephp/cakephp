@@ -4047,6 +4047,23 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNotNull($this->db->took, 'Stats were not set %s');
 		$this->assertNotNull($this->db->affected, 'Stats were not set %s');
 	}
+
+/**
+ * test that query() returns boolean values from operations like CREATE TABLE
+ *
+ * @return void
+ **/
+	function testFetchAllBooleanReturns() {
+		$name = $this->db->fullTableName('test_query');
+		$query = "CREATE TABLE {$name} (name varchar(10));";
+		$result = $this->db->query($query);
+		$this->assertTrue($result, 'Query did not return a boolean. %s');
+
+		$query = "DROP TABLE {$name};";
+		$result = $this->db->fetchAll($query);
+		$this->assertTrue($result, 'Query did not return a boolean. %s');
+	}
+
 /**
  * test ShowQuery generation of regular and error messages
  *
