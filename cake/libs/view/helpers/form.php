@@ -209,7 +209,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = ($created) ? 'edit' : 'add';
+				$options['action'] = $this->params['action'];
 			}
 
 			$actionDefaults = array(

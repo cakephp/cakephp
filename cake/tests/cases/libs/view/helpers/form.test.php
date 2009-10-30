@@ -666,6 +666,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->Html =& new HtmlHelper();
 		$this->Controller =& new ContactTestController();
 		$this->View =& new View($this->Controller);
+		$this->Form->params['action'] = 'add';
 
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
@@ -4669,6 +4670,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->data['Contact']['id'] = 1;
+		$this->Form->params['action'] = 'edit';
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
@@ -4702,6 +4704,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$this->Form->params['action'] = 'add';
 		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
 		$expected = array(
 			'form' => array('id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login/'),
@@ -4841,7 +4844,7 @@ class FormHelperTest extends CakeTestCase {
 			'last_name'		=> 'Abele',
 			'email'			=> 'nate@example.com'
 		));
-		$this->Form->params = array('models' => array('Person'), 'controller'	=> 'people');
+		$this->Form->params = array('models' => array('Person'), 'controller'	=> 'people', 'action' => 'add');
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
 
 		$this->Form->create();
