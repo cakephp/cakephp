@@ -672,7 +672,7 @@ class HttpSocket extends CakeSocket {
 
 			foreach ($items as $item) {
 				if (strpos($item, '=') !== false) {
-					list($key, $value) = explode('=', $item);
+					list($key, $value) = explode('=', $item, 2);
 				} else {
 					$key = $item;
 					$value = null;

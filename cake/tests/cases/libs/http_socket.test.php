@@ -878,6 +878,28 @@ class HttpSocketTest extends CakeTestCase {
 			'host' => 'www.google.com',
 			'port' => 8080,
 		));
+
+		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2%3Dvalue3');
+		$this->assertIdentical($uri, array(
+			'scheme' => 'http',
+			'host' => 'www.cakephp.org',
+			'path' => '/',
+			'query' => array(
+				'param1' => 'value1',
+				'param2' => 'value2=value3'
+			)
+		));
+
+		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2=value3');
+		$this->assertIdentical($uri, array(
+			'scheme' => 'http',
+			'host' => 'www.cakephp.org',
+			'path' => '/',
+			'query' => array(
+				'param1' => 'value1',
+				'param2' => 'value2=value3'
+			)
+		));
 	}
 /**
  * Tests that HttpSocket::buildUri can turn all kinds of uri arrays (and strings) into fully or partially qualified URI's
