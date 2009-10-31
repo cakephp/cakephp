@@ -1509,14 +1509,14 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testFormInput method
+ * testInput method
  *
  * Test various incarnations of input().
  *
  * @access public
  * @return void
  */
-	function testFormInput() {
+	function testInput() {
 		$result = $this->Form->input('ValidateUser.balance');
 		$expected = array(
 			'div' => array('class'),
@@ -2012,6 +2012,24 @@ class FormHelperTest extends CakeTestCase {
 			);
 			$this->assertTags($result, $expected);
 		}
+	}
+
+/**
+ * test that overriding the magic select type widget is possible
+ *
+ * @return void
+ **/
+	function testInputOverridingMagicSelectType() {
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user_id', array('type' => 'text'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ModelUserId'), 'User', '/label',
+			'input' => array('name' => 'data[Model][user_id]', 'type' => 'text', 'id' => 'ModelUserId', 'value' => ''),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

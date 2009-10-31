@@ -646,7 +646,6 @@ class FormHelper extends AppHelper {
  * @return string Completed form widget
  */
 	function input($fieldName, $options = array()) {
-		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
 
 		$options = array_merge(
@@ -654,23 +653,26 @@ class FormHelper extends AppHelper {
 			$this->_inputDefaults,
 			$options
 		);
-
-		if (!isset($this->fieldset[$this->model()])) {
-			//Try to load fieldset for this model
-			$this->_introspectModel($this->model());
+		
+		$modelKey = $this->model();
+		$fieldKey = $this->field();
+		if (!isset($this->fieldset[$modelKey])) {
+			$this->_introspectModel($modelKey);
 		}
 
-		if (!isset($options['type'])) {
+		$userType = isset($options['type']) ? true : false;
+
+		if (!$userType) {
 			$options['type'] = 'text';
 			$fieldDef = array();
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
-			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
+			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
-			} elseif (isset($this->fieldset[$this->model()]['fields'][$this->field()])) {
-				$fieldDef = $this->fieldset[$this->model()]['fields'][$this->field()];
+			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
+				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
 				$type = $fieldDef['type'];
-				$primaryKey = $this->fieldset[$this->model()]['key'];
+				$primaryKey = $this->fieldset[$modelKey]['key'];
 			}
 
 			if (isset($type)) {
@@ -686,12 +688,12 @@ class FormHelper extends AppHelper {
 				} elseif (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				}
-				if ($this->field() == $primaryKey) {
+				if ($fieldKey == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
 			}
 
-			if ($this->model() === $this->field()) {
+			if ($modelKey === $fieldKey) {
 				$options['type'] = 'select';
 				if (!isset($options['multiple'])) {
 					$options['multiple'] = 'multiple';
@@ -700,10 +702,10 @@ class FormHelper extends AppHelper {
 		}
 		$types = array('text', 'checkbox', 'radio', 'select');
 
-		if (!isset($options['options']) && in_array($options['type'], $types)) {
+		if (!isset($options['options']) && in_array($options['type'], $types) && !$userType) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
-				Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
+				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
@@ -740,8 +742,8 @@ class FormHelper extends AppHelper {
 				$divOptions = array_merge($divOptions, $div);
 			}
 			if (
-				isset($this->fieldset[$this->model()]) &&
-				in_array($this->field(), $this->fieldset[$this->model()]['validates'])
+				isset($this->fieldset[$modelKey]) &&
+				in_array($fieldKey, $this->fieldset[$modelKey]['validates'])
 				) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
