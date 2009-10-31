@@ -469,23 +469,17 @@ class Scaffold extends Object {
 				}
 				switch ($params['action']) {
 					case 'index':
+					case 'list':
 						$this->__scaffoldIndex($params);
 					break;
 					case 'view':
 						$this->__scaffoldView($params);
 					break;
-					case 'list':
-						$this->__scaffoldIndex($params);
-					break;
 					case 'add':
-						$this->__scaffoldSave($params, 'add');
-					break;
-					case 'edit':
-						$this->__scaffoldSave($params, 'edit');
-					break;
 					case 'create':
 						$this->__scaffoldSave($params, 'add');
 					break;
+					case 'edit':
 					case 'update':
 						$this->__scaffoldSave($params, 'edit');
 					break;
