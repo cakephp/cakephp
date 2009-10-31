@@ -72,8 +72,30 @@ class FormHelper extends AppHelper {
  */
 	var $requestType = null;
 
+/**
+ * The default model being used for the current form.
+ *
+ * @var string
+ */
 	var $defaultModel = null;
 
+
+/**
+ * Persistent default options used by input(). Set by FormHelper::create().
+ *
+ * @var array
+ * @access protected
+ */
+	var $_inputDefaults = array();
+
+/**
+ * Introspects model information and extracts information related
+ * to validation, field length and field type. Appends information into
+ * $this->fieldset.
+ *
+ * @return Model Returns a model instance
+ * @access protected
+ */
 	function &_introspectModel($model) {
 		$object = null;
 		if (is_string($model) && strpos($model, '.') !== false) {
@@ -123,26 +145,19 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Persistent default options used by input(). Set by FormHelper::create().
- *
- * @var array
- * @access protected
- */
-	var $_inputDefaults = array();
-
-/**
  * Returns an HTML FORM element.
  *
  * #### Options:
  *
- * - 'type' Form method defaults to POST
- * - 'action'  The Action the form submits to. Can be a string or array,
- * - 'url'  The url the form submits to. Can be a string or a url array,
- * - 'default'  Allows for the creation of Ajax forms.
- * - 'onsubmit' Used in conjunction with 'default' to create ajax forms.
- * - 'inputDefaults' set the default $options for FormHelper::input(). Any options that would
+ * - `type` Form method defaults to POST
+ * - `action`  The Action the form submits to. Can be a string or array,
+ * - `url`  The url the form submits to. Can be a string or a url array,
+ * - `default`  Allows for the creation of Ajax forms.
+ * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
+ * - `inputDefaults' set the default $options for FormHelper::input(). Any options that would
  *    be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
  *    can be overridden when calling input()
+ * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
  * @access public
  * @param string $model The model object which the form is being defined for
