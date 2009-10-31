@@ -889,24 +889,24 @@ class FormHelper extends AppHelper {
  *
  * - `value` - the value of the checkbox
  * - `checked` - boolean indicate that this checkbox is checked.
- * - `hiddenField` - boolean to indicate if you want the results of radio() to include
- *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
+ *    a hidden input with a value of ''.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
 	function checkbox($fieldName, $options = array()) {
-		$options = $this->_initInputField($fieldName, $options);
+		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
 		$value = current($this->value());
 		$output = "";
 
-		if (!isset($options['value']) || empty($options['value'])) {
+		if (empty($options['value'])) {
 			$options['value'] = 1;
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-		if (!isset($options['hiddenField']) || $options['hiddenField'] != false) {
+		if ($options['hiddenField']) {
 			$hiddenOptions = array(
 				'id' => $options['id'] . '_', 'name' => $options['name'],
 				'value' => '0', 'secure' => false
