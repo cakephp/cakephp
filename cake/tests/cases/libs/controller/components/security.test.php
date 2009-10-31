@@ -202,6 +202,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRequireSecureFail() {
+		$_SERVER['HTTPS'] = 'off';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireSecure('posted');
