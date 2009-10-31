@@ -450,7 +450,7 @@ class Scaffold extends Object {
 				$this->scaffoldActions = array(
 					'index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete'
 				);
-			} elseif (!empty($prefixes) && in_array($this->scaffoldActions, $prefixes)) {
+			} elseif (!empty($prefixes) && in_array($scaffoldPrefix, $prefixes)) {
 				$this->scaffoldActions = array(
 					$scaffoldPrefix . '_index', 
 					$scaffoldPrefix . '_list',
