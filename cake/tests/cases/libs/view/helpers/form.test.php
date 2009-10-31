@@ -2724,7 +2724,7 @@ class FormHelperTest extends CakeTestCase {
  **/
 	function testRadioHiddenInputDisabling() {
 		$result = $this->Form->input('Model.1.field', array(
-				'type' => 'radio', 
+				'type' => 'radio',
 				'options' => array('option A'),
 				'hiddenField' => false
 			)
@@ -3370,7 +3370,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testCheckboxHiddenFieldOmission() {
 		$result = $this->Form->input('UserForm.something', array(
-				'type' => 'checkbox', 
+				'type' => 'checkbox',
 				'hiddenField' => false
 			)
 		);
@@ -4652,14 +4652,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->submit('Next >', array('escape' => false));
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'Next >'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->submit('Reset!', array('type' => 'reset'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -4766,7 +4758,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->submit('Not.an.image', array('before' => $before, 'after' => $after));
 		$expected = array(
 			'div' => array('class' => 'submit'),

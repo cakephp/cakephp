@@ -1193,7 +1193,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
-		$options += array('type' => 'submit');
+		$options += array('type' => 'submit', 'before' => null, 'after' => null);
 		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
@@ -1206,16 +1206,9 @@ class FormHelper extends AppHelper {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
 
-		$before = "";
-		$after = "";
-		if (isset($options['before'])) {
-			$before = $options['before'];
-			unset($options['before']);
-		}
-		if (isset($options['after'])) {
-			$after = $options['after'];
-			unset($options['after']);
-		}
+		$before = $options['before'];
+		$after = $options['after'];
+		unset($options['before'], $options['after']);
 
 		if (strpos($caption, '://') !== false) {
 			unset($options['type']);
