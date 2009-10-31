@@ -2700,6 +2700,38 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test disabling the hidden input for radio buttons
+ *
+ * @return void
+ **/
+	function testRadioHiddenInputDisabling() {
+		$result = $this->Form->input('Model.1.field', array(
+				'type' => 'radio', 
+				'options' => array('option A'),
+				'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
+			'label' => array('for' => 'Model1Field0'),
+			'option A',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.1.field', array('option A'), array('hiddenField' => false));
+		$expected = array(
+			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
+			'label' => array('for' => 'Model1Field0'),
+			'option A',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testSelect method
  *
  * Test select element generation.
@@ -3309,6 +3341,31 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			array('input' => array('type' => 'hidden', 'name' => 'data[Account][show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Account][show_name]', 'value' => '1', 'id' => 'AccountShowName'))
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that the hidden input for checkboxes can be removed/omitted from the output.
+ *
+ * @return void
+ */
+	function testCheckboxHiddenFieldOmission() {
+		$result = $this->Form->input('UserForm.something', array(
+				'type' => 'checkbox', 
+				'hiddenField' => false
+			)
+		);
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
+				'value' => '1', 'id' => 'UserFormSomething'
+			)),
+			'label' => array('for' => 'UserFormSomething'),
+			'Something',
+			'/label',
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4793,6 +4850,28 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test automatic accept-charset overriding
+ *
+ * @return void
+ **/
+	function testCreateWithAcceptCharset() {
+		$result = $this->Form->create('UserForm', array(
+				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
+			)
+		);
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
+				'accept-charset' => 'iso-8859-1'
+			),
+			'fieldset' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test base form url when url param is passed with multiple parameters (&)
  *
  */
@@ -4822,7 +4901,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testGetFormCreate method
+ * test creating a get form, and get form inputs.
  *
  * @access public
  * @return void
@@ -4862,10 +4941,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testEditFormWithData() {
 		$this->Form->data = array('Person' => array(
-			'id'			=> 1,
-			'first_name'	=> 'Nate',
-			'last_name'		=> 'Abele',
-			'email'			=> 'nate@example.com'
+			'id' => 1,
+			'first_name' => 'Nate',
+			'last_name' => 'Abele',
+			'email' => 'nate@example.com'
 		));
 		$this->Form->params = array('models' => array('Person'), 'controller'	=> 'people', 'action' => 'add');
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
@@ -4877,15 +4956,9 @@ class FormHelperTest extends CakeTestCase {
 			'select' => array(
 				'name' => 'data[People][People][]', 'multiple' => 'multiple', 'id' => 'PeoplePeople'
 			),
-			array('option' => array('value' => 1)),
-			'Nate',
-			'/option',
-			array('option' => array('value' => 2)),
-			'Garrett',
-			'/option',
-			array('option' => array('value' => 3)),
-			'Larry',
-			'/option',
+			array('option' => array('value' => 1)), 'Nate', '/option',
+			array('option' => array('value' => 2)), 'Garrett', '/option',
+			array('option' => array('value' => 3)), 'Larry', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -5627,64 +5700,5 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 
-	function testInputErrorEscape() {
-		$this->Form->create('ValidateProfile');
-		$this->Form->validationErrors['ValidateProfile']['city'] = 'required<br>';
-		$result = $this->Form->input('city',array('error' => array('escape' => true)));
-		$this->assertPattern('/required&lt;br&gt;/', $result);
-		
-		$result = $this->Form->input('city',array('error' => array('escape' => false)));
-		$this->assertPattern('/required<br>/', $result);
-	}
-
-	function testFormEncoding() {
-		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'
-			)
-		);
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
-				'accept-charset' => 'iso-8859-1'
-			),
-			'fieldset' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-	function testDisableHiddenField() {
-		$result = $this->Form->input('UserForm.something', array(
-			'type' => 'checkbox', 'hiddenField' => false
-			)
-		);
-		$expected = array(
-			'div' => array('class' => 'input checkbox'),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[UserForm][something]',
-				'value' => '1', 'id' => 'UserFormSomething'
-			)),
-			'label' => array('for' => 'UserFormSomething'),
-			'Something',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-		
-		$result = $this->Form->input('Model.1.field', array(
-			'type' => 'radio','options' => 'option A', 'hiddenField' => false
-			)
-		);
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'radio', 'name' => 'data[Model][1][field]', 'value' => '0', 'id' => 'Model1Field0'),
-			'label' => array('for' => 'Model1Field0'),
-			'option A',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected,true);
-	}
 }
 ?>
