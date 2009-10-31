@@ -2373,6 +2373,21 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test error options when using form->input();
+ *
+ * @return void
+ */
+	function testInputErrorEscape() {
+		$this->Form->create('ValidateProfile');
+		$this->Form->validationErrors['ValidateProfile']['city'] = 'required<br>';
+		$result = $this->Form->input('city',array('error' => array('escape' => true)));
+		$this->assertPattern('/required&lt;br&gt;/', $result);
+
+		$result = $this->Form->input('city',array('error' => array('escape' => false)));
+		$this->assertPattern('/required<br>/', $result);
+	}
+
+/**
  * testPassword method
  *
  * Test password element generation
@@ -5578,16 +5593,6 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->error('2.city');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-	}
-
-	function testInputErrorEscape() {
-		$this->Form->create('ValidateProfile');
-		$this->Form->validationErrors['ValidateProfile']['city'] = 'required<br>';
-		$result = $this->Form->input('city',array('error' => array('escape' => true)));
-		$this->assertPattern('/required&lt;br&gt;/', $result);
-		
-		$result = $this->Form->input('city',array('error' => array('escape' => false)));
-		$this->assertPattern('/required<br>/', $result);
 	}
 }
 ?>
