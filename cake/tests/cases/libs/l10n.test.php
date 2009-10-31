@@ -981,6 +981,17 @@ class L10nTest extends CakeTestCase {
 			'pt-br' => array('language' => 'Portuguese (Brazil)', 'locale' => 'pt_br', 'localeFallback' => 'por', 'charset' => 'utf-8')
 		);
 		$this->assertEqual($result, $expected);
+		
+		$result = $l10n->catalog(array('eng', 'deu', 'zho', 'rum', 'zul', 'yid'));
+		$expected = array(
+			'eng' => array('language' => 'English', 'locale' => 'eng', 'localeFallback' => 'eng', 'charset' => 'utf-8'),
+			'deu' => array('language' => 'German (Standard)', 'locale' => 'deu', 'localeFallback' => 'deu', 'charset' => 'utf-8'),
+			'zho' => array('language' => 'Chinese', 'locale' => 'chi', 'localeFallback' => 'chi', 'charset' => 'utf-8'),
+			'rum' => array('language' => 'Romanian', 'locale' => 'rum', 'localeFallback' => 'rum', 'charset' => 'utf-8'),
+			'zul' => array('language' => 'Zulu', 'locale' => 'zul', 'localeFallback' => 'zul', 'charset' => 'utf-8'),
+			'yid' => array('language' => 'Yiddish', 'locale' => 'yid', 'localeFallback' => 'yid', 'charset' => 'utf-8')
+		);
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

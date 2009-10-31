@@ -474,6 +474,8 @@ class L10n extends Object {
 		} else if (is_string($language)) {
 			if (isset($this->__l10nCatalog[$language])) {
 				return $this->__l10nCatalog[$language];
+			} else if (isset($this->__l10nMap[$language]) && isset($this->__l10nCatalog[$this->__l10nMap[$language]])) {
+				return $this->__l10nCatalog[$this->__l10nMap[$language]];
 			}
 			return false;
 		}
