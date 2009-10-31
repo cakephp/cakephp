@@ -4667,6 +4667,36 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$before = '--before--';
+		$after = '--after--';
+		$result = $this->Form->submit('Test', array('before' => $before));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'--before--',
+			'input' => array('type' => 'submit', 'value' => 'Test'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('Test', array('after' => $after));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => 'Test'),
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('Test', array('before' => $before, 'after' => $after));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'--before--',
+			'input' => array('type' => 'submit', 'value' => 'Test'),
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4703,6 +4733,46 @@ class FormHelperTest extends CakeTestCase {
 		$expected = array(
 			'div' => array('class' => 'submit'),
 			'input' => array('type' => 'submit', 'value' => 'Not.an.image'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$after = '--after--';
+		$before = '--before--';
+		$result = $this->Form->submit('cake.power.gif', array('after' => $after));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'image', 'src' => 'img/cake.power.gif'),
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('cake.power.gif', array('before' => $before));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'--before--',
+			'input' => array('type' => 'image', 'src' => 'img/cake.power.gif'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->submit('cake.power.gif', array('before' => $before, 'after' => $after));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'--before--',
+			'input' => array('type' => 'image', 'src' => 'img/cake.power.gif'),
+			'--after--',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->submit('Not.an.image', array('before' => $before, 'after' => $after));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'--before--',
+			'input' => array('type' => 'submit', 'value' => 'Not.an.image'),
+			'--after--',
 			'/div'
 		);
 		$this->assertTags($result, $expected);

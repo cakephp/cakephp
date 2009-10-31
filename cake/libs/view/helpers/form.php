@@ -1206,13 +1206,24 @@ class FormHelper extends AppHelper {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
 
+		$before = "";
+		$after = "";
+		if (isset($options['before'])) {
+			$before = $options['before'];
+			unset($options['before']);
+		}
+		if (isset($options['after'])) {
+			$after = $options['after'];
+			unset($options['after']);
+		}
+
 		if (strpos($caption, '://') !== false) {
 			unset($options['type']);
-			$out .= $this->output(sprintf(
+			$out .=  $this->output($before . sprintf(
 				$this->Html->tags['submitimage'],
 				$caption,
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			) . $after);
 		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
 			unset($options['type']);
 			if ($caption{0} !== '/') {
@@ -1221,17 +1232,17 @@ class FormHelper extends AppHelper {
 				$caption = trim($caption, '/');
 				$url = $this->webroot($caption);
 			}
-			$out .= $this->output(sprintf(
+			$out .= $this->output($before . sprintf(
 				$this->Html->tags['submitimage'],
 				$url,
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			) . $after);
 		} else {
 			$options['value'] = $caption;
-			$out .= $this->output(sprintf(
+			$out .= $this->output($before . sprintf(
 				$this->Html->tags['submit'],
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			). $after);
 		}
 
 		if (isset($divOptions)) {
