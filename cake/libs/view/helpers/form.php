@@ -181,7 +181,6 @@ class FormHelper extends AppHelper {
 			$data = $this->fieldset[$this->model()];
 			$recordExists = (
 				isset($this->data[$model]) &&
-				isset($this->data[$model][$data['key']]) &&
 				!empty($this->data[$model][$data['key']])
 			);
 
@@ -190,6 +189,7 @@ class FormHelper extends AppHelper {
 				$id = $this->data[$model][$data['key']];
 			}
 		}
+
 		$options = array_merge(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
@@ -970,14 +970,15 @@ class FormHelper extends AppHelper {
 		}
 		$out = array();
 
+		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
+		unset($attributes['hiddenField']);
+
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
 			if (isset($value) && $optValue == $value) {
 				$optionsHere['checked'] = 'checked';
 			}
-			$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
-			unset($attributes['hiddenField']);
 			$parsedOptions = $this->_parseAttributes(
 				array_merge($attributes, $optionsHere),
 				array('name', 'type', 'id'), '', ' '

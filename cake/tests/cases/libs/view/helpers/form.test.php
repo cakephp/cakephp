@@ -721,7 +721,7 @@ class FormHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testFormCreateWithSecurity() {
+	function testCreateWithSecurity() {
 		$this->Form->params['_Token'] = array('key' => 'testKey');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
@@ -4691,12 +4691,12 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * testFormCreate method
+ * test the create() method
  *
  * @access public
  * @return void
  */
-	function testFormCreate() {
+	function testCreate() {
 		$result = $this->Form->create('Contact');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
@@ -4736,6 +4736,18 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+
 		$this->Form->data['Contact']['id'] = 1;
 		$this->Form->params['action'] = 'edit';
 		$result = $this->Form->create('Contact');
@@ -4743,6 +4755,20 @@ class FormHelperTest extends CakeTestCase {
 			'form' => array(
 				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
 				'accept-charset' => $encoding
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->data['Contact']['id'] = 1;
+		$this->Form->params['action'] = 'edit';
+		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
@@ -4875,7 +4901,7 @@ class FormHelperTest extends CakeTestCase {
  * Test base form url when url param is passed with multiple parameters (&)
  *
  */
-	function testFormCreateQuerystringParams() {
+	function testCreateQuerystringParams() {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array(
 			'type' => 'post',
