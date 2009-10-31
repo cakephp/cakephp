@@ -73,6 +73,9 @@ class Controller extends Object {
  *
  * Example: var $uses = array('Product', 'Post', 'Comment');
  *
+ * Can be set to array() to use no models.  Can be set to false to 
+ * use no models and prevent the merging of $uses with AppController
+ *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
