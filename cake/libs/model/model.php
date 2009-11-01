@@ -2079,11 +2079,12 @@ class Model extends Overloadable {
 		}
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
-		$this->findQueryType = null;
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'after') {
 			$results = $this->__filterResults($results);
 		}
+
+		$this->findQueryType = null;
 
 		if ($type === 'all') {
 			return $results;

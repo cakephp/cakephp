@@ -7151,5 +7151,18 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * Testing availability of $this->findQueryType in Model callbacks
+ * 
+ * @return void 
+ */
+	function testFindQueryTypeInCallbacks() {
+		$this->loadFixtures('Comment');
+		$Comment =& new AgainModifiedComment();
+		$comments = $Comment->find('all');
+		$this->assertEqual($comments[0]['Comment']['querytype'], 'all');
+		$comments = $Comment->find('first');
+		$this->assertEqual($comments['Comment']['querytype'], 'first');
+	}
 }
 ?>
