@@ -165,6 +165,12 @@ class AjaxHelperTest extends CakeTestCase {
 		$view =& new View(new AjaxTestController());
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('PostAjaxTest', new PostAjaxTest());
+
+		$this->Ajax->Form->params = array(
+			'plugin' => null,
+			'action' => 'view',
+			'controller' => 'users'
+		);
 	}
 /**
  * tearDown method
