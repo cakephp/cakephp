@@ -1883,7 +1883,7 @@ class FormHelper extends AppHelper {
 				}
 				$i = 0;
 				while ($i < 60) {
-					$data[$i] = sprintf('%02d', $i);
+					$data[sprintf('%02d', $i)] = sprintf('%02d', $i);
 					$i += $interval;
 				}
 			break;
