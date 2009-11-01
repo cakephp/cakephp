@@ -2858,7 +2858,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.contact_id',
 			array('228' => '228 value', '228-1' => '228-1 value', '228-2' => '228-2 value'),
-			null, array('escape' => false), 'pick something'
+			null, array('escape' => false, 'empty' => 'pick something')
 		);
 
 		$expected = array(
