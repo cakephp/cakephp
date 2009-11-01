@@ -1,6 +1,7 @@
 <?php
+/* SVN FILE: $Id$ */
 /**
- * TestTaskTest file
+ * ModelTaskTest file
  *
  * Test Case for test generation shell task
  *
@@ -17,10 +18,10 @@
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
- * @since         CakePHP v 1.3
+ * @since         CakePHP v 1.2.6
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Shell', 'Shell', false);
+App::import('Core', 'Shell');
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -33,16 +34,14 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
-
+if (!class_exists('TestTask')) {
+	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
+}
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 );
-
 Mock::generatePartial(
 	'ModelTask', 'MockModelTask',
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')

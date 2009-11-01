@@ -235,7 +235,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testFilteringAndTimestamping() {
-		if($this->skipIf(!is_writable(JS), "%s JavaScript directory not writable, skipping JS asset timestamp tests.")) {
+		if ($this->skipIf(!is_writable(JS), 'JavaScript directory not writable, skipping JS asset timestamp tests. %s')) {
 			return;
 		}
 
