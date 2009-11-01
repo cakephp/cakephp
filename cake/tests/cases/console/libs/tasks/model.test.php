@@ -21,7 +21,7 @@
  * @since         CakePHP v 1.2.6
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
-App::import('Core', 'Shell');
+App::import('Shell', 'Shell', false);
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -34,9 +34,9 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('TestTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
@@ -216,9 +216,9 @@ class ModelTaskTest extends CakeTestCase {
 	function testInteractiveFieldValidation() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', '20');
+		$this->Task->setReturnValueAt(0, 'in', '19');
 		$this->Task->setReturnValueAt(1, 'in', 'y');
-		$this->Task->setReturnValueAt(2, 'in', '16');
+		$this->Task->setReturnValueAt(2, 'in', '15');
 		$this->Task->setReturnValueAt(3, 'in', 'n');
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
