@@ -1592,7 +1592,8 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - `monthNames` If set and false numbers will be used for month select instead of text.
+ * - `monthNames` If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
  * - `minYear` The lowest year to use in the year select
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
