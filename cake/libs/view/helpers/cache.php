@@ -75,24 +75,32 @@ class CacheHelper extends AppHelper {
 		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
 			$controller = Inflector::underscore($this->controllerName);
+			$controllerAlternate = Inflector::variable($this->controllerName);
+
 			$check = str_replace('/', '_', $this->here);
-			$replace = str_replace('/', '_', $this->base);
+			$basePath = str_replace('/', '_', $this->base);
+
 			$match = str_replace($this->base, '', $this->here);
 			$match = str_replace('//', '/', $match);
 			$match = str_replace('/' . $controller . '/', '', $match);
+			$match = str_replace('/' . $controllerAlternate . '/', '', $match);
 			$match = str_replace('/' . $this->controllerName . '/', '', $match);
-			$check = str_replace($replace, '', $check);
+
+			$check = str_replace($basePath, '', $check);
 			$check = str_replace('_' . $controller . '_', '', $check);
 			$check = str_replace('_' . $this->controllerName . '_', '', $check);
+			$check = str_replace('_' . $controllerAlternate . '_', '', $match);
+
 			$check = Inflector::slug($check);
-			$check = preg_replace('/^_+/', '', $check);
+			$check = trim($check, '_');
+
 			$keys = str_replace('/', '_', array_keys($this->cacheAction));
 			$found = array_keys($this->cacheAction);
 			$index = null;
 			$count = 0;
 
 			foreach ($keys as $key => $value) {
-				if (strpos($check, $value) === 0) {
+				if (strpos($check, rtrim($value, '_')) === 0) {
 					$index = $found[$count];
 					break;
 				}
