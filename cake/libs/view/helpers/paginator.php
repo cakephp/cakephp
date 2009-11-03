@@ -433,7 +433,7 @@ class PaginatorHelper extends AppHelper {
 		$options = array_merge(
 			array(
 				'model' => $this->defaultModel(),
-				'format' => 'pages'
+				'format' => 'pages',
 				'separator' => __(' of ', true)
 			),
 		$options);
