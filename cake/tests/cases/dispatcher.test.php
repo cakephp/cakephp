@@ -1711,7 +1711,7 @@ class DispatcherTest extends CakeTestCase {
 
 		Configure::write('debug', 0);
 		ob_start();
-		$Dispatcher->dispatch('/img/test.jpg');
+		$Dispatcher->dispatch('img/test.jpg');
 		$result = ob_get_clean();
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
@@ -1755,6 +1755,15 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'vendors' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
+
+
+		Configure::write('debug', 2);
+		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/plugin_js.js');
+		ob_start();
+		$Dispatcher->cached('plugin_js/js/plugin_js.js');
+		$result = ob_get_clean();
+		$expected = "alert('win sauce');";
+		$this->assertEqual($result, $expected);
 
 		header('Content-type: text/html');//reset the header content-type without page can render as plain text.
 	}
