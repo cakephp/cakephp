@@ -653,7 +653,7 @@ class FormHelper extends AppHelper {
 			$this->_inputDefaults,
 			$options
 		);
-		
+
 		$modelKey = $this->model();
 		$fieldKey = $this->field();
 		if (!isset($this->fieldset[$modelKey])) {
@@ -1422,7 +1422,8 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - `monthNames` is set and false 2 digit numbers will be used instead of text.
+ * - `monthNames` - If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
  *
@@ -1591,7 +1592,8 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - `monthNames` If set and false numbers will be used for month select instead of text.
+ * - `monthNames` If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
  * - `minYear` The lowest year to use in the year select
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
@@ -1916,7 +1918,7 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-				if ($options['monthNames']) {
+				if ($options['monthNames'] === true) {
 					$data['01'] = __('January', true);
 					$data['02'] = __('February', true);
 					$data['03'] = __('March', true);
@@ -1929,6 +1931,8 @@ class FormHelper extends AppHelper {
 					$data['10'] = __('October', true);
 					$data['11'] = __('November', true);
 					$data['12'] = __('December', true);
+				} else if (is_array($options['monthNames'])) {
+					$data = $options['monthNames'];
 				} else {
 					for ($m = 1; $m <= 12; $m++) {
 						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));

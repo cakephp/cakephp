@@ -49,7 +49,7 @@ class ExtractTask extends Shell {
  * Merge all domains string into the default.pot file
  *
  * @var boolean
- * @access public
+ * @access private
  */
 	var $__merge = false;
 
