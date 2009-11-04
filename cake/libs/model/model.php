@@ -2359,7 +2359,7 @@ class Model extends Overloadable {
 			) ||
 			$this->beforeValidate($options) === false
 		) {
-			return $this->validationErrors;
+			return false;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
@@ -2793,7 +2793,7 @@ class Model extends Overloadable {
 	function afterDelete() {
 	}
 /**
- * Called during save operations, before validation. Please note that custom
+ * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
  * @return boolean True if validate operation should continue, false to abort
