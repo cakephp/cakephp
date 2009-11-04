@@ -175,8 +175,8 @@ class CakeTestCaseTest extends CakeTestCase {
 
 		$input = '<p><strong>' . $value . '</strong></p>';
 		$pattern = array(
-			'p' => array(),
-				'strong' => array(),
+			'<p',
+				'<strong',
 					$value,
 				'/strong',
 			'/p'
@@ -185,13 +185,13 @@ class CakeTestCaseTest extends CakeTestCase {
 		
 		$input = '<p><strong>' . $value . '</strong></p><p><strong>' . $value . '</strong></p>';
 		$pattern = array(
-			array('p' => array()),
-				array('strong' => array()),
+			'<p',
+				'<strong',
 					$value,
 				'/strong',
 			'/p',
-			array('p' => array()),
-				array('strong' => array()),
+			'<p',
+				'<strong',
 					$value,
 				'/strong',
 			'/p',
@@ -200,13 +200,13 @@ class CakeTestCaseTest extends CakeTestCase {
 		
 		$input = '<p><strong>' . $value . '</strong></p><p id="' . $value . '"><strong>' . $value . '</strong></p>';
 		$pattern = array(
-			array('p' => array()),
-				array('strong' => array()),
+			'<p',
+				'<strong',
 					$value,
 				'/strong',
 			'/p',
-			array('p' => array('id' => $value)),
-				array('strong' => array()),
+			'p' => array('id' => $value),
+				'<strong',
 					$value,
 				'/strong',
 			'/p',
