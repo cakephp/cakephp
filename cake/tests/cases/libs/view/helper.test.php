@@ -538,11 +538,11 @@ class HelperTest extends CakeTestCase {
  */
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
-		for($i = 0; $i < 2; $i++) {
+		for ($i = 0; $i < 2; $i++) {
 			$this->Helper->data['Model'][$i] = 'what';
 			$result[] = $this->Helper->value("Model.{$i}");
 			$this->Helper->data['Model'][$i] = array();
-			for($j = 0; $j < 2; $j++) {
+			for ($j = 0; $j < 2; $j++) {
 				$this->Helper->data['Model'][$i][$j] = 'how';
 				$result[] = $this->Helper->value("Model.{$i}.{$j}");
 			}
