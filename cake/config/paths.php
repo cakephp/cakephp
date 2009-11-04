@@ -72,7 +72,7 @@ if (!defined('APP')) {
 	define('COMPONENTS', CONTROLLERS.'components'.DS);
 
 /**
- * Path to the application's views directory.
+ * Path to the application's libs directory.
  */
 	define('APPLIBS', APP.'libs'.DS);
 
