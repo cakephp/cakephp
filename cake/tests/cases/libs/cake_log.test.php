@@ -31,6 +31,26 @@ App::import('Core', 'Log');
 class CakeLogTest extends CakeTestCase {
 
 /**
+ * Test that CakeLog autoconfigures itself to use a FileLogger with the LOGS dir.
+ * When no streams are there.
+ *
+ * @return void
+ **/
+	function testAutoConfig() {
+		$streams = CakeLog::streams();
+		foreach ($streams as $stream) {
+			CakeLog::removeStream($stream);
+		}
+
+		@unlink(LOGS . 'error.log');
+		CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		$result = CakeLog::streams();
+		$this->assertEqual($result, array('default'));
+	}
+
+/**
  * testLogFileWriting method
  *
  * @access public
