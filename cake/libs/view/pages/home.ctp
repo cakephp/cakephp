@@ -27,8 +27,9 @@ if (Configure::read() == 0):
 endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="http://code.cakephp.org/wiki/changelog/1_2_x_x"><?php __('Read the changelog'); ?> </a>
 <?php
+echo $this->Html->link(__('Read the changelog', true), 'http://code.cakephp.org/wiki/changelog/1_2_x_x');
+
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
 endif;
@@ -107,13 +108,27 @@ To change its layout, create: APP/views/layouts/default.ctp.<br />
 You can also add some CSS styles for your pages at: APP/webroot/css.');
 ?>
 </p>
+
 <h3><?php __('Getting Started'); ?></h3>
 <p>
-	<a href="http://book.cakephp.org"><strong>new</strong> CakePHP 1.2 Docs</a>
+	<?php
+		echo $this->Html->link(
+			sprintf('<strong>%s</strong>%s', __('new', true ), __('CakePHP 1.2 Docs', true )),
+			'http://book.cakephp.org',
+			array('target' => '_blank', 'escape' => false)
+		);
+	?>
 </p>
 <p>
-	<a href="http://book.cakephp.org/view/219/the-cakephp-blog-tutorial"><?php __('The 15 min Blog Tutorial'); ?></a><br />
+	<?php
+		echo $this->Html->link(
+			__('The 15 min Blog Tutorial', true),
+			'http://book.cakephp.org/view/219/the-cakephp-blog-tutorial',
+			array('target' => '_blank', 'escape' => false)
+		);
+	?>
 </p>
+
 <h3><?php __('More about Cake'); ?></h3>
 <p>
 <?php __('CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
@@ -121,30 +136,78 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 <?php __('Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
 </p>
-<br />
+
 <ul>
-	<li><a href="http://www.cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
-	<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul></li>
-	<li><a href="http://www.cakephp.org"><?php __('CakePHP'); ?> </a>
-	<ul><li><?php __('The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://book.cakephp.org"><?php __('CakePHP Documentation'); ?> </a>
-	<ul><li><?php __('Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?php __('CakePHP API'); ?> </a>
-	<ul><li><?php __('Quick Reference'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?php __('The Bakery'); ?> </a>
-	<ul><li><?php __('Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://live.cakephp.org"><?php __('The Show'); ?> </a>
-	<ul><li><?php __('The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul></li>
-	<li><a href="http://groups.google.com/group/cake-php"><?php __('CakePHP Google Group'); ?> </a>
-	<ul><li><?php __('Community mailing list'); ?></li></ul></li>
-	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?php __('Live chat about CakePHP'); ?></li></ul></li>
-	<li><a href="https://code.cakephp.org/"><?php __('CakePHP Code'); ?> </a>
-	<ul><li><?php __('For the Development of CakePHP (Tickets, Git browser, Roadmap, Changelogs)'); ?></li></ul></li>
-	<li><a href="http://www.cakeforge.org"><?php __('CakeForge'); ?> </a>
-	<ul><li><?php __('Open Development for CakePHP'); ?></li></ul></li>
-	<li><a href="http://astore.amazon.com/cakesoftwaref-20/"><?php __('Book Store'); ?> </a>
-	<ul><li><?php __('Recommended Software Books'); ?></li></ul></li>
-	<li><a href="http://www.cafepress.com/cakefoundation"><?php __('CakePHP gear'); ?> </a>
-	<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
+	<li>
+		<?php
+			echo $this->Html->link(__('Cake Software Foundation', true), 'http://www.cakefoundation.org/');
+		?>
+		<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP', true), 'http://www.cakephp.org');
+		?>
+		<ul><li><?php __('The Rapid Development Framework'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP Documentation', true), 'http://book.cakephp.org');
+		?>
+		<ul><li><?php __('Your Rapid Development Cookbook'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP API', true), 'http://api.cakephp.org');
+		?>
+		<ul><li><?php __('Quick Reference'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('The Bakery', true), 'http://bakery.cakephp.org');
+		?>
+		<ul><li><?php __('Everything CakePHP'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('The Show', true), 'http://live.cakephp.org');
+		?>
+		<ul><li><?php __('The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP Google Group', true), 'http://groups.google.com/group/cake-php');
+		?>
+		<ul><li><?php __('Community mailing list'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('irc.freenode.net #cakephp', true), 'irc://irc.freenode.net/cakephp');
+		?>
+		<ul><li><?php __('Live chat about CakePHP'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP Code', true), 'http://code.cakephp.org/');
+		?>
+		<ul><li><?php __('For the Development of CakePHP (Tickets, Git browser, Roadmap, Changelogs)'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakeForge', true), 'http://www.cakeforge.org');
+		?>
+		<ul><li><?php __('Open Development for CakePHP'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('Book Store', true), 'http://astore.amazon.com/cakesoftwaref-20/');
+		?>
+		<ul><li><?php __('Recommended Software Books'); ?></li></ul>
+	</li>
+	<li>
+		<?php
+			echo $this->Html->link(__('CakePHP gear', true), 'http://www.cafepress.com/cakefoundation');
+		?>
+		<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul>
+	</li>
 </ul>
