@@ -54,17 +54,90 @@
  * @subpackage    cake.cake.libs
  */
 class CakeLog {
+	
+/**
+ * An array of connected streams. 
+ * Each stream represents a callable that will be called when write() is called.
+ *
+ * @var array
+ * @access protected
+ **/
+	var $_streams = array();
+
+/**
+ * Get an instance
+ *
+ * @return void
+ * @static
+ **/
+	function getInstance() {
+		static $instance = array();
+		if (!isset($instance[0])) {
+			$instance[0] = new CakeLog();
+		}
+		return $instance[0];
+	}
+
+/**
+ * Returns the keynames of the currently active streams
+ *
+ * @return array
+ * @static
+ **/
+	function streams() {
+		$self = CakeLog::getInstance();
+		return array_keys($self->_streams);
+	}
+
+/**
+ * Remove a stream from the active streams.  Once a stream has been removed
+ * it will no longer be called.
+ *
+ * @param string $keyname Key name of callable to remove.
+ * @return void
+ * @static
+ **/
+	function removeStream($streamName) {
+		$self = CakeLog::getInstance();
+		unset($self->_streams[$streamName]);
+	}
+
+/**
+ * Add a stream the logger.
+ * Streams represent destinations for log messages.  Each stream can connect to 
+ * a different resource /interface and capture/write output to that source.
+ *
+ * @param string $key Keyname of config.
+ * @param array $config Array of config information for the LogStream
+ * @return boolean success
+ **/
+	function addStream($key, $config) {
+		$self = CakeLog::getInstance();
+		$self->_streams[$key] = $config;
+	}
+
+/**
+ * Configures the automatic/default stream a FileLogger.
+ *
+ * @return void
+ **/
+	function _autoConfig() {
+		if (!class_exists('FileLogger')) {
+			require LIBS . 'log' . DS . 'file.php';
+		}
+		$this->_streams['default'] = array('FileLogger', 'write');
+	}
 
 /**
  * Writes given message to a log file in the logs directory.
  *
  * @param string $type Type of log, becomes part of the log's filename
- * @param string $msg  Message to log
+ * @param string $message  Message to log
  * @return boolean Success
  * @access public
  * @static
  */
-	function write($type, $msg) {
+	function write($type, $message) {
 		if (!defined('LOG_ERROR')) {
 			define('LOG_ERROR', 2);
 		}
@@ -83,18 +156,12 @@ class CakeLog {
 		if (is_int($type) && isset($levels[$type])) {
 			$type = $levels[$type];
 		}
-
-		if ($type == 'error' || $type == 'warning') {
-			$filename = LOGS . 'error.log';
-		} elseif (in_array($type, $levels)) {
-			$filename = LOGS . 'debug.log';
-		} else {
-			$filename = LOGS . $type . '.log';
+		$self = CakeLog::getInstance();
+		if (empty($self->_streams)) {
+			$self->_autoConfig();
 		}
-		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $msg . "\n";
-		$log = new File($filename, true);
-		if ($log->writable()) {
-			return $log->append($output);
+		foreach ($self->_streams as $key => $callable) {
+			call_user_func($callable, $type, $message);
 		}
 	}
 
