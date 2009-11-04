@@ -3384,6 +3384,17 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$expected = $this->Article->User->hasOne;
 		$this->Article->find('all', array(
 			'contain' => array(
+				'User' => array(
+					'Comment' => array('fields' => array('created'))
+				)
+			)
+		));
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+		
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all', array(
+			'contain' => array(
 				'User.ArticleFeatured' => array(
 					'conditions' => array('ArticleFeatured.published' => 'Y')
 				),
