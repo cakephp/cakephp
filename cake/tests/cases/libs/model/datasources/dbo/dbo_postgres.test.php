@@ -315,11 +315,11 @@ class DboPostgresTest extends CakeTestCase {
 	}
 
 /**
- * test that date columns do not generate errors with null and nullish values.
+ * test that date and time columns do not generate errors with null and nullish values.
  *
  * @return void
  **/
-	function testDateAsNull() {
+	function testDateAndTimeAsNull() {
 		$this->assertEqual($this->db2->value(null, 'date'), 'NULL');
 		$this->assertEqual($this->db2->value('', 'date'), 'NULL');
 
@@ -328,6 +328,9 @@ class DboPostgresTest extends CakeTestCase {
 
 		$this->assertEqual($this->db2->value('', 'timestamp'), 'NULL');
 		$this->assertEqual($this->db2->value(null, 'timestamp'), 'NULL');
+
+		$this->assertEqual($this->db2->value('', 'time'), 'NULL');
+		$this->assertEqual($this->db2->value(null, 'time'), 'NULL');
 	}
 
 /**

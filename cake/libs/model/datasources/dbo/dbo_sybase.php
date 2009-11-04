@@ -112,6 +112,14 @@ class DboSybase extends DboSource {
 	}
 
 /**
+ * Check that one of the sybase extensions is installed
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('sybase') || extension_loaded('sybase_ct');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false

@@ -71,6 +71,11 @@ class StringTest extends CakeTestCase {
  * @return void
  */
 	function testInsert() {
+		$string = 'some string';
+		$expected = 'some string';
+		$result = String::insert($string, array());
+		$this->assertEqual($result, $expected);
+
 		$string = '2 + 2 = :sum. Cake is :adjective.';
 		$expected = '2 + 2 = 4. Cake is yummy.';
 		$result = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'));

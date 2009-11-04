@@ -488,57 +488,19 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	function testIsThisWeek() {
-		switch (date('D')) {
-			case 'Mon' :
-				for ($i = 0; $i < 6; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+7 days"));
-				$this->assertFalse($this->Time->isThisWeek("-1 days"));
-				break;
-			case 'Tue' :
-				for ($i = -1; $i < 5; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+6 days"));
-				$this->assertFalse($this->Time->isThisWeek("-2 days"));
-				break;
-			case 'Wed' :
-				for ($i = -2; $i < 5; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+5 days"));
-				$this->assertFalse($this->Time->isThisWeek("-3 days"));
-				break;
-			case 'Thu' :
-				for ($i = -3; $i < 4; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+4 days"));
-				$this->assertFalse($this->Time->isThisWeek("-4 days"));
-				break;
-			case 'Fri' :
-				for ($i = -4; $i < 3; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+3 days"));
-				$this->assertFalse($this->Time->isThisWeek("-5 days"));
-				break;
-			case 'Sat' :
-				for ($i = -5; $i < 2; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+2 days"));
-				$this->assertFalse($this->Time->isThisWeek("-6 days"));
-				break;
-			case 'Sun' :
-				for ($i = -6; $i < 1; $i++) {
-					$this->assertTrue($this->Time->isThisWeek("+$i days"));
-				}
-				$this->assertFalse($this->Time->isThisWeek("+1 days"));
-				$this->assertFalse($this->Time->isThisWeek("-7 days"));
-				break;
+		// A map of days which goes from -1 day of week to +1 day of week
+		$map = array(
+			'Mon' => array(-1, 7), 'Tue' => array(-2, 6), 'Wed' => array(-3, 5),
+			'Thu' => array(-4, 4), 'Fri' => array(-5, 3), 'Sat' => array(-6, 2),
+			'Sun' => array(-7, 1)
+		);
+		$days = $map[date('D')];
+
+		for ($day = $days[0] + 1; $day < $days[1]; $day++) {
+			$this->assertTrue($this->Time->isThisWeek(($day > 0 ? '+' : '') . $day . ' days'));
 		}
+		$this->assertFalse($this->Time->isThisWeek($days[0] . ' days'));
+		$this->assertFalse($this->Time->isThisWeek('+' . $days[1] . ' days'));
 	}
 
 /**
@@ -660,6 +622,11 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	function testUserOffset() {
+		if ($this->skipIf(!class_exists('DateTimeZone'), '%s DateTimeZone class not available.')) {
+			return;
+		}
+
+
 		$timezoneServer = new DateTimeZone(date_default_timezone_get());
 		$timeServer = new DateTime('now', $timezoneServer);
 		$yourTimezone = $timezoneServer->getOffset($timeServer) / HOUR;
