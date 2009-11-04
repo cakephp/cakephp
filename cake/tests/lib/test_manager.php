@@ -637,7 +637,8 @@ if (function_exists('caketestsgetreporter')) {
 					$Reporter =& new CakeHtmlReporter();
 					break;
 				default:
-					$Reporter =& new TextReporter();
+					require_once CAKE_TESTS_LIB . 'cake_text_reporter.php';
+					$Reporter =& new CakeTextReporter();
 					break;
 			}
 		}

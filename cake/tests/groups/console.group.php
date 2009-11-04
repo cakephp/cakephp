@@ -46,7 +46,24 @@ class ConsoleGroupTest extends TestSuite {
  * @return void
  */
 	function ConsoleGroupTest() {
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'console');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'cake');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'acl');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'api');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'bake');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'schema');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'shell');
+
+		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'tasks' . DS;
+
+		TestManager::addTestFile($this, $path . 'controller');
+		TestManager::addTestFile($this, $path . 'model');
+		TestManager::addTestFile($this, $path . 'view');
+		TestManager::addTestFile($this, $path . 'fixture');
+		TestManager::addTestFile($this, $path . 'test');
+		TestManager::addTestFile($this, $path . 'db_config');
+		TestManager::addTestFile($this, $path . 'plugin');
+		TestManager::addTestFile($this, $path . 'project');
+		
 	}
 }
 ?>

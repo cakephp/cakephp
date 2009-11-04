@@ -46,6 +46,14 @@ class ExtractTask extends Shell {
 	var $__files = array();
 
 /**
+ * Merge all domains string into the default.pot file
+ *
+ * @var boolean
+ * @access public
+ */
+	var $__merge = false;
+
+/**
  * Current file being processed
  *
  * @var string
@@ -137,6 +145,14 @@ class ExtractTask extends Shell {
 			}
 		}
 
+		if (isset($this->params['merge'])) {
+			$this->__merge = !(strtolower($this->params['merge']) === 'no');
+		} else {
+			$this->out();
+			$response = $this->in(sprintf(__('Would you like to merge all domains strings into the default.pot file?', true)), array('y', 'n'), 'n');
+			$this->__merge = strtolower($response) === 'y';
+		}
+
 		if (empty($this->__files)) {
 			$this->__searchFiles();
 		}
@@ -176,15 +192,18 @@ class ExtractTask extends Shell {
 		$this->out(__('By default the .pot file(s) will be place in the locale directory of -app', true));
 		$this->out(__('By default -app is ROOT/app', true));
 		$this->hr();
-		$this->out(__('Usage: cake i18n extract [command] [path...]', true));
+		$this->out(__('Usage: cake i18n extract <command> <param1> <param2>...', true));
 		$this->out();
-		$this->out(__('Commands:', true));
+		$this->out(__('Params:', true));
 		$this->out(__('   -app [path...]: directory where your application is located', true));
 		$this->out(__('   -root [path...]: path to install', true));
 		$this->out(__('   -core [path...]: path to cake directory', true));
 		$this->out(__('   -paths [comma separated list of paths, full path is needed]', true));
+		$this->out(__('   -merge [yes|no]: Merge all domains strings into the default.pot file', true));
 		$this->out(__('   -output [path...]: Full path to output directory', true));
 		$this->out(__('   -files: [comma separated list of files, full path to file is needed]', true));
+		$this->out();
+		$this->out(__('Commands:', true));
 		$this->out(__('   cake i18n extract help: Shows this help message.', true));
 		$this->out();
 	}
@@ -322,7 +341,7 @@ class ExtractTask extends Shell {
 				}
 
 				$this->__store($domain, $header, $sentence);
-				if ($domain != 'default') {
+				if ($domain != 'default' && $this->__merge) {
 					$this->__store('default', $header, $sentence);
 				}
 			}

@@ -315,8 +315,8 @@ class ScaffoldViewTest extends CakeTestCase {
  * @return void
  */
 	function testGetViewFilename() {
-		$_admin = Configure::read('Routing.admin');
-		Configure::write('Routing.admin', 'admin');
+		$_admin = Configure::read('Routing.prefixes');
+		Configure::write('Routing.prefixes', array('admin'));
 
 		$this->Controller->action = 'index';
 		$ScaffoldView =& new TestScaffoldView($this->Controller);
@@ -385,7 +385,7 @@ class ScaffoldViewTest extends CakeTestCase {
 			. DS .'test_plugin' . DS . 'views' . DS . 'tests' . DS . 'scaffold.edit.ctp';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('Routing.admin', $_admin);
+		Configure::write('Routing.prefixes', $_admin);
 	}
 
 /**
@@ -499,7 +499,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		new Scaffold($this->Controller, $params);
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1">/', $result);
+		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1"/', $result);
 		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);
 
 		$this->assertPattern('/input type="hidden" name="data\[ScaffoldMock\]\[id\]" value="1" id="ScaffoldMockId"/', $result);
@@ -509,6 +509,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
 	}
+
 /**
  * Test Admin Index Scaffolding.
  *
@@ -516,9 +517,9 @@ class ScaffoldViewTest extends CakeTestCase {
  * @return void
  **/
 	function testAdminIndexScaffold() {
-		$_backAdmin = Configure::read('Routing.admin');
+		$_backAdmin = Configure::read('Routing.prefixes');
 
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
@@ -551,7 +552,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		//TODO: add testing for table generation
 		$this->assertPattern('/<li><a href="\/admin\/scaffold_mock\/add\/">New Scaffold Mock<\/a><\/li>/', $result);
 
-		Configure::write('Routing.admin', $_backAdmin);
+		Configure::write('Routing.prefixes', $_backAdmin);
 	}
 
 /**
@@ -561,9 +562,9 @@ class ScaffoldViewTest extends CakeTestCase {
  * @return void
  **/
 	function testAdminEditScaffold() {
-		$_backAdmin = Configure::read('Routing.admin');
+		$_backAdmin = Configure::read('Routing.prefixes');
 
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		$params = array(
 			'plugin' => null,
 			'pass' => array(),
@@ -594,8 +595,54 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertPattern('#admin/scaffold_mock/edit/1#', $result);
 		$this->assertPattern('#Scaffold Mock#', $result);
 
-		Configure::write('Routing.admin', $_backAdmin);
+		Configure::write('Routing.prefixes', $_backAdmin);
 	}
+
+/**
+ * Test Admin Index Scaffolding.
+ *
+ * @access public
+ * @return void
+ **/
+	function testMultiplePrefixScaffold() {
+		$_backAdmin = Configure::read('Routing.prefixes');
+
+		Configure::write('Routing.prefixes', array('admin', 'member'));
+		$params = array(
+			'plugin' => null,
+			'pass' => array(),
+			'form' => array(),
+			'named' => array(),
+			'prefix' => 'member',
+			'url' => array('url' =>'member/scaffold_mock'),
+			'controller' => 'scaffold_mock',
+			'action' => 'member_index',
+			'member' => 1,
+		);
+		//reset, and set router.
+		Router::reload();
+		Router::setRequestInfo(array($params, array('base' => '/', 'here' => '/member/scaffold_mock', 'webroot' => '/')));
+		$this->Controller->params = $params;
+		$this->Controller->controller = 'scaffold_mock';
+		$this->Controller->base = '/';
+		$this->Controller->action = 'member_index';
+		$this->Controller->here = '/tests/member/scaffold_mock';
+		$this->Controller->webroot = '/';
+		$this->Controller->scaffold = 'member';
+		$this->Controller->constructClasses();
+
+		ob_start();
+		$Scaffold = new Scaffold($this->Controller, $params);
+		$result = ob_get_clean();
+
+		$this->assertPattern('/<h2>Scaffold Mock<\/h2>/', $result);
+		$this->assertPattern('/<table cellpadding="0" cellspacing="0">/', $result);
+		//TODO: add testing for table generation
+		$this->assertPattern('/<li><a href="\/member\/scaffold_mock\/add\/">New Scaffold Mock<\/a><\/li>/', $result);
+
+		Configure::write('Routing.prefixes', $_backAdmin);
+	}
+
 }
 
 /**

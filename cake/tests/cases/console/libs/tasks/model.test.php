@@ -1,6 +1,7 @@
 <?php
+/* SVN FILE: $Id$ */
 /**
- * TestTaskTest file
+ * ModelTaskTest file
  *
  * Test Case for test generation shell task
  *
@@ -17,7 +18,7 @@
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
- * @since         CakePHP v 1.3
+ * @since         CakePHP v 1.2.6
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 App::import('Shell', 'Shell', false);
@@ -37,12 +38,10 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-
 Mock::generatePartial(
 	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
 	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
 );
-
 Mock::generatePartial(
 	'ModelTask', 'MockModelTask',
 	array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
@@ -217,9 +216,9 @@ class ModelTaskTest extends CakeTestCase {
 	function testInteractiveFieldValidation() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', '20');
+		$this->Task->setReturnValueAt(0, 'in', '19');
 		$this->Task->setReturnValueAt(1, 'in', 'y');
-		$this->Task->setReturnValueAt(2, 'in', '16');
+		$this->Task->setReturnValueAt(2, 'in', '15');
 		$this->Task->setReturnValueAt(3, 'in', 'n');
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));

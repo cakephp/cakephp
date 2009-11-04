@@ -89,7 +89,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 			App::import('Core', 'Folder');
 			$folder = new Folder();
 			$folder->cd($path);
-			$contents = $folder->ls();
+			$contents = $folder->read();
 
 /**
  * remove method

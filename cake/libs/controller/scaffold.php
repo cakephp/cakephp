@@ -434,10 +434,7 @@ class Scaffold extends Object {
 /**
  * When methods are now present in a controller
  * scaffoldView is used to call default Scaffold methods if:
- * <code>
- * var $scaffold;
- * </code>
- * is placed in the controller's class definition.
+ * `var $scaffold;` is placed in the controller's class definition.
  *
  * @param array $params Parameters for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error
@@ -445,43 +442,44 @@ class Scaffold extends Object {
  */
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
-		$admin = Configure::read('Routing.admin');
-
+		$prefixes = Configure::read('Routing.prefixes');
+		$scaffoldPrefix = $this->scaffoldActions;
+	
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array(
 					'index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete'
 				);
-			} elseif (!empty($admin) && $this->scaffoldActions === $admin) {
+			} elseif (!empty($prefixes) && in_array($scaffoldPrefix, $prefixes)) {
 				$this->scaffoldActions = array(
-					$admin .'_index', $admin .'_list', $admin .'_view', $admin .'_add',
-					$admin .'_create', $admin .'_edit', $admin .'_update', $admin .'_delete'
+					$scaffoldPrefix . '_index', 
+					$scaffoldPrefix . '_list',
+					$scaffoldPrefix . '_view',
+					$scaffoldPrefix . '_add',
+					$scaffoldPrefix . '_create',
+					$scaffoldPrefix . '_edit',
+					$scaffoldPrefix . '_update',
+					$scaffoldPrefix . '_delete'
 				);
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				if (!empty($admin)) {
-					$params['action'] = str_replace($admin . '_', '', $params['action']);
+				if (!empty($prefixes)) {
+					$params['action'] = str_replace($scaffoldPrefix . '_', '', $params['action']);
 				}
 				switch ($params['action']) {
 					case 'index':
+					case 'list':
 						$this->__scaffoldIndex($params);
 					break;
 					case 'view':
 						$this->__scaffoldView($params);
 					break;
-					case 'list':
-						$this->__scaffoldIndex($params);
-					break;
 					case 'add':
-						$this->__scaffoldSave($params, 'add');
-					break;
-					case 'edit':
-						$this->__scaffoldSave($params, 'edit');
-					break;
 					case 'create':
 						$this->__scaffoldSave($params, 'add');
 					break;
+					case 'edit':
 					case 'update':
 						$this->__scaffoldSave($params, 'edit');
 					break;
@@ -556,10 +554,15 @@ class ScaffoldView extends ThemeView {
 			$name = $this->action;
 		}
 		$name = Inflector::underscore($name);
-		$admin = Configure::read('Routing.admin');
+		$prefixes = Configure::read('Routing.prefixes');
 
-		if (!empty($admin) && strpos($name, $admin . '_') !== false) {
-			$name = substr($name, strlen($admin) + 1);
+		if (!empty($prefixes)) {
+			foreach ($prefixes as $prefix) {
+				if (strpos($name, $prefix . '_') !== false) {
+					$name = substr($name, strlen($prefix) + 1);
+					break;
+				}
+			}
 		}
 
 		if ($name === 'add') {

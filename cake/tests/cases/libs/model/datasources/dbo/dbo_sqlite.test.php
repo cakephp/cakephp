@@ -223,6 +223,78 @@ class DboSqliteTest extends CakeTestCase {
 	}
 
 /**
+ * test building columns with SQLite
+ *
+ * @return void
+ **/
+	function testBuildColumn() {
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'null' => false,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"int_field" integer(11) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'name',
+			'type' => 'string',
+			'length' => 20,
+			'null' => false,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"name" varchar(20) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'string',
+			'length' => 20,
+			'default' => null,
+			'null' => true,
+			'collate' => 'NOCASE'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"testName" varchar(20) DEFAULT NULL COLLATE NOCASE';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'string',
+			'length' => 20,
+			'default' => 'test-value',
+			'null' => false,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"testName" varchar(20) DEFAULT \'test-value\' NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'length' => 10,
+			'default' => 10,
+			'null' => false,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
+		$this->assertEqual($result, $expected);
+		
+		$data = array(
+			'name' => 'testName',
+			'type' => 'integer',
+			'length' => 10,
+			'default' => 10,
+			'null' => false,
+			'collate' => 'BADVALUE'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test describe() and normal results.
  *
  * @return void

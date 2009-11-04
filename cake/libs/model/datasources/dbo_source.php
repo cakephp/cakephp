@@ -116,7 +116,9 @@ class DboSource extends DataSource {
 		}
 		parent::__construct($config);
 		$this->fullDebug = Configure::read() > 1;
-
+		if (!$this->enabled()) {
+			return false;
+		}
 		if ($autoConnect) {
 			return $this->connect();
 		} else {
@@ -383,8 +385,10 @@ class DboSource extends DataSource {
 					$this->_queryCache[$sql] = $out;
 				}
 			}
+			if (empty($out) && is_bool($this->_result)) {
+				return $this->_result;
+			}
 			return $out;
-
 		} else {
 			return false;
 		}
@@ -2459,16 +2463,7 @@ class DboSource extends DataSource {
 		if (($column['type'] == 'integer' || $column['type'] == 'float' ) && isset($column['default']) && $column['default'] === '') {
 			$column['default'] = null;
 		}
-
-		foreach ($this->fieldParameters as $paramName => $value) {
-			if (isset($column[$paramName]) && $value['position'] == 'beforeDefault') {
-				$val = $column[$paramName];
-				if ($value['quote']) {
-					$val = $this->value($val);
-				}
-				$out .= ' ' . $value['value'] . $value['join'] . $val;
-			}
-		}
+		$out = $this->_buildFieldParameters($out, $column, 'beforeDefault');
 
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			$out .= ' ' . $this->columns['primary_key']['name'];
@@ -2483,18 +2478,32 @@ class DboSource extends DataSource {
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
 		}
+		$out = $this->_buildFieldParameters($out, $column, 'afterDefault');
+		return $out;
+	}
 
+/**
+ * Build the field parameters, in a position
+ *
+ * @param string $columnString The partially built column string
+ * @param array $columnData The array of column data.
+ * @param string $position The position type to use. 'beforeDefault' or 'afterDefault' are common
+ * @return string a built column with the field parameters added.
+ **/
+	function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
-			if (isset($column[$paramName]) && $value['position'] == 'afterDefault') {
-				$val = $column[$paramName];
+			if (isset($columnData[$paramName]) && $value['position'] == $position) {
+				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'])) {
+					continue;
+				}
+				$val = $columnData[$paramName];
 				if ($value['quote']) {
 					$val = $this->value($val);
 				}
-				$out .= ' ' . $value['value'] . $value['join'] . $val;
+				$columnString .= ' ' . $value['value'] . $value['join'] . $val;
 			}
 		}
-
-		return $out;
+		return $columnString;
 	}
 
 /**

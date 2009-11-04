@@ -140,10 +140,19 @@ class DboFirebird extends DboSource {
 		$connect = $config['connect'];
 
 		$this->connected = false;
+
 		$this->connection = $connect($config['host'] . ':' . $config['database'], $config['login'], $config['password']);
 		$this->connected = true;
 	}
 
+/**
+ * Check that the interbase extension is loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('interbase');
+	}
 /**
  * Disconnects from database.
  *
