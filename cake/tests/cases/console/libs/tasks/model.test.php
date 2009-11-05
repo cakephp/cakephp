@@ -53,7 +53,7 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ModelTaskTest extends CakeTestCase {
-	var $fixtures = array('core.datatype');
+	var $fixtures = array('core.datatype', 'core.binary_test');
 /**
  * setUp method
  *
@@ -84,7 +84,9 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->setReturnValue('createFile', true);
 		$result = $this->Task->fixture('Datatype');
 		$this->assertPattern('/float_field\' => 1/', $result);
-		
+
+		$result = $this->Task->fixture('BinaryTest');
+		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
 	}
 }
 ?>

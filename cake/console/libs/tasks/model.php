@@ -870,6 +870,7 @@ class ModelTask extends Shell {
 								case 'integer':
 									$insert = 1;
 								break;
+								case 'binary':
 								case 'string';
 									$insert = "Lorem ipsum dolor sit amet";
 									if (!empty($value['length'])) {
