@@ -1221,6 +1221,25 @@ class NumberTreeTest extends CakeTestCase {
 	}
 
 /**
+ * test reordering large-ish trees with cacheQueries = true.
+ * This caused infinite loops when moving down elements as stale data is returned
+ * from the memory cache
+ *
+ * @access public
+ * @return void
+ */
+	function testReorderBigTreeWithQueryCaching() {
+		extract($this->settings);
+		$this->Tree =& new $modelClass();
+		$this->Tree->initialize(2, 10);
+
+		$original = $this->Tree->cacheQueries;
+		$this->Tree->cacheQueries = true;
+		$this->Tree->reorder(array('field' => 'name', 'direction' => 'DESC'));
+		$this->assertTrue($this->Tree->cacheQueries, 'cacheQueries was not restored after reorder(). %s');
+		$this->Tree->cacheQueries = $original;
+	}
+/**
  * testGenerateTreeListWithSelfJoin method
  *
  * @access public

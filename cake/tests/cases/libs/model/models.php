@@ -558,6 +558,51 @@ class ModifiedComment extends CakeTestModel {
 }
 
 /**
+ * Modified Comment Class has afterFind Callback
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class AgainModifiedComment extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Comment'
+ * @access public
+ */
+	var $name = 'Comment';
+
+/**
+ * useTable property
+ *
+ * @var string 'comments'
+ * @access public
+ */
+	var $useTable = 'comments';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('Article');
+
+/**
+ * afterFind callback
+ *
+ * @return void
+ **/
+	function afterFind($results) {
+		if (isset($results[0])) {
+			$results[0]['Comment']['querytype'] = $this->findQueryType;
+		}
+		return $results;
+	}
+}
+
+/**
  * MergeVarPluginAppModel class
  *
  * @package       cake

@@ -82,10 +82,6 @@ class FixtureTask extends Shell {
  * @access public
  */
 	function execute() {
-		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'CakeSchema', false);
-		}
-
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -176,6 +172,9 @@ class FixtureTask extends Shell {
  * @access private
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
+		if (!class_exists('CakeSchema')) {
+			App::import('Model', 'CakeSchema', false);
+		}
 		$table = $schema = $records = $import = $modelImport = $recordImport = null;
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);

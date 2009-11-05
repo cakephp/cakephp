@@ -130,6 +130,14 @@ class DboPostgres extends DboSource {
 	}
 
 /**
+ * Check if PostgreSQL is enabled/loaded
+ *
+ * @return boolean
+ **/
+	function enabled() {
+		return extension_loaded('pgsql');
+	}
+/**
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
@@ -289,6 +297,7 @@ class DboPostgres extends DboSource {
 			case 'date':
 			case 'datetime':
 			case 'timestamp':
+			case 'time':
 				if ($data === '') {
 					return $read ? 'NULL' : 'DEFAULT';
 				}

@@ -76,16 +76,6 @@ class ModelTask extends Shell {
 	var $__validations = array();
 
 /**
- * startup method
- *
- * @return void
- **/
-	function startup() {
-		App::import('Model', 'Model', false);
-		parent::startup();
-	}
-
-/**
  * Execution method always used for tasks
  *
  * @access public
@@ -176,6 +166,8 @@ class ModelTask extends Shell {
  * @access private
  */
 	function __interactive() {
+		App::import('Model', 'Model', false);
+
 		$this->hr();
 		$this->out(sprintf("Bake Model\nPath: %s", $this->path));
 		$this->hr();
@@ -796,6 +788,8 @@ class ModelTask extends Shell {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
 		}
+		App::import('Model', 'ConnectionManager', false);
+
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
 		$fullTableName = $db->fullTableName($useTable, false);
@@ -823,6 +817,8 @@ class ModelTask extends Shell {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
 		}
+		App::import('Model', 'ConnectionManager', false);
+
 		$tables = array();
 		$db =& ConnectionManager::getDataSource($useDbConfig);
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];

@@ -215,7 +215,7 @@ class CookieComponent extends Object {
 		foreach ($key as $name => $value) {
 			if (strpos($name, '.') === false) {
 				$this->__values[$name] = $value;
-				$this->__write(".$name", $value);
+				$this->__write("[$name]", $value);
 				
 			} else {
 				$names = explode('.', $name, 2);
@@ -223,7 +223,7 @@ class CookieComponent extends Object {
 					$this->__values[$names[0]] = array();
 				}
 				$this->__values[$names[0]] = Set::insert($this->__values[$names[0]], $names[1], $value);
-				$this->__write("." . implode('.', $names), $value);
+				$this->__write('[' . implode('][', $names) . ']', $value);
 			}
 		}
 		$this->__encrypted = true;
@@ -289,12 +289,12 @@ class CookieComponent extends Object {
 		}
 		if (strpos($key, '.') === false) {
 			unset($this->__values[$key]);
-			$this->__delete(".$key");
+			$this->__delete("[$key]");
 			return;
 		}
 		$names = explode('.', $key, 2);
 		$this->__values[$names[0]] = Set::remove($this->__values[$names[0]], $names[1]);
-		$this->__delete("." . implode('.', $names));
+		$this->__delete('[' . implode('][', $names) . ']');
 	}
 
 /**
@@ -315,11 +315,11 @@ class CookieComponent extends Object {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
 					unset($this->__values[$name][$key]);
-					$this->__delete(".$name.$key");
+					$this->__delete("[$name][$key]");
 				}
 			}
 			unset($this->__values[$name]);
-			$this->__delete(".$name");
+			$this->__delete("[$name]");
 		}
 	}
 
@@ -354,6 +354,11 @@ class CookieComponent extends Object {
 			return $this->__expires;
 		}
 		$this->__reset = $this->__expires;
+		
+		if ($expires == 0) {
+			return $this->__expires = 0;
+		}
+		
 		if (is_integer($expires) || is_numeric($expires)) {
 			return $this->__expires = $now + intval($expires);
 		}

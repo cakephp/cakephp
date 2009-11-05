@@ -353,9 +353,10 @@ class DbConfigTask extends Shell {
  * @return void
  **/
 	function getConfig() {
+		App::import('Model', 'ConnectionManager', false);
+
 		$useDbConfig = 'default';
 		$configs = get_class_vars($this->databaseClassName);
-
 		if (!is_array($configs)) {
 			return $this->execute();
 		}

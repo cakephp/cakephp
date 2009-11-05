@@ -95,7 +95,7 @@ class ApiShellTest extends CakeTestCase {
 				'3. beforeRender()',
 				'4. constructClasses()',
 				'5. disableCache()',
-				'6. flash($message, $url, $pause = 1)',
+				'6. flash($message, $url, $pause = 1, $layout = \'flash\')',
 				'7. header($status)',
 				'8. isAuthorized()',
 				'9. loadModel($modelClass = null, $id = null)',

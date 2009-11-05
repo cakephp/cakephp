@@ -229,6 +229,9 @@ class String {
 		$options += $defaults;
 		$format = $options['format'];
 		$data = (array)$data;
+		if (empty($data)) {
+			return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
+		}
 
 		if (!isset($format)) {
 			$format = sprintf(
