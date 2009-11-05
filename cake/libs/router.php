@@ -458,7 +458,7 @@ class Router {
 			$route->compile();
 			if (($r = $route->parse($url)) !== false) {
 				$_this->__currentRoute[] =& $route;
-				
+
 				$params = $route->params;
 				$names = $route->keys;
 				$defaults = $route->defaults;
@@ -856,7 +856,7 @@ class Router {
 
 			$named = $args = array();
 			$skip = array_merge(
-				array('bare', 'action', 'controller', 'plugin', 'prefix'), 
+				array('bare', 'action', 'controller', 'plugin', 'prefix'),
 				$_this->__prefixes
 			);
 
@@ -1233,9 +1233,9 @@ class Router {
 }
 
 /**
- * A single Route used by the Router to connect requests to 
+ * A single Route used by the Router to connect requests to
  * parameter maps.
- * 
+ *
  * Not normally created as a standalone.  Use Router::connect() to create
  * Routes for your application.
  *
@@ -1334,7 +1334,7 @@ class RouterRoute {
  *
  * @param string $route An empty string, or a route string "/"
  * @param array $default NULL or an array describing the default route
- * @param array $params An array matching the named elements in the route to regular expressions 
+ * @param array $params An array matching the named elements in the route to regular expressions
  *    which that element should match.
  * @return void
  * @access protected

@@ -647,7 +647,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('action' => 'edit', 1));
 		$expected = '/magazine/admin/subscriptions/edit/1';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = Router::url(array('admin' => true, 'controller' => 'users', 'action' => 'login'));
 		$expected = '/magazine/admin/users/login';
 		$this->assertEqual($result, $expected);
@@ -1550,7 +1550,7 @@ class RouterTest extends CakeTestCase {
 
 /**
  * test that setting a prefix override the current one
- * 
+ *
  * @return void
  */
 	function testPrefixOverride() {
@@ -1566,7 +1566,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'admin' => true));
 		$expected = '/admin/images/add';
 		$this->assertEqual($result, $expected);
-		
+
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/images/index')),
 			array('base' => '', 'here' => '/admin/images/index', 'webroot' => '/')
@@ -2000,7 +2000,7 @@ class RouterRouteTestCase extends CakeTestCase {
 		$expected = '#^/*$#';
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($route->keys, array());
-		
+
 		$route =& new RouterRoute('/:controller/:action', array('controller' => 'posts'));
 		$result = $route->compile();
 		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?[\/]*$#';
@@ -2032,8 +2032,8 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertEqual($route->keys, array('controller', 'action', 'id'));
 
 		$route =& new RouterRoute(
-			'/:lang/:controller/:action/:id', 
-			array('controller' => 'testing4'), 
+			'/:lang/:controller/:action/:id',
+			array('controller' => 'testing4'),
 			array('id' => $ID, 'lang' => '[a-z]{3}')
 		);
 		$result = $route->compile();
@@ -2069,7 +2069,7 @@ class RouterRouteTestCase extends CakeTestCase {
 		$route =& new RouterRoute('/blog/:action', array('controller' => 'posts'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEqual($result, '/blog/view');
-		
+
 		$route =& new RouterRoute('/admin/subscriptions/:action/*', array(
 			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
 		));
