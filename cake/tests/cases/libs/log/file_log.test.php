@@ -63,5 +63,20 @@ class FileLogTest extends CakeTestCase {
 		unlink(LOGS . 'random.log');
 	}
 
+/**
+ * test using the path setting to write logs in other places.
+ *
+ * @return void
+ **/
+	function testPathSetting() {
+		$path = TMP . 'tests' . DS;
+		@unlink($path . 'error.log');
+
+		$log =& new FileLog(compact('path'));
+		$log->write('warning', 'Test warning');
+		$this->assertTrue(file_exists($path . 'error.log'));
+		unlink($path . 'error.log');
+	}
+
 }
 ?>
