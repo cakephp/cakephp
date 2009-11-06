@@ -7,7 +7,7 @@
  * and the like.  These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
  *
  * Licensed under The MIT License

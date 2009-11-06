@@ -4,7 +4,7 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
+ * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
  * Copyright 2006-2008, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
