@@ -356,7 +356,7 @@ class HtmlHelper extends AppHelper {
  *
  * #### Options 
  *
- * - `inline` If set to false, the generated tag appears in the head tag of the layout.
+ * - `inline` If set to false, the generated tag appears in the head tag of the layout. Defaults to true
  *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -367,13 +367,13 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function css($path, $rel = null, $options = array()) {
-		$inline = isset($options['inline']) ? $options['inline'] : true;
+		$options += array('inline' => true);
 		if (is_array($path)) {
 			$out = '';
 			foreach ($path as $i) {
-				$out .= "\n\t" . $this->css($i, $rel, $options, $inline);
+				$out .= "\n\t" . $this->css($i, $rel, $options);
 			}
-			if ($inline)  {
+			if ($options['inline'])  {
 				return $out . "\n";
 			}
 			return;
@@ -402,7 +402,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, null, '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
@@ -411,7 +411,7 @@ class HtmlHelper extends AppHelper {
 		}
 		$out = $this->output($out);
 
-		if ($inline) {
+		if ($options['inline']) {
 			return $out;
 		} else {
 			$view =& ClassRegistry::getObject('view');
@@ -472,12 +472,10 @@ class HtmlHelper extends AppHelper {
 				$url = str_replace(JS_URL, 'cjs/', $url);
 			}
 		}
-		$inline = $options['inline'];
-		unset($options['inline'], $options['once']);
-		$attributes = $this->_parseAttributes($options, ' ', ' ');
+		$attributes = $this->_parseAttributes($options, array('inline', 'once'), ' ');
 		$out = $this->output(sprintf($this->tags['javascriptlink'], $url, $attributes));
 
-		if ($inline) {
+		if ($options['inline']) {
 			return $out;
 		} else {
 			$view =& ClassRegistry::getObject('view');
@@ -497,8 +495,7 @@ class HtmlHelper extends AppHelper {
  * @return mixed string or null depending on the value of `$options['inline']`
  **/
 	function scriptBlock($script, $options = array()) {
-		$defaultOptions = array('safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, $options);
+		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
@@ -527,8 +524,7 @@ class HtmlHelper extends AppHelper {
  * @return void
  **/
 	function scriptStart($options = array()) {
-		$defaultOptions = array('safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, $options);
+		$options += array('safe' => true, 'inline' => true);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
 		return null;
