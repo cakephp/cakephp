@@ -511,13 +511,22 @@ class ControllerTest extends CakeTestCase {
 		$Controller->paginate('ControllerPost');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['options']['page'], 1, 'XSS exploit opened %s');
-		
+
+		$Controller->passedArgs = array();
 		$Controller->paginate = array('limit' => 0);
 		$Controller->paginate('ControllerPost');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 1);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], false);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		
+		$Controller->passedArgs = array();
+		$Controller->paginate = array('limit' => 'garbage!');
+		$Controller->paginate('ControllerPost');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
 	}
 /**
  * testPaginateExtraParams method
