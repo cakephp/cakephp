@@ -407,7 +407,7 @@ class HtmlHelper extends AppHelper {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
-			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, null, '', ' '));
+			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
 		$out = $this->output($out);
 
