@@ -3,7 +3,7 @@
 :: Bake is a shell script for running CakePHP bake script
 :: PHP versions 4 and 5
 ::
-:: CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
+:: CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
 :: Copyright 2005-2007, Cake Software Foundation, Inc.
 ::
 :: Licensed under The MIT License
