@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  * @since         CakePHP(tm) v 1.2.0.6879//Correct version number as needed**
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License

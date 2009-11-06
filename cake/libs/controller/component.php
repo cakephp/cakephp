@@ -16,7 +16,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  * @since         CakePHP(tm) v TBD
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License

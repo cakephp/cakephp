@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.cake.tests.test_app.plugins.test_plugin
  * @since         CakePHP v 1.2.0.4487
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License

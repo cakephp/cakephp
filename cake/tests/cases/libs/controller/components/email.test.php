@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License

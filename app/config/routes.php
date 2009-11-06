@@ -20,7 +20,6 @@
  * @package       cake
  * @subpackage    cake.app.config
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License

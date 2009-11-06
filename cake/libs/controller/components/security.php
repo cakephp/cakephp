@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.8.2156
- * @version       $Revision$
  * @modifiedby    $LastChangedBy$
  * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
