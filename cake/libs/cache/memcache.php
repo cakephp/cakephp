@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Memcache storage engine for cache
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Short description for campaign_fixture.php
  *

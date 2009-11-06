@@ -1,5 +1,4 @@
 <?php
-
 /**
  * APC storage engine for cache.
  *

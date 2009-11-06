@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Sybase layer for DBO
  *

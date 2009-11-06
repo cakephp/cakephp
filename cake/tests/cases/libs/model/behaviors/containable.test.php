@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ContainableBehaviorTest file
  *

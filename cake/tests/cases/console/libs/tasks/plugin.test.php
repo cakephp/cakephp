@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PluginTask Test file
  *

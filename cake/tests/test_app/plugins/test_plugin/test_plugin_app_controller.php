@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Test Suite TestPlugin AppController
  *

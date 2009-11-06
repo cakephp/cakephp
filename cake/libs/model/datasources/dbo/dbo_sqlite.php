@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SQLite layer for DBO
  *

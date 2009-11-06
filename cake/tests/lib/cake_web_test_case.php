@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakeWebTestCase a simple wrapper around WebTestCase
  *

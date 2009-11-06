@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ErrorHandler for Console Shells
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * DboSqliteTest file
  *

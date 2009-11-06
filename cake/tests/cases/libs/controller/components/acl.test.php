@@ -1,5 +1,4 @@
 <?php
-
 /**
  * AclComponentTest file
  *

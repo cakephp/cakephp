@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ShellDispatcherTest file
  *

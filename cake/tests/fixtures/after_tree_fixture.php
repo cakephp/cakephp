@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Short description for after_tree_fixture.php
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * File Storage engine for cache
  *

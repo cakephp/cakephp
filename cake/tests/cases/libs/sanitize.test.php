@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SanitizeTest file
  *

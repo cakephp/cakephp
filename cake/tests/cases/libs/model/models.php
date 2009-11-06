@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Mock models file
  *

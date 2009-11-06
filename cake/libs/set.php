@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Library of array functions for Cake.
  *

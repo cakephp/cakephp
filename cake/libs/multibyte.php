@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Multibyte handling methods.
  *

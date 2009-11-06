@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Test Plugin Auth User Model
  *

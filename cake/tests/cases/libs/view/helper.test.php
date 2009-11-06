@@ -1,5 +1,4 @@
 <?php
-
 /**
  * HelperTest file
  *

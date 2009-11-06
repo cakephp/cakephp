@@ -1,5 +1,4 @@
 <?php
-
 /**
  * I18nTest file
  *

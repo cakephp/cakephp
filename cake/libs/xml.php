@@ -1,5 +1,4 @@
 <?php
-
 /**
  * XML handling for Cake.
  *

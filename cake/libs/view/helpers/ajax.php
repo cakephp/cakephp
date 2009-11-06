@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Helper for AJAX operations.
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Firebird/Interbase layer for DBO
  *

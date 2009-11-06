@@ -1,5 +1,4 @@
 <?php
-
 /**
  * UUID Tree behavior fixture.
  *

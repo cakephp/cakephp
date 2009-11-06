@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Xcache storage engine for cache.
  *

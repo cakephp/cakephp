@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CacheHelper helps create full page view caching.
  *

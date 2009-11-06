@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Backend for helpers.
  *

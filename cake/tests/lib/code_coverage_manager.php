@@ -1,5 +1,4 @@
 <?php
-
 /**
  * A class to manage all aspects for Code Coverage Analysis
  *

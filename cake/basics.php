@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Basic Cake functionality.
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MS SQL layer for DBO
  *

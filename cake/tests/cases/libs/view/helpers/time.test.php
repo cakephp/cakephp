@@ -1,5 +1,4 @@
 <?php
-
 /**
  * TimeHelperTest file
  *

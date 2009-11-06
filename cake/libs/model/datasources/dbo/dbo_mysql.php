@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MySQL layer for DBO
  *

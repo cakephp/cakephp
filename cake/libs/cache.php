@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Caching for CakePHP.
  *

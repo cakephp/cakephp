@@ -1,5 +1,4 @@
 <?php
-
 /**
  * XML Helper class file.
  *

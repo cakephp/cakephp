@@ -1,5 +1,4 @@
 <?php
-
 /**
  * XmlTest file
  *

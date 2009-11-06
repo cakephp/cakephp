@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Request object for handling alternative HTTP requests
  *

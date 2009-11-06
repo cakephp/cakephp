@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Methods to display or download any type of file
  *

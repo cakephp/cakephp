@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CakeTestFixture file
  *

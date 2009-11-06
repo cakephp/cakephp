@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ODBC for DBO
  *

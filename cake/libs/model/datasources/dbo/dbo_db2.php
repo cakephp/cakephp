@@ -1,5 +1,4 @@
 <?php
-
 /**
  * IBM DB2 for DBO
  *

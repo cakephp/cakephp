@@ -1,5 +1,4 @@
 <?php
-
 /**
  * AdoDB layer for DBO.
  *

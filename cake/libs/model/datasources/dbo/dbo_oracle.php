@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Oracle layer for DBO.
  *

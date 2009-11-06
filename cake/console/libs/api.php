@@ -1,5 +1,4 @@
 <?php
-
 /**
  * API shell to get CakePHP core method signatures.
  *

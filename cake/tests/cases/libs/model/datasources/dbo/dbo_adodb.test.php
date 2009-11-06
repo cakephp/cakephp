@@ -1,5 +1,4 @@
 <?php
-
 /**
  * DboAdodbTest file
  *

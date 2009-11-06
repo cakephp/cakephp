@@ -1,5 +1,4 @@
 <?php
-
 /**
  * ModelTest file
  *

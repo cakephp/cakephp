@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Case Folding Properties.
  *

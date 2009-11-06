@@ -1,5 +1,4 @@
 <?php
-
 /**
  * DbAclTest file
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * CodeCoverageManagerTest file
  *

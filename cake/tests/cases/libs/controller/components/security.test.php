@@ -1,5 +1,4 @@
 <?php
-
 /**
  * SecurityComponentTest file
  *

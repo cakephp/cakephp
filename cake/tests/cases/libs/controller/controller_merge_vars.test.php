@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Controller Merge vars Test file
  *

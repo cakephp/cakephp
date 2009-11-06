@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Tree behavior class.
  *

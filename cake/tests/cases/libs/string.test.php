@@ -1,5 +1,4 @@
 <?php
-
 /**
  * StringTest file
  *

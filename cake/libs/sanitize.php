@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Washes strings from unwanted noise.
  *

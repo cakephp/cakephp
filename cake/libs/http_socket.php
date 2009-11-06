@@ -1,5 +1,4 @@
 <?php
-
 /**
  * HTTP Socket connection class.
  *

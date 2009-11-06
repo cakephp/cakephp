@@ -1,5 +1,4 @@
 <?php
-
 /**
  * RequestHandlerComponentTest file
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Javascript Helper class file.
  *

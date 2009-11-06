@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Time Helper class file.
  *

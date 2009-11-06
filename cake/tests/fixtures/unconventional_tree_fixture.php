@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Unconventional Tree behavior class test fixture.
  *

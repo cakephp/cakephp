@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MultibyteTest file
  *

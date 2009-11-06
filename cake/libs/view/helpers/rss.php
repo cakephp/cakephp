@@ -1,5 +1,4 @@
 <?php
-
 /**
  * RSS Helper class file.
  *

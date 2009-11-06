@@ -1,5 +1,4 @@
 <?php
-
 /**
  * MagicDb parser and file analyzer
  *

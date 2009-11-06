@@ -1,5 +1,4 @@
 <?php
-
 /**
  * HttpSocketTest file
  *

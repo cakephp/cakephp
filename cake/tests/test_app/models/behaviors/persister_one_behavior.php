@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Behavior for binding management.
  *

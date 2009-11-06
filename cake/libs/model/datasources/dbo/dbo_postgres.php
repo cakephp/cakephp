@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PostgreSQL layer for DBO.
  *

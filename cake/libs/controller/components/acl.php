@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Access Control List factory class.
  *

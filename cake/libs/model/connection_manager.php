@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Datasource connection manager
  *

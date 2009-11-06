@@ -1,5 +1,4 @@
 <?php
-
 class TestSource extends DataSource {
 
 	function describe($model) {

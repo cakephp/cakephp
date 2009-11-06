@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Model behaviors base class.
  *

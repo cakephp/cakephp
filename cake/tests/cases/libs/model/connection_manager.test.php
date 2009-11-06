@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Connection Manager tests
  *

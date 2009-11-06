@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Short description for ad_fixture.php
  *
