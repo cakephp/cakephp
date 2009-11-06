@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.tests.test_app.plugins.test_plugin.vendors
  * @since         CakePHP(tm) v 1.2.0.7629
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>

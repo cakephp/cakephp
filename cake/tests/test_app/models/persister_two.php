@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.tests.test_app.models
  * @since         CakePHP v 1.2.0.7726
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class PersisterTwo extends AppModel {

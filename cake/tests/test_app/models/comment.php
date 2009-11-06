@@ -19,7 +19,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.
  * @since         CakePHP v 1.2.0.7726
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class Comment extends AppModel {
