@@ -30,7 +30,6 @@ class FileLog {
 /**
  * Path to save log files on.
  *
- *
  * @var string
  **/
 	var $_path = null;
