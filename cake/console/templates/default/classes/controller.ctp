@@ -29,7 +29,6 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 	var $scaffold;
 <?php else: ?>
 <?php
-
 echo "\tvar \$helpers = array('Html', 'Form'";
 if (count($helpers)):
 	foreach ($helpers as $help):
