@@ -1,6 +1,6 @@
 <?php
 /**
- * Test Suite Library
+ * Test Suite Test Plugin Logging stream class.
  *
  * PHP versions 4 and 5
  *
@@ -17,5 +17,9 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class Library {}
-?>
+class TestPluginLog {
+
+	function write($type, $message) {
+		
+	}
+}

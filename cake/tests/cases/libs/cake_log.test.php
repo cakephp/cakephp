@@ -21,6 +21,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Log');
+App::import('Core', 'log/FileLog');
 
 /**
  * CakeLogTest class
@@ -29,6 +30,98 @@ App::import('Core', 'Log');
  * @subpackage    cake.tests.cases.libs
  */
 class CakeLogTest extends CakeTestCase {
+
+/**
+ * Start test callback, clears all streams enabled.
+ *
+ * @return void
+ **/
+	function startTest() {
+		$streams = CakeLog::streams();
+		foreach ($streams as $stream) {
+			CakeLog::remove($stream);
+		}
+	}
+
+/**
+ * test importing loggers from app/libs and plugins.
+ *
+ * @return void
+ **/
+	function testImportingLoggers() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$result = CakeLog::config('libtest', array(
+			'engine' => 'TestAppLog'
+		));
+		$this->assertTrue($result);
+		$this->assertEqual(CakeLog::streams(), array('libtest'));
+
+		$result = CakeLog::config('plugintest', array(
+			'engine' => 'TestPlugin.TestPluginLog'
+		));
+		$this->assertTrue($result);
+		$this->assertEqual(CakeLog::streams(), array('libtest', 'plugintest'));
+
+		App::build();
+	}
+
+/**
+ * test all the errors from failed logger imports
+ *
+ * @return void
+ **/
+	function testImportingLoggerFailure() {
+		$this->expectError('Missing logger classname');
+		CakeLog::config('fail', array());
+
+		$this->expectError('Could not load logger class born to fail');
+		CakeLog::config('fail', array('engine' => 'born to fail'));
+
+		$this->expectError('logger class stdClass does not implement a write method.');
+		CakeLog::config('fail', array('engine' => 'stdClass'));
+	}
+
+/**
+ * Test that CakeLog autoconfigures itself to use a FileLogger with the LOGS dir.
+ * When no streams are there.
+ *
+ * @return void
+ **/
+	function testAutoConfig() {
+		@unlink(LOGS . 'error.log');
+		CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		$result = CakeLog::streams();
+		$this->assertEqual($result, array('default'));
+		unlink(LOGS . 'error.log');
+	}
+
+/**
+ * test configuring log streams
+ *
+ * @return void
+ **/
+	function testConfig() {
+		CakeLog::config('file', array(
+			'engine' => 'FileLog',
+			'path' => LOGS
+		));
+		$result = CakeLog::streams();
+		$this->assertEqual($result, array('file'));
+
+		@unlink(LOGS . 'error.log');
+		CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		$result = file_get_contents(LOGS . 'error.log');
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
+		unlink(LOGS . 'error.log');
+	}
 
 /**
  * testLogFileWriting method
@@ -66,7 +159,7 @@ class CakeLogTest extends CakeTestCase {
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable: out in \[.+ line \d{2}\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable: out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');
