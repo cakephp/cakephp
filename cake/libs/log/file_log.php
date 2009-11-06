@@ -27,30 +27,46 @@
  * @subpackage    cake.cake.libs.log
  */
 class FileLog {
+
+/**
+ * Path to save log files on.
+ *
+ *
+ * @var string
+ **/
+	var $_path = null;
+
+/**
+ * Constructs a new File Logger.
+ * 
+ * Options
+ *
+ * - `path` the path to save logs on.
+ *
+ * @param array $options Options for the FileLog, see above.
+ * @return void
+ **/
+	function FileLog($options = array()) {
+		$options += array('path' => LOGS);
+		$this->_path = $options['path'];
+	}
+
 /**
  * Implements writing to log files.
  *
- * @return void
+ * @param string $type The type of log you are making.
+ * @param string $message The message you want to log.
+ * @return boolean success of write.
  **/
 	function write($type, $message) {
-		$levels = array(
-			LOG_WARNING => 'warning',
-			LOG_NOTICE => 'notice',
-			LOG_INFO => 'info',
-			LOG_DEBUG => 'debug',
-			LOG_ERR => 'error',
-			LOG_ERROR => 'error'
-		);
+		$debugTypes = array('notice', 'info', 'debug');
 
-		if (is_int($type) && isset($levels[$type])) {
-			$type = $levels[$type];
-		}
 		if ($type == 'error' || $type == 'warning') {
-			$filename = LOGS . 'error.log';
-		} elseif (in_array($type, $levels)) {
-			$filename = LOGS . 'debug.log';
+			$filename = $this->_path  . 'error.log';
+		} elseif (in_array($type, $debugTypes)) {
+			$filename = $this->_path . 'debug.log';
 		} else {
-			$filename = LOGS . $type . '.log';
+			$filename = $this->_path . $type . '.log';
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
 		$log = new File($filename, true);
