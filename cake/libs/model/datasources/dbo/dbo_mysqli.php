@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * MySQLi layer for DBO

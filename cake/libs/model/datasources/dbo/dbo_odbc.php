@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * ODBC for DBO

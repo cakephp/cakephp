@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * I18nTest file

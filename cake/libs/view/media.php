@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * Methods to display or download any type of file

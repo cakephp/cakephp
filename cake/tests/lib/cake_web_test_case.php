@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * CakeWebTestCase a simple wrapper around WebTestCase

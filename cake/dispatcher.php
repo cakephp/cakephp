@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Dispatcher takes the URL information, parses it for paramters and
  * tells the involved controllers what to do.

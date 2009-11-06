@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /*DbAcl schema generated on: 2007-11-24 15:11:13 : 1195945453*/
 /**
  * This is Acl Schema file

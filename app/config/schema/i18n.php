@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 /*i18n schema generated on: 2007-11-25 07:11:25 : 1196004805*/
 /**
  * This is i18n Schema file

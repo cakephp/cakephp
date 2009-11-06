@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * Overload abstraction interface.  Merges differences between PHP4 and 5.

@@ -1,5 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
 
 /**
  * A class to manage all aspects for Code Coverage Analysis
