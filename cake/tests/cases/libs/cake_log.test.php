@@ -2,8 +2,6 @@
 /**
  * CakeLogTest file
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
@@ -131,7 +129,8 @@ class CakeLogTest extends CakeTestCase {
  */
 	function testLogFileWriting() {
 		@unlink(LOGS . 'error.log');
-		CakeLog::write(LOG_WARNING, 'Test warning');
+		$result = CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue($result);
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		unlink(LOGS . 'error.log');
 
