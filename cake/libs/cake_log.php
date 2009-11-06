@@ -165,7 +165,7 @@ class CakeLog {
 	}
 
 /**
- * Configures the automatic/default stream a FileLogger.
+ * Configures the automatic/default stream a FileLog.
  *
  * @return void
  **/
