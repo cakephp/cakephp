@@ -84,6 +84,7 @@ class CakeLog {
  * @param string $key The keyname for this logger, used to revmoe the logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
+ * @static
  **/
 	function config($key, $config) {
 		if (empty($config['engine'])) {
@@ -104,7 +105,8 @@ class CakeLog {
  * Attempts to import a logger class from the various paths it could be on.
  * Checks that the logger class implements a write method as well.
  *
- * @return mixed boolean false on any failures, string of classname to use if search was successful.
+ * @return mixed boolean false on any failures, string of classname to use if search was successful.\
+ * @access protected
  **/
 	function _getLogger($loggerName) {
 		$plugin = null;
@@ -164,6 +166,7 @@ class CakeLog {
  * @param string $key Keyname of config.
  * @param array $config Array of config information for the LogStream
  * @return boolean success
+ * @static
  **/
 	function addStream($key, $config) {
 		$self = CakeLog::getInstance();
@@ -174,6 +177,7 @@ class CakeLog {
  * Configures the automatic/default stream a FileLog.
  *
  * @return void
+ * @access protected
  **/
 	function _autoConfig() {
 		if (!class_exists('FileLog')) {
