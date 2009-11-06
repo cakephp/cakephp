@@ -70,12 +70,60 @@ class CakeLog {
  * @return void
  * @static
  **/
-	function getInstance() {
+	function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
 			$instance[0] = new CakeLog();
 		}
 		return $instance[0];
+	}
+
+/**
+ * Configure and add a new logging stream to CakeLog
+ * You can use add loggers from app/libs use app.loggername, or any plugin/libs using plugin.loggername
+ *
+ * @param string $key The keyname for this logger, used to revmoe the logger later.
+ * @param array $config Array of configuration information for the logger
+ * @return void
+ **/
+	function config($key, $config) {
+		if (empty($config['engine'])) {
+			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
+			return false;
+		}
+		$className = CakeLog::_getLogger($config['engine']);
+		if (!$className) {
+			return false;
+		}
+		unset($config['engine']);
+		$self = CakeLog::getInstance();
+		$self->_streams[$key] = new $className($config);
+	}
+
+/**
+ * Attempts to import a logger class from the various paths it could be on.
+ * Checks that the logger class implements a write method as well.
+ *
+ * @return mixed boolean false on any failures, string of classname to use if search was successful.
+ **/
+	function _getLogger($loggerName) {
+		$plugin = null;
+		if (strpos($loggerName, '.') !== false) {
+			list($plugin, $loggerName) = explode('.', $loggerName);
+		}
+
+		if (!class_exists($loggerName)) {
+			trigger_error(sprintf(__('Could not load logger class %s', true), $loggerName), E_USER_WARNING);
+			return false;
+		}
+		if (!method_exists($loggerName, 'write')) {
+			trigger_error(
+				sprintf(__('logger class %s does not implement a write method.', true), $loggerName), 
+				E_USER_WARNING
+			);
+			return false;
+		}
+		return $loggerName;
 	}
 
 /**
@@ -97,7 +145,7 @@ class CakeLog {
  * @return void
  * @static
  **/
-	function removeStream($streamName) {
+	function remove($streamName) {
 		$self = CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
 	}
@@ -122,10 +170,10 @@ class CakeLog {
  * @return void
  **/
 	function _autoConfig() {
-		if (!class_exists('FileLogger')) {
-			require LIBS . 'log' . DS . 'file.php';
+		if (!class_exists('FileLog')) {
+			require LIBS . 'log' . DS . 'file_log.php';
 		}
-		$this->_streams['default'] = array('FileLogger', 'write');
+		$this->_streams['default'] = new FileLog(array('path' => LOGS));
 	}
 
 /**
@@ -160,8 +208,10 @@ class CakeLog {
 		if (empty($self->_streams)) {
 			$self->_autoConfig();
 		}
-		foreach ($self->_streams as $key => $callable) {
-			call_user_func($callable, $type, $message);
+		$keys = array_keys($self->_streams);
+		foreach ($keys as $key) {
+			$logger =& $self->_streams[$key];
+			$logger->write($type, $message);
 		}
 	}
 

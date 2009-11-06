@@ -26,7 +26,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.log
  */
-class FileLogger {
+class FileLog {
 /**
  * Implements writing to log files.
  *

@@ -21,6 +21,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Log');
+require_once LIBS . 'log' . DS . 'file_log.php';
 
 /**
  * CakeLogTest class
@@ -31,23 +32,53 @@ App::import('Core', 'Log');
 class CakeLogTest extends CakeTestCase {
 
 /**
+ * Start test callback, clears all streams enabled.
+ *
+ * @return void
+ **/
+	function startTest() {
+		$streams = CakeLog::streams();
+		foreach ($streams as $stream) {
+			CakeLog::remove($stream);
+		}
+	}
+
+/**
  * Test that CakeLog autoconfigures itself to use a FileLogger with the LOGS dir.
  * When no streams are there.
  *
  * @return void
  **/
 	function testAutoConfig() {
-		$streams = CakeLog::streams();
-		foreach ($streams as $stream) {
-			CakeLog::removeStream($stream);
-		}
-
 		@unlink(LOGS . 'error.log');
 		CakeLog::write(LOG_WARNING, 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
 		$result = CakeLog::streams();
 		$this->assertEqual($result, array('default'));
+		unlink(LOGS . 'error.log');
+	}
+
+/**
+ * test configuring log streams
+ *
+ * @return void
+ **/
+	function testConfig() {
+		CakeLog::config('file', array(
+			'engine' => 'FileLog',
+			'path' => LOGS
+		));
+		$result = CakeLog::streams();
+		$this->assertEqual($result, array('file'));
+
+		@unlink(LOGS . 'error.log');
+		CakeLog::write(LOG_WARNING, 'Test warning');
+		$this->assertTrue(file_exists(LOGS . 'error.log'));
+
+		$result = file_get_contents(LOGS . 'error.log');
+		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
+		unlink(LOGS . 'error.log');
 	}
 
 /**
@@ -86,7 +117,7 @@ class CakeLogTest extends CakeTestCase {
 		$result = file(LOGS . 'debug.log');
 		$this->assertEqual(count($result), 1);
 		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable: out in \[.+ line \d{2}\]$/',
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable: out in \[.+ line \d+\]$/',
 			$result[0]
 		);
 		@unlink(LOGS . 'debug.log');
