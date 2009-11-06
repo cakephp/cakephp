@@ -420,11 +420,17 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
-		
-		$view =& ClassRegistry::getObject('view');
+
+		ClassRegistry::removeObject('view');
 		$view =& new HtmlHelperMockView();
+		ClassRegistry::addObject('view', $view);
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/css_in_head.css/')));
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
+		$this->assertNull($result);
+
+		$view =& ClassRegistry::getObject('view');
+		$view->expectAt(1, 'addScript', array(new NoPatternExpectation('/inline=""/')));
+		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 	}
 
