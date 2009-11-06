@@ -16,9 +16,6 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.layouts
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision: 7062 $
- * @modifiedby    $LastChangedBy: nate $
- * @lastmodified  $Date: 2008-05-30 07:29:53 -0400 (Fri, 30 May 2008) $
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>

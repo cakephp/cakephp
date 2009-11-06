@@ -19,9 +19,6 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision: 8225 $
- * @modifiedby    $LastChangedBy: mark_story $
- * @lastmodified  $Date: 2009-07-07 23:25:30 -0400 (Tue, 07 Jul 2009) $
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
