@@ -16,7 +16,7 @@
  * @package       cake
  * @subpackage    cake.cake.console.bake
  * @since         CakePHP(tm) v 1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * Task class for creating new project apps and plugins

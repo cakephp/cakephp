@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.cake.console.libs.templates.views
  * @since         CakePHP(tm) v 1.2.0.5234
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <div class="<?php echo $pluralVar;?> index">

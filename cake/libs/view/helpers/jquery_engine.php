@@ -18,7 +18,7 @@
  * @link            http://cakephp.org CakePHP Project
  * @package         cake
  * @subpackage      cake.view.helpers
- * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', 'Js');
 

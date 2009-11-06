@@ -6,7 +6,7 @@
 #
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.
-# http://www.opensource.org/licenses/mit-license.php The MIT License
+# MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 CREATE TABLE cake_sessions (
   id varchar(255) NOT NULL default '',

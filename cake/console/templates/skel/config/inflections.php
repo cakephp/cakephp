@@ -19,7 +19,7 @@
  * @package       cake
  * @subpackage    cake.app.config
  * @since         CakePHP(tm) v 1.0.0.2312
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**

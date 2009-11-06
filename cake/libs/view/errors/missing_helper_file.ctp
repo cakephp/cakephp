@@ -14,7 +14,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.errors
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <h2><?php __('Missing Helper File'); ?></h2>

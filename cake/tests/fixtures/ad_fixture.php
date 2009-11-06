@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  * @since         1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**

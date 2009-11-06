@@ -17,7 +17,7 @@
 ; * @package       cake
 ; * @subpackage    cake.app.config
 ; * @since         CakePHP(tm) v 0.10.0.1076
-; * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+; * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
 ; */
 
 ; acl.ini.php - Cake ACL Configuration

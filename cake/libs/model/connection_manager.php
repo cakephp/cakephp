@@ -18,7 +18,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.10.x.1402
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
 include_once CONFIGS . 'database.php';

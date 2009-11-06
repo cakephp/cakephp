@@ -4,7 +4,7 @@
 #
 # Licensed under The MIT License
 # Redistributions of files must retain the above copyright notice.
-# http://www.opensource.org/licenses/mit-license.php The MIT License
+# MIT License (http://www.opensource.org/licenses/mit-license.php)
 
 CREATE TABLE acos (
   id INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT,

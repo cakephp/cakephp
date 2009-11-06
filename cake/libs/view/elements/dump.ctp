@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.elements
  * @since         CakePHP(tm) v 0.10.5.1782
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <div id="cakeControllerDump">

@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.app.config.sql
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestPluginAppSchema extends CakeSchema {
 

@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0.6833
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (function_exists('mb_internal_encoding')) {
 	$encoding = Configure::read('App.encoding');

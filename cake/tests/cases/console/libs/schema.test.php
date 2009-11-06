@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.Shells
  * @since         CakePHP v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
 App::import('Model', 'CakeSchema', false);
