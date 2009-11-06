@@ -54,9 +54,9 @@
  * @subpackage    cake.cake.libs
  */
 class CakeLog {
-	
+
 /**
- * An array of connected streams. 
+ * An array of connected streams.
  * Each stream represents a callable that will be called when write() is called.
  *
  * @var array
@@ -125,7 +125,7 @@ class CakeLog {
 		}
 		if (!method_exists($loggerName, 'write')) {
 			trigger_error(
-				sprintf(__('logger class %s does not implement a write method.', true), $loggerName), 
+				sprintf(__('logger class %s does not implement a write method.', true), $loggerName),
 				E_USER_WARNING
 			);
 			return false;
@@ -159,7 +159,7 @@ class CakeLog {
 
 /**
  * Add a stream the logger.
- * Streams represent destinations for log messages.  Each stream can connect to 
+ * Streams represent destinations for log messages.  Each stream can connect to
  * a different resource /interface and capture/write output to that source.
  *
  * @param string $key Keyname of config.
