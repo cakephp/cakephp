@@ -84,20 +84,21 @@ class CakeLog {
  *
  * @param string $key The keyname for this logger, used to revmoe the logger later.
  * @param array $config Array of configuration information for the logger
- * @return void
+ * @return boolean success of configuration.
  **/
 	function config($key, $config) {
 		if (empty($config['engine'])) {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
 			return false;
 		}
-		$className = CakeLog::_getLogger($config['engine']);
+		$self = CakeLog::getInstance();
+		$className = $self->_getLogger($config['engine']);
 		if (!$className) {
 			return false;
 		}
 		unset($config['engine']);
-		$self = CakeLog::getInstance();
 		$self->_streams[$key] = new $className($config);
+		return true;
 	}
 
 /**
@@ -111,7 +112,13 @@ class CakeLog {
 		if (strpos($loggerName, '.') !== false) {
 			list($plugin, $loggerName) = explode('.', $loggerName);
 		}
-
+		if ($plugin) {
+			App::import('Lib', $plugin . '.log/' . $loggerName);
+		} else {
+			if (!App::import('Lib', 'log/' . $loggerName)) {
+				App::import('Core', 'log/' . $loggerName);
+			}
+		}
 		if (!class_exists($loggerName)) {
 			trigger_error(sprintf(__('Could not load logger class %s', true), $loggerName), E_USER_WARNING);
 			return false;
@@ -171,7 +178,7 @@ class CakeLog {
  **/
 	function _autoConfig() {
 		if (!class_exists('FileLog')) {
-			require LIBS . 'log' . DS . 'file_log.php';
+			App::import('Core', 'log/FileLog');
 		}
 		$this->_streams['default'] = new FileLog(array('path' => LOGS));
 	}

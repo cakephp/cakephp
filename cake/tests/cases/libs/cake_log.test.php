@@ -21,7 +21,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Log');
-require_once LIBS . 'log' . DS . 'file_log.php';
+App::import('Core', 'log/FileLog');
 
 /**
  * CakeLogTest class
@@ -41,6 +41,48 @@ class CakeLogTest extends CakeTestCase {
 		foreach ($streams as $stream) {
 			CakeLog::remove($stream);
 		}
+	}
+
+/**
+ * test importing loggers from app/libs and plugins.
+ *
+ * @return void
+ **/
+	function testImportingLoggers() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$result = CakeLog::config('libtest', array(
+			'engine' => 'TestAppLog'
+		));
+		$this->assertTrue($result);
+		$this->assertEqual(CakeLog::streams(), array('libtest'));
+
+		$result = CakeLog::config('plugintest', array(
+			'engine' => 'TestPlugin.TestPluginLog'
+		));
+		$this->assertTrue($result);
+		$this->assertEqual(CakeLog::streams(), array('libtest', 'plugintest'));
+
+		App::build();
+	}
+
+/**
+ * test all the errors from failed logger imports
+ *
+ * @return void
+ **/
+	function testImportingLoggerFailure() {
+		$this->expectError('Missing logger classname');
+		CakeLog::config('fail', array());
+
+		$this->expectError('Could not load logger class born to fail');
+		CakeLog::config('fail', array('engine' => 'born to fail'));
+
+		$this->expectError('logger class stdClass does not implement a write method.');
+		CakeLog::config('fail', array('engine' => 'stdClass'));
 	}
 
 /**
