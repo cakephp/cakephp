@@ -48,5 +48,5 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 
 	$url = null;
 
-	App::import('Core', array('Dispatcher'));
+	require CAKE . 'dispatcher.php';
 ?>
