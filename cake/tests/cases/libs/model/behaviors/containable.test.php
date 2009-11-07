@@ -3390,7 +3390,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			)
 		));
 		$this->assertEqual($expected, $this->Article->User->hasOne);
-		
+
 		$this->Article->User->bindModel($userHasOne, false);
 		$expected = $this->Article->User->hasOne;
 		$this->Article->find('all', array(
