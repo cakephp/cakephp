@@ -77,7 +77,7 @@ class PaginatorHelper extends AppHelper {
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
  *
  * Use `var $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
- * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its 
+ * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its
  * adapter before including PaginatorHelper in your helpers array.
  *
  * The chosen custom helper must implement a `link()` method.
@@ -98,6 +98,15 @@ class PaginatorHelper extends AppHelper {
 			);
 			trigger_error($message, E_USER_WARNING);
 		}
+	}
+
+/**
+ * Before render callback. Overridden to merge passed args with url options.
+ */
+	function beforeRender() {
+		$this->options['url'] = array_merge($this->params['pass'], $this->params['named']);
+
+		parent::beforeRender();
 	}
 
 /**
