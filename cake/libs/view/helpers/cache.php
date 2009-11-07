@@ -49,13 +49,6 @@ class CacheHelper extends AppHelper {
  */
 	var $__match = array();
 /**
- * holds the View object passed in final call to CacheHelper::cache()
- *
- * @var View
- * @access public
- */
-	var $view;
-/**
  * cache action time
  *
  * @var object
