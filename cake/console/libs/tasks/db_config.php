@@ -258,6 +258,7 @@ class DbConfigTask extends Shell {
 		$oldConfigs = array();
 
 		if (file_exists($filename)) {
+			config('database');
 			$db = new $this->databaseClassName;
 			$temp = get_class_vars(get_class($db));
 
