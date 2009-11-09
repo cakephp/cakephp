@@ -367,10 +367,6 @@ class Configure extends Object {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 
-			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
-			}
-
 			if (Configure::read('Cache.disable') !== true) {
 				$cache = Cache::config('default');
 
@@ -415,6 +411,15 @@ class Configure extends Object {
 					'shells' => $shellPaths, 'libs' => $libPaths
 				));
 			}
+
+			if (!include(CONFIGS . 'bootstrap.php')) {
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+			}
+
+			Configure::buildPaths(compact(
+				'modelPaths', 'viewPaths', 'controllerPaths', 'helperPaths', 'componentPaths',
+				'behaviorPaths', 'pluginPaths', 'vendorPaths', 'localePaths', 'shellPaths'
+			));
 		}
 	}
 }

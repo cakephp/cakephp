@@ -576,7 +576,7 @@ class SecurityComponent extends Object {
 		}
 		$data = $controller->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['key'])) {
 			return false;
 		}
 		$token = $data['_Token']['key'];
