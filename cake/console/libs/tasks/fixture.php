@@ -277,9 +277,11 @@ class FixtureTask extends Shell {
 				}
 				switch ($fieldInfo['type']) {
 					case 'integer':
+					case 'float':
 						$insert = $i + 1;
 					break;
-					case 'string';
+					case 'string':
+					case 'binary':
 						$isPrimaryUuid = (
 							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) == 'primary' &&
 							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
