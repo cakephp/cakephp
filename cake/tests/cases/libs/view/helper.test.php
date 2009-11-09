@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * HelperTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('View', 'Helper'));
@@ -538,11 +532,11 @@ class HelperTest extends CakeTestCase {
  */
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
-		for($i = 0; $i < 2; $i++) {
+		for ($i = 0; $i < 2; $i++) {
 			$this->Helper->data['Model'][$i] = 'what';
 			$result[] = $this->Helper->value("Model.{$i}");
 			$this->Helper->data['Model'][$i] = array();
-			for($j = 0; $j < 2; $j++) {
+			for ($j = 0; $j < 2; $j++) {
 				$this->Helper->data['Model'][$i][$j] = 'how';
 				$result[] = $this->Helper->value("Model.{$i}.{$j}");
 			}

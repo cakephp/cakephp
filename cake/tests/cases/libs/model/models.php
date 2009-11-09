@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Mock models file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.6464
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -552,6 +546,51 @@ class ModifiedComment extends CakeTestModel {
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
+		}
+		return $results;
+	}
+}
+
+/**
+ * Modified Comment Class has afterFind Callback
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class AgainModifiedComment extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Comment'
+ * @access public
+ */
+	var $name = 'Comment';
+
+/**
+ * useTable property
+ *
+ * @var string 'comments'
+ * @access public
+ */
+	var $useTable = 'comments';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('Article');
+
+/**
+ * afterFind callback
+ *
+ * @return void
+ **/
+	function afterFind($results) {
+		if (isset($results[0])) {
+			$results[0]['Comment']['querytype'] = $this->findQueryType;
 		}
 		return $results;
 	}

@@ -1,26 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.pages
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (Configure::read() == 0):
 	$this->cakeError('error404');
@@ -138,80 +132,6 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 </p>
 
 <ul>
-<<<<<<< HEAD:cake/libs/view/pages/home.ctp
-	<li>
-		<?php
-			echo $this->Html->link(__('Cake Software Foundation', true), 'http://www.cakefoundation.org/');
-		?>
-		<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP', true), 'http://www.cakephp.org');
-		?>
-		<ul><li><?php __('The Rapid Development Framework'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP Documentation', true), 'http://book.cakephp.org');
-		?>
-		<ul><li><?php __('Your Rapid Development Cookbook'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP API', true), 'http://api.cakephp.org');
-		?>
-		<ul><li><?php __('Quick Reference'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('The Bakery', true), 'http://bakery.cakephp.org');
-		?>
-		<ul><li><?php __('Everything CakePHP'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('The Show', true), 'http://live.cakephp.org');
-		?>
-		<ul><li><?php __('The Show is a live and archived internet radio broadcast CakePHP-related topics and answer questions live via IRC, Skype, and telephone.'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP Google Group', true), 'http://groups.google.com/group/cake-php');
-		?>
-		<ul><li><?php __('Community mailing list'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('irc.freenode.net #cakephp', true), 'irc://irc.freenode.net/cakephp');
-		?>
-		<ul><li><?php __('Live chat about CakePHP'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP Code', true), 'http://code.cakephp.org/');
-		?>
-		<ul><li><?php __('For the Development of CakePHP (Tickets, Git browser, Roadmap, Changelogs)'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakeForge', true), 'http://www.cakeforge.org');
-		?>
-		<ul><li><?php __('Open Development for CakePHP'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('Book Store', true), 'http://astore.amazon.com/cakesoftwaref-20/');
-		?>
-		<ul><li><?php __('Recommended Software Books'); ?></li></ul>
-	</li>
-	<li>
-		<?php
-			echo $this->Html->link(__('CakePHP gear', true), 'http://www.cafepress.com/cakefoundation');
-		?>
-		<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul>
-	</li>
-=======
 	<li><a href="http://www.cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
 	<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul></li>
 	<li><a href="http://www.cakephp.org"><?php __('CakePHP'); ?> </a>
@@ -236,5 +156,4 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<ul><li><?php __('Recommended Software Books'); ?></li></ul></li>
 	<li><a href="http://www.cafepress.com/cakefoundation"><?php __('CakePHP gear'); ?> </a>
 	<ul><li><?php __('Get your own CakePHP gear - Doughnate to Cake'); ?></li></ul></li>
->>>>>>> 1.3-alpha:cake/libs/view/pages/home.ctp
 </ul>

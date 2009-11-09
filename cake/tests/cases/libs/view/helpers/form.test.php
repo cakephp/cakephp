@@ -3040,6 +3040,55 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test generation of habtm select boxes.
+ *
+ * @return void
+ **/
+	function testHabtmSelectBox() {
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['contactTags'] = array(
+			1 => 'blue',
+			2 => 'red',
+			3 => 'green'
+		);
+		$this->Form->data = array(
+			'Contact' => array(),
+			'ContactTag' => array(
+				array(
+					'id' => 1,
+					'name' => 'blue'
+				),
+				array(
+					'id' => 3,
+					'name' => 'green'
+				)
+			)
+		);
+		$this->Form->create('Contact');
+		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => ''
+			),
+			'select' => array(
+				'name' => 'data[ContactTag][ContactTag][]', 'id' => 'ContactTagContactTag',
+				'multiple' => 'multiple'
+			),
+			array('option' => array('value' => '1', 'selected' => 'selected')),
+			'blue',
+			'/option',
+			array('option' => array('value' => '2')),
+			'red',
+			'/option',
+			array('option' => array('value' => '3', 'selected' => 'selected')),
+			'green',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test generation of multi select elements in checkbox format
  *
  * @access public
