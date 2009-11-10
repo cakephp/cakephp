@@ -224,7 +224,8 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
+				$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}
@@ -235,7 +236,7 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'test.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', ". (strpos(CAKE_CORE_INCLUDE_PATH, '/')===0? " DS . '":"'") . str_replace('/', '\' . DS . \'', trim(CAKE_CORE_INCLUDE_PATH, '/')) . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}

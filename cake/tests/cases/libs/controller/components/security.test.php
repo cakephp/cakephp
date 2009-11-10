@@ -561,6 +561,31 @@ DIGEST;
 	}
 
 /**
+ * test that validatePost fails if any of its required fields are missing.
+ *
+ * @return void
+ **/
+	function testValidatePostFormHacking() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%3B';
+		$fields .= 'f%3A11%3A%22Zbqry.inyvq%22%3B%7D';
+
+		$this->Controller->data = array(
+			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
+			'_Token' => compact('key')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result, 'validatePost passed when fields were missing. %s');
+
+		$this->Controller->data = array(
+			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
+			'_Token' => compact('fields')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result, 'validatePost passed when key was missing. %s');
+	}
+/**
  * Tests validation of checkbox arrays
  *
  * @access public

@@ -568,7 +568,22 @@ class ModelDeleteTest extends BaseModelTest {
 		));
 		$this->assertEqual($result['Monkey'], $expected);
 	}
+/**
+ * test that beforeDelete returning false can abort deletion.
+ *
+ * @return void
+ **/
+	function testBeforeDeleteDeleteAbortion() {
+		$this->loadFixtures('Post');
+		$Model =& new CallbackPostTestModel();
+		$Model->beforeDeleteReturn = false;
 
+		$result = $Model->delete(1);
+		$this->assertFalse($result);
+
+		$exists = $Model->findById(1);
+		$this->assertTrue(is_array($exists));
+	}
 }
 
 ?>

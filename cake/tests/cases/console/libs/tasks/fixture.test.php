@@ -61,7 +61,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @var array
  **/
-	var $fixtures = array('core.article', 'core.comment');
+	var $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test');
 
 /**
  * startTest method
@@ -257,6 +257,22 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->assertPattern("/var \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\);/", $result);
 		$this->assertNoPattern('/var \$fields/', $result);
 		$this->assertNoPattern('/var \$records/', $result);
+	}
+
+/**
+ * test record generation with float and binary types
+ *
+ * @return void
+ **/
+	function testRecordGenerationForBinaryAndFloat() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+
+		$result = $this->Task->bake('Article', 'datatypes');
+		$this->assertPattern("/'float_field' => 1/", $result);
+
+		$result = $this->Task->bake('Article', 'binary_tests');
+		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
 	}
 
 /**

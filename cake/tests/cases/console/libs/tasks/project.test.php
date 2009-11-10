@@ -131,6 +131,22 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Test that index.php is generated correctly.
+ *
+ * @return void
+ **/
+	function testIndexPhpGeneration() {
+		$this->_setupTestProject();
+		
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$this->Task->corePath($path);
+
+		$file =& new File($path . 'webroot' . DS . 'index.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
+	}
+
+/**
  * test getPrefix method, and that it returns Routing.prefix or writes to config file.
  *
  * @return void
