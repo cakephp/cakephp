@@ -144,6 +144,10 @@ class ProjectTaskTest extends CakeTestCase {
 		$file =& new File($path . 'webroot' . DS . 'index.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
+
+		$file =& new File($path . 'webroot' . DS . 'test.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
 	}
 
 /**
