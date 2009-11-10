@@ -366,9 +366,11 @@ class DboSource extends DataSource {
 
 			$first = $this->fetchRow();
 			if ($first != null) {
+				$this->fetchVirtualField($first);
 				$out[] = $first;
 			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
+				$this->fetchVirtualField($item);
 				$out[] = $item;
 			}
 
@@ -383,6 +385,29 @@ class DboSource extends DataSource {
 			return $out;
 		} else {
 			return false;
+		}
+	}
+
+	function fetchVirtualField(&$result) {
+		if (isset($result[0]) && is_array($result[0])) {
+			foreach ($result[0] as $field => $value) {
+				if (strpos($field,'__') === false) {
+					continue;
+				}
+				list($alias,$virtual) = explode('__',$field);
+
+				if (!ClassRegistry::isKeySet($alias)) {
+					retrun;
+				}
+				$model = ClassRegistry::getObject($alias);
+				if (isset($model->virtualFields[$virtual])) {
+					$result[$alias][$virtual] = $value;
+					unset($result[0][$field]);
+				}
+			}
+			if (empty($result[0])) {
+				unset($result[0]);
+			}
 		}
 	}
 
@@ -1733,6 +1758,14 @@ class DboSource extends DataSource {
 		return $data;
 	}
 
+	function _constructVirtualFields(&$model,$fields) {
+		$virtual = array();
+		foreach ($fields as $name => $expression) {
+			$virtual[] = $expression . " {$this->alias} {$model->alias}__{$name}";
+		}
+		return $virtual;
+	}
+
 /**
  * Generates the fields list of an SQL query.
  *
@@ -1746,7 +1779,8 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
-		if (empty($fields)) {
+		$allFields = empty($fields);
+		if ($allFields) {
 			$fields = array_keys($model->schema());
 		} elseif (!is_array($fields)) {
 			$fields = String::tokenize($fields);
@@ -1811,6 +1845,13 @@ class DboSource extends DataSource {
 						}
 					}
 				}
+			}
+		}
+		
+		if (!empty($model->virtualFields)) {
+			if ($allFields) {
+				$fields = array_merge($fields,$this->_constructVirtualFields($model,$model->virtualFields));
+			} else {
 			}
 		}
 		return array_unique($fields);
