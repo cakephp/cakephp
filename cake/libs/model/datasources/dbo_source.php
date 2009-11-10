@@ -369,6 +369,7 @@ class DboSource extends DataSource {
 
 			$first = $this->fetchRow();
 			if ($first != null) {
+				$this->fetchVirtualField($first);
 				$out[] = $first;
 			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
@@ -387,6 +388,29 @@ class DboSource extends DataSource {
 			return $out;
 		} else {
 			return false;
+		}
+	}
+
+	function fetchVirtualField(&$result) {
+		if (isset($result[0]) && is_array($result[0])) {
+			foreach ($result[0] as $field => $value) {
+				if (strpos($field,'__') === false) {
+					continue;
+				}
+				list($alias,$virtual) = explode('__',$field);
+
+				if (!ClassRegistry::isKeySet($alias)) {
+					retrun;
+				}
+				$model = ClassRegistry::getObject($alias);
+				if (isset($model->virtualFields[$virtual])) {
+					$result[$alias][$virtual] = $value;
+					unset($result[0][$field]);
+				}
+			}
+			if (empty($result[0])) {
+				unset($result[0]);
+			}
 		}
 	}
 
@@ -1765,6 +1789,14 @@ class DboSource extends DataSource {
 		return $data;
 	}
 
+	function _constructVirtualFields(&$model,$fields) {
+		$virtual = array();
+		foreach ($fields as $name => $expression) {
+			$virtual[] = $expression . " {$this->alias} {$model->alias}__{$name}";
+		}
+		return $virtual;
+	}
+
 /**
  * Converts model virtual fields into sql expressions to be fetched later
  *
@@ -1873,9 +1905,11 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-
-		if (!empty($virtual)) {
-			$fields = array_merge($fields,$this->_constructVirtualFields($model,$alias,$virtual));
+		if (!empty($model->virtualFields)) {
+			if ($allFields) {
+				$fields = array_merge($fields,$this->_constructVirtualFields($model,$model->virtualFields));
+			} else {
+			}
 		}
 		return array_unique($fields);
 	}

@@ -26,6 +26,22 @@ require_once dirname(__FILE__) . DS . 'model.test.php';
  */
 class ModelReadTest extends BaseModelTest {
 
+	function testVirtualFields() {
+		$this->loadFixtures('Post');
+		$Post = ClassRegistry::init('Post');
+		$Post->virtualFields = array('two' => "1 + 1");
+		$expected = array(
+			'author_id' => 1,
+			'title' => 'First Post',
+			'body' => 'First Post Body',
+			'published' => 'Y',
+			'created' => '2007-03-18 10:39:23',
+			'updated' => '2007-03-18 10:41:31'
+		);
+		debug($Post->find('first'));
+		exit;
+	}
+
 /**
  * testVirtualFields()
  *
