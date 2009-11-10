@@ -28,7 +28,7 @@
  * Tree Behavior.
  *
  * Enables a model object to act as a node-based tree. Using Modified Preorder Tree Traversal
- * 
+ *
  * @see http://en.wikipedia.org/wiki/Tree_traversal
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
@@ -137,15 +137,6 @@ class TreeBehavior extends ModelBehavior {
  */
 	function beforeSave(&$Model) {
 		extract($this->settings[$Model->alias]);
-
-		if (isset($Model->data[$Model->alias][$Model->primaryKey])) {
-			if ($Model->data[$Model->alias][$Model->primaryKey]) {
-				if (!$Model->id) {
-					$Model->id = $Model->data[$Model->alias][$Model->primaryKey];
-				}
-			}
-			unset($Model->data[$Model->alias][$Model->primaryKey]);
-		}
 
 		$this->_addToWhitelist($Model, array($left, $right));
 		if (!$Model->id) {
@@ -616,9 +607,9 @@ class TreeBehavior extends ModelBehavior {
  * This method does not change the parent of any node.
  *
  * Requires a valid tree, by default it verifies the tree before beginning.
- * 
+ *
  * Options:
- * 
+ *
  * - 'id' id of record to use as top node for reordering
  * - 'field' Which field to use in reordeing defaults to displayField
  * - 'order' Direction to order either DESC or ASC (defaults to ASC)
