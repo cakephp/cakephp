@@ -42,6 +42,25 @@ class CustomValidator {
 }
 
 /**
+ * TestNlValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestNlValidation {
+/**
+ * postal function, for testing postal pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function postal($check) {
+		return true;
+	}
+}
+
+/**
  * Test Case for Validation Class
  *
  * @package       cake
@@ -1996,6 +2015,21 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('13089-333'));
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
+	}
+
+/**
+ * test the pass through calling of an alternate locale with postal()
+ *
+ * @return void
+ **/
+	function testPassThroughMethod() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+
+		$this->expectError('Could not find AUTOFAILValidation class, unable to complete validation.');
+		Validation::postal('text', null, 'AUTOFAIL');
+
+		$this->expectError('Method phone does not exist on TestNlValidation unable to complete validation.');
+		Validation::phone('text', null, 'testNl');
 	}
 
 /**

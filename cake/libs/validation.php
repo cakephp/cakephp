@@ -672,11 +672,15 @@ class Validation extends Object {
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'us':
+				case 'all':
+				case 'can':
 				// includes all NANPA members. see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-				default:
 					$_this->regex  = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
 				break;
 			}
+		}
+		if (empty($_this->regex)) {
+			return $_this->_pass('phone', $check, $country);
 		}
 		return $_this->_check();
 	}
@@ -698,6 +702,9 @@ class Validation extends Object {
 		if (is_array($check)) {
 			$_this->_extract($check);
 		}
+		if (empty($country)) {
+			$_this->country = 'us';
+		}
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
@@ -715,10 +722,12 @@ class Validation extends Object {
 					$_this->regex  = '/^[1-9]{1}[0-9]{3}$/i';
 					break;
 				case 'us':
-				default:
 					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 					break;
 			}
+		}
+		if (empty($_this->regex)) {
+			return $_this->_pass('postal', $check, $country);
 		}
 		return $_this->_check();
 	}
@@ -832,6 +841,31 @@ class Validation extends Object {
  */
 	function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array(&$object, $method), array($check, $args));
+	}
+
+/**
+ * Attempts to pass unhandled Validation locales to a class starting with $classPrefix
+ * and ending with Validation.  For example $classPrefix = 'nl', the class would be
+ * `NlValidation`.
+ *
+ * @param string $method The method to call on the other class.
+ * @param mixed $check The value to check or an array of parameters for the method to be called.
+ * @param string $classPrefix The prefix for the class to do the validation.
+ * @return mixed Return of Passed method, false on failure
+ * @access protected
+ **/
+	function _pass($method, $check, $classPrefix) {
+		$className = ucwords($classPrefix) . 'Validation';
+		if (!class_exists($className)) {
+			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
+			return false;
+		}
+		if (!method_exists($className, $method)) {
+			trigger_error(sprintf(__('Method %s does not exist on %s unable to complete validation.', true), $method, $className), E_USER_WARNING);
+			return false;
+		}
+		$check = (array)$check;
+		return call_user_func_array(array($className, $method), $check);
 	}
 
 /**
