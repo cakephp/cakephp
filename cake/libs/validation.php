@@ -213,8 +213,8 @@ class Validation extends Object {
  *
  * @param mixed $check credit card number to validate
  * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
- * 							if an array is used only the values of the array are checked.
- * 							Example: array('amex', 'bankcard', 'maestro')
+ *    if an array is used only the values of the array are checked.
+ *    Example: array('amex', 'bankcard', 'maestro')
  * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
@@ -608,12 +608,14 @@ class Validation extends Object {
 /**
  * Validate a multiple select.
  *
+ * Valid Options 
+ * 
+ * - in => provide a list of choices that selections must be made from
+ * - max => maximun number of non-zero choices that can be made
+ * - min => minimum number of non-zero choices that can be made
+ *
  * @param mixed $check Value to check
  * @param mixed $options Options for the check.
- * 	Valid options
- *	  in => provide a list of choices that selections must be made from
- *	  max => maximun number of non-zero choices that can be made
- * 	  min => minimum number of non-zero choices that can be made
  * @return boolean Success
  * @access public
  */
@@ -792,13 +794,14 @@ class Validation extends Object {
  * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
  *
  * The regex checks for the following component parts:
- * 	a valid, optional, scheme
- * 		a valid ip address OR
- * 		a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
- *	  with an optional port number
- *	an optional valid path
- *	an optional query string (get parameters)
- *	an optional fragment (anchor tag)
+ *
+ * - a valid, optional, scheme
+ * - a valid ip address OR 
+ *   a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
+ *   with an optional port number
+ * - an optional valid path
+ * - an optional query string (get parameters)
+ * - an optional fragment (anchor tag)
  *
  * @param string $check Value to check
  * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
