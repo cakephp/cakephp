@@ -112,6 +112,7 @@ class ViewTask extends Shell {
 		$this->controllerName = Inflector::camelize($this->args[0]);
 		$this->controllerPath = Inflector::underscore($this->controllerName);
 
+		$this->Project->interactive = false;
 		if (strtolower($this->args[0]) == 'all') {
 			return $this->all();
 		}
