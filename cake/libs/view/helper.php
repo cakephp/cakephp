@@ -646,7 +646,9 @@ class Helper extends Overloadable {
 		}
 
 		$habtmKey = $this->field();
-		if (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
+		if (empty($result) && isset($this->data[$habtmKey][$habtmKey])) {
+			$result = $this->data[$habtmKey][$habtmKey];
+		} elseif (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model =& ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($this->data[$habtmKey], $model->primaryKey);

@@ -80,6 +80,8 @@ class ModelTask extends Shell {
  * @access public
  */
 	function execute() {
+		App::import('Model', 'Model', false);
+
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -165,8 +167,6 @@ class ModelTask extends Shell {
  * @access private
  */
 	function __interactive() {
-		App::import('Model', 'Model', false);
-
 		$this->hr();
 		$this->out(sprintf("Bake Model\nPath: %s", $this->path));
 		$this->hr();

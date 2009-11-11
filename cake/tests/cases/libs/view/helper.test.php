@@ -367,6 +367,26 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('Post.2.created.year');
 		$result = $this->Helper->value('Post.2.created.year');
 		$this->assertEqual($result, '2008');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => ''));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, '');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => array(2, 3, 4)));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(2, 3, 4));
+
+		$this->Helper->data = array(
+			'HelperTestTag' => array(
+				array('id' => 3),
+				array('id' => 5)
+			)
+		);
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(3 => 3, 5 => 5));
 	}
 
 /**
