@@ -27,19 +27,27 @@ require_once dirname(__FILE__) . DS . 'model.test.php';
 class ModelReadTest extends BaseModelTest {
 
 	function testVirtualFields() {
-		$this->loadFixtures('Post');
+		$this->loadFixtures('Post','Author');
 		$Post = ClassRegistry::init('Post');
 		$Post->virtualFields = array('two' => "1 + 1");
-		$expected = array(
-			'author_id' => 1,
-			'title' => 'First Post',
-			'body' => 'First Post Body',
-			'published' => 'Y',
-			'created' => '2007-03-18 10:39:23',
-			'updated' => '2007-03-18 10:41:31'
-		);
-		debug($Post->find('first'));
-		exit;
+		$result = $Post->find('first');
+		$this->assertEqual($result['Post']['two'],2);
+
+		$Post->Author->virtualFields = array('false' => '1 = 2');
+		$result = $Post->find('first');
+		$this->assertEqual($result['Post']['two'],2);
+		$this->assertEqual($result['Author']['false'],false);
+
+		$result = $Post->find('first',array('fields' => array('author_id')));
+		$this->assertFalse(isset($result['Post']['two']));
+		$this->assertFalse(isset($result['Author']['false']));
+
+		$result = $Post->find('first',array('fields' => array('author_id','two')));
+		$this->assertEqual($result['Post']['two'],2);
+		$this->assertFalse(isset($result['Author']['false']));
+
+		$result = $Post->find('first',array('fields' => array('two')));
+		$this->assertEqual($result['Post']['two'],2);
 	}
 
 /**

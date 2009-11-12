@@ -1758,10 +1758,12 @@ class DboSource extends DataSource {
 		return $data;
 	}
 
-	function _constructVirtualFields(&$model,$fields) {
+	function _constructVirtualFields(&$model,$alias,$fields) {
 		$virtual = array();
-		foreach ($fields as $name => $expression) {
-			$virtual[] = $expression . " {$this->alias} {$model->alias}__{$name}";
+		foreach ($fields as $field) {
+			$virtualField = $this->name("{$alias}__{$field}");
+			$expression = $model->virtualFields[$field];
+			$virtual[] = $expression . " {$this->alias} {$virtualField}";
 		}
 		return $virtual;
 	}
@@ -1790,10 +1792,19 @@ class DboSource extends DataSource {
 		if (!$quote) {
 			return $fields;
 		}
+		$virtual = array();
+		if (!empty($model->virtualFields)) {
+			$keys =  array_keys($model->virtualFields);
+			$virtual = ($allFields) ? $keys :  array_intersect($keys,$fields);
+		}
 		$count = count($fields);
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
+				if (in_array($fields[$i],$virtual)) {
+					unset($fields[$i]);
+					continue;
+				}
 				if (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
 					continue;
 				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
@@ -1847,12 +1858,9 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-		
-		if (!empty($model->virtualFields)) {
-			if ($allFields) {
-				$fields = array_merge($fields,$this->_constructVirtualFields($model,$model->virtualFields));
-			} else {
-			}
+
+		if (!empty($virtual)) {
+			$fields = array_merge($fields,$this->_constructVirtualFields($model,$alias,$virtual));
 		}
 		return array_unique($fields);
 	}
