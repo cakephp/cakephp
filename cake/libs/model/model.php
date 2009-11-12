@@ -802,7 +802,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * This function does two things: 
+ * This function does two things:
  *
  * 1. it scans the array $one for the primary key,
  * and if that's found, it sets the current id to the value of $one[id].
@@ -1043,7 +1043,7 @@ class Model extends Overloadable {
 
 /**
  * Initializes the model for writing a new record, loading the default values
- * for those fields that are not defined in $data, and clearing previous validation errors. 
+ * for those fields that are not defined in $data, and clearing previous validation errors.
  * Especially helpful for saving data in loops.
  *
  * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
@@ -1996,7 +1996,7 @@ class Model extends Overloadable {
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
- * Eg: 
+ * Eg:
  * {{{
  *	find('all', array(
  *		'conditions' => array('name' => 'Thomas Anderson'),
@@ -2567,7 +2567,7 @@ class Model extends Overloadable {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
 							$error = sprintf(
-								__('Could not find validation handler %s for %s', true), 
+								__('Could not find validation handler %s for %s', true),
 								$rule,
 								$fieldName
 							);
