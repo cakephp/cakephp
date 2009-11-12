@@ -1009,12 +1009,13 @@ class Model extends Overloadable {
  * Returns true if the supplied field exists in the model's database table.
  *
  * @param mixed $name Name of field to look for, or an array of names
+ * @param boolean $checkVirtual checks if the field is declared as virtual
  * @return mixed If $name is a string, returns a boolean indicating whether the field exists.
  *               If $name is an array of field names, returns the first field that exists,
  *               or false if none exist.
  * @access public
  */
-	function hasField($name) {
+	function hasField($name, $checkVirtual = false) {
 		if (is_array($name)) {
 			foreach ($name as $n) {
 				if ($this->hasField($n)) {
@@ -1022,6 +1023,12 @@ class Model extends Overloadable {
 				}
 			}
 			return false;
+		}
+
+		if ($checkVirtual && !empty($this->virtualFields)) {
+			if (array_key_exists($name,$this->virtualFields)) {
+				return true;
+			}
 		}
 
 		if (empty($this->_schema)) {
