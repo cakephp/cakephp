@@ -72,15 +72,15 @@
 /**
  * Uncomment the define below to use CakePHP admin routes.
  *
- * The value of the define determines the name of the route
- * and its associated controller actions:
+ * The value of the define determines the names of the routes
+ * and their associated controller actions:
  *
  * 'admin' -> admin_index() and /admin/controller/index
  * 'superuser' -> superuser_index() and /superuser/controller/index
  *
  * [Note Routing.admin is deprecated in 1.3.  Use Routing.prefixes instead]
  */
-	//Configure::write('Routing.admin', 'admin');
+	//Configure::write('Routing.prefixes', array('admin'));
 
 /**
  * Uncomment the define below to use CakePHP prefix routes.
