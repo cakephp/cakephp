@@ -1136,7 +1136,6 @@ class Model extends Overloadable {
 			if (!empty($data[0])) {
 				$name = key($data[0]);
 				return $data[0][$name];
-			}
 		} else {
 			return false;
 		}
