@@ -26,6 +26,15 @@ require_once dirname(__FILE__) . DS . 'model.test.php';
  */
 class ModelReadTest extends BaseModelTest {
 
+/**
+ * testVirtualFields()
+ *
+ * Test correct fetching of virtual fields
+ * currently is not possible to do Relation.virtualField
+ *
+ * @access public
+ * @return void
+ */
 	function testVirtualFields() {
 		$this->loadFixtures('Post','Author');
 		$Post = ClassRegistry::init('Post');
@@ -48,6 +57,16 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $Post->find('first',array('fields' => array('two')));
 		$this->assertEqual($result['Post']['two'],2);
+
+		$Post->id = 1;
+		$result = $Post->field('two');
+		$this->assertEqual($result,2);
+
+		ClassRegistry::flush();
+		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'),'Model');
+		$Writing->virtualFields = array('two' => "1 + 1");
+		$result = $Writing->find('first');
+		$this->assertEqual($result['Writing']['two'],2);
 	}
 
 /**

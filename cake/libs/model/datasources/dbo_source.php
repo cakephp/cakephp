@@ -369,7 +369,6 @@ class DboSource extends DataSource {
 
 			$first = $this->fetchRow();
 			if ($first != null) {
-				$this->fetchVirtualField($first);
 				$out[] = $first;
 			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
@@ -391,6 +390,12 @@ class DboSource extends DataSource {
 		}
 	}
 
+/**
+ * Modifies $result array to place virtual fields in model entry where they belongs to
+ *
+ * @param array $resut REference to the fetched row
+ * @return void
+ */
 	function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
@@ -1789,6 +1794,14 @@ class DboSource extends DataSource {
 		return $data;
 	}
 
+/**
+ * Converts model virtual fields into sql expressions to be fetched later
+ *
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields virtual fields to be used on query
+ * @return array
+ */
 	function _constructVirtualFields(&$model,$alias,$fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
