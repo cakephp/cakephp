@@ -1789,10 +1789,12 @@ class DboSource extends DataSource {
 		return $data;
 	}
 
-	function _constructVirtualFields(&$model,$fields) {
+	function _constructVirtualFields(&$model,$alias,$fields) {
 		$virtual = array();
-		foreach ($fields as $name => $expression) {
-			$virtual[] = $expression . " {$this->alias} {$model->alias}__{$name}";
+		foreach ($fields as $field) {
+			$virtualField = $this->name("{$alias}__{$field}");
+			$expression = $model->virtualFields[$field];
+			$virtual[] = $expression . " {$this->alias} {$virtualField}";
 		}
 		return $virtual;
 	}
@@ -1905,11 +1907,8 @@ class DboSource extends DataSource {
 				}
 			}
 		}
-		if (!empty($model->virtualFields)) {
-			if ($allFields) {
-				$fields = array_merge($fields,$this->_constructVirtualFields($model,$model->virtualFields));
-			} else {
-			}
+		if (!empty($virtual)) {
+			$fields = array_merge($fields,$this->_constructVirtualFields($model,$alias,$virtual));
 		}
 		return array_unique($fields);
 	}
