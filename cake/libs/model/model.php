@@ -1121,7 +1121,8 @@ class Model extends Overloadable {
 		} else {
 			$recursive = $this->recursive;
 		}
-		if ($data = $this->find($conditions, $name, $order, $recursive)) {
+		$fields = $name;
+		if ($data = $this->find('first',compact('conditions','fields','order','recursive'))) {
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->alias][$name])) {
 					return $data[$this->alias][$name];
