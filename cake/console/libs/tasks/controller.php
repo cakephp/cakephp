@@ -252,7 +252,7 @@ class ControllerTask extends Shell {
 			exit;
 		}
 		$actions = null;
-		$modelObj =& new $currentModelName();
+		$modelObj =& ClassRegistry::init($currentModelName);
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
