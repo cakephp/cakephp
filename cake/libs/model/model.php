@@ -1018,7 +1018,7 @@ class Model extends Overloadable {
 	function hasField($name, $checkVirtual = false) {
 		if (is_array($name)) {
 			foreach ($name as $n) {
-				if ($this->hasField($n)) {
+				if ($this->hasField($n,$checkVirtual)) {
 					return $n;
 				}
 			}

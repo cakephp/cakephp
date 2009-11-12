@@ -688,6 +688,24 @@ class ControllerTest extends CakeTestCase {
 		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
 	}
 
+	function testPaginateOrderVirtualField() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->ControllerPost->virtualFields = array('offset_test' => 'ControllerPost.id + 1');
+
+		$Controller->paginate = array(
+			'fields' => array('id', 'title'),
+			'order' => 'offset_test',
+			'limit' => 1
+		);
+		$result = $Controller->paginate('ControllerPost');
+
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3));
+	}
+
 /**
  * testDefaultPaginateParams method
  *
