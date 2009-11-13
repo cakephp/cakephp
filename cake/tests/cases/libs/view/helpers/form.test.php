@@ -5049,6 +5049,21 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array();
+		$this->Form->params['controller'] = 'contacts';
+		$this->Form->params['models'] = array('Contact');
+		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
+		
 	}
 
 /**
