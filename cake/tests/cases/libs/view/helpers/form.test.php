@@ -5056,14 +5056,14 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param'
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
 			),
 			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
-		
 	}
 
 /**

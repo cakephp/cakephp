@@ -172,7 +172,8 @@ class FormHelper extends AppHelper {
 		if (is_array($model) && empty($options)) {
 			$options = $model;
 			$model = null;
-		} elseif (empty($model) && $model !== false && !empty($this->params['models'])) {
+		}
+		if (empty($model) && $model !== false && !empty($this->params['models'])) {
 			$model = $this->params['models'][0];
 			$this->defaultModel = $this->params['models'][0];
 		} elseif (empty($model) && empty($this->params['models'])) {
