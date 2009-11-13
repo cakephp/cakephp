@@ -457,8 +457,17 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
-	}
 
+		$SchemaPost =& ClassRegistry::init('SchemaPost');
+		$SchemaPost->table = 'sts';
+		$SchemaPost->tablePrefix = 'po';
+		$read = $this->Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => array('SchemaPost')
+		));
+		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
+	}
 /**
  * test reading schema from plugins.
  *

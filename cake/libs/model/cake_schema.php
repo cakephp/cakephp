@@ -245,7 +245,7 @@ class CakeSchema extends Object {
 
 				if (is_object($Object) && $Object->useTable !== false) {
 					$Object->setDataSource($connection);
-					$table = $db->fullTableName($Object->useTable, false);
+					$table = $db->fullTableName($Object, false);
 
 					if (in_array($table, $currentTables)) {
 						$key = array_search($table, $currentTables);
