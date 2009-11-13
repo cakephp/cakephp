@@ -25,7 +25,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Cache extends Object {
+class Cache {
 
 /**
  * Cache engine to use
