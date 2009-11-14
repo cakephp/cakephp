@@ -32,7 +32,7 @@ class CakeLogTest extends CakeTestCase {
  * Start test callback, clears all streams enabled.
  *
  * @return void
- **/
+ */
 	function startTest() {
 		$streams = CakeLog::streams();
 		foreach ($streams as $stream) {
@@ -44,7 +44,7 @@ class CakeLogTest extends CakeTestCase {
  * test importing loggers from app/libs and plugins.
  *
  * @return void
- **/
+ */
 	function testImportingLoggers() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
@@ -70,7 +70,7 @@ class CakeLogTest extends CakeTestCase {
  * test all the errors from failed logger imports
  *
  * @return void
- **/
+ */
 	function testImportingLoggerFailure() {
 		$this->expectError('Missing logger classname');
 		CakeLog::config('fail', array());
@@ -87,7 +87,7 @@ class CakeLogTest extends CakeTestCase {
  * When no streams are there.
  *
  * @return void
- **/
+ */
 	function testAutoConfig() {
 		@unlink(LOGS . 'error.log');
 		CakeLog::write(LOG_WARNING, 'Test warning');
@@ -102,7 +102,7 @@ class CakeLogTest extends CakeTestCase {
  * test configuring log streams
  *
  * @return void
- **/
+ */
 	function testConfig() {
 		CakeLog::config('file', array(
 			'engine' => 'FileLog',
@@ -145,7 +145,7 @@ class CakeLogTest extends CakeTestCase {
  * Test logging with the error handler.
  *
  * @return void
- **/
+ */
 	function testLoggingWithErrorHandling() {
 		@unlink(LOGS . 'debug.log');
 		Configure::write('log', E_ALL & ~E_DEPRECATED);

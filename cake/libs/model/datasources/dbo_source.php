@@ -495,7 +495,7 @@ class DboSource extends DataSource {
  *
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return array Array of queries run as an array
- **/
+ */
 	function getLog($sorted = false) {
 		if ($sorted) {
 			$log = sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC);
@@ -967,7 +967,7 @@ class DboSource extends DataSource {
  * @param object $model Model being merged onto
  * @param object $linkModel Model being merged
  * @return void
- **/
+ */
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
 		foreach ($resultSet as $i => $value) {
 			$count = 0;
@@ -2483,7 +2483,7 @@ class DboSource extends DataSource {
  * @param array $columnData The array of column data.
  * @param string $position The position type to use. 'beforeDefault' or 'afterDefault' are common
  * @return string a built column with the field parameters added.
- **/
+ */
 	function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
 			if (isset($columnData[$paramName]) && $value['position'] == $position) {

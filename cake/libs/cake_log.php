@@ -60,7 +60,7 @@ class CakeLog {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_streams = array();
 
 /**
@@ -68,7 +68,7 @@ class CakeLog {
  *
  * @return void
  * @static
- **/
+ */
 	function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
@@ -85,7 +85,7 @@ class CakeLog {
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
  * @static
- **/
+ */
 	function config($key, $config) {
 		if (empty($config['engine'])) {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
@@ -107,7 +107,7 @@ class CakeLog {
  *
  * @return mixed boolean false on any failures, string of classname to use if search was successful.\
  * @access protected
- **/
+ */
 	function _getLogger($loggerName) {
 		$plugin = null;
 		if (strpos($loggerName, '.') !== false) {
@@ -139,7 +139,7 @@ class CakeLog {
  *
  * @return array
  * @static
- **/
+ */
 	function streams() {
 		$self = CakeLog::getInstance();
 		return array_keys($self->_streams);
@@ -152,7 +152,7 @@ class CakeLog {
  * @param string $keyname Key name of callable to remove.
  * @return void
  * @static
- **/
+ */
 	function remove($streamName) {
 		$self = CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
@@ -167,7 +167,7 @@ class CakeLog {
  * @param array $config Array of config information for the LogStream
  * @return boolean success
  * @static
- **/
+ */
 	function addStream($key, $config) {
 		$self = CakeLog::getInstance();
 		$self->_streams[$key] = $config;
@@ -178,7 +178,7 @@ class CakeLog {
  *
  * @return void
  * @access protected
- **/
+ */
 	function _autoConfig() {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
@@ -235,7 +235,7 @@ class CakeLog {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return void
- **/
+ */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if ($code === 2048 || $code === 8192) {
 			return;

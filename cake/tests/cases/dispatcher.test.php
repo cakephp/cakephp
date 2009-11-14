@@ -41,8 +41,8 @@ class TestDispatcher extends Dispatcher {
  * @param mixed $controller
  * @param mixed $params
  * @param mixed $missingAction
- * @access protected
  * @return void
+ * @access protected
  */
 	function _invoke(&$controller, $params) {
 		restore_error_handler();
@@ -60,8 +60,8 @@ class TestDispatcher extends Dispatcher {
  * cakeError method
  *
  * @param mixed $filename
- * @access public
  * @return void
+ * @access public
  */
 	function cakeError($filename, $params) {
 		return array($filename, $params);
@@ -70,8 +70,8 @@ class TestDispatcher extends Dispatcher {
 /**
  * _stop method
  *
- * @access protected
  * @return void
+ * @access protected
  */
 	function _stop() {
 		return true;
@@ -114,8 +114,8 @@ class MyPluginController extends MyPluginAppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		return true;
@@ -124,8 +124,8 @@ class MyPluginController extends MyPluginAppController {
 /**
  * add method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function add() {
 		return true;
@@ -135,8 +135,8 @@ class MyPluginController extends MyPluginAppController {
  * admin_add method
  *
  * @param mixed $id
- * @access public
  * @return void
+ * @access public
  */
 	function admin_add($id = null) {
 		return $id;
@@ -171,8 +171,8 @@ class SomePagesController extends AppController {
  * display method
  *
  * @param mixed $page
- * @access public
  * @return void
+ * @access public
  */
 	function display($page = null) {
 		return $page;
@@ -181,8 +181,8 @@ class SomePagesController extends AppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		return true;
@@ -191,8 +191,8 @@ class SomePagesController extends AppController {
 /**
  * protected method
  *
- * @access protected
  * @return void
+ * @access protected
  */
 	function _protected() {
 		return true;
@@ -201,8 +201,8 @@ class SomePagesController extends AppController {
 /**
  * redirect method overriding
  *
- * @access public
  * @return void
+ * @access public
  */
 	function redirect() {
 		echo 'this should not be accessible';
@@ -237,8 +237,8 @@ class OtherPagesController extends MyPluginAppController {
  * display method
  *
  * @param mixed $page
- * @access public
  * @return void
+ * @access public
  */
 	function display($page = null) {
 		return $page;
@@ -247,8 +247,8 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		return true;
@@ -282,8 +282,8 @@ class TestDispatchPagesController extends AppController {
 /**
  * admin_index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function admin_index() {
 		return true;
@@ -292,8 +292,8 @@ class TestDispatchPagesController extends AppController {
 /**
  * camelCased method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function camelCased() {
 		return true;
@@ -336,8 +336,8 @@ class ArticlesTestController extends ArticlesTestAppController {
 /**
  * admin_index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function admin_index() {
 		return true;
@@ -379,8 +379,8 @@ class SomePostsController extends AppController {
 /**
  * beforeFilter method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function beforeFilter() {
 		if ($this->params['action'] == 'index') {
@@ -394,8 +394,8 @@ class SomePostsController extends AppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		return true;
@@ -404,8 +404,8 @@ class SomePostsController extends AppController {
 /**
  * change method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function change() {
 		return true;
@@ -466,8 +466,8 @@ class TestCachedPagesController extends AppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		$this->render();
@@ -476,8 +476,8 @@ class TestCachedPagesController extends AppController {
 /**
  * test_nocache_tags method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function test_nocache_tags() {
 		$this->render();
@@ -486,8 +486,8 @@ class TestCachedPagesController extends AppController {
 /**
  * view method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function view($id = null) {
 		$this->render('index');
@@ -521,8 +521,8 @@ class TimesheetsController extends AppController {
 /**
  * index method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function index() {
 		return true;
@@ -540,8 +540,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function startTest() {
 		$this->_get = $_GET;
@@ -567,8 +567,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function endTest() {
 		$_GET = $this->_get;
@@ -584,8 +584,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsWithoutZerosAndEmptyPost method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsWithoutZerosAndEmptyPost() {
 		$Dispatcher =& new Dispatcher();
@@ -601,8 +601,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsReturnsPostedData method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsReturnsPostedData() {
 		$_POST['testdata'] = "My Posted Content";
@@ -615,8 +615,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsWithSingleZero method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsWithSingleZero() {
 		$Dispatcher =& new Dispatcher();
@@ -631,8 +631,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsWithManySingleZeros method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsWithManySingleZeros() {
 		$Dispatcher =& new Dispatcher();
@@ -648,8 +648,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsWithManyZerosInEachSectionOfUrl method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsWithManyZerosInEachSectionOfUrl() {
 		$Dispatcher =& new Dispatcher();
@@ -665,8 +665,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
 		$Dispatcher =& new Dispatcher();
@@ -682,8 +682,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testQueryStringOnRoot method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testQueryStringOnRoot() {
 		Router::reload();
@@ -712,8 +712,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testFileUploadArrayStructure method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testFileUploadArrayStructure() {
 		$_FILES = array('data' => array('name' => array(
@@ -965,8 +965,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testGetUrl method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testGetUrl() {
 		$Dispatcher =& new Dispatcher();
@@ -1005,8 +1005,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithModRewrite method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testBaseUrlAndWebrootWithModRewrite() {
 		$Dispatcher =& new Dispatcher();
@@ -1081,8 +1081,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlwithModRewriteAlias method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testBaseUrlwithModRewriteAlias() {
 		$_SERVER['DOCUMENT_ROOT'] = '/home/aplusnur/public_html';
@@ -1116,8 +1116,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithBaseUrl method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testBaseUrlAndWebrootWithBaseUrl() {
 		$Dispatcher =& new Dispatcher();
@@ -1186,8 +1186,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithBase method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testBaseUrlAndWebrootWithBase() {
 		$Dispatcher =& new Dispatcher();
@@ -1217,8 +1217,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testMissingController method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testMissingController() {
 		$Dispatcher =& new TestDispatcher();
@@ -1237,8 +1237,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testPrivate method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testPrivate() {
 		$Dispatcher =& new TestDispatcher();
@@ -1260,8 +1260,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testMissingAction method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testMissingAction() {
 		$Dispatcher =& new TestDispatcher();
@@ -1298,8 +1298,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatch() {
 		$Dispatcher =& new TestDispatcher();
@@ -1353,8 +1353,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testDispatchWithArray method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchWithArray() {
 		$Dispatcher =& new TestDispatcher();
@@ -1373,8 +1373,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testAdminDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testAdminDispatch() {
 		$_POST = array();
@@ -1404,8 +1404,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testPluginDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testPluginDispatch() {
 		$_POST = array();
@@ -1453,8 +1453,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testAutomaticPluginDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testAutomaticPluginDispatch() {
 		$_POST = array();
@@ -1491,8 +1491,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testAutomaticPluginControllerDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testAutomaticPluginControllerDispatch() {
 		$_POST = array();
@@ -1594,7 +1594,8 @@ class DispatcherTest extends CakeTestCase {
  * plugin short form instead.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testAutomaticPluginDispatchWithShortAccess() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
@@ -1642,8 +1643,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testAutomaticPluginControllerMissingActionDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testAutomaticPluginControllerMissingActionDispatch() {
 		$_POST = array();
@@ -1685,8 +1686,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testPrefixProtection method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testPrefixProtection() {
 		$_POST = array();
@@ -1715,7 +1716,8 @@ class DispatcherTest extends CakeTestCase {
  * undocumented function
  *
  * @return void
- **/
+ * @access public
+ */
 	function testTestPluginDispatch() {
 		$Dispatcher =& new TestDispatcher();
 		App::build(array(
@@ -1734,8 +1736,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testChangingParamsFromBeforeFilter method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testChangingParamsFromBeforeFilter() {
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
@@ -1768,8 +1770,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testStaticAssets method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testStaticAssets() {
 		Router::reload();
@@ -1845,8 +1847,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testFullPageCachingDispatch method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testFullPageCachingDispatch() {
 		Configure::write('Cache.disable', false);
@@ -1981,8 +1983,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testHttpMethodOverrides method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testHttpMethodOverrides() {
 		Router::reload();
@@ -2036,6 +2038,7 @@ class DispatcherTest extends CakeTestCase {
  * Tests that invalid characters cannot be injected into the application base path.
  *
  * @return void
+ * @access public
  */
 	function testBasePathInjection() {
 		$self = $_SERVER['PHP_SELF'];
@@ -2052,8 +2055,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testEnvironmentDetection method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testEnvironmentDetection() {
 		$dispatcher =& new Dispatcher();
@@ -2158,8 +2161,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * Tests that the Dispatcher does not return an empty action
  *
- * @access private
  * @return void
+ * @access public
  */
 	function testTrailingSlash() {
 		$_POST = array();
@@ -2184,8 +2187,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * backupEnvironment method
  *
- * @access private
  * @return void
+ * @access private
  */
 	function __backupEnvironment() {
 		return array(
@@ -2199,8 +2202,8 @@ class DispatcherTest extends CakeTestCase {
 /**
  * reloadEnvironment method
  *
- * @access private
  * @return void
+ * @access private
  */
 	function __reloadEnvironment() {
 		foreach ($_GET as $key => $val) {
@@ -2219,8 +2222,8 @@ class DispatcherTest extends CakeTestCase {
  * loadEnvironment method
  *
  * @param mixed $env
- * @access private
  * @return void
+ * @access private
  */
 	function __loadEnvironment($env) {
 		if ($env['reload']) {
@@ -2254,8 +2257,8 @@ class DispatcherTest extends CakeTestCase {
  * cachePath method
  *
  * @param mixed $her
- * @access private
  * @return string
+ * @access private
  */
 	function __cachePath($here) {
 		$path = $here;

@@ -244,7 +244,7 @@ class CakeSession extends Object {
  *
  * @return boolean
  * @deprecated Use CakeSession::delete instead
- **/
+ */
 	function del($name) {
 		trigger_error('CakeSession::del() is deprecated, use CakeSession::delete() instead.', E_USER_WARNING);
 		return $this->delete($name);

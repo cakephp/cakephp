@@ -642,7 +642,7 @@ class Shell extends Object {
  *
  * @param string $pluginName Name of the plugin you want ie. DebugKit
  * @return string $path path to the correct plugin.
- **/
+ */
 	function _pluginPath($pluginName) {
 		return App::pluginPath($pluginName);
 	}

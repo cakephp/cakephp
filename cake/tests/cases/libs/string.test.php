@@ -208,7 +208,7 @@ class StringTest extends CakeTestCase {
  * test Clean Insert
  *
  * @return void
- **/
+ */
 	function testCleanInsert() {
 		$result = String::cleanInsert(':incomplete', array(
 			'clean' => true, 'before' => ':', 'after' => ''

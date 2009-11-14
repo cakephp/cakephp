@@ -477,7 +477,7 @@ class ComponentTest extends CakeTestCase {
  * Ensure that settings are not duplicated when passed into component initialize.
  *
  * @return void
- **/
+ */
 	function testComponentParamsNoDuplication() {
 		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
 			return;

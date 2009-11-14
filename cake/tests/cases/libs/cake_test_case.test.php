@@ -257,7 +257,7 @@ class CakeTestCaseTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testTestAction() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
@@ -389,7 +389,7 @@ class CakeTestCaseTest extends CakeTestCase {
  * testSkipIf
  *
  * @return void
- **/
+ */
 	function testSkipIf() {
 		$this->assertTrue($this->Case->skipIf(true));
 		$this->assertFalse($this->Case->skipIf(false));

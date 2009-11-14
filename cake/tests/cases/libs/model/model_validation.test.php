@@ -126,7 +126,7 @@ class ModelValidationTest extends BaseModelTest {
  * Helps to make developement easier.
  *
  * @return void
- **/
+ */
 	function testMissingValidationErrorTriggering() {
 		$restore = Configure::read('debug');
 		Configure::write('debug', 2);

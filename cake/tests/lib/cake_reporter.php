@@ -56,7 +56,7 @@ class CakeHtmlReporter extends SimpleReporter {
  *
  * @param 
  * @return void
- **/
+ */
 	function paintGroupStart($test_name, $size) {
 		if (empty($this->_timeStart)) {
 			$this->_timeStart = $this->_getTime();
@@ -69,7 +69,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * and timers are stopped.
  *
  * @return void
- **/
+ */
 	function paintGroupEnd($test_name) {
 		$this->_timeEnd = $this->_getTime();
 		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
@@ -81,7 +81,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * but in a separate function to reduce dependancies.
  *
  * @return float Time in microseconds
- **/
+ */
 	function _getTime() {
 		list($usec, $sec) = explode(' ', microtime());
 		return ((float)$sec + (float)$usec);

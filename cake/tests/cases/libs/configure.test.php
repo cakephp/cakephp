@@ -136,7 +136,7 @@ class ConfigureTest extends CakeTestCase {
  * testSetErrorReporting Level
  *
  * @return void
- **/
+ */
 	function testSetErrorReportingLevel() {
 		Configure::write('log', false);
 
@@ -160,7 +160,7 @@ class ConfigureTest extends CakeTestCase {
  * test that log and debug configure values interact well.
  *
  * @return void
- **/
+ */
 	function testInteractionOfDebugAndLog() {
 		Configure::write('log', false);
 

@@ -27,7 +27,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * startTest
  *
  * @return void
- **/
+ */
 	function startTest() {
 		$this->Moo =& new MootoolsEngineHelper();
 	}
@@ -35,7 +35,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * end test
  *
  * @return void
- **/
+ */
 	function endTest() {
 		unset($this->Moo);
 	}
@@ -43,7 +43,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test selector method
  *
  * @return void
- **/
+ */
 	function testSelector() {
 		$result = $this->Moo->get('#content');
 		$this->assertEqual($result, $this->Moo);
@@ -73,7 +73,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test event binding
  *
  * @return void
- **/
+ */
 	function testEvent() {
 		$this->Moo->get('#myLink');
 		$result = $this->Moo->event('click', 'doClick', array('wrap' => false));
@@ -92,7 +92,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test dom ready event creation
  *
  * @return void
- **/
+ */
 	function testDomReady() {
 		$result = $this->Moo->domReady('foo.name = "bar";');
 		$expected = 'window.addEvent("domready", function (event) {foo.name = "bar";});';
@@ -102,7 +102,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test Each method
  *
  * @return void
- **/
+ */
 	function testEach() {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->each('item.setStyle("display", "none");');
@@ -113,7 +113,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test Effect generation
  *
  * @return void
- **/
+ */
 	function testEffect() {
 		$this->Moo->get('#foo');
 		$result = $this->Moo->effect('show');
@@ -152,7 +152,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * Test Request Generation
  *
  * @return void
- **/
+ */
 	function testRequest() {
 		$result = $this->Moo->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Request({url:"\\/posts\\/view\\/1"}).send();';
@@ -222,7 +222,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test sortable list generation
  *
  * @return void
- **/
+ */
 	function testSortable() {
 		$this->Moo->get('#myList');
 		$result = $this->Moo->sortable(array(
@@ -240,7 +240,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test drag() method
  *
  * @return void
- **/
+ */
 	function testDrag() {
 		$this->Moo->get('#drag-me');
 		$result = $this->Moo->drag(array(
@@ -257,7 +257,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test drop() method
  *
  * @return void
- **/
+ */
 	function testDrop() {
 		$this->expectError();
 		$this->Moo->get('#drop-me');
@@ -291,7 +291,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test slider generation
  *
  * @return void
- **/
+ */
 	function testSlider() {
 		$this->Moo->get('#slider');
 		$result = $this->Moo->slider(array(
@@ -332,7 +332,7 @@ class MooEngineHelperTestCase extends CakeTestCase {
  * test the serializeForm implementation.
  *
  * @return void
- **/
+ */
 	function testSerializeForm() {
 		$this->Moo->get('#element');
 		$result = $this->Moo->serializeForm(array('isForm' => true));

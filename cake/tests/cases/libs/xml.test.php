@@ -120,7 +120,7 @@ class XmlTest extends CakeTestCase {
  * test serialization of boolean and null values.  false = 0, true = 1, null = ''
  *
  * @return void
- **/
+ */
 	function testSerializationOfBooleanAndBooleanishValues() {
 		$xml =& new Xml(array('data' => array('example' => false)));
 		$result = $xml->toString(false);
@@ -732,7 +732,7 @@ class XmlTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testElementCollapsing() {
 		$xmlDataThatFails = '<resultpackage>
 		<result qid="46b1c46ed6208"><![CDATA[46b1c46ed3af9]]></result>
@@ -794,7 +794,7 @@ class XmlTest extends CakeTestCase {
  *
  * @see http://code.cakephp.org/tickets/view/8
  * @return void
- **/
+ */
 	function testCaseFoldingWithEmptyValues() {
 		$filledValue = '<method name="set_user_settings">
 			<title>update user information</title>
