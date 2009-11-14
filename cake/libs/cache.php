@@ -240,12 +240,6 @@ class Cache {
 	function write($key, $value, $config = null) {
 		$_this =& Cache::getInstance();
 
-		if (is_array($config)) {
-			extract($config);
-		} else if ($config && (is_numeric($config) || is_numeric($config[0]) || (isset($config[1]) && is_numeric($config[1])))) {
-			$config = null;
-		}
-
 		if ($config && isset($_this->__config[$config])) {
 			$settings = $_this->set($_this->__config[$config]);
 		} else {
