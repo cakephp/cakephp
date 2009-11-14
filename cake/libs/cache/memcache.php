@@ -61,7 +61,10 @@ class MemcacheEngine extends CacheEngine {
 			return false;
 		}
 		parent::init(array_merge(array(
-			'engine'=> 'Memcache', 'prefix' => Inflector::slug(APP_DIR) . '_', 'servers' => array('127.0.0.1'), 'compress'=> false
+			'engine'=> 'Memcache', 
+			'prefix' => Inflector::slug(APP_DIR) . '_', 
+			'servers' => array('127.0.0.1'),
+			'compress'=> false
 			), $settings)
 		);
 
@@ -100,7 +103,7 @@ class MemcacheEngine extends CacheEngine {
  */
 	function write($key, &$value, $duration) {
 		$expires = time() + $duration;
-		$this->__Memcache->set($key.'_expires', $expires, $this->settings['compress'], $expires);
+		$this->__Memcache->set($key . '_expires', $expires, $this->settings['compress'], $expires);
 		return $this->__Memcache->set($key, $value, $this->settings['compress'], $expires);
 	}
 /**
@@ -112,7 +115,7 @@ class MemcacheEngine extends CacheEngine {
  */
 	function read($key) {
 		$time = time();
-		$cachetime = intval($this->__Memcache->get($key.'_expires'));
+		$cachetime = intval($this->__Memcache->get($key . '_expires'));
 		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
 			return false;
 		}
