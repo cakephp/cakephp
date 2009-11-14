@@ -72,6 +72,26 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * test configuring CacheEngines in App/libs
+ *
+ * @return void
+ **/
+	function testConfigWithLibAndPluginEngines() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('libEngine', $settings);
+		$this->assertEqual($result, Cache::config('libEngine'));
+
+		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('pluginLibEngine', $settings);
+		$this->assertEqual($result, Cache::config('pluginLibEngine'));
+	}
+
+/**
  * testInvalidConfig method
  *
  * Test that the cache class doesn't cause fatal errors with a partial path

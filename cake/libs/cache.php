@@ -75,20 +75,6 @@ class Cache {
 	}
 
 /**
- * Tries to find and include a file for a cache engine and returns object instance
- *
- * @param $name	Name of the engine (without 'Engine')
- * @return mixed $engine object or null
- * @access private
- */
-	function __loadEngine($name) {
-		if (!class_exists($name . 'Engine')) {
-			require LIBS . DS . 'cache' . DS . strtolower($name) . '.php';
-		}
-		return true;
-	}
-
-/**
  * Set the cache configuration to use
  *
  * @see app/config/core.php for configuration settings
@@ -146,10 +132,15 @@ class Cache {
  * @static
  */
 	function engine($name = 'File', $settings = array()) {
-		$cacheClass = $name . 'Engine';
+		$plugin = null;
+		$class = $name;
+		if (strpos($name, '.') !== false) {
+			list($plugin, $class) = explode('.', $name);
+		}
+		$cacheClass = $class . 'Engine';
 		$_this =& Cache::getInstance();
 		if (!isset($_this->_Engine[$name])) {
-			if ($_this->__loadEngine($name) === false) {
+			if ($_this->__loadEngine($class, $plugin) === false) {
 				return false;
 			}
 			$_this->_Engine[$name] =& new $cacheClass();
@@ -164,6 +155,25 @@ class Cache {
 		$_this->_Engine[$name] = null;
 		return false;
 	}
+
+/**
+ * Tries to find and include a file for a cache engine and returns object instance
+ *
+ * @param $name	Name of the engine (without 'Engine')
+ * @return mixed $engine object or null
+ * @access private
+ */
+	function __loadEngine($name, $plugin = null) {
+		if ($plugin) {
+			App::import('Lib', $plugin . '.cache' . DS . $name);
+		} else {
+			if (!App::import('Lib', 'cache' . DS . $name)) {
+				App::import('Core', 'cache' . DS . $name);
+			}
+		}
+		return true;
+	}
+
 
 /**
  * Temporarily change settings to current config options. if no params are passed, resets settings if needed
@@ -417,7 +427,7 @@ class Cache {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class CacheEngine extends Object {
+class CacheEngine {
 
 /**
  * settings of current engine instance
