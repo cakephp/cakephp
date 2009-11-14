@@ -232,6 +232,7 @@ class Router {
 		foreach ($_this->__prefixes as $prefix) {
 			if (isset($default[$prefix])) {
 				$default['prefix'] = $prefix;
+				break;
 			}
 		}
 		if (isset($default['prefix'])) {
