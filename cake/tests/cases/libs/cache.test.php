@@ -89,6 +89,11 @@ class CacheTest extends CakeTestCase {
 		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
 		$result = Cache::config('pluginLibEngine', $settings);
 		$this->assertEqual($result, Cache::config('pluginLibEngine'));
+
+		Cache::unconfig('libEngine');
+		Cache::unconfig('pluginLibEngine');
+
+		App::build();
 	}
 
 /**
@@ -158,6 +163,18 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * test that configured returns an array of the currently configured cache 
+ * settings
+ *
+ * @return void
+ **/
+	function testConfigured() {
+		$result = Cache::configured();
+		$this->assertTrue(in_array('_cake_core_', $result));
+		$this->assertTrue(in_array('default', $result));
+	}
+
+/**
  * testInitSettings method
  *
  * @access public
@@ -180,6 +197,37 @@ class CacheTest extends CakeTestCase {
 		$this->assertEqual($settings, $expecting);
 
 		Cache::engine('File');
+	}
+
+/**
+ * test that unconfig removes cache configs, and that further attempts to use that config 
+ * do not work.
+ *
+ * @return void
+ **/
+	function testUnconfig() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$result = Cache::unconfig('some_config_that_does_not_exist');
+		$this->assertFalse($result);
+
+		$_testsConfig = Cache::config('tests');
+		$result = Cache::unconfig('tests');
+		$this->assertTrue($result);
+		
+		Cache::config('unconfigTest', array(
+			'engine' => 'TestAppCache'
+		));
+		$this->assertTrue(Cache::isInitialized('TestAppCache'));
+
+		$this->assertTrue(Cache::unconfig('unconfigTest'));
+		$this->assertFalse(Cache::isInitialized('TestAppCache'));
+
+		Cache::config('tests', $_testsConfig);
+		App::build();
 	}
 
 /**

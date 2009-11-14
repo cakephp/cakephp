@@ -123,6 +123,44 @@ class Cache {
 	}
 
 /**
+ * Returns an array containing the currently configured Cache settings.
+ *
+ * @return array
+ **/
+	function configured() {
+		$_this = Cache::getInstance();
+		return array_keys($_this->__config);
+	}
+
+/**
+ * Unconfigures a cache engine.  Deletes the cache configuration information
+ * If the deleted configuration is the last configuration using an certain engine,
+ * the Engine instance is also unset.
+ *
+ * @param string $name A currently configured cache config you wish to remove.
+ * @return boolen success of the removal, returns false when the config does not exist.
+ **/
+	function unconfig($name) {
+		$_this = Cache::getInstance();
+		if (!isset($_this->__config[$name])) {
+			return false;
+		}
+		$last = true;
+		$engine = $_this->__config[$name]['engine'];
+		unset($_this->__config[$name]);
+		foreach ($_this->__config as $name => $settings) {
+			if ($settings['engine'] == $engine) {
+				$last = false;
+				break;
+			}
+		}
+		if ($last) {
+			unset($_this->_Engine[$engine]);
+		}
+		return true;
+	}
+
+/**
  * Set the cache engine to use or modify settings for one instance
  *
  * @param string $name Name of the engine (without 'Engine')
@@ -165,13 +203,14 @@ class Cache {
  */
 	function __loadEngine($name, $plugin = null) {
 		if ($plugin) {
-			App::import('Lib', $plugin . '.cache' . DS . $name);
+			return App::import('Lib', $plugin . '.cache' . DS . $name);
 		} else {
-			if (!App::import('Lib', 'cache' . DS . $name)) {
-				App::import('Core', 'cache' . DS . $name);
+			$app = App::import('Lib', 'cache' . DS . $name);
+			if (!$app) {
+				return App::import('Core', 'cache' . DS . $name);
 			}
+			return true;
 		}
-		return true;
 	}
 
 
