@@ -75,7 +75,7 @@ class CacheTest extends CakeTestCase {
  * test configuring CacheEngines in App/libs
  *
  * @return void
- **/
+ */
 	function testConfigWithLibAndPluginEngines() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
@@ -167,7 +167,7 @@ class CacheTest extends CakeTestCase {
  * settings
  *
  * @return void
- **/
+ */
 	function testConfigured() {
 		$result = Cache::configured();
 		$this->assertTrue(in_array('_cake_core_', $result));
@@ -204,7 +204,7 @@ class CacheTest extends CakeTestCase {
  * do not work.
  *
  * @return void
- **/
+ */
 	function testUnconfig() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),

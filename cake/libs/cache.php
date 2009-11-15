@@ -126,7 +126,7 @@ class Cache {
  * Returns an array containing the currently configured Cache settings.
  *
  * @return array
- **/
+ */
 	function configured() {
 		$_this = Cache::getInstance();
 		return array_keys($_this->__config);
@@ -139,7 +139,7 @@ class Cache {
  *
  * @param string $name A currently configured cache config you wish to remove.
  * @return boolen success of the removal, returns false when the config does not exist.
- **/
+ */
 	function drop($name) {
 		$_this = Cache::getInstance();
 		if (!isset($_this->__config[$name])) {
