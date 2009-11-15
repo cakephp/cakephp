@@ -392,6 +392,29 @@ class AppImportTest extends UnitTestCase {
 	}
 
 /**
+ * test that pluginPath can find paths for plugins.
+ *
+ * @return void
+ */
+	function testPluginPath() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$path = App::pluginPath('test_plugin');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS;
+		$this->assertEqual($path, $expected);
+
+		$path = App::pluginPath('TestPlugin');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS;
+		$this->assertEqual($path, $expected);
+
+		$path = App::pluginPath('TestPluginTwo');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS;
+		$this->assertEqual($path, $expected);
+		App::build();
+	}
+
+/**
  * testClassLoading method
  *
  * @access public
