@@ -19,15 +19,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-/**
- * Included libraries.
- *
- */
-	if (!class_exists('File')) {
-		require LIBS . 'file.php';
-	}
-
 /**
  * Set up error level constants to be used within the framework if they are not defined within the
  * system.
@@ -140,37 +131,22 @@ class CakeLog {
  * @return array
  * @static
  */
-	function streams() {
+	function configured() {
 		$self = CakeLog::getInstance();
 		return array_keys($self->_streams);
 	}
 
 /**
- * Remove a stream from the active streams.  Once a stream has been removed
- * it will no longer be called.
+ * Removes a stream from the active streams.  Once a stream has been removed
+ * it will no longer have messages sent to it.
  *
  * @param string $keyname Key name of callable to remove.
  * @return void
  * @static
  */
-	function remove($streamName) {
+	function drop($streamName) {
 		$self = CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
-	}
-
-/**
- * Add a stream the logger.
- * Streams represent destinations for log messages.  Each stream can connect to
- * a different resource /interface and capture/write output to that source.
- *
- * @param string $key Keyname of config.
- * @param array $config Array of config information for the LogStream
- * @return boolean success
- * @static
- */
-	function addStream($key, $config) {
-		$self = CakeLog::getInstance();
-		$self->_streams[$key] = $config;
 	}
 
 /**
