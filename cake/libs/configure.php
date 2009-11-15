@@ -130,12 +130,14 @@ class Configure extends Object {
 /**
  * Used to read information stored in the Configure instance.
  *
- * Usage
+ * Usage:
+ * {{{
  * Configure::read('Name'); will return all values for Name
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
+ * }}}
  *
- * @link          http://book.cakephp.org/view/413/read
- * @param string $var Variable to obtain
+ * @link http://book.cakephp.org/view/413/read
+ * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
  * @access public
  */
@@ -165,10 +167,12 @@ class Configure extends Object {
  * Used to delete a variable from the Configure instance.
  *
  * Usage:
+ * {{{
  * Configure::delete('Name'); will delete the entire Configure::Name
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
+ * }}}
  *
- * @link          http://book.cakephp.org/view/414/delete
+ * @link http://book.cakephp.org/view/414/delete
  * @param string $var the var to be deleted
  * @return void
  * @access public
@@ -188,27 +192,28 @@ class Configure extends Object {
 /**
  * Loads a file from app/config/configure_file.php.
  * Config file variables should be formated like:
- *  $config['name'] = 'value';
- * These will be used to create dynamic Configure vars.
+ *  `$config['name'] = 'value';`
+ * These will be used to create dynamic Configure vars. load() is also used to 
+ * load stored config files created with Configure::store()
  *
- * Usage Configure::load('configure_file');
+ * - To load config files from app/config use `Configure::load('configure_file');`.
+ * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
  *
- * @link          http://book.cakephp.org/view/415/load
+ * @link http://book.cakephp.org/view/415/load
  * @param string $fileName name of file to load, extension must be .php and only the name
- *                         should be used, not the extenstion
+ *     should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
  * @access public
  */
 	function load($fileName) {
-		$found = false;
-		$pluginPath = false;
-		if(strpos($fileName, '.') !== false) {
+		$found = $pluginPath = false;
+		if (strpos($fileName, '.') !== false) {
 			$plugin = explode('.', $fileName, 2);
 			$pluginPath = App::pluginPath($plugin[0]);
 		}
 
 		if ($pluginPath && file_exists($pluginPath . 'config' . DS . $plugin[1] . '.php')) {
-		include($pluginPath . 'config' . DS . $plugin[1] . '.php');
+			include($pluginPath . 'config' . DS . $plugin[1] . '.php');
 			$found = true;
 		} elseif (file_exists(CONFIGS . $fileName . '.php')) {
 			include(CONFIGS . $fileName . '.php');
@@ -241,9 +246,9 @@ class Configure extends Object {
 /**
  * Used to determine the current version of CakePHP.
  *
- * Usage Configure::version();
+ * Usage `Configure::version();`
  *
- * @link          http://book.cakephp.org/view/416/version
+ * @link http://book.cakephp.org/view/416/version
  * @return string Current version of CakePHP
  * @access public
  */
@@ -260,9 +265,11 @@ class Configure extends Object {
 /**
  * Used to write a config file to disk.
  *
+ * {{{
  * Configure::store('Model', 'class.paths', array('Users' => array(
  *      'path' => 'users', 'plugin' => true
  * )));
+ * }}}
  *
  * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
  * @param string $name file name.
@@ -1231,8 +1238,8 @@ class App extends Object {
 /**
  * Returns an array of filenames of PHP files in the given directory.
  *
- * @param  string $path Path to scan for files
- * @param  string $suffix if false, return only directories. if string, match and return files
+ * @param string $path Path to scan for files
+ * @param string $suffix if false, return only directories. if string, match and return files
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {
