@@ -61,6 +61,25 @@ class TestNlValidation {
 }
 
 /**
+ * TestNlValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestDeValidation {
+/**
+ * phone function, for testing phone pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function phone($check) {
+		return true;
+	}
+}
+
+/**
  * Test Case for Validation Class
  *
  * @package       cake
@@ -2015,6 +2034,16 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('13089-333'));
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
+	}
+
+/**
+ * test that phone and postal pass to other classes.
+ *
+ * @return void
+ */
+	function testPhoneAndPostalPass() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+		$this->assertTrue(Validation::phone('text', null, 'testDe'));
 	}
 
 /**
