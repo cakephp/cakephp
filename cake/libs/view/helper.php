@@ -578,8 +578,9 @@ class Helper extends Overloadable {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __name($options = array(), $field = null, $key = 'name') {
+	function _name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
 		if ($options === null) {
 			$options = array();
@@ -689,7 +690,7 @@ class Helper extends Overloadable {
 			$this->setEntity($field);
 		}
 		$options = (array)$options;
-		$options = $this->__name($options);
+		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
 		if ($this->tagIsInvalid()) {

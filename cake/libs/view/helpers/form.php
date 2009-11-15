@@ -1751,8 +1751,9 @@ class FormHelper extends AppHelper {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __name($options = array(), $field = null, $key = 'name') {
+	function _name($options = array(), $field = null, $key = 'name') {
 		if ($this->requestType == 'get') {
 			if ($options === null) {
 				$options = array();
@@ -1777,7 +1778,7 @@ class FormHelper extends AppHelper {
 				return $name;
 			}
 		}
-		return parent::__name($options, $field, $key);
+		return parent::_name($options, $field, $key);
 	}
 
 /**
@@ -1846,7 +1847,7 @@ class FormHelper extends AppHelper {
 							$label['class'] = 'selected';
 						}
 
-						list($name) = array_values($this->__name());
+						list($name) = array_values($this->_name());
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
