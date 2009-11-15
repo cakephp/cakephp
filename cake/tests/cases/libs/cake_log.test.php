@@ -121,6 +121,24 @@ class CakeLogTest extends CakeTestCase {
 	}
 
 /**
+ * explict tests for drop()
+ *
+ * @return void
+ **/
+	function testDrop() {
+		CakeLog::config('file', array(
+			'engine' => 'FileLog',
+			'path' => LOGS
+		));
+		$result = CakeLog::configured();
+		$this->assertEqual($result, array('file'));
+
+		CakeLog::drop('file');
+		$result = CakeLog::configured();
+		$this->assertEqual($result, array());
+	}
+
+/**
  * testLogFileWriting method
  *
  * @access public
