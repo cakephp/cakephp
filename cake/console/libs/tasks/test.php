@@ -46,28 +46,28 @@ class TestTask extends Shell {
  * Tasks used.
  *
  * @var array
- **/
+ */
 	var $tasks = array('Template');
 
 /**
  * class types that methods can be generated for
  *
  * @var array
- **/
+ */
 	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
 
 /**
  * Internal list of fixtures that have been added so far.
  *
  * @var string
- **/
+ */
 	var $_fixtures = array();
 
 /**
  * Flag for interactive mode
  *
  * @var boolean
- **/
+ */
 	var $interactive = false;
 
 /**
@@ -164,7 +164,7 @@ class TestTask extends Shell {
  * Interact with the user and get their chosen type. Can exit the script.
  *
  * @return string Users chosen type.
- **/
+ */
 	function getObjectType() {
 		$this->hr();
 		$this->out(__("Select an object type:", true));
@@ -188,7 +188,7 @@ class TestTask extends Shell {
  *
  * @param string $objectType Type of object to list classes for i.e. Model, Controller.
  * @return string Class name the user chose.
- **/
+ */
 	function getClassName($objectType) {
 		$options = App::objects(strtolower($objectType));
 		$this->out(sprintf(__('Choose a %s class', true), $objectType));
@@ -209,7 +209,7 @@ class TestTask extends Shell {
  * Currently only model, and controller are supported
  *
  * @return boolean
- **/
+ */
 	function typeCanDetectFixtures($type) {
 		$type = strtolower($type);
 		return ($type == 'controller' || $type == 'model');
@@ -219,7 +219,7 @@ class TestTask extends Shell {
  * Check if a class with the given type is loaded or can be loaded.
  *
  * @return boolean
- **/
+ */
 	function isLoadableClass($type, $class) {
 		return App::import($type, $class);
 	}
@@ -229,7 +229,7 @@ class TestTask extends Shell {
  * So that fixtures can be detected
  *
  * @return object
- **/
+ */
 	function &buildTestSubject($type, $class) {
 		ClassRegistry::flush();
 		App::import($type, $class);
@@ -246,7 +246,7 @@ class TestTask extends Shell {
  * Gets the real class name from the cake short form.
  *
  * @return string Real classname
- **/
+ */
 	function getRealClassName($type, $class) {
 		if (strtolower($type) == 'model') {
 			return $class;
@@ -260,7 +260,7 @@ class TestTask extends Shell {
  *
  * @param string $className Name of class to look at.
  * @return array Array of method names.
- **/
+ */
 	function getTestableMethods($className) {
 		$classMethods = get_class_methods($className);
 		$parentMethods = get_class_methods(get_parent_class($className));
@@ -280,7 +280,7 @@ class TestTask extends Shell {
  *
  * @param object The object you want to generate fixtures for.
  * @return array Array of fixtures to be included in the test.
- **/
+ */
 	function generateFixtureList(&$subject) {
 		$this->_fixtures = array();
 		if (is_a($subject, 'Model')) {
@@ -297,7 +297,7 @@ class TestTask extends Shell {
  *
  * @return void
  * @access protected
- **/
+ */
 	function _processModel(&$subject) {
 		$this->_addFixture($subject->name);
 		$associated = $subject->getAssociated();
@@ -321,7 +321,7 @@ class TestTask extends Shell {
  *
  * @return void
  * @access protected
- **/
+ */
 	function _processController(&$subject) {
 		$subject->constructClasses();
 		$models = array(Inflector::classify($subject->name));
@@ -339,7 +339,7 @@ class TestTask extends Shell {
  *
  * @return void
  * @access protected
- **/
+ */
 	function _addFixture($name) {
 		$parent = get_parent_class($name);
 		$prefix = 'app.';
@@ -355,7 +355,7 @@ class TestTask extends Shell {
  * Interact with the user to get additional fixtures they want to use.
  *
  * @return void
- **/
+ */
 	function getUserFixtures() {
 		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?', true), array('y','n'), 'n');
 		$fixtures = array();
@@ -373,7 +373,7 @@ class TestTask extends Shell {
  * Controllers require a mock class.
  *
  * @return boolean
- **/
+ */
 	function hasMockClass($type) {
 		$type = strtolower($type);
 		return $type == 'controller';
@@ -383,7 +383,7 @@ class TestTask extends Shell {
  * Generate a constructor code snippet for the type and classname
  *
  * @return string Constructor snippet for the thing you are building.
- **/
+ */
 	function generateConstructor($type, $fullClassName) {
 		$type = strtolower($type);
 		if ($type == 'model') {
@@ -401,7 +401,7 @@ class TestTask extends Shell {
  * and get the plugin path if needed.
  *
  * @return string filename the test should be created on
- **/
+ */
 	function testCaseFileName($type, $className) {
 		$path = $this->path;
 		if (isset($this->plugin)) {
@@ -418,7 +418,7 @@ class TestTask extends Shell {
  * Show help file.
  *
  * @return void
- **/
+ */
 	function help() {
 		$this->hr();
 		$this->out("Usage: cake bake test <type> <class>");

@@ -203,7 +203,7 @@ class DboMysqlTest extends CakeTestCase {
  * startCase
  *
  * @return void
- **/
+ */
 	function startCase() {
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
@@ -213,7 +213,7 @@ class DboMysqlTest extends CakeTestCase {
  * endCase
  *
  * @return void
- **/
+ */
 	function endCase() {
 		Configure::write('debug', $this->_debug);
 	}
@@ -418,7 +418,7 @@ class DboMysqlTest extends CakeTestCase {
  * Using a mock ensure that MySQL 4.x output is properly parsed.
  *
  * @return void
- **/
+ */
 	function testIndexOnMySQL4Output() {
 		$name = $this->db->fullTableName('simple');
 
@@ -631,7 +631,7 @@ class DboMysqlTest extends CakeTestCase {
  * test saving and retrieval of blobs
  *
  * @return void
- **/
+ */
 	function testBlobSaving() {
 		$this->db->cacheSources = false;
 		$data = "GIF87ab 
@@ -650,7 +650,7 @@ class DboMysqlTest extends CakeTestCase {
  * test altering the table settings with schema.
  *
  * @return void
- **/
+ */
 	function testAlteringTableParameters() {
 		App::import('Model', 'CakeSchema');
 		$this->db->cacheSources = $this->db->testing = false;

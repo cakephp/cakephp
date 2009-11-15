@@ -110,7 +110,7 @@ class DboOdbc extends DboSource {
  * Check if the ODBC extension is installed/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('odbc');
 	}

@@ -36,7 +36,7 @@ class NumberHelper extends AppHelper {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_currencies = array(
 		'USD' => array(
 			'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
@@ -57,7 +57,7 @@ class NumberHelper extends AppHelper {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_currencyDefaults = array(
 		'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
 		'decimals' => '.','negative' => '()', 'escape' => true
@@ -222,7 +222,7 @@ class NumberHelper extends AppHelper {
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
  * @return void
- **/
+ */
 	function addFormat($formatName, $options) {
 		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;
 	}

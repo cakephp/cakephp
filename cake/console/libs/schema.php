@@ -242,7 +242,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function create() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__create($Schema, $table);
@@ -252,7 +252,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function update() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__update($Schema, $table);
@@ -262,7 +262,7 @@ class SchemaShell extends Shell {
  * Prepares the Schema objects for database operations.
  *
  * @return void
- **/
+ */
 	function _loadSchema() {
 		$name = $plugin = null;
 		if (isset($this->params['name'])) {

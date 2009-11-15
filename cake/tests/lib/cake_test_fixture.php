@@ -32,7 +32,7 @@ class CakeTestFixture extends Object {
  * Name of the object
  *
  * @var string
- **/
+ */
 	var $name = null;
 
 /**

@@ -313,7 +313,7 @@ class ModelWriteTest extends BaseModelTest {
  * as url for controller could be either overallFavorites/index or overall_favorites/index
  *
  * @return void
- **/
+ */
 	function testCacheClearOnSave() {
 		$_back = array(
 			'check' => Configure::read('Cache.check'),
@@ -620,7 +620,7 @@ class ModelWriteTest extends BaseModelTest {
  * test that beforeValidate returning false can abort saves.
  *
  * @return void
- **/
+ */
 	function testBeforeValidateSaveAbortion() {
 		$Model =& new CallbackPostTestModel();
 		$Model->beforeValidateReturn = false;
@@ -637,7 +637,7 @@ class ModelWriteTest extends BaseModelTest {
  * test that beforeSave returning false can abort saves.
  *
  * @return void
- **/
+ */
 	function testBeforeSaveSaveAbortion() {
 		$Model =& new CallbackPostTestModel();
 		$Model->beforeSaveReturn = false;
@@ -2622,7 +2622,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new Fruit();
@@ -2646,7 +2646,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTableNoWith() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new FruitNoWith();

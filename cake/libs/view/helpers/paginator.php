@@ -46,7 +46,7 @@ class PaginatorHelper extends AppHelper {
  * The class used for 'Ajax' pagination links.
  *
  * @var string
- **/
+ */
 	var $_ajaxHelperClass = 'Js';
 
 /**
@@ -83,7 +83,7 @@ class PaginatorHelper extends AppHelper {
  * The chosen custom helper must implement a `link()` method.
  *
  * @return void
- **/
+ */
 	function __construct($config = array()) {
 		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;

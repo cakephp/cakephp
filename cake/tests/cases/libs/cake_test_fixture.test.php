@@ -110,7 +110,7 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
  *
  * @package       default
  * @subpackage    cake.cake.tests.cases.libs.
- **/
+ */
 class FixtureImportTestModel extends Model {
 	var $name = 'FixtureImport';
 	var $useTable = 'fixture_tests';

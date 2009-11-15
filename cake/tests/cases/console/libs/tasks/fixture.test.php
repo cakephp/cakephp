@@ -60,7 +60,8 @@ class FixtureTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- **/
+ * @access public
+ */
 	var $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test');
 
 /**
@@ -94,7 +95,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test that initialize sets the path
  *
  * @return void
- **/
+ * @access public
+ */
 	function testConstruct() {
 		$this->Dispatch->params['working'] = DS . 'my' . DS . 'path';
 		$Task =& new FixtureTask($this->Dispatch);
@@ -107,7 +109,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test import option array generation
  *
  * @return void
- **/
+ * @access public
+ */
 	function testImportOptions() {
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'y');
@@ -136,7 +139,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test generating a fixture with database conditions.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testImportRecordsFromDatabaseWithConditions() {
 		$this->Task->setReturnValueAt(0, 'in', 'WHERE 1=1 LIMIT 10');
 		$this->Task->connection = 'test_suite';
@@ -155,7 +159,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test that execute passes runs bake depending with named model.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -169,7 +174,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test that execute runs all() when args[0] = all
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteIntoAll() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -189,7 +195,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test using all() with -count and -records
  *
  * @return void
- **/
+ * @access public
+ */
 	function testAllWithCountAndRecordsFlags() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -210,7 +217,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test interactive mode of execute
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -228,7 +236,8 @@ class FixtureTaskTest extends CakeTestCase {
  * Test that bake works
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBake() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -263,7 +272,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test record generation with float and binary types
  *
  * @return void
- **/
+ * @access public
+ */
 	function testRecordGenerationForBinaryAndFloat() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -279,7 +289,8 @@ class FixtureTaskTest extends CakeTestCase {
  * Test that file generation includes headers and correct path for plugins.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateFixtureFile() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -296,7 +307,8 @@ class FixtureTaskTest extends CakeTestCase {
  * test generating files into plugins.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGeneratePluginFixtureFile() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';

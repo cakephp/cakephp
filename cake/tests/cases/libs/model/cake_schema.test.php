@@ -463,7 +463,7 @@ class CakeSchemaTest extends CakeTestCase {
  * test reading schema from plugins.
  *
  * @return void
- **/
+ */
 	function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
@@ -489,7 +489,7 @@ class CakeSchemaTest extends CakeTestCase {
  * test that tables are generated correctly
  *
  * @return void
- **/
+ */
 	function testGenerateTable() {
 		$fields = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -567,7 +567,7 @@ class CakeSchemaTest extends CakeTestCase {
  * Test comparing tableParameters and indexes.
  *
  * @return void
- **/
+ */
 	function testTableParametersAndIndexComparison() {
 		$old = array(
 			'posts' => array(
@@ -670,7 +670,7 @@ class CakeSchemaTest extends CakeTestCase {
  * test loading schema files inside of plugins.
  *
  * @return void
- **/
+ */
 	function testSchemaLoadingFromPlugin() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)

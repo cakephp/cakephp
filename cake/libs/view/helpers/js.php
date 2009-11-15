@@ -26,20 +26,20 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- **/
+ */
 class JsHelper extends AppHelper {
 /**
  * Whether or not you want scripts to be buffered or output.
  *
  * @var boolean
- **/
+ */
 	var $bufferScripts = true;
 
 /**
  * helpers
  *
  * @var array
- **/
+ */
 	var $helpers = array('Html', 'Form');
 
 /**
@@ -47,14 +47,14 @@ class JsHelper extends AppHelper {
  *
  * @var array
  * @see JsHelper::set()
- **/
+ */
 	var $__jsVars = array();
 
 /**
  * Scripts that are queued for output
  *
  * @var array
- **/
+ */
 	var $__bufferedScripts = array();
 
 /**
@@ -62,14 +62,14 @@ class JsHelper extends AppHelper {
  *
  * @var string
  * @access private
- **/
+ */
 	var $__engineName;
 
 /**
  * The javascript variable created by set() variables.
  *
  * @var string
- **/
+ */
 	var $setVariable = APP_DIR;
 
 /**
@@ -78,7 +78,7 @@ class JsHelper extends AppHelper {
  * @param array $settings Settings array contains name of engine helper.
  * @access public
  * @return void
- **/
+ */
 	function __construct($settings = array()) {
 		$className = 'Jquery';
 		if (is_array($settings) && isset($settings[0])) {
@@ -115,7 +115,7 @@ class JsHelper extends AppHelper {
  * @param array $params Parameters for the method being called.
  * @access public
  * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
- **/
+ */
 	function call__($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
 			$buffer = false;
@@ -158,7 +158,7 @@ class JsHelper extends AppHelper {
  * @param array $options Options to use for encoding JSON.  See JsBaseEngineHelper::object() for more details.
  * @return string encoded JSON
  * @deprecated Remove when support for PHP4 and Object::object are removed.
- **/
+ */
 	function object($data = array(), $options = array()) {
 		return $this->{$this->__engineName}->object($data, $options);
 	}
@@ -178,7 +178,7 @@ class JsHelper extends AppHelper {
  *
  * @param array $options options for the code block
  * @return string completed javascript tag.
- **/
+ */
 	function writeBuffer($options = array()) {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
@@ -208,7 +208,7 @@ class JsHelper extends AppHelper {
  * Write a script to the cached scripts.
  *
  * @return void
- **/
+ */
 	function buffer($script) {
 		$this->__bufferedScripts[] = $script;
 	}
@@ -218,7 +218,7 @@ class JsHelper extends AppHelper {
  *
  * @param boolean $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
- **/
+ */
 	function getBuffer($clear = true) {
 		$this->_createVars();
 		$scripts = $this->__bufferedScripts;
@@ -233,7 +233,7 @@ class JsHelper extends AppHelper {
  * Generates the object string for variables passed to javascript.
  *
  * @return string
- **/
+ */
 	function _createVars() {
 		if (!empty($this->__jsVars)) {
 			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'var ' . $this->setVariable;
@@ -258,7 +258,7 @@ class JsHelper extends AppHelper {
  * @param mixed $url Mixed either a string URL or an cake url array.
  * @param array $options Options for both the HTML element and Js::request()
  * @return string Completed link. If buffering is disabled a script tag will be returned as well.
- **/
+ */
 	function link($title, $url = null, $options = array()) {
 		if (!isset($options['id'])) {
 			$options['id'] = 'link-' . intval(mt_rand());
@@ -293,7 +293,7 @@ class JsHelper extends AppHelper {
  * @param mixed $one
  * @param mixed $two
  * @return void
- **/
+ */
 	function set($one, $two = null) {
 		$data = null;
 		if (is_array($one)) {
@@ -322,7 +322,7 @@ class JsHelper extends AppHelper {
  * @param string $title The display text of the submit button.
  * @param array $options Array of options to use.
  * @return string Completed submit button.
- **/
+ */
 	function submit($caption = null, $options = array()) {
 		if (!isset($options['id'])) {
 			$options['id'] = 'submit-' . intval(mt_rand());
@@ -364,7 +364,7 @@ class JsHelper extends AppHelper {
  * @param array $options Options to filter.
  * @param array $additional Array of additional keys to extract and include in the return options array.
  * @return array Array of options for non-js.
- **/
+ */
 	function _getHtmlOptions(&$options, $additional = array()) {
 		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
 		$htmlOptions = array();
@@ -388,14 +388,14 @@ class JsHelper extends AppHelper {
  * Abstract Base Class for All JsEngines to extend. Provides generic methods.
  *
  * @package cake.view.helpers
- **/
+ */
 class JsBaseEngineHelper extends AppHelper {
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
  *
  * @var boolean
  * @access public
- **/
+ */
 	var $useNative = false;
 
 /**
@@ -403,7 +403,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @var string
  * @access public
- **/
+ */
 	var $selection;
 
 /**
@@ -412,7 +412,7 @@ class JsBaseEngineHelper extends AppHelper {
  * for end user use though.
  *
  * @var array
- **/
+ */
 	var $_optionMap = array();
 
 /**
@@ -420,21 +420,21 @@ class JsBaseEngineHelper extends AppHelper {
  * This allows specific 'end point' methods to be automatically buffered by the JsHelper.
  *
  * @var array
- **/
+ */
 	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
 
 /**
  * Contains a list of callback names -> default arguments.
  *
  * @var array
- **/
+ */
 	var $_callbackArguments = array();
 
 /**
  * Constructor.
  *
  * @return void
- **/
+ */
 	function __construct() {
 		$this->useNative = function_exists('json_encode');
 	}
@@ -445,7 +445,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want to alter.
  * @access public
  * @return string completed alert()
- **/
+ */
 	function alert($message) {
 		return 'alert("' . $this->escape($message) . '");';
 	}
@@ -456,7 +456,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param  mixed $url
  * @param  array  $options
  * @return string completed redirect in javascript
- **/
+ */
 	function redirect($url = null) {
 		return 'window.location = "' . Router::url($url) . '";';
 	}
@@ -467,7 +467,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message you want confirmed.
  * @access public
  * @return string completed confirm()
- **/
+ */
 	function confirm($message) {
 		return 'confirm("' . $this->escape($message) . '");';
 	}
@@ -479,7 +479,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $message Message to use in the confirm dialog.
  * @access public
  * @return string
- **/
+ */
 	function confirmReturn($message) {
 		$out = 'var _confirm = ' . $this->confirm($message);
 		$out .= "if (!_confirm) {\n\treturn false;\n}";
@@ -493,7 +493,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $default Default message
  * @access public
  * @return string completed prompt()
- **/
+ */
 	function prompt($message, $default = '') {
 		return 'prompt("' . $this->escape($message) . '", "' . $this->escape($default) . '");';
 	}
@@ -511,7 +511,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Set of options, see above.
  * @return string A JSON code block
  * @access public
- **/
+ */
 	function object($data = array(), $options = array()) {
 		$defaultOptions = array(
 			'prefix' => '', 'postfix' => '',
@@ -571,7 +571,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param boolean $quoteStrings If false, leaves string values unquoted
  * @return string a JavaScript-safe/JSON representation of $val
  * @access public
- **/
+ */
 	function value($val, $quoteString = true) {
 		switch (true) {
 			case (is_array($val) || is_object($val)):
@@ -611,7 +611,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param  string $script String that needs to get escaped.
  * @return string Escaped string.
  * @access public
- **/
+ */
 	function escape($string) {
 		App::import('Core', 'Multibyte');
 		return $this->_utf8ToHex($string);
@@ -621,7 +621,7 @@ class JsBaseEngineHelper extends AppHelper {
  * Encode a string into JSON.  Converts and escapes necessary characters.
  *
  * @return void
- **/
+ */
 	function _utf8ToHex($string) {
 		$length = strlen($string);
 		$return = '';
@@ -716,7 +716,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
- **/
+ */
 	function get($selector) {
 		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
 		return $this;
@@ -734,7 +734,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $callback The Javascript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
- **/
+ */
 	function event($type, $callback, $options = array()) {
 		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -744,7 +744,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
- **/
+ */
 	function domReady($functionBody) {
 		trigger_error(sprintf(__('%s does not have domReady() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -754,7 +754,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
- **/
+ */
 	function each($callback) {
 		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -781,7 +781,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $name The name of the effect to trigger.
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
- **/
+ */
 	function effect($name, $options) {
 		trigger_error(sprintf(__('%s does not have effect() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -810,7 +810,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param mixed $url Array or String URL to target with the request.
  * @param array $options Array of options. See above for cross library supported options
  * @return string XHR request.
- **/
+ */
 	function request($url, $options = array()) {
 		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -833,7 +833,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param array $options Options array see above.
  * @return string Completed drag script
- **/
+ */
 	function drag($options = array()) {
 		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -854,7 +854,7 @@ class JsBaseEngineHelper extends AppHelper {
  * - `leave` - Event fired when a drag is removed from a drop zone without being dropped.
  *
  * @return string Completed drop script
- **/
+ */
 	function drop($options = array()) {
 		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -878,7 +878,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param array $options Array of options for the sortable. See above.
  * @return string Completed sortable script.
- **/
+ */
 	function sortable() {
 		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -901,7 +901,7 @@ class JsBaseEngineHelper extends AppHelper {
  * - `complete` - Fired when the user stops sliding the handle
  *
  * @return string Completed slider script
- **/
+ */
 	function slider() {
 		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
 	}
@@ -919,7 +919,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param array $options options for serialization generation.
  * @return string completed form serialization script
- **/
+ */
 	function serializeForm() {
 		trigger_error(
 			sprintf(__('%s does not have serializeForm() implemented', true), get_class($this)), E_USER_WARNING
@@ -935,7 +935,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $safeKeys Keys that should not be escaped.
  * @return string
  * @access protected
- **/
+ */
 	function _parseOptions($options, $safeKeys = array()) {
 		$out = array();
 		$safeKeys = array_flip($safeKeys);
@@ -957,7 +957,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options to map.
  * @return array Array of mapped options.
  * @access protected
- **/
+ */
 	function _mapOptions($method, $options) {
 		if (!isset($this->_optionMap[$method])) {
 			return $options;
@@ -980,7 +980,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $callbacks Additional Keys that contain callbacks
  * @access protected
  * @return array Array of options with callbacks added.
- **/
+ */
 	function _prepareCallbacks($method, $options, $callbacks = array()) {
 		$wrapCallbacks = true;
 		if (isset($options['wrapCallbacks'])) {
@@ -1016,7 +1016,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $method Name of method processing options for.
  * @param array $options Array of options to process.
  * @return string Parsed options string.
- **/
+ */
 	function _processOptions($method, $options) {
 		$options = $this->_mapOptions($method, $options);
 		$options = $this->_prepareCallbacks($method, $options);
@@ -1030,7 +1030,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $parameters Array of parameters to convert to a query string
  * @return string Querystring fragment
  * @access protected
- **/
+ */
 	function _toQuerystring($parameters) {
 		$out = '';
 		$keys = array_keys($parameters);

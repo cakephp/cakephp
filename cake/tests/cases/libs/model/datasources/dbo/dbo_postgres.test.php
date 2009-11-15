@@ -312,7 +312,7 @@ class DboPostgresTest extends CakeTestCase {
  * test that date and time columns do not generate errors with null and nullish values.
  *
  * @return void
- **/
+ */
 	function testDateAndTimeAsNull() {
 		$this->assertEqual($this->db2->value(null, 'date'), 'NULL');
 		$this->assertEqual($this->db2->value('', 'date'), 'NULL');
@@ -523,7 +523,7 @@ class DboPostgresTest extends CakeTestCase {
  * Test index generation from table info.
  *
  * @return void
- **/
+ */
 	function testIndexGeneration() {
 		$name = $this->db->fullTableName('index_test', false);
 		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');

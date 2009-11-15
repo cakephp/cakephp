@@ -88,7 +88,8 @@ class ControllerTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- **/
+ * @access public
+ */
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
@@ -124,7 +125,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test ListAll
  *
  * @return void
- **/
+ * @access public
+ */
 	function testListAll() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = true;
@@ -153,7 +155,8 @@ class ControllerTaskTest extends CakeTestCase {
  * Test that getName interacts with the user and returns the controller name.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetName() {
 		$this->Task->setReturnValue('in', 1);
 
@@ -180,7 +183,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test helper interactions
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDoHelpers() {
 		$this->Task->setReturnValue('in', 'n');
 		$result = $this->Task->doHelpers();
@@ -203,7 +207,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test component interactions
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDoComponents() {
 		$this->Task->setReturnValue('in', 'n');
 		$result = $this->Task->doComponents();
@@ -226,7 +231,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test Confirming controller user interaction
  *
  * @return void
- **/
+ * @access public
+ */
 	function testConfirmController() {
 		$controller = 'Posts';
 		$scaffold = false;
@@ -244,7 +250,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test the bake method
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBake() {
 		$helpers = array('Ajax', 'Time');
 		$components = array('Acl', 'Auth');
@@ -267,7 +274,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test bake() with a -plugin param
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 		$helpers = array('Ajax', 'Time');
@@ -289,7 +297,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that bakeActions is creating the correct controller Code. (Using sessions)
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeActionsUsingSessions() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Testing bakeActions requires Article, Comment & Tag Model to be undefined. %s');
@@ -332,7 +341,8 @@ class ControllerTaskTest extends CakeTestCase {
  * Test baking with Controller::flash() or no sessions.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeActionsWithNoSessions() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Testing bakeActions requires Article, Tag, Comment Models to be undefined. %s');
@@ -367,7 +377,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test baking a test
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test_suite';
@@ -383,7 +394,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test Interactive mode.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path';
@@ -407,7 +419,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that execute runs all when the first arg == all
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteIntoAll() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute into all could not be run as an Article, Tag or Comment model was already loaded. %s');
@@ -432,7 +445,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that `cake bake controller foos` works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithController() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
@@ -455,7 +469,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that `cake bake controller foo scaffold` works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithPublicParam() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
@@ -478,7 +493,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that `cake bake controller foos both` works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithControllerAndBoth() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
@@ -502,7 +518,8 @@ class ControllerTaskTest extends CakeTestCase {
  * test that `cake bake controller foos admin` works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithControllerAndAdmin() {
 		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
 			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');

@@ -352,7 +352,7 @@ class DboMysqlBase extends DboSource {
  * @param array $parameters Parameters to add & drop.
  * @return array Array of table property alteration statementes.
  * @todo Implement this method.
- **/
+ */
 	function _alterTableParameters($table, $parameters) {
 		if (isset($parameters['change'])) {
 			return $this->buildTableParameters($parameters['change']);
@@ -530,7 +530,7 @@ class DboMysql extends DboMysqlBase {
  * Check whether the MySQL extension is installed/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('mysql');
 	}

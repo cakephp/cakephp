@@ -31,7 +31,7 @@ class FileLog {
  * Path to save log files on.
  *
  * @var string
- **/
+ */
 	var $_path = null;
 
 /**
@@ -43,7 +43,7 @@ class FileLog {
  *
  * @param array $options Options for the FileLog, see above.
  * @return void
- **/
+ */
 	function FileLog($options = array()) {
 		$options += array('path' => LOGS);
 		$this->_path = $options['path'];
@@ -55,7 +55,7 @@ class FileLog {
  * @param string $type The type of log you are making.
  * @param string $message The message you want to log.
  * @return boolean success of write.
- **/
+ */
 	function write($type, $message) {
 		$debugTypes = array('notice', 'info', 'debug');
 

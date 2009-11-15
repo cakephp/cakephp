@@ -1861,7 +1861,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testMultiple() {
 		$this->assertTrue(Validation::multiple(array(0, 1, 2, 3)));
 		$this->assertTrue(Validation::multiple(array(50, 32, 22, 0)));

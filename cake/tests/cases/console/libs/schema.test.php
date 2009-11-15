@@ -115,7 +115,14 @@ class SchemaShellTestSchema extends CakeSchema {
  */
 class SchemaShellTest extends CakeTestCase {
 
+/**
+ * Fixtures
+ *
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user');
+
 /**
  * startTest method
  *
@@ -142,7 +149,8 @@ class SchemaShellTest extends CakeTestCase {
  * test startup method
  *
  * @return void
- **/
+ * @access public
+ */
 	function testStartup() {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
@@ -177,7 +185,8 @@ class SchemaShellTest extends CakeTestCase {
  * Test View - and that it dumps the schema file to stdout
  *
  * @return void
- **/
+ * @access public
+ */
 	function testView() {
 		$this->Shell->startup();
 		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
@@ -191,7 +200,8 @@ class SchemaShellTest extends CakeTestCase {
  * test that view() can find plugin schema files.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testViewWithPlugins() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -214,7 +224,8 @@ class SchemaShellTest extends CakeTestCase {
  * test dump() with sql file generation
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDumpWithFileWriting() {
 		$this->Shell->params = array(
 			'name' => 'i18n',
@@ -242,7 +253,8 @@ class SchemaShellTest extends CakeTestCase {
  * test that dump() can find and work with plugin schema files.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDumpFileWritingWithPlugins() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -271,6 +283,7 @@ class SchemaShellTest extends CakeTestCase {
  * test generate with snapshot generation
  *
  * @return void
+ * @access public
  */
 	function testGenerateSnaphot() {
 		$this->Shell->path = TMP;
@@ -290,7 +303,8 @@ class SchemaShellTest extends CakeTestCase {
  * test generate without a snapshot.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateNoOverwrite() {
 		touch(TMP . 'schema.php');
 		$this->Shell->params['file'] = 'schema.php';
@@ -309,7 +323,8 @@ class SchemaShellTest extends CakeTestCase {
  * test generate with overwriting of the schema files.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateOverwrite() {
 		touch(TMP . 'schema.php');
 		$this->Shell->params['file'] = 'schema.php';
@@ -334,7 +349,8 @@ class SchemaShellTest extends CakeTestCase {
  * in a plugin.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateWithPlugins() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -363,7 +379,8 @@ class SchemaShellTest extends CakeTestCase {
  * Test schema run create with no table args.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCreateNoArgs() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
@@ -386,7 +403,8 @@ class SchemaShellTest extends CakeTestCase {
  * Test schema run create with no table args.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCreateWithTableArgs() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
@@ -411,7 +429,8 @@ class SchemaShellTest extends CakeTestCase {
  * test run update with a table arg.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testUpdateWithTable() {
 		$this->Shell->params = array(
 			'connection' => 'test_suite',
@@ -434,7 +453,8 @@ class SchemaShellTest extends CakeTestCase {
  * test that the plugin param creates the correct path in the schema object.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testPluginParam() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -454,7 +474,8 @@ class SchemaShellTest extends CakeTestCase {
  * test that using Plugin.name with write.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testPluginDotSyntaxWithCreate() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)

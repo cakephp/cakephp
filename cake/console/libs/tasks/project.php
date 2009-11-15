@@ -30,7 +30,7 @@ class ProjectTask extends Shell {
  * configs path (used in testing).
  *
  * @var string
- **/
+ */
 	var $configPath = null;
 
 /**

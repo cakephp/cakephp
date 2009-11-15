@@ -293,7 +293,7 @@ class ViewTest extends CakeTestCase {
  * test that plugin/$plugin_name is only appended to the paths it should be.
  *
  * @return void
- **/
+ */
 	function testPluginPathGeneration() {
 		$this->Controller->plugin = 'test_plugin';
 		$this->Controller->name = 'TestPlugin';
@@ -319,7 +319,7 @@ class ViewTest extends CakeTestCase {
  * test that CamelCase plugins still find their view files.
  *
  * @return void
- **/
+ */
 	function testCamelCasePluginGetTemplate() {
 		$this->Controller->plugin = 'TestPlugin';
 		$this->Controller->name = 'TestPlugin';
@@ -572,7 +572,7 @@ class ViewTest extends CakeTestCase {
  * test the correct triggering of helper callbacks
  *
  * @return void
- **/
+ */
 	function testHelperCallbackTriggering() {
 		$this->PostsController->helpers = array('Html', 'CallbackMock');
 		$View =& new TestView($this->PostsController);
@@ -702,7 +702,7 @@ class ViewTest extends CakeTestCase {
  * test rendering layout with cache helper loaded
  *
  * @return void
- **/
+ */
 	function testRenderLayoutWithMockCacheHelper() {
 		$_check = Configure::read('Cache.check');
 		Configure::write('Cache.check', true);
