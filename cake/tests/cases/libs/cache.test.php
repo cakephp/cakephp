@@ -90,8 +90,8 @@ class CacheTest extends CakeTestCase {
 		$result = Cache::config('pluginLibEngine', $settings);
 		$this->assertEqual($result, Cache::config('pluginLibEngine'));
 
-		Cache::unconfig('libEngine');
-		Cache::unconfig('pluginLibEngine');
+		Cache::drop('libEngine');
+		Cache::drop('pluginLibEngine');
 
 		App::build();
 	}
@@ -211,11 +211,11 @@ class CacheTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
 
-		$result = Cache::unconfig('some_config_that_does_not_exist');
+		$result = Cache::drop('some_config_that_does_not_exist');
 		$this->assertFalse($result);
 
 		$_testsConfig = Cache::config('tests');
-		$result = Cache::unconfig('tests');
+		$result = Cache::drop('tests');
 		$this->assertTrue($result);
 		
 		Cache::config('unconfigTest', array(
@@ -223,7 +223,7 @@ class CacheTest extends CakeTestCase {
 		));
 		$this->assertTrue(Cache::isInitialized('TestAppCache'));
 
-		$this->assertTrue(Cache::unconfig('unconfigTest'));
+		$this->assertTrue(Cache::drop('unconfigTest'));
 		$this->assertFalse(Cache::isInitialized('TestAppCache'));
 
 		Cache::config('tests', $_testsConfig);

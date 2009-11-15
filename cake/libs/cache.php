@@ -133,14 +133,14 @@ class Cache {
 	}
 
 /**
- * Unconfigures a cache engine.  Deletes the cache configuration information
+ * Drops a cache engine.  Deletes the cache configuration information
  * If the deleted configuration is the last configuration using an certain engine,
  * the Engine instance is also unset.
  *
  * @param string $name A currently configured cache config you wish to remove.
  * @return boolen success of the removal, returns false when the config does not exist.
  **/
-	function unconfig($name) {
+	function drop($name) {
 		$_this = Cache::getInstance();
 		if (!isset($_this->__config[$name])) {
 			return false;
