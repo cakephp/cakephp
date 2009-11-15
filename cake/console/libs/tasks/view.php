@@ -460,7 +460,7 @@ class ViewTask extends Shell {
  * @return  array $associations
  * @access private
  */
-	function __associations($model) {
+	function __associations(&$model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 
