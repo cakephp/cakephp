@@ -225,6 +225,27 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * testLoad method
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadPlugin() {
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
+		$result = Configure::load('test_plugin.load');
+		$this->assertTrue($result === null);
+		$expected = '/test_app/plugins/test_plugin/config/load.php';
+		$config = Configure::read('plugin_load');
+		$this->assertEqual($config, $expected);
+
+		$result = Configure::load('test_plugin.more.load');
+		$this->assertTrue($result === null);
+		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
+		$config = Configure::read('plugin_more_load');
+		$this->assertEqual($config, $expected);
+	}
+
+/**
  * testStore method
  *
  * @access public

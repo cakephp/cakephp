@@ -201,8 +201,16 @@ class Configure extends Object {
  */
 	function load($fileName) {
 		$found = false;
+		$pluginPath = false;
+		if(strpos($fileName, '.') !== false) {
+			$plugin = explode('.', $fileName, 2);
+			$pluginPath = App::pluginPath($plugin[0]);
+		}
 
-		if (file_exists(CONFIGS . $fileName . '.php')) {
+		if ($pluginPath && file_exists($pluginPath . 'config' . DS . $plugin[1] . '.php')) {
+		include($pluginPath . 'config' . DS . $plugin[1] . '.php');
+			$found = true;
+		} elseif (file_exists(CONFIGS . $fileName . '.php')) {
 			include(CONFIGS . $fileName . '.php');
 			$found = true;
 		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
