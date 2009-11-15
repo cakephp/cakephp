@@ -38,9 +38,11 @@ class MemcacheEngine extends CacheEngine {
  */
 	var $__Memcache = null;
 /**
- * settings
- * 		servers = string or array of memcache servers, default => 127.0.0.1
- * 		compress = boolean, default => false
+ * Settings
+ *
+ *  - servers = string or array of memcache servers, default => 127.0.0.1. If an
+ *    array MemcacheEngine will use them as a pool.
+ *  - compress = boolean, default => false
  *
  * @var array
  * @access public
