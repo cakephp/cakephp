@@ -116,6 +116,51 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test bake() method with -empty flag,  directory creation and empty files.
+ *
+ * @return void
+ * @access public
+ */
+	function testBakeEmptyFlag() {
+		$this->Task->params['empty'] = true;
+		$this->_setupTestProject();
+		$path = $this->Task->path . 'bake_test_app';
+		$this->assertTrue(is_dir($path), 'No project dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
+
+		$this->assertTrue(is_file($path . DS . 'controllers' . DS .'components' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'locale' . DS . 'eng' . DS . 'LC_MESSAGES' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'models' . DS . 'behaviors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'models' . DS . 'datasources' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'plugins' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'behaviors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'components' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'controllers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'datasources' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'models' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'shells' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'fixtures' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'groups' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'css' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'img' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'js' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'errors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'helpers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'scaffolds' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'webroot' . DS . 'js' . DS . 'empty'), 'No empty file in dir %s');
+	}
+
+/**
  * test generation of Security.salt
  *
  * @return void
@@ -141,7 +186,7 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	function testIndexPhpGeneration() {
 		$this->_setupTestProject();
-		
+
 		$path = $this->Task->path . 'bake_test_app' . DS;
 		$this->Task->corePath($path);
 
