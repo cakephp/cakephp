@@ -859,6 +859,7 @@ class Router {
 				$plugin = $url['plugin'];
 			}
 
+			$_url = $url;
 			$url = array_merge(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
 
 			if ($plugin !== false) {
@@ -878,7 +879,13 @@ class Router {
 				$originalUrl = $url;
 
 				if (isset($route[4]['persist'], $_this->__params[0])) {
-					$url = array_merge(array_intersect_key($params, Set::combine($route[4]['persist'], '/')), $url);
+					foreach($route[4]['persist'] as $_key) {
+						if (array_key_exists($_key, $_url)) {
+							$url[$_key] = $_url[$_key];
+						} elseif (array_key_exists($_key, $params)) {
+							$url[$_key] = $params[$_key];
+						}
+					}
 				}
 				if ($match = $_this->mapRouteElements($route, $url)) {
 					$output = trim($match, '/');
@@ -890,7 +897,7 @@ class Router {
 
 			$named = $args = array();
 			$skip = array_merge(
-				array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix'), 
+				array('bare', 'action', 'controller', 'plugin', 'ext', '?', '#', 'prefix'),
 				$_this->__prefixes
 			);
 
