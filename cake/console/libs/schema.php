@@ -63,9 +63,10 @@ class SchemaShell extends Shell {
 		} elseif (!empty($this->args[0])) {
 			$name = $this->params['name'] = $this->args[0];
 		}
+
 		if (strpos($name, '.')) {
-			list($this->params['plugin'], $this->params['name']) = explode('.', $name);
-			$name = $this->params['name'];
+			list($this->params['plugin'], $splitName) = pluginSplit($name);
+			$name = $this->params['name'] = $splitName;
 		}
 
 		if ($name) {

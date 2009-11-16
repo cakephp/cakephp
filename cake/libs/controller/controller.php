@@ -528,11 +528,7 @@ class Controller extends Object {
 				$plugin = $this->plugin . '.';
 			}
 		}
-
-		if (strpos($modelClass, '.') !== false) {
-			list($plugin, $modelClass) = explode('.', $modelClass);
-			$plugin = $plugin . '.';
-		}
+		list($plugin, $modelClass) = pluginSplit($modelClass, true, $plugin);
 
 		if ($this->persistModel === true) {
 			$cached = $this->_persist($modelClass, null, $object);
@@ -808,9 +804,7 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			if (strpos($viewClass, '.') !== false) {
-				list($plugin, $viewClass) = explode('.', $viewClass);
-			}
+			list($plugin, $viewClass) = pluginSplit($viewClass);
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->view);
 		}
@@ -1003,9 +997,8 @@ class Controller extends Object {
 
 		if (is_string($object)) {
 			$assoc = null;
-
-			if (strpos($object, '.') !== false) {
-				list($object, $assoc) = explode('.', $object);
+			if (strpos($object, '.')  !== false) {
+				list($object, $assoc) = pluginSplit($object);
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {

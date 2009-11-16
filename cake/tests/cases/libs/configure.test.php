@@ -262,9 +262,9 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertEqual($config, $expected);
 
 		$expected = array('data' => array('first' => 'value', 'second' => 'value2'));
-		Configure::store('AnotherExample', 'test.config', $expected);
+		Configure::store('AnotherExample', 'test_config', $expected);
 
-		Configure::load('test.config');
+		Configure::load('test_config');
 		$config = Configure::read('AnotherExample');
 		$this->assertEqual($config, $expected);
 	}

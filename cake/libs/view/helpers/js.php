@@ -87,9 +87,8 @@ class JsHelper extends AppHelper {
 			$className = $settings;
 		}
 		$engineName = $className;
-		if (strpos($className, '.') !== false) {
-			list($plugin, $className) = explode('.', $className);
-		}
+		list($plugin, $className) = pluginSplit($className);
+
 		$this->__engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
 		$this->helpers[] = $engineClass;

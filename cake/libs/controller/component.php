@@ -189,16 +189,8 @@ class Component extends Object {
 			$normal = Set::merge(array('Session' => null), $normal);
 		}
 		foreach ((array)$normal as $component => $config) {
-			$plugin = null;
-
-			if (isset($this->__controllerVars['plugin'])) {
-				$plugin = $this->__controllerVars['plugin'] . '.';
-			}
-
-			if (strpos($component, '.') !== false) {
-				list($plugin, $component) = explode('.', $component);
-				$plugin = $plugin . '.';
-			}
+			$plugin = isset($this->__controllerVars['plugin']) ? $this->__controllerVars['plugin'] . '.' : null;
+			list($plugin, $component) = pluginSplit($component, true, $plugin);
 			$componentCn = $component . 'Component';
 
 			if (!class_exists($componentCn)) {

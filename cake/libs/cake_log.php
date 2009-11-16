@@ -100,10 +100,8 @@ class CakeLog {
  * @access protected
  */
 	function _getLogger($loggerName) {
-		$plugin = null;
-		if (strpos($loggerName, '.') !== false) {
-			list($plugin, $loggerName) = explode('.', $loggerName);
-		}
+		list($plugin, $loggerName) = pluginSplit($loggerName);
+
 		if ($plugin) {
 			App::import('Lib', $plugin . '.log/' . $loggerName);
 		} else {

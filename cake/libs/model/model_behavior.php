@@ -279,10 +279,7 @@ class BehaviorCollection extends Object {
  * @access public
  */
 	function attach($behavior, $config = array()) {
-		$name = $behavior;
-		if (strpos($behavior, '.')) {
-			list($plugin, $name) = explode('.', $behavior, 2);
-		}
+		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {

@@ -206,14 +206,14 @@ class Configure extends Object {
  * @access public
  */
 	function load($fileName) {
-		$found = $pluginPath = false;
-		if (strpos($fileName, '.') !== false) {
-			$plugin = explode('.', $fileName, 2);
-			$pluginPath = App::pluginPath($plugin[0]);
+		$found = $plugin = $pluginPath = false;
+		list($plugin, $fileName) = pluginSplit($fileName);
+		if ($plugin) {
+			$pluginPath = App::pluginPath($plugin);
 		}
 
-		if ($pluginPath && file_exists($pluginPath . 'config' . DS . $plugin[1] . '.php')) {
-			include($pluginPath . 'config' . DS . $plugin[1] . '.php');
+		if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
+			include($pluginPath . 'config' . DS . $fileName . '.php');
 			$found = true;
 		} elseif (file_exists(CONFIGS . $fileName . '.php')) {
 			include(CONFIGS . $fileName . '.php');
@@ -266,7 +266,7 @@ class Configure extends Object {
  * Used to write a config file to disk.
  *
  * {{{
- * Configure::store('Model', 'class.paths', array('Users' => array(
+ * Configure::store('Model', 'class_paths', array('Users' => array(
  *      'path' => 'users', 'plugin' => true
  * )));
  * }}}
