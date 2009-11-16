@@ -265,7 +265,7 @@ class ConfigureTest extends CakeTestCase {
 			'data' => array('first' => 'value with backslash \, \'singlequote\' and "doublequotes"', 'second' => 'value2'),
 			'data2' => 'value'
 		);
-		Configure::store('AnotherExample', 'test.config', $expected);
+		Configure::store('AnotherExample', 'test_config', $expected);
 
 		Configure::load('test_config');
 		$config = Configure::read('AnotherExample');
