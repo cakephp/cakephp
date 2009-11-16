@@ -456,13 +456,14 @@ class DboMysqlBase extends DboSource {
  * @return string Character set name
  */
 	function getCharsetName($name) {
-		$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
-		if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
-			return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
+			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
 		}
 		return false;
 	}
-
 }
 
 /**
