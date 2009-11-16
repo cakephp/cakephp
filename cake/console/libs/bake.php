@@ -57,7 +57,7 @@ class BakeShell extends Shell {
 			}
 			foreach($this->args as $i => $arg) {
 				if (strpos($arg, '.')) {
-					list($this->params['plugin'], $this->args[$i]) = explode('.', $arg);
+					list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
 					break;
 				}
 			}

@@ -104,7 +104,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * Test the getConfig method.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetConfig() {
 		$this->Task->setReturnValueAt(0, 'in', 'otherOne');
 		$result = $this->Task->getConfig();
@@ -115,7 +116,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * test that initialize sets the path up.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInitialize() {
 		$this->assertTrue(empty($this->Task->path));
 		$this->Task->initialize();
@@ -128,7 +130,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * test execute and by extension __interactive
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteIntoInteractive() {
 		$this->Task->initialize();
 

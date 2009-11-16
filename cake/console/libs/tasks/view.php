@@ -145,7 +145,7 @@ class ViewTask extends Shell {
  * Get a list of actions that can / should have views baked for them.
  *
  * @return array Array of action names that should be baked
- **/
+ */
 	function _methodsToBake() {
 		$methods =  array_diff(
 			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
@@ -177,7 +177,7 @@ class ViewTask extends Shell {
  * Bake All views for All controllers.
  *
  * @return void
- **/
+ */
 	function all() {
 		$this->Controller->interactive = false;
 		$tables = $this->Controller->listAll($this->connection, false);
@@ -309,7 +309,7 @@ class ViewTask extends Shell {
  *
  * @param array $actions Array of actions to make files for.
  * @return void
- **/
+ */
 	function bakeActions($actions, $vars) {
 		foreach ($actions as $action) {
 			$content = $this->getContent($action, $vars);
@@ -321,7 +321,7 @@ class ViewTask extends Shell {
  * handle creation of baking a custom action view file
  *
  * @return void
- **/
+ */
 	function customAction() {
 		$action = '';
 		while ($action == '') {
@@ -461,7 +461,7 @@ class ViewTask extends Shell {
  * @return  array $associations
  * @access private
  */
-	function __associations($model) {
+	function __associations(&$model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 

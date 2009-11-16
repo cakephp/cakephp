@@ -53,7 +53,7 @@ class DbConfigTask extends Shell {
  * Used for testing.
  *
  * @var string
- **/
+ */
 	var $databaseClassName = 'DATABASE_CONFIG';
 
 /**
@@ -351,7 +351,7 @@ class DbConfigTask extends Shell {
  * Get a user specified Connection name
  *
  * @return void
- **/
+ */
 	function getConfig() {
 		App::import('Model', 'ConnectionManager', false);
 

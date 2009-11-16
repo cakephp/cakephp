@@ -136,7 +136,7 @@ class ConfigureTest extends CakeTestCase {
  * testSetErrorReporting Level
  *
  * @return void
- **/
+ */
 	function testSetErrorReportingLevel() {
 		Configure::write('log', false);
 
@@ -160,7 +160,7 @@ class ConfigureTest extends CakeTestCase {
  * test that log and debug configure values interact well.
  *
  * @return void
- **/
+ */
 	function testInteractionOfDebugAndLog() {
 		Configure::write('log', false);
 
@@ -225,6 +225,27 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * testLoad method
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadPlugin() {
+		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
+		$result = Configure::load('test_plugin.load');
+		$this->assertTrue($result === null);
+		$expected = '/test_app/plugins/test_plugin/config/load.php';
+		$config = Configure::read('plugin_load');
+		$this->assertEqual($config, $expected);
+
+		$result = Configure::load('test_plugin.more.load');
+		$this->assertTrue($result === null);
+		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
+		$config = Configure::read('plugin_more_load');
+		$this->assertEqual($config, $expected);
+	}
+
+/**
  * testStore method
  *
  * @access public
@@ -233,17 +254,20 @@ class ConfigureTest extends CakeTestCase {
 	function testStoreAndLoad() {
 		Configure::write('Cache.disable', false);
 
-		$expected = array('data' => 'value');
+		$expected = array('data' => 'value with backslash \, \'singlequote\' and "doublequotes"');
 		Configure::store('SomeExample', 'test', $expected);
 
 		Configure::load('test');
 		$config = Configure::read('SomeExample');
 		$this->assertEqual($config, $expected);
 
-		$expected = array('data' => array('first' => 'value', 'second' => 'value2'));
-		Configure::store('AnotherExample', 'test.config', $expected);
+		$expected = array(
+			'data' => array('first' => 'value with backslash \, \'singlequote\' and "doublequotes"', 'second' => 'value2'),
+			'data2' => 'value'
+		);
+		Configure::store('AnotherExample', 'test_config', $expected);
 
-		Configure::load('test.config');
+		Configure::load('test_config');
 		$config = Configure::read('AnotherExample');
 		$this->assertEqual($config, $expected);
 	}
@@ -389,6 +413,29 @@ class AppImportTest extends UnitTestCase {
 
 		$result = App::objects('NonExistingType');
 		$this->assertFalse($result);
+	}
+
+/**
+ * test that pluginPath can find paths for plugins.
+ *
+ * @return void
+ */
+	function testPluginPath() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$path = App::pluginPath('test_plugin');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS;
+		$this->assertEqual($path, $expected);
+
+		$path = App::pluginPath('TestPlugin');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS;
+		$this->assertEqual($path, $expected);
+
+		$path = App::pluginPath('TestPluginTwo');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS;
+		$this->assertEqual($path, $expected);
+		App::build();
 	}
 
 /**

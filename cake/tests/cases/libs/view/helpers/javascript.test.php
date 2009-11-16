@@ -792,7 +792,7 @@ class JavascriptTest extends CakeTestCase {
  * test string escaping and compare to json_encode()
  *
  * @return void
- **/
+ */
 	function testStringJsonEncodeCompliance() {
 		if (!function_exists('json_encode')) {
 			return;
@@ -822,7 +822,7 @@ class JavascriptTest extends CakeTestCase {
  * test that text encoded with Javascript::object decodes properly
  *
  * @return void
- **/
+ */
 	function testObjectDecodeCompatibility() {
 		if (!function_exists('json_decode')) {
 			return;

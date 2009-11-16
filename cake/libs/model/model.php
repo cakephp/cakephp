@@ -641,20 +641,15 @@ class Model extends Overloadable {
 						if (strpos($assoc, '.') !== false) {
 							$value = $this->{$type}[$assoc];
 							unset($this->{$type}[$assoc]);
-							list($plugin, $assoc) = explode('.', $assoc);
+							list($plugin, $assoc) = pluginSplit($assoc, true);
 							$this->{$type}[$assoc] = $value;
-							$plugin = $plugin . '.';
 						}
 					}
 					$className =  $assoc;
 
-					if (isset($value['className']) && !empty($value['className'])) {
-						$className = $value['className'];
-						if (strpos($className, '.') !== false) {
-							list($plugin, $className) = explode('.', $className);
-							$plugin = $plugin . '.';
-							$this->{$type}[$assoc]['className'] = $className;
-						}
+					if (!empty($value['className'])) {
+						list($plugin, $className) = pluginSplit($value['className'], true);
+						$this->{$type}[$assoc]['className'] = $className;
 					}
 					$this->__constructLinkedModel($assoc, $plugin . $className);
 				}
@@ -753,13 +748,8 @@ class Model extends Overloadable {
 				if (is_array($joinClass)) {
 					$joinClass = key($joinClass);
 				}
-				$plugin = null;
-
-				if (strpos($joinClass, '.') !== false) {
-					list($plugin, $joinClass) = explode('.', $joinClass);
-					$plugin = $plugin . '.';
-					$this->{$type}[$assocKey]['with'] = $joinClass;
-				}
+				list($plugin, $joinClass) = pluginSplit($joinClass, true);
+				$this->{$type}[$assocKey]['with'] = $joinClass;
 
 				if (!ClassRegistry::isKeySet($joinClass) && $dynamicWith === true) {
 					$this->{$joinClass} = new AppModel(array(

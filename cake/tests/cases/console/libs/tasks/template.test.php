@@ -81,7 +81,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test that set sets variables
  *
  * @return void
- **/
+ * @access public
+ */
 	function testSet() {
 		$this->Task->set('one', 'two');
 		$this->assertTrue(isset($this->Task->templateVars['one']));
@@ -98,7 +99,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test finding themes installed in
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFindingInstalledThemesForBake() {
 		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS;
 		$this->Task->Dispatch->shellPaths = array($consoleLibs);
@@ -111,7 +113,8 @@ class TemplateTaskTest extends CakeTestCase {
  * that the user is not bugged.  If there are more, find and return the correct theme name
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetThemePath() {
 		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
@@ -136,7 +139,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test generate
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerate() {
 		App::build(array(
 			'shells' => array(
@@ -155,7 +159,8 @@ class TemplateTaskTest extends CakeTestCase {
  * ensure fallback to default works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateWithTemplateFallbacks() {
 		App::build(array(
 			'shells' => array(

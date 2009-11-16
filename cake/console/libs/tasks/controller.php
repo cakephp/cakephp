@@ -113,7 +113,7 @@ class ControllerTask extends Shell {
  *
  * @access public
  * @return void
- **/
+ */
 	function all() {
 		$this->interactive = false;
 		$this->listAll($this->connection, false);
@@ -219,7 +219,7 @@ class ControllerTask extends Shell {
  * Confirm a to be baked controller with the user
  *
  * @return void
- **/
+ */
 	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
 		$this->out();
 		$this->hr();
@@ -257,7 +257,7 @@ class ControllerTask extends Shell {
  * Interact with the user and ask about which methods (admin or regular they want to bake)
  *
  * @return array Array containing (bakeRegular, bakeAdmin) answers
- **/
+ */
 	function _askAboutMethods() {
 		$wannaBakeCrud = $this->in(
 			__("Would you like to create some basic class methods \n(index(), add(), view(), edit())?", true),
@@ -348,7 +348,7 @@ class ControllerTask extends Shell {
  * Interact with the user and get a list of additional helpers
  *
  * @return array Helpers that the user wants to use.
- **/
+ */
 	function doHelpers() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?", true),
@@ -360,7 +360,7 @@ class ControllerTask extends Shell {
  * Interact with the user and get a list of additional components
  *
  * @return array Components the user wants to use.
- **/
+ */
 	function doComponents() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use any components?", true),
@@ -374,7 +374,7 @@ class ControllerTask extends Shell {
  * @param string $prompt A yes/no question to precede the list
  * @param sting $example A question for a comma separated list, with examples.
  * @return array Array of values for property.
- **/
+ */
 	function _doPropertyChoices($prompt, $example) {
 		$proceed = $this->in($prompt, array('y','n'), 'n');
 		$property = array();

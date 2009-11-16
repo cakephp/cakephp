@@ -765,11 +765,10 @@ class CakeTestCase extends UnitTestCase {
 				$pluginName = $parts[1];
 				$fixture = $parts[2];
 				$fixturePaths = array(
-					APP . 'plugins' . DS . $pluginName . DS . 'tests' . DS . 'fixtures',
+					App::pluginPath($pluginName) . 'tests' . DS . 'fixtures',
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures'
 				);
-				$fixturesPaths[0] = App::pluginPath($pluginName) . DS . 'tests' . DS . 'fixtures';
 			} else {
 				$fixturePaths = array(
 					TESTS . 'fixtures',

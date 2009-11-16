@@ -65,7 +65,8 @@ class ModelTaskTest extends CakeTestCase {
  * fixtures
  *
  * @var array
- **/
+ * @access public
+ */
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
 
 /**
@@ -99,7 +100,8 @@ class ModelTaskTest extends CakeTestCase {
  * Test that listAll scans the database connection and lists all the tables in it.s
  *
  * @return void
- **/
+ * @access public
+ */
 	function testListAll() {
 		$this->Task->expectAt(1, 'out', array('1. Article'));
 		$this->Task->expectAt(2, 'out', array('2. ArticlesTag'));
@@ -126,7 +128,8 @@ class ModelTaskTest extends CakeTestCase {
  * Test that getName interacts with the user and returns the model name.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetName() {
 		$this->Task->setReturnValue('in', 1);
 
@@ -153,7 +156,8 @@ class ModelTaskTest extends CakeTestCase {
  * Test table name interactions
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetTableName() {
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$result = $this->Task->getTable('Article', 'test_suite');
@@ -171,7 +175,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that initializing the validations works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInitValidations() {
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notempty', $result));
@@ -182,7 +187,8 @@ class ModelTaskTest extends CakeTestCase {
  * tests the guessing features of validation
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFieldValidationGuessing() {
 		$this->Task->interactive = false;
 		$this->Task->initValidations();
@@ -210,7 +216,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that interactive field validation works and returns multiple validators.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInteractiveFieldValidation() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
@@ -228,7 +235,8 @@ class ModelTaskTest extends CakeTestCase {
  * test the validation Generation routine
  *
  * @return void
- **/
+ * @access public
+ */
 	function testNonInteractiveDoValidation() {
 		$Model =& new MockModelTaskModel();
 		$Model->primaryKey = 'id';
@@ -289,7 +297,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that finding primary key works
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFindPrimaryKey() {
 		$fields = array(
 			'one' => array(),
@@ -307,7 +316,8 @@ class ModelTaskTest extends CakeTestCase {
  * test finding Display field
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFindDisplayField() {
 		$fields = array('id' => array(), 'tagname' => array(), 'body' => array(),
 			'created' => array(), 'modified' => array());
@@ -327,7 +337,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that belongsTo generation works.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBelongsToGeneration() {
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'Comment'));
 		$result = $this->Task->findBelongsTo($model, array());
@@ -347,7 +358,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
 		$result = $this->Task->findBelongsTo($model, array());
 		$expected = array(
@@ -366,7 +376,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that hasOne and/or hasMany relations are generated properly.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testHasManyHasOneGeneration() {
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
 		$this->Task->connection = 'test_suite';
@@ -390,7 +401,6 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
 		$result = $this->Task->findHasOneAndMany($model, array());
 		$expected = array(
@@ -413,10 +423,11 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * test that habtm generation works
+ * Test that HABTM generation works
  *
  * @return void
- **/
+ * @access public
+ */
 	function testHasAndBelongsToManyGeneration() {
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
 		$this->Task->connection = 'test_suite';
@@ -440,7 +451,8 @@ class ModelTaskTest extends CakeTestCase {
  * test non interactive doAssociations
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDoAssociationsNonInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = false;
@@ -464,14 +476,14 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			),
 		);
-
 	}
 
 /**
  * Ensure that the fixutre object is correctly called.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeFixture() {
 		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
 		$this->Task->bakeFixture('Article', 'articles');
@@ -484,7 +496,8 @@ class ModelTaskTest extends CakeTestCase {
  * Ensure that the test object is correctly called.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeTest() {
 		$this->Task->Test->expectAt(0, 'bake', array('Model', 'Article'));
 		$this->Task->bakeTest('Article');
@@ -498,7 +511,8 @@ class ModelTaskTest extends CakeTestCase {
  * a question for the hasOne is also not asked.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testConfirmAssociations() {
 		$associations = array(
 			'hasOne' => array(
@@ -538,7 +552,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that inOptions generates questions and only accepts a valid answer
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInOptions() {
 		$options = array('one', 'two', 'three');
 		$this->Task->expectAt(0, 'out', array('1. one'));
@@ -558,7 +573,8 @@ class ModelTaskTest extends CakeTestCase {
  * test baking validation
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeValidation() {
 		$validate = array(
 			'name' => array(
@@ -586,7 +602,8 @@ class ModelTaskTest extends CakeTestCase {
  * test baking relations
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeRelations() {
 		$associations = array(
 			'belongsTo' => array(
@@ -640,7 +657,8 @@ class ModelTaskTest extends CakeTestCase {
  * test bake() with a -plugin param
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 
@@ -660,7 +678,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that execute passes runs bake depending with named model.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -675,7 +694,8 @@ class ModelTaskTest extends CakeTestCase {
  * test that execute runs all() when args[0] = all
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteIntoAll() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -707,7 +727,8 @@ class ModelTaskTest extends CakeTestCase {
  * test the interactive side of bake.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteIntoInteractive() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
@@ -736,7 +757,8 @@ class ModelTaskTest extends CakeTestCase {
  * test using bake interactively with a table that does not exist.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithNonExistantTableName() {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';

@@ -236,7 +236,7 @@ class AclShell extends Shell {
  * @param integer $indent indent level.
  * @return void
  * @access protected
- **/
+ */
 	function _outputNode($class, $node, $indent) {
 		$indent = str_repeat('  ', $indent);
 		$data = $node[$class];
@@ -521,7 +521,7 @@ class AclShell extends Shell {
  *
  * @param string $identifier Identifier to parse
  * @return mixed a string for aliases, and an array for model.foreignKey
- **/
+ */
 	function parseIdentifier($identifier) {
 		if (preg_match('/^([\w]+)\.(.*)$/', $identifier, $matches)) {
 			return array(
@@ -539,7 +539,7 @@ class AclShell extends Shell {
  * @param string $class Class type you want (Aro/Aco)
  * @param mixed $identifier A mixed identifier for finding the node.
  * @return int Integer of NodeId. Will trigger an error if nothing is found.
- **/
+ */
 	function _getNodeId($class, $identifier) {
 		$node = $this->Acl->{$class}->node($identifier);
 		if (empty($node)) {

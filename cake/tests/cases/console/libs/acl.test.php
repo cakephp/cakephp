@@ -52,13 +52,21 @@ Mock::generate('AclComponent', 'MockAclShellAclComponent');
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class AclShellTest extends CakeTestCase {
+
+/**
+ * Fixtures
+ *
+ * @var array
+ * @access public
+ */
 	var $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
 
 /**
  * configure Configure for testcase
  *
  * @return void
- **/
+ * @access public
+ */
 	function startCase() {
 		$this->_aclDb = Configure::read('Acl.database');
 		$this->_aclClass = Configure::read('Acl.classname');
@@ -71,7 +79,8 @@ class AclShellTest extends CakeTestCase {
  * restore Environment settings
  *
  * @return void
- **/
+ * @access public
+ */
 	function endCase() {
 		Configure::write('Acl.database', $this->_aclDb);
 		Configure::write('Acl.classname', $this->_aclClass);
@@ -107,7 +116,8 @@ class AclShellTest extends CakeTestCase {
  * test that model.foreign_key output works when looking at acl rows
  *
  * @return void
- **/
+ * @access public
+ */
 	function testViewWithModelForeignKeyOutput() {
 		$this->Task->command = 'view';
 		$this->Task->startup();
@@ -132,7 +142,8 @@ class AclShellTest extends CakeTestCase {
  * test view with an argument
  *
  * @return void
- **/
+ * @access public
+ */
 	function testViewWithArgument() {
 		$this->Task->args = array('aro', 'admins');
 		$this->Task->expectAt(0, 'out', array('Aro tree:'));
@@ -146,7 +157,8 @@ class AclShellTest extends CakeTestCase {
  * test the method that splits model.foreign key. and that it returns an array.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testParsingModelAndForeignKey() {
 		$result = $this->Task->parseIdentifier('Model.foreignKey');
 		$expected = array('model' => 'Model', 'foreign_key' => 'foreignKey');
@@ -162,7 +174,8 @@ class AclShellTest extends CakeTestCase {
  * test creating aro/aco nodes
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCreate() {
 		$this->Task->args = array('aro', 'root', 'User.1');
 		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/created/'), '*'));
@@ -202,7 +215,8 @@ class AclShellTest extends CakeTestCase {
  * test the delete method with different node types.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDelete() {
 		$this->Task->args = array('aro', 'AuthUser.1');
 		$this->Task->expectAt(0, 'out', array(new NoPatternExpectation('/not/'), true));
@@ -217,7 +231,8 @@ class AclShellTest extends CakeTestCase {
  * test setParent method.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testSetParent() {
 		$this->Task->args = array('aro', 'AuthUser.2', 'root');
 		$this->Task->setParent();
@@ -231,7 +246,8 @@ class AclShellTest extends CakeTestCase {
  * test grant
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGrant() {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission granted/'), true));
@@ -246,7 +262,8 @@ class AclShellTest extends CakeTestCase {
  * test deny
  *
  * @return void
- **/
+ * @access public
+ */
 	function testDeny() {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission denied/'), true));
@@ -261,7 +278,8 @@ class AclShellTest extends CakeTestCase {
  * test checking allowed and denied perms
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCheck() {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', '*');
 		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/not allowed/'), true));
@@ -284,7 +302,8 @@ class AclShellTest extends CakeTestCase {
  * test inherit and that it 0's the permission fields.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testInherit() {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'create');
 		$this->Task->expectAt(0, 'out', array(new PatternExpectation('/Permission granted/'), true));
@@ -303,7 +322,8 @@ class AclShellTest extends CakeTestCase {
  * test getting the path for an aro/aco
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetPath() {
 		$this->Task->args = array('aro', 'AuthUser.2');
 		$this->Task->expectAt(1, 'out', array('[1] ROOT'));
@@ -311,6 +331,5 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->expectAt(3, 'out', array('    [4] Elrond'));
 		$this->Task->getPath();
 	}
-
 }
 ?>

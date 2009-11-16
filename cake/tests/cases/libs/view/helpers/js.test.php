@@ -38,7 +38,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
  * test method for testing option mapping
  *
  * @return array
- **/
+ */
 	function testMap($options = array()) {
 		return $this->_mapOptions('request', $options);
 	}
@@ -46,7 +46,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
  * test method for option parsing
  *
  * @return void
- **/
+ */
 	function testParseOptions($options, $safe = array()) {
 		return $this->_parseOptions($options, $safe);
 	}
@@ -109,7 +109,7 @@ class JsHelperTestCase extends CakeTestCase {
  * Switches $this->Js to a mocked engine.
  *
  * @return void
- **/
+ */
 	function _useMock() {
 		$this->Js =& new JsHelper(array('TestJs'));
 		$this->Js->TestJsEngine =& new TestJsEngineHelper($this);
@@ -122,7 +122,7 @@ class JsHelperTestCase extends CakeTestCase {
  * test object construction
  *
  * @return void
- **/
+ */
 	function testConstruction() {
 		$js =& new JsHelper();
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'JqueryEngine'));
@@ -141,7 +141,7 @@ class JsHelperTestCase extends CakeTestCase {
  * test that methods dispatch internally and to the engine class
  *
  * @return void
- **/
+ */
 	function testMethodDispatching() {
 		$this->_useMock();
 		$this->Js->TestJsEngine->expectOnce('dispatchMethod', array(new PatternExpectation('/methodOne/i'), array()));
@@ -157,7 +157,7 @@ class JsHelperTestCase extends CakeTestCase {
  * Test that method dispatching respects buffer parameters and bufferedMethods Lists.
  *
  * @return void
- **/
+ */
 	function testMethodDispatchWithBuffering() {
 		$this->_useMock();
 
@@ -209,7 +209,7 @@ class JsHelperTestCase extends CakeTestCase {
  * test that writeScripts generates scripts inline.
  *
  * @return void
- **/
+ */
 	function testWriteScriptsNoFile() {
 		$this->_useMock();
 		$this->Js->buffer('one = 1;');
@@ -236,7 +236,7 @@ class JsHelperTestCase extends CakeTestCase {
  * test that writeScripts makes files, and puts the events into them.
  *
  * @return void
- **/
+ */
 	function testWriteScriptsInFile() {
 		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped')) {
 			return;
@@ -261,7 +261,7 @@ class JsHelperTestCase extends CakeTestCase {
  * test link()
  *
  * @return void
- **/
+ */
 	function testLinkWithMock() {
 		$this->_useMock();
 		$options = array('update' => '#content');
@@ -322,7 +322,7 @@ CODE;
  * test that link() and no buffering returns an <a> and <script> tags.
  *
  * @return void
- **/
+ */
 	function testLinkWithNoBuffering() {
 		$this->_useMock();
 		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax code', array('request', '*'));
@@ -359,7 +359,7 @@ CODE;
  * test submit() with a Mock to check Engine method calls
  *
  * @return void
- **/
+ */
 	function testSubmitWithMock() {
 		$this->_useMock();
 
@@ -423,7 +423,7 @@ CODE;
  * Test that Object::Object() is not breaking json output in JsHelper
  *
  * @return void
- **/
+ */
 	function testObjectPassThrough() {
 		$result = $this->Js->object(array('one' => 'first', 'two' => 'second'));
 		$expected = '{"one":"first","two":"second"}';
@@ -434,7 +434,7 @@ CODE;
  * test set()'ing variables to the Javascript buffer and controlling the output var name.
  *
  * @return void
- **/
+ */
 	function testSet() {
 		$this->Js->set('loggedIn', true);
 		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
@@ -463,7 +463,7 @@ CODE;
  * JsBaseEngine Class Test case
  *
  * @package cake.tests.view.helpers
- **/
+ */
 class JsBaseEngineTestCase extends CakeTestCase {
 /**
  * startTest method
@@ -489,7 +489,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test escape string skills
  *
  * @return void
- **/
+ */
 	function testEscaping() {
 		$result = $this->JsEngine->escape('');
 		$expected = '';
@@ -520,7 +520,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test prompt() creation
  *
  * @return void
- **/
+ */
 	function testPrompt() {
 		$result = $this->JsEngine->prompt('Hey, hey you', 'hi!');
 		$expected = 'prompt("Hey, hey you", "hi!");';
@@ -535,7 +535,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test alert generation
  *
  * @return void
- **/
+ */
 	function testAlert() {
 		$result = $this->JsEngine->alert('Hey there');
 		$expected = 'alert("Hey there");';
@@ -550,7 +550,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test confirm generation
  *
  * @return void
- **/
+ */
 	function testConfirm() {
 		$result = $this->JsEngine->confirm('Are you sure?');
 		$expected = 'confirm("Are you sure?");';
@@ -565,7 +565,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test Redirect
  *
  * @return void
- **/
+ */
 	function testRedirect() {
 		$result = $this->JsEngine->redirect(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'window.location = "/posts/view/1";';
@@ -576,7 +576,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * testObject encoding with non-native methods.
  *
  * @return void
- **/
+ */
 	function testObject() {
 		$this->JsEngine->useNative = false;
 
@@ -620,7 +620,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test compatibility of JsBaseEngineHelper::object() vs. json_encode()
  *
  * @return void
- **/
+ */
 	function testObjectAgainstJsonEncode() {
 		$skip = $this->skipIf(!function_exists('json_encode'), 'json_encode() not found, comparison tests skipped. %s');
 		if ($skip) {
@@ -659,7 +659,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test that JSON made with JsBaseEngineHelper::object() against json_decode()
  *
  * @return void
- **/
+ */
 	function testObjectAgainstJsonDecode() {
 		$skip = $this->skipIf(!function_exists('json_encode'), 'json_encode() not found, comparison tests skipped. %s');
 		if ($skip) {
@@ -684,7 +684,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test Mapping of options.
  *
  * @return void
- **/
+ */
 	function testOptionMapping() {
 		$JsEngine = new OptionEngineHelper();
 		$result = $JsEngine->testMap();
@@ -704,7 +704,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * test that option parsing escapes strings and saves what is supposed to be saved.
  *
  * @return void
- **/
+ */
 	function testOptionParsing() {
 		$JsEngine = new OptionEngineHelper();
 

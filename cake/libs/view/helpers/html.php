@@ -143,14 +143,14 @@ class HtmlHelper extends AppHelper {
  *
  * @var array
  * @access private
- **/
+ */
 	var $__includedScripts = array();
 /**
  * Options for the currently opened script block buffer if any.
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_scriptBlockOptions = array();
 /**
  * Document type definitions
@@ -436,7 +436,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
  *   included before.
- **/
+ */
 	function script($url, $options = array()) {
 		if (is_bool($options)) {
 			list($inline, $options) = array($options, array());
@@ -492,7 +492,7 @@ class HtmlHelper extends AppHelper {
  * @param string $script The script to wrap
  * @param array $options The options to use.
  * @return mixed string or null depending on the value of `$options['inline']`
- **/
+ */
 	function scriptBlock($script, $options = array()) {
 		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
@@ -521,7 +521,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Options for the code block.
  * @return void
- **/
+ */
 	function scriptStart($options = array()) {
 		$options += array('safe' => true, 'inline' => true);
 		$this->_scriptBlockOptions = $options;
@@ -534,7 +534,7 @@ class HtmlHelper extends AppHelper {
  * used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
- **/
+ */
 	function scriptEnd() {
 		$buffer = ob_get_clean();
 		$options = $this->_scriptBlockOptions;
