@@ -233,14 +233,17 @@ class ConfigureTest extends CakeTestCase {
 	function testStoreAndLoad() {
 		Configure::write('Cache.disable', false);
 
-		$expected = array('data' => 'value');
+		$expected = array('data' => 'value with backslash \, \'singlequote\' and "doublequotes"');
 		Configure::store('SomeExample', 'test', $expected);
 
 		Configure::load('test');
 		$config = Configure::read('SomeExample');
 		$this->assertEqual($config, $expected);
 
-		$expected = array('data' => array('first' => 'value', 'second' => 'value2'));
+		$expected = array(
+			'data' => array('first' => 'value with backslash \, \'singlequote\' and "doublequotes"', 'second' => 'value2'),
+			'data2' => 'value'
+		);
 		Configure::store('AnotherExample', 'test.config', $expected);
 
 		Configure::load('test.config');

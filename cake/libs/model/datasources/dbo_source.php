@@ -851,12 +851,12 @@ class DboSource extends DataSource {
 					if (count($ins) > 1) {
 						$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
 						$query = str_replace('= (', 'IN (', $query);
-						$query = str_replace('=	 (', 'IN (', $query);
+						$query = str_replace('= (', 'IN (', $query);
 					} else {
 						$query = str_replace('{$__cakeID__$}',$ins[0], $query);
 					}
 
-					$query = str_replace('	WHERE 1 = 1', '', $query);
+					$query = str_replace(' WHERE 1 = 1', '', $query);
 				}
 
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
@@ -930,7 +930,7 @@ class DboSource extends DataSource {
 						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type, $selfJoin);
 					}
 					if (isset($resultSet[$i][$association])) {
-						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association]);
+						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association], false);
 					}
 				} else {
 					$tempArray[0][$association] = false;
@@ -952,7 +952,7 @@ class DboSource extends DataSource {
 		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
-			$query = str_replace('=	 (', 'IN (', $query);
+			$query = str_replace('= (', 'IN (', $query);
 		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}

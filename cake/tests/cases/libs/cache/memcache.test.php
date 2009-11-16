@@ -83,13 +83,15 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('prefix' => 'cake_',
-						'duration'=> 3600,
-						'probability' => 100,
-						'servers' => array('127.0.0.1'),
-						'compress' => false,
-						'engine' => 'Memcache'
-						);
+		unset($settings['serialize'], $settings['path']);
+		$expecting = array(
+			'prefix' => 'cake_',
+			'duration'=> 3600,
+			'probability' => 100,
+			'servers' => array('127.0.0.1'),
+			'compress' => false,
+			'engine' => 'Memcache'
+		);
 		$this->assertEqual($settings, $expecting);
 	}
 

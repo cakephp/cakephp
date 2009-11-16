@@ -597,6 +597,7 @@ class Router {
 						if (strcasecmp($name, $match) === 0) {
 							$url = substr($url, 0, strpos($url, '.' . $name));
 							$ext = $match;
+							break;
 						}
 					}
 				}
