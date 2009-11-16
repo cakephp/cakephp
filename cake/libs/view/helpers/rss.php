@@ -34,7 +34,7 @@ class RssHelper extends XmlHelper {
  *
  * @var array
  * @access public
- **/
+ */
 	var $helpers = array('Time');
 
 /**

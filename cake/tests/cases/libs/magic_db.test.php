@@ -172,7 +172,7 @@ class MagicDbTestData extends Object {
  *
  * @param string $key
  * @access public
- **/
+ */
 	function get($key) {
 /**
  * data property

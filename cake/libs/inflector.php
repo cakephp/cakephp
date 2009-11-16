@@ -37,7 +37,7 @@ class Inflector {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_plural = array(
 		'rules' => array(
 			'/(s)tatus$/i' => '\1\2tatuses',
@@ -105,7 +105,7 @@ class Inflector {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_singular = array(
 		'rules' => array(
 			'/(s)tatuses$/i' => '\1\2tatus',
@@ -156,7 +156,7 @@ class Inflector {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_uninflected = array(
 		'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
 		'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
@@ -177,7 +177,7 @@ class Inflector {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_pluralized = array();
 
 /**
@@ -185,7 +185,7 @@ class Inflector {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_singularized = array();
 
 /**

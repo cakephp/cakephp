@@ -3643,7 +3643,7 @@ class DboSourceTest extends CakeTestCase {
  * test hasAny()
  *
  * @return void
- **/
+ */
 	function testHasAny() {
 		$this->testDb->hasAny($this->Model, array());
 		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
@@ -4000,7 +4000,7 @@ class DboSourceTest extends CakeTestCase {
  * test getting the query log as an array.
  *
  * @return void
- **/
+ */
 	function testGetLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
@@ -4024,7 +4024,7 @@ class DboSourceTest extends CakeTestCase {
  * test that execute runs queries.
  *
  * @return void
- **/
+ */
 	function testExecute() {
 		$query = 'SELECT * FROM ' . $this->testDb->fullTableName('articles') . ' WHERE 1 = 1';
 
@@ -4046,7 +4046,7 @@ class DboSourceTest extends CakeTestCase {
  * test that query() returns boolean values from operations like CREATE TABLE
  *
  * @return void
- **/
+ */
 	function testFetchAllBooleanReturns() {
 		$name = $this->db->fullTableName('test_query');
 		$query = "CREATE TABLE {$name} (name varchar(10));";
@@ -4062,7 +4062,7 @@ class DboSourceTest extends CakeTestCase {
  * test ShowQuery generation of regular and error messages
  *
  * @return void
- **/
+ */
 	function testShowQuery() {
 		$this->testDb->error = false;
 		ob_start();

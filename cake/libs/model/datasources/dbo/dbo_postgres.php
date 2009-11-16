@@ -127,7 +127,7 @@ class DboPostgres extends DboSource {
  * Check if PostgreSQL is enabled/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('pgsql');
 	}

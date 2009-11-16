@@ -572,7 +572,7 @@ class ModelDeleteTest extends BaseModelTest {
  * test that beforeDelete returning false can abort deletion.
  *
  * @return void
- **/
+ */
 	function testBeforeDeleteDeleteAbortion() {
 		$this->loadFixtures('Post');
 		$Model =& new CallbackPostTestModel();

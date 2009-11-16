@@ -196,7 +196,7 @@ class DboAdodbTest extends CakeTestCase {
  *
  * @var string
  * @access public
- **/
+ */
 	var $fixtures = array('core.article');
 
 /**

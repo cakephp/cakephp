@@ -404,7 +404,7 @@ class DataSource extends Object {
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.
- **/
+ */
 	function enabled() {
 		return true;
 	}

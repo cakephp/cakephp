@@ -391,9 +391,7 @@ class EmailComponent extends Object{
 		$viewClass = $this->Controller->view;
 
 		if ($viewClass != 'View') {
-			if (strpos($viewClass, '.') !== false) {
-				list($plugin, $viewClass) = explode('.', $viewClass);
-			}
+			list($plugin, $viewClass) = pluginSplit($viewClass);
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->Controller->view);
 		}

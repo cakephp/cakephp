@@ -84,7 +84,8 @@ class ProjectTaskTest extends CakeTestCase {
  * creates a test project that is used for testing project task.
  *
  * @return void
- **/
+ * @access protected
+ */
 	function _setupTestProject() {
 		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 		$this->Task->setReturnValueAt(0, 'in', 'y');
@@ -96,7 +97,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test bake() method and directory creation.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBake() {
 		$this->_setupTestProject();
 
@@ -117,7 +119,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test generation of Security.salt
  *
  * @return void
- **/
+ * @access public
+ */
 	function testSecuritySaltGeneration() {
 		$this->_setupTestProject();
 
@@ -134,7 +137,8 @@ class ProjectTaskTest extends CakeTestCase {
  * Test that index.php is generated correctly.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testIndexPhpGeneration() {
 		$this->_setupTestProject();
 		
@@ -154,7 +158,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test getPrefix method, and that it returns Routing.prefix or writes to config file.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
@@ -176,7 +181,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test cakeAdmin() writing core.php
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCakeAdmin() {
 		$file =& new File(CONFIGS . 'core.php');
 		$contents = $file->read();;
@@ -196,7 +202,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test getting the prefix with more than one prefix setup
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
@@ -211,7 +218,8 @@ class ProjectTaskTest extends CakeTestCase {
  * Test execute method with one param to destination folder.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecute() {
 		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . DS . 'console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;

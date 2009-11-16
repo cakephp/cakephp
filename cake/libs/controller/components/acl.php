@@ -46,9 +46,7 @@ class AclComponent extends Object {
 		$name = Inflector::camelize(strtolower(Configure::read('Acl.classname')));
 		if (!class_exists($name)) {
 			if (App::import('Component', $name)) {
-				if (strpos($name, '.') !== false) {
-					list($plugin, $name) = explode('.', $name);
-				}
+				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
 				trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);

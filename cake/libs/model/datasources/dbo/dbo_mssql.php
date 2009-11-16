@@ -162,7 +162,7 @@ class DboMssql extends DboSource {
  * Check that MsSQL is installed/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('mssql');
 	}

@@ -4734,7 +4734,7 @@ class ModelReadTest extends BaseModelTest {
  * test that bindModel behaves with Custom primary Key associations
  *
  * @return void
- **/
+ */
 	function bindWithCustomPrimaryKey() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Model =& ClassRegistry::init('StoriesTag');
@@ -6415,7 +6415,7 @@ class ModelReadTest extends BaseModelTest {
  * test find with COUNT(DISTINCT field)
  *
  * @return void
- **/
+ */
 	function testFindCountDistinct() {
 		$skip = $this->skipIf(
 			$this->db->config['driver'] == 'sqlite',

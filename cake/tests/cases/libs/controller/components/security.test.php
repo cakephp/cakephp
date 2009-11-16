@@ -564,7 +564,7 @@ DIGEST;
  * test that validatePost fails if any of its required fields are missing.
  *
  * @return void
- **/
+ */
 	function testValidatePostFormHacking() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
@@ -676,7 +676,7 @@ DIGEST;
  * test ValidatePost with multiple select elements.
  *
  * @return void
- **/
+ */
 	function testValidatePostMultipleSelect() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
