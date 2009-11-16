@@ -220,7 +220,7 @@ class DboSqliteTest extends CakeTestCase {
  * test building columns with SQLite
  *
  * @return void
- **/
+ */
 	function testBuildColumn() {
 		$data = array(
 			'name' => 'int_field',
@@ -292,7 +292,7 @@ class DboSqliteTest extends CakeTestCase {
  * test describe() and normal results.
  *
  * @return void
- **/
+ */
 	function testDescribe() {
 		$Model =& new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
 		$result = $this->db->describe($Model);
@@ -336,7 +336,7 @@ class DboSqliteTest extends CakeTestCase {
  * test that describe does not corrupt UUID primary keys
  *
  * @return void
- **/
+ */
 	function testDescribeWithUuidPrimaryKey() {
 		$tableName = 'uuid_tests';
 		$this->db->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");

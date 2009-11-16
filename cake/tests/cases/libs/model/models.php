@@ -542,7 +542,7 @@ class ModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
@@ -587,7 +587,7 @@ class AgainModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
@@ -2057,7 +2057,7 @@ class CallbackPostTestModel extends CakeTestModel {
  * beforeSave callback
  *
  * @return void
- **/
+ */
 	function beforeSave($options) {
 		return $this->beforeSaveReturn;
 	}
@@ -2065,7 +2065,7 @@ class CallbackPostTestModel extends CakeTestModel {
  * beforeValidate callback
  *
  * @return void
- **/
+ */
 	function beforeValidate($options) {
 		return $this->beforeValidateReturn;
 	}
@@ -2073,7 +2073,7 @@ class CallbackPostTestModel extends CakeTestModel {
  * beforeDelete callback
  *
  * @return void
- **/
+ */
 	function beforeDelete($cascade = true) {
 		return $this->beforeDeleteReturn;
 	}

@@ -204,7 +204,7 @@ class PluginTask extends Shell {
  * find and change $this->path to the user selection
  *
  * @return void
- **/
+ */
 	function findPath($pathOptions) {
 		$valid = false;
 		$max = count($pathOptions);

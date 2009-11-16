@@ -495,7 +495,7 @@ class DboSource extends DataSource {
  *
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return array Array of queries run as an array
- **/
+ */
 	function getLog($sorted = false) {
 		if ($sorted) {
 			$log = sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC);
@@ -851,12 +851,12 @@ class DboSource extends DataSource {
 					if (count($ins) > 1) {
 						$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
 						$query = str_replace('= (', 'IN (', $query);
-						$query = str_replace('=	 (', 'IN (', $query);
+						$query = str_replace('= (', 'IN (', $query);
 					} else {
 						$query = str_replace('{$__cakeID__$}',$ins[0], $query);
 					}
 
-					$query = str_replace('	WHERE 1 = 1', '', $query);
+					$query = str_replace(' WHERE 1 = 1', '', $query);
 				}
 
 				$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
@@ -930,7 +930,7 @@ class DboSource extends DataSource {
 						$this->__mergeAssociation($resultSet[$i], $fetch, $association, $type, $selfJoin);
 					}
 					if (isset($resultSet[$i][$association])) {
-						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association]);
+						$resultSet[$i][$association] = $linkModel->afterFind($resultSet[$i][$association], false);
 					}
 				} else {
 					$tempArray[0][$association] = false;
@@ -952,7 +952,7 @@ class DboSource extends DataSource {
 		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
-			$query = str_replace('=	 (', 'IN (', $query);
+			$query = str_replace('= (', 'IN (', $query);
 		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
 	}
@@ -967,7 +967,7 @@ class DboSource extends DataSource {
  * @param object $model Model being merged onto
  * @param object $linkModel Model being merged
  * @return void
- **/
+ */
 	function __mergeHasMany(&$resultSet, $merge, $association, &$model, &$linkModel) {
 		foreach ($resultSet as $i => $value) {
 			$count = 0;
@@ -2483,7 +2483,7 @@ class DboSource extends DataSource {
  * @param array $columnData The array of column data.
  * @param string $position The position type to use. 'beforeDefault' or 'afterDefault' are common
  * @return string a built column with the field parameters added.
- **/
+ */
 	function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
 			if (isset($columnData[$paramName]) && $value['position'] == $position) {

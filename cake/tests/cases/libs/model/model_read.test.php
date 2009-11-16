@@ -4734,7 +4734,7 @@ class ModelReadTest extends BaseModelTest {
  * test that bindModel behaves with Custom primary Key associations
  *
  * @return void
- **/
+ */
 	function bindWithCustomPrimaryKey() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Model =& ClassRegistry::init('StoriesTag');
@@ -4887,6 +4887,21 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
 
+/**
+ * Tests that the database configuration assigned to the model can be changed using
+ * (before|after)Find callbacks
+ *
+ * @return void
+ */
+	function testCallbackSourceChange() {
+		$this->loadFixtures('Post');
+		$TestModel = new Post();
+		$this->assertEqual(3, count($TestModel->find('all')));
+
+		$this->expectError(new PatternExpectation('/Non-existent data source foo/i'));
+		$this->expectError(new PatternExpectation('/Only variable references/i'));
+		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
+	}
 /**
  * testMultipleBelongsToWithSameClass method
  *
@@ -6400,7 +6415,7 @@ class ModelReadTest extends BaseModelTest {
  * test find with COUNT(DISTINCT field)
  *
  * @return void
- **/
+ */
 	function testFindCountDistinct() {
 		$skip = $this->skipIf(
 			$this->db->config['driver'] == 'sqlite',

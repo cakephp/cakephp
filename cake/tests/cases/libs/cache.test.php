@@ -72,6 +72,31 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * test configuring CacheEngines in App/libs
+ *
+ * @return void
+ */
+	function testConfigWithLibAndPluginEngines() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('libEngine', $settings);
+		$this->assertEqual($result, Cache::config('libEngine'));
+
+		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('pluginLibEngine', $settings);
+		$this->assertEqual($result, Cache::config('pluginLibEngine'));
+
+		Cache::drop('libEngine');
+		Cache::drop('pluginLibEngine');
+
+		App::build();
+	}
+
+/**
  * testInvalidConfig method
  *
  * Test that the cache class doesn't cause fatal errors with a partial path
@@ -138,6 +163,18 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * test that configured returns an array of the currently configured cache 
+ * settings
+ *
+ * @return void
+ */
+	function testConfigured() {
+		$result = Cache::configured();
+		$this->assertTrue(in_array('_cake_core_', $result));
+		$this->assertTrue(in_array('default', $result));
+	}
+
+/**
  * testInitSettings method
  *
  * @access public
@@ -160,6 +197,37 @@ class CacheTest extends CakeTestCase {
 		$this->assertEqual($settings, $expecting);
 
 		Cache::engine('File');
+	}
+
+/**
+ * test that unconfig removes cache configs, and that further attempts to use that config 
+ * do not work.
+ *
+ * @return void
+ */
+	function testUnconfig() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$result = Cache::drop('some_config_that_does_not_exist');
+		$this->assertFalse($result);
+
+		$_testsConfig = Cache::config('tests');
+		$result = Cache::drop('tests');
+		$this->assertTrue($result);
+		
+		Cache::config('unconfigTest', array(
+			'engine' => 'TestAppCache'
+		));
+		$this->assertTrue(Cache::isInitialized('TestAppCache'));
+
+		$this->assertTrue(Cache::drop('unconfigTest'));
+		$this->assertFalse(Cache::isInitialized('TestAppCache'));
+
+		Cache::config('tests', $_testsConfig);
+		App::build();
 	}
 
 /**

@@ -76,8 +76,8 @@ class ApiShellTest extends CakeTestCase {
 /**
  * Test that method names are detected properly including those with no arguments.
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testMethodNameDetection () {
 		$this->Shell->setReturnValueAt(0, 'in', 'q');

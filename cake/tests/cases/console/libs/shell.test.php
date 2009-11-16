@@ -46,7 +46,7 @@ Mock::generatePartial('ShellDispatcher', 'TestShellMockShellDispatcher', array(
  */
 class TestShell extends Shell {
 
-/*
+/**
  * name property
  *
  * @var name
@@ -65,8 +65,8 @@ class TestShell extends Shell {
  * stop method
  *
  * @param integer $status
- * @access protected
  * @return void
+ * @access protected
  */
 	function _stop($status = 0) {
 		$this->stopped = $status;
@@ -257,8 +257,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testNl
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testNl() {
 		$this->assertEqual($this->Shell->nl(), "\n");
@@ -271,8 +271,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testHr
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testHr() {
 		$bar = '---------------------------------------------------------------';
@@ -296,8 +296,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testError
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testError() {
 		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Error: Foo Not Found\n"));

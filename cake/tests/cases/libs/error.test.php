@@ -218,7 +218,7 @@ class MyCustomErrorHandler extends ErrorHandler {
  * custom error message type.
  *
  * @return void
- **/
+ */
 	function missingWidgetThing() {
 		echo 'widget thing is missing';
 	}
@@ -276,7 +276,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * into error404 when debug == 0
  *
  * @return void
- **/
+ */
 	function testSubclassMethodsNotBeingConvertedToError() {
 		$back = Configure::read('debug');
 		Configure::write('debug', 2);

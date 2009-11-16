@@ -109,7 +109,7 @@ class RequestActionController extends Controller {
  * post pass, testing post passing
  *
  * @return array
- **/
+ */
 	function post_pass() {
 		return $this->data;
 	}
@@ -152,7 +152,7 @@ class RequestActionPersistentController extends Controller {
  * post pass, testing post passing
  *
  * @return array
- **/
+ */
 	function index() {
 		return 'This is a test';
 	}
@@ -295,7 +295,7 @@ class TestObject extends Object {
  * testPersist
  *
  * @return void
- **/
+ */
 	function testPersist($name, $return = null, &$object, $type = null) {
 		return $this->_persist($name, $return, $object, $type);
 	}
@@ -324,7 +324,7 @@ class ObjectTest extends CakeTestCase {
  * fixtures
  *
  * @var string
- **/
+ */
 	var $fixtures = array('core.post', 'core.comment');
 
 /**
@@ -774,7 +774,7 @@ class ObjectTest extends CakeTestCase {
  * testCakeError
  *
  * @return void
- **/
+ */
 	function testCakeError() {
 
 	}

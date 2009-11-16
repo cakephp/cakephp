@@ -69,7 +69,7 @@ class CacheHelperTest extends CakeTestCase {
  * Checks if TMP/views is writable, and skips the case if it is not.
  *
  * @return void
- **/
+ */
 	function skip() {
 		$this->skipUnless(is_writable(TMP . 'cache' . DS . 'views' . DS), 'TMP/views is not writable %s');
 	}
@@ -202,7 +202,7 @@ class CacheHelperTest extends CakeTestCase {
  * test that multiple <cake:nocache> tags function with multiple nocache tags in the layout.
  *
  * @return void
- **/
+ */
 	function testMultipleNoCacheTagsInViewfile() {
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = 21600;
@@ -282,7 +282,7 @@ class CacheHelperTest extends CakeTestCase {
  * test cacheAction set to a boolean
  *
  * @return void
- **/
+ */
 	function testCacheActionArray() {
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = array(

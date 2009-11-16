@@ -302,7 +302,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test image() with Asset.timestamp
  *
  * @return void
- **/
+ */
 	function testImageTagWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
@@ -438,7 +438,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test use of css() and timestamping
  *
  * @return void
- **/
+ */
 	function testCssTimestamping() {
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
@@ -482,7 +482,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test timestamp enforcement for script tags.
  *
  * @return void
- **/
+ */
 	function testScriptTimestamping() {
 		$skip = $this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped');
 		if ($skip) {
@@ -510,7 +510,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test script tag generation
  *
  * @return void
- **/
+ */
 	function testScript() {
 		$result = $this->Html->script('foo');
 		$expected = array(
@@ -565,7 +565,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test Script block generation
  *
  * @return void
- **/
+ */
 	function testScriptBlock() {
 		$result = $this->Html->scriptBlock('window.foo = 2;');
 		$expected = array(
@@ -615,7 +615,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test script tag output buffering when using scriptStart() and scriptEnd();
  *
  * @return void
- **/
+ */
 	function testScriptStartAndScriptEnd() {
 		$result = $this->Html->scriptStart(array('safe' => true));
 		$this->assertNull($result);

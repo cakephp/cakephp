@@ -317,13 +317,8 @@ class ShellDispatcher {
 			$this->help();
 			return true;
 		}
-
-		if (strpos($arg, '.') !== false)  {
-			list($plugin, $shell) = explode('.', $arg);
-		} else {
-			$plugin = null;
-			$shell = $arg;
-		}
+		
+		list($plugin, $shell) = pluginSplit($arg);
 		$this->shell = $shell;
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';

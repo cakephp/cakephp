@@ -118,12 +118,12 @@ class ClassRegistry {
 
 		foreach ($objects as $key => $settings) {
 			if (is_array($settings)) {
-				$plugin = $pluginPath = null;
+				$pluginPath = null;
 				$settings = array_merge($defaults, $settings);
 				$class = $settings['class'];
-
-				if (strpos($class, '.') !== false) {
-					list($plugin, $class) = explode('.', $class);
+				
+				list($plugin, $class) = pluginSplit($class);
+				if ($plugin) {
 					$pluginPath = $plugin . '.';
 				}
 

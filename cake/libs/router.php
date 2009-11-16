@@ -161,7 +161,7 @@ class Router {
  * Builds __prefixes
  *
  * @return void
- **/
+ */
 	function Router() {
 		$this->__setPrefixes();
 	}
@@ -173,7 +173,7 @@ class Router {
  * @return void
  * @access private
  * @todo Remove support for Routing.admin in future versions.
- **/
+ */
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');
 		if (!empty($routing['admin'])) {
@@ -232,6 +232,7 @@ class Router {
 		foreach ($_this->__prefixes as $prefix) {
 			if (isset($default[$prefix])) {
 				$default['prefix'] = $prefix;
+				break;
 			}
 		}
 		if (isset($default['prefix'])) {
@@ -597,6 +598,7 @@ class Router {
 						if (strcasecmp($name, $match) === 0) {
 							$url = substr($url, 0, strpos($url, '.' . $name));
 							$ext = $match;
+							break;
 						}
 					}
 				}

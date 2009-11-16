@@ -63,9 +63,10 @@ class SchemaShell extends Shell {
 		} elseif (!empty($this->args[0])) {
 			$name = $this->params['name'] = $this->args[0];
 		}
+
 		if (strpos($name, '.')) {
-			list($this->params['plugin'], $this->params['name']) = explode('.', $name);
-			$name = $this->params['name'];
+			list($this->params['plugin'], $splitName) = pluginSplit($name);
+			$name = $this->params['name'] = $splitName;
 		}
 
 		if ($name) {
@@ -242,7 +243,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function create() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__create($Schema, $table);
@@ -252,7 +253,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function update() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__update($Schema, $table);
@@ -262,7 +263,7 @@ class SchemaShell extends Shell {
  * Prepares the Schema objects for database operations.
  *
  * @return void
- **/
+ */
 	function _loadSchema() {
 		$name = $plugin = null;
 		if (isset($this->params['name'])) {

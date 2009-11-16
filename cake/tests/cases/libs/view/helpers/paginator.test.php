@@ -731,7 +731,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * allowing you to use shortcut syntax
  *
  * @return void
- **/
+ */
 	function testPagingLinksOptionsReplaceEmptyDisabledOptions() {
 		$this->Paginator->params['paging'] = array(
 			'Client' => array(
@@ -1735,7 +1735,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * test that mock classes injected into paginatorHelper are called when using link()
  *
  * @return void
- **/
+ */
 	function testMockAjaxProviderClassInjection() {
 		$Paginator =& new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(
