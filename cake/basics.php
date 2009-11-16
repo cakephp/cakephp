@@ -220,9 +220,10 @@ if (!function_exists('array_combine')) {
  *
  * @param string $name The name you want to plugin split.
  * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
+ * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
  * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
  */
-	function pluginSplit($name, $dotAppend = false) {
+	function pluginSplit($name, $dotAppend = false, $plugin = null) {
 		if (strpos($name, '.') !== false) {
 			$parts = explode('.', $name, 2);
 			if ($dotAppend) {
@@ -230,7 +231,7 @@ if (!function_exists('array_combine')) {
 			}
 			return $parts;
 		}
-		return array(null, $name);
+		return array($plugin, $name);
 	}
 
 /**

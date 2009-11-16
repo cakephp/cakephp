@@ -773,18 +773,24 @@ class BasicsTest extends CakeTestCase {
 	function testPluginSplit() {
 		$result = pluginSplit('Something.else');
 		$this->assertEqual($result, array('Something', 'else'));
-		
+
 		$result = pluginSplit('Something.else.more.dots');
 		$this->assertEqual($result, array('Something', 'else.more.dots'));
 
 		$result = pluginSplit('Somethingelse');
 		$this->assertEqual($result, array(null, 'Somethingelse'));
-		
+
 		$result = pluginSplit('Something.else', true);
 		$this->assertEqual($result, array('Something.', 'else'));
-		
+
 		$result = pluginSplit('Something.else.more.dots', true);
 		$this->assertEqual($result, array('Something.', 'else.more.dots'));
+
+		$result = pluginSplit('Post', false, 'Blog');
+		$this->assertEqual($result, array('Blog', 'Post'));
+
+		$result = pluginSplit('Blog.Post', false, 'Ultimate');
+		$this->assertEqual($result, array('Blog', 'Post'));
 	}
 }
 ?>
