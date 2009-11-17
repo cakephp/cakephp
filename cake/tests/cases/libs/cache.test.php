@@ -22,7 +22,7 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
-
+Configure::write('debug', 0);
 /**
  * CacheTest class
  *
@@ -137,6 +137,37 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * test that calling config() sets the 'default' configuration up.
+ *
+ * @return void
+ */
+	function testConfigSettingDefaultConfigKey() {
+		Configure::write('debug', 2);
+		Cache::config('test_name', array('engine' => 'File', 'prefix' => 'test_name_'));
+
+		Cache::config('test_name');
+		Cache::write('value_one', 'I am cached');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am cached');
+
+		Cache::config('default');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, null);
+
+		Cache::write('value_one', 'I am in another cache config!');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am in another cache config!');
+
+		Cache::config('test_name');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am cached');
+		
+		Cache::delete('value_one');
+		Cache::config('default');
+		Cache::delete('value_one');
+	}
+
+/**
  * testWritingWithConfig method
  *
  * @access public
@@ -200,12 +231,12 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
- * test that unconfig removes cache configs, and that further attempts to use that config 
+ * test that drop removes cache configs, and that further attempts to use that config 
  * do not work.
  *
  * @return void
  */
-	function testUnconfig() {
+	function testDrop() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -324,5 +355,7 @@ class CacheTest extends CakeTestCase {
 
 		Cache::set($_cacheSet);
 	}
+
+
 }
 ?>

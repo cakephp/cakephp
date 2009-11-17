@@ -75,7 +75,18 @@ class Cache {
 	}
 
 /**
- * Set the cache configuration to use
+ * Set the cache configuration to use.  config() can
+ * both create new configurations, return the settings for already configured
+ * configurations.  It also sets the 'default' configuration to use for subsequent 
+ * operations.
+ *
+ * To create a new configuration:
+ *
+ * `Cache::config('my_config', array('engine' => 'File', 'path' => TMP));`
+ *
+ * To get the settings for a configuration, and set it as the currently selected configuration
+ *
+ * `Cache::config('default');`
  *
  * @see app/config/core.php for configuration settings
  * @param string $name Name of the configuration
