@@ -169,12 +169,12 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testSerialize() {
-		Cache::engine('File', array('serialize' => true));
+		Cache::config('default', array('engine' => 'File', 'serialize' => true));
 		$data = 'this is a test of the emergency broadcasting system';
-		$write = Cache::write('serialize_test', $data, 1);
+		$write = Cache::write('serialize_test', $data);
 		$this->assertTrue($write);
 
-		Cache::engine('File', array('serialize' => false));
+		Cache::config('default', array('serialize' => false));
 		$read = Cache::read('serialize_test');
 
 		$newread = Cache::read('serialize_test');
@@ -194,7 +194,7 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testClear() {
-		Cache::engine('File', array('duration' => 1));
+		Cache::config('default', array('engine' => 'File', 'duration' => 1));
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test1', $data);
 		$write = Cache::write('serialize_test2', $data);
@@ -223,7 +223,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
 
-		$result = Cache::engine('File', array('path' => CACHE . 'views'));
+		Cache::config('default', array('engine' => 'File', 'path' => CACHE . 'views'));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('controller_view_1', $data);
@@ -278,7 +278,7 @@ class FileEngineTest extends CakeTestCase {
 
 		clearCache('controller_view');
 
-		Cache::engine('File', array('path' => CACHE));
+		Cache::config('default', array('engine' => 'File', 'path' => CACHE));
 	}
 
 /**
@@ -306,7 +306,7 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testRemoveWindowsSlashesFromCache() {
-		Cache::engine('File', array('isWindows' => true, 'prefix' => null, 'path' => TMP));
+		Cache::config('default', array('engine' => 'File', 'isWindows' => true, 'prefix' => null, 'path' => TMP));
 
 		$expected = array (
 				'C:\dev\prj2\sites\cake\libs' => array(
@@ -349,13 +349,13 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testWriteQuotedString() {
-		Cache::engine('File', array('path' => TMP . 'tests'));
+		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"');
 		$this->assertIdentical(Cache::read('App.doubleQuoteTest'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
 		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
 
-		Cache::engine('File', array('isWindows' => true, 'path' => TMP . 'tests'));
+		Cache::config('default', array('isWindows' => true, 'path' => TMP . 'tests'));
 		$this->assertIdentical(Cache::read('App.doubleQuoteTest'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
 		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
