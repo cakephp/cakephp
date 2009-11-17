@@ -1350,7 +1350,7 @@ class DboSource extends DataSource {
  * @return string An executable SQL statement
  * @see DboSource::renderStatement()
  */
-	function buildStatement($query, $model) {
+	function buildStatement($query, &$model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1365,7 +1365,7 @@ class DboSource extends DataSource {
 			'fields' => implode(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
-			'order' => $this->order($query['order']),
+			'order' => $this->order($query['order'],'ASC',$model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
 			'group' => $this->group($query['group'])
@@ -2177,7 +2177,7 @@ class DboSource extends DataSource {
  * @param string $direction Direction (ASC or DESC)
  * @return string ORDER BY clause
  */
-	function order($keys, $direction = 'ASC') {
+	function order($keys, $direction = 'ASC', &$model = null) {
 		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
 			$keys = array_map('trim', explode(',', $keys));
 		}
