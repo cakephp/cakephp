@@ -2589,6 +2589,12 @@ class I18nTest extends CakeTestCase {
 		$this->assertEqual('Po (translated)', $singular);
 	}
 
+	function testTimeDefinition() {
+		$I18n = I18n::getInstance();
+		$file = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS . 'po' . DS .'LC_TIME';
+		$I18n->__loadLocaleDefinition($file);
+	}
+
 /**
  * Singular method
  *

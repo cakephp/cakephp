@@ -443,6 +443,79 @@ class I18n extends Object {
 		return $this->__domains[$this->category][$this->__lang][$domain] = array_merge($merge ,$translations);
 	}
 
+	function __loadLocaleDefinition($file, $domain = null) {
+		$_this =& I18N::getInstance();
+		$handler = fopen($file,'r');
+		$comment = '#';
+		$escape = '\\';
+		$currentToken = false;
+		$value = '';
+		while ($line = fgets($handler)) {
+			$line = trim($line);
+			if (empty($line) || $line[0] === $comment) {
+				continue;
+			}
+			$parts = preg_split("/[[:space:]]+/",$line);
+			if ($parts[0] === 'comment_char') {
+				$comment = $parts[1];
+				continue;
+			}
+			if ($parts[0] === 'escape_char') {
+				$escape = $parts[1];
+				continue;
+			}
+			$count = count($parts);
+			if ($count == 2) {
+				$currentToken = $parts[0];
+				$value = $parts[1];
+			} elseif ($count == 1) {
+				$value .= $parts[0];
+			} else {
+				continue;
+			}
+
+			$len = strlen($value) - 1;
+			if ($value[$len] === $escape) {
+				$value = substr($value,0,$len);
+				continue;
+			}
+
+			$mustEscape = array($escape.',',$escape.';',$escape.'<',$escape.'>',$escape.$escape);
+			$replacements = array_map('crc32',$mustEscape);
+			$value = str_replace($mustEscape,$replacements,$value);
+			$value = explode(';',$value);
+			$_this->__escape = $escape;
+			foreach ($value as $i => $val) {
+				$val = trim($val,'"');
+				$val = preg_replace_callback('/(<)?(?P<literal>.[^>]*)(>)?/',array(&$this,'__parseLiteralValue'),$val);
+				$val = str_replace($replacements,$mustEscape,$val);
+				$value[$i] = $val;
+			}
+			if (count($value) == 1) {
+				$this->__domains[$this->category][$this->__lang][$domain][$currentToken] = array_pop($value);
+			} else {
+				$this->__domains[$this->category][$this->__lang][$domain][$currentToken] = $value;
+			}
+		}
+				debug($this->__domains[$this->category][$this->__lang][$domain],true);
+	}
+
+	function __parseLiteralValue($string) {
+		$string = $string['literal'];
+		switch (substr($string,0,2)) {
+			case $this->__escape . 'x':
+				$string = chr(hexdec(substr($string,-2)));
+			break;
+			case $this->__escape . 'd':
+
+			break;
+		}
+		if (substr($string,0,3) === 'U00') {
+			$string = chr(hexdec(substr($string,-2)));
+		}
+		return $string;
+	}
+
 /**
  * Object destructor
  *
