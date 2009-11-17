@@ -22,7 +22,7 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
-Configure::write('debug', 0);
+
 /**
  * CacheTest class
  *
@@ -127,10 +127,10 @@ class CacheTest extends CakeTestCase {
 		$_cacheConfigTests = Cache::config('tests');
 
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
-		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertEqual($result['settings'], Cache::settings('sessions'));
 
 		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
-		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertEqual($result['settings'], Cache::settings('tests'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
 		Cache::config('tests', $_cacheConfigTests['settings']);
@@ -142,7 +142,6 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testConfigSettingDefaultConfigKey() {
-		Configure::write('debug', 2);
 		Cache::config('test_name', array('engine' => 'File', 'prefix' => 'test_name_'));
 
 		Cache::config('test_name');
@@ -188,7 +187,7 @@ class CacheTest extends CakeTestCase {
 			'engine' => 'File',
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
-		$this->assertEqual($expected, Cache::settings('File'));
+		$this->assertEqual($expected, Cache::settings('sessions'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
 	}
@@ -252,7 +251,7 @@ class CacheTest extends CakeTestCase {
 		Cache::config('unconfigTest', array(
 			'engine' => 'TestAppCache'
 		));
-		$this->assertTrue(Cache::isInitialized('TestAppCache'));
+		$this->assertTrue(Cache::isInitialized('unconfigTest'));
 
 		$this->assertTrue(Cache::drop('unconfigTest'));
 		$this->assertFalse(Cache::isInitialized('TestAppCache'));
@@ -355,7 +354,6 @@ class CacheTest extends CakeTestCase {
 
 		Cache::set($_cacheSet);
 	}
-
 
 }
 ?>
