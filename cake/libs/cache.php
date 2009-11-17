@@ -196,37 +196,6 @@ class Cache {
 	}
 
 /**
- * Set the cache engine to use or modify settings for one instance
- *
- * @param string $name Name of the engine (without 'Engine')
- * @param array $settings Optional associative array of settings passed to the engine
- * @return boolean True on success, false on failure
- * @access public
- * @static
- */
-	function engine($name = 'File', $settings = array()) {
-		$class = $name;
-		list($plugin, $class) = pluginSplit($name);
-		$cacheClass = $class . 'Engine';
-		$self =& Cache::getInstance();
-		if (!isset($self->_Engine[$name])) {
-			if ($self->__loadEngine($class, $plugin) === false) {
-				return false;
-			}
-			$self->_Engine[$name] =& new $cacheClass();
-		}
-
-		if ($self->_Engine[$name]->init($settings)) {
-			if (time() % $self->_Engine[$name]->settings['probability'] === 0) {
-				$self->_Engine[$name]->gc();
-			}
-			return true;
-		}
-		$self->_Engine[$name] = null;
-		return false;
-	}
-
-/**
  * Tries to find and include a file for a cache engine and returns object instance
  *
  * @param $name	Name of the engine (without 'Engine')
@@ -244,7 +213,6 @@ class Cache {
 			return true;
 		}
 	}
-
 
 /**
  * Temporarily change settings to current config options. if no params are passed, resets settings if needed
@@ -293,8 +261,7 @@ class Cache {
  */
 	function gc() {
 		$self =& Cache::getInstance();
-		$config = $self->config();
-		$self->_Engine[$config['engine']]->gc();
+		$self->_engines[$self->__name]->gc();
 	}
 
 /**

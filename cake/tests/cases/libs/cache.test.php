@@ -43,8 +43,6 @@ class CacheTest extends CakeTestCase {
 
 		$this->_defaultCacheConfig = Cache::config('default');
 		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
-
-		Cache::engine('File', array('path' => TMP . 'tests'));
 	}
 
 /**
@@ -56,7 +54,6 @@ class CacheTest extends CakeTestCase {
 	function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_defaultCacheConfig['settings']);
-		Cache::engine('File');
 	}
 
 /**
@@ -211,7 +208,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testInitSettings() {
-		Cache::engine('File', array('path' => TMP . 'tests'));
+		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
 
 		$settings = Cache::settings();
 		$expecting = array(
@@ -225,8 +222,6 @@ class CacheTest extends CakeTestCase {
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($settings, $expecting);
-
-		Cache::engine('File');
 	}
 
 /**
