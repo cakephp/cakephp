@@ -277,6 +277,7 @@ class I18n extends Object {
 
 			foreach ($this->l10n->languagePath as $lang) {
 				$file = $directory . $lang . DS . $this->category . DS . $domain;
+				$localeDef = $directory . $lang . DS . $this->category;
 
 				if ($core) {
 					$app = $directory . $lang . DS . $this->category . DS . 'core';
@@ -302,6 +303,10 @@ class I18n extends Object {
 					$this->__loadPo($f, $domain);
 					$this->__noLocale = false;
 					break 2;
+				} elseif (file_exists($localeDef) && ($f = fopen($localeDef, "r"))) {
+					$this->__loadLocaleDefinition($f, $domain);
+					$this->__noLocale = false;
+					return $domain;
 				}
 			}
 		}
@@ -445,12 +450,11 @@ class I18n extends Object {
 
 	function __loadLocaleDefinition($file, $domain = null) {
 		$_this =& I18N::getInstance();
-		$handler = fopen($file,'r');
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
 		$value = '';
-		while ($line = fgets($handler)) {
+		while ($line = fgets($file)) {
 			$line = trim($line);
 			if (empty($line) || $line[0] === $comment) {
 				continue;
@@ -487,7 +491,7 @@ class I18n extends Object {
 			$_this->__escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val,'"');
-				$val = preg_replace_callback('/(<)?(?P<literal>.[^>]*)(>)?/',array(&$this,'__parseLiteralValue'),$val);
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/',array(&$this,'__parseLiteralValue'),$val);
 				$val = str_replace($replacements,$mustEscape,$val);
 				$value[$i] = $val;
 			}
@@ -497,21 +501,25 @@ class I18n extends Object {
 				$this->__domains[$this->category][$this->__lang][$domain][$currentToken] = $value;
 			}
 		}
-				debug($this->__domains[$this->category][$this->__lang][$domain],true);
 	}
 
 	function __parseLiteralValue($string) {
-		$string = $string['literal'];
-		switch (substr($string,0,2)) {
-			case $this->__escape . 'x':
-				$string = chr(hexdec(substr($string,-2)));
-			break;
-			case $this->__escape . 'd':
-
-			break;
+		$string = $string[1];
+		if (substr($string,0,2) === $this->__escape . 'x') {
+			$delimiter = $this->__escape . 'x';
+			return join('',array_map('chr',array_map('hexdec',array_filter(explode($delimiter,$string)))));
+		}
+		if (substr($string,0,2) === $this->__escape . 'd') {
+			$delimiter = $this->__escape . 'd';
+			return join('',array_map('chr',array_filter(explode($delimiter,$string))));
+		}
+		if ($string[0] === $this->__escape && isset($string[1]) && is_numeric($string[1])) {
+			$delimiter = $this->__escape;
+			return join('',array_map('chr',array_filter(explode($delimiter,$string))));
 		}
 		if (substr($string,0,3) === 'U00') {
-			$string = chr(hexdec(substr($string,-2)));
+			$delimiter = 'U00';
+			return join('',array_map('chr',array_map('hexdec',array_filter(explode($delimiter,$string)))));
 		}
 		return $string;
 	}

@@ -2590,9 +2590,8 @@ class I18nTest extends CakeTestCase {
 	}
 
 	function testTimeDefinition() {
-		$I18n = I18n::getInstance();
-		$file = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS . 'po' . DS .'LC_TIME';
-		$I18n->__loadLocaleDefinition($file);
+		Configure::write('Config.language', 'po');
+		$abday = __c('abday', 5, true);
 	}
 
 /**
