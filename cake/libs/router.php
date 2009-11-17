@@ -581,10 +581,6 @@ class Router extends Object {
  * @access private
  */
 	function __connectDefaultRoutes() {
-		if ($this->__defaultsMapped) {
-			return;
-		}
-
 		if ($this->__admin) {
 			$params = array('prefix' => $this->__admin, $this->__admin => true);
 		}
