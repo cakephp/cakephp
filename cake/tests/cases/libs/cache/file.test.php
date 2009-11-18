@@ -153,7 +153,6 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertFalse($result);
-
 	}
 
 /**
@@ -178,7 +177,6 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertIdentical($read, serialize($data));
 
 		$this->assertIdentical(unserialize($newread), $data);
-
 	}
 
 /**
