@@ -180,18 +180,8 @@ class Cache {
 		if (!isset($self->__config[$name])) {
 			return false;
 		}
-		$last = true;
-		$engine = $self->__config[$name]['engine'];
 		unset($self->__config[$name]);
-		foreach ($self->__config as $name => $settings) {
-			if ($settings['engine'] == $engine) {
-				$last = false;
-				break;
-			}
-		}
-		if ($last) {
-			unset($self->_Engine[$engine]);
-		}
+		unset($self->_engines[$name]);
 		return true;
 	}
 
