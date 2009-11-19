@@ -367,9 +367,6 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 			return $base;
 		}
-		$file = null;
-
-		if ($baseUrl) {
 			$file = '/' . basename($baseUrl);
 			$base = dirname($baseUrl);
 
@@ -385,8 +382,6 @@ class Dispatcher extends Object {
 				$this->webroot .= $webroot . '/';
 			}
 			return $base . $file;
-		}
-		return false;
 	}
 /**
  * Restructure params in case we're serving a plugin.
