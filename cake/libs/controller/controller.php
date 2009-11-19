@@ -604,7 +604,7 @@ class Controller extends Object {
 				504 => 'Gateway Time-out'
 			);
 			if (is_string($status)) {
-				$codes = array_combine(array_values($codes), array_keys($codes));
+				$codes = array_flip($codes);
 			}
 
 			if (isset($codes[$status])) {
