@@ -636,10 +636,10 @@ class Validation extends Object {
 		if (empty($check)) {
 			return false;
 		}
-		if ($options['max'] && sizeof($check) > $options['max']) {
+		if ($options['max'] && count($check) > $options['max']) {
 			return false;
 		}
-		if ($options['min'] && sizeof($check) < $options['min']) {
+		if ($options['min'] && count($check) < $options['min']) {
 			return false;
 		}
 		if ($options['in'] && is_array($options['in'])) {

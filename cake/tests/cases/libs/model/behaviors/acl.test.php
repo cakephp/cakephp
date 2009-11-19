@@ -285,7 +285,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual($result['Aro']['parent_id'], 5);
 
 		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
-		$this->assertEqual(sizeof($node), 2);
+		$this->assertEqual(count($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
 	}
@@ -315,7 +315,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$Person->save($data);
 		$id = $Person->id;
 		$node = $Person->node();
-		$this->assertEqual(sizeof($node), 2);
+		$this->assertEqual(count($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
 
@@ -362,7 +362,7 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$Person->id = 2;
 		$result = $Person->node();
 		$this->assertTrue(is_array($result));
-		$this->assertEqual(sizeof($result), 1);
+		$this->assertEqual(count($result), 1);
 	}
 }
 ?>
