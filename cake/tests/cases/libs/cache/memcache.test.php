@@ -2,8 +2,6 @@
 /**
  * MemcacheEngineTest file
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
@@ -29,13 +27,6 @@ if (!class_exists('Cache')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
-
-/**
- * MemcacheEngineTest class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.cache
- */
 class MemcacheEngineTest extends CakeTestCase {
 
 /**
@@ -46,7 +37,7 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	function skip() {
 		$skip = true;
-		if (Cache::engine('Memcache')) {
+		if (class_exists('Memcache')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Memcache is not installed or configured properly');
@@ -72,6 +63,7 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::drop('memcache');
 		Cache::config('default');
 	}
 
@@ -103,14 +95,12 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
-
-		$Cache =& Cache::getInstance();
-		$MemCache =& $Cache->_Engine['Memcache'];
-
 		$available = true;
+		$Memcache =& new Memcache();
+
 		foreach($servers as $server) {
 			list($host, $port) = explode(':', $server);
-			if (!@$MemCache->__Memcache->connect($host, $port)) {
+			if (!$Memcache->addServer($host, $port)) {
 				$available = false;
 			}
 		}
@@ -118,13 +108,13 @@ class MemcacheEngineTest extends CakeTestCase {
 		if ($this->skipIf(!$available, '%s Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
 			return;
 		}
+		$Memcache =& new MemcacheEngine();
+		$Memcache->init(array('engine' => 'Memcache', 'servers' => $servers));
 
-		unset($MemCache->__Memcache);
-		$MemCache->init(array('engine' => 'Memcache', 'servers' => $servers));
-
-		$servers = array_keys($MemCache->__Memcache->getExtendedStats());
-		$settings = Cache::settings();
+		$servers = array_keys($Memcache->__Memcache->getExtendedStats());
+		$settings = $Memcache->settings();
 		$this->assertEqual($servers, $settings['servers']);
+		Cache::drop('dual_server');
 	}
 
 /**
@@ -134,8 +124,9 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testConnect() {
-		$Cache =& Cache::getInstance();
-		$result = $Cache->_Engine['Memcache']->connect('127.0.0.1');
+		$Memcache =& new MemcacheEngine();
+		$Memcache->init(Cache::settings('memcache'));
+		$result = $Memcache->connect('127.0.0.1');
 		$this->assertTrue($result);
 	}
 
@@ -193,13 +184,13 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
-		Cache::engine('Memcache', array('duration' => '+1 second'));
+		Cache::config('memcache', array('duration' => '+1 second'));
 		sleep(2);
 
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
-		Cache::engine('Memcache', array('duration' => '+31 day'));
+		Cache::config('memcache', array('duration' => '+31 day'));
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('long_expiry_test', $data);
 		$this->assertTrue($result);
@@ -212,7 +203,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::read('long_expiry_test');
 		$this->assertTrue($result);
 
-		Cache::engine('Memcache', array('duration' => 3600));
+		Cache::config('memcache', array('duration' => 3600));
 	}
 
 /**
