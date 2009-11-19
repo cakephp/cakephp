@@ -40,7 +40,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		if (class_exists('Memcache')) {
 			$skip = false;
 		}
-		$this->skipIf($skip, '%s Memcache is not installed or configured properly');
+		$this->skipIf($skip, '%s Memcache is not installed or configured properly.');
 	}
 
 /**
