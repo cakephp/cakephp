@@ -283,7 +283,7 @@ class ContainableBehavior extends ModelBehavior {
 			if (strpos($name, '.') !== false) {
 				$chain = explode('.', $name);
 				$name = array_shift($chain);
-				$children = array(join('.', $chain) => $children);
+				$children = array(implode('.', $chain) => $children);
 			}
 
 			$children = (array)$children;

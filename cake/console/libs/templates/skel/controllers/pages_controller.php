@@ -79,7 +79,7 @@ class PagesController extends AppController {
 			$title = Inflector::humanize($path[$count - 1]);
 		}
 		$this->set(compact('page', 'subpage', 'title'));
-		$this->render(join('/', $path));
+		$this->render(implode('/', $path));
 	}
 }
 

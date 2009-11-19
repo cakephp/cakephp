@@ -414,13 +414,13 @@ class ExtractTask extends Shell{
 
 			if ($this->__oneFile === true) {
 				foreach ($fileInfo as $file => $lines) {
-					$occured[] = "$file:" . join(';', $lines);
+					$occured[] = "$file:" . implode(';', $lines);
 
 					if (isset($this->__fileVersions[$file])) {
 						$fileList[] = $this->__fileVersions[$file];
 					}
 				}
-				$occurances = join("\n#: ", $occured);
+				$occurances = implode("\n#: ", $occured);
 				$occurances = str_replace($this->path, '', $occurances);
 				$output = "#: $occurances\n";
 				$filename = $this->__filename;
@@ -439,12 +439,12 @@ class ExtractTask extends Shell{
 			} else {
 				foreach ($fileInfo as $file => $lines) {
 					$filename = $str;
-					$occured = array("$str:" . join(';', $lines));
+					$occured = array("$str:" . implode(';', $lines));
 
 					if (isset($this->__fileVersions[$str])) {
 						$fileList[] = $this->__fileVersions[$str];
 					}
-					$occurances = join("\n#: ", $occured);
+					$occurances = implode("\n#: ", $occured);
 					$occurances = str_replace($this->path, '', $occurances);
 					$output .= "#: $occurances\n";
 
@@ -511,9 +511,9 @@ class ExtractTask extends Shell{
 			$fileList = str_replace(array($this->path), '', $fileList);
 
 			if (count($fileList) > 1) {
-				$fileList = "Generated from files:\n#  " . join("\n#  ", $fileList);
+				$fileList = "Generated from files:\n#  " . implode("\n#  ", $fileList);
 			} elseif (count($fileList) == 1) {
-				$fileList = 'Generated from file: ' . join('', $fileList);
+				$fileList = 'Generated from file: ' . implode('', $fileList);
 			} else {
 				$fileList = 'No version information was available in the source files.';
 			}
@@ -535,7 +535,7 @@ class ExtractTask extends Shell{
 				}
 			}
 			$fp = fopen($this->__output . $file, 'w');
-			fwrite($fp, str_replace('--VERSIONS--', $fileList, join('', $content)));
+			fwrite($fp, str_replace('--VERSIONS--', $fileList, implode('', $content)));
 			fclose($fp);
 		}
 	}

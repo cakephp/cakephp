@@ -649,9 +649,9 @@ class JavascriptHelper extends AppHelper {
 			}
 
 			if (!$numeric) {
-				$rt = '{' . join(',', $out) . '}';
+				$rt = '{' . implode(',', $out) . '}';
 			} else {
-				$rt = '[' . join(',', $out) . ']';
+				$rt = '[' . implode(',', $out) . ']';
 			}
 		}
 		$rt = $options['prefix'] . $rt . $options['postfix'];

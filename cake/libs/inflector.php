@@ -243,8 +243,8 @@ class Inflector extends Object {
 		extract($_this->pluralRules);
 
 		if (!isset($regexUninflected) || !isset($regexIrregular)) {
-			$regexUninflected = __enclose(join( '|', $uninflected));
-			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+			$regexUninflected = __enclose(implode( '|', $uninflected));
+			$regexIrregular = __enclose(implode( '|', array_keys($irregular)));
 			$_this->pluralRules['regexUninflected'] = $regexUninflected;
 			$_this->pluralRules['regexIrregular'] = $regexIrregular;
 		}
@@ -383,8 +383,8 @@ class Inflector extends Object {
 		extract($_this->singularRules);
 
 		if (!isset($regexUninflected) || !isset($regexIrregular)) {
-			$regexUninflected = __enclose(join( '|', $uninflected));
-			$regexIrregular = __enclose(join( '|', array_keys($irregular)));
+			$regexUninflected = __enclose(implode( '|', $uninflected));
+			$regexIrregular = __enclose(implode( '|', array_keys($irregular)));
 			$_this->singularRules['regexUninflected'] = $regexUninflected;
 			$_this->singularRules['regexIrregular'] = $regexIrregular;
 		}

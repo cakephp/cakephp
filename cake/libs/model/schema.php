@@ -334,19 +334,19 @@ class CakeSchema extends Object {
 							}
 							$col = "\t\t'{$field}' => array('type' => '" . $value['type'] . "', ";
 							unset($value['type']);
-							$col .= join(', ',  $this->__values($value));
+							$col .= implode(', ',  $this->__values($value));
 						} else {
 							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(" . join(', ',  $this->__values($index)) . ")";
+								$props[] = "'{$key}' => array(" . implode(', ',  $this->__values($index)) . ")";
 							}
-							$col .= join(', ', $props);
+							$col .= implode(', ', $props);
 						}
 						$col .= ")";
 						$cols[] = $col;
 					}
-					$out .= join(",\n", $cols);
+					$out .= implode(",\n", $cols);
 				}
 				$out .= "\n\t);\n";
 			}
@@ -447,7 +447,7 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('" . join("', '",  $val) . "')";
+					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
 				} else if (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";

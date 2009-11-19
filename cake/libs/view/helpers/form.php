@@ -355,7 +355,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		$field = join('.', $field);
+		$field = implode('.', $field);
 		if (!in_array($field, $this->fields)) {
 			if ($value !== null) {
 				return $this->fields[$field] = $value;
@@ -585,7 +585,7 @@ class FormHelper extends AppHelper {
 	function input($fieldName, $options = array()) {
 		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
-		$entity = join('.', $view->entity());
+		$entity = implode('.', $view->entity());
 
 		$defaults = array('before' => null, 'between' => null, 'after' => null);
 		$options = array_merge($defaults, $options);
@@ -952,7 +952,7 @@ class FormHelper extends AppHelper {
 				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
 			));
 		}
-		$out = $hidden . join($inbetween, $out);
+		$out = $hidden . implode($inbetween, $out);
 
 		if ($legend) {
 			$out = sprintf(

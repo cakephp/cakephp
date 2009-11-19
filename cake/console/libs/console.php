@@ -286,7 +286,7 @@ class ConsoleShell extends Shell {
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
 					$router =& Router::getInstance();
-					$this->out(join("\n", Set::extract($router->routes, '{n}.0')));
+					$this->out(implode("\n", Set::extract($router->routes, '{n}.0')));
 				break;
 				case (preg_match("/^route\s+(.*)/i", $command, $tmp) == true):
 					$this->out(var_export(Router::parse($tmp[1]), true));

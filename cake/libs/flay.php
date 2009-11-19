@@ -217,7 +217,7 @@ class Flay extends Object{
 		if (count($snips) > $max_snippets) {
 			$snips = array_slice($snips, 0, $max_snippets);
 		}
-		$joined = join(' <b>...</b> ', $snips);
+		$joined = implode(' <b>...</b> ', $snips);
 		$snips = $joined ? "<b>...</b> {$joined} <b>...</b>" : substr($string, 0, 80) . '<b>...</b>';
 		return $this->colorMark($words, $snips);
 	}

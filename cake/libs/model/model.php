@@ -1340,7 +1340,7 @@ class Model extends Overloadable {
 						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
 						}
-						$values = join(',', $values);
+						$values = implode(',', $values);
 						$newValues[] = "({$values})";
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
@@ -1368,7 +1368,7 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$fields =  join(',', $fields);
+					$fields =  implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}

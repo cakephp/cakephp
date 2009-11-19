@@ -327,7 +327,7 @@ class SecurityComponent extends Object {
 			$out[] = 'opaque="' . md5($options['realm']).'"';
 		}
 
-		return $auth . ' ' . join(',', $out);
+		return $auth . ' ' . implode(',', $out);
 	}
 /**
  * Parses an HTTP digest authentication response, and returns an array of the data, or null on failure.

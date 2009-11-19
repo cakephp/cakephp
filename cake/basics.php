@@ -423,7 +423,7 @@ if (!function_exists('file_put_contents')) {
 /**
  * Writes data into file.
  *
- * If file exists, it will be overwritten. If data is an array, it will be join()ed with an empty string.
+ * If file exists, it will be overwritten. If data is an array, it will be implode()ed with an empty string.
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
@@ -431,7 +431,7 @@ if (!function_exists('file_put_contents')) {
  */
 	function file_put_contents($fileName, $data) {
 		if (is_array($data)) {
-			$data = join('', $data);
+			$data = implode('', $data);
 		}
 		$res = @fopen($fileName, 'w+b');
 

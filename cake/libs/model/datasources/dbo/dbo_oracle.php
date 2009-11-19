@@ -704,7 +704,7 @@ class DboOracle extends DboSource {
 						break;
 					}
 				}
-				$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
+				$out .= "\t" . implode(",\n\t", $colList) . ";\n\n";
 			}
 		}
 		return $out;
@@ -925,7 +925,7 @@ class DboOracle extends DboSource {
 			case 'schema':
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
 				if (trim($indexes) != '') {
@@ -977,7 +977,7 @@ class DboOracle extends DboSource {
 					$fetch = array();
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
-						$q = str_replace('{$__cakeID__$}', join(', ', $i), $query);
+						$q = str_replace('{$__cakeID__$}', implode(', ', $i), $query);
 						$q = str_replace('= (', 'IN (', $q);
 						$res = $this->fetchAll($q, $model->cacheQueries, $model->alias);
 						$fetch = array_merge($fetch, $res);
@@ -1021,7 +1021,7 @@ class DboOracle extends DboSource {
 					$fetch = array();
 					$ins = array_chunk($ins, 1000);
 					foreach ($ins as $i) {
-						$q = str_replace('{$__cakeID__$}', '(' .join(', ', $i) .')', $query);
+						$q = str_replace('{$__cakeID__$}', '(' .implode(', ', $i) .')', $query);
 						$q = str_replace('= (', 'IN (', $q);
 						$q = str_replace('  WHERE 1 = 1', '', $q);
 

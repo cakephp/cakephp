@@ -378,7 +378,7 @@ class Router extends Object {
 				$parsed[] = '/' . $element;
 			}
 		}
-		return array('#^' . join('', $parsed) . '[\/]*$#', $names);
+		return array('#^' . implode('', $parsed) . '[\/]*$#', $names);
 	}
 /**
  * Returns the list of prefixes used in connected routes
@@ -880,11 +880,11 @@ class Router extends Object {
 				if ($_this->__admin && isset($url[$_this->__admin])) {
 					array_unshift($urlOut, $_this->__admin);
 				}
-				$output = join('/', $urlOut) . '/';
+				$output = implode('/', $urlOut) . '/';
 			}
 
 			if (!empty($args)) {
-				$args = join('/', $args);
+				$args = implode('/', $args);
 				if ($output{strlen($output) - 1} != '/') {
 					$args = '/'. $args;
 				}
@@ -1066,7 +1066,7 @@ class Router extends Object {
 				for ($i = 0; $i < $count; $i++) {
 					$named[] = $keys[$i] . $this->named['separator'] . $params['named'][$keys[$i]];
 				}
-				$params['named'] = join('/', $named);
+				$params['named'] = implode('/', $named);
 			}
 			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
 		}

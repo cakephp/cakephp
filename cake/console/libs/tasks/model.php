@@ -700,7 +700,7 @@ class ModelTask extends Shell {
 					}
 				}
 			}
-			$fixture = join(", ", $fixture);
+			$fixture = implode(", ", $fixture);
 
 			$import = $className;
 			if (isset($this->plugin)) {
@@ -904,24 +904,24 @@ class ModelTask extends Shell {
 							}
 							$records[] = "\t\t'$field' => $insert";
 							unset($value['type']);
-							$col .= join(', ',  $schema->__values($value));
+							$col .= implode(', ',  $schema->__values($value));
 						} else {
 							$col = "\t\t'indexes' => array(";
 							$props = array();
 							foreach ((array)$value as $key => $index) {
-								$props[] = "'{$key}' => array(" . join(', ',  $schema->__values($index)) . ")";
+								$props[] = "'{$key}' => array(" . implode(', ',  $schema->__values($index)) . ")";
 							}
-							$col .= join(', ', $props);
+							$col .= implode(', ', $props);
 						}
 						$col .= ")";
 						$cols[] = $col;
 					}
-					$out .= join(",\n", $cols);
+					$out .= implode(",\n", $cols);
 				}
 				$out .= "\n\t);\n";
 			}
 		}
-		$records = join(",\n", $records);
+		$records = implode(",\n", $records);
 		$out .= "\tvar \$records = array(array(\n$records\n\t));\n";
 		$out .= "}\n";
 		$path = TESTS . DS . 'fixtures' . DS;

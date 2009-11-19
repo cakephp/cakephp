@@ -634,10 +634,10 @@ class CakeTestCase extends UnitTestCase {
 					$permutations = $this->__array_permute($attrs);
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
-						$permutationTokens[] = join('', $permutation);
+						$permutationTokens[] = implode('', $permutation);
 					}
 					$regex[] = array(
-						sprintf('%s', join(', ', $explanations)),
+						sprintf('%s', implode(', ', $explanations)),
 						$permutationTokens,
 						$i,
 					);

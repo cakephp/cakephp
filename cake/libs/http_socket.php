@@ -738,7 +738,7 @@ class HttpSocket extends CakeSocket {
 		$request['uri'] = $this->buildUri($request['uri'], '/%path?%query');
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
-			trigger_error(sprintf(__('HttpSocket::buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', true), join(',', $asteriskMethods)), E_USER_WARNING);
+			trigger_error(sprintf(__('HttpSocket::buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', true), implode(',', $asteriskMethods)), E_USER_WARNING);
 			return false;
 		}
 		return $request['method'].' '.$request['uri'].' '.$versionToken.$this->lineBreak;
@@ -776,7 +776,7 @@ class HttpSocket extends CakeSocket {
 		$returnHeader = '';
 		foreach ($header as $field => $contents) {
 			if (is_array($contents) && $mode == 'standard') {
-				$contents = join(',', $contents);
+				$contents = implode(',', $contents);
 			}
 			foreach ((array)$contents as $content) {
 				$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $content);
@@ -921,7 +921,7 @@ class HttpSocket extends CakeSocket {
  * @todo Test $chars parameter
  */
 	function unescapeToken($token, $chars = null) {
-		$regex = '/"(['.join('', $this->__tokenEscapeChars(true, $chars)).'])"/';
+		$regex = '/"(['.implode('', $this->__tokenEscapeChars(true, $chars)).'])"/';
 		$token = preg_replace($regex, '\\1', $token);
 		return $token;
 	}
@@ -934,7 +934,7 @@ class HttpSocket extends CakeSocket {
  * @todo Test $chars parameter
  */
 	function escapeToken($token, $chars = null) {
-		$regex = '/(['.join('', $this->__tokenEscapeChars(true, $chars)).'])/';
+		$regex = '/(['.implode('', $this->__tokenEscapeChars(true, $chars)).'])/';
 		$token = preg_replace($regex, '"\\1"', $token);
 		return $token;
 	}

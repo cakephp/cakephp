@@ -128,7 +128,7 @@ class JsHelper extends Overloadable2 {
 				$options['requestHeaders'] = array();
 			}
 			if (is_array($options['update'])) {
-				$options['update'] = join(' ', $options['update']);
+				$options['update'] = implode(' ', $options['update']);
 			}
 			$options['requestHeaders']['X-Update'] = $options['update'];
 		} else {
@@ -257,9 +257,9 @@ class JsHelper extends Overloadable2 {
 		}
 
 		if (!$numeric) {
-			$rt = '{' . join(', ', $out) . '}';
+			$rt = '{' . implode(', ', $out) . '}';
 		} else {
-			$rt = '[' . join(', ', $out) . ']';
+			$rt = '[' . implode(', ', $out) . ']';
 		}
 		$rt = $prefix . $rt . $postfix;
 
@@ -445,7 +445,7 @@ class JsHelperObject {
 			}
 			$options[] = $key . ':' . $val;
 		}
-		return join(', ', $options);
+		return implode(', ', $options);
 	}
 }
 ?>

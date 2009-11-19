@@ -126,7 +126,7 @@ class ControllerTask extends Shell {
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
 			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
 		}
-		$doItInteractive = $this->in(join("\n", $question), array('y','n'), 'y');
+		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
 
 		if (strtolower($doItInteractive) == 'y' || strtolower($doItInteractive) == 'yes') {
 			$this->interactive = true;
@@ -313,7 +313,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
+			$actions .= "\t\t\$this->set(compact(" . implode(', ', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
@@ -365,7 +365,7 @@ class ControllerTask extends Shell {
 			}
 		}
 		if (!empty($compact)) {
-			$actions .= "\t\t\$this->set(compact(" . join(',', $compact) . "));\n";
+			$actions .= "\t\t\$this->set(compact(" . implode(',', $compact) . "));\n";
 		}
 		$actions .= "\t}\n";
 		$actions .= "\n";

@@ -313,7 +313,7 @@ class Helper extends Overloadable {
 
 		if ($setScope) {
 			$view->modelScope = false;
-		} elseif (join('.', $view->entity()) == $entity) {
+		} elseif (implode('.', $view->entity()) == $entity) {
 			return;
 		}
 
@@ -530,7 +530,7 @@ class Helper extends Overloadable {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . join('][', $view->entity()) . ']';
+				$name = 'data[' . implode('][', $view->entity()) . ']';
 			break;
 		}
 

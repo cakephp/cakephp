@@ -275,7 +275,7 @@ class Debugger extends Object {
 						foreach ($next['args'] as $arg) {
 							$args[] = Debugger::exportVar($arg);
 						}
-						$function .= join(', ', $args);
+						$function .= implode(', ', $args);
 					}
 					$function .= ')';
 				}
@@ -297,7 +297,7 @@ class Debugger extends Object {
 		if ($options['format'] == 'array' || $options['format'] == 'points') {
 			return $back;
 		}
-		return join("\n", $back);
+		return implode("\n", $back);
 	}
 /**
  * Shortens file paths by replacing the application base path with 'APP', and the CakePHP core
@@ -406,7 +406,7 @@ class Debugger extends Object {
 				if (count($vars) > 0) {
 					$n = "\n";
 				}
-				return $out . join(",", $vars) . "{$n})";
+				return $out . implode(",", $vars) . "{$n})";
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
@@ -444,7 +444,7 @@ class Debugger extends Object {
 				$out[] = "$className::$$key = " . $value;
 			}
 		}
-		return join("\n", $out);
+		return implode("\n", $out);
 	}
 /**
  * Handles object conversion to debug string.
