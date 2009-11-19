@@ -218,7 +218,7 @@ class Debugger extends Object {
 		}
 
 		if ($error == 'Fatal Error') {
-			die();
+			exit();
 		}
 		return true;
 	}

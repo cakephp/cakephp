@@ -1,4 +1,4 @@
-;<?php die() ?>
+;<?php exit() ?>
 ; SVN FILE: $Id$
 ;/**
 ; * Short description for file.

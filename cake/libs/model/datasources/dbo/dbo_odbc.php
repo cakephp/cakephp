@@ -95,7 +95,7 @@ class DboOdbc extends DboSource {
 			$connect = 'odbc_connect';
 		}
 		if (!function_exists($connect)) {
-			die('no odbc?');
+			exit('no odbc?');
 		}
 		$this->connected = false;
 		$this->connection = $connect($config['database'], $config['login'], $config['password'],  SQL_CUR_USE_ODBC);
