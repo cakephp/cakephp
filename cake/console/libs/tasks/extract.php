@@ -263,9 +263,9 @@ class ExtractTask extends Shell{
 				}
 
 				if (is_array($token)) {
-					$lineNumber += count(split("\n", $token[1])) - 1;
+					$lineNumber += count(explode("\n", $token[1])) - 1;
 				} else {
-					$lineNumber += count(split("\n", $token)) - 1;
+					$lineNumber += count(explode("\n", $token)) - 1;
 				}
 			}
 			unset($allTokens);
