@@ -183,6 +183,7 @@ class Router {
 			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
 		}
 	}
+
 /**
  * Gets a reference to the Router object instance
  *
