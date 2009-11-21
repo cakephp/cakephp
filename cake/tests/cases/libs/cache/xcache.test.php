@@ -76,13 +76,16 @@ class XcacheEngineTest extends UnitTestCase {
  */
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('prefix' => 'cake_',
-						'duration'=> 3600,
-						'probability' => 100,
-						'engine' => 'Xcache',
-						'PHP_AUTH_USER' => 'user',
-						'PHP_AUTH_PW' => 'password',
-						);
+		$expecting = array(
+			'prefix' => 'cake_',
+			'duration'=> 3600,
+			'probability' => 100,
+			'engine' => 'Xcache',
+		);
+		$this->assertTrue(isset($settings['PHP_AUTH_USER']));
+		$this->assertTrue(isset($settings['PHP_AUTH_PW']));
+
+		unset($settings['PHP_AUTH_USER'], $settings['PHP_AUTH_PW']);
 		$this->assertEqual($settings, $expecting);
 	}
 

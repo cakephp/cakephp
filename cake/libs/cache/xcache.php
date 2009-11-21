@@ -29,9 +29,10 @@
 class XcacheEngine extends CacheEngine {
 
 /**
- * settings
- * 		PHP_AUTH_USER = xcache.admin.user, default cake
- * 		PHP_AUTH_PW = xcache.admin.password, default cake
+ * Settings
+ *
+ *  - PHP_AUTH_USER = xcache.admin.user, default cake
+ *  - PHP_AUTH_PW = xcache.admin.password, default cake
  *
  * @var array
  * @access public
