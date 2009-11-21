@@ -2,7 +2,6 @@
 /**
  * File Storage stream for Logging
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
@@ -18,7 +17,9 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+if (!class_exists('File')) {
+	require LIBS . 'file.php';
+}
 /**
  * File Storage stream for Logging
  *
