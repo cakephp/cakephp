@@ -2039,7 +2039,7 @@ class DboSource extends DataSource {
 			$keys = array_filter($keys);
 		}
 
-		if (empty($keys) || (is_array($keys) && count($keys) && isset($keys[0]) && empty($keys[0]))) {
+		if (empty($keys) || (is_array($keys) && isset($keys[0]) && empty($keys[0]))) {
 			return '';
 		}
 

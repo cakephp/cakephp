@@ -403,7 +403,7 @@ class Debugger extends Object {
 					}
 				}
 				$n = null;
-				if (count($vars) > 0) {
+				if (!empty($vars)) {
 					$n = "\n";
 				}
 				return $out . implode(",", $vars) . "{$n})";

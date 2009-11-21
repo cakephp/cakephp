@@ -410,7 +410,7 @@ class HtmlHelper extends AppHelper {
  * @return string
  */
 	function getCrumbs($separator = '&raquo;', $startText = false) {
-		if (count($this->_crumbs)) {
+		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
 				$out[] = $this->link($startText, '/');

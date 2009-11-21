@@ -737,7 +737,7 @@ class Controller extends Object {
 	function validateErrors() {
 		$objects = func_get_args();
 
-		if (!count($objects)) {
+		if (empty($objects)) {
 			return false;
 		}
 
@@ -747,7 +747,7 @@ class Controller extends Object {
 			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 
-		return $this->validationErrors = (count($errors) ? $errors : false);
+		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 /**
  * Instantiates the correct view class, hands it its data, and uses it to render the view output.

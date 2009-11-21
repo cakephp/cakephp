@@ -566,7 +566,7 @@ class XmlNode extends Object {
  * @access public
  */
 	function hasChildren() {
-		if (is_array($this->children) && count($this->children) > 0) {
+		if (is_array($this->children) && !empty($this->children)) {
 			return true;
 		}
 		return false;
@@ -593,7 +593,7 @@ class XmlNode extends Object {
 			}
 
 			$d .= '<' . $this->name();
-			if (count($this->namespaces) > 0) {
+			if (!empty($this->namespaces) > 0) {
 				foreach ($this->namespaces as $key => $val) {
 					$val = str_replace('"', '\"', $val);
 					$d .= ' xmlns:' . $key . '="' . $val . '"';
@@ -601,14 +601,14 @@ class XmlNode extends Object {
 			}
 
 			$parent =& $this->parent();
-			if ($parent->name === '#document' && count($parent->namespaces) > 0) {
+			if ($parent->name === '#document' && !empty($parent->namespaces)) {
 				foreach ($parent->namespaces as $key => $val) {
 					$val = str_replace('"', '\"', $val);
 					$d .= ' xmlns:' . $key . '="' . $val . '"';
 				}
 			}
 
-			if (is_array($this->attributes) && count($this->attributes) > 0) {
+			if (is_array($this->attributes) && !empty($this->attributes)) {
 				foreach ($this->attributes as $key => $val) {
 					if (is_bool($val) && $val === false) {
 						$val = 0;

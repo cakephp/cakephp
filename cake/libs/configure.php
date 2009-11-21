@@ -373,7 +373,7 @@ class Configure extends Object {
 		$_this =& Configure::getInstance();
 		$name = $_this->__configVarNames($var);
 
-		if (count($name) > 1) {
+		if (isset($name[1])) {
 			unset($_this->{$name[0]}[$name[1]]);
 		} else {
 			unset($_this->{$name[0]});

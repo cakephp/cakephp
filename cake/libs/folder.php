@@ -744,7 +744,7 @@ class Folder extends Object {
 				continue;
 			}
 			if ($part === '..') {
-				if (count($newparts) > 0) {
+				if (!empty($newparts)) {
 					array_pop($newparts);
 					continue;
 				} else {

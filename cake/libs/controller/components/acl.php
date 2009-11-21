@@ -349,7 +349,7 @@ class DbAcl extends AclBase {
 		}
 		list($save['aro_id'], $save['aco_id']) = array($perms['aro'], $perms['aco']);
 
-		if ($perms['link'] != null && count($perms['link']) > 0) {
+		if ($perms['link'] != null && !empty($perms['link'])) {
 			$save['id'] = $perms['link'][0][$this->Aro->Permission->alias]['id'];
 		} else {
 			unset($save['id']);

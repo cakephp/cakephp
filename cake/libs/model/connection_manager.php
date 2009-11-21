@@ -135,7 +135,7 @@ class ConnectionManager extends Object {
 	function getSourceName(&$source) {
 		$_this =& ConnectionManager::getInstance();
 		$names = array_keys($_this->_dataSources);
-		for ($i = 0; $i < count($names); $i++) {
+		for ($i = 0, $count = count($names); $i < $count; $i++) {
 			if ($_this->_dataSources[$names[$i]] === $source) {
 				return $names[$i];
 			}
