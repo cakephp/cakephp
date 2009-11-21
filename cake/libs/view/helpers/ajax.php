@@ -528,7 +528,7 @@ class AjaxHelper extends AppHelper {
 			}
 		}
 		$attr = $this->_parseAttributes(array_merge($options, array('id' => $id)));
-		return $this->output(sprintf($this->Html->tags['blockstart'], $attr));
+		return sprintf($this->Html->tags['blockstart'], $attr);
 	}
 
 /**
@@ -547,7 +547,7 @@ class AjaxHelper extends AppHelper {
 				return '';
 			}
 		}
-		return $this->output($this->Html->tags['blockend']);
+		return $this->Html->tags['blockend'];
 	}
 
 /**

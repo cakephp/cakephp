@@ -294,7 +294,7 @@ class FormHelper extends AppHelper {
 
 		$this->setEntity($model . '.', true);
 		$attributes = $this->_parseAttributes($htmlAttributes, null, '');
-		return $this->output(sprintf($this->Html->tags['form'], $attributes)) . $append;
+		return sprintf($this->Html->tags['form'], $attributes) . $append;
 	}
 
 /**
@@ -349,7 +349,7 @@ class FormHelper extends AppHelper {
 
 		$view =& ClassRegistry::getObject('view');
 		$view->modelScope = false;
-		return $this->output($out);
+		return $out;
 	}
 
 /**
@@ -528,11 +528,11 @@ class FormHelper extends AppHelper {
 			$labelFor = $this->domId($fieldName);
 		}
 
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['label'],
 			$labelFor,
 			$this->_parseAttributes($options), $text
-		));
+		);
 	}
 
 /**
@@ -940,11 +940,11 @@ class FormHelper extends AppHelper {
 		}
 		unset($options['hiddenField']);
 
-		return $this->output($output . sprintf(
+		return $output . sprintf(
 			$this->Html->tags['checkbox'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
@@ -1036,7 +1036,7 @@ class FormHelper extends AppHelper {
 				sprintf($this->Html->tags['legend'], $legend) . $out
 			);
 		}
-		return $this->output($out);
+		return $out;
 	}
 
 /**
@@ -1050,11 +1050,11 @@ class FormHelper extends AppHelper {
 		$options = $this->_initInputField($fieldName, array_merge(
 			array('type' => 'text'), $options
 		));
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['input'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
@@ -1066,11 +1066,11 @@ class FormHelper extends AppHelper {
  */
 	function password($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['password'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
@@ -1091,12 +1091,12 @@ class FormHelper extends AppHelper {
 			}
 			unset($options['value']);
 		}
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['textarea'],
 			$options['name'],
 			$this->_parseAttributes($options, array('type', 'name'), null, ' '),
 			$value
-		));
+		);
 	}
 
 /**
@@ -1123,11 +1123,11 @@ class FormHelper extends AppHelper {
 			$this->__secure(null, '' . $options['value']);
 		}
 
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['hidden'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name', 'class'), '', ' ')
-		));
+		);
 	}
 
 /**
@@ -1149,7 +1149,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$attributes = $this->_parseAttributes($options, array('name'), '', ' ');
-		return $this->output(sprintf($this->Html->tags['file'], $options['name'], $attributes));
+		return sprintf($this->Html->tags['file'], $options['name'], $attributes);
 	}
 
 /**
@@ -1169,12 +1169,12 @@ class FormHelper extends AppHelper {
 		if ($options['escape']) {
 			$title = h($title);
 		}
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['button'],
 			$options['type'],
 			$this->_parseAttributes($options, array('type'), '', ' '),
 			$title
-		));
+		);
 	}
 
 /**
@@ -1217,11 +1217,11 @@ class FormHelper extends AppHelper {
 
 		if (strpos($caption, '://') !== false) {
 			unset($options['type']);
-			$out .=  $this->output($before . sprintf(
+			$out .=  $before . sprintf(
 				$this->Html->tags['submitimage'],
 				$caption,
 				$this->_parseAttributes($options, null, '', ' ')
-			) . $after);
+			) . $after;
 		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
 			unset($options['type']);
 			if ($caption{0} !== '/') {
@@ -1230,17 +1230,17 @@ class FormHelper extends AppHelper {
 				$caption = trim($caption, '/');
 				$url = $this->webroot($caption);
 			}
-			$out .= $this->output($before . sprintf(
+			$out .= $before . sprintf(
 				$this->Html->tags['submitimage'],
 				$url,
 				$this->_parseAttributes($options, null, '', ' ')
-			) . $after);
+			) . $after;
 		} else {
 			$options['value'] = $caption;
-			$out .= $this->output($before . sprintf(
+			$out .= $before . sprintf(
 				$this->Html->tags['submit'],
 				$this->_parseAttributes($options, null, '', ' ')
-			). $after);
+			). $after;
 		}
 
 		if (isset($divOptions)) {
@@ -1347,7 +1347,7 @@ class FormHelper extends AppHelper {
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
 		$select[] = $this->Html->tags[$template];
-		return $this->output(implode("\n", $select));
+		return implode("\n", $select);
 	}
 
 /**
