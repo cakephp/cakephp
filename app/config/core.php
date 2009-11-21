@@ -151,7 +151,7 @@
 	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).
- * Will append a querysting parameter containing the time the file was modified. This is
+ * Will append a querystring parameter containing the time the file was modified. This is
  * useful for invalidating browser caches.
  *
  * Set to `true` to apply timestamps, when debug = 0, or set to 'force' to always enable
