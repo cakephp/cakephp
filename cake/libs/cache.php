@@ -234,6 +234,9 @@ class Cache {
 					$settings = array($settings => $value);
 				}
 				$settings = array_merge($self->__config[$self->__name], $settings);
+				if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
+					$settings['duration'] = strtotime($settings['duration']) - time();
+				}
 			}
 			$self->_engines[$name]->settings = $settings;
 		}
