@@ -150,6 +150,15 @@
  */
 	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 /**
+ * Apply timestamps with the last modified time to static assets (js, css, images).
+ * Will append a querysting parameter containing the time the file was modified. This is
+ * useful for invalidating browser caches.
+ *
+ * Set to `true` to apply timestamps, when debug = 0, or set to 'force' to always enable
+ * timestamping.
+ */
+	//Configure::write('Asset.timestamp', true);
+/**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.
  * This requires a/var/cache directory to be writable by the web server for caching.
  * and /vendors/csspp/csspp.php
