@@ -39,7 +39,7 @@ class XcacheEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if ($result = Cache::engine('Xcache')) {
+		if (function_exists('xcache_set')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Xcache is not installed or configured properly');
@@ -132,7 +132,7 @@ class XcacheEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  "+1 second"));
+		Cache::set(array('duration' =>  1));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data);
