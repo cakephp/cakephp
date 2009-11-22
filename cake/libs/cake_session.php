@@ -216,7 +216,7 @@ class CakeSession extends Object {
 		if (empty($var)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $var);
+		$result = Set::classicExtract($_SESSION, $var);
 		return isset($result);
 	}
 
@@ -354,7 +354,7 @@ class CakeSession extends Object {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $name);
+		$result = Set::classicExtract($_SESSION, $name);
 
 		if (!is_null($result)) {
 			return $result;
@@ -433,7 +433,7 @@ class CakeSession extends Object {
 			trigger_error('Writing session key {' . $var . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
 		}
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
-		return (Set::extract($_SESSION, $var) === $value);
+		return (Set::classicExtract($_SESSION, $var) === $value);
 	}
 
 /**
