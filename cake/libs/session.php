@@ -520,7 +520,7 @@ class CakeSession extends Object {
 					$config = CONFIGS . Configure::read('Session.save') . '.php';
 
 					if (is_file($config)) {
-						require_once ($config);
+						require($config);
 					}
 				}
 			break;
