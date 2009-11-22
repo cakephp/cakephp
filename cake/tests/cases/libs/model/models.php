@@ -2718,8 +2718,6 @@ class Uuiditem extends CakeTestModel {
  * @var array
  * @access public
  */
-	//var $hasAndBelongsToMany = array('Uuidportfolio' => array('unique' => true));
-//	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolio'));
 	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolioNumericid'));
 
 }
