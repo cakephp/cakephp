@@ -143,7 +143,8 @@ class Cache {
 		$config = $this->__config[$name];
 
 		list($plugin, $class) = pluginSplit($config['engine']);
-		if ($this->__loadEngine($class, $plugin) === false) {
+		$cacheClass = $class . 'Engine';
+		if (!class_exists($cacheClass) && $this->__loadEngine($class, $plugin) === false) {
 			return false;
 		}
 		$cacheClass = $class . 'Engine';
