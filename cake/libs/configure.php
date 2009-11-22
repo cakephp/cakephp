@@ -91,11 +91,21 @@ class Configure extends Object {
 			if (strpos($name, '.') === false) {
 				$_this->{$name} = $value;
 			} else {
-				$names = explode('.', $name, 2);
-				if (!isset($_this->{$names[0]})) {
-					$_this->{$names[0]} = array();
+				$names = explode('.', $name, 4);
+				switch (count($names)) {
+					case 2:
+						$_this->{$names[0]}[$names[1]] = $value;
+					break;
+					case 3:
+						$_this->{$names[0]}[$names[1]][$names[2]] = $value;
+					case 4:
+						$names = explode('.', $name, 2);
+						if (!isset($_this->{$names[0]})) {
+							$_this->{$names[0]} = array();
+						}
+						$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
+					break;
 				}
-				$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
 			}
 		}
 
@@ -149,18 +159,32 @@ class Configure extends Object {
 		}
 
 		if (strpos($var, '.') !== false) {
-			$names = explode('.', $var, 2);
+			$names = explode('.', $var, 3);
 			$var = $names[0];
 		}
 		if (!isset($_this->{$var})) {
 			return null;
 		}
-
-		if (!empty($names[1])) {
-			return Set::extract($_this->{$var}, $names[1]);
+		if (!isset($names[1])) {
+			return $_this->{$var};
 		}
-
-		return $_this->{$var};
+		switch (count($names)) {
+			case 2:
+				if (isset($_this->{$var}[$names[1]])) {
+					return $_this->{$var}[$names[1]];
+				}
+			break;
+			case 3:
+				if (isset($_this->{$var}[$names[1]][$names[2]])) {
+					return $_this->{$var}[$names[1]][$names[2]];
+				}
+				if (!isset($_this->{$var}[$names[1]])) {
+					return null;
+				}
+				return Set::classicExtract($_this->{$var}[$names[1]], $names[2]);
+			break;
+		}
+		return null;
 	}
 
 /**
