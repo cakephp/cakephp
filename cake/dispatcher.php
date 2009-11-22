@@ -136,13 +136,13 @@ class Dispatcher extends Object {
 			)));
 		}
 
-		$privateAction = (bool)(strpos($this->params['action'], '_', 0) === 0);
+		$privateAction = $this->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
 		if (!empty($prefixes)) {
 			if (isset($this->params['prefix'])) {
 				$this->params['action'] = $this->params['prefix'] . '_' . $this->params['action'];
-			} elseif (strpos($this->params['action'], '_') !== false && !$privateAction) {
+			} elseif (strpos($this->params['action'], '_') > 0) {
 				list($prefix, $action) = explode('_', $this->params['action']);
 				$privateAction = in_array($prefix, $prefixes);
 			}
