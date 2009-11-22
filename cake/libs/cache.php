@@ -195,11 +195,11 @@ class Cache {
  */
 	function __loadEngine($name, $plugin = null) {
 		if ($plugin) {
-			return App::import('Lib', $plugin . '.cache' . DS . $name);
+			return App::import('Lib', $plugin . '.cache' . DS . $name, false);
 		} else {
-			$app = App::import('Lib', 'cache' . DS . $name);
+			$app = App::import('Lib', 'cache' . DS . $name, false);
 			if (!$app) {
-				return App::import('Core', 'cache' . DS . $name);
+				require LIBS . 'cache' . DS . strtolower($name) . '.php';
 			}
 			return true;
 		}
