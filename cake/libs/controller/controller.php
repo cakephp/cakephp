@@ -895,11 +895,12 @@ class Controller extends Object {
 			$op = '';
 		}
 
+		$arrayOp = is_array($op);
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
 				$key = $model.'.'.$field;
 				$fieldOp = $op;
-				if (is_array($op)) {
+				if ($arrayOp) {
 					if (array_key_exists($key, $op)) {
 						$fieldOp = $op[$key];
 					} elseif (array_key_exists($field, $op)) {
