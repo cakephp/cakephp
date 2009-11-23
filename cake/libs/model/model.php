@@ -748,8 +748,13 @@ class Model extends Overloadable {
 				if (is_array($joinClass)) {
 					$joinClass = key($joinClass);
 				}
-				list($plugin, $joinClass) = pluginSplit($joinClass, true);
-				$this->{$type}[$assocKey]['with'] = $joinClass;
+
+				$plugin = null;
+				if (strpos($joinClass, '.') !== false) {
+					list($plugin, $joinClass) = explode('.', $joinClass);
+					$plugin .= '.';
+					$this->{$type}[$assocKey]['with'] = $joinClass;
+				}
 
 				if (!ClassRegistry::isKeySet($joinClass) && $dynamicWith === true) {
 					$this->{$joinClass} = new AppModel(array(
