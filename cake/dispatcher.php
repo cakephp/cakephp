@@ -142,13 +142,13 @@ class Dispatcher extends Object {
 			)));
 		}
 
-		$privateAction = (bool)(strpos($this->params['action'], '_', 0) === 0);
+		$privateAction = $this->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
 		if (!empty($prefixes)) {
 			if (isset($this->params['prefix'])) {
 				$this->params['action'] = $this->params['prefix'] . '_' . $this->params['action'];
-			} elseif (strpos($this->params['action'], '_') !== false && !$privateAction) {
+			} elseif (strpos($this->params['action'], '_') > 0) {
 				list($prefix, $action) = explode('_', $this->params['action']);
 				$privateAction = in_array($prefix, $prefixes);
 			}
@@ -377,9 +377,6 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 			return $base;
 		}
-		$file = null;
-
-		if ($baseUrl) {
 			$file = '/' . basename($baseUrl);
 			$base = dirname($baseUrl);
 
@@ -395,8 +392,6 @@ class Dispatcher extends Object {
 				$this->webroot .= $webroot . '/';
 			}
 			return $base . $file;
-		}
-		return false;
 	}
 
 /**
@@ -529,7 +524,7 @@ class Dispatcher extends Object {
 			if (key($_GET) && strpos(key($_GET), '?') !== false) {
 				unset($_GET[key($_GET)]);
 			}
-			$uri = preg_split('/\?/', $uri, 2);
+			$uri = explode('?', $uri, 2);
 
 			if (isset($uri[1])) {
 				parse_str($uri[1], $_GET);

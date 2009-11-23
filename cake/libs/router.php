@@ -410,7 +410,7 @@ class Router {
 				$parsed[] = '/' . $element;
 			}
 		}
-		return array('#^' . join('', $parsed) . '[\/]*$#', $names);
+		return array('#^' . implode('', $parsed) . '[\/]*$#', $names);
 	}
 
 /**
@@ -941,11 +941,11 @@ class Router {
 						break;
 					}
 				}
-				$output = join('/', $urlOut) . '/';
+				$output = implode('/', $urlOut) . '/';
 			}
 
 			if (!empty($args)) {
-				$args = join('/', $args);
+				$args = implode('/', $args);
 				if ($output{strlen($output) - 1} != '/') {
 					$args = '/'. $args;
 				}
@@ -1132,7 +1132,7 @@ class Router {
 				for ($i = 0; $i < $count; $i++) {
 					$named[] = $keys[$i] . $this->named['separator'] . $params['named'][$keys[$i]];
 				}
-				$params['named'] = join('/', $named);
+				$params['named'] = implode('/', $named);
 			}
 			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
 		}

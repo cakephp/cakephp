@@ -165,7 +165,7 @@ class Sanitize {
 		$params = params(func_get_args());
 		$str = $params[0];
 
-		for ($i = 1; $i < count($params); $i++) {
+		for ($i = 1, $count = count($params); $i < $count; $i++) {
 			$str = preg_replace('/<' . $params[$i] . '\b[^>]*>/i', '', $str);
 			$str = preg_replace('/<\/' . $params[$i] . '[^>]*>/i', '', $str);
 		}

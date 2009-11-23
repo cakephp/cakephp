@@ -835,7 +835,6 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$_this =& App::getInstance();
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -886,7 +885,7 @@ class App extends Object {
 			list($plugin, $name) = explode('.', $name);
 			$plugin = Inflector::camelize($plugin);
 		}
-
+		$_this =& App::getInstance();
 		$_this->return = $return;
 
 		if (isset($ext)) {

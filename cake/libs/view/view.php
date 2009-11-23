@@ -454,7 +454,7 @@ class View extends Object {
 
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
-			'scripts_for_layout' => join("\n\t", $this->__scripts),
+			'scripts_for_layout' => implode("\n\t", $this->__scripts),
 			'cakeDebug' => $debug
 		));
 

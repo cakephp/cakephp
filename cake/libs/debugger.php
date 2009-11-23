@@ -312,7 +312,7 @@ class Debugger extends Object {
 		}
 
 		if ($error == 'Fatal Error') {
-			die();
+			exit();
 		}
 		return true;
 	}
@@ -393,7 +393,7 @@ class Debugger extends Object {
 		if ($options['format'] == 'array' || $options['format'] == 'points') {
 			return $back;
 		}
-		return join("\n", $back);
+		return implode("\n", $back);
 	}
 
 /**
@@ -503,10 +503,10 @@ class Debugger extends Object {
 					}
 				}
 				$n = null;
-				if (count($vars) > 0) {
+				if (!empty($vars)) {
 					$n = "\n";
 				}
-				return $out . join(",", $vars) . "{$n})";
+				return $out . implode(",", $vars) . "{$n})";
 			break;
 			case 'resource':
 				return strtolower(gettype($var));
@@ -545,7 +545,7 @@ class Debugger extends Object {
 				$out[] = "$className::$$key = " . $value;
 			}
 		}
-		return join("\n", $out);
+		return implode("\n", $out);
 	}
 
 /**

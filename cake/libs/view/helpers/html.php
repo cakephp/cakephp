@@ -560,7 +560,7 @@ class HtmlHelper extends AppHelper {
 		if ($oneline) {
 			return join(' ', $out);
 		}
-		return join("\n", $out);
+		return implode("\n", $out);
 	}
 
 /**
@@ -572,7 +572,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function getCrumbs($separator = '&raquo;', $startText = false) {
-		if (count($this->_crumbs)) {
+		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
 				$out[] = $this->link($startText, '/');
@@ -585,7 +585,7 @@ class HtmlHelper extends AppHelper {
 					$out[] = $crumb[0];
 				}
 			}
-			return $this->output(join($separator, $out));
+			return $this->output(implode($separator, $out));
 		} else {
 			return null;
 		}
@@ -643,7 +643,7 @@ class HtmlHelper extends AppHelper {
 		foreach ($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
-		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
+		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), implode(' ', $out));
 		return $this->output($data);
 	}
 
@@ -696,9 +696,9 @@ class HtmlHelper extends AppHelper {
 				$cellsOut[] = sprintf($this->tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
-			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
+			$out[] = sprintf($this->tags['tablerow'], $options, implode(' ', $cellsOut));
 		}
-		return $this->output(join("\n", $out));
+		return $this->output(implode("\n", $out));
 	}
 
 /**

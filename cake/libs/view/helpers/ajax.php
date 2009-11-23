@@ -261,7 +261,7 @@ class AjaxHelper extends AppHelper {
 				$options['requestHeaders'] = array();
 			}
 			if (is_array($options['update'])) {
-				$options['update'] = join(' ', $options['update']);
+				$options['update'] = implode(' ', $options['update']);
 			}
 			$options['requestHeaders']['X-Update'] = $options['update'];
 		} else {
@@ -824,7 +824,7 @@ class AjaxHelper extends AppHelper {
 						$keys[] = "'" . $key . "'";
 						$keys[] = "'" . $val . "'";
 					}
-					$jsOptions['requestHeaders'] = '[' . join(', ', $keys) . ']';
+					$jsOptions['requestHeaders'] = '[' . implode(', ', $keys) . ']';
 				break;
 			}
 		}
@@ -873,7 +873,7 @@ class AjaxHelper extends AppHelper {
 				}
 			}
 
-			$out = join(', ', $out);
+			$out = implode(', ', $out);
 			$out = '{' . $out . '}';
 			return $out;
 		} else {
@@ -996,7 +996,7 @@ class AjaxHelper extends AppHelper {
 						$data[] = $key . ':"' . rawurlencode($val) . '"';
 					}
 				}
-				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
+				$out  = 'var __ajaxUpdater__ = {' . implode(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string"';
 				$out .= ' && $(n)) Element.update($(n), unescape(decodeURIComponent(';
 				$out .= '__ajaxUpdater__[n]))); }';

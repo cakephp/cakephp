@@ -1127,7 +1127,7 @@ class Model extends Overloadable {
 					return $data[$name[0]][$name[1]];
 				}
 			}
-			if (isset($data[0]) && count($data[0]) > 0) {
+			if (!empty($data[0])) {
 				$name = key($data[0]);
 				return $data[0][$name];
 			}
@@ -1353,14 +1353,6 @@ class Model extends Overloadable {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
-				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
-
-				$links = $this->{$join}->find('all', array(
-					'conditions' => $conditions,
-					'recursive' => -1,
-					'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
-				));
-
 				$isUUID = !empty($this->{$join}->primaryKey) && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
@@ -1391,7 +1383,7 @@ class Model extends Overloadable {
 						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
 						}
-						$values = join(',', $values);
+						$values = implode(',', $values);
 						$newValues[] = "({$values})";
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
@@ -1402,6 +1394,16 @@ class Model extends Overloadable {
 				}
 
 				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
+					$conditions = array_merge(
+						array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id),
+						(array)$this->hasAndBelongsToMany[$assoc]['conditions']
+					);
+					$links = $this->{$join}->find('all', array(
+						'conditions' => $conditions,
+						'recursive' => empty($this->hasAndBelongsToMany[$assoc]['conditions']) ? -1 : 0,
+						'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
+					));
+
 					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
@@ -1419,7 +1421,7 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$fields =  join(',', $fields);
+					$fields =  implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}

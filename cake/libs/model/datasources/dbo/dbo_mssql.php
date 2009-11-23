@@ -612,7 +612,7 @@ class DboMssql extends DboSource {
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
@@ -747,7 +747,7 @@ class DboMssql extends DboSource {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
-					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+					$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 				} else {
 					$value['column'] = $this->name($value['column']);
 				}

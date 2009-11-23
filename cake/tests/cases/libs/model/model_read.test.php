@@ -4888,21 +4888,6 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
- * Tests that the database configuration assigned to the model can be changed using
- * (before|after)Find callbacks
- *
- * @return void
- */
-	function testCallbackSourceChange() {
-		$this->loadFixtures('Post');
-		$TestModel = new Post();
-		$this->assertEqual(3, count($TestModel->find('all')));
-
-		$this->expectError(new PatternExpectation('/Non-existent data source foo/i'));
-		$this->expectError(new PatternExpectation('/Only variable references/i'));
-		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
-	}
-/**
  * testMultipleBelongsToWithSameClass method
  *
  * @access public

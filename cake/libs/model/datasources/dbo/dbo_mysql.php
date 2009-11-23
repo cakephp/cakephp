@@ -168,7 +168,7 @@ class DboMysqlBase extends DboSource {
 
 		$alias = $joins = false;
 		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
-		$fields = join(', ', $fields);
+		$fields = implode(', ', $fields);
 		$table = $this->fullTableName($model);
 
 		if (!empty($conditions)) {
@@ -392,7 +392,7 @@ class DboMysqlBase extends DboSource {
 					}
 				}
 				if (is_array($value['column'])) {
-					$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+					$out .= 'KEY '. $name .' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 				} else {
 					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
 				}
@@ -412,7 +412,7 @@ class DboMysqlBase extends DboSource {
 	function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
-			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
+			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
