@@ -290,6 +290,20 @@ class SessionTest extends CakeTestCase {
 	}
 
 /**
+ * test key exploitation
+ *
+ * @return void
+ */
+	function testKeyExploit() {
+		$key = "a'] = 1; phpinfo(); \$_SESSION['a";
+		$result = $this->Session->write($key, 'haxored');
+		$this->assertTrue($result);
+
+		$result = $this->Session->read($key);
+		$this->assertEqual($result, 'haxored');
+	}
+
+/**
  * testReadingSavedEmpty method
  *
  * @access public

@@ -273,7 +273,7 @@ class JavascriptHelper extends AppHelper {
 				}
 			}
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+		$out = sprintf($this->tags['javascriptlink'], $url);
 
 		if ($inline) {
 			return $out;

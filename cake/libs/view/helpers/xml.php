@@ -65,7 +65,7 @@ class XmlHelper extends AppHelper {
 			$attrib = 'xml ' . $attrib;
 		}
 
-		return $this->output($this->Xml->header($attrib));
+		return $this->Xml->header($attrib);
 	}
 
 /**
@@ -131,7 +131,7 @@ class XmlHelper extends AppHelper {
 		if (!$endTag) {
 			$this->Xml =& $elem;
 		}
-		return $this->output($out);
+		return $out;
 	}
 
 /**
@@ -144,7 +144,7 @@ class XmlHelper extends AppHelper {
 		if ($parent =& $this->Xml->parent()) {
 			$this->Xml =& $parent;
 		}
-		return $this->output('</' . $name . '>');
+		return '</' . $name . '>';
 	}
 
 /**

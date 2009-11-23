@@ -149,6 +149,9 @@ class ProjectTask extends Shell {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
+			if (!empty($this->params['empty'])) {
+				$skip = array();
+			}
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));

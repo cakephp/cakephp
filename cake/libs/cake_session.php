@@ -212,11 +212,10 @@ class CakeSession extends Object {
  * @access public
  */
 	function check($name) {
-		$var = $this->__validateKeys($name);
-		if (empty($var)) {
+		if (empty($name)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $var);
+		$result = Set::classicExtract($_SESSION, $name);
 		return isset($result);
 	}
 
@@ -259,13 +258,11 @@ class CakeSession extends Object {
  */
 	function delete($name) {
 		if ($this->check($name)) {
-			if ($var = $this->__validateKeys($name)) {
-				if (in_array($var, $this->watchKeys)) {
-					trigger_error('Deleting session key {' . $var . '}', E_USER_NOTICE);
-				}
-				$this->__overwrite($_SESSION, Set::remove($_SESSION, $var));
-				return ($this->check($var) == false);
+			if (in_array($name, $this->watchKeys)) {
+				trigger_error('Deleting session key {' . $name . '}', E_USER_NOTICE);
 			}
+			$this->__overwrite($_SESSION, Set::remove($_SESSION, $name));
+			return ($this->check($name) == false);
 		}
 		$this->__setError(2, "$name doesn't exist");
 		return false;
@@ -354,7 +351,7 @@ class CakeSession extends Object {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $name);
+		$result = Set::classicExtract($_SESSION, $name);
 
 		if (!is_null($result)) {
 			return $result;
@@ -385,7 +382,6 @@ class CakeSession extends Object {
  * @access public
  */
 	function watch($var) {
-		$var = $this->__validateKeys($var);
 		if (empty($var)) {
 			return false;
 		}
@@ -402,7 +398,6 @@ class CakeSession extends Object {
  * @access public
  */
 	function ignore($var) {
-		$var = $this->__validateKeys($var);
 		if (!in_array($var, $this->watchKeys)) {
 			return;
 		}
@@ -424,16 +419,14 @@ class CakeSession extends Object {
  * @access public
  */
 	function write($name, $value) {
-		$var = $this->__validateKeys($name);
-
-		if (empty($var)) {
+		if (empty($name)) {
 			return false;
 		}
-		if (in_array($var, $this->watchKeys)) {
-			trigger_error('Writing session key {' . $var . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
+		if (in_array($name, $this->watchKeys)) {
+			trigger_error('Writing session key {' . $name . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
 		}
-		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
-		return (Set::extract($_SESSION, $var) === $value);
+		$this->__overwrite($_SESSION, Set::insert($_SESSION, $name, $value));
+		return (Set::classicExtract($_SESSION, $name) === $value);
 	}
 
 /**
@@ -674,22 +667,6 @@ class CakeSession extends Object {
  */
 	function renew() {
 		$this->__regenerateId();
-	}
-
-/**
- * Validate that the $name is in correct dot notation
- * example: $name = 'ControllerName.key';
- *
- * @param string $name Session key names as string.
- * @return mixed false is $name is not correct format, or $name if it is correct
- * @access private
- */
-	function __validateKeys($name) {
-		if (is_string($name) && preg_match("/^[ 0-9a-zA-Z._-]*$/", $name)) {
-			return $name;
-		}
-		$this->__setError(3, "$name is not a string");
-		return false;
 	}
 
 /**

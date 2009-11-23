@@ -39,7 +39,7 @@ class XcacheEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if ($result = Cache::engine('Xcache')) {
+		if (function_exists('xcache_set')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Xcache is not installed or configured properly');
