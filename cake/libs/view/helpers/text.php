@@ -331,18 +331,8 @@ class TextHelper extends AppHelper {
  * @return string
  * @access public
  */
-	function toList($list, $and = 'and') {
-		$return = '';
-		$count = count($list) - 1;
-	    $counter = 0;
-		foreach ($list as $i => $item) {
-			$return .= $item;
-			if ($count > 0 && $counter < $count) {
-				$return .= ($counter < $count - 1 ? ', ' : " {$and} ");
-			}
-		    $counter++;
-		}
-		return $return;
+	function toList($list, $and = 'and', $separator = ', ') {
+        return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop(array_slice($list, -1));
 	}
 }
 ?>
