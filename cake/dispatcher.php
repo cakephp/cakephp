@@ -280,7 +280,7 @@ class Dispatcher extends Object {
 				$params['form']['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
 			}
 			if (isset($params['form']['_method'])) {
-				if (isset($_SERVER) && !empty($_SERVER)) {
+				if (!empty($_SERVER)) {
 					$_SERVER['REQUEST_METHOD'] = $params['form']['_method'];
 				} else {
 					$_ENV['REQUEST_METHOD'] = $params['form']['_method'];
@@ -614,15 +614,19 @@ class Dispatcher extends Object {
 				$this->_stop();
 			}
 			$isAsset = false;
-			$assets = array('js' => 'text/javascript', 'css' => 'text/css', 'gif' => 'image/gif', 'jpg' => 'image/jpeg', 'png' => 'image/png');
+			$assets = array(
+				'js' => 'text/javascript', 'css' => 'text/css',
+				'gif' => 'image/gif', 'jpg' => 'image/jpeg', 'png' => 'image/png'
+			);
 			$ext = array_pop(explode('.', $url));
 
 			foreach ($assets as $type => $contentType) {
 				if ($type === $ext) {
-					if ($type === 'css' || $type === 'js') {
-						$pos = strpos($url, $type . '/');
+					$parts = explode('/', $url);
+					if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
+						$pos = 0;
 					} else {
-						$pos = strpos($url, 'img/');
+						$pos = strlen($parts[0]);
 					}
 					$isAsset = true;
 					break;
@@ -640,7 +644,7 @@ class Dispatcher extends Object {
 				$paths = array();
 
 				if ($pos > 0) {
-					$plugin = substr($url, 0, $pos - 1);
+					$plugin = substr($url, 0, $pos);
 					$url = preg_replace('/^' . preg_quote($plugin, '/') . '\//i', '', $url);
 					$paths[] = App::pluginPath($plugin) . 'vendors' . DS;
 				}

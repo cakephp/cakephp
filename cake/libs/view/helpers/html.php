@@ -143,14 +143,14 @@ class HtmlHelper extends AppHelper {
  *
  * @var array
  * @access private
- **/
+ */
 	var $__includedScripts = array();
 /**
  * Options for the currently opened script block buffer if any.
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_scriptBlockOptions = array();
 /**
  * Document type definitions
@@ -201,7 +201,7 @@ class HtmlHelper extends AppHelper {
  */
 	function docType($type = 'xhtml-strict') {
 		if (isset($this->__docTypes[$type])) {
-			return $this->output($this->__docTypes[$type]);
+			return $this->__docTypes[$type];
 		}
 		return null;
 	}
@@ -270,7 +270,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($inline) {
-			return $this->output($out);
+			return $out;
 		} else {
 			$view =& ClassRegistry::getObject('view');
 			$view->addScript($out);
@@ -288,7 +288,7 @@ class HtmlHelper extends AppHelper {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
-		return $this->output(sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8')));
+		return sprintf($this->tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
 	}
 
 /**
@@ -347,7 +347,7 @@ class HtmlHelper extends AppHelper {
 			}
 			unset($options['default']);
 		}
-		return $this->output(sprintf($this->tags['link'], $url, $this->_parseAttributes($options), $title));
+		return sprintf($this->tags['link'], $url, $this->_parseAttributes($options), $title);
 	}
 
 /**
@@ -355,7 +355,7 @@ class HtmlHelper extends AppHelper {
  *
  * #### Options 
  *
- * - `inline` If set to false, the generated tag appears in the head tag of the layout.
+ * - `inline` If set to false, the generated tag appears in the head tag of the layout. Defaults to true
  *
  * @param mixed $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
@@ -366,13 +366,13 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function css($path, $rel = null, $options = array()) {
-		$inline = isset($options['inline']) ? $options['inline'] : true;
+		$options += array('inline' => true);
 		if (is_array($path)) {
 			$out = '';
 			foreach ($path as $i) {
-				$out .= "\n\t" . $this->css($i, $rel, $options, $inline);
+				$out .= "\n\t" . $this->css($i, $rel, $options);
 			}
-			if ($inline)  {
+			if ($options['inline'])  {
 				return $out . "\n";
 			}
 			return;
@@ -401,16 +401,15 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if ($rel == 'import') {
-			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, null, '', ' '), '@import url(' . $url . ');');
+			$out = sprintf($this->tags['style'], $this->_parseAttributes($options, array('inline'), '', ' '), '@import url(' . $url . ');');
 		} else {
 			if ($rel == null) {
 				$rel = 'stylesheet';
 			}
 			$out = sprintf($this->tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline'), '', ' '));
 		}
-		$out = $this->output($out);
 
-		if ($inline) {
+		if ($options['inline']) {
 			return $out;
 		} else {
 			$view =& ClassRegistry::getObject('view');
@@ -436,7 +435,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
  *   included before.
- **/
+ */
 	function script($url, $options = array()) {
 		if (is_bool($options)) {
 			list($inline, $options) = array($options, array());
@@ -471,12 +470,10 @@ class HtmlHelper extends AppHelper {
 				$url = str_replace(JS_URL, 'cjs/', $url);
 			}
 		}
-		$inline = $options['inline'];
-		unset($options['inline'], $options['once']);
-		$attributes = $this->_parseAttributes($options, ' ', ' ');
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url, $attributes));
+		$attributes = $this->_parseAttributes($options, array('inline', 'once'), ' ');
+		$out = sprintf($this->tags['javascriptlink'], $url, $attributes);
 
-		if ($inline) {
+		if ($options['inline']) {
 			return $out;
 		} else {
 			$view =& ClassRegistry::getObject('view');
@@ -494,10 +491,9 @@ class HtmlHelper extends AppHelper {
  * @param string $script The script to wrap
  * @param array $options The options to use.
  * @return mixed string or null depending on the value of `$options['inline']`
- **/
+ */
 	function scriptBlock($script, $options = array()) {
-		$defaultOptions = array('safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, $options);
+		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
@@ -524,10 +520,9 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Options for the code block.
  * @return void
- **/
+ */
 	function scriptStart($options = array()) {
-		$defaultOptions = array('safe' => true, 'inline' => true);
-		$options = array_merge($defaultOptions, $options);
+		$options += array('safe' => true, 'inline' => true);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
 		return null;
@@ -538,7 +533,7 @@ class HtmlHelper extends AppHelper {
  * used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
- **/
+ */
 	function scriptEnd() {
 		$buffer = ob_get_clean();
 		$options = $this->_scriptBlockOptions;
@@ -589,7 +584,7 @@ class HtmlHelper extends AppHelper {
 					$out[] = $crumb[0];
 				}
 			}
-			return $this->output(join($separator, $out));
+			return join($separator, $out);
 		} else {
 			return null;
 		}
@@ -628,9 +623,9 @@ class HtmlHelper extends AppHelper {
 		$image = sprintf($this->tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
 
 		if ($url) {
-			return $this->output(sprintf($this->tags['link'], $this->url($url), null, $image));
+			return sprintf($this->tags['link'], $this->url($url), null, $image);
 		}
-		return $this->output($image);
+		return $image;
 	}
 
 /**
@@ -647,8 +642,7 @@ class HtmlHelper extends AppHelper {
 		foreach ($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
 		}
-		$data = sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
-		return $this->output($data);
+		return sprintf($this->tags['tablerow'], $this->_parseAttributes($trOptions), join(' ', $out));
 	}
 
 /**
@@ -702,7 +696,7 @@ class HtmlHelper extends AppHelper {
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
 			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
 		}
-		return $this->output(join("\n", $out));
+		return implode("\n", $out);
 	}
 
 /**
@@ -733,7 +727,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'tag';
 		}
-		return $this->output(sprintf($this->tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name));
+		return sprintf($this->tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
 	}
 
 /**
@@ -782,7 +776,7 @@ class HtmlHelper extends AppHelper {
 		} else {
 			$tag = 'para';
 		}
-		return $this->output(sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text));
+		return sprintf($this->tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
 	}
 
 /**

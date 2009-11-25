@@ -273,7 +273,7 @@ class JavascriptHelper extends AppHelper {
 				}
 			}
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+		$out = sprintf($this->tags['javascriptlink'], $url);
 
 		if ($inline) {
 			return $out;
@@ -319,7 +319,7 @@ class JavascriptHelper extends AppHelper {
  * Encode a string into JSON.  Converts and escapes necessary characters.
  *
  * @return void
- **/
+ */
 	function _utf8ToHex($string) {
 		$length = strlen($string);
 		$return = '';

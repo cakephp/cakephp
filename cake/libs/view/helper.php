@@ -225,7 +225,7 @@ class Helper extends Overloadable {
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
  * @return string Path with a timestamp added, or not.
- **/
+ */
 	function assetTimestamp($path) {
 		$timestampEnabled = (
 			(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
@@ -578,8 +578,9 @@ class Helper extends Overloadable {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __name($options = array(), $field = null, $key = 'name') {
+	function _name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
 		if ($options === null) {
 			$options = array();
@@ -646,7 +647,9 @@ class Helper extends Overloadable {
 		}
 
 		$habtmKey = $this->field();
-		if (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
+		if (empty($result) && isset($this->data[$habtmKey][$habtmKey])) {
+			$result = $this->data[$habtmKey][$habtmKey];
+		} elseif (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model =& ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($this->data[$habtmKey], $model->primaryKey);
@@ -687,7 +690,7 @@ class Helper extends Overloadable {
 			$this->setEntity($field);
 		}
 		$options = (array)$options;
-		$options = $this->__name($options);
+		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
 		if ($this->tagIsInvalid()) {

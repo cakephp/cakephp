@@ -123,7 +123,7 @@ class DboAdodb extends DboSource {
  * Check that AdoDB is available.
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return function_exists('NewADOConnection');
 	}

@@ -303,7 +303,7 @@ class DboMysqliTest extends CakeTestCase {
  * test that float values are correctly identified
  *
  * @return void
- **/
+ */
 	function testFloatParsing() {
 		$model =& new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
 		$result = $this->db->describe($model);

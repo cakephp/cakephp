@@ -19,15 +19,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
-/**
- * Included libraries.
- *
- */
-	if (!class_exists('File')) {
-		require LIBS . 'file.php';
-	}
-
 /**
  * Set up error level constants to be used within the framework if they are not defined within the
  * system.
@@ -60,7 +51,7 @@ class CakeLog {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_streams = array();
 
 /**
@@ -68,7 +59,7 @@ class CakeLog {
  *
  * @return void
  * @static
- **/
+ */
 	function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
@@ -85,7 +76,7 @@ class CakeLog {
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
  * @static
- **/
+ */
 	function config($key, $config) {
 		if (empty($config['engine'])) {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
@@ -107,12 +98,10 @@ class CakeLog {
  *
  * @return mixed boolean false on any failures, string of classname to use if search was successful.\
  * @access protected
- **/
+ */
 	function _getLogger($loggerName) {
-		$plugin = null;
-		if (strpos($loggerName, '.') !== false) {
-			list($plugin, $loggerName) = explode('.', $loggerName);
-		}
+		list($plugin, $loggerName) = pluginSplit($loggerName);
+
 		if ($plugin) {
 			App::import('Lib', $plugin . '.log/' . $loggerName);
 		} else {
@@ -139,38 +128,23 @@ class CakeLog {
  *
  * @return array
  * @static
- **/
-	function streams() {
+ */
+	function configured() {
 		$self = CakeLog::getInstance();
 		return array_keys($self->_streams);
 	}
 
 /**
- * Remove a stream from the active streams.  Once a stream has been removed
- * it will no longer be called.
+ * Removes a stream from the active streams.  Once a stream has been removed
+ * it will no longer have messages sent to it.
  *
  * @param string $keyname Key name of callable to remove.
  * @return void
  * @static
- **/
-	function remove($streamName) {
+ */
+	function drop($streamName) {
 		$self = CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
-	}
-
-/**
- * Add a stream the logger.
- * Streams represent destinations for log messages.  Each stream can connect to
- * a different resource /interface and capture/write output to that source.
- *
- * @param string $key Keyname of config.
- * @param array $config Array of config information for the LogStream
- * @return boolean success
- * @static
- **/
-	function addStream($key, $config) {
-		$self = CakeLog::getInstance();
-		$self->_streams[$key] = $config;
 	}
 
 /**
@@ -178,7 +152,7 @@ class CakeLog {
  *
  * @return void
  * @access protected
- **/
+ */
 	function _autoConfig() {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
@@ -235,7 +209,7 @@ class CakeLog {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return void
- **/
+ */
 	function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if ($code === 2048 || $code === 8192) {
 			return;

@@ -61,7 +61,6 @@ class Security extends Object {
  * @static
  */
 	function inactiveMins() {
-		$_this =& Security::getInstance();
 		switch (Configure::read('Security.level')) {
 			case 'high':
 				return 10;
@@ -179,7 +178,6 @@ class Security extends Object {
 			return '';
 		}
 
-		$_this =& Security::getInstance();
 		if (!defined('CIPHER_SEED')) {
 			//This is temporary will change later
 			define('CIPHER_SEED', '76859309657453542496749683645');

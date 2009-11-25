@@ -392,7 +392,7 @@ class I18n extends Object {
 		$header = "";
 
 		do {
-			$line = trim(fgets($file, 1024));
+			$line = trim(fgets($file));
 			if ($line == "" || $line[0] == "#") {
 				continue;
 			}

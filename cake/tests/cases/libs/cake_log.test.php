@@ -32,11 +32,11 @@ class CakeLogTest extends CakeTestCase {
  * Start test callback, clears all streams enabled.
  *
  * @return void
- **/
+ */
 	function startTest() {
-		$streams = CakeLog::streams();
+		$streams = CakeLog::configured();
 		foreach ($streams as $stream) {
-			CakeLog::remove($stream);
+			CakeLog::drop($stream);
 		}
 	}
 
@@ -44,7 +44,7 @@ class CakeLogTest extends CakeTestCase {
  * test importing loggers from app/libs and plugins.
  *
  * @return void
- **/
+ */
 	function testImportingLoggers() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
@@ -55,13 +55,13 @@ class CakeLogTest extends CakeTestCase {
 			'engine' => 'TestAppLog'
 		));
 		$this->assertTrue($result);
-		$this->assertEqual(CakeLog::streams(), array('libtest'));
+		$this->assertEqual(CakeLog::configured(), array('libtest'));
 
 		$result = CakeLog::config('plugintest', array(
 			'engine' => 'TestPlugin.TestPluginLog'
 		));
 		$this->assertTrue($result);
-		$this->assertEqual(CakeLog::streams(), array('libtest', 'plugintest'));
+		$this->assertEqual(CakeLog::configured(), array('libtest', 'plugintest'));
 
 		App::build();
 	}
@@ -70,7 +70,7 @@ class CakeLogTest extends CakeTestCase {
  * test all the errors from failed logger imports
  *
  * @return void
- **/
+ */
 	function testImportingLoggerFailure() {
 		$this->expectError('Missing logger classname');
 		CakeLog::config('fail', array());
@@ -87,13 +87,13 @@ class CakeLogTest extends CakeTestCase {
  * When no streams are there.
  *
  * @return void
- **/
+ */
 	function testAutoConfig() {
 		@unlink(LOGS . 'error.log');
 		CakeLog::write(LOG_WARNING, 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
-		$result = CakeLog::streams();
+		$result = CakeLog::configured();
 		$this->assertEqual($result, array('default'));
 		unlink(LOGS . 'error.log');
 	}
@@ -102,13 +102,13 @@ class CakeLogTest extends CakeTestCase {
  * test configuring log streams
  *
  * @return void
- **/
+ */
 	function testConfig() {
 		CakeLog::config('file', array(
 			'engine' => 'FileLog',
 			'path' => LOGS
 		));
-		$result = CakeLog::streams();
+		$result = CakeLog::configured();
 		$this->assertEqual($result, array('file'));
 
 		@unlink(LOGS . 'error.log');
@@ -118,6 +118,24 @@ class CakeLogTest extends CakeTestCase {
 		$result = file_get_contents(LOGS . 'error.log');
 		$this->assertPattern('/^2[0-9]{3}-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+ Warning: Test warning/', $result);
 		unlink(LOGS . 'error.log');
+	}
+
+/**
+ * explict tests for drop()
+ *
+ * @return void
+ **/
+	function testDrop() {
+		CakeLog::config('file', array(
+			'engine' => 'FileLog',
+			'path' => LOGS
+		));
+		$result = CakeLog::configured();
+		$this->assertEqual($result, array('file'));
+
+		CakeLog::drop('file');
+		$result = CakeLog::configured();
+		$this->assertEqual($result, array());
 	}
 
 /**
@@ -145,7 +163,7 @@ class CakeLogTest extends CakeTestCase {
  * Test logging with the error handler.
  *
  * @return void
- **/
+ */
 	function testLoggingWithErrorHandling() {
 		@unlink(LOGS . 'debug.log');
 		Configure::write('log', E_ALL & ~E_DEPRECATED);

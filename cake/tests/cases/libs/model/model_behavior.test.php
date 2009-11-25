@@ -508,7 +508,7 @@ class BehaviorTest extends CakeTestCase {
  * test that attaching a non existant Behavior triggers a cake error.
  *
  * @return void
- **/
+ */
 	function testInvalidBehaviorCausingCakeError() {
 		$Apple =& new Apple();
 		$Apple->Behaviors =& new MockModelBehaviorCollection();
@@ -1103,7 +1103,7 @@ class BehaviorTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testBehaviorAttachAndDetach() {
 		$Sample =& new Sample();
 		$Sample->actsAs = array('Test3' => array('bar'), 'Test2' => array('foo', 'bar'));

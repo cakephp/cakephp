@@ -63,7 +63,7 @@ class CakeSchema extends Object {
  * plugin name.
  *
  * @var string
- **/
+ */
 	var $plugin = null;
 
 /**
@@ -245,7 +245,7 @@ class CakeSchema extends Object {
 
 				if (is_object($Object) && $Object->useTable !== false) {
 					$Object->setDataSource($connection);
-					$table = $db->fullTableName($Object->useTable, false);
+					$table = $db->fullTableName($Object, false);
 
 					if (in_array($table, $currentTables)) {
 						$key = array_search($table, $currentTables);
@@ -382,7 +382,7 @@ class CakeSchema extends Object {
  * @param string $table Table name you want returned.
  * @param array $fields Array of field information to generate the table with.
  * @return string Variable declaration for a schema class
- **/
+ */
 	function generateTable($table, $fields) {
 		$out = "\tvar \${$table} = array(\n";
 		if (is_array($fields)) {
@@ -573,7 +573,7 @@ class CakeSchema extends Object {
  * @param array $new New indexes
  * @param array $old Old indexes
  * @return mixed False on failure, or an array of parameters to add & drop.
- **/
+ */
 	function _compareTableParameters($new, $old) {
 		if (!is_array($new) || !is_array($old)) {
 			return false;

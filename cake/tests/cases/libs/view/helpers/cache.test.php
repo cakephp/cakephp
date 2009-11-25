@@ -26,15 +26,6 @@ App::import('Core', array('Controller', 'Model', 'View'));
 App::import('Helper', 'Cache');
 
 /**
- * TestCacheHelper class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
- */
-class TestCacheHelper extends CacheHelper {
-}
-
-/**
  * CacheTestController class
  *
  * @package       cake
@@ -78,7 +69,7 @@ class CacheHelperTest extends CakeTestCase {
  * Checks if TMP/views is writable, and skips the case if it is not.
  *
  * @return void
- **/
+ */
 	function skip() {
 		$this->skipUnless(is_writable(TMP . 'cache' . DS . 'views' . DS), 'TMP/views is not writable %s');
 	}
@@ -90,7 +81,8 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Controller = new CacheTestController();
-		$this->Cache = new TestCacheHelper();
+		$this->Cache = new CacheHelper();
+		$this->_cacheSettings = Configure::read('Cache');
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
 	}
@@ -126,6 +118,7 @@ class CacheHelperTest extends CakeTestCase {
 	function tearDown() {
 		clearCache();
 		unset($this->Cache);
+		Configure::write('Cache', $this->_cacheSettings);
 	}
 
 /**
@@ -209,7 +202,7 @@ class CacheHelperTest extends CakeTestCase {
  * test that multiple <cake:nocache> tags function with multiple nocache tags in the layout.
  *
  * @return void
- **/
+ */
 	function testMultipleNoCacheTagsInViewfile() {
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = 21600;
@@ -238,7 +231,7 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testComplexNoCache () {
 		$this->Controller->cache_parsing();
-		$this->Controller->cacheAction = array('cacheTest' => 21600);
+		$this->Controller->cacheAction = array('cache_complex' => 21600);
 		$this->Controller->here = '/cacheTest/cache_complex';
 		$this->Controller->action = 'cache_complex';
 		$this->Controller->layout = 'multi_cache';
@@ -285,6 +278,81 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertPattern('/7\. layout after content and after element with no cache tags/', $contents);
 	}
 
+/**
+ * test cacheAction set to a boolean
+ *
+ * @return void
+ */
+	function testCacheActionArray() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => 21600
+		);
+		$this->Controller->here = '/cache_test/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
+
+
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array(
+			'cache_parsing/' => 21600
+		);
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
+
+
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array(
+			'cache_parsing/33' => 21600
+		);
+		$this->Controller->here = '/cacheTest/cache_parsing/33';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing_33.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
+		
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array(
+			'cache_parsing/33' => 21600
+		);
+		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
+		$this->assertFalse(file_exists($filename));
+	}
 /**
  * testCacheEmptySections method
  *

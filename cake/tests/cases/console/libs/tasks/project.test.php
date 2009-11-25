@@ -84,7 +84,8 @@ class ProjectTaskTest extends CakeTestCase {
  * creates a test project that is used for testing project task.
  *
  * @return void
- **/
+ * @access protected
+ */
 	function _setupTestProject() {
 		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 		$this->Task->setReturnValueAt(0, 'in', 'y');
@@ -96,7 +97,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test bake() method and directory creation.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBake() {
 		$this->_setupTestProject();
 
@@ -114,10 +116,56 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test bake() method with -empty flag,  directory creation and empty files.
+ *
+ * @return void
+ * @access public
+ */
+	function testBakeEmptyFlag() {
+		$this->Task->params['empty'] = true;
+		$this->_setupTestProject();
+		$path = $this->Task->path . 'bake_test_app';
+		$this->assertTrue(is_dir($path), 'No project dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'groups'), 'No groups dir %s');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
+
+		$this->assertTrue(is_file($path . DS . 'controllers' . DS .'components' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'locale' . DS . 'eng' . DS . 'LC_MESSAGES' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'models' . DS . 'behaviors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'models' . DS . 'datasources' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'plugins' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'behaviors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'components' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'controllers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'datasources' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'models' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'shells' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'fixtures' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'groups' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'css' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'img' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'js' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'errors' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'helpers' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'views' . DS . 'scaffolds' . DS . 'empty'), 'No empty file in dir %s');
+		$this->assertTrue(is_file($path . DS . 'webroot' . DS . 'js' . DS . 'empty'), 'No empty file in dir %s');
+	}
+
+/**
  * test generation of Security.salt
  *
  * @return void
- **/
+ * @access public
+ */
 	function testSecuritySaltGeneration() {
 		$this->_setupTestProject();
 
@@ -131,10 +179,32 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Test that index.php is generated correctly.
+ *
+ * @return void
+ * @access public
+ */
+	function testIndexPhpGeneration() {
+		$this->_setupTestProject();
+
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$this->Task->corePath($path);
+
+		$file =& new File($path . 'webroot' . DS . 'index.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
+
+		$file =& new File($path . 'webroot' . DS . 'test.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
+	}
+
+/**
  * test getPrefix method, and that it returns Routing.prefix or writes to config file.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
@@ -156,7 +226,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test cakeAdmin() writing core.php
  *
  * @return void
- **/
+ * @access public
+ */
 	function testCakeAdmin() {
 		$file =& new File(CONFIGS . 'core.php');
 		$contents = $file->read();;
@@ -176,7 +247,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test getting the prefix with more than one prefix setup
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
@@ -191,7 +263,8 @@ class ProjectTaskTest extends CakeTestCase {
  * Test execute method with one param to destination folder.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecute() {
 		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . DS . 'console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;

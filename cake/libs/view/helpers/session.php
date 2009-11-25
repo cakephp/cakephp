@@ -125,10 +125,12 @@ class SessionHelper extends CakeSession {
  * 					Will default to flash if no param is passed
  *
  * @param string $key The [Message.]key you are rendering in the view.
- * @return string Will echo the value if $key is set, or false if not set.
+ * @return boolean|string Will return the value if $key is set, or false if not set.
  * @access public
  */
 	function flash($key = 'flash') {
+		$out = false;
+
 		if ($this->__active === true && $this->__start()) {
 			if (parent::check('Message.' . $key)) {
 				$flash = parent::read('Message.' . $key);
@@ -148,12 +150,10 @@ class SessionHelper extends CakeSession {
 					$tmpVars['message'] = $flash['message'];
 					$out = $view->element($flash['element'], $tmpVars);
 				}
-				echo($out);
 				parent::delete('Message.' . $key);
-				return true;
 			}
 		}
-		return false;
+		return $out;
 	}
 
 /**

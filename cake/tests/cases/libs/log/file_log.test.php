@@ -67,7 +67,7 @@ class FileLogTest extends CakeTestCase {
  * test using the path setting to write logs in other places.
  *
  * @return void
- **/
+ */
 	function testPathSetting() {
 		$path = TMP . 'tests' . DS;
 		@unlink($path . 'error.log');

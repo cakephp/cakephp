@@ -341,7 +341,7 @@ class HelperTest extends CakeTestCase {
  * test getting values from Helper
  *
  * @return void
- **/
+ */
 	function testValue() {
 		$this->Helper->data = array('fullname' => 'This is me');
 		$this->Helper->setEntity('fullname');
@@ -367,13 +367,33 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('Post.2.created.year');
 		$result = $this->Helper->value('Post.2.created.year');
 		$this->assertEqual($result, '2008');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => ''));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, '');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => array(2, 3, 4)));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(2, 3, 4));
+
+		$this->Helper->data = array(
+			'HelperTestTag' => array(
+				array('id' => 3),
+				array('id' => 5)
+			)
+		);
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(3 => 3, 5 => 5));
 	}
 
 /**
  * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
  *
  * @return void
- **/
+ */
 	function testUrlConversion() {
 		$result = $this->Helper->url('/controller/action/1');
 		$this->assertEqual($result, '/controller/action/1');
@@ -409,7 +429,7 @@ class HelperTest extends CakeTestCase {
  * test assetTimestamp application
  *
  * @return void
- **/
+ */
 	function testAssetTimestamp() {
 		$_timestamp = Configure::read('Asset.timestamp');
 		$_debug = Configure::read('debug');

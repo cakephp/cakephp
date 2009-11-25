@@ -252,7 +252,7 @@ class View extends Object {
  * Holds View output.
  *
  * @var string
- **/
+ */
 	var $output = false;
 
 /**
@@ -722,7 +722,7 @@ class View extends Object {
 				$cache->helpers = $this->helpers;
 				$cache->action = $this->action;
 				$cache->controllerName = $this->name;
-				$cache->layout	= $this->layout;
+				$cache->layout = $this->layout;
 				$cache->cacheAction = $this->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}
@@ -750,18 +750,14 @@ class View extends Object {
 				$options = $helper;
 				$helper = $i;
 			}
-			$plugin = $this->plugin;
-
-			if (strpos($helper, '.') !== false) {
-				list($plugin, $helper) = explode('.', $helper);
-			}
+			list($plugin, $helper) = pluginSplit($helper, true, $this->plugin);
 			$helperCn = $helper . 'Helper';
 
 			if (!isset($loaded[$helper])) {
 				if (!class_exists($helperCn)) {
 					$isLoaded = false;
 					if (!is_null($plugin)) {
-						$isLoaded = App::import('Helper', $plugin . '.' . $helper);
+						$isLoaded = App::import('Helper', $plugin . $helper);
 					}
 					if (!$isLoaded) {
 						if (!App::import('Helper', $helper)) {

@@ -40,7 +40,7 @@
 		</div>
 		<div id="content">
 
-			<?php $this->Session->flash(); ?>
+			<?php echo $this->Session->flash(); ?>
 
 			<?php echo $content_for_layout; ?>
 

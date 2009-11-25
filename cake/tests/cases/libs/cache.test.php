@@ -43,8 +43,6 @@ class CacheTest extends CakeTestCase {
 
 		$this->_defaultCacheConfig = Cache::config('default');
 		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
-
-		Cache::engine('File', array('path' => TMP . 'tests'));
 	}
 
 /**
@@ -56,7 +54,6 @@ class CacheTest extends CakeTestCase {
 	function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_defaultCacheConfig['settings']);
-		Cache::engine('File');
 	}
 
 /**
@@ -69,6 +66,31 @@ class CacheTest extends CakeTestCase {
 		$settings = array('engine' => 'File', 'path' => TMP . 'tests', 'prefix' => 'cake_test_');
 		$results = Cache::config('new', $settings);
 		$this->assertEqual($results, Cache::config('new'));
+	}
+
+/**
+ * test configuring CacheEngines in App/libs
+ *
+ * @return void
+ */
+	function testConfigWithLibAndPluginEngines() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$settings = array('engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('libEngine', $settings);
+		$this->assertEqual($result, Cache::config('libEngine'));
+
+		$settings = array('engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_');
+		$result = Cache::config('pluginLibEngine', $settings);
+		$this->assertEqual($result, Cache::config('pluginLibEngine'));
+
+		Cache::drop('libEngine');
+		Cache::drop('pluginLibEngine');
+
+		App::build();
 	}
 
 /**
@@ -102,13 +124,43 @@ class CacheTest extends CakeTestCase {
 		$_cacheConfigTests = Cache::config('tests');
 
 		$result = Cache::config('sessions', array('engine'=> 'File', 'path' => TMP . 'sessions'));
-		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertEqual($result['settings'], Cache::settings('sessions'));
 
 		$result = Cache::config('tests', array('engine'=> 'File', 'path' => TMP . 'tests'));
-		$this->assertEqual($result['settings'], Cache::settings('File'));
+		$this->assertEqual($result['settings'], Cache::settings('tests'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
 		Cache::config('tests', $_cacheConfigTests['settings']);
+	}
+
+/**
+ * test that calling config() sets the 'default' configuration up.
+ *
+ * @return void
+ */
+	function testConfigSettingDefaultConfigKey() {
+		Cache::config('test_name', array('engine' => 'File', 'prefix' => 'test_name_'));
+
+		Cache::config('test_name');
+		Cache::write('value_one', 'I am cached');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am cached');
+
+		Cache::config('default');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, null);
+
+		Cache::write('value_one', 'I am in another cache config!');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am in another cache config!');
+
+		Cache::config('test_name');
+		$result = Cache::read('value_one');
+		$this->assertEqual($result, 'I am cached');
+		
+		Cache::delete('value_one');
+		Cache::config('default');
+		Cache::delete('value_one');
 	}
 
 /**
@@ -132,9 +184,21 @@ class CacheTest extends CakeTestCase {
 			'engine' => 'File',
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
-		$this->assertEqual($expected, Cache::settings('File'));
+		$this->assertEqual($expected, Cache::settings('sessions'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
+	}
+
+/**
+ * test that configured returns an array of the currently configured cache 
+ * settings
+ *
+ * @return void
+ */
+	function testConfigured() {
+		$result = Cache::configured();
+		$this->assertTrue(in_array('_cake_core_', $result));
+		$this->assertTrue(in_array('default', $result));
 	}
 
 /**
@@ -144,7 +208,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testInitSettings() {
-		Cache::engine('File', array('path' => TMP . 'tests'));
+		Cache::config('default', array('engine' => 'File', 'path' => TMP . 'tests'));
 
 		$settings = Cache::settings();
 		$expecting = array(
@@ -158,8 +222,37 @@ class CacheTest extends CakeTestCase {
 			'isWindows' => DIRECTORY_SEPARATOR == '\\'
 		);
 		$this->assertEqual($settings, $expecting);
+	}
 
-		Cache::engine('File');
+/**
+ * test that drop removes cache configs, and that further attempts to use that config 
+ * do not work.
+ *
+ * @return void
+ */
+	function testDrop() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+
+		$result = Cache::drop('some_config_that_does_not_exist');
+		$this->assertFalse($result);
+
+		$_testsConfig = Cache::config('tests');
+		$result = Cache::drop('tests');
+		$this->assertTrue($result);
+		
+		Cache::config('unconfigTest', array(
+			'engine' => 'TestAppCache'
+		));
+		$this->assertTrue(Cache::isInitialized('unconfigTest'));
+
+		$this->assertTrue(Cache::drop('unconfigTest'));
+		$this->assertFalse(Cache::isInitialized('TestAppCache'));
+
+		Cache::config('tests', $_testsConfig);
+		App::build();
 	}
 
 /**
@@ -256,5 +349,6 @@ class CacheTest extends CakeTestCase {
 
 		Cache::set($_cacheSet);
 	}
+
 }
 ?>

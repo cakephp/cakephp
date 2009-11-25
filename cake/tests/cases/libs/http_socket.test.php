@@ -1068,6 +1068,9 @@ class HttpSocketTest extends CakeTestCase {
 		$r = $this->Socket->buildUri(array('host' => 'www.cakephp.org', 'port' => 23));
 		$this->assertIdentical($r, 'http://www.cakephp.org:23/');
 
+		$r = $this->Socket->buildUri(array('path' => 'www.google.com/search', 'query' => 'q=cakephp'));
+		$this->assertIdentical($r, 'http://www.google.com/search?q=cakephp');
+
 		$r = $this->Socket->buildUri(array('host' => 'www.cakephp.org', 'scheme' => 'https', 'port' => 79));
 		$this->assertIdentical($r, 'https://www.cakephp.org:79/');
 

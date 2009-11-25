@@ -542,7 +542,7 @@ class ModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
@@ -587,7 +587,7 @@ class AgainModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
@@ -2025,7 +2025,58 @@ class AssociationTest2 extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class Callback extends CakeTestModel {
-	//
+	
+}
+/**
+ * CallbackPostTestModel class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class CallbackPostTestModel extends CakeTestModel {
+	var $useTable = 'posts';
+/**
+ * variable to control return of beforeValidate
+ *
+ * @var string
+ */
+	var $beforeValidateReturn = true;
+/**
+ * variable to control return of beforeSave
+ *
+ * @var string
+ */
+	var $beforeSaveReturn = true;
+/**
+ * variable to control return of beforeDelete
+ *
+ * @var string
+ */
+	var $beforeDeleteReturn = true;
+/**
+ * beforeSave callback
+ *
+ * @return void
+ */
+	function beforeSave($options) {
+		return $this->beforeSaveReturn;
+	}
+/**
+ * beforeValidate callback
+ *
+ * @return void
+ */
+	function beforeValidate($options) {
+		return $this->beforeValidateReturn;
+	}
+/**
+ * beforeDelete callback
+ *
+ * @return void
+ */
+	function beforeDelete($cascade = true) {
+		return $this->beforeDeleteReturn;
+	}
 }
 
 /**

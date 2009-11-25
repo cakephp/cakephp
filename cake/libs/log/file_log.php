@@ -2,7 +2,6 @@
 /**
  * File Storage stream for Logging
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
@@ -18,7 +17,9 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+if (!class_exists('File')) {
+	require LIBS . 'file.php';
+}
 /**
  * File Storage stream for Logging
  *
@@ -31,7 +32,7 @@ class FileLog {
  * Path to save log files on.
  *
  * @var string
- **/
+ */
 	var $_path = null;
 
 /**
@@ -43,7 +44,7 @@ class FileLog {
  *
  * @param array $options Options for the FileLog, see above.
  * @return void
- **/
+ */
 	function FileLog($options = array()) {
 		$options += array('path' => LOGS);
 		$this->_path = $options['path'];
@@ -55,7 +56,7 @@ class FileLog {
  * @param string $type The type of log you are making.
  * @param string $message The message you want to log.
  * @return boolean success of write.
- **/
+ */
 	function write($type, $message) {
 		$debugTypes = array('notice', 'info', 'debug');
 

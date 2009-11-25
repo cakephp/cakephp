@@ -54,14 +54,14 @@ class FixtureTask extends Shell {
  * The db connection being used for baking
  *
  * @var string
- **/
+ */
 	var $connection = null;
 
 /**
  * Schema instance
  *
  * @var object
- **/
+ */
 	var $_Schema = null;
 
 /**
@@ -103,7 +103,7 @@ class FixtureTask extends Shell {
  *
  * @access public
  * @return void
- **/
+ */
 	function all() {
 		$this->interactive = false;
 		$this->Model->interactive = false;
@@ -140,7 +140,7 @@ class FixtureTask extends Shell {
  *
  * @param string $modelName Name of model you are dealing with.
  * @return array Array of import options.
- **/
+ */
 	function importOptions($modelName) {
 		$options = array();
 		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
@@ -230,7 +230,7 @@ class FixtureTask extends Shell {
  * @param string $fixture Contents of the fixture file.
  * @access public
  * @return void
- **/
+ */
 	function generateFixtureFile($model, $otherVars) {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
@@ -255,7 +255,7 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return string fields definitions
- **/
+ */
 	function _generateSchema($tableInfo) {
 		$schema = $this->_Schema->generateTable('f', $tableInfo);
 		return substr($schema, 10, -2);
@@ -266,7 +266,7 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return array Array of records to use in the fixture.
- **/
+ */
 	function _generateRecords($tableInfo, $recordCount = 1) {
 		$records = array();
 		for ($i = 0; $i < $recordCount; $i++) {
@@ -277,9 +277,11 @@ class FixtureTask extends Shell {
 				}
 				switch ($fieldInfo['type']) {
 					case 'integer':
+					case 'float':
 						$insert = $i + 1;
 					break;
-					case 'string';
+					case 'string':
+					case 'binary':
 						$isPrimaryUuid = (
 							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) == 'primary' &&
 							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
@@ -335,7 +337,7 @@ class FixtureTask extends Shell {
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.
- **/
+ */
 	function _makeRecordString($records) {
 		$out = "array(\n";
 		foreach ($records as $record) {
@@ -358,7 +360,7 @@ class FixtureTask extends Shell {
  * @param string $modelName name of the model to take records from.
  * @param string $useTable Name of table to use.
  * @return array Array of records.
- **/
+ */
 	function _getRecordsFromTable($modelName, $useTable = null) {
 		if ($this->interactive) {
 			$condition = null;

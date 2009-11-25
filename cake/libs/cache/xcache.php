@@ -2,7 +2,6 @@
 /**
  * Xcache storage engine for cache.
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -29,9 +28,10 @@
 class XcacheEngine extends CacheEngine {
 
 /**
- * settings
- * 		PHP_AUTH_USER = xcache.admin.user, default cake
- * 		PHP_AUTH_PW = xcache.admin.password, default cake
+ * Settings
+ *
+ *  - PHP_AUTH_USER = xcache.admin.user, default cake
+ *  - PHP_AUTH_PW = xcache.admin.password, default cake
  *
  * @var array
  * @access public
@@ -67,7 +67,7 @@ class XcacheEngine extends CacheEngine {
  */
 	function write($key, &$value, $duration) {
 		$expires = time() + $duration;
-		xcache_set($key.'_expires', $expires, $duration);
+		xcache_set($key . '_expires', $expires, $duration);
 		return xcache_set($key, $value, $duration);
 	}
 
@@ -81,7 +81,7 @@ class XcacheEngine extends CacheEngine {
 	function read($key) {
 		if (xcache_isset($key)) {
 			$time = time();
-			$cachetime = intval(xcache_get($key.'_expires'));
+			$cachetime = intval(xcache_get($key . '_expires'));
 			if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
 				return false;
 			}

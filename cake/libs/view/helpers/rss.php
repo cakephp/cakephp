@@ -34,7 +34,7 @@ class RssHelper extends XmlHelper {
  *
  * @var array
  * @access public
- **/
+ */
 	var $helpers = array('Time');
 
 /**
@@ -269,7 +269,7 @@ class RssHelper extends XmlHelper {
 		if (!empty($elements)) {
 			$content = join('', $elements);
 		}
-		return $this->output($this->elem('item', $att, $content, !($content === null)));
+		return $this->elem('item', $att, $content, !($content === null));
 	}
 
 /**

@@ -50,7 +50,7 @@ class RouterTest extends CakeTestCase {
  * end the test and reset the environment
  *
  * @return void
- **/
+ */
 	function endTest() {
 		Configure::write('Routing', $this->_routing);
 	}
@@ -1031,7 +1031,7 @@ class RouterTest extends CakeTestCase {
  * or reset
  *
  * @return void
- **/
+ */
 	function testRoutingPrefixesSetting() {
 		$restore = Configure::read('Routing');
 
@@ -1120,7 +1120,7 @@ class RouterTest extends CakeTestCase {
  * Test prefix routing and plugin combinations
  *
  * @return void
- **/
+ */
 	function testPrefixRoutingAndPlugins() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$paths = App::path('plugins');
@@ -1461,7 +1461,7 @@ class RouterTest extends CakeTestCase {
  * test newer style automatically generated prefix routes.
  *
  * @return void
- **/
+ */
 	function testUrlGenerationWithAutoPrefixes() {
 		Configure::write('Routing.prefixes', array('protected'));
 		Router::reload();
@@ -1518,7 +1518,7 @@ class RouterTest extends CakeTestCase {
  * test that auto-generated prefix routes persist
  *
  * @return void
- **/
+ */
 	function testAutoPrefixRoutePersistence() {
 		Configure::write('Routing.prefixes', array('protected'));
 		Router::reload();

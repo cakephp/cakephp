@@ -114,6 +114,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('waxes'), 'wax');
 		$this->assertEqual(Inflector::singularize('niches'), 'niche');
 		$this->assertEqual(Inflector::singularize('waves'), 'wave');
+		$this->assertEqual(Inflector::singularize('bureaus'), 'bureau');
 		$this->assertEqual(Inflector::singularize(''), '');
 	}
 
@@ -160,6 +161,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::pluralize('crisis'), 'crises');
 		$this->assertEqual(Inflector::pluralize('tax'), 'taxes');
 		$this->assertEqual(Inflector::pluralize('wave'), 'waves');
+		$this->assertEqual(Inflector::pluralize('bureau'), 'bureaus');
 		$this->assertEqual(Inflector::pluralize(''), '');
 	}
 
@@ -266,6 +268,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::classify('artists_genres'), 'ArtistsGenre');
 		$this->assertEqual(Inflector::classify('file_systems'), 'FileSystem');
 		$this->assertEqual(Inflector::classify('news'), 'News');
+		$this->assertEqual(Inflector::classify('bureaus'), 'Bureau');
 	}
 
 /**
@@ -278,6 +281,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::tableize('ArtistsGenre'), 'artists_genres');
 		$this->assertEqual(Inflector::tableize('FileSystem'), 'file_systems');
 		$this->assertEqual(Inflector::tableize('News'), 'news');
+		$this->assertEqual(Inflector::tableize('Bureau'), 'bureaus');
 	}
 
 /**

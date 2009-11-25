@@ -536,7 +536,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * test deconstruct() with time fields.
  *
  * @return void
- **/
+ */
 	function testDeconstructFieldsTime() {
 		$this->loadFixtures('Apple');
 		$TestModel =& new Apple();
@@ -881,7 +881,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that __exists is reset on create
  *
  * @return void
- **/
+ */
 	function testResetOfExistsOnCreate() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -1179,7 +1179,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstruct() {
 		$this->loadFixtures('Post', 'Comment');
 
@@ -1200,7 +1200,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstructWithAlternateDataSource() {
 		$TestModel =& ClassRegistry::init(array(
 			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false

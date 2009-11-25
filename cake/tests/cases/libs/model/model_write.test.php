@@ -313,7 +313,7 @@ class ModelWriteTest extends BaseModelTest {
  * as url for controller could be either overallFavorites/index or overall_favorites/index
  *
  * @return void
- **/
+ */
 	function testCacheClearOnSave() {
 		$_back = array(
 			'check' => Configure::read('Cache.check'),
@@ -616,6 +616,40 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue($result);
 	}
 
+/**
+ * test that beforeValidate returning false can abort saves.
+ *
+ * @return void
+ */
+	function testBeforeValidateSaveAbortion() {
+		$Model =& new CallbackPostTestModel();
+		$Model->beforeValidateReturn = false;
+		
+		$data = array(
+			'title' => 'new article',
+			'body' => 'this is some text.'
+		);
+		$Model->create();
+		$result = $Model->save($data);
+		$this->assertFalse($result);
+	}
+/**
+ * test that beforeSave returning false can abort saves.
+ *
+ * @return void
+ */
+	function testBeforeSaveSaveAbortion() {
+		$Model =& new CallbackPostTestModel();
+		$Model->beforeSaveReturn = false;
+
+		$data = array(
+			'title' => 'new article',
+			'body' => 'this is some text.'
+		);
+		$Model->create();
+		$result = $Model->save($data);
+		$this->assertFalse($result);
+	}
 /**
  * testValidates method
  *
@@ -2588,7 +2622,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new Fruit();
@@ -2612,7 +2646,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTableNoWith() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new FruitNoWith();

@@ -195,6 +195,29 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
+		
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
+
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
+		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'asc'));
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
+
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'asc'));
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
+
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 	}
 
 
@@ -731,7 +754,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * allowing you to use shortcut syntax
  *
  * @return void
- **/
+ */
 	function testPagingLinksOptionsReplaceEmptyDisabledOptions() {
 		$this->Paginator->params['paging'] = array(
 			'Client' => array(
@@ -1735,7 +1758,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * test that mock classes injected into paginatorHelper are called when using link()
  *
  * @return void
- **/
+ */
 	function testMockAjaxProviderClassInjection() {
 		$Paginator =& new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(

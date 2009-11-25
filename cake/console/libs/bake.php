@@ -57,7 +57,7 @@ class BakeShell extends Shell {
 			}
 			foreach($this->args as $i => $arg) {
 				if (strpos($arg, '.')) {
-					list($this->params['plugin'], $this->args[$i]) = explode('.', $arg);
+					list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
 					break;
 				}
 			}
@@ -230,6 +230,8 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
 		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
+		$this->out("\n\tbake fixture\n\t\tbakes fixtures. run 'bake fixture help' for more info.");
+		$this->out("\n\tbake test\n\t\tbakes unit tests. run 'bake test help' for more info.");
 		$this->out();
 
 	}

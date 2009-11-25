@@ -45,7 +45,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * Store reference of $_GET to restore later.
  *
  * @return void
- **/
+ */
 	function startCase() {
 		$this->_get = $_GET;
 	}
@@ -54,7 +54,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * End Case - restore GET vars.
  *
  * @return void
- **/
+ */
 	function endCase() {
 		$_GET = $this->_get;
 	}
