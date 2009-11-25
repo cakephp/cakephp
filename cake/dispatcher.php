@@ -600,7 +600,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	function cached($url) {
-		if (strpos($url, '.ico') !== false || strpos($url, 'css/') !== false || strpos($url, 'js/') !== false || strpos($url, 'img/') !== false) {
+		if (strpos($url, '.')) {
 			if (strpos($url, 'ccss/') === 0) {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.css');
 				$this->_stop();
@@ -608,33 +608,19 @@ class Dispatcher extends Object {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.js');
 				$this->_stop();
 			}
-			$isAsset = false;
-			$assets = array(
-				'js' => 'text/javascript',
-				'css' => 'text/css',
-				'gif' => 'image/gif',
-				'jpg' => 'image/jpeg',
-				'png' => 'image/png',
-				'ico' => 'image/vnd.microsoft.icon'
-			);
+			App::import('View', 'Media', false);
+			$Media = new MediaView();
 			$ext = array_pop(explode('.', $url));
-
-			foreach ($assets as $type => $contentType) {
-				if ($type === $ext) {
-					$parts = explode('/', $url);
-					if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
-						$pos = 0;
-					} elseif ($parts[0] === 'theme') {
-						$pos = strlen($parts[0] . $parts[1]) + 1;
-					} elseif (count($parts) > 2) {
-						$pos = strlen($parts[0]);
-					}
-					$isAsset = true;
-					break;
+			
+			if (isset($Media->mimeType[$ext])) {
+				$parts = explode('/', $url);
+				if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
+					$pos = 0;
+				} elseif ($parts[0] === 'theme') {
+					$pos = strlen($parts[0] . $parts[1]) + 1;
+				} elseif (count($parts) > 2) {
+					$pos = strlen($parts[0]);
 				}
-			}
-
-			if ($isAsset === true) {
 				$ob = @ini_get("zlib.output_compression") !== '1' && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 
 				if ($ob && Configure::read('Asset.compress')) {
@@ -680,11 +666,11 @@ class Dispatcher extends Object {
 				if ($assetFile !== null) {
 					$fileModified = filemtime($assetFile);
 					header("Date: " . date("D, j M Y G:i:s ", $fileModified) . 'GMT');
-					header('Content-type: ' . $assets[$type]);
+					header('Content-type: ' . $Media->mimeType[$ext]);
 					header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
 					header("Cache-Control: cache");
 					header("Pragma: cache");
-					if ($type === 'css' || $type === 'js') {
+					if ($ext === 'css' || $ext === 'js') {
 						include($assetFile);
 					} else {
 						readfile($assetFile);
