@@ -651,12 +651,7 @@ class Dispatcher extends Object {
 					}
 
 					if ($matched === false) {
-						$pluginPaths = App::path('plugins');
-						$count = count($pluginPaths);
-							
-						for ($i = 0; $i < $count; $i++) {
-							$paths[] = $pluginPaths[$i] . $plugin . DS . 'webroot' . DS;
-						}
+						$paths[] = App::pluginPath($plugin) . 'webroot' . DS;
 					}
 				}
 
