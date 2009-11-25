@@ -630,8 +630,8 @@ class DboSource extends DataSource {
 		}
 		$query = array(
 			'table' => $this->fullTableName($model),
-			'fields' => join(', ', $fieldInsert),
-			'values' => join(', ', $valueInsert)
+			'fields' => implode(', ', $fieldInsert),
+			'values' => implode(', ', $valueInsert)
 		);
 
 		if ($this->execute($this->renderStatement('create', $query))) {
@@ -849,7 +849,7 @@ class DboSource extends DataSource {
 				}
 				if (!empty($ins)) {
 					if (count($ins) > 1) {
-						$query = str_replace('{$__cakeID__$}', '(' .join(', ', $ins) .')', $query);
+						$query = str_replace('{$__cakeID__$}', '(' .implode(', ', $ins) .')', $query);
 						$query = str_replace('= (', 'IN (', $query);
 						$query = str_replace('= (', 'IN (', $query);
 					} else {
@@ -949,7 +949,7 @@ class DboSource extends DataSource {
  * @return array Association results
  */
 	function fetchAssociated($model, $query, $ids) {
-		$query = str_replace('{$__cakeID__$}', join(', ', $ids), $query);
+		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
 			$query = str_replace('= (', 'IN (', $query);
@@ -1332,12 +1332,12 @@ class DboSource extends DataSource {
 		}
 		return $this->renderStatement('select', array(
 			'conditions' => $this->conditions($query['conditions'], true, true, $model),
-			'fields' => join(', ', $query['fields']),
+			'fields' => implode(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
 			'order' => $this->order($query['order']),
 			'limit' => $this->limit($query['limit'], $query['offset']),
-			'joins' => join(' ', $query['joins']),
+			'joins' => implode(' ', $query['joins']),
 			'group' => $this->group($query['group'])
 		));
 	}
@@ -1444,7 +1444,7 @@ class DboSource extends DataSource {
 		} else {
 			$combined = array_combine($fields, $values);
 		}
-		$fields = join(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions)));
+		$fields = implode(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions)));
 
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
@@ -1807,7 +1807,7 @@ class DboSource extends DataSource {
 						} else {
 							$field[0] = explode('.', $field[1]);
 							if (!Set::numeric($field[0])) {
-								$field[0] = join('.', array_map(array($this, 'name'), $field[0]));
+								$field[0] = implode('.', array_map(array($this, 'name'), $field[0]));
 								$fields[$i] = preg_replace('/\(' . $field[1] . '\)/', '(' . $field[0] . ')', $fields[$i], 1);
 							}
 						}
@@ -1840,7 +1840,7 @@ class DboSource extends DataSource {
 			if (empty($out)) {
 				return $clause . ' 1 = 1';
 			}
-			return $clause . join(' AND ', $out);
+			return $clause . implode(' AND ', $out);
 		}
 
 		if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
@@ -1910,7 +1910,7 @@ class DboSource extends DataSource {
 						$out[] = $value[0] ;
 					}
 				} else {
-					$out[] = '(' . $not . '(' . join(') ' . strtoupper($key) . ' (', $value) . '))';
+					$out[] = '(' . $not . '(' . implode(') ' . strtoupper($key) . ' (', $value) . '))';
 				}
 
 			} else {
@@ -1937,13 +1937,13 @@ class DboSource extends DataSource {
 							if (is_object($model)) {
 								$columnType = $model->getColumnType($key);
 							}
-							$data .= join(', ', $this->value($value, $columnType));
+							$data .= implode(', ', $this->value($value, $columnType));
 						}
 						$data .= ')';
 					} else {
 						$ret = $this->conditionKeysToString($value, $quoteValues, $model);
 						if (count($ret) > 1) {
-							$data = '(' . join(') AND (', $ret) . ')';
+							$data = '(' . implode(') AND (', $ret) . ')';
 						} elseif (isset($ret[0])) {
 							$data = $ret[0];
 						}
@@ -1978,7 +1978,7 @@ class DboSource extends DataSource {
  * @access private
  */
 	function __parseKey($model, $key, $value) {
-		$operatorMatch = '/^((' . join(')|(', $this->__sqlOps);
+		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
 
@@ -2024,7 +2024,7 @@ class DboSource extends DataSource {
 		$operator = trim($operator);
 
 		if (is_array($value)) {
-			$value = join(', ', $value);
+			$value = implode(', ', $value);
 
 			switch ($operator) {
 				case '=':
@@ -2124,7 +2124,7 @@ class DboSource extends DataSource {
 			$keys = array_filter($keys);
 		}
 
-		if (empty($keys) || (is_array($keys) && count($keys) && isset($keys[0]) && empty($keys[0]))) {
+		if (empty($keys) || (is_array($keys) && isset($keys[0]) && empty($keys[0]))) {
 			return '';
 		}
 
@@ -2154,7 +2154,7 @@ class DboSource extends DataSource {
 				}
 				$order[] = $this->order($key . $value);
 			}
-			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', join(',', $order)));
+			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', implode(',', $order)));
 		}
 		$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
 
@@ -2186,7 +2186,7 @@ class DboSource extends DataSource {
 	function group($group) {
 		if ($group) {
 			if (is_array($group)) {
-				$group = join(', ', $group);
+				$group = implode(', ', $group);
 			}
 			return ' GROUP BY ' . $this->__quoteFields($group);
 		}
@@ -2315,7 +2315,7 @@ class DboSource extends DataSource {
 	function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
-			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
+			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$count = count($values);
 		for ($x = 0; $x < $count; $x++) {
@@ -2521,7 +2521,7 @@ class DboSource extends DataSource {
 				$name = $this->startQuote . $name . $this->endQuote;
 			}
 			if (is_array($value['column'])) {
-				$out .= 'KEY ' . $name . ' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+				$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 			} else {
 				$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
 			}

@@ -273,7 +273,7 @@ class JavascriptHelper extends AppHelper {
 				}
 			}
 		}
-		$out = $this->output(sprintf($this->tags['javascriptlink'], $url));
+		$out = sprintf($this->tags['javascriptlink'], $url);
 
 		if ($inline) {
 			return $out;
@@ -655,9 +655,9 @@ class JavascriptHelper extends AppHelper {
 			}
 
 			if (!$numeric) {
-				$rt = '{' . join(',', $out) . '}';
+				$rt = '{' . implode(',', $out) . '}';
 			} else {
-				$rt = '[' . join(',', $out) . ']';
+				$rt = '[' . implode(',', $out) . ']';
 			}
 		}
 		$rt = $options['prefix'] . $rt . $options['postfix'];

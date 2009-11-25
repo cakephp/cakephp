@@ -645,7 +645,7 @@ class Controller extends Object {
 				504 => 'Gateway Time-out'
 			);
 			if (is_string($status)) {
-				$codes = array_combine(array_values($codes), array_keys($codes));
+				$codes = array_flip($codes);
 			}
 
 			if (isset($codes[$status])) {
@@ -776,7 +776,7 @@ class Controller extends Object {
 	function validateErrors() {
 		$objects = func_get_args();
 
-		if (!count($objects)) {
+		if (empty($objects)) {
 			return false;
 		}
 
@@ -786,7 +786,7 @@ class Controller extends Object {
 			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 
-		return $this->validationErrors = (count($errors) ? $errors : false);
+		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
@@ -951,12 +951,14 @@ class Controller extends Object {
 			foreach ($fields as $field => $value) {
 				$key = $model.'.'.$field;
 				$fieldOp = $op;
-				if (is_array($op) && array_key_exists($key, $op)) {
-					$fieldOp = $op[$key];
-				} elseif (is_array($op) && array_key_exists($field, $op)) {
-					$fieldOp = $op[$field];
-				} elseif (is_array($op)) {
-					$fieldOp = false;
+				if (is_array($op)) {
+					if (array_key_exists($key, $op)) {
+						$fieldOp = $op[$key];
+					} elseif (array_key_exists($field, $op)) {
+						$fieldOp = $op[$field];
+					} else {
+						$fieldOp = false;
+					}
 				}
 				if ($exclusive && $fieldOp === false) {
 					continue;

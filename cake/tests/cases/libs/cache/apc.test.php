@@ -39,7 +39,7 @@ class ApcEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if (Cache::engine('Apc')) {
+		if (function_exists('apc_store')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Apc is not installed or configured properly');
@@ -65,6 +65,7 @@ class ApcEngineTest extends UnitTestCase {
  */
 	function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::drop('apc');
 		Cache::config('default');
 	}
 
@@ -112,7 +113,7 @@ class ApcEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  "+1 second"));
+		Cache::set(array('duration' =>  1));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data);

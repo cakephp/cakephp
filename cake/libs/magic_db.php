@@ -95,7 +95,7 @@ class MagicDb extends Object {
 		$lines = explode("\r\n", $data);
 		$db = array();
 
-		$validHeader = count($lines > 3)
+		$validHeader = count($lines) > 3
 					&& preg_match('/^# Date:([0-9]{4}-[0-9]{2}-[0-9]{2})$/', $lines[1], $date)
 					&& preg_match('/^# Source:(.+)$/', $lines[2], $source)
 					&& strlen($lines[3]) == 0;

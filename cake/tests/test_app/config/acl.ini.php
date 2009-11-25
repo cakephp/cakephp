@@ -1,4 +1,4 @@
-;<?php die() ?>
+;<?php exit() ?>
 ; SVN FILE: $Id$
 ;/**
 ; * Test App Ini Based Acl Config File

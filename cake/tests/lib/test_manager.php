@@ -602,7 +602,7 @@ class HtmlTestManager extends TestManager {
 		foreach ($testCases as $testCaseFile => $testCase) {
 			$title = explode(strpos($testCase, '\\') ? '\\' : '/', str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
-			$title = join(' / ', $title);
+			$title = implode(' / ', $title);
 
 				$buffer .= "<li><a href='" . $manager->getBaseURL() . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
 		}

@@ -164,7 +164,7 @@ class ControllerTask extends Shell {
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
 			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
 		}
-		$doItInteractive = $this->in(join("\n", $question), array('y', 'n'), 'y');
+		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
 
 		if (strtolower($doItInteractive) == 'y') {
 			$this->interactive = true;

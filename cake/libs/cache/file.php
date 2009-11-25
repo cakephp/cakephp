@@ -37,11 +37,12 @@ class FileEngine extends CacheEngine {
 	var $__File = null;
 
 /**
- * settings
- * 		path = absolute path to cache directory, default => CACHE
- * 		prefix = string prefix for filename, default => cake_
- * 		lock = enable file locking on write, default => false
- * 		serialize = serialize the data, default => true
+ * Settings
+ * 
+ * - path = absolute path to cache directory, default => CACHE
+ * - prefix = string prefix for filename, default => cake_
+ * - lock = enable file locking on write, default => false
+ * - serialize = serialize the data, default => true
  *
  * @var array
  * @see CacheEngine::__defaults

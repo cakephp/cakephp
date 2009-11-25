@@ -514,7 +514,7 @@ class CakeSchema extends Object {
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => array('" . join("', '",  $val) . "')";
+					$vals[] = "'{$key}' => array('" . implode("', '",  $val) . "')";
 				} else if (!is_numeric($key)) {
 					$val = var_export($val, true);
 					$vals[] = "'{$key}' => {$val}";

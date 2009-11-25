@@ -554,11 +554,11 @@ class DboPostgres extends DboSource {
 				}
 
 				if (!empty($colList)) {
-					$out .= "\t" . join(",\n\t", $colList) . ";\n\n";
+					$out .= "\t" . implode(",\n\t", $colList) . ";\n\n";
 				} else {
 					$out = '';
 				}
-				$out .= join(";\n\t", $this->_alterIndexes($curTable, $indexes)) . ";";
+				$out .= implode(";\n\t", $this->_alterIndexes($curTable, $indexes)) . ";";
 			}
 		}
 		return $out;
@@ -596,7 +596,7 @@ class DboPostgres extends DboSource {
 					$out .= 'INDEX ';
 				}
 				if (is_array($value['column'])) {
-					$out .= $name . ' ON ' . $table . ' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+					$out .= $name . ' ON ' . $table . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 				} else {
 					$out .= $name . ' ON ' . $table . ' (' . $this->name($value['column']) . ')';
 				}
@@ -855,7 +855,7 @@ class DboPostgres extends DboSource {
 					$out .= 'UNIQUE ';
 				}
 				if (is_array($value['column'])) {
-					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+					$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 				} else {
 					$value['column'] = $this->name($value['column']);
 				}
@@ -889,7 +889,7 @@ class DboPostgres extends DboSource {
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = join($join[$var], array_filter(${$var}));
+						${$var} = implode($join[$var], array_filter(${$var}));
 					}
 				}
 				return "CREATE TABLE {$table} (\n\t{$columns}\n);\n{$indexes}";

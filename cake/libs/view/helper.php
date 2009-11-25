@@ -605,7 +605,7 @@ class Helper extends Overloadable {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . join('][', $view->entity()) . ']';
+				$name = 'data[' . implode('][', $view->entity()) . ']';
 			break;
 		}
 
