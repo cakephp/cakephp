@@ -600,7 +600,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	function cached($url) {
-		if (strpos($url, '.')) {
+		if (strpos($url, '..') === false && strpos($url, '.')) {
 			if (strpos($url, 'ccss/') === 0) {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.css');
 				$this->_stop();

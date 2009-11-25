@@ -222,6 +222,9 @@ class ConfigureTest extends CakeTestCase {
 
 		$result = Configure::load('config');
 		$this->assertTrue($result === null);
+		
+		$result = Configure::load('../../index');
+		$this->assertFalse($result);
 	}
 
 /**

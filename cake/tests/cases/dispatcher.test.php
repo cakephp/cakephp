@@ -1786,6 +1786,10 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
+		ob_start();
+		$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
+		$result = ob_get_clean();
+		$this->assertEqual(null, $result);
 		
 		ob_start();
 		$Dispatcher->dispatch('theme/test_theme/flash/theme_test.swf');
