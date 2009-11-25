@@ -1780,52 +1780,71 @@ class DispatcherTest extends CakeTestCase {
 
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS)
+			'vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors'. DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
-
 		$Dispatcher =& new TestDispatcher();
-/**
- * Removing assets in vendors so these 2 tests need to be removed
- *		Configure::write('debug', 0);
- *		ob_start();
- *		$Dispatcher->dispatch('img/test.jpg');
- *		$result = ob_get_clean();
- *		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
- *		$this->assertEqual($file, $result);
- *
- *
- *		Configure::write('debug', 0);
- *		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
- *
- *		ob_start();
- *		$Dispatcher->cached('css/test_asset.css');
- *		$result = ob_get_clean();
- *		$this->assertEqual('this is the test asset css file', $result);
- */
-
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+		
+		ob_start();
+		$Dispatcher->dispatch('theme/test_theme/flash/theme_test.swf');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'flash' . DS . 'theme_test.swf');
+		$this->assertEqual($file, $result);
+		$this->assertEqual('this is just a test to load swf file from the theme.', $result);
+		
+		ob_start();
+		$Dispatcher->dispatch('theme/test_theme/pdfs/theme_test.pdf');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'pdfs' . DS . 'theme_test.pdf');
+		$this->assertEqual($file, $result);
+		$this->assertEqual('this is just a test to load pdf file from the theme.', $result);
+		
+		ob_start();
+		$Dispatcher->dispatch('theme/test_theme/img/test.jpg');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
+		$this->assertEqual($file, $result);
+		
+		
+		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/css/test_asset.css');
+		ob_start();
+		$Dispatcher->cached('theme/test_theme/css/test_asset.css');
+		$result = ob_get_clean();
+		$this->assertEqual('this is the test asset css file', $result);
+		
+		ob_start();
+		$Dispatcher->dispatch('test_plugin/flash/plugin_test.swf');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'flash' . DS . 'plugin_test.swf');
+		$this->assertEqual($file, $result);
+		$this->assertEqual('this is just a test to load swf file from the plugin.', $result);
+	
+		ob_start();
+		$Dispatcher->dispatch('test_plugin/pdfs/plugin_test.pdf');
+		$result = ob_get_clean();
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'pdfs' . DS . 'plugin_test.pdf');
+		$this->assertEqual($file, $result);
+		 $this->assertEqual('this is just a test to load pdf file from the plugin.', $result);
+		
 		ob_start();
 		$Dispatcher->cached('test_plugin/js/test_plugin/test.js');
 		$result = ob_get_clean();
 		$this->assertEqual('alert("Test App");', $result);
 
-
-		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/js/test_plugin/test.js');
 		ob_start();
 		$Dispatcher->cached('test_plugin/js/test_plugin/test.js');
 		$result = ob_get_clean();
 		$this->assertEqual('alert("Test App");', $result);
 
-
-		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		ob_start();
 		$Dispatcher->cached('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test plugin asset css file', $result);
 
-
-		Configure::write('debug', 0);
 		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/img/cake.icon.gif');
 		ob_start();
 		$Dispatcher->cached('test_plugin/img/cake.icon.gif');
@@ -1834,7 +1853,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($file, $result);
 
 
-		Configure::write('debug', 2);
+		Configure::write('debug', $debug);
 		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/plugin_js.js');
 		ob_start();
 		$Dispatcher->cached('plugin_js/js/plugin_js.js');

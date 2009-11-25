@@ -637,10 +637,16 @@ class Dispatcher extends Object {
 
 					if (strpos($plugin, '/') !== false) {
 						list($plugin, $theme) = explode('/', $plugin);
-						$path = VIEWS . 'themed' . DS . $theme . DS . 'webroot' . DS;
-						if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
-							$assetFile = $path . $url;
-							$matched = true;
+						$themePaths = App::path('views');
+						
+						foreach ($themePaths as $viewPath) {
+							$path = $viewPath . 'themed' . DS . $theme . DS . 'webroot' . DS;
+							
+							if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
+								$assetFile = $path . $url;
+								$matched = true;
+								break;
+							}
 						}
 					}
 
