@@ -605,7 +605,7 @@ class Dispatcher extends Object {
  * @access public
  */
 	function cached($url) {
-		if (strpos($url, 'css/') !== false || strpos($url, 'js/') !== false || strpos($url, 'img/') !== false) {
+		if (strpos($url, '.ico') !== false || strpos($url, 'css/') !== false || strpos($url, 'js/') !== false || strpos($url, 'img/') !== false) {
 			if (strpos($url, 'ccss/') === 0) {
 				include WWW_ROOT . DS . Configure::read('Asset.filter.css');
 				$this->_stop();
@@ -615,8 +615,12 @@ class Dispatcher extends Object {
 			}
 			$isAsset = false;
 			$assets = array(
-				'js' => 'text/javascript', 'css' => 'text/css',
-				'gif' => 'image/gif', 'jpg' => 'image/jpeg', 'png' => 'image/png'
+				'js' => 'text/javascript',
+				'css' => 'text/css',
+				'gif' => 'image/gif',
+				'jpg' => 'image/jpeg',
+				'png' => 'image/png',
+				'ico' => 'image/vnd.microsoft.icon'
 			);
 			$ext = array_pop(explode('.', $url));
 
@@ -625,7 +629,9 @@ class Dispatcher extends Object {
 					$parts = explode('/', $url);
 					if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
 						$pos = 0;
-					} else {
+					} elseif ($parts[0] === 'theme') {
+						$pos = strlen($parts[0] . $parts[1]) + 1;
+					} elseif (count($parts) > 2) {
 						$pos = strlen($parts[0]);
 					}
 					$isAsset = true;
@@ -642,18 +648,37 @@ class Dispatcher extends Object {
 				}
 				$assetFile = null;
 				$paths = array();
+				$matched = false;
 
 				if ($pos > 0) {
 					$plugin = substr($url, 0, $pos);
 					$url = preg_replace('/^' . preg_quote($plugin, '/') . '\//i', '', $url);
-					$paths[] = App::pluginPath($plugin) . 'vendors' . DS;
-				}
-				$paths = array_merge($paths, App::path('vendors'));
 
-				foreach ($paths as $path) {
-					if (is_file($path . $url) && file_exists($path . $url)) {
-						$assetFile = $path . $url;
-						break;
+					if (strpos($plugin, '/') !== false) {
+						list($plugin, $theme) = explode('/', $plugin);
+						$path = VIEWS . 'themed' . DS . $theme . DS . 'webroot' . DS;
+						if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
+							$assetFile = $path . $url;
+							$matched = true;
+						}
+					}
+
+					if ($matched === false) {
+						$pluginPaths = App::path('plugins');
+						$count = count($pluginPaths);
+							
+						for ($i = 0; $i < $count; $i++) {
+							$paths[] = $pluginPaths[$i] . $plugin . DS . 'webroot' . DS;
+						}
+					}
+				}
+
+				if ($matched === false) {
+					foreach ($paths as $path) {
+						if (is_file($path . $url) && file_exists($path . $url)) {
+							$assetFile = $path . $url;
+							break;
+						}
 					}
 				}
 

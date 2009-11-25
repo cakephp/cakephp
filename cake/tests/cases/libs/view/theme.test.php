@@ -179,6 +179,8 @@ class ThemeViewTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
+		$Configure = App::getInstance();
+		array_shift($Configure->views);
 	}
 
 /**

@@ -1784,23 +1784,24 @@ class DispatcherTest extends CakeTestCase {
 		));
 
 		$Dispatcher =& new TestDispatcher();
-
-		Configure::write('debug', 0);
-		ob_start();
-		$Dispatcher->dispatch('img/test.jpg');
-		$result = ob_get_clean();
-		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
-		$this->assertEqual($file, $result);
-
-
-		Configure::write('debug', 0);
-		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
-
-		ob_start();
-		$Dispatcher->cached('css/test_asset.css');
-		$result = ob_get_clean();
-		$this->assertEqual('this is the test asset css file', $result);
-
+/**
+ * Removing assets in vendors so these 2 tests need to be removed
+ *		Configure::write('debug', 0);
+ *		ob_start();
+ *		$Dispatcher->dispatch('img/test.jpg');
+ *		$result = ob_get_clean();
+ *		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'img' . DS . 'test.jpg');
+ *		$this->assertEqual($file, $result);
+ *
+ *
+ *		Configure::write('debug', 0);
+ *		$Dispatcher->params = $Dispatcher->parseParams('css/test_asset.css');
+ *
+ *		ob_start();
+ *		$Dispatcher->cached('css/test_asset.css');
+ *		$result = ob_get_clean();
+ *		$this->assertEqual('this is the test asset css file', $result);
+ */
 
 		ob_start();
 		$Dispatcher->cached('test_plugin/js/test_plugin/test.js');
@@ -1829,7 +1830,7 @@ class DispatcherTest extends CakeTestCase {
 		ob_start();
 		$Dispatcher->cached('test_plugin/img/cake.icon.gif');
 		$result = ob_get_clean();
-		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'vendors' . DS . 'img' . DS . 'cake.icon.gif');
+		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
 
 

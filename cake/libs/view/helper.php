@@ -198,24 +198,27 @@ class Helper extends Overloadable {
  * @return string  $webPath web path to file.
  */
 	function webroot($file) {
-		$webPath = "{$this->webroot}" . $file;
-		if (!empty($this->themeWeb)) {
-			$os = env('OS');
-			if (!empty($os) && strpos($os, 'Windows') !== false) {
-				if (strpos(WWW_ROOT . $this->themeWeb  . $file, '\\') !== false) {
-					$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
+		$asset = explode('?', $file);
+		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
+		$webPath = "{$this->webroot}" . $asset[0];
+		
+		if (!empty($this->theme)) {
+			$viewPaths = App::path('views');
+			
+			foreach ($viewPaths as $viewPath) {
+				$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $asset[0];
+				$theme = $this->theme . '/';
+				
+				if (file_exists($path)) {
+					$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+					break;
 				}
-			} else {
-				$path = WWW_ROOT . $this->themeWeb  . $file;
-			}
-			if (file_exists($path)) {
-				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
 		if (strpos($webPath, '//') !== false) {
 			return str_replace('//', '/', $webPath);
 		}
-		return $webPath;
+		return $webPath . $asset[1];
 	}
 
 /**

@@ -333,27 +333,27 @@ class HtmlHelperTest extends CakeTestCase {
  * @link https://trac.cakephp.org/ticket/6490
  */
 	function testImageTagWithTheme() {
-		$file = WWW_ROOT . 'themed' . DS . 'default' . DS . 'img' . DS . 'cake.power.gif';
-		$message = "File '{$file}' not present. %s";
-		$this->skipUnless(file_exists($file), $message);
-
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
-		$this->Html->themeWeb = 'themed/default/';
-
+		
+		$this->Html->theme = 'test_theme';
 		$result = $this->Html->image('cake.power.gif');
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->image('cake.power.gif');
+		
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/\/testing\/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
 		$this->Html->webroot = $webroot;
