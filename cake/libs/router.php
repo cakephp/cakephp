@@ -314,13 +314,14 @@ class Router {
 
 /**
  * Tell router to connect or not connect the default routes.
+ *
  * If default routes are disabled all automatic route generation will be disabled
  * and you will need to manually configure all the routes you want.
  *
  * @param boolean $connect Set to true or false depending on whether you want or don't want default routes.
  * @return void
  */
-	function connectDefaults($connect = true) {
+	function defaults($connect = true) {
 		$_this =& Router::getInstance();
 		$_this->__connectDefaults = $connect;
 	}

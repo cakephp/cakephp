@@ -1965,6 +1965,20 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual(Router::getparams(), $expected);
 		$this->assertEqual(Router::getparams(true), $expected);
 	}
+
+/**
+ * test that connectDefaults() can disable default route connection
+ *
+ * @return void
+ */
+	function testRouterConnectDefaults() {
+		Router::defaults(false);
+		Router::connect('/test/*', array('controller' => 'pages', 'action' => 'display', 2));
+		$result = Router::parse('/posts/edit/5');
+		$this->assertFalse(isset($result['controller']));
+		$this->assertFalse(isset($result['action']));
+
+	}
 }
 
 /**
