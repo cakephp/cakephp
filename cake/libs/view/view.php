@@ -161,13 +161,13 @@ class View extends Object {
  * @var string
  */
 	var $subDir = null;
-
+	
 /**
  * Theme name.
  *
  * @var string
  */
-	var $themeWeb = null;
+	var $theme = null;
 
 /**
  * Used to define methods a controller that will be cached.
@@ -454,7 +454,7 @@ class View extends Object {
 
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
-			'scripts_for_layout' => join("\n\t", $this->__scripts),
+			'scripts_for_layout' => implode("\n\t", $this->__scripts),
 			'cakeDebug' => $debug
 		));
 
@@ -779,9 +779,7 @@ class View extends Object {
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
-				$vars = array(
-					'base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin'
-				);
+				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
 				$c = count($vars);
 
 				for ($j = 0; $j < $c; $j++) {
@@ -837,7 +835,6 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		
 		$exts = array($this->ext);

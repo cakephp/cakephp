@@ -559,7 +559,7 @@ class HtmlHelper extends AppHelper {
 		if ($oneline) {
 			return join(' ', $out);
 		}
-		return join("\n", $out);
+		return implode("\n", $out);
 	}
 
 /**
@@ -571,7 +571,7 @@ class HtmlHelper extends AppHelper {
  * @access public
  */
 	function getCrumbs($separator = '&raquo;', $startText = false) {
-		if (count($this->_crumbs)) {
+		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
 				$out[] = $this->link($startText, '/');
@@ -694,7 +694,7 @@ class HtmlHelper extends AppHelper {
 				$cellsOut[] = sprintf($this->tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
 			}
 			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
-			$out[] = sprintf($this->tags['tablerow'], $options, join(' ', $cellsOut));
+			$out[] = sprintf($this->tags['tablerow'], $options, implode(' ', $cellsOut));
 		}
 		return implode("\n", $out);
 	}

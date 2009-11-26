@@ -225,7 +225,7 @@ class DboAdodb extends DboSource {
 	function listSources() {
 		$tables = $this->_adodb->MetaTables('TABLES');
 
-		if (!sizeof($tables) > 0) {
+		if (!count($tables) > 0) {
 			trigger_error(ERROR_NO_TABLE_LIST, E_USER_NOTICE);
 			exit;
 		}

@@ -40,12 +40,6 @@ class ThemeView extends View {
 	function __construct(&$controller) {
 		parent::__construct($controller);
 		$this->theme =& $controller->theme;
-
-		if (!empty($this->theme)) {
-			if (is_dir(WWW_ROOT . 'themed' . DS . $this->theme)) {
-				$this->themeWeb = 'themed/'. $this->theme .'/';
-			}
-		}
 	}
 
 /**

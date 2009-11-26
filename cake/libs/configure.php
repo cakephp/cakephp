@@ -235,22 +235,25 @@ class Configure extends Object {
 		if ($plugin) {
 			$pluginPath = App::pluginPath($plugin);
 		}
-
-		if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
-			include($pluginPath . 'config' . DS . $fileName . '.php');
-			$found = true;
-		} elseif (file_exists(CONFIGS . $fileName . '.php')) {
-			include(CONFIGS . $fileName . '.php');
-			$found = true;
-		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
-			include(CACHE . 'persistent' . DS . $fileName . '.php');
-			$found = true;
-		} else {
-			foreach (App::core('cake') as $key => $path) {
-				if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
-					include($path . DS . 'config' . DS . $fileName . '.php');
-					$found = true;
-					break;
+		$pos = strpos($fileName, '..');
+		
+		if ($pos === false) {
+			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
+				include($pluginPath . 'config' . DS . $fileName . '.php');
+				$found = true;
+			} elseif (file_exists(CONFIGS . $fileName . '.php')) {
+				include(CONFIGS . $fileName . '.php');
+				$found = true;
+			} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
+				include(CACHE . 'persistent' . DS . $fileName . '.php');
+				$found = true;
+			} else {
+				foreach (App::core('cake') as $key => $path) {
+					if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
+						include($path . DS . 'config' . DS . $fileName . '.php');
+						$found = true;
+						break;
+					}
 				}
 			}
 		}
@@ -859,7 +862,6 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$_this =& App::getInstance();
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -910,7 +912,7 @@ class App extends Object {
 			list($plugin, $name) = explode('.', $name);
 			$plugin = Inflector::camelize($plugin);
 		}
-
+		$_this =& App::getInstance();
 		$_this->return = $return;
 
 		if (isset($ext)) {

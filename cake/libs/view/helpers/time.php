@@ -62,7 +62,7 @@ class TimeHelper extends AppHelper {
 		if (empty($dateString)) {
 			return false;
 		}
-		if (is_integer($dateString) || is_numeric($dateString)) {
+		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} else {
 			$date = strtotime($dateString);

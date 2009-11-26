@@ -794,7 +794,7 @@ class HttpSocket extends CakeSocket {
 		$returnHeader = '';
 		foreach ($header as $field => $contents) {
 			if (is_array($contents) && $mode == 'standard') {
-				$contents = join(',', $contents);
+				$contents = implode(',', $contents);
 			}
 			foreach ((array)$contents as $content) {
 				$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $content);
@@ -873,7 +873,7 @@ class HttpSocket extends CakeSocket {
 		foreach ((array)$header['Set-Cookie'] as $cookie) {
 			if (strpos($cookie, '";"') !== false) {
 				$cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
-				$parts  = str_replace("{__cookie_replace__}", '";"', preg_split('/\;/', $cookie));
+				$parts  = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));
 			} else {
 				$parts = preg_split('/\;[ \t]*/', $cookie);
 			}

@@ -409,7 +409,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		$field = join('.', $field);
+		$field = implode('.', $field);
 		if (!in_array($field, $this->fields)) {
 			if ($value !== null) {
 				return $this->fields[$field] = $value;
@@ -1028,7 +1028,7 @@ class FormHelper extends AppHelper {
 				));
 			}
 		}
-		$out = $hidden . join($inbetween, $out);
+		$out = $hidden . implode($inbetween, $out);
 
 		if ($legend) {
 			$out = sprintf(
