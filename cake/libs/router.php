@@ -1286,14 +1286,17 @@ class RouterRoute {
 				if ($name !== 'plugin' && array_key_exists($name, $default)) {
 					$option = '?';
 				}
-				$replacements[] = '(?:/(' . $params[$name] . ')' . $option . ')' . $option;
+				$replacements[] = '(?:(' . $params[$name] . ')' . $option . ')' . $option;
 			} else {
-				$replacements[] = '(?:/(^[\/]+))?';
+				$replacements[] = '(?:([^\/]+))?';
 			}
 			$names[] = $name;
 		}
-		$route = str_replace($namedElements[0], $replacements, $route);
-		$this->_compiledRoute = '#^' . $route . '[\/]*$#';
+		$parsed = str_replace($namedElements[0], $replacements, $route);
+		if (preg_match('#\/\*$#', $route)) {
+			$parsed = preg_replace('#\/*$#', '(?:/(.*))?', $parsed);
+		}
+		$this->_compiledRoute = '#^' . $parsed . '[\/]*$#';
 		$this->keys = $names;
 		/*
 		$elements = explode('/', $route);

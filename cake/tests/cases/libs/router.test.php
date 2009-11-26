@@ -2036,18 +2036,24 @@ class RouterRouteTestCase extends CakeTestCase {
 
 		$route =& new RouterRoute('/:controller/:action', array('controller' => 'posts'));
 		$result = $route->compile();
-		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?[\/]*$#';
-		$this->assertEqual($result, $expected);
+		// $expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?[\/]*$#';
+		// $this->assertEqual($result, $expected);
 
 		$route =& new RouterRoute('/posts/foo:id', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->compile();
-		$expected = '#^/posts(?:/foo([^\/]+))?[\/]*$#';
-		$this->assertEqual($result, $expected);
-		$this->assertEqual($route->keys, array('id'));
 
+		$this->assertPattern($result, '/posts/foo:1');
+		$this->assertPattern($result, '/posts/foo:param');
+		$this->assertNoPattern($result, '/posts');
+		$this->assertNoPattern($result, '/posts/');
+
+		$this->assertEqual($route->keys, array('id'));
 
 		$route =& new RouterRoute('/:plugin/:controller/:action/*', array('plugin' => 'test_plugin', 'action' => 'index'));
 		$result = $route->compile();
+		$this->assertPattern($result, '/test_plugin/posts/index');
+		$this->assertPattern($result, '/test_plugin/posts/edit/5');
+		$this->assertPattern($result, '/test_plugin/posts/edit/5/name:value/nick:name');
 	}
 /**
  * test compiling routes with keys that have patterns
@@ -2059,8 +2065,13 @@ class RouterRouteTestCase extends CakeTestCase {
 
 		$route = new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
 		$result = $route->compile();
-		$expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#';
-		$this->assertEqual($result, $expected);
+		$this->assertPattern($result, '/posts/edit/1');
+		$this->assertPattern($result, '/posts/view/518098');
+		$this->assertNoPattern($result, '/posts/edit/name-of-post');
+		$this->assertNoPattern($result, '/posts/edit/4/other:param');
+
+		// $expected = '#^(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+)?)?[\/]*$#';
+		// $this->assertEqual($result, $expected);
 
 		$this->assertEqual($route->keys, array('controller', 'action', 'id'));
 
@@ -2070,15 +2081,25 @@ class RouterRouteTestCase extends CakeTestCase {
 			array('id' => $ID, 'lang' => '[a-z]{3}')
 		);
 		$result = $route->compile();
-		$expected = '#^(?:/([a-z]{3}))(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#';
-		$this->assertEqual($result, $expected);
+		$this->assertPattern($result, '/eng/posts/edit/1');
+		$this->assertPattern($result, '/cze/articles/view/1');
+		$this->assertNoPattern($result, '/language/articles/view/2');
+		$this->assertNoPattern($result, '/eng/articles/view/name-of-article');
+
+		// $expected = '#^(?:/([a-z]{3}))(?:/([^\/]+))?(?:/([^\/]+))?(?:/([0-9]+))[\/]*$#';
+		// $this->assertEqual($result, $expected);
 		$this->assertEqual($route->keys, array('lang', 'controller', 'action', 'id'));
 
 		foreach (array(':', '@', ';', '$', '-') as $delim) {
 			$route =& new RouterRoute('/posts/:id'.$delim.':title');
 			$result = $route->compile();
-			$expected = '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#';
-			$this->assertEqual($result, $expected);
+			//$expected = '#^/posts(?:/([^\/]+))?(?:'.preg_quote($delim, '#').'([^\/]+))?[\/]*$#';
+			//$this->assertEqual($result, $expected);
+
+			$this->assertPattern($result, '/posts/1' . $delim . 'name-of-article');
+			$this->assertPattern($result, '/posts/13244' . $delim . 'name-of_Article[]');
+			$this->assertNoPattern($result, '/posts/11!!nameofarticle');
+			$this->assertNoPattern($result, '/posts/11');
 
 			$this->assertEqual($route->keys, array('id', 'title'));
 		}
@@ -2089,7 +2110,13 @@ class RouterRouteTestCase extends CakeTestCase {
 			array('id' => $ID, 'year' => $Year, 'title' => '[a-z-_]+')
 		);
 		$result = $route->compile();
-		$this->assertEqual($result, '#^/posts(?:/([0-9]+))(?:\\:([a-z-_]+))(?:/([12][0-9]{3}))[\/]*$#');
+		$this->assertPattern($result, '/posts/1:name-of-article/2009/');
+		$this->assertPattern($result, '/posts/13244:name-of-article/1999');
+		$this->assertNoPattern($result, '/posts/hey_now:nameofarticle');
+		$this->assertNoPattern($result, '/posts/:nameofarticle/2009');
+		$this->assertNoPattern($result, '/posts/:nameofarticle/01');
+		
+		// $this->assertEqual($result, '#^/posts(?:/([0-9]+))(?:\\:([a-z-_]+))(?:/([12][0-9]{3}))[\/]*$#');
 		$this->assertEqual($route->keys, array('id', 'title', 'year'));
 		
 		$route =& new RouterRoute(
@@ -2098,7 +2125,13 @@ class RouterRouteTestCase extends CakeTestCase {
 			array('pass' => array('id', 'url_title'), 'id' => $ID)
 		);
 		$result = $route->compile();
-		$this->assertEqual($result, '#^/posts(?:/([^\/]+))?(?:-\(uuid\:([0-9]+)\))[\/]*$#');
+		$this->assertPattern($result, '/posts/some_title_for_article-(uuid:12534)/');
+		$this->assertPattern($result, '/posts/some_title_for_article-(uuid:12534)');
+		$this->assertNoPattern($result, '/posts/');
+		$this->assertNoPattern($result, '/posts/nameofarticle');
+		$this->assertNoPattern($result, '/posts/nameofarticle-12347');
+
+		// $this->assertEqual($result, '#^/posts(?:/([^\/]+))?(?:-\(uuid\:([0-9]+)\))[\/]*$#');
 		$this->assertEqual($route->keys, array('url_title', 'id'));
 	}
 
