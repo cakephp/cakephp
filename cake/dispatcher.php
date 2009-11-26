@@ -611,8 +611,9 @@ class Dispatcher extends Object {
 			App::import('View', 'Media', false);
 			$Media = new MediaView();
 			$ext = array_pop(explode('.', $url));
-			
+
 			if (isset($Media->mimeType[$ext])) {
+				$pos = 0;
 				$parts = explode('/', $url);
 				if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
 					$pos = 0;
@@ -638,10 +639,10 @@ class Dispatcher extends Object {
 					if (strpos($plugin, '/') !== false) {
 						list($plugin, $theme) = explode('/', $plugin);
 						$themePaths = App::path('views');
-						
+
 						foreach ($themePaths as $viewPath) {
 							$path = $viewPath . 'themed' . DS . $theme . DS . 'webroot' . DS;
-							
+
 							if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
 								$assetFile = $path . $url;
 								$matched = true;
