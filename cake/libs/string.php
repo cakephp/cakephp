@@ -29,24 +29,6 @@
 class String {
 
 /**
- * Gets a reference to the String object instance
- *
- * @return object String instance
- * @access public
- * @static
- * @deprecated
- */
-	function &getInstance() {
-		trigger_error('String::getInstance() is deprecated.  All String methods are called statically.', E_USER_WARNING);
-		static $instance = array();
-
-		if (!$instance) {
-			$instance[0] =& new String();
-		}
-		return $instance[0];
-	}
-
-/**
  * Generate a random UUID
  *
  * @see http://www.ietf.org/rfc/rfc4122.txt
