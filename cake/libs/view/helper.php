@@ -201,17 +201,28 @@ class Helper extends Overloadable {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
 		$webPath = "{$this->webroot}" . $asset[0];
+		$file = $asset[0];
 		
 		if (!empty($this->theme)) {
-			$viewPaths = App::path('views');
+			$file = trim($file, '/');
+			$theme = $this->theme . '/';
 			
-			foreach ($viewPaths as $viewPath) {
-				$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $asset[0];
-				$theme = $this->theme . '/';
+			if (DS === '\\') {
+				$file = str_replace('/', '\\', $file);
+			}
+
+			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS  . $file)) {
+				$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+			} else {
+				$viewPaths = App::path('views');
 				
-				if (file_exists($path)) {
-					$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
-					break;
+				foreach ($viewPaths as $viewPath) {
+					$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $file;
+
+					if (file_exists($path)) {
+						$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+						break;
+					}
 				}
 			}
 		}

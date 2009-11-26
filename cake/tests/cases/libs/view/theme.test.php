@@ -211,8 +211,12 @@ class ThemeViewTest extends CakeTestCase {
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'default.ctp';
-		$result = $ThemeView->getLayoutFileName();
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
+		$result = $ThemeView->getLayoutFileName('plugin_default');
+		$this->assertEqual($result, $expected);
+		
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEqual($result, $expected);
 	}
 
