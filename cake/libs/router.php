@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -162,7 +161,7 @@ class Router {
  * Builds __prefixes
  *
  * @return void
- **/
+ */
 	function Router() {
 		$this->__setPrefixes();
 	}
@@ -174,7 +173,7 @@ class Router {
  * @return void
  * @access private
  * @todo Remove support for Routing.admin in future versions.
- **/
+ */
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');
 		if (!empty($routing['admin'])) {
@@ -184,6 +183,7 @@ class Router {
 			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
 		}
 	}
+
 /**
  * Gets a reference to the Router object instance
  *
@@ -233,6 +233,7 @@ class Router {
 		foreach ($_this->__prefixes as $prefix) {
 			if (isset($default[$prefix])) {
 				$default['prefix'] = $prefix;
+				break;
 			}
 		}
 		if (isset($default['prefix'])) {
@@ -409,7 +410,7 @@ class Router {
 				$parsed[] = '/' . $element;
 			}
 		}
-		return array('#^' . join('', $parsed) . '[\/]*$#', $names);
+		return array('#^' . implode('', $parsed) . '[\/]*$#', $names);
 	}
 
 /**
@@ -561,6 +562,7 @@ class Router {
 						if (strcasecmp($name, $match) === 0) {
 							$url = substr($url, 0, strpos($url, '.' . $name));
 							$ext = $match;
+							break;
 						}
 					}
 				}
@@ -822,10 +824,8 @@ class Router {
 				$plugin = $url['plugin'];
 			}
 
-			$url = array_merge(
-				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
-				Set::filter($url, true)
-			);
+			$_url = $url;
+			$url = array_merge(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
 
 			if ($plugin !== false) {
 				$url['plugin'] = $plugin;
@@ -897,11 +897,11 @@ class Router {
 						break;
 					}
 				}
-				$output = join('/', $urlOut);
+				$output = implode('/', $urlOut) . '/';
 			}
 
 			if (!empty($args)) {
-				$args = join('/', $args);
+				$args = implode('/', $args);
 				if ($output{strlen($output) - 1} != '/') {
 					$args = '/'. $args;
 				}

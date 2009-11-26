@@ -7,13 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -39,6 +38,44 @@ class CustomValidator {
  */
 	function customValidate($check) {
 		return preg_match('/^[0-9]{3}$/', $check);
+	}
+}
+
+/**
+ * TestNlValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestNlValidation {
+/**
+ * postal function, for testing postal pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function postal($check) {
+		return true;
+	}
+}
+
+/**
+ * TestNlValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestDeValidation {
+/**
+ * phone function, for testing phone pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function phone($check) {
+		return true;
 	}
 }
 
@@ -1862,7 +1899,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testMultiple() {
 		$this->assertTrue(Validation::multiple(array(0, 1, 2, 3)));
 		$this->assertTrue(Validation::multiple(array(50, 32, 22, 0)));
@@ -1997,6 +2034,31 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('13089-333'));
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
+	}
+
+/**
+ * test that phone and postal pass to other classes.
+ *
+ * @return void
+ */
+	function testPhoneAndPostalPass() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+		$this->assertTrue(Validation::phone('text', null, 'testDe'));
+	}
+
+/**
+ * test the pass through calling of an alternate locale with postal()
+ *
+ * @return void
+ **/
+	function testPassThroughMethod() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+
+		$this->expectError('Could not find AUTOFAILValidation class, unable to complete validation.');
+		Validation::postal('text', null, 'AUTOFAIL');
+
+		$this->expectError('Method phone does not exist on TestNlValidation unable to complete validation.');
+		Validation::phone('text', null, 'testNl');
 	}
 
 /**

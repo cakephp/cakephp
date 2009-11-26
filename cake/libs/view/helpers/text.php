@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -329,19 +328,13 @@ class TextHelper extends AppHelper {
  * Creates a comma separated list where the last two items are joined with 'and', forming natural English
  *
  * @param array $list The list to be joined
- * @return string
+ * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
+ * @param string $separator The separator used to join all othe other items together. Defaults to ', '
+ * @return string The glued together string.
  * @access public
  */
-	function toList($list, $and = 'and') {
-		$r = '';
-		$c = count($list) - 1;
-		foreach ($list as $i => $item) {
-			$r .= $item;
-			if ($c > 0 && $i < $c) {
-				$r .= ($i < $c - 1 ? ', ' : " {$and} ");
-			}
-		}
-		return $r;
+	function toList($list, $and = 'and', $separator = ', ') {
+        return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 	}
 }
 ?>

@@ -9,20 +9,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision: 8225 $
- * @modifiedby    $LastChangedBy: mark_story $
- * @lastmodified  $Date: 2009-07-07 23:25:30 -0400 (Tue, 07 Jul 2009) $
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
@@ -317,7 +313,7 @@ class ModelWriteTest extends BaseModelTest {
  * as url for controller could be either overallFavorites/index or overall_favorites/index
  *
  * @return void
- **/
+ */
 	function testCacheClearOnSave() {
 		$_back = array(
 			'check' => Configure::read('Cache.check'),
@@ -620,6 +616,40 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertTrue($result);
 	}
 
+/**
+ * test that beforeValidate returning false can abort saves.
+ *
+ * @return void
+ */
+	function testBeforeValidateSaveAbortion() {
+		$Model =& new CallbackPostTestModel();
+		$Model->beforeValidateReturn = false;
+
+		$data = array(
+			'title' => 'new article',
+			'body' => 'this is some text.'
+		);
+		$Model->create();
+		$result = $Model->save($data);
+		$this->assertFalse($result);
+	}
+/**
+ * test that beforeSave returning false can abort saves.
+ *
+ * @return void
+ */
+	function testBeforeSaveSaveAbortion() {
+		$Model =& new CallbackPostTestModel();
+		$Model->beforeSaveReturn = false;
+
+		$data = array(
+			'title' => 'new article',
+			'body' => 'this is some text.'
+		);
+		$Model->create();
+		$result = $Model->save($data);
+		$this->assertFalse($result);
+	}
 /**
  * testValidates method
  *
@@ -1986,6 +2016,54 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that saving habtm records respects conditions set in the the 'conditions' key
+ * for the association.
+ *
+ * @return void
+ */
+	function testHabtmSaveWithConditionsInAssociation() {
+		$this->loadFixtures('JoinThing', 'Something', 'SomethingElse');
+		$Something =& new Something();
+		$Something->unbindModel(array('hasAndBelongsToMany' => array('SomethingElse')), false);
+
+		$Something->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'DoomedSomethingElse' => array(
+					'className' => 'SomethingElse',
+					'joinTable' => 'join_things',
+					'conditions' => 'JoinThing.doomed = 1',
+					'unique' => true
+				),
+				'NotDoomedSomethingElse' => array(
+					'className' => 'SomethingElse',
+					'joinTable' => 'join_things',
+					'conditions' => array('JoinThing.doomed' => 0),
+					'unique' => true
+				)
+			)
+		), false);
+		$result = $Something->read(null, 1);
+		$this->assertTrue(empty($result['NotDoomedSomethingElse']));
+		$this->assertEqual(count($result['DoomedSomethingElse']), 1);
+
+		$data = array(
+			'Something' => array('id' => 1),
+			'NotDoomedSomethingElse' => array(
+				'NotDoomedSomethingElse' => array(
+					array('something_else_id' => 2, 'doomed' => 0),
+					array('something_else_id' => 3, 'doomed' => 0)
+				)
+			)
+		);
+		$Something->create($data);
+		$result = $Something->save();
+		$this->assertTrue($result);
+
+		$result = $Something->read(null, 1);
+		$this->assertEqual(count($result['NotDoomedSomethingElse']), 2);
+		$this->assertEqual(count($result['DoomedSomethingElse']), 1);
+	}
+/**
  * testHabtmSaveKeyResolution method
  *
  * @access public
@@ -2592,7 +2670,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new Fruit();
@@ -2616,7 +2694,7 @@ class ModelWriteTest extends BaseModelTest {
  * test HABTM saving when join table has no primary key and only 2 columns, no with model is used.
  *
  * @return void
- **/
+ */
 	function testHabtmSavingWithNoPrimaryKeyUuidJoinTableNoWith() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit =& new FruitNoWith();

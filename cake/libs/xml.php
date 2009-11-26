@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * XML handling for Cake.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP v .0.10.3.1400
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Set');
 
@@ -596,7 +590,7 @@ class XmlNode extends Object {
  * @access public
  */
 	function hasChildren() {
-		if (is_array($this->children) && count($this->children) > 0) {
+		if (is_array($this->children) && !empty($this->children)) {
 			return true;
 		}
 		return false;
@@ -624,7 +618,7 @@ class XmlNode extends Object {
 			}
 
 			$d .= '<' . $this->name();
-			if (count($this->namespaces) > 0) {
+			if (!empty($this->namespaces) > 0) {
 				foreach ($this->namespaces as $key => $val) {
 					$val = str_replace('"', '\"', $val);
 					$d .= ' xmlns:' . $key . '="' . $val . '"';
@@ -632,14 +626,14 @@ class XmlNode extends Object {
 			}
 
 			$parent =& $this->parent();
-			if ($parent->name === '#document' && count($parent->namespaces) > 0) {
+			if ($parent->name === '#document' && !empty($parent->namespaces)) {
 				foreach ($parent->namespaces as $key => $val) {
 					$val = str_replace('"', '\"', $val);
 					$d .= ' xmlns:' . $key . '="' . $val . '"';
 				}
 			}
 
-			if (is_array($this->attributes) && count($this->attributes) > 0) {
+			if (is_array($this->attributes) && !empty($this->attributes)) {
 				foreach ($this->attributes as $key => $val) {
 					if (is_bool($val) && $val === false) {
 						$val = 0;

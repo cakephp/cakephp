@@ -252,7 +252,7 @@ class ControllerPaginateModel extends CakeTestModel {
  *
  * @return void
  * @access public
- **/
+ */
 	function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
 		$this->extra = $extra;
 	}
@@ -557,6 +557,22 @@ class ControllerTest extends CakeTestCase {
 		$Controller->paginate('ControllerPost');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['options']['page'], 1, 'XSS exploit opened %s');
+
+		$Controller->passedArgs = array();
+		$Controller->paginate = array('limit' => 0);
+		$Controller->paginate('ControllerPost');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		
+		$Controller->passedArgs = array();
+		$Controller->paginate = array('limit' => 'garbage!');
+		$Controller->paginate('ControllerPost');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
 	}
 
 /**
@@ -657,7 +673,7 @@ class ControllerTest extends CakeTestCase {
  * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
  *
  * @return void
- **/
+ */
 	function testPaginateSpecialType() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
@@ -1013,7 +1029,7 @@ class ControllerTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testChildComponentOptionsSupercedeParents() {
 		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
 			return;
@@ -1030,7 +1046,7 @@ class ControllerTest extends CakeTestCase {
  * AppController when you make an instance of Controller
  *
  * @return void
- **/
+ */
 	function testMergeVarsNotGreedy() {
 		$Controller =& new Controller();
 		$Controller->components = array();

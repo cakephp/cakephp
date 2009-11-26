@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.0.0.2363
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -97,11 +91,21 @@ class Configure extends Object {
 			if (strpos($name, '.') === false) {
 				$_this->{$name} = $value;
 			} else {
-				$names = explode('.', $name, 2);
-				if (!isset($_this->{$names[0]})) {
-					$_this->{$names[0]} = array();
+				$names = explode('.', $name, 4);
+				switch (count($names)) {
+					case 2:
+						$_this->{$names[0]}[$names[1]] = $value;
+					break;
+					case 3:
+						$_this->{$names[0]}[$names[1]][$names[2]] = $value;
+					case 4:
+						$names = explode('.', $name, 2);
+						if (!isset($_this->{$names[0]})) {
+							$_this->{$names[0]} = array();
+						}
+						$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
+					break;
 				}
-				$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
 			}
 		}
 
@@ -136,12 +140,14 @@ class Configure extends Object {
 /**
  * Used to read information stored in the Configure instance.
  *
- * Usage
+ * Usage:
+ * {{{
  * Configure::read('Name'); will return all values for Name
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
+ * }}}
  *
- * @link          http://book.cakephp.org/view/413/read
- * @param string $var Variable to obtain
+ * @link http://book.cakephp.org/view/413/read
+ * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
  * @access public
  */
@@ -153,28 +159,44 @@ class Configure extends Object {
 		}
 
 		if (strpos($var, '.') !== false) {
-			$names = explode('.', $var, 2);
+			$names = explode('.', $var, 3);
 			$var = $names[0];
 		}
 		if (!isset($_this->{$var})) {
 			return null;
 		}
-
-		if (!empty($names[1])) {
-			return Set::extract($_this->{$var}, $names[1]);
+		if (!isset($names[1])) {
+			return $_this->{$var};
 		}
-
-		return $_this->{$var};
+		switch (count($names)) {
+			case 2:
+				if (isset($_this->{$var}[$names[1]])) {
+					return $_this->{$var}[$names[1]];
+				}
+			break;
+			case 3:
+				if (isset($_this->{$var}[$names[1]][$names[2]])) {
+					return $_this->{$var}[$names[1]][$names[2]];
+				}
+				if (!isset($_this->{$var}[$names[1]])) {
+					return null;
+				}
+				return Set::classicExtract($_this->{$var}[$names[1]], $names[2]);
+			break;
+		}
+		return null;
 	}
 
 /**
  * Used to delete a variable from the Configure instance.
  *
  * Usage:
+ * {{{
  * Configure::delete('Name'); will delete the entire Configure::Name
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
+ * }}}
  *
- * @link          http://book.cakephp.org/view/414/delete
+ * @link http://book.cakephp.org/view/414/delete
  * @param string $var the var to be deleted
  * @return void
  * @access public
@@ -194,32 +216,44 @@ class Configure extends Object {
 /**
  * Loads a file from app/config/configure_file.php.
  * Config file variables should be formated like:
- *  $config['name'] = 'value';
- * These will be used to create dynamic Configure vars.
+ *  `$config['name'] = 'value';`
+ * These will be used to create dynamic Configure vars. load() is also used to 
+ * load stored config files created with Configure::store()
  *
- * Usage Configure::load('configure_file');
+ * - To load config files from app/config use `Configure::load('configure_file');`.
+ * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
  *
- * @link          http://book.cakephp.org/view/415/load
+ * @link http://book.cakephp.org/view/415/load
  * @param string $fileName name of file to load, extension must be .php and only the name
- *                         should be used, not the extenstion
+ *     should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
  * @access public
  */
 	function load($fileName) {
-		$found = false;
-
-		if (file_exists(CONFIGS . $fileName . '.php')) {
-			include(CONFIGS . $fileName . '.php');
-			$found = true;
-		} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
-			include(CACHE . 'persistent' . DS . $fileName . '.php');
-			$found = true;
-		} else {
-			foreach (App::core('cake') as $key => $path) {
-				if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
-					include($path . DS . 'config' . DS . $fileName . '.php');
-					$found = true;
-					break;
+		$found = $plugin = $pluginPath = false;
+		list($plugin, $fileName) = pluginSplit($fileName);
+		if ($plugin) {
+			$pluginPath = App::pluginPath($plugin);
+		}
+		$pos = strpos($fileName, '..');
+		
+		if ($pos === false) {
+			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
+				include($pluginPath . 'config' . DS . $fileName . '.php');
+				$found = true;
+			} elseif (file_exists(CONFIGS . $fileName . '.php')) {
+				include(CONFIGS . $fileName . '.php');
+				$found = true;
+			} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
+				include(CACHE . 'persistent' . DS . $fileName . '.php');
+				$found = true;
+			} else {
+				foreach (App::core('cake') as $key => $path) {
+					if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
+						include($path . DS . 'config' . DS . $fileName . '.php');
+						$found = true;
+						break;
+					}
 				}
 			}
 		}
@@ -239,9 +273,9 @@ class Configure extends Object {
 /**
  * Used to determine the current version of CakePHP.
  *
- * Usage Configure::version();
+ * Usage `Configure::version();`
  *
- * @link          http://book.cakephp.org/view/416/version
+ * @link http://book.cakephp.org/view/416/version
  * @return string Current version of CakePHP
  * @access public
  */
@@ -258,9 +292,11 @@ class Configure extends Object {
 /**
  * Used to write a config file to disk.
  *
- * Configure::store('Model', 'class.paths', array('Users' => array(
+ * {{{
+ * Configure::store('Model', 'class_paths', array('Users' => array(
  *      'path' => 'users', 'plugin' => true
  * )));
+ * }}}
  *
  * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
  * @param string $name file name.
@@ -273,20 +309,7 @@ class Configure extends Object {
 		$content = '';
 
 		foreach ($data as $key => $value) {
-			$content .= "\$config['$type']['$key']";
-
-			if (is_array($value)) {
-				$content .= " = array(";
-
-				foreach ($value as $key1 => $value2) {
-					$value2 = addslashes($value2);
-					$content .= "'$key1' => '$value2', ";
-				}
-				$content .= ");\n";
-			} else {
-				$value = addslashes($value);
-				$content .= " = '$value';\n";
-			}
+			$content .= "\$config['$type']['$key'] = " . var_export($value, true) . ";\n";
 		}
 		if (is_null($type)) {
 			$write = false;
@@ -373,10 +396,6 @@ class Configure extends Object {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
 			}
 
-			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
-			}
-
 			if (Configure::read('Cache.disable') !== true) {
 				$cache = Cache::config('default');
 
@@ -413,6 +432,11 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
+
+			if (!include(CONFIGS . 'bootstrap.php')) {
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+			}
+
 			if (App::path('controllers') == array()) {
 				App::build(array(
 					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
@@ -690,7 +714,7 @@ class App extends Object {
  *
  * @param string $plugin CamelCased plugin name to find the path of.
  * @return string full path to the plugin.
- **/
+ */
 	function pluginPath($plugin) {
 		$_this =& App::getInstance();
 		$pluginDir = Inflector::underscore($plugin);
@@ -838,7 +862,6 @@ class App extends Object {
  * @access public
  */
 	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
-		$_this =& App::getInstance();
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -889,7 +912,7 @@ class App extends Object {
 			list($plugin, $name) = explode('.', $name);
 			$plugin = Inflector::camelize($plugin);
 		}
-
+		$_this =& App::getInstance();
 		$_this->return = $return;
 
 		if (isset($ext)) {
@@ -1228,8 +1251,8 @@ class App extends Object {
 /**
  * Returns an array of filenames of PHP files in the given directory.
  *
- * @param  string $path Path to scan for files
- * @param  string $suffix if false, return only directories. if string, match and return files
+ * @param string $path Path to scan for files
+ * @param string $suffix if false, return only directories. if string, match and return files
  * @return array  List of directories or files in directory
  */
 	function __list($path, $suffix = false, $extension = false) {

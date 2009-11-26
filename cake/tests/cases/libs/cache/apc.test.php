@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ApcEngineTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('Cache')) {
@@ -45,7 +39,7 @@ class ApcEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if (Cache::engine('Apc')) {
+		if (function_exists('apc_store')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Apc is not installed or configured properly');
@@ -71,6 +65,7 @@ class ApcEngineTest extends UnitTestCase {
  */
 	function tearDown() {
 		Configure::write('Cache.disable', $this->_cacheDisable);
+		Cache::drop('apc');
 		Cache::config('default');
 	}
 
@@ -118,7 +113,7 @@ class ApcEngineTest extends UnitTestCase {
 		$result = Cache::read('other_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  "+1 second"));
+		Cache::set(array('duration' =>  1));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data);

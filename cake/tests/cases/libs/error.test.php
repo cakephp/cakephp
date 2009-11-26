@@ -7,13 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -219,7 +218,7 @@ class MyCustomErrorHandler extends ErrorHandler {
  * custom error message type.
  *
  * @return void
- **/
+ */
 	function missingWidgetThing() {
 		echo 'widget thing is missing';
 	}
@@ -277,7 +276,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * into error404 when debug == 0
  *
  * @return void
- **/
+ */
 	function testSubclassMethodsNotBeingConvertedToError() {
 		$back = Configure::read('debug');
 		Configure::write('debug', 2);

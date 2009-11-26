@@ -528,11 +528,7 @@ class Controller extends Object {
 				$plugin = $this->plugin . '.';
 			}
 		}
-
-		if (strpos($modelClass, '.') !== false) {
-			list($plugin, $modelClass) = explode('.', $modelClass);
-			$plugin = $plugin . '.';
-		}
+		list($plugin, $modelClass) = pluginSplit($modelClass, true, $plugin);
 
 		if ($this->persistModel === true) {
 			$cached = $this->_persist($modelClass, null, $object);
@@ -649,7 +645,7 @@ class Controller extends Object {
 				504 => 'Gateway Time-out'
 			);
 			if (is_string($status)) {
-				$codes = array_combine(array_values($codes), array_keys($codes));
+				$codes = array_flip($codes);
 			}
 
 			if (isset($codes[$status])) {
@@ -780,7 +776,7 @@ class Controller extends Object {
 	function validateErrors() {
 		$objects = func_get_args();
 
-		if (!count($objects)) {
+		if (empty($objects)) {
 			return false;
 		}
 
@@ -790,7 +786,7 @@ class Controller extends Object {
 			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 
-		return $this->validationErrors = (count($errors) ? $errors : false);
+		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
@@ -808,9 +804,7 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			if (strpos($viewClass, '.') !== false) {
-				list($plugin, $viewClass) = explode('.', $viewClass);
-			}
+			list($plugin, $viewClass) = pluginSplit($viewClass);
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->view);
 		}
@@ -957,12 +951,14 @@ class Controller extends Object {
 			foreach ($fields as $field => $value) {
 				$key = $model.'.'.$field;
 				$fieldOp = $op;
-				if (is_array($op) && array_key_exists($key, $op)) {
-					$fieldOp = $op[$key];
-				} elseif (is_array($op) && array_key_exists($field, $op)) {
-					$fieldOp = $op[$field];
-				} elseif (is_array($op)) {
-					$fieldOp = false;
+				if (is_array($op)) {
+					if (array_key_exists($key, $op)) {
+						$fieldOp = $op[$key];
+					} elseif (array_key_exists($field, $op)) {
+						$fieldOp = $op[$field];
+					} else {
+						$fieldOp = false;
+					}
 				}
 				if ($exclusive && $fieldOp === false) {
 					continue;
@@ -1003,9 +999,8 @@ class Controller extends Object {
 
 		if (is_string($object)) {
 			$assoc = null;
-
-			if (strpos($object, '.') !== false) {
-				list($object, $assoc) = explode('.', $object);
+			if (strpos($object, '.')  !== false) {
+				list($object, $assoc) = pluginSplit($object);
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
@@ -1112,8 +1107,9 @@ class Controller extends Object {
 			$type = $defaults[0];
 			unset($defaults[0]);
 		}
-
-		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
+		$options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options);
+		$options['limit'] = (empty($options['limit']) || !is_numeric($options['limit'])) ? 1 : $options['limit'];
+		extract($options);
 
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = array_merge($conditions, $scope);

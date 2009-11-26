@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Mock models file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.6464
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -548,7 +542,7 @@ class ModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
@@ -593,7 +587,7 @@ class AgainModifiedComment extends CakeTestModel {
  * afterFind callback
  *
  * @return void
- **/
+ */
 	function afterFind($results) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
@@ -2031,7 +2025,58 @@ class AssociationTest2 extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class Callback extends CakeTestModel {
-	//
+	
+}
+/**
+ * CallbackPostTestModel class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class CallbackPostTestModel extends CakeTestModel {
+	var $useTable = 'posts';
+/**
+ * variable to control return of beforeValidate
+ *
+ * @var string
+ */
+	var $beforeValidateReturn = true;
+/**
+ * variable to control return of beforeSave
+ *
+ * @var string
+ */
+	var $beforeSaveReturn = true;
+/**
+ * variable to control return of beforeDelete
+ *
+ * @var string
+ */
+	var $beforeDeleteReturn = true;
+/**
+ * beforeSave callback
+ *
+ * @return void
+ */
+	function beforeSave($options) {
+		return $this->beforeSaveReturn;
+	}
+/**
+ * beforeValidate callback
+ *
+ * @return void
+ */
+	function beforeValidate($options) {
+		return $this->beforeValidateReturn;
+	}
+/**
+ * beforeDelete callback
+ *
+ * @return void
+ */
+	function beforeDelete($cascade = true) {
+		return $this->beforeDeleteReturn;
+	}
 }
 
 /**
@@ -3045,8 +3090,6 @@ class Uuiditem extends CakeTestModel {
  * @var array
  * @access public
  */
-	//var $hasAndBelongsToMany = array('Uuidportfolio' => array('unique' => true));
-//	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolio'));
 	var $hasAndBelongsToMany = array('Uuidportfolio' => array('with' => 'UuiditemsUuidportfolioNumericid'));
 
 }

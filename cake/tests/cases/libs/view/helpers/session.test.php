@@ -7,13 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
@@ -96,7 +95,7 @@ class SessionHelperTest extends CakeTestCase {
  * test construction and initial property settings
  *
  * @return void
- **/
+ */
 	function testConstruct() {
 		$this->assertFalse(empty($this->Session->sessionTime));
 		$this->assertFalse(empty($this->Session->security));
@@ -149,19 +148,13 @@ class SessionHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFlash() {
-		ob_start();
-		$this->Session->flash();
-		$result = ob_get_contents();
-		ob_clean();
-
+		$result = $this->Session->flash('flash', true);
 		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
 		$expected = '<div id="classyMessage" class="positive">Recorded</div>';
-		ob_start();
-		$this->Session->flash('classy');
-		$result = ob_get_clean();
+		$result = $this->Session->flash('classy', true);
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
@@ -170,21 +163,13 @@ class SessionHelperTest extends CakeTestCase {
 		$controller = new Controller();
 		$this->Session->view = new View($controller);
 
-		ob_start();
-		$this->Session->flash('notification');
-		$result = ob_get_contents();
-		ob_clean();
-
+		$result = $this->Session->flash('notification', true);
 		$result = str_replace("\r\n", "\n", $result);
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.notification'));
 
-		ob_start();
-		$this->Session->flash('bare');
-		$result = ob_get_contents();
-		ob_clean();
-
+		$result = $this->Session->flash('bare');
 		$expected = 'Bare message';
 		$this->assertEqual($result, $expected);
 		$this->assertFalse($this->Session->check('Message.bare'));

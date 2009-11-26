@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * DebuggerTest file
  *
@@ -242,7 +240,7 @@ class DebuggerTest extends CakeTestCase {
 		View::$autoLayout = true
 		View::$ext = ".ctp"
 		View::$subDir = NULL
-		View::$themeWeb = NULL
+		View::$theme = NULL
 		View::$cacheAction = false
 		View::$validationErrors = array
 		View::$hasRendered = false
@@ -258,7 +256,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$__passedVars = array
 		View::$__scripts = array
 		View::$__paths = array
-		View::$_log = NULL
 		View::$webroot = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);

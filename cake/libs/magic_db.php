@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * MagicDb parser and file analyzer
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!class_exists('Object')) {
 	require LIBS . 'object.php';
@@ -42,7 +36,7 @@ class MagicDb extends Object {
  * Holds the parsed MagicDb for this class instance
  *
  * @var array
- **/
+ */
 	var $db = array();
 
 /**
@@ -51,7 +45,7 @@ class MagicDb extends Object {
  * @var $magicDb mixed Can be an array containing the db, a magic db as a string, or a filename pointing to a magic db in .db or magic.db.php format
  * @return boolean Returns false if reading / validation failed or true on success.
  * @author        Felix
- **/
+ */
 	function read($magicDb = null) {
 		if (!is_string($magicDb) && !is_array($magicDb)) {
 			return false;
@@ -101,7 +95,7 @@ class MagicDb extends Object {
 		$lines = explode("\r\n", $data);
 		$db = array();
 
-		$validHeader = count($lines > 3)
+		$validHeader = count($lines) > 3
 					&& preg_match('/^# Date:([0-9]{4}-[0-9]{2}-[0-9]{2})$/', $lines[1], $date)
 					&& preg_match('/^# Source:(.+)$/', $lines[2], $source)
 					&& strlen($lines[3]) == 0;

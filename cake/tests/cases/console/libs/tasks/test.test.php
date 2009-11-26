@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * TestTaskTest file
  *
@@ -8,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
 App::import('Controller', 'Controller', false);
@@ -52,17 +49,48 @@ Mock::generatePartial(
 );
 
 /**
- * Test subject models for fixture generation
- **/
+ * Test Article model
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.console.libs.tasks
+ */
 class TestTaskArticle extends Model {
+
+/**
+ * Model name
+ *
+ * @var string
+ * @access public
+ */
 	var $name = 'TestTaskArticle';
+
+/**
+ * Table name to use
+ *
+ * @var string
+ * @access public
+ */
 	var $useTable = 'articles';
+
+/**
+ * HasMany Associations
+ *
+ * @var array
+ * @access public
+ */
 	var $hasMany = array(
 		'Comment' => array(
 			'className' => 'TestTask.TestTaskComment',
 			'foreignKey' => 'article_id',
 		)
 	);
+
+/**
+ * Has and Belongs To Many Associations
+ *
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array(
 		'Tag' => array(
 			'className' => 'TestTaskTag',
@@ -71,19 +99,65 @@ class TestTaskArticle extends Model {
 			'associationForeignKey' => 'tag_id'
 		)
 	);
+
+/**
+ * Example public method
+ *
+ * @return void
+ * @access public
+ */
 	function doSomething() {
-
 	}
+
+/**
+ * Example Secondary public method
+ *
+ * @return void
+ * @access public
+ */
 	function doSomethingElse() {
-
 	}
-	function _innerMethod() {
 
+/**
+ * Example protected method
+ *
+ * @return void
+ * @access protected
+ */
+	function _innerMethod() {
 	}
 }
+
+/**
+ * Tag Testing Model
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.console.libs.tasks
+ */
 class TestTaskTag extends Model {
+
+/**
+ * Model name
+ *
+ * @var string
+ * @access public
+ */
 	var $name = 'TestTaskTag';
+
+/**
+ * Table name
+ *
+ * @var string
+ * @access public
+ */
 	var $useTable = 'tags';
+
+/**
+ * Has and Belongs To Many Associations
+ *
+ * @var array
+ * @access public
+ */
 	var $hasAndBelongsToMany = array(
 		'Article' => array(
 			'className' => 'TestTaskArticle',
@@ -95,14 +169,44 @@ class TestTaskTag extends Model {
 }
 
 /**
- * Simulated Plugin
- **/
+ * Simulated plugin
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.console.libs.tasks
+ */
 class TestTaskAppModel extends Model {
-
 }
+
+/**
+ * Testing AppMode (TaskComment)
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.console.libs.tasks
+ */
 class TestTaskComment extends TestTaskAppModel {
+
+/**
+ * Model name
+ *
+ * @var string
+ * @access public
+ */
 	var $name = 'TestTaskComment';
+
+/**
+ * Table name
+ *
+ * @var string
+ * @access public
+ */
 	var $useTable = 'comments';
+
+/**
+ * Belongs To Associations
+ *
+ * @var array
+ * @access public
+ */
 	var $belongsTo = array(
 		'Article' => array(
 			'className' => 'TestTaskArticle',
@@ -111,8 +215,28 @@ class TestTaskComment extends TestTaskAppModel {
 	);
 }
 
+/**
+ * Test Task Comments Controller
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.console.libs.tasks
+ */
 class TestTaskCommentsController extends Controller {
+
+/**
+ * Controller Name
+ *
+ * @var string
+ * @access public
+ */
 	var $name = 'TestTaskComments';
+
+/**
+ * Models to use
+ *
+ * @var array
+ * @access public
+ */
 	var $uses = array('TestTaskComment', 'TestTaskTag');
 }
 
@@ -124,6 +248,12 @@ class TestTaskCommentsController extends Controller {
  */
 class TestTaskTest extends CakeTestCase {
 
+/**
+ * Fixtures
+ *
+ * @var string
+ * @access public
+ */
 	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
@@ -153,8 +283,8 @@ class TestTaskTest extends CakeTestCase {
 /**
  * Test that file path generation doesn't continuously append paths.
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testFilePathGeneration() {
 		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
@@ -179,7 +309,7 @@ class TestTaskTest extends CakeTestCase {
  * methods into the test case.
  *
  * @return void
- **/
+ */
 	function testMethodIntrospection() {
 		$result = $this->Task->getTestableMethods('TestTaskArticle');
 		$expected = array('dosomething', 'dosomethingelse');
@@ -190,7 +320,8 @@ class TestTaskTest extends CakeTestCase {
  * test that the generation of fixtures works correctly.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFixtureArrayGenerationFromModel() {
 		$subject = ClassRegistry::init('TestTaskArticle');
 		$result = $this->Task->generateFixtureList($subject);
@@ -204,7 +335,8 @@ class TestTaskTest extends CakeTestCase {
  * test that the generation of fixtures works correctly.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testFixtureArrayGenerationFromController() {
 		$subject = new TestTaskCommentsController();
 		$result = $this->Task->generateFixtureList($subject);
@@ -218,7 +350,8 @@ class TestTaskTest extends CakeTestCase {
  * test user interaction to get object type
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetObjectType() {
 		$this->Task->expectOnce('_stop');
 		$this->Task->setReturnValueAt(0, 'in', 'q');
@@ -233,7 +366,8 @@ class TestTaskTest extends CakeTestCase {
  * creating test subjects should clear the registry so the registry is always fresh
  *
  * @return void
- **/
+ * @access public
+ */
 	function testRegistryClearWhenBuildingTestObjects() {
 		ClassRegistry::flush();
 		$model = ClassRegistry::init('TestTaskComment');
@@ -257,7 +391,8 @@ class TestTaskTest extends CakeTestCase {
  * test that getClassName returns the user choice as a classname.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetClassName() {
 		$objects = App::objects('model');
 		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
@@ -278,7 +413,8 @@ class TestTaskTest extends CakeTestCase {
  * Test the user interaction for defining additional fixtures.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetUserFixtures() {
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'app.pizza, app.topping, app.side_dish');
@@ -291,7 +427,8 @@ class TestTaskTest extends CakeTestCase {
  * test that resolving classnames works
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGetRealClassname() {
 		$result = $this->Task->getRealClassname('Model', 'Post');
 		$this->assertEqual($result, 'Post');
@@ -314,7 +451,8 @@ class TestTaskTest extends CakeTestCase {
  * as PHP4 classnames are all lower case, breaking the plugin path inflection.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeModelTest() {
 		$this->Task->setReturnValue('createFile', true);
 		$this->Task->setReturnValue('isLoadableClass', true);
@@ -347,7 +485,8 @@ class TestTaskTest extends CakeTestCase {
  * causing issues with inflection of path name from classname.
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeControllerTest() {
 		$this->Task->setReturnValue('createFile', true);
 		$this->Task->setReturnValue('isLoadableClass', true);
@@ -380,7 +519,8 @@ class TestTaskTest extends CakeTestCase {
  * test Constructor generation ensure that constructClasses is called for controllers
  *
  * @return void
- **/
+ * @access public
+ */
 	function testGenerateContsructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
@@ -399,7 +539,8 @@ class TestTaskTest extends CakeTestCase {
  * Test that mock class generation works for the appropriate classes
  *
  * @return void
- **/
+ * @access public
+ */
 	function testMockClassGeneration() {
 		$result = $this->Task->hasMockClass('controller');
 		$this->assertTrue($result);
@@ -409,7 +550,8 @@ class TestTaskTest extends CakeTestCase {
  * test bake() with a -plugin param
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeWithPlugin() {
 		$this->Task->plugin = 'TestTest';
 
@@ -422,7 +564,8 @@ class TestTaskTest extends CakeTestCase {
  * Test filename generation for each type + plugins
  *
  * @return void
- **/
+ * @access public
+ */
 	function testTestCaseFileName() {
 		$this->Task->path = '/my/path/tests/';
 
@@ -456,7 +599,8 @@ class TestTaskTest extends CakeTestCase {
  * test execute with a type defined
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithOneArg() {
 		$this->Task->args[0] = 'Model';
 		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
@@ -469,7 +613,8 @@ class TestTaskTest extends CakeTestCase {
  * test execute with type and class name defined
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithTwoArgs() {
 		$this->Task->args = array('Model', 'TestTaskTag');
 		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');

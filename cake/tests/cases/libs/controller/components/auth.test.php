@@ -7,13 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
@@ -768,7 +767,7 @@ class AuthTest extends CakeTestCase {
  * test authorize = 'actions' setting.
  *
  * @return void
- **/
+ */
 	function testAuthorizeActions() {
 		$this->AuthUser =& new AuthUser();
 		$user = $this->AuthUser->find();
@@ -828,7 +827,7 @@ class AuthTest extends CakeTestCase {
  * test the action() method
  *
  * @return void
- **/
+ */
 	function testActionMethod() {
 		$this->Controller->params['controller'] = 'auth_test';
 		$this->Controller->params['action'] = 'add';
@@ -857,7 +856,7 @@ class AuthTest extends CakeTestCase {
  * test that deny() converts camel case inputs to lowercase.
  *
  * @return void
- **/
+ */
 	function testDenyWithCamelCaseMethods() {
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->allow('*');
@@ -874,7 +873,7 @@ class AuthTest extends CakeTestCase {
  * test that allow() and allowedActions work with camelCase method names.
  *
  * @return void
- **/
+ */
 	function testAllowedActionsWithCamelCaseMethods() {
 		$url = '/auth_test/camelCase';
 		$this->Controller->params = Router::parse($url);
@@ -1100,7 +1099,7 @@ class AuthTest extends CakeTestCase {
  * And the user doesn't have a session.
  *
  * @return void
- **/
+ */
 	function testNoRedirectOn404() {
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Auth->initialize($this->Controller);
@@ -1202,7 +1201,7 @@ class AuthTest extends CakeTestCase {
  * test Hashing of passwords
  *
  * @return void
- **/
+ */
 	function testHashPasswords() {
 		$this->Controller->Auth->userModel = 'AuthUser';
 

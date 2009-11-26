@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Helper for AJAX operations.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -267,7 +261,7 @@ class AjaxHelper extends AppHelper {
 				$options['requestHeaders'] = array();
 			}
 			if (is_array($options['update'])) {
-				$options['update'] = join(' ', $options['update']);
+				$options['update'] = implode(' ', $options['update']);
 			}
 			$options['requestHeaders']['X-Update'] = $options['update'];
 		} else {
@@ -534,7 +528,7 @@ class AjaxHelper extends AppHelper {
 			}
 		}
 		$attr = $this->_parseAttributes(array_merge($options, array('id' => $id)));
-		return $this->output(sprintf($this->Html->tags['blockstart'], $attr));
+		return sprintf($this->Html->tags['blockstart'], $attr);
 	}
 
 /**
@@ -553,7 +547,7 @@ class AjaxHelper extends AppHelper {
 				return '';
 			}
 		}
-		return $this->output($this->Html->tags['blockend']);
+		return $this->Html->tags['blockend'];
 	}
 
 /**
@@ -830,7 +824,7 @@ class AjaxHelper extends AppHelper {
 						$keys[] = "'" . $key . "'";
 						$keys[] = "'" . $val . "'";
 					}
-					$jsOptions['requestHeaders'] = '[' . join(', ', $keys) . ']';
+					$jsOptions['requestHeaders'] = '[' . implode(', ', $keys) . ']';
 				break;
 			}
 		}
@@ -879,7 +873,7 @@ class AjaxHelper extends AppHelper {
 				}
 			}
 
-			$out = join(', ', $out);
+			$out = implode(', ', $out);
 			$out = '{' . $out . '}';
 			return $out;
 		} else {
@@ -1002,7 +996,7 @@ class AjaxHelper extends AppHelper {
 						$data[] = $key . ':"' . rawurlencode($val) . '"';
 					}
 				}
-				$out  = 'var __ajaxUpdater__ = {' . join(", \n", $data) . '};' . "\n";
+				$out  = 'var __ajaxUpdater__ = {' . implode(", \n", $data) . '};' . "\n";
 				$out .= 'for (n in __ajaxUpdater__) { if (typeof __ajaxUpdater__[n] == "string"';
 				$out .= ' && $(n)) Element.update($(n), unescape(decodeURIComponent(';
 				$out .= '__ajaxUpdater__[n]))); }';

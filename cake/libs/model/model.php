@@ -641,20 +641,15 @@ class Model extends Overloadable {
 						if (strpos($assoc, '.') !== false) {
 							$value = $this->{$type}[$assoc];
 							unset($this->{$type}[$assoc]);
-							list($plugin, $assoc) = explode('.', $assoc);
+							list($plugin, $assoc) = pluginSplit($assoc, true);
 							$this->{$type}[$assoc] = $value;
-							$plugin = $plugin . '.';
 						}
 					}
 					$className =  $assoc;
 
-					if (isset($value['className']) && !empty($value['className'])) {
-						$className = $value['className'];
-						if (strpos($className, '.') !== false) {
-							list($plugin, $className) = explode('.', $className);
-							$plugin = $plugin . '.';
-							$this->{$type}[$assoc]['className'] = $className;
-						}
+					if (!empty($value['className'])) {
+						list($plugin, $className) = pluginSplit($value['className'], true);
+						$this->{$type}[$assoc]['className'] = $className;
 					}
 					$this->__constructLinkedModel($assoc, $plugin . $className);
 				}
@@ -753,11 +748,11 @@ class Model extends Overloadable {
 				if (is_array($joinClass)) {
 					$joinClass = key($joinClass);
 				}
-				$plugin = null;
 
+				$plugin = null;
 				if (strpos($joinClass, '.') !== false) {
 					list($plugin, $joinClass) = explode('.', $joinClass);
-					$plugin = $plugin . '.';
+					$plugin .= '.';
 					$this->{$type}[$assocKey]['with'] = $joinClass;
 				}
 
@@ -1137,7 +1132,7 @@ class Model extends Overloadable {
 					return $data[$name[0]][$name[1]];
 				}
 			}
-			if (isset($data[0]) && count($data[0]) > 0) {
+			if (!empty($data[0])) {
 				$name = key($data[0]);
 				return $data[0][$name];
 			}
@@ -1363,14 +1358,6 @@ class Model extends Overloadable {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
-				$conditions = array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id);
-
-				$links = $this->{$join}->find('all', array(
-					'conditions' => $conditions,
-					'recursive' => -1,
-					'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
-				));
-
 				$isUUID = !empty($this->{$join}->primaryKey) && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
 						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
@@ -1401,7 +1388,7 @@ class Model extends Overloadable {
 						if ($isUUID && $primaryAdded) {
 							$values[] = $db->value(String::uuid());
 						}
-						$values = join(',', $values);
+						$values = implode(',', $values);
 						$newValues[] = "({$values})";
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
@@ -1412,6 +1399,16 @@ class Model extends Overloadable {
 				}
 
 				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
+					$conditions = array_merge(
+						array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id),
+						(array)$this->hasAndBelongsToMany[$assoc]['conditions']
+					);
+					$links = $this->{$join}->find('all', array(
+						'conditions' => $conditions,
+						'recursive' => empty($this->hasAndBelongsToMany[$assoc]['conditions']) ? -1 : 0,
+						'fields' => $this->hasAndBelongsToMany[$assoc]['associationForeignKey']
+					));
+
 					$associationForeignKey = "{$join}." . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
 					$oldLinks = Set::extract($links, "{n}.{$associationForeignKey}");
 					if (!empty($oldLinks)) {
@@ -1429,7 +1426,7 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$fields =  join(',', $fields);
+					$fields =  implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
@@ -2453,7 +2450,7 @@ class Model extends Overloadable {
 			) ||
 			$this->beforeValidate($options) === false
 		) {
-			return $this->validationErrors;
+			return false;
 		}
 
 		if (!isset($this->validate) || empty($this->validate)) {
@@ -2925,7 +2922,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * Called during save operations, before validation. Please note that custom
+ * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
  * @return boolean True if validate operation should continue, false to abort

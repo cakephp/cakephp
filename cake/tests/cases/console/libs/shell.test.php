@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ShellTest file
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs
  * @since         CakePHP v 1.2.0.7726
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Folder');
 App::import('Shell', 'Shell', false);
@@ -52,7 +46,7 @@ Mock::generatePartial('ShellDispatcher', 'TestShellMockShellDispatcher', array(
  */
 class TestShell extends Shell {
 
-/*
+/**
  * name property
  *
  * @var name
@@ -71,8 +65,8 @@ class TestShell extends Shell {
  * stop method
  *
  * @param integer $status
- * @access protected
  * @return void
+ * @access protected
  */
 	function _stop($status = 0) {
 		$this->stopped = $status;
@@ -263,8 +257,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testNl
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testNl() {
 		$this->assertEqual($this->Shell->nl(), "\n");
@@ -277,8 +271,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testHr
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testHr() {
 		$bar = '---------------------------------------------------------------';
@@ -302,8 +296,8 @@ class ShellTest extends CakeTestCase {
 /**
  * testError
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testError() {
 		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Error: Foo Not Found\n"));

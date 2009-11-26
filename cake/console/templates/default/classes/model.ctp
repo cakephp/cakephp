@@ -52,7 +52,6 @@ endif;
 ?>
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 <?php
-
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);

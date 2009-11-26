@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * MS SQL layer for DBO
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -168,7 +162,7 @@ class DboMssql extends DboSource {
  * Check that MsSQL is installed/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('mssql');
 	}
@@ -432,7 +426,7 @@ class DboMssql extends DboSource {
  * @return string Error message with error number
  */
 	function lastError() {
-		$error = mssql_get_last_message($this->connection);
+		$error = mssql_get_last_message();
 
 		if ($error) {
 			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|datenbankkontext/i', $error)) {
@@ -618,7 +612,7 @@ class DboMssql extends DboSource {
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
@@ -753,7 +747,7 @@ class DboMssql extends DboSource {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
-					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+					$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 				} else {
 					$value['column'] = $this->name($value['column']);
 				}

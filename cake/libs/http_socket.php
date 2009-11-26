@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * HTTP Socket connection class.
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('CakeSocket', 'Set', 'Router'));
 
@@ -583,7 +577,8 @@ class HttpSocket extends CakeSocket {
 		$stripIfEmpty = array(
 			'query' => '?%query',
 			'fragment' => '#%fragment',
-			'user' => '%user:%pass@'
+			'user' => '%user:%pass@',
+			'host' => '%host:%port/'
 		);
 
 		foreach ($stripIfEmpty as $key => $strip) {
@@ -596,7 +591,6 @@ class HttpSocket extends CakeSocket {
 		if (array_key_exists($uri['scheme'], $defaultPorts) && $defaultPorts[$uri['scheme']] == $uri['port']) {
 			$uriTemplate = str_replace(':%port', null, $uriTemplate);
 		}
-
 		foreach ($uri as $property => $value) {
 			$uriTemplate = str_replace('%'.$property, $value, $uriTemplate);
 		}
@@ -800,7 +794,7 @@ class HttpSocket extends CakeSocket {
 		$returnHeader = '';
 		foreach ($header as $field => $contents) {
 			if (is_array($contents) && $mode == 'standard') {
-				$contents = join(',', $contents);
+				$contents = implode(',', $contents);
 			}
 			foreach ((array)$contents as $content) {
 				$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $content);
@@ -879,7 +873,7 @@ class HttpSocket extends CakeSocket {
 		foreach ((array)$header['Set-Cookie'] as $cookie) {
 			if (strpos($cookie, '";"') !== false) {
 				$cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
-				$parts  = str_replace("{__cookie_replace__}", '";"', preg_split('/\;/', $cookie));
+				$parts  = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));
 			} else {
 				$parts = preg_split('/\;[ \t]*/', $cookie);
 			}

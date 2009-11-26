@@ -5,19 +5,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.bake
  * @since         CakePHP(tm) v 1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
  * Task class for creating new project apps and plugins
@@ -31,7 +30,7 @@ class ProjectTask extends Shell {
  * configs path (used in testing).
  *
  * @var string
- **/
+ */
 	var $configPath = null;
 
 /**
@@ -150,6 +149,9 @@ class ProjectTask extends Shell {
 			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
+			if (!empty($this->params['empty'])) {
+				$skip = array();
+			}
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
 				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
@@ -225,7 +227,8 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
+				$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}
@@ -236,7 +239,7 @@ class ProjectTask extends Shell {
 			$File =& new File($path . 'webroot' . DS . 'test.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*define\\(\\\'CAKE_CORE_INCLUDE_PATH\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
-				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', '" . CAKE_CORE_INCLUDE_PATH . "');", $contents);
+				$result = str_replace($match[0], "\t\tdefine('CAKE_CORE_INCLUDE_PATH', " . $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "');", $contents);
 				if (!$File->write($result)) {
 					return false;
 				}
@@ -281,30 +284,39 @@ class ProjectTask extends Shell {
 		$admin = '';
 		$prefixes = Configure::read('Routing.prefixes');
 		if (!empty($prefixes)) {
+			if ($this->interactive) {
+				$this->out();
+				$this->out(__('You have more than one routing prefix configured', true));
+			}
 			if (count($prefixes) == 1) {
 				return $prefixes[0] . '_';
 			}
 			$options = array();
 			foreach ($prefixes as $i => $prefix) {
 				$options[] = $i + 1;
-				$this->out($i + 1 . '. ' . $prefix);
+				if ($this->interactive) {
+					$this->out($i + 1 . '. ' . $prefix);
+				}
 			}
 			$selection = $this->in(__('Please choose a prefix to bake with.', true), $options, 1);
 			return $prefixes[$selection - 1] . '_';
 		}
-
-		$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
-		$this->out(__('What would you like the prefix route to be?', true));
-		$this->out(__('Example: www.example.com/admin/controller', true));
-		while ($admin == '') {
-			$admin = $this->in(__("What would you like the prefix route to be?", true), null, 'admin');
-		}
-		if ($this->cakeAdmin($admin) !== true) {
-			$this->out(__('Unable to write to /app/config/core.php.', true));
+		if ($this->interactive) {
+			$this->hr();
 			$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
-			$this->_stop();
+			$this->out(__('What would you like the prefix route to be?', true));
+			$this->out(__('Example: www.example.com/admin/controller', true));
+			while ($admin == '') {
+				$admin = $this->in(__("Enter a routing prefix:", true), null, 'admin');
+			}
+			if ($this->cakeAdmin($admin) !== true) {
+				$this->out(__('Unable to write to /app/config/core.php.', true));
+				$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
+				$this->_stop();
+			}
+			return $admin . '_';
 		}
-		return $admin . '_';
+		return '';
 	}
 
 /**

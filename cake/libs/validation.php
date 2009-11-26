@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0.3830
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!class_exists('Multibyte')) {
 	App::import('Core', 'Multibyte', false);
@@ -214,8 +213,8 @@ class Validation extends Object {
  *
  * @param mixed $check credit card number to validate
  * @param mixed $type 'all' may be passed as a sting, defaults to fast which checks format of most major credit cards
- * 							if an array is used only the values of the array are checked.
- * 							Example: array('amex', 'bankcard', 'maestro')
+ *    if an array is used only the values of the array are checked.
+ *    Example: array('amex', 'bankcard', 'maestro')
  * @param boolean $deep set to true this will check the Luhn algorithm of the credit card.
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
@@ -609,12 +608,14 @@ class Validation extends Object {
 /**
  * Validate a multiple select.
  *
+ * Valid Options 
+ * 
+ * - in => provide a list of choices that selections must be made from
+ * - max => maximun number of non-zero choices that can be made
+ * - min => minimum number of non-zero choices that can be made
+ *
  * @param mixed $check Value to check
  * @param mixed $options Options for the check.
- * 	Valid options
- *	  in => provide a list of choices that selections must be made from
- *	  max => maximun number of non-zero choices that can be made
- * 	  min => minimum number of non-zero choices that can be made
  * @return boolean Success
  * @access public
  */
@@ -625,10 +626,10 @@ class Validation extends Object {
 		if (empty($check)) {
 			return false;
 		}
-		if ($options['max'] && sizeof($check) > $options['max']) {
+		if ($options['max'] && count($check) > $options['max']) {
 			return false;
 		}
-		if ($options['min'] && sizeof($check) < $options['min']) {
+		if ($options['min'] && count($check) < $options['min']) {
 			return false;
 		}
 		if ($options['in'] && is_array($options['in'])) {
@@ -673,11 +674,15 @@ class Validation extends Object {
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
 				case 'us':
+				case 'all':
+				case 'can':
 				// includes all NANPA members. see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-				default:
 					$_this->regex  = '/^(?:\+?1)?[-. ]?\\(?[2-9][0-8][0-9]\\)?[-. ]?[2-9][0-9]{2}[-. ]?[0-9]{4}$/';
 				break;
 			}
+		}
+		if (empty($_this->regex)) {
+			return $_this->_pass('phone', $check, $country);
 		}
 		return $_this->_check();
 	}
@@ -699,6 +704,9 @@ class Validation extends Object {
 		if (is_array($check)) {
 			$_this->_extract($check);
 		}
+		if (empty($country)) {
+			$_this->country = 'us';
+		}
 
 		if (is_null($_this->regex)) {
 			switch ($_this->country) {
@@ -716,10 +724,12 @@ class Validation extends Object {
 					$_this->regex  = '/^[1-9]{1}[0-9]{3}$/i';
 					break;
 				case 'us':
-				default:
 					$_this->regex  = '/\\A\\b[0-9]{5}(?:-[0-9]{4})?\\b\\z/i';
 					break;
 			}
+		}
+		if (empty($_this->regex)) {
+			return $_this->_pass('postal', $check, $country);
 		}
 		return $_this->_check();
 	}
@@ -784,13 +794,14 @@ class Validation extends Object {
  * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
  *
  * The regex checks for the following component parts:
- * 	a valid, optional, scheme
- * 		a valid ip address OR
- * 		a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
- *	  with an optional port number
- *	an optional valid path
- *	an optional query string (get parameters)
- *	an optional fragment (anchor tag)
+ *
+ * - a valid, optional, scheme
+ * - a valid ip address OR 
+ *   a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
+ *   with an optional port number
+ * - an optional valid path
+ * - an optional query string (get parameters)
+ * - an optional fragment (anchor tag)
  *
  * @param string $check Value to check
  * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
@@ -833,6 +844,31 @@ class Validation extends Object {
  */
 	function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array(&$object, $method), array($check, $args));
+	}
+
+/**
+ * Attempts to pass unhandled Validation locales to a class starting with $classPrefix
+ * and ending with Validation.  For example $classPrefix = 'nl', the class would be
+ * `NlValidation`.
+ *
+ * @param string $method The method to call on the other class.
+ * @param mixed $check The value to check or an array of parameters for the method to be called.
+ * @param string $classPrefix The prefix for the class to do the validation.
+ * @return mixed Return of Passed method, false on failure
+ * @access protected
+ **/
+	function _pass($method, $check, $classPrefix) {
+		$className = ucwords($classPrefix) . 'Validation';
+		if (!class_exists($className)) {
+			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
+			return false;
+		}
+		if (!method_exists($className, $method)) {
+			trigger_error(sprintf(__('Method %s does not exist on %s unable to complete validation.', true), $method, $className), E_USER_WARNING);
+			return false;
+		}
+		$check = (array)$check;
+		return call_user_func_array(array($className, $method), $check);
 	}
 
 /**

@@ -12,7 +12,6 @@
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
@@ -303,7 +302,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test image() with Asset.timestamp
  *
  * @return void
- **/
+ */
 	function testImageTagWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
@@ -334,27 +333,27 @@ class HtmlHelperTest extends CakeTestCase {
  * @link https://trac.cakephp.org/ticket/6490
  */
 	function testImageTagWithTheme() {
-		$file = WWW_ROOT . 'themed' . DS . 'default' . DS . 'img' . DS . 'cake.power.gif';
-		$message = "File '{$file}' not present. %s";
-		$this->skipUnless(file_exists($file), $message);
-
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
-		$this->Html->themeWeb = 'themed/default/';
-
+		
+		$this->Html->theme = 'test_theme';
 		$result = $this->Html->image('cake.power.gif');
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->image('cake.power.gif');
+		
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/\/testing\/themed\/default\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
 				'alt' => ''
 		)));
 		$this->Html->webroot = $webroot;
@@ -421,11 +420,17 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/vendor\.generic\.css/';
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
-		
-		$view =& ClassRegistry::getObject('view');
+
+		ClassRegistry::removeObject('view');
 		$view =& new HtmlHelperMockView();
+		ClassRegistry::addObject('view', $view);
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/css_in_head.css/')));
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
+		$this->assertNull($result);
+
+		$view =& ClassRegistry::getObject('view');
+		$view->expectAt(1, 'addScript', array(new NoPatternExpectation('/inline=""/')));
+		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 	}
 
@@ -433,7 +438,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test use of css() and timestamping
  *
  * @return void
- **/
+ */
 	function testCssTimestamping() {
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
@@ -477,7 +482,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test timestamp enforcement for script tags.
  *
  * @return void
- **/
+ */
 	function testScriptTimestamping() {
 		$skip = $this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped');
 		if ($skip) {
@@ -505,7 +510,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test script tag generation
  *
  * @return void
- **/
+ */
 	function testScript() {
 		$result = $this->Html->script('foo');
 		$expected = array(
@@ -560,7 +565,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test Script block generation
  *
  * @return void
- **/
+ */
 	function testScriptBlock() {
 		$result = $this->Html->scriptBlock('window.foo = 2;');
 		$expected = array(
@@ -610,7 +615,7 @@ class HtmlHelperTest extends CakeTestCase {
  * test script tag output buffering when using scriptStart() and scriptEnd();
  *
  * @return void
- **/
+ */
 	function testScriptStartAndScriptEnd() {
 		$result = $this->Html->scriptStart(array('safe' => true));
 		$this->assertNull($result);

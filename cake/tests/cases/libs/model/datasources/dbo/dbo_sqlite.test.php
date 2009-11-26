@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * DboSqliteTest file
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
 
@@ -226,7 +220,7 @@ class DboSqliteTest extends CakeTestCase {
  * test building columns with SQLite
  *
  * @return void
- **/
+ */
 	function testBuildColumn() {
 		$data = array(
 			'name' => 'int_field',
@@ -298,7 +292,7 @@ class DboSqliteTest extends CakeTestCase {
  * test describe() and normal results.
  *
  * @return void
- **/
+ */
 	function testDescribe() {
 		$Model =& new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
 		$result = $this->db->describe($Model);
@@ -342,7 +336,7 @@ class DboSqliteTest extends CakeTestCase {
  * test that describe does not corrupt UUID primary keys
  *
  * @return void
- **/
+ */
 	function testDescribeWithUuidPrimaryKey() {
 		$tableName = 'uuid_tests';
 		$this->db->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");

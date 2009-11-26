@@ -7,13 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
@@ -4735,7 +4734,7 @@ class ModelReadTest extends BaseModelTest {
  * test that bindModel behaves with Custom primary Key associations
  *
  * @return void
- **/
+ */
 	function bindWithCustomPrimaryKey() {
 		$this->loadFixtures('Story', 'StoriesTag', 'Tag');
 		$Model =& ClassRegistry::init('StoriesTag');
@@ -6401,7 +6400,7 @@ class ModelReadTest extends BaseModelTest {
  * test find with COUNT(DISTINCT field)
  *
  * @return void
- **/
+ */
 	function testFindCountDistinct() {
 		$skip = $this->skipIf(
 			$this->db->config['driver'] == 'sqlite',

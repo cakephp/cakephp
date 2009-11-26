@@ -4,19 +4,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -162,13 +161,13 @@ class View extends Object {
  * @var string
  */
 	var $subDir = null;
-
+	
 /**
  * Theme name.
  *
  * @var string
  */
-	var $themeWeb = null;
+	var $theme = null;
 
 /**
  * Used to define methods a controller that will be cached.
@@ -253,7 +252,7 @@ class View extends Object {
  * Holds View output.
  *
  * @var string
- **/
+ */
 	var $output = false;
 
 /**
@@ -455,7 +454,7 @@ class View extends Object {
 
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
-			'scripts_for_layout' => join("\n\t", $this->__scripts),
+			'scripts_for_layout' => implode("\n\t", $this->__scripts),
 			'cakeDebug' => $debug
 		));
 
@@ -723,7 +722,7 @@ class View extends Object {
 				$cache->helpers = $this->helpers;
 				$cache->action = $this->action;
 				$cache->controllerName = $this->name;
-				$cache->layout	= $this->layout;
+				$cache->layout = $this->layout;
 				$cache->cacheAction = $this->cacheAction;
 				$cache->cache($___viewFn, $out, $cached);
 			}
@@ -751,18 +750,14 @@ class View extends Object {
 				$options = $helper;
 				$helper = $i;
 			}
-			$plugin = $this->plugin;
-
-			if (strpos($helper, '.') !== false) {
-				list($plugin, $helper) = explode('.', $helper);
-			}
+			list($plugin, $helper) = pluginSplit($helper, true, $this->plugin);
 			$helperCn = $helper . 'Helper';
 
 			if (!isset($loaded[$helper])) {
 				if (!class_exists($helperCn)) {
 					$isLoaded = false;
 					if (!is_null($plugin)) {
-						$isLoaded = App::import('Helper', $plugin . '.' . $helper);
+						$isLoaded = App::import('Helper', $plugin . $helper);
 					}
 					if (!$isLoaded) {
 						if (!App::import('Helper', $helper)) {
@@ -784,9 +779,7 @@ class View extends Object {
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
-				$vars = array(
-					'base', 'webroot', 'here', 'params', 'action', 'data', 'themeWeb', 'plugin'
-				);
+				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
 				$c = count($vars);
 
 				for ($j = 0; $j < $c; $j++) {
@@ -842,7 +835,6 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-
 		$paths = $this->_paths(Inflector::underscore($this->plugin));
 		
 		$exts = array($this->ext);

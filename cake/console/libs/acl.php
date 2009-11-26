@@ -4,19 +4,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Component', 'Acl');
 App::import('Model', 'DbAcl');
@@ -237,7 +236,7 @@ class AclShell extends Shell {
  * @param integer $indent indent level.
  * @return void
  * @access protected
- **/
+ */
 	function _outputNode($class, $node, $indent) {
 		$indent = str_repeat('  ', $indent);
 		$data = $node[$class];
@@ -522,7 +521,7 @@ class AclShell extends Shell {
  *
  * @param string $identifier Identifier to parse
  * @return mixed a string for aliases, and an array for model.foreignKey
- **/
+ */
 	function parseIdentifier($identifier) {
 		if (preg_match('/^([\w]+)\.(.*)$/', $identifier, $matches)) {
 			return array(
@@ -540,7 +539,7 @@ class AclShell extends Shell {
  * @param string $class Class type you want (Aro/Aco)
  * @param mixed $identifier A mixed identifier for finding the node.
  * @return int Integer of NodeId. Will trigger an error if nothing is found.
- **/
+ */
 	function _getNodeId($class, $identifier) {
 		$node = $this->Acl->{$class}->node($identifier);
 		if (empty($node)) {

@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Backend for helpers.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -204,24 +198,27 @@ class Helper extends Overloadable {
  * @return string  $webPath web path to file.
  */
 	function webroot($file) {
-		$webPath = "{$this->webroot}" . $file;
-		if (!empty($this->themeWeb)) {
-			$os = env('OS');
-			if (!empty($os) && strpos($os, 'Windows') !== false) {
-				if (strpos(WWW_ROOT . $this->themeWeb  . $file, '\\') !== false) {
-					$path = str_replace('/', '\\', WWW_ROOT . $this->themeWeb  . $file);
+		$asset = explode('?', $file);
+		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
+		$webPath = "{$this->webroot}" . $asset[0];
+		
+		if (!empty($this->theme)) {
+			$viewPaths = App::path('views');
+			
+			foreach ($viewPaths as $viewPath) {
+				$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $asset[0];
+				$theme = $this->theme . '/';
+				
+				if (file_exists($path)) {
+					$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+					break;
 				}
-			} else {
-				$path = WWW_ROOT . $this->themeWeb  . $file;
-			}
-			if (file_exists($path)) {
-				$webPath = "{$this->webroot}" . $this->themeWeb . $file;
 			}
 		}
 		if (strpos($webPath, '//') !== false) {
 			return str_replace('//', '/', $webPath);
 		}
-		return $webPath;
+		return $webPath . $asset[1];
 	}
 
 /**
@@ -231,7 +228,7 @@ class Helper extends Overloadable {
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
  * @return string Path with a timestamp added, or not.
- **/
+ */
 	function assetTimestamp($path) {
 		$timestampEnabled = (
 			(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
@@ -584,8 +581,9 @@ class Helper extends Overloadable {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __name($options = array(), $field = null, $key = 'name') {
+	function _name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
 		if ($options === null) {
 			$options = array();
@@ -607,7 +605,7 @@ class Helper extends Overloadable {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . join('][', $view->entity()) . ']';
+				$name = 'data[' . implode('][', $view->entity()) . ']';
 			break;
 		}
 
@@ -652,7 +650,9 @@ class Helper extends Overloadable {
 		}
 
 		$habtmKey = $this->field();
-		if (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
+		if (empty($result) && isset($this->data[$habtmKey][$habtmKey])) {
+			$result = $this->data[$habtmKey][$habtmKey];
+		} elseif (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model =& ClassRegistry::getObject($habtmKey);
 				$result = $this->__selectedArray($this->data[$habtmKey], $model->primaryKey);
@@ -693,7 +693,7 @@ class Helper extends Overloadable {
 			$this->setEntity($field);
 		}
 		$options = (array)$options;
-		$options = $this->__name($options);
+		$options = $this->_name($options);
 		$options = $this->value($options);
 		$options = $this->domId($options);
 		if ($this->tagIsInvalid()) {

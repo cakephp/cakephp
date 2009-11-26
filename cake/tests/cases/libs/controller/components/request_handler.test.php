@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * RequestHandlerComponentTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Controller', 'Controller', false);
@@ -43,7 +37,7 @@ class RequestHandlerTestController extends Controller {
  *
  * @var string
  * @access public
- **/
+ */
 	var $name = 'RequestHandlerTest';
 
 /**
@@ -72,7 +66,7 @@ class RequestHandlerTestController extends Controller {
  * test method for ajax redirection
  *
  * @return void
- **/
+ */
 	function destination() {
 		$this->viewPath = 'posts';
 		$this->render('index');
@@ -251,7 +245,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * testStartupCallback with charset.
  *
  * @return void
- **/
+ */
 	function testStartupCallbackCharset() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
@@ -293,7 +287,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  *
  * @link #6466
  * @return void
- **/
+ */
 	function testRenderAsCalledTwice() {
 		$this->RequestHandler->renderAs($this->Controller, 'xml');
 		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'xml');
@@ -557,7 +551,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * test that ajax requests involving redirects trigger requestAction instead.
  *
  * @return void
- **/
+ */
 	function testAjaxRedirectAsRequestAction() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->_init();

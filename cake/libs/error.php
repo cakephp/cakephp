@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.10.5.1732
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'App');
 
@@ -108,10 +107,13 @@ class ErrorHandler extends Object {
 		if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($this)))) {
 			$method = 'error';
 		}
-
 		if ($method !== 'error') {
 			if (Configure::read('debug') == 0) {
-				$parentMethods = get_class_methods(get_parent_class($this));
+				$parentClass = get_parent_class($this);
+				if (strtolower($parentClass) != 'errorhandler') {
+					$method = 'error404';
+				}
+				$parentMethods = get_class_methods($parentClass);
 				if (in_array($method, $parentMethods)) {
 					$method = 'error404';
 				}

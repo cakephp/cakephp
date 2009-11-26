@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ScaffoldTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Scaffold');
@@ -159,7 +153,7 @@ class ScaffoldMock extends CakeTestModel {
  * hasAndBelongsToMany property
  *
  * @var string
- **/
+ */
 	var $hasAndBelongsToMany = array(
 		'ScaffoldTag' => array(
 			'className' => 'ScaffoldTag',
@@ -393,7 +387,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testIndexScaffold() {
 		$this->Controller->action = 'index';
 		$this->Controller->here = '/scaffold_mock';
@@ -432,7 +426,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testViewScaffold() {
 		$this->Controller->action = 'view';
 		$this->Controller->here = '/scaffold_mock';
@@ -474,7 +468,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testEditScaffold() {
 		$this->Controller->action = 'edit';
 		$this->Controller->here = '/scaffold_mock';
@@ -515,7 +509,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testAdminIndexScaffold() {
 		$_backAdmin = Configure::read('Routing.prefixes');
 
@@ -560,7 +554,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testAdminEditScaffold() {
 		$_backAdmin = Configure::read('Routing.prefixes');
 
@@ -603,7 +597,7 @@ class ScaffoldViewTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testMultiplePrefixScaffold() {
 		$_backAdmin = Configure::read('Routing.prefixes');
 
@@ -724,7 +718,7 @@ class ScaffoldTest extends CakeTestCase {
  * test that the proper names and variable values are set by Scaffold
  *
  * @return void
- **/
+ */
 	function testScaffoldVariableSetting() {
 		$this->Controller->action = 'admin_edit';
 		$this->Controller->here = '/admin/scaffold_mock/edit';
@@ -763,7 +757,7 @@ class ScaffoldTest extends CakeTestCase {
  * test that scaffold outputs flash messages when sessions are unset.
  *
  * @return void
- **/
+ */
 	function testScaffoldFlashMessages() {
 		$this->Controller->action = 'edit';
 		$this->Controller->here = '/scaffold_mock';
@@ -803,7 +797,7 @@ class ScaffoldTest extends CakeTestCase {
  *
  * @see http://code.cakephp.org/tickets/view/48
  * @return void
- **/
+ */
 	function testHabtmFieldAdditionWithScaffoldForm() {
 		$this->Controller->action = 'edit';
 		$this->Controller->here = '/scaffold_mock';
@@ -836,7 +830,7 @@ class ScaffoldTest extends CakeTestCase {
  * test that the proper names and variable values are set by Scaffold
  *
  * @return void
- **/
+ */
 	function testEditScaffoldWithScaffoldFields() {
 		$this->Controller = new ScaffoldMockControllerWithFields();
 		$this->Controller->action = 'edit';

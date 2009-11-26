@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * PluginTask Test file
  *
@@ -8,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.3.0
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
 
@@ -75,7 +72,8 @@ class PluginTaskTest extends CakeTestCase {
  * startCase methods
  *
  * @return void
- **/
+ * @access public
+ */
 	function startCase() {
 		$this->_paths = $paths = App::path('plugins');
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
@@ -86,7 +84,8 @@ class PluginTaskTest extends CakeTestCase {
  * endCase
  *
  * @return void
- **/
+ * @access public
+ */
 	function endCase() {
 		App::build(array('plugins' => $this->_paths));
 	}
@@ -105,7 +104,8 @@ class PluginTaskTest extends CakeTestCase {
  * test bake()
  *
  * @return void
- **/
+ * @access public
+ */
 	function testBakeFoldersAndFiles() {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
@@ -171,19 +171,12 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(file_exists($path . DS . 'tests' . DS . 'fixtures' . DS . 'empty'), 'No empty file %s');
 
 		$this->assertTrue(is_dir($path . DS . 'vendors'), 'No vendors dir %s');
-		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'css'), 'No vendors css dir %s');
-		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'css' . DS . 'empty'), 'No empty file %s');
-
-		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'js'), 'No vendors js dir %s');
-		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'js' . DS . 'empty'), 'No empty file %s');
-
-		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'img'), 'No vendors img dir %s');
-		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'img' . DS . 'empty'), 'No empty file %s');
-
+	
 		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells'), 'No vendors shells dir %s');
 		$this->assertTrue(is_dir($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks'), 'No vendors shells tasks dir %s');
 		$this->assertTrue(file_exists($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file %s');
 		$this->assertTrue(is_dir($path . DS . 'libs'), 'No libs dir %s');
+		$this->assertTrue(is_dir($path . DS . 'webroot'), 'No webroot dir %s');
 
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
 		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
@@ -199,7 +192,8 @@ class PluginTaskTest extends CakeTestCase {
  * test execute with no args, flowing into interactive,
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithNoArgs() {
 		$this->Task->setReturnValueAt(0, 'in', 'TestPlugin');
 		$this->Task->setReturnValueAt(1, 'in', '3');
@@ -224,7 +218,8 @@ class PluginTaskTest extends CakeTestCase {
  * Test Execute
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithOneArg() {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
@@ -248,7 +243,8 @@ class PluginTaskTest extends CakeTestCase {
  * test execute chaining into MVC parts
  *
  * @return void
- **/
+ * @access public
+ */
 	function testExecuteWithTwoArgs() {
 		$this->Task->Model =& new PluginTestMockModelTask();
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);

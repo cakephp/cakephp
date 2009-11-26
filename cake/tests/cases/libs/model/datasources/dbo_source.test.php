@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * DboSourceTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *	Licensed under The Open Group Test Suite License
  *	Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -3649,7 +3643,7 @@ class DboSourceTest extends CakeTestCase {
  * test hasAny()
  *
  * @return void
- **/
+ */
 	function testHasAny() {
 		$this->testDb->hasAny($this->Model, array());
 		$expected = 'SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1';
@@ -4006,7 +4000,7 @@ class DboSourceTest extends CakeTestCase {
  * test getting the query log as an array.
  *
  * @return void
- **/
+ */
 	function testGetLog() {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
@@ -4030,7 +4024,7 @@ class DboSourceTest extends CakeTestCase {
  * test that execute runs queries.
  *
  * @return void
- **/
+ */
 	function testExecute() {
 		$query = 'SELECT * FROM ' . $this->testDb->fullTableName('articles') . ' WHERE 1 = 1';
 
@@ -4052,7 +4046,7 @@ class DboSourceTest extends CakeTestCase {
  * test that query() returns boolean values from operations like CREATE TABLE
  *
  * @return void
- **/
+ */
 	function testFetchAllBooleanReturns() {
 		$name = $this->db->fullTableName('test_query');
 		$query = "CREATE TABLE {$name} (name varchar(10));";
@@ -4068,7 +4062,7 @@ class DboSourceTest extends CakeTestCase {
  * test ShowQuery generation of regular and error messages
  *
  * @return void
- **/
+ */
 	function testShowQuery() {
 		$this->testDb->error = false;
 		ob_start();

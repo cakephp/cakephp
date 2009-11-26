@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -65,14 +64,14 @@ class ModelTask extends Shell {
  * Holds tables found on connection.
  *
  * @var array
- **/
+ */
 	var $__tables = array();
 
 /**
  * Holds validation method map.
  *
  * @var array
- **/
+ */
 	var $__validations = array();
 
 /**
@@ -81,6 +80,8 @@ class ModelTask extends Shell {
  * @access public
  */
 	function execute() {
+		App::import('Model', 'Model', false);
+
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -108,7 +109,7 @@ class ModelTask extends Shell {
  * Bake all models at once.
  *
  * @return void
- **/
+ */
 	function all() {
 		$this->listAll($this->connection, false);
 		$unitTestExists = $this->_checkUnitTest();
@@ -128,9 +129,12 @@ class ModelTask extends Shell {
  *
  * @param string $className Name of class you want model to be.
  * @return object Model instance
- **/
-	function &_getModelObject($className) {
-		$object = new Model(array('name' => $className, 'ds' => $this->connection));
+ */
+	function &_getModelObject($className, $table = null) {
+		if (!$table) {
+			$table = Inflector::tableize($className);
+		}
+		$object =& new Model(array('name' => $className, 'table' => $table, 'ds' => $this->connection));
 		return $object;
 	}
 
@@ -141,7 +145,7 @@ class ModelTask extends Shell {
  * @param string $prompt Prompt to use for options list.
  * @param integer $default The default option for the given prompt.
  * @return result of user choice.
- **/
+ */
 	function inOptions($options, $prompt = null, $default = null) {
 		$valid = false;
 		$max = count($options);
@@ -166,8 +170,6 @@ class ModelTask extends Shell {
  * @access private
  */
 	function __interactive() {
-		App::import('Model', 'Model', false);
-
 		$this->hr();
 		$this->out(sprintf("Bake Model\nPath: %s", $this->path));
 		$this->hr();
@@ -263,7 +265,7 @@ class ModelTask extends Shell {
  * @param string $associations Collection of associations.
  * @access protected
  * @return void
- **/
+ */
 	function _printAssociation($modelName, $type, $associations) {
 		if (!empty($associations[$type])) {
 			for ($i = 0; $i < count($associations[$type]); $i++) {
@@ -279,7 +281,7 @@ class ModelTask extends Shell {
  * @param array $fields Array of fields that might have a primary key.
  * @return string Name of field that is a primary key.
  * @access public
- **/
+ */
 	function findPrimaryKey($fields) {
 		foreach ($fields as $name => $field) {
 			if (isset($field['key']) && $field['key'] == 'primary') {
@@ -294,7 +296,7 @@ class ModelTask extends Shell {
  *
  * @param array $fields Array of fields to look for and choose as a displayField
  * @return mixed Name of field to use for displayField or false if the user declines to choose
- **/
+ */
 	function findDisplayField($fields) {
 		$fieldNames = array_keys($fields);
 		$prompt = __("A displayField could not be automatically detected\nwould you like to choose one?", true);
@@ -338,7 +340,7 @@ class ModelTask extends Shell {
  * Populate the __validations array
  *
  * @return void
- **/
+ */
 	function initValidations() {
 		$options = $choices = array();
 		if (class_exists('Validation')) {
@@ -364,7 +366,7 @@ class ModelTask extends Shell {
  * @param string $fieldName Name of field to be validated.
  * @param array $metaData metadata for field
  * @return array Array of validation for the field.
- **/
+ */
 	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
 		$defaultChoice = count($this->__validations);
 		$validate = $alreadyChosen = array();
@@ -485,7 +487,7 @@ class ModelTask extends Shell {
  * @param object $model Model instance of model being generated.
  * @param array $associations Array of inprogress associations
  * @return array $associations with belongsTo added in.
- **/
+ */
 	function findBelongsTo(&$model, $associations) {
 		$fields = $model->schema();
 		foreach ($fields as $fieldName => $field) {
@@ -514,11 +516,11 @@ class ModelTask extends Shell {
  * @param object $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasOne and hasMany added in.
- **/
+ */
 	function findHasOneAndMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->__tables as $otherTable) {
-			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
+			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
 			$modelFieldsTemp = $tempOtherModel->schema();
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
@@ -557,11 +559,11 @@ class ModelTask extends Shell {
  * @param object $model Model instance being generated
  * @param array $associations Array of inprogress associations
  * @return array $associations with hasAndBelongsToMany added in.
- **/
+ */
 	function findHasAndBelongsToMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->__tables as $otherTable) {
-			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable));
+			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
 			$modelFieldsTemp = $tempOtherModel->schema();
 
 			$offset = strpos($otherTable, $model->table . '_');
@@ -597,7 +599,7 @@ class ModelTask extends Shell {
  * @param array $model Temporary Model instance.
  * @param array $associations Array of associations to be confirmed.
  * @return array Array of confirmed associations
- **/
+ */
 	function confirmAssociations(&$model, $associations) {
 		foreach ($associations as $type => $settings) {
 			if (!empty($associations[$type])) {
@@ -625,7 +627,7 @@ class ModelTask extends Shell {
  * @param object $model Temporary model instance
  * @param array $associations Array of associations.
  * @return array Array of associations.
- **/
+ */
 	function doMoreAssociations($model, $associations) {
 		$prompt = __('Would you like to define some additional model associations?', true);
 		$wannaDoMoreAssoc = $this->in($prompt, array('y','n'), 'n');
@@ -690,7 +692,7 @@ class ModelTask extends Shell {
  * Finds all possible keys to use on custom associations.
  *
  * @return array array of tables and possible keys
- **/
+ */
 	function _generatePossibleKeys() {
 		$possible = array();
 		foreach ($this->__tables as $otherTable) {
@@ -783,7 +785,7 @@ class ModelTask extends Shell {
  * @param string $modelName Name of the model you want a table for.
  * @param string $useDbConfig Name of the database config you want to get tables from.
  * @return void
- **/
+ */
 	function getTable($modelName, $useDbConfig = null) {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
@@ -812,7 +814,7 @@ class ModelTask extends Shell {
  *
  * @param string $useDbConfig Connection name to scan.
  * @return array Array of tables in the database.
- **/
+ */
 	function getAllTables($useDbConfig = null) {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
@@ -907,7 +909,7 @@ class ModelTask extends Shell {
  * @access public
  * @return void
  * @see FixtureTask::bake
- **/
+ */
 	function bakeFixture($className, $useTable = null) {
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;

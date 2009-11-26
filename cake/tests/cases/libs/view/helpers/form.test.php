@@ -1758,7 +1758,7 @@ class FormHelperTest extends CakeTestCase {
  * test form->input() with datetime, date and time types
  *
  * @return void
- **/
+ */
 	function testInputDatetime() {
 		extract($this->dateRegex);
 		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
@@ -1874,7 +1874,7 @@ class FormHelperTest extends CakeTestCase {
  * Test generating checkboxes in a loop.
  *
  * @return void
- **/
+ */
 	function testInputCheckboxesInLoop() {
 		for ($i = 1; $i < 5; $i++) {
 			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
@@ -1894,7 +1894,7 @@ class FormHelperTest extends CakeTestCase {
  * test form->input() with select type inputs.
  *
  * @return void
- **/
+ */
 	function testInputSelectType() {
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
@@ -2040,7 +2040,7 @@ class FormHelperTest extends CakeTestCase {
  * test that overriding the magic select type widget is possible
  *
  * @return void
- **/
+ */
 	function testInputOverridingMagicSelectType() {
 		$view =& ClassRegistry::getObject('view');
 		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
@@ -2743,7 +2743,7 @@ class FormHelperTest extends CakeTestCase {
  * test disabling the hidden input for radio buttons
  *
  * @return void
- **/
+ */
 	function testRadioHiddenInputDisabling() {
 		$result = $this->Form->input('Model.1.field', array(
 				'type' => 'radio',
@@ -3043,7 +3043,7 @@ class FormHelperTest extends CakeTestCase {
  * test generation of habtm select boxes.
  *
  * @return void
- **/
+ */
 	function testHabtmSelectBox() {
 		$view =& ClassRegistry::getObject('view');
 		$view->viewVars['contactTags'] = array(
@@ -3427,7 +3427,7 @@ class FormHelperTest extends CakeTestCase {
  * Test that disabling a checkbox also disables the hidden input so no value is submitted
  *
  * @return void
- **/
+ */
 	function testCheckboxDisabling() {
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
 		$expected = array(
@@ -3441,7 +3441,7 @@ class FormHelperTest extends CakeTestCase {
  * Test that specifying false in the 'disabled' option will not disable either the hidden input or the checkbox input
  *
  * @return void
- **/
+ */
 	function testCheckboxHiddenDisabling() {
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
 		$expected = array(
@@ -4685,7 +4685,7 @@ class FormHelperTest extends CakeTestCase {
  * test File upload input on a model not used in create();
  *
  * @return void
- **/
+ */
 	function testFileUploadOnOtherModel() {
 		ClassRegistry::removeObject('view');
 		$controller =& new Controller();
@@ -4816,7 +4816,7 @@ class FormHelperTest extends CakeTestCase {
  * test image submit types.
  *
  * @return void
- **/
+ */
 	function testSubmitImage() {
 		$result = $this->Form->submit('http://example.com/cake.power.gif');
 		$expected = array(
@@ -5049,13 +5049,28 @@ class FormHelperTest extends CakeTestCase {
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array();
+		$this->Form->params['controller'] = 'contacts';
+		$this->Form->params['models'] = array('Contact');
+		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
+			),
+			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/fieldset'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
  * test that inputDefaults are stored and used.
  *
  * @return void
- **/
+ */
 	function testCreateWithInputDefaults() {
 		$this->Form->create('User', array(
 			'inputDefaults' => array('div' => false, 'label' => false)
@@ -5080,7 +5095,7 @@ class FormHelperTest extends CakeTestCase {
  * test automatic accept-charset overriding
  *
  * @return void
- **/
+ */
 	function testCreateWithAcceptCharset() {
 		$result = $this->Form->create('UserForm', array(
 				'type' => 'post', 'action' => 'login','encoding' => 'iso-8859-1'

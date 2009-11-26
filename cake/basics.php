@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Basic Cake functionality.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -216,6 +210,28 @@ if (!function_exists('array_combine')) {
 			$charset = 'UTF-8';
 		}
 		return htmlspecialchars($text, ENT_QUOTES, $charset);
+	}
+
+/**
+ * Splits a dot syntax plugin name into its plugin and classname.
+ * If $name does not have a dot, then index 0 will be null.
+ *
+ * Commonly used like `list($plugin, $name) = pluginSplit($name);`
+ *
+ * @param string $name The name you want to plugin split.
+ * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
+ * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
+ * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
+ */
+	function pluginSplit($name, $dotAppend = false, $plugin = null) {
+		if (strpos($name, '.') !== false) {
+			$parts = explode('.', $name, 2);
+			if ($dotAppend) {
+				$parts[0] .= '.';
+			}
+			return $parts;
+		}
+		return array($plugin, $name);
 	}
 
 /**
@@ -445,7 +461,7 @@ if (!function_exists('file_put_contents')) {
 /**
  * Writes data into file.
  *
- * If file exists, it will be overwritten. If data is an array, it will be join()ed with an empty string.
+ * If file exists, it will be overwritten. If data is an array, it will be implode()ed with an empty string.
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
@@ -453,7 +469,7 @@ if (!function_exists('file_put_contents')) {
  */
 	function file_put_contents($fileName, $data) {
 		if (is_array($data)) {
-			$data = join('', $data);
+			$data = implode('', $data);
 		}
 		$res = @fopen($fileName, 'w+b');
 

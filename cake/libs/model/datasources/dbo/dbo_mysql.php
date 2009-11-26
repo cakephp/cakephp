@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * MySQL layer for DBO
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -174,7 +168,7 @@ class DboMysqlBase extends DboSource {
 
 		$alias = $joins = false;
 		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
-		$fields = join(', ', $fields);
+		$fields = implode(', ', $fields);
 		$table = $this->fullTableName($model);
 
 		if (!empty($conditions)) {
@@ -358,7 +352,7 @@ class DboMysqlBase extends DboSource {
  * @param array $parameters Parameters to add & drop.
  * @return array Array of table property alteration statementes.
  * @todo Implement this method.
- **/
+ */
 	function _alterTableParameters($table, $parameters) {
 		if (isset($parameters['change'])) {
 			return $this->buildTableParameters($parameters['change']);
@@ -398,7 +392,7 @@ class DboMysqlBase extends DboSource {
 					}
 				}
 				if (is_array($value['column'])) {
-					$out .= 'KEY '. $name .' (' . join(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
+					$out .= 'KEY '. $name .' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
 				} else {
 					$out .= 'KEY '. $name .' (' . $this->name($value['column']) . ')';
 				}
@@ -418,7 +412,7 @@ class DboMysqlBase extends DboSource {
 	function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
-			$fields = join(', ', array_map(array(&$this, 'name'), $fields));
+			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
 		}
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
@@ -462,13 +456,14 @@ class DboMysqlBase extends DboSource {
  * @return string Character set name
  */
 	function getCharsetName($name) {
-		$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
-		if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
-			return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
+			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
 		}
 		return false;
 	}
-
 }
 
 /**
@@ -536,7 +531,7 @@ class DboMysql extends DboMysqlBase {
  * Check whether the MySQL extension is installed/loaded
  *
  * @return boolean
- **/
+ */
 	function enabled() {
 		return extension_loaded('mysql');
 	}

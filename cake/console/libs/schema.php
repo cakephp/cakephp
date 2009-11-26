@@ -7,19 +7,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5550
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'File', false);
 App::import('Model', 'CakeSchema', false);
@@ -64,9 +63,10 @@ class SchemaShell extends Shell {
 		} elseif (!empty($this->args[0])) {
 			$name = $this->params['name'] = $this->args[0];
 		}
+
 		if (strpos($name, '.')) {
-			list($this->params['plugin'], $this->params['name']) = explode('.', $name);
-			$name = $this->params['name'];
+			list($this->params['plugin'], $splitName) = pluginSplit($name);
+			$name = $this->params['name'] = $splitName;
 		}
 
 		if ($name) {
@@ -243,7 +243,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function create() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__create($Schema, $table);
@@ -253,7 +253,7 @@ class SchemaShell extends Shell {
  * Run database create commands.  Alias for run create.
  *
  * @return void
- **/
+ */
 	function update() {
 		list($Schema, $table) = $this->_loadSchema();
 		$this->__update($Schema, $table);
@@ -263,7 +263,7 @@ class SchemaShell extends Shell {
  * Prepares the Schema objects for database operations.
  *
  * @return void
- **/
+ */
 	function _loadSchema() {
 		$name = $plugin = null;
 		if (isset($this->params['name'])) {

@@ -6,13 +6,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -458,13 +457,22 @@ class CakeSchemaTest extends CakeTestCase {
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
-	}
 
+		$SchemaPost =& ClassRegistry::init('SchemaPost');
+		$SchemaPost->table = 'sts';
+		$SchemaPost->tablePrefix = 'po';
+		$read = $this->Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => array('SchemaPost')
+		));
+		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
+	}
 /**
  * test reading schema from plugins.
  *
  * @return void
- **/
+ */
 	function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
@@ -490,7 +498,7 @@ class CakeSchemaTest extends CakeTestCase {
  * test that tables are generated correctly
  *
  * @return void
- **/
+ */
 	function testGenerateTable() {
 		$fields = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
@@ -568,7 +576,7 @@ class CakeSchemaTest extends CakeTestCase {
  * Test comparing tableParameters and indexes.
  *
  * @return void
- **/
+ */
 	function testTableParametersAndIndexComparison() {
 		$old = array(
 			'posts' => array(
@@ -671,7 +679,7 @@ class CakeSchemaTest extends CakeTestCase {
  * test loading schema files inside of plugins.
  *
  * @return void
- **/
+ */
 	function testSchemaLoadingFromPlugin() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)

@@ -9,20 +9,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision: 8225 $
- * @modifiedby    $LastChangedBy: mark_story $
- * @lastmodified  $Date: 2009-07-07 23:25:30 -0400 (Tue, 07 Jul 2009) $
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
@@ -540,7 +536,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * test deconstruct() with time fields.
  *
  * @return void
- **/
+ */
 	function testDeconstructFieldsTime() {
 		$this->loadFixtures('Apple');
 		$TestModel =& new Apple();
@@ -885,7 +881,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that __exists is reset on create
  *
  * @return void
- **/
+ */
 	function testResetOfExistsOnCreate() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -1183,7 +1179,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstruct() {
 		$this->loadFixtures('Post', 'Comment');
 
@@ -1204,7 +1200,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstructWithAlternateDataSource() {
 		$TestModel =& ClassRegistry::init(array(
 			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false

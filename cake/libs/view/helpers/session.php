@@ -6,19 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 1.1.7.3328
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!class_exists('cakesession')) {
 	require LIBS . 'cake_session.php';
@@ -126,10 +125,12 @@ class SessionHelper extends CakeSession {
  * 					Will default to flash if no param is passed
  *
  * @param string $key The [Message.]key you are rendering in the view.
- * @return string Will echo the value if $key is set, or false if not set.
+ * @return boolean|string Will return the value if $key is set, or false if not set.
  * @access public
  */
 	function flash($key = 'flash') {
+		$out = false;
+
 		if ($this->__active === true && $this->__start()) {
 			if (parent::check('Message.' . $key)) {
 				$flash = parent::read('Message.' . $key);
@@ -149,12 +150,10 @@ class SessionHelper extends CakeSession {
 					$tmpVars['message'] = $flash['message'];
 					$out = $view->element($flash['element'], $tmpVars);
 				}
-				echo($out);
 				parent::delete('Message.' . $key);
-				return true;
 			}
 		}
-		return false;
+		return $out;
 	}
 
 /**

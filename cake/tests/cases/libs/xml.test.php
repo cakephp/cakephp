@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * XmlTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.5432
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Xml');
@@ -126,7 +120,7 @@ class XmlTest extends CakeTestCase {
  * test serialization of boolean and null values.  false = 0, true = 1, null = ''
  *
  * @return void
- **/
+ */
 	function testSerializationOfBooleanAndBooleanishValues() {
 		$xml =& new Xml(array('data' => array('example' => false)));
 		$result = $xml->toString(false);
@@ -738,7 +732,7 @@ class XmlTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testElementCollapsing() {
 		$xmlDataThatFails = '<resultpackage>
 		<result qid="46b1c46ed6208"><![CDATA[46b1c46ed3af9]]></result>
@@ -800,7 +794,7 @@ class XmlTest extends CakeTestCase {
  *
  * @see http://code.cakephp.org/tickets/view/8
  * @return void
- **/
+ */
 	function testCaseFoldingWithEmptyValues() {
 		$filledValue = '<method name="set_user_settings">
 			<title>update user information</title>

@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * HelperTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('View', 'Helper'));
@@ -347,7 +341,7 @@ class HelperTest extends CakeTestCase {
  * test getting values from Helper
  *
  * @return void
- **/
+ */
 	function testValue() {
 		$this->Helper->data = array('fullname' => 'This is me');
 		$this->Helper->setEntity('fullname');
@@ -373,13 +367,33 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('Post.2.created.year');
 		$result = $this->Helper->value('Post.2.created.year');
 		$this->assertEqual($result, '2008');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => ''));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, '');
+
+		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => array(2, 3, 4)));
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(2, 3, 4));
+
+		$this->Helper->data = array(
+			'HelperTestTag' => array(
+				array('id' => 3),
+				array('id' => 5)
+			)
+		);
+		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
+		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
+		$this->assertEqual($result, array(3 => 3, 5 => 5));
 	}
 
 /**
  * Ensure HTML escaping of url params.  So link addresses are valid and not exploited
  *
  * @return void
- **/
+ */
 	function testUrlConversion() {
 		$result = $this->Helper->url('/controller/action/1');
 		$this->assertEqual($result, '/controller/action/1');
@@ -415,7 +429,7 @@ class HelperTest extends CakeTestCase {
  * test assetTimestamp application
  *
  * @return void
- **/
+ */
 	function testAssetTimestamp() {
 		$_timestamp = Configure::read('Asset.timestamp');
 		$_debug = Configure::read('debug');
