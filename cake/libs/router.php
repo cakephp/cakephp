@@ -844,7 +844,13 @@ class Router {
 				$originalUrl = $url;
 
 				if (isset($route->params['persist'], $_this->__params[0])) {
-					$url = array_merge(array_intersect_key($params, Set::combine($route->params['persist'], '/')), $url);
+					foreach ($route->params['persist'] as $persistKey) {
+						if (array_key_exists($persistKey, $_url)) {
+							$url[$persistKey] = $_url[$persistKey];
+						} elseif (array_key_exists($persistKey, $params)) {
+							$url[$persistKey] = $params[$persistKey];
+						}
+					}
 				}
 				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
@@ -897,7 +903,7 @@ class Router {
 						break;
 					}
 				}
-				$output = implode('/', $urlOut) . '/';
+				$output = implode('/', $urlOut);
 			}
 
 			if (!empty($args)) {

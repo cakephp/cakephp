@@ -947,13 +947,29 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42');
 		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEqual($result, $expected);
+	}
 
+/**
+ * test that the persist key works.
+ *
+ * @return void
+ */
+	function testPersistentParameters() {
 		Router::reload();
-		Router::connect('/:lang/:color/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('persist' => array('lang', 'color')));
-		Router::connect('/:lang/:color/posts/index', array('controller' => 'posts', 'action' => 'index'), array('persist' => array('lang')));
+		Router::connect(
+			'/:lang/:color/posts/view/*',
+			array('controller' => 'posts', 'action' => 'view'),
+			array('persist' => array('lang', 'color')
+		));
+		Router::connect(
+			'/:lang/:color/posts/index',
+			array('controller' => 'posts', 'action' => 'index'),
+			array('persist' => array('lang')
+		));
 		Router::connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'index'));
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
 		Router::parse('/en/red/posts/view/5');
+
 		Router::setRequestInfo(array(
 			array('controller' => 'posts', 'action' => 'view', 'lang' => 'en', 'color' => 'red', 'form' => array(), 'url' => array(), 'plugin' => null),
 			array('base' => '/', 'here' => '/en/red/posts/view/5', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
@@ -964,6 +980,10 @@ class RouterTest extends CakeTestCase {
 
 		$expected = '/en/blue/posts/index';
 		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'color' => 'blue'));
+		$this->assertEqual($result, $expected);
+
+		$expected = '/posts/edit/6';
+		$result = Router::url(array('controller' => 'posts', 'action' => 'edit', 6, 'color' => null, 'lang' => null));
 		$this->assertEqual($result, $expected);
 
 		$expected = '/posts';
