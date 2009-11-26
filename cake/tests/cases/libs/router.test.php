@@ -2091,6 +2091,15 @@ class RouterRouteTestCase extends CakeTestCase {
 		$result = $route->compile();
 		$this->assertEqual($result, '#^/posts(?:/([0-9]+))(?:\\:([a-z-_]+))(?:/([12][0-9]{3}))[\/]*$#');
 		$this->assertEqual($route->keys, array('id', 'title', 'year'));
+		
+		$route =& new RouterRoute(
+			'/posts/:url_title-(uuid::id)',
+			array('controller' => 'posts', 'action' => 'view'), 
+			array('pass' => array('id', 'url_title'), 'id' => $ID)
+		);
+		$result = $route->compile();
+		$this->assertEqual($result, '#^/posts(?:/([^\/]+))?(?:-\(uuid\:([0-9]+)\))[\/]*$#');
+		$this->assertEqual($route->keys, array('url_title', 'id'));
 	}
 
 /**
@@ -2112,7 +2121,6 @@ class RouterRouteTestCase extends CakeTestCase {
 		$expected = '/admin/subscriptions/edit/1/';
 		$this->assertEqual($result, $expected);
 	}
-
 }
 
 
