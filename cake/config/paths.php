@@ -198,13 +198,6 @@ if (!defined('VENDORS')) {
 }
 
 /**
- * Path to the Pear directory
- * The purporse is to make it easy porting Pear libs into Cake
- * without setting the include_path PHP variable.
- */
-	define('PEAR', VENDORS.'Pear'.DS);
-
-/**
  *  Full url prefix
  */
 if (!defined('FULL_BASE_URL')) {
