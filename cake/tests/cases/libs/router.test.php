@@ -1980,7 +1980,7 @@ class RouterTest extends CakeTestCase {
 
 	}
 }
-
+SimpleTest::ignore('RouterTest');
 /**
  * Test case for RouterRoute
  *

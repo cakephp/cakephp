@@ -1276,7 +1276,26 @@ class RouterRoute {
 			$this->keys = array();
 			return;
 		}
-		$names = $parsed = array();
+		$names = $replacements = array();
+		$parsed = $route;
+
+		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
+		foreach ($namedElements[1] as $i => $name) {
+			$option = null;
+			if (isset($params[$name])) {
+				if ($name !== 'plugin' && array_key_exists($name, $default)) {
+					$option = '?';
+				}
+				$replacements[] = '(?:/(' . $params[$name] . ')' . $option . ')' . $option;
+			} else {
+				$replacements[] = '(?:/(^[\/]+))?';
+			}
+			$names[] = $name;
+		}
+		$route = str_replace($namedElements[0], $replacements, $route);
+		$this->_compiledRoute = '#^' . $route . '[\/]*$#';
+		$this->keys = $names;
+		/*
 		$elements = explode('/', $route);
 
 		foreach ($elements as $element) {
@@ -1333,6 +1352,7 @@ class RouterRoute {
 		}
 		$this->_compiledRoute = '#^' . join('', $parsed) . '[\/]*$#';
 		$this->keys = $names;
+		*/
 	}
 
 /**
