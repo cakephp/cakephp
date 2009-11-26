@@ -217,8 +217,8 @@ class Router {
  * @static
  */
 	function getNamedExpressions() {
-		$_this =& Router::getInstance();
-		return $_this->__named;
+		$self =& Router::getInstance();
+		return $self->__named;
 	}
 
 /**
@@ -233,23 +233,23 @@ class Router {
  * @static
  */
 	function connect($route, $default = array(), $params = array()) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 
 		if (!isset($default['action'])) {
 			$default['action'] = 'index';
 		}
-		foreach ($_this->__prefixes as $prefix) {
+		foreach ($self->__prefixes as $prefix) {
 			if (isset($default[$prefix])) {
 				$default['prefix'] = $prefix;
 				break;
 			}
 		}
 		if (isset($default['prefix'])) {
-			$_this->__prefixes[] = $default['prefix'];
-			$_this->__prefixes = array_keys(array_flip($_this->__prefixes));
+			$self->__prefixes[] = $default['prefix'];
+			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
-		$_this->routes[] =& new RouterRoute($route, $default, $params);
-		return $_this->routes;
+		$self->routes[] =& new RouterRoute($route, $default, $params);
+		return $self->routes;
 	}
 
 /**
@@ -280,10 +280,10 @@ class Router {
  * @static
  */
 	function connectNamed($named, $options = array()) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 
 		if (isset($options['argSeparator'])) {
-			$_this->named['separator'] = $options['argSeparator'];
+			$self->named['separator'] = $options['argSeparator'];
 			unset($options['argSeparator']);
 		}
 
@@ -293,23 +293,23 @@ class Router {
 		}
 		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 
-		if ($options['reset'] == true || $_this->named['rules'] === false) {
-			$_this->named['rules'] = array();
+		if ($options['reset'] == true || $self->named['rules'] === false) {
+			$self->named['rules'] = array();
 		}
 
 		if ($options['default']) {
-			$named = array_merge($named, $_this->named['default']);
+			$named = array_merge($named, $self->named['default']);
 		}
 
 		foreach ($named as $key => $val) {
 			if (is_numeric($key)) {
-				$_this->named['rules'][$val] = true;
+				$self->named['rules'][$val] = true;
 			} else {
-				$_this->named['rules'][$key] = $val;
+				$self->named['rules'][$key] = $val;
 			}
 		}
-		$_this->named['greedy'] = $options['greedy'];
-		return $_this->named;
+		$self->named['greedy'] = $options['greedy'];
+		return $self->named;
 	}
 
 /**
@@ -322,8 +322,8 @@ class Router {
  * @return void
  */
 	function defaults($connect = true) {
-		$_this =& Router::getInstance();
-		$_this->__connectDefaults = $connect;
+		$self =& Router::getInstance();
+		$self->__connectDefaults = $connect;
 	}
 
 /**
@@ -342,14 +342,14 @@ class Router {
  * @static
  */
 	function mapResources($controller, $options = array()) {
-		$_this =& Router::getInstance();
-		$options = array_merge(array('prefix' => '/', 'id' => $_this->__named['ID'] . '|' . $_this->__named['UUID']), $options);
+		$self =& Router::getInstance();
+		$options = array_merge(array('prefix' => '/', 'id' => $self->__named['ID'] . '|' . $self->__named['UUID']), $options);
 		$prefix = $options['prefix'];
 
 		foreach ((array)$controller as $ctlName) {
 			$urlName = Inflector::underscore($ctlName);
 
-			foreach ($_this->__resourceMap as $params) {
+			foreach ($self->__resourceMap as $params) {
 				extract($params);
 				$url = $prefix . $urlName . (($id) ? '/:id' : '');
 
@@ -358,7 +358,7 @@ class Router {
 					array('id' => $options['id'], 'pass' => array('id'))
 				);
 			}
-			$_this->__resourceMapped[] = $urlName;
+			$self->__resourceMapped[] = $urlName;
 		}
 	}
 
@@ -370,8 +370,8 @@ class Router {
  * @static
  */
 	function prefixes() {
-		$_this =& Router::getInstance();
-		return $_this->__prefixes;
+		$self =& Router::getInstance();
+		return $self->__prefixes;
 	}
 
 /**
@@ -384,9 +384,9 @@ class Router {
  * @static
  */
 	function parse($url) {
-		$_this =& Router::getInstance();
-		if (!$_this->__defaultsMapped && $_this->__connectDefaults) {
-			$_this->__connectDefaultRoutes();
+		$self =& Router::getInstance();
+		if (!$self->__defaultsMapped && $self->__connectDefaults) {
+			$self->__connectDefaultRoutes();
 		}
 		$out = array('pass' => array(), 'named' => array());
 		$r = $ext = null;
@@ -401,13 +401,13 @@ class Router {
 		if (strpos($url, '?') !== false) {
 			$url = substr($url, 0, strpos($url, '?'));
 		}
-		extract($_this->__parseExtension($url));
+		extract($self->__parseExtension($url));
 
-		for ($i = 0, $len = count($_this->routes); $i < $len; $i++) {
-			$route =& $_this->routes[$i];
+		for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
+			$route =& $self->routes[$i];
 			$route->compile();
 			if (($r = $route->parse($url)) !== false) {
-				$_this->__currentRoute[] =& $route;
+				$self->__currentRoute[] =& $route;
 
 				$params = $route->params;
 				$names = $route->keys;
@@ -444,10 +444,10 @@ class Router {
 					}
 
 					if (isset($names[$key])) {
-						$out[$names[$key]] = $_this->stripEscape($found);
+						$out[$names[$key]] = $self->stripEscape($found);
 					} else {
 						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
-						extract($_this->getArgs($found, $argOptions));
+						extract($self->getArgs($found, $argOptions));
 						$out['pass'] = array_merge($out['pass'], $pass);
 						$out['named'] = $named;
 					}
@@ -549,16 +549,16 @@ class Router {
  * @static
  */
 	function setRequestInfo($params) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		$defaults = array('plugin' => null, 'controller' => null, 'action' => null);
 		$params[0] = array_merge($defaults, (array)$params[0]);
 		$params[1] = array_merge($defaults, (array)$params[1]);
-		list($_this->__params[], $_this->__paths[]) = $params;
+		list($self->__params[], $self->__paths[]) = $params;
 
-		if (count($_this->__paths)) {
-			if (isset($_this->__paths[0]['namedArgs'])) {
-				foreach ($_this->__paths[0]['namedArgs'] as $arg => $value) {
-					$_this->named['rules'][$arg] = true;
+		if (count($self->__paths)) {
+			if (isset($self->__paths[0]['namedArgs'])) {
+				foreach ($self->__paths[0]['namedArgs'] as $arg => $value) {
+					$self->named['rules'][$arg] = true;
 				}
 			}
 		}
@@ -573,12 +573,12 @@ class Router {
  * @static
  */
 	function getParams($current = false) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		if ($current) {
-			return $_this->__params[count($_this->__params) - 1];
+			return $self->__params[count($self->__params) - 1];
 		}
-		if (isset($_this->__params[0])) {
-			return $_this->__params[0];
+		if (isset($self->__params[0])) {
+			return $self->__params[0];
 		}
 		return array();
 	}
@@ -609,14 +609,14 @@ class Router {
  * @static
  */
 	function getPaths($current = false) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		if ($current) {
-			return $_this->__paths[count($_this->__paths) - 1];
+			return $self->__paths[count($self->__paths) - 1];
 		}
-		if (!isset($_this->__paths[0])) {
+		if (!isset($self->__paths[0])) {
 			return array('base' => null);
 		}
-		return $_this->__paths[0];
+		return $self->__paths[0];
 	}
 
 /**
@@ -627,11 +627,11 @@ class Router {
  * @static
  */
 	function reload() {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		foreach (get_class_vars('Router') as $key => $val) {
-			$_this->{$key} = $val;
+			$self->{$key} = $val;
 		}
-		$_this->__setPrefixes();
+		$self->__setPrefixes();
 	}
 
 /**
@@ -644,16 +644,16 @@ class Router {
  * @static
  */
 	function promote($which = null) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		if ($which === null) {
-			$which = count($_this->routes) - 1;
+			$which = count($self->routes) - 1;
 		}
-		if (!isset($_this->routes[$which])) {
+		if (!isset($self->routes[$which])) {
 			return false;
 		}
-		$route = $_this->routes[$which];
-		unset($_this->routes[$which]);
-		array_unshift($_this->routes, $route);
+		$route = $self->routes[$which];
+		unset($self->routes[$which]);
+		array_unshift($self->routes, $route);
 		return true;
 	}
 
@@ -680,7 +680,7 @@ class Router {
  * @static
  */
 	function url($url = null, $full = false) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if (is_bool($full)) {
@@ -689,11 +689,11 @@ class Router {
 			extract(array_merge(array('escape' => false, 'full' => false), $full));
 		}
 
-		if (!empty($_this->__params)) {
+		if (!empty($self->__params)) {
 			if (isset($this) && !isset($this->params['requested'])) {
-				$params = $_this->__params[0];
+				$params = $self->__params[0];
 			} else {
-				$params = end($_this->__params);
+				$params = end($self->__params);
 			}
 			if (isset($params['prefix']) && strpos($params['action'], $params['prefix']) === 0) {
 				$params['action'] = substr($params['action'], strlen($params['prefix']) + 1);
@@ -701,11 +701,11 @@ class Router {
 		}
 		$path = array('base' => null);
 
-		if (!empty($_this->__paths)) {
+		if (!empty($self->__paths)) {
 			if (isset($this) && !isset($this->params['requested'])) {
-				$path = $_this->__paths[0];
+				$path = $self->__paths[0];
 			} else {
-				$path = end($_this->__paths);
+				$path = end($self->__paths);
 			}
 		}
 		$base = $path['base'];
@@ -736,8 +736,8 @@ class Router {
 				}
 			}
 
-			$prefixExists = (array_intersect_key($url, array_flip($_this->__prefixes)));
-			foreach ($_this->__prefixes as $prefix) {
+			$prefixExists = (array_intersect_key($url, array_flip($self->__prefixes)));
+			foreach ($self->__prefixes as $prefix) {
 				if (!isset($url[$prefix]) && !empty($params[$prefix]) && !$prefixExists) {
 					$url[$prefix] = true;
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
@@ -762,13 +762,13 @@ class Router {
 			}
 			$match = false;
 
-			for ($i = 0, $len = count($_this->routes); $i < $len; $i++) {
-				$route =& $_this->routes[$i];
+			for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
+				$route =& $self->routes[$i];
 				$route->compile();
 
 				$originalUrl = $url;
 
-				if (isset($route->params['persist'], $_this->__params[0])) {
+				if (isset($route->params['persist'], $self->__params[0])) {
 					foreach ($route->params['persist'] as $persistKey) {
 						if (array_key_exists($persistKey, $_url)) {
 							$url[$persistKey] = $_url[$persistKey];
@@ -788,7 +788,7 @@ class Router {
 			$named = $args = array();
 			$skip = array_merge(
 				array('bare', 'action', 'controller', 'plugin', 'prefix'),
-				$_this->__prefixes
+				$self->__prefixes
 			);
 
 			$keys = array_values(array_diff(array_keys($url), $skip));
@@ -805,7 +805,7 @@ class Router {
 
 			if ($match === false) {
 				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
-				foreach ($_this->__prefixes as $prefix) {
+				foreach ($self->__prefixes as $prefix) {
 					if (!empty($url[$prefix])) {
 						$url['action'] = str_replace($prefix . '_', '', $url['action']);
 						break;
@@ -822,7 +822,7 @@ class Router {
 					array_unshift($urlOut, $url['plugin']);
 				}
 
-				foreach ($_this->__prefixes as $prefix) {
+				foreach ($self->__prefixes as $prefix) {
 					if (isset($url[$prefix])) {
 						array_unshift($urlOut, $prefix);
 						break;
@@ -841,7 +841,7 @@ class Router {
 
 			if (!empty($named)) {
 				foreach ($named as $name => $value) {
-					$output .= '/' . $name . $_this->named['separator'] . $value;
+					$output .= '/' . $name . $self->named['separator'] . $value;
 				}
 			}
 			$output = str_replace('//', '/', $base . '/' . $output);
@@ -858,7 +858,7 @@ class Router {
 				$output = $base . $url;
 			} else {
 				$output = $base . '/';
-				foreach ($_this->__prefixes as $prefix) {
+				foreach ($self->__prefixes as $prefix) {
 					if (isset($params[$prefix])) {
 						$output .= $prefix . '/';
 						break;
@@ -878,7 +878,7 @@ class Router {
 			$output = substr($output, 0, -1);
 		}
 
-		return $output . $extension . $_this->queryString($q, array(), $escape) . $frag;
+		return $output . $extension . $self->queryString($q, array(), $escape) . $frag;
 	}
 
 /**
@@ -892,12 +892,12 @@ class Router {
  * @static
  */
 	function getNamedElements($params, $controller = null, $action = null) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		$named = array();
 
 		foreach ($params as $param => $val) {
-			if (isset($_this->named['rules'][$param])) {
-				$rule = $_this->named['rules'][$param];
+			if (isset($self->named['rules'][$param])) {
+				$rule = $self->named['rules'][$param];
 				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
 					$named[$param] = $val;
 					unset($params[$param]);
@@ -1013,8 +1013,8 @@ class Router {
  * @static
  */
 	function requestRoute() {
-		$_this =& Router::getInstance();
-		return $_this->__currentRoute[0];
+		$self =& Router::getInstance();
+		return $self->__currentRoute[0];
 	}
 
 /**
@@ -1025,8 +1025,8 @@ class Router {
  * @static
  */
 	function currentRoute() {
-		$_this =& Router::getInstance();
-		return $_this->__currentRoute[count($_this->__currentRoute) - 1];
+		$self =& Router::getInstance();
+		return $self->__currentRoute[count($self->__currentRoute) - 1];
 	}
 
 /**
@@ -1061,7 +1061,7 @@ class Router {
  * @static
  */
 	function stripEscape($param) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		if (!is_array($param) || empty($param)) {
 			if (is_bool($param)) {
 				return $param;
@@ -1075,7 +1075,7 @@ class Router {
 				$return[$key] = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $value);
 			} else {
 				foreach ($value as $array => $string) {
-					$return[$key][$array] = $_this->stripEscape($string);
+					$return[$key][$array] = $self->stripEscape($string);
 				}
 			}
 		}
@@ -1099,10 +1099,10 @@ class Router {
  * @static
  */
 	function parseExtensions() {
-		$_this =& Router::getInstance();
-		$_this->__parseExtensions = true;
+		$self =& Router::getInstance();
+		$self->__parseExtensions = true;
 		if (func_num_args() > 0) {
-			$_this->__validExtensions = func_get_args();
+			$self->__validExtensions = func_get_args();
 		}
 	}
 
@@ -1115,11 +1115,11 @@ class Router {
  * @static
  */
 	function getArgs($args, $options = array()) {
-		$_this =& Router::getInstance();
+		$self =& Router::getInstance();
 		$pass = $named = array();
 		$args = explode('/', $args);
 
-		$greedy = $_this->named['greedy'];
+		$greedy = $self->named['greedy'];
 		if (isset($options['greedy'])) {
 			$greedy = $options['greedy'];
 		}
@@ -1127,7 +1127,7 @@ class Router {
 		if (isset($options['context'])) {
 			$context = $options['context'];
 		}
-		$rules = $_this->named['rules'];
+		$rules = $self->named['rules'];
 		if (isset($options['named'])) {
 			$greedy = isset($options['greedy']) && $options['greedy'] === true;
 			foreach ((array)$options['named'] as $key => $val) {
@@ -1143,13 +1143,13 @@ class Router {
 			if (empty($param) && $param !== '0' && $param !== 0) {
 				continue;
 			}
-			$param = $_this->stripEscape($param);
+			$param = $self->stripEscape($param);
 
-			$separatorIsPresent = strpos($param, $_this->named['separator']) !== false;
+			$separatorIsPresent = strpos($param, $self->named['separator']) !== false;
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
-				list($key, $val) = explode($_this->named['separator'], $param, 2);
+				list($key, $val) = explode($self->named['separator'], $param, 2);
 				$hasRule = isset($rules[$key]);
-				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$_this->matchNamed($key, $val, $rules[$key], $context));
+				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$self->matchNamed($key, $val, $rules[$key], $context));
 				if ($passIt) {
 					$pass[] = $param;
 				} else {
