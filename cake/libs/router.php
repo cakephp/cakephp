@@ -157,6 +157,14 @@ class Router {
 	var $__defaultsMapped = false;
 
 /**
+ * Keeps track of whether the connection of default routes is enabled or disabled.
+ *
+ * @var boolean
+ * @access private
+ */
+	var $__connectDefaults = true;
+
+/**
  * Constructor for Router.
  * Builds __prefixes
  *
@@ -305,6 +313,19 @@ class Router {
 	}
 
 /**
+ * Tell router to connect or not connect the default routes.
+ * If default routes are disabled all automatic route generation will be disabled
+ * and you will need to manually configure all the routes you want.
+ *
+ * @param boolean $connect Set to true or false depending on whether you want or don't want default routes.
+ * @return void
+ */
+	function connectDefaults($connect = true) {
+		$_this =& Router::getInstance();
+		$_this->__connectDefaults = $connect;
+	}
+
+/**
  * Creates REST resource routes for the given controller(s)
  *
  * Options:
@@ -341,79 +362,6 @@ class Router {
 	}
 
 /**
- * Builds a route regular expression
- *
- * @param string $route An empty string, or a route string "/"
- * @param array $default NULL or an array describing the default route
- * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
- * @return array
- * @see routes
- * @access public
- * @static
- */
-	function writeRoute($route, $default, $params) {
-		if (empty($route) || ($route === '/')) {
-			return array('/^[\/]*$/', array());
-		}
-		$names = array();
-		$elements = explode('/', $route);
-
-		foreach ($elements as $element) {
-			if (empty($element)) {
-				continue;
-			}
-			$q = null;
-			$element = trim($element);
-			$namedParam = strpos($element, ':') !== false;
-
-			if ($namedParam && preg_match('/^:([^:]+)$/', $element, $r)) {
-				if (isset($params[$r[1]])) {
-					if ($r[1] != 'plugin' && array_key_exists($r[1], $default)) {
-						$q = '?';
-					}
-					$parsed[] = '(?:/(' . $params[$r[1]] . ')' . $q . ')' . $q;
-				} else {
-					$parsed[] = '(?:/([^\/]+))?';
-				}
-				$names[] = $r[1];
-			} elseif ($element === '*') {
-				$parsed[] = '(?:/(.*))?';
-			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
-				$matchCount = count($matches[1]);
-
-				foreach ($matches[1] as $i => $name) {
-					$pos = strpos($element, ':' . $name);
-					$before = substr($element, 0, $pos);
-					$element = substr($element, $pos + strlen($name) + 1);
-					$after = null;
-
-					if ($i + 1 === $matchCount && $element) {
-						$after = preg_quote($element);
-					}
-
-					if ($i === 0) {
-						$before = '/' . $before;
-					}
-					$before = preg_quote($before, '#');
-
-					if (isset($params[$name])) {
-						if (isset($default[$name]) && $name != 'plugin') {
-							$q = '?';
-						}
-						$parsed[] = '(?:' . $before . '(' . $params[$name] . ')' . $q . $after . ')' . $q;
-					} else {
-						$parsed[] = '(?:' . $before . '([^\/]+)' . $after . ')?';
-					}
-					$names[] = $name;
-				}
-			} else {
-				$parsed[] = '/' . $element;
-			}
-		}
-		return array('#^' . implode('', $parsed) . '[\/]*$#', $names);
-	}
-
-/**
  * Returns the list of prefixes used in connected routes
  *
  * @return array A list of prefixes used in connected routes
@@ -436,7 +384,7 @@ class Router {
  */
 	function parse($url) {
 		$_this =& Router::getInstance();
-		if (!$_this->__defaultsMapped) {
+		if (!$_this->__defaultsMapped && $_this->__connectDefaults) {
 			$_this->__connectDefaultRoutes();
 		}
 		$out = array('pass' => array(), 'named' => array());
@@ -522,26 +470,6 @@ class Router {
 	}
 
 /**
- * Compiles a route by numeric key and returns the compiled expression, replacing
- * the existing uncompiled route.  Do not call statically.
- *
- * @param integer $i
- * @return array Returns an array containing the compiled route
- * @access public
- */
-	function compile($i) {
-		$route = $this->routes[$i];
-
-		list($pattern, $names) = $this->writeRoute($route[0], $route[1], $route[2]);
-		$this->routes[$i] = array(
-			$route[0], $pattern, $names,
-			array_merge(array('plugin' => null, 'controller' => null), (array)$route[1]),
-			$route[2]
-		);
-		return $this->routes[$i];
-	}
-
-/**
  * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
  *
  * @param string $url
@@ -582,10 +510,6 @@ class Router {
  * @access private
  */
 	function __connectDefaultRoutes() {
-		if ($this->__defaultsMapped) {
-			return;
-		}
-
 		if ($plugins = App::objects('plugin')) {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
