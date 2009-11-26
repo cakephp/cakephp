@@ -59,9 +59,10 @@ class ThemeView extends View {
 					&& strpos($paths[$i], DS . 'libs' . DS . 'view') === false
 					&& strpos($paths[$i], DS . $plugin . DS) === false) {
 						if ($plugin) {
-							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS . $plugin . DS;
+							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS . 'plugins' . DS . $plugin . DS;
+						} else {
+							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
 						}
-						$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
 					}
 			}
 			$paths = array_merge($themePaths, $paths);

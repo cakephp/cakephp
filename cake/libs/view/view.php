@@ -939,7 +939,7 @@ class View extends Object {
 			$count = count($viewPaths);
 			for ($i = 0; $i < $count; $i++) {
 				if (!isset($corePaths[$viewPaths[$i]])) {
-					$paths[] = $viewPaths[$i] . $plugin . DS;
+					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
 				}
 			}
 			$paths[] = App::pluginPath($plugin) . 'views' . DS;
