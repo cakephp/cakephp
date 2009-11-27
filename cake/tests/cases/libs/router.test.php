@@ -1980,7 +1980,7 @@ class RouterTest extends CakeTestCase {
 
 	}
 }
-SimpleTest::ignore('RouterTest');
+ SimpleTest::ignore('RouterTest');
 /**
  * Test case for RouterRoute
  *
@@ -2144,6 +2144,21 @@ class RouterRouteTestCase extends CakeTestCase {
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1/';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test the parse method of RouterRoute.
+ *
+ * @return void
+ */
+	function testParse() {
+		extract(Router::getNamedExpressions());
+		$route = new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$route->compile();
+		$result = $route->parse('/posts/view/1');
+		$this->assertEqual($result[1], 'posts');
+		$this->assertEqual($result[2], 'view');
+		$this->assertEqual($result[3], '1');
 	}
 }
 
