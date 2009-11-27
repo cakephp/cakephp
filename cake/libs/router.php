@@ -1286,22 +1286,28 @@ class RouterRoute {
 				if ($name !== 'plugin' && array_key_exists($name, $default)) {
 					$option = '?';
 				}
-				$replacements[] = '(?:(' . $params[$name] . ')' . $option . ')' . $option;
+				$slashParam = '/\\' . $namedElements[0][$i];
+				if (strpos($parsed, $slashParam) !== false) {
+					$replacements[] = '(?:/(' . $params[$name] . ')' . $option . ')' . $option;
+					$search[] = $slashParam;
+				} else {
+					$search[] = '\\' . $namedElements[0][$i];
+					$replacements[] = '(?:(' . $params[$name] . ')' . $option . ')' . $option;
+				}
 			} else {
 				$replacements[] = '(?:([^/]+))?';
+				$search[] = '\\' . $namedElements[0][$i];
 			}
-			$search[] = '\\' . $namedElements[0][$i];
 			$names[] = $name;
 		}
-
-		$parsed = str_replace($search, $replacements, $parsed);
 		if (preg_match('#\/\*#', $route, $m)) {
 			$parsed = preg_replace('#/\\\\\*#', '(?:/(.*))?', $parsed);
 		}
-
+		$parsed = str_replace($search, $replacements, $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
-	/*	
+
+	/*
 		$elements = explode('/', $route);
 
 		foreach ($elements as $element) {

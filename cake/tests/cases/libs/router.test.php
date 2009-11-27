@@ -2068,7 +2068,7 @@ class RouterRouteTestCase extends CakeTestCase {
 		extract(Router::getNamedExpressions());
 
 		$route = new RouterRoute(
-			'/:controller/:action/:id', 
+			'/:controller/:action/:id',
 			array('controller' => 'testing4', 'id' => null),
 			array('id' => $ID)
 		);
@@ -2097,7 +2097,7 @@ class RouterRouteTestCase extends CakeTestCase {
 
 			$this->assertPattern($result, '/posts/1' . $delim . 'name-of-article');
 			$this->assertPattern($result, '/posts/13244' . $delim . 'name-of_Article[]');
-			$this->assertNoPattern($result, '/posts/11!!nameofarticle');
+			$this->assertNoPattern($result, '/posts/11!nameofarticle');
 			$this->assertNoPattern($result, '/posts/11');
 
 			$this->assertEqual($route->keys, array('id', 'title'));
@@ -2115,10 +2115,10 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertNoPattern($result, '/posts/:nameofarticle/2009');
 		$this->assertNoPattern($result, '/posts/:nameofarticle/01');
 		$this->assertEqual($route->keys, array('id', 'title', 'year'));
-		
+
 		$route =& new RouterRoute(
 			'/posts/:url_title-(uuid::id)',
-			array('controller' => 'posts', 'action' => 'view'), 
+			array('controller' => 'posts', 'action' => 'view'),
 			array('pass' => array('id', 'url_title'), 'id' => $ID)
 		);
 		$result = $route->compile();
@@ -2148,7 +2148,7 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertPattern($result, '/pages/view/today');
 		$this->assertPattern($result, '/pages/view/today/tomorrow');
 		$this->assertNoPattern($result, '/pages/view/tomorrow/something:else');
-		
+
 		$route =& new RouterRoute(
 			'/posts/:month/:day/:year/*',
 			array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day)
@@ -2164,6 +2164,9 @@ class RouterRouteTestCase extends CakeTestCase {
 			array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
 		);
 		$result = $route->compile();
+
+		$this->assertPattern($result, '/some_extra/page/this_is_the_slug');
+		$this->assertPattern($result, '/page/this_is_the_slug');
 		$this->assertEqual($route->keys, array('extra', 'slug'));
 		$this->assertEqual($route->params, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
 		$expected = array(
@@ -2173,8 +2176,6 @@ class RouterRouteTestCase extends CakeTestCase {
 			'plugin' => null
 		);
 		$this->assertEqual($route->defaults, $expected);
-		$this->assertPattern($result, '/some_extra/page/this_is_the_slug');
-		$this->assertNoPattern($result, '/page/this_is_the_slug');
 	}
 
 /**
