@@ -1811,12 +1811,23 @@ class DispatcherTest extends CakeTestCase {
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
 		
-		
 		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/css/test_asset.css');
 		ob_start();
 		$Dispatcher->cached('theme/test_theme/css/test_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $result);
+		
+		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/theme.js');
+		ob_start();
+		$Dispatcher->cached('theme/test_theme/js/theme.js');
+		$result = ob_get_clean();
+		$this->assertEqual('root theme js file', $result);
+		
+		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/one/theme_one.js');
+		ob_start();
+		$Dispatcher->cached('theme/test_theme/js/one/theme_one.js');
+		$result = ob_get_clean();
+		$this->assertEqual('nested theme js file', $result);
 		
 		ob_start();
 		$Dispatcher->dispatch('test_plugin/flash/plugin_test.swf');
@@ -1856,16 +1867,22 @@ class DispatcherTest extends CakeTestCase {
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
 
-
-		Configure::write('debug', $debug);
 		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/plugin_js.js');
 		ob_start();
 		$Dispatcher->cached('plugin_js/js/plugin_js.js');
 		$result = ob_get_clean();
 		$expected = "alert('win sauce');";
 		$this->assertEqual($result, $expected);
-
-		header('Content-type: text/html');//reset the header content-type without page can render as plain text.
+		
+		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/one/plugin_one.js');
+		ob_start();
+		$Dispatcher->cached('plugin_js/js/one/plugin_one.js');
+		$result = ob_get_clean();
+		$expected = "alert('plugin one nested js file');";
+		$this->assertEqual($result, $expected);
+		Configure::write('debug', $debug);
+		//reset the header content-type without page can render as plain text.
+		header('Content-type: text/html');
 	}
 
 /**

@@ -56,8 +56,7 @@ class ThemeView extends View {
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
 				if (strpos($paths[$i], DS . 'plugins' . DS) === false
-					&& strpos($paths[$i], DS . 'libs' . DS . 'view') === false
-					&& strpos($paths[$i], DS . $plugin . DS) === false) {
+					&& strpos($paths[$i], DS . 'libs' . DS . 'view') === false) {
 						if ($plugin) {
 							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS . 'plugins' . DS . $plugin . DS;
 						}
