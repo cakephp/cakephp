@@ -241,7 +241,7 @@ class XmlNode extends Object {
 		}
 
 		$n = $name;
-		if (!empty($chldObjs['_name_'])) {
+		if (isset($chldObjs['_name_'])) {
 			$n = null;
 			unset($chldObjs['_name_']);
 		}
