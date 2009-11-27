@@ -1276,8 +1276,8 @@ class RouterRoute {
 			$this->keys = array();
 			return;
 		}
-		$names = $replacements = array();
-		$parsed = $route;
+		$names = $replacements = $search = array();
+		$parsed = preg_quote($route, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
@@ -1288,15 +1288,18 @@ class RouterRoute {
 				}
 				$replacements[] = '(?:(' . $params[$name] . ')' . $option . ')' . $option;
 			} else {
-				$replacements[] = '(?:([^\/]+))?';
+				$replacements[] = '(?:([^/]+))?';
 			}
+			$search[] = '\\' . $namedElements[0][$i];
 			$names[] = $name;
 		}
-		$parsed = str_replace($namedElements[0], $replacements, $route);
-		if (preg_match('#\/\*$#', $route)) {
-			$parsed = preg_replace('#\/*$#', '(?:/(.*))?', $parsed);
+
+		$parsed = str_replace($search, $replacements, $parsed);
+		if (preg_match('#\/\*$#', $route, $m)) {
+			$parsed = preg_replace('#/\\\\\*$#', '(?:/(.*))?', $parsed);
 		}
-		$this->_compiledRoute = '#^' . $parsed . '[\/]*$#';
+
+		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 		/*
 		$elements = explode('/', $route);
