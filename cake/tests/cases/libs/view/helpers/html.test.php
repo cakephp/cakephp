@@ -358,6 +358,38 @@ class HtmlHelperTest extends CakeTestCase {
 		)));
 		$this->Html->webroot = $webroot;
 	}
+	
+/**
+ * test theme assets in main webroot path
+ *
+ * @access public
+ * @return void
+ */
+	function testThemeAssetsInMainWebrootPath() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+		$webRoot = Configure::read('App.www_root');
+		Configure::write('App.www_root', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
+		
+		$webroot = $this->Html->webroot;
+		$this->Html->theme = 'test_theme';
+		$result = $this->Html->css('webroot_test');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/webroot_test\.css/')
+		);
+		$this->assertTags($result, $expected);
+
+		$webroot = $this->Html->webroot;
+		$this->Html->theme = 'test_theme';
+		$result = $this->Html->css('theme_webroot');
+		$expected = array(
+			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
+		);
+		$this->assertTags($result, $expected);
+		
+		Configure::write('App.www_root', $webRoot);
+	}
 
 /**
  * testStyle method
