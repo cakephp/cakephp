@@ -858,7 +858,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$this->router->routes = array();
-		Router::connect('/posts/:month/:day/:year//*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
+		Router::connect('/posts/:month/:day/:year/*', array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day));
 		$result = Router::parse('/posts/08/01/2007/title-of-post-here');
 		$expected = array('month' => '08', 'day' => '01', 'year' => '2007', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array('0' => 'title-of-post-here'), 'named' => array());
 		$this->assertEqual($result, $expected);
@@ -1034,11 +1034,10 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/page/this_is_the_slug');
-		$expected = array( 'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null);
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => null);
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-
 		Router::connect(
 			"/:extra/page/:slug/*",
 			array('controller' => 'pages', 'action' => 'view', 'extra' => null),
@@ -1660,7 +1659,7 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 
 		$result = Router::parse('/');
-		$expected = array('pass'=>array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$expected = array('pass'=> array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/pages/home/');
@@ -1980,7 +1979,8 @@ class RouterTest extends CakeTestCase {
 
 	}
 }
- SimpleTest::ignore('RouterTest');
+
+// SimpleTest::ignore('RouterTest');
 /**
  * Test case for RouterRoute
  *
@@ -2067,7 +2067,11 @@ class RouterRouteTestCase extends CakeTestCase {
 	function testRouteCompilingWithParamPatterns() {
 		extract(Router::getNamedExpressions());
 
-		$route = new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$route = new RouterRoute(
+			'/:controller/:action/:id', 
+			array('controller' => 'testing4', 'id' => null),
+			array('id' => $ID)
+		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/edit/1');
 		$this->assertPattern($result, '/posts/view/518098');
@@ -2124,6 +2128,53 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertNoPattern($result, '/posts/nameofarticle');
 		$this->assertNoPattern($result, '/posts/nameofarticle-12347');
 		$this->assertEqual($route->keys, array('url_title', 'id'));
+	}
+
+/**
+ * test more complex route compiling & parsing with mid route greedy stars
+ * and //
+ *
+ * @return void
+ */
+	function testComplexRouteCompilingAndParsing() {
+		extract(Router::getNamedExpressions());
+
+		$route =& new RouterRoute(
+			'/pages/*/:event',
+			array('controller' => 'pages', 'action' => 'display'),
+			array('event' => '[a-z0-9_-]+')
+		);
+		$result = $route->compile();
+		$this->assertPattern($result, '/pages/view/today');
+		$this->assertPattern($result, '/pages/view/today/tomorrow');
+		$this->assertNoPattern($result, '/pages/view/tomorrow/something:else');
+		
+		$route =& new RouterRoute(
+			'/posts/:month/:day/:year/*',
+			array('controller' => 'posts', 'action' => 'view'), array('year' => $Year, 'month' => $Month, 'day' => $Day)
+		);
+		$result = $route->compile();
+		$this->assertPattern($result, '/posts/08/01/2007/title-of-post');
+		$result = $route->parse('/posts/08/01/2007/title-of-post');
+		$this->assertEqual(count($result), 5);
+
+		$route =& new RouterRoute(
+			"/:extra/page/:slug/*",
+			array('controller' => 'pages', 'action' => 'view', 'extra' => null),
+			array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
+		);
+		$result = $route->compile();
+		$this->assertEqual($route->keys, array('extra', 'slug'));
+		$this->assertEqual($route->params, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
+		$expected = array(
+			'controller' => 'pages',
+			'action' => 'view',
+			'extra' => null,
+			'plugin' => null
+		);
+		$this->assertEqual($route->defaults, $expected);
+		$this->assertPattern($result, '/some_extra/page/this_is_the_slug');
+		$this->assertNoPattern($result, '/page/this_is_the_slug');
 	}
 
 /**

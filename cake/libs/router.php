@@ -1295,13 +1295,13 @@ class RouterRoute {
 		}
 
 		$parsed = str_replace($search, $replacements, $parsed);
-		if (preg_match('#\/\*$#', $route, $m)) {
-			$parsed = preg_replace('#/\\\\\*$#', '(?:/(.*))?', $parsed);
+		if (preg_match('#\/\*#', $route, $m)) {
+			$parsed = preg_replace('#/\\\\\*#', '(?:/(.*))?', $parsed);
 		}
 
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
-		/*
+	/*	
 		$elements = explode('/', $route);
 
 		foreach ($elements as $element) {
@@ -1358,7 +1358,7 @@ class RouterRoute {
 		}
 		$this->_compiledRoute = '#^' . join('', $parsed) . '[\/]*$#';
 		$this->keys = $names;
-		*/
+		//*/
 	}
 
 /**
