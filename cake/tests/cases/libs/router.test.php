@@ -1620,35 +1620,6 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * testParamsUrlParsing method
- *
- * @access public
- * @return void
- */
-	function testParamsUrlParsing() {
-		Router::connect('/', array('controller' => 'posts', 'action' => 'index'));
-		Router::connect('/view/:user/*', array('controller' => 'posts', 'action' => 'view'), array('user'));
-		$result = Router::parse('/view/gwoo/');
-		$expected = array('user' => 'gwoo', 'controller' => 'posts', 'action' => 'view', 'plugin' =>'', 'pass' => array(), 'named' => array());
-		$this->assertEqual($result, $expected);
-
-		Router::reload();
-		Router::connect('/([0-9]+)-p-(.*)/', array('controller' => 'products', 'action' => 'show'));
-		Router::connect('/(.*)-q-(.*)/', array('controller' => 'products', 'action' => 'show'));
-		$result = Router::parse('/100-p-500/');
-		$expected = array('pass' => array('100', '500'), 'named' => array(), 'controller' => 'products', 'action' => 'show', 'plugin' => null);
-		$this->assertEqual($result, $expected);
-
-		$result = Router::parse('/bob-q-500/');
-		$expected = array('pass' => array('bob', '500'), 'named' => array(), 'controller' => 'products', 'action' => 'show', 'plugin' => null);
-		$this->assertEqual($result, $expected);
-
-		$result = Router::parse('/bob-p-500/');
-		$expected = array('pass' => array(), 'named' => array(), 'controller' => 'bob-p-500', 'plugin' => null, 'action' => 'index');
-		$this->assertEqual($result, $expected);
-	}
-
-/**
  * testPagesUrlParsing method
  *
  * @access public

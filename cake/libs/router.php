@@ -1306,65 +1306,6 @@ class RouterRoute {
 		$parsed = str_replace($search, $replacements, $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
-
-	/*
-		$elements = explode('/', $route);
-
-		foreach ($elements as $element) {
-			if (empty($element)) {
-				continue;
-			}
-			$q = null;
-			$element = trim($element);
-			$namedParam = strpos($element, ':') !== false;
-
-			if ($namedParam && preg_match('/^:([^:]+)$/', $element, $r)) {
-				if (isset($params[$r[1]])) {
-					if ($r[1] != 'plugin' && array_key_exists($r[1], $default)) {
-						$q = '?';
-					}
-					$parsed[] = '(?:/(' . $params[$r[1]] . ')' . $q . ')' . $q;
-				} else {
-					$parsed[] = '(?:/([^\/]+))?';
-				}
-				$names[] = $r[1];
-			} elseif ($element === '*') {
-				$parsed[] = '(?:/(.*))?';
-			} else if ($namedParam && preg_match_all('/(?!\\\\):([a-z_0-9]+)/i', $element, $matches)) {
-				$matchCount = count($matches[1]);
-
-				foreach ($matches[1] as $i => $name) {
-					$pos = strpos($element, ':' . $name);
-					$before = substr($element, 0, $pos);
-					$element = substr($element, $pos + strlen($name) + 1);
-					$after = null;
-
-					if ($i + 1 === $matchCount && $element) {
-						$after = preg_quote($element);
-					}
-
-					if ($i === 0) {
-						$before = '/' . $before;
-					}
-					$before = preg_quote($before, '#');
-
-					if (isset($params[$name])) {
-						if (isset($default[$name]) && $name != 'plugin') {
-							$q = '?';
-						}
-						$parsed[] = '(?:' . $before . '(' . $params[$name] . ')' . $q . $after . ')' . $q;
-					} else {
-						$parsed[] = '(?:' . $before . '([^\/]+)' . $after . ')?';
-					}
-					$names[] = $name;
-				}
-			} else {
-				$parsed[] = '/' . $element;
-			}
-		}
-		$this->_compiledRoute = '#^' . join('', $parsed) . '[\/]*$#';
-		$this->keys = $names;
-		//*/
 	}
 
 /**
