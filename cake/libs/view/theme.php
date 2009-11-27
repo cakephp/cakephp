@@ -51,6 +51,7 @@ class ThemeView extends View {
  */
 	function _paths($plugin = null, $cached = true) {
 		$paths = parent::_paths($plugin, $cached);
+		$themePaths = array();
 
 		if (!empty($this->theme)) {
 			$count = count($paths);
