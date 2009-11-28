@@ -418,6 +418,25 @@ class ControllerTest extends CakeTestCase {
 		App::build();
 	}
 
+	function testPaginateOrderVirtualField() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->ControllerPost->virtualFields = array('offset_test' => 'ControllerPost.id + 1');
+
+		$Controller->paginate = array(
+			'fields' => array('id', 'title'),
+			'order' => 'offset_test',
+			'limit' => 1
+		);
+		$result = $Controller->paginate('ControllerPost');
+
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3));
+		exit;
+	}
+
 /**
  * testConstructClasses method
  *
@@ -563,7 +582,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
-		
+
 		$Controller->passedArgs = array();
 		$Controller->paginate = array('limit' => 'garbage!');
 		$Controller->paginate('ControllerPost');
@@ -686,24 +705,6 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
 		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['defaults'][0]));
 		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
-	}
-
-	function testPaginateOrderVirtualField() {
-		$Controller =& new Controller();
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-		$Controller->ControllerPost->virtualFields = array('offset_test' => 'ControllerPost.id + 1');
-
-		$Controller->paginate = array(
-			'fields' => array('id', 'title'),
-			'order' => 'offset_test',
-			'limit' => 1
-		);
-		$result = $Controller->paginate('ControllerPost');
-
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3));
 	}
 
 /**

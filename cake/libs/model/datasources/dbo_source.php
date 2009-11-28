@@ -2221,9 +2221,13 @@ class DboSource extends DataSource {
  *
  * @param string $key Field reference, as a key (i.e. Post.title)
  * @param string $direction Direction (ASC or DESC)
+ * @param object $model model reference (used to look for virtual fields)
  * @return string ORDER BY clause
  */
 	function order($keys, $direction = 'ASC', &$model = null) {
+		if (is_string($keys) && !empty($model->virtualFields[$keys])) {
+			return '(' . $model->virtualFields[$keys] . ') ' . $direction;
+		}
 		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
 			$keys = array_map('trim', explode(',', $keys));
 		}
@@ -2241,7 +2245,7 @@ class DboSource extends DataSource {
 
 			foreach ($keys as $key => $value) {
 				if (is_numeric($key)) {
-					$key = $value = ltrim(str_replace('ORDER BY ', '', $this->order($value)));
+					$key = $value = ltrim(str_replace('ORDER BY ', '', $this->order($value,'ASC',$model)));
 					$value = (!preg_match('/\\x20ASC|\\x20DESC/i', $key) ? ' ' . $direction : '');
 				} else {
 					$value = ' ' . $value;
@@ -2260,7 +2264,7 @@ class DboSource extends DataSource {
 					}
 					$key .= ' ' . trim($dir);
 				}
-				$order[] = $this->order($key . $value);
+				$order[] = $this->order($key . $value,'ASC',$model);
 			}
 			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', implode(',', $order)));
 		}
