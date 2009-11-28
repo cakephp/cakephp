@@ -423,34 +423,14 @@ class Router {
 					$argOptions['greedy'] = $params['greedy'];
 					unset($params['greedy']);
 				}
-				array_shift($r);
+				$out = $r;
 
-				foreach ($names as $name) {
-					$out[$name] = null;
-				}
-				if (is_array($defaults)) {
-					foreach ($defaults as $name => $value) {
-						if (preg_match('#[a-zA-Z_\-]#i', $name)) {
-							$out[$name] = $value;
-						} else {
-							$out['pass'][] = $value;
-						}
-					}
-				}
-
-				foreach ($r as $key => $found) {
-					if (empty($found) && $found != 0) {
-						continue;
-					}
-
-					if (isset($names[$key])) {
-						$out[$names[$key]] = $self->stripEscape($found);
-					} else {
-						$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
-						extract($self->getArgs($found, $argOptions));
-						$out['pass'] = array_merge($out['pass'], $pass);
-						$out['named'] = $named;
-					}
+				if (isset($out['_args_'])) {
+					$argOptions['context'] = array('action' => $out['action'], 'controller' => $out['controller']);
+					$parsedArgs = $self->getArgs($out['_args_'], $argOptions);
+					$out['pass'] = array_merge($out['pass'], $parsedArgs['pass']);
+					$out['named'] = $parsedArgs['named'];
+					unset($out['_args_']);
 				}
 
 				if (isset($params['pass'])) {
@@ -1281,27 +1261,27 @@ class RouterRoute {
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
-			$option = null;
 			if (isset($params[$name])) {
+				$option = null;
 				if ($name !== 'plugin' && array_key_exists($name, $default)) {
 					$option = '?';
 				}
 				$slashParam = '/\\' . $namedElements[0][$i];
 				if (strpos($parsed, $slashParam) !== false) {
-					$replacements[] = '(?:/(' . $params[$name] . ')' . $option . ')' . $option;
+					$replacements[] = '(?:/(?P<' . $name . '>' . $params[$name] . ')' . $option . ')' . $option;
 					$search[] = $slashParam;
 				} else {
 					$search[] = '\\' . $namedElements[0][$i];
-					$replacements[] = '(?:(' . $params[$name] . ')' . $option . ')' . $option;
+					$replacements[] = '(?:(?P<' . $name . '>' . $params[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
-				$replacements[] = '(?:([^/]+))?';
+				$replacements[] = '(?:(?P<' . $name . '>[^/]+))?';
 				$search[] = '\\' . $namedElements[0][$i];
 			}
 			$names[] = $name;
 		}
 		if (preg_match('#\/\*#', $route, $m)) {
-			$parsed = preg_replace('#/\\\\\*#', '(?:/(.*))?', $parsed);
+			$parsed = preg_replace('#/\\\\\*#', '(?:/(?P<_args_>.*))?', $parsed);
 		}
 		$parsed = str_replace($search, $replacements, $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
@@ -1321,11 +1301,11 @@ class RouterRoute {
 			$this->compile();
 		}
 
-		if (!preg_match($this->_compiledRoute, $url, $r)) {
+		if (!preg_match($this->_compiledRoute, $url, $route)) {
 			return false;
 		} else {
 			foreach ($this->defaults as $key => $val) {
-				if ($key{0} === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
+				if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
 					if (isset($this->__headerMap[$header[1]])) {
 						$header = $this->__headerMap[$header[1]];
 					} else {
@@ -1345,8 +1325,21 @@ class RouterRoute {
 					}
 				}
 			}
+			array_shift($route);
+			$count = count($this->keys);
+			for ($i = 0; $i <= $count; $i++) {
+				unset($route[$i]);
+			}
+			$route['pass'] = $route['named'] = array();
+			$route += $this->defaults;
+			foreach ($route as $key => $value) {
+				if (is_integer($key)) {
+					$route['pass'][] = $value;
+					unset($route[$key]);
+				}
+			}
+			return $route;
 		}
-		return $r;
 	}
 
 /**

@@ -1649,7 +1649,7 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/pages/*/:event', array('controller' => 'pages', 'action' => 'display'), array('event' => '[a-z0-9_-]+'));
 
 		$result = Router::parse('/');
-		$expected = array('pass'=>array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
+		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/pages/home');
@@ -1951,7 +1951,7 @@ class RouterTest extends CakeTestCase {
 	}
 }
 
-// SimpleTest::ignore('RouterTest');
+
 /**
  * Test case for RouterRoute
  *
@@ -2103,7 +2103,7 @@ class RouterRouteTestCase extends CakeTestCase {
 
 /**
  * test more complex route compiling & parsing with mid route greedy stars
- * and //
+ * and optional routing parameters
  *
  * @return void
  */
@@ -2127,7 +2127,14 @@ class RouterRouteTestCase extends CakeTestCase {
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/08/01/2007/title-of-post');
 		$result = $route->parse('/posts/08/01/2007/title-of-post');
-		$this->assertEqual(count($result), 5);
+
+		$this->assertEqual(count($result), 9);
+		$this->assertEqual($result['controller'], 'posts');
+		$this->assertEqual($result['action'], 'view');
+		$this->assertEqual($result['plugin'], null);
+		$this->assertEqual($result['year'], '2007');
+		$this->assertEqual($result['month'], '08');
+		$this->assertEqual($result['day'], '01');
 
 		$route =& new RouterRoute(
 			"/:extra/page/:slug/*",
@@ -2179,9 +2186,9 @@ class RouterRouteTestCase extends CakeTestCase {
 		$route = new RouterRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
 		$route->compile();
 		$result = $route->parse('/posts/view/1');
-		$this->assertEqual($result[1], 'posts');
-		$this->assertEqual($result[2], 'view');
-		$this->assertEqual($result[3], '1');
+		$this->assertEqual($result['controller'], 'posts');
+		$this->assertEqual($result['action'], 'view');
+		$this->assertEqual($result['id'], '1');
 	}
 }
 
