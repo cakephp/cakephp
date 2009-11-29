@@ -862,9 +862,9 @@ class Router {
 /**
  * Takes an array of URL parameters and separates the ones that can be used as named arguments
  *
- * @param array $params			Associative array of URL parameters.
- * @param string $controller	Name of controller being routed.  Used in scoping.
- * @param string $action	 	Name of action being routed.  Used in scoping.
+ * @param array $params Associative array of URL parameters.
+ * @param string $controller Name of controller being routed.  Used in scoping.
+ * @param string $action Name of action being routed.  Used in scoping.
  * @return array
  * @access public
  * @static
@@ -958,6 +958,7 @@ class Router {
  * @param mixed $url URL to normalize
  * @return string Normalized URL
  * @access public
+ * @static
  */
 	function normalize($url = '/') {
 		if (is_array($url)) {
