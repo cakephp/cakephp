@@ -1031,36 +1031,6 @@ class Router {
 	}
 
 /**
- * Strip escape characters from parameter values.
- *
- * @param mixed $param Either an array, or a string
- * @return mixed Array or string escaped
- * @access public
- * @static
- */
-	function stripEscape($param) {
-		$self =& Router::getInstance();
-		if (!is_array($param) || empty($param)) {
-			if (is_bool($param)) {
-				return $param;
-			}
-
-			return preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $param);
-		}
-
-		foreach ($param as $key => $value) {
-			if (is_string($value)) {
-				$return[$key] = preg_replace('/^(?:[\\t ]*(?:-!)+)/', '', $value);
-			} else {
-				foreach ($value as $array => $string) {
-					$return[$key][$array] = $self->stripEscape($string);
-				}
-			}
-		}
-		return $return;
-	}
-
-/**
  * Instructs the router to parse out file extensions from the URL. For example,
  * http://example.com/posts.rss would yield an file extension of "rss".
  * The file extension itself is made available in the controller as
@@ -1121,7 +1091,6 @@ class Router {
 			if (empty($param) && $param !== '0' && $param !== 0) {
 				continue;
 			}
-			$param = $self->stripEscape($param);
 
 			$separatorIsPresent = strpos($param, $self->named['separator']) !== false;
 			if ((!isset($options['named']) || !empty($options['named'])) && $separatorIsPresent) {
