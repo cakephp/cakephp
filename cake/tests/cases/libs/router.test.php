@@ -1646,18 +1646,9 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'pages', 'action' => 'display', 'home'));
-		Router::connect('/pages/*/:event', array('controller' => 'pages', 'action' => 'display'), array('event' => '[a-z0-9_-]+'));
 
 		$result = Router::parse('/');
 		$expected = array('pass' => array('home'), 'named' => array(), 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
-		$this->assertEqual($result, $expected);
-
-		$result = Router::parse('/pages/home');
-		$expected = array('pass' => array('home'), 'named' => array(), 'event' => '', 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
-		$this->assertEqual($result, $expected);
-
-		$result = Router::parse('/pages/home/');
-		$expected = array('pass' => array('home'), 'named' => array(), 'event' => '', 'plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual($result, $expected);
 
 		$result = Router::parse('/pages/display/home/event:value');
@@ -2109,16 +2100,6 @@ class RouterRouteTestCase extends CakeTestCase {
  */
 	function testComplexRouteCompilingAndParsing() {
 		extract(Router::getNamedExpressions());
-
-		$route =& new RouterRoute(
-			'/pages/*/:event',
-			array('controller' => 'pages', 'action' => 'display'),
-			array('event' => '[a-z0-9_-]+')
-		);
-		$result = $route->compile();
-		$this->assertPattern($result, '/pages/view/today');
-		$this->assertPattern($result, '/pages/view/today/tomorrow');
-		$this->assertNoPattern($result, '/pages/view/tomorrow/something:else');
 
 		$route =& new RouterRoute(
 			'/posts/:month/:day/:year/*',

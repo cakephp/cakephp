@@ -1280,8 +1280,8 @@ class RouterRoute {
 			}
 			$names[] = $name;
 		}
-		if (preg_match('#\/\*#', $route, $m)) {
-			$parsed = preg_replace('#/\\\\\*#', '(?:/(?P<_args_>.*))?', $parsed);
+		if (preg_match('#\/\*$#', $route, $m)) {
+			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 		}
 		$parsed = str_replace($search, $replacements, $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
