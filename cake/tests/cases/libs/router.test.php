@@ -1949,7 +1949,7 @@ class RouterTest extends CakeTestCase {
 	}
 }
 
-// SimpleTest::ignore('RouterTest');
+//SimpleTest::ignore('RouterTest');
 /**
  * Test case for RouterRoute
  *
@@ -2117,10 +2117,9 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertPattern($result, '/posts/08/01/2007/title-of-post');
 		$result = $route->parse('/posts/08/01/2007/title-of-post');
 
-		$this->assertEqual(count($result), 9);
+		$this->assertEqual(count($result), 8);
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
-		$this->assertEqual($result['plugin'], null);
 		$this->assertEqual($result['year'], '2007');
 		$this->assertEqual($result['month'], '08');
 		$this->assertEqual($result['day'], '01');
@@ -2140,7 +2139,6 @@ class RouterRouteTestCase extends CakeTestCase {
 			'controller' => 'pages',
 			'action' => 'view',
 			'extra' => null,
-			'plugin' => null
 		);
 		$this->assertEqual($route->defaults, $expected);
 	}
@@ -2200,7 +2198,7 @@ class RouterRouteTestCase extends CakeTestCase {
 			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
 		));
 
-		$url = array('plugin' => null, 'controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
+		$url = array('controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEqual($result, $expected);
@@ -2212,14 +2210,14 @@ class RouterRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testMatchWithPatterns() {
-		$route =& new RouterRoute('/:controller/:action/:id', array(), array('id' => '[0-9]+'));
+		$route =& new RouterRoute('/:controller/:action/:id', array('plugin' => null), array('id' => '[0-9]+'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => 'foo'));
 		$this->assertFalse($result);
 
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => '9'));
+		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '9'));
 		$this->assertEqual($result, '/posts/view/9');
 
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => '922'));
+		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => '922'));
 		$this->assertEqual($result, '/posts/view/922');
 	}
 

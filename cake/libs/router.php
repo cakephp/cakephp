@@ -274,9 +274,7 @@ class Router {
 			$self->__prefixes[] = $default['prefix'];
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
-		if (!isset($default['action'])) {
-			$default['action'] = 'index';
-		}
+		$default += array('action' => 'index', 'plugin' => null, 'controller' => null);
 		$self->routes[] =& new RouterRoute($route, $default, $params);
 		return $self->routes;
 	}
@@ -1222,7 +1220,6 @@ class RouterRoute {
 			return $this->_compiledRoute;
 		}
 		$this->_writeRoute($this->template, $this->defaults, $this->params);
-		$this->defaults += array('plugin' => null, 'controller' => null);
 		return $this->_compiledRoute;
 	}
 /**
@@ -1407,8 +1404,6 @@ class RouterRoute {
 		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 
 //*/
-
-		$url += array('controller' => null, 'plugin' => null);
 		$defaults = $this->defaults;
 
 		if (isset($defaults['prefix'])) {
