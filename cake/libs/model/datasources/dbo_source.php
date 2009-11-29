@@ -1933,7 +1933,7 @@ class DboSource extends DataSource {
 						} else {
 							$data = $this->__quoteFields($key) . ' IN (';
 						}
-						if ($quoteValues || strpos($value[0], '-!') !== 0) {
+						if ($quoteValues) {
 							if (is_object($model)) {
 								$columnType = $model->getColumnType($key);
 							}

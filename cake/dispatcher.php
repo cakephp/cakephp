@@ -297,7 +297,7 @@ class Dispatcher extends Object {
 			$params['action'] = 'index';
 		}
 		if (isset($params['form']['data'])) {
-			$params['data'] = Router::stripEscape($params['form']['data']);
+			$params['data'] = $params['form']['data'];
 			unset($params['form']['data']);
 		}
 		if (isset($_GET)) {
