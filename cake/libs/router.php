@@ -410,9 +410,6 @@ class Router {
 				$self->__currentRoute[] =& $route;
 
 				$params = $route->params;
-				$names = $route->keys;
-				$defaults = $route->defaults;
-
 				$argOptions = array();
 
 				if (array_key_exists('named', $params)) {
@@ -434,7 +431,8 @@ class Router {
 				}
 
 				if (isset($params['pass'])) {
-					for ($j = count($params['pass']) - 1; $j > -1; $j--) {
+					$j = count($params['pass']);
+					while($j--) {
 						if (isset($out[$params['pass'][$j]])) {
 							array_unshift($out['pass'], $out[$params['pass'][$j]]);
 						}
