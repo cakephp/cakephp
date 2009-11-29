@@ -670,7 +670,7 @@ class Router {
  * Returns an URL pointing to a combination of controller and action. Param
  * $url can be:
  *
- * - Empty - the method will find adress to actuall controller/action.
+ * - Empty - the method will find address to actuall controller/action.
  * - '/' - the method will find base URL of application.
  * - A combination of controller/action - the method will find url for it.
  *
@@ -693,7 +693,7 @@ class Router {
 		if (is_bool($full)) {
 			$escape = false;
 		} else {
-			extract(array_merge(array('escape' => false, 'full' => false), $full));
+			extract($full + array('escape' => false, 'full' => false));
 		}
 
 		if (!empty($self->__params)) {
@@ -751,17 +751,15 @@ class Router {
 					unset($url[$prefix]);
 				}
 			}
-			$plugin = false;
 			if (array_key_exists('plugin', $url)) {
-				$plugin = $url['plugin'];
+				$params['plugin'] = $url['plugin'];
 			}
 
 			$_url = $url;
-			$url = array_merge(array('controller' => $params['controller'], 'plugin' => $params['plugin']), Set::filter($url, true));
-
-			if ($plugin !== false) {
-				$url['plugin'] = $plugin;
-			}
+			$url = array_merge(
+				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
+				Set::filter($url, true)
+			);
 
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
@@ -771,8 +769,6 @@ class Router {
 
 			for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
 				$route =& $self->routes[$i];
-				$route->compile();
-
 				$originalUrl = $url;
 
 				if (isset($route->params['persist'], $self->__params[0])) {
@@ -841,7 +837,7 @@ class Router {
 			if (!empty($args)) {
 				$args = implode('/', $args);
 				if ($output{strlen($output) - 1} != '/') {
-					$args = '/'. $args;
+					$args = '/' . $args;
 				}
 				$output .= $args;
 			}
@@ -944,8 +940,7 @@ class Router {
 		if (!$actionMatches) {
 			return false;
 		}
-		$valueMatches = !isset($rule['match']) || preg_match(sprintf('/%s/', $rule['match']), $val);
-		return $valueMatches;
+		return (!isset($rule['match']) || preg_match('/' . $rule['match'] . '/', $val));
 	}
 
 /**
@@ -1097,10 +1092,7 @@ class Router {
 		$pass = $named = array();
 		$args = explode('/', $args);
 
-		$greedy = $self->named['greedy'];
-		if (isset($options['greedy'])) {
-			$greedy = $options['greedy'];
-		}
+		$greedy = isset($options['greedy']) ? $options['greedy'] : $self->named['greedy'];
 		$context = array();
 		if (isset($options['context'])) {
 			$context = $options['context'];
@@ -1363,19 +1355,17 @@ class RouterRoute {
 
 		$pass = array();
 		$params = Set::diff($url, $defaults);
-		$urlInv = array_combine(array_values($url), array_keys($url));
 
-		$i = 0;
-		while (isset($defaults[$i])) {
-			if (isset($urlInv[$defaults[$i]])) {
-				if (!in_array($defaults[$i], $url) && is_int($urlInv[$defaults[$i]])) {
+		if (isset($defaults[0])) {
+			$i = 0;
+			while (isset($defaults[$i])) {
+				if (isset($url[$i]) && $defaults[$i] == $url[$i]) {
+					unset($defaults[$i]);
+				} else {
 					return false;
 				}
-				unset($urlInv[$defaults[$i]], $defaults[$i]);
-			} else {
-				return false;
+				$i++;
 			}
-			$i++;
 		}
 
 		foreach ($params as $key => $value) {

@@ -1764,6 +1764,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testPassedArgsOrder() {
+		Router::connect('/test-passed/*', array('controller' => 'pages', 'action' => 'display', 'home'));
 		Router::connect('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		Router::connect('/test/*', array('controller' => 'pages', 'action' => 'display', 1));
 		Router::parse('/');
@@ -1774,6 +1775,10 @@ class RouterTest extends CakeTestCase {
 
 		$result = Router::url(array('controller' => 'pages', 'action' => 'display', 2, 'whatever'));
 		$expected = '/test2/whatever';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'pages', 'action' => 'display', 'home', 'whatever'));
+		$expected = '/test-passed/whatever';
 		$this->assertEqual($result, $expected);
 
 		Configure::write('Routing.prefixes', array('admin'));
