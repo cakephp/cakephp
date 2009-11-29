@@ -264,9 +264,6 @@ class Router {
 	function connect($route, $default = array(), $params = array()) {
 		$self =& Router::getInstance();
 
-		if (!isset($default['action'])) {
-			$default['action'] = 'index';
-		}
 		foreach ($self->__prefixes as $prefix) {
 			if (isset($default[$prefix])) {
 				$default['prefix'] = $prefix;
@@ -276,6 +273,9 @@ class Router {
 		if (isset($default['prefix'])) {
 			$self->__prefixes[] = $default['prefix'];
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
+		}
+		if (!isset($default['action'])) {
+			$default['action'] = 'index';
 		}
 		$self->routes[] =& new RouterRoute($route, $default, $params);
 		return $self->routes;
@@ -528,14 +528,16 @@ class Router {
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
-				$this->connect("/{$prefix}/:plugin/:controller", $params, $match);
+				$indexParams = $params + array('action' => 'index');
+				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
 		}
 
 		foreach ($this->__prefixes as $prefix) {
 			$params = array('prefix' => $prefix, $prefix => true);
-			$this->connect("/{$prefix}/:controller", $params);
+			$indexParams = $params + array('action' => 'index');
+			$this->connect("/{$prefix}/:controller", $indexParams);
 			$this->connect("/{$prefix}/:controller/:action/*", $params);
 		}
 		$this->connect('/:controller', array('action' => 'index'));
@@ -1220,7 +1222,7 @@ class RouterRoute {
 			return $this->_compiledRoute;
 		}
 		$this->_writeRoute($this->template, $this->defaults, $this->params);
-		$this->defaults += array('plugin' => null, 'controller' => null, 'action' => null);
+		$this->defaults += array('plugin' => null, 'controller' => null);
 		return $this->_compiledRoute;
 	}
 /**
@@ -1265,6 +1267,7 @@ class RouterRoute {
 		}
 		if (preg_match('#\/\*$#', $route, $m)) {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
+			$this->_greedy = true;
 		}
 		$parsed = str_replace($search, $replacements, $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
@@ -1315,6 +1318,7 @@ class RouterRoute {
 			}
 			$route['pass'] = $route['named'] = array();
 			$route += $this->defaults;
+
 			foreach ($route as $key => $value) {
 				if (is_integer($key)) {
 					$route['pass'][] = $value;
@@ -1353,6 +1357,57 @@ class RouterRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
+/*		$url += array('controller' => null, 'plugin' => null);
+
+		$defaults = $this->defaults;
+		if (isset($defaults['prefix'])) {
+			$prefix = $defaults['prefix'];
+			unset($defaults['prefix']);
+		}
+
+		$diff = Set::diff($url, $defaults);
+
+		$url += array('controller' => null, 'plugin' => null);
+
+		$keyNames = array_flip($this->keys);
+		if (array_keys(array_intersect_key($url, $keyNames)) != $this->keys) {
+			return false;
+		}
+
+		//if the default keys aren't the same its not a match.
+		if (array_intersect_key($url, $this->defaults) != $this->defaults) {
+			return false;
+		}
+
+		//if this route is not greedy, make sure there are no more params
+		if (!$this->_greedy) {
+			if (array_diff_key($url, array_merge($this->defaults, $keyNames)) !== array()) {
+				return false;
+			}
+		}
+
+		//check that required passed parameters are the same.
+		$i = 0;
+		while (isset($this->defaults[$i])) {
+			if (isset($url[$i]) && $this->defaults[$i] !== $url[$i]) {
+				return false;
+			}
+			$i++;
+		}
+
+		//remove any pass params, they have numeric indexes
+		$pass = array();
+		$i = 0;
+		while (isset($url[$i])) {
+			$pass[] = $url[$i];
+			unset($url[$i]);
+			$i++;
+		}
+
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
+
+//*/
+
 		$url += array('controller' => null, 'plugin' => null);
 		$defaults = $this->defaults;
 
@@ -1415,7 +1470,7 @@ class RouterRoute {
 		}
 
 		if (empty($params)) {
-			return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
+			return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 		} elseif (!empty($routeParams) && !empty($defaults)) {
 			if (!empty($required)) {
 				return false;
@@ -1431,7 +1486,7 @@ class RouterRoute {
 			}
 		} else {
 			if (empty($required) && $defaults['plugin'] === $url['plugin'] && $defaults['controller'] === $url['controller'] && $defaults['action'] === $url['action']) {
-				return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
+				return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 			}
 			return false;
 		}
@@ -1444,14 +1499,17 @@ class RouterRoute {
 				}
 			}
 		}
-		return $this->__mapRoute(array_merge($filled, compact('pass', 'named', 'prefix')));
+		return $this->_writeUrl(array_merge($filled, compact('pass', 'named', 'prefix')));
+		//*/
 	}
 /**
- * Converts Route arrays into strings.
+ * Converts a matching route array into a url string.
  *
- * @return void
+ * @params array $params The params to convert to a string url.
+ * @return string Compiled route string.
+ * @access protected
  **/
-	function __mapRoute($params) {
+	function _writeUrl($params) {
 		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
 		}
@@ -1468,7 +1526,7 @@ class RouterRoute {
 		$instance =& Router::getInstance();
 		$separator = $instance->named['separator'];
 
-		if (isset($params['named'])) {
+		if (!empty($params['named'])) {
 			if (is_array($params['named'])) {
 				$named = array();
 				foreach ($params['named'] as $key => $value) {
