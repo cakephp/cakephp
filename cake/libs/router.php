@@ -1452,49 +1452,45 @@ class RouterRoute {
  * @return void
  **/
 	function __mapRoute($params) {
-		if (isset($params['plugin']) && isset($params['controller']) && $params['plugin'] === $params['controller']) {
+		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
 		}
 
-		if (isset($params['prefix']) && isset($params['action'])) {
+		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
 		}
 
-		if (isset($params['pass']) && is_array($params['pass'])) {
-			$params['pass'] = implode('/', Set::filter($params['pass'], true));
-		} elseif (!isset($params['pass'])) {
-			$params['pass'] = '';
+		if (is_array($params['pass'])) {
+			$params['pass'] = implode('/', $params['pass']);
 		}
 
-		$instance = Router::getInstance();
+		$instance =& Router::getInstance();
 		$separator = $instance->named['separator'];
 
 		if (isset($params['named'])) {
 			if (is_array($params['named'])) {
-				$count = count($params['named']);
-				$keys = array_keys($params['named']);
 				$named = array();
-
-				for ($i = 0; $i < $count; $i++) {
-					$named[] = $keys[$i] . $separator . $params['named'][$keys[$i]];
+				foreach ($params['named'] as $key => $value) {
+					$named[] = $key . $separator . $value;
 				}
-				$params['named'] = join('/', $named);
+				$params['pass'] = $params['pass'] . '/' . implode('/', $named);;
 			}
-			$params['pass'] = str_replace('//', '/', $params['pass'] . '/' . $params['named']);
 		}
 		$out = $this->template;
 
+		$search = $replace = array();
 		foreach ($this->keys as $key) {
 			$string = null;
 			if (isset($params[$key])) {
 				$string = $params[$key];
-				unset($params[$key]);
 			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
 				$key = $key . '/';
 			}
-			$out = str_replace(':' . $key, $string, $out);
+			$search[] = ':' . $key;
+			$replace[] = $string;
 		}
+		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
