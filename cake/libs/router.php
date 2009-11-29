@@ -222,11 +222,40 @@ class Router {
 	}
 
 /**
- * Returns this object's routes array. Returns false if there are no routes available.
+ * Connects a new Route in the router.
  *
- * @param string $route An empty string, or a route string "/"
- * @param array $default NULL or an array describing the default route
- * @param array $params An array matching the named elements in the route to regular expressions which that element should match.
+ * Routes are a way of connecting request urls to objects in your application.  At their core routes
+ * are a set or regular expressions that are used to match requests to destinations.
+ *
+ * Examples:
+ *
+ * `Router::connect('/:controller/:action/*');`
+ * 
+ * The first parameter will be used as a controller name while the second is used as the action name.
+ * the '/*' syntax makes this route greedy in that it will match requests like `/posts/index` as well as requests
+ * like `/posts/edit/1/foo/bar`.  
+ *
+ * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
+ * 
+ * The above shows the use of route parameter defaults. And providing routing parameters for a static route.
+ *
+ * {{{
+ * Router::connect(
+ *   '/:lang/:controller/:action/:id',
+ *   array('controller' => 'testing4'),
+ *   array('id' => '[0-9]+', 'lang' => '[a-z]{3}')
+ * );
+ * }}}
+ *
+ * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
+ * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
+ *
+ * @param string $route A string describing the template of the route
+ * @param array $default An array describing the default route parameters. These parameters will be used by default
+ *   and can supply routing parameters that are not dynamic. See above.
+ * @param array $params An array matching the named elements in the route to regular expressions which that 
+ *   element should match.  Also contains additional parameters such as which routed parameters should be 
+ *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
  * @access public

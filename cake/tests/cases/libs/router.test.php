@@ -1785,9 +1785,9 @@ class RouterTest extends CakeTestCase {
 		));
 
 		Router::connect('/protected/:controller/:action/*', array(
-			'controller'	=> 'users',
-			'action'		=> 'index',
-			'prefix'		=> 'protected'
+			'controller' => 'users',
+			'action' => 'index',
+			'prefix' => 'protected'
 		));
 
 		Router::parse('/');
