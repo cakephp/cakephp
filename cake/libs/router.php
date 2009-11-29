@@ -755,7 +755,7 @@ class Router {
 				$params['plugin'] = $url['plugin'];
 			}
 
-			$_url = $url;
+			$backupUrl = $url;
 			$url = array_merge(
 				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
 				Set::filter($url, true)
@@ -771,14 +771,8 @@ class Router {
 				$route =& $self->routes[$i];
 				$originalUrl = $url;
 
-				if (isset($route->params['persist'], $self->__params[0])) {
-					foreach ($route->params['persist'] as $persistKey) {
-						if (array_key_exists($persistKey, $_url)) {
-							$url[$persistKey] = $_url[$persistKey];
-						} elseif (array_key_exists($persistKey, $params)) {
-							$url[$persistKey] = $params[$persistKey];
-						}
-					}
+				if (isset($route->params['persist'], $params)) {
+					$url = $route->persistParams($url, array_merge($params, $backupUrl));
 				}
 				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
@@ -1332,6 +1326,22 @@ class RouterRoute {
 	}
 
 /**
+ * Apply persistent parameters to a url array.
+ *
+ * @param array $url The array to apply persistent parameters to.
+ * @param array $params An array of persistent values to replace persistent ones.
+ * @return array An array with persistent parameters applied.
+ */
+	function persistParams($url, $params) {
+		foreach ($this->params['persist'] as $persistKey) {
+			if (array_key_exists($persistKey, $params)) {
+				$url[$persistKey] = $params[$persistKey];
+			}
+		}
+		return $url;
+	}
+
+/**
  * Attempt to match a url array.  If the url matches the routes pattern, then
  * return an array of parsed params.  If the url doesn't match the routes compiled pattern
  * returns false.
@@ -1345,8 +1355,6 @@ class RouterRoute {
 		}
 		$url += array('controller' => null, 'plugin' => null);
 		$defaults = $this->defaults;
-		$routeParams = $this->keys;
-		$routeOptions = $this->params;
 
 		if (isset($defaults['prefix'])) {
 			$prefix = $defaults['prefix'];
@@ -1379,12 +1387,11 @@ class RouterRoute {
 		if (!strpos($this->template, '*') && (!empty($pass) || !empty($named))) {
 			return false;
 		}
-
-		$urlKeys = array_keys($url);
-		$paramsKeys = array_keys($params);
-		$defaultsKeys = array_keys($defaults);
+		$routeParams = $this->keys;
 
 		if (!empty($params)) {
+			$urlKeys = array_keys($url);
+			$paramsKeys = array_keys($params);
 			if (array_diff($paramsKeys, $routeParams) != array()) {
 				return false;
 			}
@@ -1410,10 +1417,10 @@ class RouterRoute {
 		if (empty($params)) {
 			return $this->__mapRoute(array_merge($url, compact('pass', 'named', 'prefix')));
 		} elseif (!empty($routeParams) && !empty($defaults)) {
-
 			if (!empty($required)) {
 				return false;
 			}
+
 			foreach ($params as $key => $val) {
 				if ((!isset($url[$key]) || $url[$key] != $val) || (!isset($defaults[$key]) || $defaults[$key] != $val) && !in_array($key, $routeParams)) {
 					if (!isset($defaults[$key])) {
@@ -1428,6 +1435,7 @@ class RouterRoute {
 			}
 			return false;
 		}
+		$routeOptions = $this->params;
 
 		if (!empty($routeOptions)) {
 			foreach ($routeOptions as $key => $reg) {

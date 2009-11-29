@@ -2163,6 +2163,24 @@ class RouterRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test persistParams ability to persist parameters from $params and remove params.
+ *
+ * @return void
+ */
+	function testPersistParams() {
+		$route =& new RouterRoute(
+			'/:lang/:color/blog/:action',
+			array('controller' => 'posts'),
+			array('persist' => array('lang', 'color'))
+		);
+		$url = array('controller' => 'posts', 'action' => 'index');
+		$params = array('lang' => 'en', 'color' => 'blue');
+		$result = $route->persistParams($url, $params);
+		$this->assertEqual($result['lang'], $params['lang']);
+		$this->assertEqual($result['color'], $params['color']);
+	}
+
+/**
  * test the parse method of RouterRoute.
  *
  * @return void
