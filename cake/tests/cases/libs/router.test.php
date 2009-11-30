@@ -2181,7 +2181,7 @@ class RouterRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'nodes', 'action' => 'view'));
 		$this->assertFalse($result);
-		
+
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
 		$this->assertFalse($result);
 
@@ -2218,7 +2218,7 @@ class RouterRouteTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function testMatchWithNamedParameters() {
+	function testMatchWithNamedParametersAndPassedArgs() {
 		Router::connectNamed(true);
 
 		$route = new RouterRoute('/:controller/:action/*', array('plugin' => null));
@@ -2230,6 +2230,14 @@ class RouterRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
+
+
+		$route =& new RouterRoute('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
+		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 1));
+		$this->assertFalse($result);
+
+		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 2, 'something'));
+		$this->assertEqual($result, '/test2/something');
 	}
 
 /**

@@ -242,7 +242,7 @@ class Router {
  * {{{
  * Router::connect(
  *   '/:lang/:controller/:action/:id',
- *   array('controller' => 'testing4'),
+ *   array(),
  *   array('id' => '[0-9]+', 'lang' => '[a-z]{3}')
  * );
  * }}}
@@ -1354,14 +1354,20 @@ class RouterRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-		$url += $this->defaults;
-		
+		$defaults = $this->defaults;
+		$url += $defaults;
+
+		if (isset($defaults['prefix'])) {
+			$prefix = $defaults['prefix'];
+			unset($defaults['prefix']);
+		}
+
 		//check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
 		if (array_intersect_key($keyNames, $url) != $keyNames) {
 			return false;
 		}
-		$diff = Set::diff($url, $this->defaults);
+		$diff = Set::diff($url, $defaults);
 
 		//if a not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && array_keys($diff) != $this->keys) {
@@ -1369,29 +1375,34 @@ class RouterRoute {
 		}
 
 		//if the difference between the url and defaults contains keys from defaults its not a match
-		if (array_intersect_key($diff, $this->defaults) !== array()) {
+		if (array_intersect_key(array_filter($defaults), $diff) !== array()) {
 			return false;
 		}
 
 		//check that required passed parameters are the same.
 		$i = 0;
-		while (isset($this->defaults[$i])) {
-			if (isset($url[$i]) && $this->defaults[$i] !== $url[$i]) {
+		while (isset($defaults[$i])) {
+			if (isset($url[$i]) && $defaults[$i] !== $url[$i]) {
 				return false;
 			}
 			$i++;
 		}
-		$passedArgsAndParams = array_diff_key($diff, $this->defaults, $keyNames);
+		$passedArgsAndParams = array_diff_key($diff, $defaults, $keyNames);
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
-		//remove any pass params, they have numeric indexes
+		//remove any pass params, they have numeric indexes, skip any params that are in the defaults
 		$pass = array();
 		$i = 0;
 		while (isset($url[$i])) {
+			if (!isset($diff[$i])) {
+				$i++;
+				continue;
+			}
 			$pass[] = $url[$i];
 			unset($url[$i]);
 			$i++;
 		}
+
 
 		//check patterns for routed params
 		if (!empty($this->params)) {
