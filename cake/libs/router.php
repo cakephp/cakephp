@@ -751,6 +751,7 @@ class Router {
 					unset($url[$prefix]);
 				}
 			}
+
 			if (array_key_exists('plugin', $url)) {
 				$params['plugin'] = $url['plugin'];
 			}
@@ -774,6 +775,7 @@ class Router {
 				if (isset($route->params['persist'], $params)) {
 					$url = $route->persistParams($url, array_merge($params, $backupUrl));
 				}
+
 				if ($match = $route->match($url)) {
 					$output = trim($match, '/');
 					$url = array();
@@ -1355,7 +1357,6 @@ class RouterRoute {
 			$this->compile();
 		}
 		$defaults = $this->defaults;
-		$url += $defaults;
 
 		if (isset($defaults['prefix'])) {
 			$prefix = $defaults['prefix'];
@@ -1370,7 +1371,7 @@ class RouterRoute {
 		$diff = Set::diff($url, $defaults);
 
 		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && array_keys($diff) != $this->keys) {
+		if (!$this->_greedy && array_diff_key($diff, $keyNames) != array()) {
 			return false;
 		}
 
@@ -1413,7 +1414,6 @@ class RouterRoute {
 			}
 		}
 		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
-
 //*/
 /*
 		$defaults = $this->defaults;
@@ -1446,7 +1446,7 @@ class RouterRoute {
 		}
 		list($named, $params) = Router::getNamedElements($params);
 
-		if (!strpos($this->template, '*') && (!empty($pass) || !empty($named))) {
+		if (!$this->_greedy && (!empty($pass) || !empty($named))) {
 			return false;
 		}
 		$routeParams = $this->keys;

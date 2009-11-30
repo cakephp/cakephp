@@ -966,7 +966,7 @@ class RouterTest extends CakeTestCase {
 			array('controller' => 'posts', 'action' => 'index'),
 			array('persist' => array('lang')
 		));
-		Router::connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'index'));
+		Router::connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'edit'));
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
 		Router::parse('/en/red/posts/view/5');
 
