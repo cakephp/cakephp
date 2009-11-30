@@ -52,8 +52,8 @@ class ThemeView extends View {
  *
  * @param unknown_type $controller
  */
-	function __construct (&$controller) {
-		parent::__construct($controller);
+	function __construct (&$controller, $register = true) {
+		parent::__construct($controller, $register);
 		$this->theme =& $controller->theme;
 
 		if (!empty($this->theme)) {
