@@ -4568,6 +4568,24 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array();
+		$this->Form->create('Contact');
+		$result = $this->Form->year('published', 2006, 2008, null, array('empty' => false));
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '2008')),
+			'2008',
+			'/option',
+			array('option' => array('value' => '2007')),
+			'2007',
+			'/option',
+			array('option' => array('value' => '2006')),
+			'2006',
+			'/option',
+			'/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
