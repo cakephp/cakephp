@@ -1384,7 +1384,6 @@ class RouterRoute {
 		$passedArgsAndParams = array_diff_key($diff, $this->defaults, $keyNames);
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
-
 		//remove any pass params, they have numeric indexes
 		$pass = array();
 		$i = 0;
@@ -1393,8 +1392,16 @@ class RouterRoute {
 			unset($url[$i]);
 			$i++;
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 
+		//check patterns for routed params
+		if (!empty($this->params)) {
+			foreach ($this->params as $key => $pattern) {
+				if (array_key_exists($key, $url) && !preg_match('#' . $pattern . '#', $url[$key])) {
+					return false;
+				}
+			}
+		}
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 
 //*/
 /*
@@ -1426,12 +1433,7 @@ class RouterRoute {
 				unset($params[$key]);
 			}
 		}
-		debug($params);
 		list($named, $params) = Router::getNamedElements($params);
-		debug($named);
-		debug($params);
-		debug($this);
-		echo '-----------<br>';
 
 		if (!strpos($this->template, '*') && (!empty($pass) || !empty($named))) {
 			return false;

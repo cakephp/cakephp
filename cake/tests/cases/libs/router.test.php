@@ -1948,7 +1948,7 @@ class RouterTest extends CakeTestCase {
 	}
 }
 
-SimpleTest::ignore('RouterTest');
+// SimpleTest::ignore('RouterTest');
 // SimpleTest::ignore('RouterRouteTestCase');
 /**
  * Test case for RouterRoute
