@@ -1354,33 +1354,23 @@ class RouterRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-/*		$url += array('controller' => null, 'plugin' => null);
-
-		$defaults = $this->defaults;
-		if (isset($defaults['prefix'])) {
-			$prefix = $defaults['prefix'];
-			unset($defaults['prefix']);
-		}
-
-		$diff = Set::diff($url, $defaults);
-
-		$url += array('controller' => null, 'plugin' => null);
-
+		$url += $this->defaults;
+		
+		//check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
-		if (array_keys(array_intersect_key($url, $keyNames)) != $this->keys) {
+		if (array_intersect_key($keyNames, $url) != $keyNames) {
+			return false;
+		}
+		$diff = Set::diff($url, $this->defaults);
+
+		//if a not a greedy route, no extra params are allowed.
+		if (!$this->_greedy && array_keys($diff) != $this->keys) {
 			return false;
 		}
 
-		//if the default keys aren't the same its not a match.
-		if (array_intersect_key($url, $this->defaults) != $this->defaults) {
+		//if the difference between the url and defaults contains keys from defaults its not a match
+		if (array_intersect_key($diff, $this->defaults) !== array()) {
 			return false;
-		}
-
-		//if this route is not greedy, make sure there are no more params
-		if (!$this->_greedy) {
-			if (array_diff_key($url, array_merge($this->defaults, $keyNames)) !== array()) {
-				return false;
-			}
 		}
 
 		//check that required passed parameters are the same.
@@ -1391,6 +1381,9 @@ class RouterRoute {
 			}
 			$i++;
 		}
+		$passedArgsAndParams = array_diff_key($diff, $this->defaults, $keyNames);
+		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
+
 
 		//remove any pass params, they have numeric indexes
 		$pass = array();
@@ -1400,10 +1393,11 @@ class RouterRoute {
 			unset($url[$i]);
 			$i++;
 		}
-
 		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
 
+
 //*/
+/*
 		$defaults = $this->defaults;
 
 		if (isset($defaults['prefix'])) {
@@ -1432,7 +1426,12 @@ class RouterRoute {
 				unset($params[$key]);
 			}
 		}
+		debug($params);
 		list($named, $params) = Router::getNamedElements($params);
+		debug($named);
+		debug($params);
+		debug($this);
+		echo '-----------<br>';
 
 		if (!strpos($this->template, '*') && (!empty($pass) || !empty($named))) {
 			return false;
@@ -1548,6 +1547,7 @@ class RouterRoute {
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
 		}
+		$out = str_replace('//', '/', $out);
 		return $out;
 	}
 }

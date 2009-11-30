@@ -1945,11 +1945,11 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/posts/edit/5');
 		$this->assertFalse(isset($result['controller']));
 		$this->assertFalse(isset($result['action']));
-
 	}
 }
 
-//SimpleTest::ignore('RouterTest');
+SimpleTest::ignore('RouterTest');
+// SimpleTest::ignore('RouterRouteTestCase');
 /**
  * Test case for RouterRoute
  *
@@ -2149,9 +2149,15 @@ class RouterRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMatchBasic() {
-		$route = new RouterRoute('/:controller/:action/:id');
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
+		$route = new RouterRoute('/:controller/:action/:id', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null));
 		$this->assertFalse($result);
+
+		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 0));
+		$this->assertFalse($result);
+
+		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 1));
+		$this->assertEqual($result, '/posts/view/1');
 
 		$route =& new RouterRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -2173,6 +2179,9 @@ class RouterRouteTestCase extends CakeTestCase {
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEqual($result, '/blog/view');
 
+		$result = $route->match(array('controller' => 'nodes', 'action' => 'view'));
+		$this->assertFalse($result);
+		
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 1));
 		$this->assertFalse($result);
 
@@ -2202,6 +2211,25 @@ class RouterRouteTestCase extends CakeTestCase {
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test match() with greedy routes, named parameters and passed args.
+ *
+ * @return void
+ */
+	function testMatchWithNamedParameters() {
+		Router::connectNamed(true);
+
+		$route = new RouterRoute('/:controller/:action/*', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', 'plugin' => null, 'page' => 1));
+		$this->assertEqual($result, '/posts/index/page:1');
+
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5));
+		$this->assertEqual($result, '/posts/view/5');
+
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
+		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
 	}
 
 /**
