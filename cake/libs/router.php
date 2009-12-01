@@ -520,9 +520,7 @@ class Router {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}
-
 			$match = array('plugin' => implode('|', $plugins));
-			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
@@ -530,6 +528,7 @@ class Router {
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
+			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 		}
 
 		foreach ($this->__prefixes as $prefix) {
@@ -1405,11 +1404,10 @@ class RouterRoute {
 				continue;
 			}
 			$pass[] = $url[$i];
-			unset($url[$i]);
+			unset($url[$i], $params[$i]);
 			$i++;
 		}
-
-
+		
 		//check patterns for routed params
 		if (!empty($this->params)) {
 			foreach ($this->params as $key => $pattern) {
