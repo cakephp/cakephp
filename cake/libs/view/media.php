@@ -17,7 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.5714
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class MediaView {
+App::import('View', 'View', false);
+
+class MediaView extends View {
 
 /**
  * Holds known mime type mappings
@@ -90,7 +92,8 @@ class MediaView {
  *
  * @param object $controller
  */
-	function __construct($controller = null) {
+	function __construct(&$controller = null) {
+		parent::__construct($controller);
 	}
 
 /**

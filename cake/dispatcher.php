@@ -605,7 +605,8 @@ class Dispatcher extends Object {
 				$this->_stop();
 			}
 			App::import('View', 'Media', false);
-			$Media = new MediaView();
+			$controller = null;
+			$Media = new MediaView($controller);
 			$ext = array_pop(explode('.', $url));
 
 			if (isset($Media->mimeType[$ext])) {
