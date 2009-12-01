@@ -1375,6 +1375,11 @@ class RouterRoute {
 			return false;
 		}
 
+		$count = count($this->keys);
+		while ($count--) {
+			unset($defaults[$this->keys[$count]]);
+		}
+
 		//if the difference between the url and defaults contains keys from defaults its not a match
 		if (array_intersect_key(array_filter($defaults), $diff) !== array()) {
 			return false;
