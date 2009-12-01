@@ -110,7 +110,6 @@ class XmlNode extends Object {
 			$this->createTextNode($value);
 		}
 	}
-
 /**
  * Adds a namespace to the current node
  *
@@ -732,13 +731,13 @@ class XmlNode extends Object {
  * if given the $recursive parameter.
  *
  * @param boolean $recursive Recursively delete elements.
- * @access private
+ * @access protected
  */
-	function __killParent($recursive = true) {
+	function _killParent($recursive = true) {
 		unset($this->__parent, $this->_log);
 		if ($recursive && $this->hasChildren()) {
 			for ($i = 0; $i < count($this->children); $i++) {
-				$this->children[$i]->__killParent(true);
+				$this->children[$i]->_killParent(true);
 			}
 		}
 	}
@@ -1093,6 +1092,7 @@ class Xml extends XmlNode {
 		if (is_resource($this->__parser)) {
 			xml_parser_free($this->__parser);
 		}
+		$this->_killParent(true);
 	}
 /**
  * Adds a namespace to any XML documents generated or parsed
