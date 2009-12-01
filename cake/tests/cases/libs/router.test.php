@@ -2188,6 +2188,11 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 
 
+		$route =& new RouterRoute('/foo/:controller/:action', array('action' => 'index'));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
+		$this->assertEqual($result, '/foo/posts/view');
+
+
 		$route =& new RouterRoute('/:plugin/:id/*', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->match(array('plugin' => 'test', 'controller' => 'posts', 'action' => 'view', 'id' => '1'));
 		$this->assertEqual($result, '/test/1/');
