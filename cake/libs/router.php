@@ -756,6 +756,7 @@ class Router {
 			}
 
 			$backupUrl = $url;
+			//$url += array('controller' => $params['controller'], 'plugin' => $params['plugin'])
 			$url = array_merge(
 				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
 				Set::filter($url, true)
@@ -1374,6 +1375,7 @@ class RouterRoute {
 			return false;
 		}
 
+		//remove defaults that are also keys. They can cause match failures
 		$count = count($this->keys);
 		while ($count--) {
 			unset($defaults[$this->keys[$count]]);
@@ -1392,7 +1394,7 @@ class RouterRoute {
 			}
 			$i++;
 		}
-		$passedArgsAndParams = array_diff_key($diff, $defaults, $keyNames);
+		$passedArgsAndParams = array_diff_key($diff, array_filter($defaults), $keyNames);
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
 		//remove any pass params, they have numeric indexes, skip any params that are in the defaults
@@ -1407,7 +1409,12 @@ class RouterRoute {
 			unset($url[$i], $params[$i]);
 			$i++;
 		}
-		
+
+		//still some left over parameters that weren't named or passed args, bail.
+		if (!empty($params)) {
+			return false;
+		}
+
 		//check patterns for routed params
 		if (!empty($this->params)) {
 			foreach ($this->params as $key => $pattern) {
