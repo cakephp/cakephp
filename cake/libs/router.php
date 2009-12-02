@@ -774,7 +774,7 @@ class Router {
 				$url = $originalUrl;
 			}
 			if ($match === false) {
-				$output = $self->_handleRouteFailure($url);
+				$output = $self->_handleNoRoute($url);
 			}
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
@@ -809,7 +809,6 @@ class Router {
 		if (!empty($extension) && substr($output, -1) === '/') {
 			$output = substr($output, 0, -1);
 		}
-
 		return $output . $extension . $self->queryString($q, array(), $escape) . $frag;
 	}
 
@@ -821,7 +820,7 @@ class Router {
  * @return string A generated url for the array
  * @see Router::url()
  */
-	function _handleRouteFailure($url) {
+	function _handleNoRoute($url) {
 		$named = $args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
@@ -852,7 +851,7 @@ class Router {
 			$url['action'] = null;
 		}
 
-		$urlOut = Set::filter(array($url['controller'], $url['action']));
+		$urlOut = array_filter(array($url['controller'], $url['action']));
 
 		if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 			array_unshift($urlOut, $url['plugin']);
@@ -867,11 +866,7 @@ class Router {
 		$output = implode('/', $urlOut);
 
 		if (!empty($args)) {
-			$args = implode('/', $args);
-			if ($output{strlen($output) - 1} != '/') {
-				$args = '/' . $args;
-			}
-			$output .= $args;
+			$output .= '/' . implode('/', $args);
 		}
 
 		if (!empty($named)) {
