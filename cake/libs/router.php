@@ -760,79 +760,21 @@ class Router {
 			$match = false;
 
 			for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
-				$route =& $self->routes[$i];
 				$originalUrl = $url;
 
-				if (isset($route->params['persist'], $params)) {
-					$url = $route->persistParams($url, $params);
+				if (isset($self->routes[$i]->params['persist'], $params)) {
+					$url = $self->routes[$i]->persistParams($url, $params);
 				}
 
-				if ($match = $route->match($url)) {
+				if ($match = $self->routes[$i]->match($url)) {
 					$output = trim($match, '/');
 					$url = array();
 					break;
 				}
 				$url = $originalUrl;
 			}
-
-			$named = $args = array();
-			$skip = array_merge(
-				array('bare', 'action', 'controller', 'plugin', 'prefix'),
-				$self->__prefixes
-			);
-
-			$keys = array_values(array_diff(array_keys($url), $skip));
-			$count = count($keys);
-
-			// Remove this once parsed URL parameters can be inserted into 'pass'
-			for ($i = 0; $i < $count; $i++) {
-				if (is_numeric($keys[$i])) {
-					$args[] = $url[$keys[$i]];
-				} else {
-					$named[$keys[$i]] = $url[$keys[$i]];
-				}
-			}
-
 			if ($match === false) {
-				list($args, $named)  = array(Set::filter($args, true), Set::filter($named, true));
-				foreach ($self->__prefixes as $prefix) {
-					if (!empty($url[$prefix])) {
-						$url['action'] = str_replace($prefix . '_', '', $url['action']);
-						break;
-					}
-				}
-
-				if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
-					$url['action'] = null;
-				}
-
-				$urlOut = Set::filter(array($url['controller'], $url['action']));
-
-				if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
-					array_unshift($urlOut, $url['plugin']);
-				}
-
-				foreach ($self->__prefixes as $prefix) {
-					if (isset($url[$prefix])) {
-						array_unshift($urlOut, $prefix);
-						break;
-					}
-				}
-				$output = implode('/', $urlOut);
-			}
-
-			if (!empty($args)) {
-				$args = implode('/', $args);
-				if ($output{strlen($output) - 1} != '/') {
-					$args = '/' . $args;
-				}
-				$output .= $args;
-			}
-
-			if (!empty($named)) {
-				foreach ($named as $name => $value) {
-					$output .= '/' . $name . $self->named['separator'] . $value;
-				}
+				$output = $self->_handleRouteFailure($url);
 			}
 			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
@@ -869,6 +811,75 @@ class Router {
 		}
 
 		return $output . $extension . $self->queryString($q, array(), $escape) . $frag;
+	}
+
+/**
+ * A special fallback method that handles url arrays that cannot match
+ * any defined routes.
+ *
+ * @param array $url A url that didn't match any routes
+ * @return string A generated url for the array
+ * @see Router::url()
+ */
+	function _handleRouteFailure($url) {
+		$named = $args = array();
+		$skip = array_merge(
+			array('bare', 'action', 'controller', 'plugin', 'prefix'),
+			$this->__prefixes
+		);
+
+		$keys = array_values(array_diff(array_keys($url), $skip));
+		$count = count($keys);
+
+		// Remove this once parsed URL parameters can be inserted into 'pass'
+		for ($i = 0; $i < $count; $i++) {
+			if (is_numeric($keys[$i])) {
+				$args[] = $url[$keys[$i]];
+			} else {
+				$named[$keys[$i]] = $url[$keys[$i]];
+			}
+		}
+
+		list($args, $named) = array(Set::filter($args, true), Set::filter($named, true));
+		foreach ($this->__prefixes as $prefix) {
+			if (!empty($url[$prefix])) {
+				$url['action'] = str_replace($prefix . '_', '', $url['action']);
+				break;
+			}
+		}
+
+		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
+			$url['action'] = null;
+		}
+
+		$urlOut = Set::filter(array($url['controller'], $url['action']));
+
+		if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+			array_unshift($urlOut, $url['plugin']);
+		}
+
+		foreach ($this->__prefixes as $prefix) {
+			if (isset($url[$prefix])) {
+				array_unshift($urlOut, $prefix);
+				break;
+			}
+		}
+		$output = implode('/', $urlOut);
+
+		if (!empty($args)) {
+			$args = implode('/', $args);
+			if ($output{strlen($output) - 1} != '/') {
+				$args = '/' . $args;
+			}
+			$output .= $args;
+		}
+
+		if (!empty($named)) {
+			foreach ($named as $name => $value) {
+				$output .= '/' . $name . $this->named['separator'] . $value;
+			}
+		}
+		return $output;
 	}
 
 /**
