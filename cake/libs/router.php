@@ -751,11 +751,6 @@ class Router {
 				}
 			}
 
-			if (array_key_exists('plugin', $url)) {
-				$params['plugin'] = $url['plugin'];
-			}
-
-			$backupUrl = $url;
 			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
 
 			if (isset($url['ext'])) {
@@ -769,7 +764,7 @@ class Router {
 				$originalUrl = $url;
 
 				if (isset($route->params['persist'], $params)) {
-					$url = $route->persistParams($url, array_merge($params, $backupUrl));
+					$url = $route->persistParams($url, $params);
 				}
 
 				if ($match = $route->match($url)) {
@@ -799,7 +794,7 @@ class Router {
 			}
 
 			if ($match === false) {
-				list($args, $named)  = array(Set::filter($args, true), Set::filter($named));
+				list($args, $named)  = array(Set::filter($args, true), Set::filter($named, true));
 				foreach ($self->__prefixes as $prefix) {
 					if (!empty($url[$prefix])) {
 						$url['action'] = str_replace($prefix . '_', '', $url['action']);
