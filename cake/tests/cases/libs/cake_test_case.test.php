@@ -169,7 +169,6 @@ class CakeTestCaseTest extends CakeTestCase {
  * @access public
  * @return void
  */
- 
 	function testNumericValuesInExpectationForAssertTags() {
 		$value = 220985;
 
@@ -182,7 +181,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/p'
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
-		
+
 		$input = '<p><strong>' . $value . '</strong></p><p><strong>' . $value . '</strong></p>';
 		$pattern = array(
 			'<p',
@@ -197,7 +196,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/p',
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
-		
+
 		$input = '<p><strong>' . $value . '</strong></p><p id="' . $value . '"><strong>' . $value . '</strong></p>';
 		$pattern = array(
 			'<p',
@@ -213,7 +212,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
 	}
- 
+
  /**
  * testBadAssertTags
  *
