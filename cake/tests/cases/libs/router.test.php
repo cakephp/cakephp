@@ -1986,7 +1986,7 @@ class RouterRouteTestCase extends CakeTestCase {
 
 		$this->assertEqual($route->template, '/:controller/:action/:id');
 		$this->assertEqual($route->defaults, array());
-		$this->assertEqual($route->params, array('id' => '[0-9]+'));
+		$this->assertEqual($route->options, array('id' => '[0-9]+'));
 		$this->assertFalse($route->compiled());
 	}
 
@@ -2133,7 +2133,7 @@ class RouterRouteTestCase extends CakeTestCase {
 		$this->assertPattern($result, '/some_extra/page/this_is_the_slug');
 		$this->assertPattern($result, '/page/this_is_the_slug');
 		$this->assertEqual($route->keys, array('extra', 'slug'));
-		$this->assertEqual($route->params, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
+		$this->assertEqual($route->options, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
 		$expected = array(
 			'controller' => 'pages',
 			'action' => 'view',

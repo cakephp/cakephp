@@ -436,7 +436,7 @@ class Router {
 			if (($r = $route->parse($url)) !== false) {
 				$self->__currentRoute[] =& $route;
 
-				$params = $route->params;
+				$params = $route->options;
 				$argOptions = array();
 
 				if (array_key_exists('named', $params)) {
@@ -762,7 +762,7 @@ class Router {
 			for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
 				$originalUrl = $url;
 
-				if (isset($self->routes[$i]->params['persist'], $params)) {
+				if (isset($self->routes[$i]->options['persist'], $params)) {
 					$url = $self->routes[$i]->persistParams($url, $params);
 				}
 
@@ -1150,7 +1150,7 @@ class RouterRoute {
  *
  * @var array
  **/
-	var $params = array();
+	var $options = array();
 /**
  * Default parameters for a Route
  *
@@ -1195,10 +1195,10 @@ class RouterRoute {
  * @param string $params Array of parameters and additional options for the Route
  * @return void
  */
-	function RouterRoute($template, $defaults = array(), $params = array()) {
+	function RouterRoute($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
-		$this->params = (array)$params;
+		$this->options = (array)$options;
 	}
 /**
  * Check if a Route has been compiled into a regular expression.
@@ -1219,7 +1219,7 @@ class RouterRoute {
 		if ($this->compiled()) {
 			return $this->_compiledRoute;
 		}
-		$this->_writeRoute($this->template, $this->defaults, $this->params);
+		$this->_writeRoute($this->template, $this->defaults, $this->options);
 		return $this->_compiledRoute;
 	}
 /**
@@ -1334,7 +1334,7 @@ class RouterRoute {
  * @return array An array with persistent parameters applied.
  */
 	function persistParams($url, $params) {
-		foreach ($this->params['persist'] as $persistKey) {
+		foreach ($this->options['persist'] as $persistKey) {
 			if (array_key_exists($persistKey, $params)) {
 				$url[$persistKey] = $params[$persistKey];
 			}
@@ -1421,8 +1421,8 @@ class RouterRoute {
 		}
 
 		//check patterns for routed params
-		if (!empty($this->params)) {
-			foreach ($this->params as $key => $pattern) {
+		if (!empty($this->options)) {
+			foreach ($this->options as $key => $pattern) {
 				if (array_key_exists($key, $url) && !preg_match('#^' . $pattern . '$#', $url[$key])) {
 					return false;
 				}
