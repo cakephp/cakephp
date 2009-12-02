@@ -1219,42 +1219,40 @@ class RouterRoute {
 		if ($this->compiled()) {
 			return $this->_compiledRoute;
 		}
-		$this->_writeRoute($this->template, $this->defaults, $this->options);
+		$this->_writeRoute();
 		return $this->_compiledRoute;
 	}
 /**
- * Builds a route regular expression
+ * Builds a route regular expression.  Uses the template, defaults and options
+ * properties to compile a regular expression that can be used to match/parse request strings.
  *
- * @param string $route An empty string, or a route string "/"
- * @param array $default NULL or an array describing the default route
- * @param array $params An array matching the named elements in the route to regular expressions
- *    which that element should match.
  * @return void
  * @access protected
  */
-	function _writeRoute($route, $default, $params) {
-		if (empty($route) || ($route === '/')) {
+	function _writeRoute() {
+		if (empty($this->template) || ($this->template === '/')) {
 			$this->_compiledRoute = '#^/*$#';
 			$this->keys = array();
 			return;
 		}
+		$route = $this->template;
 		$names = $replacements = $search = array();
-		$parsed = preg_quote($route, '#');
+		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
-			if (isset($params[$name])) {
+			if (isset($this->options[$name])) {
 				$option = null;
-				if ($name !== 'plugin' && array_key_exists($name, $default)) {
+				if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
 					$option = '?';
 				}
 				$slashParam = '/\\' . $namedElements[0][$i];
 				if (strpos($parsed, $slashParam) !== false) {
-					$replacements[] = '(?:/(?P<' . $name . '>' . $params[$name] . ')' . $option . ')' . $option;
+					$replacements[] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 					$search[] = $slashParam;
 				} else {
 					$search[] = '\\' . $namedElements[0][$i];
-					$replacements[] = '(?:(?P<' . $name . '>' . $params[$name] . ')' . $option . ')' . $option;
+					$replacements[] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
 				$replacements[] = '(?:(?P<' . $name . '>[^/]+))?';
