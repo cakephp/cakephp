@@ -1365,7 +1365,14 @@ class RouterRoute {
 		if (array_intersect_key($keyNames, $url) != $keyNames) {
 			return false;
 		}
-		$diff = Set::filter(Set::diff($url, $defaults), true);
+
+		$diffUnfiltered = Set::diff($url, $defaults);
+		$diff = array();
+		foreach ($diffUnfiltered as $key => $var) {
+			if ($var === 0 || $var === '0' || !empty($var)) {
+				$diff[$key] = $var;
+			}
+		}
 
 		//if a not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && array_diff_key($diff, $keyNames) != array()) {
