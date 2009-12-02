@@ -657,7 +657,7 @@ class Router {
 		if (!isset($self->routes[$which])) {
 			return false;
 		}
-		$route = $self->routes[$which];
+		$route =& $self->routes[$which];
 		unset($self->routes[$which]);
 		array_unshift($self->routes, $route);
 		return true;
@@ -809,6 +809,7 @@ class Router {
 		if (!empty($extension) && substr($output, -1) === '/') {
 			$output = substr($output, 0, -1);
 		}
+
 		return $output . $extension . $self->queryString($q, array(), $escape) . $frag;
 	}
 
