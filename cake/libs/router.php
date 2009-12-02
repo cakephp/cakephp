@@ -317,8 +317,9 @@ class Router {
 		if ($named === true || $named === false) {
 			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
 			$named = array();
+		} else {
+			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
-		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 
 		if ($options['reset'] == true || $self->named['rules'] === false) {
 			$self->named['rules'] = array();
@@ -432,7 +433,6 @@ class Router {
 
 		for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
 			$route =& $self->routes[$i];
-			$route->compile();
 			if (($r = $route->parse($url)) !== false) {
 				$self->__currentRoute[] =& $route;
 
