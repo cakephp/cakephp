@@ -756,11 +756,7 @@ class Router {
 			}
 
 			$backupUrl = $url;
-			//$url += array('controller' => $params['controller'], 'plugin' => $params['plugin'])
-			$url = array_merge(
-				array('controller' => $params['controller'], 'plugin' => $params['plugin']),
-				Set::filter($url, true)
-			);
+			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
 
 			if (isset($url['ext'])) {
 				$extension = '.' . $url['ext'];
@@ -1359,8 +1355,7 @@ class RouterRoute {
 		$defaults = $this->defaults;
 
 		if (isset($defaults['prefix'])) {
-			$prefix = $defaults['prefix'];
-			unset($defaults['prefix']);
+			$url['prefix'] = $defaults['prefix'];
 		}
 
 		//check that all the key names are in the url
@@ -1368,7 +1363,7 @@ class RouterRoute {
 		if (array_intersect_key($keyNames, $url) != $keyNames) {
 			return false;
 		}
-		$diff = Set::diff($url, $defaults);
+		$diff = Set::filter(Set::diff($url, $defaults), true);
 
 		//if a not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && array_diff_key($diff, $keyNames) != array()) {
@@ -1382,7 +1377,7 @@ class RouterRoute {
 		}
 		$filteredDefaults = array_filter($defaults);
 
-		//if the difference between the url and defaults contains keys from defaults its not a match
+		//if the difference between the url diff and defaults contains keys from defaults its not a match
 		if (array_intersect_key($filteredDefaults, $diff) !== array()) {
 			return false;
 		}
@@ -1424,7 +1419,7 @@ class RouterRoute {
 				}
 			}
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named', 'prefix')));
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
 	}
 /**
  * Converts a matching route array into a url string.
