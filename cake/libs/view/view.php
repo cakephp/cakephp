@@ -686,13 +686,16 @@ class View extends Object {
 
 			for ($i = count($helpers) - 1; $i >= 0; $i--) {
 				$name = $helperNames[$i];
+				$helper =& $loadedHelpers[$helpers[$i]];
 
-				${$name} =& $loadedHelpers[$helpers[$i]];
-				$this->loaded[$helperNames[$i]] =& ${$name};
-				$this->{$helpers[$i]} =& ${$name};
+				if (!isset($___dataForView[$name])) {
+					${$name} =& $helper;
+				}
+				$this->loaded[$helperNames[$i]] =& $helper;
+				$this->{$helpers[$i]} =& $helper;
 			}
 			$this->_triggerHelpers('beforeRender');
-			unset($name, $loadedHelpers, $helpers, $i, $helperNames);
+			unset($name, $loadedHelpers, $helpers, $i, $helperNames, $helper);
 		}
 
 		extract($___dataForView, EXTR_SKIP);
