@@ -2333,6 +2333,8 @@ class Model extends Overloadable {
 /**
  * Returns true if all fields pass validation.
  *
+ * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
+ *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return boolean True if there are no errors
  * @access public
@@ -2350,6 +2352,7 @@ class Model extends Overloadable {
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields
+ * @see Model::validates()
  * @access public
  * @link http://book.cakephp.org/view/410/Validating-Data-from-the-Controller
  */
