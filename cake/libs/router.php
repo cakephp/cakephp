@@ -251,9 +251,9 @@ class Router {
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
  * @param string $route A string describing the template of the route
- * @param array $default An array describing the default route parameters. These parameters will be used by default
+ * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
- * @param array $params An array matching the named elements in the route to regular expressions which that 
+ * @param array $options An array matching the named elements in the route to regular expressions which that 
  *   element should match.  Also contains additional parameters such as which routed parameters should be 
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
@@ -261,21 +261,21 @@ class Router {
  * @access public
  * @static
  */
-	function connect($route, $default = array(), $params = array()) {
+	function connect($route, $defaults = array(), $options = array()) {
 		$self =& Router::getInstance();
 
 		foreach ($self->__prefixes as $prefix) {
-			if (isset($default[$prefix])) {
-				$default['prefix'] = $prefix;
+			if (isset($defaults[$prefix])) {
+				$defaults['prefix'] = $prefix;
 				break;
 			}
 		}
-		if (isset($default['prefix'])) {
-			$self->__prefixes[] = $default['prefix'];
+		if (isset($defaults['prefix'])) {
+			$self->__prefixes[] = $defaults['prefix'];
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
-		$default += array('action' => 'index', 'plugin' => null, 'controller' => null);
-		$self->routes[] =& new RouterRoute($route, $default, $params);
+		$defaults += array('action' => 'index', 'plugin' => null, 'controller' => null);
+		$self->routes[] =& new RouterRoute($route, $defaults, $options);
 		return $self->routes;
 	}
 
