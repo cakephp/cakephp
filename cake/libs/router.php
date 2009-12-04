@@ -275,7 +275,7 @@ class Router {
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
 		$defaults += array('action' => 'index', 'plugin' => null, 'controller' => null);
-		$routeClass = 'RouterRoute';
+		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
 			unset($options['routeClass']);
@@ -1142,7 +1142,7 @@ class Router {
  * @since 1.3.0
  * @see Router::connect
  */
-class RouterRoute {
+class CakeRoute {
 /**
  * An array of named segments in a Route.
  * `/:controller/:action/:id` has 3 named elements
@@ -1200,7 +1200,7 @@ class RouterRoute {
  * @param string $params Array of parameters and additional options for the Route
  * @return void
  */
-	function RouterRoute($template, $defaults = array(), $options = array()) {
+	function CakeRoute($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
