@@ -3067,6 +3067,19 @@ class ModelWriteTest extends BaseModelTest {
 				'attachment' => 'some_file.zip'
 		)));
 		$this->assertEqual($result, $expected);
+
+
+		$model->Attachment->bindModel(array('belongsTo' => array('Comment')), false);
+		$data = array(
+			'Comment' => array(
+				'comment' => 'Comment with attachment',
+				'article_id' => 1,
+				'user_id' => 1
+			),
+			'Attachment' => array(
+				'attachment' => 'some_file.zip'
+		));
+		$this->assertTrue($model->saveAll($data, array('validate' => 'first')));
 	}
 /**
  * testSaveAllBelongsTo method
