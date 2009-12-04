@@ -494,11 +494,14 @@ class DboSource extends DataSource {
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return array Array of queries run as an array
  */
-	function getLog($sorted = false) {
+	function getLog($sorted = false, $clear = true) {
 		if ($sorted) {
 			$log = sortByKey($this->_queriesLog, 'took', 'desc', SORT_NUMERIC);
 		} else {
 			$log = $this->_queriesLog;
+		}
+		if ($clear) {
+			$this->_queriesLog = array();
 		}
 		return array('log' => $log, 'count' => $this->_queriesCnt, 'time' => $this->_queriesTime);
 	}
@@ -509,26 +512,18 @@ class DboSource extends DataSource {
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false
  */
 	function showLog($sorted = false) {
-		return false;
-
-		$log = $this->getLog($sorted);
-
-		if ($this->_queriesCnt > 1) {
-			$text = 'queries';
-		} else {
-			$text = 'query';
+		$log = $this->getLog($sorted, false);
+		if (empty($log['log'])) {
+			return;
 		}
-
 		if (PHP_SAPI != 'cli') {
-			print ("<table class=\"cake-sql-log\" id=\"cakeSqlLog_" . preg_replace('/[^A-Za-z0-9_]/', '_', uniqid(time(), true)) . "\" summary=\"Cake SQL Log\" cellspacing=\"0\" border = \"0\">\n<caption>({$this->configKeyName}) {$this->_queriesCnt} {$text} took {$this->_queriesTime} ms</caption>\n");
-			print ("<thead>\n<tr><th>Nr</th><th>Query</th><th>Error</th><th>Affected</th><th>Num. rows</th><th>Took (ms)</th></tr>\n</thead>\n<tbody>\n");
-
-			foreach ($log as $k => $i) {
-				print ("<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n");
-			}
-			print ("</tbody></table>\n");
+			App::import('Core', 'View');
+			$controller = null;
+			$View =& new View($controller, false);
+			$View->set('logs', array($this->configKeyName => $log));
+			echo $View->element('sql_dump');
 		} else {
-			foreach ($log as $k => $i) {
+			foreach ($log['log'] as $k => $i) {
 				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
 			}
 		}

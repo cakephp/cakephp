@@ -4011,11 +4011,11 @@ class DboSourceTest extends CakeTestCase {
 
 		$log = $this->testDb->getLog();
 		$expected = array('query' => 'Query 1', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log[0], $expected);
+		$this->assertEqual($log['log'][0], $expected);
 		$expected = array('query' => 'Query 2', 'error' => '', 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log[1], $expected);
+		$this->assertEqual($log['log'][1], $expected);
 		$expected = array('query' => 'Error 1', 'error' => true, 'affected' => '', 'numRows' => '', 'took' => '');
-		$this->assertEqual($log[2], $expected);
+		$this->assertEqual($log['log'][2], $expected);
 	}
 
 /**

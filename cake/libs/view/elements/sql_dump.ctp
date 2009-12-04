@@ -1,16 +1,22 @@
 <?php
 
-if (!class_exists('ConnectionManager') || Configure::read('debug') < 2) {
+if (!class_exists('ConnectionManager') || Configure::read('debug') > 1) {
 	return false;
 }
 
 $sources = ConnectionManager::sourceList();
-foreach ($sources as $source):
-	$db =& ConnectionManager::getDataSource($source);
-	if (!$db->isInterfaceSupported('getLog')) {
-		continue;
-	}
-	$logInfo = $db->getLog();
+if (!isset($logs)):
+	$logs = array();
+	foreach ($sources as $source):
+		$db =& ConnectionManager::getDataSource($source);
+		if (!$db->isInterfaceSupported('getLog')):
+			continue;
+		endif;
+		$logs[$source] = $db->getLog();
+	endforeach;
+endif;
+
+foreach ($logs as $source => $logInfo):
 	$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 	printf(
 		'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0" border = "0">',
