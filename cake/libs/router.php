@@ -280,7 +280,12 @@ class Router {
 			$routeClass = $options['routeClass'];
 			unset($options['routeClass']);
 		}
-		$self->routes[] =& new $routeClass($route, $defaults, $options);
+		$Route =& new $routeClass($route, $defaults, $options);
+		if ($routeClass !== 'CakeRoute' && !is_subclass_of($Route, 'CakeRoute')) {
+			trigger_error(__('Route classes must extend CakeRoute', true), E_USER_WARNING);
+			return false;
+		}
+		$self->routes[] =& $Route;
 		return $self->routes;
 	}
 
