@@ -782,10 +782,12 @@ class Validation extends Object {
 					$_this->regex  = '/\\A\\b[0-9]{9}\\b\\z/i';
 					break;
 				case 'us':
-				default:
 					$_this->regex  = '/\\A\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b\\z/i';
 					break;
 			}
+		}
+		if (empty($_this->regex)) {
+			return $_this->_pass('ssn', $check, $country);
 		}
 		return $_this->_check();
 	}

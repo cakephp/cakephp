@@ -586,6 +586,9 @@ class CakeTestCase extends UnitTestCase {
 		}
 		$i = 0;
 		foreach ($normalized as $tags) {
+			if (!is_array($tags)) {
+				$tags = (string)$tags;
+			}
 			$i++;
 			if (is_string($tags) && $tags{0} == '<') {
 				$tags = array(substr($tags, 1) => array());

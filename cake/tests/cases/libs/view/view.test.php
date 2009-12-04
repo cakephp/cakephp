@@ -720,6 +720,23 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test that view vars can replace the local helper variables
+ * and not overwrite the $this->Helper references
+ *
+ * @return void
+ */
+	function testViewVarOverwritingLocalHelperVar() {
+		$Controller = new ViewPostsController();
+		$Controller->helpers = array('Html');
+		$Controller->set('html', 'I am some test html');
+		$View = new View($Controller);
+		$result = $View->render('helper_overwrite', false);
+
+		$this->assertPattern('/I am some test html/', $result);
+		$this->assertPattern('/Test link/', $result);
+	}
+
+/**
  * testGetViewFileName method
  *
  * @access public
