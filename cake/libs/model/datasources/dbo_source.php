@@ -500,7 +500,7 @@ class DboSource extends DataSource {
 		} else {
 			$log = $this->_queriesLog;
 		}
-		return $log;
+		return array('log' => $log, 'count' => $this->_queriesCnt, 'time' => $this->_queriesTime);
 	}
 
 /**
@@ -509,6 +509,8 @@ class DboSource extends DataSource {
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false
  */
 	function showLog($sorted = false) {
+		return false;
+
 		$log = $this->getLog($sorted);
 
 		if ($this->_queriesCnt > 1) {
