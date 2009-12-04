@@ -62,14 +62,6 @@ class Dispatcher extends Object {
 	var $here = false;
 
 /**
- * Admin route (if on it)
- *
- * @var string
- * @access public
- */
-	var $admin = false;
-
-/**
  * Plugin being served (if any)
  *
  * @var string
