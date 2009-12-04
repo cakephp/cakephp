@@ -1938,17 +1938,34 @@ class RouterTest extends CakeTestCase {
  *
  * @return void
  */
-	function testRouterConnectDefaults() {
+	function testDefaultsMethod() {
 		Router::defaults(false);
 		Router::connect('/test/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$result = Router::parse('/posts/edit/5');
 		$this->assertFalse(isset($result['controller']));
 		$this->assertFalse(isset($result['action']));
 	}
+
+/**
+ * test using a custom route class for route connection
+ *
+ * @return void
+ */
+	function testUsingCustomRouteClass() {
+		Mock::generate('RouterRoute', 'MockConnectedRoute');
+		$routes = Router::connect(
+			'/:slug',
+			array('controller' => 'posts', 'action' => 'view'),
+			array('routeClass' => 'MockConnectedRoute', 'slug' => '[a-z_-]+')
+		);
+		$this->assertTrue(is_a($routes[0], 'MockConnectedRoute'), 'Incorrect class used. %s');
+		$expected = array('controller' => 'posts', 'action' => 'view', 'slug' => 'test');
+		$routes[0]->setReturnValue('parse', $expected);
+		$result = Router::parse('/test');
+		$this->assertEqual($result, $expected);
+	}
 }
 
-// SimpleTest::ignore('RouterTest');
-// SimpleTest::ignore('RouterRouteTestCase');
 /**
  * Test case for RouterRoute
  *

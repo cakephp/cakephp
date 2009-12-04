@@ -275,7 +275,12 @@ class Router {
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
 		$defaults += array('action' => 'index', 'plugin' => null, 'controller' => null);
-		$self->routes[] =& new RouterRoute($route, $defaults, $options);
+		$routeClass = 'RouterRoute';
+		if (isset($options['routeClass'])) {
+			$routeClass = $options['routeClass'];
+			unset($options['routeClass']);
+		}
+		$self->routes[] =& new $routeClass($route, $defaults, $options);
 		return $self->routes;
 	}
 
