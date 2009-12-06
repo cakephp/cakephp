@@ -2216,6 +2216,14 @@ class DboSource extends DataSource {
 		return null;
 	}
 
+/**
+ * Returns an ORDER BY clause as a string.
+ *
+ * @param string $key Field reference, as a key (i.e. Post.title)
+ * @param string $direction Direction (ASC or DESC)
+ * @param object $model model reference (used to look for virtual field)
+ * @return string ORDER BY clause
+ */
 	function order($keys, $direction = 'ASC', &$model = null) {
 		if (!is_array($keys)) {
 			$keys = array($keys);
@@ -2246,7 +2254,7 @@ class DboSource extends DataSource {
 				}
 				continue;
 			}
-			
+
 			if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $_dir)) {
 				$dir = $_dir[0];
 				$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
@@ -2264,7 +2272,11 @@ class DboSource extends DataSource {
 
 			$key = trim($key);
 			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
-				$key = $this->name($key);
+				if (!empty($model->virtualFields[$key])) {
+					$key = $model->virtualFields[$key];
+				} else {
+					$key = $this->name($key);
+				}
 			}
 			$key .= ' ' . trim($dir);
 			$result[] = $key;
@@ -2273,79 +2285,6 @@ class DboSource extends DataSource {
 			return ' ORDER BY ' . implode(', ',$result);
 		}
 		return '';
-	}
-
-/**
- * Returns an ORDER BY clause as a string.
- *
- * @param string $key Field reference, as a key (i.e. Post.title)
- * @param string $direction Direction (ASC or DESC)
- * @param object $model model reference (used to look for virtual field)
- * @return string ORDER BY clause
- */
-	function order2($keys, $direction = 'ASC', &$model = null) {
-		if (is_string($keys) && !empty($model->virtualFields[$keys])) {
-			return '(' . $model->virtualFields[$keys] . ') ' . $direction;
-		}
-		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
-			$keys = array_map('trim', explode(',', $keys));
-		}
-
-		if (is_array($keys)) {
-			$keys = array_filter($keys);
-			$dir = $direction;
-		}
-
-		if (empty($keys) || (is_array($keys) && isset($keys[0]) && empty($keys[0]))) {
-			return '';
-		}
-
-		if (is_array($keys)) {	
-
-			foreach ($keys as $key => $value) {
-				if (is_numeric($key)) {
-					$key = $value = ltrim(str_replace('ORDER BY ', '', $this->order($value,'ASC',$model)));
-					$value = (!preg_match('/\\x20ASC|\\x20DESC/i', $key) ? ' ' . $direction : '');
-				} else {
-					$value = ' ' . $value;
-				}
-
-				if (!preg_match('/^.+\\(.*\\)/', $key) && !strpos($key, ',')) {
-					if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $dir)) {
-						$dir = $dir[0];
-						$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
-					} else {
-						$dir = '';
-					}
-					$key = trim($key);
-					if (!preg_match('/\s/', $key)) {
-						$key = $this->name($key);
-					}
-					$key .= ' ' . trim($dir);
-				}
-				$order[] = $this->order($key . $value,'ASC',$model);
-			}
-			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', implode(',', $order)));
-		}
-		$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
-
-		if (strpos($keys, '.')) {
-			preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
-			$pregCount = count($result[0]);
-
-			for ($i = 0; $i < $pregCount; $i++) {
-				if (!is_numeric($result[0][$i])) {
-					$keys = preg_replace('/' . $result[0][$i] . '/', $this->name($result[0][$i]), $keys);
-				}
-			}
-			$result = ' ORDER BY ' . $keys;
-			return $result . (!preg_match('/\\x20ASC|\\x20DESC/i', $keys) ? ' ' . $direction : '');
-
-		} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
-			$direction = $match[1];
-			return ' ORDER BY ' . preg_replace('/' . $match[1] . '/', '', $keys) . $direction;
-		}
-		return ' ORDER BY ' . $keys . ' ' . $direction;
 	}
 
 /**

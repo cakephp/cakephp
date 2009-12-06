@@ -1076,9 +1076,11 @@ class Controller extends Object {
 			$value = $options['order'][$key];
 			unset($options['order'][$key]);
 
-			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+			if ($object->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field)) {
+			} elseif ($object->hasField($field,true)) {
+				$options['order'][$field] = $value;
+			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
