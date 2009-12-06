@@ -2216,15 +2216,74 @@ class DboSource extends DataSource {
 		return null;
 	}
 
+	function order($keys, $direction = 'ASC', &$model = null) {
+		if (!is_array($keys)) {
+			$keys = array($keys);
+		}
+		$keys = array_filter($keys);
+		$result = array();
+		while (!empty($keys)) {
+			list($key,$dir) = each($keys);
+			array_shift($keys);
+
+			if (is_numeric($key)) {
+				$key = $dir;
+				$dir = $direction;
+			}
+
+			if (is_string($key) && strpos($key, ',') && !preg_match('/\(.+\,.+\)/', $key)) {
+				$key = array_map('trim', explode(',', $key));
+			}
+			if (is_array($key)) {
+				//Flatten the array
+				$key = array_reverse($key,true);
+				foreach ($key as $k => $v) {
+					if (is_numeric($k)) {
+						array_unshift($keys,$v);
+					} else {
+						$keys = array($k => $v) + $keys;
+					}
+				}
+				continue;
+			}
+			
+			if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $_dir)) {
+				$dir = $_dir[0];
+				$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
+			}
+
+			if (strpos($key, '.')) {
+				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $key, $matches, PREG_PATTERN_ORDER);
+				$pregCount = count($matches[0]);
+				for ($i = 0; $i < $pregCount; $i++) {
+					if (!is_numeric($matches[0][$i])) {
+						$key = preg_replace('/' . $matches[0][$i] . '/', $this->name($matches[0][$i]), $key);
+					}
+				}
+			}
+
+			$key = trim($key);
+			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
+				$key = $this->name($key);
+			}
+			$key .= ' ' . trim($dir);
+			$result[] = $key;
+		}
+		if (!empty($result)) {
+			return ' ORDER BY ' . implode(', ',$result);
+		}
+		return '';
+	}
+
 /**
  * Returns an ORDER BY clause as a string.
  *
  * @param string $key Field reference, as a key (i.e. Post.title)
  * @param string $direction Direction (ASC or DESC)
- * @param object $model model reference (used to look for virtual fields)
+ * @param object $model model reference (used to look for virtual field)
  * @return string ORDER BY clause
  */
-	function order($keys, $direction = 'ASC', &$model = null) {
+	function order2($keys, $direction = 'ASC', &$model = null) {
 		if (is_string($keys) && !empty($model->virtualFields[$keys])) {
 			return '(' . $model->virtualFields[$keys] . ') ' . $direction;
 		}
@@ -2234,14 +2293,14 @@ class DboSource extends DataSource {
 
 		if (is_array($keys)) {
 			$keys = array_filter($keys);
+			$dir = $direction;
 		}
 
 		if (empty($keys) || (is_array($keys) && isset($keys[0]) && empty($keys[0]))) {
 			return '';
 		}
 
-		if (is_array($keys)) {
-			$keys = (Set::countDim($keys) > 1) ? array_map(array(&$this, 'order'), $keys) : $keys;
+		if (is_array($keys)) {	
 
 			foreach ($keys as $key => $value) {
 				if (is_numeric($key)) {

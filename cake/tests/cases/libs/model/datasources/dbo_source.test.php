@@ -3403,7 +3403,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
 
 		$result = $this->testDb->order("Dealer.id = 7 desc, Dealer.id = 3 desc, Dealer.title asc");
-		$expected = " ORDER BY `Dealer`.`id` = 7 desc,  `Dealer`.`id` = 3 desc,  `Dealer`.`title` asc";
+		$expected = " ORDER BY `Dealer`.`id` = 7 desc, `Dealer`.`id` = 3 desc, `Dealer`.`title` asc";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->order(array("Page.name" => "='test' DESC"));
