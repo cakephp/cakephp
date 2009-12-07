@@ -408,7 +408,7 @@ class DboSource extends DataSource {
 					retrun;
 				}
 				$model = ClassRegistry::getObject($alias);
-				if (isset($model->virtualFields[$virtual])) {
+				if ($model->isVirtualField($virtual)) {
 					$result[$alias][$virtual] = $value;
 					unset($result[0][$field]);
 				}
@@ -1667,8 +1667,8 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				if (!empty($model->virtualFields[$params[0]])) {
-					$arg = $model->virtualFields[$params[0]];
+				if (is_object($model) && $model->isVirtualField($params[0])){
+					$arg = $model->getVirtualField($params[0]);
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -1678,8 +1678,8 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				if (!empty($model->virtualFields[$params[0]])) {
-					$arg = $model->virtualFields[$params[0]];
+				if (is_object($model) && $model->isVirtualField($params[0])) {
+					$arg = $model->getVirtualField($params[0]);
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -1816,7 +1816,7 @@ class DboSource extends DataSource {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
-			$expression = $model->virtualFields[$field];
+			$expression = $model->getVirtualField($field);
 			$virtual[] = $expression . " {$this->alias} {$virtualField}";
 		}
 		return $virtual;
@@ -1865,8 +1865,8 @@ class DboSource extends DataSource {
 			return $fields;
 		}
 		$virtual = array();
-		if (!empty($model->virtualFields)) {
-			$keys =  array_keys($model->virtualFields);
+		if ($model->getVirtualField()) {
+			$keys =  array_keys($model->getVirtualField());
 			$virtual = ($allFields) ? $keys :  array_intersect($keys,$fields);
 		}
 		$count = count($fields);
@@ -2114,8 +2114,8 @@ class DboSource extends DataSource {
 		}
 
 		$virtual = false;
-		if (!empty($model->virtualFields[$key])) {
-			$key = $model->virtualFields[$key];
+		if (is_object($model) && $model->isVirtualField($key)) {
+			$key = $model->getVirtualField($key);
 			$virtual = true;
 		}
 
@@ -2287,8 +2287,8 @@ class DboSource extends DataSource {
 
 			$key = trim($key);
 			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
-				if (!empty($model->virtualFields[$key])) {
-					$key = $model->virtualFields[$key];
+				if (is_object($model) && $model->isVirtualField($key)) {
+					$key =  $model->getVirtualField($key);
 				} else {
 					$key = $this->name($key);
 				}

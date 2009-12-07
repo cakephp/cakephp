@@ -1026,7 +1026,7 @@ class Model extends Overloadable {
 		}
 
 		if ($checkVirtual && !empty($this->virtualFields)) {
-			if (array_key_exists($name,$this->virtualFields)) {
+			if ($this->isVirtualField($name)) {
 				return true;
 			}
 		}
@@ -1037,6 +1037,36 @@ class Model extends Overloadable {
 
 		if ($this->_schema != null) {
 			return isset($this->_schema[$name]);
+		}
+		return false;
+	}
+
+/**
+ * Returns true if the supplied field is a model Virtual Field
+ *
+ * @param mixed $name Name of field to look for
+ * @return boolean indicating whether the field exists as a model virtual field.
+ * @access public
+ */
+	function isVirtualField($field) {
+		return !empty($this->virtualFields) && array_key_exists($field,$this->virtualFields);
+	}
+
+/**
+ * Returns the expression for a model virtual field 
+ *
+ * @param mixed $name Name of field to look for
+ * @return mixed If $field is string expression bound to virtual field $field
+ *					  If $field is null, returns an array of all model virtual fields
+ *               or false if none $field exist.
+ * @access public
+ */
+	function getVirtualField($field = null) {
+		if ($field == null) {
+			return empty($this->virtualFields) ? false : $this->virtualFields;
+		}
+		if ($this->isVirtualField($field)) {
+			return $this->virtualFields[$field];
 		}
 		return false;
 	}
