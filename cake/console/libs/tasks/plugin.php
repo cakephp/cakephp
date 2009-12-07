@@ -153,10 +153,9 @@ class PluginTask extends Shell {
 				'tests' . DS . 'cases' . DS . 'models',
 				'tests' . DS . 'groups',
 				'tests' . DS . 'fixtures',
-				'vendors' . DS . 'img',
-				'vendors' . DS . 'js',
-				'vendors' . DS . 'css',
-				'vendors' . DS . 'shells' . DS . 'tasks'
+				'vendors',
+				'vendors' . DS . 'shells' . DS . 'tasks',
+				'webroot'
 			);
 
 			foreach ($directories as $directory) {
