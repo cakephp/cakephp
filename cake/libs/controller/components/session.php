@@ -49,14 +49,6 @@ class SessionComponent extends CakeSession {
 	var $__started = false;
 
 /**
- * Used to determine if request are from an Ajax request
- *
- * @var boolean
- * @access private
- */
-	var $__bare = 0;
-
-/**
  * Class constructor
  *
  * @param string $base The base path for the Session
@@ -66,19 +58,6 @@ class SessionComponent extends CakeSession {
 			parent::__construct($base);
 		} else {
 			$this->__active = false;
-		}
-	}
-
-/**
- * Initializes the component, gets a reference to Controller::$param['bare'].
- *
- * @param object $controller A reference to the controller
- * @return void
- * @access public
- */
-	function initialize(&$controller) {
-		if (isset($controller->params['bare'])) {
-			$this->__bare = $controller->params['bare'];
 		}
 	}
 

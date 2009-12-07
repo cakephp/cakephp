@@ -102,11 +102,6 @@ if (!defined('CONFIGS')) {
 /**
  * Path to the libs directory.
  */
-	define('INFLECTIONS', CAKE.'config'.DS.'inflections'.DS);
-
-/**
- * Path to the libs directory.
- */
 	define('LIBS', CAKE.'libs'.DS);
 
 /**
@@ -196,13 +191,6 @@ if (!defined('TMP')) {
 if (!defined('VENDORS')) {
 	define('VENDORS', CAKE_CORE_INCLUDE_PATH.DS.'vendors'.DS);
 }
-
-/**
- * Path to the Pear directory
- * The purporse is to make it easy porting Pear libs into Cake
- * without setting the include_path PHP variable.
- */
-	define('PEAR', VENDORS.'Pear'.DS);
 
 /**
  *  Full url prefix

@@ -137,26 +137,6 @@ class SessionComponentTest extends CakeTestCase {
 	}
 
 /**
- * testSessionInitialize method
- *
- * @access public
- * @return void
- */
-	function testSessionInitialize() {
-		$Session =& new SessionComponent();
-
-		$this->assertEqual($Session->__bare, 0);
-
-		$Session->initialize(new SessionTestController());
-		$this->assertEqual($Session->__bare, 0);
-
-		$sessionController =& new SessionTestController();
-		$sessionController->params['bare'] = 1;
-		$Session->initialize($sessionController);
-		$this->assertEqual($Session->__bare, 1);
-	}
-
-/**
  * testSessionActivate method
  *
  * @access public

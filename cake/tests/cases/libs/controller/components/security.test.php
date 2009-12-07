@@ -190,7 +190,7 @@ class SecurityComponentTest extends CakeTestCase {
 	function testRequirePostFail() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->Controller->action = 'posted';
-		$this->Controller->Security->requirePost('posted');
+		$this->Controller->Security->requirePost(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -219,7 +219,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['HTTPS'] = 'off';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'posted';
-		$this->Controller->Security->requireSecure('posted');
+		$this->Controller->Security->requireSecure(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -249,7 +249,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
 		$this->Controller->action = 'posted';
 		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
-		$this->Controller->Security->requireAuth('posted');
+		$this->Controller->Security->requireAuth(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
@@ -321,7 +321,7 @@ class SecurityComponentTest extends CakeTestCase {
 	function testRequireGetFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'getted';
-		$this->Controller->Security->requireGet('getted');
+		$this->Controller->Security->requireGet(array('getted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -360,7 +360,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireLogin(
-			'posted',
+			array('posted'),
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
 		);
 		$_SERVER['PHP_AUTH_USER'] = 'admin2';
@@ -437,7 +437,7 @@ DIGEST;
 	function testRequirePutFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'putted';
-		$this->Controller->Security->requirePut('putted');
+		$this->Controller->Security->requirePut(array('putted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}
@@ -479,7 +479,7 @@ DIGEST;
 	function testRequireDeleteFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->action = 'deleted';
-		$this->Controller->Security->requireDelete('deleted');
+		$this->Controller->Security->requireDelete(array('deleted', 'other_method'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 	}

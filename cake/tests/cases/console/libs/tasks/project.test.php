@@ -150,9 +150,6 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'cases' . DS . 'shells' . DS . 'empty'), 'No empty file in dir %s');
 		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'fixtures' . DS . 'empty'), 'No empty file in dir %s');
 		$this->assertTrue(is_file($path . DS . 'tests' . DS . 'groups' . DS . 'empty'), 'No empty file in dir %s');
-		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'css' . DS . 'empty'), 'No empty file in dir %s');
-		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'img' . DS . 'empty'), 'No empty file in dir %s');
-		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'js' . DS . 'empty'), 'No empty file in dir %s');
 		$this->assertTrue(is_file($path . DS . 'vendors' . DS . 'shells' . DS . 'tasks' . DS . 'empty'), 'No empty file in dir %s');
 		$this->assertTrue(is_file($path . DS . 'views' . DS . 'errors' . DS . 'empty'), 'No empty file in dir %s');
 		$this->assertTrue(is_file($path . DS . 'views' . DS . 'helpers' . DS . 'empty'), 'No empty file in dir %s');

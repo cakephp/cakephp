@@ -62,14 +62,6 @@ class Dispatcher extends Object {
 	var $here = false;
 
 /**
- * Admin route (if on it)
- *
- * @var string
- * @access public
- */
-	var $admin = false;
-
-/**
  * Plugin being served (if any)
  *
  * @var string
@@ -293,7 +285,7 @@ class Dispatcher extends Object {
 			$params['action'] = 'index';
 		}
 		if (isset($params['form']['data'])) {
-			$params['data'] = Router::stripEscape($params['form']['data']);
+			$params['data'] = $params['form']['data'];
 			unset($params['form']['data']);
 		}
 		if (isset($_GET)) {

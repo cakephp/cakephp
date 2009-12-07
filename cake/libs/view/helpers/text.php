@@ -328,21 +328,13 @@ class TextHelper extends AppHelper {
  * Creates a comma separated list where the last two items are joined with 'and', forming natural English
  *
  * @param array $list The list to be joined
- * @return string
+ * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
+ * @param string $separator The separator used to join all othe other items together. Defaults to ', '
+ * @return string The glued together string.
  * @access public
  */
-	function toList($list, $and = 'and') {
-		$return = '';
-		$count = count($list) - 1;
-	    $counter = 0;
-		foreach ($list as $i => $item) {
-			$return .= $item;
-			if ($count > 0 && $counter < $count) {
-				$return .= ($counter < $count - 1 ? ', ' : " {$and} ");
-			}
-		    $counter++;
-		}
-		return $return;
+	function toList($list, $and = 'and', $separator = ', ') {
+        return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 	}
 }
 ?>

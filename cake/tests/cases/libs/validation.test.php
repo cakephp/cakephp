@@ -58,10 +58,18 @@ class TestNlValidation {
 	function postal($check) {
 		return true;
 	}
+/**
+ * ssn function for testing ssn pass through
+ *
+ * @return void
+ */
+	function ssn($check) {
+		return true;
+	}
 }
 
 /**
- * TestNlValidation class
+ * TestDeValidation class
  *
  * Used to test pass through of Validation
  *
@@ -2041,9 +2049,10 @@ class ValidationTest extends CakeTestCase {
  *
  * @return void
  */
-	function testPhoneAndPostalPass() {
+	function testPhonePostalSsnPass() {
 		$this->assertTrue(Validation::postal('text', null, 'testNl'));
 		$this->assertTrue(Validation::phone('text', null, 'testDe'));
+		$this->assertTrue(Validation::ssn('text', null, 'testNl'));
 	}
 
 /**
