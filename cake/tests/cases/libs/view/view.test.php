@@ -445,11 +445,11 @@ class ViewTest extends CakeTestCase {
  */
 	function testUUIDGeneration() {
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'form0425fe3bad');
+		$this->assertEqual($result, 'form5988016017');
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'forma9918342a7');
+		$this->assertEqual($result, 'formc3dc6be854');
 		$result = $this->View->uuid('form', array('controller' => 'posts', 'action' => 'index'));
-		$this->assertEqual($result, 'form3ecf2e3e96');
+		$this->assertEqual($result, 'form28f92cc87f');
 	}
 
 /**
