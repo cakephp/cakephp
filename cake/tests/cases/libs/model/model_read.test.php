@@ -92,7 +92,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->find('all',array(
 			'fields' => array($dbo->calculate($Post,'max',array('other_field')))
 		));
-		$this->assertEqual($result[0]['other_field'],4);
+		$this->assertEqual($result[0][0]['other_field'],4);
 
 		ClassRegistry::flush();
 		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'),'Model');
