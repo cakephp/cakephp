@@ -1247,7 +1247,6 @@ class ControllerTest extends CakeTestCase {
 	function testPaginateOrderVirtualField() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->ControllerPost->virtualFields = array(

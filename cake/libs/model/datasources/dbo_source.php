@@ -2103,6 +2103,11 @@ class DboSource extends DataSource {
 			}
 		}
 
+		$virtual = false;
+		if (!empty($model->virtualFields[$key])) {
+			$key = $model->virtualFields[$key];
+			$virtual = true;
+		}
 
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 
@@ -2117,7 +2122,7 @@ class DboSource extends DataSource {
 
 		$value = $this->value($value, $type);
 
-		if ($key !== '?') {
+		if (!$virtual && $key !== '?') {
 			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
 			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
 		}

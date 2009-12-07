@@ -62,6 +62,32 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->field('two');
 		$this->assertEqual($result,2);
 
+		$result = $Post->find('first',array(
+			'conditions' => array('two' => 2),
+			'limit' => 1
+		));
+		$this->assertEqual($result['Post']['two'],2);
+		
+		$result = $Post->find('first',array(
+			'conditions' => array('two <' => 3),
+			'limit' => 1
+		));
+		$this->assertEqual($result['Post']['two'],2);
+		
+		$result = $Post->find('first',array(
+			'conditions' => array('NOT' => array('two >' => 3)),
+			'limit' => 1
+		));
+		$this->assertEqual($result['Post']['two'],2);
+		
+		$dbo =& $Post->getDataSource();
+		$Post->virtualFields = array('other_field' => $dbo->name('Post.id') . ' + 1');
+		$result = $Post->find('first',array(
+			'conditions' => array('other_field' => 3),
+			'limit' => 1
+		));
+		$this->assertEqual($result['Post']['id'],2);
+
 		ClassRegistry::flush();
 		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'),'Model');
 		$Writing->virtualFields = array('two' => "1 + 1");
