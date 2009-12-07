@@ -464,6 +464,53 @@ class DboMysqlBase extends DboSource {
 		}
 		return false;
 	}
+/**
+ * Converts database-layer column types to basic types
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return string Abstract column type (i.e. "string")
+ */
+	function column($real) {
+		if (is_array($real)) {
+			$col = $real['name'];
+			if (isset($real['limit'])) {
+				$col .= '('.$real['limit'].')';
+			}
+			return $col;
+		}
+
+		$col = str_replace(')', '', $real);
+		$limit = $this->length($real);
+		if (strpos($col, '(') !== false) {
+			list($col, $vals) = explode('(', $col);
+		}
+
+		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
+			return $col;
+		}
+		if (($col == 'tinyint' && $limit == 1) || $col == 'boolean') {
+			return 'boolean';
+		}
+		if (strpos($col, 'int') !== false) {
+			return 'integer';
+		}
+		if (strpos($col, 'char') !== false || $col == 'tinytext') {
+			return 'string';
+		}
+		if (strpos($col, 'text') !== false) {
+			return 'text';
+		}
+		if (strpos($col, 'blob') !== false || $col == 'binary') {
+			return 'binary';
+		}
+		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
+			return 'float';
+		}
+		if (strpos($col, 'enum') !== false) {
+			return "enum($vals)";
+		}
+		return 'text';
+	}
 }
 
 /**
@@ -680,54 +727,6 @@ class DboMysql extends DboMysqlBase {
 		}
 
 		return null;
-	}
-
-/**
- * Converts database-layer column types to basic types
- *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return string Abstract column type (i.e. "string")
- */
-	function column($real) {
-		if (is_array($real)) {
-			$col = $real['name'];
-			if (isset($real['limit'])) {
-				$col .= '('.$real['limit'].')';
-			}
-			return $col;
-		}
-
-		$col = str_replace(')', '', $real);
-		$limit = $this->length($real);
-		if (strpos($col, '(') !== false) {
-			list($col, $vals) = explode('(', $col);
-		}
-
-		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
-			return $col;
-		}
-		if (($col == 'tinyint' && $limit == 1) || $col == 'boolean') {
-			return 'boolean';
-		}
-		if (strpos($col, 'int') !== false) {
-			return 'integer';
-		}
-		if (strpos($col, 'char') !== false || $col == 'tinytext') {
-			return 'string';
-		}
-		if (strpos($col, 'text') !== false) {
-			return 'text';
-		}
-		if (strpos($col, 'blob') !== false || $col == 'binary') {
-			return 'binary';
-		}
-		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
-			return 'float';
-		}
-		if (strpos($col, 'enum') !== false) {
-			return "enum($vals)";
-		}
-		return 'text';
 	}
 
 /**

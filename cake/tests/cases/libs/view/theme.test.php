@@ -149,11 +149,11 @@ class ThemeViewTest extends CakeTestCase {
  */
 	function setUp() {
 		Router::reload();
-		$this->Controller = new Controller();
-		$this->PostsController = new ThemePostsController();
+		$this->Controller =& new Controller();
+		$this->PostsController =& new ThemePostsController();
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
-		$this->ThemeView = new ThemeView($this->PostsController);
+		$this->ThemeView =& new ThemeView($this->PostsController);
 	}
 
 /**
@@ -166,6 +166,19 @@ class ThemeViewTest extends CakeTestCase {
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
+		ClassRegistry::flush();
+	}
+/**
+ * test that the theme view can be constructed without going into the registry
+ *
+ * @return void
+ */
+	function testConstructionNoRegister() {
+		ClassRegistry::flush();
+		$controller = null;
+		$Theme =& new ThemeView($controller, false);
+		$ThemeTwo =& ClassRegistry::getObject('view');
+		$this->assertFalse($ThemeTwo);
 	}
 
 /**

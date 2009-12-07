@@ -282,8 +282,9 @@ class Router {
 		if ($named === true || $named === false) {
 			$options = array_merge(array('default' => $named, 'reset' => true, 'greedy' => $named), $options);
 			$named = array();
+		} else {
+			$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 		}
-		$options = array_merge(array('default' => false, 'reset' => false, 'greedy' => true), $options);
 
 		if ($options['reset'] == true || $_this->named['rules'] === false) {
 			$_this->named['rules'] = array();
