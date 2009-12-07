@@ -317,6 +317,22 @@ class DboMysqli extends DboMysqlBase {
 	}
 
 /**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	function getCharsetName($name) {
+		if ((bool)version_compare(mysqli_get_server_info($this->connection), "5", ">=")) {
+			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
+		}
+		return false;
+	}
+
+/**
  * Checks if the result is valid
  *
  * @return boolean True if the result is valid, else false

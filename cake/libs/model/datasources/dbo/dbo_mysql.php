@@ -450,21 +450,6 @@ class DboMysqlBase extends DboSource {
 	}
 
 /**
- * Query charset by collation
- *
- * @param string $name Collation name
- * @return string Character set name
- */
-	function getCharsetName($name) {
-		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
-			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
-			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
-				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
-			}
-		}
-		return false;
-	}
-/**
  * Converts database-layer column types to basic types
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
@@ -783,6 +768,22 @@ class DboMysql extends DboMysqlBase {
  */
 	function getEncoding() {
 		return mysql_client_encoding($this->connection);
+	}
+
+/**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	function getCharsetName($name) {
+		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
+			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
+		}
+		return false;
 	}
 }
 ?>

@@ -386,6 +386,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testBuildColumn() {
+		$restore = $this->db->columns;
 		$this->db->columns = array('varchar(255)' => 1);
 		$data = array(
 			'name' => 'testName',
@@ -411,6 +412,7 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->buildColumn($data);
 		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
 		$this->assertEqual($result, $expected);
+		$this->db->columns = $restore;
 	}
 
 /**
