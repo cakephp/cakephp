@@ -1667,13 +1667,23 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				return 'COUNT(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+				if (!empty($model->virtualFields[$params[0]])) {
+					$arg = $model->virtualFields[$params[0]];
+				} else {
+					$arg = $this->name($params[0]);
+				}
+				return 'COUNT(' . $arg . ') AS ' . $this->name($params[1]);
 			case 'max':
 			case 'min':
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				return strtoupper($func) . '(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+				if (!empty($model->virtualFields[$params[0]])) {
+					$arg = $model->virtualFields[$params[0]];
+				} else {
+					$arg = $this->name($params[0]);
+				}
+				return strtoupper($func) . '(' . $arg . ') AS ' . $this->name($params[1]);
 			break;
 		}
 	}
