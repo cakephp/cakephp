@@ -745,6 +745,25 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/a',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Paginator->params['paging'] = array(
+			'Client' => array(
+				'page' => 2, 'current' => 1, 'count' => 13, 'prevPage' => true, 
+				'nextPage' => false, 'pageCount' => 2,
+				'defaults' => array(),
+				'options' => array(
+					'page' => 2, 'limit' => 10, 'order' => array(), 'conditions' => array()
+				)
+			)
+		);
+		$this->Paginator->options(array('url' => array(12, 'page' => 3)));
+		$result = $this->Paginator->prev('Prev', array('url' => array(12, 'foo' => 'bar')));
+		$expected = array(
+			'a' => array('href' => '/index/12/page:1/limit:10/foo:bar', 'class' => 'prev'),
+			'Prev',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
