@@ -23,8 +23,6 @@
 /**
  * Short description for file
  *
- * Long description for file
- *
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
  */

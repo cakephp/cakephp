@@ -2,8 +2,6 @@
 /**
  * Validation Class.  Used for validation of model data
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -24,8 +22,6 @@ if (!class_exists('Multibyte')) {
 }
 /**
  * Offers different validation methods.
- *
- * Long description for file
  *
  * @package       cake
  * @subpackage    cake.cake.libs
