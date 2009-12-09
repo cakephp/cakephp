@@ -2299,6 +2299,9 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 2, 'something'));
 		$this->assertEqual($result, '/test2/something');
+
+		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 5, 'something'));
+		$this->assertFalse($result);
 	}
 
 /**

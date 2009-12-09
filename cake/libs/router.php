@@ -1397,15 +1397,6 @@ class CakeRoute {
 			return false;
 		}
 
-		//check that required passed parameters are the same.
-		$i = 0;
-		while (isset($defaults[$i])) {
-			if (isset($url[$i]) && $defaults[$i] !== $url[$i]) {
-				return false;
-			}
-			$i++;
-		}
-
 		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames);
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
