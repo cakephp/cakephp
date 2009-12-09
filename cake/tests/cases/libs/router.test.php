@@ -391,7 +391,7 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/:controller/:action/:id', array(), array('id' => $ID));
 		Router::parse('/');
-		
+
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 'id' => '1'));
 		$expected = '/posts/view/1';
 		$this->assertEqual($result, $expected);
@@ -770,7 +770,7 @@ class RouterTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPluginUrlGeneration() {
+	function testUrlGenerationPlugins() {
 		Router::setRequestInfo(array(
 			array(
 				'controller' => 'controller', 'action' => 'index', 'form' => array(),
@@ -785,17 +785,17 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual(Router::url('read/1'), '/base/test/controller/read/1');
 
 		Router::reload();
-
 		Router::connect('/:lang/:plugin/:controller/*', array('action' => 'index'));
 
 		Router::setRequestInfo(array(
-				array(
-					'lang' => 'en',
-					'plugin' => 'shows', 'controller' => 'shows', 'action' => 'index', 'pass' =>
-						array(), 'form' => array(), 'url' =>
-						array('url' => 'en/shows/')),
-				array('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '',
-				'here' => '/en/shows/', 'webroot' => '/')));
+			array(
+				'lang' => 'en',
+				'plugin' => 'shows', 'controller' => 'shows', 'action' => 'index', 'pass' =>
+					array(), 'form' => array(), 'url' =>
+					array('url' => 'en/shows/')),
+			array('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '',
+			'here' => '/en/shows/', 'webroot' => '/')
+		));
 
 		Router::parse('/en/shows/');
 
@@ -805,6 +805,48 @@ class RouterTest extends CakeTestCase {
 		));
 		$expected = '/en/shows/page:1';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that you can leave active plugin routes with plugin = null
+ *
+ * @return void
+ */
+	function testCanLeavePlugin() {
+		Router::reload();
+		Router::connect(
+			'/admin/other/:controller/:action/*',
+			array(
+				'admin' => 1,
+				'plugin' => 'aliased',
+				'prefix' => 'admin'
+			)
+		);
+		Router::setRequestInfo(array(
+			array(
+				'pass' => array(),
+				'admin' => true,
+				'prefix' => 'admin',
+				'plugin' => 'this',
+				'action' => 'admin_index',
+				'controller' => 'interesting',
+				'url' => array('url' => 'admin/this/interesting/index'),
+			),
+			array(
+				'base' => '',
+				'here' => '/admin/this/interesting/index',
+				'webroot' => '/',
+				'passedArgs' => array(),
+			)
+		));
+		$result = Router::url(array('plugin' => null, 'controller' => 'posts', 'action' => 'index'));
+		$this->assertEqual($result, '/admin/posts');
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'index'));
+		$this->assertEqual($result, '/admin/this/posts');
+
+		$result = Router::url(array('plugin' => 'aliased', 'controller' => 'posts', 'action' => 'index'));
+		$this->assertEqual($result, '/admin/other/posts/index');
 	}
 
 /**
@@ -1147,7 +1189,7 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
 		$expected = '/admin/test_plugin';
 		$this->assertEqual($result, $expected);
-		
+
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(

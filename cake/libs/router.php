@@ -228,13 +228,13 @@ class Router {
  * Examples:
  *
  * `Router::connect('/:controller/:action/*');`
- * 
+ *
  * The first parameter will be used as a controller name while the second is used as the action name.
  * the '/*' syntax makes this route greedy in that it will match requests like `/posts/index` as well as requests
- * like `/posts/edit/1/foo/bar`.  
+ * like `/posts/edit/1/foo/bar`.
  *
  * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
- * 
+ *
  * The above shows the use of route parameter defaults. And providing routing parameters for a static route.
  *
  * {{{
@@ -251,8 +251,8 @@ class Router {
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
- * @param array $options An array matching the named elements in the route to regular expressions which that 
- *   element should match.  Also contains additional parameters such as which routed parameters should be 
+ * @param array $options An array matching the named elements in the route to regular expressions which that
+ *   element should match.  Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
@@ -1374,6 +1374,7 @@ class CakeRoute {
 
 		$diffUnfiltered = Set::diff($url, $defaults);
 		$diff = array();
+
 		foreach ($diffUnfiltered as $key => $var) {
 			if ($var === 0 || $var === '0' || !empty($var)) {
 				$diff[$key] = $var;
@@ -1386,14 +1387,13 @@ class CakeRoute {
 		}
 
 		//remove defaults that are also keys. They can cause match failures
-		$count = count($this->keys);
-		while ($count--) {
-			unset($defaults[$this->keys[$count]]);
+		foreach ($this->keys as $key) {
+			unset($defaults[$key]);
 		}
 		$filteredDefaults = array_filter($defaults);
 
 		//if the difference between the url diff and defaults contains keys from defaults its not a match
-		if (array_intersect_key($filteredDefaults, $diff) !== array()) {
+		if (array_intersect_key($filteredDefaults, $diffUnfiltered) !== array()) {
 			return false;
 		}
 
@@ -1405,6 +1405,7 @@ class CakeRoute {
 			}
 			$i++;
 		}
+
 		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames);
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
