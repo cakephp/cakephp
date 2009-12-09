@@ -1330,8 +1330,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAdminRoute() {
-		$admin = Configure::read('Routing.admin');
-		Configure::write('Routing.admin', 'admin');
+		$prefixes = Configure::read('Routing.prefixes');
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		$url = '/admin/auth_test/add';
@@ -1358,7 +1358,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertEqual($this->Controller->testUrl, '/admin/auth_test/login');
 
-		Configure::write('Routing.admin', $admin);
+		Configure::write('Routing.prefixes', $prefixes);
 	}
 
 /**
@@ -1478,6 +1478,42 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->_loggedIn = true;
 		$this->Controller->Auth->shutdown($this->Controller);
 		$this->assertFalse($this->Controller->Session->read('Auth.redirect'));
+	}
+
+/**
+ * test the initialize callback and its interactions with Router::prefixes()
+ *
+ * @return void
+ */
+	function testInitializeAndRoutingPrefixes() {
+		$restore = Configure::read('Routing');
+		Configure::write('Routing.prefixes', array('admin', 'super_user'));
+		Router::reload();
+		$this->Controller->Auth->initialize($this->Controller);
+
+		$this->assertTrue(isset($this->Controller->Auth->actionMap['delete']));
+		$this->assertTrue(isset($this->Controller->Auth->actionMap['view']));
+		$this->assertTrue(isset($this->Controller->Auth->actionMap['add']));
+		$this->assertTrue(isset($this->Controller->Auth->actionMap['admin_view']));
+		$this->assertTrue(isset($this->Controller->Auth->actionMap['super_user_delete']));
+
+		Configure::write('Routing', $restore);
+	}
+
+/**
+ * test that logout deletes the session variables. and returns the correct url
+ *
+ * @return void
+ */
+	function testLogout() {
+		$this->Controller->Session->write('Auth.User.id', '1');
+		$this->Controller->Session->write('Auth.redirect', '/users/login');
+		$this->Controller->Auth->logoutRedirect = '/';
+		$result = $this->Controller->Auth->logout();
+
+		$this->assertEqual($result, '/');
+		$this->assertNull($this->Controller->Session->read('Auth.AuthUser'));
+		$this->assertNull($this->Controller->Session->read('Auth.redirect'));
 	}
 }
 ?>

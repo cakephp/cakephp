@@ -259,19 +259,21 @@ class AuthComponent extends Object {
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
 		$this->_methods = $controller->methods;
 
-		$admin = Configure::read('Routing.admin');
-		if (!empty($admin)) {
-			$this->actionMap = array_merge($this->actionMap, array(
-				$admin . '_index'	=> 'read',
-				$admin . '_add'		=> 'create',
-				$admin . '_edit'	=> 'update',
-				$admin . '_view'	=> 'read',
-				$admin . '_remove'	=> 'delete',
-				$admin . '_create'	=> 'create',
-				$admin . '_read'	=> 'read',
-				$admin . '_update'	=> 'update',
-				$admin . '_delete'	=> 'delete'
-			));
+		$prefixes = Router::prefixes();
+		if (!empty($prefixes)) {
+			foreach ($prefixes as $prefix) {
+				$this->actionMap = array_merge($this->actionMap, array(
+					$prefix . '_index' => 'read',
+					$prefix . '_add' => 'create',
+					$prefix . '_edit' => 'update',
+					$prefix . '_view' => 'read',
+					$prefix . '_remove' => 'delete',
+					$prefix . '_create' => 'create',
+					$prefix . '_read' => 'read',
+					$prefix . '_update' => 'update',
+					$prefix . '_delete' => 'delete'
+				));
+			}
 		}
 		if (Configure::read() > 0) {
 			App::import('Debugger');
