@@ -17,9 +17,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import('Core', array('ClassRegistry', 'Controller', 'View', 'Model', 'Security'));
 App::import('Helper', 'Html');
 App::import('Helper', 'Form');
@@ -725,12 +722,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testKey', 'id'
 			)),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected,true);
 
@@ -812,12 +809,12 @@ class FormHelperTest extends CakeTestCase {
 		$expected .= ':' . str_rot13(serialize(array('Model.valid')));
 
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => urlencode($expected), 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -876,12 +873,12 @@ class FormHelperTest extends CakeTestCase {
 		$hash .= '.uvqqra%22%3Bv%3A3%3Bf%3A13%3A%22Zbqry.1.inyvq%22%3B%7D';
 
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -918,12 +915,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->end(null);
 
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -966,12 +963,12 @@ class FormHelperTest extends CakeTestCase {
 		$hash .= '3A%22Nqqerffrf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
 
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1010,12 +1007,12 @@ class FormHelperTest extends CakeTestCase {
 		$hash .= 'frf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
 
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1054,12 +1051,12 @@ class FormHelperTest extends CakeTestCase {
 		$hash = '449b7e889128e8e52c5e81d19df68f5346571492%3An%3A1%3A%';
 		$hash .= '7Bv%3A0%3Bf%3A12%3A%22Nqqerffrf.vq%22%3B%7D';
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1079,13 +1076,13 @@ class FormHelperTest extends CakeTestCase {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][key]',
 				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
 			)),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -1161,12 +1158,12 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = array(
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
 			)),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1277,12 +1274,12 @@ class FormHelperTest extends CakeTestCase {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
+				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -1321,10 +1318,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id','accept-charset' => $encoding),
-			'fieldset' => array('style' => 'display:none;'),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -1365,10 +1362,10 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add/', 'id','accept-charset' => $encoding),
-			'fieldset' => array('style' => 'display:none;'),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -4918,25 +4915,25 @@ class FormHelperTest extends CakeTestCase {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'GET'));
 		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
@@ -4944,24 +4941,24 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact', array('type' => 'put'));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('Contact', array('type' => 'file'));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -4973,9 +4970,9 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -4987,9 +4984,9 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
 				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5000,9 +4997,9 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
 				'action' => '/contact_non_standard_pks/edit/1','accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5012,9 +5009,9 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5022,33 +5019,33 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login/',
+				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('User', array('action' => 'login'));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login/',
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->create('User', array('url' => '/users/login'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/users/login','accept-charset' => $encoding),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5057,12 +5054,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('User', array('action' => 'signup'));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup/',
+				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5075,9 +5072,9 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
 				'accept-charset' => 'utf-8'
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -5119,12 +5116,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login/', 'id' => 'UserFormLoginForm',
+				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
 				'accept-charset' => 'iso-8859-1'
 			),
-			'fieldset' => array('style' => 'display:none;'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -5148,12 +5145,12 @@ class FormHelperTest extends CakeTestCase {
 			'form' => array(
 				'id' => 'ContactAddForm',
 				'method' => 'post',
-				'action' => '/controller/action/?param1=value1&amp;param2=value2',
+				'action' => '/controller/action?param1=value1&amp;param2=value2',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected, true);
 	}
@@ -5168,7 +5165,7 @@ class FormHelperTest extends CakeTestCase {
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$this->assertTags($result, array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add/',
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
 			'accept-charset' => $encoding
 		)));
 
@@ -5233,12 +5230,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5461,12 +5458,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
@@ -5523,12 +5520,12 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('Contact');
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add/',
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
 				'accept-charset' => $encoding
 			),
-			'fieldset' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/fieldset'
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
