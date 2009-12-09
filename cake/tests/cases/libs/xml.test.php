@@ -187,6 +187,22 @@ class XmlTest extends CakeTestCase {
 		$result = $xml->toString(false);
 		$expected = '<zero_string>0</zero_string><zero_integer>0</zero_integer>';
 		$this->assertEqual($expected, $result);
+
+		$data = array(
+			'Client' => array(
+				'id' => 3,
+				'object_id' => 9,
+				'key' => 'alt',
+				'name' => 'Client Two',
+				'created_by' => 4,
+				'status' => '0',
+				'num_projects' => 0
+			)
+		);
+		$xml = new Xml($data, array('format' => 'tags'));
+		$result = $xml->toString(array('format' => 'tags', 'header' => false));
+		$this->assertPattern('/<status>0<\/status>/', $result);
+		$this->assertPattern('/<num_projects>0<\/num_projects>/', $result);
 	}
 /**
  * testHeader method
