@@ -469,12 +469,12 @@ class ControllerTask extends Shell {
 		$this->out("\t(index, view, add, edit, delete)");
 		$this->out();
 		$this->out("controller <name> admin");
-		$this->out("\tbakes a controller with basic crud actions for");
-		$this->out("\tConfigure::read('Routing.admin') methods.");
+		$this->out("\tbakes a controller with basic crud actions for one of the");
+		$this->out("\tConfigure::read('Routing.prefixes') methods.");
 		$this->out();
 		$this->out("controller <name> public admin");
-		$this->out("\tbakes a controller with basic crud actions for");
-		$this->out("\tConfigure::read('Routing.admin') and non admin methods.");
+		$this->out("\tbakes a controller with basic crud actions for one");
+		$this->out("\tConfigure::read('Routing.prefixes') and non admin methods.");
 		$this->out("\t(index, view, add, edit, delete,");
 		$this->out("\tadmin_index, admin_view, admin_edit, admin_add, admin_delete)");
 		$this->out();

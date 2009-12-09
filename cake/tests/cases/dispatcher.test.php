@@ -1377,7 +1377,7 @@ class DispatcherTest extends CakeTestCase {
 	function testAdminDispatch() {
 		$_POST = array();
 		$Dispatcher =& new TestDispatcher();
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = 'admin/test_dispatch_pages/index/param:value/param2:value2';
 
@@ -1543,7 +1543,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params['controller'], $expected);
 
 
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();

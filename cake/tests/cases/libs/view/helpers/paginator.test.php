@@ -63,7 +63,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
 		$this->Paginator->Ajax->Form =& new FormHelper();
 
-		Configure::write('Routing.admin', '');
+		Configure::write('Routing.prefixes', array());
 		Router::reload();
 	}
 
@@ -385,7 +385,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSortAdminLinks() {
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
 		Router::setRequestInfo(array(
