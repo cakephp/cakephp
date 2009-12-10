@@ -33,7 +33,7 @@ foreach ($scaffoldFields as $_field) {
 			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt{$class}>" . Inflector::humanize($_alias) . "</dt>\n";
-				echo "\t\t<dd{$class}>\n\t\t\t" . $html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
+				echo "\t\t<dd{$class}>\n\t\t\t" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t&nbsp;</dd>\n";
 				break;
 			}
 		}
@@ -49,17 +49,17 @@ foreach ($scaffoldFields as $_field) {
 <div class="actions">
 	<ul>
 <?php
-	echo "\t\t<li>" .$html->link(sprintf(__('Edit %s', true), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$html->link(sprintf(__('Delete %s', true), $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
-	echo "\t\t<li>" .$html->link(sprintf(__('List %s', true), $pluralHumanName), array('action' => 'index')). " </li>\n";
-	echo "\t\t<li>" .$html->link(sprintf(__('New %s', true), $singularHumanName), array('action' => 'add')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('Edit %s', true), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('Delete %s', true), $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('List %s', true), $pluralHumanName), array('action' => 'index')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('New %s', true), $singularHumanName), array('action' => 'add')). " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>" . $html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-				echo "\t\t<li>" . $html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}
@@ -90,7 +90,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $this->Html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
@@ -136,9 +136,9 @@ $otherSingularVar = Inflector::variable($_alias);
 			}
 
 			echo "\t\t\t<td class=\"actions\">\n";
-			echo "\t\t\t\t" . $html->link(__('View', true), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Edit', true), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
-			echo "\t\t\t\t" . $html->link(__('Delete', true), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__('View', true), array('controller' => $_details['controller'], 'action' => 'view', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__('Edit', true), array('controller' => $_details['controller'], 'action' => 'edit', ${$otherSingularVar}[$_details['primaryKey']])). "\n";
+			echo "\t\t\t\t" . $this->Html->link(__('Delete', true), array('controller' => $_details['controller'], 'action' => 'delete', ${$otherSingularVar}[$_details['primaryKey']]), null, __('Are you sure you want to delete', true).' #' . ${$otherSingularVar}[$_details['primaryKey']] . '?'). "\n";
 			echo "\t\t\t</td>\n";
 		echo "\t\t</tr>\n";
 		endforeach;
@@ -147,7 +147,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
 		</ul>
 	</div>
 </div>
