@@ -1146,44 +1146,56 @@ class Router {
  * @see Router::connect
  */
 class CakeRoute {
+
 /**
  * An array of named segments in a Route.
  * `/:controller/:action/:id` has 3 named elements
  *
  * @var array
- **/
+ * @access public
+ */
 	var $keys = array();
+
 /**
  * An array of additional parameters for the Route.
  *
  * @var array
- **/
+ * @access public
+ */
 	var $options = array();
 /**
  * Default parameters for a Route
  *
  * @var array
+ * @access public
  */
 	var $defaults = array();
+
 /**
  * The routes template string.
  *
  * @var string
- **/
+ * @access public
+ */
 	var $template = null;
+
 /**
  * Is this route a greedy route?  Greedy routes have a `/*` in their
  * template
  *
  * @var string
- **/
+ * @access protected
+ */
 	var $_greedy = false;
+
 /**
  * The compiled route regular expresssion
  *
  * @var string
- **/
+ * @access protected
+ */
 	var $_compiledRoute = null;
+
 /**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
@@ -1195,6 +1207,7 @@ class CakeRoute {
 		'method' => 'request_method',
 		'server' => 'server_name'
 	);
+
 /**
  * Constructor for a Route
  *
@@ -1202,20 +1215,24 @@ class CakeRoute {
  * @param array $defaults Array of defaults for the route.
  * @param string $params Array of parameters and additional options for the Route
  * @return void
+ * @access public
  */
 	function CakeRoute($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
 	}
+
 /**
  * Check if a Route has been compiled into a regular expression.
  *
  * @return boolean
- **/
+ * @access public
+ */
 	function compiled() {
 		return !empty($this->_compiledRoute);
 	}
+
 /**
  * Compiles the routes regular expression.  Modifies defaults property so all necessary keys are set
  * and populates $this->names with the named routing elements.
@@ -1230,6 +1247,7 @@ class CakeRoute {
 		$this->_writeRoute();
 		return $this->_compiledRoute;
 	}
+
 /**
  * Builds a route regular expression.  Uses the template, defaults and options
  * properties to compile a regular expression that can be used to match/parse request strings.
@@ -1284,6 +1302,7 @@ class CakeRoute {
  *
  * @param string $url The url to attempt to parse.
  * @return mixed Boolean false on failure, otherwise an array or parameters
+ * @access public
  */
 	function parse($url) {
 		if (!$this->compiled()) {
@@ -1338,6 +1357,7 @@ class CakeRoute {
  * @param array $url The array to apply persistent parameters to.
  * @param array $params An array of persistent values to replace persistent ones.
  * @return array An array with persistent parameters applied.
+ * @access public
  */
 	function persistParams($url, $params) {
 		foreach ($this->options['persist'] as $persistKey) {
@@ -1355,7 +1375,8 @@ class CakeRoute {
  *
  * @param array $url An array of parameters to check matching with.
  * @return mixed Either a string url for the parameters if they match or false.
- **/
+ * @access public
+ */
 	function match($url) {
 		if (!$this->compiled()) {
 			$this->compile();
@@ -1428,13 +1449,14 @@ class CakeRoute {
 		}
 		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
 	}
+
 /**
  * Converts a matching route array into a url string.
  *
- * @params array $params The params to convert to a string url.
+ * @param array $params The params to convert to a string url.
  * @return string Compiled route string.
  * @access protected
- **/
+ */
 	function _writeUrl($params) {
 		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
