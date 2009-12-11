@@ -420,35 +420,6 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Modifies $result array to place virtual fields in model entry where they belongs to
- *
- * @param array $resut REference to the fetched row
- * @return void
- */
-	function fetchVirtualField(&$result) {
-		if (isset($result[0]) && is_array($result[0])) {
-			foreach ($result[0] as $field => $value) {
-				if (strpos($field,'__') === false) {
-					continue;
-				}
-				list($alias,$virtual) = explode('__',$field);
-
-				if (!ClassRegistry::isKeySet($alias)) {
-					retrun;
-				}
-				$model = ClassRegistry::getObject($alias);
-				if (isset($model->virtualFields[$virtual])) {
-					$result[$alias][$virtual] = $value;
-					unset($result[0][$field]);
-				}
-			}
-			if (empty($result[0])) {
-				unset($result[0]);
-			}
-		}
-	}
-
-/**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
  *
  * @param string $name Name of the field
@@ -1817,24 +1788,6 @@ class DboSource extends DataSource {
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
 			$expression = $model->getVirtualField($field);
-			$virtual[] = $expression . " {$this->alias} {$virtualField}";
-		}
-		return $virtual;
-	}
-
-/**
- * Converts model virtual fields into sql expressions to be fetched later
- *
- * @param Model $model
- * @param string $alias Alias tablename
- * @param mixed $fields virtual fields to be used on query
- * @return array
- */
-	function _constructVirtualFields(&$model,$alias,$fields) {
-		$virtual = array();
-		foreach ($fields as $field) {
-			$virtualField = $this->name("{$alias}__{$field}");
-			$expression = $model->virtualFields[$field];
 			$virtual[] = $expression . " {$this->alias} {$virtualField}";
 		}
 		return $virtual;

@@ -1049,7 +1049,7 @@ class Model extends Overloadable {
  * @access public
  */
 	function isVirtualField($field) {
-		return !empty($this->virtualFields) && array_key_exists($field,$this->virtualFields);
+		return !empty($this->virtualFields) && is_string($field) && array_key_exists($field,$this->virtualFields);
 	}
 
 /**
@@ -1170,9 +1170,9 @@ class Model extends Overloadable {
 					return $data[$name[0]][$name[1]];
 				}
 			}
-			if (!empty($data[0])) {
-				$name = key($data[0]);
-				return $data[0][$name];
+			if (isset($data[0]) && count($data[0]) > 0) {
+				return array_shift($data[0]);
+			}
 		} else {
 			return false;
 		}
