@@ -248,7 +248,7 @@ class JsHelper extends AppHelper {
  */
 	function _createVars() {
 		if (!empty($this->__jsVars)) {
-			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'var ' . $this->setVariable;
+			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'window.' . $this->setVariable;
 			$this->buffer($setVar . ' = ' . $this->object($this->__jsVars) . ';');
 		}
 	}
