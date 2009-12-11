@@ -241,7 +241,7 @@ class ClassRegistry {
  * Return object which corresponds to given key.
  *
  * @param string $key Key of object to look for
- * @return mixed Object stored in registry
+ * @return mixed Object stored in registry or boolean false if the object does not exist.
  * @access public
  * @static
  */

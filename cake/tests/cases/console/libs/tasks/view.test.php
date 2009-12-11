@@ -336,6 +336,11 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'name\'\]/', $result);
 		$this->assertPattern('/testViewModel\[\'TestViewModel\'\]\[\'body\'\]/', $result);
 
+		$result = $this->Task->getContent('admin_add', $vars);
+		$this->assertPattern("/input\('name'\)/", $result);
+		$this->assertPattern("/input\('body'\)/", $result);
+		$this->assertPattern('/List .+Test View Models/', $result);
+
 		Configure::write('Routing', $_back);
 	}
 

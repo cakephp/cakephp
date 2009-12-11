@@ -37,8 +37,8 @@ class ThemeView extends View {
  *
  * @param Controller $controller
  */
-	function __construct(&$controller) {
-		parent::__construct($controller);
+	function __construct(&$controller, $register = true) {
+		parent::__construct($controller, $register);
 		$this->theme =& $controller->theme;
 	}
 
@@ -51,19 +51,23 @@ class ThemeView extends View {
  */
 	function _paths($plugin = null, $cached = true) {
 		$paths = parent::_paths($plugin, $cached);
+		$themePaths = array();
 
 		if (!empty($this->theme)) {
 			$count = count($paths);
 			for ($i = 0; $i < $count; $i++) {
-				$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
+				if (strpos($paths[$i], DS . 'plugins' . DS) === false
+					&& strpos($paths[$i], DS . 'libs' . DS . 'view') === false) {
+						if ($plugin) {
+							$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS . 'plugins' . DS . $plugin . DS;
+						}
+						$themePaths[] = $paths[$i] . 'themed'. DS . $this->theme . DS;
+					}
 			}
 			$paths = array_merge($themePaths, $paths);
 		}
-
-		if (empty($this->__paths)) {
-			$this->__paths = $paths;
-		}
-		return $paths;
+		$this->__paths = $paths;
+		return $this->__paths;
 	}
 }
 ?>

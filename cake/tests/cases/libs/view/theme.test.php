@@ -2,8 +2,6 @@
 /**
  * ThemeViewTest file
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
@@ -149,11 +147,11 @@ class ThemeViewTest extends CakeTestCase {
  */
 	function setUp() {
 		Router::reload();
-		$this->Controller = new Controller();
-		$this->PostsController = new ThemePostsController();
+		$this->Controller =& new Controller();
+		$this->PostsController =& new ThemePostsController();
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
-		$this->ThemeView = new ThemeView($this->PostsController);
+		$this->ThemeView =& new ThemeView($this->PostsController);
 	}
 
 /**
@@ -166,6 +164,19 @@ class ThemeViewTest extends CakeTestCase {
 		unset($this->ThemeView);
 		unset($this->PostsController);
 		unset($this->Controller);
+		ClassRegistry::flush();
+	}
+/**
+ * test that the theme view can be constructed without going into the registry
+ *
+ * @return void
+ */
+	function testConstructionNoRegister() {
+		ClassRegistry::flush();
+		$controller = null;
+		$Theme =& new ThemeView($controller, false);
+		$ThemeTwo =& ClassRegistry::getObject('view');
+		$this->assertFalse($ThemeTwo);
 	}
 
 /**
@@ -199,20 +210,24 @@ class ThemeViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testPluginGetTemplate() {
+	function testPluginThemedGetTemplate() {
 		$this->Controller->plugin = 'test_plugin';
 		$this->Controller->name = 'TestPlugin';
 		$this->Controller->viewPath = 'tests';
 		$this->Controller->action = 'index';
-		$this->Controller->theme = 'test_plugin_theme';
+		$this->Controller->theme = 'test_theme';
 
 		$ThemeView = new TestThemeView($this->Controller);
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'themed' . DS . 'test_plugin_theme' . DS .'tests' . DS .'index.ctp';
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
 
-		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS .'test_plugin' . DS . 'views' . DS . 'themed' . DS . 'test_plugin_theme' . DS . 'layouts' . DS .'default.ctp';
-		$result = $ThemeView->getLayoutFileName();
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
+		$result = $ThemeView->getLayoutFileName('plugin_default');
+		$this->assertEqual($result, $expected);
+		
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
+		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEqual($result, $expected);
 	}
 

@@ -140,15 +140,6 @@ class TreeBehavior extends ModelBehavior {
 	function beforeSave(&$Model) {
 		extract($this->settings[$Model->alias]);
 
-		if (isset($Model->data[$Model->alias][$Model->primaryKey])) {
-			if ($Model->data[$Model->alias][$Model->primaryKey]) {
-				if (!$Model->id) {
-					$Model->id = $Model->data[$Model->alias][$Model->primaryKey];
-				}
-			}
-			unset($Model->data[$Model->alias][$Model->primaryKey]);
-		}
-
 		$this->_addToWhitelist($Model, array($left, $right));
 		if (!$Model->id) {
 			if (array_key_exists($parent, $Model->data[$Model->alias]) && $Model->data[$Model->alias][$parent]) {

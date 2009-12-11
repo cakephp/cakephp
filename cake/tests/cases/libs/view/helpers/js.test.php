@@ -310,7 +310,7 @@ CODE;
 		$options = array('id' => 'something', 'htmlAttributes' => array('arbitrary' => 'value', 'batman' => 'robin'));
 		$result = $this->Js->link('test link', '/posts/view/1', $options);
 		$expected = array(
-			'a' => array('id' => $options['id'], 'href' => '/posts/view/1', 'arbitrary' => 'value', 
+			'a' => array('id' => $options['id'], 'href' => '/posts/view/1', 'arbitrary' => 'value',
 				'batman' => 'robin'),
 			'test link',
 			'/a'
@@ -373,7 +373,7 @@ CODE;
 		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
 
 		$params = array(
-			'update' => $options['update'], 'data' => 'serialize-code', 
+			'update' => $options['update'], 'data' => 'serialize-code',
 			'method' => 'post', 'dataExpression' => true
 		);
 		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
@@ -402,13 +402,13 @@ CODE;
 		$this->Js->TestJsEngine->expectAt(6, 'dispatchMethod', array('request', $requestParams));
 
 		$params = array(
-			'update' => '#content', 'data' => 'serialize-code', 
+			'update' => '#content', 'data' => 'serialize-code',
 			'method' => 'post', 'dataExpression' => true
 		);
 		$this->Js->TestJsEngine->expectAt(7, 'dispatchMethod', array(
 			'event', array('click', "ajax-code", $params)
 		));
-		
+
 		$options = array('update' => '#content', 'id' => 'test-submit', 'url' => '/custom/url');
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
@@ -431,6 +431,18 @@ CODE;
 	}
 
 /**
+ * Test that inherited Helper::value() is overwritten in JsHelper::value()
+ * and calls JsBaseEngineHelper::value().
+ *
+ * @return void
+ */
+	function testValuePassThrough() {
+		$result = $this->Js->value('string "quote"', true);
+		$expected = '"string \"quote\""';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test set()'ing variables to the Javascript buffer and controlling the output var name.
  *
  * @return void
@@ -439,16 +451,16 @@ CODE;
 		$this->Js->set('loggedIn', true);
 		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
 		$result = $this->Js->getBuffer();
-		$expected = 'var app = {"loggedIn":true,"height":"tall","color":"purple"};';
+		$expected = 'window.app = {"loggedIn":true,"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
 
 		$this->Js->set('loggedIn', true);
 		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
 		$this->Js->setVariable = 'WICKED';
 		$result = $this->Js->getBuffer();
-		$expected = 'var WICKED = {"loggedIn":true,"height":"tall","color":"purple"};';
+		$expected = 'window.WICKED = {"loggedIn":true,"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
-		
+
 		$this->Js->set('loggedIn', true);
 		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
 		$this->Js->setVariable = 'Application.variables';

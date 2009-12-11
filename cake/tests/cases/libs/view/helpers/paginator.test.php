@@ -2,8 +2,6 @@
 /**
  * PaginatorHelperTest file
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
@@ -65,7 +63,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
 		$this->Paginator->Ajax->Form =& new FormHelper();
 
-		Configure::write('Routing.admin', '');
+		Configure::write('Routing.prefixes', array());
 		Router::reload();
 	}
 
@@ -387,7 +385,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSortAdminLinks() {
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
 		Router::setRequestInfo(array(
@@ -743,6 +741,25 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->prev('Prev');
 		$expected = array(
 			'a' => array('href' => '/index/page:1/limit:10', 'class' => 'prev'),
+			'Prev',
+			'/a',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->params['paging'] = array(
+			'Client' => array(
+				'page' => 2, 'current' => 1, 'count' => 13, 'prevPage' => true, 
+				'nextPage' => false, 'pageCount' => 2,
+				'defaults' => array(),
+				'options' => array(
+					'page' => 2, 'limit' => 10, 'order' => array(), 'conditions' => array()
+				)
+			)
+		);
+		$this->Paginator->options(array('url' => array(12, 'page' => 3)));
+		$result = $this->Paginator->prev('Prev', array('url' => array(12, 'foo' => 'bar')));
+		$expected = array(
+			'a' => array('href' => '/index/12/page:1/limit:10/foo:bar', 'class' => 'prev'),
 			'Prev',
 			'/a',
 		);

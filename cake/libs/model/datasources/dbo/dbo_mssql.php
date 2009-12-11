@@ -2,8 +2,6 @@
 /**
  * MS SQL layer for DBO
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -429,7 +427,7 @@ class DboMssql extends DboSource {
 		$error = mssql_get_last_message();
 
 		if ($error) {
-			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|datenbankkontext/i', $error)) {
+			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
 				return $error;
 			}
 		}
