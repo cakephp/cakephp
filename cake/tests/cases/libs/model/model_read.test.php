@@ -26,7 +26,6 @@ require_once dirname(__FILE__) . DS . 'model.test.php';
  */
 class ModelReadTest extends BaseModelTest {
 
-
 /**
  * testFetchingNonUniqueFKJoinTableRecords()
  *
@@ -7172,7 +7171,7 @@ class ModelReadTest extends BaseModelTest {
  * @access public
  * @return void
  */
-	function testVirtualFields() {
+		function testVirtualFields() {
 			$this->loadFixtures('Post','Author');
 			$Post = ClassRegistry::init('Post');
 			$Post->virtualFields = array('two' => "1 + 1");
@@ -7199,11 +7198,48 @@ class ModelReadTest extends BaseModelTest {
 			$result = $Post->field('two');
 			$this->assertEqual($result,2);
 
+			$result = $Post->find('first',array(
+				'conditions' => array('two' => 2),
+				'limit' => 1
+			));
+			$this->assertEqual($result['Post']['two'],2);
+
+			$result = $Post->find('first',array(
+				'conditions' => array('two <' => 3),
+				'limit' => 1
+			));
+			$this->assertEqual($result['Post']['two'],2);
+
+			$result = $Post->find('first',array(
+				'conditions' => array('NOT' => array('two >' => 3)),
+				'limit' => 1
+			));
+			$this->assertEqual($result['Post']['two'],2);
+
+			$dbo =& $Post->getDataSource();
+			$Post->virtualFields = array('other_field' => 'Post.id + 1');
+			$result = $Post->find('first',array(
+				'conditions' => array('other_field' => 3),
+				'limit' => 1
+			));
+			$this->assertEqual($result['Post']['id'],2);
+
+			$Post->virtualFields = array('other_field' => 'Post.id + 1');
+			$result = $Post->find('all',array(
+				'fields' => array($dbo->calculate($Post,'max',array('other_field')))
+			));
+			$this->assertEqual($result[0][0]['other_field'],4);
+
 			ClassRegistry::flush();
 			$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'),'Model');
 			$Writing->virtualFields = array('two' => "1 + 1");
 			$result = $Writing->find('first');
 			$this->assertEqual($result['Writing']['two'],2);
+			
+			$Post->create();
+			$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
+			$result = $Post->field('other_field');
+			$this->assertEqual($result,4);
 		}
 }
 ?>

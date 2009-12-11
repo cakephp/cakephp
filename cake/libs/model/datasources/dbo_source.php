@@ -1639,7 +1639,7 @@ class DboSource extends DataSource {
 					$params[1] = 'count';
 				}
 				if (is_object($model) && $model->isVirtualField($params[0])){
-					$arg = $model->getVirtualField($params[0]);
+					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -1650,7 +1650,7 @@ class DboSource extends DataSource {
 					$params[1] = $params[0];
 				}
 				if (is_object($model) && $model->isVirtualField($params[0])) {
-					$arg = $model->getVirtualField($params[0]);
+					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -1787,7 +1787,7 @@ class DboSource extends DataSource {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
-			$expression = $model->getVirtualField($field);
+			$expression = $this->__quoteFields($model->getVirtualField($field));
 			$virtual[] = $expression . " {$this->alias} {$virtualField}";
 		}
 		return $virtual;
@@ -2068,7 +2068,7 @@ class DboSource extends DataSource {
 
 		$virtual = false;
 		if (is_object($model) && $model->isVirtualField($key)) {
-			$key = $model->getVirtualField($key);
+			$key = $this->__quoteFields($model->getVirtualField($key));
 			$virtual = true;
 		}
 
@@ -2241,7 +2241,7 @@ class DboSource extends DataSource {
 			$key = trim($key);
 			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
 				if (is_object($model) && $model->isVirtualField($key)) {
-					$key =  $model->getVirtualField($key);
+					$key =  $this->__quoteFields($model->getVirtualField($key));
 				} else {
 					$key = $this->name($key);
 				}
