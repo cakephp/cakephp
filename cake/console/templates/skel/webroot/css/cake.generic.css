@@ -190,7 +190,7 @@ dl {
 	margin: 0em 0em;
 	width: 60%;
 }
-dl.altrow {
+dl .altrow {
 	background: #f4f4f4;
 }
 dt {

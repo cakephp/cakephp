@@ -2,8 +2,6 @@
 /**
  * DispatcherTest file
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
@@ -1379,7 +1377,7 @@ class DispatcherTest extends CakeTestCase {
 	function testAdminDispatch() {
 		$_POST = array();
 		$Dispatcher =& new TestDispatcher();
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = 'admin/test_dispatch_pages/index/param:value/param2:value2';
 
@@ -1545,7 +1543,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params['controller'], $expected);
 
 
-		Configure::write('Routing.admin', 'admin');
+		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
@@ -1811,12 +1809,23 @@ class DispatcherTest extends CakeTestCase {
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
 		
-		
 		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/css/test_asset.css');
 		ob_start();
 		$Dispatcher->cached('theme/test_theme/css/test_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $result);
+		
+		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/theme.js');
+		ob_start();
+		$Dispatcher->cached('theme/test_theme/js/theme.js');
+		$result = ob_get_clean();
+		$this->assertEqual('root theme js file', $result);
+		
+		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/one/theme_one.js');
+		ob_start();
+		$Dispatcher->cached('theme/test_theme/js/one/theme_one.js');
+		$result = ob_get_clean();
+		$this->assertEqual('nested theme js file', $result);
 		
 		ob_start();
 		$Dispatcher->dispatch('test_plugin/flash/plugin_test.swf');
@@ -1856,16 +1865,22 @@ class DispatcherTest extends CakeTestCase {
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
 
-
-		Configure::write('debug', $debug);
 		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/plugin_js.js');
 		ob_start();
 		$Dispatcher->cached('plugin_js/js/plugin_js.js');
 		$result = ob_get_clean();
 		$expected = "alert('win sauce');";
 		$this->assertEqual($result, $expected);
-
-		header('Content-type: text/html');//reset the header content-type without page can render as plain text.
+		
+		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/one/plugin_one.js');
+		ob_start();
+		$Dispatcher->cached('plugin_js/js/one/plugin_one.js');
+		$result = ob_get_clean();
+		$expected = "alert('plugin one nested js file');";
+		$this->assertEqual($result, $expected);
+		Configure::write('debug', $debug);
+		//reset the header content-type without page can render as plain text.
+		header('Content-type: text/html');
 	}
 
 /**

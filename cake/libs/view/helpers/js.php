@@ -163,6 +163,19 @@ class JsHelper extends AppHelper {
 	}
 
 /**
+ * Overwrite inherited Helper::value()
+ * See JsBaseEngineHelper::value() for more information on this method.
+ *
+ * @param mixed $val A PHP variable to be converted to JSON
+ * @param boolean $quoteStrings If false, leaves string values unquoted
+ * @return string a JavaScript-safe/JSON representation of $val
+ * @access public
+ **/
+	function value($val, $quoteString = true) {
+		return $this->{$this->__engineName}->value($val, $quoteString);
+	}
+
+/**
  * Writes all Javascript generated so far to a code block or
  * caches them to a file and returns a linked script.
  *

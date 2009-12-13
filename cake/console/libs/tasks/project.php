@@ -251,7 +251,7 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Enables Configure::read('Routing.admin') in /app/config/core.php
+ * Enables Configure::read('Routing.prefixes') in /app/config/core.php
  *
  * @param string $name Name to use as admin routing
  * @return boolean Success
@@ -275,7 +275,7 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Checks for Configure::read('Routing.admin') and forces user to input it if not enabled
+ * Checks for Configure::read('Routing.prefixes') and forces user to input it if not enabled
  *
  * @return string Admin route to use
  * @access public

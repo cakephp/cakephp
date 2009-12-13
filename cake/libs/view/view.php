@@ -609,7 +609,7 @@ class View extends Object {
 	function entity() {
 		$assoc = ($this->association) ? $this->association : $this->model;
 		if (!empty($this->entityPath)) {
-			$path = explode('.',$this->entityPath);
+			$path = explode('.', $this->entityPath);
 			$count = count($path);
 			if (
 				($count == 1 && !empty($this->association)) ||
@@ -947,12 +947,8 @@ class View extends Object {
 			}
 			$paths[] = App::pluginPath($plugin) . 'views' . DS;
 		}
-		$paths = array_merge($paths, $viewPaths);
-
-		if (empty($this->__paths)) {
-			$this->__paths = $paths;
-		}
-		return $paths;
+		$this->__paths = array_merge($paths, $viewPaths);
+		return $this->__paths;
 	}
 }
 

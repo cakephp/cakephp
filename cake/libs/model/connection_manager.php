@@ -25,8 +25,6 @@ include_once CONFIGS . 'database.php';
 /**
  * Manages loaded instances of DataSource objects
  *
- * Long description for file
- *
  * @package       cake
  * @subpackage    cake.cake.libs.model
  */

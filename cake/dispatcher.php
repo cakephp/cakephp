@@ -115,13 +115,11 @@ class Dispatcher extends Object {
 			$url = $this->getUrl();
 			$this->params = array_merge($this->parseParams($url), $additionalParams);
 		}
-
 		$this->here = $this->base . '/' . $url;
 
 		if ($this->cached($url)) {
 			$this->_stop();
 		}
-
 		$controller =& $this->__getController();
 
 		if (!is_object($controller)) {
@@ -133,7 +131,6 @@ class Dispatcher extends Object {
 				'base' => $this->base
 			)));
 		}
-
 		$privateAction = $this->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
@@ -159,7 +156,6 @@ class Dispatcher extends Object {
 				'base' => $this->base
 			)));
 		}
-
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
@@ -369,21 +365,21 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 			return $base;
 		}
-			$file = '/' . basename($baseUrl);
-			$base = dirname($baseUrl);
+		$file = '/' . basename($baseUrl);
+		$base = dirname($baseUrl);
+		
+		if ($base === DS || $base === '.') {
+			$base = '';
+		}
+		$this->webroot = $base .'/';
 
-			if ($base === DS || $base === '.') {
-				$base = '';
-			}
-			$this->webroot = $base .'/';
-
-			if (strpos($this->webroot, $dir) === false) {
-				$this->webroot .= $dir . '/' ;
-			}
-			if (strpos($this->webroot, $webroot) === false) {
-				$this->webroot .= $webroot . '/';
-			}
-			return $base . $file;
+		if (strpos($this->webroot, $dir) === false) {
+			$this->webroot .= $dir . '/' ;
+		}
+		if (strpos($this->webroot, $webroot) === false) {
+			$this->webroot .= $webroot . '/';
+		}
+		return $base . $file;
 	}
 
 /**
@@ -601,14 +597,15 @@ class Dispatcher extends Object {
 				$this->_stop();
 			}
 			App::import('View', 'Media', false);
-			$Media = new MediaView();
+			$controller = null;
+			$Media = new MediaView($controller);
 			$ext = array_pop(explode('.', $url));
-			
+
 			if (isset($Media->mimeType[$ext])) {
+				$pos = 0;
 				$parts = explode('/', $url);
-				if ($parts[0] === 'css' || $parts[0] === 'js' || $parts[0] === 'img') {
-					$pos = 0;
-				} elseif ($parts[0] === 'theme') {
+				
+				if ($parts[0] === 'theme') {
 					$pos = strlen($parts[0] . $parts[1]) + 1;
 				} elseif (count($parts) > 2) {
 					$pos = strlen($parts[0]);
@@ -630,10 +627,10 @@ class Dispatcher extends Object {
 					if (strpos($plugin, '/') !== false) {
 						list($plugin, $theme) = explode('/', $plugin);
 						$themePaths = App::path('views');
-						
+
 						foreach ($themePaths as $viewPath) {
 							$path = $viewPath . 'themed' . DS . $theme . DS . 'webroot' . DS;
-							
+
 							if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
 								$assetFile = $path . $url;
 								$matched = true;

@@ -2,8 +2,6 @@
 /**
  * ErrorHandler for Console Shells
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)

@@ -289,7 +289,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($append)) {
-			$append = sprintf($this->Html->tags['fieldset'], ' style="display:none;"', $append);
+			$append = sprintf($this->Html->tags['block'], ' style="display:none;"', $append);
 		}
 
 		$this->setEntity($model . '.', true);
@@ -363,7 +363,6 @@ class FormHelper extends AppHelper {
 		if (!isset($this->params['_Token']) || empty($this->params['_Token'])) {
 			return;
 		}
-		$out = '<fieldset style="display:none;">';
 		$locked = array();
 
 		foreach ($fields as $key => $value) {
@@ -379,11 +378,12 @@ class FormHelper extends AppHelper {
 		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
 		$locked = str_rot13(serialize(array_keys($locked)));
 
-		$out .= $this->hidden('_Token.fields', array(
+		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
 		));
-		return $out .= '</fieldset>';
+		$out = sprintf($this->Html->tags['block'], ' style="display:none;"', $out);
+		return $out;
 	}
 
 /**
