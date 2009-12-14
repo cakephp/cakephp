@@ -1361,7 +1361,7 @@ class CakeRoute {
  */
 	function persistParams($url, $params) {
 		foreach ($this->options['persist'] as $persistKey) {
-			if (array_key_exists($persistKey, $params)) {
+			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
 				$url[$persistKey] = $params[$persistKey];
 			}
 		}
