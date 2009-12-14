@@ -178,7 +178,7 @@ class ErrorHandler extends Object {
 			$url = $this->controller->here;
 		}
 		$url = Router::normalize($url);
-		$this->controller->header("HTTP/1.0 500 Not Found");
+		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
 			'name' => __('An Internal Error Has Occurred', true),
