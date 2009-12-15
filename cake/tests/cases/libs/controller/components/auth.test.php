@@ -1501,6 +1501,61 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test $settings in Controller::$components
+ *
+ * @access public
+ * @return void
+ */
+	function testComponentSettings() {
+		$this->Controller =& new AuthTestController();
+		$this->Controller->components = array(
+			'Auth' => array(
+				'fields' => array('username' => 'email', 'password' => 'password'),
+				'loginAction' => array('controller' => 'people', 'action' => 'login'),
+				'userModel' => 'AuthUserCustomField',
+				'sessionKey' => 'AltAuth'
+			)
+		);
+		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Component->initialize($this->Controller);
+		Router::reload();
+
+		$this->AuthUserCustomField =& new AuthUserCustomField();
+		$user = array(
+			'id' => 1, 'email' => 'harking@example.com',
+			'password' => Security::hash(Configure::read('Security.salt') . 'cake'
+		));
+		$user = $this->AuthUserCustomField->save($user, false);
+
+		Router::connect('/', array('controller' => 'people', 'action' => 'login'));
+		$url = '/';
+		$this->Controller->params = Router::parse($url);
+		Router::setRequestInfo(array($this->Controller->passedArgs, array(
+			'base' => null, 'here' => $url, 'webroot' => '/', 'passedArgs' => array(),
+			'argSeparator' => ':', 'namedArgs' => array()
+		)));
+		$this->Controller->data['AuthUserCustomField'] = array('email' => 'harking@example.com', 'password' => 'cake');
+		$this->Controller->params['url']['url'] = substr($url, 1);
+		$this->Controller->Auth->startup($this->Controller);
+
+		$user = $this->Controller->Auth->user();
+		$this->assertTrue(!!$user);
+		
+		$expected = array(
+			'fields' => array('username' => 'email', 'password' => 'password'),
+			'loginAction' => array('controller' => 'people', 'action' => 'login'),
+			'logoutRedirect' => array('controller' => 'people', 'action' => 'login'),
+			'userModel' => 'AuthUserCustomField',
+			'sessionKey' => 'AltAuth.AuthUserCustomField'
+		);
+		$this->assertEqual($expected['fields'], $this->Controller->Auth->fields);
+		$this->assertEqual($expected['loginAction'], $this->Controller->Auth->loginAction);
+		$this->assertEqual($expected['logoutRedirect'], $this->Controller->Auth->logoutRedirect);
+		$this->assertEqual($expected['userModel'], $this->Controller->Auth->userModel);
+		$this->assertEqual($expected['sessionKey'], $this->Controller->Auth->sessionKey);
+	}
+
+/**
  * test that logout deletes the session variables. and returns the correct url
  *
  * @return void
