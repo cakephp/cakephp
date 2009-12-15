@@ -2331,7 +2331,8 @@ class Model extends Overloadable {
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
 /**
- * Returns true if all fields pass validation.
+ * Returns true if all fields pass validation. Will validate hasAndBelongsToMany associations
+ * that use the 'with' key as well. Since __saveMulti is incapable of exiting a save operation.
  *
  * Will validate the currently set data.  Use Model::set() or Model::create() to set the active data.
  *
@@ -2342,13 +2343,16 @@ class Model extends Overloadable {
  */
 	function validates($options = array()) {
 		$errors = $this->invalidFields($options);
+		if (empty($errors) && $errors !== false) {
+			$errors = $this->__validateWithModels($options);
+		}
 		if (is_array($errors)) {
 			return count($errors) === 0;
 		}
 		return $errors;
 	}
 /**
- * Returns an array of fields that have failed validation.
+ * Returns an array of fields that have failed validation. On the current model.
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields
@@ -2497,6 +2501,40 @@ class Model extends Overloadable {
 		}
 		$this->validate = $_validate;
 		return $this->validationErrors;
+	}
+/**
+ * Runs validation for hasAndBelongsToMany associations that have 'with' keys
+ * set. And data in the set() data set.
+ *
+ * @param array $options Array of options to use on Valdation of with models
+ * @return boolean Failure of validation on with models.
+ * @access private
+ * @see Model::validates()
+ */
+	function __validateWithModels($options) {
+		$valid = true;
+		foreach ($this->data as $assoc => $data) {
+			if (isset($this->hasAndBelongsToMany[$assoc]) && !empty($this->hasAndBelongsToMany[$assoc]['with'])) {
+				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
+				$newData = array();
+				foreach ((array)$data as $row) {
+					if (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+						$newData[] = $row;
+					} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+						$newData[] = $row[$join];
+					}
+				}
+				if (empty($newData)) {
+					continue;
+				}
+				foreach ($newData as $data) {
+					$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->id;
+					$this->{$join}->create($data);
+					$valid = ($valid && $this->{$join}->validates($options));
+				}
+			}
+		}
+		return $valid;
 	}
 /**
  * Marks a field as invalid, optionally setting the name of validation

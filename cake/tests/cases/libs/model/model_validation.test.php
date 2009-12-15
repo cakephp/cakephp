@@ -121,6 +121,100 @@ class ModelValidationTest extends BaseModelTest {
 
 		$this->assertEqual($TestModel->validate, $validate);
 	}
+/**
+ * test that validates() checks all the 'with' associations as well for validation
+ * as this can cause partial/wrong data insertion.
+ *
+ * @return void
+ */
+	function testValidatesWithAssociations() {
+		$data = array(
+			'Something' => array(
+				'id' => 5,
+				'title' => 'Extra Fields',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			),
+			'SomethingElse' => array(
+				array('something_else_id' => 1, 'doomed' => '')
+			)
+		);
 
+		$Something =& new Something();
+		$JoinThing =& $Something->JoinThing;
+
+		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
+
+		$expectedError = array('doomed' => 'This field cannot be left blank');
+
+		$Something->create();
+		$result = $Something->save($data);
+		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
+		$this->assertIdentical($count, 0);
+
+		$data = array(
+			'Something' => array(
+				'id' => 5,
+				'title' => 'Extra Fields',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			),
+			'SomethingElse' => array(
+				array('something_else_id' => 1, 'doomed' => 1),
+				array('something_else_id' => 1, 'doomed' => '')
+			)
+		);
+		$Something->create();
+		$result = $Something->save($data);
+		$this->assertFalse($result, 'Save occured even when with models failed. %s');
+
+		$joinRecords = $JoinThing->find('count', array(
+			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
+		));
+		$this->assertEqual($joinRecords, 0, 'Records were saved on the join table. %s');
+	}
+/**
+ * test that saveAll and with models with validation interact well
+ *
+ * @return void
+ */
+	function testValidatesWithModelsAndSaveAll() {
+		$data = array(
+			'Something' => array(
+				'id' => 5,
+				'title' => 'Extra Fields',
+				'body' => 'Extra Fields Body',
+				'published' => '1'
+			),
+			'SomethingElse' => array(
+				array('something_else_id' => 1, 'doomed' => '')
+			)
+		);
+		$Something =& new Something();
+		$JoinThing =& $Something->JoinThing;
+
+		$JoinThing->validate = array('doomed' => array('rule' => 'notEmpty'));
+		$expectedError = array('doomed' => 'This field cannot be left blank');
+
+		$Something->create();
+		$result = $Something->saveAll($data, array('validate' => 'only'));
+		$this->assertFalse($result);
+		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+
+		$Something->create();
+		$result = $Something->saveAll($data, array('validate' => 'first'));
+		$this->assertFalse($result);
+		$this->assertEqual($JoinThing->validationErrors, $expectedError);
+
+		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
+		$this->assertIdentical($count, 0);
+
+		$joinRecords = $JoinThing->find('count', array(
+			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
+		));
+		$this->assertEqual($joinRecords, 0, 'Records were saved on the join table. %s');
+	}
 }
 ?>
