@@ -195,6 +195,10 @@ class JsHelper extends AppHelper {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
 		$script = implode("\n", $this->getBuffer($options['clear']));
+		
+		if (empty($script)) {
+			return null;
+		}
 
 		if ($options['onDomReady']) {
 			$script = $this->{$this->__engineName}->domReady($script);
