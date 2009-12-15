@@ -461,7 +461,7 @@ class DboMysql extends DboMysqlBase {
 			$this->connected = true;
 		}
 
-		if (isset($config['encoding']) && !empty($config['encoding'])) {
+		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
 
