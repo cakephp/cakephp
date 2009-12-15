@@ -2513,25 +2513,28 @@ class Model extends Overloadable {
  */
 	function __validateWithModels($options) {
 		$valid = true;
-		foreach ($this->data as $assoc => $data) {
-			if (isset($this->hasAndBelongsToMany[$assoc]) && !empty($this->hasAndBelongsToMany[$assoc]['with'])) {
-				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
-				$newData = array();
-				foreach ((array)$data as $row) {
-					if (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-						$newData[] = $row;
-					} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-						$newData[] = $row[$join];
-					}
+		foreach ($this->hasAndBelongsToMany as $assoc => $association) {
+			if (empty($association['with']) || !isset($this->data[$assoc])) {
+				continue;
+			}
+			list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
+			$data = $this->data[$assoc];
+
+			$newData = array();
+			foreach ((array)$data as $row) {
+				if (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+					$newData[] = $row;
+				} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
+					$newData[] = $row[$join];
 				}
-				if (empty($newData)) {
-					continue;
-				}
-				foreach ($newData as $data) {
-					$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->id;
-					$this->{$join}->create($data);
-					$valid = ($valid && $this->{$join}->validates($options));
-				}
+			}
+			if (empty($newData)) {
+				continue;
+			}
+			foreach ($newData as $data) {
+				$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $this->id;
+				$this->{$join}->create($data);
+				$valid = ($valid && $this->{$join}->validates($options));
 			}
 		}
 		return $valid;
