@@ -247,6 +247,22 @@ class EmailComponent extends Object{
 	var $smtpError = null;
 
 /**
+ * Contains the rendered plain text message if one was sent.
+ *
+ * @var string
+ * @access public
+ */
+	var $textMessage = null;
+
+/**
+ * Contains the rendered plain text message if one was sent.
+ *
+ * @var string
+ * @access public
+ */
+	var $htmlMessage = null;
+
+/**
  * Temporary store of message header lines
  *
  * @var array
@@ -324,6 +340,17 @@ class EmailComponent extends Object{
 			$content = implode("\n", $content) . "\n";
 		}
 
+		$this->htmlMessage = $this->textMessage = null;
+		if ($content) {
+			if ($this->sendAs === 'html') {
+				$this->htmlMessage = $content;
+			} elseif ($this->sendAs === 'text') {
+				$this->textMessage = $content;
+			} else {
+				$this->htmlMessage = $this->textMessage = $content;
+			}
+		}
+
 		$message = $this->_wrap($content);
 
 		if ($this->template === null) {
@@ -372,6 +399,8 @@ class EmailComponent extends Object{
 		$this->additionalParams = null;
 		$this->smtpError = null;
 		$this->attachments = array();
+		$this->htmlMessage = null;
+		$this->textMessage = null;
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
@@ -415,7 +444,8 @@ class EmailComponent extends Object{
 
 			$content = $View->element('email' . DS . 'text' . DS . $this->template, array('content' => $content), true);
 			$View->layoutPath = 'email' . DS . 'text';
-			$content = explode("\n", str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+			$content = explode("\n", $this->textMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+
 			$msg = array_merge($msg, $content);
 
 			$msg[] = '';
@@ -426,7 +456,7 @@ class EmailComponent extends Object{
 
 			$htmlContent = $View->element('email' . DS . 'html' . DS . $this->template, array('content' => $htmlContent), true);
 			$View->layoutPath = 'email' . DS . 'html';
-			$htmlContent = explode("\n", str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
+			$htmlContent = explode("\n", $this->htmlMessage = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($htmlContent)));
 			$msg = array_merge($msg, $htmlContent);
 			$msg[] = '';
 			$msg[] = '--alt-' . $this->__boundary . '--';
@@ -452,7 +482,14 @@ class EmailComponent extends Object{
 
 		$content = $View->element('email' . DS . $this->sendAs . DS . $this->template, array('content' => $content), true);
 		$View->layoutPath = 'email' . DS . $this->sendAs;
-		$content = explode("\n", str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+		$content = explode("\n", $rendered = str_replace(array("\r\n", "\r"), "\n", $View->renderLayout($content)));
+
+		if ($this->sendAs === 'html') {
+			$this->htmlMessage = $rendered;
+		} else {
+			$this->textMessage = $rendered;
+		}
+
 		$msg = array_merge($msg, $content);
 
 		return $msg;

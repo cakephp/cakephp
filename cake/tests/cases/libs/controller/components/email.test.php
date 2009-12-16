@@ -416,8 +416,6 @@ HEADBLOC;
 This is the body of the message
 
 This email was sent using the CakePHP Framework, http://cakephp.org.
-
-
 TEXTBLOC;
 
 		$html = <<<HTMLBLOC
@@ -433,7 +431,6 @@ TEXTBLOC;
 	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
 </body>
 </html>
-
 HTMLBLOC;
 
 		$this->Controller->EmailTest->sendAs = 'text';
@@ -544,6 +541,103 @@ TEXTBLOC;
 		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
 		$this->assertPattern('/This is the body of the message/', $result);
 
+	}
+
+/**
+ * testMessageRetrievalWithoutTemplate method
+ *
+ * @access public
+ * @return void
+ */
+	function testMessageRetrievalWithoutTemplate() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->layout = 'default';
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'debug';
+
+		$text = $html = 'This is the body of the message';
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertEqual($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertNull($this->Controller->EmailTest->htmlMessage);
+
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$this->assertNull($this->Controller->EmailTest->textMessage);
+		$this->assertEqual($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+	}
+
+/**
+ * testMessageRetrievalWithTemplate method
+ *
+ * @access public
+ * @return void
+ */
+	function testMessageRetrievalWithTemplate() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+
+		$this->Controller->set('value', 22091985);
+
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->layout = 'default';
+		$this->Controller->EmailTest->template = 'custom';
+
+		$this->Controller->EmailTest->delivery = 'debug';
+
+		$text = <<<TEXTBLOC
+
+Here is your value: 22091985
+This email was sent using the CakePHP Framework, http://cakephp.org.
+TEXTBLOC;
+
+		$html = <<<HTMLBLOC
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+
+<html>
+<head>
+	<title>EmailTest</title>
+</head>
+
+<body>
+	<p>Here is your value: <b>22091985</b></p>
+	<p>This email was sent using the <a href="http://cakephp.org">CakePHP Framework</a></p>
+</body>
+</html>
+HTMLBLOC;
+
+		$this->Controller->EmailTest->sendAs = 'both';
+		$this->assertTrue($this->Controller->EmailTest->send());
+		$this->assertEqual($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertEqual($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send());
+		$this->assertEqual($this->Controller->EmailTest->textMessage, $this->__osFix($text));
+		$this->assertNull($this->Controller->EmailTest->htmlMessage);
+
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->assertTrue($this->Controller->EmailTest->send());
+		$this->assertNull($this->Controller->EmailTest->textMessage);
+		$this->assertEqual($this->Controller->EmailTest->htmlMessage, $this->__osFix($html));
 	}
 
 /**
@@ -715,6 +809,8 @@ TEXTBLOC;
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
 		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
+		$this->Controller->EmailTest->textMessage = 'This is the body of the message';
+		$this->Controller->EmailTest->htmlMessage = 'This is the body of the message';
 
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
 
@@ -734,6 +830,7 @@ TEXTBLOC;
 		$this->assertIdentical($this->Controller->EmailTest->getMessage(), array());
 		$this->assertNull($this->Controller->EmailTest->smtpError);
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
+		$this->assertNull($this->Controller->EmailTest->textMessage);
 	}
 
 	function testPluginCustomViewClass() {
