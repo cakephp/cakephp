@@ -255,7 +255,7 @@ class EmailComponent extends Object{
 	var $textMessage = null;
 
 /**
- * Contains the rendered plain text message if one was sent.
+ * Contains the rendered HTML message if one was sent.
  *
  * @var string
  * @access public
