@@ -1037,7 +1037,9 @@ class SetTest extends CakeTestCase {
 		$data = array(
 			'Level1' => array(
 				'Level2' => array('test1', 'test2'),
-				'Level2bis' => array('test3', 'test4')));
+				'Level2bis' => array('test3', 'test4')
+			)
+		);
 		$this->assertEqual(Set::extract('/Level1/Level2', $data), array(array('Level2' => array('test1', 'test2'))));
 		$this->assertEqual(Set::extract('/Level1/Level2bis', $data), array(array('Level2bis' => array('test3', 'test4'))));
 	}
@@ -1113,7 +1115,6 @@ class SetTest extends CakeTestCase {
 
 
 	}
-	
 /**
  * testSetExtractReturnsEmptyArray method
  *
