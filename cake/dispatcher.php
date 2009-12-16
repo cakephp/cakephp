@@ -62,14 +62,6 @@ class Dispatcher extends Object {
 	var $here = false;
 
 /**
- * Plugin being served (if any)
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
-
-/**
  * the params for this request
  *
  * @var string
@@ -159,7 +151,7 @@ class Dispatcher extends Object {
 		$controller->base = $this->base;
 		$controller->here = $this->here;
 		$controller->webroot = $this->webroot;
-		$controller->plugin = $this->plugin;
+		$controller->plugin = isset($this->params['plugin']) ? $this->params['plugin'] : null;
 		$controller->params =& $this->params;
 		$controller->action =& $this->params['action'];
 		$controller->passedArgs = array_merge($this->params['pass'], $this->params['named']);
@@ -399,16 +391,8 @@ class Dispatcher extends Object {
 				'pass' => array_merge($pass, $params['pass']),
 				'named' => array_merge($named, $params['named'])
 			));
-			$this->plugin = $params['plugin'];
 		} else {
 			$params['plugin'] = $params['controller'];
-			$params['controller'] = $params['action'];
-			if (isset($params['pass'][0])) {
-				$params['action'] = $params['pass'][0];
-				array_shift($params['pass']);
-			} else {
-				$params['action'] = null;
-			}
 		}
 		return $params;
 	}
@@ -420,19 +404,15 @@ class Dispatcher extends Object {
  * @return mixed name of controller if not loaded, or object if loaded
  * @access private
  */
-	function &__getController($params = null) {
-		if (!is_array($params)) {
-			$original = $params = $this->params;
-		}
+	function &__getController() {
+		$original = $params = $this->params;
+
 		$controller = false;
 		$ctrlClass = $this->__loadController($params);
 		if (!$ctrlClass) {
 			if (!isset($params['plugin'])) {
 				$params = $this->_restructureParams($params);
 			} else {
-				if (empty($original['pass']) && $original['action'] == 'index') {
-					$params['action'] = null;
-				}
 				$params = $this->_restructureParams($params, true);
 			}
 			$ctrlClass = $this->__loadController($params);
@@ -441,15 +421,13 @@ class Dispatcher extends Object {
 				return $controller;
 			}
 		} else {
-			$params = $this->params;
+			if (!isset($params['plugin'])) {
+				$params = $this->_restructureParams($params);
+			}
 		}
 		$name = $ctrlClass;
-		$ctrlClass = $ctrlClass . 'Controller';
+		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			if (strtolower(get_parent_class($ctrlClass)) === strtolower($name . 'AppController') && empty($params['plugin'])) {
-				$params = $this->_restructureParams($params);
-				$params = $this->_restructureParams($params, true);
-			}
 			$this->params = $params;
 			$controller =& new $ctrlClass();
 		}
@@ -466,10 +444,9 @@ class Dispatcher extends Object {
 	function __loadController($params) {
 		$pluginName = $pluginPath = $controller = null;
 		if (!empty($params['plugin'])) {
-			$this->plugin = $params['plugin'];
 			$pluginName = Inflector::camelize($params['plugin']);
 			$pluginPath = $pluginName . '.';
-			$this->params['controller'] = $this->plugin;
+			$this->params['controller'] = $params['plugin'];
 			$controller = $pluginName;
 		}
 		if (!empty($params['controller'])) {

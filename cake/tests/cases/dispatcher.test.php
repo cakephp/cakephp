@@ -1599,10 +1599,17 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
-		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=>'my_plugin'));
+		Router::connect('/my_plugin/:controller/:action/*', array('plugin' => 'my_plugin'));
 
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
+
+		$url = 'my_plugin/';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual($controller->params['controller'], 'my_plugin');
+		$this->assertEqual($controller->params['plugin'], 'my_plugin');
+		$this->assertEqual($controller->params['action'], 'index');
+		$this->assertFalse(isset($controller->params['pass'][0]));
 
 		$url = 'my_plugin/my_plugin/add';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1620,7 +1627,6 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = 'my_plugin/add';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
 		$this->assertFalse(isset($controller->params['pass'][0]));
 
 		$Dispatcher =& new TestDispatcher();
@@ -1628,14 +1634,48 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = 'my_plugin/add/0';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertIdentical('0',$controller->params['pass'][0]);
+		$this->assertEqual($controller->params['controller'], 'my_plugin');
+		$this->assertEqual($controller->params['plugin'], 'my_plugin');
+		$this->assertEqual($controller->params['action'], 'add');
+		$this->assertIdentical('0', $controller->params['pass'][0]);
 
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/add/1';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertIdentical('1',$controller->params['pass'][0]);
+
+		$this->assertEqual($controller->params['controller'], 'my_plugin');
+		$this->assertEqual($controller->params['plugin'], 'my_plugin');
+		$this->assertEqual($controller->params['action'], 'add');
+		$this->assertIdentical('1', $controller->params['pass'][0]);
+	}
+
+/**
+ * test plugin shortcut urls with controllers that need to be loaded,
+ * the above test uses a controller that has already been included.
+ *
+ * @return void
+ */
+	function testPluginShortCutUrlsWithControllerThatNeedsToBeLoaded() {
+		$loaded = class_exists('TestPluginController', false);
+		if ($this->skipIf($loaded, 'TestPluginController already loaded, this test will always pass, skipping %s')) {
+			return true;
+		}
+		Router::reload();
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+		$Dispatcher =& new TestDispatcher();
+		$Dispatcher->base = false;
+
+		$url = 'test_plugin/';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual($controller->params['controller'], 'test_plugin');
+		$this->assertEqual($controller->params['plugin'], 'test_plugin');
+		$this->assertEqual($controller->params['action'], 'index');
+		$this->assertFalse(isset($controller->params['pass'][0]));
+		App::build();
 	}
 
 /**
@@ -1711,7 +1751,7 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * undocumented function
+ * Test dispatching into the TestPlugin in the test_app
  *
  * @return void
  * @access public
@@ -1721,12 +1761,20 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+		App::objects('plugin', null, false);
+		Router::reload();
+		Router::parse('/');
+
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
 		$this->assertTrue(class_exists('TestPluginAppController'));
 		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
+
+		$this->assertEqual($result->params['controller'], 'tests');
+		$this->assertEqual($result->params['plugin'], 'test_plugin');
+		$this->assertEqual($result->params['action'], 'index');
 
 		App::build();
 	}

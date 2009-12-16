@@ -508,6 +508,16 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('plugin' => 'shows', 'controller' => 'shows', 'action' => 'calendar', 'year' => 2007, 'month' => 10, 'min-forestilling'));
 		$expected = '/kalender/10/2007/min-forestilling';
 		$this->assertEqual($result, $expected);
+
+		Router::reload();
+		Router::connect('/:controller/:action/*', array(), array(
+			'controller' => 'source|wiki|commits|tickets|comments|view',
+			'action' => 'branches|history|branch|logs|view|start|add|edit|modify'
+		));
+		Router::defaults(false);
+		$result = Router::parse('/foo/bar');
+		$expected = array('pass' => array(), 'named' => array(), 'controller' => null);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -1844,7 +1854,7 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/government', $url);
 		Router::parse('/government');
 		$route =& Router::currentRoute();
-		$this->assertEqual(array_merge($url, array('plugin' => false)), $route->defaults);
+		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
 /**
  * testRequestRoute
@@ -1857,21 +1867,21 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/government', $url);
 		Router::parse('/government');
 		$route =& Router::requestRoute();
-		$this->assertEqual(array_merge($url, array('plugin' => false)), $route->defaults);
+		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that the first route is matched
 		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/government', $url);
 		Router::parse('/government');
 		$route =& Router::requestRoute();
-		$this->assertEqual(array_merge($url, array('plugin' => false)), $route->defaults);
+		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that an unmatched route does not change the current route
 		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/actor', $url);
 		Router::parse('/government');
 		$route =& Router::requestRoute();
-		$this->assertEqual(array_merge($url, array('plugin' => false)), $route->defaults);
+		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
 /**
  * testGetParams
@@ -1884,7 +1894,7 @@ class RouterTest extends CakeTestCase {
 		$params = array('param1' => '1', 'param2' => '2');
 		Router::setRequestInfo(array($params, $paths));
 		$expected = array(
-			'plugin' => false, 'controller' => false, 'action' => false,
+			'plugin' => null, 'controller' => false, 'action' => false,
 			'param1' => '1', 'param2' => '2'
 		);
 		$this->assertEqual(Router::getparams(), $expected);
@@ -1896,7 +1906,7 @@ class RouterTest extends CakeTestCase {
 
 		$params = array('controller' => 'pages', 'action' => 'display');
 		Router::setRequestInfo(array($params, $paths));
-		$expected = array('plugin' => false, 'controller' => 'pages', 'action' => 'display');
+		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display');
 		$this->assertEqual(Router::getparams(), $expected);
 		$this->assertEqual(Router::getparams(true), $expected);
 	}
@@ -2125,6 +2135,23 @@ class CakeRouteTestCase extends CakeTestCase {
 			'extra' => null,
 		);
 		$this->assertEqual($route->defaults, $expected);
+
+		$route =& new CakeRoute(
+			'/:controller/:action/*',
+			array('project' => false),
+			array(
+				'controller' => 'source|wiki|commits|tickets|comments|view',
+				'action' => 'branches|history|branch|logs|view|start|add|edit|modify'
+			)
+		);
+		$this->assertFalse($route->parse('/chaw_test/wiki'));
+
+		$result = $route->compile();
+		$this->assertNoPattern($result, '/some_project/source');
+		$this->assertPattern($result, '/source/view');
+		$this->assertPattern($result, '/source/view/other/params');
+		$this->assertNoPattern($result, '/chaw_test/wiki');
+		$this->assertNoPattern($result, '/source/wierd_action');
 	}
 
 /**
