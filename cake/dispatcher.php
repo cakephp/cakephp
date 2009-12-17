@@ -420,14 +420,13 @@ class Dispatcher extends Object {
 				$this->params = $original;
 				return $controller;
 			}
-		} else {
-			if (!isset($params['plugin'])) {
-				$params = $this->_restructureParams($params);
-			}
 		}
 		$name = $ctrlClass;
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
+			if (empty($params['plugin']) && strtolower(get_parent_class($ctrlClass)) === strtolower($name . 'AppController')) {
+				$params = $this->_restructureParams($params);
+			}
 			$this->params = $params;
 			$controller =& new $ctrlClass();
 		}

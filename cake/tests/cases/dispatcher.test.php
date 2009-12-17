@@ -1321,6 +1321,8 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = 'pages/home/';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertNull($controller->plugin);
+		$this->assertNull($Dispatcher->params['plugin']);
 
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
