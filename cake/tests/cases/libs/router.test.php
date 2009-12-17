@@ -516,7 +516,7 @@ class RouterTest extends CakeTestCase {
 		));
 		Router::defaults(false);
 		$result = Router::parse('/foo/bar');
-		$expected = array('pass' => array(), 'named' => array(), 'controller' => null);
+		$expected = array('pass' => array(), 'named' => array());
 		$this->assertEqual($result, $expected);
 	}
 
