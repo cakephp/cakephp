@@ -272,7 +272,7 @@ class Router {
 			$self->__prefixes[] = $defaults['prefix'];
 			$self->__prefixes = array_keys(array_flip($self->__prefixes));
 		}
-		$defaults += array('action' => 'index', 'plugin' => null, 'controller' => null);
+		$defaults += array('action' => 'index', 'plugin' => null);
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
@@ -424,7 +424,11 @@ class Router {
 		if (!$self->__defaultsMapped && $self->__connectDefaults) {
 			$self->__connectDefaultRoutes();
 		}
-		$out = array('pass' => array(), 'named' => array());
+		$out = array(
+			'pass' => array(),
+			'named' => array(),
+			'controller' => null,
+		);
 		$r = $ext = null;
 
 		if (ini_get('magic_quotes_gpc') === '1') {
@@ -1361,7 +1365,7 @@ class CakeRoute {
  */
 	function persistParams($url, $params) {
 		foreach ($this->options['persist'] as $persistKey) {
-			if (array_key_exists($persistKey, $params)) {
+			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
 				$url[$persistKey] = $params[$persistKey];
 			}
 		}
