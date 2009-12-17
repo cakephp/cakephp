@@ -169,9 +169,22 @@ class SecurityComponent extends Object {
 	var $_action = null;
 
 /**
+ * Initialize the SecurityComponent
+ *
+ * @param object $controller Controller instance for the request
+ * @param array $settings Settings to set to the component
+ * @return void
+ * @access public
+ */
+	function initialize(&$controller, $settings = array()) {
+		$this->_set($settings);
+	}
+
+/**
  * Component startup. All security checking happens here.
  *
  * @param object $controller Instantiating controller
+ * @return void
  * @access public
  */
 	function startup(&$controller) {
@@ -342,7 +355,7 @@ class SecurityComponent extends Object {
 		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
 			$out[] = 'nonce="' . uniqid("") . '"';
-			$out[] = 'opaque="' . md5($options['realm']).'"';
+			$out[] = 'opaque="' . md5($options['realm']) . '"';
 		}
 
 		return $auth . ' ' . implode(',', $out);

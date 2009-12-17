@@ -253,7 +253,7 @@ class AuthComponent extends Object {
  * @return void
  * @access public
  */
-	function initialize(&$controller) {
+	function initialize(&$controller, $settings) {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
@@ -275,6 +275,7 @@ class AuthComponent extends Object {
 				));
 			}
 		}
+		$this->_set($settings);
 		if (Configure::read() > 0) {
 			App::import('Debugger');
 			Debugger::checkSessionKey();
