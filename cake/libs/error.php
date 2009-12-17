@@ -92,7 +92,6 @@ class ErrorHandler extends Object {
 			$this->controller =& new Controller();
 			$this->controller->viewPath = 'errors';
 		}
-
 		$options = array('escape' => false);
 		$messages = Sanitize::clean($messages, $options);
 
@@ -156,7 +155,7 @@ class ErrorHandler extends Object {
 			$url = $this->controller->here;
 		}
 		$url = Router::normalize($url);
-		header("HTTP/1.0 404 Not Found");
+		$this->controller->header("HTTP/1.0 404 Not Found");
 		$this->controller->set(array(
 			'code' => '404',
 			'name' => __('Not Found', true),
@@ -166,6 +165,28 @@ class ErrorHandler extends Object {
 		$this->_outputMessage('error404');
 	}
 
+/**
+ * Convenience method to display a 500 page.
+ *
+ * @param array $params Parameters for controller
+ * @access public
+ */
+	function error500($params) {
+		extract($params, EXTR_OVERWRITE);
+
+		if (!isset($url)) {
+			$url = $this->controller->here;
+		}
+		$url = Router::normalize($url);
+		$this->controller->header("HTTP/1.0 500 Internal Server Error");
+		$this->controller->set(array(
+			'code' => '500',
+			'name' => __('An Internal Error Has Occurred', true),
+			'message' => h($url),
+			'base' => $this->controller->base
+		));
+		$this->_outputMessage('error500');
+	}
 /**
  * Renders the Missing Controller web page.
  *
@@ -229,7 +250,9 @@ class ErrorHandler extends Object {
 	function missingTable($params) {
 		extract($params, EXTR_OVERWRITE);
 
+		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
+			'code' => '500',
 			'model' => $className,
 			'table' => $table,
 			'title' => __('Missing Database Table', true)
@@ -244,7 +267,9 @@ class ErrorHandler extends Object {
  * @access public
  */
 	function missingDatabase($params = array()) {
+		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
+			'code' => '500',
 			'title' => __('Scaffold Missing Database Connection', true)
 		));
 		$this->_outputMessage('missingScaffolddb');
@@ -294,7 +319,9 @@ class ErrorHandler extends Object {
 	function missingConnection($params) {
 		extract($params, EXTR_OVERWRITE);
 
+		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
+			'code' => '500',
 			'model' => $className,
 			'title' => __('Missing Database Connection', true)
 		));
