@@ -186,6 +186,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->Controller->params['url']['ext'] = 'rss';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->assertEqual($this->RequestHandler->ext, 'rss');
+
+		$settings = array(
+			'ajaxLayout' => 'test_ajax'
+		);
+		$this->RequestHandler->initialize($this->Controller, $settings);
+		$this->assertEqual($this->RequestHandler->ajaxLayout, 'test_ajax');
 	}
 
 /**
