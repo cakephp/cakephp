@@ -4082,6 +4082,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNoPattern('/Took:/s', $contents);
 	}
 
+/**
+ * test fields generating usable virtual fields to use in query
+ *
+ * @return void
+ */
 	function testVirtualFields() {
 		$this->loadFixtures('Article');
 
@@ -4115,6 +4120,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected,$result);
 	}
 
+/**
+ * test conditions to generate query conditions for virtual fields
+ *
+ * @return void
+ */
 	function testVirtualFieldsInConditions() {
 		$this->loadFixtures('Article');
 
@@ -4146,6 +4156,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected,$result);
 	}
 
+/**
+ * test order to generate query order clause for virtual fields
+ *
+ * @return void
+ */
 	function testVirtualFieldsInOrder() {
 		$this->loadFixtures('Article');
 
@@ -4160,6 +4175,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected,$result);
 	}
 
+/**
+ * test calculate to generate claculate statements on virtual fields
+ *
+ * @return void
+ */
 	function testVirtualFieldsInCalculate() {
 		$this->loadFixtures('Article');
 
@@ -4180,6 +4200,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected,$result);
 	}
 
+/**
+ * test a full example of using virtual fields
+ *
+ * @return void
+ */
 	function testVirtualFieldsFetch() {
 		$this->loadFixtures('Article','Comment');
 
