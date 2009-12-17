@@ -143,7 +143,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function setUp() {
+	function startTest() {
 		$this->Controller =& new SecurityTestController();
 		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Security =& $this->Controller->TestSecurity;
@@ -158,7 +158,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		Configure::write('Security.salt', $this->oldSalt);
 		$this->Controller->Session->delete('_Token');
 		unset($this->Controller->Security);
