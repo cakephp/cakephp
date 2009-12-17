@@ -215,14 +215,14 @@ class ModelReadTest extends BaseModelTest {
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
 		$result = $Product->find('all',array(
-			'fields'=>array('Product.type','MIN(Product.price) as price'),
+			'fields'=>array('Product.type', 'MIN(Product.price) as price'),
 			'group'=> 'Product.type',
 			'order' => 'Product.type ASC'
 			));
 		$this->assertEqual($result, $expected);
 
 		$result = $Product->find('all', array(
-			'fields'=>array('Product.type','MIN(Product.price) as price'),
+			'fields'=>array('Product.type', 'MIN(Product.price) as price'),
 			'group'=> array('Product.type'),
 			'order' => 'Product.type ASC'));
 		$this->assertEqual($result, $expected);
@@ -7176,45 +7176,45 @@ class ModelReadTest extends BaseModelTest {
 			$Post = ClassRegistry::init('Post');
 			$Post->virtualFields = array('two' => "1 + 1");
 			$result = $Post->find('first');
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 
 			$Post->Author->virtualFields = array('false' => '1 = 2');
 			$result = $Post->find('first');
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 			$this->assertEqual($result['Author']['false'],false);
 
 			$result = $Post->find('first',array('fields' => array('author_id')));
 			$this->assertFalse(isset($result['Post']['two']));
 			$this->assertFalse(isset($result['Author']['false']));
 
-			$result = $Post->find('first',array('fields' => array('author_id','two')));
-			$this->assertEqual($result['Post']['two'],2);
+			$result = $Post->find('first',array('fields' => array('author_id', 'two')));
+			$this->assertEqual($result['Post']['two'], 2);
 			$this->assertFalse(isset($result['Author']['false']));
 
 			$result = $Post->find('first',array('fields' => array('two')));
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 
 			$Post->id = 1;
 			$result = $Post->field('two');
-			$this->assertEqual($result,2);
+			$this->assertEqual($result, 2);
 
 			$result = $Post->find('first',array(
 				'conditions' => array('two' => 2),
 				'limit' => 1
 			));
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 
 			$result = $Post->find('first',array(
 				'conditions' => array('two <' => 3),
 				'limit' => 1
 			));
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 
 			$result = $Post->find('first',array(
 				'conditions' => array('NOT' => array('two >' => 3)),
 				'limit' => 1
 			));
-			$this->assertEqual($result['Post']['two'],2);
+			$this->assertEqual($result['Post']['two'], 2);
 
 			$dbo =& $Post->getDataSource();
 			$Post->virtualFields = array('other_field' => 'Post.id + 1');
@@ -7222,24 +7222,24 @@ class ModelReadTest extends BaseModelTest {
 				'conditions' => array('other_field' => 3),
 				'limit' => 1
 			));
-			$this->assertEqual($result['Post']['id'],2);
+			$this->assertEqual($result['Post']['id'], 2);
 
 			$Post->virtualFields = array('other_field' => 'Post.id + 1');
 			$result = $Post->find('all',array(
-				'fields' => array($dbo->calculate($Post,'max',array('other_field')))
+				'fields' => array($dbo->calculate($Post, 'max',array('other_field')))
 			));
-			$this->assertEqual($result[0][0]['other_field'],4);
+			$this->assertEqual($result[0][0]['other_field'], 4);
 
 			ClassRegistry::flush();
-			$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'),'Model');
+			$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'), 'Model');
 			$Writing->virtualFields = array('two' => "1 + 1");
 			$result = $Writing->find('first');
-			$this->assertEqual($result['Writing']['two'],2);
+			$this->assertEqual($result['Writing']['two'], 2);
 			
 			$Post->create();
 			$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
 			$result = $Post->field('other_field');
-			$this->assertEqual($result,4);
+			$this->assertEqual($result, 4);
 		}
 }
 ?>

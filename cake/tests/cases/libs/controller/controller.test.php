@@ -1254,15 +1254,15 @@ class ControllerTest extends CakeTestCase {
 		);
 
 		$Controller->paginate = array(
-			'fields' => array('id', 'title','offset_test'),
+			'fields' => array('id', 'title', 'offset_test'),
 			'order' => array('offset_test' => 'DESC')
 		);
 		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(4,3,2));
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(4, 3, 2));
 
 		$Controller->passedArgs = array('sort' => 'offset_test', 'direction' => 'asc');
 		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2,3,4));
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3, 4));
 	}
 }
 ?>

@@ -399,13 +399,13 @@ class DboSource extends DataSource {
 	function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
-				if (strpos($field,'__') === false) {
+				if (strpos($field, '__') === false) {
 					continue;
 				}
-				list($alias,$virtual) = explode('__',$field);
+				list($alias, $virtual) = explode('__', $field);
 
 				if (!ClassRegistry::isKeySet($alias)) {
-					retrun;
+					return;
 				}
 				$model = ClassRegistry::getObject($alias);
 				if ($model->isVirtualField($virtual)) {
@@ -1365,7 +1365,7 @@ class DboSource extends DataSource {
 			'fields' => implode(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
-			'order' => $this->order($query['order'],'ASC',$model),
+			'order' => $this->order($query['order'], 'ASC', $model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
 			'group' => $this->group($query['group'])
@@ -1820,13 +1820,13 @@ class DboSource extends DataSource {
 		$virtual = array();
 		if ($model->getVirtualField()) {
 			$keys =  array_keys($model->getVirtualField());
-			$virtual = ($allFields) ? $keys :  array_intersect($keys,$fields);
+			$virtual = ($allFields) ? $keys :  array_intersect($keys, $fields);
 		}
 		$count = count($fields);
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
-				if (in_array($fields[$i],$virtual)) {
+				if (in_array($fields[$i], $virtual)) {
 					unset($fields[$i]);
 					continue;
 				}
@@ -1884,7 +1884,7 @@ class DboSource extends DataSource {
 			}
 		}
 		if (!empty($virtual)) {
-			$fields = array_merge($fields,$this->_constructVirtualFields($model,$alias,$virtual));
+			$fields = array_merge($fields,$this->_constructVirtualFields($model, $alias, $virtual));
 		}
 		return array_unique($fields);
 	}
@@ -2199,7 +2199,7 @@ class DboSource extends DataSource {
 		$keys = array_filter($keys);
 		$result = array();
 		while (!empty($keys)) {
-			list($key,$dir) = each($keys);
+			list($key, $dir) = each($keys);
 			array_shift($keys);
 
 			if (is_numeric($key)) {
@@ -2212,10 +2212,10 @@ class DboSource extends DataSource {
 			}
 			if (is_array($key)) {
 				//Flatten the array
-				$key = array_reverse($key,true);
+				$key = array_reverse($key, true);
 				foreach ($key as $k => $v) {
 					if (is_numeric($k)) {
-						array_unshift($keys,$v);
+						array_unshift($keys, $v);
 					} else {
 						$keys = array($k => $v) + $keys;
 					}
@@ -2250,7 +2250,7 @@ class DboSource extends DataSource {
 			$result[] = $key;
 		}
 		if (!empty($result)) {
-			return ' ORDER BY ' . implode(', ',$result);
+			return ' ORDER BY ' . implode(', ', $result);
 		}
 		return '';
 	}

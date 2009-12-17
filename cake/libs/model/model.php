@@ -1018,7 +1018,7 @@ class Model extends Overloadable {
 	function hasField($name, $checkVirtual = false) {
 		if (is_array($name)) {
 			foreach ($name as $n) {
-				if ($this->hasField($n,$checkVirtual)) {
+				if ($this->hasField($n, $checkVirtual)) {
 					return $n;
 				}
 			}
@@ -1049,7 +1049,7 @@ class Model extends Overloadable {
  * @access public
  */
 	function isVirtualField($field) {
-		return !empty($this->virtualFields) && is_string($field) && array_key_exists($field,$this->virtualFields);
+		return !empty($this->virtualFields) && is_string($field) && array_key_exists($field, $this->virtualFields);
 	}
 
 /**
@@ -1159,7 +1159,7 @@ class Model extends Overloadable {
 			$recursive = $this->recursive;
 		}
 		$fields = $name;
-		if ($data = $this->find('first',compact('conditions','fields','order','recursive'))) {
+		if ($data = $this->find('first', compact('conditions', 'fields', 'order', 'recursive'))) {
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->alias][$name])) {
 					return $data[$this->alias][$name];
