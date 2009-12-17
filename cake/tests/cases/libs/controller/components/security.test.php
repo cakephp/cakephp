@@ -167,6 +167,31 @@ class SecurityComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that initalize can set properties.
+ *
+ * @return void
+ */
+	function testInitialize() {
+		$settings = array(
+			'requirePost' => array('edit', 'update'),
+			'requireSecure' => array('update_account'),
+			'requireGet' => array('index'),
+			'validatePost' => false,
+			'loginUsers' => array(
+				'mark' => 'password'
+			),
+			'requireLogin' => array('login'),
+		);
+		$this->Controller->Security->initialize($this->Controller, $settings);
+		$this->assertEqual($this->Controller->Security->requirePost, $settings['requirePost']);
+		$this->assertEqual($this->Controller->Security->requireSecure, $settings['requireSecure']);
+		$this->assertEqual($this->Controller->Security->requireGet, $settings['requireGet']);
+		$this->assertEqual($this->Controller->Security->validatePost, $settings['validatePost']);
+		$this->assertEqual($this->Controller->Security->loginUsers, $settings['loginUsers']);
+		$this->assertEqual($this->Controller->Security->requireLogin, $settings['requireLogin']);
+	}
+
+/**
  * testStartup method
  *
  * @access public
