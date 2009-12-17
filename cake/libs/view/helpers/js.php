@@ -177,7 +177,8 @@ class JsHelper extends AppHelper {
 
 /**
  * Writes all Javascript generated so far to a code block or
- * caches them to a file and returns a linked script.
+ * caches them to a file and returns a linked script.  If no scripts have been
+ * buffered this method will return null
  *
  * Options
  *
@@ -189,13 +190,14 @@ class JsHelper extends AppHelper {
  * - `safe` - if an inline block is generated should it be wrapped in <![CDATA[ ... ]]> (default true)
  *
  * @param array $options options for the code block
- * @return string completed javascript tag.
+ * @return mixed Completed javascript tag if there are scripts, if there are no buffered
+ *   scripts null will be returned.
  */
 	function writeBuffer($options = array()) {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
 		$options = array_merge($defaults, $options);
 		$script = implode("\n", $this->getBuffer($options['clear']));
-		
+
 		if (empty($script)) {
 			return null;
 		}
