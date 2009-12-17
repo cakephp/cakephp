@@ -481,7 +481,7 @@ class Inflector extends Object {
 	function variable($string) {
 		$string = Inflector::camelize(Inflector::underscore($string));
 		$replace = strtolower(substr($string, 0, 1));
-		return preg_replace('/\\w/', $replace, $string, 1);
+		return $replace . substr($string, 1);
 	}
 /**
  * Returns a string with all spaces converted to underscores (by default), accented
