@@ -42,6 +42,7 @@ foreach ($fields as $field) {
 	</dl>
 </div>
 <div class="actions">
+	<h3><?php __('Actions'); ?></h3>
 	<ul>
 <?php
 	echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('Edit %s', true), __('{$singularHumanName}', true)), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?> </li>\n";

@@ -69,13 +69,14 @@ foreach (\${$pluralVar} as \${$singularVar}):
 echo "<?php endforeach; ?>\n";
 ?>
 </table>
-</div>
-<div class="paging">
-<?php echo "\t<?php echo \$this->Paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
- | <?php echo "\t<?php echo \$this->Paginator->numbers();?>\n"?>
-<?php echo "\t<?php echo \$this->Paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>\n";?>
+	<div class="paging">
+	<?php echo "\t<?php echo \$this->Paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
+	 | <?php echo "\t<?php echo \$this->Paginator->numbers();?>\n"?>
+	<?php echo "\t<?php echo \$this->Paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>\n";?>
+	</div>
 </div>
 <div class="actions">
+	<h3><?php __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo "<?php echo \$this->Html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action' => 'add')); ?>";?></li>
 <?php

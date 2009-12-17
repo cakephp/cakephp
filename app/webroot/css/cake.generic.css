@@ -45,31 +45,27 @@ a img {
 }
 h1, h2, h3, h4 {
 	font-weight: normal;
+	margin-bottom:0.5em;
 }
 h1 {
 	background:#fff;
 	color: #003d4c;
 	font-size: 100%;
-	margin: 0.1em 0;
 }
 h2 {
 	background:#fff;
 	color: #e32;
 	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
 	font-size: 190%;
-	margin: 0.3em 0;
-	padding-top: 0.8em;
 }
 h3 {
 	color: #993;
 	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
 	font-size: 165%;
-	padding-top: 1.5em;
 }
 h4 {
 	color: #993;
 	font-weight: normal;
-	padding-top: 0.5em;
 }
 ul, li {
 	margin: 0 12px;
@@ -111,6 +107,24 @@ ul, li {
 	padding: 6px 10px;
 	text-align: right;
 }
+
+div.form,
+div.index,
+div.view {
+	float:right;
+	width:81%;
+	border-left:1px solid #666;
+	padding:10px 2%;
+}
+div.actions {
+	float:left;
+	width:9.5%;
+	padding:10px 2%;
+}
+div.actions h3 {
+	padding-top:0;
+}
+
 
 /* Tables */
 table {
@@ -170,6 +184,7 @@ div.paging {
 	background:#fff;
 	color: #ccc;
 	margin-bottom: 2em;
+	clear:both;
 }
 div.paging div.disabled {
 	color: #ddd;
@@ -212,7 +227,7 @@ form {
 }
 fieldset {
 	border: 1px solid #ccc;
-	margin-top: 30px;
+	margin-bottom: 1em;
 	padding: 16px 20px;
 }
 fieldset legend {
