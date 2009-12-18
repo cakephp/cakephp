@@ -80,7 +80,8 @@ ul, li {
 	padding: 10px 20px;
 }
 #header h1 {
-	background: #003d4c url('../img/cake.icon.gif') no-repeat left;
+	line-height:20px;
+	background: #003d4c url('../img/cake.icon.png') no-repeat left;
 	color: #fff;
 	padding: 0px 30px;
 }
@@ -108,6 +109,7 @@ ul, li {
 	text-align: right;
 }
 
+/** containers **/
 div.form,
 div.index,
 div.view {
@@ -118,7 +120,7 @@ div.view {
 }
 div.actions {
 	float:left;
-	width:9.5%;
+	width:11%;
 	padding:10px 2%;
 }
 div.actions h3 {
@@ -129,7 +131,6 @@ div.actions h3 {
 /* Tables */
 table {
 	background: #fff;
-	border:1px solid #ccc;
 	border-right:0;
 	clear: both;
 	color: #333;
@@ -137,29 +138,32 @@ table {
 	width: 100%;
 }
 th {
-	background: #f2f2f2;
-	border:1px solid #bbb;
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
+	border:0;
+	border-bottom:2px solid #555;
 	text-align: center;
+	padding:4px;
 }
 th a {
-	background:#f2f2f2;
 	display: block;
 	padding: 2px 4px;
 	text-decoration: none;
 }
 th a:hover {
-	background: #ccc;
-	color: #333;
+	color: #00cdff;
 	text-decoration: none;
+}
+th a.asc:after {
+	content: ' ⇣';
+}
+th a.desc:after {
+	content: ' ⇡';
 }
 table tr td {
 	background: #fff;
-	border-right: 1px solid #ccc;
-	padding: 4px;
+	padding: 6px;
 	text-align: center;
 	vertical-align: top;
+	border-bottom:1px solid #ddd;
 }
 table tr.altrow td {
 	background: #f4f4f4;
@@ -168,8 +172,9 @@ td.actions {
 	text-align: center;
 	white-space: nowrap;
 }
-td.actions a {
+table td.actions a {
 	margin: 0px 6px;
+	padding:2px 5px;
 }
 .cake-sql-log table {
 	background: #f4f4f4;
@@ -191,7 +196,7 @@ div.paging span.disabled {
 	display: inline;
 }
 div.paging span.current {
-	color: #993;
+	color: #c73e14;
 }
 div.paging span a {
 }
@@ -307,9 +312,7 @@ div.radio label {
 input[type=submit] {
 	display: inline;
 	font-size: 110%;
-	padding: 2px 5px;
 	width: auto;
-	vertical-align: bottom;
 }
 
 /* Notices and Errors */
@@ -360,20 +363,35 @@ div.actions ul {
 	padding: 0;
 }
 div.actions li {
-	display: inline;
+	margin:0 0 0.5em 0;
 	list-style-type: none;
-	line-height: 2em;
-	margin: 0 2em 0 0;
 	white-space: nowrap;
 }
 div.actions ul li a {
-	background:#fff;
-	color: #003d4c;
-	text-decoration: none;
+	font-weight:normal;
+	display:block;
 }
 div.actions ul li a:hover {
-	color: #333;
 	text-decoration: underline;
+}
+
+input[type=submit],
+div.actions ul li a,
+td.actions a {
+	font-weight:normal;
+	padding: 4px 8px;
+	background:#f0f09a;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f1f1d4), to(#e6e49f));
+	text-shadow: #fff 0px 1px 0px;
+	color:#333;
+	border:1px solid #aaac62;
+	-webkit-border-radius:8px;
+	text-decoration:none;
+}
+input[type=submit]:hover,
+div.actions ul li a:hover,
+td.actions a:hover {
+	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7e1), to(#eeeca9));
 }
 
 /* Related */
