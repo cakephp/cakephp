@@ -183,17 +183,15 @@ td.actions a {
 div.paging {
 	background:#fff;
 	color: #ccc;
-	margin-bottom: 2em;
+	margin-top: 1em;
 	clear:both;
 }
-div.paging div.disabled {
+div.paging span.disabled {
 	color: #ddd;
 	display: inline;
 }
-div.paging span {
-}
 div.paging span.current {
-	color: #000;
+	color: #993;
 }
 div.paging span a {
 }
