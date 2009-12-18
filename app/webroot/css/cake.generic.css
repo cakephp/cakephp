@@ -36,8 +36,7 @@ a {
 	font-weight: bold;
 }
 a:hover {
-	background:#fff;
-	color: #003d4c;
+	color: #367889;
 	text-decoration:none;
 }
 a img {
@@ -121,7 +120,7 @@ div.view {
 div.actions {
 	float:left;
 	width:11%;
-	padding:10px 2%;
+	padding:10px 1.5%;
 }
 div.actions h3 {
 	padding-top:0;
@@ -148,10 +147,6 @@ th a {
 	padding: 2px 4px;
 	text-decoration: none;
 }
-th a:hover {
-	color: #00cdff;
-	text-decoration: none;
-}
 th a.asc:after {
 	content: ' ⇣';
 }
@@ -165,8 +160,9 @@ table tr td {
 	vertical-align: top;
 	border-bottom:1px solid #ddd;
 }
+table tr:nth-child(2n) td,
 table tr.altrow td {
-	background: #f4f4f4;
+	background: #fafafa;
 }
 td.actions {
 	text-align: center;
@@ -380,17 +376,21 @@ div.actions ul li a,
 td.actions a {
 	font-weight:normal;
 	padding: 4px 8px;
-	background:#f0f09a;
+	background:#e6e49f;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f1f1d4), to(#e6e49f));
-	text-shadow: #fff 0px 1px 0px;
+	background-image: -moz-linear-gradient(top, #f1f1d4, #e6e49f);
 	color:#333;
 	border:1px solid #aaac62;
 	-webkit-border-radius:8px;
+	-moz-border-radius:8px;
+	border-radius:8px;
 	text-decoration:none;
+	text-shadow: #fff 0px 1px 0px;
 }
 input[type=submit]:hover,
 div.actions ul li a:hover,
 td.actions a:hover {
+	background: #f0f09a;
 	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7e1), to(#eeeca9));
 }
 
