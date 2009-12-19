@@ -391,7 +391,7 @@ class DboSource extends DataSource {
  *
  * @param string $name Name of the field
  * @param string $sql SQL query
- * @return unknown
+ * @return mixed Value of field read.
  */
 	function field($name, $sql) {
 		$data = $this->fetchRow($sql);
@@ -509,7 +509,8 @@ class DboSource extends DataSource {
 /**
  * Outputs the contents of the queries log.
  *
- * @param boolean $sorted Get the queries sorted by time taken, defaults to false
+ * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
+ * @return void
  */
 	function showLog($sorted = false) {
 		$log = $this->getLog($sorted, false);
@@ -2189,14 +2190,12 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Disconnects database, kills the connection and says the connection is closed,
- * and if DEBUG is turned on, the log for this object is shown.
+ * Disconnects database, kills the connection and says the connection is closed.
  *
+ * @return void
+ * @access public
  */
 	function close() {
-		if (Configure::read() > 1) {
-			$this->showLog();
-		}
 		$this->disconnect();
 	}
 
