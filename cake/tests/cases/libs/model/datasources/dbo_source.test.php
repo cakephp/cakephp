@@ -4206,22 +4206,22 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsFetch() {
-		$this->loadFixtures('Article','Comment');
+		$this->loadFixtures('Article', 'Comment');
 
 		$Article =& ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
 		);
 
 		$conditions = array('comment_count >' => 2);
-		$query = 'SELECT ' . join(',',$this->db->fields($Article,null,array('id','comment_count'))) .
-				' FROM ' .  $this->db->fullTableName($Article) . ' Article ' . $this->db->conditions($conditions,true,true,$Article);
+		$query = 'SELECT ' . join(',',$this->db->fields($Article, null, array('id', 'comment_count'))) .
+				' FROM ' .  $this->db->fullTableName($Article) . ' Article ' . $this->db->conditions($conditions, true, true, $Article);
 		$result = $this->db->fetchAll($query);
 		$expected = array(array(
 			'Article' => array('id' => 1, 'comment_count' => 4)
 		));
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 	}
 }
 ?>
