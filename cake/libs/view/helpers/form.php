@@ -1507,7 +1507,7 @@ class FormHelper extends AppHelper {
  */
 	function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$selected = $this->__dateTimeSelected('minute', $fieldName, $selected, $attributes);
+		$selected = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('i', strtotime($selected));
