@@ -3609,8 +3609,8 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->fieldParameters['param'] = array(
 			'value' => 'COLLATE',
 			'quote' => false,
-			'join' => ' ', 
-			'column' => 'Collate', 
+			'join' => ' ',
+			'column' => 'Collate',
 			'position' => 'beforeDefault',
 			'options' => array('GOOD', 'OK')
 		);
@@ -4080,6 +4080,148 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNoPattern('/Aff:/s', $contents);
 		$this->assertNoPattern('/Num:/s', $contents);
 		$this->assertNoPattern('/Took:/s', $contents);
+	}
+
+/**
+ * test fields generating usable virtual fields to use in query
+ *
+ * @return void
+ */
+	function testVirtualFields() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+		);
+		$result = $this->db->fields($Article);
+		$expected = array(
+			'`Article`.`id`',
+			'`Article`.`user_id`',
+			'`Article`.`title`',
+			'`Article`.`body`',
+			'`Article`.`published`',
+			'`Article`.`created`',
+			'`Article`.`updated`',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected,$result);
+
+		$result = $this->db->fields($Article,null,array('this_moment','title'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected,$result);
+	}
+
+/**
+ * test conditions to generate query conditions for virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInConditions() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+		);
+		$conditions = array('two' => 2);
+		$result = $this->db->conditions($conditions,true,false,$Article);
+		$expected = '(1 + 1) = 2';
+		$this->assertEqual($expected,$result);
+
+		$conditions = array('this_moment BETWEEN ? AND ?' => array(1,2));
+		$expected = 'NOW() BETWEEN 1 AND 2';
+		$result = $this->db->conditions($conditions,true,false,$Article);
+		$this->assertEqual($expected,$result);
+
+		$conditions = array('comment_count >' => 5);
+		$expected = '(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) > 5';
+		$result = $this->db->conditions($conditions,true,false,$Article);
+		$this->assertEqual($expected,$result);
+
+		$conditions = array('NOT' => array('two' => 2));
+		$result = $this->db->conditions($conditions,true,false,$Article);
+		$expected = 'NOT ((1 + 1) = 2)';
+		$this->assertEqual($expected,$result);
+	}
+
+/**
+ * test order to generate query order clause for virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInOrder() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+		);
+		$order = array('two','this_moment');
+		$result = $this->db->order($order,'ASC',$Article);
+		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
+		$this->assertEqual($expected,$result);
+	}
+
+/**
+ * test calculate to generate claculate statements on virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInCalculate() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+		);
+
+		$result = $this->db->calculate($Article,'count',array('this_moment'));
+		$expected = 'COUNT(NOW()) AS `count`';
+		$this->assertEqual($expected,$result);
+
+		$result = $this->db->calculate($Article,'max',array('comment_count'));
+		$expected = 'MAX(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS `comment_count`';
+		$this->assertEqual($expected,$result);
+	}
+
+/**
+ * test a full example of using virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsFetch() {
+		$this->loadFixtures('Article','Comment');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+		);
+
+		$conditions = array('comment_count >' => 2);
+		$query = 'SELECT ' . join(',',$this->db->fields($Article,null,array('id','comment_count'))) .
+				' FROM ' .  $this->db->fullTableName($Article) . ' Article ' . $this->db->conditions($conditions,true,true,$Article);
+		$result = $this->db->fetchAll($query);
+		$expected = array(array(
+			'Article' => array('id' => 1, 'comment_count' => 4)
+		));
+		$this->assertEqual($expected,$result);
 	}
 }
 ?>
