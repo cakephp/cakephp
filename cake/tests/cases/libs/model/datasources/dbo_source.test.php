@@ -4095,7 +4095,7 @@ class DboSourceTest extends CakeTestCase {
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
 			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
 		);
 		$result = $this->db->fields($Article);
 		$expected = array(
@@ -4112,7 +4112,7 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($expected,$result);
 
-		$result = $this->db->fields($Article,null,array('this_moment','title'));
+		$result = $this->db->fields($Article, null, array('this_moment','title'));
 		$expected = array(
 			'`Article`.`title`',
 			'(NOW()) AS  `Article__this_moment`',
@@ -4133,27 +4133,27 @@ class DboSourceTest extends CakeTestCase {
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
 			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
+				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
 		);
 		$conditions = array('two' => 2);
 		$result = $this->db->conditions($conditions,true,false,$Article);
 		$expected = '(1 + 1) = 2';
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('this_moment BETWEEN ? AND ?' => array(1,2));
 		$expected = 'NOW() BETWEEN 1 AND 2';
-		$result = $this->db->conditions($conditions,true,false,$Article);
-		$this->assertEqual($expected,$result);
+		$result = $this->db->conditions($conditions, true, false, $Article);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('comment_count >' => 5);
 		$expected = '(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) > 5';
-		$result = $this->db->conditions($conditions,true,false,$Article);
-		$this->assertEqual($expected,$result);
+		$result = $this->db->conditions($conditions, true, false, $Article);
+		$this->assertEqual($expected, $result);
 
 		$conditions = array('NOT' => array('two' => 2));
-		$result = $this->db->conditions($conditions,true,false,$Article);
+		$result = $this->db->conditions($conditions, true, false, $Article);
 		$expected = 'NOT ((1 + 1) = 2)';
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4169,10 +4169,10 @@ class DboSourceTest extends CakeTestCase {
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
 		);
-		$order = array('two','this_moment');
-		$result = $this->db->order($order,'ASC',$Article);
+		$order = array('two', 'this_moment');
+		$result = $this->db->order($order, 'ASC', $Article);
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -4191,13 +4191,13 @@ class DboSourceTest extends CakeTestCase {
 				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
 		);
 
-		$result = $this->db->calculate($Article,'count',array('this_moment'));
+		$result = $this->db->calculate($Article, 'count', array('this_moment'));
 		$expected = 'COUNT(NOW()) AS `count`';
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 
-		$result = $this->db->calculate($Article,'max',array('comment_count'));
+		$result = $this->db->calculate($Article, 'max', array('comment_count'));
 		$expected = 'MAX(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS `comment_count`';
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
