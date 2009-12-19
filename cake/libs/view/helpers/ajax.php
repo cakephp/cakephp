@@ -202,19 +202,18 @@ class AjaxHelper extends AppHelper {
  *						initiated and before <i>loading</i>.
  *
  * @param string $title Title of link
- * @param string $href Href string "/products/view/12"
- * @param array $options		Options for JavaScript function
- * @param string $confirm		Confirmation message. Calls up a JavaScript confirm() message.
- * @param boolean $escapeTitle  Escaping the title string to HTML entities
+ * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param array $options Options for JavaScript function
+ * @param string $confirm Confirmation message. Calls up a JavaScript confirm() message.
  *
- * @return string				HTML code for link to remote action
+ * @return string HTML code for link to remote action
  */
-	function link($title, $href = null, $options = array(), $confirm = null, $escapeTitle = true) {
-		if (!isset($href)) {
-			$href = $title;
+	function link($title, $url = null, $options = array(), $confirm = null) {
+		if (!isset($url)) {
+			$url = $title;
 		}
 		if (!isset($options['url'])) {
-			$options['url'] = $href;
+			$options['url'] = $url;
 		}
 
 		if (isset($confirm)) {
@@ -223,14 +222,15 @@ class AjaxHelper extends AppHelper {
 		}
 		$htmlOptions = $this->__getHtmlOptions($options, array('url'));
 
+		unset($options['escape']);
 		if (empty($options['fallback']) || !isset($options['fallback'])) {
-			$options['fallback'] = $href;
+			$options['fallback'] = $url;
 		}
 		$htmlDefaults = array('id' => 'link' . intval(mt_rand()), 'onclick' => '');
 		$htmlOptions = array_merge($htmlDefaults, $htmlOptions);
 
 		$htmlOptions['onclick'] .= ' event.returnValue = false; return false;';
-		$return = $this->Html->link($title, $href, $htmlOptions, null, $escapeTitle);
+		$return = $this->Html->link($title, $url, $htmlOptions);
 		$callback = $this->remoteFunction($options);
 		$script = $this->Javascript->event("'{$htmlOptions['id']}'", "click", $callback);
 
