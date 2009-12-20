@@ -3948,7 +3948,8 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->logQuery('Query 1');
 		$this->testDb->logQuery('Query 2');
 
-		$result = Set::extract($this->testDb->_queriesLog, '/query');
+		$log = $this->testDb->getLog(false, false);
+		$result = Set::extract($log['log'], '/query');
 		$expected = array('Query 1', 'Query 2');
 		$this->assertEqual($result, $expected);
 
@@ -3958,10 +3959,12 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertFalse($result);
 		$this->testDb->error = $oldError;
 
-		$result = Set::combine($this->testDb->_queriesLog, '/query', '/error');
+		$log = $this->testDb->getLog(false, false);
+		$result = Set::combine($log['log'], '/query', '/error');
 		$expected = array('Query 1' => false, 'Query 2' => false, 'Error 1' => true);
 		$this->assertEqual($result, $expected);
 
+		Configure::write('debug', 2);
 		ob_start();
 		$this->testDb->showLog();
 		$contents = ob_get_clean();
