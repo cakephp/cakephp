@@ -427,7 +427,6 @@ class Router {
 		$out = array(
 			'pass' => array(),
 			'named' => array(),
-			'controller' => null,
 		);
 		$r = $ext = null;
 

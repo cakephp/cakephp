@@ -510,6 +510,10 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testElementCache() {
+		$writable = is_writable(CACHE . 'views' . DS);
+		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test elementCache. %s')) {
+			return;
+		}
 		$View = new TestView($this->PostsController);
 		$element = 'test_element';
 		$expected = 'this is the test element';
@@ -775,6 +779,10 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testRenderCache() {
+		$writable = is_writable(CACHE . 'views' . DS);
+		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test renderCache. %s')) {
+			return;
+		}
 		$view = 'test_view';
 		$View = new View($this->PostsController);
 		$path = CACHE . 'views' . DS . 'view_cache_'.$view;

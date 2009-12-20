@@ -433,7 +433,6 @@ class View extends Object {
  * - `title_for_layout` - contains page title
  * - `content_for_layout` - contains rendered view file
  * - `scripts_for_layout` - contains scripts added to header
- * - `cakeDebug` - if debug is on, cake debug information is added.
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
@@ -444,18 +443,9 @@ class View extends Object {
 			return $this->output;
 		}
 
-		$debug = '';
-
-		if (isset($this->viewVars['cakeDebug']) && Configure::read() > 2) {
-			$params = array('controller' => $this->viewVars['cakeDebug']);
-			$debug = View::element('dump', $params, false);
-			unset($this->viewVars['cakeDebug']);
-		}
-
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
 			'scripts_for_layout' => implode("\n\t", $this->__scripts),
-			'cakeDebug' => $debug
 		));
 
 		if (!isset($dataForLayout['title_for_layout'])) {

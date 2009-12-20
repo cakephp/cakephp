@@ -707,6 +707,32 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * test paginate() and virtualField interactions
+ *
+ * @return void
+ */
+	function testPaginateOrderVirtualField() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->ControllerPost->virtualFields = array(
+			'offset_test' => 'ControllerPost.id + 1'
+		);
+
+		$Controller->paginate = array(
+			'fields' => array('id', 'title', 'offset_test'),
+			'order' => array('offset_test' => 'DESC')
+		);
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(4, 3, 2));
+
+		$Controller->passedArgs = array('sort' => 'offset_test', 'direction' => 'asc');
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3, 4));
+	}
+
+/**
  * testFlash method
  *
  * @access public

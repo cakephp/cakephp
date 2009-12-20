@@ -38,9 +38,9 @@ if (!class_exists('ExtractTask')) {
 }
 
 Mock::generatePartial(
-				'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
-				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-				);
+	'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
+	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+);
 
 /**
  * ExtractTaskTest class
@@ -130,11 +130,6 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-		$this->assertPattern($pattern, $result);
-
-		$pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
-		$this->assertPattern($pattern, $result);
-		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertPattern($pattern, $result);
 
 		// extract.ctp - reading the domain.pot

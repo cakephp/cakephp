@@ -3978,6 +3978,19 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertPattern('/<option[^<>]+value="03"[^<>]+selected="selected"[^>]*>3<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="13"[^<>]+selected="selected"[^>]*>13<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="35"[^<>]+selected="selected"[^>]*>35<\/option>/', $result);
+
+		$this->assertNoErrors();
+		$this->Form->data['Contact'] = array(
+			'date' => array(
+				'day' => '',
+				'month' => '',
+				'year' => '',
+				'hour' => '',
+				'min' => '',
+				'meridian' => ''
+			)
+		);
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array('empty' => false));
 	}
 
 /**
