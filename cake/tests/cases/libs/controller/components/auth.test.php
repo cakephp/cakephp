@@ -1513,7 +1513,7 @@ class AuthTest extends CakeTestCase {
 				'fields' => array('username' => 'email', 'password' => 'password'),
 				'loginAction' => array('controller' => 'people', 'action' => 'login'),
 				'userModel' => 'AuthUserCustomField',
-				'sessionKey' => 'AltAuth'
+				'sessionKey' => 'AltAuth.AuthUserCustomField'
 			)
 		);
 		$this->Controller->Component->init($this->Controller);
@@ -1540,7 +1540,7 @@ class AuthTest extends CakeTestCase {
 
 		$user = $this->Controller->Auth->user();
 		$this->assertTrue(!!$user);
-		
+
 		$expected = array(
 			'fields' => array('username' => 'email', 'password' => 'password'),
 			'loginAction' => array('controller' => 'people', 'action' => 'login'),
