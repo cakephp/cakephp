@@ -729,10 +729,8 @@ class SecurityComponent extends Object {
 		if (is_callable(array($controller, $method))) {
 			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 		} else {
-			// Debug::warning('Callback method ' . $method . ' in controller ' . get_class($controller)
 			return null;
 		}
 	}
 }
-
 ?>
