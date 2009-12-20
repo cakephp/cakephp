@@ -410,7 +410,7 @@ class RequestHandlerComponent extends Object {
  * @return string Server address
  * @access public
  */
-	function getReferrer() {
+	function getReferer() {
 		if (env('HTTP_HOST') != null) {
 			$sessHost = env('HTTP_HOST');
 		}
@@ -419,6 +419,14 @@ class RequestHandlerComponent extends Object {
 			$sessHost = env('HTTP_X_FORWARDED_HOST');
 		}
 		return trim(preg_replace('/(?:\:.*)/', '', $sessHost));
+	}
+
+/**
+ * @deprecated use getReferer()
+ */
+	function getReferrer() {
+		trigger_error('Deprecated method, use RequestHandlerComponent::getReferer instead', E_USER_WARNING);
+		return $this->getReferer();
 	}
 
 /**

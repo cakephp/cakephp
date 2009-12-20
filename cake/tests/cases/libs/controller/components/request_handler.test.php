@@ -530,10 +530,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function testClientProperties() {
 		$_SERVER['HTTP_HOST'] = 'localhost:80';
-		$this->assertEqual($this->RequestHandler->getReferrer(), 'localhost');
+		$this->assertEqual($this->RequestHandler->getReferer(), 'localhost');
 		$_SERVER['HTTP_HOST'] = null;
 		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
-		$this->assertEqual($this->RequestHandler->getReferrer(), 'cakephp.org');
+		$this->assertEqual($this->RequestHandler->getReferer(), 'cakephp.org');
 
 		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
