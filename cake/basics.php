@@ -81,7 +81,7 @@ if (!function_exists('clone')) {
  * `uses('flay', 'time');`
  *
  * @param string $name Filename without the .php part
- * @deprecated
+ * @deprecated Will be removed in 2.0
  */
 	function uses() {
 		$args = func_get_args();
@@ -169,6 +169,7 @@ if (!function_exists('array_combine')) {
  * @param array $a1 Array to use for keys
  * @param array $a2 Array to use for values
  * @return mixed Outputs either combined array or false.
+ * @deprecated Will be removed in 2.0
  */
 	function array_combine($a1, $a2) {
 		$a1 = array_values($a1);
@@ -247,6 +248,7 @@ if (!function_exists('array_combine')) {
  *
  * @return array Array of given parameters
  * @link http://book.cakephp.org/view/694/a
+ * @deprecated Will be removed in 2.0
  */
 	function a() {
 		$args = func_get_args();
@@ -266,6 +268,7 @@ if (!function_exists('array_combine')) {
  *
  * @return array Associative array
  * @link http://book.cakephp.org/view/695/aa
+ * @deprecated Will be removed in 2.0
  */
 	function aa() {
 		$args = func_get_args();
@@ -286,6 +289,7 @@ if (!function_exists('array_combine')) {
  *
  * @param string $text String to echo
  * @link http://book.cakephp.org/view/700/e
+ * @deprecated Will be removed in 2.0
  */
 	function e($text) {
 		echo $text;
@@ -297,6 +301,7 @@ if (!function_exists('array_combine')) {
  * @param string $str String to lowercase
  * @return string Lowercased string
  * @link http://book.cakephp.org/view/705/low
+ * @deprecated Will be removed in 2.0
  */
 	function low($str) {
 		return strtolower($str);
@@ -308,6 +313,7 @@ if (!function_exists('array_combine')) {
  * @param string $str String to uppercase
  * @return string Uppercased string
  * @link http://book.cakephp.org/view/710/up
+ * @deprecated Will be removed in 2.0
  */
 	function up($str) {
 		return strtoupper($str);
@@ -321,6 +327,7 @@ if (!function_exists('array_combine')) {
  * @param string $subject String to search
  * @return string Replaced string
  * @link http://book.cakephp.org/view/708/r
+ * @deprecated Will be removed in 2.0
  */
 	function r($search, $replace, $subject) {
 		return str_replace($search, $replace, $subject);
@@ -348,6 +355,7 @@ if (!function_exists('array_combine')) {
  *
  * @param mixed $p Parameter as string or array
  * @return string
+ * @deprecated Will be removed in 2.0
  */
 	function params($p) {
 		if (!is_array($p) || count($p) == 0) {
@@ -466,6 +474,7 @@ if (!function_exists('file_put_contents')) {
  * @param string $fileName File name.
  * @param mixed  $data String or array.
  * @return boolean Success
+ * @deprecated Will be removed in 2.0
  */
 	function file_put_contents($fileName, $data) {
 		if (is_array($data)) {
@@ -836,6 +845,7 @@ if (!function_exists('file_put_contents')) {
  * @param array First array
  * @param array Second array
  * @return array Array with different keys
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('array_diff_key')) {
 		function array_diff_key() {
@@ -871,6 +881,7 @@ if (!function_exists('file_put_contents')) {
  * @param array First array
  * @param array Second array
  * @return array Array with interesected keys
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('array_intersect_key')) {
 		function array_intersect_key($arr1, $arr2) {
@@ -942,6 +953,7 @@ if (!function_exists('file_put_contents')) {
  * @param string $baseKey Base key
  * @return string URL encoded query string
  * @see http://php.net/http_build_query
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('http_build_query')) {
 		function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
@@ -985,6 +997,7 @@ if (!function_exists('file_put_contents')) {
  * @param mixed $val2 Value to return if condition doesn't match
  * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
  * @link http://book.cakephp.org/view/704/ife
+ * @deprecated Will be removed in 2.0
  */
 	function ife($condition, $val1 = null, $val2 = null) {
 		if (!empty($condition)) {
