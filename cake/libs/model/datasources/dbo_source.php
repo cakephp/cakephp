@@ -363,6 +363,9 @@ class DboSource extends DataSource {
 		if ($this->hasResult()) {
 			$this->resultSet($this->_result);
 			$resultRow = $this->fetchResult();
+			if (!empty($resultRow)) {
+				$this->fetchVirtualField($resultRow);
+			}
 			return $resultRow;
 		} else {
 			return null;
@@ -393,6 +396,7 @@ class DboSource extends DataSource {
 				$out[] = $first;
 			}
 			while ($this->hasResult() && $item = $this->fetchResult()) {
+				$this->fetchVirtualField($item);
 				$out[] = $item;
 			}
 
@@ -411,6 +415,35 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Modifies $result array to place virtual fields in model entry where they belongs to
+ *
+ * @param array $resut REference to the fetched row
+ * @return void
+ */
+	function fetchVirtualField(&$result) {
+		if (isset($result[0]) && is_array($result[0])) {
+			foreach ($result[0] as $field => $value) {
+				if (strpos($field, '__') === false) {
+					continue;
+				}
+				list($alias, $virtual) = explode('__', $field);
+
+				if (!ClassRegistry::isKeySet($alias)) {
+					return;
+				}
+				$model = ClassRegistry::getObject($alias);
+				if ($model->isVirtualField($virtual)) {
+					$result[$alias][$virtual] = $value;
+					unset($result[0][$field]);
+				}
+			}
+			if (empty($result[0])) {
+				unset($result[0]);
+			}
+		}
+	}
+
+/**
  * Returns a single field of the first of query results for a given SQL query, or false if empty.
  *
  * @param string $name Name of the field
@@ -420,7 +453,6 @@ class DboSource extends DataSource {
  */
 	function field($name, $sql) {
 		$data = $this->fetchRow($sql);
-
 		if (!isset($data[$name]) || empty($data[$name])) {
 			return false;
 		} else {
@@ -1363,7 +1395,7 @@ class DboSource extends DataSource {
  * @access public
  * @see DboSource::renderStatement()
  */
-	function buildStatement($query, $model) {
+	function buildStatement($query, &$model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1378,7 +1410,7 @@ class DboSource extends DataSource {
 			'fields' => implode(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
-			'order' => $this->order($query['order']),
+			'order' => $this->order($query['order'], 'ASC', $model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
 			'group' => $this->group($query['group'])
@@ -1657,13 +1689,23 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				return 'COUNT(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+				if (is_object($model) && $model->isVirtualField($params[0])){
+					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
+				} else {
+					$arg = $this->name($params[0]);
+				}
+				return 'COUNT(' . $arg . ') AS ' . $this->name($params[1]);
 			case 'max':
 			case 'min':
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				return strtoupper($func) . '(' . $this->name($params[0]) . ') AS ' . $this->name($params[1]);
+				if (is_object($model) && $model->isVirtualField($params[0])) {
+					$arg = $this->__quoteFields($model->getVirtualField($params[0]));
+				} else {
+					$arg = $this->name($params[0]);
+				}
+				return strtoupper($func) . '(' . $arg . ') AS ' . $this->name($params[1]);
 			break;
 		}
 	}
@@ -1791,6 +1833,24 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Converts model virtual fields into sql expressions to be fetched later
+ *
+ * @param Model $model
+ * @param string $alias Alias tablename
+ * @param mixed $fields virtual fields to be used on query
+ * @return array
+ */
+	function _constructVirtualFields(&$model,$alias,$fields) {
+		$virtual = array();
+		foreach ($fields as $field) {
+			$virtualField = $this->name("{$alias}__{$field}");
+			$expression = $this->__quoteFields($model->getVirtualField($field));
+			$virtual[] = '(' .$expression . ") {$this->alias} {$virtualField}";
+		}
+		return $virtual;
+	}
+
+/**
  * Generates the fields list of an SQL query.
  *
  * @param Model $model
@@ -1804,7 +1864,8 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
-		if (empty($fields)) {
+		$allFields = empty($fields);
+		if ($allFields) {
 			$fields = array_keys($model->schema());
 		} elseif (!is_array($fields)) {
 			$fields = String::tokenize($fields);
@@ -1814,10 +1875,19 @@ class DboSource extends DataSource {
 		if (!$quote) {
 			return $fields;
 		}
+		$virtual = array();
+		if ($model->getVirtualField()) {
+			$keys =  array_keys($model->getVirtualField());
+			$virtual = ($allFields) ? $keys :  array_intersect($keys, $fields);
+		}
 		$count = count($fields);
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
+				if (in_array($fields[$i], $virtual)) {
+					unset($fields[$i]);
+					continue;
+				}
 				if (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
 					continue;
 				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
@@ -1870,6 +1940,9 @@ class DboSource extends DataSource {
 					}
 				}
 			}
+		}
+		if (!empty($virtual)) {
+			$fields = array_merge($fields,$this->_constructVirtualFields($model, $alias, $virtual));
 		}
 		return array_unique($fields);
 	}
@@ -2053,6 +2126,11 @@ class DboSource extends DataSource {
 			}
 		}
 
+		$virtual = false;
+		if (is_object($model) && $model->isVirtualField($key)) {
+			$key = $this->__quoteFields($model->getVirtualField($key));
+			$virtual = true;
+		}
 
 		$type = (is_object($model) ? $model->getColumnType($key) : null);
 
@@ -2067,7 +2145,7 @@ class DboSource extends DataSource {
 
 		$value = $this->value($value, $type);
 
-		if ($key !== '?') {
+		if (!$virtual && $key !== '?') {
 			$isKey = (strpos($key, '(') !== false || strpos($key, ')') !== false);
 			$key = $isKey ? $this->__quoteFields($key) : $this->name($key);
 		}
@@ -2105,7 +2183,9 @@ class DboSource extends DataSource {
 				break;
 			}
 		}
-
+		if ($virtual) {
+			return "({$key}) {$operator} {$value}";
+		}
 		return "{$key} {$operator} {$value}";
 	}
 
@@ -2172,69 +2252,71 @@ class DboSource extends DataSource {
  *
  * @param string $key Field reference, as a key (i.e. Post.title)
  * @param string $direction Direction (ASC or DESC)
+ * @param object $model model reference (used to look for virtual field)
  * @return string ORDER BY clause
  * @access public
  */
-	function order($keys, $direction = 'ASC') {
-		if (is_string($keys) && strpos($keys, ',') && !preg_match('/\(.+\,.+\)/', $keys)) {
-			$keys = array_map('trim', explode(',', $keys));
+	function order($keys, $direction = 'ASC', &$model = null) {
+		if (!is_array($keys)) {
+			$keys = array($keys);
 		}
+		$keys = array_filter($keys);
+		$result = array();
+		while (!empty($keys)) {
+			list($key, $dir) = each($keys);
+			array_shift($keys);
 
-		if (is_array($keys)) {
-			$keys = array_filter($keys);
-		}
+			if (is_numeric($key)) {
+				$key = $dir;
+				$dir = $direction;
+			}
 
-		if (empty($keys) || (is_array($keys) && isset($keys[0]) && empty($keys[0]))) {
-			return '';
-		}
-
-		if (is_array($keys)) {
-			$keys = (Set::countDim($keys) > 1) ? array_map(array(&$this, 'order'), $keys) : $keys;
-
-			foreach ($keys as $key => $value) {
-				if (is_numeric($key)) {
-					$key = $value = ltrim(str_replace('ORDER BY ', '', $this->order($value)));
-					$value = (!preg_match('/\\x20ASC|\\x20DESC/i', $key) ? ' ' . $direction : '');
-				} else {
-					$value = ' ' . $value;
-				}
-
-				if (!preg_match('/^.+\\(.*\\)/', $key) && !strpos($key, ',')) {
-					if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $dir)) {
-						$dir = $dir[0];
-						$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
+			if (is_string($key) && strpos($key, ',') && !preg_match('/\(.+\,.+\)/', $key)) {
+				$key = array_map('trim', explode(',', $key));
+			}
+			if (is_array($key)) {
+				//Flatten the array
+				$key = array_reverse($key, true);
+				foreach ($key as $k => $v) {
+					if (is_numeric($k)) {
+						array_unshift($keys, $v);
 					} else {
-						$dir = '';
+						$keys = array($k => $v) + $keys;
 					}
-					$key = trim($key);
-					if (!preg_match('/\s/', $key)) {
-						$key = $this->name($key);
-					}
-					$key .= ' ' . trim($dir);
 				}
-				$order[] = $this->order($key . $value);
+				continue;
 			}
-			return ' ORDER BY ' . trim(str_replace('ORDER BY', '', implode(',', $order)));
-		}
-		$keys = preg_replace('/ORDER\\x20BY/i', '', $keys);
 
-		if (strpos($keys, '.')) {
-			preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $keys, $result, PREG_PATTERN_ORDER);
-			$pregCount = count($result[0]);
+			if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $_dir)) {
+				$dir = $_dir[0];
+				$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
+			}
 
-			for ($i = 0; $i < $pregCount; $i++) {
-				if (!is_numeric($result[0][$i])) {
-					$keys = preg_replace('/' . $result[0][$i] . '/', $this->name($result[0][$i]), $keys);
+			if (strpos($key, '.')) {
+				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $key, $matches, PREG_PATTERN_ORDER);
+				$pregCount = count($matches[0]);
+				for ($i = 0; $i < $pregCount; $i++) {
+					if (!is_numeric($matches[0][$i])) {
+						$key = preg_replace('/' . $matches[0][$i] . '/', $this->name($matches[0][$i]), $key);
+					}
 				}
 			}
-			$result = ' ORDER BY ' . $keys;
-			return $result . (!preg_match('/\\x20ASC|\\x20DESC/i', $keys) ? ' ' . $direction : '');
 
-		} elseif (preg_match('/(\\x20ASC|\\x20DESC)/i', $keys, $match)) {
-			$direction = $match[1];
-			return ' ORDER BY ' . preg_replace('/' . $match[1] . '/', '', $keys) . $direction;
+			$key = trim($key);
+			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
+				if (is_object($model) && $model->isVirtualField($key)) {
+					$key =  '('.$this->__quoteFields($model->getVirtualField($key)).')';
+				} else {
+					$key = $this->name($key);
+				}
+			}
+			$key .= ' ' . trim($dir);
+			$result[] = $key;
 		}
-		return ' ORDER BY ' . $keys . ' ' . $direction;
+		if (!empty($result)) {
+			return ' ORDER BY ' . implode(', ', $result);
+		}
+		return '';
 	}
 
 /**
