@@ -299,6 +299,20 @@ class Model extends Overloadable {
 	var $order = null;
 
 /**
+ * Array of virtual fields this model has.  Virtual fields are aliased
+ * SQL expressions. Fields added to this property will be read as other fields in a model
+ * but will not be saveable.
+ *
+ * `var $virtualFields = array('two' => '1 + 1');` 
+ *
+ * Is a simplistic example of how to set virtualFields
+ *
+ * @var array
+ * @access public
+ */
+	var $virtualFields = array();
+
+/**
  * Whether or not the model record exists, set by Model::exists().
  *
  * @var bool
@@ -1057,8 +1071,8 @@ class Model extends Overloadable {
  *
  * @param mixed $name Name of field to look for
  * @return mixed If $field is string expression bound to virtual field $field
- *					  If $field is null, returns an array of all model virtual fields
- *               or false if none $field exist.
+ *    If $field is null, returns an array of all model virtual fields
+ *    or false if none $field exist.
  * @access public
  */
 	function getVirtualField($field = null) {
