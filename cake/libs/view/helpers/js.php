@@ -199,11 +199,13 @@ class JsHelper extends AppHelper {
 		if ($options['onDomReady']) {
 			$script = $this->{$this->__engineName}->domReady($script);
 		}
+		$opts = $options;
+		unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
+
 		if (!$options['cache'] && $options['inline']) {
-			$opts = $options;
-			unset($opts['onDomReady'], $opts['cache'], $opts['clear']);
 			return $this->Html->scriptBlock($script, $opts);
 		}
+
 		if ($options['cache'] && $options['inline']) {
 			$filename = md5($script);
 			if (!file_exists(JS . $filename . '.js')) {
@@ -211,8 +213,7 @@ class JsHelper extends AppHelper {
 			}
 			return $this->Html->script($filename);
 		}
-		$view =& ClassRegistry::getObject('view');
-		$view->addScript($script);
+		$this->Html->scriptBlock($script, $opts);
 		return null;
 	}
 

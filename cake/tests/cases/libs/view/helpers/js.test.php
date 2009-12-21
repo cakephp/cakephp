@@ -231,6 +231,28 @@ class JsHelperTestCase extends CakeTestCase {
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/one\s=\s1;\ntwo\=\2;/')));
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
+	function getTests() {
+		return array('start', 'startCase', 'testWriteBufferNotInline', 'endCase', 'end');
+	}
+
+/**
+ * test that writing the buffer with inline = false includes a script tag.
+ *
+ * @return void
+ */
+	function testWriteBufferNotInline() {
+		$this->Js->set('foo', 1);
+
+		$view =& new JsHelperMockView();
+		ClassRegistry::removeObject('view');
+		ClassRegistry::addObject('view', $view);
+		$view->expectCallCount('addScript', 1);
+
+		$pattern = new PatternExpectation('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#');
+		$view->expectAt(0, 'addScript', array($pattern));
+
+		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'safe' => false));
+	}
 
 /**
  * test that writeScripts makes files, and puts the events into them.
