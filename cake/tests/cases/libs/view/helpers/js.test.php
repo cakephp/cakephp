@@ -231,9 +231,6 @@ class JsHelperTestCase extends CakeTestCase {
 		$view->expectAt(0, 'addScript', array(new PatternExpectation('/one\s=\s1;\ntwo\=\2;/')));
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
 	}
-	function getTests() {
-		return array('start', 'startCase', 'testWriteBufferNotInline', 'endCase', 'end');
-	}
 
 /**
  * test that writing the buffer with inline = false includes a script tag.
@@ -490,8 +487,24 @@ CODE;
 		$expected = 'Application.variables = {"loggedIn":true,"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
 	}
-}
 
+/**
+ * test that vars set with Js->set() go to the top of the buffered scripts list.
+ *
+ * @return void
+ */
+	function testSetVarsAtTopOfBufferedScripts() {
+		$this->Js->set(array('height' => 'tall', 'color' => 'purple'));
+		$this->Js->alert('hey you!', array('buffer' => true));
+		$this->Js->confirm('Are you sure?', array('buffer' => true));
+		$result = $this->Js->getBuffer(false);
+		
+		$expected = 'window.app = {"height":"tall","color":"purple"};';
+		$this->assertEqual($result[0], $expected);
+		$this->assertEqual($result[1], 'alert("hey you!");');
+		$this->assertEqual($result[2], 'confirm("Are you sure?");');
+	}
+}
 
 /**
  * JsBaseEngine Class Test case
