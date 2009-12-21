@@ -710,7 +710,6 @@ class HtmlHelper extends AppHelper {
  * @param string $text String content that will appear inside the div element.
  *   If null, only a start tag will be printed
  * @param array $options Additional HTML attributes of the DIV tag, see above.
- * @param boolean $escape If true, $text will be HTML-escaped (Deprecated, use $options['escape'])
  * @return string The formatted tag element
  * @access public
  */
