@@ -177,10 +177,12 @@ class NumberHelper extends AppHelper {
 			}
 			$options['after'] = null;
 		} elseif ($number < 1 && $number > -1 ) {
-			$multiply = intval('1' . str_pad('', $options['places'], '0'));
-			$number = $number * $multiply;
-			$options['before'] = null;
-			$options['places'] = null;
+			if ($options['after'] !== false) {
+				$multiply = intval('1' . str_pad('', $options['places'], '0'));
+				$number = $number * $multiply;
+				$options['before'] = null;
+				$options['places'] = null;
+			}
 		} elseif (empty($options['before'])) {
 			$options['before'] = null;
 		} else {
