@@ -524,8 +524,7 @@ class DboMysql extends DboMysqlBase {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => '3306',
-		'connect' => 'mysql_pconnect'
+		'port' => '3306'
 	);
 
 /**

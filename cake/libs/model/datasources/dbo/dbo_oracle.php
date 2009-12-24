@@ -172,12 +172,11 @@ class DboOracle extends DboSource {
 		$this->connected = false;
 		$config['charset'] = !empty($config['charset']) ? $config['charset'] : null;
 
-		if ($this->config['persistent']) {
-			$connect = 'ociplogon';
+		if (!$config['persistent']) {
+			$this->connection = @ocilogon($config['login'], $config['password'], $config['database'], $config['charset']);
 		} else {
-			$connect = 'ocilogon';
+			$this->connection = @ociplogon($config['login'], $config['password'], $config['database'], $config['charset']);
 		}
-		$this->connection = @$connect($config['login'], $config['password'], $config['database'], $config['charset']);
 
 		if ($this->connection) {
 			$this->connected = true;

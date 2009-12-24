@@ -55,7 +55,6 @@ class DboPostgres extends DboSource {
  * @access protected
  */
 	var $_baseConfig = array(
-		'connect'	=> 'pg_pconnect',
 		'persistent' => true,
 		'host' => 'localhost',
 		'login' => 'root',

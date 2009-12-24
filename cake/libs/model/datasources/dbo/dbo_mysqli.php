@@ -47,8 +47,7 @@ class DboMysqli extends DboMysqlBase {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => '3306',
-		'connect' => 'mysqli_connect'
+		'port' => '3306'
 	);
 
 /**
