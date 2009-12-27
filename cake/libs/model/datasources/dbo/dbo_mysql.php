@@ -535,20 +535,20 @@ class DboMysql extends DboMysqlBase {
  */
 	function connect() {
 		$config = $this->config;
-		$connect = $config['connect'];
 		$this->connected = false;
 
 		if (!$config['persistent']) {
 			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
+			$config['connect'] = 'mysql_connect';
 		} else {
-			$this->connection = $connect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
+			$this->connection = mysql_pconnect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
 		}
 
 		if (mysql_select_db($config['database'], $this->connection)) {
 			$this->connected = true;
 		}
 
-		if (isset($config['encoding']) && !empty($config['encoding'])) {
+		if (!empty($config['encoding'])) {
 			$this->setEncoding($config['encoding']);
 		}
 

@@ -2929,6 +2929,20 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that fields() will accept objects made from DboSource::expression
+ *
+ * @return void
+ */
+	function testFieldsWithExpression() {
+		$expression =& $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
+		$result = $this->testDb->fields($this->Model, null, array("id", $expression));
+		$expected = array(
+			'`TestModel`.`id`',
+			"CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col"
+		);
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testMergeAssociations method
  *
  * @access public

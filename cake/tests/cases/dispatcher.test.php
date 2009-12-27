@@ -490,6 +490,15 @@ class TestCachedPagesController extends AppController {
 	function view($id = null) {
 		$this->render('index');
 	}
+/**
+ * test cached forms / tests view object being registered
+ *
+ * @return void
+ */
+	function cache_form() {
+		$this->cacheAction = 10;
+		$this->helpers[] = 'Form';
+	}
 }
 
 /**
@@ -2088,6 +2097,48 @@ class DispatcherTest extends CakeTestCase {
 		$filename = $this->__cachePath($dispatcher->here);
 		$this->assertTrue(file_exists($filename));
 		unlink($filename);
+
+		$url = 'TestCachedPages/test_nocache_tags';
+	}
+/**
+ * test that cached() registers a view and un-registers it.  Tests
+ * that helpers using ClassRegistry::getObject('view'); don't fail
+ *
+ * @return void
+ */
+	function testCachedRegisteringViewObject() {
+		Configure::write('Cache.disable', false);
+		Configure::write('Cache.check', true);
+		Configure::write('debug', 2);
+
+		$_POST = array();
+		$_SERVER['PHP_SELF'] = '/';
+
+		Router::reload();
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+
+		$dispatcher =& new Dispatcher();
+		$dispatcher->base = false;
+
+		$url = 'test_cached_pages/cache_form';
+		ob_start();
+		$dispatcher->dispatch($url);
+		$out = ob_get_clean();
+
+		ClassRegistry::flush();
+
+		ob_start();
+		$dispatcher->cached($url);
+		$cached = ob_get_clean();
+
+		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
+		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
+
+		$this->assertEqual($result, $expected);
+		$filename = $this->__cachePath($dispatcher->here);
+		unlink($filename);
+		ClassRegistry::flush();
 	}
 
 /**

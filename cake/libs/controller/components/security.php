@@ -652,6 +652,10 @@ class SecurityComponent extends Object {
  */
 	function _generateToken(&$controller) {
 		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
+			if ($this->Session->check('_Token')) {
+				$tokenData = unserialize($this->Session->read('_Token'));
+				$controller->params['_Token'] = $tokenData;
+			}
 			return false;
 		}
 		$authKey = Security::generateAuthKey();
@@ -682,7 +686,6 @@ class SecurityComponent extends Object {
 		}
 		$controller->params['_Token'] = $token;
 		$this->Session->write('_Token', serialize($token));
-
 		return true;
 	}
 

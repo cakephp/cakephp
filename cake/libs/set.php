@@ -459,7 +459,7 @@ class Set {
 								$item = $items[$token];
 								$matches[] = array(
 									'trace' => array_merge($context['trace'], $ctext),
-									'key' => $key,
+									'key' => $token,
 									'item' => $item,
 								);
 								break;

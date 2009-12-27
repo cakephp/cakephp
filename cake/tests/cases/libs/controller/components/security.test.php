@@ -1177,5 +1177,23 @@ DIGEST;
 		$this->assertEqual(count($this->Controller->testHeaders), 1);
 		$this->assertEqual(current($this->Controller->testHeaders), $expected);
 	}
+
+/**
+ * test that a requestAction's controller will have the _Token appended to
+ * the params.
+ *
+ * @return void
+ * @see http://cakephp.lighthouseapp.com/projects/42648/tickets/68
+ */
+	function testSettingTokenForRequestAction() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->params['_Token']['key'];
+
+		$this->Controller->params['requested'] = 1;
+		unset($this->Controller->params['_Token']);
+
+		$this->Controller->Security->startup($this->Controller);
+		$this->assertEqual($this->Controller->params['_Token']['key'], $key);
+	}
 }
 ?>

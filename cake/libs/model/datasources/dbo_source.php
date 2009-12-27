@@ -1760,7 +1760,9 @@ class DboSource extends DataSource {
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
-				if (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
+				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
+					$fields[$i] = $fields[$i]->value;
+				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
 					continue;
 				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
 					$prepend = '';

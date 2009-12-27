@@ -1031,6 +1031,22 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * testExtractWithArrays method
+ * 
+ * @access public
+ * @return void
+ */
+	function testExtractWithArrays() {
+		$data = array(
+			'Level1' => array(
+				'Level2' => array('test1', 'test2'),
+				'Level2bis' => array('test3', 'test4')
+			)
+		);
+		$this->assertEqual(Set::extract('/Level1/Level2', $data), array(array('Level2' => array('test1', 'test2'))));
+		$this->assertEqual(Set::extract('/Level1/Level2bis', $data), array(array('Level2bis' => array('test3', 'test4'))));
+	}
+/**
  * testMatches method
  *
  * @access public
