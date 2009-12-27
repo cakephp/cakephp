@@ -563,7 +563,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
 		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
-		
+
 		$Controller->passedArgs = array();
 		$Controller->paginate = array('limit' => 'garbage!');
 		$Controller->paginate('ControllerPost');
@@ -704,6 +704,32 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['defaults']['order'], 'ControllerPost.id DESC');
 		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['order'], 'ControllerPost.id DESC');
 		$this->assertEqual($results, array(3, 2, 1));
+	}
+
+/**
+ * test paginate() and virtualField interactions
+ *
+ * @return void
+ */
+	function testPaginateOrderVirtualField() {
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->ControllerPost->virtualFields = array(
+			'offset_test' => 'ControllerPost.id + 1'
+		);
+
+		$Controller->paginate = array(
+			'fields' => array('id', 'title', 'offset_test'),
+			'order' => array('offset_test' => 'DESC')
+		);
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(4, 3, 2));
+
+		$Controller->passedArgs = array('sort' => 'offset_test', 'direction' => 'asc');
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3, 4));
 	}
 
 /**
@@ -1242,6 +1268,44 @@ class ControllerTest extends CakeTestCase {
 
 		$this->assertEqual($Controller->RequestHandler->prefers(), 'rss');
 		unset($Controller);
+	}
+
+/**
+ * testControllerHttpCodes method
+ *
+ * @access public
+ * @return void
+ */
+	function testControllerHttpCodes() {
+		$Controller =& new Controller();
+		$result = $Controller->httpCodes();
+		$this->assertEqual(count($result), 39);
+
+		$result = $Controller->httpCodes(100);
+		$expected = array(100 => 'Continue');
+		$this->assertEqual($result, $expected);
+
+		$codes = array(
+			1337 => 'Undefined Unicorn',
+			1729 => 'Hardy-Ramanujan Located'
+		);
+
+		$result = $Controller->httpCodes($codes);
+		$this->assertTrue($result);
+		$this->assertEqual(count($Controller->httpCodes()), 41);
+
+		$result = $Controller->httpCodes(1337);
+		$expected = array(1337 => 'Undefined Unicorn');
+		$this->assertEqual($result, $expected);
+
+		$codes = array(404 => 'Sorry Bro');
+		$result = $Controller->httpCodes($codes);
+		$this->assertTrue($result);
+		$this->assertEqual(count($Controller->httpCodes()), 41);
+
+		$result = $Controller->httpCodes(404);
+		$expected = array(404 => 'Sorry Bro');
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>

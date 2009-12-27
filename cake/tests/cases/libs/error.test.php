@@ -288,7 +288,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
-		
+
 		Configure::write('debug', 0);
 		ob_start();
 		$ErrorHandler = new MyCustomErrorHandler('missingController', array('message' => 'Page not found'));
@@ -343,6 +343,29 @@ class ErrorHandlerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertNoPattern('#<script>#', $result);
 		$this->assertNoPattern('#</script>#', $result);
+	}
+
+/**
+ * testError500 method
+ *
+ * @access public
+ * @return void
+ */
+	function testError500() {
+		ob_start();
+		$TestErrorHandler = new TestErrorHandler('error500', array(
+			'message' => 'An Internal Error Has Occurred'
+		));
+		$result = ob_get_clean();
+		$this->assertPattern('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
+
+		ob_start();
+		$TestErrorHandler = new TestErrorHandler('error500', array(
+			'message' => 'An Internal Error Has Occurred',
+			'code' => '500'
+		));
+		$result = ob_get_clean();
+		$this->assertPattern('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
 	}
 
 /**
@@ -408,6 +431,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingTable', array('className' => 'Article', 'table' => 'articles'));
 		$result = ob_get_clean();
+		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Table<\/h2>/', $result);
 		$this->assertPattern('/table <em>articles<\/em> for model <em>Article<\/em>/', $result);
 	}
@@ -422,6 +446,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingDatabase', array());
 		$result = ob_get_clean();
+		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Confirm you have created the file/', $result);
 	}

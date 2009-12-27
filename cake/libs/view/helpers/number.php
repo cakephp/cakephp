@@ -152,6 +152,18 @@ class NumberHelper extends AppHelper {
 /**
  * Formats a number into a currency format.
  *
+ * ### Options
+ *
+ * - `before` - The currency symbol to place before whole numbers ie. '$'
+ * - `after` - The currency symbol to place after decimal numbers ie. 'c'. Set to boolean false to 
+ *    use no decimal symbol.  eg. 0.35 => $0.35.
+ * - `zero` - The text to use for zero values, can be a string or a number. ie. 0, 'Free!'
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ * - `negative` - Symbol for negative numbers. If equal to '()', the number will be wrapped with ( and )
+ * - `escape` - Should the output be htmlentity escaped? Defaults to true
+ *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
@@ -177,10 +189,12 @@ class NumberHelper extends AppHelper {
 			}
 			$options['after'] = null;
 		} elseif ($number < 1 && $number > -1 ) {
-			$multiply = intval('1' . str_pad('', $options['places'], '0'));
-			$number = $number * $multiply;
-			$options['before'] = null;
-			$options['places'] = null;
+			if ($options['after'] !== false) {
+				$multiply = intval('1' . str_pad('', $options['places'], '0'));
+				$number = $number * $multiply;
+				$options['before'] = null;
+				$options['places'] = null;
+			}
 		} elseif (empty($options['before'])) {
 			$options['before'] = null;
 		} else {
@@ -222,6 +236,7 @@ class NumberHelper extends AppHelper {
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
  * @return void
+ * @see NumberHelper::currency()
  */
 	function addFormat($formatName, $options) {
 		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;

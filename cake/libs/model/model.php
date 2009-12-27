@@ -299,6 +299,20 @@ class Model extends Overloadable {
 	var $order = null;
 
 /**
+ * Array of virtual fields this model has.  Virtual fields are aliased
+ * SQL expressions. Fields added to this property will be read as other fields in a model
+ * but will not be saveable.
+ *
+ * `var $virtualFields = array('two' => '1 + 1');` 
+ *
+ * Is a simplistic example of how to set virtualFields
+ *
+ * @var array
+ * @access public
+ */
+	var $virtualFields = array();
+
+/**
  * Whether or not the model record exists, set by Model::exists().
  *
  * @var bool
@@ -802,7 +816,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * This function does two things: 
+ * This function does two things:
  *
  * 1. it scans the array $one for the primary key,
  * and if that's found, it sets the current id to the value of $one[id].
@@ -1009,19 +1023,26 @@ class Model extends Overloadable {
  * Returns true if the supplied field exists in the model's database table.
  *
  * @param mixed $name Name of field to look for, or an array of names
+ * @param boolean $checkVirtual checks if the field is declared as virtual
  * @return mixed If $name is a string, returns a boolean indicating whether the field exists.
  *               If $name is an array of field names, returns the first field that exists,
  *               or false if none exist.
  * @access public
  */
-	function hasField($name) {
+	function hasField($name, $checkVirtual = false) {
 		if (is_array($name)) {
 			foreach ($name as $n) {
-				if ($this->hasField($n)) {
+				if ($this->hasField($n, $checkVirtual)) {
 					return $n;
 				}
 			}
 			return false;
+		}
+
+		if ($checkVirtual && !empty($this->virtualFields)) {
+			if ($this->isVirtualField($name)) {
+				return true;
+			}
 		}
 
 		if (empty($this->_schema)) {
@@ -1035,8 +1056,38 @@ class Model extends Overloadable {
 	}
 
 /**
+ * Returns true if the supplied field is a model Virtual Field
+ *
+ * @param mixed $name Name of field to look for
+ * @return boolean indicating whether the field exists as a model virtual field.
+ * @access public
+ */
+	function isVirtualField($field) {
+		return !empty($this->virtualFields) && is_string($field) && array_key_exists($field, $this->virtualFields);
+	}
+
+/**
+ * Returns the expression for a model virtual field 
+ *
+ * @param mixed $name Name of field to look for
+ * @return mixed If $field is string expression bound to virtual field $field
+ *    If $field is null, returns an array of all model virtual fields
+ *    or false if none $field exist.
+ * @access public
+ */
+	function getVirtualField($field = null) {
+		if ($field == null) {
+			return empty($this->virtualFields) ? false : $this->virtualFields;
+		}
+		if ($this->isVirtualField($field)) {
+			return $this->virtualFields[$field];
+		}
+		return false;
+	}
+
+/**
  * Initializes the model for writing a new record, loading the default values
- * for those fields that are not defined in $data, and clearing previous validation errors. 
+ * for those fields that are not defined in $data, and clearing previous validation errors.
  * Especially helpful for saving data in loops.
  *
  * @param mixed $data Optional data array to assign to the model after it is created.  If null or false,
@@ -1121,7 +1172,8 @@ class Model extends Overloadable {
 		} else {
 			$recursive = $this->recursive;
 		}
-		if ($data = $this->find($conditions, $name, $order, $recursive)) {
+		$fields = $name;
+		if ($data = $this->find('first', compact('conditions', 'fields', 'order', 'recursive'))) {
 			if (strpos($name, '.') === false) {
 				if (isset($data[$this->alias][$name])) {
 					return $data[$this->alias][$name];
@@ -1132,9 +1184,8 @@ class Model extends Overloadable {
 					return $data[$name[0]][$name[1]];
 				}
 			}
-			if (!empty($data[0])) {
-				$name = key($data[0]);
-				return $data[0][$name];
+			if (isset($data[0]) && count($data[0]) > 0) {
+				return array_shift($data[0]);
 			}
 		} else {
 			return false;
@@ -1989,7 +2040,7 @@ class Model extends Overloadable {
  * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order')
  *
- * Eg: 
+ * Eg:
  * {{{
  *	find('all', array(
  *		'conditions' => array('name' => 'Thomas Anderson'),
@@ -2564,7 +2615,7 @@ class Model extends Overloadable {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
 							$error = sprintf(
-								__('Could not find validation handler %s for %s', true), 
+								__('Could not find validation handler %s for %s', true),
 								$rule,
 								$fieldName
 							);

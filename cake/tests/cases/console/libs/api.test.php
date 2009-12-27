@@ -91,17 +91,18 @@ class ApiShellTest extends CakeTestCase {
 				'5. disableCache()',
 				'6. flash($message, $url, $pause = 1, $layout = \'flash\')',
 				'7. header($status)',
-				'8. isAuthorized()',
-				'9. loadModel($modelClass = null, $id = null)',
-				'10. paginate($object = null, $scope = array(), $whitelist = array())',
-				'11. postConditions($data = array(), $op = null, $bool = \'AND\', $exclusive = false)',
-				'12. redirect($url, $status = null, $exit = true)',
-				'13. referer($default = null, $local = false)',
-				'14. render($action = null, $layout = null, $file = null)',
-				'15. set($one, $two = null)',
-				'16. setAction($action)',
-				'17. validate()',
-				'18. validateErrors()'
+				'8. httpCodes($code = null)',
+				'9. isAuthorized()',
+				'10. loadModel($modelClass = null, $id = null)',
+				'11. paginate($object = null, $scope = array(), $whitelist = array())',
+				'12. postConditions($data = array(), $op = null, $bool = \'AND\', $exclusive = false)',
+				'13. redirect($url, $status = null, $exit = true)',
+				'14. referer($default = null, $local = false)',
+				'15. render($action = null, $layout = null, $file = null)',
+				'16. set($one, $two = null)',
+				'17. setAction($action)',
+				'18. validate()',
+				'19. validateErrors()'
 			)
 		);
 		$this->Shell->expectAt(1, 'out', $expected);

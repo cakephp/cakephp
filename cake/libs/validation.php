@@ -53,7 +53,6 @@ class Validation extends Object {
  * @access private
  */
 	var $__pattern = array(
-		'ip' => '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])',
 		'hostname' => '(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)'
 	);
 
@@ -548,10 +547,15 @@ class Validation extends Object {
  * @return boolean Success
  * @access public
  */
-	function ip($check) {
+	function ip($check, $type = 'IPv4') {
+		if (function_exists('filter_var')) {
+			return filter_var($check, FILTER_VALIDATE_IP);
+		}
+
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
-		$_this->regex = '/^' . $_this->__pattern['ip'] . '$/';
+		$_this->__populateIp();
+		$_this->regex = '/^' . $_this->__pattern[$type] . '$/';
 		return $_this->_check();
 	}
 
@@ -604,8 +608,8 @@ class Validation extends Object {
 /**
  * Validate a multiple select.
  *
- * Valid Options 
- * 
+ * Valid Options
+ *
  * - in => provide a list of choices that selections must be made from
  * - max => maximun number of non-zero choices that can be made
  * - min => minimum number of non-zero choices that can be made
@@ -794,7 +798,7 @@ class Validation extends Object {
  * The regex checks for the following component parts:
  *
  * - a valid, optional, scheme
- * - a valid ip address OR 
+ * - a valid ip address OR
  *   a valid domain name as defined by section 2.3.1 of http://www.ietf.org/rfc/rfc1035.txt
  *   with an optional port number
  * - an optional valid path
@@ -808,10 +812,11 @@ class Validation extends Object {
  */
 	function url($check, $strict = false) {
 		$_this =& Validation::getInstance();
+		$_this->__populateIp();
 		$_this->check = $check;
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z]|(%[0-9a-f]{2}))';
 		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-			'(?:' . $_this->__pattern['ip'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:' . $_this->__pattern['IPv4'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
 			'(?:#' . $validChars . '*)?$/i';
@@ -943,6 +948,36 @@ class Validation extends Object {
 		}
 
 		return ($sum % 10 == 0);
+	}
+
+/*
+ * Lazily popualate the IP address patterns used for validations
+ *
+ * @return void
+ */
+	function __populateIp() {
+		if (!isset($this->__pattern['IPv6'])) {
+			$pattern  = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
+			$pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
+			$pattern .= '|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})';
+			$pattern .= '(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)';
+			$pattern .= '{4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2}))';
+			$pattern .= '{3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}';
+			$pattern .= '((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|';
+			$pattern .= '((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}';
+			$pattern .= '((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2}))';
+			$pattern .= '{3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4})';
+			$pattern .= '{0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)';
+			$pattern .= '|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]';
+			$pattern .= '\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4})';
+			$pattern .= '{1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?';
+
+			$this->__pattern['IPv6'] = $pattern;
+		}
+		if (!isset($this->__pattern['IPv4'])) {
+			$pattern = '(?:(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|(?:(?:1[0-9])?|[1-9]?)[0-9])';
+			$this->__pattern['IPv4'] = $pattern;
+		}
 	}
 
 /**

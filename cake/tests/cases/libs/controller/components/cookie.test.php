@@ -94,6 +94,21 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that initialize sets settings from components array
+ *
+ * @return void
+ */
+	function testInitialize() {
+		$settings = array(
+			'time' => '5 days',
+			'path' => '/'
+		);
+		$this->Controller->Cookie->initialize($this->Controller, $settings);
+		$this->assertEqual($this->Controller->Cookie->time, $settings['time']);
+		$this->assertEqual($this->Controller->Cookie->path, $settings['path']);
+	}
+
+/**
  * testCookieName
  *
  * @access public

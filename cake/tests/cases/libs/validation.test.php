@@ -1735,6 +1735,46 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * testIp v6
+ *
+ * @access public
+ * @return void
+ */
+	function testIpv6() {
+		$this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3::8a2e:370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0000:0000:0000:0000:1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0000:0000:0000::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0:0:0:0:1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0:0::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('0000:0000:0000:0000:0000:0000:0000:0001', 'IPv6'));
+		$this->assertTrue(Validation::ip('::1', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:12.34.56.78', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:0c22:384e', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:1234:0000:0000:0000:0000:0000', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:1234:ffff:ffff:ffff:ffff:ffff', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:a::123', 'IPv6'));
+		$this->assertTrue(Validation::ip('fe80::', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:192.0.2.128', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:c000:280', 'IPv6'));
+
+		$this->assertFalse(Validation::ip('123', 'IPv6'));
+		$this->assertFalse(Validation::ip('ldkfj', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001::FFD3::57ab', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:37023:7334', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:370k:7334', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:2:3:4:5:6:7:8:9', 'IPv6'));
+		$this->assertFalse(Validation::ip('1::2::3', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:::3:4:5', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:2:3::4:5:6:7:8:9', 'IPv6'));
+		$this->assertFalse(Validation::ip('::ffff:2.3.4', 'IPv6'));
+		$this->assertFalse(Validation::ip('::ffff:257.1.2.3', 'IPv6'));
+	}
+
+/**
  * testMaxLength method
  *
  * @access public

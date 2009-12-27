@@ -45,7 +45,13 @@ class LibGroupTest extends TestSuite {
 	function LibGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'basics');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'inflector');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_session');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'debugger');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'error');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'file');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'folder');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_log');
+		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'log' . DS . 'file_log');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'overloadable');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'sanitize');

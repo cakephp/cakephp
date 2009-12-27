@@ -260,7 +260,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components);
 		$this->assertPattern('/class ArticlesController extends AppController/', $result);
 		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
-		$this->assertPattern('/\$helpers \= array\(\'Html\', \'Form\', \'Ajax\', \'Time\'\)/', $result);
+		$this->assertPattern('/\$helpers \= array\(\'Ajax\', \'Time\'\)/', $result);
 		$this->assertPattern('/\-\-actions\-\-/', $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
@@ -268,6 +268,12 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertPattern('/var \$scaffold/', $result);
 		$this->assertNoPattern('/helpers/', $result);
 		$this->assertNoPattern('/components/', $result);
+
+		$result = $this->Task->bake('Articles', '--actions--', array(), array());
+		$this->assertPattern('/class ArticlesController extends AppController/', $result);
+		$this->assertNoPattern('/components/', $result);
+		$this->assertNoPattern('/helpers/', $result);
+		$this->assertPattern('/\-\-actions\-\-/', $result);
 	}
 
 /**

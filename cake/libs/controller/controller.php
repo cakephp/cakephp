@@ -74,7 +74,7 @@ class Controller extends Object {
  *
  * Example: var $uses = array('Product', 'Post', 'Comment');
  *
- * Can be set to array() to use no models.  Can be set to false to 
+ * Can be set to array() to use no models.  Can be set to false to
  * use no models and prevent the merging of $uses with AppController
  *
  * @var mixed A single name as a string or a list of names as an array.
@@ -350,6 +350,16 @@ class Controller extends Object {
 	var $validationErrors = null;
 
 /**
+ * Contains a list of the HTTP codes that CakePHP recognizes. These may be
+ * queried and/or modified through Controller::httpCodes(), which is also
+ * tasked with their lazy-loading.
+ *
+ * @var array Associative array of HTTP codes and their associated messages.
+ * @access private
+ */
+	var $__httpCodes = null;
+
+/**
  * Constructor.
  *
  */
@@ -505,6 +515,62 @@ class Controller extends Object {
 	}
 
 /**
+ * Queries & sets valid HTTP response codes & messages.
+ *
+ * @param mixed $code If $code is an integer, then the corresponding code/message is
+ *        returned if it exists, null if it does not exist. If $code is an array,
+ *        then the 'code' and 'message' keys of each nested array are added to the default
+ *        HTTP codes. Example:
+ *
+ *        httpCodes(404); // returns array(404 => 'Not Found')
+ *
+ *        httpCodes(array(
+ *            701 => 'Unicorn Moved',
+ *            800 => 'Unexpected Minotaur'
+ *        )); // sets these new values, and returns true
+ *
+ * @return mixed Associative array of the HTTP codes as keys, and the message
+ *         strings as values, or null of the given $code does not exist.
+ */
+	function httpCodes($code = null) {
+		if (empty($this->__httpCodes)) {
+			$this->__httpCodes = array(
+				100 => 'Continue', 101 => 'Switching Protocols',
+				200 => 'OK', 201 => 'Created', 202 => 'Accepted',
+				203 => 'Non-Authoritative Information', 204 => 'No Content',
+				205 => 'Reset Content', 206 => 'Partial Content',
+				300 => 'Multiple Choices', 301 => 'Moved Permanently',
+				302 => 'Found', 303 => 'See Other',
+				304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect',
+				400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required',
+				403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed',
+				406 => 'Not Acceptable', 407 => 'Proxy Authentication Required',
+				408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone',
+				411 => 'Length Required', 412 => 'Precondition Failed',
+				413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large',
+				415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable',
+				417 => 'Expectation Failed', 500 => 'Internal Server Error',
+				501 => 'Not Implemented', 502 => 'Bad Gateway',
+				503 => 'Service Unavailable', 504 => 'Gateway Time-out'
+			);
+		}
+
+		if (empty($code)) {
+			return $this->__httpCodes;
+		}
+
+		if (is_array($code)) {
+			$this->__httpCodes = $code + $this->__httpCodes;
+			return true;
+		}
+
+		if (!isset($this->__httpCodes[$code])) {
+			return null;
+		}
+		return array($code => $this->__httpCodes[$code]);
+	}
+
+/**
  * Loads and instantiates models required by this controller.
  * If Controller::persistModel; is true, controller will cache model instances on first request,
  * additional request will used cached models.
@@ -603,47 +669,8 @@ class Controller extends Object {
 		}
 
 		if (!empty($status)) {
-			$codes = array(
-				100 => 'Continue',
-				101 => 'Switching Protocols',
-				200 => 'OK',
-				201 => 'Created',
-				202 => 'Accepted',
-				203 => 'Non-Authoritative Information',
-				204 => 'No Content',
-				205 => 'Reset Content',
-				206 => 'Partial Content',
-				300 => 'Multiple Choices',
-				301 => 'Moved Permanently',
-				302 => 'Found',
-				303 => 'See Other',
-				304 => 'Not Modified',
-				305 => 'Use Proxy',
-				307 => 'Temporary Redirect',
-				400 => 'Bad Request',
-				401 => 'Unauthorized',
-				402 => 'Payment Required',
-				403 => 'Forbidden',
-				404 => 'Not Found',
-				405 => 'Method Not Allowed',
-				406 => 'Not Acceptable',
-				407 => 'Proxy Authentication Required',
-				408 => 'Request Time-out',
-				409 => 'Conflict',
-				410 => 'Gone',
-				411 => 'Length Required',
-				412 => 'Precondition Failed',
-				413 => 'Request Entity Too Large',
-				414 => 'Request-URI Too Large',
-				415 => 'Unsupported Media Type',
-				416 => 'Requested range not satisfiable',
-				417 => 'Expectation Failed',
-				500 => 'Internal Server Error',
-				501 => 'Not Implemented',
-				502 => 'Bad Gateway',
-				503 => 'Service Unavailable',
-				504 => 'Gateway Time-out'
-			);
+			$codes = $this->httpCodes();
+
 			if (is_string($status)) {
 				$codes = array_flip($codes);
 			}
@@ -657,14 +684,13 @@ class Controller extends Object {
 					$msg = $status;
 				}
 				$status = "HTTP/1.1 {$code} {$msg}";
+
 			} else {
 				$status = null;
 			}
-		}
-
-		if (!empty($status)) {
 			$this->header($status);
 		}
+
 		if ($url !== null) {
 			$this->header('Location: ' . Router::url($url, true));
 		}
@@ -1076,9 +1102,11 @@ class Controller extends Object {
 			$value = $options['order'][$key];
 			unset($options['order'][$key]);
 
-			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+			if ($object->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field)) {
+			} elseif ($object->hasField($field, true)) {
+				$options['order'][$field] = $value;
+			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}

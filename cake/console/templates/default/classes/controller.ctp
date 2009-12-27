@@ -29,13 +29,17 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 	var $scaffold;
 <?php else: ?>
 <?php
-echo "\tvar \$helpers = array('Html', 'Form'";
 if (count($helpers)):
-	foreach ($helpers as $help):
-		echo ", '" . Inflector::camelize($help) . "'";
-	endforeach;
+	echo "\tvar \$helpers = array(";
+	for ($i = 0, $len = count($helpers); $i < $len; $i++):
+		if ($i != $len - 1):
+			echo "'" . Inflector::camelize($helpers[$i]) . "', ";
+		else:
+			echo "'" . Inflector::camelize($helpers[$i]) . "'";
+		endif;
+	endfor;
+	echo ");\n";
 endif;
-echo ");\n";
 
 if (count($components)):
 	echo "\tvar \$components = array(";
