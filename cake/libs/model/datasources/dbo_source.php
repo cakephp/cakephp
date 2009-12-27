@@ -1888,7 +1888,6 @@ class DboSource extends DataSource {
 					unset($fields[$i]);
 					continue;
 				}
-				if (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
 				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
 					$fields[$i] = $fields[$i]->value;
 				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])){
