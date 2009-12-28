@@ -994,7 +994,7 @@ class Router {
 		$pass = $params['pass'];
 		$named = $params['named'];
 		$url = $params['url'];
-		unset($params['pass'], $params['named'], $params['url'], $url['url']);
+		unset($params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url']);
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
 			$params['?'] = $url;

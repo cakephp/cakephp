@@ -1987,7 +1987,9 @@ class RouterTest extends CakeTestCase {
 			'action' => 'view',
 			'pass' => array(1),
 			'named' => array(),
-			'url' => array('url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu')
+			'url' => array('url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu'),
+			'paging' => array(),
+			'models' => array()
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
