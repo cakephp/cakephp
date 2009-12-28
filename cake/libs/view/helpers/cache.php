@@ -67,25 +67,10 @@ class CacheHelper extends AppHelper {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
-			$controller = Inflector::underscore($this->controllerName);
-			$controllerAlternate = Inflector::variable($this->controllerName);
-
-			$check = str_replace('/', '_', $this->here);
-			$basePath = str_replace('/', '_', $this->base);
-
-			$match = str_replace($this->base, '', $this->here);
-			$match = str_replace('//', '/', $match);
-			$match = str_replace('/' . $controller . '/', '', $match);
-			$match = str_replace('/' . $controllerAlternate . '/', '', $match);
-			$match = str_replace('/' . $this->controllerName . '/', '', $match);
-
-			$check = str_replace($basePath, '', $check);
-			$check = str_replace('_' . $controller . '_', '', $check);
-			$check = str_replace('_' . $this->controllerName . '_', '', $check);
-			$check = str_replace('_' . $controllerAlternate . '_', '', $match);
-
-			$check = Inflector::slug($check);
-			$check = trim($check, '_');
+			$check = Inflector::slug(Router::reverse($this->params));
+			$base = trim(str_replace('/', '_', $this->base), '_');
+			$check = trim(str_replace($base, '', $check), '_');
+			$match = $check;
 
 			$keys = str_replace('/', '_', array_keys($this->cacheAction));
 			$found = array_keys($this->cacheAction);
@@ -93,23 +78,14 @@ class CacheHelper extends AppHelper {
 			$count = 0;
 
 			foreach ($keys as $key => $value) {
-				if (strpos($check, rtrim($value, '_')) === 0) {
+				if (strpos($check, rtrim($value, '_')) !== false) {
 					$index = $found[$count];
 					break;
 				}
 				$count++;
 			}
 
-			if (isset($index)) {
-				$pos1 = strrpos($match, '/');
-				$char = strlen($match) - 1;
-
-				if ($pos1 == $char) {
-					$match = substr($match, 0, $char);
-				}
-
-				$key = $match;
-			} elseif ($this->action == 'index') {
+			if (!isset($index) && $this->action == 'index') {
 				$index = 'index';
 			}
 
