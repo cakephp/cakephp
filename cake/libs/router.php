@@ -997,7 +997,7 @@ class Router {
 		unset($params['pass'], $params['named'], $params['url'], $url['url']);
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
-			$params['q'] = $url;
+			$params['?'] = $url;
 		}
 		return Router::url($params);
 	}

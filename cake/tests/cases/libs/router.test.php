@@ -1980,6 +1980,17 @@ class RouterTest extends CakeTestCase {
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/eng/posts/view/1');
+
+		$params = array(
+			'lang' => 'eng',
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'url' => array('url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu')
+		);
+		$result = Router::reverse($params);
+		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
 	}
 }
 
