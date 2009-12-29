@@ -549,7 +549,7 @@ class Validation extends Object {
  */
 	function ip($check, $type = 'IPv4') {
 		if (function_exists('filter_var')) {
-			return filter_var($check, FILTER_VALIDATE_IP);
+			return (boolean) filter_var($check, FILTER_VALIDATE_IP);
 		}
 
 		$_this =& Validation::getInstance();
