@@ -280,8 +280,8 @@ input, textarea {
 	clear: both;
 	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
-	padding: 2px;
-	width: 100%;
+	padding: 1%;
+	width:98%;
 }
 select {
 	clear: both;
