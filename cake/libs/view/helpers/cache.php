@@ -67,10 +67,6 @@ class CacheHelper extends AppHelper {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
-			$check = Inflector::slug(Router::reverse($this->params));
-			$base = trim(str_replace('/', '_', $this->base), '_');
-			$check = trim(str_replace($base, '', $check), '_');
-
 			$keys = array_keys($this->cacheAction);
 			$index = null;
 
@@ -233,8 +229,6 @@ class CacheHelper extends AppHelper {
 				$controller->layout = $this->layout = \'' . $this->layout. '\';
 				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
 				$controller->here = $this->here = \'' . $this->here . '\';
-				$controller->namedArgs  = $this->namedArgs  = \'' . $this->namedArgs . '\';
-				$controller->argSeparator = $this->argSeparator = \'' . $this->argSeparator . '\';
 				$controller->params = $this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
