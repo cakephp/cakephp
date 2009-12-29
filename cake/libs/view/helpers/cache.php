@@ -256,6 +256,7 @@ class CacheHelper extends AppHelper {
 					$camelBackedHelper = Inflector::variable($helper);
 					${$camelBackedHelper} =& $loadedHelpers[$helper];
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
+					$this->{$helper} =& $loadedHelpers[$helper];
 				}
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
