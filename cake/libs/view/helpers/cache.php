@@ -70,19 +70,15 @@ class CacheHelper extends AppHelper {
 			$check = Inflector::slug(Router::reverse($this->params));
 			$base = trim(str_replace('/', '_', $this->base), '_');
 			$check = trim(str_replace($base, '', $check), '_');
-			$match = $check;
 
-			$keys = str_replace('/', '_', array_keys($this->cacheAction));
-			$found = array_keys($this->cacheAction);
+			$keys = array_keys($this->cacheAction);
 			$index = null;
-			$count = 0;
 
-			foreach ($keys as $key => $value) {
-				if (strpos($check, rtrim($value, '_')) !== false) {
-					$index = $found[$count];
+			foreach ($keys as $action) {
+				if ($action == $this->params['action']) {
+					$index = $action;
 					break;
 				}
-				$count++;
 			}
 
 			if (!isset($index) && $this->action == 'index') {
@@ -92,19 +88,17 @@ class CacheHelper extends AppHelper {
 			$options = $this->cacheAction;
 			if (isset($this->cacheAction[$index])) {
 				if (is_array($this->cacheAction[$index])) {
-					$options = array_merge(array('duration'=> 0, 'callbacks' => false), $this->cacheAction[$index]);
+					$options = array_merge(array('duration' => 0, 'callbacks' => false), $this->cacheAction[$index]);
 				} else {
 					$cacheTime = $this->cacheAction[$index];
 				}
 			}
-
-			if (array_key_exists('duration', $options)) {
+			if (isset($options['duration'])) {
 				$cacheTime = $options['duration'];
 			}
-			if (array_key_exists('callbacks', $options)) {
+			if (isset($options['callbacks'])) {
 				$useCallbacks = $options['callbacks'];
 			}
-
 		} else {
 			$cacheTime = $this->cacheAction;
 		}
