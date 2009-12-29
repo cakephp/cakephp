@@ -194,7 +194,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::clean($string);
 		$this->assertEqual($string, $expected);
 	}
-	/**
+
+/**
  * testHtml method
  *
  * @access public
@@ -211,7 +212,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::html($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripWhitespace method
  *
  * @access public
@@ -223,7 +225,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripWhitespace($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testParanoid method
  *
  * @access public
@@ -264,7 +267,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::paranoid($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripImages method
  *
  * @access public
@@ -291,7 +295,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripImages($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripScripts method
  *
  * @access public
@@ -328,7 +333,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripAll method
  *
  * @access public
@@ -359,7 +365,8 @@ class SanitizeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-	/**
+
+/**
  * testStripTags method
  *
  * @access public
@@ -401,7 +408,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripTags($string, 'h2', 'a', 'img');
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testFormatColumns method
  *
  * @access public
