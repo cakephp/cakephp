@@ -90,9 +90,9 @@ class Sanitize {
 		if ($remove) {
 			$string = strip_tags($string);
 		} else {
-			$patterns = array("/\&/", "/%/", "/</", "/>/", '/"/', "/'/", "/\(/", "/\)/", "/\+/", "/-/");
+			$patterns = array('&', '%', '<', '>', '"', "'", '(', ')', '+', '-');
 			$replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
-			$string = preg_replace($patterns, $replacements, $string);
+			$string = str_replace($patterns, $replacements, $string);
 		}
 		return $string;
 	}
