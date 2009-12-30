@@ -247,6 +247,17 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {asynchronous:false, method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
 		$this->assertEqual($result, $expected);
+
+		$this->Proto->get('#submit');
+		$result = $this->Proto->request('/users/login', array(
+			'before' => 'login.create(event)',
+			'complete' => 'login.complete(event)',
+			'update' => 'auth',
+			'data' => $this->Proto->serializeForm(array('isForm' => false, 'inline' => true)),
+			'dataExpression' => true
+		));
+		$this->assertTrue(strpos($result, '$($("submit").form).serialize()') > 0);
+		$this->assertFalse(strpos($result, 'parameters:function () {$($("submit").form).serialize()}') > 0);
 	}
 
 /**
