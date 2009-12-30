@@ -46,6 +46,7 @@ class TestTask extends Shell {
  * Tasks used.
  *
  * @var array
+ * @access public
  */
 	var $tasks = array('Template');
 
@@ -53,6 +54,7 @@ class TestTask extends Shell {
  * class types that methods can be generated for
  *
  * @var array
+ * @access public
  */
 	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
 
@@ -60,6 +62,7 @@ class TestTask extends Shell {
  * Internal list of fixtures that have been added so far.
  *
  * @var string
+ * @access protected
  */
 	var $_fixtures = array();
 
@@ -164,6 +167,7 @@ class TestTask extends Shell {
  * Interact with the user and get their chosen type. Can exit the script.
  *
  * @return string Users chosen type.
+ * @access public
  */
 	function getObjectType() {
 		$this->hr();
@@ -188,6 +192,7 @@ class TestTask extends Shell {
  *
  * @param string $objectType Type of object to list classes for i.e. Model, Controller.
  * @return string Class name the user chose.
+ * @access public
  */
 	function getClassName($objectType) {
 		$options = App::objects(strtolower($objectType));
@@ -207,8 +212,11 @@ class TestTask extends Shell {
 /**
  * Checks whether the chosen type can find its own fixtures.
  * Currently only model, and controller are supported
- *
+ * 
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $className the Classname of the class the test is being generated for.
  * @return boolean
+ * @access public
  */
 	function typeCanDetectFixtures($type) {
 		$type = strtolower($type);
@@ -218,7 +226,10 @@ class TestTask extends Shell {
 /**
  * Check if a class with the given type is loaded or can be loaded.
  *
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $className the Classname of the class the test is being generated for.
  * @return boolean
+ * @access public
  */
 	function isLoadableClass($type, $class) {
 		return App::import($type, $class);
@@ -228,7 +239,10 @@ class TestTask extends Shell {
  * Construct an instance of the class to be tested.
  * So that fixtures can be detected
  *
- * @return object
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $class the Classname of the class the test is being generated for.
+ * @return object And instance of the class that is going to be tested.
+ * @access public
  */
 	function &buildTestSubject($type, $class) {
 		ClassRegistry::flush();
@@ -245,7 +259,10 @@ class TestTask extends Shell {
 /**
  * Gets the real class name from the cake short form.
  *
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $class the Classname of the class the test is being generated for.
  * @return string Real classname
+ * @access public
  */
 	function getRealClassName($type, $class) {
 		if (strtolower($type) == 'model') {
@@ -260,6 +277,7 @@ class TestTask extends Shell {
  *
  * @param string $className Name of class to look at.
  * @return array Array of method names.
+ * @access public
  */
 	function getTestableMethods($className) {
 		$classMethods = get_class_methods($className);
@@ -278,8 +296,9 @@ class TestTask extends Shell {
  * Generate the list of fixtures that will be required to run this test based on
  * loaded models.
  *
- * @param object The object you want to generate fixtures for.
+ * @param object $subject The object you want to generate fixtures for.
  * @return array Array of fixtures to be included in the test.
+ * @access public
  */
 	function generateFixtureList(&$subject) {
 		$this->_fixtures = array();
@@ -295,6 +314,7 @@ class TestTask extends Shell {
  * Process a model recursively and pull out all the
  * model names converting them to fixture names.
  *
+ * @param Model $subject A Model class to scan for associations and pull fixtures off of.
  * @return void
  * @access protected
  */
@@ -319,6 +339,7 @@ class TestTask extends Shell {
  * Process all the models attached to a controller
  * and generate a fixture list.
  *
+ * @param Controller $subject A controller to pull model names off of.
  * @return void
  * @access protected
  */
@@ -337,6 +358,7 @@ class TestTask extends Shell {
  * Add classname to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.
  *
+ * @param string $name Name of the Model class that a fixture might be required for.
  * @return void
  * @access protected
  */
@@ -354,7 +376,8 @@ class TestTask extends Shell {
 /**
  * Interact with the user to get additional fixtures they want to use.
  *
- * @return void
+ * @return array Array of fixtures the user wants to add.
+ * @access public
  */
 	function getUserFixtures() {
 		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?', true), array('y','n'), 'n');
@@ -372,7 +395,9 @@ class TestTask extends Shell {
  * Is a mock class required for this type of test?
  * Controllers require a mock class.
  *
+ * @param string $type The type of object tests are being generated for eg. controller.
  * @return boolean
+ * @access public
  */
 	function hasMockClass($type) {
 		$type = strtolower($type);
@@ -382,7 +407,10 @@ class TestTask extends Shell {
 /**
  * Generate a constructor code snippet for the type and classname
  *
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $className the Classname of the class the test is being generated for.
  * @return string Constructor snippet for the thing you are building.
+ * @access public
  */
 	function generateConstructor($type, $fullClassName) {
 		$type = strtolower($type);
@@ -397,10 +425,13 @@ class TestTask extends Shell {
 	}
 
 /**
- * make the filename for the test case. resolve the suffixes for controllers
+ * Make the filename for the test case. resolve the suffixes for controllers
  * and get the plugin path if needed.
  *
- * @return string filename the test should be created on
+ * @param string $type The Type of object you are generating tests for eg. controller
+ * @param string $className the Classname of the class the test is being generated for.
+ * @return string filename the test should be created on.
+ * @access public
  */
 	function testCaseFileName($type, $className) {
 		$path = $this->path;
@@ -418,6 +449,7 @@ class TestTask extends Shell {
  * Show help file.
  *
  * @return void
+ * @access public
  */
 	function help() {
 		$this->hr();

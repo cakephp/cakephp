@@ -54,6 +54,7 @@ class FixtureTask extends Shell {
  * The db connection being used for baking
  *
  * @var string
+ * @access public
  */
 	var $connection = null;
 
@@ -61,6 +62,7 @@ class FixtureTask extends Shell {
  * Schema instance
  *
  * @var object
+ * @access protected
  */
 	var $_Schema = null;
 
@@ -140,6 +142,7 @@ class FixtureTask extends Shell {
  *
  * @param string $modelName Name of model you are dealing with.
  * @return array Array of import options.
+ * @access public
  */
 	function importOptions($modelName) {
 		$options = array();
@@ -167,8 +170,8 @@ class FixtureTask extends Shell {
  * @param string $model Name of model to bake.
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for var $import
- * @return string Baked fixture
- * @access private
+ * @return string Baked fixture content
+ * @access public
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
 		if (!class_exists('CakeSchema')) {
@@ -228,8 +231,8 @@ class FixtureTask extends Shell {
  *
  * @param string $model name of the model being generated
  * @param string $fixture Contents of the fixture file.
+ * @return string Content saved into fixture file.
  * @access public
- * @return void
  */
 	function generateFixtureFile($model, $otherVars) {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
@@ -255,6 +258,7 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return string fields definitions
+ * @access protected
  */
 	function _generateSchema($tableInfo) {
 		$schema = $this->_Schema->generateTable('f', $tableInfo);
@@ -266,6 +270,7 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return array Array of records to use in the fixture.
+ * @access protected
  */
 	function _generateRecords($tableInfo, $recordCount = 1) {
 		$records = array();
@@ -337,6 +342,7 @@ class FixtureTask extends Shell {
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.
+ * @access protected
  */
 	function _makeRecordString($records) {
 		$out = "array(\n";
@@ -360,6 +366,7 @@ class FixtureTask extends Shell {
  * @param string $modelName name of the model to take records from.
  * @param string $useTable Name of table to use.
  * @return array Array of records.
+ * @access protected
  */
 	function _getRecordsFromTable($modelName, $useTable = null) {
 		if ($this->interactive) {
