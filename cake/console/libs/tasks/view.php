@@ -283,7 +283,7 @@ class ViewTask extends Shell {
 			$displayField = $modelObj->displayField;
 			$singularVar = Inflector::variable($modelClass);
 			$singularHumanName = $this->_singularHumanName($modelClass);
-			$schema = $modelObj->schema();
+			$schema = $modelObj->schema(true);
 			$fields = array_keys($schema);
 			$associations = $this->__associations($modelObj);
 		} else {
@@ -469,7 +469,7 @@ class ViewTask extends Shell {
 				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
 				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
 				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($assocData['className']));
-				$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema());
+				$associations[$type][$assocKey]['fields'] =  array_keys($model->{$assocKey}->schema(true));
 			}
 		}
 		return $associations;
