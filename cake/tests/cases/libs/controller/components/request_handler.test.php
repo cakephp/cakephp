@@ -241,8 +241,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml';
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertTrue(is_object($this->Controller->data));
-		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');
+		$this->assertTrue(is_array($this->Controller->data));
+		$this->assertFalse(is_object($this->Controller->data));
 	}
 
 /**
@@ -254,8 +254,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$_SERVER['CONTENT_TYPE'] = 'application/xml; charset=UTF-8';
 		$this->RequestHandler->startup($this->Controller);
-		$this->assertTrue(is_object($this->Controller->data));
-		$this->assertEqual(strtolower(get_class($this->Controller->data)), 'xml');
+		$this->assertTrue(is_array($this->Controller->data));
+		$this->assertFalse(is_object($this->Controller->data));
 	}
 
 /**
