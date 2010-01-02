@@ -487,9 +487,6 @@ class Model extends Overloadable {
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-			if (method_exists($this, 'setTablePrefix')) {
-				$this->setTablePrefix();
-			}
 			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
