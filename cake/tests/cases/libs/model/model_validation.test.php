@@ -73,6 +73,56 @@ class ModelValidationTest extends BaseModelTest {
 		);
 
 		$this->assertEqual($TestModel->invalidFields(), $expected);
+
+		$TestModel->validate['title'] = array(
+			'rule' => array('customValidatorWithSixParams', 'one', 'two', null, 'four'),
+			'required' => true
+		);
+		$TestModel->create(array('title' => 'foo'));
+		$TestModel->invalidFields();
+		$expected = array(
+			'data' => array(
+				'title' => 'foo'
+			),
+			'one' => 'one',
+			'two' => 'two',
+			'three' => null,
+			'four' => 'four',
+			'five' => array(
+				'rule' => array(1 => 'one', 2 => 'two', 3 => null, 4 => 'four'),
+				'on' => null,
+				'last' => false,
+				'allowEmpty' => false,
+				'required' => true
+			),
+			'six' => 6
+		);
+		$this->assertEqual($TestModel->validatorParams, $expected);
+
+		$TestModel->validate['title'] = array(
+			'rule' => array('customValidatorWithSixParams', 'one', array('two'), null, 'four', array('five' => 5)),
+			'required' => true
+		);
+		$TestModel->create(array('title' => 'foo'));
+		$TestModel->invalidFields();
+		$expected = array(
+			'data' => array(
+				'title' => 'foo'
+			),
+			'one' => 'one',
+			'two' => array('two'),
+			'three' => null,
+			'four' => 'four',
+			'five' => array('five' => 5),
+			'six' => array(
+				'rule' => array(1 => 'one', 2 => array('two'), 3 => null, 4 => 'four', 5 => array('five' => 5)),
+				'on' => null,
+				'last' => false,
+				'allowEmpty' => false,
+				'required' => true
+			)
+		);
+		$this->assertEqual($TestModel->validatorParams, $expected);
 	}
 /**
  * Tests validation parameter fieldList in invalidFields
