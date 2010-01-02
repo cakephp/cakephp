@@ -180,6 +180,9 @@ table td.actions a {
 	text-align: left;
 	font-family: Monaco, Consolas, "Courier New", monospaced;
 }
+.cake-sql-log caption {
+	color:#fff;
+}
 
 /* Paging */
 div.paging {
@@ -436,7 +439,6 @@ pre.cake-debug {
 }
 div.cake-stack-trace {
 	background: #fff;
-	border: 4px dotted #ffcc00;
 	color: #333;
 	margin: 0px;
 	padding: 6px;
