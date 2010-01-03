@@ -23,14 +23,46 @@
  * in an HTML format / context.
  *
  * @package cake
- * @subpackage cake.cake.tests.lib
+ * @subpackage cake.tests.lib
  */
 class CakeHtmlReporter extends SimpleReporter {
+
+/**
+ * Character set for the output of test reporting.
+ *
+ * @var string
+ */
 	var $_character_set;
+/**
+ * Toggle to show passes in output.
+ *
+ * @var boolean
+ * @access protected
+ */
 	var $_show_passes = false;
 
+/**
+ * Time the test runs started.
+ *
+ * @var integer
+ * @access protected
+ */
 	var $_timeStart = 0;
+
+/**
+ * Time the test runs ended
+ *
+ * @var integer
+ * @access protected
+ */
 	var $_timeEnd = 0;
+
+/**
+ * Duration of all test methods.
+ *
+ * @var integer
+ * @access protected
+ */
 	var $_timeDuration = 0;
 
 /**
@@ -52,7 +84,8 @@ class CakeHtmlReporter extends SimpleReporter {
  * Signals / Paints the beginning of a TestSuite executing.
  * Starts the timer for the TestSuite execution time.
  *
- * @param 
+ * @param string $test_name Name of the test that is being run.
+ * @param integer $size 
  * @return void
  */
 	function paintGroupStart($test_name, $size) {
@@ -66,6 +99,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Signals/Paints the end of a TestSuite. All test cases have run
  * and timers are stopped.
  *
+ * @param string $test_name Name of the test that is being run.
  * @return void
  */
 	function paintGroupEnd($test_name) {
