@@ -217,7 +217,7 @@ class Configure extends Object {
  * Loads a file from app/config/configure_file.php.
  * Config file variables should be formated like:
  *  `$config['name'] = 'value';`
- * These will be used to create dynamic Configure vars. load() is also used to 
+ * These will be used to create dynamic Configure vars. load() is also used to
  * load stored config files created with Configure::store()
  *
  * - To load config files from app/config use `Configure::load('configure_file');`.
@@ -236,7 +236,7 @@ class Configure extends Object {
 			$pluginPath = App::pluginPath($plugin);
 		}
 		$pos = strpos($fileName, '..');
-		
+
 		if ($pos === false) {
 			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
 				include($pluginPath . 'config' . DS . $fileName . '.php');
@@ -822,10 +822,8 @@ class App extends Object {
 			$items = array();
 
 			foreach ((array)$path as $dir) {
-				if ($type === 'file' || $type === 'class' || strpos($dir, $type) !== false) {
 					$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
 					$objects = array_merge($items, array_diff($objects, $items));
-				}
 			}
 
 			if ($type !== 'file') {
