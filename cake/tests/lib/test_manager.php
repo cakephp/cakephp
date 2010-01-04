@@ -641,34 +641,4 @@ class HtmlTestManager extends TestManager {
 		return $buffer;
 	}
 }
-
-if (function_exists('caketestsgetreporter')) {
-	echo "You need a new test.php. \n";
-	echo "Try this one: " . dirname(CONSOLE_LIBS) . "templates" . DS . "skel" . DS . "webroot" . DS . "test.php";
-	exit();
-} else {
-
-/**
- * Returns an object of the currently needed reporter
- *
- * @access public
- */
-	function &CakeTestsGetReporter() {
-		static $Reporter = NULL;
-		if (!$Reporter) {
-			switch (CAKE_TEST_OUTPUT) {
-				case CAKE_TEST_OUTPUT_HTML:
-					require_once CAKE_TESTS_LIB . 'cake_reporter.php';
-					$Reporter =& new CakeHtmlReporter();
-					break;
-				default:
-					require_once CAKE_TESTS_LIB . 'cake_text_reporter.php';
-					$Reporter =& new CakeTextReporter();
-					break;
-			}
-		}
-		return $Reporter;
-	}
-
-}
 ?>

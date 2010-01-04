@@ -40,6 +40,7 @@ class CakeTestSuiteDispatcher {
 		'output' => 'html',
 		'show' => 'groups'
 	);
+
 /**
  * Runs the actions required by the URL parameters.
  *
@@ -97,6 +98,46 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
+ * Sets the Manager to use for the request.
+ *
+ * @return string The manager class name
+ * @static
+ */
+	function getManager() {
+		$className = ucwords($this->params['output']) . 'TestManager';
+		if (class_exists($className)) {
+			$this->_manager = $className;
+			return;
+		} else {
+			$this->_manager = 'TextTestManager';
+		}
+	}
+
+/**
+ * Gets the reporter based on the request parameters
+ *
+ * @return void
+ */
+	function &getReporter() {
+		static $Reporter = NULL;
+		if (!$Reporter) {
+			$coreClass = 'Cake' . $this->params['output'] . 'Reporter';
+			$coreFile = CAKE_TESTS_LIB . 'cake_' . strtolower($this->params['output']) . '_reporter.php';
+			
+			$appClass = $this->params['output'] . 'Reporter';
+			$appFile = APPLIBS . 'test_suite' . DS . strtolower($this->params['output']) . '_reporter.php';
+			if (file_exists($coreFile)) {
+				require_once $coreFile;
+				$Reporter =& new $coreClass();
+			} elseif (file_exists($appFile)) {
+				require_once $appFile;
+				$Reporter =& new $appClass();
+			}
+		}
+		return $Reporter;
+	}
+
+/**
  * Parse url params into a 'request'
  *
  * @return void
@@ -115,6 +156,7 @@ class CakeTestSuiteDispatcher {
 			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 			$this->_checkXdebug();
 		}
+		$this->getManager();
 	}
 
 /**
@@ -127,9 +169,9 @@ class CakeTestSuiteDispatcher {
 			TestManager::runAllTests(CakeTestsGetReporter());
 		} else {
 			if ($this->params['codeCoverage']) {
-				CodeCoverageManager::start($this->params['group'], CakeTestsGetReporter());
+				CodeCoverageManager::start($this->params['group'], CakeTestSuiteDispatcher::getReporter());
 			}
-			TestManager::runGroupTest(ucfirst($this->params['group']), CakeTestsGetReporter());
+			TestManager::runGroupTest(ucfirst($this->params['group']), CakeTestSuiteDispatcher::getReporter());
 			if ($this->params['codeCoverage']) {
 				CodeCoverageManager::report();
 			}
