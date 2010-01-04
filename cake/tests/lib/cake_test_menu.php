@@ -103,16 +103,8 @@ class CakeTestMenu {
  * @access public
  */
 	function testCaseList() {
-		switch (CAKE_TEST_OUTPUT) {
-			case CAKE_TEST_OUTPUT_HTML:
-				ob_start();
-				echo HtmlTestManager::getTestCaseList();
-				break;
-			case CAKE_TEST_OUTPUT_TEXT:
-			default:
-				echo TextTestManager::getTestCaseList();
-				break;
-		}
+		$class = CakeTestMenu::getTestManager();
+		echo call_user_func(array($class, 'getTestCaseList'));
 	}
 
 /**
@@ -122,14 +114,22 @@ class CakeTestMenu {
  * @access public
  */
 	function groupTestList() {
+		$class = CakeTestMenu::getTestManager();
+		echo call_user_func(array($class, 'getGroupTestList'));
+	}
+
+/**
+ * Gets the correct test manager for the chosen output.
+ *
+ * @return void
+ */
+	function getTestManager() {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
-				echo HtmlTestManager::getGroupTestList();
-				break;
+				return 'HtmlTestManager';
 			case CAKE_TEST_OUTPUT_TEXT:
 			default:
-				echo TextTestManager::getGroupTestList();
-				break;
+				return 'TextTestManager';
 		}
 	}
 
