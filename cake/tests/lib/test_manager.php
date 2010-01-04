@@ -475,7 +475,7 @@ class TextTestManager extends TestManager {
 /**
  * Returns the base url
  *
- * @return void
+ * @return string The base URL for link building.
  * @access public
  */
 	function getBaseURL() {
@@ -485,6 +485,7 @@ class TextTestManager extends TestManager {
 /**
  * Returns a list of available group tests in a text-friendly format
  *
+ * @return string A link list for group tests.
  * @access public
  */
 	function &getGroupTestList() {
@@ -513,6 +514,7 @@ class TextTestManager extends TestManager {
 /**
  * Returns a list of available test cases in a text-friendly format
  *
+ * @param string A link list for test cases.
  * @access public
  */
 	function &getTestCaseList() {
