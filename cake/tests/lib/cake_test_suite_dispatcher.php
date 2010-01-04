@@ -121,16 +121,14 @@ class CakeTestSuiteDispatcher {
 	function &getReporter() {
 		static $Reporter = NULL;
 		if (!$Reporter) {
-			$coreClass = 'Cake' . $this->params['output'] . 'Reporter';
+			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
 			$coreFile = CAKE_TESTS_LIB . 'cake_' . strtolower($this->params['output']) . '_reporter.php';
-			
+
 			$appClass = $this->params['output'] . 'Reporter';
 			$appFile = APPLIBS . 'test_suite' . DS . strtolower($this->params['output']) . '_reporter.php';
-			if (file_exists($coreFile)) {
-				require_once $coreFile;
+			if (include_once $coreFile) {
 				$Reporter =& new $coreClass();
-			} elseif (file_exists($appFile)) {
-				require_once $appFile;
+			} elseif (include_once $appFile) {
 				$Reporter =& new $appClass();
 			}
 		}
@@ -187,10 +185,10 @@ class CakeTestSuiteDispatcher {
  */
 	function _runTestCase() {
 		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::start($_GET['case'], CakeTestsGetReporter());
+			CodeCoverageManager::start($_GET['case'], CakeTestSuiteDispatcher::getReporter());
 		}
 
-		TestManager::runTestCase($_GET['case'], CakeTestsGetReporter());
+		TestManager::runTestCase($_GET['case'], CakeTestSuiteDispatcher::getReporter());
 
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::report();
