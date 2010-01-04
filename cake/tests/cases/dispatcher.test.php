@@ -2115,7 +2115,9 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['PHP_SELF'] = '/';
 
 		Router::reload();
-		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 
 		$dispatcher =& new Dispatcher();
 		$dispatcher->base = false;
