@@ -74,7 +74,7 @@ class CakeTestMenu {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				if (isset($_GET['case'])) {
-					$query = '?case='.$_GET['case'];
+					$query = '?case=' . $_GET['case'];
 					if (isset($_GET['app'])) {
 						$query .= '&amp;app=true';
 					} elseif (isset($_GET['plugin'])) {
@@ -171,8 +171,8 @@ class CakeTestMenu {
 		switch (CAKE_TEST_OUTPUT) {
 			case CAKE_TEST_OUTPUT_HTML:
 				ob_start();
-				$groups = $_SERVER['PHP_SELF'].'?show=groups';
-				$cases = $_SERVER['PHP_SELF'].'?show=cases';
+				$groups = $_SERVER['PHP_SELF'] . '?show=groups';
+				$cases = $_SERVER['PHP_SELF'] . '?show=cases';
 				$plugins = App::objects('plugin');
 				include CAKE_TESTS_LIB . 'content.php';
 				break;

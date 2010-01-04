@@ -637,6 +637,5 @@ if (function_exists('caketestsgetreporter')) {
 		return $Reporter;
 	}
 
-
 }
 ?>
