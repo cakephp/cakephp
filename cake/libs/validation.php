@@ -501,8 +501,13 @@ class Validation extends Object {
 		}
 
 		if ($return === true && preg_match('/@(' . $_this->__pattern['hostname'] . ')$/i', $_this->check, $regs)) {
-			$host = gethostbynamel($regs[1]);
-			return is_array($host);
+			if (function_exists('getmxrr')) {
+				return getmxrr($regs[1], $mxhosts);
+			}
+			if (function_exists('checkdnsrr')) {
+				return checkdnsrr($regs[1], 'MX');
+			}
+			return is_array(gethostbynamel($regs[1]));
 		}
 		return false;
 	}
