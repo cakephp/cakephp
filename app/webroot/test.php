@@ -86,6 +86,7 @@ if (isset($corePath[0])) {
 }
 
 require_once CAKE_TESTS_LIB . 'test_manager.php';
+require_once CAKE_TESTS_LIB . 'cake_test_menu.php';
 
 if (Configure::read('debug') < 1) {
 	die(__('Debug setting does not allow access to this url.', true));
@@ -112,9 +113,9 @@ if (isset($_GET['output']) && $_GET['output'] == 'html') {
 }
 
 if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-	CakePHPTestHeader();
+	CakeTestMenu::testHeader();
 	include CAKE_TESTS_LIB . 'simpletest.php';
-	CakePHPTestSuiteFooter();
+	CakeTestMenu::footer();
 	exit();
 }
 
@@ -123,15 +124,15 @@ if (isset($_GET['code_coverage'])) {
 	$analyzeCodeCoverage = true;
 	require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 	if (!extension_loaded('xdebug')) {
-		CakePHPTestHeader();
+		CakeTestMenu::testHeader();
 		include CAKE_TESTS_LIB . 'xdebug.php';
-		CakePHPTestSuiteFooter();
+		CakeTestMenu::footer();
 		exit();
 	}
 }
 
-CakePHPTestHeader();
-CakePHPTestSuiteHeader();
+CakeTestMenu::testHeader();
+CakeTestMenu::testSuiteHeader();
 define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
 
 if (isset($_GET['group'])) {
@@ -147,8 +148,8 @@ if (isset($_GET['group'])) {
 		}
 	}
 
-	CakePHPTestRunMore();
-	CakePHPTestAnalyzeCodeCoverage();
+	CakeTestMenu::runMore();
+	CakeTestMenu::analyzeCodeCoverage();
 } elseif (isset($_GET['case'])) {
 	if ($analyzeCodeCoverage) {
 		CodeCoverageManager::start($_GET['case'], CakeTestsGetReporter());
@@ -160,14 +161,14 @@ if (isset($_GET['group'])) {
 		CodeCoverageManager::report();
 	}
 
-	CakePHPTestRunMore();
-	CakePHPTestAnalyzeCodeCoverage();
+	CakeTestMenu::runMore();
+	CakeTestMenu::analyzeCodeCoverage();
 } elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
-	CakePHPTestCaseList();
+	CakeTestMenu::testCaseList();
 } else {
-	CakePHPTestGroupTestList();
+	CakeTestMenu::groupTestList();
 }
-CakePHPTestSuiteFooter();
+CakeTestMenu::footer();
 $output = ob_get_clean();
 echo $output;
 ?>
