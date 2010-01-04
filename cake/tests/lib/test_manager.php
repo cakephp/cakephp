@@ -23,15 +23,39 @@ define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
 /**
- * Short description for class.
+ * TestManager is the base class that handles loading and initiating the running 
+ * of TestCase and TestSuite classes that the user has selected.
  *
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
 class TestManager {
+/**
+ * Extension suffix for test case files.
+ *
+ * @var string
+ */
 	var $_testExtension = '.test.php';
+
+/**
+ * Extension suffix for group test case files.
+ *
+ * @var string
+ */
 	var $_groupExtension = '.group.php';
+
+/**
+ * Is this test an AppTest?
+ *
+ * @var boolean
+ */
 	var $appTest = false;
+
+/**
+ * Is this test a plugin test?
+ *
+ * @var mixed boolean false or string name of the plugin being used.
+ */
 	var $pluginTest = false;
 
 /**
@@ -69,8 +93,9 @@ class TestManager {
 /**
  * Runs all tests in the Application depending on the current appTest setting
  *
- * @param string $reporter
- * @return void
+ * @param Object $reporter Reporter object for the tests being run.
+ * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
+ * @return mixed
  * @access public
  */
 	function runAllTests(&$reporter, $testing = false) {
@@ -99,9 +124,10 @@ class TestManager {
 /**
  * Runs a specific test case file
  *
- * @param string $testCaseFile
- * @param string $reporter
- * @return void
+ * @param string $testCaseFile Filename of the test to be run.
+ * @param Object $reporter Reporter instance to attach to the test case.
+ * @param boolean $testing Set to true if testing, otherwise test case will be run.
+ * @return mixed
  * @access public
  */
 	function runTestCase($testCaseFile, &$reporter, $testing = false) {
@@ -126,9 +152,9 @@ class TestManager {
 /**
  * Runs a specific group test file
  *
- * @param string $groupTestName
- * @param string $reporter
- * @return void
+ * @param string $groupTestName GroupTest that you want to run.
+ * @param Object $reporter Reporter instance to use with the group test being run.
+ * @return mixed
  * @access public
  */
 	function runGroupTest($groupTestName, &$reporter) {
@@ -154,8 +180,8 @@ class TestManager {
 /**
  * Adds all testcases in a given directory to a given GroupTest object
  *
- * @param string $groupTest
- * @param string $directory
+ * @param object $groupTest Instance of TestSuite/GroupTest that files are to be added to.
+ * @param string $directory The directory to add tests from.
  * @return void
  * @access public
  */
@@ -170,8 +196,8 @@ class TestManager {
 /**
  * Adds a specific test file and thereby all of its test cases and group tests to a given group test file
  *
- * @param string $groupTest
- * @param string $file
+ * @param object $groupTest Instance of TestSuite/GroupTest that a file should be added to.
+ * @param string $file The file name, minus the suffix to add.
  * @return void
  * @access public
  */
@@ -235,6 +261,7 @@ class TestManager {
 /**
  * Returns a list of group test files from a given directory
  *
+ * @param string $directory The directory to get group test files from.
  * @access public
  */
 	function &_getTestGroupFileList($directory = '.') {
@@ -245,6 +272,7 @@ class TestManager {
 /**
  * Returns a list of group test files from a given directory
  *
+ * @param string $directory The directory to get group tests from.
  * @access public
  */
 	function &_getTestGroupList($directory = '.') {
@@ -261,6 +289,7 @@ class TestManager {
 /**
  * Returns a list of class names from a group test file
  *
+ * @param string $groupTestFile The groupTest file to scan for TestSuite classnames.
  * @access public
  */
 	function &_getGroupTestClassNames($groupTestFile) {
@@ -278,6 +307,8 @@ class TestManager {
  * Gets a recursive list of files from a given directory and matches then against
  * a given fileTestFunction, like isTestCaseFile()
  *
+ * @param string $directory The directory to scan for files.
+ * @param mixed $fileTestFunction
  * @access public
  */
 	function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
@@ -336,8 +367,8 @@ class TestManager {
 /**
  * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
  *
- * @param string $type
- * @return void
+ * @param string $type either 'cases' or 'groups'
+ * @return string The path tests are located on
  * @access public
  */
 	function _getTestsPath($type = 'cases') {
@@ -365,10 +396,10 @@ class TestManager {
 	}
 
 /**
- * undocumented function
+ * Get the extension for either 'group' or 'test' types.
  *
- * @param string $type
- * @return void
+ * @param string $type Type of test to get, either 'test' or 'group'
+ * @return string Extension suffix for test.
  * @access public
  */
 	function getExtension($type = 'test') {
