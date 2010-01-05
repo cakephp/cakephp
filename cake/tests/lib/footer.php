@@ -24,6 +24,12 @@
  			<a href="http://www.cakephp.org/" target="_blank">
  				<img src="<?php echo $baseUrl; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" /></a></p>
  		</div>
+		<?php
+			App::import('Core', 'View');
+			$null = null;
+			$View =& new View($null, false);
+			echo $View->element('sql_dump');
+		?>
 	</div>
 </body>
 </html>
