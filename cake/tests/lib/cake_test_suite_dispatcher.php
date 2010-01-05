@@ -42,6 +42,20 @@ class CakeTestSuiteDispatcher {
 	);
 
 /**
+ * The classname for the TestManager being used
+ *
+ * @var string
+ */
+	var $_managerClass;
+
+/**
+ * The Instance of the Manager being used.
+ *
+ * @var TestManager subclass
+ */
+	var $Manager;
+
+/**
  * Runs the actions required by the URL parameters.
  *
  * @return void
@@ -75,7 +89,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			CakeTestMenu::testHeader();
 			include CAKE_TESTS_LIB . 'simpletest.php';
 			CakeTestMenu::footer();
 			exit();
@@ -90,7 +103,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
-			CakeTestMenu::testHeader();
 			include CAKE_TESTS_LIB . 'xdebug.php';
 			CakeTestMenu::footer();
 			exit();
@@ -106,11 +118,14 @@ class CakeTestSuiteDispatcher {
 	function getManager() {
 		$className = ucwords($this->params['output']) . 'TestManager';
 		if (class_exists($className)) {
-			$this->_manager = $className;
-			return;
+			$this->_managerClass = $className;
 		} else {
-			$this->_manager = 'TextTestManager';
+			$this->_managerClass = 'TextTestManager';
 		}
+		if (empty($this->Manager)) {
+			$this->Manager = new $this->_managerClass();
+		}
+		return $this->Manager;
 	}
 
 /**
@@ -163,13 +178,14 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runGroupTest() {
+		$Reporter =& CakeTestSuiteDispatcher::getReporter();
 		if ('all' == $this->params['group']) {
-			TestManager::runAllTests(CakeTestsGetReporter());
+			TestManager::runAllTests($Reporter);
 		} else {
 			if ($this->params['codeCoverage']) {
-				CodeCoverageManager::start($this->params['group'], CakeTestSuiteDispatcher::getReporter());
+				CodeCoverageManager::start($this->params['group'], $Reporter);
 			}
-			TestManager::runGroupTest(ucfirst($this->params['group']), CakeTestSuiteDispatcher::getReporter());
+			TestManager::runGroupTest(ucfirst($this->params['group']), $Reporter);
 			if ($this->params['codeCoverage']) {
 				CodeCoverageManager::report();
 			}
@@ -184,11 +200,12 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
+		$Reporter =& CakeTestSuiteDispatcher::getReporter();
 		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::start($_GET['case'], CakeTestSuiteDispatcher::getReporter());
+			CodeCoverageManager::start($_GET['case'], $Reporter);
 		}
 
-		TestManager::runTestCase($_GET['case'], CakeTestSuiteDispatcher::getReporter());
+		TestManager::runTestCase($_GET['case'], $Reporter);
 
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::report();
