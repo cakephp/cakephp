@@ -505,7 +505,7 @@ class TextTestManager extends TestManager {
 		$buffer .= "All tests\n" . $_SERVER['SERVER_NAME'] . $manager->getBaseURL() . "?group=all&output=txt{$urlExtra}\n";
 
 		foreach ((array)$groupTests as $groupTest) {
-			$buffer .= $_SERVER['SERVER_NAME']. $manager->getBaseURL()."?group=" . $groupTest . "&output=txt{$urlExtra}"."\n";
+			$buffer .= $_SERVER['SERVER_NAME'] . $manager->getBaseURL() . "?group=" . $groupTest . "&output=text{$urlExtra}\n";
 		}
 
 		return $buffer;
@@ -537,7 +537,7 @@ class TextTestManager extends TestManager {
 		}
 
 		foreach ($testCases as $testCaseFile => $testCase) {
-			$buffer .= $_SERVER['SERVER_NAME']. $manager->getBaseURL()."?case=" . $testCase . "&output=txt"."\n";
+			$buffer .= $_SERVER['SERVER_NAME']. $manager->getBaseURL()."?case=" . $testCase . "&output=text"."\n";
 		}
 
 		$buffer .= "\n";
