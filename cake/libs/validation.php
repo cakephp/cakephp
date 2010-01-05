@@ -556,10 +556,10 @@ class Validation extends Object {
 	function ip($check, $type = 'both') {
 		$_this =& Validation::getInstance();
 		$success = false;
-		if ($type === 'IPv4' || $type === 'both') {
+		if ($type === 'ipv4' || $type === 'both') {
 			$success |= $_this->_ipv4($check);
 		}
-		if ($type === 'IPv6' || $type === 'both') {
+		if ($type === 'ipv6' || $type === 'both') {
 			$success |= $_this->_ipv6($check);
 		}
 		return $success;
@@ -576,11 +576,10 @@ class Validation extends Object {
 		if (function_exists('filter_var')) {
 			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV4)) !== false;
 		}
-		$_this =& Validation::getInstance();
-		$_this->__populateIp();
-		$_this->check = $check;
-		$_this->regex = '/^' . $_this->__pattern['IPv4'] . '$/';
-		return $_this->_check();
+		$this->__populateIp();
+		$this->check = $check;
+		$this->regex = '/^' . $this->__pattern['IPv4'] . '$/';
+		return $this->_check();
 	}
 
 /**
@@ -594,11 +593,10 @@ class Validation extends Object {
 		if (function_exists('filter_var')) {
 			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV6)) !== false;
 		}
-		$_this =& Validation::getInstance();
-		$_this->__populateIp();
-		$_this->check = $check;
-		$_this->regex = '/^' . $_this->__pattern['IPv6'] . '$/';
-		return $_this->_check();
+		$this->__populateIp();
+		$this->check = $check;
+		$this->regex = '/^' . $this->__pattern['IPv6'] . '$/';
+		return $this->_check();
 	}
 
 /**
