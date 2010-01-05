@@ -81,8 +81,20 @@ class DboPostgres extends DboSource {
 		'inet' => array('name'  => 'inet')
 	);
 
+/**
+ * Starting Quote
+ *
+ * @var string
+ * @access public
+ */
 	var $startQuote = '"';
 
+/**
+ * Ending Quote
+ *
+ * @var string
+ * @access public
+ */
 	var $endQuote = '"';
 
 /**
