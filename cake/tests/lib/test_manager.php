@@ -201,10 +201,10 @@ class TestManager {
 	function addTestFile(&$groupTest, $file) {
 		$manager =& new TestManager();
 
-		if (file_exists($file.'.test.php')) {
-			$file .= '.test.php';
-		} elseif (file_exists($file.'.group.php')) {
-			$file .= '.group.php';
+		if (file_exists($file . $manager->_testExtension)) {
+			$file .= $manager->_testExtension;
+		} elseif (file_exists($file . $manager->_groupExtension)) {
+			$file .= $manager->_groupExtension;
 		}
 		$groupTest->addTestFile($file);
 	}
