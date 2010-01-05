@@ -180,12 +180,12 @@ class CakeTestSuiteDispatcher {
 	function _runGroupTest() {
 		$Reporter =& CakeTestSuiteDispatcher::getReporter();
 		if ('all' == $this->params['group']) {
-			TestManager::runAllTests($Reporter);
+			$this->Manager->runAllTests($Reporter);
 		} else {
 			if ($this->params['codeCoverage']) {
 				CodeCoverageManager::start($this->params['group'], $Reporter);
 			}
-			TestManager::runGroupTest(ucfirst($this->params['group']), $Reporter);
+			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
 			if ($this->params['codeCoverage']) {
 				CodeCoverageManager::report();
 			}
@@ -205,7 +205,7 @@ class CakeTestSuiteDispatcher {
 			CodeCoverageManager::start($_GET['case'], $Reporter);
 		}
 
-		TestManager::runTestCase($_GET['case'], $Reporter);
+		$this->Manager->runTestCase($_GET['case'], $Reporter);
 
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::report();

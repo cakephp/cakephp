@@ -131,9 +131,7 @@ class TestManager {
  * @access public
  */
 	function runTestCase($testCaseFile, &$reporter, $testing = false) {
-		$manager =& new TestManager();
-
-		$testCaseFileWithPath = $manager->_getTestsPath() . DS . $testCaseFile;
+		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
 			trigger_error("Test case {$testCaseFile} cannot be found", E_USER_ERROR);
@@ -158,8 +156,7 @@ class TestManager {
  * @access public
  */
 	function runGroupTest($groupTestName, &$reporter) {
-		$manager =& new TestManager();
-		$filePath = $manager->_getTestsPath('groups') . DS . strtolower($groupTestName) . $manager->_groupExtension;
+		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
 
 		if (!file_exists($filePath)) {
 			trigger_error("Group test {$groupTestName} cannot be found at {$filePath}", E_USER_ERROR);
@@ -167,7 +164,7 @@ class TestManager {
 
 		require_once $filePath;
 		$test =& new TestSuite($groupTestName . ' group test');
-		foreach ($manager->_getGroupTestClassNames($filePath) as $groupTest) {
+		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
 			if (isset($testCase->label)) {
@@ -582,8 +579,8 @@ class HtmlTestManager extends TestManager {
  * @access public
  */
 	function &getGroupTestList() {
-		$urlExtra = '';
 		$manager =& new HtmlTestManager();
+		$urlExtra = '';
 		$groupTests =& $manager->_getTestGroupList($manager->_getTestsPath('groups'));
 
 		$buffer = "<h3>Core Test Groups:</h3>\n<ul>";
