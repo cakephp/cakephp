@@ -18,6 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 /**
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
@@ -78,45 +79,6 @@ class CakeHtmlReporter extends SimpleReporter {
 		}
 		$this->SimpleReporter();
 		$this->_character_set = $character_set;
-	}
-
-/**
- * Signals / Paints the beginning of a TestSuite executing.
- * Starts the timer for the TestSuite execution time.
- *
- * @param string $test_name Name of the test that is being run.
- * @param integer $size 
- * @return void
- */
-	function paintGroupStart($test_name, $size) {
-		if (empty($this->_timeStart)) {
-			$this->_timeStart = $this->_getTime();
-		}
-		parent::paintGroupStart($test_name, $size);
-	}
-
-/**
- * Signals/Paints the end of a TestSuite. All test cases have run
- * and timers are stopped.
- *
- * @param string $test_name Name of the test that is being run.
- * @return void
- */
-	function paintGroupEnd($test_name) {
-		$this->_timeEnd = $this->_getTime();
-		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
-		parent::paintGroupEnd($test_name);
-	}
-
-/**
- * Get the current time in microseconds. Similar to getMicrotime in basics.php
- * but in a separate function to reduce dependancies.
- *
- * @return float Time in microseconds
- */
-	function _getTime() {
-		list($usec, $sec) = explode(' ', microtime());
-		return ((float)$sec + (float)$usec);
 	}
 
 /**
