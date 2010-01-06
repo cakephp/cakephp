@@ -68,18 +68,32 @@ class CakeHtmlReporter extends SimpleReporter {
 	var $_timeDuration = 0;
 
 /**
+ * Array of request parameters.  Usually parsed GET params.
+ *
+ * @var array
+ */
+	var $params = array();
+
+/**
  * Does nothing yet. The first output will
  * be sent on the first test start. For use
  * by a web browser.
  *
+ * ### Params
+ *
+ * - show_passes - Should passes be shown
+ * - plugin - Plugin test being run?
+ * - app - App test being run.
+ * - case - The case being run
+ * 
+ * @param string $character_set The character set to output with. Defaults to ISO-8859-1
+ * @param array $params Array of request parameters the reporter should use. See above.
  * @access public
  */
-	function CakeHtmlReporter($character_set = 'ISO-8859-1') {
-		if (isset($_GET['show_passes']) && $_GET['show_passes']) {
-			$this->_show_passes = true;
-		}
+	function CakeHtmlReporter($character_set = 'ISO-8859-1', $params = array()) {
 		$this->SimpleReporter();
-		$this->_character_set = $character_set;
+		$this->_character_set = !empty($character_set) ? $character_set : 'ISO-8859-1';
+		$this->params = $params;
 	}
 
 /**
@@ -139,7 +153,54 @@ class CakeHtmlReporter extends SimpleReporter {
 		if (function_exists('memory_get_peak_usage')) {
 			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
 		}
+		echo $this->_paintLinks();
 		echo '</div>';
+	}
+
+/**
+ * Renders the links that for accessing things in the test suite.
+ *
+ * @return void
+ */
+	function _paintLinks() {
+		$show = $query = array();
+		if (!empty($this->params['group'])) {
+			$show['show'] = 'groups';
+		} elseif (!empty($this->params['case'])) {
+			$show['show'] = 'cases';
+		}
+
+		if (!empty($this->params['app'])) {
+			$show['app'] = $query['app'] = 'true';
+		}
+		if (!empty($this->params['plugin'])) {
+			$show['plugin'] = $query['plugin'] = $this->params['plugin'];
+		}
+		if (!empty($this->params['case'])) {
+			$query['case'] = $this->params['case'];
+ 		} elseif (!empty($this->params['group'])) {
+			$query['group'] = $this->params['group'];
+		}
+		$show = $this->_queryString($show);
+		$query = $this->_queryString($query);
+
+		echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
+		echo " <a href='" . RUN_TEST_LINK . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
+	}
+/**
+ * Convert an array of parameters into a query string url
+ *
+ * @param array $url Url hash to be converted
+ * @return string Converted url query string
+ */
+	function _queryString($url) {
+		$out = '?';
+		$params = array();
+		foreach ($url as $key => $value) {
+			$params[] = "$key=$value";
+		}
+		$out .= implode('&amp;', $params);
+		return $out;
 	}
 
 /**
@@ -175,7 +236,7 @@ class CakeHtmlReporter extends SimpleReporter {
 	function paintPass($message) {
 		parent::paintPass($message);
 
-		if ($this->_show_passes) {
+		if (isset($this->params['show_passes']) && $this->params['show_passes']) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
 			$breadcrumb = $this->getTestList();

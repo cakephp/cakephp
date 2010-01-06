@@ -38,7 +38,8 @@ class CakeTestSuiteDispatcher {
 		'app' => false,
 		'plugin' => null,
 		'output' => 'html',
-		'show' => 'groups'
+		'show' => 'groups',
+		'show_passes' => false
 	);
 
 /**
@@ -143,9 +144,9 @@ class CakeTestSuiteDispatcher {
 			$appClass = $this->params['output'] . 'Reporter';
 			$appFile = APPLIBS . 'test_suite' . DS . 'reporter' . DS . $type . '_reporter.php';
 			if (include_once $coreFile) {
-				$Reporter =& new $coreClass();
+				$Reporter =& new $coreClass(null, $this->params);
 			} elseif (include_once $appFile) {
-				$Reporter =& new $appClass();
+				$Reporter =& new $appClass(null, $this->params);
 			}
 		}
 		return $Reporter;
@@ -191,8 +192,6 @@ class CakeTestSuiteDispatcher {
 				CodeCoverageManager::report();
 			}
 		}
-		CakeTestMenu::runMore();
-		CakeTestMenu::analyzeCodeCoverage();
 	}
 
 /**
@@ -211,8 +210,6 @@ class CakeTestSuiteDispatcher {
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::report();
 		}
-		CakeTestMenu::runMore();
-		CakeTestMenu::analyzeCodeCoverage();
 	}
 }
 ?>
