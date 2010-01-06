@@ -90,4 +90,25 @@ class CakeBaseReporter extends SimpleReporter {
 		return ((float)$sec + (float)$usec);
 	}
 
+/**
+ * Retrieves a list of test cases from the active Manager class,
+ * displaying it in the correct format for the reporter subclass
+ *
+ * @return mixed
+ */
+	function testCaseList() {
+		
+	}
+
+/**
+ * Retrieves a list of group test cases from the active Manager class
+ * displaying it in the correct format for the reporter subclass.
+ *
+ * @return void
+ */
+	function groupTestList() {
+		
+	}
+
 }
+?>
