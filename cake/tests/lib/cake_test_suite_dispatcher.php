@@ -245,10 +245,10 @@ class CakeTestSuiteDispatcher {
 	function _runTestCase() {
 		$Reporter =& CakeTestSuiteDispatcher::getReporter();
 		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::start($_GET['case'], $Reporter);
+			CodeCoverageManager::start($this->params['case'], $Reporter);
 		}
 
-		$this->Manager->runTestCase($_GET['case'], $Reporter);
+		$this->Manager->runTestCase($this->params['case'], $Reporter);
 
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::report();
