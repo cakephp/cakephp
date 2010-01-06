@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * CakeHtmlReporter
  *
  * PHP versions 4 and 5
  *
@@ -11,14 +11,14 @@
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://cakephp.org
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-
 include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
+
 /**
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
