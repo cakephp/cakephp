@@ -32,6 +32,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Character set for the output of test reporting.
  *
  * @var string
+ * @access protected
  */
 	var $_character_set;
 /**
@@ -153,7 +154,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = Set::filter($this->getTestList());
+		$breadcrumb = $this->getTestList();
 		array_shift($breadcrumb);
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
@@ -173,7 +174,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		if ($this->_show_passes) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
-			$breadcrumb = Set::filter($this->getTestList());
+			$breadcrumb = $this->getTestList();
 			array_shift($breadcrumb);
 			echo implode(" -&gt; ", $breadcrumb);
 			echo "<br />" . $this->_htmlEntities($message) . "\n";
@@ -192,7 +193,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<li class='error'>\n";
 		echo "<span>Error</span>";
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = Set::filter($this->getTestList());
+		$breadcrumb = $this->getTestList();
 		array_shift($breadcrumb);
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
@@ -213,7 +214,7 @@ class CakeHtmlReporter extends SimpleReporter {
 			'] in ['. $exception->getFile() .
 			' line ' . $exception->getLine() . ']';
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = Set::filter($this->getTestList());
+		$breadcrumb = $this->getTestList();
 		array_shift($breadcrumb);
 		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
