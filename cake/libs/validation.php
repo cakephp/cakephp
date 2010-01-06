@@ -798,6 +798,20 @@ class Validation extends Object {
 	}
 
 /**
+ * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * 
+ * @param string $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	function uuid($check) {
+		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
+		return $_this->_check();
+	}
+
+/**
  * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
  *
  * The regex checks for the following component parts:

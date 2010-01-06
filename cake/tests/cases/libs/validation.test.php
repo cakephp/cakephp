@@ -1849,6 +1849,17 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
 	}
 
+	function testUuid() {
+		$this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
+		$this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29-11d4-a716-446655440000'));
+	}
+
 /**
  * testInList method
  *
