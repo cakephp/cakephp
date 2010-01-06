@@ -31,6 +31,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * the passes and failures.
  *
  * @param string $test_name Name class of test.
+ * @return void
  * @access public
  */
 	function paintFooter($test_name) {
@@ -54,6 +55,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Paints the title only.
  *
  * @param string $test_name Name class of test.
+ * @return void
  * @access public
  */
 	function paintHeader($test_name) {
@@ -69,6 +71,7 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $message Failure message displayed in
  *    the context of the other tests.
+ * @return void
  * @access public
  */
 	function paintFail($message) {
@@ -84,6 +87,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Paints a PHP error.
  *
  * @param string $message Message to be shown.
+ * @return void
  * @access public
  */
 	function paintError($message) {
@@ -99,6 +103,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to describe.
+ * @return void
  * @access public
  */
 	function paintException($exception) {
@@ -118,6 +123,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Prints the message for skipping tests.
  *
  * @param string $message Text of skip condition.
+ * @return void
  * @access public
  */
 	function paintSkip($message) {
@@ -129,6 +135,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * Paints formatted text such as dumped variables.
  *
  * @param string $message Text to show.
+ * @return void
  * @access public
  */
 	function paintFormattedMessage($message) {

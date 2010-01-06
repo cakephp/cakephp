@@ -87,6 +87,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * title to the name of the starting test.
  *
  * @param string $test_name Name class of test.
+ * @return void
  * @access public
  */
 	function paintHeader($testName) {
@@ -100,8 +101,8 @@ class CakeHtmlReporter extends SimpleReporter {
  * reloaded on every request. Otherwise you could be
  * scratching your head over out of date test data.
  *
+ * @return void
  * @access public
- * @static
  */
 	function sendNoCacheHeaders() {
 		if (!headers_sent()) {
@@ -118,6 +119,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * the passes and failures.
  *
  * @param string $test_name Name class of test.
+ * @return void
  * @access public
  */
 	function paintFooter($test_name) {
@@ -147,6 +149,7 @@ class CakeHtmlReporter extends SimpleReporter {
  *
  * @param string $message Failure message displayed in
  *   the context of the other tests.
+ * @return void
  * @access public
  */
 	function paintFail($message) {
@@ -166,6 +169,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * top level test.
  *
  * @param string $message Pass message displayed in the context of the other tests.
+ * @return void
  * @access public
  */
 	function paintPass($message) {
@@ -186,6 +190,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints a PHP error.
  *
  * @param string $message Message is ignored.
+ * @return void
  * @access public
  */
 	function paintError($message) {
@@ -203,6 +208,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to display.
+ * @return void
  * @access public
  */
 	function paintException($exception) {
@@ -223,7 +229,8 @@ class CakeHtmlReporter extends SimpleReporter {
 /**
  * Prints the message for skipping tests.
  *
- * @param string $message    Text of skip condition.
+ * @param string $message Text of skip condition.
+ * @return void
  * @access public
  */
 	function paintSkip($message) {
@@ -238,6 +245,7 @@ class CakeHtmlReporter extends SimpleReporter {
  * Paints formatted text such as dumped variables.
  *
  * @param string $message Text to show.
+ * @return void
  * @access public
  */
 	function paintFormattedMessage($message) {
