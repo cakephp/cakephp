@@ -155,6 +155,8 @@ class CakeHtmlReporter extends SimpleReporter {
 		}
 		echo $this->_paintLinks();
 		echo '</div>';
+		$baseDir = $this->params['baseDir'];
+		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
 	}
 
 /**

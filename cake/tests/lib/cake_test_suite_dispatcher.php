@@ -102,7 +102,6 @@ class CakeTestSuiteDispatcher {
 			$this->_groupTestList();
 		}
 
-		CakeTestMenu::footer();
 		$output = ob_get_clean();
 		echo $output;
 	}
@@ -114,7 +113,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			$baseUrl = $this->_baseDir;
+			$basePath = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'simpletest.php';
 			exit();
 		}
@@ -128,7 +127,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
-			$baseUrl = $this->_baseDir;
+			$basePath = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
 			exit();
 		}
@@ -214,6 +213,8 @@ class CakeTestSuiteDispatcher {
 			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 			$this->_checkXdebug();
 		}
+		$this->params['baseUrl'] = $this->_baseUrl;
+		$this->params['baseDir'] = $this->_baseDir;
 		$this->getManager();
 	}
 
