@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Missing SimpleTest error page.
  *
  * PHP versions 4 and 5
  *
@@ -18,6 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
+<?php include dirname(__FILE__) . DS . 'header.php'; ?>
 <div id="content">
 	<h2>SimpleTest is not installed</h2>
 	<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
@@ -28,3 +29,4 @@
 	</ul>
 	<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
 </div>
+<?php include dirname(__FILE__) . DS . 'footer.php'; ?>

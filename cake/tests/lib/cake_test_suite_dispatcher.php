@@ -57,6 +57,30 @@ class CakeTestSuiteDispatcher {
 	var $Manager;
 
 /**
+ * Baseurl for the request
+ *
+ * @var string
+ */
+	var $_baseUrl;
+
+/**
+ * Base dir of the request.  Used for accessing assets.
+ *
+ * @var string
+ */
+	var $_baseDir;
+
+/**
+ * constructor
+ *
+ * @return void
+ */
+	function CakeTestSuiteDispatcher() {
+		$this->_baseUrl = $_SERVER['PHP_SELF'];
+		$this->_baseDir = dirname($this->_baseUrl) . '/';
+	}
+
+/**
  * Runs the actions required by the URL parameters.
  *
  * @return void
@@ -90,8 +114,8 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
+			$baseUrl = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'simpletest.php';
-			CakeTestMenu::footer();
 			exit();
 		}
 	}
@@ -104,8 +128,8 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
+			$baseUrl = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
-			CakeTestMenu::footer();
 			exit();
 		}
 	}
