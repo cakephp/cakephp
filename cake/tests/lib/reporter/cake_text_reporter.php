@@ -1,47 +1,31 @@
 <?php
-class CakeTextReporter extends TextReporter {
-
-	var $_timeStart = 0;
-	var $_timeEnd = 0;
-	var $_timeDuration = 0;
+/**
+ * CakeTextReporter contains reporting features used for plain text based output
+ *
+ * PHP versions 4 and 5
+ *
+ * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ *  Licensed under The Open Group Test Suite License
+ *  Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org
+ * @package       cake
+ * @subpackage    cake.cake.tests.libs
+ * @since         CakePHP(tm) v 1.3
+ * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ */
+include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 
 /**
- * Signals / Paints the beginning of a TestSuite executing.
- * Starts the timer for the TestSuite execution time.
+ * CakeTextReporter contains reporting features used for plain text based output
  *
- * @param 
- * @return void
+ * @package cake
+ * @subpackage cake.tests.lib
  */
-	function paintGroupStart($test_name, $size) {
-		if (empty($this->_timeStart)) {
-			$this->_timeStart = $this->_getTime();
-		}
-		parent::paintGroupStart($test_name, $size);
-	}
-
-/**
- * Signals/Paints the end of a TestSuite. All test cases have run
- * and timers are stopped.
- *
- * @return void
- */
-	function paintGroupEnd($test_name) {
-		$this->_timeEnd = $this->_getTime();
-		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
-		parent::paintGroupEnd($test_name);
-	}
-
-/**
- * Get the current time in microseconds. Similar to getMicrotime in basics.php
- * but in a separate function to reduce dependancies.
- *
- * @return float Time in microseconds
- */
-	function _getTime() {
-		list($usec, $sec) = explode(' ', microtime());
-		return ((float)$sec + (float)$usec);
-	}
-
+class CakeTextReporter extends CakeBaseReporter {
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
@@ -50,11 +34,106 @@ class CakeTextReporter extends TextReporter {
  * @access public
  */
 	function paintFooter($test_name) {
-		parent::paintFooter($test_name);
+		if ($this->getFailCount() + $this->getExceptionCount() == 0) {
+			echo "OK\n";
+		} else {
+			echo "FAILURES!!!\n";
+		}
+		echo "Test cases run: " . $this->getTestCaseProgress() .
+				"/" . $this->getTestCaseCount() .
+				", Passes: " . $this->getPassCount() .
+				", Failures: " . $this->getFailCount() .
+				", Exceptions: " . $this->getExceptionCount() . "\n";
+
 		echo 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
 		if (function_exists('memory_get_peak_usage')) {
 			echo 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
 		}
+	}
+/**
+ * Paints the title only.
+ *
+ * @param string $test_name Name class of test.
+ * @access public
+ */
+	function paintHeader($test_name) {
+		if (! SimpleReporter::inCli()) {
+			header('Content-type: text/plain');
+		}
+		echo "$test_name\n";
+		flush();
+	}
+
+/**
+ * Paints the test failure as a stack trace.
+ *
+ * @param string $message Failure message displayed in
+ *    the context of the other tests.
+ * @access public
+ */
+	function paintFail($message) {
+		parent::paintFail($message);
+		echo $this->getFailCount() . ") $message\n";
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		echo "\n";
+	}
+
+/**
+ * Paints a PHP error.
+ *
+ * @param string $message Message to be shown.
+ * @access public
+ */
+	function paintError($message) {
+		parent::paintError($message);
+		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		echo "\n";
+	}
+
+/**
+ * Paints a PHP exception.
+ *
+ * @param Exception $exception Exception to describe.
+ * @access public
+ */
+	function paintException($exception) {
+		parent::paintException($exception);
+		$message = 'Unexpected exception of type [' . get_class($exception) .
+				'] with message ['. $exception->getMessage() .
+				'] in ['. $exception->getFile() .
+				' line ' . $exception->getLine() . ']';
+		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		echo "\n";
+	}
+
+/**
+ * Prints the message for skipping tests.
+ *
+ * @param string $message Text of skip condition.
+ * @access public
+ */
+	function paintSkip($message) {
+		parent::paintSkip($message);
+		echo "Skip: $message\n";
+	}
+
+/**
+ * Paints formatted text such as dumped variables.
+ *
+ * @param string $message Text to show.
+ * @access public
+ */
+	function paintFormattedMessage($message) {
+		echo "$message\n";
+		flush();
 	}
 }
 ?>
