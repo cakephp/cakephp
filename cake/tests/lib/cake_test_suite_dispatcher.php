@@ -90,7 +90,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			include CAKE_TESTS_LIB . 'simpletest.php';
+			include CAKE_TESTS_LIB . 'templates' . DS . 'simpletest.php';
 			CakeTestMenu::footer();
 			exit();
 		}
@@ -104,7 +104,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
-			include CAKE_TESTS_LIB . 'xdebug.php';
+			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
 			CakeTestMenu::footer();
 			exit();
 		}
@@ -116,7 +116,7 @@ class CakeTestSuiteDispatcher {
  * @return string The manager class name
  * @static
  */
-	function getManager() {
+	function &getManager() {
 		$className = ucwords($this->params['output']) . 'TestManager';
 		if (class_exists($className)) {
 			$this->_managerClass = $className;
@@ -133,6 +133,7 @@ class CakeTestSuiteDispatcher {
  * Gets the reporter based on the request parameters
  *
  * @return void
+ * @static
  */
 	function &getReporter() {
 		static $Reporter = NULL;
