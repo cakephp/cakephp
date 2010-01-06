@@ -97,9 +97,9 @@ class CakeTestSuiteDispatcher {
 		} elseif ($this->params['case']) {
 			$this->_runTestCase();
 		} elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
-			CakeTestMenu::testCaseList();
+			$this->_testCaseList();
 		} else {
-			CakeTestMenu::groupTestList();
+			$this->_groupTestList();
 		}
 
 		CakeTestMenu::footer();
@@ -132,6 +132,24 @@ class CakeTestSuiteDispatcher {
 			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
 			exit();
 		}
+	}
+
+/**
+ * Generates a page containing the a list of test cases that could be run.
+ *
+ * @return void
+ */
+	function _testCaseList() {
+		CakeTestMenu::testCaseList();
+	}
+
+/**
+ * Generates a page containing a list of group tests that could be run.
+ *
+ * @return void
+ */
+	function _groupTestList() {
+		CakeTestMenu::groupTestList();
 	}
 
 /**
