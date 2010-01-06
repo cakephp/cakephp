@@ -162,7 +162,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1), array(
 			'update' => '#content'
 		));
-		$expected = '$.ajax({success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
+		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -184,7 +184,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'method' => 'post',
 			'wrapCallbacks' => false
 		));
-		$expected = '$.ajax({success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -195,7 +195,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'data' => '$("#someId").serialize()',
 			'wrapCallbacks' => false
 		));
-		$expected = '$.ajax({data:$("#someId").serialize(), success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$expected = '$.ajax({data:$("#someId").serialize(), dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
