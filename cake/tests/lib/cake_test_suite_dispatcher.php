@@ -136,11 +136,12 @@ class CakeTestSuiteDispatcher {
 	function &getReporter() {
 		static $Reporter = NULL;
 		if (!$Reporter) {
+			$type = strtolower($this->params['output']);
 			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
-			$coreFile = CAKE_TESTS_LIB . 'cake_' . strtolower($this->params['output']) . '_reporter.php';
+			$coreFile = CAKE_TESTS_LIB . 'reporter' . DS . 'cake_' . $type . '_reporter.php';
 
 			$appClass = $this->params['output'] . 'Reporter';
-			$appFile = APPLIBS . 'test_suite' . DS . strtolower($this->params['output']) . '_reporter.php';
+			$appFile = APPLIBS . 'test_suite' . DS . 'reporter' . DS . $type . '_reporter.php';
 			if (include_once $coreFile) {
 				$Reporter =& new $coreClass();
 			} elseif (include_once $appFile) {
