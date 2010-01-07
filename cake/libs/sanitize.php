@@ -79,22 +79,40 @@ class Sanitize {
 
 /**
  * Returns given string safe for display as HTML. Renders entities.
+ * 
+ * strip_tags() is not validating HTML, so it might strip whole passages
+ * with broken HTML.
  *
  * @param string $string String from where to strip tags
- * @param boolean $remove If true, the string is stripped of all HTML tags
+ * @param array $options
+ * 
+ * possible options:
+ * 
+ * 		- remove (boolean) if true strips all HTML tags before encoding
+ * 		- charset (string) the charset used to encode the string
+ * 		- quotes (int) see http://php.net/manual/en/function.htmlentities.php
+ * 
  * @return string Sanitized string
  * @access public
  * @static
  */
-	function html($string, $remove = false) {
-		if ($remove) {
+	function html($string, $options = array()) {
+		$default = array(
+			'remove' => false,
+			'charset' => 'UTF-8',
+			'quotes' => ENT_QUOTES
+		);
+
+		$options = array_merge($default, $options);
+
+		if ($options['remove']) {
 			$string = strip_tags($string);
-		} else {
-			$patterns = array('&', '%', '<', '>', '"', "'", '(', ')', '+', '-');
-			$replacements = array("&amp;", "&#37;", "&lt;", "&gt;", "&quot;", "&#39;", "&#40;", "&#41;", "&#43;", "&#45;");
-			$string = str_replace($patterns, $replacements, $string);
 		}
-		return $string;
+		$encoding = Configure::read('App.encoding');
+		if (empty($encoding)) {
+			$encoding = $options['charset'];
+		}
+		return htmlentities($string, $options['quotes'], $encoding);
 	}
 
 /**
@@ -198,6 +216,7 @@ class Sanitize {
 		$options = array_merge(array(
 			'connection' => 'default',
 			'odd_spaces' => true,
+			'remove_html' => false,
 			'encode' => true,
 			'dollar' => true,
 			'carriage' => true,
@@ -216,7 +235,7 @@ class Sanitize {
 				$data = str_replace(chr(0xCA), '', str_replace(' ', ' ', $data));
 			}
 			if ($options['encode']) {
-				$data = Sanitize::html($data);
+				$data = Sanitize::html($data, array('remove' => $options['remove_html']));
 			}
 			if ($options['dollar']) {
 				$data = str_replace("\\\$", "$", $data);
