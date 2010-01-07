@@ -1725,13 +1725,16 @@ class ValidationTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIp() {
-		$this->assertTrue(Validation::ip('0.0.0.0'));
-		$this->assertTrue(Validation::ip('192.168.1.156'));
-		$this->assertTrue(Validation::ip('255.255.255.255'));
-		$this->assertFalse(Validation::ip('127.0.0'));
-		$this->assertFalse(Validation::ip('127.0.0.a'));
-		$this->assertFalse(Validation::ip('127.0.0.256'));
+	function testIpv4() {
+		$this->assertTrue(Validation::ip('0.0.0.0', 'IPv4'));
+		$this->assertTrue(Validation::ip('192.168.1.156', 'IPv4'));
+		$this->assertTrue(Validation::ip('255.255.255.255', 'IPv4'));
+
+		$this->assertFalse(Validation::ip('127.0.0', 'IPv4'));
+		$this->assertFalse(Validation::ip('127.0.0.a', 'IPv4'));
+		$this->assertFalse(Validation::ip('127.0.0.256', 'IPv4'));
+
+		$this->assertFalse(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv4'));
 	}
 
 /**
@@ -1772,6 +1775,32 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::ip('1:2:3::4:5:6:7:8:9', 'IPv6'));
 		$this->assertFalse(Validation::ip('::ffff:2.3.4', 'IPv6'));
 		$this->assertFalse(Validation::ip('::ffff:257.1.2.3', 'IPv6'));
+
+		$this->assertFalse(Validation::ip('0.0.0.0', 'IPv6'));
+	}
+
+/**
+ * testIpBoth method
+ *
+ * @return void
+ * @access public
+ */	
+	function testIpBoth() {
+		$this->assertTrue(Validation::ip('0.0.0.0'));
+		$this->assertTrue(Validation::ip('192.168.1.156'));
+		$this->assertTrue(Validation::ip('255.255.255.255'));
+		
+		$this->assertFalse(Validation::ip('127.0.0'));
+		$this->assertFalse(Validation::ip('127.0.0.a'));
+		$this->assertFalse(Validation::ip('127.0.0.256'));
+
+		$this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3::8a2e:370:7334'));
+
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:37023:7334'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:370k:7334'));
+		$this->assertFalse(Validation::ip('1:2:3:4:5:6:7:8:9'));
 	}
 
 /**
@@ -1847,6 +1876,23 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+
+		$this->assertTrue(Validation::url('http://cakephp.org:80'));
+		$this->assertTrue(Validation::url('http://cakephp.org:443'));
+		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('[::1]'));
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('[::1]:80'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('http://[::1]'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('http://[::1]:80'));
+
+		$this->assertFalse(Validation::url('[1::2::3]'));
 	}
 
 /**

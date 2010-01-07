@@ -541,22 +541,63 @@ class Validation extends Object {
 	}
 
 /**
- * Validation of an IPv4 address.
+ * Validation of an IP address.
+ *
+ * Valid IP version strings for type restriction are:
+ * - both: Check both IPv4 and IPv6, return true if the supplied address matches either version
+ * - IPv4: Version 4 (Eg: 127.0.0.1, 192.168.10.123, 203.211.24.8)
+ * - IPv6: Version 6 (Eg: ::1, 2001:0db8::1428:57ab)
  *
  * @param string $check The string to test.
+ * @param string $type The IP Version to test against
  * @return boolean Success
  * @access public
  */
-	function ip($check, $type = 'IPv4') {
-		if (function_exists('filter_var')) {
-			return (boolean) filter_var($check, FILTER_VALIDATE_IP);
-		}
-
+	function ip($check, $type = 'both') {
 		$_this =& Validation::getInstance();
-		$_this->check = $check;
-		$_this->__populateIp();
-		$_this->regex = '/^' . $_this->__pattern[$type] . '$/';
-		return $_this->_check();
+		$success = false;
+		$type = strtolower($type);
+		if ($type === 'ipv4' || $type === 'both') {
+			$success |= $_this->_ipv4($check);
+		}
+		if ($type === 'ipv6' || $type === 'both') {
+			$success |= $_this->_ipv6($check);
+		}
+		return $success;
+	}
+
+/**
+ * Validation of IPv4 addresses.
+ *
+ * @param string $check IP Address to test
+ * @return boolean Success
+ * @access protected
+ */
+	function _ipv4($check) {
+		if (function_exists('filter_var')) {
+			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV4)) !== false;
+		}
+		$this->__populateIp();
+		$this->check = $check;
+		$this->regex = '/^' . $this->__pattern['IPv4'] . '$/';
+		return $this->_check();
+	}
+
+/**
+ * Validation of IPv6 addresses.
+ *
+ * @param string $check IP Address to test
+ * @return boolean Success
+ * @access protected
+ */
+	function _ipv6($check) {
+		if (function_exists('filter_var')) {
+			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV6)) !== false;
+		}
+		$this->__populateIp();
+		$this->check = $check;
+		$this->regex = '/^' . $this->__pattern['IPv6'] . '$/';
+		return $this->_check();
 	}
 
 /**
@@ -816,7 +857,8 @@ class Validation extends Object {
 		$_this->check = $check;
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z]|(%[0-9a-f]{2}))';
 		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-			'(?:' . $_this->__pattern['IPv4'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:' . $_this->__pattern['IPv4'] . '|\[' . $_this->__pattern['IPv6'] . '\]|' . $_this->__pattern['hostname'] . ')' .
+			'(?::[1-9][0-9]{0,4})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
 			'(?:#' . $validChars . '*)?$/i';
@@ -954,6 +996,7 @@ class Validation extends Object {
  * Lazily popualate the IP address patterns used for validations
  *
  * @return void
+ * @access private
  */
 	function __populateIp() {
 		if (!isset($this->__pattern['IPv6'])) {

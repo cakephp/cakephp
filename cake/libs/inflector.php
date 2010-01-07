@@ -189,12 +189,12 @@ class Inflector {
 	var $_singularized = array();
 
 /**
- * Cached Underscored Inflections
+ * Cached Underscore Inflections
  *
  * @var array
  * @access protected
  */
-	var $_underscored = array();
+	var $_underscore = array();
 
 /**
  * Cached Camelize Inflections
@@ -213,7 +213,7 @@ class Inflector {
 	var $_classify = array();
 
 /**
- * Tablized cached inflections
+ * Tablize cached inflections
  *
  * @var array
  * @access protected
@@ -241,6 +241,31 @@ class Inflector {
 			$instance[0] =& new Inflector();
 		}
 		return $instance[0];
+	}
+
+/**
+ * Cache inflected values, and return if already available
+ *
+ * @param string $type Inflection type
+ * @param string $key Original value
+ * @param string $value Inflected value
+ * @return string Inflected value, from cache
+ * @access protected
+ */
+	function _cache($type, $key, $value = false) {
+		$_this =& Inflector::getInstance();
+
+		$key = '_' . $key;
+		$type = '_' . $type;
+		if ($value !== false) {
+			$_this->{$type}[$key] = $value;
+			return $value;
+		}
+
+		if (!isset($_this->{$type}[$key])) {
+			return false;
+		}
+		return $_this->{$type}[$key];
 	}
 
 /**
@@ -379,11 +404,11 @@ class Inflector {
  */
 	function camelize($lowerCaseAndUnderscoredWord) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_camelize[$lowerCaseAndUnderscoredWord])) {
-			$_this->_camelize[$lowerCaseAndUnderscoredWord] = str_replace(" ", "", ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord)));
+		if (!($result = $_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
+			$result = str_replace(' ', '', Inflector::humanize($lowerCaseAndUnderscoredWord));
+			$_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
 		}
-		return $_this->_camelize[$lowerCaseAndUnderscoredWord];
+		return $result;
 	}
 
 /**
@@ -397,11 +422,11 @@ class Inflector {
  */
 	function underscore($camelCasedWord) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_underscored[$camelCasedWord])) {
-			$_this->_underscored[$camelCasedWord] = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+		if (!($result = $_this->_cache(__FUNCTION__, $camelCasedWord))) {
+			$result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+			$_this->_cache(__FUNCTION__, $camelCasedWord, $result);
 		}
-		return $_this->_underscored[$camelCasedWord];
+		return $result;
 	}
 
 /**
@@ -416,11 +441,11 @@ class Inflector {
  */
 	function humanize($lowerCaseAndUnderscoredWord) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_humanize[$lowerCaseAndUnderscoredWord])) {
-			$_this->_humanize[$lowerCaseAndUnderscoredWord] = ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+		if (!($result = $_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
+			$result = ucwords(str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
+			$_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
 		}
-		return $_this->_humanize[$lowerCaseAndUnderscoredWord];
+		return $result;
 	}
 
 /**
@@ -434,11 +459,11 @@ class Inflector {
  */
 	function tableize($className) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_tableize[$className])) {
-			$_this->_tableize[$className] = Inflector::pluralize(Inflector::underscore($className));
+		if (!($result = $_this->_cache(__FUNCTION__, $className))) {
+			$result = Inflector::pluralize(Inflector::underscore($className));
+			$_this->_cache(__FUNCTION__, $className, $result);
 		}
-		return $_this->_tableize[$className];
+		return $result;
 	}
 
 /**
@@ -452,11 +477,11 @@ class Inflector {
  */
 	function classify($tableName) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_classify[$tableName])) {
-			$_this->_classify[$tableName] = Inflector::camelize(Inflector::singularize($tableName));
+		if (!($result = $_this->_cache(__FUNCTION__, $tableName))) {
+			$result = Inflector::camelize(Inflector::singularize($tableName));
+			$_this->_cache(__FUNCTION__, $tableName, $result);
 		}
-		return $_this->_classify[$tableName];
+		return $result;
 	}
 
 /**
@@ -470,13 +495,13 @@ class Inflector {
  */
 	function variable($string) {
 		$_this =& Inflector::getInstance();
-
-		if (!isset($_this->_variable[$string])) {
-			$string = Inflector::camelize(Inflector::underscore($string));
-			$replace = strtolower(substr($string, 0, 1));
-			$_this->_variable[$string] = preg_replace('/\\w/', $replace, $string, 1);
+		if (!($result = $_this->_cache(__FUNCTION__, $string))) {
+			$string2 = Inflector::camelize(Inflector::underscore($string));
+			$replace = strtolower(substr($string2, 0, 1));
+			$result = preg_replace('/\\w/', $replace, $string2, 1);
+			$_this->_cache(__FUNCTION__, $string, $result);
 		}
-		return $_this->_variable[$string];
+		return $result;
 	}
 
 /**
