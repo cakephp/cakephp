@@ -1876,6 +1876,23 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+
+		$this->assertTrue(Validation::url('http://cakephp.org:80'));
+		$this->assertTrue(Validation::url('http://cakephp.org:443'));
+		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('[::1]'));
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('[::1]:80'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('http://[::1]'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('http://[::1]:80'));
+
+		$this->assertFalse(Validation::url('[1::2::3]'));
 	}
 
 /**

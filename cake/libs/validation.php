@@ -556,6 +556,7 @@ class Validation extends Object {
 	function ip($check, $type = 'both') {
 		$_this =& Validation::getInstance();
 		$success = false;
+		$type = strtolower($type);
 		if ($type === 'ipv4' || $type === 'both') {
 			$success |= $_this->_ipv4($check);
 		}
@@ -856,7 +857,8 @@ class Validation extends Object {
 		$_this->check = $check;
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z]|(%[0-9a-f]{2}))';
 		$_this->regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-			'(?:' . $_this->__pattern['IPv4'] . '|' . $_this->__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:' . $_this->__pattern['IPv4'] . '|\[' . $_this->__pattern['IPv6'] . '\]|' . $_this->__pattern['hostname'] . ')' .
+			'(?::[1-9][0-9]{0,4})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
 			'(?:#' . $validChars . '*)?$/i';
