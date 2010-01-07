@@ -86,9 +86,6 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function dispatch() {
-		CakeTestMenu::testHeader();
-		CakeTestMenu::testSuiteHeader();
-
 		$this->_checkSimpleTest();
 		$this->_parseParams();
 

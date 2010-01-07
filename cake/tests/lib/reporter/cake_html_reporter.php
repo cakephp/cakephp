@@ -106,8 +106,30 @@ class CakeHtmlReporter extends SimpleReporter {
  */
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
+		$this->paintDocumentHeader();
+		$this->paintTestMenu();
 		echo "<h2>$testName</h2>\n";
 		echo "<ul class='tests'>\n";
+	}
+
+/**
+ * Paints the document header contained in header.php
+ *
+ * @return void
+ */
+	function paintDocumentHeader() {
+		$baseDir = $this->params['baseDir'];
+		include CAKE_TESTS_LIB . 'templates' . DS . 'header.php';
+	}
+
+/**
+ * Paints the menu on the left side of the test suite interface.
+ * Contains all of the various plugin, core, and app buttons.
+ *
+ * @return void
+ */
+	function paintTestMenu() {
+		CakeTestMenu::testSuiteHeader();
 	}
 
 /**
