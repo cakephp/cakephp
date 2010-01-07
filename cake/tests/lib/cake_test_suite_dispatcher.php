@@ -139,7 +139,7 @@ class CakeTestSuiteDispatcher {
 		$Reporter =& $this->getReporter();
 		$Reporter->paintDocumentHeader();
 		$Reporter->paintTestMenu();
-		CakeTestMenu::testCaseList();
+		$Reporter->testCaseList();
 		$Reporter->paintDocumentEnd();
 	}
 
@@ -152,7 +152,7 @@ class CakeTestSuiteDispatcher {
 		$Reporter =& $this->getReporter();
 		$Reporter->paintDocumentHeader();
 		$Reporter->paintTestMenu();
-		CakeTestMenu::groupTestList();
+		$Reporter->groupTestList();
 		$Reporter->paintDocumentEnd();
 	}
 

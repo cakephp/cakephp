@@ -85,24 +85,6 @@ class CakeTestMenu {
 	}
 
 /**
- * Provides the left hand navigation for the testsuite
- *
- * @return void
- * @access public
- */
-	function testSuiteHeader() {
-		switch (CAKE_TEST_OUTPUT) {
-			case CAKE_TEST_OUTPUT_HTML:
-				ob_start();
-				$groups = $_SERVER['PHP_SELF'] . '?show=groups';
-				$cases = $_SERVER['PHP_SELF'] . '?show=cases';
-				$plugins = App::objects('plugin');
-				include CAKE_TESTS_LIB . 'content.php';
-				break;
-		}
-	}
-
-/**
  * Provides the testsuite footer text
  *
  * @return void

@@ -129,7 +129,28 @@ class CakeHtmlReporter extends SimpleReporter {
  * @return void
  */
 	function paintTestMenu() {
-		CakeTestMenu::testSuiteHeader();
+		$groups = $_SERVER['PHP_SELF'] . '?show=groups';
+		$cases = $_SERVER['PHP_SELF'] . '?show=cases';
+		$plugins = App::objects('plugin');
+		include CAKE_TESTS_LIB . 'templates' . DS . 'menu.php';
+	}
+
+/**
+ * Retrieves and paints the list of tests cases in an HTML format.
+ *
+ * @return void
+ */
+	function testCaseList() {
+		CakeTestMenu::testCaseList();
+	}
+
+/**
+ * Retrieves and paints the list of group tests in an HTML format.
+ *
+ * @return void
+ */
+	function groupTestList() {
+		CakeTestMenu::groupTestList();
 	}
 
 /**
