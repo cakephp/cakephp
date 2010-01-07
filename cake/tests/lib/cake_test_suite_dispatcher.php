@@ -136,7 +136,11 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _testCaseList() {
+		$Reporter =& $this->getReporter();
+		$Reporter->paintDocumentHeader();
+		$Reporter->paintTestMenu();
 		CakeTestMenu::testCaseList();
+		$Reporter->paintDocumentEnd();
 	}
 
 /**
@@ -145,7 +149,11 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _groupTestList() {
+		$Reporter =& $this->getReporter();
+		$Reporter->paintDocumentHeader();
+		$Reporter->paintTestMenu();
 		CakeTestMenu::groupTestList();
+		$Reporter->paintDocumentEnd();
 	}
 
 /**

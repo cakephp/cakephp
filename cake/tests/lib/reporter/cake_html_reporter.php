@@ -177,8 +177,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		}
 		echo $this->_paintLinks();
 		echo '</div>';
-		$baseDir = $this->params['baseDir'];
-		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
+		$this->paintDocumentEnd();
 	}
 
 /**
@@ -211,6 +210,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
 		echo " <a href='" . RUN_TEST_LINK . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
 	}
+
 /**
  * Convert an array of parameters into a query string url
  *
@@ -225,6 +225,16 @@ class CakeHtmlReporter extends SimpleReporter {
 		}
 		$out .= implode('&amp;', $params);
 		return $out;
+	}
+
+/**
+ * paints the end of the document html.
+ *
+ * @return void
+ */
+	function paintDocumentEnd() {
+		$baseDir = $this->params['baseDir'];
+		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
 	}
 
 /**

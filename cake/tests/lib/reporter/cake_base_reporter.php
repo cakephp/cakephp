@@ -107,6 +107,26 @@ class CakeBaseReporter extends SimpleReporter {
  * @return void
  */
 	function groupTestList() {
+
+	}
+
+/**
+ * paints the header of the response from the test suite.
+ * Used to paint things like head elements in an html page.
+ *
+ * @return void
+ */
+	function paintDocumentHeader() {
+
+	}
+
+/**
+ * paints the end of the response from the test suite.
+ * Used to paint things like </body> in an html page.
+ *
+ * @return void
+ */
+	function paintDocumentFooter() {
 		
 	}
 
