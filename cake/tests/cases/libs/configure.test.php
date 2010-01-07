@@ -227,7 +227,7 @@ class ConfigureTest extends CakeTestCase {
 
 		$result = Configure::load('config');
 		$this->assertTrue($result === null);
-		
+
 		$result = Configure::load('../../index');
 		$this->assertFalse($result);
 	}
@@ -421,6 +421,17 @@ class AppImportTest extends UnitTestCase {
 
 		$result = App::objects('NonExistingType');
 		$this->assertFalse($result);
+
+		App::build(array(
+			'plugins' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS
+			)
+		));
+		$result = App::objects('plugin', null, false);
+		$this->assertTrue(in_array('Cache', $result));
+		$this->assertTrue(in_array('Log', $result));
+
+		App::build();
 	}
 
 /**
