@@ -35,6 +35,7 @@ class Sanitize {
  * Removes any non-alphanumeric characters.
  *
  * @param string $string String to sanitize
+ * @param array $allowed An array of additional characters that are not to be removed.
  * @return string Sanitized string
  * @access public
  * @static
@@ -80,18 +81,17 @@ class Sanitize {
 /**
  * Returns given string safe for display as HTML. Renders entities.
  * 
- * strip_tags() is not validating HTML, so it might strip whole passages
+ * strip_tags() does not validating HTML syntax or structure, so it might strip whole passages
  * with broken HTML.
  *
+ * ### Options:
+ *
+ * - remove (boolean) if true strips all HTML tags before encoding
+ * - charset (string) the charset used to encode the string
+ * - quotes (int) see http://php.net/manual/en/function.htmlentities.php
+ *
  * @param string $string String from where to strip tags
- * @param array $options
- * 
- * possible options:
- * 
- * 		- remove (boolean) if true strips all HTML tags before encoding
- * 		- charset (string) the charset used to encode the string
- * 		- quotes (int) see http://php.net/manual/en/function.htmlentities.php
- * 
+ * @param array $options Array of options to use.
  * @return string Sanitized string
  * @access public
  * @static
@@ -173,6 +173,10 @@ class Sanitize {
  * Strips the specified tags from output. First parameter is string from
  * where to remove tags. All subsequent parameters are tags.
  *
+ * Ex.`$clean = Sanitize::stripTags($dirty, 'b', 'p', 'div');`
+ *
+ * Will remove all `<b>`, `<p>`, and `<div>` tags from the $dirty string.
+ *
  * @param string $str String to sanitize
  * @param string $tag Tag to remove (add more parameters as needed)
  * @return string sanitized String
@@ -193,8 +197,16 @@ class Sanitize {
 /**
  * Sanitizes given array or value for safe input. Use the options to specify
  * the connection to use, and what filters should be applied (with a boolean
- * value). Valid filters: odd_spaces, encode, dollar, carriage, unicode,
- * escape, backslash.
+ * value). Valid filters: 
+ *
+ * - odd_spaces - removes any non space whitespace characters
+ * - encode - Encode any html entities. Encode must be true for the `remove_html` to work.
+ * - dollar - Escape `$` with `\$`
+ * - carriage - Remove `\r`
+ * - unicode - 
+ * - escape - Should the string be SQL escaped.
+ * - backslash - 
+ * - remove_html - Strip HTML with strip_tags. `encode` must be true for this option to work.
  *
  * @param mixed $data Data to sanitize
  * @param mixed $options If string, DB connection being used, otherwise set of options
