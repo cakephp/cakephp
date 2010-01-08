@@ -825,8 +825,10 @@ class App extends Object {
 			$items = array();
 
 			foreach ((array)$path as $dir) {
+				if ($dir != APP) {
 					$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
 					$objects = array_merge($items, array_diff($objects, $items));
+				}
 			}
 
 			if ($type !== 'file') {
