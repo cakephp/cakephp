@@ -18,7 +18,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE_TESTS_LIB . 'test_manager.php';
-require_once CAKE_TESTS_LIB . 'cake_test_menu.php';
 
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
