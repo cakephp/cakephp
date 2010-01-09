@@ -56,48 +56,5 @@ class CakeTestMenu {
 		}
 	}
 
-/**
- * Includes the Testsuite Header
- *
- * @return void
- * @access public
- */
-	function testHeader() {
-		switch (CAKE_TEST_OUTPUT) {
-			case CAKE_TEST_OUTPUT_HTML:
-				ob_start();
-				if (!class_exists('dispatcher')) {
-					require CAKE . 'dispatcher.php';
-				}
-				$dispatch =& new Dispatcher();
-				$dispatch->baseUrl();
-				define('BASE', $dispatch->webroot);
-				$baseUrl = BASE;
-				$characterSet = 'charset=utf-8';
-				include CAKE_TESTS_LIB . 'header.php';
-
-				break;
-			case CAKE_TEST_OUTPUT_TEXT:
-			default:
-				header('content-type: text/plain');
-				break;
-		}
-	}
-
-/**
- * Provides the testsuite footer text
- *
- * @return void
- * @access public
- */
-	function footer() {
-		switch ( CAKE_TEST_OUTPUT) {
-			case CAKE_TEST_OUTPUT_HTML:
-				ob_start();
-				$baseUrl = BASE;
-				include CAKE_TESTS_LIB . 'footer.php';
-				break;
-		}
-	}
 }
 ?>
