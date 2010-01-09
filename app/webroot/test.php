@@ -89,21 +89,6 @@ if (Configure::read('debug') < 1) {
 	die(__('Debug setting does not allow access to this url.', true));
 }
 
-/**
- *
- * Used to determine output to display
- */
-define('CAKE_TEST_OUTPUT_HTML', 1);
-define('CAKE_TEST_OUTPUT_TEXT', 2);
-
-if (!isset($_GET['output']) || (isset($_GET['output']) && $_GET['output'] == 'html')) {
-	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_HTML);
-} else {
-	Debugger::output('txt');
-	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_TEXT);
-}
-define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
-
 require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
 
 $Dispatcher = new CakeTestSuiteDispatcher();
