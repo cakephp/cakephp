@@ -26,7 +26,7 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeHtmlReporter extends SimpleReporter {
+class CakeHtmlReporter extends CakeBaseReporter {
 
 /**
  * Character set for the output of test reporting.
@@ -42,30 +42,6 @@ class CakeHtmlReporter extends SimpleReporter {
  * @access protected
  */
 	var $_show_passes = false;
-
-/**
- * Time the test runs started.
- *
- * @var integer
- * @access protected
- */
-	var $_timeStart = 0;
-
-/**
- * Time the test runs ended
- *
- * @var integer
- * @access protected
- */
-	var $_timeEnd = 0;
-
-/**
- * Duration of all test methods.
- *
- * @var integer
- * @access protected
- */
-	var $_timeDuration = 0;
 
 /**
  * Array of request parameters.  Usually parsed GET params.
@@ -94,6 +70,7 @@ class CakeHtmlReporter extends SimpleReporter {
 		$this->SimpleReporter();
 		$this->_character_set = !empty($character_set) ? $character_set : 'ISO-8859-1';
 		$this->params = $params;
+		$this->_url = $_SERVER['PHP_SELF'];
 	}
 
 /**
@@ -141,7 +118,34 @@ class CakeHtmlReporter extends SimpleReporter {
  * @return void
  */
 	function testCaseList() {
-		CakeTestMenu::testCaseList();
+		$testCases = parent::testCaseList();
+		$app = $this->params['app'];
+		$plugin = $this->params['plugin'];
+
+		$buffer = "<h3>Core Test Cases:</h3>\n<ul>";
+		$urlExtra = null;
+		if ($app) {
+			$buffer = "<h3>App Test Cases:</h3>\n<ul>";
+			$urlExtra = '&app=true';
+		} elseif ($plugin) {
+			$buffer = "<h3>" . Inflector::humanize($plugin) . " Test Cases:</h3>\n<ul>";
+			$urlExtra = '&plugin=' . $plugin;
+		}
+
+		if (1 > count($testCases)) {
+			$buffer .= "<strong>EMPTY</strong>";
+			echo $buffer;
+		}
+
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$title = explode(strpos($testCase, '\\') ? '\\' : '/', str_replace('.test.php', '', $testCase));
+			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
+			$title = implode(' / ', $title);
+
+				$buffer .= "<li><a href='" . $this->_url . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
+		}
+		$buffer .= "</ul>\n";
+		echo $buffer;
 	}
 
 /**

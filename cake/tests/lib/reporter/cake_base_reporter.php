@@ -97,7 +97,8 @@ class CakeBaseReporter extends SimpleReporter {
  * @return mixed
  */
 	function testCaseList() {
-		
+		$testList = TestManager::getTestCaseList();
+		return $testList;
 	}
 
 /**
@@ -107,7 +108,8 @@ class CakeBaseReporter extends SimpleReporter {
  * @return void
  */
 	function groupTestList() {
-
+		$testList = TestManager::getGroupTestList();
+		return $testList;
 	}
 
 /**
