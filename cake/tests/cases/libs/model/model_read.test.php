@@ -7240,6 +7240,29 @@ class ModelReadTest extends BaseModelTest {
 			$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
 			$result = $Post->field('other_field');
 			$this->assertEqual($result, 4);
+
+			ClassRegistry::flush();
+			$Post = ClassRegistry::init('Post');
+
+			$Post->create();
+			$Post->virtualFields = array(
+				'year' => 'YEAR(Post.created)',
+				'unique_test_field' => 'COUNT(Post.id)'
+			);
+
+			$expectation = array(
+				'Post' => array(
+					'year' => 2007,
+					'unique_test_field' => 3
+				)
+			);
+
+			$result = $Post->find('first', array(
+				'fields' => array_keys($Post->virtualFields),
+				'group' => array('year')
+			));
+
+			$this->assertEqual($result, $expectation);
 		}
 }
 ?>
