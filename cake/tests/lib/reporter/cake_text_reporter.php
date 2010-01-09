@@ -26,6 +26,7 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
  * @subpackage cake.tests.lib
  */
 class CakeTextReporter extends CakeBaseReporter {
+
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
@@ -59,9 +60,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * @access public
  */
 	function paintHeader($test_name) {
-		if (! SimpleReporter::inCli()) {
-			header('Content-type: text/plain');
-		}
+		header('Content-type: text/plain');
 		echo "$test_name\n";
 		flush();
 	}
@@ -141,6 +140,41 @@ class CakeTextReporter extends CakeBaseReporter {
 	function paintFormattedMessage($message) {
 		echo "$message\n";
 		flush();
+	}
+
+/**
+ * Generate a test case list in plain text.
+ * Creates as series of url's for tests that can be run.
+ * One case per line.
+ *
+ * @return void
+ */
+	function testCaseList() {
+		$testCases = parent::testCaseList();
+		$app = $this->params['app'];
+		$plugin = $this->params['plugin'];
+
+		$buffer = "Core Test Cases:\n";
+		$urlExtra = '';
+		if ($app) {
+			$buffer = "App Test Cases:\n";
+			$urlExtra = '&app=true';
+		} elseif ($plugin) {
+			$buffer = Inflector::humanize($plugin) . " Test Cases:\n";
+			$urlExtra = '&plugin=' . $plugin;
+		}
+
+		if (1 > count($testCases)) {
+			$buffer .= "EMPTY";
+			echo $buffer;
+		}
+
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$buffer .= $_SERVER['SERVER_NAME'] . $this->baseUrl() ."?case=" . $testCase . "&output=text"."\n";
+		}
+
+		$buffer .= "\n";
+		echo $buffer;
 	}
 }
 ?>

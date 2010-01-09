@@ -29,51 +29,6 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 class CakeHtmlReporter extends CakeBaseReporter {
 
 /**
- * Character set for the output of test reporting.
- *
- * @var string
- * @access protected
- */
-	var $_character_set;
-/**
- * Toggle to show passes in output.
- *
- * @var boolean
- * @access protected
- */
-	var $_show_passes = false;
-
-/**
- * Array of request parameters.  Usually parsed GET params.
- *
- * @var array
- */
-	var $params = array();
-
-/**
- * Does nothing yet. The first output will
- * be sent on the first test start. For use
- * by a web browser.
- *
- * ### Params
- *
- * - show_passes - Should passes be shown
- * - plugin - Plugin test being run?
- * - app - App test being run.
- * - case - The case being run
- * 
- * @param string $character_set The character set to output with. Defaults to ISO-8859-1
- * @param array $params Array of request parameters the reporter should use. See above.
- * @access public
- */
-	function CakeHtmlReporter($character_set = 'ISO-8859-1', $params = array()) {
-		$this->SimpleReporter();
-		$this->_character_set = !empty($character_set) ? $character_set : 'ISO-8859-1';
-		$this->params = $params;
-		$this->_url = $_SERVER['PHP_SELF'];
-	}
-
-/**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
  *
@@ -83,18 +38,18 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
-		$this->paintDocumentHeader();
+		$this->paintDocumentStart();
 		$this->paintTestMenu();
 		echo "<h2>$testName</h2>\n";
 		echo "<ul class='tests'>\n";
 	}
 
 /**
- * Paints the document header contained in header.php
+ * Paints the document start content contained in header.php
  *
  * @return void
  */
-	function paintDocumentHeader() {
+	function paintDocumentStart() {
 		$baseDir = $this->params['baseDir'];
 		include CAKE_TESTS_LIB . 'templates' . DS . 'header.php';
 	}
@@ -106,8 +61,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	function paintTestMenu() {
-		$groups = $_SERVER['PHP_SELF'] . '?show=groups';
-		$cases = $_SERVER['PHP_SELF'] . '?show=cases';
+		$groups = $this->baseUrl() . '?show=groups';
+		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin');
 		include CAKE_TESTS_LIB . 'templates' . DS . 'menu.php';
 	}
@@ -134,15 +89,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 
 		if (1 > count($testCases)) {
 			$buffer .= "<strong>EMPTY</strong>";
-			echo $buffer;
 		}
 
 		foreach ($testCases as $testCaseFile => $testCase) {
 			$title = explode(strpos($testCase, '\\') ? '\\' : '/', str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);
-
-				$buffer .= "<li><a href='" . $this->_url . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
+				$buffer .= "<li><a href='" . $this->baseUrl() . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
 		}
 		$buffer .= "</ul>\n";
 		echo $buffer;
@@ -154,7 +107,27 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	function groupTestList() {
-		CakeTestMenu::groupTestList();
+		$groupTests = parent::groupTestList();
+		$app = $this->params['app'];
+		$plugin = $this->params['plugin'];
+
+		$buffer = "<h3>Core Test Groups:</h3>\n<ul>";
+		$urlExtra = null;
+		if ($app) {
+			$buffer = "<h3>App Test Groups:</h3>\n<ul>";
+			$urlExtra = '&app=true';
+		} else if ($plugin) {
+			$buffer = "<h3>" . Inflector::humanize($plugin) . " Test Groups:</h3>\n<ul>";
+			$urlExtra = '&plugin=' . $plugin;
+		}
+
+		$buffer .= "<li><a href='" . $this->baseURL() . "?group=all$urlExtra'>All tests</a></li>\n";
+
+		foreach ($groupTests as $groupTest) {
+			$buffer .= "<li><a href='" . $this->baseURL() . "?group={$groupTest}" . "{$urlExtra}'>" . $groupTest . "</a></li>\n";
+		}
+		$buffer .= "</ul>\n";
+		echo $buffer;
 	}
 
 /**
@@ -232,8 +205,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$show = $this->_queryString($show);
 		$query = $this->_queryString($query);
 
-		echo "<p><a href='" . RUN_TEST_LINK . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
-		echo " <a href='" . RUN_TEST_LINK . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
+		echo "<p><a href='" . $this->baseUrl() . $show . "'>Run more tests</a> | <a href='" . RUN_TEST_LINK . $query . "&show_passes=1'>Show Passes</a> | \n";
+		echo " <a href='" . $this->baseUrl() . $query . "&amp;code_coverage=true'>Analyze Code Coverage</a></p>\n";
 	}
 
 /**
@@ -253,7 +226,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 	}
 
 /**
- * paints the end of the document html.
+ * Paints the end of the document html.
  *
  * @return void
  */
@@ -380,7 +353,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @access protected
  */
 	function _htmlEntities($message) {
-		return htmlentities($message, ENT_COMPAT, $this->_character_set);
+		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
 	}
 }
 ?>

@@ -51,6 +51,42 @@ class CakeBaseReporter extends SimpleReporter {
 	var $_timeDuration = 0;
 
 /**
+ * Array of request parameters.  Usually parsed GET params.
+ *
+ * @var array
+ */
+	var $params = array();
+
+/**
+ * Character set for the output of test reporting.
+ *
+ * @var string
+ * @access protected
+ */
+	var $_characterSet;
+
+/**
+ * Does nothing yet. The first output will
+ * be sent on the first test start.
+ *
+ * ### Params
+ *
+ * - show_passes - Should passes be shown
+ * - plugin - Plugin test being run?
+ * - app - App test being run.
+ * - case - The case being run
+ * 
+ * @param string $charset The character set to output with. Defaults to UTF-8
+ * @param array $params Array of request parameters the reporter should use. See above.
+ * @access public
+ */
+	function CakeBaseReporter($charset = 'utf-8', $params = array()) {
+		$this->SimpleReporter();
+		$this->_characterSet = $charset;
+		$this->params = $params;
+	}
+
+/**
  * Signals / Paints the beginning of a TestSuite executing.
  * Starts the timer for the TestSuite execution time.
  *
@@ -113,23 +149,45 @@ class CakeBaseReporter extends SimpleReporter {
 	}
 
 /**
- * paints the header of the response from the test suite.
+ * Paints the start of the response from the test suite.
  * Used to paint things like head elements in an html page.
  *
  * @return void
  */
-	function paintDocumentHeader() {
+	function paintDocumentStart() {
 
 	}
 
 /**
- * paints the end of the response from the test suite.
+ * Paints the end of the response from the test suite.
  * Used to paint things like </body> in an html page.
  *
  * @return void
  */
-	function paintDocumentFooter() {
+	function paintDocumentEnd() {
 		
+	}
+
+/**
+ * Paint a list of test sets, core, app, and plugin test sets
+ * available.
+ *
+ * @return void
+ */
+	function paintTestMenu() {
+		
+	}
+
+/**
+ * Get the baseUrl if one is available.
+ *
+ * @return string The base url for the request.
+ */
+	function baseUrl() {
+		if (!empty($_SERVER['PHP_SELF'])) {
+			return $_SERVER['PHP_SELF'];
+		}
+		return '';
 	}
 
 }
