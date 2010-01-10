@@ -168,24 +168,15 @@ class CodeCoverageManager {
 		$manager =& CodeCoverageManager::getInstance();
 
 		CodeCoverageManager::stop();
+		CodeCoverageManager::clear();
+
+		list($coverageData, $testObjectFile) = $manager->_getCoverageData();
+
+		if (empty($coverageData) && $output) {
+			echo 'The test object file is never loaded.';
+		}
 
 		if (!$manager->groupTest) {
-			$testObjectFile = $manager->__testObjectFileFromCaseFile($manager->testCaseFile, $manager->appTest);
-
-			if (!file_exists($testObjectFile)) {
-				trigger_error('This test object file is invalid: ' . $testObjectFile);
-				return ;
-			}
-			$dump = xdebug_get_code_coverage();
-			$coverageData = array();
-
-			if (isset($dump[$testObjectFile])) {
-				$coverageData = $dump[$testObjectFile];
-			}
-
-			if (empty($coverageData) && $output) {
-				echo 'The test object file is never loaded.';
-			}
 			$execCodeLines = $manager->__getExecutableLines(file_get_contents($testObjectFile));
 			$result = '';
 
@@ -201,46 +192,63 @@ class CodeCoverageManager {
 					break;
 			}
 		} else {
-			$testObjectFiles = $manager->__testObjectFilesFromGroupFile($manager->testCaseFile, $manager->appTest);
-
-			foreach ($testObjectFiles as $file) {
-				if (!file_exists($file)) {
-					trigger_error('This test object file is invalid: ' . $file);
-					return ;
-				}
-			}
-			$dump = xdebug_get_code_coverage();
-			$coverageData = array();
-			
-			foreach ($testObjectFiles as $file) {
-				if (isset($dump[$file])) {
-					$coverageData[$file] = $dump[$file];
-				}
-			}
-
-			if (empty($coverageData) && $output) {
-				echo 'The test object files are never loaded.';
-			}
-			$execCodeLines = $manager->__getExecutableLines($testObjectFiles);
+			$execCodeLines = $manager->__getExecutableLines($testObjectFile);
 			$result = '';
 
 			switch (get_class($manager->reporter)) {
 				case 'CakeHtmlReporter':
-					$result = $manager->reportGroupHtml($testObjectFiles, $coverageData, $execCodeLines, $manager->numDiffContextLines);
+					$result = $manager->reportGroupHtml($testObjectFile, $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 				case 'CLIReporter':
-					$result = $manager->reportGroupCli($testObjectFiles, $coverageData, $execCodeLines, $manager->numDiffContextLines);
+					$result = $manager->reportGroupCli($testObjectFile, $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 				default:
 					trigger_error('Currently only HTML and CLI reporting is supported for code coverage analysis.');
 					break;
 			}
 		}
-		CodeCoverageManager::clear();
 
 		if ($output) {
 			echo $result;
 		}
+	}
+
+/**
+ * Gets the coverage data for the test case or group test that is being run.
+ *
+ * @return void
+ */
+	function _getCoverageData() {
+		$coverageData = array();
+		$dump = xdebug_get_code_coverage();
+
+		if ($this->groupTest) {
+			$testObjectFile = $this->__testObjectFilesFromGroupFile($this->testCaseFile, $this->appTest);
+
+			foreach ($testObjectFile as $file) {
+				if (!file_exists($file)) {
+					trigger_error('This test object file is invalid: ' . $file);
+					return ;
+				}
+			}
+			foreach ($testObjectFile as $file) {
+				if (isset($dump[$file])) {
+					$coverageData[$file] = $dump[$file];
+				}
+			}
+		} else {
+			$testObjectFile = $this->__testObjectFileFromCaseFile($this->testCaseFile, $this->appTest);
+
+			if (!file_exists($testObjectFile)) {
+				trigger_error('This test object file is invalid: ' . $testObjectFile);
+				return ;
+			}
+
+			if (isset($dump[$testObjectFile])) {
+				$coverageData = $dump[$testObjectFile];
+			}
+		}
+		return array($coverageData, $testObjectFile);
 	}
 
 /**
