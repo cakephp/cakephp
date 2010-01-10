@@ -307,7 +307,8 @@ class TestSuiteShell extends Shell {
 
 			if ($this->doCoverage) {
 				require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
-				CodeCoverageManager::start($ucFirstGroup, $Reporter);
+				CodeCoverageManager::init($ucFirstGroup, $Reporter);
+				CodeCoverageManager::start();
 			}
 			$result = $this->Manager->runGroupTest($ucFirstGroup, $Reporter);
 			if ($this->doCoverage) {
@@ -330,7 +331,8 @@ class TestSuiteShell extends Shell {
 
 		if ($this->doCoverage) {
 			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
-			CodeCoverageManager::start($case, $Reporter);
+			CodeCoverageManager::init($case, $Reporter);
+			CodeCoverageManager::start();
 		}
 
 		$result = $this->Manager->runTestCase($case, $Reporter);
