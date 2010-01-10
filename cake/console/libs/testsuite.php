@@ -70,14 +70,6 @@ class TestSuiteShell extends Shell {
 	var $doCoverage = false;
 
 /**
- * The headline for the test output
- *
- * @var string
- * @access public
- */
-	var $headline = 'CakePHP Test Shell';
-
-/**
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
@@ -111,6 +103,9 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	function parseArgs() {
+		if (empty($this->args)) {
+			return;
+		}
 		$this->category = $this->args[0];
 
 		if (!in_array($this->category, array('app', 'core'))) {
@@ -154,24 +149,24 @@ class TestSuiteShell extends Shell {
  * @access public
  */
 	function main() {
-		$this->out($this->headline);
+		$this->out(__('CakePHP Test Shell', true));
 		$this->hr();
 
 		if (count($this->args) == 0) {
-			$this->err('Sorry, you did not pass any arguments!');
+			$this->error(__('Sorry, you did not pass any arguments!', true));
 		}
 
 		if ($this->__canRun()) {
-			$this->out('Running ' . $this->category . ' ' . $this->type . ' ' . $this->file);
+			$message = sprintf(__('Running %s %s %s', true), $this->category, $this->type, $this->file);
+			$this->out($message);
 
 			$exitCode = 0;
 			if (!$this->__run()) {
 				$exitCode = 1;
 			}
-			exit($exitCode);
+			$this->_stop($exitCode);
 		} else {
-			$this->err('Sorry, the tests could not be found.');
-			exit(1);
+			$this->error(__('Sorry, the tests could not be found.', true));
 		}
 	}
 
@@ -224,47 +219,55 @@ class TestSuiteShell extends Shell {
 		$isPlugin = in_array(Inflector::underscore($this->category), $this->plugins);
 
 		if ($isNeitherAppNorCore && !$isPlugin) {
-			$this->err($this->category . ' is an invalid test category (either "app", "core" or name of a plugin)');
+			$message = sprintf(
+				__('%s is an invalid test category (either "app", "core" or name of a plugin)', true),
+				$this->category
+			);
+			$this->error($message);
 			return false;
 		}
 
 		$folder = $this->__findFolderByCategory($this->category);
 		if (!file_exists($folder)) {
-			$this->err($folder . ' not found');
+			$this->err(sprintf(__('%s not found', true), $folder));
 			return false;
 		}
 
 		if (!in_array($this->type, array('all', 'group', 'case'))) {
-			$this->err($this->type . ' is invalid. Should be case, group or all');
+			$this->err(sprintf(__('%s is invalid. Should be case, group or all', true), $this->type));
 			return false;
 		}
+		$ext = $this->Manager->getExtensino($this->type);
 
 		switch ($this->type) {
 			case 'all':
 				return true;
-				break;
 			case 'group':
-				if (file_exists($folder . DS . 'groups' . DS . $this->file . '.group.php')) {
+				if (file_exists($folder . DS . 'groups' . DS . $this->file . $ext)) {
 					return true;
 				}
 				break;
 			case 'case':
-				if ($this->category == 'app' && file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php')) {
+				if ($this->category == 'app' && file_exists($folder . DS . 'cases' . DS . $this->file . $ext)) {
 					return true;
 				}
-				$coreCaseExists = file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php');
-				$coreLibCaseExists = file_exists($folder . DS . 'cases' . DS . 'libs' . DS . $this->file . '.test.php');
+				$coreCaseExists = file_exists($folder . DS . 'cases' . DS . $this->file . $ext);
+				$coreLibCaseExists = file_exists($folder . DS . 'cases' . DS . 'libs' . DS . $this->file . $ext);
 				if ($this->category == 'core' && ($coreCaseExists || $coreLibCaseExists)) {
 					return true;
 				}
 
-				if ($isPlugin && file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php')) {
+				if ($isPlugin && file_exists($folder . DS . 'cases' . DS . $this->file . $ext)) {
 					return true;
 				}
 				break;
 		}
-
-		$this->err($this->category . ' ' . $this->type . ' ' . $this->file . ' is an invalid test identifier');
+		
+		$message = sprintf(
+			__('%s %s %s is an invalid test identifier', true),
+			$this->category, $this->type, $this->file
+		);
+		$this->err($message);
 		return false;
 	}
 
@@ -283,7 +286,7 @@ class TestSuiteShell extends Shell {
 
 		if ($this->doCoverage) {
 			if (!extension_loaded('xdebug')) {
-				$this->out('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install');
+				$this->out(__('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install', true));
 				exit(0);
 			}
 		}
@@ -385,7 +388,7 @@ class TestSuiteShell extends Shell {
  */
 	function __installSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			$this->err('Sorry, Simpletest could not be found. Download it from http://simpletest.org and install it to your vendors directory.');
+			$this->err(__('Sorry, Simpletest could not be found. Download it from http://simpletest.org and install it to your vendors directory.', true));
 			exit;
 		}
 	}
