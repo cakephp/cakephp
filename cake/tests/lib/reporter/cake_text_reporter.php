@@ -28,6 +28,17 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 class CakeTextReporter extends CakeBaseReporter {
 
 /**
+ * Sets the text/plain header if the test is not a CLI test.
+ *
+ * @return void
+ */
+	function paintDocumentStart() {
+		if (!SimpleReporter::inCli()) {
+			header('Content-type: text/plain');
+		}
+	}
+
+/**
  * Paints the end of the test with a summary of
  * the passes and failures.
  *
@@ -52,6 +63,7 @@ class CakeTextReporter extends CakeBaseReporter {
 			echo 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
 		}
 	}
+
 /**
  * Paints the title only.
  *
@@ -60,7 +72,6 @@ class CakeTextReporter extends CakeBaseReporter {
  * @access public
  */
 	function paintHeader($test_name) {
-		header('Content-type: text/plain');
 		echo "$test_name\n";
 		flush();
 	}
