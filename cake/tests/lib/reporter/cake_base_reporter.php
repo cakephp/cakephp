@@ -82,6 +82,9 @@ class CakeBaseReporter extends SimpleReporter {
  */
 	function CakeBaseReporter($charset = 'utf-8', $params = array()) {
 		$this->SimpleReporter();
+		if (!$charset) {
+			$charset = 'utf-8';
+		}
 		$this->_characterSet = $charset;
 		$this->params = $params;
 	}
