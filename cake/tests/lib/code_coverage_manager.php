@@ -105,7 +105,6 @@ class CodeCoverageManager {
 		}
 		$manager->setParams($reporter);
 		$manager->testCaseFile = $testCaseFile;
-		CodeCoverageManager::start();
 	}
 
 /**
@@ -180,11 +179,8 @@ class CodeCoverageManager {
 			$dump = xdebug_get_code_coverage();
 			$coverageData = array();
 
-			foreach ($dump as $file => $data) {
-				if ($file == $testObjectFile) {
-					$coverageData = $data;
-					break;
-				}
+			if (isset($dump[$testObjectFile])) {
+				$coverageData = $dump[$testObjectFile];
 			}
 
 			if (empty($coverageData) && $output) {
@@ -215,9 +211,10 @@ class CodeCoverageManager {
 			}
 			$dump = xdebug_get_code_coverage();
 			$coverageData = array();
-			foreach ($dump as $file => $data) {
-				if (in_array($file, $testObjectFiles)) {
-					$coverageData[$file] = $data;
+			
+			foreach ($testObjectFiles as $file) {
+				if (isset($dump[$file])) {
+					$coverageData[$file] = $dump[$file];
 				}
 			}
 
