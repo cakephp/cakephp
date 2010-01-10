@@ -278,7 +278,11 @@ class TestSuiteShell extends Shell {
  * @access private
  */
 	function __run() {
-		$Reporter = new CakeCliReporter();
+		$Reporter = new CakeCliReporter('utf-8', array(
+			'app' => $this->Manager->appTest,
+			'plugin' => $this->Manager->pluginTest,
+			'group' => ($this->type === 'group')
+		));
 
 		if ($this->type == 'all') {
 			return $this->Manager->runAllTests($Reporter);
@@ -332,6 +336,7 @@ class TestSuiteShell extends Shell {
 		$result = $this->Manager->runTestCase($case, $Reporter);
 		if ($this->doCoverage) {
 			CodeCoverageManager::report();
+			$this->out();
 		}
 
 		return $result;

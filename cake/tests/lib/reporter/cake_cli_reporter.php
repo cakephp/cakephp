@@ -34,11 +34,29 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
  * @subpackage cake.tests.libs.reporter
  */
 class CakeCliReporter extends CakeBaseReporter {
-
+/**
+ * separator string for fail, error, exception, and skip messages.
+ *
+ * @var string
+ */
 	var $separator = '->';
 
-	function CakeCLIReporter($separator = NULL) {
-		$this->SimpleReporter();
+/**
+ * array of 'request' parameters
+ *
+ * @var array
+ */
+	var $params = array();
+
+/**
+ * Constructor
+ *
+ * @param string $separator 
+ * @param array $params 
+ * @return void
+ */
+	function CakeCLIReporter($separator = NULL, $params = array()) {
+		$this->CakeBaseReporter('utf-8', $params);
 		if (!is_null($separator)) {
 			$this->setFailDetailSeparator($separator);
 		}
