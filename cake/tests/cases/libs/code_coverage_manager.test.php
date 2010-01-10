@@ -19,7 +19,6 @@
  */
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
-require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_reporter.php';
 
 /**
  * CodeCoverageManagerTest class
@@ -65,12 +64,13 @@ class CodeCoverageManagerTest extends CakeTestCase {
  */
 	function testNoTestCaseSupplied() {
 		if (PHP_SAPI != 'cli') {
-			unset($_GET['group']);
-			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), new CakeHtmlReporter());
+			$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
+
+			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), $reporter);
 			CodeCoverageManager::report(false);
 			$this->assertError();
 
-			CodeCoverageManager::start('tests' . DS . 'lib' . DS . basename(__FILE__), new CakeHtmlReporter());
+			CodeCoverageManager::start('tests' . DS . 'lib' . DS . basename(__FILE__), $reporter);
 			CodeCoverageManager::report(false);
 			$this->assertError();
 
@@ -96,7 +96,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 			$contents[1] = array_filter($contents[1], "remove");
 
 			foreach ($contents[1] as $file) {
-				CodeCoverageManager::start('libs'.DS.$file, new CakeHtmlReporter());
+				CodeCoverageManager::start('libs'.DS.$file, $reporter);
 				CodeCoverageManager::report(false);
 				$this->assertNoErrors('libs'.DS.$file);
 			}

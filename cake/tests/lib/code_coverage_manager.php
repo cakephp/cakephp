@@ -93,6 +93,7 @@ class CodeCoverageManager {
  * @param string $testCaseFile
  * @param string $reporter
  * @return void
+ * @static
  */
 	function start($testCaseFile, &$reporter) {
 		$manager =& CodeCoverageManager::getInstance();
@@ -103,26 +104,35 @@ class CodeCoverageManager {
 		if (strpos($testCaseFile, $thisFile) !== false) {
 			trigger_error('Xdebug supports no parallel coverage analysis - so this is not possible.', E_USER_ERROR);
 		}
-		
+		$manager->setParams($reporter);
+		$manager->testCaseFile = $testCaseFile;
+		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+	}
+
+/**
+ * Set the parameters from a reporter to the CodeCoverageManager
+ *
+ * @return void
+ */
+	function setParams(&$reporter) {
 		if ($reporter->params['app']) {
-			$manager->appTest = true;
+			$this->appTest = true;
 		}
 
 		if ($reporter->params['group']) {
-			$manager->groupTest = true;
+			$this->groupTest = true;
 		}
 
 		if ($reporter->params['plugin']) {
-			$manager->pluginTest = Inflector::underscore($reporter->params['plugin']);
+			$this->pluginTest = Inflector::underscore($reporter->params['plugin']);
 		}
-		$manager->testCaseFile = $testCaseFile;
-		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 	}
 
 /**
  * Stops the current code coverage analyzation and dumps a nice report depending on the reporter that was passed to start()
  *
  * @return void
+ * @static
  */
 	function report($output = true) {
 		$manager =& CodeCoverageManager::getInstance();
@@ -212,6 +222,7 @@ class CodeCoverageManager {
  * @param string $execCodeLines
  * @param string $output
  * @return void
+ * @static
  */
 	function reportCaseHtml($testObjectFile, $coverageData, $execCodeLines) {
 		$manager = CodeCoverageManager::getInstance();
@@ -248,6 +259,7 @@ class CodeCoverageManager {
  * @param string $execCodeLines
  * @param string $output
  * @return void
+ * @static
  */
 	function reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
 		$manager = CodeCoverageManager::getInstance();
@@ -366,6 +378,7 @@ class CodeCoverageManager {
  * @param string $execCodeLines
  * @param string $output
  * @return void
+ * @static
  */
 	function reportCaseCli($testObjectFile, $coverageData, $execCodeLines) {
 		$manager = CodeCoverageManager::getInstance();
@@ -396,6 +409,7 @@ class CodeCoverageManager {
  * @param string $execCodeLines
  * @param string $output
  * @return void
+ * @static
  */
 	function reportGroupHtml($testObjectFiles, $coverageData, $execCodeLines, $numContextLines) {
 		$manager = CodeCoverageManager::getInstance();
@@ -436,6 +450,7 @@ class CodeCoverageManager {
  * @param string $execCodeLines
  * @param string $output
  * @return void
+ * @static
  */
 	function reportGroupCli($testObjectFiles, $coverageData, $execCodeLines) {
 		$manager = CodeCoverageManager::getInstance();
