@@ -46,7 +46,7 @@ class CakeTestSuiteDispatcher {
  *
  * @var string
  */
-	var $_managerClass;
+	var $_managerClass = 'TestManager';
 
 /**
  * The Instance of the Manager being used.
@@ -162,12 +162,6 @@ class CakeTestSuiteDispatcher {
  * @static
  */
 	function &getManager() {
-		$className = ucwords($this->params['output']) . 'TestManager';
-		if (class_exists($className)) {
-			$this->_managerClass = $className;
-		} else {
-			$this->_managerClass = 'TextTestManager';
-		}
 		if (empty($this->Manager)) {
 			$this->Manager = new $this->_managerClass();
 		}
