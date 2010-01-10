@@ -38,6 +38,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
+		ob_start();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
 		echo "<h2>$testName</h2>\n";
@@ -240,6 +241,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 	function paintDocumentEnd() {
 		$baseDir = $this->params['baseDir'];
 		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
+		ob_end_flush();
 	}
 
 /**
