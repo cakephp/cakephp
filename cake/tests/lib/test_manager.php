@@ -404,7 +404,7 @@ class TestManager {
  * @access public
  */
 	function getExtension($type = 'test') {
-		if ($type == 'test') {
+		if ($type == 'test' || $type == 'case') {
 			return $this->_testExtension;
 		}
 		return $this->_groupExtension;
