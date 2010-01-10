@@ -117,6 +117,10 @@ class CakeCliReporter extends CakeBaseReporter {
 				$buffer .= ", " . $this->getExceptionCount() . " exceptions";
 			}
 			$buffer .= ".\n";
+			$buffer .= 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
+			if (function_exists('memory_get_peak_usage')) {
+				$buffer .= 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
+			}
 			fwrite(STDOUT, $buffer);
 		} else {
 			fwrite(STDOUT, $buffer . $this->getPassCount() . " passes.\n");
