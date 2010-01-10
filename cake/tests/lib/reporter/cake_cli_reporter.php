@@ -57,10 +57,7 @@ class CakeCliReporter extends CakeBaseReporter {
  */
 	function paintFail($message) {
 		parent::paintFail($message);
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		$message .= "\n\n";
+		$message .= $this->_getBreadcrumb();
 		fwrite(STDERR, 'FAIL' . $this->separator . $message);
 	}
 
@@ -73,10 +70,7 @@ class CakeCliReporter extends CakeBaseReporter {
  */
 	function paintError($message) {
 		parent::paintError($message);
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		$message .= "\n\n";
+		$message .= $this->_getBreadcrumb();
 		fwrite(STDERR, 'ERROR' . $this->separator . $message);
 	}
 
@@ -95,11 +89,32 @@ class CakeCliReporter extends CakeBaseReporter {
 			$exception->getFile(),
 			$exception->getLine()
 		);
+		$message .= $this->_getBreadcrumb();
+		fwrite(STDERR, 'EXCEPTION' . $this->separator . $message);
+	}
+
+/**
+ * Get the breadcrumb trail for the current test method/case
+ *
+ * @return string The string for the breadcrumb
+ */
+	function _getBreadcrumb() {
 		$breadcrumb = $this->getTestList();
 		array_shift($breadcrumb);
-		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		$message .= "\n\n";
-		fwrite(STDERR, 'EXCEPTION' . $this->separator . $message);
+		$out = "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		$out .= "\n\n";
+		return $out;
+	}
+
+/**
+ * Paint a test skip message
+ *
+ * @param string $message The message of the skip
+ * @return void
+ */
+	function paintSkip($message) {
+		parent::paintSkip($message);
+		fwrite(STDOUT, 'SKIP' . $this->separator . $message . "\n\n");
 	}
 
 /**
@@ -117,14 +132,25 @@ class CakeCliReporter extends CakeBaseReporter {
 				$buffer .= ", " . $this->getExceptionCount() . " exceptions";
 			}
 			$buffer .= ".\n";
-			$buffer .= 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
-			if (function_exists('memory_get_peak_usage')) {
-				$buffer .= 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
-			}
+			$buffer .= $this->_timeStats();
 			fwrite(STDOUT, $buffer);
 		} else {
-			fwrite(STDOUT, $buffer . $this->getPassCount() . " passes.\n");
+			fwrite(STDOUT, $buffer . $this->getPassCount() . " passes.\n" . $this->_timeStats());
 		}
+	}
+
+/**
+ * Get the time and memory stats for this test case/group
+ *
+ * @return string String content to display
+ * @access protected
+ */
+	function _timeStats() {
+		$out = 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
+		if (function_exists('memory_get_peak_usage')) {
+			$out .= 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
+		}
+		return $out;
 	}
 }
 ?>
