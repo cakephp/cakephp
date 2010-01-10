@@ -159,7 +159,8 @@ class CodeCoverageManager {
 	}
 
 /**
- * Stops the current code coverage analyzation and dumps a nice report depending on the reporter that was passed to start()
+ * Stops the current code coverage analyzation and dumps a nice report 
+ * depending on the reporter that was passed to start()
  *
  * @return void
  * @static
@@ -185,10 +186,8 @@ class CodeCoverageManager {
 					$result = $manager->reportCaseHtmlDiff(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 				case 'CakeCliReporter':
-					$result = $manager->reportCaseCli(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
-					break;
 				default:
-					trigger_error('Currently only HTML and CLI reporting is supported for code coverage analysis.');
+					$result = $manager->reportCaseCli(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 			}
 		} else {
@@ -199,11 +198,9 @@ class CodeCoverageManager {
 				case 'CakeHtmlReporter':
 					$result = $manager->reportGroupHtml($testObjectFile, $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
-				case 'CLIReporter':
-					$result = $manager->reportGroupCli($testObjectFile, $coverageData, $execCodeLines, $manager->numDiffContextLines);
-					break;
+				case 'CakeCliReporter':
 				default:
-					trigger_error('Currently only HTML and CLI reporting is supported for code coverage analysis.');
+					$result = $manager->reportGroupCli($testObjectFile, $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 			}
 		}
