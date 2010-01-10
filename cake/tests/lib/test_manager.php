@@ -97,6 +97,7 @@ class TestManager {
  * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
  * @return mixed
  * @access public
+ * @static
  */
 	function runAllTests(&$reporter, $testing = false) {
 		$manager =& new TestManager();
@@ -181,6 +182,7 @@ class TestManager {
  * @param string $directory The directory to add tests from.
  * @return void
  * @access public
+ * @static
  */
 	function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
 		$manager =& new TestManager();
@@ -197,6 +199,7 @@ class TestManager {
  * @param string $file The file name, minus the suffix to add.
  * @return void
  * @access public
+ * @static
  */
 	function addTestFile(&$groupTest, $file) {
 		$manager =& new TestManager();
@@ -223,6 +226,7 @@ class TestManager {
 /**
  * Builds the list of test cases from a given directory
  *
+ * @param string $directory Directory to get test case list from.
  * @access public
  */
 	function &_getTestCaseList($directory = '.') {
@@ -237,7 +241,8 @@ class TestManager {
 /**
  * Returns a list of test files from a given directory
  *
- * @access public
+ * @param string $directory Directory to get test case files from.
+ * @access protected
  */
 	function &_getTestFileList($directory = '.') {
 		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestCaseFile'));
@@ -248,6 +253,7 @@ class TestManager {
  * Returns a list of group tests found in the current valid test case path
  *
  * @access public
+ * @static
  */
 	function &getGroupTestList() {
 		$manager =& new TestManager();
@@ -259,7 +265,7 @@ class TestManager {
  * Returns a list of group test files from a given directory
  *
  * @param string $directory The directory to get group test files from.
- * @access public
+ * @access protected
  */
 	function &_getTestGroupFileList($directory = '.') {
 		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestGroupFile'));
@@ -270,7 +276,7 @@ class TestManager {
  * Returns a list of group test files from a given directory
  *
  * @param string $directory The directory to get group tests from.
- * @access public
+ * @access protected
  */
 	function &_getTestGroupList($directory = '.') {
 		$fileList =& $this->_getTestGroupFileList($directory);
@@ -287,7 +293,7 @@ class TestManager {
  * Returns a list of class names from a group test file
  *
  * @param string $groupTestFile The groupTest file to scan for TestSuite classnames.
- * @access public
+ * @access protected
  */
 	function &_getGroupTestClassNames($groupTestFile) {
 		$file = implode("\n", file($groupTestFile));
@@ -306,7 +312,7 @@ class TestManager {
  *
  * @param string $directory The directory to scan for files.
  * @param mixed $fileTestFunction
- * @access public
+ * @access protected
  */
 	function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
 		$fileList = array();
@@ -332,7 +338,7 @@ class TestManager {
  *
  * @param string $file
  * @return void
- * @access public
+ * @access protected
  */
 	function _isTestCaseFile($file) {
 		return $this->_hasExpectedExtension($file, $this->_testExtension);
@@ -343,7 +349,7 @@ class TestManager {
  *
  * @param string $file
  * @return void
- * @access public
+ * @access protected
  */
 	function _isTestGroupFile($file) {
 		return $this->_hasExpectedExtension($file, $this->_groupExtension);
@@ -355,7 +361,7 @@ class TestManager {
  * @param string $file
  * @param string $extension
  * @return void
- * @access public
+ * @access protected
  */
 	function _hasExpectedExtension($file, $extension) {
 		return $extension == strtolower(substr($file, (0 - strlen($extension))));
@@ -366,7 +372,7 @@ class TestManager {
  *
  * @param string $type either 'cases' or 'groups'
  * @return string The path tests are located on
- * @access public
+ * @access protected
  */
 	function _getTestsPath($type = 'cases') {
 		if (!empty($this->appTest)) {
