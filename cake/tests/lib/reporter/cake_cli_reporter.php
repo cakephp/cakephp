@@ -17,10 +17,6 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-	if (! defined('ST_FAILDETAIL_SEPARATOR')) {
-		define('ST_FAILDETAIL_SEPARATOR', "->");
-	}
-
 	if (version_compare(PHP_VERSION, '4.4.4', '<=') ||
 		PHP_SAPI == 'cgi') {
 		define('STDOUT', fopen('php://stdout', 'w'));
@@ -37,9 +33,9 @@
  */
 class CakeCliReporter extends TextReporter {
 
-	var $faildetail_separator = ST_FAILDETAIL_SEPARATOR;
+	var $faildetail_separator = '->';
 
-	function CLIReporter($faildetail_separator = NULL) {
+	function CakeCLIReporter($faildetail_separator = NULL) {
 		$this->SimpleReporter();
 		if (! is_null($faildetail_separator)) {
 			$this->setFailDetailSeparator($faildetail_separator);

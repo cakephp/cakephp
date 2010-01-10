@@ -237,7 +237,7 @@ class TestSuiteShell extends Shell {
 			$this->err(sprintf(__('%s is invalid. Should be case, group or all', true), $this->type));
 			return false;
 		}
-		$ext = $this->Manager->getExtensino($this->type);
+		$ext = $this->Manager->getExtension($this->type);
 
 		switch ($this->type) {
 			case 'all':
