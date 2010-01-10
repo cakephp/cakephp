@@ -13,7 +13,7 @@
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org
  * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @subpackage    cake.tests.libs.reporter
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
