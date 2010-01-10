@@ -97,16 +97,13 @@ class TestManager {
  * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
  * @return mixed
  * @access public
- * @static
  */
 	function runAllTests(&$reporter, $testing = false) {
-		$manager =& new TestManager();
-
-		$testCases =& $manager->_getTestFileList($manager->_getTestsPath());
-		if ($manager->appTest) {
+		$testCases =& $this->_getTestFileList($this->_getTestsPath());
+		if ($this->appTest) {
 			$test =& new TestSuite('All App Tests');
-		} else if ($manager->pluginTest) {
-			$test =& new TestSuite('All ' . Inflector::humanize($manager->pluginTest) . ' Plugin Tests');
+		} else if ($this->pluginTest) {
+			$test =& new TestSuite('All ' . Inflector::humanize($this->pluginTest) . ' Plugin Tests');
 		} else {
 			$test =& new TestSuite('All Core Tests');
 		}
@@ -337,7 +334,7 @@ class TestManager {
  * Tests if a file has the correct test case extension
  *
  * @param string $file
- * @return void
+ * @return boolean
  * @access protected
  */
 	function _isTestCaseFile($file) {
