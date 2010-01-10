@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Cake CLI test reporter.
  *
  * PHP versions 4 and 5
  *
@@ -32,10 +32,11 @@
  * Minimal command line test displayer. Writes fail details to STDERR. Returns 0
  * to the shell if all tests pass, ST_FAILS_RETURN_CODE if any test fails.
  *
- * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @package cake
+ * @subpackage cake.tests.libs.reporter
  */
-class CLIReporter extends TextReporter {
+class CakeCliReporter extends TextReporter {
+
 	var $faildetail_separator = ST_FAILDETAIL_SEPARATOR;
 
 	function CLIReporter($faildetail_separator = NULL) {
