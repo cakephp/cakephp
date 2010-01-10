@@ -100,6 +100,51 @@ class TestSuiteShell extends Shell {
 		foreach ($plugins as $p) {
 			$this->plugins[] = Inflector::underscore($p);
 		}
+		$this->parseArgs();
+		$this->getManager();
+	}
+
+/**
+ * Parse the arguments given into the Shell object properties.
+ *
+ * @return void
+ * @access public
+ */
+	function parseArgs() {
+		$this->category = $this->args[0];
+
+		if (!in_array($this->category, array('app', 'core'))) {
+			$this->isPluginTest = true;
+		}
+
+		if (isset($this->args[1])) {
+			$this->type = $this->args[1];
+		}
+
+		if (isset($this->args[2])) {
+			if ($this->args[2] == 'cov') {
+				$this->doCoverage = true;
+			} else {
+				$this->file = Inflector::underscore($this->args[2]);
+			}
+		}
+
+		if (isset($this->args[3]) && $this->args[3] == 'cov') {
+			$this->doCoverage = true;
+		}
+	}
+
+/**
+ * Gets a manager instance, and set the app/plugin properties.
+ *
+ * @return void
+ */
+	function getManager() {
+		$this->Manager = new TestManager();
+		$this->Manager->appTest = ($this->category === 'app');
+		if ($this->isPluginTest) {
+			$this->Manager->pluginTest = $this->category;
+		}
 	}
 
 /**
@@ -112,29 +157,7 @@ class TestSuiteShell extends Shell {
 		$this->out($this->headline);
 		$this->hr();
 
-		if (count($this->args) > 0) {
-			$this->category = $this->args[0];
-
-			if (!in_array($this->category, array('app', 'core'))) {
-				$this->isPluginTest = true;
-			}
-
-			if (isset($this->args[1])) {
-				$this->type = $this->args[1];
-			}
-
-			if (isset($this->args[2])) {
-				if ($this->args[2] == 'cov') {
-					$this->doCoverage = true;
-				} else {
-					$this->file = Inflector::underscore($this->args[2]);
-				}
-			}
-
-			if (isset($this->args[3]) && $this->args[3] == 'cov') {
-				$this->doCoverage = true;
-			}
-		} else {
+		if (count($this->args) == 0) {
 			$this->err('Sorry, you did not pass any arguments!');
 		}
 
@@ -252,11 +275,10 @@ class TestSuiteShell extends Shell {
  * @access private
  */
 	function __run() {
-		$reporter = new CLIReporter();
-		$this->__setGetVars();
+		$Reporter = new CakeCliReporter();
 
 		if ($this->type == 'all') {
-			return TestManager::runAllTests($reporter);
+			return $this->Manager->runAllTests($Reporter);
 		}
 
 		if ($this->doCoverage) {
@@ -278,9 +300,9 @@ class TestSuiteShell extends Shell {
 
 			if ($this->doCoverage) {
 				require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
-				CodeCoverageManager::start($ucFirstGroup, $reporter);
+				CodeCoverageManager::start($ucFirstGroup, $Reporter);
 			}
-			$result = TestManager::runGroupTest($ucFirstGroup, $reporter);
+			$result = $this->Manager->runGroupTest($ucFirstGroup, $Reporter);
 			if ($this->doCoverage) {
 				CodeCoverageManager::report();
 			}
@@ -301,10 +323,10 @@ class TestSuiteShell extends Shell {
 
 		if ($this->doCoverage) {
 			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
-			CodeCoverageManager::start($case, $reporter);
+			CodeCoverageManager::start($case, $Reporter);
 		}
 
-		$result = TestManager::runTestCase($case, $reporter);
+		$result = $this->Manager->runTestCase($case, $Reporter);
 		if ($this->doCoverage) {
 			CodeCoverageManager::report();
 		}
@@ -328,14 +350,9 @@ class TestSuiteShell extends Shell {
 		if (array_key_exists($category, $paths)) {
 			$folder = $paths[$category] . 'tests';
 		} else {
-			$scoredCategory = Inflector::underscore($category);
-			$folder = APP . 'plugins' . DS . $scoredCategory . DS;
-			$pluginPaths = App::path('plugins');
-			foreach ($pluginPaths as $path) {
-				if (file_exists($path . $scoredCategory . DS . 'tests')) {
-					$folder = $path . $scoredCategory . DS . 'tests';
-					break;
-				}
+			$pluginPath = App::pluginPath($category);
+			if (is_dir($pluginPath . 'tests')) {
+				$folder = $pluginPath . 'tests' . DS;
 			}
 		}
 		return $folder;
