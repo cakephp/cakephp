@@ -227,7 +227,7 @@ class CakeTestSuiteDispatcher {
 			$this->Manager->runAllTests($Reporter);
 		} else {
 			if ($this->params['codeCoverage']) {
-				CodeCoverageManager::start($this->params['group'], $Reporter);
+				CodeCoverageManager::init($this->params['group'], $Reporter);
 			}
 			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
 		}
@@ -241,7 +241,7 @@ class CakeTestSuiteDispatcher {
 	function _runTestCase() {
 		$Reporter =& CakeTestSuiteDispatcher::getReporter();
 		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::start($this->params['case'], $Reporter);
+			CodeCoverageManager::init($this->params['case'], $Reporter);
 		}
 		$this->Manager->runTestCase($this->params['case'], $Reporter);
 	}

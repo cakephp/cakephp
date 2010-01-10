@@ -75,6 +75,7 @@ class CakeBaseReporter extends SimpleReporter {
  * - plugin - Plugin test being run?
  * - app - App test being run.
  * - case - The case being run
+ * - codeCoverage - Whether the case/group being run is being code covered.
  * 
  * @param string $charset The character set to output with. Defaults to UTF-8
  * @param array $params Array of request parameters the reporter should use. See above.
@@ -115,6 +116,34 @@ class CakeBaseReporter extends SimpleReporter {
 		$this->_timeEnd = $this->_getTime();
 		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
 		parent::paintGroupEnd($test_name);
+	}
+
+/**
+ * Paints the beginning of a test method being run.  This is used
+ * to start/resume the code coverage tool.
+ *
+ * @param string $method The method name being run.
+ * @return void
+ */
+	function paintMethodStart($method) {
+		parent::paintMethodStart($method);
+		if (!empty($this->params['codeCoverage'])) {
+			CodeCoverageManager::start();
+		}
+	}
+
+/**
+ * Paints the end of a test method being run.  This is used
+ * to pause the collection of code coverage if its being used.
+ *
+ * @param string $method The name of the method being run.
+ * @return void
+ */
+	function paintMethodEnd($method) {
+		parent::paintMethodEnd($method);
+		if (!empty($this->params['codeCoverage'])) {
+			CodeCoverageManager::stop();
+		}
 	}
 
 /**
