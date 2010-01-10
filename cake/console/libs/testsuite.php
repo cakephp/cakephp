@@ -94,7 +94,7 @@ class TestSuiteShell extends Shell {
 		$this->__installSimpleTest();
 
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_cli_reporter.php';
 
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $p) {
@@ -139,7 +139,7 @@ class TestSuiteShell extends Shell {
 		}
 
 		if ($this->__canRun()) {
-			$this->out('Running '.$this->category.' '.$this->type.' '.$this->file);
+			$this->out('Running ' . $this->category . ' ' . $this->type . ' ' . $this->file);
 
 			$exitCode = 0;
 			if (!$this->__run()) {
@@ -201,7 +201,7 @@ class TestSuiteShell extends Shell {
 		$isPlugin = in_array(Inflector::underscore($this->category), $this->plugins);
 
 		if ($isNeitherAppNorCore && !$isPlugin) {
-			$this->err($this->category.' is an invalid test category (either "app", "core" or name of a plugin)');
+			$this->err($this->category . ' is an invalid test category (either "app", "core" or name of a plugin)');
 			return false;
 		}
 
@@ -212,7 +212,7 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (!in_array($this->type, array('all', 'group', 'case'))) {
-			$this->err($this->type.' is invalid. Should be case, group or all');
+			$this->err($this->type . ' is invalid. Should be case, group or all');
 			return false;
 		}
 
@@ -221,27 +221,27 @@ class TestSuiteShell extends Shell {
 				return true;
 				break;
 			case 'group':
-				if (file_exists($folder.DS.'groups'.DS.$this->file.'.group.php')) {
+				if (file_exists($folder . DS . 'groups' . DS . $this->file . '.group.php')) {
 					return true;
 				}
 				break;
 			case 'case':
-				if ($this->category == 'app' && file_exists($folder.DS.'cases'.DS.$this->file.'.test.php')) {
+				if ($this->category == 'app' && file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php')) {
 					return true;
 				}
-				$coreCaseExists = file_exists($folder.DS.'cases'.DS.$this->file.'.test.php');
-				$coreLibCaseExists = file_exists($folder.DS.'cases'.DS.'libs'.DS.$this->file.'.test.php');
+				$coreCaseExists = file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php');
+				$coreLibCaseExists = file_exists($folder . DS . 'cases' . DS . 'libs' . DS . $this->file . '.test.php');
 				if ($this->category == 'core' && ($coreCaseExists || $coreLibCaseExists)) {
 					return true;
 				}
 
-				if ($isPlugin && file_exists($folder.DS.'cases'.DS.$this->file.'.test.php')) {
+				if ($isPlugin && file_exists($folder . DS . 'cases' . DS . $this->file . '.test.php')) {
 					return true;
 				}
 				break;
 		}
 
-		$this->err($this->category.' '.$this->type.' '.$this->file.' is an invalid test identifier');
+		$this->err($this->category . ' ' . $this->type . ' ' . $this->file . ' is an invalid test identifier');
 		return false;
 	}
 
@@ -273,7 +273,7 @@ class TestSuiteShell extends Shell {
 			if ($this->category == 'app') {
 				$path = APP_TEST_GROUPS;
 			} elseif ($this->isPluginTest) {
-				$path = APP.'plugins'.DS.$this->category.DS.'tests'.DS.'groups';
+				$path = APP . 'plugins' . DS . $this->category . DS . 'tests' . DS . 'groups';
 			}
 
 			if ($this->doCoverage) {
@@ -287,16 +287,16 @@ class TestSuiteShell extends Shell {
 			return $result;
 		}
 		if ($this->category === 'core') {
-			$coreCaseExists = file_exists(CORE_TEST_CASES.DS.$this->file.'.test.php');
+			$coreCaseExists = file_exists(CORE_TEST_CASES . DS . $this->file . '.test.php');
 			if ($coreCaseExists) {
 				$case = $this->file . '.test.php';
 			} else {
 				$case = 'libs' . DS . $this->file . '.test.php';
 			}
 		} elseif ($this->category === 'app') {
-			$case = $this->file.'.test.php';
+			$case = $this->file . '.test.php';
 		} elseif ($this->isPluginTest) {
-			$case = $this->file.'.test.php';
+			$case = $this->file . '.test.php';
 		}
 
 		if ($this->doCoverage) {
@@ -322,7 +322,7 @@ class TestSuiteShell extends Shell {
 		$folder = '';
 		$paths = array(
 			'core' => CAKE,
-			'app'  => APP
+			'app' => APP
 		);
 
 		if (array_key_exists($category, $paths)) {
@@ -350,8 +350,8 @@ class TestSuiteShell extends Shell {
 	function __setGetVars() {
 		if (in_array($this->category, $this->plugins)) {
 			$_GET['plugin'] = $this->category;
-		} elseif (in_array(Inflector::Humanize($this->category), $this->plugins)) {
-			$_GET['plugin'] = Inflector::Humanize($this->category);
+		} elseif (in_array(Inflector::humanize($this->category), $this->plugins)) {
+			$_GET['plugin'] = Inflector::humanize($this->category);
 		} elseif ($this->category == 'app') {
 			$_GET['app'] = true;
 		}
