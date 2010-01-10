@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * TestManager for CakePHP Test suite.
  *
  * PHP versions 4 and 5
  *
