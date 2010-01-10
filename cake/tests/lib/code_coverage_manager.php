@@ -96,24 +96,24 @@ class CodeCoverageManager {
  */
 	function start($testCaseFile, &$reporter) {
 		$manager =& CodeCoverageManager::getInstance();
-		$manager->reporter = $reporter;
+		$manager->reporter =& $reporter;
 		$testCaseFile = str_replace(DS . DS, DS, $testCaseFile);
 		$thisFile = str_replace('.php', '.test.php', basename(__FILE__));
 
 		if (strpos($testCaseFile, $thisFile) !== false) {
 			trigger_error('Xdebug supports no parallel coverage analysis - so this is not possible.', E_USER_ERROR);
 		}
-
-		if (isset($_GET['app'])) {
+		
+		if ($reporter->params['app']) {
 			$manager->appTest = true;
 		}
 
-		if (isset($_GET['group'])) {
+		if ($reporter->params['group']) {
 			$manager->groupTest = true;
 		}
 
-		if (isset($_GET['plugin'])) {
-			$manager->pluginTest = Inflector::underscore($_GET['plugin']);
+		if ($reporter->params['plugin']) {
+			$manager->pluginTest = Inflector::underscore($reporter->params['plugin']);
 		}
 		$manager->testCaseFile = $testCaseFile;
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
