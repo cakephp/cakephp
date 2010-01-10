@@ -256,6 +256,17 @@ class InflectorTest extends CakeTestCase {
 		$this->assertIdentical(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertIdentical(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
 		$this->assertIdentical(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+
+		// Identical checks test the cache code path.
+		$this->assertIdentical(Inflector::underscore('TestThing'), 'test_thing');
+		$this->assertIdentical(Inflector::underscore('testThing'), 'test_thing');
+		$this->assertIdentical(Inflector::underscore('TestThingExtra'), 'test_thing_extra');
+		$this->assertIdentical(Inflector::underscore('testThingExtra'), 'test_thing_extra');
+
+		// Test stupid values
+		$this->assertIdentical(Inflector::underscore(''), '');
+		$this->assertIdentical(Inflector::underscore(0), '0');
+		$this->assertIdentical(Inflector::underscore(false), '');
 	}
 
 /**
