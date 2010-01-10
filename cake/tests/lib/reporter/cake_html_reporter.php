@@ -175,6 +175,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 		echo $this->_paintLinks();
 		echo '</div>';
+		if (
+			isset($this->params['codeCoverage']) && 
+			$this->params['codeCoverage'] && 
+			class_exists('CodeCoverageManager')
+		) {
+			CodeCoverageManager::report();
+		}
 		$this->paintDocumentEnd();
 	}
 

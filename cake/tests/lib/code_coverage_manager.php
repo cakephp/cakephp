@@ -155,7 +155,7 @@ class CodeCoverageManager {
 				case 'CakeHtmlReporter':
 					$result = $manager->reportCaseHtmlDiff(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
-				case 'CLIReporter':
+				case 'CakeCliReporter':
 					$result = $manager->reportCaseCli(@file($testObjectFile), $coverageData, $execCodeLines, $manager->numDiffContextLines);
 					break;
 				default:
