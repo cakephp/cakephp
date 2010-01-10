@@ -24,6 +24,8 @@
 		register_shutdown_function(create_function('', 'fclose(STDOUT); fclose(STDERR); return true;'));
 	}
 
+include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
+
 /**
  * Minimal command line test displayer. Writes fail details to STDERR. Returns 0
  * to the shell if all tests pass, ST_FAILS_RETURN_CODE if any test fails.
@@ -31,47 +33,73 @@
  * @package cake
  * @subpackage cake.tests.libs.reporter
  */
-class CakeCliReporter extends TextReporter {
+class CakeCliReporter extends CakeBaseReporter {
 
-	var $faildetail_separator = '->';
+	var $separator = '->';
 
-	function CakeCLIReporter($faildetail_separator = NULL) {
+	function CakeCLIReporter($separator = NULL) {
 		$this->SimpleReporter();
-		if (! is_null($faildetail_separator)) {
-			$this->setFailDetailSeparator($faildetail_separator);
+		if (!is_null($separator)) {
+			$this->setFailDetailSeparator($separator);
 		}
 	}
 
 	function setFailDetailSeparator($separator) {
-		$this->faildetail_separator = $separator;
-	}
-
-/**
- * Return a formatted faildetail for printing.
- */
-	function &_paintTestFailDetail(&$message) {
-		$buffer = '';
-		$faildetail = $this->getTestList();
-		array_shift($faildetail);
-		$buffer .= implode($this->faildetail_separator, $faildetail);
-		$buffer .= $this->faildetail_separator . "$message\n";
-		return $buffer;
+		$this->separator = $separator;
 	}
 
 /**
  * Paint fail faildetail to STDERR.
+ *
+ * @param string $message Message of the fail.
+ * @return void
+ * @access public
  */
 	function paintFail($message) {
 		parent::paintFail($message);
-		fwrite(STDERR, 'FAIL' . $this->faildetail_separator . $this->_paintTestFailDetail($message));
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		$message .= "\n\n";
+		fwrite(STDERR, 'FAIL' . $this->separator . $message);
+	}
+
+/**
+ * Paint PHP errors to STDERR.
+ *
+ * @param string $message Message of the Error
+ * @return void
+ * @access public
+ */
+	function paintError($message) {
+		parent::paintError($message);
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		$message .= "\n\n";
+		fwrite(STDERR, 'ERROR' . $this->separator . $message);
 	}
 
 /**
  * Paint exception faildetail to STDERR.
+ *
+ * @param string $message Message of the Error
+ * @return void
+ * @access public
  */
-	function paintException($message) {
-		parent::paintException($message);
-		fwrite(STDERR, 'EXCEPTION' . $this->faildetail_separator . $this->_paintTestFailDetail($message));
+	function paintException($exception) {
+		parent::paintException($exception);
+		$message .= sprintf('Unexpected exception of type [%s] with message [%s] in [%s] line [%s]',
+			get_class($exception),
+			$exception->getMessage(),
+			$exception->getFile(),
+			$exception->getLine()
+		);
+		$breadcrumb = $this->getTestList();
+		array_shift($breadcrumb);
+		$message .= "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
+		$message .= "\n\n";
+		fwrite(STDERR, 'EXCEPTION' . $this->separator . $message);
 	}
 
 /**
