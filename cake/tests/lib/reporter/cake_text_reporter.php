@@ -72,6 +72,7 @@ class CakeTextReporter extends CakeBaseReporter {
  * @access public
  */
 	function paintHeader($test_name) {
+		$this->paintDocumentStart();
 		echo "$test_name\n";
 		flush();
 	}
