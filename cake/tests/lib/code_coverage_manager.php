@@ -87,15 +87,14 @@ class CodeCoverageManager {
 	}
 
 /**
- * Starts a new Coverage Analyzation for a given test case file
- * @TODO: Works with $_GET now within the function body, which will make it hard when we do code coverage reports for CLI
+ * Initializes a new Coverage Analyzation for a given test case file
  *
- * @param string $testCaseFile
- * @param string $reporter
+ * @param string $testCaseFile The test case file being covered.
+ * @param object $reporter Instance of the reporter running.
  * @return void
  * @static
  */
-	function start($testCaseFile, &$reporter) {
+	function init($testCaseFile, &$reporter) {
 		$manager =& CodeCoverageManager::getInstance();
 		$manager->reporter =& $reporter;
 		$testCaseFile = str_replace(DS . DS, DS, $testCaseFile);
@@ -106,7 +105,39 @@ class CodeCoverageManager {
 		}
 		$manager->setParams($reporter);
 		$manager->testCaseFile = $testCaseFile;
+		CodeCoverageManager::start();
+	}
+
+/**
+ * Start/resume Code coverage collection.
+ *
+ * @return void
+ * @static
+ */
+	function start() {
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+	}
+
+/**
+ * Stops/pauses code coverage collection. Does not clean the 
+ * code coverage memory. Use clean() to clear code coverage memory
+ *
+ * @return void
+ * @static
+ */
+	function stop() {
+		xdebug_stop_code_coverage(false);
+	}
+
+/**
+ * Clears the existing code coverage information.  Also stops any
+ * running collection.
+ *
+ * @return void
+ * @static
+ */
+	function clear() {
+		xdebug_stop_code_coverage();
 	}
 
 /**
@@ -137,6 +168,8 @@ class CodeCoverageManager {
 	function report($output = true) {
 		$manager =& CodeCoverageManager::getInstance();
 
+		CodeCoverageManager::stop();
+
 		if (!$manager->groupTest) {
 			$testObjectFile = $manager->__testObjectFileFromCaseFile($manager->testCaseFile, $manager->appTest);
 
@@ -145,7 +178,6 @@ class CodeCoverageManager {
 				return ;
 			}
 			$dump = xdebug_get_code_coverage();
-			xdebug_stop_code_coverage();
 			$coverageData = array();
 
 			foreach ($dump as $file => $data) {

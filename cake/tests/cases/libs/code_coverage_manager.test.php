@@ -66,11 +66,11 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		if (PHP_SAPI != 'cli') {
 			$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
 
-			CodeCoverageManager::start(substr(md5(microtime()), 0, 5), $reporter);
+			CodeCoverageManager::init(substr(md5(microtime()), 0, 5), $reporter);
 			CodeCoverageManager::report(false);
 			$this->assertError();
 
-			CodeCoverageManager::start('tests' . DS . 'lib' . DS . basename(__FILE__), $reporter);
+			CodeCoverageManager::init('tests' . DS . 'lib' . DS . basename(__FILE__), $reporter);
 			CodeCoverageManager::report(false);
 			$this->assertError();
 
@@ -96,7 +96,7 @@ class CodeCoverageManagerTest extends CakeTestCase {
 			$contents[1] = array_filter($contents[1], "remove");
 
 			foreach ($contents[1] as $file) {
-				CodeCoverageManager::start('libs'.DS.$file, $reporter);
+				CodeCoverageManager::init('libs'.DS.$file, $reporter);
 				CodeCoverageManager::report(false);
 				$this->assertNoErrors('libs'.DS.$file);
 			}
