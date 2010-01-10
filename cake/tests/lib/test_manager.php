@@ -125,7 +125,7 @@ class TestManager {
  * @param string $testCaseFile Filename of the test to be run.
  * @param Object $reporter Reporter instance to attach to the test case.
  * @param boolean $testing Set to true if testing, otherwise test case will be run.
- * @return mixed
+ * @return mixed Result of test case being run.
  * @access public
  */
 	function runTestCase($testCaseFile, &$reporter, $testing = false) {
@@ -150,7 +150,7 @@ class TestManager {
  *
  * @param string $groupTestName GroupTest that you want to run.
  * @param Object $reporter Reporter instance to use with the group test being run.
- * @return mixed
+ * @return mixed Results of group test being run.
  * @access public
  */
 	function runGroupTest($groupTestName, &$reporter) {
@@ -213,6 +213,7 @@ class TestManager {
  * Returns a list of test cases found in the current valid test case path
  *
  * @access public
+ * @static
  */
 	function &getTestCaseList() {
 		$manager =& new TestManager();
@@ -224,7 +225,7 @@ class TestManager {
  * Builds the list of test cases from a given directory
  *
  * @param string $directory Directory to get test case list from.
- * @access public
+ * @access protected
  */
 	function &_getTestCaseList($directory = '.') {
 		$fileList =& $this->_getTestFileList($directory);
@@ -334,7 +335,7 @@ class TestManager {
  * Tests if a file has the correct test case extension
  *
  * @param string $file
- * @return boolean
+ * @return boolean Whether $file is a test case.
  * @access protected
  */
 	function _isTestCaseFile($file) {
@@ -345,7 +346,7 @@ class TestManager {
  * Tests if a file has the correct group test extension
  *
  * @param string $file
- * @return void
+ * @return boolean Whether $file is a group
  * @access protected
  */
 	function _isTestGroupFile($file) {
@@ -403,52 +404,10 @@ class TestManager {
  * @access public
  */
 	function getExtension($type = 'test') {
-		$manager =& new TestManager();
 		if ($type == 'test') {
-			return $manager->_testExtension;
+			return $this->_testExtension;
 		}
-		return $manager->_groupExtension;
-	}
-}
-
-/**
- * The CliTestManager ensures that the list of available files are printed in the correct cli format
- *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
- */
-class CliTestManager extends TestManager {
-
-/**
- * Prints the list of group tests in a cli friendly format
- *
- * @access public
- */
-	function &getGroupTestList() {
-		$manager =& new CliTestManager();
-		$groupTests =& $manager->_getTestGroupList($manager->_getTestsPath('groups'));
-		$buffer = "Available Group Test:\n";
-
-		foreach ($groupTests as $groupTest) {
-			$buffer .= "  " . $groupTest . "\n";
-		}
-		return $buffer . "\n";
-	}
-
-/**
- * Prints the list of test cases in a cli friendly format
- *
- * @access public
- */
-	function &getTestCaseList() {
-		$manager =& new CliTestManager();
-		$testCases =& $manager->_getTestCaseList($manager->_getTestsPath());
-		$buffer = "Available Test Cases:\n";
-
-		foreach ($testCases as $testCaseFile => $testCase) {
-			$buffer .= "  " . $testCaseFile . "\n";
-		}
-		return $buffer . "\n";
+		return $this->_groupExtension;
 	}
 }
 
