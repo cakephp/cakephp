@@ -174,7 +174,7 @@ class CodeCoverageManager {
 		list($coverageData, $testObjectFile) = $manager->_getCoverageData();
 
 		if (empty($coverageData) && $output) {
-			echo 'The test object file is never loaded.';
+			echo "The test object file is never loaded.\n";
 		}
 
 		if (!$manager->groupTest) {
@@ -221,7 +221,6 @@ class CodeCoverageManager {
 
 		if ($this->groupTest) {
 			$testObjectFile = $this->__testObjectFilesFromGroupFile($this->testCaseFile, $this->appTest);
-
 			foreach ($testObjectFile as $file) {
 				if (!file_exists($file)) {
 					trigger_error('This test object file is invalid: ' . $file);
