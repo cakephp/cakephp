@@ -215,43 +215,6 @@ class CodeCoverageManager {
 	}
 
 /**
- * Html reporting
- *
- * @param string $testObjectFile
- * @param string $coverageData
- * @param string $execCodeLines
- * @param string $output
- * @return void
- * @static
- */
-	function reportCaseHtml($testObjectFile, $coverageData, $execCodeLines) {
-		$manager = CodeCoverageManager::getInstance();
-		$lineCount = $coveredCount = 0;
-		$report = '';
-
-		foreach ($testObjectFile as $num => $line) {
-			$num++;
-			$foundByManualFinder = isset($execCodeLines[$num]) && trim($execCodeLines[$num]) != '';
-			$foundByXdebug = isset($coverageData[$num]) && $coverageData[$num] !== -2;
-
-			// xdebug does not find all executable lines (zend engine fault)
-			if ($foundByManualFinder && $foundByXdebug) {
-				$class = 'uncovered';
-				$lineCount++;
-
-				if ($coverageData[$num] > 0) {
-					$class = 'covered';
-					$coveredCount++;
-				}
-			} else {
-				$class = 'ignored';
-			}
-			$report .= $manager->__paintCodeline($class, $num, $line);
-		}
-		return $manager->__paintHeader($lineCount, $coveredCount, $report);
-	}
-
-/**
  * Diff reporting
  *
  * @param string $testObjectFile
