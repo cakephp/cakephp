@@ -237,32 +237,12 @@ class TestSuiteShell extends Shell {
 			$this->err(sprintf(__('%s is invalid. Should be case, group or all', true), $this->type));
 			return false;
 		}
-		$ext = $this->Manager->getExtension($this->type);
 
-		switch ($this->type) {
-			case 'all':
-				return true;
-			case 'group':
-				if (file_exists($folder . DS . 'groups' . DS . $this->file . $ext)) {
-					return true;
-				}
-				break;
-			case 'case':
-				if ($this->category == 'app' && file_exists($folder . DS . 'cases' . DS . $this->file . $ext)) {
-					return true;
-				}
-				$coreCaseExists = file_exists($folder . DS . 'cases' . DS . $this->file . $ext);
-				$coreLibCaseExists = file_exists($folder . DS . 'cases' . DS . 'libs' . DS . $this->file . $ext);
-				if ($this->category == 'core' && ($coreCaseExists || $coreLibCaseExists)) {
-					return true;
-				}
-
-				if ($isPlugin && file_exists($folder . DS . 'cases' . DS . $this->file . $ext)) {
-					return true;
-				}
-				break;
+		$fileName = $this->__getFileName($folder, $this->isPluginTest);
+		if ($fileName === true || file_exists($folder . $fileName)) {
+			return true;
 		}
-		
+
 		$message = sprintf(
 			__('%s %s %s is an invalid test identifier', true),
 			$this->category, $this->type, $this->file
@@ -270,7 +250,6 @@ class TestSuiteShell extends Shell {
 		$this->err($message);
 		return false;
 	}
-
 /**
  * Executes the tests depending on our settings
  *
@@ -281,7 +260,8 @@ class TestSuiteShell extends Shell {
 		$Reporter = new CakeCliReporter('utf-8', array(
 			'app' => $this->Manager->appTest,
 			'plugin' => $this->Manager->pluginTest,
-			'group' => ($this->type === 'group')
+			'group' => ($this->type === 'group'),
+			'codeCoverage' => $this->doCoverage
 		));
 
 		if ($this->type == 'all') {
@@ -291,62 +271,68 @@ class TestSuiteShell extends Shell {
 		if ($this->doCoverage) {
 			if (!extension_loaded('xdebug')) {
 				$this->out(__('You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation. Download it from http://www.xdebug.org/docs/install', true));
-				exit(0);
+				$this->_stop(0);
 			}
 		}
 
 		if ($this->type == 'group') {
 			$ucFirstGroup = ucfirst($this->file);
-
-			$path = CORE_TEST_GROUPS;
-			if ($this->category == 'app') {
-				$path = APP_TEST_GROUPS;
-			} elseif ($this->isPluginTest) {
-				$path = APP . 'plugins' . DS . $this->category . DS . 'tests' . DS . 'groups';
-			}
-
 			if ($this->doCoverage) {
 				require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
 				CodeCoverageManager::init($ucFirstGroup, $Reporter);
 				CodeCoverageManager::start();
 			}
 			$result = $this->Manager->runGroupTest($ucFirstGroup, $Reporter);
-			if ($this->doCoverage) {
-				CodeCoverageManager::report();
-			}
 			return $result;
 		}
-		if ($this->category === 'core') {
-			$coreCaseExists = file_exists(CORE_TEST_CASES . DS . $this->file . '.test.php');
-			if ($coreCaseExists) {
-				$case = $this->file . '.test.php';
-			} else {
-				$case = 'libs' . DS . $this->file . '.test.php';
-			}
-		} elseif ($this->category === 'app') {
-			$case = $this->file . '.test.php';
-		} elseif ($this->isPluginTest) {
-			$case = $this->file . '.test.php';
-		}
+
+		$folder = $folder = $this->__findFolderByCategory($this->category);
+		$case = $this->__getFileName($folder, $this->isPluginTest);
 
 		if ($this->doCoverage) {
 			require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
 			CodeCoverageManager::init($case, $Reporter);
 			CodeCoverageManager::start();
 		}
-
 		$result = $this->Manager->runTestCase($case, $Reporter);
-		if ($this->doCoverage) {
-			CodeCoverageManager::report();
-			$this->out();
-		}
-
 		return $result;
 	}
 
 /**
- * Finds the correct folder to look for tests for based on the input category
+ * Gets the concrete filename for the inputted test name and category/type
  *
+ * @param string $folder Folder name to look for files in.
+ * @param boolean $isPlugin If the test case is a plugin.
+ * @return mixed Either string filename or boolean false on failure. Or true if the type is 'all'
+ * @access private
+ */
+	function __getFileName($folder, $isPlugin) {
+		$ext = $this->Manager->getExtension($this->type);
+		switch ($this->type) {
+			case 'all':
+				return true;
+			case 'group':
+				return $this->file . $ext; 
+			case 'case':
+				if ($this->category == 'app' || $isPlugin) {
+					return $this->file . $ext;
+				}
+				$coreCase = $this->file . $ext;
+				$coreLibCase = 'libs' . DS . $this->file . $ext;
+
+				if ($this->category == 'core' && file_exists($folder . DS . $coreCase)) {
+					return $coreCase;
+				} elseif ($this->category == 'core' && file_exists($folder . DS . $coreLibCase)) {
+					return $coreLibCase;
+				}
+		}
+		return false;
+	}
+
+/**
+ * Finds the correct folder to look for tests for based on the input category and type.
+ *
+ * @param string $category The category of the test.  Either 'app', 'core' or a plugin name.
  * @return string the folder path
  * @access private
  */
@@ -356,13 +342,14 @@ class TestSuiteShell extends Shell {
 			'core' => CAKE,
 			'app' => APP
 		);
+		$typeDir = $this->type === 'group' ? 'groups' : 'cases';
 
 		if (array_key_exists($category, $paths)) {
-			$folder = $paths[$category] . 'tests';
+			$folder = $paths[$category] . 'tests' . DS . $typeDir . DS;
 		} else {
 			$pluginPath = App::pluginPath($category);
 			if (is_dir($pluginPath . 'tests')) {
-				$folder = $pluginPath . 'tests' . DS;
+				$folder = $pluginPath . 'tests' . DS . $typeDir . DS;
 			}
 		}
 		return $folder;
