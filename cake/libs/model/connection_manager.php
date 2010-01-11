@@ -141,7 +141,12 @@ class ConnectionManager extends Object {
  */
 	function getSourceName(&$source) {
 		$_this =& ConnectionManager::getInstance();
-		return array_search($source, $_this->_dataSources);
+		foreach ($_this->_dataSources as $name => $ds) {
+			if ($ds == $source) {
+				return $name;
+			}
+		}
+		return '';
 	}
 
 /**
