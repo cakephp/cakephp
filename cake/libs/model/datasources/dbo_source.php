@@ -2330,14 +2330,16 @@ class DboSource extends DataSource {
  */
 	function group($group, $model = null) {
 		if ($group) {
-			if (is_array($group)) {
-				foreach($group as $index => $key) {
-					if ($model->isVirtualField($key)) {
-						$group[$index] = '(' . $model->getVirtualField($key) . ')';
-					}
-				}
-				$group = implode(', ', $group);
+			if (!is_array($group)) {
+				$group = array($group);
 			}
+
+			foreach($group as $index => $key) {
+				if ($model->isVirtualField($key)) {
+					$group[$index] = '(' . $model->getVirtualField($key) . ')';
+				}
+			}
+			$group = implode(', ', $group);
 			return ' GROUP BY ' . $this->__quoteFields($group);
 		}
 		return null;
