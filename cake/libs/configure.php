@@ -1,8 +1,6 @@
 <?php
 /**
- * Short description for file.
- *
- * Long description for filec
+ * App and Configure classes
  *
  * PHP versions 4 and 5
  *
