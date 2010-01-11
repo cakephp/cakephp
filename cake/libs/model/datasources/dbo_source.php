@@ -2333,7 +2333,6 @@ class DboSource extends DataSource {
 			if (!is_array($group)) {
 				$group = array($group);
 			}
-
 			foreach($group as $index => $key) {
 				if ($model->isVirtualField($key)) {
 					$group[$index] = '(' . $model->getVirtualField($key) . ')';

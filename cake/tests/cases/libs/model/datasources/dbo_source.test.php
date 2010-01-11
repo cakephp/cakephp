@@ -4240,5 +4240,23 @@ class DboSourceTest extends CakeTestCase {
 		));
 		$this->assertEqual($expected, $result);
 	}
+
+/**
+ * test calculate to generate claculate statements on virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInGroup() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_year' => 'YEAR(Article.created)'
+		);
+
+		$result = $this->db->group('this_year',$Article);
+		$expected = " GROUP BY (YEAR(`Article`.`created`))";
+		$this->assertEqual($expected, $result);
+	}
 }
 ?>
