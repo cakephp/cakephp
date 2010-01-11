@@ -177,12 +177,14 @@ class Security extends Object {
 		srand(Configure::read('Security.cipherSeed'));
 		$out = '';
 
-		for ($i = 0; $i < strlen($text); $i++) {
-			for ($j = 0; $j < ord(substr($key, $i % strlen($key), 1)); $j++) {
-				$toss = rand(0, 255);
+		$keyLength = strlen($key);
+		for ($i = 0, $j = strlen($text); $i < $j; $i++) {
+			$k = ord($key[$i % $keyLength]);
+			while ($k-- > 0) {
+				rand(0, 255);
 			}
 			$mask = rand(0, 255);
-			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
+			$out .= chr(ord($text[$i]) ^ $mask);
 		}
 
 		srand();
