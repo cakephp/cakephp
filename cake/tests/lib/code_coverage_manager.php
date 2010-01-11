@@ -681,7 +681,6 @@ class CodeCoverageManager {
 		$manager =& CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		$class = 'bad';
-
 		if ($codeCoverage > 50) {
 			$class = 'ok';
 		}
@@ -702,7 +701,14 @@ class CodeCoverageManager {
 	function __paintHeaderCli($lineCount, $coveredCount, $report) {
 		$manager =& CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
-		return $report = 'Code Coverage: ' . $codeCoverage . '%';
+		$class = 'bad';
+		if ($codeCoverage > 50) {
+			$class = 'ok';
+		}
+		if ($codeCoverage > 80) {
+			$class = 'good';
+		}
+		return $report = "Code Coverage: $codeCoverage% ($class)\n";
 	}
 
 /**
