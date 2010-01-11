@@ -2328,7 +2328,7 @@ class DboSource extends DataSource {
  * @return mixed string condition or null
  * @access public
  */
-	function group($group, &$model = null) {
+	function group($group, $model = null) {
 		if ($group) {
 			if (is_array($group)) {
 				foreach($group as $index => $key) {
