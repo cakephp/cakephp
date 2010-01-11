@@ -152,6 +152,14 @@ class CakeCliReporter extends CakeBaseReporter {
 		} else {
 			fwrite(STDOUT, $buffer . $this->getPassCount() . " passes.\n" . $this->_timeStats());
 		}
+
+		if (
+			isset($this->params['codeCoverage']) && 
+			$this->params['codeCoverage'] && 
+			class_exists('CodeCoverageManager')
+		) {
+			CodeCoverageManager::report();
+		}
 	}
 
 /**
