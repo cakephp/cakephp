@@ -2258,7 +2258,7 @@ class DboSource extends DataSource {
  * @return string ORDER BY clause
  * @access public
  */
-	function order($keys, $direction = 'ASC', &$model = null) {
+	function order($keys, $direction = 'ASC', $model = null) {
 		if (!is_array($keys)) {
 			$keys = array($keys);
 		}
