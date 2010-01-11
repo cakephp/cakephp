@@ -1884,7 +1884,7 @@ class DboSource extends DataSource {
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
-				if (in_array($fields[$i], $virtual)) {
+				if (is_string($fields[$i]) && in_array($fields[$i], $virtual)) {
 					unset($fields[$i]);
 					continue;
 				}
