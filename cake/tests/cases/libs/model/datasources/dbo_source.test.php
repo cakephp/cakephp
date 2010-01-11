@@ -4242,7 +4242,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test calculate to generate claculate statements on virtual fields
+ * test group to generate GROUP BY statements on virtual fields
  *
  * @return void
  */
