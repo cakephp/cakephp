@@ -2591,7 +2591,9 @@ class I18nTest extends CakeTestCase {
 
 	function testTimeDefinition() {
 		Configure::write('Config.language', 'po');
-		$abday = __c('abday', 5, true);
+		$result = __c('d_fmt', 5, true);
+		$expected = '%m/%d/%Y';
+		$this->assertEqual($result,$expected);
 	}
 
 /**
