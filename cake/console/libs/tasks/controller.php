@@ -386,6 +386,12 @@ class ControllerTask extends Shell {
 			$actions .= "\t\t\t\$this->flash(__('{$singularHumanName} deleted', true), array('action' => 'index'));\n";
 		}
 		$actions .= "\t\t}\n";
+		if ($wannaUseSession) {
+			$actions .= "\t\t\$this->Session->setFlash(__('The {$singularHumanName} could not be deleted. Please, try again.', true));\n";
+			$actions .= "\t\t\$this->redirect(array('action' => 'index'));\n";
+		} else {
+			$actions .= "\t\t\$this->flash(__('The {$singularHumanName} could not be deleted. Please, try again.', true), array('action' => 'index'));\n";
+		}
 		$actions .= "\t}\n";
 		$actions .= "\n";
 		return $actions;
