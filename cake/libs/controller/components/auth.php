@@ -337,7 +337,7 @@ class AuthComponent extends Object {
 		if ($loginAction == $url) {
 			$model =& $this->getModel();
 			if (empty($controller->data) || !isset($controller->data[$model->alias])) {
-				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
+				if (!$this->Session->check('Auth.redirect') && !$this->loginRedirect && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
 				return false;
