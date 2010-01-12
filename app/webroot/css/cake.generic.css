@@ -1,6 +1,6 @@
 /**
  *
- * PHP versions 4 and 5
+ * Generic CSS for CakePHP
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -160,9 +160,11 @@ table tr td {
 	vertical-align: top;
 	border-bottom:1px solid #ddd;
 }
-table tr:nth-child(2n) td,
-table tr.altrow td {
-	background: #fafafa;
+table tr:nth-child(2n) td {
+	background: #f5f5f5;
+}
+table .altrow td {
+	background: #f5f5f5;
 }
 td.actions {
 	text-align: center;
