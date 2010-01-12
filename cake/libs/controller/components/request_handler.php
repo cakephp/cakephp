@@ -219,10 +219,10 @@ class RequestHandlerComponent extends Object {
 			}
 			$xml = new Xml(trim(file_get_contents('php://input')));
 
-			if (is_object($xml->child('data')) && count($xml->children) == 1) {
-				$controller->data = $xml->child('data');
+			if (count($xml->children) == 1 && is_object($dataNode = $xml->child('data'))) {
+				$controller->data = $dataNode->toArray();
 			} else {
-				$controller->data = $xml;
+				$controller->data = $xml->toArray();
 			}
 		}
 	}

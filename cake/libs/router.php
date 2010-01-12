@@ -982,6 +982,27 @@ class Router {
 	}
 
 /**
+ * Reverses a parsed parameter array into a string. Works similarily to Router::url(), but
+ * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
+ * Those keys need to be specially handled in order to reverse a params array into a string url.
+ *
+ * @param array $param The params array that needs to be reversed.
+ * @return string The string that is the reversed result of the array
+ * @access public
+ */
+	function reverse($params) {
+		$pass = $params['pass'];
+		$named = $params['named'];
+		$url = $params['url'];
+		unset($params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url']);
+		$params = array_merge($params, $pass, $named);
+		if (!empty($url)) {
+			$params['?'] = $url;
+		}
+		return Router::url($params);
+	}
+
+/**
  * Normalizes a URL for purposes of comparison
  *
  * @param mixed $url URL to normalize

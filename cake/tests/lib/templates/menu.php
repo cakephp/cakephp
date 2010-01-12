@@ -21,7 +21,7 @@
 <div class="test-menu">
 <ul>
 	<li>
-		<span  style="font-size: 18px">App</span>
+		<span style="font-size: 18px">App</span>
 		<ul>
 			<li><a href='<?php echo $groups;?>&amp;app=true'>Test Groups</a></li>
 			<li><a href='<?php echo $cases;?>&amp;app=true'>Test Cases</a></li>
@@ -31,7 +31,7 @@
 if (!empty($plugins)):
 ?>
 	<li style="padding-top: 10px">
-		<span  style="font-size: 18px">Plugins</span>
+		<span style="font-size: 18px">Plugins</span>
 	<?php foreach($plugins as $plugin):
 			$pluginPath = Inflector::underscore($plugin);
 	?>
