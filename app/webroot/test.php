@@ -18,7 +18,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 set_time_limit(0);
-ini_set('memory_limit','128M');
 ini_set('display_errors', 1);
 /**
  * Use the DS to separate the directories in other defines
