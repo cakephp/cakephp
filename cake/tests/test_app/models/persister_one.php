@@ -28,7 +28,7 @@ class PersisterOne extends AppModel {
 	var $useTable = 'posts';
 	var $name = 'PersisterOne';
 
-	var $actsAs = array('PersisterOneBehavior');
+	var $actsAs = array('PersisterOneBehavior','TestPlugin.TestPluginPersisterOne');
 
 	var $hasMany = array('Comment');
 }

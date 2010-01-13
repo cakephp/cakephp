@@ -286,6 +286,9 @@ class BehaviorCollection extends Object {
 					$this->{$name} =& new $class;
 				}
 				ClassRegistry::addObject($class, $this->{$name});
+				if (!empty($plugin)) {
+					ClassRegistry::addObject($plugin.'.'.$class, $clas);
+				}
 			}
 		} elseif (isset($this->{$name}->settings) && isset($this->{$name}->settings[$this->modelName])) {
 			if ($config !== null && $config !== false) {

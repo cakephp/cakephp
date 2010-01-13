@@ -425,10 +425,12 @@ class ObjectTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 
 		Configure::write('modelPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS));
+		Configure::write('pluginPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'. DS));
 		Configure::write('behaviorPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS));
 
 		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
+		$this->assertFalse(class_exists('TestPluginPersisterBehavior'));
 
 		$Controller = new RequestActionPersistentController();
 		$Controller->persistModel = true;
@@ -439,11 +441,11 @@ class ObjectTest extends CakeTestCase {
 
 		$contents = str_replace('"PersisterOne"', '"PersisterTwo"', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
 		$contents = str_replace('persister_one_', 'persister_two_', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
-
 		$result = file_put_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php', $contents);
 
 		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
+		$this->assertFalse(class_exists('TestPluginPersisterTwoBehavior'));
 
 		$Controller = new RequestActionPersistentController();
 		$Controller->persistModel = true;
@@ -451,6 +453,7 @@ class ObjectTest extends CakeTestCase {
 
 		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertTrue(class_exists('PersisterTwoBehaviorBehavior'));
+		$this->assertTrue(class_exists('TestPluginPersisterTwoBehavior'));
 
 		@unlink(CACHE . 'persistent' . DS . 'persisterone.php');
 		@unlink(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
@@ -484,7 +487,13 @@ class ObjectTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
 
 		$keys = ClassRegistry::keys();
-		$this->assertEqual($keys, array('persister_one', 'comment', 'persister_one_behavior_behavior'));
+		$this->assertEqual($keys, array(
+			'persister_one',
+			'comment',
+			'persister_one_behavior_behavior',
+			'test_plugin_persister_one_behavior',
+			'test_plugin.test_plugin_persister_one_behavior'
+		));
 
 		ob_start();
 		$Controller->set('content_for_layout', 'cool');
@@ -492,8 +501,14 @@ class ObjectTest extends CakeTestCase {
 		$result = ob_get_clean();
 
 		$keys = ClassRegistry::keys();
-		$this->assertEqual($keys, array('persister_one', 'comment', 'persister_one_behavior_behavior', 'view'));
-
+		$this->assertEqual($keys, array(
+			'persister_one',
+			'comment',
+			'persister_one_behavior_behavior',
+			'test_plugin_persister_one_behavior',
+			'test_plugin.test_plugin_persister_one_behavior',
+			'view'
+		));
 		$result = $this->object->requestAction('/request_action_persistent/index');
 		$expected = 'This is a test';
 		$this->assertEqual($result, $expected);
