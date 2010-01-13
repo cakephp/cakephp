@@ -145,7 +145,7 @@ class SanitizeTest extends CakeTestCase {
  */
 	function testClean() {
 		$string = 'test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line';
-		$expected = 'test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line';
+		$expected = 'test &amp; &quot;quote&quot; &#039;other&#039; ;.$ symbol.another line';
 		$result = Sanitize::clean($string, array('connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
@@ -170,7 +170,7 @@ class SanitizeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$array = array(array('test & "quote" \'other\' ;.$ symbol.' . "\r" . 'another line'));
-		$expected = array(array('test &amp; &quot;quote&quot; &#39;other&#39; ;.$ symbol.another line'));
+		$expected = array(array('test &amp; &quot;quote&quot; &#039;other&#039; ;.$ symbol.another line'));
 		$result = Sanitize::clean($array, array('connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
@@ -179,8 +179,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::clean($array, array('encode' => false, 'escape' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
-		$array = array(array('test odd '.chr(0xCA).' spaces'.chr(0xCA)));
-		$expected = array(array('test odd '.chr(0xCA).' spaces'.chr(0xCA)));
+		$array = array(array('test odd Ä spacesé'));
+		$expected = array(array('test odd &Auml; spaces&eacute;'));
 		$result = Sanitize::clean($array, array('odd_spaces' => false, 'escape' => false, 'connection' => 'test_suite'));
 		$this->assertEqual($result, $expected);
 
@@ -194,7 +194,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::clean($string);
 		$this->assertEqual($string, $expected);
 	}
-	/**
+
+/**
  * testHtml method
  *
  * @access public
@@ -202,16 +203,31 @@ class SanitizeTest extends CakeTestCase {
  */
 	function testHtml() {
 		$string = '<p>This is a <em>test string</em> & so is this</p>';
-		$expected = 'This is a test string & so is this';
-		$result = Sanitize::html($string, true);
+		$expected = 'This is a test string &amp; so is this';
+		$result = Sanitize::html($string, array('remove' => true));
 		$this->assertEqual($result, $expected);
 
 		$string = 'The "lazy" dog \'jumped\' & flew over the moon. If (1+1) = 2 <em>is</em> true, (2-1) = 1 is also true';
-		$expected = 'The &quot;lazy&quot; dog &#39;jumped&#39; &amp; flew over the moon. If &#40;1&#43;1&#41; = 2 &lt;em&gt;is&lt;/em&gt; true, &#40;2&#45;1&#41; = 1 is also true';
+		$expected = 'The &quot;lazy&quot; dog &#039;jumped&#039; &amp; flew over the moon. If (1+1) = 2 &lt;em&gt;is&lt;/em&gt; true, (2-1) = 1 is also true';
+		$result = Sanitize::html($string);
+		$this->assertEqual($result, $expected);
+		
+		$string = 'The "lazy" dog \'jumped\'';
+		$expected = 'The &quot;lazy&quot; dog \'jumped\'';
+		$result = Sanitize::html($string, array('quotes' => ENT_COMPAT));
+		$this->assertEqual($result, $expected);
+		
+		$string = 'The "lazy" dog \'jumped\'';
+		$result = Sanitize::html($string, array('quotes' => ENT_NOQUOTES));
+		$this->assertEqual($result, $string);
+		
+		$string = 'The "lazy" dog \'jumped\' & flew over the moon. If (1+1) = 2 <em>is</em> true, (2-1) = 1 is also true';
+		$expected = 'The &quot;lazy&quot; dog &#039;jumped&#039; &amp; flew over the moon. If (1+1) = 2 &lt;em&gt;is&lt;/em&gt; true, (2-1) = 1 is also true';
 		$result = Sanitize::html($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripWhitespace method
  *
  * @access public
@@ -223,7 +239,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripWhitespace($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testParanoid method
  *
  * @access public
@@ -264,7 +281,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::paranoid($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripImages method
  *
  * @access public
@@ -291,7 +309,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripImages($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripScripts method
  *
  * @access public
@@ -328,7 +347,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testStripAll method
  *
  * @access public
@@ -359,7 +379,8 @@ class SanitizeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 	}
-	/**
+
+/**
  * testStripTags method
  *
  * @access public
@@ -401,7 +422,8 @@ class SanitizeTest extends CakeTestCase {
 		$result = Sanitize::stripTags($string, 'h2', 'a', 'img');
 		$this->assertEqual($result, $expected);
 	}
-	/**
+
+/**
  * testFormatColumns method
  *
  * @access public

@@ -13,18 +13,23 @@
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @subpackage    cake.cake.tests.lib
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-?>
-<div id="content">
-	<h2>SimpleTest is not installed</h2>
-	<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
-	<p>SimpleTest can be placed in one of the following directories.</p>
-	<ul>
-		<li><?php echo CAKE; ?>vendors </li>
-		<li><?php echo APP_DIR . DS; ?>vendors</li>
-	</ul>
-	<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
-</div>
+?>	</div>
+		</div>
+ 		<div id="footer">
+ 			<!--PLEASE USE ONE OF THE POWERED BY CAKEPHP LOGO-->
+ 			<a href="http://www.cakephp.org/" target="_blank">
+ 				<img src="<?php echo $baseDir; ?>img/cake.power.gif" alt="CakePHP(tm) :: Rapid Development Framework" /></a></p>
+ 		</div>
+		<?php
+			App::import('Core', 'View');
+			$null = null;
+			$View =& new View($null, false);
+			echo $View->element('sql_dump');
+		?>
+	</div>
+</body>
+</html>

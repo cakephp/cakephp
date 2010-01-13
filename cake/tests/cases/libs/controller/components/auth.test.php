@@ -624,6 +624,31 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
+ * test that being redirected to the login page, with no post data does 
+ * not set the session value.  Saving the session value in this circumstance
+ * can cause the user to be redirected to an already public page.
+ *
+ * @return void
+ */
+	function testLoginActionNotSettingAuthRedirect() {
+		$_referer = $_SERVER['HTTP_REFERER'];
+		$_SERVER['HTTP_REFERER'] = '/pages/display/about';
+
+		$this->Controller->data = array();
+		$this->Controller->params = Router::parse('auth_test/login');
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+		$this->Controller->Session->delete('Auth');
+
+		$this->Controller->Auth->loginRedirect = '/users/dashboard';
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$redirect = $this->Controller->Session->read('Auth.redirect');
+		$this->assertNull($redirect);
+	}
+
+/**
  * testAuthorizeFalse method
  *
  * @access public

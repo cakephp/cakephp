@@ -661,9 +661,7 @@ class FormHelper extends AppHelper {
 			$this->_introspectModel($modelKey);
 		}
 
-		$userType = isset($options['type']) ? true : false;
-
-		if (!$userType) {
+		if (!isset($options['type'])) {
 			$options['type'] = 'text';
 			$fieldDef = array();
 			if (isset($options['options'])) {
@@ -693,6 +691,9 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 			}
+			if (preg_match('/_id$/', $fieldKey)) {
+				$options['type'] = 'select';
+			}
 
 			if ($modelKey === $fieldKey) {
 				$options['type'] = 'select';
@@ -701,18 +702,15 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		$types = array('text', 'checkbox', 'radio', 'select');
+		$types = array('checkbox', 'radio', 'select');
 
-		if (!isset($options['options']) && in_array($options['type'], $types) && !$userType) {
+		if (!isset($options['options']) && in_array($options['type'], $types)) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
-				if ($options['type'] !== 'radio') {
-					$options['type'] = 'select';
-				}
 				$options['options'] = $varOptions;
 			}
 		}

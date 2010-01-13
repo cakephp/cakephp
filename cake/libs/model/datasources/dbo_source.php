@@ -1413,7 +1413,7 @@ class DboSource extends DataSource {
 			'order' => $this->order($query['order'], 'ASC', $model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
-			'group' => $this->group($query['group'])
+			'group' => $this->group($query['group'], $model)
 		));
 	}
 
@@ -1884,7 +1884,7 @@ class DboSource extends DataSource {
 
 		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			for ($i = 0; $i < $count; $i++) {
-				if (in_array($fields[$i], $virtual)) {
+				if (is_string($fields[$i]) && in_array($fields[$i], $virtual)) {
 					unset($fields[$i]);
 					continue;
 				}
@@ -2258,7 +2258,7 @@ class DboSource extends DataSource {
  * @return string ORDER BY clause
  * @access public
  */
-	function order($keys, $direction = 'ASC', &$model = null) {
+	function order($keys, $direction = 'ASC', $model = null) {
 		if (!is_array($keys)) {
 			$keys = array($keys);
 		}
@@ -2328,11 +2328,17 @@ class DboSource extends DataSource {
  * @return mixed string condition or null
  * @access public
  */
-	function group($group) {
+	function group($group, $model = null) {
 		if ($group) {
-			if (is_array($group)) {
-				$group = implode(', ', $group);
+			if (!is_array($group)) {
+				$group = array($group);
 			}
+			foreach($group as $index => $key) {
+				if ($model->isVirtualField($key)) {
+					$group[$index] = '(' . $model->getVirtualField($key) . ')';
+				}
+			}
+			$group = implode(', ', $group);
 			return ' GROUP BY ' . $this->__quoteFields($group);
 		}
 		return null;

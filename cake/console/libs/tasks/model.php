@@ -186,7 +186,7 @@ class ModelTask extends Shell {
 
 		if (in_array($useTable, $this->__tables)) {
 			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
-			$fields = $tempModel->schema();
+			$fields = $tempModel->schema(true);
 			if (!array_key_exists('id', $fields)) {
 				$primaryKey = $this->findPrimaryKey($fields);
 			}
@@ -447,7 +447,7 @@ class ModelTask extends Shell {
 			$this->out(__('One moment while the associations are detected.', true));
 		}
 
-		$fields = $model->schema();
+		$fields = $model->schema(true);
 		if (empty($fields)) {
 			return false;
 		}
@@ -487,7 +487,7 @@ class ModelTask extends Shell {
  * @return array $associations with belongsTo added in.
  */
 	function findBelongsTo(&$model, $associations) {
-		$fields = $model->schema();
+		$fields = $model->schema(true);
 		foreach ($fields as $fieldName => $field) {
 			$offset = strpos($fieldName, '_id');
 			if ($fieldName != $model->primaryKey && $fieldName != 'parent_id' && $offset !== false) {
@@ -562,7 +562,7 @@ class ModelTask extends Shell {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->__tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
-			$modelFieldsTemp = $tempOtherModel->schema();
+			$modelFieldsTemp = $tempOtherModel->schema(true);
 
 			$offset = strpos($otherTable, $model->table . '_');
 			$otherOffset = strpos($otherTable, '_' . $model->table);
@@ -695,7 +695,7 @@ class ModelTask extends Shell {
 		$possible = array();
 		foreach ($this->__tables as $otherTable) {
 			$tempOtherModel = & new Model(array('table' => $otherTable, 'ds' => $this->connection));
-			$modelFieldsTemp = $tempOtherModel->schema();
+			$modelFieldsTemp = $tempOtherModel->schema(true);
 			foreach ($modelFieldsTemp as $fieldName => $field) {
 				if ($field['type'] == 'integer' || $field['type'] == 'string') {
 					$possible[$otherTable][] = $fieldName;
@@ -821,6 +821,7 @@ class ModelTask extends Shell {
 
 		$tables = array();
 		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$db->cacheSources = false;
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {
 			foreach ($db->listSources() as $table) {

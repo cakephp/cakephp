@@ -594,8 +594,19 @@ class ModelTaskTest extends CakeTestCase {
 		$this->assertPattern('/class Article extends AppModel \{/', $result);
 		$this->assertPattern('/\$name \= \'Article\'/', $result);
 		$this->assertPattern('/\$validate \= array\(/', $result);
-		$pattern = '/' . preg_quote("'notempty' => array('rule' => array('notempty')),", '/') . '/';
-		$this->assertPattern($pattern, $result);
+		$expected = <<< STRINGEND
+array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+STRINGEND;
+
+		$this->assertPattern('/' . preg_quote($expected, '/') . '/', $result);
 	}
 
 /**

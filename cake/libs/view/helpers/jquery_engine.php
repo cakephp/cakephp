@@ -245,6 +245,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			} else {
 				$success = 'function (data, textStatus) {$("' . $options['update'] . '").html(data);}';
 			}
+			$options['dataType'] = 'html';
 			$options['success'] = $success;
 			unset($options['update']);
 		}

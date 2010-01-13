@@ -2050,6 +2050,18 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that magic input() selects can easily be converted into radio types without error.
+ *
+ * @return void
+ */
+	function testInputMagicSelectChangeToRadio() {
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
+		$this->assertPattern('/input type="radio"/', $result);
+	}
+
+/**
  * testFormInputs method
  *
  * test correct results from form::inputs().
@@ -5930,17 +5942,16 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
 		$expected = array(
-			'div' => array('class' => 'input text error'),
+			'div' => array('class' => 'input select error'),
 			'label' => array('for' => 'ValidateProfile1ValidateItem2ProfileId'),
 			'Profile',
 			'/label',
-			'input' => array(
-				'name' => 'data[ValidateProfile][1][ValidateItem][2][profile_id]', 'type' => 'text',
-				'value' => '1',
+			'select' => array(
+				'name' => 'data[ValidateProfile][1][ValidateItem][2][profile_id]',
 				'id' => 'ValidateProfile1ValidateItem2ProfileId',
-				'maxlength' => 8,
 				'class' => 'form-error'
 			),
+			'/select',
 			array('div' => array('class' => 'error-message')),
 			'Error',
 			'/div',

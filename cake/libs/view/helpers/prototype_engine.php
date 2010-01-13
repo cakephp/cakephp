@@ -234,13 +234,12 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			$type = '.Updater';
 			unset($options['update'], $options['type']);
 		}
-		$safe = array();
+		$safe = array_keys($this->_callbackArguments['request']);
+		$options = $this->_prepareCallbacks('request', $options, $safe);
 		if (isset($options['dataExpression'])) {
 			$safe[] = 'parameters';
 			unset($options['dataExpression']);
 		}
-		$safe = array_merge($safe, array_keys($this->_callbackArguments['request']));
-		$options = $this->_prepareCallbacks('request', $options, $safe);
 		$options = $this->_parseOptions($options, $safe);
 		if (!empty($options)) {
 			$options = ', {' . $options . '}';

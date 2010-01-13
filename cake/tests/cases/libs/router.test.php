@@ -1942,6 +1942,58 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/test');
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test reversing parameter arrays back into strings.
+ *
+ * @return void
+ */
+	function testRouterReverse() {
+		$params = array(
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'url' => array()
+		);
+		$result = Router::reverse($params);
+		$this->assertEqual($result, '/posts/view/1');
+
+		$params = array(
+			'controller' => 'posts',
+			'action' => 'index',
+			'pass' => array(1),
+			'named' => array('page' => 1, 'sort' => 'Article.title', 'direction' => 'desc'),
+			'url' => array()
+		);
+		$result = Router::reverse($params);
+		$this->assertEqual($result, '/posts/index/1/page:1/sort:Article.title/direction:desc');
+
+		Router::connect('/:lang/:controller/:action/*', array(), array('lang' => '[a-z]{3}'));
+		$params = array(
+			'lang' => 'eng',
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'url' => array('url' => 'eng/posts/view/1')
+		);
+		$result = Router::reverse($params);
+		$this->assertEqual($result, '/eng/posts/view/1');
+
+		$params = array(
+			'lang' => 'eng',
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'url' => array('url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu'),
+			'paging' => array(),
+			'models' => array()
+		);
+		$result = Router::reverse($params);
+		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
+	}
 }
 
 /**

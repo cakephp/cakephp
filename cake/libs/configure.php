@@ -1,8 +1,6 @@
 <?php
 /**
- * Short description for file.
- *
- * Long description for filec
+ * App and Configure classes
  *
  * PHP versions 4 and 5
  *
@@ -217,7 +215,7 @@ class Configure extends Object {
  * Loads a file from app/config/configure_file.php.
  * Config file variables should be formated like:
  *  `$config['name'] = 'value';`
- * These will be used to create dynamic Configure vars. load() is also used to 
+ * These will be used to create dynamic Configure vars. load() is also used to
  * load stored config files created with Configure::store()
  *
  * - To load config files from app/config use `Configure::load('configure_file');`.
@@ -236,7 +234,7 @@ class Configure extends Object {
 			$pluginPath = App::pluginPath($plugin);
 		}
 		$pos = strpos($fileName, '..');
-		
+
 		if ($pos === false) {
 			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
 				include($pluginPath . 'config' . DS . $fileName . '.php');
@@ -450,7 +448,7 @@ class Configure extends Object {
 }
 
 /**
- * Class and file loader.
+ * Class/file loader and path management.
  *
  * @link          http://book.cakephp.org/view/499/The-App-Class
  * @since         CakePHP(tm) v 1.2.0.6001
@@ -634,8 +632,9 @@ class App extends Object {
 /**
  * Used to read information stored path
  *
- * Usage
- * App::path('models'); will return all paths for models
+ * Usage:
+ *
+ * `App::path('models'); will return all paths for models`
  *
  * @param string $type type of path
  * @return string array
@@ -731,7 +730,7 @@ class App extends Object {
  * Passing $type only returns the values for a given value of $key.
  *
  * @param string $type valid values are: 'model', 'behavior', 'controller', 'component',
- *                      'view', 'helper', 'datasource', 'libs', and 'cake'
+ *    'view', 'helper', 'datasource', 'libs', and 'cake'
  * @return array numeric keyed array of core lib paths
  * @access public
  */
@@ -783,9 +782,11 @@ class App extends Object {
 /**
  * Returns an index of objects of the given type, with the physical path to each object.
  *
- * @param string	$type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
- * @param mixed		$path Optional
- * @return Configure instance
+ * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
+ * @param mixed $path Optional Scan only the path given. If null, paths for the chosen
+ *   type will be used.
+ * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
+ * @return mixed Either false on incorrect / miss.  Or an array of found objects.
  * @access public
  */
 	function objects($type, $path = null, $cache = true) {
@@ -822,7 +823,7 @@ class App extends Object {
 			$items = array();
 
 			foreach ((array)$path as $dir) {
-				if ($type === 'file' || $type === 'class' || strpos($dir, $type) !== false) {
+				if ($dir != APP) {
 					$items = $_this->__list($dir, $types[$type]['suffix'], $extension);
 					$objects = array_merge($items, array_diff($objects, $items));
 				}
@@ -1074,6 +1075,7 @@ class App extends Object {
  * @param string $name unique name for this map
  * @param string $type type object being mapped
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
+ * @return void
  * @access private
  */
 	function __map($file, $name, $type, $plugin) {
@@ -1254,6 +1256,7 @@ class App extends Object {
  * @param string $path Path to scan for files
  * @param string $suffix if false, return only directories. if string, match and return files
  * @return array  List of directories or files in directory
+ * @access private
  */
 	function __list($path, $suffix = false, $extension = false) {
 		if (!class_exists('Folder')) {
