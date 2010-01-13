@@ -21,7 +21,7 @@
 	padding:0;
 }
 
-/* General Style Info */
+/** General Style Info **/
 body {
 	background: #003d4c;
 	color: #fff;
@@ -69,7 +69,7 @@ ul, li {
 	margin: 0 12px;
 }
 
-/* Layout */
+/** Layout **/
 #container {
 	text-align: left;
 }
@@ -112,13 +112,13 @@ div.form,
 div.index,
 div.view {
 	float:right;
-	width:81%;
+	width:76%;
 	border-left:1px solid #666;
 	padding:10px 2%;
 }
 div.actions {
 	float:left;
-	width:11%;
+	width:16%;
 	padding:10px 1.5%;
 }
 div.actions h3 {
@@ -127,7 +127,7 @@ div.actions h3 {
 }
 
 
-/* Tables */
+/** Tables **/
 table {
 	background: #fff;
 	border-right:0;
@@ -186,7 +186,7 @@ table td.actions a {
 	color:#fff;
 }
 
-/* Paging */
+/** Paging **/
 div.paging {
 	background:#fff;
 	color: #ccc;
@@ -203,7 +203,7 @@ div.paging span.current {
 div.paging span a {
 }
 
-/* Scaffold View */
+/** Scaffold View **/
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
@@ -223,12 +223,12 @@ dd {
 	vertical-align: top;
 }
 
-/* Forms */
+/** Forms **/
 form {
 	clear: both;
 	margin-right: 20px;
 	padding: 0;
-	width: 80%;
+	width: 95%;
 }
 fieldset {
 	border: 1px solid #ccc;
@@ -306,6 +306,9 @@ input[type=checkbox] {
 	margin: 0px 6px 7px 2px;
 	width: auto;
 }
+div.checkbox label {
+	display: inline;
+}
 input[type=radio] {
 	float:left;
 	width:auto;
@@ -324,7 +327,7 @@ form .submit input[type=submit] {
 	background: -webkit-gradient(linear, left top, left bottom, from(#a8ea9c), to(#62af56));
 	background-image: -moz-linear-gradient(top, #a8ea9c, #62af56);
 	border-color: #2d6324;
-	color: #111;
+	color: #000;
 	text-shadow: #8cee7c 0px 1px 0px;
 }
 form .submit input[type=submit]:hover {
@@ -333,7 +336,7 @@ form .submit input[type=submit]:hover {
 	background-image: -moz-linear-gradient(top, #85e573, #4ca83d);
 }
 
-/* Notices and Errors */
+/** Notices and Errors **/
 div.message {
 	clear: both;
 	color: #fff;
@@ -378,19 +381,21 @@ p.error em {
 	color: #fff;
 }
 
-/*  Actions  */
+/**  Actions  **/
 div.actions ul {
-	margin: 0px 0;
+	margin: 0;
 	padding: 0;
 }
 div.actions li {
 	margin:0 0 0.5em 0;
 	list-style-type: none;
 	white-space: nowrap;
+	padding: 0;
 }
 div.actions ul li a {
-	font-weight:normal;
-	display:block;
+	font-weight: normal;
+	display: block;
+	clear: both;
 }
 div.actions ul li a:hover {
 	text-decoration: underline;
@@ -411,6 +416,7 @@ td.actions a {
 	border-radius:8px;
 	text-decoration:none;
 	text-shadow: #fff 0px 1px 0px;
+	min-width: 0;
 }
 input[type=submit]:hover,
 div.actions ul li a:hover,
@@ -419,13 +425,13 @@ td.actions a:hover {
 	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7e1), to(#eeeca9));
 }
 
-/* Related */
+/** Related **/
 div.related {
 	clear: both;
 	display: block;
 }
 
-/* Debugging */
+/** Debugging **/
 pre {
 	color: #000;
 	background: #f0f0f0;
