@@ -19,11 +19,6 @@
 ?>
 <div class="<?php echo $pluralVar;?> index">
 <h2><?php echo $pluralHumanName;?></h2>
-<p><?php
-echo $this->Paginator->counter(array(
-	'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
-));
-?></p>
 <table cellpadding="0" cellspacing="0">
 <tr>
 <?php foreach ($scaffoldFields as $_field):?>
@@ -67,13 +62,19 @@ endforeach;
 echo "\n";
 ?>
 </table>
-</div>
-<div class="paging">
-<?php echo "\t" . $this->Paginator->prev('<< ' . __('previous', true), array(), null, array('class' => 'disabled')) . "\n";?>
- | <?php echo $this->Paginator->numbers() . "\n"?>
-<?php echo "\t ". $this->Paginator->next(__('next', true) .' >>', array(), null, array('class' => 'disabled')) . "\n";?>
+	<p><?php
+	echo $this->Paginator->counter(array(
+		'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+	));
+	?></p>
+	<div class="paging">
+	<?php echo "\t" . $this->Paginator->prev('<< ' . __('previous', true), array(), null, array('class' => 'disabled')) . "\n";?>
+	 | <?php echo $this->Paginator->numbers() . "\n"?>
+	<?php echo "\t ". $this->Paginator->next(__('next', true) .' >>', array(), null, array('class' => 'disabled')) . "\n";?>
+	</div>
 </div>
 <div class="actions">
+	<h3><?php __('Actions'); ?></h3>
 	<ul>
 		<li><?php echo $this->Html->link(sprintf(__('New %s', true), $singularHumanName), array('action' => 'add')); ?></li>
 <?php

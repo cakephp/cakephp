@@ -47,6 +47,7 @@ foreach ($scaffoldFields as $_field) {
 	</dl>
 </div>
 <div class="actions">
+	<h3><?php __('Actions'); ?></h3>
 	<ul>
 <?php
 	echo "\t\t<li>" .$this->Html->link(sprintf(__('Edit %s', true), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
