@@ -109,7 +109,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkSimpleTest() {
 		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-			$basePath = $this->_baseDir;
+			$baseDir = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'simpletest.php';
 			exit();
 		}
@@ -123,7 +123,7 @@ class CakeTestSuiteDispatcher {
  */
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
-			$basePath = $this->_baseDir;
+			$baseDir = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
 			exit();
 		}
