@@ -303,7 +303,7 @@ class Model extends Overloadable {
  * SQL expressions. Fields added to this property will be read as other fields in a model
  * but will not be saveable.
  *
- * `var $virtualFields = array('two' => '1 + 1');` 
+ * `var $virtualFields = array('two' => '1 + 1');`
  *
  * Is a simplistic example of how to set virtualFields
  *
@@ -397,14 +397,14 @@ class Model extends Overloadable {
  *   eg. `ParentThread`
  *
  * ### Overriding Model's __construct method.
- * 
- * When overriding Model::__construct() be careful to include and pass in all 3 of the 
+ *
+ * When overriding Model::__construct() be careful to include and pass in all 3 of the
  * arguments to `parent::__construct($id, $table, $ds);`
  *
  * ### Dynamically creating models
  *
  * You can dynamically create model instances using the the $id array syntax.
- * 
+ *
  * {{{
  * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
  * }}}
@@ -1089,7 +1089,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * Returns the expression for a model virtual field 
+ * Returns the expression for a model virtual field
  *
  * @param mixed $name Name of field to look for
  * @return mixed If $field is string expression bound to virtual field $field
@@ -1393,7 +1393,7 @@ class Model extends Overloadable {
 		}
 
 		if (!empty($joined) && $success === true) {
-			$this->__saveMulti($joined, $this->id);
+			$this->__saveMulti($joined, $this->id, $db);
 		}
 
 		if ($success && $count > 0) {
@@ -1423,9 +1423,7 @@ class Model extends Overloadable {
  * @param mixed $id ID of record in this model
  * @access private
  */
-	function __saveMulti($joined, $id) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
+	function __saveMulti($joined, $id, &$db) {
 		foreach ($joined as $assoc => $data) {
 
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
