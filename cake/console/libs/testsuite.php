@@ -356,25 +356,6 @@ class TestSuiteShell extends Shell {
 	}
 
 /**
- * Sets some get vars needed for TestManager
- *
- * @return void
- * @access private
- */
-	function __setGetVars() {
-		if (in_array($this->category, $this->plugins)) {
-			$_GET['plugin'] = $this->category;
-		} elseif (in_array(Inflector::humanize($this->category), $this->plugins)) {
-			$_GET['plugin'] = Inflector::humanize($this->category);
-		} elseif ($this->category == 'app') {
-			$_GET['app'] = true;
-		}
-		if ($this->type == 'group') {
-			$_GET['group'] = true;
-		}
-	}
-
-/**
  * tries to install simpletest and exits gracefully if it is not there
  *
  * @return void
