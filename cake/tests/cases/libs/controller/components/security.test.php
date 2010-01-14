@@ -60,7 +60,7 @@ class SecurityTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('TestSecurity');
+	var $components = array('Session', 'TestSecurity');
 
 /**
  * failed property

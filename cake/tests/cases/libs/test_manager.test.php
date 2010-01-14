@@ -19,7 +19,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'TestManager');
 
 /**
  * TestManagerTest class
@@ -36,7 +35,7 @@ class TestManagerTest extends CakeTestCase {
  * @access public
  */
 	function setUp() {
-		$this->Sut =& new TestManager();
+		$this->TestManager =& new TestManager();
 		$this->Reporter =& new CakeHtmlReporter();
 	}
 
@@ -47,12 +46,12 @@ class TestManagerTest extends CakeTestCase {
  * @access public
  */
 	function testRunAllTests() {
-		$folder =& new Folder($this->Sut->_getTestsPath());
-		$extension = str_replace('.', '\.', TestManager::getExtension('test'));
+		$folder =& new Folder($this->TestManager->_getTestsPath());
+		$extension = str_replace('.', '\.', $this->TestManager->getExtension('test'));
 		$out = $folder->findRecursive('.*' . $extension);
 
 		$reporter =& new CakeHtmlReporter();
-		$list = TestManager::runAllTests($reporter, true);
+		$list = $this->TestManager->runAllTests($reporter, true);
 
 		$this->assertEqual(count($out), count($list));
 	}
@@ -65,12 +64,12 @@ class TestManagerTest extends CakeTestCase {
  */
 	function testRunTestCase() {
 		$file = md5(time());
-		$result = $this->Sut->runTestCase($file, $this->Reporter);
+		$result = $this->TestManager->runTestCase($file, $this->Reporter);
 		$this->assertError('Test case ' . $file . ' cannot be found');
 		$this->assertFalse($result);
 
 		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
-		$result = $this->Sut->runTestCase($file, $this->Reporter, true);
+		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
 		$this->assertTrue($result);
 	}
 

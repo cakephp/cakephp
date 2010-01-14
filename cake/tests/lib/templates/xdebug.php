@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Xdebug error page
  *
  * PHP versions 4 and 5
  *
@@ -18,13 +18,10 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 ?>
+<?php include dirname(__FILE__) . DS . 'header.php'; ?>
 <div id="content">
-	<h2>SimpleTest is not installed</h2>
-	<p>You must install SimpleTest to use the CakePHP(tm) Test Suite.</p>
-	<p>SimpleTest can be placed in one of the following directories.</p>
-	<ul>
-		<li><?php echo CAKE; ?>vendors </li>
-		<li><?php echo APP_DIR . DS; ?>vendors</li>
-	</ul>
-	<p><a href="http://simpletest.org/en/download.html" target="_blank">Download SimpleTest</a></p>
+	<h2>Xdebug is not installed</h2>
+	<p>You must install Xdebug to use the CakePHP(tm) Code Coverage Analyzation.</p>
+	<p><a href="http://www.xdebug.org/docs/install" target="_blank">Learn How To Install Xdebug</a></p>
 </div>
+<?php include dirname(__FILE__) . DS . 'footer.php'; ?>

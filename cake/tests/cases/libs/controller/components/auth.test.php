@@ -237,7 +237,7 @@ class AuthTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Auth', 'Acl');
+	var $components = array('Session', 'Auth', 'Acl');
 
 /**
  * testUrl property
@@ -382,7 +382,7 @@ class AjaxAuthController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('TestAuth');
+	var $components = array('Session', 'TestAuth');
 
 /**
  * uses property
@@ -514,6 +514,7 @@ class AuthTest extends CakeTestCase {
 		$_ENV = $this->_env;
 		Configure::write('Acl', $this->_acl);
 		Configure::write('Security.salt', $this->_securitySalt);
+
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
 		ClassRegistry::flush();
@@ -621,6 +622,31 @@ class AuthTest extends CakeTestCase {
 		));
 		$this->assertEqual($user, $expected);
 		$this->Controller->Session->delete('Auth');
+	}
+
+/**
+ * test that being redirected to the login page, with no post data does 
+ * not set the session value.  Saving the session value in this circumstance
+ * can cause the user to be redirected to an already public page.
+ *
+ * @return void
+ */
+	function testLoginActionNotSettingAuthRedirect() {
+		$_referer = $_SERVER['HTTP_REFERER'];
+		$_SERVER['HTTP_REFERER'] = '/pages/display/about';
+
+		$this->Controller->data = array();
+		$this->Controller->params = Router::parse('auth_test/login');
+		$this->Controller->params['url']['url'] = 'auth_test/login';
+		$this->Controller->Session->delete('Auth');
+
+		$this->Controller->Auth->loginRedirect = '/users/dashboard';
+		$this->Controller->Auth->loginAction = 'auth_test/login';
+		$this->Controller->Auth->userModel = 'AuthUser';
+
+		$this->Controller->Auth->startup($this->Controller);
+		$redirect = $this->Controller->Session->read('Auth.redirect');
+		$this->assertNull($redirect);
 	}
 
 /**
@@ -1514,7 +1540,8 @@ class AuthTest extends CakeTestCase {
 				'loginAction' => array('controller' => 'people', 'action' => 'login'),
 				'userModel' => 'AuthUserCustomField',
 				'sessionKey' => 'AltAuth.AuthUserCustomField'
-			)
+			),
+			'Session'
 		);
 		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Component->initialize($this->Controller);

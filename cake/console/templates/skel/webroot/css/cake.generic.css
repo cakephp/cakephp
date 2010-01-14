@@ -1,6 +1,6 @@
 /**
  *
- * PHP versions 4 and 5
+ * Generic CSS for CakePHP
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -16,13 +16,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-
 * {
 	margin:0;
 	padding:0;
 }
 
-/* General Style Info */
+/** General Style Info **/
 body {
 	background: #003d4c;
 	color: #fff;
@@ -31,14 +30,12 @@ body {
 	margin: 0;
 }
 a {
-	background:#fff;
 	color: #003d4c;
 	text-decoration: underline;
 	font-weight: bold;
 }
 a:hover {
-	background:#fff;
-	color: #003d4c;
+	color: #367889;
 	text-decoration:none;
 }
 a img {
@@ -46,37 +43,33 @@ a img {
 }
 h1, h2, h3, h4 {
 	font-weight: normal;
+	margin-bottom:0.5em;
 }
 h1 {
 	background:#fff;
 	color: #003d4c;
 	font-size: 100%;
-	margin: 0.1em 0;
 }
 h2 {
 	background:#fff;
 	color: #e32;
-	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
+	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
 	font-size: 190%;
-	margin: 0.3em 0;
-	padding-top: 0.8em;
 }
 h3 {
 	color: #993;
-	font-family:'Gill Sans','lucida grande',helvetica, arial, sans-serif;
+	font-family:'Gill Sans','lucida grande', helvetica, arial, sans-serif;
 	font-size: 165%;
-	padding-top: 1.5em;
 }
 h4 {
 	color: #993;
 	font-weight: normal;
-	padding-top: 0.5em;
 }
 ul, li {
 	margin: 0 12px;
 }
 
-/* Layout */
+/** Layout **/
 #container {
 	text-align: left;
 }
@@ -85,7 +78,8 @@ ul, li {
 	padding: 10px 20px;
 }
 #header h1 {
-	background: #003d4c url('../img/cake.icon.gif') no-repeat left;
+	line-height:20px;
+	background: #003d4c url('../img/cake.icon.png') no-repeat left;
 	color: #fff;
 	padding: 0px 30px;
 }
@@ -113,10 +107,29 @@ ul, li {
 	text-align: right;
 }
 
-/* Tables */
+/** containers **/
+div.form,
+div.index,
+div.view {
+	float:right;
+	width:76%;
+	border-left:1px solid #666;
+	padding:10px 2%;
+}
+div.actions {
+	float:left;
+	width:16%;
+	padding:10px 1.5%;
+}
+div.actions h3 {
+	padding-top:0;
+	color:#777;
+}
+
+
+/** Tables **/
 table {
 	background: #fff;
-	border:1px solid #ccc;
 	border-right:0;
 	clear: both;
 	color: #333;
@@ -124,39 +137,42 @@ table {
 	width: 100%;
 }
 th {
-	background: #f2f2f2;
-	border:1px solid #bbb;
-	border-top: 1px solid #fff;
-	border-left: 1px solid #fff;
-	text-align: center;
+	border:0;
+	border-bottom:2px solid #555;
+	text-align: left;
+	padding:4px;
 }
 th a {
-	background:#f2f2f2;
 	display: block;
 	padding: 2px 4px;
 	text-decoration: none;
 }
-th a:hover {
-	background: #ccc;
-	color: #333;
-	text-decoration: none;
+th a.asc:after {
+	content: ' ⇣';
+}
+th a.desc:after {
+	content: ' ⇡';
 }
 table tr td {
 	background: #fff;
-	border-right: 1px solid #ccc;
-	padding: 4px;
-	text-align: center;
+	padding: 6px;
+	text-align: left;
 	vertical-align: top;
+	border-bottom:1px solid #ddd;
 }
-table tr.altrow td {
-	background: #f4f4f4;
+table tr:nth-child(2n) td {
+	background: #f5f5f5;
+}
+table .altrow td {
+	background: #f5f5f5;
 }
 td.actions {
 	text-align: center;
 	white-space: nowrap;
 }
-td.actions a {
+table td.actions a {
 	margin: 0px 6px;
+	padding:2px 5px;
 }
 .cake-sql-log table {
 	background: #f4f4f4;
@@ -164,27 +180,30 @@ td.actions a {
 .cake-sql-log td {
 	padding: 4px 8px;
 	text-align: left;
+	font-family: Monaco, Consolas, "Courier New", monospaced;
+}
+.cake-sql-log caption {
+	color:#fff;
 }
 
-/* Paging */
+/** Paging **/
 div.paging {
 	background:#fff;
 	color: #ccc;
-	margin-bottom: 2em;
+	margin-top: 1em;
+	clear:both;
 }
-div.paging div.disabled {
+div.paging span.disabled {
 	color: #ddd;
 	display: inline;
 }
-div.paging span {
-}
 div.paging span.current {
-	color: #000;
+	color: #c73e14;
 }
 div.paging span a {
 }
 
-/* Scaffold View */
+/** Scaffold View **/
 dl {
 	line-height: 2em;
 	margin: 0em 0em;
@@ -204,16 +223,16 @@ dd {
 	vertical-align: top;
 }
 
-/* Forms */
+/** Forms **/
 form {
 	clear: both;
 	margin-right: 20px;
 	padding: 0;
-	width: 80%;
+	width: 95%;
 }
 fieldset {
 	border: 1px solid #ccc;
-	margin-top: 30px;
+	margin-bottom: 1em;
 	padding: 16px 20px;
 }
 fieldset legend {
@@ -241,30 +260,33 @@ form div {
 	padding: .5em;
 	vertical-align: text-top;
 }
-form div.input {
+form .input {
 	color: #444;
 }
-form div.required {
-	color: #333;
+form .required {
 	font-weight: bold;
+}
+form .required label:after {
+	color: #e32;
+	content: '*';
+	display:inline;
 }
 form div.submit {
 	border: 0;
 	clear: both;
 	margin-top: 10px;
-	margin-left: 140px;
 }
 label {
 	display: block;
 	font-size: 110%;
-	padding-right: 20px;
+	margin-bottom:3px;
 }
 input, textarea {
 	clear: both;
 	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
-	padding: 2px;
-	width: 100%;
+	padding: 1%;
+	width:98%;
 }
 select {
 	clear: both;
@@ -284,6 +306,9 @@ input[type=checkbox] {
 	margin: 0px 6px 7px 2px;
 	width: auto;
 }
+div.checkbox label {
+	display: inline;
+}
 input[type=radio] {
 	float:left;
 	width:auto;
@@ -295,23 +320,37 @@ div.radio label {
 input[type=submit] {
 	display: inline;
 	font-size: 110%;
-	padding: 2px 5px;
 	width: auto;
-	vertical-align: bottom;
+}
+form .submit input[type=submit] {
+	background:#62af56;
+	background: -webkit-gradient(linear, left top, left bottom, from(#a8ea9c), to(#62af56));
+	background-image: -moz-linear-gradient(top, #a8ea9c, #62af56);
+	border-color: #2d6324;
+	color: #000;
+	text-shadow: #8cee7c 0px 1px 0px;
+}
+form .submit input[type=submit]:hover {
+	background:#4ca83d;
+	background: -webkit-gradient(linear, left top, left bottom, from(#85e573), to(#4ca83d));
+	background-image: -moz-linear-gradient(top, #85e573, #4ca83d);
 }
 
-/* Notices and Errors */
+/** Notices and Errors **/
 div.message {
 	clear: both;
-	color: #900;
+	color: #fff;
 	font-size: 140%;
 	font-weight: bold;
-	margin: 1em 0;
+	margin: 0 0 1em 0;
+	background: #c73e14;
+	padding: 5px;
 }
 div.error-message {
 	clear: both;
-	color: #900;
+	color: #fff;
 	font-weight: bold;
+	background: #c73e14;
 }
 p.error {
 	background-color: #e32;
@@ -342,35 +381,57 @@ p.error em {
 	color: #fff;
 }
 
-/*  Actions  */
+/**  Actions  **/
 div.actions ul {
-	margin: 0px 0;
+	margin: 0;
 	padding: 0;
 }
 div.actions li {
-	display: inline;
+	margin:0 0 0.5em 0;
 	list-style-type: none;
-	line-height: 2em;
-	margin: 0 2em 0 0;
 	white-space: nowrap;
+	padding: 0;
 }
 div.actions ul li a {
-	background:#fff;
-	color: #003d4c;
-	text-decoration: none;
+	font-weight: normal;
+	display: block;
+	clear: both;
 }
 div.actions ul li a:hover {
-	color: #333;
 	text-decoration: underline;
 }
 
-/* Related */
+input[type=submit],
+div.actions ul li a,
+td.actions a {
+	font-weight:normal;
+	padding: 4px 8px;
+	background:#e6e49f;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f1f1d4), to(#e6e49f));
+	background-image: -moz-linear-gradient(top, #f1f1d4, #e6e49f);
+	color:#333;
+	border:1px solid #aaac62;
+	-webkit-border-radius:8px;
+	-moz-border-radius:8px;
+	border-radius:8px;
+	text-decoration:none;
+	text-shadow: #fff 0px 1px 0px;
+	min-width: 0;
+}
+input[type=submit]:hover,
+div.actions ul li a:hover,
+td.actions a:hover {
+	background: #f0f09a;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f7f7e1), to(#eeeca9));
+}
+
+/** Related **/
 div.related {
 	clear: both;
 	display: block;
 }
 
-/* Debugging */
+/** Debugging **/
 pre {
 	color: #000;
 	background: #f0f0f0;
@@ -386,7 +447,6 @@ pre.cake-debug {
 }
 div.cake-stack-trace {
 	background: #fff;
-	border: 4px dotted #ffcc00;
 	color: #333;
 	margin: 0px;
 	padding: 6px;

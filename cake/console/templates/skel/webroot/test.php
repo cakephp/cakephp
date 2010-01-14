@@ -18,7 +18,6 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 set_time_limit(0);
-ini_set('memory_limit','128M');
 ini_set('display_errors', 1);
 /**
  * Use the DS to separate the directories in other defines
@@ -85,89 +84,13 @@ if (isset($corePath[0])) {
 	define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 }
 
-require_once CAKE_TESTS_LIB . 'test_manager.php';
-
 if (Configure::read('debug') < 1) {
-	exit(__('Debug setting does not allow access to this url.', true));
+	die(__('Debug setting does not allow access to this url.', true));
 }
 
-if (!isset($_SERVER['SERVER_NAME'])) {
-	$_SERVER['SERVER_NAME'] = '';
-}
-if (empty( $_GET['output'])) {
-	$_GET['output'] = 'html';
-}
-/**
- *
- * Used to determine output to display
- */
-define('CAKE_TEST_OUTPUT_HTML', 1);
-define('CAKE_TEST_OUTPUT_TEXT', 2);
+require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
 
-if (isset($_GET['output']) && $_GET['output'] == 'html') {
-	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_HTML);
-} else {
-	Debugger::output('txt');
-	define('CAKE_TEST_OUTPUT', CAKE_TEST_OUTPUT_TEXT);
-}
+$Dispatcher = new CakeTestSuiteDispatcher();
+$Dispatcher->dispatch();
 
-if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
-	CakePHPTestHeader();
-	include CAKE_TESTS_LIB . 'simpletest.php';
-	CakePHPTestSuiteFooter();
-	exit();
-}
-
-$analyzeCodeCoverage = false;
-if (isset($_GET['code_coverage'])) {
-	$analyzeCodeCoverage = true;
-	require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
-	if (!extension_loaded('xdebug')) {
-		CakePHPTestHeader();
-		include CAKE_TESTS_LIB . 'xdebug.php';
-		CakePHPTestSuiteFooter();
-		exit();
-	}
-}
-
-CakePHPTestHeader();
-CakePHPTestSuiteHeader();
-define('RUN_TEST_LINK', $_SERVER['PHP_SELF']);
-
-if (isset($_GET['group'])) {
-	if ('all' == $_GET['group']) {
-		TestManager::runAllTests(CakeTestsGetReporter());
-	} else {
-		if ($analyzeCodeCoverage) {
-			CodeCoverageManager::start($_GET['group'], CakeTestsGetReporter());
-		}
-		TestManager::runGroupTest(ucfirst($_GET['group']), CakeTestsGetReporter());
-		if ($analyzeCodeCoverage) {
-			CodeCoverageManager::report();
-		}
-	}
-
-	CakePHPTestRunMore();
-	CakePHPTestAnalyzeCodeCoverage();
-} elseif (isset($_GET['case'])) {
-	if ($analyzeCodeCoverage) {
-		CodeCoverageManager::start($_GET['case'], CakeTestsGetReporter());
-	}
-
-	TestManager::runTestCase($_GET['case'], CakeTestsGetReporter());
-
-	if ($analyzeCodeCoverage) {
-		CodeCoverageManager::report();
-	}
-
-	CakePHPTestRunMore();
-	CakePHPTestAnalyzeCodeCoverage();
-} elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
-	CakePHPTestCaseList();
-} else {
-	CakePHPTestGroupTestList();
-}
-CakePHPTestSuiteFooter();
-$output = ob_get_clean();
-echo $output;
 ?>

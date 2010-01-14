@@ -185,9 +185,6 @@ class Component extends Object {
 	function _loadComponents(&$object, $parent = null) {
 		$base = $this->__controllerVars['base'];
 		$normal = Set::normalize($object->components);
-		if ($parent == null) {
-			$normal = Set::merge(array('Session' => null), $normal);
-		}
 		foreach ((array)$normal as $component => $config) {
 			$plugin = isset($this->__controllerVars['plugin']) ? $this->__controllerVars['plugin'] . '.' : null;
 			list($plugin, $component) = pluginSplit($component, true, $plugin);

@@ -501,8 +501,13 @@ class Validation extends Object {
 		}
 
 		if ($return === true && preg_match('/@(' . $_this->__pattern['hostname'] . ')$/i', $_this->check, $regs)) {
-			$host = gethostbynamel($regs[1]);
-			return is_array($host);
+			if (function_exists('getmxrr')) {
+				return getmxrr($regs[1], $mxhosts);
+			}
+			if (function_exists('checkdnsrr')) {
+				return checkdnsrr($regs[1], 'MX');
+			}
+			return is_array(gethostbynamel($regs[1]));
 		}
 		return false;
 	}
@@ -830,6 +835,20 @@ class Validation extends Object {
 		if (empty($_this->regex)) {
 			return $_this->_pass('ssn', $check, $country);
 		}
+		return $_this->_check();
+	}
+
+/**
+ * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * 
+ * @param string $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	function uuid($check) {
+		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
 		return $_this->_check();
 	}
 
