@@ -526,11 +526,11 @@ class I18n extends Object {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->__escape . 'x') {
 			$delimiter = $this->__escape . 'x';
-			return join('',array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
 		}
 		if (substr($string, 0, 2) === $this->__escape . 'd') {
 			$delimiter = $this->__escape . 'd';
-			return join('',array_map('chr', array_filter(explode($delimiter, $string))));
+			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if ($string[0] === $this->__escape && isset($string[1]) && is_numeric($string[1])) {
 			$delimiter = $this->__escape;
