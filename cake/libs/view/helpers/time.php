@@ -636,9 +636,11 @@ class TimeHelper extends AppHelper {
 
 /**
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+ * This function also accepts a time string and a format string as first and second parameters.
+ * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * @param string $format date format string.
- * @param string $dateString Datetime string
+ * @param string $format date format string (or a DateTime string)
+ * @param string $dateString Datetime string (or a date format string)
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
@@ -660,7 +662,6 @@ class TimeHelper extends AppHelper {
 /**
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
  * It take in account the default date format for the current language if a LC_TIME file is used.
- * You must set the correct locale using setlocale() in order to translate day and month names
  * @param string $dateString Datetime string
  * @param string $format strftime format string.
  * @param boolean $invalid flag to ignore results of fromString == false
