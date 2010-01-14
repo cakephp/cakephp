@@ -1077,7 +1077,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->uses = array();
 		$Controller->constructClasses();
 
-		$this->assertTrue(isset($Controller->Session));
+		$this->assertFalse(isset($Controller->Session));
 	}
 
 /**

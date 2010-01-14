@@ -150,7 +150,7 @@ class EmailTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('EmailTest');
+	var $components = array('Session', 'EmailTest');
 
 /**
  * pageTitle property

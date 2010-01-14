@@ -237,7 +237,7 @@ class AuthTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Auth', 'Acl');
+	var $components = array('Session', 'Auth', 'Acl');
 
 /**
  * testUrl property
@@ -382,7 +382,7 @@ class AjaxAuthController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('TestAuth');
+	var $components = array('Session', 'TestAuth');
 
 /**
  * uses property
@@ -514,6 +514,7 @@ class AuthTest extends CakeTestCase {
 		$_ENV = $this->_env;
 		Configure::write('Acl', $this->_acl);
 		Configure::write('Security.salt', $this->_securitySalt);
+
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
 		ClassRegistry::flush();
@@ -1539,7 +1540,8 @@ class AuthTest extends CakeTestCase {
 				'loginAction' => array('controller' => 'people', 'action' => 'login'),
 				'userModel' => 'AuthUserCustomField',
 				'sessionKey' => 'AltAuth.AuthUserCustomField'
-			)
+			),
+			'Session'
 		);
 		$this->Controller->Component->init($this->Controller);
 		$this->Controller->Component->initialize($this->Controller);
