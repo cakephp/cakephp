@@ -53,7 +53,11 @@ class AclBehavior extends ModelBehavior {
 		if (!class_exists('AclNode')) {
 			require LIBS . 'model' . DS . 'db_acl.php';
 		}
-		$model->{$type} =& ClassRegistry::init($type);
+		if (PHP5) {
+			$model->{$type} = ClassRegistry::init($type);
+		} else {
+			$model->{$type} =& ClassRegistry::init($type);
+		}
 		if (!method_exists($model, 'parentNode')) {
 			trigger_error("Callback parentNode() not defined in {$model->alias}", E_USER_WARNING);
 		}
