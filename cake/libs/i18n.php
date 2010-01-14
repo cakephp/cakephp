@@ -164,6 +164,10 @@ class I18n extends Object {
 			$_this->__cache = true;
 		}
 
+		if ($_this->category == 'LC_TIME') {
+			return $_this->__translateTime($singular,$domain);
+		}
+
 		if (!isset($count)) {
 			$plurals = 0;
 		} elseif (!empty($_this->__domains[$_this->category][$_this->__lang][$domain]["%plural-c"]) && $_this->__noLocale === false) {
@@ -448,6 +452,14 @@ class I18n extends Object {
 		return $this->__domains[$this->category][$this->__lang][$domain] = array_merge($merge ,$translations);
 	}
 
+/**
+ * Parses a locale definition file following the POSIX standard
+ *
+ * @param string $file file to load
+ * @param string $domain Domain where locale definitions will be stored
+ * @return void
+ * @access private
+ */
 	function __loadLocaleDefinition($file, $domain = null) {
 		$_this =& I18N::getInstance();
 		$comment = '#';
@@ -503,6 +515,13 @@ class I18n extends Object {
 		}
 	}
 
+/**
+ * Auxiliary function to parse a symbol from a locale definition file
+ *
+ * @param string $string Symbol to be parsed
+ * @return string parsed symbol
+ * @access private
+ */
 	function __parseLiteralValue($string) {
 		$string = $string[1];
 		if (substr($string,0,2) === $this->__escape . 'x') {
@@ -522,6 +541,23 @@ class I18n extends Object {
 			return join('',array_map('chr',array_map('hexdec',array_filter(explode($delimiter,$string)))));
 		}
 		return $string;
+	}
+
+/**
+ * Returns a Time format definition from corresponding domain
+ *
+ * @param string $format Format to be translated
+ * @param string $domain Domain where format is stored
+ * @return mixed translated format string if only value or array of translated strings for corresponding format.
+ * @access private
+ */
+	function __translateTime($format,$domain) {
+		if (!empty($this->__domains['LC_TIME'][$this->__lang][$domain][$format])) {
+			if (($trans = $this->__domains[$this->category][$this->__lang][$domain][$format])) {
+				return $trans;
+			}
+		}
+		return $format;
 	}
 
 /**

@@ -2594,6 +2594,14 @@ class I18nTest extends CakeTestCase {
 		$result = __c('d_fmt', 5, true);
 		$expected = '%m/%d/%Y';
 		$this->assertEqual($result,$expected);
+
+		$result = __c('am_pm',5,true);
+		$expected = array('AM','PM');
+		$this->assertEqual($result,$expected);
+
+		$result = __c('abmon',5,true);
+		$expected = array('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
+		$this->assertEqual($result,$expected);
 	}
 
 /**
