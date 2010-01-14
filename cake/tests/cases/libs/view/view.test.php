@@ -583,7 +583,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testHelperCallbackTriggering() {
-		$this->PostsController->helpers = array('Html', 'CallbackMock');
+		$this->PostsController->helpers = array('Session', 'Html', 'CallbackMock');
 		$View =& new TestView($this->PostsController);
 		$loaded = array();
 		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
@@ -601,7 +601,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testBeforeLayout() {
-		$this->PostsController->helpers = array('TestAfter', 'Html');
+		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
 		$View =& new View($this->PostsController);
 		$out = $View->render('index');
 		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
@@ -614,7 +614,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testAfterLayout() {
-		$this->PostsController->helpers = array('TestAfter', 'Html');
+		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
 		$this->PostsController->set('variable', 'values');
 
 		$View =& new View($this->PostsController);
@@ -633,7 +633,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testRenderLoadHelper() {
-		$this->PostsController->helpers = array('Html', 'Form', 'Ajax');
+		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Ajax');
 		$View = new TestView($this->PostsController);
 
 		$result = $View->_render($View->getViewFileName('index'), array());
@@ -694,7 +694,7 @@ class ViewTest extends CakeTestCase {
 
 		$this->assertTrue($View->render(false, 'flash'));
 
-		$this->PostsController->helpers = array('Cache', 'Html');
+		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
 		$this->PostsController->cacheAction = array('index' => 3600);
 		$this->PostsController->params['action'] = 'index';
@@ -737,7 +737,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testViewVarOverwritingLocalHelperVar() {
 		$Controller = new ViewPostsController();
-		$Controller->helpers = array('Html');
+		$Controller->helpers = array('Session', 'Html');
 		$Controller->set('html', 'I am some test html');
 		$View = new View($Controller);
 		$result = $View->render('helper_overwrite', false);
