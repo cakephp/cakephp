@@ -318,7 +318,7 @@ class TestController extends AppController {
  * @var array
  * @access public
  */
-	var $helpers = array('Xml');
+	var $helpers = array('Session', 'Xml');
 
 /**
  * components property
