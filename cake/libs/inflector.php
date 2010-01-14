@@ -273,24 +273,30 @@ class Inflector {
  *
  * @param string $type The type of inflection, either 'singular' or 'plural'
  * @param array $rules Array of rules to be added. Example usage:
- *					   Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
- *					   Inflector::rules('plural', array(
- *							'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *							'uninflected' => array('dontinflectme'),
- *							'irregular' => array('red' => 'redlings')
- *					   ));
+ *        Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
+ *        Inflector::rules('plural', array(
+ *            'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *            'uninflected' => array('dontinflectme'),
+ *            'irregular' => array('red' => 'redlings')
+ *        ));
+ * @param boolean $reset If true, will unset default inflections for all
+ *        new rules that are being defined in $rules.
  * @access public
  * @return void
  * @static
  */
-	function rules($type, $rules = array()) {
+	function rules($type, $rules, $reset = false) {
 		$_this =& Inflector::getInstance();
 		$type = '_'.$type;
 
 		foreach ($rules as $rule => $pattern) {
 			if (is_array($pattern)) {
-			  $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
-			  unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
+				if ($reset) {
+					$_this->{$type}[$rule] = $pattern;
+				} else {
+					$_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+				}
+				unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
 			}
 		}
 		$_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);

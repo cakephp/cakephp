@@ -381,6 +381,29 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('singulars'), 'singulars');
 	}
 
+	function testCustomRuleWithReset() {
+		$uninflected = array('atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x');
+		$pluralIrregular = array('as' => 'ases');
+
+		Inflector::rules('singular', array(
+			'rules' => array('/^(.*)(a|e|o|u)is$/i' => '\1\2l'),
+			'uninflected' => $uninflected,
+		), true);
+
+		Inflector::rules('plural', array(
+			'rules' => array(
+				'/^(.*)(a|e|o|u)l$/i' => '\1\2is',
+			),
+			'uninflected' => $uninflected,
+			'irregular' => $pluralIrregular
+		), true);
+
+		$this->assertEqual(Inflector::pluralize('Alcool'), 'Alcoois');
+		$this->assertEqual(Inflector::pluralize('Atlas'), 'Atlas');
+		$this->assertEqual(Inflector::singularize('Alcoois'), 'Alcool');
+		$this->assertEqual(Inflector::singularize('Atlas'), 'Atlas');
+	}
+
 /**
  * tearDown method
  *
