@@ -76,7 +76,8 @@ class CakeTestSuiteDispatcher {
  */
 	function CakeTestSuiteDispatcher() {
 		$this->_baseUrl = $_SERVER['PHP_SELF'];
-		$this->_baseDir = dirname($this->_baseUrl) . '/';
+		$dir = dirname($this->_baseUrl);
+		$this->_baseDir = ($dir === '/') ? $dir : $dir . '/';
 	}
 
 /**
