@@ -252,8 +252,7 @@ class TimeHelper extends AppHelper {
  */
 	function dayAsSql($dateString, $fieldName, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = $this->daysAsSql($dateString, $dateString, $fieldName);
-		return $ret;
+		return $this->daysAsSql($dateString, $dateString, $fieldName);
 	}
 
 /**
@@ -368,8 +367,7 @@ class TimeHelper extends AppHelper {
  * @return integer Unix timestamp
  */
 	function toUnix($dateString, $userOffset = null) {
-		$ret = $this->fromString($dateString, $userOffset);
-		return $ret;
+		return $this->fromString($dateString, $userOffset);
 	}
 
 /**
@@ -381,8 +379,7 @@ class TimeHelper extends AppHelper {
  */
 	function toAtom($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = date('Y-m-d\TH:i:s\Z', $date);
-		return $ret;
+		return date('Y-m-d\TH:i:s\Z', $date);
 	}
 
 /**
@@ -394,8 +391,7 @@ class TimeHelper extends AppHelper {
  */
 	function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = date("r", $date);
-		return $ret;
+		return date("r", $date);
 	}
 
 /**
@@ -635,8 +631,7 @@ class TimeHelper extends AppHelper {
 		$day = intval(date("j", $string));
 		$year = intval(date("Y", $string));
 
-		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
-		return $return;
+		return gmmktime($hour, $minute, $second, $month, $day, $year);
 	}
 
 /**
