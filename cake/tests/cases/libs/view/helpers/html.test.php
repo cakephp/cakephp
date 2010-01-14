@@ -301,23 +301,23 @@ class HtmlHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testImageTagWithTimestampping() {
+	function testImageWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
-		$result = $this->Html->image('cake.icon.gif');
-		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+		$result = $this->Html->image('cake.icon.png');
+		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
 
-		$result = $this->Html->image('cake.icon.gif');
-		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.gif\?\d+/', 'alt' => '')));
+		$result = $this->Html->image('cake.icon.png');
+		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/longer/';
-		$result = $this->Html->image('cake.icon.gif');
+		$result = $this->Html->image('cake.icon.png');
 		$expected = array(
-			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.gif\?[0-9]+/', 'alt' => '')
+			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '')
 		);
 		$this->assertTags($result, $expected);
 		$this->Html->webroot = $webroot;
