@@ -123,9 +123,9 @@ class DataSource extends Object {
 	var $_queriesLog = array();
 
 /**
- * Maximum number of items in query log, to prevent query log taking over
- * too much memory on large amounts of queries -- I we've had problems at
- * >6000 queries on one system.
+ * Maximum number of items in query log
+ *
+ * This is to prevent query log taking over too much memory.
  *
  * @var int Maximum number of queries in the queries log.
  * @access protected
@@ -270,7 +270,8 @@ class DataSource extends Object {
 		if ($this->cacheSources === false) {
 			return null;
 		}
-		$table = $this->fullTableName($model, false);
+		$table = $model->tablePrefix . $model->table;
+
 		if (isset($this->__descriptions[$table])) {
 			return $this->__descriptions[$table];
 		}
@@ -374,7 +375,7 @@ class DataSource extends Object {
  * To-be-overridden in subclasses.
  *
  * @param Model $model The model class having record(s) deleted
- * @param mixed $id Primary key of the model 
+ * @param mixed $id Primary key of the model
  * @access public
  */
 	function delete(&$model, $id = null) {
@@ -489,7 +490,7 @@ class DataSource extends Object {
  * @param array $data Array of data with values that will be inserted in placeholders.
  * @param string $association Name of association model being replaced
  * @param unknown_type $assocData
- * @param Model $model Instance of the model to replace $__cakeID__$ 
+ * @param Model $model Instance of the model to replace $__cakeID__$
  * @param Model $linkModel Instance of model to replace $__cakeForeignKey__$
  * @param array $stack
  * @return string String of query data with placeholders replaced.
