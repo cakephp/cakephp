@@ -1310,7 +1310,12 @@ class FormHelper extends AppHelper {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
 			$tag = $this->Html->tags[$template];
-			$select[] = $this->hidden(null, array('value' => '', 'id' => null, 'secure' => false));
+			$hiddenAttributes = array(
+				'value' => '',
+				'id' => $attributes['id'] . ($style ? '' : '_'),
+				'secure' => false
+			);
+			$select[] = $this->hidden(null, $hiddenAttributes);
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}

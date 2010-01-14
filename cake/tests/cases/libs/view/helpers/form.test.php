@@ -1860,7 +1860,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->data = array('Contact' => array('created' => null));
 		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'dateFormat' => 'NONE'));
 		$this->assertPattern('/for\="ContactCreatedHour"/', $result);
-		
+
 		$this->Form->data = array('Contact' => array('created' => null));
 		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'timeFormat' => 'NONE'));
 		$this->assertPattern('/for\="ContactCreatedMonth"/', $result);
@@ -2015,7 +2015,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'UserUser'),
 			'User',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[User][User]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[User][User]', 'value' => '', 'id' => 'UserUser_'),
 			'select' => array('name' => 'data[User][User][]', 'id' => 'UserUser', 'multiple' => 'multiple'),
 			array('option' => array('value' => '')),
 			'/option',
@@ -2267,7 +2267,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelectAsCheckbox() {
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => 'checkbox'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0', 'class' => 'selected')),
@@ -2978,7 +2978,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
 				'name' => 'data[Model][multi_field][]',
@@ -3002,7 +3002,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
 				'name' => 'data[Model][multi_field][]',
@@ -3026,7 +3026,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
 			),
 			'select' => array(
 				'name' => 'data[Model][multi_field][]', 'id' => 'ModelMultiField',
@@ -3075,7 +3075,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
 			),
 			'select' => array(
 				'name' => 'data[ContactTag][ContactTag][]', 'id' => 'ContactTagContactTag',
@@ -3110,7 +3110,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
@@ -3149,7 +3149,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
@@ -3186,7 +3186,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'
 			),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
@@ -3237,7 +3237,7 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
 			array('label' => array('for' => 'ModelMultiField0')),
@@ -3266,7 +3266,7 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => 'ModelMultiField')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
 			array('label' => array('for' => 'ModelMultiFieldA')),
@@ -3291,7 +3291,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('1' => 'first'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
 			array('label' => array('for' => 'ModelMultiField1')),
@@ -3303,7 +3303,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.multi_field', array('options' => array('2' => 'second'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
 			array('label' => array('for' => 'ModelMultiField2')),
@@ -3923,7 +3923,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for' => 'ContactTagContactTag'),
 			'Contact Tag',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[ContactTag][ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_')),
 			array('select' => array('name' => 'data[ContactTag][ContactTag][]', 'multiple' => 'multiple', 'id' => 'ContactTagContactTag')),
 			'/select',
 			'/div'
@@ -5232,7 +5232,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->create();
 		$result = $this->Form->select('People.People', $options, null, array('multiple' => true));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => ''),
+			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => '', 'id' => 'PeoplePeople_'),
 			'select' => array(
 				'name' => 'data[People][People][]', 'multiple' => 'multiple', 'id' => 'PeoplePeople'
 			),

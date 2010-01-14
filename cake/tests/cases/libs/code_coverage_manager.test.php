@@ -18,7 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE . 'tests' . DS . 'lib' . DS . 'code_coverage_manager.php';
-require_once CAKE . 'tests' . DS . 'lib' . DS . 'cli_reporter.php';
+require_once CAKE . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_cli_reporter.php';
 
 /**
  * CodeCoverageManagerTest class
