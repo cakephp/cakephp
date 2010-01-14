@@ -313,14 +313,6 @@ class Model extends Overloadable {
 	var $virtualFields = array();
 
 /**
- * Whether or not the model record exists, set by Model::exists().
- *
- * @var bool
- * @access private
- */
-	var $__exists = null;
-
-/**
  * Default list of association keys.
  *
  * @var array
@@ -1123,7 +1115,6 @@ class Model extends Overloadable {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
-		$this->__exists = null;
 		$this->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
@@ -1284,10 +1275,10 @@ class Model extends Overloadable {
 			}
 		}
 
-		$this->exists();
+		$exists = $this->exists();
 		$dateFields = array('modified', 'updated');
 
-		if (!$this->__exists) {
+		if (!$exists) {
 			$dateFields[] = 'created';
 		}
 		if (isset($this->data[$this->alias])) {
@@ -1325,11 +1316,11 @@ class Model extends Overloadable {
 				return false;
 			}
 		}
-		$fields = $values = array();
 
 		if (isset($this->data[$this->alias][$this->primaryKey]) && empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
+		$fields = $values = array();
 
 		foreach ($this->data as $n => $v) {
 			if (isset($this->hasAndBelongsToMany[$n])) {
@@ -1355,7 +1346,7 @@ class Model extends Overloadable {
 		}
 		$count = count($fields);
 
-		if (!$this->__exists && $count > 0) {
+		if (!$exists && $count > 0) {
 			$this->id = false;
 		}
 		$success = true;
@@ -1408,7 +1399,6 @@ class Model extends Overloadable {
 				$success = Set::merge($success, $this->data);
 			}
 			$this->data = false;
-			$this->__exists = null;
 			$this->_clearCache();
 			$this->validationErrors = array();
 		}
@@ -1862,7 +1852,6 @@ class Model extends Overloadable {
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
-				$this->__exists = null;
 				return true;
 			}
 		}
@@ -2017,28 +2006,16 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with the currently set ID exists.
  *
- * @param boolean $reset if true will force database query
  * @return boolean True if such a record exists
  * @access public
  */
-	function exists($reset = false) {
-		if (is_array($reset)) {
-			extract($reset, EXTR_OVERWRITE);
-		}
-
+	function exists() {
 		if ($this->getID() === false || $this->useTable === false) {
 			return false;
 		}
-		if (!empty($this->__exists) && $reset !== true) {
-			return $this->__exists;
-		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
 		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
-
-		if (is_array($reset)) {
-			$query = array_merge($query, $reset);
-		}
-		return $this->__exists = ($this->find('count', $query) > 0);
+		return ($this->find('count', $query) > 0);
 	}
 
 /**
@@ -2546,7 +2523,7 @@ class Model extends Overloadable {
 		}
 
 		$Validation =& Validation::getInstance();
-		$this->exists();
+		$exists = $this->exists();
 
 		$_validate = $this->validate;
 		$whitelist = $this->whitelist;
@@ -2591,7 +2568,7 @@ class Model extends Overloadable {
 
 				if (
 					empty($validator['on']) || ($validator['on'] == 'create' &&
-					!$this->__exists) || ($validator['on'] == 'update' && $this->__exists
+					!$exists) || ($validator['on'] == 'update' && $exists
 				)) {
 					$required = (
 						(!isset($data[$fieldName]) && $validator['required'] === true) ||
