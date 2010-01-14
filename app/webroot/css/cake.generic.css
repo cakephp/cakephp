@@ -139,7 +139,7 @@ table {
 th {
 	border:0;
 	border-bottom:2px solid #555;
-	text-align: center;
+	text-align: left;
 	padding:4px;
 }
 th a {
