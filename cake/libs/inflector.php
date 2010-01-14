@@ -521,7 +521,6 @@ class Inflector {
 			$map = $replacement;
 			$replacement = '_';
 		}
-
 		$quotedReplacement = preg_quote($replacement, '/');
 
 		$default = array(
@@ -544,7 +543,7 @@ class Inflector {
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$map = array_merge($default, $map);
+		$map = array_merge($map, $default);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }

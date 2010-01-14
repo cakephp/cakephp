@@ -236,12 +236,24 @@ class InflectorTest extends CakeTestCase {
  * @return void
  */
 	function testInflectorSlugWithMap() {
-		$result = Inflector::slug('replace every r', array('/r/' => '_'));
-		$expected = '_eplace_eve_y__';
+		$result = Inflector::slug('replace every r', array('/r/' => '1'));
+		$expected = '1eplace_eve1y_1';
 		$this->assertEqual($result, $expected);
 
-		$result = Inflector::slug('replace every r', '_', array('/r/' => '_'));
-		$expected = '_eplace_eve_y__';
+		$result = Inflector::slug('replace every r', '_', array('/r/' => '1'));
+		$expected = '1eplace_eve1y_1';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testInflectorSlugWithMapOverridingDefault method
+ *
+ * @access public
+ * @return void
+ */
+	function testInflectorSlugWithMapOverridingDefault() {
+		$result = Inflector::slug('Testing æ ø å', '-', array('/å/' => 'aa', '/ø/' => 'oe'));
+		$expected = 'Testing-ae-oe-aa';
 		$this->assertEqual($result, $expected);
 	}
 
