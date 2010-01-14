@@ -307,7 +307,7 @@ class I18n extends Object {
 					$this->__loadPo($f, $domain);
 					$this->__noLocale = false;
 					break 2;
-				} elseif (file_exists($localeDef) && ($f = fopen($localeDef, "r"))) {
+				} elseif (is_file($localeDef) && ($f = fopen($localeDef, "r"))) {
 					$this->__loadLocaleDefinition($f, $domain);
 					$this->__noLocale = false;
 					return $domain;
@@ -455,7 +455,7 @@ class I18n extends Object {
 /**
  * Parses a locale definition file following the POSIX standard
  *
- * @param string $file file to load
+ * @param resource $file file handler
  * @param string $domain Domain where locale definitions will be stored
  * @return void
  * @access private
