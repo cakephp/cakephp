@@ -41,7 +41,7 @@ class TimeHelper extends AppHelper {
 			$time = time();
 		}
 		$this->__time = $time;
-		return preg_replace_callback('/\%(\w+)/',array($this,'__translateSpecifier'),$format);
+		return preg_replace_callback('/\%(\w+)/', array($this, '__translateSpecifier'), $format);
 	}
 
 /**
@@ -54,21 +54,21 @@ class TimeHelper extends AppHelper {
 	function __translateSpecifier($specifier) {
 		switch ($specifier[1]) {
 			case 'a':
-				$abday = __c('abday',5,true);
+				$abday = __c('abday', 5, true);
 				if (is_array($abday)) {
-					return $abday[date('w',$this->__time)];
+					return $abday[date('w', $this->__time)];
 				}
 				break;
 			case 'A':
 				$day = __c('day',5,true);
 				if (is_array($day)) {
-					return $day[date('w',$this->__time)];
+					return $day[date('w', $this->__time)];
 				}
 				break;
 			case 'c':
 				$format = __c('d_t_fmt',5,true);
 				if ($format != 'd_t_fmt') {
-					return $this->convertSpecifiers($format,$this->__time);
+					return $this->convertSpecifiers($format, $this->__time);
 				}
 				break;
 			case 'C':
@@ -76,18 +76,18 @@ class TimeHelper extends AppHelper {
 			case 'D':
 				return '%m/%d/%y';
 			case 'eS' :
-				return date('jS',$this->__time);
+				return date('jS', $this->__time);
 			case 'b':
 			case 'h':
-				$months = __c('abmon',5,true);
+				$months = __c('abmon', 5, true);
 				if (is_array($months)) {
-					return $months[date('n',$this->__time) -1];
+					return $months[date('n', $this->__time) -1];
 				}
 				return '%b';
 			case 'B':
 				$months = __c('mon',5,true);
 				if (is_array($months)) {
-					return $months[date('n',$this->__time) -1];
+					return $months[date('n', $this->__time) -1];
 				}
 				break;
 			case 'n':
@@ -96,16 +96,16 @@ class TimeHelper extends AppHelper {
 			case 'P':
 				$default = array('am' => 0, 'pm' => 1);
 				$meridiem = $default[date('a',$this->__time)];
-				$format = __c('am_pm',5,true);
+				$format = __c('am_pm', 5, true);
 				if (is_array($format)) {
 					$meridiem = $format[$meridiem];
 					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
 				}
 				break;
 			case 'r':
-				$complete = __c('t_fmt_ampm',5,true);
+				$complete = __c('t_fmt_ampm', 5, true);
 				if ($complete != 't_fmt_ampm') {
-					return str_replace('%p',$this->__translateSpecifier(array('%p','p')),$complete);
+					return str_replace('%p',$this->__translateSpecifier(array('%p', 'p')),$complete);
 				}
 				break;
 			case 'R':
@@ -117,15 +117,15 @@ class TimeHelper extends AppHelper {
 			case 'u':
 				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
 			case 'x':
-				$format = __c('d_fmt',5,true);
+				$format = __c('d_fmt', 5, true);
 				if ($format != 'd_fmt') {
-					return $this->convertSpecifiers($format,$this->__time);
+					return $this->convertSpecifiers($format, $this->__time);
 				}
 				break;
 			case 'X':
 				$format = __c('t_fmt',5,true);
 				if ($format != 't_fmt') {
-					return $this->convertSpecifiers($format,$this->__time);
+					return $this->convertSpecifiers($format, $this->__time);
 				}
 				break;
 		}
@@ -190,9 +190,8 @@ class TimeHelper extends AppHelper {
 		} else {
 			$date = time();
 		}
-		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M',$date);
-		$ret = strftime($format, $date);
-		return $this->output($ret);
+		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M', $date);
+		return strftime($format, $date);
 	}
 
 /**
@@ -217,11 +216,11 @@ class TimeHelper extends AppHelper {
 		} elseif ($this->wasYesterday($date)) {
 			$ret = sprintf(__('Yesterday, %s',true), strftime("%H:%M", $date));
 		} else {
-			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M",$date);
+			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = strftime($format, $date);
 		}
 
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -239,8 +238,7 @@ class TimeHelper extends AppHelper {
 		$begin = date('Y-m-d', $begin) . ' 00:00:00';
 		$end = date('Y-m-d', $end) . ' 23:59:59';
 
-		$ret  ="($fieldName >= '$begin') AND ($fieldName <= '$end')";
-		return $this->output($ret);
+		return "($fieldName >= '$begin') AND ($fieldName <= '$end')";
 	}
 
 /**
@@ -255,7 +253,7 @@ class TimeHelper extends AppHelper {
 	function dayAsSql($dateString, $fieldName, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		$ret = $this->daysAsSql($dateString, $dateString, $fieldName);
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -359,7 +357,7 @@ class TimeHelper extends AppHelper {
 					break;
 			}
 		}
-		return $this->output($date);
+		return $date;
 	}
 
 /**
@@ -371,7 +369,7 @@ class TimeHelper extends AppHelper {
  */
 	function toUnix($dateString, $userOffset = null) {
 		$ret = $this->fromString($dateString, $userOffset);
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -384,7 +382,7 @@ class TimeHelper extends AppHelper {
 	function toAtom($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		$ret = date('Y-m-d\TH:i:s\Z', $date);
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -397,7 +395,7 @@ class TimeHelper extends AppHelper {
 	function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		$ret = date("r", $date);
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -577,7 +575,7 @@ class TimeHelper extends AppHelper {
 				$relativeDate = sprintf(__('%s ago', true), $relativeDate);
 			}
 		}
-		return $this->output($relativeDate);
+		return $relativeDate;
 	}
 
 /**
@@ -656,7 +654,7 @@ class TimeHelper extends AppHelper {
 
 		if (is_numeric($_time) && $time === false) {
 			$format = $date;
-			return $this->i18nFormat($_time,$format,$invalid,$userOffset);
+			return $this->i18nFormat($_time, $format, $invalid, $userOffset);
 		}
 		if ($time === false && $invalid !== false) {
 			return $invalid;
@@ -682,8 +680,8 @@ class TimeHelper extends AppHelper {
 		if (empty($format)) {
 			$format = '%x';
 		}
-		$format = $this->convertSpecifiers($format,$date);
-		return strftime($format,$date);
+		$format = $this->convertSpecifiers($format, $date);
+		return strftime($format, $date);
 	}
 }
 ?>

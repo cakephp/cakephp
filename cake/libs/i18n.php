@@ -524,21 +524,21 @@ class I18n extends Object {
  */
 	function __parseLiteralValue($string) {
 		$string = $string[1];
-		if (substr($string,0,2) === $this->__escape . 'x') {
+		if (substr($string, 0, 2) === $this->__escape . 'x') {
 			$delimiter = $this->__escape . 'x';
-			return join('',array_map('chr',array_map('hexdec',array_filter(explode($delimiter,$string)))));
+			return join('',array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
 		}
-		if (substr($string,0,2) === $this->__escape . 'd') {
+		if (substr($string, 0, 2) === $this->__escape . 'd') {
 			$delimiter = $this->__escape . 'd';
-			return join('',array_map('chr',array_filter(explode($delimiter,$string))));
+			return join('',array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if ($string[0] === $this->__escape && isset($string[1]) && is_numeric($string[1])) {
 			$delimiter = $this->__escape;
-			return join('',array_map('chr',array_filter(explode($delimiter,$string))));
+			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
-		if (substr($string,0,3) === 'U00') {
+		if (substr($string, 0, 3) === 'U00') {
 			$delimiter = 'U00';
-			return join('',array_map('chr',array_map('hexdec',array_filter(explode($delimiter,$string)))));
+			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		return $string;
 	}
@@ -551,7 +551,7 @@ class I18n extends Object {
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
  * @access private
  */
-	function __translateTime($format,$domain) {
+	function __translateTime($format, $domain) {
 		if (!empty($this->__domains['LC_TIME'][$this->__lang][$domain][$format])) {
 			if (($trans = $this->__domains[$this->category][$this->__lang][$domain][$format])) {
 				return $trans;

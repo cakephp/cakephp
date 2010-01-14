@@ -664,79 +664,79 @@ class TimeHelperTest extends CakeTestCase {
 		Configure::write('Config.language', 'time_test');
 		$time = 1263485619; // Thu Jan 14 11:43:39 2010
 
-		$result = $this->Time->convertSpecifiers('%a',$time);
+		$result = $this->Time->convertSpecifiers('%a', $time);
 		$expected = 'jue';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%A',$time);
+		$result = $this->Time->convertSpecifiers('%A', $time);
 		$expected = 'jueves';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%c',$time);
+		$result = $this->Time->convertSpecifiers('%c', $time);
 		$expected = 'jue %d ene %Y %H:%M:%S %Z';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%C',$time);
+		$result = $this->Time->convertSpecifiers('%C', $time);
 		$expected = '20';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%D',$time);
+		$result = $this->Time->convertSpecifiers('%D', $time);
 		$expected = '%m/%d/%y';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%b',$time);
+		$result = $this->Time->convertSpecifiers('%b', $time);
 		$expected = 'ene';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%h',$time);
+		$result = $this->Time->convertSpecifiers('%h', $time);
 		$expected = 'ene';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%B',$time);
+		$result = $this->Time->convertSpecifiers('%B', $time);
 		$expected = 'enero';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%n',$time);
+		$result = $this->Time->convertSpecifiers('%n', $time);
 		$expected = "\n";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%n',$time);
+		$result = $this->Time->convertSpecifiers('%n', $time);
 		$expected = "\n";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%p',$time);
+		$result = $this->Time->convertSpecifiers('%p', $time);
 		$expected = 'AM';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%P',$time);
+		$result = $this->Time->convertSpecifiers('%P', $time);
 		$expected = 'am';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%r',$time);
+		$result = $this->Time->convertSpecifiers('%r', $time);
 		$expected = '%I:%M:%S AM';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%R',$time);
+		$result = $this->Time->convertSpecifiers('%R', $time);
 		$expected = '11:43';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%t',$time);
+		$result = $this->Time->convertSpecifiers('%t', $time);
 		$expected = "\t";
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%T',$time);
+		$result = $this->Time->convertSpecifiers('%T', $time);
 		$expected = '%H:%M:%S';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%u',$time);
+		$result = $this->Time->convertSpecifiers('%u', $time);
 		$expected = 4;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%x',$time);
+		$result = $this->Time->convertSpecifiers('%x', $time);
 		$expected = '%d/%m/%y';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->convertSpecifiers('%X',$time);
+		$result = $this->Time->convertSpecifiers('%X', $time);
 		$expected = '%H:%M:%S';
 		$this->assertEqual($result, $expected);
 	}
@@ -756,19 +756,19 @@ class TimeHelperTest extends CakeTestCase {
 
 		$result = $this->Time->i18nFormat($time);
 		$expected = '14/01/10';
-		$this->assertEqual($result,$expected);
+		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->i18nFormat($time,'%c');
+		$result = $this->Time->i18nFormat($time, '%c');
 		$expected = 'jue 14 ene 2010 13:59:28 VET';
-		$this->assertEqual($result,$expected);
+		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->i18nFormat($time,'Time is %r, and date is %x');
+		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
 		$expected = 'Time is 01:59:28 PM, and date is 14/01/10';
-		$this->assertEqual($result,$expected);
+		$this->assertEqual($result, $expected);
 
-		$result = $this->Time->i18nFormat('invalid date','%x','Date invalid');
+		$result = $this->Time->i18nFormat('invalid date', '%x', 'Date invalid');
 		$expected = 'Date invalid';
-		$this->assertEqual($result,$expected);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -779,8 +779,8 @@ class TimeHelperTest extends CakeTestCase {
  */
 	function testFormatNewSyntax() {
 		$time = time();
-		$this->assertEqual($this->Time->format($time),$this->Time->i18nFormat($time));
-		$this->assertEqual($this->Time->format($time,'%c'),$this->Time->i18nFormat($time,'%c'));
+		$this->assertEqual($this->Time->format($time), $this->Time->i18nFormat($time));
+		$this->assertEqual($this->Time->format($time, '%c'), $this->Time->i18nFormat($time, '%c'));
 	}
 }
 ?>
