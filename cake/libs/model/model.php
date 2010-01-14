@@ -2006,11 +2006,15 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with the currently set ID exists.
  *
+ * Internally calls Model::getID() to obtain the current record ID to verify,
+ * and then performs a Model::find('count') on the currently configured datasource
+ * to ascertain the existence of the record in persistent storage.
+ *
  * @return boolean True if such a record exists
  * @access public
  */
 	function exists() {
-		if ($this->getID() === false || $this->useTable === false) {
+		if ($this->getID() === false) {
 			return false;
 		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
