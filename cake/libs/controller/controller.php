@@ -229,7 +229,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
  */
-	var $components = array();
+	var $components = array('Session');
 
 /**
  * The name of the View class this controller sends output to.
