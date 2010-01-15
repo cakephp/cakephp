@@ -279,19 +279,21 @@ class ErrorHandlerTest extends CakeTestCase {
 		$back = Configure::read('debug');
 		Configure::write('debug', 2);
 		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$ErrorHandler =& new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'widget thing is missing');
 
 		Configure::write('debug', 0);
 		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$ErrorHandler =& new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
 
 		Configure::write('debug', 0);
 		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingController', array('message' => 'Page not found'));
+		$ErrorHandler =& new MyCustomErrorHandler('missingController', array(
+			'className' => 'Missing', 'message' => 'Page not found'
+		));
 		$result = ob_get_clean();
 		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error404. %s');
 
