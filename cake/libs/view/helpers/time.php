@@ -174,6 +174,9 @@ class TimeHelper extends AppHelper {
 		if ($userOffset !== null) {
 			return $this->convert($date, $userOffset);
 		}
+		if ($date === -1) {
+			return false;
+		}
 		return $date;
 	}
 
