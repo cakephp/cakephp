@@ -2218,6 +2218,16 @@ class ValidationTest1 extends CakeTestModel {
 	function customValidatorWithMessage($data) {
 		return 'This field will *never* validate! Muhahaha!';
 	}
+/**
+ * Test validation with many parameters
+ *
+ * @return void
+ */
+	function customValidatorWithSixParams($data, $one = 1, $two = 2, $three = 3, $four = 4, $five = 5, $six = 6) {
+		$this->validatorParams = get_defined_vars();
+		unset($this->validatorParams['this']);
+		return true;
+	}
 }
 
 /**
