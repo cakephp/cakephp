@@ -74,7 +74,7 @@
  * The value of the define determines the names of the routes
  * and their associated controller actions:
  *
- * Set to an array of prefixes you want to use in your application. Use for 
+ * Set to an array of prefixes you want to use in your application. Use for
  * admin or other prefixed routes.
  *
  * 	Routing.prefixes = array('admin', 'manager');
@@ -196,6 +196,11 @@
  * A random string used in security hashing methods.
  */
 	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+
+/**
+ * A random numeric string (digits only) used to encrypt/decrypt strings.
+ */
+	Configure::write('Security.cipher_seed', '76859309657453542496749683645');
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).

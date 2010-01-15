@@ -664,14 +664,18 @@ class Debugger extends Object {
 	}
 
 /**
- * Verifies that the application's salt value has been changed from the default value.
+ * Verifies that the application's salt and cipher seed value has been changed from the default value.
  *
  * @access public
  * @static
  */
-	function checkSessionKey() {
+	function checkSecurityKeys() {
 		if (Configure::read('Security.salt') == 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
 			trigger_error(__('Please change the value of \'Security.salt\' in app/config/core.php to a salt value specific to your application', true), E_USER_NOTICE);
+		}
+
+		if (Configure::read('Security.cipher_seed') == '76859309657453542496749683645') {
+			trigger_error(__('Please change the value of \'Security.cipher_seed\' in app/config/core.php to a numeric (digits only) seed value specific to your application', true), E_USER_NOTICE);
 		}
 	}
 
