@@ -2,7 +2,7 @@
 
 <?php
 if (Configure::read() > 0):
-	Debugger::checkSessionKey();
+	Debugger::checkSecurityKeys();
 endif;
 ?>
 <p>

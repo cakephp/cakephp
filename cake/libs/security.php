@@ -174,11 +174,7 @@ class Security extends Object {
 			return '';
 		}
 
-		if (!defined('CIPHER_SEED')) {
-			//This is temporary will change later
-			define('CIPHER_SEED', '76859309657453542496749683645');
-		}
-		srand(CIPHER_SEED);
+		srand(Configure::read('Security.cipher_seed'));
 		$out = '';
 
 		for ($i = 0; $i < strlen($text); $i++) {

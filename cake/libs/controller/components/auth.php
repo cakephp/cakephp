@@ -278,7 +278,7 @@ class AuthComponent extends Object {
 		$this->_set($settings);
 		if (Configure::read() > 0) {
 			App::import('Debugger');
-			Debugger::checkSessionKey();
+			Debugger::checkSecurityKeys();
 		}
 	}
 
