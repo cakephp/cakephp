@@ -1244,16 +1244,18 @@ class AuthTest extends CakeTestCase {
 		$expected['AuthUser']['password'] = Security::hash($expected['AuthUser']['password'], null, true);
 		$this->assertEqual($return, $expected);
 
-		$xml = array(
-			'User' => array(
-				'username' => 'batman@batcave.com',
-				'password' => 'bruceWayne',
-			)
-		);
-		$data = new Xml($xml);
-		$return = $this->Controller->Auth->hashPasswords($data);
-		$expected = $data;
-		$this->assertEqual($return, $expected);
+		if (PHP5) {
+			$xml = array(
+				'User' => array(
+					'username' => 'batman@batcave.com',
+					'password' => 'bruceWayne',
+				)
+			);
+			$data =& new Xml($xml);
+			$return = $this->Controller->Auth->hashPasswords($data);
+			$expected = $data;
+			$this->assertEqual($return, $expected);
+		}
 	}
 
 /**
