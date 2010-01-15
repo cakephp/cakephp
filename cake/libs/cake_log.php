@@ -63,7 +63,7 @@ class CakeLog {
 	function &getInstance() {
 		static $instance = array();
 		if (!isset($instance[0])) {
-			$instance[0] = new CakeLog();
+			$instance[0] =& new CakeLog();
 		}
 		return $instance[0];
 	}
@@ -82,7 +82,7 @@ class CakeLog {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
 			return false;
 		}
-		$self = CakeLog::getInstance();
+		$self =& CakeLog::getInstance();
 		$className = $self->_getLogger($config['engine']);
 		if (!$className) {
 			return false;
@@ -113,7 +113,7 @@ class CakeLog {
 			trigger_error(sprintf(__('Could not load logger class %s', true), $loggerName), E_USER_WARNING);
 			return false;
 		}
-		if (!method_exists($loggerName, 'write')) {
+		if (!is_callable(array($loggerName, 'write'))) {
 			trigger_error(
 				sprintf(__('logger class %s does not implement a write method.', true), $loggerName),
 				E_USER_WARNING
@@ -130,7 +130,7 @@ class CakeLog {
  * @static
  */
 	function configured() {
-		$self = CakeLog::getInstance();
+		$self =& CakeLog::getInstance();
 		return array_keys($self->_streams);
 	}
 
@@ -143,7 +143,7 @@ class CakeLog {
  * @static
  */
 	function drop($streamName) {
-		$self = CakeLog::getInstance();
+		$self =& CakeLog::getInstance();
 		unset($self->_streams[$streamName]);
 	}
 
@@ -157,7 +157,7 @@ class CakeLog {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
 		}
-		$this->_streams['default'] = new FileLog(array('path' => LOGS));
+		$this->_streams['default'] =& new FileLog(array('path' => LOGS));
 	}
 
 /**
@@ -188,7 +188,7 @@ class CakeLog {
 		if (is_int($type) && isset($levels[$type])) {
 			$type = $levels[$type];
 		}
-		$self = CakeLog::getInstance();
+		$self =& CakeLog::getInstance();
 		if (empty($self->_streams)) {
 			$self->_autoConfig();
 		}
