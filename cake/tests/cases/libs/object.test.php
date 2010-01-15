@@ -662,7 +662,9 @@ class ObjectTest extends CakeTestCase {
 			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
 			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
-		), true);
+		));
+		App::objects('plugin', null, false);
+		Router::reload();
 
 		$result = $this->object->requestAction('/tests_apps/index', array('return'));
 		$expected = 'This is the TestsAppsController index view';
@@ -716,6 +718,9 @@ class ObjectTest extends CakeTestCase {
 
 		$result = $this->object->requestAction(array('controller'=>'request_action', 'action'=>'paginate_request_action'), array('pass' => array(5), 'named' => array('param' => 'value')));
 		$this->assertTrue($result);
+
+		App::build();
+		App::objects('plugin', null, false);
 	}
 
 /**
