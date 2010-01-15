@@ -117,19 +117,19 @@ class DebuggerTest extends CakeTestCase {
 		$result = Debugger::output(true);
 
 		$this->assertEqual($result[0]['error'], 'Notice');
-		$this->assertEqual($result[0]['description'], 'Undefined variable: out');
-		$this->assertPattern('/DebuggerTest::testOutput/', $result[0]['trace']);
-		$this->assertPattern('/SimpleInvoker::invoke/', $result[0]['trace']);
+		$this->assertPattern('/Undefined variable\:\s+out/', $result[0]['description']);
+		$this->assertPattern('/DebuggerTest::testOutput/i', $result[0]['trace']);
+		$this->assertPattern('/SimpleInvoker::invoke/i', $result[0]['trace']);
 
 		ob_start();
 		Debugger::output('txt');
 		$other .= '';
 		$result = ob_get_clean();
 
-		$this->assertPattern('/Undefined variable: other/', $result);
+		$this->assertPattern('/Undefined variable:\s+other/', $result);
 		$this->assertPattern('/Context:/', $result);
-		$this->assertPattern('/DebuggerTest::testOutput/', $result);
-		$this->assertPattern('/SimpleInvoker::invoke/', $result);
+		$this->assertPattern('/DebuggerTest::testOutput/i', $result);
+		$this->assertPattern('/SimpleInvoker::invoke/i', $result);
 
 		ob_start();
 		Debugger::output('html');
@@ -137,7 +137,7 @@ class DebuggerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertPattern('/<pre class="cake-debug">.+<\/pre>/', $result);
 		$this->assertPattern('/<b>Notice<\/b>/', $result);
-		$this->assertPattern('/variable: wrong/', $result);
+		$this->assertPattern('/variable:\s+wrong/', $result);
 
 		ob_start();
 		Debugger::output('js');
@@ -154,7 +154,7 @@ class DebuggerTest extends CakeTestCase {
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
 
-		$this->assertPattern('/Undefined variable: buzz/', $result[1]);
+		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
 		set_error_handler('simpleTestErrorHandler');
@@ -185,14 +185,14 @@ class DebuggerTest extends CakeTestCase {
 		ob_start();
 		$foo .= '';
 		$result = ob_get_clean();
-		set_error_handler('simpleTestErrorHandler');
+		set_error_handler('SimpleTestErrorHandler');
 
 		$data = array(
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
 			'line' => array(), '' . (intval(__LINE__) + -8), '/line',
-			'Undefined variable: foo',
+			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
@@ -255,8 +255,8 @@ class DebuggerTest extends CakeTestCase {
 		View::$__scripts = array
 		View::$__paths = array
 		View::$webroot = NULL';
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
+		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
+		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
 		$this->assertEqual($result, $expected);
 	}
 
@@ -273,14 +273,14 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertPattern('/DebuggerTest\:\:testLog/', $result);
+		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertPattern('/"cool"/', $result);
 
 		unlink(TMP . 'logs' . DS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(TMP . 'logs' . DS . 'debug.log');
-		$this->assertPattern('/DebuggerTest\:\:testLog/', $result);
+		$this->assertPattern('/DebuggerTest\:\:testLog/i', $result);
 		$this->assertPattern('/\[main\]/', $result);
 		$this->assertPattern('/array/', $result);
 		$this->assertPattern('/"whatever",/', $result);
