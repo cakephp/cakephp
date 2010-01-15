@@ -927,7 +927,7 @@ class Validation extends Object {
 			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
 			return false;
 		}
-		if (!method_exists($className, $method)) {
+		if (!is_callable(array($className, $method))) {
 			trigger_error(sprintf(__('Method %s does not exist on %s unable to complete validation.', true), $method, $className), E_USER_WARNING);
 			return false;
 		}
