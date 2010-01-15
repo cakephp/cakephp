@@ -299,7 +299,7 @@ class JsHelper extends AppHelper {
 		if (!isset($options['id'])) {
 			$options['id'] = 'link-' . intval(mt_rand());
 		}
-		$htmlOptions = $this->_getHtmlOptions($options);
+		list($options, $htmlOptions) = $this->_getHtmlOptions($options);
 		$out = $this->Html->link($title, $url, $htmlOptions);
 		$this->get('#' . $htmlOptions['id']);
 		$requestString = '';
@@ -366,7 +366,7 @@ class JsHelper extends AppHelper {
 			$options['id'] = 'submit-' . intval(mt_rand());
 		}
 		$formOptions = array('div');
-		$htmlOptions = $this->_getHtmlOptions($options, $formOptions);
+		list($options, $htmlOptions) = $this->_getHtmlOptions($options, $formOptions);
 		$out = $this->Form->submit($caption, $htmlOptions);
 
 		$this->get('#' . $htmlOptions['id']);
@@ -401,10 +401,10 @@ class JsHelper extends AppHelper {
  *
  * @param array $options Options to filter.
  * @param array $additional Array of additional keys to extract and include in the return options array.
- * @return array Array of options for non-js.
+ * @return array Array of js options and Htmloptions
  * @access public
  */
-	function _getHtmlOptions(&$options, $additional = array()) {
+	function _getHtmlOptions($options, $additional = array()) {
 		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
 		$htmlOptions = array();
 		foreach ($htmlKeys as $key) {
@@ -417,7 +417,7 @@ class JsHelper extends AppHelper {
 			$htmlOptions = array_merge($htmlOptions, $options['htmlAttributes']);
 			unset($options['htmlAttributes']);
 		}
-		return $htmlOptions;
+		return array($options, $htmlOptions);
 	}
 }
 

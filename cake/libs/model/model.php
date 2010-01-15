@@ -303,7 +303,7 @@ class Model extends Overloadable {
  * SQL expressions. Fields added to this property will be read as other fields in a model
  * but will not be saveable.
  *
- * `var $virtualFields = array('two' => '1 + 1');` 
+ * `var $virtualFields = array('two' => '1 + 1');`
  *
  * Is a simplistic example of how to set virtualFields
  *
@@ -311,14 +311,6 @@ class Model extends Overloadable {
  * @access public
  */
 	var $virtualFields = array();
-
-/**
- * Whether or not the model record exists, set by Model::exists().
- *
- * @var bool
- * @access private
- */
-	var $__exists = null;
 
 /**
  * Default list of association keys.
@@ -387,9 +379,34 @@ class Model extends Overloadable {
 /**
  * Constructor. Binds the model's database table to the object.
  *
- * @param integer $id Set this ID for this model on startup
+ * If `$id` is an array it can be used to pass several options into the model.
+ *
+ * - id - The id to start the model on.
+ * - table - The table to use for this model.
+ * - ds - The connection name this model is connected to.
+ * - name - The name of the model eg. Post.
+ * - alias - The alias of the model, this is used for registering the instance in the `ClassRegistry`.
+ *   eg. `ParentThread`
+ *
+ * ### Overriding Model's __construct method.
+ *
+ * When overriding Model::__construct() be careful to include and pass in all 3 of the
+ * arguments to `parent::__construct($id, $table, $ds);`
+ *
+ * ### Dynamically creating models
+ *
+ * You can dynamically create model instances using the the $id array syntax.
+ *
+ * {{{
+ * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
+ * }}}
+ *
+ * Would create a model attached to the posts table on connection2.  Dynamic model creation is useful
+ * when you want a model object that contains no associations or attached behaviors.
+ *
+ * @param mixed $id Set this ID for this model on startup, can also be an array of options, see above.
  * @param string $table Name of database table to use.
- * @param object $ds DataSource connection object.
+ * @param string $ds DataSource connection name.
  */
 	function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct();
@@ -461,9 +478,6 @@ class Model extends Overloadable {
 
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
-			}
-			if (method_exists($this, 'setTablePrefix')) {
-				$this->setTablePrefix();
 			}
 			$this->setSource($this->useTable);
 
@@ -1067,7 +1081,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * Returns the expression for a model virtual field 
+ * Returns the expression for a model virtual field
  *
  * @param mixed $name Name of field to look for
  * @return mixed If $field is string expression bound to virtual field $field
@@ -1101,7 +1115,6 @@ class Model extends Overloadable {
 		$defaults = array();
 		$this->id = false;
 		$this->data = array();
-		$this->__exists = null;
 		$this->validationErrors = array();
 
 		if ($data !== null && $data !== false) {
@@ -1262,10 +1275,10 @@ class Model extends Overloadable {
 			}
 		}
 
-		$this->exists();
+		$exists = $this->exists();
 		$dateFields = array('modified', 'updated');
 
-		if (!$this->__exists) {
+		if (!$exists) {
 			$dateFields[] = 'created';
 		}
 		if (isset($this->data[$this->alias])) {
@@ -1303,11 +1316,11 @@ class Model extends Overloadable {
 				return false;
 			}
 		}
-		$fields = $values = array();
 
 		if (isset($this->data[$this->alias][$this->primaryKey]) && empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
+		$fields = $values = array();
 
 		foreach ($this->data as $n => $v) {
 			if (isset($this->hasAndBelongsToMany[$n])) {
@@ -1333,7 +1346,7 @@ class Model extends Overloadable {
 		}
 		$count = count($fields);
 
-		if (!$this->__exists && $count > 0) {
+		if (!$exists && $count > 0) {
 			$this->id = false;
 		}
 		$success = true;
@@ -1371,7 +1384,7 @@ class Model extends Overloadable {
 		}
 
 		if (!empty($joined) && $success === true) {
-			$this->__saveMulti($joined, $this->id);
+			$this->__saveMulti($joined, $this->id, $db);
 		}
 
 		if ($success && $count > 0) {
@@ -1386,7 +1399,6 @@ class Model extends Overloadable {
 				$success = Set::merge($success, $this->data);
 			}
 			$this->data = false;
-			$this->__exists = null;
 			$this->_clearCache();
 			$this->validationErrors = array();
 		}
@@ -1401,9 +1413,7 @@ class Model extends Overloadable {
  * @param mixed $id ID of record in this model
  * @access private
  */
-	function __saveMulti($joined, $id) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-
+	function __saveMulti($joined, $id, &$db) {
 		foreach ($joined as $assoc => $data) {
 
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
@@ -1842,7 +1852,6 @@ class Model extends Overloadable {
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
-				$this->__exists = null;
 				return true;
 			}
 		}
@@ -1997,28 +2006,20 @@ class Model extends Overloadable {
 /**
  * Returns true if a record with the currently set ID exists.
  *
- * @param boolean $reset if true will force database query
+ * Internally calls Model::getID() to obtain the current record ID to verify,
+ * and then performs a Model::find('count') on the currently configured datasource
+ * to ascertain the existence of the record in persistent storage.
+ *
  * @return boolean True if such a record exists
  * @access public
  */
-	function exists($reset = false) {
-		if (is_array($reset)) {
-			extract($reset, EXTR_OVERWRITE);
-		}
-
-		if ($this->getID() === false || $this->useTable === false) {
+	function exists() {
+		if ($this->getID() === false) {
 			return false;
-		}
-		if (!empty($this->__exists) && $reset !== true) {
-			return $this->__exists;
 		}
 		$conditions = array($this->alias . '.' . $this->primaryKey => $this->getID());
 		$query = array('conditions' => $conditions, 'recursive' => -1, 'callbacks' => false);
-
-		if (is_array($reset)) {
-			$query = array_merge($query, $reset);
-		}
-		return $this->__exists = ($this->find('count', $query) > 0);
+		return ($this->find('count', $query) > 0);
 	}
 
 /**
@@ -2526,7 +2527,7 @@ class Model extends Overloadable {
 		}
 
 		$Validation =& Validation::getInstance();
-		$this->exists();
+		$exists = $this->exists();
 
 		$_validate = $this->validate;
 		$whitelist = $this->whitelist;
@@ -2571,7 +2572,7 @@ class Model extends Overloadable {
 
 				if (
 					empty($validator['on']) || ($validator['on'] == 'create' &&
-					!$this->__exists) || ($validator['on'] == 'update' && $this->__exists
+					!$exists) || ($validator['on'] == 'update' && $exists
 				)) {
 					$required = (
 						(!isset($data[$fieldName]) && $validator['required'] === true) ||

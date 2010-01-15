@@ -650,5 +650,137 @@ class TimeHelperTest extends CakeTestCase {
 		$expected = $this->Time->convert(strtotime('+1 hour'), $timezone);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test converting time specifiers using a time definition localfe file
+ *
+ * @access public
+ * @return void
+ */
+	function testConvertSpecifiers() {
+		App::build(array(
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
+		), true);
+		Configure::write('Config.language', 'time_test');
+		$time = 1263485619; // Thu Jan 14 11:43:39 2010
+
+		$result = $this->Time->convertSpecifiers('%a', $time);
+		$expected = 'jue';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%A', $time);
+		$expected = 'jueves';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%c', $time);
+		$expected = 'jue %d ene %Y %H:%M:%S %Z';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%C', $time);
+		$expected = '20';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%D', $time);
+		$expected = '%m/%d/%y';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%b', $time);
+		$expected = 'ene';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%h', $time);
+		$expected = 'ene';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%B', $time);
+		$expected = 'enero';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%n', $time);
+		$expected = "\n";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%n', $time);
+		$expected = "\n";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%p', $time);
+		$expected = 'AM';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%P', $time);
+		$expected = 'am';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%r', $time);
+		$expected = '%I:%M:%S AM';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%R', $time);
+		$expected = '11:43';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%t', $time);
+		$expected = "\t";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%T', $time);
+		$expected = '%H:%M:%S';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%u', $time);
+		$expected = 4;
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%x', $time);
+		$expected = '%d/%m/%y';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->convertSpecifiers('%X', $time);
+		$expected = '%H:%M:%S';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test formatting dates taking in account preferred i18n locale file
+ *
+ * @access public
+ * @return void
+ */
+	function testI18nFormat() {
+		App::build(array(
+			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
+		), true);
+		Configure::write('Config.language', 'time_test');
+		$time = 1263493768; //Thu Jan 14 13:59:28 2010
+
+		$result = $this->Time->i18nFormat($time);
+		$expected = '14/01/10';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->i18nFormat($time, '%c');
+		$expected = 'jue 14 ene 2010 13:59:28 VET';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
+		$expected = 'Time is 01:59:28 PM, and date is 14/01/10';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Time->i18nFormat('invalid date', '%x', 'Date invalid');
+		$expected = 'Date invalid';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test new format() syntax which inverts first and secod parameters
+ *
+ * @access public
+ * @return void
+ */
+	function testFormatNewSyntax() {
+		$time = time();
+		$this->assertEqual($this->Time->format($time), $this->Time->i18nFormat($time));
+		$this->assertEqual($this->Time->format($time, '%c'), $this->Time->i18nFormat($time, '%c'));
+	}
 }
 ?>

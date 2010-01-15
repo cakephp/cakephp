@@ -452,7 +452,7 @@ class ComponentTest extends CakeTestCase {
 		$this->assertTrue(is_a($Controller->ParamTest, 'ParamTestComponent'));
 		$this->assertTrue(is_a($Controller->ParamTest->Banana, 'BananaComponent'));
 		$this->assertTrue(is_a($Controller->Orange, 'OrangeComponent'));
-		$this->assertTrue(is_a($Controller->Session, 'SessionComponent'));
+		$this->assertFalse(isset($Controller->Session));
 		$this->assertEqual($Controller->Orange->settings, array('colour' => 'blood orange'));
 		$this->assertEqual($Controller->ParamTest->test, 'value');
 		$this->assertEqual($Controller->ParamTest->flag, true);

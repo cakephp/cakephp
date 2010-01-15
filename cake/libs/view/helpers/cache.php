@@ -67,68 +67,34 @@ class CacheHelper extends AppHelper {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		if (is_array($this->cacheAction)) {
-			$controller = Inflector::underscore($this->controllerName);
-			$controllerAlternate = Inflector::variable($this->controllerName);
-
-			$check = str_replace('/', '_', $this->here);
-			$basePath = str_replace('/', '_', $this->base);
-
-			$match = str_replace($this->base, '', $this->here);
-			$match = str_replace('//', '/', $match);
-			$match = str_replace('/' . $controller . '/', '', $match);
-			$match = str_replace('/' . $controllerAlternate . '/', '', $match);
-			$match = str_replace('/' . $this->controllerName . '/', '', $match);
-
-			$check = str_replace($basePath, '', $check);
-			$check = str_replace('_' . $controller . '_', '', $check);
-			$check = str_replace('_' . $this->controllerName . '_', '', $check);
-			$check = str_replace('_' . $controllerAlternate . '_', '', $match);
-
-			$check = Inflector::slug($check);
-			$check = trim($check, '_');
-
-			$keys = str_replace('/', '_', array_keys($this->cacheAction));
-			$found = array_keys($this->cacheAction);
+			$keys = array_keys($this->cacheAction);
 			$index = null;
-			$count = 0;
 
-			foreach ($keys as $key => $value) {
-				if (strpos($check, rtrim($value, '_')) === 0) {
-					$index = $found[$count];
+			foreach ($keys as $action) {
+				if ($action == $this->params['action']) {
+					$index = $action;
 					break;
 				}
-				$count++;
 			}
 
-			if (isset($index)) {
-				$pos1 = strrpos($match, '/');
-				$char = strlen($match) - 1;
-
-				if ($pos1 == $char) {
-					$match = substr($match, 0, $char);
-				}
-
-				$key = $match;
-			} elseif ($this->action == 'index') {
+			if (!isset($index) && $this->action == 'index') {
 				$index = 'index';
 			}
 
 			$options = $this->cacheAction;
 			if (isset($this->cacheAction[$index])) {
 				if (is_array($this->cacheAction[$index])) {
-					$options = array_merge(array('duration'=> 0, 'callbacks' => false), $this->cacheAction[$index]);
+					$options = array_merge(array('duration' => 0, 'callbacks' => false), $this->cacheAction[$index]);
 				} else {
 					$cacheTime = $this->cacheAction[$index];
 				}
 			}
-
-			if (array_key_exists('duration', $options)) {
+			if (isset($options['duration'])) {
 				$cacheTime = $options['duration'];
 			}
-			if (array_key_exists('callbacks', $options)) {
+			if (isset($options['callbacks'])) {
 				$useCallbacks = $options['callbacks'];
 			}
-
 		} else {
 			$cacheTime = $this->cacheAction;
 		}
@@ -263,8 +229,6 @@ class CacheHelper extends AppHelper {
 				$controller->layout = $this->layout = \'' . $this->layout. '\';
 				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
 				$controller->here = $this->here = \'' . $this->here . '\';
-				$controller->namedArgs  = $this->namedArgs  = \'' . $this->namedArgs . '\';
-				$controller->argSeparator = $this->argSeparator = \'' . $this->argSeparator . '\';
 				$controller->params = $this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
@@ -286,6 +250,7 @@ class CacheHelper extends AppHelper {
 					$camelBackedHelper = Inflector::variable($helper);
 					${$camelBackedHelper} =& $loadedHelpers[$helper];
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
+					$this->{$helper} =& $loadedHelpers[$helper];
 				}
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);

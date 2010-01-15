@@ -112,8 +112,8 @@ class ErrorHandler extends Object {
 				if (strtolower($parentClass) != 'errorhandler') {
 					$method = 'error404';
 				}
-				$parentMethods = get_class_methods($parentClass);
-				if (in_array($method, $parentMethods)) {
+				$parentMethods = array_map('strtolower', get_class_methods($parentClass));
+				if (in_array(strtolower($method), $parentMethods)) {
 					$method = 'error404';
 				}
 				if (isset($code) && $code == 500) {

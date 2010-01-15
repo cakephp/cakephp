@@ -1,6 +1,8 @@
 <?php
 /**
- * Short description for file.
+ * Index
+ *
+ * The Front Controller for handling every request
  *
  * PHP versions 4 and 5
  *
@@ -11,20 +13,18 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
+ * @link          http://cakephp.org
  * @package       cake
  * @subpackage    cake.app.webroot
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 /**
  * Use the DS to separate the directories in other defines
  */
 	if (!defined('DS')) {
 		define('DS', DIRECTORY_SEPARATOR);
 	}
-
 /**
  * These defines should only be edited if you have cake installed in
  * a directory layout other than the way it is distributed.
@@ -38,7 +38,6 @@
 	if (!defined('ROOT')) {
 		define('ROOT', dirname(dirname(dirname(__FILE__))));
 	}
-
 /**
  * The actual directory name for the "app".
  *
@@ -46,7 +45,6 @@
 	if (!defined('APP_DIR')) {
 		define('APP_DIR', basename(dirname(dirname(__FILE__))));
 	}
-
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
@@ -56,7 +54,7 @@
 	}
 
 /**
- * Editing below this line should not be necessary.
+ * Editing below this line should NOT be necessary.
  * Change at your own risk.
  *
  */

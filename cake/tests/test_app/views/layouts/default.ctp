@@ -38,7 +38,7 @@
 		</div>
 		<div id="content">
 
-			<?php $session->flash();?>
+			<?php $this->Session->flash();?>
 
 			<?php echo $content_for_layout;?>
 

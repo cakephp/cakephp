@@ -501,8 +501,13 @@ class Validation extends Object {
 		}
 
 		if ($return === true && preg_match('/@(' . $_this->__pattern['hostname'] . ')$/i', $_this->check, $regs)) {
-			$host = gethostbynamel($regs[1]);
-			return is_array($host);
+			if (function_exists('getmxrr')) {
+				return getmxrr($regs[1], $mxhosts);
+			}
+			if (function_exists('checkdnsrr')) {
+				return checkdnsrr($regs[1], 'MX');
+			}
+			return is_array(gethostbynamel($regs[1]));
 		}
 		return false;
 	}
@@ -834,6 +839,20 @@ class Validation extends Object {
 	}
 
 /**
+ * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * 
+ * @param string $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	function uuid($check) {
+		$_this =& Validation::getInstance();
+		$_this->check = $check;
+		$_this->regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
+		return $_this->_check();
+	}
+
+/**
  * Checks that a value is a valid URL according to http://www.w3.org/Addressing/URL/url-spec.txt
  *
  * The regex checks for the following component parts:
@@ -908,7 +927,7 @@ class Validation extends Object {
 			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
 			return false;
 		}
-		if (!method_exists($className, $method)) {
+		if (!is_callable(array($className, $method))) {
 			trigger_error(sprintf(__('Method %s does not exist on %s unable to complete validation.', true), $method, $className), E_USER_WARNING);
 			return false;
 		}

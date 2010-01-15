@@ -17,9 +17,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import('Core', array('Controller', 'Model', 'View'));
 App::import('Helper', 'Cache');
 
@@ -127,6 +124,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testLayoutCacheParsingNoTagsInView() {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
@@ -155,6 +159,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testCacheNonLatinCharactersInRoute() {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array('風街ろまん'),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->here = '/posts/view/風街ろまん';
 		$this->Controller->action = 'view';
@@ -175,6 +186,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testLayoutCacheParsingWithTagsInView() {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
@@ -203,6 +221,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testMultipleNoCacheTagsInViewfile() {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = 21600;
 		$this->Controller->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
@@ -229,6 +254,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testComplexNoCache () {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_complex',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = array('cache_complex' => 21600);
 		$this->Controller->here = '/cacheTest/cache_complex';
 		$this->Controller->action = 'cache_complex';
@@ -283,6 +315,13 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testCacheActionArray() {
 		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
@@ -302,7 +341,7 @@ class CacheHelperTest extends CakeTestCase {
 
 		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = array(
-			'cache_parsing/' => 21600
+			'cache_parsing' => 21600
 		);
 		$this->Controller->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
@@ -319,25 +358,15 @@ class CacheHelperTest extends CakeTestCase {
 
 
 		$this->Controller->cache_parsing();
-		$this->Controller->cacheAction = array(
-			'cache_parsing/33' => 21600
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
 		);
-		$this->Controller->here = '/cacheTest/cache_parsing/33';
-		$this->Controller->action = 'cache_parsing';
-
-		$View = new View($this->Controller);
-		$result = $View->render('index');
-
-		$this->assertNoPattern('/cake:nocache/', $result);
-		$this->assertNoPattern('/php echo/', $result);
-
-		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing_33.php';
-		$this->assertTrue(file_exists($filename));
-		@unlink($filename);
-		
-		$this->Controller->cache_parsing();
 		$this->Controller->cacheAction = array(
-			'cache_parsing/33' => 21600
+			'some_other_action' => 21600
 		);
 		$this->Controller->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
@@ -350,6 +379,41 @@ class CacheHelperTest extends CakeTestCase {
 
 		$filename = CACHE . 'views' . DS . 'cachetest_cache_parsing.php';
 		$this->assertFalse(file_exists($filename));
+	}
+
+/**
+ * test that custom routes are respected when generating cache files.
+ *
+ * @return void
+ */
+	function testCacheWithCustomRoutes() {
+		Router::reload();
+		Router::connect('/:lang/:controller/:action/*', array(), array('lang' => '[a-z]{3}'));
+		
+		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'lang' => 'en',
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => 21600
+		);
+		$this->Controller->here = '/en/cache_test/cache_parsing';
+		$this->Controller->action = 'cache_parsing';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'en_cache_test_cache_parsing.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
 	}
 /**
  * testCacheEmptySections method

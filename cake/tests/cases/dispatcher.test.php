@@ -449,8 +449,9 @@ class TestCachedPagesController extends AppController {
  * @access public
  */
 	var $cacheAction = array(
-		'index'=> '+2 sec', 'test_nocache_tags'=>'+2 sec',
-		'view/' => '+2 sec'
+		'index' => '+2 sec',
+		'test_nocache_tags' => '+2 sec',
+		'view' => '+2 sec'
 	);
 
 /**
@@ -2097,9 +2098,8 @@ class DispatcherTest extends CakeTestCase {
 		$filename = $this->__cachePath($dispatcher->here);
 		$this->assertTrue(file_exists($filename));
 		unlink($filename);
-
-		$url = 'TestCachedPages/test_nocache_tags';
 	}
+
 /**
  * test that cached() registers a view and un-registers it.  Tests
  * that helpers using ClassRegistry::getObject('view'); don't fail
@@ -2139,7 +2139,6 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 		$filename = $this->__cachePath($dispatcher->here);
-		unlink($filename);
 		ClassRegistry::flush();
 	}
 

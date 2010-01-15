@@ -2934,7 +2934,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testFieldsWithExpression() {
-		$expression =& $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
+		$expression = $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
 		$result = $this->testDb->fields($this->Model, null, array("id", $expression));
 		$expected = array(
 			'`TestModel`.`id`',
@@ -4238,6 +4238,24 @@ class DboSourceTest extends CakeTestCase {
 		$expected = array(array(
 			'Article' => array('id' => 1, 'comment_count' => 4)
 		));
+		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test group to generate GROUP BY statements on virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInGroup() {
+		$this->loadFixtures('Article');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_year' => 'YEAR(Article.created)'
+		);
+
+		$result = $this->db->group('this_year',$Article);
+		$expected = " GROUP BY (YEAR(`Article`.`created`))";
 		$this->assertEqual($expected, $result);
 	}
 }

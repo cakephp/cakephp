@@ -213,7 +213,7 @@ class Debugger extends Object {
  * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
 */
 	function dump($var) {
-		$_this = Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 		pr($_this->exportVar($var));
 	}
 
@@ -228,7 +228,7 @@ class Debugger extends Object {
  * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
  */
 	function log($var, $level = LOG_DEBUG) {
-		$_this = Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 		$source = $_this->trace(array('start' => 1)) . "\n";
 		CakeLog::write($level, "\n" . $source . $_this->exportVar($var));
 	}
@@ -249,7 +249,7 @@ class Debugger extends Object {
 			return;
 		}
 
-		$_this = Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 
 		if (empty($file)) {
 			$file = '[internal]';
@@ -327,7 +327,7 @@ class Debugger extends Object {
  * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
  */
 	function trace($options = array()) {
-		$_this = Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 		$defaults = array(
 			'depth'   => 999,
 			'format'  => $_this->_outputFormat,
@@ -472,7 +472,7 @@ class Debugger extends Object {
  * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
  */
 	function exportVar($var, $recursion = 0) {
-		$_this =  Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 		switch (strtolower(gettype($var))) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
@@ -556,7 +556,7 @@ class Debugger extends Object {
  * @access protected
  */
 	function output($format = null, $strings = array()) {
-		$_this = Debugger::getInstance();
+		$_this =& Debugger::getInstance();
 		$data = null;
 
 		if (is_null($format)) {

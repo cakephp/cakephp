@@ -876,7 +876,7 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
- * ensure that __exists is reset on create
+ * ensure that exists() does not persist between method calls reset on create
  *
  * @return void
  */
@@ -895,6 +895,30 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article->saveField('title', 'Staying alive');
 		$result = $Article->read(null, 2);
 		$this->assertEqual($result['Article']['title'], 'Staying alive');
+	}
+
+/**
+ * testUseTableFalseExistsCheck method
+ *
+ * @return void
+ */
+	function testUseTableFalseExistsCheck() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$Article->id = 1337;
+		$result = $Article->exists();
+		$this->assertFalse($result);
+
+		$Article->useTable = false;
+		$Article->id = null;
+		$result = $Article->exists();
+		$this->assertFalse($result);
+
+		// An article with primary key of '1' has been loaded by the fixtures.
+		$Article->useTable = false;
+		$Article->id = 1;
+		$result = $Article->exists();
+		$this->assertTrue($result);
 	}
 
 /**

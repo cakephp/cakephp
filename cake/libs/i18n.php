@@ -164,6 +164,10 @@ class I18n extends Object {
 			$_this->__cache = true;
 		}
 
+		if ($_this->category == 'LC_TIME') {
+			return $_this->__translateTime($singular,$domain);
+		}
+
 		if (!isset($count)) {
 			$plurals = 0;
 		} elseif (!empty($_this->__domains[$_this->category][$_this->__lang][$domain]["%plural-c"]) && $_this->__noLocale === false) {
@@ -277,6 +281,7 @@ class I18n extends Object {
 
 			foreach ($this->l10n->languagePath as $lang) {
 				$file = $directory . $lang . DS . $this->category . DS . $domain;
+				$localeDef = $directory . $lang . DS . $this->category;
 
 				if ($core) {
 					$app = $directory . $lang . DS . $this->category . DS . 'core';
@@ -302,6 +307,10 @@ class I18n extends Object {
 					$this->__loadPo($f, $domain);
 					$this->__noLocale = false;
 					break 2;
+				} elseif (is_file($localeDef) && ($f = fopen($localeDef, "r"))) {
+					$this->__loadLocaleDefinition($f, $domain);
+					$this->__noLocale = false;
+					return $domain;
 				}
 			}
 		}
@@ -441,6 +450,114 @@ class I18n extends Object {
 		fclose($file);
 		$merge[""] = $header;
 		return $this->__domains[$this->category][$this->__lang][$domain] = array_merge($merge ,$translations);
+	}
+
+/**
+ * Parses a locale definition file following the POSIX standard
+ *
+ * @param resource $file file handler
+ * @param string $domain Domain where locale definitions will be stored
+ * @return void
+ * @access private
+ */
+	function __loadLocaleDefinition($file, $domain = null) {
+		$_this =& I18N::getInstance();
+		$comment = '#';
+		$escape = '\\';
+		$currentToken = false;
+		$value = '';
+		while ($line = fgets($file)) {
+			$line = trim($line);
+			if (empty($line) || $line[0] === $comment) {
+				continue;
+			}
+			$parts = preg_split("/[[:space:]]+/",$line);
+			if ($parts[0] === 'comment_char') {
+				$comment = $parts[1];
+				continue;
+			}
+			if ($parts[0] === 'escape_char') {
+				$escape = $parts[1];
+				continue;
+			}
+			$count = count($parts);
+			if ($count == 2) {
+				$currentToken = $parts[0];
+				$value = $parts[1];
+			} elseif ($count == 1) {
+				$value .= $parts[0];
+			} else {
+				continue;
+			}
+
+			$len = strlen($value) - 1;
+			if ($value[$len] === $escape) {
+				$value = substr($value,0,$len);
+				continue;
+			}
+
+			$mustEscape = array($escape.',',$escape.';',$escape.'<',$escape.'>',$escape.$escape);
+			$replacements = array_map('crc32',$mustEscape);
+			$value = str_replace($mustEscape,$replacements,$value);
+			$value = explode(';',$value);
+			$_this->__escape = $escape;
+			foreach ($value as $i => $val) {
+				$val = trim($val,'"');
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/',array(&$this,'__parseLiteralValue'),$val);
+				$val = str_replace($replacements,$mustEscape,$val);
+				$value[$i] = $val;
+			}
+			if (count($value) == 1) {
+				$this->__domains[$this->category][$this->__lang][$domain][$currentToken] = array_pop($value);
+			} else {
+				$this->__domains[$this->category][$this->__lang][$domain][$currentToken] = $value;
+			}
+		}
+	}
+
+/**
+ * Auxiliary function to parse a symbol from a locale definition file
+ *
+ * @param string $string Symbol to be parsed
+ * @return string parsed symbol
+ * @access private
+ */
+	function __parseLiteralValue($string) {
+		$string = $string[1];
+		if (substr($string, 0, 2) === $this->__escape . 'x') {
+			$delimiter = $this->__escape . 'x';
+			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+		}
+		if (substr($string, 0, 2) === $this->__escape . 'd') {
+			$delimiter = $this->__escape . 'd';
+			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+		}
+		if ($string[0] === $this->__escape && isset($string[1]) && is_numeric($string[1])) {
+			$delimiter = $this->__escape;
+			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+		}
+		if (substr($string, 0, 3) === 'U00') {
+			$delimiter = 'U00';
+			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
+		}
+		return $string;
+	}
+
+/**
+ * Returns a Time format definition from corresponding domain
+ *
+ * @param string $format Format to be translated
+ * @param string $domain Domain where format is stored
+ * @return mixed translated format string if only value or array of translated strings for corresponding format.
+ * @access private
+ */
+	function __translateTime($format, $domain) {
+		if (!empty($this->__domains['LC_TIME'][$this->__lang][$domain][$format])) {
+			if (($trans = $this->__domains[$this->category][$this->__lang][$domain][$format])) {
+				return $trans;
+			}
+		}
+		return $format;
 	}
 
 /**

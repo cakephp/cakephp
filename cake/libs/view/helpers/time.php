@@ -29,6 +29,110 @@
 class TimeHelper extends AppHelper {
 
 /**
+ * Converts a string representing the format for the function strftime and returns a
+ * windows safe and i18n aware format.
+ *
+ * @param string $format Format with specifiers for strftime function. Accepts the special specifier %S which mimics th modifier S for date()
+ * @param string UNIX timestamp
+ * @return string windows safe and date() function compatible format for strftime
+ */
+	function convertSpecifiers($format, $time = null) {
+		if (!$time) {
+			$time = time();
+		}
+		$this->__time = $time;
+		return preg_replace_callback('/\%(\w+)/', array($this, '__translateSpecifier'), $format);
+	}
+
+/**
+ * Auxiliary function to translate a matched specifier element from a regular expresion into
+ * a windows safe and i18n aware specifier
+ *
+ * @param array $specifier match from regular expression
+ * @return string converted element
+ */
+	function __translateSpecifier($specifier) {
+		switch ($specifier[1]) {
+			case 'a':
+				$abday = __c('abday', 5, true);
+				if (is_array($abday)) {
+					return $abday[date('w', $this->__time)];
+				}
+				break;
+			case 'A':
+				$day = __c('day',5,true);
+				if (is_array($day)) {
+					return $day[date('w', $this->__time)];
+				}
+				break;
+			case 'c':
+				$format = __c('d_t_fmt',5,true);
+				if ($format != 'd_t_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+			case 'C':
+				return sprintf("%02d", date('Y', $this->__time) / 100);
+			case 'D':
+				return '%m/%d/%y';
+			case 'eS' :
+				return date('jS', $this->__time);
+			case 'b':
+			case 'h':
+				$months = __c('abmon', 5, true);
+				if (is_array($months)) {
+					return $months[date('n', $this->__time) -1];
+				}
+				return '%b';
+			case 'B':
+				$months = __c('mon',5,true);
+				if (is_array($months)) {
+					return $months[date('n', $this->__time) -1];
+				}
+				break;
+			case 'n':
+				return "\n";
+			case 'p':
+			case 'P':
+				$default = array('am' => 0, 'pm' => 1);
+				$meridiem = $default[date('a',$this->__time)];
+				$format = __c('am_pm', 5, true);
+				if (is_array($format)) {
+					$meridiem = $format[$meridiem];
+					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
+				}
+				break;
+			case 'r':
+				$complete = __c('t_fmt_ampm', 5, true);
+				if ($complete != 't_fmt_ampm') {
+					return str_replace('%p',$this->__translateSpecifier(array('%p', 'p')),$complete);
+				}
+				break;
+			case 'R':
+				return date('H:i', $this->__time);
+			case 't':
+				return "\t";
+			case 'T':
+				return '%H:%M:%S';
+			case 'u':
+				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
+			case 'x':
+				$format = __c('d_fmt', 5, true);
+				if ($format != 'd_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+			case 'X':
+				$format = __c('t_fmt',5,true);
+				if ($format != 't_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+		}
+		return $specifier[0];
+	}
+
+/**
  * Converts given time (in server's time zone) to user's local time, given his/her offset from GMT.
  *
  * @param string $serverTime UNIX timestamp
@@ -62,7 +166,7 @@ class TimeHelper extends AppHelper {
 		if (empty($dateString)) {
 			return false;
 		}
-		if (is_int($dateString) || is_numeric($dateString)) {
+		if (is_integer($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} else {
 			$date = strtotime($dateString);
@@ -86,8 +190,8 @@ class TimeHelper extends AppHelper {
 		} else {
 			$date = time();
 		}
-
-		return date("D, M jS Y, H:i", $date);
+		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M', $date);
+		return strftime($format, $date);
 	}
 
 /**
@@ -105,15 +209,17 @@ class TimeHelper extends AppHelper {
 	function niceShort($dateString = null, $userOffset = null) {
 		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
 
-		$y = $this->isThisYear($date) ? '' : ' Y';
+		$y = $this->isThisYear($date) ? '' : ' %Y';
 
 		if ($this->isToday($date)) {
-			$ret = sprintf(__('Today, %s',true), date("H:i", $date));
+			$ret = sprintf(__('Today, %s',true), strftime("%H:%M", $date));
 		} elseif ($this->wasYesterday($date)) {
-			$ret = sprintf(__('Yesterday, %s',true), date("H:i", $date));
+			$ret = sprintf(__('Yesterday, %s',true), strftime("%H:%M", $date));
 		} else {
-			$ret = date("M jS{$y}, H:i", $date);
+			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
+			$ret = strftime($format, $date);
 		}
+
 		return $ret;
 	}
 
@@ -525,25 +631,53 @@ class TimeHelper extends AppHelper {
 		$day = intval(date("j", $string));
 		$year = intval(date("Y", $string));
 
-		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
-		return $return;
+		return gmmktime($hour, $minute, $second, $month, $day, $year);
 	}
 
 /**
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+ * This function also accepts a time string and a format string as first and second parameters.
+ * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * @param string $format date format string. defaults to 'd-m-Y'
- * @param string $dateString Datetime string
+ * @param string $format date format string (or a DateTime string)
+ * @param string $dateString Datetime string (or a date format string)
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
  */
-	function format($format = 'd-m-Y', $date, $invalid = false, $userOffset = null) {
+	function format($format, $date = null, $invalid = false, $userOffset = null) {
+		$time = $this->fromString($date, $userOffset);
+		$_time = $this->fromString($format, $userOffset);
+
+		if (is_numeric($_time) && $time === false) {
+			$format = $date;
+			return $this->i18nFormat($_time, $format, $invalid, $userOffset);
+		}
+		if ($time === false && $invalid !== false) {
+			return $invalid;
+		}
+		return date($format, $time);
+	}
+
+/**
+ * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+ * It take in account the default date format for the current language if a LC_TIME file is used.
+ * @param string $dateString Datetime string
+ * @param string $format strftime format string.
+ * @param boolean $invalid flag to ignore results of fromString == false
+ * @param int $userOffset User's offset from GMT (in hours)
+ * @return string Formatted and translated date string
+ */
+	function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
 		$date = $this->fromString($date, $userOffset);
 		if ($date === false && $invalid !== false) {
 			return $invalid;
 		}
-		return date($format, $date);
+		if (empty($format)) {
+			$format = '%x';
+		}
+		$format = $this->convertSpecifiers($format, $date);
+		return strftime($format, $date);
 	}
 }
 ?>

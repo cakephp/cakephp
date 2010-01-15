@@ -53,21 +53,21 @@ class PagesControllerTest extends CakeTestCase {
 			return;
 		}
 
-		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
+		));
 		$Pages =& new PagesController();
 
 		$Pages->viewPath = 'posts';
 		$Pages->display('index');
 		$this->assertPattern('/posts index/', $Pages->output);
 		$this->assertEqual($Pages->viewVars['page'], 'index');
-		$this->assertEqual($Pages->pageTitle, 'Index');
 
 		$Pages->viewPath = 'themed';
 		$Pages->display('test_theme', 'posts', 'index');
 		$this->assertPattern('/posts index themed view/', $Pages->output);
 		$this->assertEqual($Pages->viewVars['page'], 'test_theme');
 		$this->assertEqual($Pages->viewVars['subpage'], 'posts');
-		$this->assertEqual($Pages->pageTitle, 'Index');
 	}
 }
 ?>

@@ -732,10 +732,6 @@ class View extends Object {
  * @return array
  */
 	function &_loadHelpers(&$loaded, $helpers, $parent = null) {
-		if (empty($loaded)) {
-			$helpers[] = 'Session';
-		}
-
 		foreach ($helpers as $i => $helper) {
 			$options = array();
 

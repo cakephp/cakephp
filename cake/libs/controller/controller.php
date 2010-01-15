@@ -93,7 +93,7 @@ class Controller extends Object {
  * @access protected
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
  */
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Session', 'Html', 'Form');
 
 /**
  * Parameters received in the current request: GET and POST data, information
@@ -229,7 +229,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
  */
-	var $components = array();
+	var $components = array('Session');
 
 /**
  * The name of the View class this controller sends output to.
@@ -1031,18 +1031,18 @@ class Controller extends Object {
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object = $this->{$object}->{$assoc};
+				$object =& $this->{$object}->{$assoc};
 			} elseif (
 				$assoc && isset($this->{$this->modelClass}) &&
 				isset($this->{$this->modelClass}->{$assoc}
 			)) {
-				$object = $this->{$this->modelClass}->{$assoc};
+				$object =& $this->{$this->modelClass}->{$assoc};
 			} elseif (isset($this->{$object})) {
-				$object = $this->{$object};
+				$object =& $this->{$object};
 			} elseif (
 				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
 			)) {
-				$object = $this->{$this->modelClass}->{$object};
+				$object =& $this->{$this->modelClass}->{$object};
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
