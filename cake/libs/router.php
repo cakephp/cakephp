@@ -1041,7 +1041,7 @@ class Router {
  * @access public
  * @static
  */
-	function requestRoute() {
+	function &requestRoute() {
 		$self =& Router::getInstance();
 		return $self->__currentRoute[0];
 	}
@@ -1053,7 +1053,7 @@ class Router {
  * @access public
  * @static
  */
-	function currentRoute() {
+	function &currentRoute() {
 		$self =& Router::getInstance();
 		return $self->__currentRoute[count($self->__currentRoute) - 1];
 	}
