@@ -161,7 +161,7 @@ class CakeSchema extends Object {
  * @return array Set of name and tables
  * @access public
  */
-	function load($options = array()) {
+	function &load($options = array()) {
 		if (is_string($options)) {
 			$options = array('path' => $options);
 		}
@@ -183,8 +183,8 @@ class CakeSchema extends Object {
 			$Schema =& new $class($options);
 			return $Schema;
 		}
-
-		return false;
+		$false = false;
+		return $false;
 	}
 
 /**
