@@ -225,8 +225,8 @@ class DbAcl extends AclBase {
  * @access public
  */
 	function initialize(&$component) {
-		$component->Aro = $this->Aro;
-		$component->Aco = $this->Aco;
+		$component->Aro =& $this->Aro;
+		$component->Aco =& $this->Aco;
 	}
 
 /**

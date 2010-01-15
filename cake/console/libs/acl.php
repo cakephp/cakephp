@@ -92,7 +92,7 @@ class AclShell extends Shell {
 			require_once (CONFIGS.'database.php');
 
 			if (!in_array($this->command, array('initdb'))) {
-				$this->Acl = new AclComponent();
+				$this->Acl =& new AclComponent();
 				$controller = null;
 				$this->Acl->startup($controller);
 			}
@@ -257,9 +257,9 @@ class AclShell extends Shell {
 		extract($this->__getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
-			$this->out(sprintf(__("%s is allowed.", true), $aro), true);
+			$this->out(sprintf(__("%s is allowed.", true), $aroName), true);
 		} else {
-			$this->out(sprintf(__("%s is not allowed.", true), $aro), true);
+			$this->out(sprintf(__("%s is not allowed.", true), $aroName), true);
 		}
 	}
 
@@ -560,6 +560,8 @@ class AclShell extends Shell {
 	function __getParams() {
 		$aro = is_numeric($this->args[0]) ? intval($this->args[0]) : $this->args[0];
 		$aco = is_numeric($this->args[1]) ? intval($this->args[1]) : $this->args[1];
+		$aroName = $aro;
+		$acoName = $aco;
 
 		if (is_string($aro)) {
 			$aro = $this->parseIdentifier($aro);
@@ -574,7 +576,7 @@ class AclShell extends Shell {
 				$action = '*';
 			}
 		}
-		return compact('aro', 'aco', 'action');
+		return compact('aro', 'aco', 'action', 'aroName', 'acoName');
 	}
 
 /**
