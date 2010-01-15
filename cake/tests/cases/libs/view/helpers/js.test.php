@@ -279,9 +279,6 @@ class JsHelperTestCase extends CakeTestCase {
 
 		@unlink(WWW_ROOT . $filename[1]);
 	}
-	function getTests() {
-		return array('start', 'startCase', 'testLinkWithMock', 'endCase', 'end');
-	}
 
 /**
  * test link()
