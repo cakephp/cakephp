@@ -106,7 +106,7 @@ class DboSource extends DataSource {
 
 /**
  * Constructor
- * 
+ *
  * @param array $config Array of configuration information for the Datasource.
  * @param boolean $autoConnect Whether or not the datasource should automatically connect.
  * @access public
@@ -668,7 +668,7 @@ class DboSource extends DataSource {
  * Creates new records in the database.
  *
  * @param Model $model Model object that the record is for.
- * @param array $fields An array of field names to insert. If null, $model->data will be 
+ * @param array $fields An array of field names to insert. If null, $model->data will be
  *   used to generate field names.
  * @param array $values An array of values with keys matching the fields. If null, $model->data will
  *   be used to generate values.
@@ -853,7 +853,7 @@ class DboSource extends DataSource {
  * Queries associations.  Used to fetch results on recursive models.
  *
  * @param Model $model Primary Model object
- * @param Model $linkModel Linked model that 
+ * @param Model $linkModel Linked model that
  * @param string $type Association type, one of the model association types ie. hasMany
  * @param unknown_type $association
  * @param unknown_type $assocData
@@ -1840,7 +1840,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	function _constructVirtualFields(&$model,$alias,$fields) {
+	function _constructVirtualFields(&$model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
@@ -1876,9 +1876,19 @@ class DboSource extends DataSource {
 			return $fields;
 		}
 		$virtual = array();
-		if ($model->getVirtualField()) {
-			$keys =  array_keys($model->getVirtualField());
+		$virtualFields = $model->getVirtualField();
+		if ($virtualFields) {
+			$keys =  array_keys($virtualFields);
+			foreach($keys as $field) {
+				$keys[] = $model->alias . '.' . $field;
+			}
 			$virtual = ($allFields) ? $keys :  array_intersect($keys, $fields);
+		}
+		foreach($virtual as &$field) {
+			if (strpos($field, '.')) {
+				$field = str_replace($model->alias . '.', '', $field);
+				$fields = array_diff($fields, array($model->alias . '.' . $field));
+			}
 		}
 		$count = count($fields);
 
