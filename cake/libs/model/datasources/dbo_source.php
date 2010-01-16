@@ -632,11 +632,11 @@ class DboSource extends DataSource {
 		if (Configure::read() > 0) {
 			$out = null;
 			if ($error) {
-				trigger_error("<span style = \"color:Red;text-align:left\"><b>SQL Error:</b> {$this->error}</span>", E_USER_WARNING);
+				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:', true) . "</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				$out = ("<small>[Aff:{$this->affected} Num:{$this->numRows} Took:{$this->took}ms]</small>");
+				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms', true), $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
-			pr(sprintf("<p style = \"text-align:left\"><b>Query:</b> %s %s</p>", $sql, $out));
+			pr(sprintf('<p style="text-align:left"><b>' . __('Query:', true) . '</b> %s %s</p>', $sql, $out));
 		}
 	}
 
@@ -2386,7 +2386,7 @@ class DboSource extends DataSource {
  */
 	function length($real) {
 		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
-			trigger_error(__('FIXME: Can\'t parse field: ' . $real, true), E_USER_WARNING);
+			trigger_error(__("FIXME: Can't parse field: " . $real, true), E_USER_WARNING);
 			$col = str_replace(array(')', 'unsigned'), '', $real);
 			$limit = null;
 
@@ -2585,12 +2585,12 @@ class DboSource extends DataSource {
 		extract(array_merge(array('null' => true), $column));
 
 		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			trigger_error(__('Column name or type not defined in schema', true), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			trigger_error(sprintf(__('Column type %s does not exist', true), $type), E_USER_WARNING);
 			return null;
 		}
 

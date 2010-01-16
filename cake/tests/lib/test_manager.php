@@ -101,11 +101,11 @@ class TestManager {
 	function runAllTests(&$reporter, $testing = false) {
 		$testCases =& $this->_getTestFileList($this->_getTestsPath());
 		if ($this->appTest) {
-			$test =& new TestSuite('All App Tests');
+			$test =& new TestSuite(__('All App Tests', true));
 		} else if ($this->pluginTest) {
-			$test =& new TestSuite('All ' . Inflector::humanize($this->pluginTest) . ' Plugin Tests');
+			$test =& new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($manager->pluginTest)));
 		} else {
-			$test =& new TestSuite('All Core Tests');
+			$test =& new TestSuite(__('All Core Tests', true));
 		}
 
 		if ($testing) {
@@ -132,7 +132,7 @@ class TestManager {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
-			trigger_error("Test case {$testCaseFile} cannot be found", E_USER_ERROR);
+			trigger_error(sprintf(__('Test case %s cannot be found', true), $testCaseFile), E_USER_ERROR);
 			return false;
 		}
 
@@ -140,7 +140,7 @@ class TestManager {
 			return true;
 		}
 
-		$test =& new TestSuite("Individual test case: " . $testCaseFile);
+		$test =& new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
@@ -157,11 +157,11 @@ class TestManager {
 		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
 
 		if (!file_exists($filePath)) {
-			trigger_error("Group test {$groupTestName} cannot be found at {$filePath}", E_USER_ERROR);
+			trigger_error(sprintf(__('Group test %s cannot be found at %s', true), $groupTestName, $filePath), E_USER_ERROR);
 		}
 
 		require_once $filePath;
-		$test =& new TestSuite($groupTestName . ' group test');
+		$test =& new TestSuite(sprintf(__('%s group test', true), $groupTestName));
 		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);

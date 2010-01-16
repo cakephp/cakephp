@@ -530,7 +530,7 @@ class Model extends Overloadable {
  * @deprecated Use Model::bindModel() instead.
  */
 	function bind($model, $options = array(), $permanent = true) {
-		trigger_error('Deprecated method, use Model::bindModel instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use Model::bindModel instead', true), E_USER_WARNING);
 		if (!is_array($model)) {
 			$model = array($model => $options);
 		}
@@ -1809,7 +1809,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/691/remove
  */
 	function remove($id = null, $cascade = true) {
-		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use Model::delete instead', true), E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -1862,7 +1862,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function del($id = null, $cascade = true) {
-		trigger_error('Deprecated method, use Model::delete instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use Model::delete instead', true), E_USER_WARNING);
 		return $this->delete($id, $cascade);
 	}
 
@@ -2615,12 +2615,7 @@ class Model extends Overloadable {
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
-							$error = sprintf(
-								__('Could not find validation handler %s for %s', true),
-								$rule,
-								$fieldName
-							);
-							trigger_error($error, E_USER_WARNING);
+							trigger_error(sprintf(__('Could not find validation handler %s for %s', true), $rule, $fieldName), E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
@@ -2727,7 +2722,7 @@ class Model extends Overloadable {
  * @deprecated
  */
 	function getDisplayField() {
-		trigger_error('Deprecated method, use Model::$displayField instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use Model::$displayField instead', true), E_USER_WARNING);
 		return $this->displayField;
 	}
 

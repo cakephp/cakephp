@@ -425,7 +425,7 @@ class RequestHandlerComponent extends Object {
  * @deprecated use getReferer()
  */
 	function getReferrer() {
-		trigger_error('Deprecated method, use RequestHandlerComponent::getReferer instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use RequestHandlerComponent::getReferer instead', true), E_USER_WARNING);
 		return $this->getReferer();
 	}
 

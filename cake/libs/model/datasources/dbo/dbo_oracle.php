@@ -583,7 +583,7 @@ class DboOracle extends DboSource {
  */
 	function constraint($action, $table) {
 		if (empty($table)) {
-			trigger_error(__('Must specify table to operate on constraints'));
+			trigger_error(__('Must specify table to operate on constraints', true));
 		}
 
 		$table = strtoupper($table);
@@ -641,7 +641,7 @@ class DboOracle extends DboSource {
 					return $constraints;
 					break;
 				default:
-					trigger_error(__('DboOracle::constraint() accepts only enable, disable, or list'));
+					trigger_error(__('DboOracle::constraint() accepts only enable, disable, or list', true));
 			}
 		}
 		return true;

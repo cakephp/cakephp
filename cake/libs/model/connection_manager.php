@@ -181,8 +181,7 @@ class ConnectionManager extends Object {
 		$class = "{$conn['plugin']}.{$conn['classname']}";
 
 		if (!App::import('Datasource', $class, false)) {
-			$error = __('ConnectionManager::loadDataSource - Unable to import DataSource class %s', true);
-			trigger_error(sprintf($error, $class), E_USER_ERROR);
+			trigger_error(sprintf(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', true), $class), E_USER_ERROR);
 			return null;
 		}
 		return true;

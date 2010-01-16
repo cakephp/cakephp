@@ -402,7 +402,7 @@ class XmlNode extends Object {
 
 		if (is_object($child)) {
 			if ($this->compare($child)) {
-				trigger_error('Cannot append a node to itself.');
+				trigger_error(__('Cannot append a node to itself.', true));
 				$return = false;
 				return $return;
 			}
@@ -909,7 +909,7 @@ class Xml extends XmlNode {
 		} elseif (file_exists($input)) {
 			$this->__rawData = file_get_contents($input);
 		} else {
-			trigger_error('XML cannot be read');
+			trigger_error(__('XML cannot be read', true));
 			return false;
 		}
 		return $this->parse();

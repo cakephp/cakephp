@@ -261,8 +261,7 @@ class Configure extends Object {
 		}
 
 		if (!isset($config)) {
-			$error = __("Configure::load() - no variable \$config found in %s.php", true);
-			trigger_error(sprintf($error, $fileName), E_USER_WARNING);
+			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php', true), $fileName), E_USER_WARNING);
 			return false;
 		}
 		return Configure::write($config);
@@ -398,7 +397,7 @@ class Configure extends Object {
 				$cache = Cache::config('default');
 
 				if (empty($cache['settings'])) {
-					trigger_error('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', E_USER_WARNING);
+					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', true), E_USER_WARNING);
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
 				$path = $prefix = $duration = null;

@@ -420,8 +420,7 @@ class View extends Object {
 			$this->hasRendered = true;
 		} else {
 			$out = $this->_render($viewFileName, $this->viewVars);
-			$msg = __("Error in view %s, got: <blockquote>%s</blockquote>", true);
-			trigger_error(sprintf($msg, $viewFileName, $out), E_USER_ERROR);
+			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>", true), $viewFileName, $out), E_USER_ERROR);
 		}
 		return $out;
 	}
@@ -464,8 +463,7 @@ class View extends Object {
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
-			$msg = __("Error in layout %s, got: <blockquote>%s</blockquote>", true);
-			trigger_error(sprintf($msg, $layoutFileName, $this->output), E_USER_ERROR);
+			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>", true), $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
 

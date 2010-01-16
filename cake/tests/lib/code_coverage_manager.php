@@ -101,7 +101,7 @@ class CodeCoverageManager {
 		$thisFile = str_replace('.php', '.test.php', basename(__FILE__));
 
 		if (strpos($testCaseFile, $thisFile) !== false) {
-			trigger_error('Xdebug supports no parallel coverage analysis - so this is not possible.', E_USER_ERROR);
+			trigger_error(__('Xdebug supports no parallel coverage analysis - so this is not possible.', true), E_USER_ERROR);
 		}
 		$manager->setParams($reporter);
 		$manager->testCaseFile = $testCaseFile;
@@ -223,7 +223,7 @@ class CodeCoverageManager {
 			$testObjectFile = $this->__testObjectFilesFromGroupFile($this->testCaseFile, $this->appTest);
 			foreach ($testObjectFile as $file) {
 				if (!file_exists($file)) {
-					trigger_error('This test object file is invalid: ' . $file);
+					trigger_error(sprintf(__('This test object file is invalid: %s', true), $file));
 					return ;
 				}
 			}
@@ -236,7 +236,7 @@ class CodeCoverageManager {
 			$testObjectFile = $this->__testObjectFileFromCaseFile($this->testCaseFile, $this->appTest);
 
 			if (!file_exists($testObjectFile)) {
-				trigger_error('This test object file is invalid: ' . $testObjectFile);
+				trigger_error(sprintf(__('This test object file is invalid: %s', true), $testObjectFile));
 				return ;
 			}
 
@@ -551,7 +551,7 @@ class CodeCoverageManager {
 		$path .= DS . $groupFile . $testManager->_groupExtension;
 
 		if (!file_exists($path)) {
-			trigger_error('This group file does not exist!');
+			trigger_error(__('This group file does not exist!', true));
 			return array();
 		}
 
@@ -736,7 +736,7 @@ class CodeCoverageManager {
  */
 	function __calcCoverage($lineCount, $coveredCount) {
 		if ($coveredCount > $lineCount) {
-			trigger_error('Sorry, you cannot have more covered lines than total lines!');
+			trigger_error(__('Sorry, you cannot have more covered lines than total lines!', true));
 		}
 		return ($lineCount != 0)
 				? round(100 * $coveredCount / $lineCount, 2)

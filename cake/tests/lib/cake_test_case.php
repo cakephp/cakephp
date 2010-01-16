@@ -533,7 +533,7 @@ class CakeTestCase extends UnitTestCase {
 				$fixture->truncate($this->db);
 				$fixture->insert($this->db);
 			} else {
-				trigger_error("Referenced fixture class {$class} not found", E_USER_WARNING);
+				trigger_error(sprintf(__('Referenced fixture class %s not found', true), $class), E_USER_WARNING);
 			}
 		}
 	}

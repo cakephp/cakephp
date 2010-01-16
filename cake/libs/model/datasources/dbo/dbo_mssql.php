@@ -111,7 +111,7 @@ class DboMssql extends DboSource {
 	function __construct($config, $autoConnect = true) {
 		if ($autoConnect) {
 			if (!function_exists('mssql_min_message_severity')) {
-				trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_WARNING);
+				trigger_error(__("PHP SQL Server interface is not installed, cannot continue. For troubleshooting information, see http://php.net/mssql/", true), E_USER_WARNING);
 			}
 			mssql_min_message_severity(15);
 			mssql_min_error_severity(2);
