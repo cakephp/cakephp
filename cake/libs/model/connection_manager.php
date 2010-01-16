@@ -62,6 +62,7 @@ class ConnectionManager extends Object {
 		if (class_exists('DATABASE_CONFIG')) {
 			$this->config =& new DATABASE_CONFIG();
 		}
+		$this->_getConnectionObjects();
 	}
 
 /**
@@ -96,14 +97,13 @@ class ConnectionManager extends Object {
 			$return =& $_this->_dataSources[$name];
 			return $return;
 		}
-		$connections = $_this->enumConnectionObjects();
 
-		if (empty($connections[$name])) {
+		if (empty($_this->_connectionsEnum[$name])) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s", true), $name), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
-		$conn = $connections[$name];
+		$conn = $_this->_connectionsEnum[$name];
 		$class = $conn['classname'];
 
 		if ($_this->loadDataSource($name) === null) {
@@ -165,8 +165,7 @@ class ConnectionManager extends Object {
 		if (is_array($connName)) {
 			$conn = $connName;
 		} else {
-			$connections = $_this->enumConnectionObjects();
-			$conn = $connections[$connName];
+			$conn = $_this->_connectionsEnum[$connName];
 		}
 
 		if (class_exists($conn['classname'])) {
@@ -188,7 +187,7 @@ class ConnectionManager extends Object {
 	}
 
 /**
- * Gets a list of class and file names associated with the user-defined DataSource connections
+ * Return a list of connections
  *
  * @return array An associative array of elements where the key is the connection name
  *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
@@ -198,19 +197,7 @@ class ConnectionManager extends Object {
 	function enumConnectionObjects() {
 		$_this =& ConnectionManager::getInstance();
 
-		if (!empty($_this->_connectionsEnum)) {
-			return $_this->_connectionsEnum;
-		}
-		$connections = get_object_vars($_this->config);
-
-		if ($connections != null) {
-			foreach ($connections as $name => $config) {
-				$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
-			}
-			return $_this->_connectionsEnum;
-		} else {
-			$_this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
-		}
+		return $_this->_connectionsEnum;
 	}
 
 /**
@@ -233,6 +220,25 @@ class ConnectionManager extends Object {
 		$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
 		$return =& $_this->getDataSource($name);
 		return $return;
+	}
+
+/**
+ * Gets a list of class and file names associated with the user-defined DataSource connections
+ *
+ * @return void
+ * @access protected
+ * @static
+ */
+	function _getConnectionObjects() {
+		$connections = get_object_vars($this->config);
+
+		if ($connections != null) {
+			foreach ($connections as $name => $config) {
+				$this->_connectionsEnum[$name] = $this->__connectionData($config);
+			}
+		} else {
+			$this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
+		}
 	}
 
 /**
