@@ -85,7 +85,7 @@
 /**
  * Uncomment the define below to use CakePHP prefix routes.
  *
- * Set to an array of prefixes you want to use in your application. Use for 
+ * Set to an array of prefixes you want to use in your application. Use for
  * admin or other prefixed routes.
  *
  * 	Routing.prefixes = array('admin', 'manager');
@@ -205,6 +205,11 @@
  * A random string used in security hashing methods.
  */
 	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
+
+/**
+ * A random numeric string (digits only) used to encrypt/decrypt strings.
+ */
+	Configure::write('Security.cipher_seed', '76859309657453542496749683645');
 
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.

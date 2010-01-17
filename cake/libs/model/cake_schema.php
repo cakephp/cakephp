@@ -485,11 +485,16 @@ class CakeSchema extends Object {
 
 			if (isset($old[$table]['indexes']) && isset($new[$table]['indexes'])) {
 				$diff = $this->_compareIndexes($new[$table]['indexes'], $old[$table]['indexes']);
-				if ($diff && isset($diff['drop'])) {
-					$tables[$table]['drop']['indexes'] = $diff['drop'];
-				}
-				if ($diff && isset($diff['add'])) {
-					$tables[$table]['add']['indexes'] = $diff['add'];
+				if ($diff) {
+					if (!isset($tables[$table])) {
+						$tables[$table] = array();
+					}
+					if (isset($diff['drop'])) {
+						$tables[$table]['drop']['indexes'] = $diff['drop'];
+					}
+					if ($diff && isset($diff['add'])) {
+						$tables[$table]['add']['indexes'] = $diff['add'];
+					}
 				}
 			}
 			if (isset($old[$table]['tableParameters']) && isset($new[$table]['tableParameters'])) {

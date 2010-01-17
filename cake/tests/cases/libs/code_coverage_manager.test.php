@@ -63,44 +63,55 @@ class CodeCoverageManagerTest extends CakeTestCase {
  * @return void
  */
 	function testNoTestCaseSupplied() {
-		if (PHP_SAPI != 'cli') {
-			$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
+		if ($this->skipIf(PHP_SAPI == 'cli', 'Is cli, cannot run this test %s')) {
+			return;
+		}
+		$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
 
-			CodeCoverageManager::init(substr(md5(microtime()), 0, 5), $reporter);
-			CodeCoverageManager::report(false);
-			$this->assertError();
+		CodeCoverageManager::init(substr(md5(microtime()), 0, 5), $reporter);
+		CodeCoverageManager::report(false);
+		$this->assertError();
 
-			CodeCoverageManager::init('tests' . DS . 'lib' . DS . basename(__FILE__), $reporter);
-			CodeCoverageManager::report(false);
-			$this->assertError();
-
-			$path = LIBS;
-			if (strpos(LIBS, ROOT) === false) {
-				$path = ROOT.DS.LIBS;
-			}
-			App::import('Core', 'Folder');
-			$folder = new Folder();
-			$folder->cd($path);
-			$contents = $folder->read();
+		CodeCoverageManager::init('tests' . DS . 'lib' . DS . basename(__FILE__), $reporter);
+		CodeCoverageManager::report(false);
+		$this->assertError();
+	}
 
 /**
- * remove method
+ * Test that test cases don't cause errors
  *
- * @param mixed $var
- * @access public
  * @return void
  */
-			function remove($var) {
-				return ($var != basename(__FILE__));
-			}
-			$contents[1] = array_filter($contents[1], "remove");
-
-			foreach ($contents[1] as $file) {
-				CodeCoverageManager::init('libs' . DS . $file, $reporter);
-				CodeCoverageManager::report(false);
-				$this->assertNoErrors('libs' . DS . $file);
-			}
+	function testNoTestCaseSuppliedNoErrors() {
+		if ($this->skipIf(PHP_SAPI == 'cli', 'Is cli, cannot run this test %s')) {
+			return;
 		}
+		$reporter =& new CakeHtmlReporter(null, array('group' => false, 'app' => false, 'plugin' => false));
+		$path = LIBS;
+		if (strpos(LIBS, ROOT) === false) {
+			$path = ROOT.DS.LIBS;
+		}
+		App::import('Core', 'Folder');
+		$folder = new Folder();
+		$folder->cd($path);
+		$contents = $folder->read();
+
+		$contents[1] = array_filter($contents[1], array(&$this, '_basenameFilter'));
+
+		foreach ($contents[1] as $file) {
+			CodeCoverageManager::init('libs' . DS . $file, $reporter);
+			CodeCoverageManager::report(false);
+			$this->assertNoErrors('libs' . DS . $file);
+		}
+	}
+
+/**
+ * Remove file names that don't share a basename with the current file.
+ *
+ * @return void
+ */
+	function _basenameFilter($var) {
+		return ($var != basename(__FILE__));
 	}
 
 /**

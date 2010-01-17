@@ -22,12 +22,12 @@ if (!class_exists('CakeSession')) {
 }
 
 /**
- * SessionTest class
+ * CakeSessionTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class SessionTest extends CakeTestCase {
+class CakeSessionTest extends CakeTestCase {
 
 /**
  * Fixtures used in the SessionTest

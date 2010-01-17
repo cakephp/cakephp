@@ -33,9 +33,8 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('ExtractTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
+
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',

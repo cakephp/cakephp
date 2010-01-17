@@ -44,7 +44,7 @@ class LibGroupTest extends TestSuite {
  */
 	function LibGroupTest() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'basics');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'inflector');
+		// TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'inflector');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'cake_session');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'debugger');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'error');

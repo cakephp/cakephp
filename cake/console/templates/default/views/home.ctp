@@ -3,7 +3,7 @@ $output = "<h2>Sweet, \"" . Inflector::humanize($app) . "\" got Baked by CakePHP
 $output .="
 <?php
 if (Configure::read() > 0):
-	Debugger::checkSessionKey();
+	Debugger::checkSecurityKeys();
 endif;
 ?>
 <p>

@@ -25,7 +25,7 @@ endif;
 echo $this->Html->link(__('Read the changelog', true), 'http://code.cakephp.org/wiki/changelog/1_3_0-alpha');
 
 if (Configure::read() > 0):
-	Debugger::checkSessionKey();
+	Debugger::checkSecurityKeys();
 endif;
 ?>
 <p>

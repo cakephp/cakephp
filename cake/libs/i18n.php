@@ -496,15 +496,15 @@ class I18n extends Object {
 				continue;
 			}
 
-			$mustEscape = array($escape.',',$escape.';',$escape.'<',$escape.'>',$escape.$escape);
-			$replacements = array_map('crc32',$mustEscape);
-			$value = str_replace($mustEscape,$replacements,$value);
-			$value = explode(';',$value);
+			$mustEscape = array($escape . ',' , $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
+			$replacements = array_map('crc32', $mustEscape);
+			$value = str_replace($mustEscape, $replacements, $value);
+			$value = explode(';', $value);
 			$_this->__escape = $escape;
 			foreach ($value as $i => $val) {
-				$val = trim($val,'"');
-				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/',array(&$this,'__parseLiteralValue'),$val);
-				$val = str_replace($replacements,$mustEscape,$val);
+				$val = trim($val, '"');
+				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$this, '__parseLiteralValue'), $val);
+				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
 			if (count($value) == 1) {

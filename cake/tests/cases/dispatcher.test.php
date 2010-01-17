@@ -1516,17 +1516,10 @@ class DispatcherTest extends CakeTestCase {
 
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'my_plugin';
-		$this->assertIdentical($controller->plugin, $expected);
-
-		$expected = 'MyPlugin';
-		$this->assertIdentical($controller->name, $expected);
-
-		$expected = 'add';
-		$this->assertIdentical($controller->action, $expected);
-
-		$expected = array('param' => 'value', 'param2' => 'value2');
-		$this->assertEqual($controller->params['named'], $expected);
+		$this->assertIdentical($controller->plugin, 'my_plugin');
+		$this->assertIdentical($controller->name, 'MyPlugin');
+		$this->assertIdentical($controller->action, 'add');
+		$this->assertEqual($controller->params['named'], array('param' => 'value', 'param2' => 'value2'));
 
 
 		Router::reload();
@@ -1678,6 +1671,8 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		), true);
+		App::objects('plugin', null, false);
+
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
@@ -1687,6 +1682,21 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params['plugin'], 'test_plugin');
 		$this->assertEqual($controller->params['action'], 'index');
 		$this->assertFalse(isset($controller->params['pass'][0]));
+
+		$url = '/test_plugin/tests/index';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual($controller->params['controller'], 'tests');
+		$this->assertEqual($controller->params['plugin'], 'test_plugin');
+		$this->assertEqual($controller->params['action'], 'index');
+		$this->assertFalse(isset($controller->params['pass'][0]));
+
+		$url = '/test_plugin/tests/index/some_param';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual($controller->params['controller'], 'tests');
+		$this->assertEqual($controller->params['plugin'], 'test_plugin');
+		$this->assertEqual($controller->params['action'], 'index');
+		$this->assertEqual($controller->params['pass'][0], 'some_param');
+
 		App::build();
 	}
 
@@ -1985,7 +1995,7 @@ class DispatcherTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
 		), true);
 
-		$dispatcher =& new Dispatcher();
+		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
 
 		$url = '/';
@@ -2119,7 +2129,7 @@ class DispatcherTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 
-		$dispatcher =& new Dispatcher();
+		$dispatcher =& new TestDispatcher();
 		$dispatcher->base = false;
 
 		$url = 'test_cached_pages/cache_form';
@@ -2139,6 +2149,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertEqual($result, $expected);
 		$filename = $this->__cachePath($dispatcher->here);
+		@unlink($filename);
 		ClassRegistry::flush();
 	}
 

@@ -2558,8 +2558,12 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel =& new TheVoid();
 		$this->assertFalse($TestModel->exists());
+
 		$TestModel->id = 5;
+		$this->expectError();
+		ob_start();
 		$this->assertFalse($TestModel->exists());
+		$output = ob_get_clean();
 	}
 
 /**

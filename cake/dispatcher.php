@@ -167,16 +167,6 @@ class Dispatcher extends Object {
 		if (!empty($this->params['bare'])) {
 			$controller->autoLayout = false;
 		}
-		if (array_key_exists('layout', $this->params)) {
-			if (empty($this->params['layout'])) {
-				$controller->autoLayout = false;
-			} else {
-				$controller->layout = $this->params['layout'];
-			}
-		}
-		if (isset($this->params['viewPath'])) {
-			$controller->viewPath = $this->params['viewPath'];
-		}
 		return $this->_invoke($controller, $this->params);
 	}
 
