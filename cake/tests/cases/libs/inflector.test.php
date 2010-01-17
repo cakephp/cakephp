@@ -381,6 +381,11 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('singulars'), 'singulars');
 	}
 
+/**
+ * Test resetting inflection rules.
+ *
+ * @return void
+ */
 	function testCustomRuleWithReset() {
 		$uninflected = array('atlas', 'lapis', 'onibus', 'pires', 'virus', '.*x');
 		$pluralIrregular = array('as' => 'ases');

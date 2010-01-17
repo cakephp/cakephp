@@ -1824,7 +1824,7 @@ class SetTest extends CakeTestCase {
 			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => 'models', 'primaryKey' => 'id', '_schema' => null, 'validate' => array(),
 			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'transactional' => false, 'cacheQueries' => false,
 			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'whitelist' =>  array(), 'cacheSources' => true,
-			'findQueryType' => null, 'recursive' => 1, 'order' => null, '__exists' => null,
+			'findQueryType' => null, 'recursive' => 1, 'order' => null, 'virtualFields' => array(),
 			'__associationKeys' => array(
 				'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 				'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
