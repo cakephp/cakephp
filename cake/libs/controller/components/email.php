@@ -505,8 +505,8 @@ class EmailComponent extends Object{
 			}
 		}
 
-		$this->__createBoundary();
 		if (!empty($this->attachments)) {
+			$this->__createBoundary();
 			$this->__header[] = 'MIME-Version: 1.0';
 			$this->__header[] = 'Content-Type: multipart/mixed; boundary="' . $this->__boundary . '"';
 			$this->__header[] = 'This part of the E-mail should never be seen. If';
