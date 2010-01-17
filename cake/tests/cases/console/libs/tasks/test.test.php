@@ -34,10 +34,9 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('TestTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
+
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestTestTaskMockShellDispatcher',

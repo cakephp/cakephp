@@ -32,9 +32,7 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('ProjectTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestProjectTaskMockShellDispatcher',
