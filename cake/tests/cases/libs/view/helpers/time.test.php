@@ -661,7 +661,7 @@ class TimeHelperTest extends CakeTestCase {
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
 		), true);
 		Configure::write('Config.language', 'time_test');
-		$time = 1263485619; // Thu Jan 14 11:43:39 2010
+		$time = 1263487419; // Thu Jan 14 11:43:39 2010
 
 		$result = $this->Time->convertSpecifiers('%a', $time);
 		$expected = 'jue';
@@ -751,14 +751,14 @@ class TimeHelperTest extends CakeTestCase {
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
 		), true);
 		Configure::write('Config.language', 'time_test');
-		$time = 1263493768; //Thu Jan 14 13:59:28 2010
+		$time = 1263495568; //Thu Jan 14 13:59:28 2010
 
 		$result = $this->Time->i18nFormat($time);
 		$expected = '14/01/10';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'jue 14 ene 2010 13:59:28 VET';
+		$expected = 'jue 14 ene 2010 13:59:28 ' . strftime('%Z');
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
