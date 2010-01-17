@@ -4014,8 +4014,24 @@ class DboSourceTest extends CakeTestCase {
 		$expected = '(sm)';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->testDb->name('name AS x');
+		$expected = '`name` AS `x`';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->name('Model.name AS x');
+		$expected = '`Model`.`name` AS `x`';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->testDb->name('Function(Something.foo)');
 		$expected = 'Function(`Something`.`foo`)';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->name('Function(SubFunction(Something.foo))');
+		$expected = 'Function(SubFunction(`Something`.`foo`))';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->name('Function(Something.foo) AS x');
+		$expected = 'Function(`Something`.`foo`) AS `x`';
 		$this->assertEqual($result, $expected);
 	}
 

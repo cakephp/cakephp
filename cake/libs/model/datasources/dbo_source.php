@@ -469,63 +469,37 @@ class DboSource extends DataSource {
  * @access public
  */
 	function name($data) {
-		if ($data == '*') {
+		if ($data === '*') {
 			return '*';
 		}
 		if (is_object($data) && isset($data->type)) {
 			return $data->value;
 		}
-		$array = is_array($data);
-		$data = (array)$data;
-		$count = count($data);
-
-		for ($i = 0; $i < $count; $i++) {
-			if ($data[$i] == '*') {
-				continue;
+		if (is_array($data)) {
+			foreach ($data as $i => $dataItem) {
+				$data[$i] = $this->name($dataItem);
 			}
-			if (strpos($data[$i], '(') !== false && preg_match_all('/([^(]*)\((.*)\)(.*)/', $data[$i], $fields)) {
-				$fields = Set::extract($fields, '{n}.0');
-
-				if (!empty($fields[1])) {
-					if (!empty($fields[2])) {
-						$data[$i] = $fields[1] . '(' . $this->name($fields[2]) . ')' . $fields[3];
-					} else {
-						$data[$i] = $fields[1] . '()' . $fields[3];
-					}
-				}
-			}
-			$data[$i] = str_replace('.', $this->endQuote . '.' . $this->startQuote, $data[$i]);
-			$data[$i] = $this->startQuote . $data[$i] . $this->endQuote;
-			$data[$i] = str_replace($this->startQuote . $this->startQuote, $this->startQuote, $data[$i]);
-			$data[$i] = str_replace($this->startQuote . '(', '(', $data[$i]);
-			$data[$i] = str_replace(')' . $this->startQuote, ')', $data[$i]);
-			$alias = !empty($this->alias) ? $this->alias : 'AS ';
-
-			if (preg_match('/\s+' . $alias . '\s*/', $data[$i])) {
-				if (preg_match('/\w+\s+' . $alias . '\s*/', $data[$i])) {
-					$quoted = $this->endQuote . ' ' . $alias . $this->startQuote;
-					$data[$i] = str_replace(' ' . $alias, $quoted, $data[$i]);
-				} else {
-					$quoted = $alias . $this->startQuote;
-					$data[$i] = str_replace($alias, $quoted, $data[$i]) . $this->endQuote;
-				}
-			}
-
-			if (!empty($this->endQuote) && $this->endQuote == $this->startQuote) {
-				if (substr_count($data[$i], $this->endQuote) % 2 == 1) {
-					if (substr($data[$i], -2) == $this->endQuote . $this->endQuote) {
-						$data[$i] = substr($data[$i], 0, -1);
-					} else {
-						$data[$i] = trim($data[$i], $this->endQuote);
-					}
-				}
-			}
-			if (strpos($data[$i], '*')) {
-				$data[$i] = str_replace($this->endQuote . '*' . $this->endQuote, '*', $data[$i]);
-			}
-			$data[$i] = str_replace($this->endQuote . $this->endQuote, $this->endQuote, $data[$i]);
+			return $data;
 		}
-		return (!$array) ? $data[0] : $data;
+		$data = trim($data);
+		if (preg_match('/^\w+(\.\w+)*$/', $data)) { // string, string.string
+			if (strpos($data, '.') === false) { // string
+				return $this->startQuote . $data . $this->endQuote;
+			}
+			$items = explode('.', $data);
+			return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+		}
+		if (preg_match('/^\w+\.\*$/', $data)) { // string.*
+			$items = explode('.', $data);
+			return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $data);
+		}
+		if (preg_match('/^(\w+)\((.*)\)$/', $data, $matches)) { // Functions
+			return $matches[1] . '(' . $this->name($matches[2]) . ')';
+		}
+		if (preg_match('/^(\w+(\.\w+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*(\w+)$/', $data, $matches)) {
+			return preg_replace('/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3]));
+		}
+		return $data;
 	}
 
 /**
