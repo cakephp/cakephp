@@ -293,12 +293,16 @@ class Shell extends Object {
 					}
 				}
 			}
-			if (ClassRegistry::isKeySet($taskClass)) {
+			$taskClassCheck = $taskClass;
+			if (!PHP5) {
+				$taskClassCheck = strtolower($taskClass);
+			}
+			if (ClassRegistry::isKeySet($taskClassCheck)) {
 				$this->taskNames[] = $taskName;
 				if (!PHP5) {
-					$this->{$taskName} =& ClassRegistry::getObject($taskClass);
+					$this->{$taskName} =& ClassRegistry::getObject($taskClassCheck);
 				} else {
-					$this->{$taskName} = ClassRegistry::getObject($taskClass);
+					$this->{$taskName} = ClassRegistry::getObject($taskClassCheck);
 				}
 			} else {
 				$this->taskNames[] = $taskName;
