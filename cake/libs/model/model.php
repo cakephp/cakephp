@@ -667,6 +667,9 @@ class Model extends Overloadable {
 			} else {
 				$this->{$assoc} =& ClassRegistry::init($model);
 			}
+			if (strpos($className, '.') !== false) {
+				ClassRegistry::addObject($className, $this->{$assoc});
+			}
 			if ($assoc) {
 				$this->tableToModel[$this->{$assoc}->table] = $assoc;
 			}

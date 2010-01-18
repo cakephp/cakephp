@@ -431,6 +431,7 @@ class ObjectTest extends CakeTestCase {
 		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
 		$this->assertFalse(class_exists('TestPluginPersisterBehavior'));
+		$this->assertFalse(class_exists('TestPluginAuthors'));
 
 		$Controller = new RequestActionPersistentController();
 		$Controller->persistModel = true;
@@ -439,13 +440,18 @@ class ObjectTest extends CakeTestCase {
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisterone.php'));
 		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
 
-		$contents = str_replace('"PersisterOne"', '"PersisterTwo"', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
-		$contents = str_replace('persister_one_', 'persister_two_', file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php'));
+		$contents = file_get_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
+		$contents = str_replace('"PersisterOne"', '"PersisterTwo"', $contents);
+		$contents = str_replace('persister_one', 'persister_two', $contents);
+		$contents = str_replace('test_plugin_comment', 'test_plugin_authors', $contents);
 		$result = file_put_contents(CACHE . 'persistent' . DS . 'persisteroneregistry.php', $contents);
 
 		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
+		$this->assertTrue(class_exists('TestPluginPersisterOneBehavior'));
+		$this->assertTrue(class_exists('TestPluginComment'));
 		$this->assertFalse(class_exists('PersisterTwoBehaviorBehavior'));
 		$this->assertFalse(class_exists('TestPluginPersisterTwoBehavior'));
+		$this->assertFalse(class_exists('TestPluginAuthors'));
 
 		$Controller = new RequestActionPersistentController();
 		$Controller->persistModel = true;
@@ -454,6 +460,7 @@ class ObjectTest extends CakeTestCase {
 		$this->assertTrue(class_exists('PersisterOneBehaviorBehavior'));
 		$this->assertTrue(class_exists('PersisterTwoBehaviorBehavior'));
 		$this->assertTrue(class_exists('TestPluginPersisterTwoBehavior'));
+		$this->assertTrue(class_exists('TestPluginAuthors'));
 
 		@unlink(CACHE . 'persistent' . DS . 'persisterone.php');
 		@unlink(CACHE . 'persistent' . DS . 'persisteroneregistry.php');
@@ -490,6 +497,8 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($keys, array(
 			'persister_one',
 			'comment',
+			'test_plugin_comment',
+			'test_plugin.test_plugin_comment',
 			'persister_one_behavior_behavior',
 			'test_plugin_persister_one_behavior',
 			'test_plugin.test_plugin_persister_one_behavior'
@@ -504,6 +513,8 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEqual($keys, array(
 			'persister_one',
 			'comment',
+			'test_plugin_comment',
+			'test_plugin.test_plugin_comment',
 			'persister_one_behavior_behavior',
 			'test_plugin_persister_one_behavior',
 			'test_plugin.test_plugin_persister_one_behavior',

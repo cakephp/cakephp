@@ -275,7 +275,7 @@ class Object {
 					if (strpos($key, '_behavior') !== false) {
 						App::import('Behavior', Inflector::classify(substr($key, 0, -9)));
 					} else {
-						App::import('Model', Inflector::classify($key));
+						App::import('Model', Inflector::camelize($key));
 					}
 					unset ($value);
 				}
