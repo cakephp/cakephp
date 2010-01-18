@@ -1849,7 +1849,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testCurentRoute() {
+	function testCurrentRoute() {
 		$url = array('controller' => 'pages', 'action' => 'display', 'government');
 		Router::connect('/government', $url);
 		Router::parse('/government');
@@ -1922,6 +1922,32 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/posts/edit/5');
 		$this->assertFalse(isset($result['controller']));
 		$this->assertFalse(isset($result['action']));
+	}
+
+/**
+ * test that the required default routes are connected.
+ *
+ * @return void
+ */
+	function testConnectDefaultRoutes() {
+		App::build(array(
+			'plugins' =>  array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			)
+		), true);
+		App::objects('plugin', null, false);
+
+		$plugins = App::objects('plugin');
+		$plugin = Inflector::underscore($plugins[0]);
+		$result = Router::url(array('plugin' => $plugin, 'controller' => 'js_file', 'action' => 'index'));
+		$this->assertEqual($result, '/plugin_js/js_file');
+
+		$result = Router::parse('/plugin_js/js_file');
+		$expected = array(
+			'plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index',
+			'named' => array(), 'pass' => array()
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
