@@ -403,9 +403,7 @@ class AuthComponent extends Object {
 				if (isset($controller->Acl)) {
 					$this->Acl =& $controller->Acl;
 				} else {
-					$err = 'Could not find AclComponent. Please include Acl in ';
-					$err .= 'Controller::$components.';
-					trigger_error(__($err, true), E_USER_WARNING);
+					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
 				}
 			break;
 			case 'model':
@@ -514,10 +512,8 @@ class AuthComponent extends Object {
 			case 'crud':
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
-					$err = 'Auth::startup() - Attempted access of un-mapped action "%1$s" in';
-					$err .= ' controller "%2$s"';
 					trigger_error(
-						sprintf(__($err, true), $this->params['action'], $this->params['controller']),
+						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', true), $this->params['action'], $this->params['controller']),
 						E_USER_WARNING
 					);
 				} else {

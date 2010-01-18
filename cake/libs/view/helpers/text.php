@@ -273,7 +273,7 @@ class TextHelper extends AppHelper {
  * @access public
  */
 	function trim() {
-		trigger_error('TextHelper::trim() is deprecated.  Use TextHelper::truncate() instead', E_USER_WARNING);
+		trigger_error(__('TextHelper::trim() is deprecated. Use TextHelper::truncate() instead', true), E_USER_WARNING);
 		$args = func_get_args();
 		return call_user_func_array(array(&$this, 'truncate'), $args);
 	}

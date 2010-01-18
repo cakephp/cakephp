@@ -828,7 +828,7 @@ class Set {
  * @deprecated
  */
 	function isEqual($val1, $val2 = null) {
-		trigger_error('Set::isEqual() is deprecated. Please use standard comparison operators instead.', E_USER_WARNING);
+		trigger_error(__('Set::isEqual() is deprecated. Please use standard comparison operators instead.', true), E_USER_WARNING);
 		return ($val1 == $val2);
 	}
 

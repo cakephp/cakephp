@@ -20,11 +20,11 @@
 <h2><?php __('Missing Component Class'); ?></h2>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__('Component class %1$s in %2$s was not found.', true), '<em>' . $component . 'Component</em>', '<em>' . $controller . 'Controller</em>');?>
+	<?php printf(__('Component class %1$s in %2$s was not found.', true), '<em>' . $component . 'Component</em>', '<em>' . $controller . 'Controller</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php __('Error'); ?>: </strong>
-	<?php echo sprintf(__('Create the class %s in file: %s', true), '<em>' . $component . 'Component</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file);?>
+	<?php printf(__('Create the class %s in file: %s', true), '<em>' . $component . 'Component</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -35,5 +35,5 @@ class <?php echo $component;?>Component extends Object {<br />
 </pre>
 <p class="notice">
 	<strong><?php __('Notice'); ?>: </strong>
-	<?php echo sprintf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_component_class.ctp');?>
+	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_component_class.ctp'); ?>
 </p>

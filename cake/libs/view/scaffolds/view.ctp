@@ -18,7 +18,7 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> view">
-<h2><?php echo sprintf(__("View %s", true), $singularHumanName);?></h2>
+<h2><?php printf(__("View %s", true), $singularHumanName); ?></h2>
 	<dl>
 <?php
 $i = 0;
@@ -72,7 +72,7 @@ foreach ($scaffoldFields as $_field) {
 if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
+	<h3><?php printf(__("Related %s", true), Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<dl>
 <?php
@@ -111,7 +111,7 @@ foreach ($relations as $_alias => $_details):
 $otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">
-	<h3><?php echo sprintf(__("Related %s", true), Inflector::humanize($_details['controller']));?></h3>
+	<h3><?php printf(__("Related %s", true), Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>

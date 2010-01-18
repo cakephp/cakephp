@@ -441,7 +441,7 @@ class BehaviorCollection extends Object {
 		$call = null;
 
 		if ($strict && !$found) {
-			trigger_error("BehaviorCollection::dispatchMethod() - Method {$method} not found in any attached behavior", E_USER_WARNING);
+			trigger_error(sprintf(__("BehaviorCollection::dispatchMethod() - Method %s not found in any attached behavior", true), $method), E_USER_WARNING);
 			return null;
 		} elseif ($found) {
 			$methods = array_combine($methods, array_values($this->__methods));

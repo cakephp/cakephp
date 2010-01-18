@@ -141,7 +141,7 @@ class SessionComponent extends CakeSession {
  * @deprecated use delete
  */
 	function del($name) {
-		trigger_error('Deprecated method, use SessionComponent::delete instead', E_USER_WARNING);
+		trigger_error(__('Deprecated method, use SessionComponent::delete instead', true), E_USER_WARNING);
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::del($name);

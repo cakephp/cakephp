@@ -245,7 +245,7 @@ class CakeSession extends Object {
  * @deprecated Use CakeSession::delete instead
  */
 	function del($name) {
-		trigger_error('CakeSession::del() is deprecated, use CakeSession::delete() instead.', E_USER_WARNING);
+		trigger_error(__('CakeSession::del() is deprecated, use CakeSession::delete() instead.', true), E_USER_WARNING);
 		return $this->delete($name);
 	}
 
@@ -259,12 +259,12 @@ class CakeSession extends Object {
 	function delete($name) {
 		if ($this->check($name)) {
 			if (in_array($name, $this->watchKeys)) {
-				trigger_error('Deleting session key {' . $name . '}', E_USER_NOTICE);
+				trigger_error(sprintf(__('Deleting session key {%s}', true), $name), E_USER_NOTICE);
 			}
 			$this->__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return ($this->check($name) == false);
 		}
-		$this->__setError(2, "$name doesn't exist");
+		$this->__setError(2, sprintf(__("%s doesn't exist", true), $name));
 		return false;
 	}
 
@@ -423,7 +423,7 @@ class CakeSession extends Object {
 			return false;
 		}
 		if (in_array($name, $this->watchKeys)) {
-			trigger_error('Writing session key {' . $name . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
+			trigger_error(sprintf(__('Writing session key {%s}: %s', true), $name, Debugger::exportVar($value)), E_USER_NOTICE);
 		}
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $name, $value));
 		return (Set::classicExtract($_SESSION, $name) === $value);
