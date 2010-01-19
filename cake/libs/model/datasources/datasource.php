@@ -436,11 +436,11 @@ class DataSource extends Object {
  * @access public
  */
 	function isInterfaceSupported($interface) {
-		$methods = get_class_methods(get_class($this));
-		$methods = strtolower(implode('|', $methods));
-		$methods = explode('|', $methods);
-		$return = in_array(strtolower($interface), $methods);
-		return $return;
+		static $methods = false;
+		if ($methods === false) {
+			$methods = array_map('strtolower', get_class_methods($this));
+		}
+		return in_array(strtolower($interface), $methods);
 	}
 
 /**

@@ -605,7 +605,7 @@ class DboMysql extends DboMysqlBase {
 		} else {
 			$tables = array();
 
-			while ($line = mysql_fetch_array($result)) {
+			while ($line = mysql_fetch_row($result)) {
 				$tables[] = $line[0];
 			}
 			parent::listSources($tables);
@@ -727,7 +727,6 @@ class DboMysql extends DboMysqlBase {
 		$j = 0;
 
 		while ($j < $numFields) {
-
 			$column = mysql_fetch_field($results,$j);
 			if (!empty($column->table)) {
 				$this->map[$index++] = array($column->table, $column->name);

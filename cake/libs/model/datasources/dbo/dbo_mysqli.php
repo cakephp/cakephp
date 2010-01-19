@@ -140,7 +140,7 @@ class DboMysqli extends DboMysqlBase {
  */
 	function listSources() {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache !== null) {
 			return $cache;
 		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']) . ';');
@@ -151,7 +151,7 @@ class DboMysqli extends DboMysqlBase {
 
 		$tables = array();
 
-		while ($line = mysqli_fetch_array($result)) {
+		while ($line = mysqli_fetch_row($result)) {
 			$tables[] = $line[0];
 		}
 		parent::listSources($tables);
@@ -290,14 +290,12 @@ class DboMysqli extends DboMysqlBase {
 	function fetchResult() {
 		if ($row = mysqli_fetch_row($this->results)) {
 			$resultRow = array();
-			$i = 0;
 			foreach ($row as $index => $field) {
 				$table = $column = null;
-				if (count($this->map[$index]) == 2) {
+				if (count($this->map[$index]) === 2) {
 					list($table, $column) = $this->map[$index];
 				}
 				$resultRow[$table][$column] = $row[$index];
-				$i++;
 			}
 			return $resultRow;
 		}
