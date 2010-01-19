@@ -278,6 +278,7 @@ class Router {
 			$routeClass = $options['routeClass'];
 			unset($options['routeClass']);
 		}
+		//TODO 2.0 refactor this to use a string class name, throw exception, and then construct.
 		$Route =& new $routeClass($route, $defaults, $options);
 		if ($routeClass !== 'CakeRoute' && !is_subclass_of($Route, 'CakeRoute')) {
 			trigger_error(__('Route classes must extend CakeRoute', true), E_USER_WARNING);
@@ -539,6 +540,7 @@ class Router {
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
+			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 		}
 
