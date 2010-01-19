@@ -1882,7 +1882,7 @@ class DboSource extends DataSource {
 			foreach($keys as $field) {
 				$keys[] = $model->alias . '.' . $field;
 			}
-			$virtual = ($allFields) ? $keys :  array_intersect($keys, $fields);
+			$virtual = ($allFields) ? $keys : array_intersect($keys, $fields);
 		}
 		foreach($virtual as &$field) {
 			if (strpos($field, '.')) {

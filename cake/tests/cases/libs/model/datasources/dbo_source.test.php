@@ -4098,6 +4098,9 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNoPattern('/Num:/s', $contents);
 		$this->assertNoPattern('/Took:/s', $contents);
 	}
+	function getTests() {
+		return array('start', 'startCase', 'testVirtualFields', 'endCase', 'end');
+	}
 
 /**
  * test fields generating usable virtual fields to use in query
@@ -4127,14 +4130,21 @@ class DboSourceTest extends CakeTestCase {
 			'(1 + 1) AS  `Article__two`',
 			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
 		);
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
 
-		$result = $this->db->fields($Article, null, array('this_moment','title'));
+		$result = $this->db->fields($Article, null, array('this_moment', 'title'));
 		$expected = array(
 			'`Article`.`title`',
 			'(NOW()) AS  `Article__this_moment`',
 		);
-		$this->assertEqual($expected,$result);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->db->fields($Article, null, array('Article.title', 'Article.this_moment'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
