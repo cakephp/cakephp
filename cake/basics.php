@@ -204,13 +204,19 @@ if (!function_exists('array_combine')) {
 		if (is_array($text)) {
 			return array_map('h', $text);
 		}
-		if (empty($charset)) {
-			$charset = Configure::read('App.encoding');
+
+		static $defaultCharset = false;
+		if ($defaultCharset === false) {
+			$defaultCharset = Configure::read('App.encoding');
+			if ($defaultCharset === null) {
+				$defaultCharset = 'UTF-8';
+			}
 		}
-		if (empty($charset)) {
-			$charset = 'UTF-8';
+		if ($charset) {
+			return htmlspecialchars($text, ENT_QUOTES, $charset);
+		} else {
+			return htmlspecialchars($text, ENT_QUOTES, $defaultCharset);
 		}
-		return htmlspecialchars($text, ENT_QUOTES, $charset);
 	}
 
 /**
