@@ -122,7 +122,7 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-		App::import('Core', 'Set', 'Security');
+		App::import('Core', array('Set', 'Security'));
 		$this->time = time();
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
