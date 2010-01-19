@@ -317,7 +317,7 @@ class Helper extends Overloadable {
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$keys = array_diff(array_keys($options), array_merge((array)$exclude, array('escape')));
+			$keys = array_diff(array_keys($options), array_merge($exclude, array('escape')));
 			$values = array_intersect_key(array_values($options), $keys);
 			$escape = $options['escape'];
 			$attributes = array();
