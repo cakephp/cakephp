@@ -4098,9 +4098,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertNoPattern('/Num:/s', $contents);
 		$this->assertNoPattern('/Took:/s', $contents);
 	}
-	function getTests() {
-		return array('start', 'startCase', 'testVirtualFields', 'endCase', 'end');
-	}
 
 /**
  * test fields generating usable virtual fields to use in query
