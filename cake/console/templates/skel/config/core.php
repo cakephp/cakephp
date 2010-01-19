@@ -209,7 +209,7 @@
 /**
  * A random numeric string (digits only) used to encrypt/decrypt strings.
  */
-	Configure::write('Security.cipher_seed', '76859309657453542496749683645');
+	Configure::write('Security.cipherSeed', '76859309657453542496749683645');
 
 /**
  * Compress CSS output by removing comments, whitespace, repeating tags, etc.

@@ -174,7 +174,7 @@ class Security extends Object {
 			return '';
 		}
 
-		srand(Configure::read('Security.cipher_seed'));
+		srand(Configure::read('Security.cipherSeed'));
 		$out = '';
 
 		for ($i = 0; $i < strlen($text); $i++) {
@@ -184,6 +184,8 @@ class Security extends Object {
 			$mask = rand(0, 255);
 			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
 		}
+
+		srand();
 		return $out;
 	}
 }
