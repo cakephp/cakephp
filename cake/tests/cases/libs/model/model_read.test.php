@@ -7172,7 +7172,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testVirtualFields() {
-		$this->loadFixtures('Post','Author');
+		$this->loadFixtures('Post', 'Author');
 		$Post =& ClassRegistry::init('Post');
 		$Post->virtualFields = array('two' => "1 + 1");
 		$result = $Post->find('first');
@@ -7235,7 +7235,7 @@ class ModelReadTest extends BaseModelTest {
 		$Writing->virtualFields = array('two' => "1 + 1");
 		$result = $Writing->find('first');
 		$this->assertEqual($result['Writing']['two'], 2);
-		
+
 		$Post->create();
 		$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
 		$result = $Post->field('other_field');
@@ -7263,6 +7263,37 @@ class ModelReadTest extends BaseModelTest {
 		));
 
 		$this->assertEqual($result, $expectation);
+	}
+
+/**
+ * test that isVirtualField will accept both aliased and non aliased fieldnames
+ *
+ * @return void
+ */
+	function testIsVirtualField() {
+		$this->loadFixtures('Post');
+		$Post =& ClassRegistry::init('Post');
+		$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
+
+		$this->assertTrue($Post->isVirtualField('other_field'));
+		$this->assertTrue($Post->isVirtualField('Post.other_field'));
+		$this->assertFalse($Post->isVirtualField('id'));
+		$this->assertFalse($Post->isVirtualField('Post.id'));
+		$this->assertFalse($Post->isVirtualField(array()));
+	}
+
+/**
+ * test that getting virtual fields works with and without model alias attached
+ *
+ * @return void
+ */
+	function testGetVirtualField() {
+		$this->loadFixtures('Post');
+		$Post =& ClassRegistry::init('Post');
+		$Post->virtualFields = array('other_field' => 'COUNT(Post.id) + 1');
+
+		$this->assertEqual($Post->getVirtualField('other_field'), $Post->virtualFields['other_field']);
+		$this->assertEqual($Post->getVirtualField('Post.other_field'), $Post->virtualFields['other_field']);
 	}
 }
 ?>

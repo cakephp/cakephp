@@ -1077,7 +1077,19 @@ class Model extends Overloadable {
  * @access public
  */
 	function isVirtualField($field) {
-		return !empty($this->virtualFields) && is_string($field) && array_key_exists($field, $this->virtualFields);
+		if (empty($this->virtualFields) || !is_string($field)) {
+			return false;
+		}
+		if (isset($this->virtualFields[$field])) {
+			return true;
+		}
+		if (strpos($field, '.') !== false) {
+			list($model, $field) = explode('.', $field);
+			if (isset($this->virtualFields[$field])) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 /**
@@ -1094,6 +1106,9 @@ class Model extends Overloadable {
 			return empty($this->virtualFields) ? false : $this->virtualFields;
 		}
 		if ($this->isVirtualField($field)) {
+			if (strpos($field, '.') !== false) {
+				list($model, $field) = explode('.', $field);
+			}
 			return $this->virtualFields[$field];
 		}
 		return false;
@@ -2126,6 +2141,7 @@ class Model extends Overloadable {
 		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
 			return false;
 		}
+
 		$results = $db->read($this, $query);
 		$this->resetAssociations();
 
