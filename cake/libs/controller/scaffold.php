@@ -163,7 +163,7 @@ class Scaffold extends Object {
 			$this->{$var} = $controller->{$var};
 		}
 
-		$this->redirect = array('action'=> 'index');
+		$this->redirect = array('action' => 'index');
 
 		$this->modelClass = $controller->modelClass;
 		$this->modelKey = $controller->modelKey;
@@ -177,8 +177,7 @@ class Scaffold extends Object {
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
-		$this->controller->pageTitle = __('Scaffold :: ', true)
-			. Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
+		$title_for_layout = __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 		$modelClass = $this->controller->modelClass;
 		$primaryKey = $this->ScaffoldModel->primaryKey;
 		$displayField = $this->ScaffoldModel->displayField;
@@ -190,7 +189,7 @@ class Scaffold extends Object {
 		$associations = $this->__associations();
 
 		$this->controller->set(compact(
-			'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 
@@ -223,7 +222,7 @@ class Scaffold extends Object {
  */
 	function __scaffoldView($params) {
 		if ($this->controller->_beforeScaffold('view')) {
-			
+
 			$message = sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey));
 			if (isset($params['pass'][0])) {
 				$this->ScaffoldModel->id = $params['pass'][0];
@@ -444,7 +443,7 @@ class Scaffold extends Object {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 		$prefixes = Configure::read('Routing.prefixes');
 		$scaffoldPrefix = $this->scaffoldActions;
-	
+
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array(
@@ -452,7 +451,7 @@ class Scaffold extends Object {
 				);
 			} elseif (!empty($prefixes) && in_array($scaffoldPrefix, $prefixes)) {
 				$this->scaffoldActions = array(
-					$scaffoldPrefix . '_index', 
+					$scaffoldPrefix . '_index',
 					$scaffoldPrefix . '_list',
 					$scaffoldPrefix . '_view',
 					$scaffoldPrefix . '_add',
@@ -525,6 +524,10 @@ class Scaffold extends Object {
 
 				$associations[$type][$assocKey]['controller'] =
 					Inflector::pluralize(Inflector::underscore($assocData['className']));
+
+				if ($type == 'hasAndBelongsToMany') {
+					$associations[$type][$assocKey]['with'] = $assocData['with'];
+				}
 			}
 		}
 		return $associations;

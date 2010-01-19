@@ -117,6 +117,10 @@ $otherSingularVar = Inflector::variable($_alias);
 	<tr>
 <?php
 		$otherFields = array_keys(${$singularVar}[$_alias][0]);
+		if (isset($_details['with'])) {
+			$index = array_search($_details['with'], $otherFields);
+			unset($otherFields[$index]);
+		}
 		foreach ($otherFields as $_field) {
 			echo "\t\t<th>" . Inflector::humanize($_field) . "</th>\n";
 		}
@@ -130,7 +134,7 @@ $otherSingularVar = Inflector::variable($_alias);
 			if ($i++ % 2 == 0) {
 				$class = ' class="altrow"';
 			}
-		echo "\t\t<tr{$class}>\n";
+			echo "\t\t<tr{$class}>\n";
 
 			foreach ($otherFields as $_field) {
 				echo "\t\t\t<td>" . ${$otherSingularVar}[$_field] . "</td>\n";

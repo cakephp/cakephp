@@ -155,9 +155,9 @@ class ScaffoldMock extends CakeTestModel {
 	var $hasAndBelongsToMany = array(
 		'ScaffoldTag' => array(
 			'className' => 'ScaffoldTag',
-			'foreignKey' => 'post_id',
-			'associationForeignKey' => 'tag_id',
-			'joinTable' => 'posts_tags'
+			'foreignKey' => 'something_id',
+			'associationForeignKey' => 'something_else_id',
+			'joinTable' => 'join_things'
 		)
 	);
 }
@@ -271,7 +271,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.posts_tag', 'core.tag');
+	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 
 /**
  * startTest method
@@ -459,6 +459,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		//check related table
 		$this->assertPattern('/<div class="related">\s*<h3>Related Scaffold Comments<\/h3>\s*<table cellpadding="0" cellspacing="0">/', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_comments\/add">New Comment<\/a><\/li>/', $result);
+		$this->assertNoPattern('/<th>JoinThing<\/th>/', $result);
 	}
 
 /**
@@ -659,7 +660,7 @@ class ScaffoldTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.posts_tag', 'core.tag');
+	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 /**
  * startTest method
  *
@@ -741,6 +742,7 @@ class ScaffoldTest extends CakeTestCase {
 		$Scaffold =& new TestScaffoldMock($this->Controller, $params);
 		$result = $Scaffold->controller->viewVars;
 
+		$this->assertEqual($result['title_for_layout'], 'Scaffold :: Admin Edit :: Scaffold Mock');
 		$this->assertEqual($result['singularHumanName'], 'Scaffold Mock');
 		$this->assertEqual($result['pluralHumanName'], 'Scaffold Mock');
 		$this->assertEqual($result['modelClass'], 'ScaffoldMock');
