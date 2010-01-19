@@ -253,19 +253,17 @@ class Inflector {
  * @access protected
  */
 	function _cache($type, $key, $value = false) {
-		$_this =& Inflector::getInstance();
-
 		$key = '_' . $key;
 		$type = '_' . $type;
 		if ($value !== false) {
-			$_this->{$type}[$key] = $value;
+			$this->{$type}[$key] = $value;
 			return $value;
 		}
 
-		if (!isset($_this->{$type}[$key])) {
+		if (!isset($this->{$type}[$key])) {
 			return false;
 		}
-		return $_this->{$type}[$key];
+		return $this->{$type}[$key];
 	}
 
 /**
@@ -328,8 +326,8 @@ class Inflector {
 		}
 
 		if (!isset($_this->_plural['cacheUninflected']) || !isset($_this->_plural['cacheIrregular'])) {
-			$_this->_plural['cacheUninflected'] = '(?:' . join( '|', $_this->_plural['merged']['uninflected']) . ')';
-			$_this->_plural['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->_plural['merged']['irregular'])) . ')';
+			$_this->_plural['cacheUninflected'] = '(?:' . implode('|', $_this->_plural['merged']['uninflected']) . ')';
+			$_this->_plural['cacheIrregular'] = '(?:' . implode('|', array_keys($_this->_plural['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . $_this->_plural['cacheIrregular'] . ')$/i', $word, $regs)) {
