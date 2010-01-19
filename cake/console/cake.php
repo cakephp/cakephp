@@ -120,15 +120,6 @@ class ShellDispatcher {
 	var $shellName = null;
 
 /**
- * Constructs this ShellDispatcher instance.
- *
- * @param array $args the argv.
- */
-	function ShellDispatcher($args = array()) {
-		$this->__construct($args);
-	}
-
-/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -138,7 +129,7 @@ class ShellDispatcher {
  * @return void
  * @access public
  */
-	function __construct($args = array()) {
+	function ShellDispatcher($args = array()) {
 		set_time_limit(0);
 
 		$this->__initConstants();
