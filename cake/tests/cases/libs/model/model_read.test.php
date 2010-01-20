@@ -3945,20 +3945,6 @@ class ModelReadTest extends BaseModelTest {
 		$expected = $TestModel->save($data);
 		$this->assertFalse($expected);
 	}
-	// function testBasicValidation() {
-	// 	$TestModel =& new ValidationTest1();
-	// 	$TestModel->testing = true;
-	// 	$TestModel->set(array('title' => '', 'published' => 1));
-	// 	$this->assertEqual($TestModel->invalidFields(), array('title' => 'This field cannot be left blank'));
-	//
-	// 	$TestModel->create();
-	// 	$TestModel->set(array('title' => 'Hello', 'published' => 0));
-	// 	$this->assertEqual($TestModel->invalidFields(), array('published' => 'This field cannot be left blank'));
-	//
-	// 	$TestModel->create();
-	// 	$TestModel->set(array('title' => 'Hello', 'published' => 1, 'body' => ''));
-	// 	$this->assertEqual($TestModel->invalidFields(), array('body' => 'This field cannot be left blank'));
-	// }
 
 /**
  * testFindAllWithConditionInChildQuery
@@ -7150,8 +7136,8 @@ class ModelReadTest extends BaseModelTest {
 	}
 /**
  * Testing availability of $this->findQueryType in Model callbacks
- * 
- * @return void 
+ *
+ * @return void
  */
 	function testFindQueryTypeInCallbacks() {
 		$this->loadFixtures('Comment');
