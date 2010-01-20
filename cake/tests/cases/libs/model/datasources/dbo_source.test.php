@@ -3615,6 +3615,8 @@ class DboSourceTest extends CakeTestCase {
 			'default' => '',
 			'null' => false,
 		);
+		$restore = $this->testDb->columns;
+
 		$this->testDb->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
 		$result = $this->testDb->buildColumn($data);
 		$expected = '`int_field` int(11) NOT NULL';
@@ -3648,6 +3650,47 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$result = $this->testDb->buildColumn($data);
 		$expected = '`int_field` int(11) COLLATE GOOD NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$this->testDb->columns = $restore;
+
+		$data = array(
+			'name' => 'created',
+			'type' => 'timestamp',
+			'default' => 'current_timestamp',
+			'null' => false,
+ 		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'created',
+			'type' => 'timestamp',
+			'default' => 'CURRENT_TIMESTAMP',
+			'null' => true,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'modified',
+			'type' => 'timestamp',
+			'null' => true,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`modified` timestamp NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'modified',
+			'type' => 'timestamp',
+			'default' => null,
+			'null' => true,
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`modified` timestamp NULL';
 		$this->assertEqual($result, $expected);
 	}
 
