@@ -99,6 +99,11 @@ class L10nTest extends CakeTestCase {
 		$expected = 'en_us';
 		$this->assertEqual($result, $expected);
 
+		$l10n->get('es');
+		$l10n->get('');
+		$this->assertEqual($l10n->lang, 'en-us');
+
+
 		// Using $this->default
 		$l10n = new L10n();
 		$l10n->get('use_default');

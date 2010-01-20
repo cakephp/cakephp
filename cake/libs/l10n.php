@@ -352,7 +352,7 @@ class L10n extends Object {
 		} else if ($language !== null && isset($this->__l10nCatalog[$language])) {
 			$langKey = $language;
 		} else if (defined('DEFAULT_LANGUAGE')) {
-			$langKey = DEFAULT_LANGUAGE;
+			$langKey = $language = DEFAULT_LANGUAGE;
 		}
 
 		if ($langKey !== null && isset($this->__l10nCatalog[$langKey])) {
