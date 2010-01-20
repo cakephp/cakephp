@@ -353,8 +353,8 @@ class ConsoleShell extends Shell {
 		foreach (array_keys($router->getNamedExpressions()) as $var) {
 			unset(${$var});
 		}
-		for ($i = 0; $i < count($router->routes); $i++) {
-			$router->compile($i);
+		for ($i = 0, $len = count($router->routes); $i < $len; $i++) {
+			$router->routes[$i]->compile();
 		}
 		return true;
 	}
