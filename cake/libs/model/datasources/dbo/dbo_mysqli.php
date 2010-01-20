@@ -1,29 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * MySQLi layer for DBO
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 1.1.4.2974
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Datasource', 'DboMysql');
 
@@ -55,8 +47,7 @@ class DboMysqli extends DboMysqlBase {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => '3306',
-		'connect' => 'mysqli_connect'
+		'port' => '3306'
 	);
 
 /**
@@ -89,6 +80,14 @@ class DboMysqli extends DboMysqlBase {
 		return $this->connected;
 	}
 
+/**
+ * Check that MySQLi is installed/enabled
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return extension_loaded('mysqli');
+	}
 /**
  * Disconnects from database.
  *
@@ -141,7 +140,7 @@ class DboMysqli extends DboMysqlBase {
  */
 	function listSources() {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache !== null) {
 			return $cache;
 		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']) . ';');
@@ -152,49 +151,11 @@ class DboMysqli extends DboMysqlBase {
 
 		$tables = array();
 
-		while ($line = mysqli_fetch_array($result)) {
+		while ($line = mysqli_fetch_row($result)) {
 			$tables[] = $line[0];
 		}
 		parent::listSources($tables);
 		return $tables;
-	}
-
-/**
- * Returns an array of the fields in given table name.
- *
- * @param string $tableName Name of database table to inspect
- * @return array Fields in table. Keys are name and type
- */
-	function describe(&$model) {
-
-		$cache = parent::describe($model);
-		if ($cache != null) {
-			return $cache;
-		}
-
-		$fields = false;
-		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
-
-		foreach ($cols as $column) {
-			$colKey = array_keys($column);
-			if (isset($column[$colKey[0]]) && !isset($column[0])) {
-				$column[0] = $column[$colKey[0]];
-			}
-			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array(
-					'type'		=> $this->column($column[0]['Type']),
-					'null'		=> ($column[0]['Null'] == 'YES' ? true : false),
-					'default'	=> $column[0]['Default'],
-					'length'	=> $this->length($column[0]['Type'])
-				);
-				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
-					$fields[$column[0]['Field']]['key']	= $this->index[$column[0]['Key']];
-				}
-			}
-		}
-
-		$this->__cacheDescription($this->fullTableName($model, false), $fields);
-		return $fields;
 	}
 
 /**
@@ -297,74 +258,6 @@ class DboMysqli extends DboMysqlBase {
 	}
 
 /**
- * Converts database-layer column types to basic types
- *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return string Abstract column type (i.e. "string")
- */
-	function column($real) {
-		if (is_array($real)) {
-			$col = $real['name'];
-			if (isset($real['limit'])) {
-				$col .= '('.$real['limit'].')';
-			}
-			return $col;
-		}
-
-		$col = str_replace(')', '', $real);
-		$limit = $this->length($real);
-		if (strpos($col, '(') !== false) {
-			list($col, $vals) = explode('(', $col);
-		}
-
-		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
-			return $col;
-		}
-		if (($col == 'tinyint' && $limit == 1) || $col == 'boolean') {
-			return 'boolean';
-		}
-		if (strpos($col, 'int') !== false) {
-			return 'integer';
-		}
-		if (strpos($col, 'char') !== false || $col == 'tinytext') {
-			return 'string';
-		}
-		if (strpos($col, 'text') !== false) {
-			return 'text';
-		}
-		if (strpos($col, 'blob') !== false || $col == 'binary') {
-			return 'binary';
-		}
-		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
-			return 'float';
-		}
-		if (strpos($col, 'enum') !== false) {
-			return "enum($vals)";
-		}
-		return 'text';
-	}
-
-/**
- * Gets the length of a database-native column description, or null if no length
- *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return integer An integer representing the length of the column
- */
-	function length($real) {
-		$col = str_replace(array(')', 'unsigned'), '', $real);
-		$limit = null;
-	
-		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
-		}
-	
-		if ($limit != null) {
-			return intval($limit);
-		}
-		return null;
-	}
-
-/**
  * Enter description here...
  *
  * @param unknown_type $results
@@ -397,14 +290,12 @@ class DboMysqli extends DboMysqlBase {
 	function fetchResult() {
 		if ($row = mysqli_fetch_row($this->results)) {
 			$resultRow = array();
-			$i = 0;
 			foreach ($row as $index => $field) {
 				$table = $column = null;
-				if (count($this->map[$index]) == 2) {
+				if (count($this->map[$index]) === 2) {
 					list($table, $column) = $this->map[$index];
 				}
 				$resultRow[$table][$column] = $row[$index];
-				$i++;
 			}
 			return $resultRow;
 		}
@@ -418,6 +309,22 @@ class DboMysqli extends DboMysqlBase {
  */
 	function getEncoding() {
 		return mysqli_client_encoding($this->connection);
+	}
+
+/**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	function getCharsetName($name) {
+		if ((bool)version_compare(mysqli_get_server_info($this->connection), "5", ">=")) {
+			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
+			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
+		}
+		return false;
 	}
 
 /**

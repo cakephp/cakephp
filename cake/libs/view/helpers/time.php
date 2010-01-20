@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Time Helper class file.
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -33,6 +27,110 @@
  * @subpackage    cake.cake.libs.view.helpers
  */
 class TimeHelper extends AppHelper {
+
+/**
+ * Converts a string representing the format for the function strftime and returns a
+ * windows safe and i18n aware format.
+ *
+ * @param string $format Format with specifiers for strftime function. Accepts the special specifier %S which mimics th modifier S for date()
+ * @param string UNIX timestamp
+ * @return string windows safe and date() function compatible format for strftime
+ */
+	function convertSpecifiers($format, $time = null) {
+		if (!$time) {
+			$time = time();
+		}
+		$this->__time = $time;
+		return preg_replace_callback('/\%(\w+)/', array($this, '__translateSpecifier'), $format);
+	}
+
+/**
+ * Auxiliary function to translate a matched specifier element from a regular expresion into
+ * a windows safe and i18n aware specifier
+ *
+ * @param array $specifier match from regular expression
+ * @return string converted element
+ */
+	function __translateSpecifier($specifier) {
+		switch ($specifier[1]) {
+			case 'a':
+				$abday = __c('abday', 5, true);
+				if (is_array($abday)) {
+					return $abday[date('w', $this->__time)];
+				}
+				break;
+			case 'A':
+				$day = __c('day',5,true);
+				if (is_array($day)) {
+					return $day[date('w', $this->__time)];
+				}
+				break;
+			case 'c':
+				$format = __c('d_t_fmt',5,true);
+				if ($format != 'd_t_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+			case 'C':
+				return sprintf("%02d", date('Y', $this->__time) / 100);
+			case 'D':
+				return '%m/%d/%y';
+			case 'eS' :
+				return date('jS', $this->__time);
+			case 'b':
+			case 'h':
+				$months = __c('abmon', 5, true);
+				if (is_array($months)) {
+					return $months[date('n', $this->__time) -1];
+				}
+				return '%b';
+			case 'B':
+				$months = __c('mon',5,true);
+				if (is_array($months)) {
+					return $months[date('n', $this->__time) -1];
+				}
+				break;
+			case 'n':
+				return "\n";
+			case 'p':
+			case 'P':
+				$default = array('am' => 0, 'pm' => 1);
+				$meridiem = $default[date('a',$this->__time)];
+				$format = __c('am_pm', 5, true);
+				if (is_array($format)) {
+					$meridiem = $format[$meridiem];
+					return ($specifier[1] == 'P') ? strtolower($meridiem) : strtoupper($meridiem);
+				}
+				break;
+			case 'r':
+				$complete = __c('t_fmt_ampm', 5, true);
+				if ($complete != 't_fmt_ampm') {
+					return str_replace('%p',$this->__translateSpecifier(array('%p', 'p')),$complete);
+				}
+				break;
+			case 'R':
+				return date('H:i', $this->__time);
+			case 't':
+				return "\t";
+			case 'T':
+				return '%H:%M:%S';
+			case 'u':
+				return ($weekDay = date('w', $this->__time)) ? $weekDay : 7;
+			case 'x':
+				$format = __c('d_fmt', 5, true);
+				if ($format != 'd_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+			case 'X':
+				$format = __c('t_fmt',5,true);
+				if ($format != 't_fmt') {
+					return $this->convertSpecifiers($format, $this->__time);
+				}
+				break;
+		}
+		return $specifier[0];
+	}
 
 /**
  * Converts given time (in server's time zone) to user's local time, given his/her offset from GMT.
@@ -76,6 +174,9 @@ class TimeHelper extends AppHelper {
 		if ($userOffset !== null) {
 			return $this->convert($date, $userOffset);
 		}
+		if ($date === -1) {
+			return false;
+		}
 		return $date;
 	}
 
@@ -92,9 +193,8 @@ class TimeHelper extends AppHelper {
 		} else {
 			$date = time();
 		}
-
-		$ret = date("D, M jS Y, H:i", $date);
-		return $this->output($ret);
+		$format = $this->convertSpecifiers('%a, %b %eS %Y, %H:%M', $date);
+		return strftime($format, $date);
 	}
 
 /**
@@ -112,17 +212,18 @@ class TimeHelper extends AppHelper {
 	function niceShort($dateString = null, $userOffset = null) {
 		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
 
-		$y = $this->isThisYear($date) ? '' : ' Y';
+		$y = $this->isThisYear($date) ? '' : ' %Y';
 
 		if ($this->isToday($date)) {
-			$ret = sprintf(__('Today, %s',true), date("H:i", $date));
+			$ret = sprintf(__('Today, %s',true), strftime("%H:%M", $date));
 		} elseif ($this->wasYesterday($date)) {
-			$ret = sprintf(__('Yesterday, %s',true), date("H:i", $date));
+			$ret = sprintf(__('Yesterday, %s',true), strftime("%H:%M", $date));
 		} else {
-			$ret = date("M jS{$y}, H:i", $date);
+			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
+			$ret = strftime($format, $date);
 		}
 
-		return $this->output($ret);
+		return $ret;
 	}
 
 /**
@@ -140,8 +241,7 @@ class TimeHelper extends AppHelper {
 		$begin = date('Y-m-d', $begin) . ' 00:00:00';
 		$end = date('Y-m-d', $end) . ' 23:59:59';
 
-		$ret  ="($fieldName >= '$begin') AND ($fieldName <= '$end')";
-		return $this->output($ret);
+		return "($fieldName >= '$begin') AND ($fieldName <= '$end')";
 	}
 
 /**
@@ -155,8 +255,7 @@ class TimeHelper extends AppHelper {
  */
 	function dayAsSql($dateString, $fieldName, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = $this->daysAsSql($dateString, $dateString, $fieldName);
-		return $this->output($ret);
+		return $this->daysAsSql($dateString, $dateString, $fieldName);
 	}
 
 /**
@@ -260,7 +359,7 @@ class TimeHelper extends AppHelper {
 					break;
 			}
 		}
-		return $this->output($date);
+		return $date;
 	}
 
 /**
@@ -271,8 +370,7 @@ class TimeHelper extends AppHelper {
  * @return integer Unix timestamp
  */
 	function toUnix($dateString, $userOffset = null) {
-		$ret = $this->fromString($dateString, $userOffset);
-		return $this->output($ret);
+		return $this->fromString($dateString, $userOffset);
 	}
 
 /**
@@ -284,8 +382,7 @@ class TimeHelper extends AppHelper {
  */
 	function toAtom($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = date('Y-m-d\TH:i:s\Z', $date);
-		return $this->output($ret);
+		return date('Y-m-d\TH:i:s\Z', $date);
 	}
 
 /**
@@ -297,8 +394,7 @@ class TimeHelper extends AppHelper {
  */
 	function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
-		$ret = date("r", $date);
-		return $this->output($ret);
+		return date("r", $date);
 	}
 
 /**
@@ -315,8 +411,8 @@ class TimeHelper extends AppHelper {
  * Relative dates look something like this:
  *	3 weeks, 4 days ago
  *	15 seconds ago
- * Formatted dates look like this:
- *	on 02/18/2004
+ *
+ * Default date formatting is d/m/yy e.g: on 18/2/09
  *
  * The returned string includes 'ago' or 'on' and assumes you'll properly add a word
  * like 'Posted ' before the function output.
@@ -478,7 +574,7 @@ class TimeHelper extends AppHelper {
 				$relativeDate = sprintf(__('%s ago', true), $relativeDate);
 			}
 		}
-		return $this->output($relativeDate);
+		return $relativeDate;
 	}
 
 /**
@@ -538,25 +634,53 @@ class TimeHelper extends AppHelper {
 		$day = intval(date("j", $string));
 		$year = intval(date("Y", $string));
 
-		$return = gmmktime($hour, $minute, $second, $month, $day, $year);
-		return $return;
+		return gmmktime($hour, $minute, $second, $month, $day, $year);
 	}
 
 /**
- * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
+ * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+ * This function also accepts a time string and a format string as first and second parameters.
+ * In that case this function behaves as a wrapper for TimeHelper::i18nFormat()
  *
- * @param string $format date format string. defaults to 'd-m-Y'
- * @param string $dateString Datetime string
+ * @param string $format date format string (or a DateTime string)
+ * @param string $dateString Datetime string (or a date format string)
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
  */
-	function format($format = 'd-m-Y', $date, $invalid = false, $userOffset = null) {
+	function format($format, $date = null, $invalid = false, $userOffset = null) {
+		$time = $this->fromString($date, $userOffset);
+		$_time = $this->fromString($format, $userOffset);
+
+		if (is_numeric($_time) && $time === false) {
+			$format = $date;
+			return $this->i18nFormat($_time, $format, $invalid, $userOffset);
+		}
+		if ($time === false && $invalid !== false) {
+			return $invalid;
+		}
+		return date($format, $time);
+	}
+
+/**
+ * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
+ * It take in account the default date format for the current language if a LC_TIME file is used.
+ * @param string $dateString Datetime string
+ * @param string $format strftime format string.
+ * @param boolean $invalid flag to ignore results of fromString == false
+ * @param int $userOffset User's offset from GMT (in hours)
+ * @return string Formatted and translated date string
+ */
+	function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
 		$date = $this->fromString($date, $userOffset);
 		if ($date === false && $invalid !== false) {
 			return $invalid;
 		}
-		return date($format, $date);
+		if (empty($format)) {
+			$format = '%x';
+		}
+		$format = $this->convertSpecifiers($format, $date);
+		return strftime($format, $date);
 	}
 }
 ?>

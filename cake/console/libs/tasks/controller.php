@@ -2,23 +2,20 @@
 /**
  * The ControllerTask handles creating and updating controller files.
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -86,17 +83,17 @@ class ControllerTask extends Shell {
 				$this->out(__('Baking basic crud methods for ', true) . $controller);
 				$actions = $this->bakeActions($controller);
 			} elseif (!empty($this->args[1]) && $this->args[1] == 'admin') {
-				$admin = $this->Project->getAdmin();
+				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
-					$actions= $this->bakeActions($controller, $admin);
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
+					$actions = $this->bakeActions($controller, $admin);
 				}
 			}
-			
+
 			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
-				$admin = $this->Project->getAdmin();
+				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out('Adding ' . Configure::read('Routing.admin') .' methods');
+					$this->out(sprintf(__('Adding %s methods', true), $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
 			}
@@ -114,7 +111,7 @@ class ControllerTask extends Shell {
  *
  * @access public
  * @return void
- **/
+ */
 	function all() {
 		$this->interactive = false;
 		$this->listAll($this->connection, false);
@@ -165,7 +162,7 @@ class ControllerTask extends Shell {
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
 			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController.", true), $controllerName);
 		}
-		$doItInteractive = $this->in(join("\n", $question), array('y', 'n'), 'y');
+		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
 
 		if (strtolower($doItInteractive) == 'y') {
 			$this->interactive = true;
@@ -194,7 +191,7 @@ class ControllerTask extends Shell {
 			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) == 'y');
 		}
 		if (strtolower($wannaBakeAdminCrud) == 'y') {
-			$admin = $this->Project->getAdmin();
+			$admin = $this->Project->getPrefix();
 			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
 		}
 
@@ -220,9 +217,9 @@ class ControllerTask extends Shell {
  * Confirm a to be baked controller with the user
  *
  * @return void
- **/
+ */
 	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
-		$this->out('');
+		$this->out();
 		$this->hr();
 		$this->out(__('The following controller will be created:', true));
 		$this->hr();
@@ -258,7 +255,7 @@ class ControllerTask extends Shell {
  * Interact with the user and ask about which methods (admin or regular they want to bake)
  *
  * @return array Array containing (bakeRegular, bakeAdmin) answers
- **/
+ */
 	function _askAboutMethods() {
 		$wannaBakeCrud = $this->in(
 			__("Would you like to create some basic class methods \n(index(), add(), view(), edit())?", true),
@@ -294,8 +291,8 @@ class ControllerTask extends Shell {
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
-		$singularHumanName = Inflector::humanize($currentModelName);
-		$pluralHumanName = Inflector::humanize($controllerName);
+		$singularHumanName = $this->_singularHumanName($currentModelName);
+		$pluralHumanName = $this->_pluralName($controllerName);
 
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
@@ -349,7 +346,7 @@ class ControllerTask extends Shell {
  * Interact with the user and get a list of additional helpers
  *
  * @return array Helpers that the user wants to use.
- **/
+ */
 	function doHelpers() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?", true),
@@ -361,7 +358,7 @@ class ControllerTask extends Shell {
  * Interact with the user and get a list of additional components
  *
  * @return array Components the user wants to use.
- **/
+ */
 	function doComponents() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use any components?", true),
@@ -375,7 +372,7 @@ class ControllerTask extends Shell {
  * @param string $prompt A yes/no question to precede the list
  * @param sting $example A question for a comma separated list, with examples.
  * @return array Array of values for property.
- **/
+ */
 	function _doPropertyChoices($prompt, $example) {
 		$proceed = $this->in($prompt, array('y','n'), 'n');
 		$property = array();
@@ -456,28 +453,34 @@ class ControllerTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake controller <arg1> <arg2>...");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<name>");
+		$this->out("\tName of the controller to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("controller <name>");
 		$this->out("\tbakes controller with var \$scaffold");
-		$this->out('');
+		$this->out();
 		$this->out("controller <name> public");
 		$this->out("\tbakes controller with basic crud actions");
 		$this->out("\t(index, view, add, edit, delete)");
-		$this->out('');
+		$this->out();
 		$this->out("controller <name> admin");
-		$this->out("\tbakes a controller with basic crud actions for");
-		$this->out("\tConfigure::read('Routing.admin') methods.");
-		$this->out('');
+		$this->out("\tbakes a controller with basic crud actions for one of the");
+		$this->out("\tConfigure::read('Routing.prefixes') methods.");
+		$this->out();
 		$this->out("controller <name> public admin");
-		$this->out("\tbakes a controller with basic crud actions for");
-		$this->out("\tConfigure::read('Routing.admin') and non admin methods.");
+		$this->out("\tbakes a controller with basic crud actions for one");
+		$this->out("\tConfigure::read('Routing.prefixes') and non admin methods.");
 		$this->out("\t(index, view, add, edit, delete,");
 		$this->out("\tadmin_index, admin_view, admin_edit, admin_add, admin_delete)");
-		$this->out('');
+		$this->out();
 		$this->out("controller all");
 		$this->out("\tbakes all controllers with CRUD methods.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

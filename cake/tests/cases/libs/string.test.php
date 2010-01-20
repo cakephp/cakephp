@@ -1,10 +1,6 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * StringTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
@@ -71,6 +67,11 @@ class StringTest extends CakeTestCase {
  * @return void
  */
 	function testInsert() {
+		$string = 'some string';
+		$expected = 'some string';
+		$result = String::insert($string, array());
+		$this->assertEqual($result, $expected);
+
 		$string = '2 + 2 = :sum. Cake is :adjective.';
 		$expected = '2 + 2 = 4. Cake is yummy.';
 		$result = String::insert($string, array('sum' => '4', 'adjective' => 'yummy'));
@@ -205,7 +206,7 @@ class StringTest extends CakeTestCase {
  * test Clean Insert
  *
  * @return void
- **/
+ */
 	function testCleanInsert() {
 		$result = String::cleanInsert(':incomplete', array(
 			'clean' => true, 'before' => ':', 'after' => ''
@@ -277,6 +278,13 @@ class StringTest extends CakeTestCase {
 
 		$result = String::tokenize('tagA "single tag" tagB', ' ', '"', '"');
 		$expected = array('tagA', '"single tag"', 'tagB');
+		$this->assertEqual($expected, $result);
+	}
+	
+	function testReplaceWithQuestionMarkInString() {
+		$string = ':a, :b and :c?';
+		$expected = '2 and 3?';
+		$result = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
 		$this->assertEqual($expected, $result);
 	}
 }

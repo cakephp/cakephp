@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ShellDispatcherTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2007, Cake Software Foundation, Inc.
+ * Copyright 2005-2009, Cake Software Foundation, Inc.
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2007, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.console
  * @since         CakePHP(tm) v 1.2.0.5432
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('DISABLE_AUTO_DISPATCH')) {
@@ -36,8 +28,8 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-
 require_once CONSOLE_LIBS . 'shell.php';
+
 /**
  * TestShellDispatcher class
  *
@@ -85,11 +77,12 @@ class TestShellDispatcher extends ShellDispatcher {
  * @access public
  */
 	var $TestShell;
+
 /**
  * _initEnvironment method
  *
- * @access protected
  * @return void
+ * @access protected
  */
 	function _initEnvironment() {
 	}
@@ -97,8 +90,8 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * stderr method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function stderr($string) {
 		$this->stderr .= rtrim($string, ' ');
@@ -107,8 +100,8 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * stdout method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
@@ -121,8 +114,8 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * clear method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function clear() {
 
@@ -131,29 +124,31 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * _stop method
  *
- * @access protected
  * @return void
+ * @access protected
  */
 	function _stop($status = 0) {
 		$this->stopped = 'Stopped with status: ' . $status;
 		return $status;
 	}
+
 /**
  * getShell
  *
  * @param mixed $plugin
- * @access public
  * @return mixed
+ * @access public
  */
 	function getShell($plugin = null) {
 		return $this->_getShell($plugin);
 	}
+
 /**
  * _getShell
  *
  * @param mixed $plugin
- * @access protected
  * @return mixed
+ * @access protected
  */
 	function _getShell($plugin = null) {
 		if (isset($this->TestShell)) {
@@ -174,8 +169,8 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function setUp() {
 		App::build(array(
@@ -192,8 +187,8 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function tearDown() {
 		App::build();
@@ -202,8 +197,8 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * testParseParams method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testParseParams() {
 		$Dispatcher =& new TestShellDispatcher();
@@ -439,7 +434,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
-
 		$params = array(
 			'cake.php',
 			'-working',
@@ -462,8 +456,8 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * testBuildPaths method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testBuildPaths() {
 		$Dispatcher =& new TestShellDispatcher();
@@ -485,8 +479,8 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * Verify loading of (plugin-) shells
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testGetShell() {
 		$this->skipIf(class_exists('SampleShell'), '%s SampleShell Class already loaded');
@@ -510,11 +504,12 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->getShell('test_plugin');
 		$this->assertIsA($result, 'ExampleShell');
 	}
+
 /**
  * Verify correct dispatch of Shell subclasses with a main method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchShellWithMain() {
 		Mock::generate('Shell', 'MockWithMainShell', array('main', '_secret'));
@@ -600,11 +595,12 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of Shell subclasses without a main method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchShellWithoutMain() {
 		Mock::generate('Shell', 'MockWithoutMainShell', array('initDb', '_secret'));
@@ -671,11 +667,12 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of custom classes with a main method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchNotAShellWithMain() {
 		Mock::generate('Object', 'MockWithMainNotAShell',
@@ -750,11 +747,12 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify correct dispatch of custom classes without a main method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchNotAShellWithoutMain() {
 		Mock::generate('Object', 'MockWithoutMainNotAShell',
@@ -819,12 +817,13 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 	}
+
 /**
  * Verify that a task is called instead of the shell if the first arg equals
  * the name of the task
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testDispatchTask() {
 		Mock::generate('Shell', 'MockWeekShell', array('main'));
@@ -867,11 +866,12 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
 	}
+
 /**
  * Verify shifting of arguments
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testShiftArgs() {
 		$Dispatcher =& new TestShellDispatcher();
@@ -900,45 +900,40 @@ class ShellDispatcherTest extends CakeTestCase {
 /**
  * testHelpCommand method
  *
- * @access public
  * @return void
+ * @access public
  */
 	function testHelpCommand() {
 		$Dispatcher =& new TestShellDispatcher();
 
-		$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t example";
-	 	$expected .= "\n/";
+		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)plugins(\\\|\/)test_plugin_two(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t example";
-	 	$expected .= "\n\t welcome";
-	 	$expected .= "\n/";
+		$expected = "/welcome \[.*TestPluginTwo.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ APP(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n/";
+		$expected = "/acl \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ ROOT(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n/";
+		$expected = "/api \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)console(\\\|\/)libs:";
-	 	$expected .= "\n\t acl";
-	 	$expected .= "\n\t api";
-	 	$expected .= "\n\t bake";
-	 	$expected .= "\n\t console";
-	 	$expected .= "\n\t i18n";
-	 	$expected .= "\n\t schema";
-	 	$expected .= "\n\t testsuite";
-	 	$expected .= "\n/";
+		$expected = "/bake \[.*CORE.*\]/";
 	 	$this->assertPattern($expected, $Dispatcher->stdout);
 
-	 	$expected = "/ CORE(\\\|\/)tests(\\\|\/)test_app(\\\|\/)vendors(\\\|\/)shells:";
-	 	$expected .= "\n\t sample";
-	 	$expected .= "\n/";
+		$expected = "/console \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/i18n \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/schema \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/testsuite \[.*CORE.*\]/";
+	 	$this->assertPattern($expected, $Dispatcher->stdout);
+
+		$expected = "/sample \[.*test_app.*\]/";
 		$this->assertPattern($expected, $Dispatcher->stdout);
 	}
 }

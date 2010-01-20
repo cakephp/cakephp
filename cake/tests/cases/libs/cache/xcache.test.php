@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * XcacheEngineTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('Cache')) {
@@ -45,7 +37,7 @@ class XcacheEngineTest extends UnitTestCase {
  */
 	function skip() {
 		$skip = true;
-		if ($result = Cache::engine('Xcache')) {
+		if (function_exists('xcache_set')) {
 			$skip = false;
 		}
 		$this->skipIf($skip, '%s Xcache is not installed or configured properly');
@@ -82,13 +74,16 @@ class XcacheEngineTest extends UnitTestCase {
  */
 	function testSettings() {
 		$settings = Cache::settings();
-		$expecting = array('prefix' => 'cake_',
-						'duration'=> 3600,
-						'probability' => 100,
-						'engine' => 'Xcache',
-						'PHP_AUTH_USER' => 'user',
-						'PHP_AUTH_PW' => 'password',
-						);
+		$expecting = array(
+			'prefix' => 'cake_',
+			'duration'=> 3600,
+			'probability' => 100,
+			'engine' => 'Xcache',
+		);
+		$this->assertTrue(isset($settings['PHP_AUTH_USER']));
+		$this->assertTrue(isset($settings['PHP_AUTH_PW']));
+
+		unset($settings['PHP_AUTH_USER'], $settings['PHP_AUTH_PW']);
 		$this->assertEqual($settings, $expecting);
 	}
 

@@ -4,19 +4,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -55,14 +54,16 @@ class FixtureTask extends Shell {
  * The db connection being used for baking
  *
  * @var string
- **/
+ * @access public
+ */
 	var $connection = null;
 
 /**
  * Schema instance
  *
  * @var object
- **/
+ * @access protected
+ */
 	var $_Schema = null;
 
 /**
@@ -73,9 +74,6 @@ class FixtureTask extends Shell {
 	function __construct(&$dispatch) {
 		parent::__construct($dispatch);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
-		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'CakeSchema', false);
-		}
 	}
 
 /**
@@ -90,6 +88,7 @@ class FixtureTask extends Shell {
 		}
 
 		if (isset($this->args[0])) {
+			$this->interactive = false;
 			if (!isset($this->connection)) {
 				$this->connection = 'default';
 			}
@@ -106,9 +105,10 @@ class FixtureTask extends Shell {
  *
  * @access public
  * @return void
- **/
+ */
 	function all() {
 		$this->interactive = false;
+		$this->Model->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
@@ -142,7 +142,8 @@ class FixtureTask extends Shell {
  *
  * @param string $modelName Name of model you are dealing with.
  * @return array Array of import options.
- **/
+ * @access public
+ */
 	function importOptions($modelName) {
 		$options = array();
 		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
@@ -169,10 +170,13 @@ class FixtureTask extends Shell {
  * @param string $model Name of model to bake.
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for var $import
- * @return string Baked fixture
- * @access private
+ * @return string Baked fixture content
+ * @access public
  */
 	function bake($model, $useTable = false, $importOptions = array()) {
+		if (!class_exists('CakeSchema')) {
+			App::import('Model', 'CakeSchema', false);
+		}
 		$table = $schema = $records = $import = $modelImport = $recordImport = null;
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
@@ -215,7 +219,7 @@ class FixtureTask extends Shell {
 			}
 			$records = $this->_makeRecordString($this->_generateRecords($tableInfo, $recordCount));
 		}
-		if (isset($importOptions['fromTable'])) {
+		if (isset($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
 		}
 		$out = $this->generateFixtureFile($model, compact('records', 'table', 'schema', 'import', 'fields'));
@@ -227,9 +231,9 @@ class FixtureTask extends Shell {
  *
  * @param string $model name of the model being generated
  * @param string $fixture Contents of the fixture file.
+ * @return string Content saved into fixture file.
  * @access public
- * @return void
- **/
+ */
 	function generateFixtureFile($model, $otherVars) {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
@@ -254,30 +258,11 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return string fields definitions
- **/
+ * @access protected
+ */
 	function _generateSchema($tableInfo) {
-		$cols = array();
-		$out = "array(\n";
-		foreach ($tableInfo as $field => $fieldInfo) {
-			if (is_array($fieldInfo)) {
-				if ($field != 'indexes') {
-					$col = "\t\t'{$field}' => array('type'=>'" . $fieldInfo['type'] . "', ";
-					$col .= join(', ',  $this->_Schema->__values($fieldInfo));
-				} else {
-					$col = "\t\t'indexes' => array(";
-					$props = array();
-					foreach ((array)$fieldInfo as $key => $index) {
-						$props[] = "'{$key}' => array(".join(', ',  $this->_Schema->__values($index)).")";
-					}
-					$col .= join(', ', $props);
-				}
-				$col .= ")";
-				$cols[] = $col;
-			}
-		}
-		$out .= join(",\n", $cols);
-		$out .= "\n\t)";
-		return $out;
+		$schema = $this->_Schema->generateTable('f', $tableInfo);
+		return substr($schema, 10, -2);
 	}
 
 /**
@@ -285,7 +270,8 @@ class FixtureTask extends Shell {
  *
  * @param array $table Table schema array
  * @return array Array of records to use in the fixture.
- **/
+ * @access protected
+ */
 	function _generateRecords($tableInfo, $recordCount = 1) {
 		$records = array();
 		for ($i = 0; $i < $recordCount; $i++) {
@@ -296,9 +282,11 @@ class FixtureTask extends Shell {
 				}
 				switch ($fieldInfo['type']) {
 					case 'integer':
+					case 'float':
 						$insert = $i + 1;
 					break;
-					case 'string';
+					case 'string':
+					case 'binary':
 						$isPrimaryUuid = (
 							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) == 'primary' &&
 							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
@@ -354,7 +342,8 @@ class FixtureTask extends Shell {
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.
- **/
+ * @access protected
+ */
 	function _makeRecordString($records) {
 		$out = "array(\n";
 		foreach ($records as $record) {
@@ -377,12 +366,17 @@ class FixtureTask extends Shell {
  * @param string $modelName name of the model to take records from.
  * @param string $useTable Name of table to use.
  * @return array Array of records.
- **/
+ * @access protected
+ */
 	function _getRecordsFromTable($modelName, $useTable = null) {
-		$condition = null;
-		$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
-		while (!$condition) {
-			$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
+		if ($this->interactive) {
+			$condition = null;
+			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
+			while (!$condition) {
+				$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
+			}
+		} else {
+			$condition = 'WHERE 1=1 ' . isset($this->params['count']) ? $this->params['count'] : 10;
 		}
 		App::import('Model', 'Model', false);
 		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
@@ -391,7 +385,7 @@ class FixtureTask extends Shell {
 			'recursive' => -1
 		));
 		$db =& ConnectionManager::getDataSource($modelObject->useDbConfig);
-		$schema = $modelObject->schema();
+		$schema = $modelObject->schema(true);
 		$out = array();
 		foreach ($records as $record) {
 			$row = array();
@@ -412,15 +406,23 @@ class FixtureTask extends Shell {
 		$this->hr();
 		$this->out("Usage: cake bake fixture <arg1> <params>");
 		$this->hr();
+		$this->out('Arguments:');
+		$this->out();
+		$this->out("<name>");
+		$this->out("\tName of the fixture to bake. Can use Plugin.name");
+		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
 		$this->out('Commands:');
 		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
 		$this->out("\nfixture all\n\tbakes all fixtures.");
-		$this->out("");
+		$this->out();
 		$this->out('Parameters:');
 		$this->out("\t-count       When using generated data, the number of records to include in the fixture(s).");
 		$this->out("\t-connection  Which database configuration to use for baking.");
-		$this->out("\t-plugin      lowercased_underscored name of plugin to bake fixtures for.");
-		$this->out("");
+		$this->out("\t-plugin      CamelCased name of plugin to bake fixtures for.");
+		$this->out("\t-records     Used with -count and <name>/all commands to pull [n] records from the live tables");
+		$this->out("\t             Where [n] is either -count or the default of 10.");
+		$this->out();
 		$this->_stop();
 	}
 }

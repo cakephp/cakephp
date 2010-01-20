@@ -21,14 +21,6 @@
  */
 
 /**
- * Included libraries.
- *
- */
-if (!class_exists('Object')) {
-	require_once(LIBS . 'object.php');
-}
-
-/**
  * Pluralize and singularize English words.
  *
  * Inflector pluralizes and singularizes English nouns.
@@ -38,14 +30,14 @@ if (!class_exists('Object')) {
  * @subpackage    cake.cake.libs
  * @link          http://book.cakephp.org/view/491/Inflector
  */
-class Inflector extends Object {
+class Inflector {
 
 /**
  * Plural inflector rules
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_plural = array(
 		'rules' => array(
 			'/(s)tatus$/i' => '\1\2tatuses',
@@ -113,7 +105,7 @@ class Inflector extends Object {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_singular = array(
 		'rules' => array(
 			'/(s)tatuses$/i' => '\1\2tatus',
@@ -124,7 +116,7 @@ class Inflector extends Object {
 			'/^(ox)en/i' => '\1',
 			'/(alias)(es)*$/i' => '\1',
 			'/(alumn|bacill|cact|foc|fung|nucle|radi|stimul|syllab|termin|viri?)i$/i' => '\1us',
-			'/([ftw]ax)es/' => '\1',
+			'/([ftw]ax)es/i' => '\1',
 			'/(cris|ax|test)es$/i' => '\1is',
 			'/(shoe|slave)s$/i' => '\1',
 			'/(o)es$/i' => '\1',
@@ -147,13 +139,16 @@ class Inflector extends Object {
 			'/(m)en$/i' => '\1an',
 			'/(c)hildren$/i' => '\1\2hild',
 			'/(n)ews$/i' => '\1\2ews',
+			'/eaus$/' => 'eau',
 			'/^(.*us)$/' => '\\1',
 			'/s$/i' => ''
 		),
 		'uninflected' => array(
 			'.*[nrlm]ese', '.*deer', '.*fish', '.*measles', '.*ois', '.*pox', '.*sheep', '.*ss'
-	),
-		'irregular' => array()
+		),
+		'irregular' => array(
+			'waves' => 'wave'
+		)
 	);
 
 /**
@@ -161,7 +156,7 @@ class Inflector extends Object {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_uninflected = array(
 		'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
 		'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
@@ -182,7 +177,7 @@ class Inflector extends Object {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_pluralized = array();
 
 /**
@@ -190,8 +185,48 @@ class Inflector extends Object {
  *
  * @var array
  * @access protected
- **/
+ */
 	var $_singularized = array();
+
+/**
+ * Cached Underscore Inflections
+ *
+ * @var array
+ * @access protected
+ */
+	var $_underscore = array();
+
+/**
+ * Cached Camelize Inflections
+ *
+ * @var array
+ * @access protected
+ */
+	var $_camelize = array();
+
+/**
+ * Classify cached inflecctions
+ *
+ * @var array
+ * @access protected
+ */
+	var $_classify = array();
+
+/**
+ * Tablize cached inflections
+ *
+ * @var array
+ * @access protected
+ */
+	var $_tableize = array();
+
+/**
+ * Humanize cached inflections
+ *
+ * @var array
+ * @access protected
+ */
+	var $_humanize = array();
 
 /**
  * Gets a reference to the Inflector object instance
@@ -209,28 +244,57 @@ class Inflector extends Object {
 	}
 
 /**
+ * Cache inflected values, and return if already available
+ *
+ * @param string $type Inflection type
+ * @param string $key Original value
+ * @param string $value Inflected value
+ * @return string Inflected value, from cache
+ * @access protected
+ */
+	function _cache($type, $key, $value = false) {
+		$key = '_' . $key;
+		$type = '_' . $type;
+		if ($value !== false) {
+			$this->{$type}[$key] = $value;
+			return $value;
+		}
+
+		if (!isset($this->{$type}[$key])) {
+			return false;
+		}
+		return $this->{$type}[$key];
+	}
+
+/**
  * Adds custom inflection $rules, of either 'plural' or 'singular' $type.
  *
  * @param string $type The type of inflection, either 'singular' or 'plural'
  * @param array $rules Array of rules to be added. Example usage:
- *					   Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
- *					   Inflector::rules('plural', array(
- *							'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *							'uninflected' => array('dontinflectme'),
- *							'irregular' => array('red' => 'redlings')
- *					   ));
+ *        Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
+ *        Inflector::rules('plural', array(
+ *            'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *            'uninflected' => array('dontinflectme'),
+ *            'irregular' => array('red' => 'redlings')
+ *        ));
+ * @param boolean $reset If true, will unset default inflections for all
+ *        new rules that are being defined in $rules.
  * @access public
  * @return void
  * @static
  */
-	function rules($type, $rules = array()) {
+	function rules($type, $rules, $reset = false) {
 		$_this =& Inflector::getInstance();
 		$type = '_'.$type;
 
 		foreach ($rules as $rule => $pattern) {
 			if (is_array($pattern)) {
-			  $_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
-			  unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
+				if ($reset) {
+					$_this->{$type}[$rule] = $pattern;
+				} else {
+					$_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+				}
+				unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
 			}
 		}
 		$_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
@@ -262,8 +326,8 @@ class Inflector extends Object {
 		}
 
 		if (!isset($_this->_plural['cacheUninflected']) || !isset($_this->_plural['cacheIrregular'])) {
-			$_this->_plural['cacheUninflected'] = '(?:' . join( '|', $_this->_plural['merged']['uninflected']) . ')';
-			$_this->_plural['cacheIrregular'] = '(?:' . join( '|', array_keys($_this->_plural['merged']['irregular'])) . ')';
+			$_this->_plural['cacheUninflected'] = '(?:' . implode('|', $_this->_plural['merged']['uninflected']) . ')';
+			$_this->_plural['cacheIrregular'] = '(?:' . implode('|', array_keys($_this->_plural['merged']['irregular'])) . ')';
 		}
 
 		if (preg_match('/(.*)\\b(' . $_this->_plural['cacheIrregular'] . ')$/i', $word, $regs)) {
@@ -343,7 +407,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function camelize($lowerCaseAndUnderscoredWord) {
-		return str_replace(" ", "", ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord)));
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
+			$result = str_replace(' ', '', Inflector::humanize($lowerCaseAndUnderscoredWord));
+			$_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -356,7 +425,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function underscore($camelCasedWord) {
-		return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $camelCasedWord))) {
+			$result = strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $camelCasedWord));
+			$_this->_cache(__FUNCTION__, $camelCasedWord, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -370,7 +444,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function humanize($lowerCaseAndUnderscoredWord) {
-		return ucwords(str_replace("_", " ", $lowerCaseAndUnderscoredWord));
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord))) {
+			$result = ucwords(str_replace('_', ' ', $lowerCaseAndUnderscoredWord));
+			$_this->_cache(__FUNCTION__, $lowerCaseAndUnderscoredWord, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -383,7 +462,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function tableize($className) {
-		return Inflector::pluralize(Inflector::underscore($className));
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $className))) {
+			$result = Inflector::pluralize(Inflector::underscore($className));
+			$_this->_cache(__FUNCTION__, $className, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -396,7 +480,12 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function classify($tableName) {
-		return Inflector::camelize(Inflector::singularize($tableName));
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $tableName))) {
+			$result = Inflector::camelize(Inflector::singularize($tableName));
+			$_this->_cache(__FUNCTION__, $tableName, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -409,9 +498,14 @@ class Inflector extends Object {
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function variable($string) {
-		$string = Inflector::camelize(Inflector::underscore($string));
-		$replace = strtolower(substr($string, 0, 1));
-		return preg_replace('/\\w/', $replace, $string, 1);
+		$_this =& Inflector::getInstance();
+		if (!($result = $_this->_cache(__FUNCTION__, $string))) {
+			$string2 = Inflector::camelize(Inflector::underscore($string));
+			$replace = strtolower(substr($string2, 0, 1));
+			$result = preg_replace('/\\w/', $replace, $string2, 1);
+			$_this->_cache(__FUNCTION__, $string, $result);
+		}
+		return $result;
 	}
 
 /**
@@ -431,7 +525,6 @@ class Inflector extends Object {
 			$map = $replacement;
 			$replacement = '_';
 		}
-
 		$quotedReplacement = preg_quote($replacement, '/');
 
 		$default = array(
@@ -454,7 +547,7 @@ class Inflector extends Object {
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$map = array_merge($default, $map);
+		$map = array_merge($map, $default);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }

@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Automatic generation of HTML FORMs from given data.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 0.10.0.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -50,7 +44,7 @@ class FormHelper extends AppHelper {
  *
  * @access public
  */
-	var $fieldset = array('fields' => array(), 'key' => 'id', 'validates' => array());
+	var $fieldset = array();
 
 /**
  * Options used by DateTime fields
@@ -79,63 +73,45 @@ class FormHelper extends AppHelper {
 	var $requestType = null;
 
 /**
- * Returns an HTML FORM element.
+ * The default model being used for the current form.
  *
- * Options:
- *
- * - 'type' Form method defaults to POST
- * - 'action'  The Action the form submits to. Can be a string or array,
- * - 'url'  The url the form submits to. Can be a string or a url array,
- * - 'default'  Allows for the creation of Ajax forms.
- * - 'onsubmit' Used in conjunction with 'default' to create ajax forms.
- *
- * @access public
- * @param string $model The model object which the form is being defined for
- * @param array $options An array of html attributes and options.
- * @return string An formatted opening FORM tag.
+ * @var string
  */
-	function create($model = null, $options = array()) {
-		$defaultModel = null;
-		$view =& ClassRegistry::getObject('view');
+	var $defaultModel = null;
 
-		if (is_array($model) && empty($options)) {
-			$options = $model;
-			$model = null;
-		}
 
-		if (empty($model) && $model !== false && !empty($this->params['models'])) {
-			$model = $this->params['models'][0];
-			$defaultModel = $this->params['models'][0];
-		} elseif (empty($model) && empty($this->params['models'])) {
-			$model = false;
-		} elseif (is_string($model) && strpos($model, '.') !== false) {
+/**
+ * Persistent default options used by input(). Set by FormHelper::create().
+ *
+ * @var array
+ * @access protected
+ */
+	var $_inputDefaults = array();
+
+/**
+ * Introspects model information and extracts information related
+ * to validation, field length and field type. Appends information into
+ * $this->fieldset.
+ *
+ * @return Model Returns a model instance
+ * @access protected
+ */
+	function &_introspectModel($model) {
+		$object = null;
+		if (is_string($model) && strpos($model, '.') !== false) {
 			$path = explode('.', $model);
-			$model = $path[count($path) - 1];
+			$model = end($path);
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
 			$object =& ClassRegistry::getObject($model);
 		}
 
-		$models = ClassRegistry::keys();
-		foreach ($models as $currentModel) {
-			if (ClassRegistry::isKeySet($currentModel)) {
-				$currentObject =& ClassRegistry::getObject($currentModel);
-				if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
-					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
-				}
-			}
-		}
-
-		$this->setEntity($model . '.', true);
-		$append = '';
-		$created = $id = false;
-
-		if (isset($object)) {
+		if (!empty($object)) {
 			$fields = $object->schema();
 			foreach ($fields as $key => $value) {
 				unset($fields[$key]);
-				$fields[$model . '.' . $key] = $value;
+				$fields[$key] = $value;
 			}
 
 			if (!empty($object->hasAndBelongsToMany)) {
@@ -160,45 +136,104 @@ class FormHelper extends AppHelper {
 					}
 				}
 			}
+			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
 			$key = $object->primaryKey;
-			$this->fieldset = compact('fields', 'key', 'validates');
+			$this->fieldset[$object->name] = array_merge($defaults,compact('fields', 'key', 'validates'));
 		}
 
-		$data = $this->fieldset;
-		$recordExists = (
-			isset($this->data[$model]) &&
-			isset($this->data[$model][$data['key']]) &&
-			!empty($this->data[$model][$data['key']])
-		);
+		return $object;
+	}
 
-		if ($recordExists) {
-			$created = true;
-			$id = $this->data[$model][$data['key']];
+/**
+ * Returns an HTML FORM element.
+ *
+ * #### Options:
+ *
+ * - `type` Form method defaults to POST
+ * - `action`  The Action the form submits to. Can be a string or array,
+ * - `url`  The url the form submits to. Can be a string or a url array,
+ * - `default`  Allows for the creation of Ajax forms.
+ * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
+ * - `inputDefaults' set the default $options for FormHelper::input(). Any options that would
+ *    be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
+ *    can be overridden when calling input()
+ * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
+ *
+ * @access public
+ * @param string $model The model object which the form is being defined for
+ * @param array $options An array of html attributes and options.
+ * @return string An formatted opening FORM tag.
+ */
+	function create($model = null, $options = array()) {
+		$created = $id = false;
+		$append = '';
+		$view =& ClassRegistry::getObject('view');
+
+		if (is_array($model) && empty($options)) {
+			$options = $model;
+			$model = null;
 		}
+		if (empty($model) && $model !== false && !empty($this->params['models'])) {
+			$model = $this->params['models'][0];
+			$this->defaultModel = $this->params['models'][0];
+		} elseif (empty($model) && empty($this->params['models'])) {
+			$model = false;
+		}
+
+		$models = ClassRegistry::keys();
+		foreach ($models as $currentModel) {
+			if (ClassRegistry::isKeySet($currentModel)) {
+				$currentObject =& ClassRegistry::getObject($currentModel);
+				if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
+					$this->validationErrors[Inflector::camelize($currentModel)] =& $currentObject->validationErrors;
+				}
+			}
+		}
+
+		$object =& $this->_introspectModel($model);
+		$this->setEntity($model . '.', true);
+
+		if (isset($this->fieldset[$this->model()]['key'])) {
+			$data = $this->fieldset[$this->model()];
+			$recordExists = (
+				isset($this->data[$model]) &&
+				!empty($this->data[$model][$data['key']])
+			);
+
+			if ($recordExists) {
+				$created = true;
+				$id = $this->data[$model][$data['key']];
+			}
+		}
+
 		$options = array_merge(array(
 			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
-			'default' => true),
+			'default' => true,
+			'encoding' => strtolower(Configure::read('App.encoding')),
+			'inputDefaults' => array()),
 		$options);
+		$this->_inputDefaults = $options['inputDefaults'];
+		unset($options['inputDefaults']);
 
 		if (empty($options['url']) || is_array($options['url'])) {
 			if (empty($options['url']['controller'])) {
-				if (!empty($model) && $model != $defaultModel) {
+				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
 				} elseif (!empty($this->params['controller'])) {
 					$options['url']['controller'] = Inflector::underscore($this->params['controller']);
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = ($created) ? 'edit' : 'add';
+				$options['action'] = $this->params['action'];
 			}
 
 			$actionDefaults = array(
 				'plugin' => $this->plugin,
 				'controller' => $view->viewPath,
 				'action' => $options['action'],
-				'id' => $id
+				0 => $id
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
@@ -238,6 +273,12 @@ class FormHelper extends AppHelper {
 				$htmlAttributes['onsubmit'] = 'event.returnValue = false; return false;';
 			}
 		}
+
+		if (!empty($options['encoding'])) {
+			$htmlAttributes['accept-charset'] = $options['encoding'];
+			unset($options['encoding']);
+		}
+
 		unset($options['default']);
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
@@ -248,28 +289,30 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($append)) {
-			$append = sprintf($this->Html->tags['fieldset'], ' style="display:none;"', $append);
+			$append = sprintf($this->Html->tags['block'], ' style="display:none;"', $append);
 		}
 
 		$this->setEntity($model . '.', true);
 		$attributes = $this->_parseAttributes($htmlAttributes, null, '');
-		return $this->output(sprintf($this->Html->tags['form'], $attributes)) . $append;
+		return sprintf($this->Html->tags['form'], $attributes) . $append;
 	}
 
 /**
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
  * input fields where appropriate.
  *
- * If $options is set a form submit button will be created.
+ * If $options is set a form submit button will be created. Options can be either a string or an array.
+ *
+ * {{{
+ * array usage:
+ * array('label' => 'save'); value="save"
+ * array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
+ * array('name' => 'Whatever'); value="Submit" name="Whatever"
+ * array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
+ * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
+ * }}}
  *
  * @param mixed $options as a string will use $options as the value of button,
- * 	array usage:
- * 		array('label' => 'save'); value="save"
- * 		array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
- * 		array('name' => 'Whatever'); value="Submit" name="Whatever"
- * 		array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
- * 		array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
- *
  * @return string a closing FORM tag optional submit button.
  * @access public
  */
@@ -306,7 +349,7 @@ class FormHelper extends AppHelper {
 
 		$view =& ClassRegistry::getObject('view');
 		$view->modelScope = false;
-		return $this->output($out);
+		return $out;
 	}
 
 /**
@@ -320,7 +363,6 @@ class FormHelper extends AppHelper {
 		if (!isset($this->params['_Token']) || empty($this->params['_Token'])) {
 			return;
 		}
-		$out = '<fieldset style="display:none;">';
 		$locked = array();
 
 		foreach ($fields as $key => $value) {
@@ -336,11 +378,12 @@ class FormHelper extends AppHelper {
 		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
 		$locked = str_rot13(serialize(array_keys($locked)));
 
-		$out .= $this->hidden('_Token.fields', array(
+		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand()
 		));
-		return $out .= '</fieldset>';
+		$out = sprintf($this->Html->tags['block'], ' style="display:none;"', $out);
+		return $out;
 	}
 
 /**
@@ -366,7 +409,7 @@ class FormHelper extends AppHelper {
 				}
 			}
 		}
-		$field = join('.', $field);
+		$field = implode('.', $field);
 		if (!in_array($field, $this->fields)) {
 			if ($value !== null) {
 				return $this->fields[$field] = $value;
@@ -397,9 +440,9 @@ class FormHelper extends AppHelper {
  *   string, will be used as the HTML tag to use.
  * - 'class'  string  The classname for the error message
  *
- * @param string $field  A field name, like "Modelname.fieldname"
- * @param mixed $text  Error message or array of $options
- * @param array $options  Rendering options for <div /> wrapper tag
+ * @param string $field A field name, like "Modelname.fieldname"
+ * @param mixed $text Error message or array of $options
+ * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
  */
@@ -421,11 +464,10 @@ class FormHelper extends AppHelper {
 			if (is_array($text) && is_numeric($error) && $error > 0) {
 				$error--;
 			}
-			if (is_array($text) && isset($text[$error])) {
-				$text = $text[$error];
-			} elseif (is_array($text)) {
+			if (is_array($text)) {
 				$options = array_merge($options, $text);
-				$text = null;
+				$text = isset($text[$error]) ? $text[$error] : null;
+				unset($options[$error]);
 			}
 
 			if ($text != null) {
@@ -454,10 +496,10 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param string $text Text that will appear in the label field.
- * @param Mixed $attributes An array of HTML attributes, or a string, to be used as a class name.
+ * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
  */
-	function label($fieldName = null, $text = null, $attributes = array()) {
+	function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
 			$view = ClassRegistry::getObject('view');
 			$fieldName = implode('.', $view->entity());
@@ -475,32 +517,43 @@ class FormHelper extends AppHelper {
 			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
 		}
 
-		if (is_string($attributes)) {
-			$attributes = array('class' => $attributes);
+		if (is_string($options)) {
+			$options = array('class' => $options);
 		}
 
-		if (isset($attributes['for'])) {
-			$labelFor = $attributes['for'];
-			unset($attributes['for']);
+		if (isset($options['for'])) {
+			$labelFor = $options['for'];
+			unset($options['for']);
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
 
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['label'],
 			$labelFor,
-			$this->_parseAttributes($attributes), $text
-		));
+			$this->_parseAttributes($options), $text
+		);
 	}
 
 /**
- * Will display all the fields passed in an array expects fieldName as an array key
- * replaces generateFields
+ * Generate a set of inputs for `$fields`.  If $fields is null the current model
+ * will be used.
  *
+ * In addition to controller fields output, `$fields` can be used to control legend
+ * and fieldset rendering with the `fieldset` and `legend` keys.
+ * `$form->inputs(array('legend' => 'My legend'));` Would generate an input set with
+ * a custom legend.  You can customize individual inputs through `$fields` as well.
+ *
+ * {{{
+ *	$form->inputs(array(
+ *		'name' => array('label' => 'custom label')
+ *	));
+ * }}}
+ *
+ * @param mixed $fields An array of fields to generate inputs for, or null.
+ * @param array $blacklist a simple array of fields to skip.
+ * @return string Completed form inputs.
  * @access public
- * @param array $fields works well with Controller::generateFields() or on its own;
- * @param array $blacklist a simple array of fields to skip
- * @return output
  */
 	function inputs($fields = null, $blacklist = null) {
 		$fieldset = $legend = true;
@@ -524,20 +577,20 @@ class FormHelper extends AppHelper {
 		}
 
 		if (empty($fields)) {
-			$fields = array_keys($this->fieldset['fields']);
+			$fields = array_keys($this->fieldset[$this->model()]['fields']);
 		}
 
 		if ($legend === true) {
-			$actionName = __('New', true);
+			$actionName = __('New %s', true);
 			$isEdit = (
 				strpos($this->action, 'update') !== false ||
 				strpos($this->action, 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __('Edit', true);
+				$actionName = __('Edit %s', true);
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($this->model()));
-			$legend = $actionName .' '. __($modelName, true);
+			$legend = sprintf($actionName, __($modelName, true));
 		}
 
 		$out = null;
@@ -582,46 +635,43 @@ class FormHelper extends AppHelper {
  * Options - See each field type method for more information. Any options that are part of
  * $attributes or $options for the different type methods can be included in $options for input().
  *
- * - 'type' - Force the type of widget you want. e.g. ```type => 'select'```
- * - 'label' - control the label
- * - 'div' - control the wrapping div element
- * - 'options' - for widgets that take options e.g. radio, select
- * - 'error' - control the error message that is produced
+ * - `type` - Force the type of widget you want. e.g. `type => 'select'`
+ * - `label` - control the label
+ * - `div` - control the wrapping div element
+ * - `options` - for widgets that take options e.g. radio, select
+ * - `error` - control the error message that is produced
+ * - `empty` - String or boolean to enable empty select box options.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
  * @return string Completed form widget
  */
 	function input($fieldName, $options = array()) {
-		$view =& ClassRegistry::getObject('view');
 		$this->setEntity($fieldName);
-		$entity = join('.', $view->entity());
 
-		$defaults = array('before' => null, 'between' => null, 'after' => null);
-		$options = array_merge($defaults, $options);
+		$options = array_merge(
+			array('before' => null, 'between' => null, 'after' => null),
+			$this->_inputDefaults,
+			$options
+		);
+
+		$modelKey = $this->model();
+		$fieldKey = $this->field();
+		if (!isset($this->fieldset[$modelKey])) {
+			$this->_introspectModel($modelKey);
+		}
 
 		if (!isset($options['type'])) {
 			$options['type'] = 'text';
-
+			$fieldDef = array();
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
-			} elseif (in_array($this->field(), array('psword', 'passwd', 'password'))) {
+			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
 				$options['type'] = 'password';
-			} elseif (isset($this->fieldset['fields'][$entity])) {
-				$fieldDef = $this->fieldset['fields'][$entity];
+			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
+				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
 				$type = $fieldDef['type'];
-				$primaryKey = $this->fieldset['key'];
-			} elseif (ClassRegistry::isKeySet($this->model())) {
-				$model =& ClassRegistry::getObject($this->model());
-				$type = $model->getColumnType($this->field());
-				$fieldDef = $model->schema();
-
-				if (isset($fieldDef[$this->field()])) {
-					$fieldDef = $fieldDef[$this->field()];
-				} else {
-					$fieldDef = array();
-				}
-				$primaryKey = $model->primaryKey;
+				$primaryKey = $this->fieldset[$modelKey]['key'];
 			}
 
 			if (isset($type)) {
@@ -637,30 +687,30 @@ class FormHelper extends AppHelper {
 				} elseif (isset($map[$type])) {
 					$options['type'] = $map[$type];
 				}
-				if ($this->field() == $primaryKey) {
+				if ($fieldKey == $primaryKey) {
 					$options['type'] = 'hidden';
 				}
 			}
+			if (preg_match('/_id$/', $fieldKey)) {
+				$options['type'] = 'select';
+			}
 
-			if ($this->model() === $this->field()) {
+			if ($modelKey === $fieldKey) {
 				$options['type'] = 'select';
 				if (!isset($options['multiple'])) {
 					$options['multiple'] = 'multiple';
 				}
 			}
 		}
-		$types = array('text', 'checkbox', 'radio', 'select');
+		$types = array('checkbox', 'radio', 'select');
 
 		if (!isset($options['options']) && in_array($options['type'], $types)) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
-				Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
+				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
-				if ($options['type'] !== 'radio') {
-					$options['type'] = 'select';
-				}
 				$options['options'] = $varOptions;
 			}
 		}
@@ -690,7 +740,10 @@ class FormHelper extends AppHelper {
 			} elseif (is_array($div)) {
 				$divOptions = array_merge($divOptions, $div);
 			}
-			if (in_array($this->field(), $this->fieldset['validates'])) {
+			if (
+				isset($this->fieldset[$modelKey]) &&
+				in_array($fieldKey, $this->fieldset[$modelKey]['validates'])
+				) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
@@ -718,9 +771,13 @@ class FormHelper extends AppHelper {
 
 		if ($label !== false) {
 			$labelAttributes = $this->domId(array(), 'for');
-			if (in_array($options['type'], array('date', 'datetime'))) {
-				$labelAttributes['for'] .= 'Month';
-			} else if ($options['type'] === 'time') {
+			if ($options['type'] === 'date' || $options['type'] === 'datetime') {
+				if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
+					$labelAttributes['for'] .= 'Hour';
+				} else {
+					$labelAttributes['for'] .= 'Month';
+				}
+			} elseif ($options['type'] === 'time') {
 				$labelAttributes['for'] .= 'Hour';
 			}
 
@@ -756,12 +813,6 @@ class FormHelper extends AppHelper {
 			$options['type'] = 'textarea';
 		}
 
-		$empty = false;
-		if (isset($options['empty'])) {
-			$empty = $options['empty'];
-			unset($options['empty']);
-		}
-
 		$timeFormat = 12;
 		if (isset($options['timeFormat'])) {
 			$timeFormat = $options['timeFormat'];
@@ -774,10 +825,14 @@ class FormHelper extends AppHelper {
 			unset($options['dateFormat']);
 		}
 
-		$type	 = $options['type'];
-		$before	 = $options['before'];
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
+			$options += array('empty' => false);
+		}
+
+		$type = $options['type'];
+		$before  = $options['before'];
 		$between = $options['between'];
-		$after	 = $options['after'];
+		$after = $options['after'];
 		unset($options['type'], $options['before'], $options['between'], $options['after']);
 
 		switch ($type) {
@@ -803,22 +858,22 @@ class FormHelper extends AppHelper {
 				$list = $options['options'];
 				unset($options['options']);
 				$out = $before . $out . $between . $this->select(
-					$fieldName, $list, $selected, $options, $empty
+					$fieldName, $list, $selected, $options
 				);
 			break;
 			case 'time':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, null, $timeFormat, $selected, $options, $empty
+					$fieldName, null, $timeFormat, $selected, $options
 				);
 			break;
 			case 'date':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, null, $selected, $options, $empty
+					$fieldName, $dateFormat, null, $selected, $options
 				);
 			break;
 			case 'datetime':
 				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, $timeFormat, $selected, $options, $empty
+					$fieldName, $dateFormat, $timeFormat, $selected, $options
 				);
 			break;
 			case 'textarea':
@@ -852,38 +907,42 @@ class FormHelper extends AppHelper {
  *
  * Options:
  *
- * - 'value' - the value of the checkbox
- * - checked' - boolean indicate that this checkbox is checked.
+ * - `value` - the value of the checkbox
+ * - `checked` - boolean indicate that this checkbox is checked.
+ * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
+ *    a hidden input with a value of ''.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
- * @todo Right now, automatically setting the 'checked' value is dependent on whether or not the
- *    checkbox is bound to a model.  This should probably be re-evaluated in future versions.
  * @return string An HTML text input element
  */
 	function checkbox($fieldName, $options = array()) {
-		$options = $this->_initInputField($fieldName, $options);
+		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
 		$value = current($this->value());
+		$output = "";
 
-		if (!isset($options['value']) || empty($options['value'])) {
+		if (empty($options['value'])) {
 			$options['value'] = 1;
 		} elseif (!empty($value) && $value === $options['value']) {
 			$options['checked'] = 'checked';
 		}
-		$hiddenOptions = array(
-			'id' => $options['id'] . '_', 'name' => $options['name'],
-			'value' => '0', 'secure' => false
-		);
-		if (isset($options['disabled']) && $options['disabled'] == true) {
-			$hiddenOptions['disabled'] = 'disabled';
+		if ($options['hiddenField']) {
+			$hiddenOptions = array(
+				'id' => $options['id'] . '_', 'name' => $options['name'],
+				'value' => '0', 'secure' => false
+			);
+			if (isset($options['disabled']) && $options['disabled'] == true) {
+				$hiddenOptions['disabled'] = 'disabled';
+			}
+			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
-		$output = $this->hidden($fieldName, $hiddenOptions);
+		unset($options['hiddenField']);
 
-		return $this->output($output . sprintf(
+		return $output . sprintf(
 			$this->Html->tags['checkbox'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
@@ -891,10 +950,12 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'separator' - define the string in between the radio buttons
- * - 'legend' - control whether or not the widget set has a fieldset & legend
- * - 'value' - indicate a value that is should be checked
- * - 'label' - boolean to indicate whether or not labels for widgets show be displayed
+ * - `separator` - define the string in between the radio buttons
+ * - `legend` - control whether or not the widget set has a fieldset & legend
+ * - `value` - indicate a value that is should be checked
+ * - `label` - boolean to indicate whether or not labels for widgets show be displayed
+ * - `hiddenField` - boolean to indicate if you want the results of radio() to include
+ *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -931,6 +992,9 @@ class FormHelper extends AppHelper {
 		}
 		$out = array();
 
+		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
+		unset($attributes['hiddenField']);
+
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue);
 
@@ -955,12 +1019,14 @@ class FormHelper extends AppHelper {
 		}
 		$hidden = null;
 
-		if (!isset($value) || $value === '') {
-			$hidden = $this->hidden($fieldName, array(
-				'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
-			));
+		if ($hiddenField) {
+			if (!isset($value) || $value === '') {
+				$hidden = $this->hidden($fieldName, array(
+					'id' => $attributes['id'] . '_', 'value' => '', 'name' => $attributes['name']
+				));
+			}
 		}
-		$out = $hidden . join($inbetween, $out);
+		$out = $hidden . implode($inbetween, $out);
 
 		if ($legend) {
 			$out = sprintf(
@@ -968,41 +1034,41 @@ class FormHelper extends AppHelper {
 				sprintf($this->Html->tags['legend'], $legend) . $out
 			);
 		}
-		return $this->output($out);
+		return $out;
 	}
 
 /**
  * Creates a text input widget.
  *
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
- * @param array  $options Array of HTML attributes.
+ * @param array $options Array of HTML attributes.
  * @return string An HTML text input element
  */
 	function text($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, array_merge(
 			array('type' => 'text'), $options
 		));
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['input'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
  * Creates a password input widget.
  *
- * @param  string  $fieldName Name of a field, like in the form "Modelname.fieldname"
- * @param  array	$options Array of HTML attributes.
+ * @param string $fieldName Name of a field, like in the form "Modelname.fieldname"
+ * @param array $options Array of HTML attributes.
  * @return string
  */
 	function password($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['password'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name'), null, ' ')
-		));
+		);
 	}
 
 /**
@@ -1023,12 +1089,12 @@ class FormHelper extends AppHelper {
 			}
 			unset($options['value']);
 		}
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['textarea'],
 			$options['name'],
 			$this->_parseAttributes($options, array('type', 'name'), null, ' '),
 			$value
-		));
+		);
 	}
 
 /**
@@ -1055,11 +1121,11 @@ class FormHelper extends AppHelper {
 			$this->__secure(null, '' . $options['value']);
 		}
 
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['hidden'],
 			$options['name'],
 			$this->_parseAttributes($options, array('name', 'class'), '', ' ')
-		));
+		);
 	}
 
 /**
@@ -1081,33 +1147,32 @@ class FormHelper extends AppHelper {
 		}
 
 		$attributes = $this->_parseAttributes($options, array('name'), '', ' ');
-		return $this->output(sprintf($this->Html->tags['file'], $options['name'], $attributes));
+		return sprintf($this->Html->tags['file'], $options['name'], $attributes);
 	}
 
 /**
- * Creates a button tag.
+ * Creates a <button> tag.
  *
- * @param string $title  The button's caption
- * @param array $options Array of options.
+ * Options:
+ *
+ * - `escape` - HTML entity encode the $title of the button. Defaults to false.
+ *
+ * @param string $title  The button's caption. Not automatically HTML encoded
+ * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
  * @access public
  */
 	function button($title, $options = array()) {
-		$options = array_merge(array('type' => 'button', 'value' => $title), $options);
-
-		if (isset($options['name']) && strpos($options['name'], '.') !== false) {
-			if ($this->value($options['name'])) {
-				$options['checked'] = 'checked';
-			}
-			$name = $options['name'];
-			unset($options['name']);
-			$options = $this->_initInputField($name, $options);
+		$options += array('type' => 'submit', 'escape' => false);
+		if ($options['escape']) {
+			$title = h($title);
 		}
-		return $this->output(sprintf(
+		return sprintf(
 			$this->Html->tags['button'],
 			$options['type'],
-			$this->_parseAttributes($options, array('type'), '', ' ')
-		));
+			$this->_parseAttributes($options, array('type'), '', ' '),
+			$title
+		);
 	}
 
 /**
@@ -1131,6 +1196,7 @@ class FormHelper extends AppHelper {
 			$div = $options['div'];
 			unset($options['div']);
 		}
+		$options += array('type' => 'submit', 'before' => null, 'after' => null);
 		$divOptions = array('tag' => 'div');
 
 		if ($div === true) {
@@ -1143,30 +1209,36 @@ class FormHelper extends AppHelper {
 			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
 		}
 
+		$before = $options['before'];
+		$after = $options['after'];
+		unset($options['before'], $options['after']);
+
 		if (strpos($caption, '://') !== false) {
-			$out .= $this->output(sprintf(
+			unset($options['type']);
+			$out .=  $before . sprintf(
 				$this->Html->tags['submitimage'],
 				$caption,
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			) . $after;
 		} elseif (preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption)) {
+			unset($options['type']);
 			if ($caption{0} !== '/') {
 				$url = $this->webroot(IMAGES_URL . $caption);
 			} else {
 				$caption = trim($caption, '/');
 				$url = $this->webroot($caption);
 			}
-			$out .= $this->output(sprintf(
+			$out .= $before . sprintf(
 				$this->Html->tags['submitimage'],
 				$url,
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			) . $after;
 		} else {
 			$options['value'] = $caption;
-			$out .= $this->output(sprintf(
+			$out .= $before . sprintf(
 				$this->Html->tags['submit'],
 				$this->_parseAttributes($options, null, '', ' ')
-			));
+			). $after;
 		}
 
 		if (isset($divOptions)) {
@@ -1182,10 +1254,12 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'showParents' - If included in the array and set to true, an additional option element
+ * - `showParents` - If included in the array and set to true, an additional option element
  *   will be added for the parent of each option group.
- * - 'multiple' - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
+ * - `multiple` - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
  *   created instead.
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
@@ -1193,20 +1267,23 @@ class FormHelper extends AppHelper {
  * @param mixed $selected The option selected by default.  If null, the default value
  *   from POST data will be used when available.
  * @param array $attributes The HTML attributes of the select element.
- * @param mixed $showEmpty If true, the empty select option is shown.  If a string,
- *   that string is displayed as the empty element.
  * @return string Formatted SELECT element
  */
-	function select($fieldName, $options = array(), $selected = null, $attributes = array(), $showEmpty = '') {
+	function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
 		$select = array();
 		$showParents = false;
 		$escapeOptions = true;
 		$style = null;
 		$tag = null;
+		$showEmpty = '';
 
 		if (isset($attributes['escape'])) {
 			$escapeOptions = $attributes['escape'];
 			unset($attributes['escape']);
+		}
+		if (isset($attributes['empty'])) {
+			$showEmpty = $attributes['empty'];
+			unset($attributes['empty']);
 		}
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
@@ -1233,7 +1310,12 @@ class FormHelper extends AppHelper {
 			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
 			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
 			$tag = $this->Html->tags[$template];
-			$select[] = $this->hidden(null, array('value' => '', 'id' => null, 'secure' => false));
+			$hiddenAttributes = array(
+				'value' => '',
+				'id' => $attributes['id'] . ($style ? '' : '_'),
+				'secure' => false
+			);
+			$select[] = $this->hidden(null, $hiddenAttributes);
 		} else {
 			$tag = $this->Html->tags['selectstart'];
 		}
@@ -1268,66 +1350,61 @@ class FormHelper extends AppHelper {
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
 		$select[] = $this->Html->tags[$template];
-		return $this->output(implode("\n", $select));
+		return implode("\n", $select);
 	}
 
 /**
  * Returns a SELECT element for days.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
- * @param array	 $attributes HTML attributes for the select element
- * @param mixed $showEmpty Show/hide the empty select option
+ * @param array $attributes HTML attributes for the select element
  * @return string
  */
-	function day($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $day;
-			} else {
-				if (empty($value)) {
-					if (!$showEmpty) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+	function day($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
+		$selected = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('d', strtotime($selected));
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		return $this->select(
-			$fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes, $showEmpty
-		);
+		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes);
 	}
 
 /**
  * Returns a SELECT element for years
+ *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
  * @param integer $maxYear Last year in sequence
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
- * @param boolean $showEmpty Show/hide the empty select option
- * @return string
+ * @return string Completed year select input
  */
-	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array(), $showEmpty = true) {
+	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $year;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty && !$maxYear) {
+					if (!$attributes['empty'] && !$maxYear) {
 						$selected = 'now';
 
-					} elseif (!$showEmpty && $maxYear && !$selected) {
+					} elseif (!$attributes['empty'] && $maxYear && !$selected) {
 						$selected = $maxYear;
 					}
 				} else {
@@ -1344,7 +1421,7 @@ class FormHelper extends AppHelper {
 		$yearOptions = array('min' => $minYear, 'max' => $maxYear);
 		return $this->select(
 			$fieldName . ".year", $this->__generateOptions('year', $yearOptions),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
@@ -1353,29 +1430,19 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'monthNames' is set and false 2 digit numbers will be used instead of text.
+ * - `monthNames` - If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param array $attributes Attributes for the select element
- * @param boolean $showEmpty Show/hide the empty select option
  * @return string
  */
-	function month($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $month;
-			} else {
-				if (empty($value)) {
-					if (!$showEmpty) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+	function month($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
+		$selected = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('m', strtotime($selected));
@@ -1390,43 +1457,33 @@ class FormHelper extends AppHelper {
 		return $this->select(
 			$fieldName . ".month",
 			$this->__generateOptions('month', array('monthNames' => $monthNames)),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
 /**
  * Returns a SELECT element for hours.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param boolean $format24Hours True for 24 hours format
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
- * @param mixed $showEmpty True to show an empty element, or a string to provide default empty element text
- * @return string
+ * @return string Completed hour select input
  */
-	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array(), $showEmpty = true) {
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $hour;
-			} else {
-				if (empty($value)) {
-					if (!$showEmpty) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		} else {
-			$value = $selected;
-		}
+	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
+		$selected = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			if ($format24Hours) {
-				$selected = date('H', strtotime($value));
+				$selected = date('H', strtotime($selected));
 			} else {
-				$selected = date('g', strtotime($value));
+				$selected = date('g', strtotime($selected));
 			}
 		} elseif ($selected === false) {
 			$selected = null;
@@ -1434,34 +1491,26 @@ class FormHelper extends AppHelper {
 		return $this->select(
 			$fieldName . ".hour",
 			$this->__generateOptions($format24Hours ? 'hour24' : 'hour'),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
 /**
  * Returns a SELECT element for minutes.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
- * @param bool $showEmpty True to show an empty element, or a string to provide default empty element text
- * @return string
+ * @return string Completed minute select input
  */
-	function minute($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				extract($value);
-				$selected = $min;
-			} else {
-				if (empty($value)) {
-					if (!$showEmpty) {
-						$selected = 'now';
-					}
-				} else {
-					$selected = $value;
-				}
-			}
-		}
+	function minute($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
+		$selected = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
 
 		if (strlen($selected) > 2) {
 			$selected = date('i', strtotime($selected));
@@ -1476,27 +1525,59 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".min", $this->__generateOptions('minute', $minuteOptions),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
+	}
+
+/**
+ * Selects values for dateTime selects.
+ *
+ * @param string $select Name of element field. ex. 'day'
+ * @param string $fieldName Name of fieldName being generated ex. Model.created
+ * @param mixed $selected The current selected value.
+ * @param array $attributes Array of attributes, must contain 'empty' key.
+ * @return string Currently selected value.
+ */
+	function __dateTimeSelected($select, $fieldName, $selected, $attributes) {
+		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
+			if (is_array($value) && isset($value[$select])) {
+				$selected = $value[$select];
+			} else {
+				if (empty($value)) {
+					if (!$attributes['empty']) {
+						$selected = 'now';
+					}
+				} else {
+					$selected = $value;
+				}
+			}
+		}
+		return $selected;
 	}
 
 /**
  * Returns a SELECT element for AM or PM.
  *
+ * Attributes:
+ *
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
+ *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @param bool $showEmpty Show/Hide an empty option
- * @return string
+ * @return string Completed meridian select input
  */
-	function meridian($fieldName, $selected = null, $attributes = array(), $showEmpty = true) {
+	function meridian($fieldName, $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
 				$selected = $meridian;
 			} else {
 				if (empty($value)) {
-					if (!$showEmpty) {
+					if (!$attribues['empty']) {
 						$selected = date('a');
 					}
 				} else {
@@ -1510,7 +1591,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".meridian", $this->__generateOptions('meridian'),
-			$selected, $attributes, $showEmpty
+			$selected, $attributes
 		);
 	}
 
@@ -1519,28 +1600,31 @@ class FormHelper extends AppHelper {
  *
  * Attributes:
  *
- * - 'monthNames' If set and false numbers will be used for month select instead of text.
- * - 'minYear' The lowest year to use in the year select
- * - 'maxYear' The maximum year to use in the year select
- * - 'interval' The interval for the minutes select. Defaults to 1
- * - 'separator' The contents of the string between select elements. Defaults to '-'
+ * - `monthNames` If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
+ * - `minYear` The lowest year to use in the year select
+ * - `maxYear` The maximum year to use in the year select
+ * - `interval` The interval for the minutes select. Defaults to 1
+ * - `separator` The contents of the string between select elements. Defaults to '-'
+ * - `empty` - If true, the empty select option is shown.  If a string,
+ *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $dateFormat DMY, MDY, YMD or NONE.
- * @param string $timeFormat 12, 24, NONE
+ * @param string $dateFormat DMY, MDY, YMD.
+ * @param string $timeFormat 12, 24.
  * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
- * @param bool $showEmpty Whether or not to show an empty default value.
  * @return string The HTML formatted OPTION element
  */
-	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array(), $showEmpty = true) {
+	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
+		$attributes += array('empty' => true);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($selected)) {
 			$selected = $this->value($fieldName);
 		}
 
-		if ($selected === null && $showEmpty != true) {
+		if ($selected === null && $attributes['empty'] != true) {
 			$selected = time();
 		}
 
@@ -1563,7 +1647,7 @@ class FormHelper extends AppHelper {
 					$days[1] = $selected;
 				}
 
-				if ($timeFormat != 'NONE' && !empty($timeFormat)) {
+				if (!empty($timeFormat)) {
 					$time = explode(':', $days[1]);
 					$check = str_replace(':', '', $days[1]);
 
@@ -1625,42 +1709,39 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$opt = '';
-
-		if ($dateFormat != 'NONE') {
-			$selects = array();
-			foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
-				switch ($char) {
-					case 'Y':
-						$selects[] = $this->year(
-							$fieldName, $minYear, $maxYear, $year, $selectYearAttr, $showEmpty
-						);
-					break;
-					case 'M':
-						$selectMonthAttr['monthNames'] = $monthNames;
-						$selects[] = $this->month($fieldName, $month, $selectMonthAttr, $showEmpty);
-					break;
-					case 'D':
-						$selects[] = $this->day($fieldName, $day, $selectDayAttr, $showEmpty);
-					break;
-				}
+		$selects = array();
+		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
+			switch ($char) {
+				case 'Y':
+					$selects[] = $this->year(
+						$fieldName, $minYear, $maxYear, $year, $selectYearAttr
+					);
+				break;
+				case 'M':
+					$selectMonthAttr['monthNames'] = $monthNames;
+					$selects[] = $this->month($fieldName, $month, $selectMonthAttr);
+				break;
+				case 'D':
+					$selects[] = $this->day($fieldName, $day, $selectDayAttr);
+				break;
 			}
-			$opt = implode($separator, $selects);
 		}
+		$opt = implode($separator, $selects);
 
+		if (!empty($interval) && $interval > 1 && !empty($min)) {
+			$min = round($min * (1 / $interval)) * $interval;
+		}
+		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
 			case '24':
-				$selectMinuteAttr['interval'] = $interval;
-				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr, $showEmpty) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty);
+				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr) . ':' .
+				$this->minute($fieldName, $min, $selectMinuteAttr);
 			break;
 			case '12':
-				$selectMinuteAttr['interval'] = $interval;
-				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr, $showEmpty) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr, $showEmpty) . ' ' .
-				$this->meridian($fieldName, $meridian, $selectMeridianAttr, $showEmpty);
+				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr) . ':' .
+				$this->minute($fieldName, $min, $selectMinuteAttr) . ' ' .
+				$this->meridian($fieldName, $meridian, $selectMeridianAttr);
 			break;
-			case 'NONE':
 			default:
 				$opt .= '';
 			break;
@@ -1674,8 +1755,9 @@ class FormHelper extends AppHelper {
  * @param array $options
  * @param string $key
  * @return array
+ * @access protected
  */
-	function __name($options = array(), $field = null, $key = 'name') {
+	function _name($options = array(), $field = null, $key = 'name') {
 		if ($this->requestType == 'get') {
 			if ($options === null) {
 				$options = array();
@@ -1700,7 +1782,7 @@ class FormHelper extends AppHelper {
 				return $name;
 			}
 		}
-		return parent::__name($options, $field, $key);
+		return parent::_name($options, $field, $key);
 	}
 
 /**
@@ -1745,7 +1827,7 @@ class FormHelper extends AppHelper {
 			}
 
 			if ($name !== null) {
-				if ((!$selectedIsEmpty && $selected == $name) || ($selectedIsArray && in_array($name, $selected))) {
+				if ((!$selectedIsEmpty && (string)$selected == (string)$name) || ($selectedIsArray && in_array($name, $selected))) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
 					} else {
@@ -1769,7 +1851,7 @@ class FormHelper extends AppHelper {
 							$label['class'] = 'selected';
 						}
 
-						list($name) = array_values($this->__name());
+						list($name) = array_values($this->_name());
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';
@@ -1812,7 +1894,7 @@ class FormHelper extends AppHelper {
 				}
 				$i = 0;
 				while ($i < 60) {
-					$data[$i] = sprintf('%02d', $i);
+					$data[sprintf('%02d', $i)] = sprintf('%02d', $i);
 					$i += $interval;
 				}
 			break;
@@ -1845,7 +1927,7 @@ class FormHelper extends AppHelper {
 				}
 			break;
 			case 'month':
-				if ($options['monthNames']) {
+				if ($options['monthNames'] === true) {
 					$data['01'] = __('January', true);
 					$data['02'] = __('February', true);
 					$data['03'] = __('March', true);
@@ -1858,6 +1940,8 @@ class FormHelper extends AppHelper {
 					$data['10'] = __('October', true);
 					$data['11'] = __('November', true);
 					$data['12'] = __('December', true);
+				} else if (is_array($options['monthNames'])) {
+					$data = $options['monthNames'];
 				} else {
 					for ($m = 1; $m <= 12; $m++) {
 						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
@@ -1895,7 +1979,8 @@ class FormHelper extends AppHelper {
  * Sets field defaults and adds field to form security input hash
  *
  * Options
- *  - secure - boolean whether or not the the field should be added to the security fields.
+ *
+ *  - `secure` - boolean whether or not the the field should be added to the security fields.
  *
  * @param string $field
  * @param array $options

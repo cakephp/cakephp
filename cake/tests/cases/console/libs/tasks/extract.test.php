@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ExtractTaskTest file
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', 'Folder');
 App::import('Shell', 'Shell', false);
@@ -39,14 +33,13 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-if (!class_exists('ExtractTask')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
-}
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
+
 
 Mock::generatePartial(
-				'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
-				array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-				);
+	'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
+	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+);
 
 /**
  * ExtractTaskTest class
@@ -84,15 +77,12 @@ class ExtractTaskTest extends CakeTestCase {
  * @access public
  */
 	function testExecute() {
-		$path = TMP . 'extract_task_test';
-		$folder1 = $path . DS . 'locale';
-
-		new Folder($path, true);
-		new Folder($folder1, true);
+		$path = TMP . 'tests' . DS . 'extract_task_test';
+		new Folder($path . DS . 'locale', true);
 
 		$this->Task->interactive = false;
 
-		$this->Task->params['path'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
+		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
 		$this->Task->params['output'] = $path . DS;
 		$this->Task->Dispatch->expectNever('stderr');
 		$this->Task->Dispatch->expectNever('_stop');
@@ -107,6 +97,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/"Plural-Forms\: nplurals\=INTEGER; plural\=EXPRESSION;/';
 		$this->assertPattern($pattern, $result);
 
+		// home.ctp
 		$pattern = '/msgid "Your tmp directory is writable."\nmsgstr ""\n/';
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
@@ -133,6 +124,26 @@ class ExtractTaskTest extends CakeTestCase {
 		$pattern = '/msgid "To change the content of this page, edit: %s.*To change its layout, ';
 		$pattern .= 'edit: %s.*You can also add some CSS styles for your pages at: %s"\nmsgstr ""/s';
 		$this->assertPattern($pattern, $result);
+
+		// extract.ctp
+		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+		$this->assertPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+		$this->assertPattern($pattern, $result);
+
+		// extract.ctp - reading the domain.pot
+		$result = file_get_contents($path . DS . 'domain.pot');
+
+		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+		$this->assertNoPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+		$this->assertNoPattern($pattern, $result);
+
+		$pattern = '/msgid "You have %d new message \(domain\)."\nmsgid_plural "You have %d new messages \(domain\)."/';
+		$this->assertPattern($pattern, $result);
+		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
+		$this->assertPattern($pattern, $result);
+
 
 		$Folder = new Folder($path);
 		$Folder->delete();

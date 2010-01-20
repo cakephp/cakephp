@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * DboMysqlTest file
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 1.2.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
 
@@ -166,7 +160,7 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-
+	var $fixtures = array('core.binary_test');
 /**
  * The Dbo instance to be tested
  *
@@ -190,9 +184,8 @@ class DboMysqlTest extends CakeTestCase {
  *
  * @access public
  */
-	function setUp() {
+	function startTest() {
 		$db = ConnectionManager::getDataSource('test_suite');
-		$this->db = new DboMysqlTestDb($db->config);
 		$this->model = new MysqlTestModel();
 	}
 
@@ -202,14 +195,15 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function tearDown() {
-		unset($this->db);
+		unset($this->model);
+		ClassRegistry::flush();
 	}
 
 /**
  * startCase
  *
  * @return void
- **/
+ */
 	function startCase() {
 		$this->_debug = Configure::read('debug');
 		Configure::write('debug', 1);
@@ -219,7 +213,7 @@ class DboMysqlTest extends CakeTestCase {
  * endCase
  *
  * @return void
- **/
+ */
 	function endCase() {
 		Configure::write('debug', $this->_debug);
 	}
@@ -290,11 +284,11 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testTinyintCasting() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
-			'name' => 'Tinyint', 'table' => $this->db->fullTableName('tinyint', false)
+			'name' => 'Tinyint', 'table' => 'tinyint', 'ds' => 'test_suite'
 		));
 
 		$result = $this->model->schema();
@@ -329,12 +323,12 @@ class DboMysqlTest extends CakeTestCase {
  * @access public
  */
 	function testIndexDetection() {
-		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->cacheSources = false;
 
 		$name = $this->db->fullTableName('simple');
 		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
-		$result = $this->db->index($name, false);
+		$result = $this->db->index('simple', false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 
@@ -344,7 +338,7 @@ class DboMysqlTest extends CakeTestCase {
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->db->index('with_a_key', false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 
@@ -355,7 +349,7 @@ class DboMysqlTest extends CakeTestCase {
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->db->index('with_two_keys', false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 
@@ -367,7 +361,7 @@ class DboMysqlTest extends CakeTestCase {
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->db->index('with_compound_keys', false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
 
@@ -380,9 +374,45 @@ class DboMysqlTest extends CakeTestCase {
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 			'other_way' => array('column' => array('small_int', 'bool'), 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->db->index('with_multiple_compound_keys', false);
 		$this->assertEqual($expected, $result);
 		$this->db->query('DROP TABLE ' . $name);
+	}
+
+/**
+ * testBuildColumn method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildColumn() {
+		$restore = $this->db->columns;
+		$this->db->columns = array('varchar(255)' => 1);
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key',
+			'comment' => 'test'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`testName`  DEFAULT NULL COMMENT \'test\'';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key',
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci'
+		);
+		$result = $this->db->buildColumn($data);
+		$expected = '`testName`  CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL';
+		$this->assertEqual($result, $expected);
+		$this->db->columns = $restore;
 	}
 
 /**
@@ -390,7 +420,7 @@ class DboMysqlTest extends CakeTestCase {
  * Using a mock ensure that MySQL 4.x output is properly parsed.
  *
  * @return void
- **/
+ */
 	function testIndexOnMySQL4Output() {
 		$name = $this->db->fullTableName('simple');
 
@@ -534,7 +564,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchemaIndexes() {
-		App::import('Core', 'CakeSchema');
+		App::import('Model', 'CakeSchema');
 		$this->db->cacheSources = $this->db->testing = false;
 
 		$schema1 =& new CakeSchema(array(
@@ -599,5 +629,135 @@ class DboMysqlTest extends CakeTestCase {
 
 		$this->db->query($this->db->dropSchema($schema1));
 	}
+/**
+ * test saving and retrieval of blobs
+ *
+ * @return void
+ */
+	function testBlobSaving() {
+		$this->db->cacheSources = false;
+		$data = "GIF87ab 
+		 Ò   4A¿¿¿ˇˇˇ   ,    b 
+		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
+		k”:;kÀAõ{*¡€Î˚˚[  ;;";
+
+		$model =& new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model->save(compact('data'));
+
+		$result = $model->find('first');
+		$this->assertEqual($result['BinaryTest']['data'], $data);
+	}
+
+/**
+ * test altering the table settings with schema.
+ *
+ * @return void
+ */
+	function testAlteringTableParameters() {
+		App::import('Model', 'CakeSchema');
+		$this->db->cacheSources = $this->db->testing = false;
+
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'tableParameters' => array(
+					'charset' => 'latin1',
+					'collate' => 'latin1_general_ci',
+					'engine' => 'MyISAM'
+				)
+			)
+		));
+		$this->db->query($this->db->createSchema($schema1));
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+				'tableParameters' => array(
+					'charset' => 'utf8',
+					'collate' => 'utf8_general_ci',
+					'engine' => 'InnoDB'
+				)
+			)
+		));
+		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$this->assertPattern('/DEFAULT CHARSET=utf8/', $result);
+		$this->assertPattern('/ENGINE=InnoDB/', $result);
+		$this->assertPattern('/COLLATE=utf8_general_ci/', $result);
+
+		$this->db->query($result);
+		$result = $this->db->listDetailedSources('altertest');
+		$this->assertEqual($result['Collation'], 'utf8_general_ci');
+		$this->assertEqual($result['Engine'], 'InnoDB');
+		$this->assertEqual($result['charset'], 'utf8');
+
+		$this->db->query($this->db->dropSchema($schema1));
+	}
+
+/**
+ * testReadTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testReadTableParameters() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci',
+			'engine' => 'InnoDB');
+		$this->assertEqual($result, $expected);
+
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$result = $this->db->readTableParameters('tinyint');
+		$expected = array(
+			'charset' => 'cp1250',
+			'collate' => 'cp1250_general_ci',
+			'engine' => 'MyISAM');
+		$this->assertEqual($result, $expected);
+		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+	}
+
+/**
+ * testBuildTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildTableParameters() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$data = array(
+			'charset' => 'utf8',
+			'collate' => 'utf8_unicode_ci',
+			'engine' => 'InnoDB');
+		$result = $this->db->buildTableParameters($data);
+		$expected = array(
+			'DEFAULT CHARSET=utf8',
+			'COLLATE=utf8_unicode_ci',
+			'ENGINE=InnoDB');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testBuildTableParameters method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetCharsetName() {
+		$this->db->cacheSources = $this->db->testing = false;
+		$result = $this->db->getCharsetName('utf8_unicode_ci');
+		$this->assertEqual($result, 'utf8');
+		$result = $this->db->getCharsetName('cp1250_general_ci');
+		$this->assertEqual($result, 'cp1250');
+	}
+
 }
 ?>

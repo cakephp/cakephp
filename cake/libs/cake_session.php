@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Session class for Cake.
  *
@@ -11,22 +9,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v .0.10.0.1222
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -128,7 +122,7 @@ class CakeSession extends Object {
  * @access public
  */
 	function __construct($base = null, $start = true) {
-		App::import('Core', 'Set', 'Security');
+		App::import('Core', array('Set', 'Security'));
 		$this->time = time();
 
 		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
@@ -171,6 +165,8 @@ class CakeSession extends Object {
 			if (strpos($this->host, ':') !== false) {
 				$this->host = substr($this->host, 0, strpos($this->host, ':'));
 			}
+		}
+		if (isset($_SESSION) || $start === true) {
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
@@ -216,11 +212,10 @@ class CakeSession extends Object {
  * @access public
  */
 	function check($name) {
-		$var = $this->__validateKeys($name);
-		if (empty($var)) {
+		if (empty($name)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $var);
+		$result = Set::classicExtract($_SESSION, $name);
 		return isset($result);
 	}
 
@@ -244,23 +239,32 @@ class CakeSession extends Object {
 	}
 
 /**
+ * Remove a variable from the session
+ *
+ * @return boolean
+ * @deprecated Use CakeSession::delete instead
+ */
+	function del($name) {
+		trigger_error(__('CakeSession::del() is deprecated, use CakeSession::delete() instead.', true), E_USER_WARNING);
+		return $this->delete($name);
+	}
+
+/**
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove
  * @return boolean Success
  * @access public
  */
-	function del($name) {
+	function delete($name) {
 		if ($this->check($name)) {
-			if ($var = $this->__validateKeys($name)) {
-				if (in_array($var, $this->watchKeys)) {
-					trigger_error('Deleting session key {' . $var . '}', E_USER_NOTICE);
-				}
-				$this->__overwrite($_SESSION, Set::remove($_SESSION, $var));
-				return ($this->check($var) == false);
+			if (in_array($name, $this->watchKeys)) {
+				trigger_error(sprintf(__('Deleting session key {%s}', true), $name), E_USER_NOTICE);
 			}
+			$this->__overwrite($_SESSION, Set::remove($_SESSION, $name));
+			return ($this->check($name) == false);
 		}
-		$this->__setError(2, "$name doesn't exist");
+		$this->__setError(2, sprintf(__("%s doesn't exist", true), $name));
 		return false;
 	}
 
@@ -347,7 +351,7 @@ class CakeSession extends Object {
 		if (empty($name)) {
 			return false;
 		}
-		$result = Set::extract($_SESSION, $name);
+		$result = Set::classicExtract($_SESSION, $name);
 
 		if (!is_null($result)) {
 			return $result;
@@ -378,7 +382,6 @@ class CakeSession extends Object {
  * @access public
  */
 	function watch($var) {
-		$var = $this->__validateKeys($var);
 		if (empty($var)) {
 			return false;
 		}
@@ -395,7 +398,6 @@ class CakeSession extends Object {
  * @access public
  */
 	function ignore($var) {
-		$var = $this->__validateKeys($var);
 		if (!in_array($var, $this->watchKeys)) {
 			return;
 		}
@@ -417,16 +419,14 @@ class CakeSession extends Object {
  * @access public
  */
 	function write($name, $value) {
-		$var = $this->__validateKeys($name);
-
-		if (empty($var)) {
+		if (empty($name)) {
 			return false;
 		}
-		if (in_array($var, $this->watchKeys)) {
-			trigger_error('Writing session key {' . $var . '}: ' . Debugger::exportVar($value), E_USER_NOTICE);
+		if (in_array($name, $this->watchKeys)) {
+			trigger_error(sprintf(__('Writing session key {%s}: %s', true), $name, Debugger::exportVar($value)), E_USER_NOTICE);
 		}
-		$this->__overwrite($_SESSION, Set::insert($_SESSION, $var, $value));
-		return (Set::extract($_SESSION, $var) === $value);
+		$this->__overwrite($_SESSION, Set::insert($_SESSION, $name, $value));
+		return (Set::classicExtract($_SESSION, $name) === $value);
 	}
 
 /**
@@ -510,12 +510,14 @@ class CakeSession extends Object {
 						ini_set('session.auto_start', 0);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('CakeSession', '__read'),
-													array('CakeSession', '__write'),
-													array('CakeSession', '__destroy'),
-													array('CakeSession', '__gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('CakeSession', '__read'),
+					array('CakeSession', '__write'),
+					array('CakeSession', '__destroy'),
+					array('CakeSession', '__gc')
+				);
 			break;
 			case 'php':
 				if (empty($_SESSION)) {
@@ -542,19 +544,21 @@ class CakeSession extends Object {
 						ini_set('session.cookie_path', $this->path);
 					}
 				}
-				session_set_save_handler(array('CakeSession','__open'),
-													array('CakeSession', '__close'),
-													array('Cache', 'read'),
-													array('Cache', 'write'),
-													array('Cache', 'delete'),
-													array('Cache', 'gc'));
+				session_set_save_handler(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('Cache', 'read'),
+					array('Cache', 'write'),
+					array('Cache', 'delete'),
+					array('Cache', 'gc')
+				);
 			break;
 			default:
 				if (empty($_SESSION)) {
 					$config = CONFIGS . Configure::read('Session.save') . '.php';
 
 					if (is_file($config)) {
-						require_once ($config);
+						require($config);
 					}
 				}
 			break;
@@ -629,15 +633,15 @@ class CakeSession extends Object {
 	function __regenerateId() {
 		$oldSessionId = session_id();
 		if ($oldSessionId) {
-			$sessionpath = session_save_path();
-			if (empty($sessionpath)) {
-				$sessionpath = "/tmp";
-			}
-			if (session_id() != "" || isset($_COOKIE[session_name()])) {
+			if (session_id() != ''|| isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, $this->path);
 			}
 			session_regenerate_id(true);
 			if (PHP_VERSION < 5.1) {
+				$sessionPath = session_save_path();
+				if (empty($sessionPath)) {
+					$sessionPath = '/tmp';
+				}
 				$newSessid = session_id();
 
 				if (function_exists('session_write_close')) {
@@ -647,7 +651,7 @@ class CakeSession extends Object {
 				session_id($oldSessionId);
 				session_start();
 				session_destroy();
-				$file = $sessionpath . DS . "sess_$oldSessionId";
+				$file = $sessionPath . DS . 'sess_' . $oldSessionId;
 				@unlink($file);
 				$this->__initSession();
 				session_id($newSessid);
@@ -663,22 +667,6 @@ class CakeSession extends Object {
  */
 	function renew() {
 		$this->__regenerateId();
-	}
-
-/**
- * Validate that the $name is in correct dot notation
- * example: $name = 'ControllerName.key';
- *
- * @param string $name Session key names as string.
- * @return mixed false is $name is not correct format, or $name if it is correct
- * @access private
- */
-	function __validateKeys($name) {
-		if (is_string($name) && preg_match("/^[ 0-9a-zA-Z._-]*$/", $name)) {
-			return $name;
-		}
-		$this->__setError(3, "$name is not a string");
-		return false;
 	}
 
 /**

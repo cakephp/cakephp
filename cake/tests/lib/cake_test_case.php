@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * CakeTestCase file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4667
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('dispatcher')) {
@@ -67,7 +59,7 @@ class CakeTestDispatcher extends Dispatcher {
  * @param array $params
  * @param boolean $missingAction
  * @return Controller
- * @access proptected
+ * @access protected
  */
 	function _invoke(&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
@@ -541,7 +533,7 @@ class CakeTestCase extends UnitTestCase {
 				$fixture->truncate($this->db);
 				$fixture->insert($this->db);
 			} else {
-				trigger_error("Referenced fixture class {$class} not found", E_USER_WARNING);
+				trigger_error(sprintf(__('Referenced fixture class %s not found', true), $class), E_USER_WARNING);
 			}
 		}
 	}
@@ -592,6 +584,9 @@ class CakeTestCase extends UnitTestCase {
 		}
 		$i = 0;
 		foreach ($normalized as $tags) {
+			if (!is_array($tags)) {
+				$tags = (string)$tags;
+			}
 			$i++;
 			if (is_string($tags) && $tags{0} == '<') {
 				$tags = array(substr($tags, 1) => array());
@@ -662,10 +657,10 @@ class CakeTestCase extends UnitTestCase {
 					$permutations = $this->__array_permute($attrs);
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
-						$permutationTokens[] = join('', $permutation);
+						$permutationTokens[] = implode('', $permutation);
 					}
 					$regex[] = array(
-						sprintf('%s', join(', ', $explanations)),
+						sprintf('%s', implode(', ', $explanations)),
 						$permutationTokens,
 						$i,
 					);
@@ -771,17 +766,10 @@ class CakeTestCase extends UnitTestCase {
 				$pluginName = $parts[1];
 				$fixture = $parts[2];
 				$fixturePaths = array(
-					APP . 'plugins' . DS . $pluginName . DS . 'tests' . DS . 'fixtures',
+					App::pluginPath($pluginName) . 'tests' . DS . 'fixtures',
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures'
 				);
-				$pluginPaths = App::path('plugins');
-				foreach ($pluginPaths as $path) {
-					if (file_exists($path . $pluginName . DS . 'tests' . DS. 'fixtures')) {
-						$fixturePaths[0] = $path . $pluginName . DS . 'tests' . DS. 'fixtures';
-						break;
-					}
-				}
 			} else {
 				$fixturePaths = array(
 					TESTS . 'fixtures',

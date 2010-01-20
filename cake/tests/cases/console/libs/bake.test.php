@@ -61,14 +61,16 @@ class BakeShellTestCase extends CakeTestCase {
  * fixtures
  *
  * @var array
- **/
+ * @access public
+ */
 	var $fixtures = array('core.user');
 
 /**
  * start test
  *
  * @return void
- **/
+ * @access public
+ */
 	function startTest() {
 		$this->Dispatch =& new BakeShellMockShellDispatcher();
 		$this->Shell =& new MockBakeShell();
@@ -80,7 +82,8 @@ class BakeShellTestCase extends CakeTestCase {
  * endTest method
  *
  * @return void
- **/
+ * @access public
+ */
 	function endTest() {
 		unset($this->Dispatch, $this->Shell);
 	}
@@ -89,8 +92,14 @@ class BakeShellTestCase extends CakeTestCase {
  * test bake all
  *
  * @return void
- **/
+ * @access public
+ */
 	function testAllWithModelName() {
+		App::import('Model', 'User');
+		$userExists = class_exists('User');
+		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {
+			return;
+		}
 		$this->Shell->Model =& new BakeShellMockModelTask();
 		$this->Shell->Controller =& new BakeShellMockControllerTask();
 		$this->Shell->View =& new BakeShellMockModelTask();
@@ -119,3 +128,4 @@ class BakeShellTestCase extends CakeTestCase {
 		$this->Shell->all();
 	}
 }
+?>

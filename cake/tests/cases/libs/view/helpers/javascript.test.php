@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * JavascriptHelperTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('Controller', 'View', 'ClassRegistry', 'View'));
@@ -182,6 +174,10 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '<script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Javascript->link('some.json.libary');
+		$expected = '<script type="text/javascript" src="js/some.json.libary.js"></script>';
+		$this->assertEqual($result, $expected);
+
 		$result = $this->Javascript->link('jquery-1.1.2');
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
@@ -231,7 +227,7 @@ class JavascriptTest extends CakeTestCase {
  * @return void
  */
 	function testFilteringAndTimestamping() {
-		if($this->skipIf(!is_writable(JS), "%s JavaScript directory not writable, skipping JS asset timestamp tests.")) {
+		if ($this->skipIf(!is_writable(JS), 'JavaScript directory not writable, skipping JS asset timestamp tests. %s')) {
 			return;
 		}
 
@@ -266,6 +262,10 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '<script type="text/javascript" src="cjs/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 
+		$result = $this->Javascript->link('folderjs/jquery-1.1.2');
+		$expected = '<script type="text/javascript" src="cjs/folderjs/jquery-1.1.2.js"></script>';
+		$this->assertEqual($result, $expected);
+
 		if ($old === null) {
 			Configure::delete('Asset.filter.js');
 		}
@@ -278,11 +278,11 @@ class JavascriptTest extends CakeTestCase {
 
 		$this->Javascript->webroot = '/testing/';
 		$result = $this->Javascript->link('__cake_js_test');
-		$this->assertPattern('/^<script[^<>]+src="\/testing\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/js\/__cake_js_test\.js\?\d+"[^<>]*>/', $result);
 
 		$this->Javascript->webroot = '/testing/longer/';
 		$result = $this->Javascript->link('__cake_js_test');
-		$this->assertPattern('/^<script[^<>]+src="\/testing\/longer\/js\/__cake_js_test\.js\?"[^<>]*>/', $result);
+		$this->assertPattern('/^<script[^<>]+src="\/testing\/longer\/js\/__cake_js_test\.js\?\d+"[^<>]*>/', $result);
 
 		$this->Javascript->webroot = $webroot;
 		Configure::write('debug', $debug);
@@ -790,7 +790,7 @@ class JavascriptTest extends CakeTestCase {
  * test string escaping and compare to json_encode()
  *
  * @return void
- **/
+ */
 	function testStringJsonEncodeCompliance() {
 		if (!function_exists('json_encode')) {
 			return;
@@ -820,7 +820,7 @@ class JavascriptTest extends CakeTestCase {
  * test that text encoded with Javascript::object decodes properly
  *
  * @return void
- **/
+ */
 	function testObjectDecodeCompatibility() {
 		if (!function_exists('json_decode')) {
 			return;

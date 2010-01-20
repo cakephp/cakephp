@@ -1,29 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -68,7 +60,7 @@ class ConsoleShell extends Shell {
 		App::import('Model', $this->models);
 
 		foreach ($this->models as $model) {
-			$class = Inflector::camelize(r('.php', '', $model));
+			$class = Inflector::camelize(str_replace('.php', '', $model));
 			$this->models[$model] = $class;
 			$this->{$class} =& new $class();
 		}
@@ -238,7 +230,7 @@ class ConsoleShell extends Shell {
 													$this->out("\t$field2: $value2");
 												}
 
-												$this->out("");
+												$this->out();
 											} else {
 												$this->out("\t$field: $value");
 											}
@@ -253,7 +245,7 @@ class ConsoleShell extends Shell {
 												$this->out("\t$field2: $value2");
 											}
 
-											$this->out("");
+											$this->out();
 										} else {
 											$this->out("\t$field: $value");
 										}
@@ -311,7 +303,7 @@ class ConsoleShell extends Shell {
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
 					$router =& Router::getInstance();
-					$this->out(join("\n", Set::extract($router->routes, '{n}.0')));
+					$this->out(implode("\n", Set::extract($router->routes, '{n}.0')));
 				break;
 				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
 					if ($url = eval('return array' . $tmp[1] . ';')) {
@@ -361,8 +353,8 @@ class ConsoleShell extends Shell {
 		foreach (array_keys($router->getNamedExpressions()) as $var) {
 			unset(${$var});
 		}
-		for ($i = 0; $i < count($router->routes); $i++) {
-			$router->compile($i);
+		for ($i = 0, $len = count($router->routes); $i < $len; $i++) {
+			$router->routes[$i]->compile();
 		}
 		return true;
 	}

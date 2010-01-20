@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Request object for handling alternative HTTP requests
  *
@@ -8,22 +6,18 @@
  * and the like.  These units have no use for Ajax requests, and this Component can tell how Cake
  * should respond to the different needs of a handheld computer and a desktop machine.
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.4.1076
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 if (!defined('REQUEST_MOBILE_UA')) {
@@ -171,14 +165,16 @@ class RequestHandlerComponent extends Object {
  * as the first item.
  *
  * @param object $controller A reference to the controller
+ * @param array $settings Array of settings to _set().
  * @return void
  * @see Router::parseExtensions()
  * @access public
  */
-	function initialize(&$controller) {
+	function initialize(&$controller, $settings = array()) {
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
+		$this->_set($settings);
 	}
 
 /**
@@ -223,10 +219,10 @@ class RequestHandlerComponent extends Object {
 			}
 			$xml = new Xml(trim(file_get_contents('php://input')));
 
-			if (is_object($xml->child('data')) && count($xml->children) == 1) {
-				$controller->data = $xml->child('data');
+			if (count($xml->children) == 1 && is_object($dataNode = $xml->child('data'))) {
+				$controller->data = $dataNode->toArray();
 			} else {
-				$controller->data = $xml;
+				$controller->data = $xml->toArray();
 			}
 		}
 	}
@@ -414,7 +410,7 @@ class RequestHandlerComponent extends Object {
  * @return string Server address
  * @access public
  */
-	function getReferrer() {
+	function getReferer() {
 		if (env('HTTP_HOST') != null) {
 			$sessHost = env('HTTP_HOST');
 		}
@@ -423,6 +419,14 @@ class RequestHandlerComponent extends Object {
 			$sessHost = env('HTTP_X_FORWARDED_HOST');
 		}
 		return trim(preg_replace('/(?:\:.*)/', '', $sessHost));
+	}
+
+/**
+ * @deprecated use getReferer()
+ */
+	function getReferrer() {
+		trigger_error(__('Deprecated method, use RequestHandlerComponent::getReferer instead', true), E_USER_WARNING);
+		return $this->getReferer();
 	}
 
 /**
@@ -617,9 +621,9 @@ class RequestHandlerComponent extends Object {
 		$controller->ext = '.ctp';
 
 		if (empty($this->__renderType)) {
-			$controller->viewPath .= '/' . $type;
+			$controller->viewPath .= DS . $type;
 		} else {
-			$remove = preg_replace("/(?:\/{$this->__renderType})$/", '/' . $type, $controller->viewPath);
+			$remove = preg_replace("/([\/\\\\]{$this->__renderType})$/", DS . $type, $controller->viewPath);
 			$controller->viewPath = $remove;
 		}
 		$this->__renderType = $type;

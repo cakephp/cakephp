@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Datasource connection manager
  *
@@ -8,30 +6,24 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.10.x.1402
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-uses ('model' . DS . 'datasources' . DS . 'datasource');
-config('database');
+require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
+include_once CONFIGS . 'database.php';
 
 /**
  * Manages loaded instances of DataSource objects
- *
- * Long description for file
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model
@@ -104,18 +96,23 @@ class ConnectionManager extends Object {
 			$return =& $_this->_dataSources[$name];
 			return $return;
 		}
-
 		$connections = $_this->enumConnectionObjects();
-		if (!empty($connections[$name])) {
-			$conn = $connections[$name];
-			$class = $conn['classname'];
-			$_this->loadDataSource($name);
-			$_this->_dataSources[$name] =& new $class($_this->config->{$name});
-			$_this->_dataSources[$name]->configKeyName = $name;
-		} else {
+
+		if (empty($connections[$name])) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s", true), $name), E_USER_ERROR);
-			return null;
+			$null = null;
+			return $null;
 		}
+		$conn = $connections[$name];
+		$class = $conn['classname'];
+
+		if ($_this->loadDataSource($name) === null) {
+			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s", true), $class), E_USER_ERROR);
+			$null = null;
+			return $null;
+		}
+		$_this->_dataSources[$name] =& new $class($_this->config->{$name});
+		$_this->_dataSources[$name]->configKeyName = $name;
 
 		$return =& $_this->_dataSources[$name];
 		return $return;
@@ -137,19 +134,19 @@ class ConnectionManager extends Object {
  * Gets a DataSource name from an object reference
  *
  * @param object $source DataSource object
- * @return string Datasource name
+ * @return string Datasource name, or null if source is not present
+ *                in the ConnectionManager.
  * @access public
  * @static
  */
 	function getSourceName(&$source) {
 		$_this =& ConnectionManager::getInstance();
-		$names = array_keys($_this->_dataSources);
-		for ($i = 0; $i < count($names); $i++) {
-			if ($_this->_dataSources[$names[$i]] === $source) {
-				return $names[$i];
+		foreach ($_this->_dataSources as $name => $ds) {
+			if ($ds == $source) {
+				return $name;
 			}
 		}
-		return null;
+		return '';
 	}
 
 /**
@@ -172,23 +169,22 @@ class ConnectionManager extends Object {
 			$conn = $connections[$connName];
 		}
 
-		if (!empty($conn['parent'])) {
-			$_this->loadDataSource($conn['parent']);
-		}
-
 		if (class_exists($conn['classname'])) {
 			return false;
 		}
 
-		if (file_exists(MODELS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (MODELS . 'datasources' . DS . $conn['filename'] . '.php');
-		} elseif (fileExistsInPath(LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php')) {
-			require (LIBS . 'model' . DS . 'datasources' . DS . $conn['filename'] . '.php');
-		} else {
-		    $error = __('Unable to load DataSource file %s.php', true);
-			trigger_error(sprintf($error, $conn['filename']), E_USER_ERROR);
+		if (!empty($conn['parent'])) {
+			$_this->loadDataSource($conn['parent']);
+		}
+
+		$conn = array_merge(array('plugin' => null, 'classname' => null, 'parent' => null), $conn);
+		$class = "{$conn['plugin']}.{$conn['classname']}";
+
+		if (!App::import('Datasource', $class, false)) {
+			trigger_error(sprintf(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', true), $class), E_USER_ERROR);
 			return null;
 		}
+		return true;
 	}
 
 /**
@@ -209,7 +205,7 @@ class ConnectionManager extends Object {
 
 		if ($connections != null) {
 			foreach ($connections as $name => $config) {
-				$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
+				$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
 			}
 			return $_this->_connectionsEnum;
 		} else {
@@ -233,9 +229,8 @@ class ConnectionManager extends Object {
 			$null = null;
 			return $null;
 		}
-
 		$_this->config->{$name} = $config;
-		$_this->_connectionsEnum[$name] = $_this->__getDriver($config);
+		$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
 		$return =& $_this->getDataSource($name);
 		return $return;
 	}
@@ -243,24 +238,31 @@ class ConnectionManager extends Object {
 /**
  * Returns the file, class name, and parent for the given driver.
  *
- * @return array An indexed array with: filename, classname, and parent
+ * @return array An indexed array with: filename, classname, plugin and parent
  * @access private
  */
-	function __getDriver($config) {
+	function __connectionData($config) {
 		if (!isset($config['datasource'])) {
 			$config['datasource'] = 'dbo';
 		}
+		$filename = $classname = $parent = $plugin = null;
 
-		if (isset($config['driver']) && $config['driver'] != null && !empty($config['driver'])) {
-			$filename = $config['datasource'] . DS . $config['datasource'] . '_' . $config['driver'];
-			$classname = Inflector::camelize(strtolower($config['datasource'] . '_' . $config['driver']));
-			$parent = $this->__getDriver(array('datasource' => $config['datasource']));
+		if (!empty($config['driver'])) {
+			$source = $config['datasource'] . '_' . $config['driver'];
+
+			$filename = $config['datasource'] . DS . $source;
+			$classname = Inflector::camelize(strtolower($source));
+			$parent = $this->__connectionData(array('datasource' => $config['datasource']));
 		} else {
-			$filename = $config['datasource'] . '_source';
-			$classname = Inflector::camelize(strtolower($config['datasource'] . '_source'));
-			$parent = null;
+			if (strpos($config['datasource'], '.') !== false) {
+				list($plugin, $classname) = explode('.', $config['datasource']);
+				$filename = Inflector::underscore($classname);
+			} else {
+				$filename = $config['datasource'] . '_source';
+				$classname = Inflector::camelize(strtolower($filename));
+			}
 		}
-		return array('filename'  => $filename, 'classname' => $classname, 'parent' => $parent);
+		return compact('filename', 'classname', 'parent', 'plugin');
 	}
 
 /**

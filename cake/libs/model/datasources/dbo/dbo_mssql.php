@@ -1,29 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * MS SQL layer for DBO
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.10.5.1790
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -119,7 +111,7 @@ class DboMssql extends DboSource {
 	function __construct($config, $autoConnect = true) {
 		if ($autoConnect) {
 			if (!function_exists('mssql_min_message_severity')) {
-				trigger_error("PHP SQL Server interface is not installed, cannot continue.  For troubleshooting information, see http://php.net/mssql/", E_USER_WARNING);
+				trigger_error(__("PHP SQL Server interface is not installed, cannot continue. For troubleshooting information, see http://php.net/mssql/", true), E_USER_WARNING);
 			}
 			mssql_min_message_severity(15);
 			mssql_min_error_severity(2);
@@ -164,6 +156,14 @@ class DboMssql extends DboSource {
 		return $this->connected;
 	}
 
+/**
+ * Check that MsSQL is installed/loaded
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return extension_loaded('mssql');
+	}
 /**
  * Disconnects from database.
  *
@@ -273,6 +273,9 @@ class DboMssql extends DboSource {
 			return $parent;
 		}
 		if ($data === null) {
+			return 'NULL';
+		}
+		if (in_array($column, array('integer', 'float', 'binary')) && $data === '') {
 			return 'NULL';
 		}
 		if ($data === '') {
@@ -421,10 +424,10 @@ class DboMssql extends DboSource {
  * @return string Error message with error number
  */
 	function lastError() {
-		$error = mssql_get_last_message($this->connection);
+		$error = mssql_get_last_message();
 
 		if ($error) {
-			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|datenbankkontext/i', $error)) {
+			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
 				return $error;
 			}
 		}
@@ -607,7 +610,7 @@ class DboMssql extends DboSource {
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
@@ -737,18 +740,18 @@ class DboMssql extends DboSource {
 
 		foreach ($indexes as $name => $value) {
 			if ($name == 'PRIMARY') {
-				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
-			} else {
+				$join[] = 'PRIMARY KEY (' . $this->name($value['column']) . ')';
+			} else if (isset($value['unique']) && $value['unique']) {
 				$out = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE";
 
 				if (is_array($value['column'])) {
-					$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+					$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 				} else {
 					$value['column'] = $this->name($value['column']);
 				}
 				$out .= "({$value['column']});";
+				$join[] = $out;
 			}
-			$join[] = $out;
 		}
 		return $join;
 	}

@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * SessionComponentTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5436
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Controller', 'Controller', false);
@@ -143,26 +135,6 @@ class SessionComponentTest extends CakeTestCase {
 	}
 
 /**
- * testSessionInitialize method
- *
- * @access public
- * @return void
- */
-	function testSessionInitialize() {
-		$Session =& new SessionComponent();
-
-		$this->assertEqual($Session->__bare, 0);
-
-		$Session->initialize(new SessionTestController());
-		$this->assertEqual($Session->__bare, 0);
-
-		$sessionController =& new SessionTestController();
-		$sessionController->params['bare'] = 1;
-		$Session->initialize($sessionController);
-		$this->assertEqual($Session->__bare, 1);
-	}
-
-/**
  * testSessionActivate method
  *
  * @access public
@@ -247,51 +219,30 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertTrue($Session->write('Test', 'some value'));
 		$this->assertEqual($Session->read('Test'), 'some value');
 		$this->assertFalse($Session->write('Test.key', 'some value'));
-		$Session->del('Test');
+		$Session->delete('Test');
 
 		$this->assertTrue($Session->write('Test.key.path', 'some value'));
 		$this->assertEqual($Session->read('Test.key.path'), 'some value');
 		$this->assertEqual($Session->read('Test.key'), array('path' => 'some value'));
 		$this->assertTrue($Session->write('Test.key.path2', 'another value'));
 		$this->assertEqual($Session->read('Test.key'), array('path' => 'some value', 'path2' => 'another value'));
-		$Session->del('Test');
+		$Session->delete('Test');
 
 		$array = array('key1' => 'val1', 'key2' => 'val2', 'key3' => 'val3');
 		$this->assertTrue($Session->write('Test', $array));
 		$this->assertEqual($Session->read('Test'), $array);
-		$Session->del('Test');
+		$Session->delete('Test');
 
 		$this->assertFalse($Session->write(array('Test'), 'some value'));
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
 		$this->assertEqual($Session->read('Test'), 'some value');
-		$Session->del('Test');
+		$Session->delete('Test');
 
 		Configure::write('Session.start', false);
 		$Session =& new SessionComponent();
 		$this->assertFalse($Session->write('Test', 'some value'));
 		$Session->write('Test', 'some value');
 		$this->assertFalse($Session->read('Test'));
-		Configure::write('Session.start', true);
-	}
-
-/**
- * testSessionDel method
- *
- * @access public
- * @return void
- */
-	function testSessionDel() {
-		$Session =& new SessionComponent();
-
-		$this->assertFalse($Session->del('Test'));
-
-		$Session->write('Test', 'some value');
-		$this->assertTrue($Session->del('Test'));
-
-		Configure::write('Session.start', false);
-		$Session =& new SessionComponent();
-		$Session->write('Test', 'some value');
-		$this->assertFalse($Session->del('Test'));
 		Configure::write('Session.start', true);
 	}
 
@@ -350,18 +301,18 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Message.flash'));
 
 		$Session->setFlash('This is a test message');
-		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'layout' => 'default', 'params' => array()));
+		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
 		$Session->setFlash('This is a test message', 'test', array('name' => 'Joel Moss'));
-		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'layout' => 'test', 'params' => array('name' => 'Joel Moss')));
+		$this->assertEqual($Session->read('Message.flash'), array('message' => 'This is a test message', 'element' => 'test', 'params' => array('name' => 'Joel Moss')));
 
 		$Session->setFlash('This is a test message', 'default', array(), 'myFlash');
-		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'layout' => 'default', 'params' => array()));
+		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
 		$Session->setFlash('This is a test message', 'non_existing_layout');
-		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'layout' => 'default', 'params' => array()));
+		$this->assertEqual($Session->read('Message.myFlash'), array('message' => 'This is a test message', 'element' => 'default', 'params' => array()));
 
-		$Session->del('Message');
+		$Session->delete('Message');
 	}
 
 /**

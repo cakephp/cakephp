@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * EmailComponentTest file
  *
@@ -9,20 +7,16 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Component', 'Email');
@@ -156,7 +150,7 @@ class EmailTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('EmailTest');
+	var $components = array('Session', 'EmailTest');
 
 /**
  * pageTitle property
@@ -224,7 +218,7 @@ class EmailComponentTest extends CakeTestCase {
 	function tearDown() {
 		Configure::write('App.encoding', $this->_appEncoding);
 		App::build();
-		$this->Controller->Session->del('Message');
+		$this->Controller->Session->delete('Message');
 		restore_error_handler();
 		ClassRegistry::flush();
 	}
@@ -423,7 +417,7 @@ TEXTBLOC;
 
 <html>
 <head>
-	<title>EmailTest</title>
+	<title>Email Test</title>
 </head>
 
 <body>
@@ -457,7 +451,7 @@ HTMLBLOC;
 
 <html>
 <head>
-	<title>EmailTest</title>
+	<title>Email Test</title>
 </head>
 
 <body>
@@ -482,8 +476,6 @@ standards.
 This is the body of the message
 
 This email was sent using the CakePHP Framework, http://cakephp.org.
-
-
 TEXTBLOC;
 
 		$this->Controller->EmailTest->sendAs = 'text';
@@ -509,10 +501,9 @@ TEXTBLOC;
 		$response = $this->Controller->EmailTest->smtpSend('HELO', '250');
 		$this->assertPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
 
-		$this->Controller->EmailTest->smtpError = null;
+		$this->Controller->EmailTest->reset();
 		$response = $this->Controller->EmailTest->smtpSend('HELO somehostname', '250');
 		$this->assertNoPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
-
 	}
 
 /**

@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Model behaviors base class.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 1.2.0.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -285,13 +279,25 @@ class BehaviorCollection extends Object {
  * @access public
  */
 	function attach($behavior, $config = array()) {
-		$name = $behavior;
-		if (strpos($behavior, '.')) {
-			list($plugin, $name) = explode('.', $behavior, 2);
-		}
+		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
+			$this->cakeError('missingBehaviorFile', array(array(
+				'behavior' => $behavior,
+				'file' => Inflector::underscore($behavior) . '.php',
+				'code' => 500,
+				'base' => '/'
+			)));
+			return false;
+		}
+		if (!class_exists($class)) {
+			$this->cakeError('missingBehaviorClass', array(array(
+				'behavior' => $class,
+				'file' => Inflector::underscore($class) . '.php',
+				'code' => 500,
+				'base' => '/'
+			)));
 			return false;
 		}
 
@@ -435,7 +441,7 @@ class BehaviorCollection extends Object {
 		$call = null;
 
 		if ($strict && !$found) {
-			trigger_error("BehaviorCollection::dispatchMethod() - Method {$method} not found in any attached behavior", E_USER_WARNING);
+			trigger_error(sprintf(__("BehaviorCollection::dispatchMethod() - Method %s not found in any attached behavior", true), $method), E_USER_WARNING);
 			return null;
 		} elseif ($found) {
 			$methods = array_combine($methods, array_values($this->__methods));

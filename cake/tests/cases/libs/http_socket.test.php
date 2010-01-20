@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * HttpSocketTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'HttpSocket');
@@ -1026,6 +1018,28 @@ class HttpSocketTest extends CakeTestCase {
 			'host' => 'www.google.com',
 			'port' => 8080,
 		));
+
+		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2%3Dvalue3');
+		$this->assertIdentical($uri, array(
+			'scheme' => 'http',
+			'host' => 'www.cakephp.org',
+			'path' => '/',
+			'query' => array(
+				'param1' => 'value1',
+				'param2' => 'value2=value3'
+			)
+		));
+
+		$uri = $this->Socket->parseUri('http://www.cakephp.org/?param1=value1&param2=value2=value3');
+		$this->assertIdentical($uri, array(
+			'scheme' => 'http',
+			'host' => 'www.cakephp.org',
+			'path' => '/',
+			'query' => array(
+				'param1' => 'value1',
+				'param2' => 'value2=value3'
+			)
+		));
 	}
 
 /**
@@ -1051,6 +1065,9 @@ class HttpSocketTest extends CakeTestCase {
 
 		$r = $this->Socket->buildUri(array('host' => 'www.cakephp.org', 'port' => 23));
 		$this->assertIdentical($r, 'http://www.cakephp.org:23/');
+
+		$r = $this->Socket->buildUri(array('path' => 'www.google.com/search', 'query' => 'q=cakephp'));
+		$this->assertIdentical($r, 'http://www.google.com/search?q=cakephp');
 
 		$r = $this->Socket->buildUri(array('host' => 'www.cakephp.org', 'scheme' => 'https', 'port' => 79));
 		$this->assertIdentical($r, 'https://www.cakephp.org:79/');

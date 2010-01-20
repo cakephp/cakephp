@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ContainableBehaviorTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5669
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', array('AppModel', 'Model'));
@@ -57,17 +49,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->Article =& ClassRegistry::init('Article');
 		$this->Tag =& ClassRegistry::init('Tag');
 
-		$this->User->bind(array(
-			'Article' => array('type' => 'hasMany'),
-			'ArticleFeatured' => array('type' => 'hasMany'),
-			'Comment' => array('type' => 'hasMany')
-		));
+		$this->User->bindModel(array(
+			'hasMany' => array('Article', 'ArticleFeatured', 'Comment')
+		), false);
 		$this->User->ArticleFeatured->unbindModel(array('belongsTo' => array('Category')), false);
 		$this->User->ArticleFeatured->hasMany['Comment']['foreignKey'] = 'article_id';
 
-		$this->Tag->bind(array(
-			'Article' => array('type' => 'hasAndBelongsToMany')
-		));
+		$this->Tag->bindModel(array(
+			'hasAndBelongsToMany' => array('Article')
+		), false);
 
 		$this->User->Behaviors->attach('Containable');
 		$this->Article->Behaviors->attach('Containable');
@@ -3400,6 +3390,17 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'contain' => array(
 				'User' => array(
 					'ArticleFeatured',
+					'Comment' => array('fields' => array('created'))
+				)
+			)
+		));
+		$this->assertEqual($expected, $this->Article->User->hasOne);
+
+		$this->Article->User->bindModel($userHasOne, false);
+		$expected = $this->Article->User->hasOne;
+		$this->Article->find('all', array(
+			'contain' => array(
+				'User' => array(
 					'Comment' => array('fields' => array('created'))
 				)
 			)

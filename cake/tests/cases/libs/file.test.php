@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * FileTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'File');
@@ -414,6 +406,35 @@ class FileTest extends CakeTestCase {
 		$TmpFile =& new File('/this/does/not/exist');
 		$result = $TmpFile->delete();
 		$this->assertFalse($result);
+	}
+
+/**
+ * testCopy method
+ *
+ * @access public
+ * @return void
+ */
+	function testCopy() {
+		$dest = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
+		$file = __FILE__;
+		$this->File =& new File($file);
+		$result = $this->File->copy($dest);
+		$this->assertTrue($result);
+
+		$result = $this->File->copy($dest, true);
+		$this->assertTrue($result);
+
+		$result = $this->File->copy($dest, false);
+		$this->assertFalse($result);
+
+		$this->File->close();
+		unlink($dest);
+
+		$TmpFile =& new File('/this/does/not/exist');
+		$result = $TmpFile->copy($dest);
+		$this->assertFalse($result);
+
+		$TmpFile->close();
 	}
 
 /**

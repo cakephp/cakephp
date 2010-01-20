@@ -1,27 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
 /**
  * AjaxHelperTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
@@ -165,6 +158,12 @@ class AjaxHelperTest extends CakeTestCase {
 		$view =& new View(new AjaxTestController());
 		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('PostAjaxTest', new PostAjaxTest());
+
+		$this->Ajax->Form->params = array(
+			'plugin' => null,
+			'action' => 'view',
+			'controller' => 'users'
+		);
 	}
 /**
  * tearDown method
@@ -549,6 +548,14 @@ class AjaxHelperTest extends CakeTestCase {
 		$this->assertPattern("/Event.observe\('link[0-9]+', [\w\d,'\(\)\s{}]+Ajax\.Request\([\w\d\s,'\(\){}:\/]+onComplete:function\(request, json\) {test}/", $result);
 		$this->assertNoPattern('/^<a[^<>]+complete="test"[^<>]*>Ajax Link<\/a>/', $result);
 		$this->assertNoPattern('/^<a\s+[^<>]*url="[^"]*"[^<>]*>/', $result);
+
+		$result = $this->Ajax->link('A & B', array('controller' => 'foo', 'action' => 'index'), array('escape' => false));
+		$this->assertPattern('/^<a[^<>]+>A & B<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$this->assertPattern("/Event.observe\('link[0-9]+', [\w\d,'\(\)\s{}]+Ajax\.Request\([\w\d\s,'\(\){}:\/]/", $result);
+		$this->assertPattern('/^<a[^<>]+href="\/foo"[^<>]*>/', $result);
+
+		$result = $this->Ajax->link('A & B', array('controller' => 'foo', 'action' => 'index'));
+		$this->assertPattern('/^<a[^<>]+>A &amp; B<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
 	}
 /**
  * testRemoteTimer method

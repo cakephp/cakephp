@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * SetTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Set');
@@ -345,6 +337,21 @@ class SetTest extends CakeTestCase {
 		);
 		$a = Set::sort($a, '{n}.Person.name', 'ASC');
 		$this->assertIdentical($a, $b);
+
+		$names = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$result = Set::sort($names, '{n}.employees.0.name', 'asc', 1);
+		$expected = array(
+			array('employees' => array(array('name' => array('first' => 'John', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array('first' => 'Jane', 'last' => 'Doe')))),
+			array('employees' => array(array('name' => array()))),
+			array('employees' => array(array('name' => array())))
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -543,6 +550,30 @@ class SetTest extends CakeTestCase {
 
 		$expected = array(array('id', 'name'), array('id', 'name'), array('id', 'name'), array('id', 'name'));
 		$r = Set::extract('/User/@*', $tricky);
+		$this->assertEqual($r, $expected);
+
+		$nonZero = array(
+			1 => array(
+				'User' => array(
+					'id' => 1,
+					'name' => 'John',
+				)
+			),
+			2 => array(
+				'User' => array(
+					'id' => 2,
+					'name' => 'Bob',
+				)
+			),
+			3 => array(
+				'User' => array(
+					'id' => 3,
+					'name' => 'Tony',
+				)
+			)
+		);
+		$expected = array(1, 2, 3);
+		$r = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($r, $expected);
 
 		$common = array(
@@ -980,8 +1011,41 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
 
+		$hasMany = array(
+			'Node' => array(
+				'id' => 1,
+				'name' => 'First',
+				'state' => 50
+			),
+			'ParentNode' => array(
+				0 => array(
+					'id' => 2,
+					'name' => 'Second',
+					'state' => 60,
+				)
+			)
+		);
+		$result = Set::extract('/ParentNode/name', $hasMany);
+		$expected = array('Second');
+		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * testExtractWithArrays method
+ * 
+ * @access public
+ * @return void
+ */
+	function testExtractWithArrays() {
+		$data = array(
+			'Level1' => array(
+				'Level2' => array('test1', 'test2'),
+				'Level2bis' => array('test3', 'test4')
+			)
+		);
+		$this->assertEqual(Set::extract('/Level1/Level2', $data), array(array('Level2' => array('test1', 'test2'))));
+		$this->assertEqual(Set::extract('/Level1/Level2bis', $data), array(array('Level2bis' => array('test3', 'test4'))));
+	}
 /**
  * testMatches method
  *
@@ -1395,29 +1459,6 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
- * testIsEqual method
- *
- * @access public
- * @return void
- */
-	function testIsEqual() {
-		$a = array(
-			0 => array('name' => 'main'),
-			1 => array('name' => 'about')
-		);
-		$b = array(
-			0 => array('name' => 'main'),
-			1 => array('name' => 'about'),
-			2 => array('name' => 'contact')
-		);
-
-		$this->assertTrue(Set::isEqual($a, $a));
-		$this->assertTrue(Set::isEqual($b, $b));
-		$this->assertFalse(Set::isEqual($a, $b));
-		$this->assertFalse(Set::isEqual($b, $a));
-	}
-
-/**
  * testContains method
  *
  * @access public
@@ -1779,18 +1820,18 @@ class SetTest extends CakeTestCase {
 
 		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
 		$expected = array(
-			'Behaviors' => array('modelName' => 'Model', '_attached' => array(), '_disabled' => array(), '__methods' => array(), '__mappedMethods' => array(), '_log' => null),
+			'Behaviors' => array('modelName' => 'Model', '_attached' => array(), '_disabled' => array(), '__methods' => array(), '__mappedMethods' => array()),
 			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => 'models', 'primaryKey' => 'id', '_schema' => null, 'validate' => array(),
 			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'transactional' => false, 'cacheQueries' => false,
 			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'whitelist' =>  array(), 'cacheSources' => true,
-			'findQueryType' => null, 'recursive' => 1, 'order' => null, '__exists' => null,
+			'findQueryType' => null, 'recursive' => 1, 'order' => null, 'virtualFields' => array(),
 			'__associationKeys' => array(
 				'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 				'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
 				'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 				'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')),
 			'__associations' => array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'), '__backAssociation' => array(), '__insertID' => null, '__numRows' => null, '__affectedRows' => null,
-				'_findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true), '_log' => null);
+				'_findMethods' => array('all' => true, 'first' => true, 'count' => true, 'neighbors' => true, 'list' => true, 'threaded' => true));
 		$result = Set::reverse($model);
 
 		ksort($result);
@@ -2347,6 +2388,58 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * testSetApply method
+ * @access public
+ * @return void
+ *
+ */
+	function testApply() {
+		$data = array(
+			array('Movie' => array('id' => 1, 'title' => 'movie 3', 'rating' => 5)),
+			array('Movie' => array('id' => 1, 'title' => 'movie 1', 'rating' => 1)),
+			array('Movie' => array('id' => 1, 'title' => 'movie 2', 'rating' => 3))
+		);
+
+		$result = Set::apply('/Movie/rating', $data, 'array_sum');
+		$expected = 9;
+		$this->assertEqual($result, $expected);
+
+		if (PHP5) {
+			$result = Set::apply('/Movie/rating', $data, 'array_product');
+			$expected = 15;
+			$this->assertEqual($result, $expected);
+		}
+
+		$result = Set::apply('/Movie/title', $data, 'ucfirst', array('type' => 'map'));
+		$expected = array('Movie 3', 'Movie 1', 'Movie 2');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/title', $data, 'strtoupper', array('type' => 'map'));
+		$expected = array('MOVIE 3', 'MOVIE 1', 'MOVIE 2');
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/rating', $data, array('SetTest', '_method'), array('type' => 'reduce'));
+		$expected = 9;
+		$this->assertEqual($result, $expected);
+
+		$result = Set::apply('/Movie/rating', $data, 'strtoupper', array('type' => 'non existing type'));
+		$expected = null;
+		$this->assertEqual($result, $expected);
+
+	}
+
+/**
+ * Helper method to test Set::apply()
+ *
+ * @access protected
+ * @return void
+ */
+	function _method($val1, $val2) {
+		$val1 += $val2;
+		return $val1;
+	}
+
+/**
  * testXmlSetReverse method
  *
  * @access public
@@ -2423,7 +2516,7 @@ class SetTest extends CakeTestCase {
 			array(
 				'Item' => array(
 					'title' => 'An example of a correctly reversed XMLNode',
-					'Desc' => array(),
+					'desc' => array(),
 				)
 			)
 		);

@@ -1,29 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.4213
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -210,31 +202,25 @@ class CookieComponent extends Object {
 		if (is_null($encrypt)) {
 			$encrypt = true;
 		}
-
 		$this->__encrypted = $encrypt;
 		$this->__expire($expires);
+		
+		if (!is_array($key)) {
+			$key = array($key => $value);
+		}
 
-		if (!is_array($key) && $value !== null) {
-			$name = $this->__cookieVarNames($key);
-
-			if (count($name) > 1) {
-				$this->__values[$name[0]][$name[1]] = $value;
-				$this->__write("[" . $name[0] . "][" . $name[1] . "]", $value);
+		foreach ($key as $name => $value) {
+			if (strpos($name, '.') === false) {
+				$this->__values[$name] = $value;
+				$this->__write("[$name]", $value);
+				
 			} else {
-				$this->__values[$name[0]] = $value;
-				$this->__write("[" . $name[0] . "]", $value);
-			}
-		} else {
-			foreach ($key as $names => $value) {
-				$name = $this->__cookieVarNames($names);
-
-				if (count($name) > 1) {
-					$this->__values[$name[0]][$name[1]] = $value;
-					$this->__write("[" . $name[0] . "][" . $name[1] . "]", $value);
-				} else {
-					$this->__values[$name[0]] = $value;
-					$this->__write("[" . $name[0] . "]", $value);
+				$names = explode('.', $name, 2);
+				if (!isset($this->__values[$names[0]])) {
+					$this->__values[$names[0]] = array();
 				}
+				$this->__values[$names[0]] = Set::insert($this->__values[$names[0]], $names[1], $value);
+				$this->__write('[' . implode('][', $names) . ']', $value);
 			}
 		}
 		$this->__encrypted = true;
@@ -258,22 +244,27 @@ class CookieComponent extends Object {
 		if (is_null($key)) {
 			return $this->__values;
 		}
-		$name = $this->__cookieVarNames($key);
-
-		if (count($name) > 1) {
-			if (isset($this->__values[$name[0]])) {
-				if (isset($this->__values[$name[0]][$name[1]])) {
-					return $this->__values[$name[0]][$name[1]];
-				}
-			}
-			return null;
-		} else {
-			if (isset($this->__values[$name[0]])) {
-				$value = $this->__values[$name[0]];
-				return $value;
-			}
+		
+		if (strpos($key, '.') !== false) {
+			$names = explode('.', $key, 2);
+			$key = $names[0];
+		}
+		if (!isset($this->__values[$key])) {
 			return null;
 		}
+
+		if (!empty($names[1])) {
+			return Set::extract($this->__values[$key], $names[1]);
+		}
+		return $this->__values[$key];
+	}
+
+/**
+ * @deprecated use delete()
+ */
+	function del($key) {
+		trigger_error(__('Deprecated method, use CookieComponent::delete instead', true), E_USER_WARNING);
+		return $this->delete($key);
 	}
 
 /**
@@ -289,27 +280,18 @@ class CookieComponent extends Object {
  * @return void
  * @access public
  */
-	function del($key) {
+	function delete($key) {
 		if (empty($this->__values)) {
 			$this->read();
 		}
-		$name = $this->__cookieVarNames($key);
-		if (count($name) > 1) {
-			if (isset($this->__values[$name[0]])) {
-				$this->__delete("[" . $name[0] . "][" . $name[1] . "]");
-				unset($this->__values[$name[0]][$name[1]]);
-			}
-		} else {
-			if (isset($this->__values[$name[0]])) {
-				if (is_array($this->__values[$name[0]])) {
-					foreach ($this->__values[$name[0]] as $key => $value) {
-						$this->__delete("[" . $name[0] . "][" . $key . "]");
-					}
-				}
-				$this->__delete("[" . $name[0] . "]");
-				unset($this->__values[$name[0]]);
-			}
+		if (strpos($key, '.') === false) {
+			unset($this->__values[$key]);
+			$this->__delete("[$key]");
+			return;
 		}
+		$names = explode('.', $key, 2);
+		$this->__values[$names[0]] = Set::remove($this->__values[$names[0]], $names[1]);
+		$this->__delete('[' . implode('][', $names) . ']');
 	}
 
 /**
@@ -369,6 +351,11 @@ class CookieComponent extends Object {
 			return $this->__expires;
 		}
 		$this->__reset = $this->__expires;
+		
+		if ($expires == 0) {
+			return $this->__expires = 0;
+		}
+		
 		if (is_integer($expires) || is_numeric($expires)) {
 			return $this->__expires = $now + intval($expires);
 		}
@@ -383,7 +370,7 @@ class CookieComponent extends Object {
  * @access private
  */
 	function __write($name, $value) {
-		setcookie($this->name . "$name", $this->__encrypt($value), $this->__expires, $this->path, $this->domain, $this->secure);
+		setcookie($this->name . $name, $this->__encrypt($value), $this->__expires, $this->path, $this->domain, $this->secure);
 
 		if (!is_null($this->__reset)) {
 			$this->__expires = $this->__reset;
@@ -417,7 +404,7 @@ class CookieComponent extends Object {
 			$type = $this->__type;
 			$value = "Q2FrZQ==." .base64_encode(Security::$type($value, $this->key));
 		}
-		return($value);
+		return $value;
 	}
 
 /**
@@ -452,27 +439,7 @@ class CookieComponent extends Object {
 				}
 			}
 		}
-
-		return($decrypted);
-	}
-
-/**
- * Creates an array from the $name parameter which allows the dot notation
- * similar to one used by Session and Configure classes
- *
- * @param string $name Name with or without dot notation
- * @return array Extracted names
- * @access private
- */
-	function __cookieVarNames($name) {
-		if (is_string($name)) {
-			if (strpos($name, ".")) {
-				$name = explode(".", $name);
-			} else {
-				$name = array($name);
-			}
-		}
-		return $name;
+		return $decrypted;
 	}
 
 /**

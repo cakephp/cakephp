@@ -1,29 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * SQLite layer for DBO
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  * @since         CakePHP(tm) v 0.9.0
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -72,8 +64,7 @@ class DboSqlite extends DboSource {
  */
 	var $_baseConfig = array(
 		'persistent' => true,
-		'database' => null,
-		'connect' => 'sqlite_popen'
+		'database' => null
 	);
 
 /**
@@ -108,6 +99,25 @@ class DboSqlite extends DboSource {
 	);
 
 /**
+ * List of engine specific additional field parameters used on table creating
+ *
+ * @var array
+ * @access public
+ */
+	var $fieldParameters = array(
+		'collate' => array(
+			'value' => 'COLLATE',
+			'quote' => false,
+			'join' => ' ', 
+			'column' => 'Collate', 
+			'position' => 'afterDefault',
+			'options' => array(
+				'BINARY', 'NOCASE', 'RTRIM'
+			)
+		),
+	);
+
+/**
  * Connects to the database using config['database'] as a filename.
  *
  * @param array $config Configuration array for connecting
@@ -115,7 +125,12 @@ class DboSqlite extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$this->connection = $config['connect']($config['database']);
+
+		if (!$config['persistent']) {
+			$this->connection = sqlite_open($config['database']);
+		} else {
+			$this->connection = sqlite_popen($config['database']);
+		}
 		$this->connected = is_resource($this->connection);
 
 		if ($this->connected) {
@@ -124,6 +139,14 @@ class DboSqlite extends DboSource {
 		return $this->connected;
 	}
 
+/**
+ * Check that SQLite is enabled/installed
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return extension_loaded('sqlite');
+	}
 /**
  * Disconnects from database.
  *
@@ -467,12 +490,12 @@ class DboSqlite extends DboSource {
 		extract($column);
 
 		if (empty($name) || empty($type)) {
-			trigger_error('Column name or type not defined in schema', E_USER_WARNING);
+			trigger_error(__('Column name or type not defined in schema', true), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			trigger_error(sprintf(__('Column type %s does not exist', true), $type), E_USER_WARNING);
 			return null;
 		}
 
@@ -481,32 +504,7 @@ class DboSqlite extends DboSource {
 		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}
-		if (isset($real['limit']) || isset($real['length']) || isset($column['limit']) || isset($column['length'])) {
-			if (isset($column['length'])) {
-				$length = $column['length'];
-			} elseif (isset($column['limit'])) {
-				$length = $column['limit'];
-			} elseif (isset($real['length'])) {
-				$length = $real['length'];
-			} else {
-				$length = $real['limit'];
-			}
-			$out .= '(' . $length . ')';
-		}
-		if (isset($column['key']) && $column['key'] == 'primary' && $type == 'integer') {
-			$out .= ' ' . $this->columns['primary_key']['name'];
-		} elseif (isset($column['key']) && $column['key'] == 'primary') {
-			$out .= ' NOT NULL';
-		} elseif (isset($column['default']) && isset($column['null']) && $column['null'] == false) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
-		} elseif (isset($column['default'])) {
-			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
-			$out .= ' DEFAULT NULL';
-		} elseif (isset($column['null']) && $column['null'] == false) {
-			$out .= ' NOT NULL';
-		}
-		return $out;
+		return parent::buildColumn($column);
 	}
 
 /**
@@ -551,7 +549,7 @@ class DboSqlite extends DboSource {
 				$out .= 'UNIQUE ';
 			}
 			if (is_array($value['column'])) {
-				$value['column'] = join(', ', array_map(array(&$this, 'name'), $value['column']));
+				$value['column'] = implode(', ', array_map(array(&$this, 'name'), $value['column']));
 			} else {
 				$value['column'] = $this->name($value['column']);
 			}
@@ -612,7 +610,7 @@ class DboSqlite extends DboSource {
 
 				foreach (array('columns', 'indexes') as $var) {
 					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
+						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";

@@ -2,31 +2,24 @@
 /* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
 
 /**
- * ModelDeleteTest file
- *
- * Long description for file
+ * ModelIntegrationTest file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision: 8225 $
- * @modifiedby    $LastChangedBy: mark_story $
- * @lastmodified  $Date: 2009-07-07 23:25:30 -0400 (Tue, 07 Jul 2009) $
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
-require_once dirname(__FILE__) . DS . 'model_integration.test.php';
 
 /**
  * ModelIntegrationTest
@@ -541,7 +534,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * test deconstruct() with time fields.
  *
  * @return void
- **/
+ */
 	function testDeconstructFieldsTime() {
 		$this->loadFixtures('Apple');
 		$TestModel =& new Apple();
@@ -883,10 +876,10 @@ class ModelIntegrationTest extends BaseModelTest {
 	}
 
 /**
- * ensure that __exists is reset on create
+ * ensure that exists() does not persist between method calls reset on create
  *
  * @return void
- **/
+ */
 	function testResetOfExistsOnCreate() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
@@ -902,6 +895,30 @@ class ModelIntegrationTest extends BaseModelTest {
 		$Article->saveField('title', 'Staying alive');
 		$result = $Article->read(null, 2);
 		$this->assertEqual($result['Article']['title'], 'Staying alive');
+	}
+
+/**
+ * testUseTableFalseExistsCheck method
+ *
+ * @return void
+ */
+	function testUseTableFalseExistsCheck() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$Article->id = 1337;
+		$result = $Article->exists();
+		$this->assertFalse($result);
+
+		$Article->useTable = false;
+		$Article->id = null;
+		$result = $Article->exists();
+		$this->assertFalse($result);
+
+		// An article with primary key of '1' has been loaded by the fixtures.
+		$Article->useTable = false;
+		$Article->id = 1;
+		$result = $Article->exists();
+		$this->assertTrue($result);
 	}
 
 /**
@@ -1184,7 +1201,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstruct() {
 		$this->loadFixtures('Post', 'Comment');
 
@@ -1205,7 +1222,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * ensure that $actsAS and $_findMethods are merged.
  *
  * @return void
- **/
+ */
 	function testConstructWithAlternateDataSource() {
 		$TestModel =& ClassRegistry::init(array(
 			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false

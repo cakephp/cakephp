@@ -33,7 +33,6 @@ App::import('View', 'View', false);
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  * @link          http://book.cakephp.org/view/49/Controllers
- *
  */
 class Controller extends Object {
 
@@ -75,6 +74,9 @@ class Controller extends Object {
  *
  * Example: var $uses = array('Product', 'Post', 'Comment');
  *
+ * Can be set to array() to use no models.  Can be set to false to
+ * use no models and prevent the merging of $uses with AppController
+ *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
@@ -91,7 +93,7 @@ class Controller extends Object {
  * @access protected
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
  */
-	var $helpers = array('Html', 'Form');
+	var $helpers = array('Session', 'Html', 'Form');
 
 /**
  * Parameters received in the current request: GET and POST data, information
@@ -227,7 +229,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/53/components-helpers-and-uses
  */
-	var $components = array();
+	var $components = array('Session');
 
 /**
  * The name of the View class this controller sends output to.
@@ -346,6 +348,16 @@ class Controller extends Object {
  * @access public
  */
 	var $validationErrors = null;
+
+/**
+ * Contains a list of the HTTP codes that CakePHP recognizes. These may be
+ * queried and/or modified through Controller::httpCodes(), which is also
+ * tasked with their lazy-loading.
+ *
+ * @var array Associative array of HTTP codes and their associated messages.
+ * @access private
+ */
+	var $__httpCodes = null;
 
 /**
  * Constructor.
@@ -503,6 +515,62 @@ class Controller extends Object {
 	}
 
 /**
+ * Queries & sets valid HTTP response codes & messages.
+ *
+ * @param mixed $code If $code is an integer, then the corresponding code/message is
+ *        returned if it exists, null if it does not exist. If $code is an array,
+ *        then the 'code' and 'message' keys of each nested array are added to the default
+ *        HTTP codes. Example:
+ *
+ *        httpCodes(404); // returns array(404 => 'Not Found')
+ *
+ *        httpCodes(array(
+ *            701 => 'Unicorn Moved',
+ *            800 => 'Unexpected Minotaur'
+ *        )); // sets these new values, and returns true
+ *
+ * @return mixed Associative array of the HTTP codes as keys, and the message
+ *         strings as values, or null of the given $code does not exist.
+ */
+	function httpCodes($code = null) {
+		if (empty($this->__httpCodes)) {
+			$this->__httpCodes = array(
+				100 => 'Continue', 101 => 'Switching Protocols',
+				200 => 'OK', 201 => 'Created', 202 => 'Accepted',
+				203 => 'Non-Authoritative Information', 204 => 'No Content',
+				205 => 'Reset Content', 206 => 'Partial Content',
+				300 => 'Multiple Choices', 301 => 'Moved Permanently',
+				302 => 'Found', 303 => 'See Other',
+				304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect',
+				400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required',
+				403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed',
+				406 => 'Not Acceptable', 407 => 'Proxy Authentication Required',
+				408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone',
+				411 => 'Length Required', 412 => 'Precondition Failed',
+				413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large',
+				415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable',
+				417 => 'Expectation Failed', 500 => 'Internal Server Error',
+				501 => 'Not Implemented', 502 => 'Bad Gateway',
+				503 => 'Service Unavailable', 504 => 'Gateway Time-out'
+			);
+		}
+
+		if (empty($code)) {
+			return $this->__httpCodes;
+		}
+
+		if (is_array($code)) {
+			$this->__httpCodes = $code + $this->__httpCodes;
+			return true;
+		}
+
+		if (!isset($this->__httpCodes[$code])) {
+			return null;
+		}
+		return array($code => $this->__httpCodes[$code]);
+	}
+
+/**
  * Loads and instantiates models required by this controller.
  * If Controller::persistModel; is true, controller will cache model instances on first request,
  * additional request will used cached models.
@@ -526,11 +594,7 @@ class Controller extends Object {
 				$plugin = $this->plugin . '.';
 			}
 		}
-
-		if (strpos($modelClass, '.') !== false) {
-			list($plugin, $modelClass) = explode('.', $modelClass);
-			$plugin = $plugin . '.';
-		}
+		list($plugin, $modelClass) = pluginSplit($modelClass, true, $plugin);
 
 		if ($this->persistModel === true) {
 			$cached = $this->_persist($modelClass, null, $object);
@@ -605,49 +669,10 @@ class Controller extends Object {
 		}
 
 		if (!empty($status)) {
-			$codes = array(
-				100 => 'Continue',
-				101 => 'Switching Protocols',
-				200 => 'OK',
-				201 => 'Created',
-				202 => 'Accepted',
-				203 => 'Non-Authoritative Information',
-				204 => 'No Content',
-				205 => 'Reset Content',
-				206 => 'Partial Content',
-				300 => 'Multiple Choices',
-				301 => 'Moved Permanently',
-				302 => 'Found',
-				303 => 'See Other',
-				304 => 'Not Modified',
-				305 => 'Use Proxy',
-				307 => 'Temporary Redirect',
-				400 => 'Bad Request',
-				401 => 'Unauthorized',
-				402 => 'Payment Required',
-				403 => 'Forbidden',
-				404 => 'Not Found',
-				405 => 'Method Not Allowed',
-				406 => 'Not Acceptable',
-				407 => 'Proxy Authentication Required',
-				408 => 'Request Time-out',
-				409 => 'Conflict',
-				410 => 'Gone',
-				411 => 'Length Required',
-				412 => 'Precondition Failed',
-				413 => 'Request Entity Too Large',
-				414 => 'Request-URI Too Large',
-				415 => 'Unsupported Media Type',
-				416 => 'Requested range not satisfiable',
-				417 => 'Expectation Failed',
-				500 => 'Internal Server Error',
-				501 => 'Not Implemented',
-				502 => 'Bad Gateway',
-				503 => 'Service Unavailable',
-				504 => 'Gateway Time-out'
-			);
+			$codes = $this->httpCodes();
+
 			if (is_string($status)) {
-				$codes = array_combine(array_values($codes), array_keys($codes));
+				$codes = array_flip($codes);
 			}
 
 			if (isset($codes[$status])) {
@@ -659,14 +684,13 @@ class Controller extends Object {
 					$msg = $status;
 				}
 				$status = "HTTP/1.1 {$code} {$msg}";
+
 			} else {
 				$status = null;
 			}
-		}
-
-		if (!empty($status)) {
 			$this->header($status);
 		}
+
 		if ($url !== null) {
 			$this->header('Location: ' . Router::url($url, true));
 		}
@@ -713,14 +737,7 @@ class Controller extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-
-		foreach ($data as $name => $value) {
-			if ($name === 'title') {
-				$this->pageTitle = $value;
-			} else {
-				$this->viewVars[$name] = $value;
-			}
-		}
+		$this->viewVars = array_merge($this->viewVars, $data);
 	}
 
 /**
@@ -785,7 +802,7 @@ class Controller extends Object {
 	function validateErrors() {
 		$objects = func_get_args();
 
-		if (!count($objects)) {
+		if (empty($objects)) {
 			return false;
 		}
 
@@ -795,7 +812,7 @@ class Controller extends Object {
 			$errors = array_merge($errors, $this->{$object->alias}->invalidFields());
 		}
 
-		return $this->validationErrors = (count($errors) ? $errors : false);
+		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
@@ -813,9 +830,7 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			if (strpos($viewClass, '.') !== false) {
-				list($plugin, $viewClass) = explode('.', $viewClass);
-			}
+			list($plugin, $viewClass) = pluginSplit($viewClass);
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->view);
 		}
@@ -917,17 +932,18 @@ class Controller extends Object {
  * @param string $message Message to display to the user
  * @param mixed $url Relative string or array-based URL to redirect to after the time expires
  * @param integer $pause Time to show the message
+ * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
  * @access public
  * @link http://book.cakephp.org/view/426/flash
  */
-	function flash($message, $url, $pause = 1) {
+	function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->render(false, 'flash');
+		$this->render(false, $layout);
 	}
 
 /**
@@ -957,16 +973,19 @@ class Controller extends Object {
 			$op = '';
 		}
 
+		$arrayOp = is_array($op);
 		foreach ($data as $model => $fields) {
 			foreach ($fields as $field => $value) {
 				$key = $model.'.'.$field;
 				$fieldOp = $op;
-				if (is_array($op) && array_key_exists($key, $op)) {
-					$fieldOp = $op[$key];
-				} elseif (is_array($op) && array_key_exists($field, $op)) {
-					$fieldOp = $op[$field];
-				} elseif (is_array($op)) {
-					$fieldOp = false;
+				if ($arrayOp) {
+					if (array_key_exists($key, $op)) {
+						$fieldOp = $op[$key];
+					} elseif (array_key_exists($field, $op)) {
+						$fieldOp = $op[$field];
+					} else {
+						$fieldOp = false;
+					}
 				}
 				if ($exclusive && $fieldOp === false) {
 					continue;
@@ -1007,24 +1026,23 @@ class Controller extends Object {
 
 		if (is_string($object)) {
 			$assoc = null;
-
-			if (strpos($object, '.') !== false) {
-				list($object, $assoc) = explode('.', $object);
+			if (strpos($object, '.')  !== false) {
+				list($object, $assoc) = pluginSplit($object);
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object = $this->{$object}->{$assoc};
+				$object =& $this->{$object}->{$assoc};
 			} elseif (
 				$assoc && isset($this->{$this->modelClass}) &&
 				isset($this->{$this->modelClass}->{$assoc}
 			)) {
-				$object = $this->{$this->modelClass}->{$assoc};
+				$object =& $this->{$this->modelClass}->{$assoc};
 			} elseif (isset($this->{$object})) {
-				$object = $this->{$object};
+				$object =& $this->{$object};
 			} elseif (
 				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
 			)) {
-				$object = $this->{$this->modelClass}->{$object};
+				$object =& $this->{$this->modelClass}->{$object};
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
@@ -1084,9 +1102,11 @@ class Controller extends Object {
 			$value = $options['order'][$key];
 			unset($options['order'][$key]);
 
-			if (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+			if ($object->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field)) {
+			} elseif ($object->hasField($field, true)) {
+				$options['order'][$field] = $value;
+			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
 				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
@@ -1116,8 +1136,9 @@ class Controller extends Object {
 			$type = $defaults[0];
 			unset($defaults[0]);
 		}
-
-		extract($options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options));
+		$options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options);
+		$options['limit'] = (empty($options['limit']) || !is_numeric($options['limit'])) ? 1 : $options['limit'];
+		extract($options);
 
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = array_merge($conditions, $scope);

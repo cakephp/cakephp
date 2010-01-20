@@ -4,20 +4,19 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright       Copyright 2006-2008, Cake Software Foundation, Inc.
- * @link            http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright       Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @link            http://cakephp.org CakePHP Project
  * @package         cake.tests
  * @subpackage      cake.tests.cases.views.helpers
- * @license         http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', array('Html', 'Js', 'PrototypeEngine'));
 
@@ -26,7 +25,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * startTest
  *
  * @return void
- **/
+ */
 	function startTest() {
 		$this->Proto =& new PrototypeEngineHelper();
 	}
@@ -35,7 +34,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * end test
  *
  * @return void
- **/
+ */
 	function endTest() {
 		unset($this->Proto);
 	}
@@ -44,7 +43,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test selector method
  *
  * @return void
- **/
+ */
 	function testSelector() {
 		$result = $this->Proto->get('#content');
 		$this->assertEqual($result, $this->Proto);
@@ -75,7 +74,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test event binding
  *
  * @return void
- **/
+ */
 	function testEvent() {
 		$this->Proto->get('#myLink');
 		$result = $this->Proto->event('click', 'doClick', array('wrap' => false));
@@ -95,7 +94,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test dom ready event creation
  *
  * @return void
- **/
+ */
 	function testDomReady() {
 		$result = $this->Proto->domReady('foo.name = "bar";');
 		$expected = 'document.observe("dom:loaded", function (event) {foo.name = "bar";});';
@@ -106,7 +105,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test Each method
  *
  * @return void
- **/
+ */
 	function testEach() {
 		$this->Proto->get('#foo li');
 		$result = $this->Proto->each('item.hide();');
@@ -118,7 +117,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test Effect generation
  *
  * @return void
- **/
+ */
 	function testEffect() {
 		$this->Proto->get('#foo');
 		$result = $this->Proto->effect('show');
@@ -174,7 +173,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * Test Request Generation
  *
  * @return void
- **/
+ */
 	function testRequest() {
 		$result = $this->Proto->request(array('controller' => 'posts', 'action' => 'view', 1));
 		$expected = 'var jsRequest = new Ajax.Request("/posts/view/1");';
@@ -227,7 +226,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:doSuccess, onFailure:handleError, parameters:$("element").serialize()});';
 		$this->assertEqual($result, $expected);
-		
+
 		$result = $this->Proto->request('/people/edit/1', array(
 			'method' => 'post',
 			'before' => 'doBefore();',
@@ -237,13 +236,35 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		));
 		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->Proto->request('/people/edit/1', array(
+			'async' => false,
+			'method' => 'post',
+			'before' => 'doBefore();',
+			'success' => 'doSuccess();',
+			'complete' => 'doComplete();',
+			'error' => 'handleError();',
+		));
+		$expected = 'var jsRequest = new Ajax.Request("/people/edit/1", {asynchronous:false, method:"post", onComplete:function (transport) {doComplete();}, onCreate:function (transport) {doBefore();}, onFailure:function (response, jsonHeader) {handleError();}, onSuccess:function (response, jsonHeader) {doSuccess();}});';
+		$this->assertEqual($result, $expected);
+
+		$this->Proto->get('#submit');
+		$result = $this->Proto->request('/users/login', array(
+			'before' => 'login.create(event)',
+			'complete' => 'login.complete(event)',
+			'update' => 'auth',
+			'data' => $this->Proto->serializeForm(array('isForm' => false, 'inline' => true)),
+			'dataExpression' => true
+		));
+		$this->assertTrue(strpos($result, '$($("submit").form).serialize()') > 0);
+		$this->assertFalse(strpos($result, 'parameters:function () {$($("submit").form).serialize()}') > 0);
 	}
 
 /**
  * test sortable list generation
  *
  * @return void
- **/
+ */
 	function testSortable() {
 		$this->Proto->get('#myList');
 		$result = $this->Proto->sortable(array(
@@ -262,7 +283,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * in new Drag() when selection is a multiple type.  Iterate over the array.
  *
  * @return void
- **/
+ */
 	function testDrag() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drag(array(
@@ -291,7 +312,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test drop() method
  *
  * @return void
- **/
+ */
 	function testDrop() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->drop(array(
@@ -308,7 +329,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * ensure that slider() method behaves properly
  *
  * @return void
- **/
+ */
 	function testSlider() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->slider(array(
@@ -337,7 +358,7 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
  * test the serializeForm implementation.
  *
  * @return void
- **/
+ */
 	function testSerializeForm() {
 		$this->Proto->get('#element');
 		$result = $this->Proto->serializeForm(array('isForm' => true));

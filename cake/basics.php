@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Basic Cake functionality.
  *
@@ -8,34 +6,30 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * Basic defines for timing functions.
  */
 	define('SECOND', 1);
-	define('MINUTE', 60 * SECOND);
-	define('HOUR', 60 * MINUTE);
-	define('DAY', 24 * HOUR);
-	define('WEEK', 7 * DAY);
-	define('MONTH', 30 * DAY);
-	define('YEAR', 365 * DAY);
+	define('MINUTE', 60);
+	define('HOUR', 3600);
+	define('DAY', 86400);
+	define('WEEK', 604800);
+	define('MONTH', 2592000);
+	define('YEAR', 31536000);
 
 /**
  * Patch for PHP < 5.0
@@ -54,9 +48,8 @@ if (!function_exists('clone')) {
  * Loads configuration files. Receives a set of configuration files
  * to load.
  * Example:
- * <code>
- * config('config1', 'config2');
- * </code>
+ *
+ * `config('config1', 'config2');`
  *
  * @return boolean Success
  */
@@ -84,12 +77,11 @@ if (!function_exists('clone')) {
  * Loads component/components from LIBS. Takes optional number of parameters.
  *
  * Example:
- * <code>
- * uses('flay', 'time');
- * </code>
+ *
+ * `uses('flay', 'time');`
  *
  * @param string $name Filename without the .php part
- * @deprecated
+ * @deprecated Will be removed in 2.0
  */
 	function uses() {
 		$args = func_get_args();
@@ -177,6 +169,7 @@ if (!function_exists('array_combine')) {
  * @param array $a1 Array to use for keys
  * @param array $a2 Array to use for values
  * @return mixed Outputs either combined array or false.
+ * @deprecated Will be removed in 2.0
  */
 	function array_combine($a1, $a2) {
 		$a1 = array_values($a1);
@@ -211,30 +204,57 @@ if (!function_exists('array_combine')) {
 		if (is_array($text)) {
 			return array_map('h', $text);
 		}
-		if (empty($charset)) {
-			$charset = Configure::read('App.encoding');
+
+		static $defaultCharset = false;
+		if ($defaultCharset === false) {
+			$defaultCharset = Configure::read('App.encoding');
+			if ($defaultCharset === null) {
+				$defaultCharset = 'UTF-8';
+			}
 		}
-		if (empty($charset)) {
-			$charset = 'UTF-8';
+		if ($charset) {
+			return htmlspecialchars($text, ENT_QUOTES, $charset);
+		} else {
+			return htmlspecialchars($text, ENT_QUOTES, $defaultCharset);
 		}
-		return htmlspecialchars($text, ENT_QUOTES, $charset);
+	}
+
+/**
+ * Splits a dot syntax plugin name into its plugin and classname.
+ * If $name does not have a dot, then index 0 will be null.
+ *
+ * Commonly used like `list($plugin, $name) = pluginSplit($name);`
+ *
+ * @param string $name The name you want to plugin split.
+ * @param boolean $dotAppend Set to true if you want the plugin to have a '.' appended to it.
+ * @param string $plugin Optional default plugin to use if no plugin is found. Defaults to null.
+ * @return array Array with 2 indexes.  0 => plugin name, 1 => classname
+ */
+	function pluginSplit($name, $dotAppend = false, $plugin = null) {
+		if (strpos($name, '.') !== false) {
+			$parts = explode('.', $name, 2);
+			if ($dotAppend) {
+				$parts[0] .= '.';
+			}
+			return $parts;
+		}
+		return array($plugin, $name);
 	}
 
 /**
  * Returns an array of all the given parameters.
  *
  * Example:
- * <code>
- * a('a', 'b')
- * </code>
+ *
+ * `a('a', 'b')`
  *
  * Would return:
- * <code>
- * array('a', 'b')
- * </code>
+ *
+ * `array('a', 'b')`
  *
  * @return array Array of given parameters
  * @link http://book.cakephp.org/view/694/a
+ * @deprecated Will be removed in 2.0
  */
 	function a() {
 		$args = func_get_args();
@@ -245,17 +265,16 @@ if (!function_exists('array_combine')) {
  * Constructs associative array from pairs of arguments.
  *
  * Example:
- * <code>
- * aa('a','b')
- * </code>
+ *
+ * `aa('a','b')`
  *
  * Would return:
- * <code>
- * array('a'=>'b')
- * </code>
+ *
+ * `array('a'=>'b')`
  *
  * @return array Associative array
  * @link http://book.cakephp.org/view/695/aa
+ * @deprecated Will be removed in 2.0
  */
 	function aa() {
 		$args = func_get_args();
@@ -276,6 +295,7 @@ if (!function_exists('array_combine')) {
  *
  * @param string $text String to echo
  * @link http://book.cakephp.org/view/700/e
+ * @deprecated Will be removed in 2.0
  */
 	function e($text) {
 		echo $text;
@@ -287,6 +307,7 @@ if (!function_exists('array_combine')) {
  * @param string $str String to lowercase
  * @return string Lowercased string
  * @link http://book.cakephp.org/view/705/low
+ * @deprecated Will be removed in 2.0
  */
 	function low($str) {
 		return strtolower($str);
@@ -298,6 +319,7 @@ if (!function_exists('array_combine')) {
  * @param string $str String to uppercase
  * @return string Uppercased string
  * @link http://book.cakephp.org/view/710/up
+ * @deprecated Will be removed in 2.0
  */
 	function up($str) {
 		return strtoupper($str);
@@ -311,6 +333,7 @@ if (!function_exists('array_combine')) {
  * @param string $subject String to search
  * @return string Replaced string
  * @link http://book.cakephp.org/view/708/r
+ * @deprecated Will be removed in 2.0
  */
 	function r($search, $replace, $subject) {
 		return str_replace($search, $replace, $subject);
@@ -338,6 +361,7 @@ if (!function_exists('array_combine')) {
  *
  * @param mixed $p Parameter as string or array
  * @return string
+ * @deprecated Will be removed in 2.0
  */
 	function params($p) {
 		if (!is_array($p) || count($p) == 0) {
@@ -451,15 +475,16 @@ if (!function_exists('file_put_contents')) {
 /**
  * Writes data into file.
  *
- * If file exists, it will be overwritten. If data is an array, it will be join()ed with an empty string.
+ * If file exists, it will be overwritten. If data is an array, it will be implode()ed with an empty string.
  *
  * @param string $fileName File name.
  * @param mixed  $data String or array.
  * @return boolean Success
+ * @deprecated Will be removed in 2.0
  */
 	function file_put_contents($fileName, $data) {
 		if (is_array($data)) {
-			$data = join('', $data);
+			$data = implode('', $data);
 		}
 		$res = @fopen($fileName, 'w+b');
 
@@ -496,7 +521,7 @@ if (!function_exists('file_put_contents')) {
 			$expires = strtotime($expires, $now);
 		}
 
-		switch (low($target)) {
+		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
 			break;
@@ -531,10 +556,9 @@ if (!function_exists('file_put_contents')) {
 /**
  * Used to delete files in the cache directories, or clear contents of cache directories
  *
- * @param mixed $params As String name to be searched for deletion, if name is a directory all files in directory will be deleted.
- *              If array, names to be searched for deletion.
- *              If clearCache() without params, all files in app/tmp/cache/views will be deleted
- *
+ * @param mixed $params As String name to be searched for deletion, if name is a directory all files in
+ *   directory will be deleted. If array, names to be searched for deletion. If clearCache() without params,
+ *   all files in app/tmp/cache/views will be deleted
  * @param string $type Directory in tmp/cache defaults to view directory
  * @param string $ext The file extension you are deleting
  * @return true if files found and deleted false otherwise
@@ -715,13 +739,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
@@ -754,13 +779,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_ALL       0
- * LC_COLLATE   1
- * LC_CTYPE     2
- * LC_MONETARY  3
- * LC_NUMERIC   4
- * LC_TIME      5
- * LC_MESSAGES  6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -790,13 +816,14 @@ if (!function_exists('file_put_contents')) {
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
  * Note that the category must be specified with a numeric value, instead of the constant name.  The values are:
- * LC_CTYPE     0
- * LC_NUMERIC   1
- * LC_TIME      2
- * LC_COLLATE   3
- * LC_MONETARY  4
- * LC_MESSAGES  5
- * LC_ALL       6
+ *
+ * - LC_ALL       0
+ * - LC_COLLATE   1
+ * - LC_CTYPE     2
+ * - LC_MONETARY  3
+ * - LC_NUMERIC   4
+ * - LC_TIME      5
+ * - LC_MESSAGES  6
  *
  * @param string $msg String to translate
  * @param integer $category Category
@@ -824,6 +851,7 @@ if (!function_exists('file_put_contents')) {
  * @param array First array
  * @param array Second array
  * @return array Array with different keys
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('array_diff_key')) {
 		function array_diff_key() {
@@ -859,6 +887,7 @@ if (!function_exists('file_put_contents')) {
  * @param array First array
  * @param array Second array
  * @return array Array with interesected keys
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('array_intersect_key')) {
 		function array_intersect_key($arr1, $arr2) {
@@ -930,6 +959,7 @@ if (!function_exists('file_put_contents')) {
  * @param string $baseKey Base key
  * @return string URL encoded query string
  * @see http://php.net/http_build_query
+ * @deprecated Will be removed in 2.0
  */
 	if (!function_exists('http_build_query')) {
 		function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
@@ -965,15 +995,15 @@ if (!function_exists('file_put_contents')) {
  * Wraps ternary operations. If $condition is a non-empty value, $val1 is returned, otherwise $val2.
  * Don't use for isset() conditions, or wrap your variable with @ operator:
  * Example:
- * <code>
- * ife(isset($variable), @$variable, 'default');
- * </code>
+ *
+ * `ife(isset($variable), @$variable, 'default');`
  *
  * @param mixed $condition Conditional expression
  * @param mixed $val1 Value to return in case condition matches
  * @param mixed $val2 Value to return if condition doesn't match
  * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
  * @link http://book.cakephp.org/view/704/ife
+ * @deprecated Will be removed in 2.0
  */
 	function ife($condition, $val1 = null, $val2 = null) {
 		if (!empty($condition)) {

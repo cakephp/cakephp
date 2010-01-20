@@ -1,35 +1,25 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Short description for file.
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.8.2156
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
  * Short description for file.
- *
- * Long description for file
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
@@ -179,9 +169,22 @@ class SecurityComponent extends Object {
 	var $_action = null;
 
 /**
+ * Initialize the SecurityComponent
+ *
+ * @param object $controller Controller instance for the request
+ * @param array $settings Settings to set to the component
+ * @return void
+ * @access public
+ */
+	function initialize(&$controller, $settings = array()) {
+		$this->_set($settings);
+	}
+
+/**
  * Component startup. All security checking happens here.
  *
  * @param object $controller Instantiating controller
+ * @return void
  * @access public
  */
 	function startup(&$controller) {
@@ -352,10 +355,10 @@ class SecurityComponent extends Object {
 		if (strtolower($options['type']) == 'digest') {
 			$out[] = 'qop="auth"';
 			$out[] = 'nonce="' . uniqid("") . '"';
-			$out[] = 'opaque="' . md5($options['realm']).'"';
+			$out[] = 'opaque="' . md5($options['realm']) . '"';
 		}
 
-		return $auth . ' ' . join(',', $out);
+		return $auth . ' ' . implode(',', $out);
 	}
 
 /**
@@ -412,7 +415,7 @@ class SecurityComponent extends Object {
  * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
-		$this->Session->del('_Token');
+		$this->Session->delete('_Token');
 
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
@@ -435,6 +438,9 @@ class SecurityComponent extends Object {
  * @access protected
  */
 	function _requireMethod($method, $actions = array()) {
+		if (isset($actions[0]) && is_array($actions[0])) {
+			$actions = $actions[0];
+		}
 		$this->{'require' . $method} = (empty($actions)) ? array('*'): $actions;
 	}
 
@@ -582,7 +588,7 @@ class SecurityComponent extends Object {
 		}
 		$data = $controller->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['key'])) {
 			return false;
 		}
 		$token = $data['_Token']['key'];
@@ -659,6 +665,10 @@ class SecurityComponent extends Object {
  */
 	function _generateToken(&$controller) {
 		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
+			if ($this->Session->check('_Token')) {
+				$tokenData = unserialize($this->Session->read('_Token'));
+				$controller->params['_Token'] = $tokenData;
+			}
 			return false;
 		}
 		$authKey = Security::generateAuthKey();
@@ -689,7 +699,6 @@ class SecurityComponent extends Object {
 		}
 		$controller->params['_Token'] = $token;
 		$this->Session->write('_Token', serialize($token));
-
 		return true;
 	}
 
@@ -723,10 +732,8 @@ class SecurityComponent extends Object {
 		if (is_callable(array($controller, $method))) {
 			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 		} else {
-			// Debug::warning('Callback method ' . $method . ' in controller ' . get_class($controller)
 			return null;
 		}
 	}
 }
-
 ?>

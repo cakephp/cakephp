@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * SessionTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 if (!class_exists('CakeSession')) {
@@ -30,12 +22,12 @@ if (!class_exists('CakeSession')) {
 }
 
 /**
- * SessionTest class
+ * CakeSessionTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class SessionTest extends CakeTestCase {
+class CakeSessionTest extends CakeTestCase {
 
 /**
  * Fixtures used in the SessionTest
@@ -175,6 +167,7 @@ class SessionTest extends CakeTestCase {
 		$this->assertTrue($this->Session->started());
 
 		unset($_SESSION);
+		$_SESSION = null;
 		$this->assertFalse($this->Session->started());
 		$this->assertTrue($this->Session->start());
 	}
@@ -190,7 +183,7 @@ class SessionTest extends CakeTestCase {
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Does.not.exist doesn't exist");
 
-		$this->Session->del('Failing.delete');
+		$this->Session->delete('Failing.delete');
 		$result = $this->Session->error();
 		$this->assertEqual($result, "Failing.delete doesn't exist");
 	}
@@ -201,14 +194,14 @@ class SessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDel() {
+	function testDelete() {
 		$this->assertTrue($this->Session->write('Delete.me', 'Clearing out'));
-		$this->assertTrue($this->Session->del('Delete.me'));
+		$this->assertTrue($this->Session->delete('Delete.me'));
 		$this->assertFalse($this->Session->check('Delete.me'));
 		$this->assertTrue($this->Session->check('Delete'));
 
 		$this->assertTrue($this->Session->write('Clearing.sale', 'everything must go'));
-		$this->assertTrue($this->Session->del('Clearing'));
+		$this->assertTrue($this->Session->delete('Clearing'));
 		$this->assertFalse($this->Session->check('Clearing.sale'));
 		$this->assertFalse($this->Session->check('Clearing'));
 	}
@@ -228,7 +221,7 @@ class SessionTest extends CakeTestCase {
 		$this->Session->write('Watching', 'They found us!');
 
 		$this->expectError('Deleting session key {Watching}');
-		$this->Session->del('Watching');
+		$this->Session->delete('Watching');
 
 		$this->assertFalse($this->Session->watch('Invalid.key'));
 	}
@@ -289,10 +282,24 @@ class SessionTest extends CakeTestCase {
 	function testCheckKeyWithSpaces() {
 		$this->assertTrue($this->Session->write('Session Test', "test"));
 		$this->assertEqual($this->Session->check('Session Test'), 'test');
-		$this->Session->del('Session Test');
+		$this->Session->delete('Session Test');
 
 		$this->assertTrue($this->Session->write('Session Test.Test Case', "test"));
 		$this->assertTrue($this->Session->check('Session Test.Test Case'));
+	}
+
+/**
+ * test key exploitation
+ *
+ * @return void
+ */
+	function testKeyExploit() {
+		$key = "a'] = 1; phpinfo(); \$_SESSION['a";
+		$result = $this->Session->write($key, 'haxored');
+		$this->assertTrue($result);
+
+		$result = $this->Session->read($key);
+		$this->assertEqual($result, 'haxored');
 	}
 
 /**

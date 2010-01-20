@@ -2,23 +2,20 @@
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
- * Long description for file
- *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  * @since         CakePHP(tm) v 1.2
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -145,6 +142,7 @@ class PluginTask extends Shell {
 				'models' . DS . 'behaviors',
 				'models' . DS . 'datasources',
 				'controllers' . DS . 'components',
+				'libs',
 				'views' . DS . 'helpers',
 				'tests' . DS . 'cases' . DS . 'components',
 				'tests' . DS . 'cases' . DS . 'helpers',
@@ -153,10 +151,9 @@ class PluginTask extends Shell {
 				'tests' . DS . 'cases' . DS . 'models',
 				'tests' . DS . 'groups',
 				'tests' . DS . 'fixtures',
-				'vendors' . DS . 'img',
-				'vendors' . DS . 'js',
-				'vendors' . DS . 'css',
-				'vendors' . DS . 'shells' . DS . 'tasks'
+				'vendors',
+				'vendors' . DS . 'shells' . DS . 'tasks',
+				'webroot'
 			);
 
 			foreach ($directories as $directory) {
@@ -204,7 +201,7 @@ class PluginTask extends Shell {
  * find and change $this->path to the user selection
  *
  * @return void
- **/
+ */
 	function findPath($pathOptions) {
 		$valid = false;
 		$max = count($pathOptions);
@@ -232,19 +229,19 @@ class PluginTask extends Shell {
 		$this->out("Usage: cake bake plugin <arg1> <arg2>...");
 		$this->hr();
 		$this->out('Commands:');
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name>");
 		$this->out("\tbakes plugin directory structure");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> model");
 		$this->out("\tbakes model. Run 'cake bake model help' for more info.");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> controller");
 		$this->out("\tbakes controller. Run 'cake bake controller help' for more info.");
-		$this->out('');
+		$this->out();
 		$this->out("plugin <name> view");
 		$this->out("\tbakes view. Run 'cake bake view help' for more info.");
-		$this->out("");
+		$this->out();
 		$this->_stop();
 	}
 }

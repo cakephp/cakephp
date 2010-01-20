@@ -1,26 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  * @since         CakePHP(tm) v TBD
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -62,7 +56,7 @@ class Component extends Object {
  *
  * @var array
  * @access private
- **/
+ */
 	var $__settings = array();
 
 /**
@@ -191,20 +185,9 @@ class Component extends Object {
 	function _loadComponents(&$object, $parent = null) {
 		$base = $this->__controllerVars['base'];
 		$normal = Set::normalize($object->components);
-		if ($parent == null) {
-			$normal = Set::merge(array('Session' => null), $normal);
-		}
 		foreach ((array)$normal as $component => $config) {
-			$plugin = null;
-
-			if (isset($this->__controllerVars['plugin'])) {
-				$plugin = $this->__controllerVars['plugin'] . '.';
-			}
-
-			if (strpos($component, '.') !== false) {
-				list($plugin, $component) = explode('.', $component);
-				$plugin = $plugin . '.';
-			}
+			$plugin = isset($this->__controllerVars['plugin']) ? $this->__controllerVars['plugin'] . '.' : null;
+			list($plugin, $component) = pluginSplit($component, true, $plugin);
 			$componentCn = $component . 'Component';
 
 			if (!class_exists($componentCn)) {

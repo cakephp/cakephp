@@ -8,19 +8,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -58,7 +57,7 @@ class BakeShell extends Shell {
 			}
 			foreach($this->args as $i => $arg) {
 				if (strpos($arg, '.')) {
-					list($this->params['plugin'], $this->args[$i]) = explode('.', $arg);
+					list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
 					break;
 				}
 			}
@@ -81,6 +80,8 @@ class BakeShell extends Shell {
 		if (!is_dir($this->DbConfig->path)) {
 			if ($this->Project->execute()) {
 				$this->DbConfig->path = $this->params['working'] . DS . 'config' . DS;
+			} else {
+				return false;
 			}
 		}
 
@@ -97,9 +98,10 @@ class BakeShell extends Shell {
 		$this->out('[C]ontroller');
 		$this->out('[P]roject');
 		$this->out('[F]ixture');
+		$this->out('[T]est case');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'Q')));
+		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -119,11 +121,14 @@ class BakeShell extends Shell {
 			case 'F':
 				$this->Fixture->execute();
 				break;
+			case 'T':
+				$this->Test->execute();
+				break;
 			case 'Q':
 				exit(0);
 				break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, or C.', true));
+				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.', true));
 		}
 		$this->hr();
 		$this->main();
@@ -225,7 +230,9 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
 		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
 		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
-		$this->out("");
+		$this->out("\n\tbake fixture\n\t\tbakes fixtures. run 'bake fixture help' for more info.");
+		$this->out("\n\tbake test\n\t\tbakes unit tests. run 'bake test help' for more info.");
+		$this->out();
 
 	}
 }

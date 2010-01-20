@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Behavior for binding management.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console.libs
  * @since         CakePHP(tm) v 1.2.0.5669
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -83,8 +77,9 @@ class ContainableBehavior extends ModelBehavior {
  * Runs before a find() operation. Used to allow 'contain' setting
  * as part of the find call, like this:
  *
- * Model->find('all', array('contain' => array('Model1', 'Model2')));
+ * `Model->find('all', array('contain' => array('Model1', 'Model2')));`
  *
+ * {{{
  * Model->find('all', array('contain' => array(
  * 	'Model1' => array('Model11', 'Model12'),
  * 	'Model2',
@@ -93,6 +88,7 @@ class ContainableBehavior extends ModelBehavior {
  * 		'Model32',
  * 		'Model33' => array('Model331', 'Model332')
  * )));
+ * }}}
  *
  * @param object $Model	Model using the behavior
  * @param array $query Query parameters as set by cake
@@ -159,7 +155,7 @@ class ContainableBehavior extends ModelBehavior {
 							if (!$reset && empty($instance->__backOriginalAssociation)) {
 								$instance->__backOriginalAssociation = $backupBindings;
 							} else if ($reset) {
-								$instance->__backAssociation[$type] = $instance->{$type};
+								$instance->__backAssociation[$type] = $backupBindings[$type];
 							}
 							$instance->{$type}[$assoc] = array_merge($instance->{$type}[$assoc], $model['keep'][$assoc]);
 						}
@@ -291,7 +287,7 @@ class ContainableBehavior extends ModelBehavior {
 			if (strpos($name, '.') !== false) {
 				$chain = explode('.', $name);
 				$name = array_shift($chain);
-				$children = array(join('.', $chain) => $children);
+				$children = array(implode('.', $chain) => $children);
 			}
 
 			$children = (array)$children;

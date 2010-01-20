@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * ValidationTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Core', 'Validation');
@@ -44,6 +36,52 @@ class CustomValidator {
  */
 	function customValidate($check) {
 		return preg_match('/^[0-9]{3}$/', $check);
+	}
+}
+
+/**
+ * TestNlValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestNlValidation {
+/**
+ * postal function, for testing postal pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function postal($check) {
+		return true;
+	}
+/**
+ * ssn function for testing ssn pass through
+ *
+ * @return void
+ */
+	function ssn($check) {
+		return true;
+	}
+}
+
+/**
+ * TestDeValidation class
+ *
+ * Used to test pass through of Validation
+ *
+ * @package cake.tests.cases.libs
+ */
+class TestDeValidation {
+/**
+ * phone function, for testing phone pass through.
+ *
+ * @param string $check
+ * @return void
+ */
+	function phone($check) {
+		return true;
 	}
 }
 
@@ -177,7 +215,10 @@ class ValidationTest extends CakeTestCase {
 	function testBetween() {
 		$this->assertTrue(Validation::between('abcdefg', 1, 7));
 		$this->assertTrue(Validation::between('', 0, 7));
+		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
+
 		$this->assertFalse(Validation::between('abcdefg', 1, 6));
+		$this->assertFalse(Validation::between('ÆΔΩЖÇ', 1, 3));
 	}
 
 /**
@@ -1643,6 +1684,10 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function testEmailDeep() {
+		$found = gethostbynamel('example.abcd');
+		if ($this->skipIf($found, 'Your DNS service responds for non-existant domains, skipping deep email checks. %s'))  {
+			return;
+		}
 		$this->assertTrue(Validation::email('abc.efg@cakephp.org', true));
 		$this->assertFalse(Validation::email('abc.efg@caphpkeinvalid.com', true));
 		$this->assertFalse(Validation::email('abc@example.abcd', true));
@@ -1680,13 +1725,82 @@ class ValidationTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIp() {
+	function testIpv4() {
+		$this->assertTrue(Validation::ip('0.0.0.0', 'IPv4'));
+		$this->assertTrue(Validation::ip('192.168.1.156', 'IPv4'));
+		$this->assertTrue(Validation::ip('255.255.255.255', 'IPv4'));
+
+		$this->assertFalse(Validation::ip('127.0.0', 'IPv4'));
+		$this->assertFalse(Validation::ip('127.0.0.a', 'IPv4'));
+		$this->assertFalse(Validation::ip('127.0.0.256', 'IPv4'));
+
+		$this->assertFalse(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv4'));
+	}
+
+/**
+ * testIp v6
+ *
+ * @access public
+ * @return void
+ */
+	function testIpv6() {
+		$this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3::8a2e:370:7334', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0000:0000:0000:0000:1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0000:0000:0000::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0:0:0:0:1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:0:0::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8::1428:57ab', 'IPv6'));
+		$this->assertTrue(Validation::ip('0000:0000:0000:0000:0000:0000:0000:0001', 'IPv6'));
+		$this->assertTrue(Validation::ip('::1', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:12.34.56.78', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:0c22:384e', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:1234:0000:0000:0000:0000:0000', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:0db8:1234:ffff:ffff:ffff:ffff:ffff', 'IPv6'));
+		$this->assertTrue(Validation::ip('2001:db8:a::123', 'IPv6'));
+		$this->assertTrue(Validation::ip('fe80::', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:192.0.2.128', 'IPv6'));
+		$this->assertTrue(Validation::ip('::ffff:c000:280', 'IPv6'));
+
+		$this->assertFalse(Validation::ip('123', 'IPv6'));
+		$this->assertFalse(Validation::ip('ldkfj', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001::FFD3::57ab', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:37023:7334', 'IPv6'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:370k:7334', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:2:3:4:5:6:7:8:9', 'IPv6'));
+		$this->assertFalse(Validation::ip('1::2::3', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:::3:4:5', 'IPv6'));
+		$this->assertFalse(Validation::ip('1:2:3::4:5:6:7:8:9', 'IPv6'));
+		$this->assertFalse(Validation::ip('::ffff:2.3.4', 'IPv6'));
+		$this->assertFalse(Validation::ip('::ffff:257.1.2.3', 'IPv6'));
+
+		$this->assertFalse(Validation::ip('0.0.0.0', 'IPv6'));
+	}
+
+/**
+ * testIpBoth method
+ *
+ * @return void
+ * @access public
+ */	
+	function testIpBoth() {
 		$this->assertTrue(Validation::ip('0.0.0.0'));
 		$this->assertTrue(Validation::ip('192.168.1.156'));
 		$this->assertTrue(Validation::ip('255.255.255.255'));
+		
 		$this->assertFalse(Validation::ip('127.0.0'));
 		$this->assertFalse(Validation::ip('127.0.0.a'));
 		$this->assertFalse(Validation::ip('127.0.0.256'));
+
+		$this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334'));
+		$this->assertTrue(Validation::ip('2001:db8:85a3::8a2e:370:7334'));
+
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:37023:7334'));
+		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:370k:7334'));
+		$this->assertFalse(Validation::ip('1:2:3:4:5:6:7:8:9'));
 	}
 
 /**
@@ -1698,7 +1812,10 @@ class ValidationTest extends CakeTestCase {
 	function testMaxLength() {
 		$this->assertTrue(Validation::maxLength('ab', 3));
 		$this->assertTrue(Validation::maxLength('abc', 3));
+		$this->assertTrue(Validation::maxLength('ÆΔΩЖÇ', 10));
+
 		$this->assertFalse(Validation::maxLength('abcd', 3));
+		$this->assertFalse(Validation::maxLength('ÆΔΩЖÇ', 3));
 	}
 
 /**
@@ -1709,8 +1826,11 @@ class ValidationTest extends CakeTestCase {
  */
 	function testMinLength() {
 		$this->assertFalse(Validation::minLength('ab', 3));
+		$this->assertFalse(Validation::minLength('ÆΔΩЖÇ', 10));
+
 		$this->assertTrue(Validation::minLength('abc', 3));
 		$this->assertTrue(Validation::minLength('abcd', 3));
+		$this->assertTrue(Validation::minLength('ÆΔΩЖÇ', 2));
 	}
 
 /**
@@ -1755,6 +1875,35 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('http://en.(wikipedia).org/'));
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
+		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
+
+		$this->assertTrue(Validation::url('http://cakephp.org:80'));
+		$this->assertTrue(Validation::url('http://cakephp.org:443'));
+		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
+		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
+
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('[::1]'));
+		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('[::1]:80'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]'));
+		$this->assertTrue(Validation::url('http://[::1]'));
+		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]:80'));
+		$this->assertTrue(Validation::url('http://[::1]:80'));
+
+		$this->assertFalse(Validation::url('[1::2::3]'));
+	}
+
+	function testUuid() {
+		$this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
+		$this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29b-11d-a716-446655440000'));
+		$this->assertFalse(Validation::uuid('550e8400-e29-11d4-a716-446655440000'));
 	}
 
 /**
@@ -1767,33 +1916,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::inList('one', array('one', 'two')));
 		$this->assertTrue(Validation::inList('two', array('one', 'two')));
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
-	}
-
-/**
- * testValidNumber method
- *
- * @access public
- * @return void
- */
-	function testValidNumber() {
-		$this->assertTrue(Validation::custom('12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('--12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('++12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('a12345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-a12345z', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('123-12345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('-1.2345', VALID_NUMBER));
-		$this->assertTrue(Validation::custom('+1.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('-1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('+1..2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('.2345', VALID_NUMBER));
-		$this->assertFalse(Validation::custom('12345.', VALID_NUMBER));
 	}
 
 /**
@@ -1880,7 +2002,7 @@ class ValidationTest extends CakeTestCase {
  *
  * @access public
  * @return void
- **/
+ */
 	function testMultiple() {
 		$this->assertTrue(Validation::multiple(array(0, 1, 2, 3)));
 		$this->assertTrue(Validation::multiple(array(50, 32, 22, 0)));
@@ -2015,6 +2137,32 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('13089-333'));
 		$this->assertFalse(Validation::postal('13A89-4333'));
 		$this->assertTrue(Validation::postal('13089-3333'));
+	}
+
+/**
+ * test that phone and postal pass to other classes.
+ *
+ * @return void
+ */
+	function testPhonePostalSsnPass() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+		$this->assertTrue(Validation::phone('text', null, 'testDe'));
+		$this->assertTrue(Validation::ssn('text', null, 'testNl'));
+	}
+
+/**
+ * test the pass through calling of an alternate locale with postal()
+ *
+ * @return void
+ **/
+	function testPassThroughMethod() {
+		$this->assertTrue(Validation::postal('text', null, 'testNl'));
+
+		$this->expectError('Could not find AUTOFAILValidation class, unable to complete validation.');
+		Validation::postal('text', null, 'AUTOFAIL');
+
+		$this->expectError('Method phone does not exist on TestNlValidation unable to complete validation.');
+		Validation::phone('text', null, 'testNl');
 	}
 
 /**

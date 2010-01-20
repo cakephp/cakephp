@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * XML Helper class file.
  *
  * Simplifies the output of XML documents.
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @since         CakePHP(tm) v 1.2
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Xml', 'Set'));
 
@@ -71,7 +65,7 @@ class XmlHelper extends AppHelper {
 			$attrib = 'xml ' . $attrib;
 		}
 
-		return $this->output($this->Xml->header($attrib));
+		return $this->Xml->header($attrib);
 	}
 
 /**
@@ -119,7 +113,7 @@ class XmlHelper extends AppHelper {
 			$cdata = true;
 			unset($content['cdata']);
 		}
-		if (is_array($content) && isset($content['value'])) {
+		if (is_array($content) && array_key_exists('value', $content)) {
 			$content = $content['value'];
 		}
 		$children = array();
@@ -137,7 +131,7 @@ class XmlHelper extends AppHelper {
 		if (!$endTag) {
 			$this->Xml =& $elem;
 		}
-		return $this->output($out);
+		return $out;
 	}
 
 /**
@@ -150,7 +144,7 @@ class XmlHelper extends AppHelper {
 		if ($parent =& $this->Xml->parent()) {
 			$this->Xml =& $parent;
 		}
-		return $this->output('</' . $name . '>');
+		return '</' . $name . '>';
 	}
 
 /**

@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * This is core configuration file.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -33,8 +27,6 @@ App::import('Model', 'App');
 
 /**
  * Short description for file.
- *
- * Long description for file
  *
  *
  * @package       cake
@@ -150,7 +142,7 @@ class AclNode extends AppModel {
 			}
 
 			if (empty($model)) {
-				trigger_error("Model class '$name' not found in AclNode::node() when trying to bind {$this->alias} object", E_USER_WARNING);
+				trigger_error(sprintf(__("Model class '%s' not found in AclNode::node() when trying to bind %s object", true), $type, $this->alias), E_USER_WARNING);
 				return null;
 			}
 
@@ -195,7 +187,7 @@ class AclNode extends AppModel {
 			$result = $db->read($this, $queryData, -1);
 
 			if (!$result) {
-				trigger_error("AclNode::node() - Couldn't find {$type} node identified by \"" . print_r($ref, true) . "\"", E_USER_WARNING);
+				trigger_error(sprintf(__("AclNode::node() - Couldn't find %s node identified by \"%s\"", true), $type, print_r($ref, true)), E_USER_WARNING);
 			}
 		}
 		return $result;

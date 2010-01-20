@@ -163,7 +163,7 @@ class Scaffold extends Object {
 			$this->{$var} = $controller->{$var};
 		}
 
-		$this->redirect = array('action'=> 'index');
+		$this->redirect = array('action' => 'index');
 
 		$this->modelClass = $controller->modelClass;
 		$this->modelKey = $controller->modelKey;
@@ -177,8 +177,7 @@ class Scaffold extends Object {
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
-		$this->controller->pageTitle = __('Scaffold :: ', true)
-			. Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
+		$title_for_layout = __('Scaffold :: ', true) . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
 		$modelClass = $this->controller->modelClass;
 		$primaryKey = $this->ScaffoldModel->primaryKey;
 		$displayField = $this->ScaffoldModel->displayField;
@@ -190,17 +189,17 @@ class Scaffold extends Object {
 		$associations = $this->__associations();
 
 		$this->controller->set(compact(
-			'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
+			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 
 		if ($this->controller->view && $this->controller->view !== 'Theme') {
 			$this->controller->view = 'scaffold';
 		}
-		$this->__scaffold($params);
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
+		$this->__scaffold($params);
 	}
 
 /**
@@ -224,19 +223,14 @@ class Scaffold extends Object {
 	function __scaffoldView($params) {
 		if ($this->controller->_beforeScaffold('view')) {
 
+			$message = sprintf(__("No id set for %s::view()", true), Inflector::humanize($this->modelKey));
 			if (isset($params['pass'][0])) {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash(sprintf(
-					__("No id set for %s::view()", true),
-					Inflector::humanize($this->modelKey
-				)));
+				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
 			} else {
-				return $this->controller->flash(sprintf(
-					__("No id set for %s::view()", true), Inflector::humanize($this->modelKey)),
-					'/' . Inflector::underscore($this->controller->viewPath
-				));
+				return $this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
 			}
 			$this->ScaffoldModel->recursive = 1;
 			$this->controller->data = $this->ScaffoldModel->read();
@@ -278,6 +272,10 @@ class Scaffold extends Object {
  * @access private
  */
 	function __scaffoldForm($action = 'edit') {
+		$this->controller->viewVars['scaffoldFields'] = array_merge(
+			$this->controller->viewVars['scaffoldFields'],
+			array_keys($this->ScaffoldModel->hasAndBelongsToMany)
+		);
 		$this->controller->render($action, $this->layout);
 		$this->_output();
 	}
@@ -305,17 +303,13 @@ class Scaffold extends Object {
 				}
 
 				if (!$this->ScaffoldModel->exists()) {
+					$message = sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey));
 					if ($this->_validSession) {
-						$this->controller->Session->setFlash(sprintf(
-							__("Invalid id for %s::edit()", true),
-							Inflector::humanize($this->modelKey)
-						));
+						$this->controller->Session->setFlash($message);
 						$this->controller->redirect($this->redirect);
 					} else {
-						return $this->controller->flash(sprintf(
-							__("Invalid id for %s::edit()", true),
-							Inflector::humanize($this->modelKey)
-						), $this->redirect);
+						$this->controller->flash($message, $this->redirect);
+						$this->_output();
 					}
 				}
 			}
@@ -327,17 +321,16 @@ class Scaffold extends Object {
 
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
+						$message = sprintf(__('The %1$s has been %2$s', true),
+							Inflector::humanize($this->modelKey),
+							$success
+						);
 						if ($this->_validSession) {
-							$this->controller->Session->setFlash(sprintf(
-								__('The %1$s has been %2$s', true),
-								Inflector::humanize($this->modelClass), $success
-							));
+							$this->controller->Session->setFlash($message);
 							$this->controller->redirect($this->redirect);
 						} else {
-							return $this->controller->flash(sprintf(
-								__('The %1$s has been %2$s', true),
-								Inflector::humanize($this->modelClass), $success
-							), $this->redirect);
+							$this->controller->flash($message, $this->redirect);
+							return $this->_output();
 						}
 					} else {
 						return $this->controller->_afterScaffoldSaveError($action);
@@ -385,44 +378,40 @@ class Scaffold extends Object {
  */
 	function __scaffoldDelete($params = array()) {
 		if ($this->controller->_beforeScaffold('delete')) {
+			$message = sprintf(__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey));
 			if (isset($params['pass'][0])) {
 				$id = $params['pass'][0];
 			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash(sprintf(
-					__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)
-				));
+				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
 			} else {
-				return $this->controller->flash(sprintf(
-					__("No id set for %s::delete()", true), Inflector::humanize($this->modelKey)
-				), '/' . Inflector::underscore($this->controller->viewPath));
+				$this->controller->flash($message, $this->redirect);
+				return $this->_output();
 			}
 
 			if ($this->ScaffoldModel->delete($id)) {
+				$message = sprintf(
+					__('The %1$s with id: %2$d has been deleted.', true),
+					Inflector::humanize($this->modelClass), $id
+				);
 				if ($this->_validSession) {
-					$this->controller->Session->setFlash(sprintf(
-						__('The %1$s with id: %2$d has been deleted.', true),
-						Inflector::humanize($this->modelClass), $id
-					));
+					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(
-						__('The %1$s with id: %2$d has been deleted.', true),
-						Inflector::humanize($this->modelClass), $id
-					), '/' . $this->viewPath);
+					$this->controller->flash($message, $this->redirect);
+					return $this->_output();
 				}
 			} else {
+				$message = sprintf(
+					__('There was an error deleting the %1$s with id: %2$d', true),
+					Inflector::humanize($this->modelClass), $id
+				);
 				if ($this->_validSession) {
-					$this->controller->Session->setFlash(sprintf(
-						__('There was an error deleting the %1$s with id: %2$d', true),
-						Inflector::humanize($this->modelClass), $id
-					));
+					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
 				} else {
-					return $this->controller->flash(sprintf(
-						__('There was an error deleting the %1$s with id: %2$d', true),
-						Inflector::humanize($this->modelClass), $id
-					), '/' . $this->viewPath);
+					$this->controller->flash($message, $this->redirect);
+					return $this->_output();
 				}
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
@@ -444,10 +433,7 @@ class Scaffold extends Object {
 /**
  * When methods are now present in a controller
  * scaffoldView is used to call default Scaffold methods if:
- * <code>
- * var $scaffold;
- * </code>
- * is placed in the controller's class definition.
+ * `var $scaffold;` is placed in the controller's class definition.
  *
  * @param array $params Parameters for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error
@@ -455,43 +441,44 @@ class Scaffold extends Object {
  */
 	function __scaffold($params) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
-		$admin = Configure::read('Routing.admin');
+		$prefixes = Configure::read('Routing.prefixes');
+		$scaffoldPrefix = $this->scaffoldActions;
 
 		if (isset($db)) {
 			if (empty($this->scaffoldActions)) {
 				$this->scaffoldActions = array(
 					'index', 'list', 'view', 'add', 'create', 'edit', 'update', 'delete'
 				);
-			} elseif (!empty($admin) && $this->scaffoldActions === $admin) {
+			} elseif (!empty($prefixes) && in_array($scaffoldPrefix, $prefixes)) {
 				$this->scaffoldActions = array(
-					$admin .'_index', $admin .'_list', $admin .'_view', $admin .'_add',
-					$admin .'_create', $admin .'_edit', $admin .'_update', $admin .'_delete'
+					$scaffoldPrefix . '_index',
+					$scaffoldPrefix . '_list',
+					$scaffoldPrefix . '_view',
+					$scaffoldPrefix . '_add',
+					$scaffoldPrefix . '_create',
+					$scaffoldPrefix . '_edit',
+					$scaffoldPrefix . '_update',
+					$scaffoldPrefix . '_delete'
 				);
 			}
 
 			if (in_array($params['action'], $this->scaffoldActions)) {
-				if (!empty($admin)) {
-					$params['action'] = str_replace($admin . '_', '', $params['action']);
+				if (!empty($prefixes)) {
+					$params['action'] = str_replace($scaffoldPrefix . '_', '', $params['action']);
 				}
 				switch ($params['action']) {
 					case 'index':
+					case 'list':
 						$this->__scaffoldIndex($params);
 					break;
 					case 'view':
 						$this->__scaffoldView($params);
 					break;
-					case 'list':
-						$this->__scaffoldIndex($params);
-					break;
 					case 'add':
-						$this->__scaffoldSave($params, 'add');
-					break;
-					case 'edit':
-						$this->__scaffoldSave($params, 'edit');
-					break;
 					case 'create':
 						$this->__scaffoldSave($params, 'add');
 					break;
+					case 'edit':
 					case 'update':
 						$this->__scaffoldSave($params, 'edit');
 					break;
@@ -537,6 +524,10 @@ class Scaffold extends Object {
 
 				$associations[$type][$assocKey]['controller'] =
 					Inflector::pluralize(Inflector::underscore($assocData['className']));
+
+				if ($type == 'hasAndBelongsToMany') {
+					$associations[$type][$assocKey]['with'] = $assocData['with'];
+				}
 			}
 		}
 		return $associations;
@@ -566,10 +557,15 @@ class ScaffoldView extends ThemeView {
 			$name = $this->action;
 		}
 		$name = Inflector::underscore($name);
-		$admin = Configure::read('Routing.admin');
+		$prefixes = Configure::read('Routing.prefixes');
 
-		if (!empty($admin) && strpos($name, $admin . '_') !== false) {
-			$name = substr($name, strlen($admin) + 1);
+		if (!empty($prefixes)) {
+			foreach ($prefixes as $prefix) {
+				if (strpos($name, $prefix . '_') !== false) {
+					$name = substr($name, strlen($prefix) + 1);
+					break;
+				}
+			}
 		}
 
 		if ($name === 'add') {

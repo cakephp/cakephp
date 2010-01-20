@@ -1,27 +1,21 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Convenience class for handling directories.
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 0.2.9
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -331,7 +325,7 @@ class Folder extends Object {
  * @static
  */
 	function addPathElement($path, $element) {
-		return Folder::slashTerm($path) . $element;
+		return rtrim($path, DS) . DS . $element;
 	}
 
 /**
@@ -627,7 +621,7 @@ class Folder extends Object {
 		}
 
 		if (!is_dir($toDir)) {
-			$this->mkdir($toDir, $mode);
+			$this->create($toDir, $mode);
 		}
 
 		if (!is_writable($toDir)) {
@@ -725,9 +719,11 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see read
+ * @deprecated use read
  * @access public
  */
 	function ls($sort = true, $exceptions = false) {
+		trigger_error(__('Deprecated method, use Folder::read instead', true), E_USER_WARNING);
 		return $this->read($sort, $exceptions);
 	}
 
@@ -735,9 +731,11 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see create
+ * @deprecated use create
  * @access public
  */
 	function mkdir($pathname, $mode = 0755) {
+		trigger_error(__('Deprecated method, use Folder::create instead', true), E_USER_WARNING);
 		return $this->create($pathname, $mode);
 	}
 
@@ -745,9 +743,11 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see copy
+ * @deprecated use copy
  * @access public
  */
 	function cp($options) {
+		trigger_error(__('Deprecated method, use Folder::copy instead', true), E_USER_WARNING);
 		return $this->copy($options);
 	}
 
@@ -755,9 +755,11 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see move
+ * @deprecated use move
  * @access public
  */
 	function mv($options) {
+		trigger_error(__('Deprecated method, use Folder::move instead', true), E_USER_WARNING);
 		return $this->move($options);
 	}
 
@@ -765,9 +767,11 @@ class Folder extends Object {
  * nix flavored alias
  *
  * @see delete
+ * @deprecated use delete
  * @access public
  */
 	function rm($path) {
+		trigger_error(__('Deprecated method, use Folder::delete instead', true), E_USER_WARNING);
 		return $this->delete($path);
 	}
 
@@ -797,7 +801,7 @@ class Folder extends Object {
 				continue;
 			}
 			if ($part === '..') {
-				if (count($newparts) > 0) {
+				if (!empty($newparts)) {
 					array_pop($newparts);
 					continue;
 				} else {

@@ -1,28 +1,20 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * TextHelperTest file
- *
- * Long description for file
  *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Helper', 'Text');
@@ -70,10 +62,7 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	function testTruncate() {
-		if (!isset($this->method)) {
-			$this->method = 'truncate';
-		}
-		$m = $this->method;
+		$m = 'truncate';
 		$text1 = 'The quick brown fox jumps over the lazy dog';
 		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
@@ -82,35 +71,31 @@ class TextHelperTest extends CakeTestCase {
         $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
         $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
         $text8 = 'Vive la R'.chr(195).chr(169).'publique de France';
+		$text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 
-		$this->assertIdentical($this->Text->{$m}($text1, 15), 'The quick br...');
-		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false), 'The quick...');
-		$this->assertIdentical($this->Text->{$m}($text1, 100), 'The quick brown fox jumps over the lazy dog');
-		$this->assertIdentical($this->Text->{$m}($text2, 10, '...'), 'Heiz&ou...');
-		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', false), '...');
-		$this->assertIdentical($this->Text->{$m}($text3, 20), '<b>&copy; 2005-20...');
-		$this->assertIdentical($this->Text->{$m}($text4, 15), '<img src="my...');
-		$this->assertIdentical($this->Text->{$m}($text5, 6, ''), '0<b>1<');
-		$this->assertIdentical($this->Text->{$m}($text1, 15, array('ending' => '...', 'exact' => true, 'considerHtml' => true)), 'The quick br...');
-		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', true, true), 'The quick br...');
-		$this->assertIdentical($this->Text->{$m}($text1, 15, '...', false, true), 'The quick...');
-		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', true, true), 'Heiz&ouml;lr...');
-		$this->assertIdentical($this->Text->{$m}($text2, 10, '...', false, true), '...');
-		$this->assertIdentical($this->Text->{$m}($text3, 20, '...', true, true), '<b>&copy; 2005-2007, Cake...</b>');
-		$this->assertIdentical($this->Text->{$m}($text4, 15, '...', true, true), '<img src="mypic.jpg"> This image ...');
-		$this->assertIdentical($this->Text->{$m}($text4, 45, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
-		$this->assertIdentical($this->Text->{$m}($text4, 90, '...', true, true), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
-		$this->assertIdentical($this->Text->{$m}($text5, 6, '', true, true), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
-		$this->assertIdentical($this->Text->{$m}($text5, 20, '', true, true), $text5);
-		$this->assertIdentical($this->Text->{$m}($text6, 57, '...', false, true), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
-		$this->assertIdentical($this->Text->{$m}($text7, 255), $text7);
-		$this->assertIdentical($this->Text->{$m}($text7, 15), 'El moño está...');
-		$this->assertIdentical($this->Text->{$m}($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
-
-		if ($this->method == 'truncate') {
-			$this->method = 'trim';
-			$this->testTruncate();
-		}
+		$this->assertIdentical($this->Text->truncate($text1, 15), 'The quick br...');
+		$this->assertIdentical($this->Text->truncate($text1, 15, array('exact' => false)), 'The quick...');
+		$this->assertIdentical($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
+		$this->assertIdentical($this->Text->truncate($text2, 10), 'Heiz&ou...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, array('exact' => false)), '...');
+		$this->assertIdentical($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
+		$this->assertIdentical($this->Text->truncate($text4, 15), '<img src="my...');
+		$this->assertIdentical($this->Text->truncate($text5, 6, array('ending' => '')), '0<b>1<');
+		$this->assertIdentical($this->Text->truncate($text1, 15, array('html' => true)), 'The quick br...');
+		$this->assertIdentical($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr...');
+		$this->assertIdentical($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), '...');
+		$this->assertIdentical($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake...</b>');
+		$this->assertIdentical($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ...');
+		$this->assertIdentical($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
+		$this->assertIdentical($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
+		$this->assertIdentical($this->Text->truncate($text5, 6, array('ending' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertIdentical($this->Text->truncate($text5, 20, array('ending' => '', 'html' => true)), $text5);
+		$this->assertIdentical($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
+		$this->assertIdentical($this->Text->truncate($text7, 255), $text7);
+		$this->assertIdentical($this->Text->truncate($text7, 15), 'El moño está...');
+		$this->assertIdentical($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
+		$this->assertIdentical($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 	}
 
 /**
@@ -122,46 +107,62 @@ class TextHelperTest extends CakeTestCase {
 	function testHighlight() {
 		$text = 'This is a test text';
 		$phrases = array('This', 'text');
-		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
+		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
 		$expected = '<b>This</b> is a test <b>text</b>';
 		$this->assertEqual($expected, $result);
 
 		$text = 'This is a test text';
 		$phrases = null;
-		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
+		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
 		$this->assertEqual($result, $text);
 
 		$text = 'Ich saß in einem Café am Übergang';
 		$expected = 'Ich <b>saß</b> in einem <b>Café</b> am <b>Übergang</b>';
 		$phrases = array('saß', 'café', 'übergang');
-		$result = $this->Text->highlight($text, $phrases, '<b>\1</b>');
+		$result = $this->Text->highlight($text, $phrases, array('format' => '<b>\1</b>'));
 		$this->assertEqual($result, $expected);
 	}
 
 /**
- * testHighlightConsiderHtml method
+ * testHighlightHtml method
  *
  * @access public
  * @return void
  */
-	function testHighlightConsiderHtml() {
+	function testHighlightHtml() {
 		$text1 = '<p>strongbow isn&rsquo;t real cider</p>';
 		$text2 = '<p>strongbow <strong>isn&rsquo;t</strong> real cider</p>';
 		$text3 = '<img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
 		$text4 = 'What a strong mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
+		$options = array('format' => '<b>\1</b>', 'html' => true);
 
 		$expected = '<p><b>strong</b>bow isn&rsquo;t real cider</p>';
-		$this->assertEqual($this->Text->highlight($text1, 'strong', '<b>\1</b>', true), $expected);
+		$this->assertEqual($this->Text->highlight($text1, 'strong', $options), $expected);
 
 		$expected = '<p><b>strong</b>bow <strong>isn&rsquo;t</strong> real cider</p>';
-		$this->assertEqual($this->Text->highlight($text2, 'strong', '<b>\1</b>', true), $expected);
+		$this->assertEqual($this->Text->highlight($text2, 'strong', $options), $expected);
 
-		$this->assertEqual($this->Text->highlight($text3, 'strong', '<b>\1</b>', true), $text3);
+		$this->assertEqual($this->Text->highlight($text3, 'strong', $options), $text3);
 
-		$this->assertEqual($this->Text->highlight($text3, array('strong', 'what'), '<b>\1</b>', true), $text3);
+		$this->assertEqual($this->Text->highlight($text3, array('strong', 'what'), $options), $text3);
 
 		$expected = '<b>What</b> a <b>strong</b> mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
-		$this->assertEqual($this->Text->highlight($text4, array('strong', 'what'), '<b>\1</b>', true), $expected);
+		$this->assertEqual($this->Text->highlight($text4, array('strong', 'what'), $options), $expected);
+	}
+
+/**
+ * testHighlightMulti method
+ *
+ * @access public
+ * @return void
+ */
+	function testHighlightMulti() {
+		$text = 'This is a test text';
+		$phrases = array('This', 'text');
+		$result = $this->Text->highlight($text, $phrases, array('format' => array('<b>\1</b>', '<em>\1</em>')));
+		$expected = '<b>This</b> is a test <em>text</em>';
+		$this->assertEqual($expected, $result);
+
 	}
 
 /**
@@ -282,10 +283,10 @@ class TextHelperTest extends CakeTestCase {
 		$text = 'This is a Test text';
 		$expected = 'This is a <b>Test</b> text';
 
-		$result = $this->Text->highlight($text, 'test', '<b>\1</b>');
+		$result = $this->Text->highlight($text, 'test', array('format' => '<b>\1</b>'));
 		$this->assertEqual($expected, $result);
 
-		$result = $this->Text->highlight($text, array('test'), '<b>\1</b>');
+		$result = $this->Text->highlight($text, array('test'), array('format' => '<b>\1</b>'));
 		$this->assertEqual($expected, $result);
 	}
 
@@ -359,6 +360,15 @@ class TextHelperTest extends CakeTestCase {
 
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
 		$this->assertEqual($result, 'Dusty, Lucky y Ned');
+
+        $result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
+        $this->assertEqual($result, 'Dusty, Lucky y Ned');
+
+        $result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
+        $this->assertEqual($result, 'Dusty + Lucky and Ned');
+
+        $result = $this->Text->toList(array( 'name1' => 'Dusty', 'name2' => 'Lucky'));
+        $this->assertEqual($result, 'Dusty and Lucky');
 	}
 }
 ?>

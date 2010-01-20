@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id$ */
-
 /**
  * Tree behavior class.
  *
@@ -8,22 +6,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2006-2008, Cake Software Foundation, Inc.
+ * CakePHP : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2006-2009, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2006-2008, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
  * @since         CakePHP v 1.2.0.4487
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -145,15 +139,6 @@ class TreeBehavior extends ModelBehavior {
  */
 	function beforeSave(&$Model) {
 		extract($this->settings[$Model->alias]);
-
-		if (isset($Model->data[$Model->alias][$Model->primaryKey])) {
-			if ($Model->data[$Model->alias][$Model->primaryKey]) {
-				if (!$Model->id) {
-					$Model->id = $Model->data[$Model->alias][$Model->primaryKey];
-				}
-			}
-			unset($Model->data[$Model->alias][$Model->primaryKey]);
-		}
 
 		$this->_addToWhitelist($Model, array($left, $right));
 		if (!$Model->id) {
@@ -474,7 +459,7 @@ class TreeBehavior extends ModelBehavior {
 			'fields' => array($Model->primaryKey, $left, $right), 'recursive' => $recursive)
 		);
 		if ($nextNode) {
-			list($nextNode)= array_values($nextNode);
+			list($nextNode) = array_values($nextNode);
 		} else {
 			return false;
 		}
@@ -657,6 +642,8 @@ class TreeBehavior extends ModelBehavior {
 		$sort = $field . ' ' . $order;
 		$nodes = $this->children($Model, $id, true, $fields, $sort, null, null, $recursive);
 
+		$cacheQueries = $Model->cacheQueries;
+		$Model->cacheQueries = false;
 		if ($nodes) {
 			foreach ($nodes as $node) {
 				$id = $node[$Model->alias][$Model->primaryKey];
@@ -666,6 +653,7 @@ class TreeBehavior extends ModelBehavior {
 				}
 			}
 		}
+		$Model->cacheQueries = $cacheQueries;
 		return true;
 	}
 

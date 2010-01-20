@@ -7,22 +7,18 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2008,	Cake Software Foundation, Inc.
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009,	Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.console
  * @since         CakePHP(tm) v 1.2.0.5012
- * @version       $Revision$
- * @modifiedby    $LastChangedBy$
- * @lastmodified  $Date$
- * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!defined('E_DEPRECATED')) {
 	define('E_DEPRECATED', 8192);
@@ -124,15 +120,6 @@ class ShellDispatcher {
 	var $shellName = null;
 
 /**
- * Constructs this ShellDispatcher instance.
- *
- * @param array $args the argv.
- */
-	function ShellDispatcher($args = array()) {
-		$this->__construct($args);
-	}
-
-/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -142,7 +129,7 @@ class ShellDispatcher {
  * @return void
  * @access public
  */
-	function __construct($args = array()) {
+	function ShellDispatcher($args = array()) {
 		set_time_limit(0);
 
 		$this->__initConstants();
@@ -160,7 +147,7 @@ class ShellDispatcher {
 	function __initConstants() {
 		if (function_exists('ini_set')) {
 			ini_set('display_errors', '1');
-			ini_set('error_reporting', E_ALL);
+			ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
@@ -222,18 +209,15 @@ class ShellDispatcher {
  */
 	function __buildPaths() {
 		$paths = array();
-		$pluginPaths = App::path('plugins');
 		if (!class_exists('Folder')) {
 			require LIBS . 'folder.php';
 		}
-		foreach ($pluginPaths as $pluginPath) {
-			$Folder =& new Folder($pluginPath);
-			list($plugins,) = $Folder->read(false, true);
-			foreach ((array)$plugins as $plugin) {
-				$path = $pluginPath . Inflector::underscore($plugin) . DS . 'vendors' . DS . 'shells' . DS;
-				if (file_exists($path)) {
-					$paths[] = $path;
-				}
+		$plugins = App::objects('plugin', null, false);
+		foreach ((array)$plugins as $plugin) {
+			$pluginPath = App::pluginPath($plugin);
+			$path = $pluginPath . 'vendors' . DS . 'shells' . DS;
+			if (file_exists($path)) {
+				$paths[] = $path;
 			}
 		}
 
@@ -324,13 +308,8 @@ class ShellDispatcher {
 			$this->help();
 			return true;
 		}
-
-		if (strpos($arg, '.') !== false)  {
-			list($plugin, $shell) = explode('.', $arg);
-		} else {
-			$plugin = null;
-			$shell = $arg;
-		}
+		
+		list($plugin, $shell) = pluginSplit($arg);
 		$this->shell = $shell;
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';
@@ -402,6 +381,7 @@ class ShellDispatcher {
 		$this->stderr($title . "\n" . $message . "\n");
 		return false;
 	}
+
 /**
  * Get shell to use, either plugin shell or application shell
  *
@@ -479,13 +459,14 @@ class ShellDispatcher {
  *
  * @param string $string String to output.
  * @param boolean $newline If true, the outputs gets an added newline.
+ * @return integer Returns the number of bytes output to stdout.
  * @access public
  */
 	function stdout($string, $newline = true) {
 		if ($newline) {
-			fwrite($this->stdout, $string . "\n");
+			return fwrite($this->stdout, $string . "\n");
 		} else {
-			fwrite($this->stdout, $string);
+			return fwrite($this->stdout, $string);
 		}
 	}
 
@@ -606,26 +587,56 @@ class ShellDispatcher {
 		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
 
 		$this->stdout("\nAvailable Shells:");
-		$_shells = array();
+		$shellList = array();
 		foreach ($this->shellPaths as $path) {
-			if (is_dir($path)) {
-				$shells = App::objects('file', $path);
-				$path = str_replace(CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS, 'CORE' . DS, $path);
-				$path = str_replace(APP, 'APP' . DS, $path);
-				$path = str_replace(ROOT, 'ROOT', $path);
-				$path = rtrim($path, DS);
-				$this->stdout("\n " . $path . ":");
-				if (empty($shells)) {
-					$this->stdout("\t - none");
-				} else {
-					sort($shells);
-					foreach ($shells as $shell) {
-
-						if ($shell !== 'shell.php') {
-							$this->stdout("\t " . str_replace('.php', '', $shell));
-						}
-					}
+			if (!is_dir($path)) {
+				continue;
+			}
+ 			$shells = App::objects('file', $path);
+			if (empty($shells)) {
+				continue;
+			}
+			if (preg_match('@plugins[\\\/]([^\\\/]*)@', $path, $matches)) {
+				$type = Inflector::camelize($matches[1]);
+			} elseif (preg_match('@([^\\\/]*)[\\\/]vendors[\\\/]@', $path, $matches)) {
+				$type = $matches[1];
+			} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH . DS . 'cake') === 0) {
+				$type = 'CORE';
+			} else {
+				$type = 'app';
+			}
+			foreach ($shells as $shell) {
+				if ($shell !== 'shell.php') {
+					$shell = str_replace('.php', '', $shell);
+					$shellList[$shell][$type] = $type;
 				}
+			}
+		}
+		if ($shellList) {
+			ksort($shellList);
+			if (DS === '/') {
+				$width = exec('tput cols') - 2;
+			}
+			if (empty($width)) {
+				$width = 80;
+			}
+			$columns = max(1, floor($width / 30));
+			$rows = ceil(count($shellList) / $columns);
+
+			foreach($shellList as $shell => $types) {
+				sort($types);
+				$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
+			}
+			$out = array_chunk($shellList, $rows);
+			for($i = 0; $i < $rows; $i++) {
+				$row = '';
+				for($j = 0; $j < $columns; $j++) {
+					if (!isset($out[$j][$i])) {
+						continue;
+ 					}
+					$row .= $out[$j][$i];
+ 				}
+				$this->stdout(" " . $row);
 			}
 		}
 		$this->stdout("\nTo run a command, type 'cake shell_name [args]'");
