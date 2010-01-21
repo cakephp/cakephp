@@ -180,7 +180,7 @@ class XcacheEngineTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	public function testDecrement() {
+	function testDecrement() {
 		$result = Cache::write('test_decrement', 5);
 		$this->assertTrue($result);
 
@@ -195,7 +195,6 @@ class XcacheEngineTest extends UnitTestCase {
 
 		$result = Cache::read('test_decrement');
 		$this->assertEqual(2, $result);
-		
 	}
 
 /**
@@ -204,21 +203,21 @@ class XcacheEngineTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	public function testIncrement() {
+	function testIncrement() {
 		$result = Cache::write('test_increment', 5);
 		$this->assertTrue($result);
 
 		$result = Cache::increment('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::increment('test_increment', 2);
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 	}
 }
 ?>
