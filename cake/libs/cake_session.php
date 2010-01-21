@@ -138,17 +138,19 @@ class CakeSession extends Object {
 			if (empty($database)) {
 				$database = 'default';
 			}
-			if (empty($modelName)) {
-				ClassRegistry::init(array(
-					'class' => Inflector::classify($table),
-					'alias' => 'Session'
-				));
-			} else {
-				ClassRegistry::init(array(
-					'class' => $modelName,
-					'alias' => 'Session'
-				));
+			$settings = array(
+				'class' => 'Session',
+				'alias' => 'Session',
+				'table' => 'cake_sessions',
+				'ds' => $database
+			);
+			if (!empty($modelName)) {
+				$settings['class'] = $modelName;
 			}
+			if (!empty($table)) {
+				$settings['table'] = $table;
+			}
+			ClassRegistry::init($settings);
 		}
 		if ($start === true) {
 			if (!empty($base)) {
@@ -492,11 +494,9 @@ class CakeSession extends Object {
 			break;
 			case 'database':
 				if (empty($_SESSION)) {
-					if (Configure::read('Session.table') === null) {
+					if (Configure::read('Session.model') === null) {
 						trigger_error(__("You must set the all Configure::write('Session.*') in core.php to use database storage"), E_USER_WARNING);
-						exit();
-					} elseif (Configure::read('Session.database') === null) {
-						Configure::write('Session.database', 'default');
+						$this->_stop();
 					}
 					if ($iniSet) {
 						ini_set('session.use_trans_sid', 0);
@@ -763,7 +763,6 @@ class CakeSession extends Object {
 
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
-
 		return $return;
 	}
 

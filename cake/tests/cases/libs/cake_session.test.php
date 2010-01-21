@@ -431,7 +431,8 @@ class CakeSessionTest extends CakeTestCase {
 		unset($_SESSION);
 		session_destroy();
 		Configure::write('Session.table', 'sessions');
-		Configure::write('Session.database', 'test');
+		Configure::write('Session.model', 'Session');
+		Configure::write('Session.database', 'test_suite');
 		Configure::write('Session.save', 'database');
 		$this->setUp();
 
@@ -463,5 +464,6 @@ class CakeSessionTest extends CakeTestCase {
 		Configure::write('Session.save', 'php');
 		$this->setUp();
 	}
+
 }
 ?>
