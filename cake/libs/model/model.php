@@ -518,57 +518,6 @@ class Model extends Overloadable {
 /**
  * Bind model associations on the fly.
  *
- * If $permanent is true, association will not be reset
- * to the originals defined in the model.
- *
- * @param mixed $model A model or association name (string) or set of binding options (indexed by model name type)
- * @param array $options If $model is a string, this is the list of association properties with which $model will
- *   be bound
- * @param boolean $permanent Set to true to make the binding permanent
- * @return void
- * @access public
- * @deprecated Use Model::bindModel() instead.
- */
-	function bind($model, $options = array(), $permanent = true) {
-		trigger_error(__('Deprecated method, use Model::bindModel instead', true), E_USER_WARNING);
-		if (!is_array($model)) {
-			$model = array($model => $options);
-		}
-
-		foreach ($model as $name => $options) {
-			if (isset($options['type'])) {
-				$assoc = $options['type'];
-			} elseif (isset($options[0])) {
-				$assoc = $options[0];
-			} else {
-				$assoc = 'belongsTo';
-			}
-
-			if (!$permanent) {
-				$this->__backAssociation[$assoc] = $this->{$assoc};
-			}
-			foreach ($model as $key => $value) {
-				$assocName = $modelName = $key;
-
-				if (isset($this->{$assoc}[$assocName])) {
-					$this->{$assoc}[$assocName] = array_merge($this->{$assoc}[$assocName], $options);
-				} else {
-					if (isset($value['className'])) {
-						$modelName = $value['className'];
-					}
-
-					$this->__constructLinkedModel($assocName, $modelName);
-					$this->{$assoc}[$assocName] = $model[$assocName];
-					$this->__generateAssociation($assoc);
-				}
-				unset($this->{$assoc}[$assocName]['type'], $this->{$assoc}[$assocName][0]);
-			}
-		}
-	}
-
-/**
- * Bind model associations on the fly.
- *
  * If $reset is false, association will not be reset
  * to the originals defined in the model
  *
@@ -1820,15 +1769,6 @@ class Model extends Overloadable {
 	}
 
 /**
- * @deprecated
- * @link http://book.cakephp.org/view/691/remove
- */
-	function remove($id = null, $cascade = true) {
-		trigger_error(__('Deprecated method, use Model::delete instead', true), E_USER_WARNING);
-		return $this->delete($id, $cascade);
-	}
-
-/**
  * Removes record for given ID. If no ID is given, the current ID is used. Returns true on success.
  *
  * @param mixed $id ID of record to delete
@@ -1871,14 +1811,6 @@ class Model extends Overloadable {
 			}
 		}
 		return false;
-	}
-
-/**
- * @deprecated
- */
-	function del($id = null, $cascade = true) {
-		trigger_error(__('Deprecated method, use Model::delete instead', true), E_USER_WARNING);
-		return $this->delete($id, $cascade);
 	}
 
 /**
@@ -2728,18 +2660,6 @@ class Model extends Overloadable {
 			}
 		}
 		return in_array($field, $foreignKeys);
-	}
-
-/**
- * Returns the display field for this model.
- *
- * @return string The name of the display field for this Model (i.e. 'name', 'title').
- * @access public
- * @deprecated
- */
-	function getDisplayField() {
-		trigger_error(__('Deprecated method, use Model::$displayField instead', true), E_USER_WARNING);
-		return $this->displayField;
 	}
 
 /**

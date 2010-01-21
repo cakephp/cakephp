@@ -422,14 +422,6 @@ class RequestHandlerComponent extends Object {
 	}
 
 /**
- * @deprecated use getReferer()
- */
-	function getReferrer() {
-		trigger_error(__('Deprecated method, use RequestHandlerComponent::getReferer instead', true), E_USER_WARNING);
-		return $this->getReferer();
-	}
-
-/**
  * Gets remote client IP
  *
  * @return string Client IP address

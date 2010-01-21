@@ -241,17 +241,6 @@ class CakeSession extends Object {
 	}
 
 /**
- * Remove a variable from the session
- *
- * @return boolean
- * @deprecated Use CakeSession::delete instead
- */
-	function del($name) {
-		trigger_error(__('CakeSession::del() is deprecated, use CakeSession::delete() instead.', true), E_USER_WARNING);
-		return $this->delete($name);
-	}
-
-/**
  * Removes a variable from session.
  *
  * @param string $name Session variable to remove

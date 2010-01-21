@@ -260,14 +260,6 @@ class CookieComponent extends Object {
 	}
 
 /**
- * @deprecated use delete()
- */
-	function del($key) {
-		trigger_error(__('Deprecated method, use CookieComponent::delete instead', true), E_USER_WARNING);
-		return $this->delete($key);
-	}
-
-/**
  * Delete a cookie value
  *
  * Optional [Name.], reguired key

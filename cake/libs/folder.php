@@ -716,66 +716,6 @@ class Folder extends Object {
 	}
 
 /**
- * nix flavored alias
- *
- * @see read
- * @deprecated use read
- * @access public
- */
-	function ls($sort = true, $exceptions = false) {
-		trigger_error(__('Deprecated method, use Folder::read instead', true), E_USER_WARNING);
-		return $this->read($sort, $exceptions);
-	}
-
-/**
- * nix flavored alias
- *
- * @see create
- * @deprecated use create
- * @access public
- */
-	function mkdir($pathname, $mode = 0755) {
-		trigger_error(__('Deprecated method, use Folder::create instead', true), E_USER_WARNING);
-		return $this->create($pathname, $mode);
-	}
-
-/**
- * nix flavored alias
- *
- * @see copy
- * @deprecated use copy
- * @access public
- */
-	function cp($options) {
-		trigger_error(__('Deprecated method, use Folder::copy instead', true), E_USER_WARNING);
-		return $this->copy($options);
-	}
-
-/**
- * nix flavored alias
- *
- * @see move
- * @deprecated use move
- * @access public
- */
-	function mv($options) {
-		trigger_error(__('Deprecated method, use Folder::move instead', true), E_USER_WARNING);
-		return $this->move($options);
-	}
-
-/**
- * nix flavored alias
- *
- * @see delete
- * @deprecated use delete
- * @access public
- */
-	function rm($path) {
-		trigger_error(__('Deprecated method, use Folder::delete instead', true), E_USER_WARNING);
-		return $this->delete($path);
-	}
-
-/**
  * Get the real path (taking ".." and such into account)
  *
  * @param string $path Path to resolve
