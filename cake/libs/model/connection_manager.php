@@ -131,11 +131,13 @@ class ConnectionManager extends Object {
 	}
 
 /**
- * Gets a DataSource name from an object reference
+ * Gets a DataSource name from an object reference.
+ *
+ * **Warning** this method may cause fatal errors in PHP4.
  *
  * @param object $source DataSource object
  * @return string Datasource name, or null if source is not present
- *                in the ConnectionManager.
+ *    in the ConnectionManager.
  * @access public
  * @static
  */
