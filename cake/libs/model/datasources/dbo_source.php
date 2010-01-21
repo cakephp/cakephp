@@ -1877,18 +1877,19 @@ class DboSource extends DataSource {
 		}
 		$virtual = array();
 		$virtualFields = $model->getVirtualField();
-		if ($virtualFields) {
-			$keys =  array_keys($virtualFields);
-			foreach($keys as $field) {
-				$keys[] = $model->alias . '.' . $field;
+		if (!empty($virtualFields)) {
+			$virtualKeys = array_keys($virtualFields);
+			foreach ($virtualKeys as $field) {
+				$virtualKeys[] = $model->alias . '.' . $field;
 			}
-			$virtual = ($allFields) ? $keys : array_intersect($keys, $fields);
-		}
-		foreach($virtual as &$field) {
-			if (strpos($field, '.')) {
-				$field = str_replace($model->alias . '.', '', $field);
-				$fields = array_diff($fields, array($model->alias . '.' . $field));
+			$virtual = ($allFields) ? $virtualKeys : array_intersect($virtualKeys, $fields);
+			foreach ($virtual as $i => $field) {
+				if (strpos($field, '.') !== false) {
+					$virtual[$i] = str_replace($model->alias . '.', '', $field);
+				}
+				$fields = array_diff($fields, array($field));
 			}
+			$fields = array_values($fields);
 		}
 		$count = count($fields);
 
@@ -1954,7 +1955,7 @@ class DboSource extends DataSource {
 			}
 		}
 		if (!empty($virtual)) {
-			$fields = array_merge($fields,$this->_constructVirtualFields($model, $alias, $virtual));
+			$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
 		}
 		return array_unique($fields);
 	}

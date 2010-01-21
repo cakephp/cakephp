@@ -4142,6 +4142,13 @@ class DboSourceTest extends CakeTestCase {
 			'(NOW()) AS  `Article__this_moment`',
 		);
 		$this->assertEqual($expected, $result);
+
+		$result = $this->db->fields($Article, null, array('Article.this_moment', 'Article.title'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

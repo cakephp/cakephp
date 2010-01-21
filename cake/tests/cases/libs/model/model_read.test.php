@@ -7249,6 +7249,26 @@ class ModelReadTest extends BaseModelTest {
 		));
 
 		$this->assertEqual($result, $expectation);
+
+
+		$Author =& ClassRegistry::init('Author');
+		$Author->virtualFields = array(
+			'full_name' => 'CONCAT(Author.user, " ", Author.id)'
+		);
+
+		$result = $Author->find('first', array(
+			'conditions' => array('Author.user' => 'mariano'),
+			'fields' => array('Author.password', 'Author.full_name'),
+			'recursive' => -1
+		));
+		$this->assertTrue(isset($result['Author']['full_name']));
+
+		$result = $Author->find('first', array(
+			'conditions' => array('Author.user' => 'mariano'),
+			'fields' => array('Author.full_name', 'Author.password'),
+			'recursive' => -1
+		));
+		$this->assertTrue(isset($result['Author']['full_name']));
 	}
 
 /**
