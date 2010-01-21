@@ -27,7 +27,7 @@ if (!class_exists('Cache')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
-class ApcEngineTest extends UnitTestCase {
+class ApcEngineTest extends CakeTestCase {
 
 /**
  * skip method
@@ -139,6 +139,59 @@ class ApcEngineTest extends UnitTestCase {
 
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
+	}
+
+/**
+ * testDecrement method
+ *
+ * @access public
+ * @return void
+ */
+	function testDecrement() {
+		if ($this->skipIf(!function_exists('apc_dec'), 'No apc_dec() function, cannot test decrement() %s')) {
+			return;
+		}
+		$result = Cache::write('test_decrement', 5);
+		$this->assertTrue($result);
+
+		$result = Cache::decrement('test_decrement');
+		$this->assertEqual(4, $result);
+
+		$result = Cache::read('test_decrement');
+		$this->assertEqual(4, $result);
+
+		$result = Cache::decrement('test_decrement', 2);
+		$this->assertEqual(2, $result);
+
+		$result = Cache::read('test_decrement');
+		$this->assertEqual(2, $result);
+		
+	}
+
+/**
+ * testIncrement method
+ *
+ * @access public
+ * @return void
+ */
+	function testIncrement() {
+		if ($this->skipIf(!function_exists('apc_inc'), 'No apc_inc() function, cannot test increment() %s')) {
+			return;
+		}
+		$result = Cache::write('test_increment', 5);
+		$this->assertTrue($result);
+
+		$result = Cache::increment('test_increment');
+		$this->assertEqual(5, $result);
+
+		$result = Cache::read('test_increment');
+		$this->assertEqual(5, $result);
+
+		$result = Cache::increment('test_increment', 2);
+		$this->assertEqual(7, $result);
+
+		$result = Cache::read('test_increment');
+		$this->assertEqual(7, $result);
 	}
 }
 ?>

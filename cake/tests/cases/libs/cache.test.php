@@ -73,7 +73,7 @@ class CacheTest extends CakeTestCase {
  *
  * @return void
  */
-	function XXtestConfigWithLibAndPluginEngines() {
+	function testConfigWithLibAndPluginEngines() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)

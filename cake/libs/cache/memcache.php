@@ -126,6 +126,38 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
+ * Increments the value of an integer cached key
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to increment
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New incremented value, false otherwise
+ * @access public
+ */
+	function increment($key, $offset = 1) {
+		if ($this->settings['compress']) {
+			trigger_error(sprintf(__('Method increment() not implemented for compressed cache in %s', true), get_class($this)), E_USER_ERROR);
+		}
+		return $this->__Memcache->increment($key, $offset);
+	}
+
+/**
+ * Decrements the value of an integer cached key
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to substract
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New decremented value, false otherwise
+ * @access public
+ */
+	function decrement($key, $offset = 1) {
+		if ($this->settings['compress']) {
+			trigger_error(sprintf(__('Method decrement() not implemented for compressed cache in %s', true), get_class($this)), E_USER_ERROR);
+		}
+		return $this->__Memcache->decrement($key, $offset);
+	}
+
+/**
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
