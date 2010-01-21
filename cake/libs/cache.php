@@ -329,6 +329,70 @@ class Cache {
 	}
 
 /**
+ * Increment a number under the key and return incremented value
+ * 
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to add
+ * @param string $config Optional - string configuration name
+ * @return mixed new value, or false if the data doesn't exist, is not integer, or if there was an error fetching it
+ * @access public
+ */
+	function increment($key, $offset = 1, $config = null) {
+		$self =& Cache::getInstance();
+		
+		if (!$config) {
+			$config = $self->__name;
+		}
+		$settings = $self->settings($config);
+
+		if (empty($settings)) {
+			return null;
+		}
+		if (!$self->isInitialized($config)) {
+			return false;
+		}
+		$key = $self->_engines[$config]->key($key);
+
+		if (!$key || is_resource($value)) {
+			return false;
+		}
+		$success = $_this->_Engine[$engine]->increment($settings['prefix'] . $key, $offset);
+		$self->set();
+		return $success;
+	}
+/**
+ * Decrement a number under the key and return decremented value
+ * 
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to substract
+ * @param string $config Optional - string configuration name
+ * @return mixed new value, or false if the data doesn't exist, is not integer, or if there was an error fetching it
+ * @access public
+ */
+	function decrement($key, $offset = 1, $config = null) {
+		$self =& Cache::getInstance();
+		
+		if (!$config) {
+			$config = $self->__name;
+		}
+		$settings = $self->settings($config);
+
+		if (empty($settings)) {
+			return null;
+		}
+		if (!$self->isInitialized($config)) {
+			return false;
+		}
+		$key = $self->_engines[$config]->key($key);
+
+		if (!$key || is_resource($value)) {
+			return false;
+		}
+		$success = $_this->_Engine[$engine]->increment($settings['prefix'] . $key, $offset);
+		$self->set();
+		return $success;
+	}
+/**
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
@@ -498,6 +562,28 @@ class CacheEngine {
 		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 
+/**
+ * Increment a number under the key and return incremented value
+ * 
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to add
+ * @return New incremented value, false otherwise
+ * @access public
+ */
+	function increment($key, $offset = 1) {
+		trigger_error(sprintf(__('Method increment() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+	}
+/**
+ * Decrement a number under the key and return decremented value
+ * 
+ * @param string $key Identifier for the data
+ * @param integer $value How much to substract
+ * @return New incremented value, false otherwise
+ * @access public
+ */
+	function decrement($key, $offset = 1) {
+		trigger_error(sprintf(__('Method decrement() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+	}
 /**
  * Delete a key from the cache
  *

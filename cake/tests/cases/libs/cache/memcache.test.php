@@ -220,5 +220,52 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::delete('delete_test');
 		$this->assertTrue($result);
 	}
+
+/**
+ * testDecrement method
+ *
+ * @access public
+ * @return void
+ */
+	public function testDecrement() {
+		$result = Cache::write('test_decrement', 5);
+		$this->assertTrue($result);
+
+		$result = Cache::decrement('test_decrement');
+		$this->assertEqual(4, $result);
+
+		$result = Cache::read('test_decrement');
+		$this->assertEqual(4, $result);
+
+		$result = Cache::decrement('test_decrement', 2);
+		$this->assertEqual(2, $result);
+
+		$result = Cache::read('test_decrement');
+		$this->assertEqual(2, $result);
+		
+	}
+
+/**
+ * testIncrement method
+ *
+ * @access public
+ * @return void
+ */
+	public function testIncrement() {
+		$result = Cache::write('test_increment', 5);
+		$this->assertTrue($result);
+
+		$result = Cache::increment('test_increment');
+		$this->assertEqual(5, $result);
+
+		$result = Cache::read('test_increment');
+		$this->assertEqual(5, $result);
+
+		$result = Cache::increment('test_increment', 2);
+		$this->assertEqual(7, $result);
+
+		$result = Cache::read('test_increment');
+		$this->assertEqual(7, $result);
+	}
 }
 ?>

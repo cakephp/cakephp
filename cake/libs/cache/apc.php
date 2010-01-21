@@ -75,6 +75,38 @@ class ApcEngine extends CacheEngine {
 	}
 
 /**
+ * Increments the value of an integer cached key
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to increment
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New incremented value, false otherwise
+ * @access public
+ */
+	function increment($key, $offset = 1) {
+		if (!is_integer($offset) || $offset < 0) {
+			return false;
+		}
+		return apc_inc($key, $offset);
+	}
+
+/**
+ * Decrements the value of an integer cached key
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to substract
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New decremented value, false otherwise
+ * @access public
+ */
+	function decrement($key, $offset = 1) {
+		if (!is_integer($offset) || $offset < 0) {
+			return false;
+		}
+		return apc_dec($key, $offset);
+	}
+
+/**
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data

@@ -91,6 +91,39 @@ class XcacheEngine extends CacheEngine {
 	}
 
 /**
+ * Increments the value of an integer cached key
+ * If the cache key is not an integer it will be treated as 0
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to increment
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New incremented value, false otherwise
+ * @access public
+ */
+	function increment($key, $offset = 1) {
+		if (!is_integer($offset) || $offset < 0) {
+			return false;
+		}
+		return xcache_inc($key, $offset);
+	}
+
+/**
+ * Decrements the value of an integer cached key.
+ * If the cache key is not an integer it will be treated as 0
+ *
+ * @param string $key Identifier for the data
+ * @param integer $offset How much to substract
+ * @param integer $duration How long to cache the data, in seconds
+ * @return New decremented value, false otherwise
+ * @access public
+ */
+	function decrement($key, $offset = 1) {
+		if (!is_integer($offset) || $offset < 0) {
+			return false;
+		}
+		return xcache_dec($key, $offset);
+	}
+/**
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
