@@ -1170,7 +1170,7 @@ class FormHelper extends AppHelper {
 		return sprintf(
 			$this->Html->tags['button'],
 			$options['type'],
-			$this->_parseAttributes($options, array('type'), '', ' '),
+			$this->_parseAttributes($options, array('type'), ' ', ''),
 			$title
 		);
 	}
