@@ -101,9 +101,6 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	function increment($key, $offset = 1) {
-		if (!is_integer($offset) || $offset < 0) {
-			return false;
-		}
 		return xcache_inc($key, $offset);
 	}
 
@@ -118,9 +115,6 @@ class XcacheEngine extends CacheEngine {
  * @access public
  */
 	function decrement($key, $offset = 1) {
-		if (!is_integer($offset) || $offset < 0) {
-			return false;
-		}
 		return xcache_dec($key, $offset);
 	}
 /**

@@ -27,7 +27,7 @@ if (!class_exists('Cache')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
-class ApcEngineTest extends UnitTestCase {
+class ApcEngineTest extends CakeTestCase {
 
 /**
  * skip method
@@ -147,7 +147,10 @@ class ApcEngineTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	public function testDecrement() {
+	function testDecrement() {
+		if ($this->skipIf(!function_exists('apc_dec'), 'No apc_dec() function, cannot test decrement() %s')) {
+			return;
+		}
 		$result = Cache::write('test_decrement', 5);
 		$this->assertTrue($result);
 
@@ -171,7 +174,10 @@ class ApcEngineTest extends UnitTestCase {
  * @access public
  * @return void
  */
-	public function testIncrement() {
+	function testIncrement() {
+		if ($this->skipIf(!function_exists('apc_inc'), 'No apc_inc() function, cannot test increment() %s')) {
+			return;
+		}
 		$result = Cache::write('test_increment', 5);
 		$this->assertTrue($result);
 
