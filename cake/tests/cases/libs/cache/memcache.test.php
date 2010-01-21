@@ -100,7 +100,7 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		foreach($servers as $server) {
 			list($host, $port) = explode(':', $server);
-			if (!$Memcache->addServer($host, $port)) {
+			if (!@$Memcache->connect($host, $port)) {
 				$available = false;
 			}
 		}
@@ -227,7 +227,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	public function testDecrement() {
+	function testDecrement() {
 		$result = Cache::write('test_decrement', 5);
 		$this->assertTrue($result);
 
@@ -242,7 +242,6 @@ class MemcacheEngineTest extends CakeTestCase {
 
 		$result = Cache::read('test_decrement');
 		$this->assertEqual(2, $result);
-		
 	}
 
 /**
@@ -251,21 +250,21 @@ class MemcacheEngineTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	public function testIncrement() {
+	function testIncrement() {
 		$result = Cache::write('test_increment', 5);
 		$this->assertTrue($result);
 
 		$result = Cache::increment('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::increment('test_increment', 2);
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 	}
 }
 ?>

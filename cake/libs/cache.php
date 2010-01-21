@@ -353,10 +353,10 @@ class Cache {
 		}
 		$key = $self->_engines[$config]->key($key);
 
-		if (!$key || is_resource($value)) {
+		if (!$key || !is_integer($offset) || $offset < 0) {
 			return false;
 		}
-		$success = $_this->_Engine[$engine]->increment($settings['prefix'] . $key, $offset);
+		$success = $self->_engines[$config]->increment($settings['prefix'] . $key, $offset);
 		$self->set();
 		return $success;
 	}
@@ -385,10 +385,10 @@ class Cache {
 		}
 		$key = $self->_engines[$config]->key($key);
 
-		if (!$key || is_resource($value)) {
+		if (!$key || !is_integer($offset) || $offset < 0) {
 			return false;
 		}
-		$success = $_this->_Engine[$engine]->increment($settings['prefix'] . $key, $offset);
+		$success = $self->_engines[$config]->decrement($settings['prefix'] . $key, $offset);
 		$self->set();
 		return $success;
 	}
