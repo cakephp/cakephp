@@ -2634,10 +2634,15 @@ class DboSource extends DataSource {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type) . ' NOT NULL';
 		} elseif (isset($column['default'])) {
 			$out .= ' DEFAULT ' . $this->value($column['default'], $type);
-		} elseif (isset($column['null']) && $column['null'] == true) {
+		} elseif ($type !== 'timestamp' && !empty($column['null'])) {
 			$out .= ' DEFAULT NULL';
+		} elseif ($type === 'timestamp' && !empty($column['null'])) {
+			$out .= ' NULL';
 		} elseif (isset($column['null']) && $column['null'] == false) {
 			$out .= ' NOT NULL';
+		}
+		if ($type == 'timestamp' && isset($column['default']) && strtolower($column['default']) == 'current_timestamp') {
+			$out = str_replace(array("'CURRENT_TIMESTAMP'", "'current_timestamp'"), 'CURRENT_TIMESTAMP', $out);
 		}
 		$out = $this->_buildFieldParameters($out, $column, 'afterDefault');
 		return $out;
