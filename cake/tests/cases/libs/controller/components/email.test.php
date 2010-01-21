@@ -584,6 +584,7 @@ TEXTBLOC;
 		));
 
 		$this->Controller->set('value', 22091985);
+		$this->Controller->set('title_for_layout', 'EmailTest');
 
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
