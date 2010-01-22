@@ -38,7 +38,9 @@
 	}
 
 /**
- * Logs messages to text files
+ * Logs messages to configured Log adapters.  One or more adapters can be configured
+ * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
+ * a default FileLog will be autoconfigured for you.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -70,7 +72,24 @@ class CakeLog {
 
 /**
  * Configure and add a new logging stream to CakeLog
- * You can use add loggers from app/libs use app.loggername, or any plugin/libs using plugin.loggername
+ * You can use add loggers from app/libs use app.loggername, or any plugin/libs using plugin.loggername.
+ *
+ * ### Usage:
+ *
+ * {{{
+ * CakeLog::config('second_file', array(
+ * 		'engine' => 'FileLog',
+ * 		'path' => '/var/logs/my_app/'
+ * ));
+ * }}}
+ *
+ * Will configure a FileLog instance to use the specified path.  All options that are not `engine`
+ * are passed onto the logging adapter, and handled there.  Any class can be configured as a logging
+ * adapter as long as it implements a `write` method with the following signature.
+ *
+ * `write($type, $message)`
+ *
+ * For an explaination of these parameters, see CakeLog::write()
  *
  * @param string $key The keyname for this logger, used to revmoe the logger later.
  * @param array $config Array of configuration information for the logger
@@ -96,7 +115,8 @@ class CakeLog {
  * Attempts to import a logger class from the various paths it could be on.
  * Checks that the logger class implements a write method as well.
  *
- * @return mixed boolean false on any failures, string of classname to use if search was successful.\
+ * @param string $loggerName the plugin.className of the logger class you want to build.
+ * @return mixed boolean false on any failures, string of classname to use if search was successful.
  * @access protected
  */
 	function _getLogger($loggerName) {
@@ -126,7 +146,8 @@ class CakeLog {
 /**
  * Returns the keynames of the currently active streams
  *
- * @return array
+ * @return array Array of configured log streams.
+ * @access public
  * @static
  */
 	function configured() {
@@ -138,8 +159,9 @@ class CakeLog {
  * Removes a stream from the active streams.  Once a stream has been removed
  * it will no longer have messages sent to it.
  *
- * @param string $keyname Key name of callable to remove.
+ * @param string $keyname Key name of a configured stream to remove.
  * @return void
+ * @access public
  * @static
  */
 	function drop($streamName) {
@@ -161,10 +183,27 @@ class CakeLog {
 	}
 
 /**
- * Writes given message to a log file in the logs directory.
+ * Writes the given message and type to all of the configured log adapters.
+ * Configured adapters are passed both the $type and $message variables. $type
+ * is one of the following strings/values.
  *
- * @param string $type Type of log, becomes part of the log's filename
- * @param string $message  Message to log
+ * ### Types:
+ *
+ * - `LOG_WARNING` => 'warning',
+ * - `LOG_NOTICE` => 'notice',
+ * - `LOG_INFO` => 'info',
+ * - `LOG_DEBUG` => 'debug',
+ * - `LOG_ERR` => 'error',
+ * - `LOG_ERROR` => 'error'
+ *
+ * ### Usage:
+ *
+ * Write a message to the 'warning' log:
+ * 
+ * `CakeLog::write('warning', 'Stuff is broken here');`
+ *
+ * @param string $type Type of message being written
+ * @param string $message Message content to log
  * @return boolean Success
  * @access public
  * @static
@@ -202,6 +241,9 @@ class CakeLog {
 
 /**
  * An error_handler that will log errors to file using CakeLog::write();
+ * You can control how verbose and what type of errors this error_handler will 
+ * catch using `Configure::write('log', $value)`.  See core.php for more information.
+ *
  *
  * @param integer $code Code of error
  * @param string $description Error description

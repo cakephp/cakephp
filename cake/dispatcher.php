@@ -368,7 +368,8 @@ class Dispatcher extends Object {
  * Restructure params in case we're serving a plugin.
  *
  * @param array $params Array on where to re-set 'controller', 'action', and 'pass' indexes
- * @param boolean $reverse
+ * @param boolean $reverse  If true all the params are shifted one forward, so plugin becomes
+ *   controller, controller becomes action etc.  If false, plugin is made equal to controller
  * @return array Restructured array
  * @access protected
  */
