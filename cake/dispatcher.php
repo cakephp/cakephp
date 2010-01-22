@@ -201,7 +201,7 @@ class Dispatcher extends Object {
 				'base' => $this->base
 			)));
 		}
-		$output = $controller->dispatchMethod($params['action'], $params['pass']);
+		$output = call_user_func_array(array(&$controller, $params['action']), $params['pass']);
 
 		if ($controller->autoRender) {
 			$controller->output = $controller->render();
