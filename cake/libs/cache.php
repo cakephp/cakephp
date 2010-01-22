@@ -160,7 +160,7 @@ class Cache {
 /**
  * Returns an array containing the currently configured Cache settings.
  *
- * @return array
+ * @return array Array of configured Cache config names.
  */
 	function configured() {
 		$self = Cache::getInstance();
@@ -188,7 +188,7 @@ class Cache {
 /**
  * Tries to find and include a file for a cache engine and returns object instance
  *
- * @param $name	Name of the engine (without 'Engine')
+ * @param $name Name of the engine (without 'Engine')
  * @return mixed $engine object or null
  * @access private
  */
@@ -212,7 +212,7 @@ class Cache {
  *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
- * @return array of settings
+ * @return array Array of settings.
  * @access public
  * @static
  */
@@ -259,11 +259,23 @@ class Cache {
 	}
 
 /**
- * Write data for key into cache
+ * Write data for key into cache. Will automatically use the currently
+ * active cache configuration.  To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Writing to the active cache config:
+ *
+ * `Cache::write('cached_data', $data);`
+ *
+ * Writing to a specific cache config:
+ *
+ * `Cache::write('cached_data', $data, 'long_term');`
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached - anything except a resource
- * @param string $config Optional - string configuration name
+ * @param string $config Optional string configuration name to write to.
  * @return boolean True if the data was successfully cached, false on failure
  * @access public
  * @static
@@ -294,10 +306,22 @@ class Cache {
 	}
 
 /**
- * Read a key from the cache
+ * Read a key from the cache.  Will automatically use the currently
+ * active cache configuration.  To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Reading from the active cache configuration.
+ *
+ * `Cache::read('my_data');`
+ *
+ * Reading from a specific cache configuration.
+ *
+ * `Cache::read('my_data', 'long_term');`
  *
  * @param string $key Identifier for the data
- * @param string $config name of the configuration to use
+ * @param string $config optional name of the configuration to use.
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  * @access public
  * @static
@@ -329,17 +353,19 @@ class Cache {
 	}
 
 /**
- * Increment a number under the key and return incremented value
- * 
+ * Increment a number under the key and return incremented value.
+ *
  * @param string $key Identifier for the data
  * @param integer $offset How much to add
- * @param string $config Optional - string configuration name
- * @return mixed new value, or false if the data doesn't exist, is not integer, or if there was an error fetching it
+ * @param string $config Optional string configuration name.  If not specified the current
+ *   default config will be used.
+ * @return mixed new value, or false if the data doesn't exist, is not integer,
+ *    or if there was an error fetching it.
  * @access public
  */
 	function increment($key, $offset = 1, $config = null) {
 		$self =& Cache::getInstance();
-		
+
 		if (!$config) {
 			$config = $self->__name;
 		}
@@ -361,17 +387,19 @@ class Cache {
 		return $success;
 	}
 /**
- * Decrement a number under the key and return decremented value
- * 
+ * Decrement a number under the key and return decremented value.
+ *
  * @param string $key Identifier for the data
  * @param integer $offset How much to substract
- * @param string $config Optional - string configuration name
- * @return mixed new value, or false if the data doesn't exist, is not integer, or if there was an error fetching it
+ * @param string $config Optional string configuration name, if not specified the current
+ *   default config will be used.
+ * @return mixed new value, or false if the data doesn't exist, is not integer,
+ *   or if there was an error fetching it
  * @access public
  */
 	function decrement($key, $offset = 1, $config = null) {
 		$self =& Cache::getInstance();
-		
+
 		if (!$config) {
 			$config = $self->__name;
 		}
@@ -393,7 +421,19 @@ class Cache {
 		return $success;
 	}
 /**
- * Delete a key from the cache
+ * Delete a key from the cache. Will automatically use the currently
+ * active cache configuration.  To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Deleting from the active cache configuration.
+ *
+ * `Cache::delete('my_data');`
+ *
+ * Deleting from a specific cache configuration.
+ *
+ * `Cache::delete('my_data', 'long_term');`
  *
  * @param string $key Identifier for the data
  * @param string $config name of the configuration to use
@@ -425,7 +465,7 @@ class Cache {
 	}
 
 /**
- * Delete all keys from the cache
+ * Delete all keys from the cache.
  *
  * @param boolean $check if true will check expiration, otherwise delete all
  * @param string $config name of the configuration to use
@@ -457,7 +497,7 @@ class Cache {
  *
  * @param string $engine Name of the engine
  * @param string $config Name of the configuration setting
- * @return bool
+ * @return bool Whether or not the config name has been initialized.
  * @access public
  * @static
  */
@@ -504,7 +544,7 @@ class Cache {
 class CacheEngine {
 
 /**
- * settings of current engine instance
+ * Settings of current engine instance
  *
  * @var int
  * @access public
@@ -521,7 +561,11 @@ class CacheEngine {
  * @access public
  */
 	function init($settings = array()) {
-		$this->settings = array_merge(array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100), $this->settings, $settings);
+		$this->settings = array_merge(
+			array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100),
+			$this->settings,
+			$settings
+		);
 		if (!is_numeric($this->settings['duration'])) {
 			$this->settings['duration'] = strtotime($this->settings['duration']) - time();
 		}
@@ -564,7 +608,7 @@ class CacheEngine {
 
 /**
  * Increment a number under the key and return incremented value
- * 
+ *
  * @param string $key Identifier for the data
  * @param integer $offset How much to add
  * @return New incremented value, false otherwise
@@ -575,7 +619,7 @@ class CacheEngine {
 	}
 /**
  * Decrement a number under the key and return decremented value
- * 
+ *
  * @param string $key Identifier for the data
  * @param integer $value How much to substract
  * @return New incremented value, false otherwise
@@ -615,7 +659,7 @@ class CacheEngine {
 	}
 
 /**
- * generates a safe key
+ * Generates a safe key for use with cache engine storage engines.
  *
  * @param string $key the key passed over
  * @return mixed string $key or false
