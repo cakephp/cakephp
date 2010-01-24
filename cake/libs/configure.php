@@ -696,12 +696,12 @@ class App extends Object {
 			$_this->{$type} = $default;
 
 			if (!empty($paths[$type])) {
-				$path = array_flip(array_flip((array_merge(
+				$path = array_flip(array_flip(array_merge(
 					$_this->{$type}, (array)$paths[$type], $merge
-				))));
+				)));
 				$_this->{$type} = array_values($path);
 			} else {
-				$path = array_flip(array_flip((array_merge($_this->{$type}, $merge))));
+				$path = array_flip(array_flip(array_merge($_this->{$type}, $merge)));
 				$_this->{$type} = array_values($path);
 			}
 		}
@@ -734,13 +734,16 @@ class App extends Object {
  * @access public
  */
 	function core($type = null) {
-		$paths = Cache::read('core_paths', '_cake_core_');
+		static $paths = false;
+		if ($paths === false) {
+			$paths = Cache::read('core_paths', '_cake_core_');
+		}
 		if (!$paths) {
 			$paths = array();
 			$openBasedir = ini_get('open_basedir');
 			if ($openBasedir) {
 				$all = explode(PATH_SEPARATOR, $openBasedir);
-				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
+				$all = array_flip(array_flip(array_merge(array(CAKE_CORE_INCLUDE_PATH), $all)));
 			} else {
 				$all = explode(PATH_SEPARATOR, ini_get('include_path'));
 				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
@@ -925,8 +928,7 @@ class App extends Object {
 					$_this->__overload($type, $name . $ext['class'], $parent);
 
 					if ($_this->return) {
-						$value = include $load;
-						return $value;
+						return include($load);
 					}
 					return true;
 				} else {
@@ -967,8 +969,7 @@ class App extends Object {
 				$_this->__overload($type, $name . $ext['class'], $parent);
 
 				if ($_this->return) {
-					$value = include $directory . $file;
-					return $value;
+					return include($directory . $file);
 				}
 				return true;
 			}
@@ -1001,6 +1002,9 @@ class App extends Object {
  * @access private
  */
 	function __find($file, $recursive = true) {
+		static $appPath = false;
+		static $libsPath = false;
+
 		if (empty($this->search)) {
 			return null;
 		} elseif (is_string($this->search)) {
@@ -1012,9 +1016,13 @@ class App extends Object {
 		}
 
 		foreach ($this->search as $path) {
+			if ($appPath === false) {
+				$appPath = rtrim(APP, DS);
+				$libsPath = rtrim(LIBS, DS);
+			}
 			$path = rtrim($path, DS);
 
-			if ($path === rtrim(APP, DS)) {
+			if ($path === $appPath || $path === $libsPath) {
 				$recursive = false;
 			}
 			if ($recursive === false) {
@@ -1029,7 +1037,7 @@ class App extends Object {
 					require LIBS . 'folder.php';
 				}
 				$Folder =& new Folder();
-				$directories = $Folder->tree($path, array('.svn', 'tests', 'templates'), 'dir');
+				$directories = $Folder->tree($path, array('.svn', '.git', 'CVS', 'tests', 'templates'), 'dir');
 				sort($directories);
 				$this->__paths[$path] = $directories;
 			}
@@ -1133,7 +1141,7 @@ class App extends Object {
  */
 	function __settings($type, $plugin, $parent) {
 		if (!$parent) {
-			return null;
+			return array('class' => null, 'suffix' => null, 'path' => null);
 		}
 
 		if ($plugin) {
@@ -1164,6 +1172,11 @@ class App extends Object {
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
+			case 'datasource':
+				if ($plugin) {
+					$path = $pluginPath . DS . 'models' . DS . 'datasources' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			case 'controller':
 				App::import($type, 'AppController', false);
 				if ($plugin) {
@@ -1226,8 +1239,9 @@ class App extends Object {
 		if ($type === 'core') {
 			return App::core('libs');
 		}
-		if ($paths = App::path($type .'s')) {
-			return $paths;
+		
+		if (isset($this->{$type.'s'})) {
+			return $this->{$type.'s'};
 		}
 		return $paths;
 	}

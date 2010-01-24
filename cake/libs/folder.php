@@ -254,10 +254,7 @@ class Folder extends Object {
  * @static
  */
 	function isWindowsPath($path) {
-		if (preg_match('/^[A-Z]:\\\\/i', $path)) {
-			return true;
-		}
-		return false;
+		return (bool)preg_match('/^[A-Z]:\\\\/i', $path);
 	}
 
 /**
@@ -269,8 +266,7 @@ class Folder extends Object {
  * @static
  */
 	function isAbsolute($path) {
-		$match = preg_match('/^\\//', $path) || preg_match('/^[A-Z]:\\\\/i', $path);
-		return $match;
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path));
 	}
 
 /**
@@ -356,11 +352,7 @@ class Folder extends Object {
 		} else {
 			$return = preg_match('/^(.*)' . preg_quote($current, '/') . '(.*)/', $dir);
 		}
-		if ($return == 1) {
-			return true;
-		} else {
-			return false;
-		}
+		return (bool)$return;
 	}
 
 /**
@@ -427,14 +419,20 @@ class Folder extends Object {
 	function tree($path, $exceptions = true, $type = null) {
 		$original = $this->path;
 		$path = rtrim($path, DS);
+		if (!$this->cd($path)) {
+			if ($type === null) {
+				return array(array(), array());
+			}
+			return array();
+		}
 		$this->__files = array();
-		$this->__directories = array($path);
+		$this->__directories = array($this->realpath($path));
 		$directories = array();
 
 		if ($exceptions === false) {
 			$exceptions = true;
 		}
-		while (count($this->__directories)) {
+		while (!empty($this->__directories)) {
 			$dir = array_pop($this->__directories);
 			$this->__tree($dir, $exceptions);
 			$directories[] = $dir;
@@ -459,11 +457,10 @@ class Folder extends Object {
  * @access private
  */
 	function __tree($path, $exceptions) {
-		if ($this->cd($path)) {
-			list($dirs, $files) = $this->read(false, $exceptions, true);
-			$this->__directories = array_merge($this->__directories, $dirs);
-			$this->__files = array_merge($this->__files, $files);
-		}
+		$this->path = $path;
+		list($dirs, $files) = $this->read(false, $exceptions, true);
+		$this->__directories = array_merge($this->__directories, $dirs);
+		$this->__files = array_merge($this->__files, $files);
 	}
 
 /**
