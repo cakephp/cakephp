@@ -52,7 +52,8 @@ class TranslateBehaviorTest extends CakeTestCase {
  */
 	var $fixtures = array(
 		'core.translated_item', 'core.translate', 'core.translate_table',
-		'core.translated_article', 'core.translate_article', 'core.user', 'core.comment', 'core.tag', 'core.articles_tag'
+		'core.translated_article', 'core.translate_article', 'core.user', 'core.comment', 'core.tag', 'core.articles_tag',
+		'core.translate_with_prefix'
 	);
 /**
  * endTest method
@@ -833,6 +834,27 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'body' => 'Body (eng) #1'
 			)
 		);
+		$this->assertEqual($result, $expected);
+	}
+/**
+ * testTranslateTableWithPrefix method
+ * Tests that is possible to have a translation model with a custom tablePrefix
+ *
+ * @access public
+ * @return void
+ */
+	function testTranslateTableWithPrefix() {
+		$this->loadFixtures('TranslateWithPrefix', 'TranslatedItem');
+		$TestModel =& new TranslatedItem2;
+		$TestModel->locale = 'eng';
+		$result = $TestModel->read(null, 1);
+		$expected = array('TranslatedItem' => array(
+			'id' => 1,
+			'slug' => 'first_translated',
+			'locale' => 'eng',
+			'content' => 'Content #1',
+			'title' => 'Title #1'
+		));
 		$this->assertEqual($result, $expected);
 	}
 }

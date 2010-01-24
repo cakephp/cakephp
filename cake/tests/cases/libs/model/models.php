@@ -2791,6 +2791,35 @@ class TranslateTestModel extends CakeTestModel {
 	var $displayField = 'field';
 }
 /**
+ * TranslateTestModel class.
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslateWithPrefix extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
+	var $name = 'TranslateWithPrefix';
+/**
+ * tablePrefix property
+ *
+ * @var string 'i18n'
+ * @access public
+ */
+	var $tablePrefix = 'i18n_';
+/**
+ * displayField property
+ *
+ * @var string 'field'
+ * @access public
+ */
+	var $displayField = 'field';
+}
+/**
  * TranslatedItem class.
  *
  * @package       cake
@@ -2825,6 +2854,42 @@ class TranslatedItem extends CakeTestModel {
  * @access public
  */
 	var $translateModel = 'TranslateTestModel';
+}
+/**
+ * TranslatedItem class.
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class TranslatedItem2 extends CakeTestModel {
+/**
+ * name property
+ *
+ * @var string 'TranslatedItem'
+ * @access public
+ */
+	var $name = 'TranslatedItem';
+/**
+ * cacheQueries property
+ *
+ * @var bool false
+ * @access public
+ */
+	var $cacheQueries = false;
+/**
+ * actsAs property
+ *
+ * @var array
+ * @access public
+ */
+	var $actsAs = array('Translate' => array('content', 'title'));
+/**
+ * translateModel property
+ *
+ * @var string 'TranslateTestModel'
+ * @access public
+ */
+	var $translateModel = 'TranslateWithPrefix';
 }
 /**
  * TranslatedItemWithTable class.

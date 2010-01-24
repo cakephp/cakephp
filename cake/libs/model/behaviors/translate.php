@@ -93,8 +93,12 @@ class TranslateBehavior extends ModelBehavior {
 			return $query;
 		}
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
-		$tablePrefix = $db->config['prefix'];
 		$RuntimeModel =& $this->translateModel($model);
+		if (!empty($RuntimeModel->tablePrefix)) {
+			$tablePrefix = $RuntimeModel->tablePrefix;
+		} else {
+			$tablePrefix = $db->config['prefix'];
+		}
 
 		if (is_string($query['fields']) && 'COUNT(*) AS '.$db->name('count') == $query['fields']) {
 			$query['fields'] = 'COUNT(DISTINCT('.$db->name($model->alias . '.' . $model->primaryKey) . ')) ' . $db->alias . 'count';
