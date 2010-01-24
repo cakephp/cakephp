@@ -256,6 +256,17 @@ class EmailComponent extends Object{
 	var $htmlMessage = null;
 
 /**
+ * Whether to generate a Message-ID header for the
+ * e-mail. True to generate a Message-ID, False to let
+ * it be handled by sendmail (or similar) or a string
+ * to completely override the Message-ID.
+ *
+ * @var mixed
+ * @access public
+ */
+	var $messageId = true;
+
+/**
  * Temporary store of message header lines
  *
  * @var array
@@ -394,6 +405,7 @@ class EmailComponent extends Object{
 		$this->attachments = array();
 		$this->htmlMessage = null;
 		$this->textMessage = null;
+		$this->messageId = true;
 		$this->__header = array();
 		$this->__boundary = null;
 		$this->__message = array();
@@ -540,6 +552,15 @@ class EmailComponent extends Object{
 		if ($this->delivery == 'smtp') {
 			$headers['Subject'] = $this->_encode($this->subject);
 		}
+		
+		if ($this->messageId !== false) {
+			if ($this->messageId === true) {
+				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
+			} else {
+				$headers['Message-ID'] = $this->messageId; 
+			}
+		}
+		
 		$headers['X-Mailer'] = $this->xMailer;
 
 		if (!empty($this->headers)) {

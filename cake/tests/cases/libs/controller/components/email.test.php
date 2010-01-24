@@ -334,6 +334,7 @@ TEMPDOC;
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
 		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->messageId = false;
 
 		$message = <<<MSGBLOC
 <pre>To: postmaster@localhost
@@ -384,6 +385,7 @@ MSGBLOC;
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 
 		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->messageId = false;
 
 		$header = <<<HEADBLOC
 To: postmaster@localhost
@@ -803,6 +805,7 @@ HTMLBLOC;
 		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
 		$this->Controller->EmailTest->textMessage = 'This is the body of the message';
 		$this->Controller->EmailTest->htmlMessage = 'This is the body of the message';
+		$this->Controller->EmailTest->messageId = false;
 
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
 
@@ -823,6 +826,7 @@ HTMLBLOC;
 		$this->assertNull($this->Controller->EmailTest->smtpError);
 		$this->assertIdentical($this->Controller->EmailTest->attachments, array());
 		$this->assertNull($this->Controller->EmailTest->textMessage);
+		$this->assertTrue($this->Controller->EmailTest->messageId);
 	}
 
 	function testPluginCustomViewClass() {
@@ -854,6 +858,40 @@ HTMLBLOC;
  */
 	function testStartup() {
 		$this->assertNull($this->Controller->EmailTest->startup($this->Controller));
+	}
+
+/**
+ * testMessageId method
+ *
+ * @access public
+ * @return void
+ */
+	function testMessageId() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/Message-ID: \<[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}@' . env('HTTP_HOST') . '\>\n/', $result);
+
+		$this->Controller->EmailTest->messageId = '<22091985.998877@localhost>';
+
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/Message-ID: <22091985.998877@localhost>\n/', $result);
+
+		$this->Controller->EmailTest->messageId = false;
+
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertNoPattern('/Message-ID:/', $result);
 	}
 
 }
