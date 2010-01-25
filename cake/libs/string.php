@@ -2,7 +2,6 @@
 /**
  * String handling methods.
  *
- *
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -108,8 +107,10 @@ class String {
  * $leftBound and $rightBound
  *
  * @param string $data The data to tokenize
- * @param string $separator The token to split the data on
- * @return array
+ * @param string $separator The token to split the data on.
+ * @param string $leftBound The left boundary to ignore separators in.
+ * @param string $rightBound The right boundary to ignore separators in.
+ * @return array Array of tokens in $data.
  * @access public
  * @static
  */

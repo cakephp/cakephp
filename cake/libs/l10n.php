@@ -336,8 +336,8 @@ class L10n extends Object {
 
 /**
  * Gets the settings for $language.
- * If $language is null it attempt to get settings from I10n::__autoLanguage(); if this fails
- * the method will get the settings from I10n::__setLanguage();
+ * If $language is null it attempt to get settings from L10n::__autoLanguage(); if this fails
+ * the method will get the settings from L10n::__setLanguage();
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
  * @access public
@@ -432,7 +432,8 @@ class L10n extends Object {
  * Attempts to find locale for language, or language for locale
  *
  * @param mixed $mixed 2/3 char string (language/locale), array of those strings, or null
- * @return mixed string language/locale, array of those values, whole map as an array, or false when language/locale doesn't exist
+ * @return mixed string language/locale, array of those values, whole map as an array, 
+ *    or false when language/locale doesn't exist
  * @access public
  */
 	function map($mixed = null) {
@@ -459,7 +460,9 @@ class L10n extends Object {
  * Attempts to find catalog record for requested language
  *
  * @param mixed $language string requested language, array of requested languages, or null for whole catalog
- * @return mixed array catalog record for requested language, array of catalog records, whole catalog, or false when language doesn't exist
+ * @return mixed array catalog record for requested language, array of catalog records, whole catalog, 
+ *    or false when language doesn't exist
+ * @access public
  */
 	function catalog($language = null) {
 		if (is_array($language)) {

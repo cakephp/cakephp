@@ -21,8 +21,6 @@
 /**
  * Class used for manipulation of arrays.
  *
- * Long description for class
- *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
@@ -37,7 +35,8 @@ class Set {
 /**
  * This function can be thought of as a hybrid between PHP's array_merge and array_merge_recursive. The difference
  * to the two is that if an array key contains another array then the function behaves recursive (unlike array_merge)
- * but does not do if for keys containing strings (unlike array_merge_recursive). See the unit test for more information.
+ * but does not do if for keys containing strings (unlike array_merge_recursive).
+ * See the unit test for more information.
  *
  * Note: This function will work with an unlimited amount of arguments and typecasts non-array parameters into arrays.
  *
@@ -289,10 +288,10 @@ class Set {
 /**
  * Returns a series of values extracted from an array, formatted in a format string.
  *
- * @param array		$data Source array from which to extract the data
- * @param string	$format Format string into which values will be inserted, see sprintf()
- * @param array		$keys An array containing one or more Set::extract()-style key paths
- * @return array	An array of strings extracted from $keys and formatted with $format
+ * @param array $data Source array from which to extract the data
+ * @param string $format Format string into which values will be inserted, see sprintf()
+ * @param array $keys An array containing one or more Set::extract()-style key paths
+ * @return array An array of strings extracted from $keys and formatted with $format
  * @access public
  * @static
  */
@@ -345,7 +344,7 @@ class Set {
 	}
 
 /**
- * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call 
+ * Implements partial support for XPath 2.0. If $path is an array or $data is empty it the call
  * is delegated to Set::classicExtract.
  *
  * #### Currently implemented selectors:
@@ -366,8 +365,8 @@ class Set {
  *
  * - Only absolute paths starting with a single '/' are supported right now
  *
- * **Warning**: Even so it has plenty of unit tests the XPath support has not gone through a lot of 
- * real-world testing. Please report Bugs as you find them. Suggestions for additional features to 
+ * **Warning**: Even so it has plenty of unit tests the XPath support has not gone through a lot of
+ * real-world testing. Please report Bugs as you find them. Suggestions for additional features to
  * implement are also very welcome!
  *
  * @param string $path An absolute XPath 2.0 path

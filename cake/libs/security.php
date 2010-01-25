@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for file.
+ * Security Library contains utility methods related to security
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -105,7 +105,7 @@ class Security extends Object {
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5)
  * @param boolean $salt If true, automatically appends the application's salt
- * 				  value to $string (Security.salt)
+ *     value to $string (Security.salt)
  * @return string Hash
  * @access public
  * @static

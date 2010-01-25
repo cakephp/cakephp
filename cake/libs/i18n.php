@@ -24,7 +24,7 @@
 App::import('Core', 'l10n');
 
 /**
- * Short description for file.
+ * I18n handles translation of Text and time format strings.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -120,10 +120,10 @@ class I18n extends Object {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain
- * @param string $category Category
- * @param integer $count Count
- * @return string translated strings.
+ * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
+ * @param string $category Category The integer value of the category to use.
+ * @param integer $count Count Count is used with $plural to choose the correct plural form.
+ * @return string translated string.
  * @access public
  */
 	function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {

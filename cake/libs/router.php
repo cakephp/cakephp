@@ -27,7 +27,7 @@
 class Router {
 
 /**
- * Array of routes
+ * Array of routes connected with Router::connect()
  *
  * @var array
  * @access public
@@ -111,18 +111,6 @@ class Router {
 	);
 
 /**
- * HTTP header shortcut map.  Used for evaluating header-based route expressions.
- *
- * @var array
- * @access private
- */
-	var $__headerMap = array(
-		'type'		=> 'content_type',
-		'method'	=> 'request_method',
-		'server'	=> 'server_name'
-	);
-
-/**
  * List of resource-mapped controllers
  *
  * @var array
@@ -193,7 +181,7 @@ class Router {
 /**
  * Gets a reference to the Router object instance
  *
- * @return object Object instance
+ * @return Router Instance of the Router.
  * @access public
  * @static
  */
@@ -248,6 +236,15 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
+ * $options offers two 'special' keys. `pass` and `persist` have special meaning in the $options array.
+ *
+ * `pass` is used to define which of the routed parameters should be shifted into the pass array.  Adding a
+ * parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
+ *
+ * `persist` is used to define which route parameters should be automatically included when generating
+ * new urls. You can override peristent parameters by redifining them in a url or remove them by
+ * setting the parameter to `false`.  Ex. `'persist' => array('lang')`
+ *
  * @param string $route A string describing the template of the route
  * @param array $defaults An array describing the default route parameters. These parameters will be used by default
  *   and can supply routing parameters that are not dynamic. See above.
@@ -292,24 +289,41 @@ class Router {
  * Specifies what named parameters CakePHP should be parsing. The most common setups are:
  *
  * Do not parse any named parameters:
+ *
  * {{{ Router::connectNamed(false); }}}
  *
  * Parse only default parameters used for CakePHP's pagination:
+ *
  * {{{ Router::connectNamed(false, array('default' => true)); }}}
  *
  * Parse only the page parameter if its value is a number:
+ *
  * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
  *
  * Parse only the page parameter no mater what.
+ *
  * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
  *
  * Parse only the page parameter if the current action is 'index'.
- * {{{ Router::connectNamed(array('page' => array('action' => 'index')), array('default' => false, 'greedy' => false)); }}}
+ *
+ * {{{
+ * Router::connectNamed(
+ *    array('page' => array('action' => 'index')),
+ *    array('default' => false, 'greedy' => false)
+ * );
+ * }}}
  *
  * Parse only the page parameter if the current action is 'index' and the controller is 'pages'.
- * {{{ Router::connectNamed(array('page' => array('action' => 'index', 'controller' => 'pages')), array('default' => false, 'greedy' => false)); }}}
  *
- * @param array $named A list of named parameters. Key value pairs are accepted where values are either regex strings to match, or arrays as seen above.
+ * {{{
+ * Router::connectNamed(
+ *    array('page' => array('action' => 'index', 'controller' => 'pages')),
+ *    array('default' => false, 'greedy' => false)
+ * ); 
+ * }}}
+ *
+ * @param array $named A list of named parameters. Key value pairs are accepted where values are 
+ *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
  * @access public
@@ -366,7 +380,7 @@ class Router {
 /**
  * Creates REST resource routes for the given controller(s)
  *
- * Options:
+ * ### Options:
  *
  * - 'id' - The regular expression fragment to use when matching IDs.  By default, matches
  *    integer values and UUIDs.
@@ -412,7 +426,7 @@ class Router {
 	}
 
 /**
- * Parses given URL and returns an array of controllers, action and parameters
+ * Parses given URL and returns an array of controller, action and parameters
  * taken from that URL.
  *
  * @param string $url URL to be parsed
@@ -521,8 +535,20 @@ class Router {
 	}
 
 /**
- * Connects the default, built-in routes, including admin routes, and (deprecated) web services
- * routes.
+ * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created
+ * in the order below:
+ *
+ * - `/:prefix/:plugin/:controller`
+ * - `/:prefix/:plugin/:controller/:action/*`
+ * - `/:prefix/:controller`
+ * - `/:prefix/:controller/:action/*`
+ * - `/:plugin/:controller`
+ * - `/:plugin/:controller/:action/*`
+ * - `/:controller'
+ * - `/:controller/:action/*'
+ *
+ * A prefix route is generated for each Routing.prefixes declared in core.php. You can disable the
+ * connection of default routes with Router::defaults().
  *
  * @return void
  * @access private
@@ -560,7 +586,9 @@ class Router {
 	}
 
 /**
- * Takes parameter and path information back from the Dispatcher
+ * Takes parameter and path information back from the Dispatcher, sets these
+ * parameters as the current request parameters that are merged with url arrays 
+ * created later in the request.
  *
  * @param array $params Parameters and path information
  * @return void
@@ -586,7 +614,7 @@ class Router {
 /**
  * Gets parameter information
  *
- * @param boolean $current Get current parameter (true)
+ * @param boolean $current Get current request parameter, useful when using requestAction
  * @return array Parameter information
  * @access public
  * @static
@@ -606,7 +634,7 @@ class Router {
  * Gets URL parameter by name
  *
  * @param string $name Parameter name
- * @param boolean $current Current parameter
+ * @param boolean $current Current parameter, useful when using requestAction
  * @return string Parameter value
  * @access public
  * @static
@@ -622,7 +650,7 @@ class Router {
 /**
  * Gets path information
  *
- * @param boolean $current Current parameter
+ * @param boolean $current Current parameter, useful when using requestAction
  * @return array
  * @access public
  * @static
@@ -639,7 +667,8 @@ class Router {
 	}
 
 /**
- * Reloads default Router settings
+ * Reloads default Router settings.  Resets all class variables and 
+ * removes all connected routes.
  *
  * @access public
  * @return void
@@ -657,7 +686,7 @@ class Router {
  * Promote a route (by default, the last one added) to the beginning of the list
  *
  * @param $which A zero-based array index representing the route to move. For example,
- *               if 3 routes have been added, the last route would be 2.
+ *    if 3 routes have been added, the last route would be 2.
  * @return boolean Retuns false if no route exists at the position specified by $which.
  * @access public
  * @static
@@ -1039,7 +1068,7 @@ class Router {
 /**
  * Returns the route matching the current request URL.
  *
- * @return array Matching route
+ * @return CakeRoute Matching route object.
  * @access public
  * @static
  */
@@ -1051,7 +1080,7 @@ class Router {
 /**
  * Returns the route matching the current request (useful for requestAction traces)
  *
- * @return array Matching route
+ * @return CakeRoute Matching route object.
  * @access public
  * @static
  */
@@ -1175,7 +1204,7 @@ class CakeRoute {
 
 /**
  * An array of named segments in a Route.
- * `/:controller/:action/:id` has 3 named elements
+ * `/:controller/:action/:id` has 3 key elements
  *
  * @var array
  * @access public
@@ -1189,6 +1218,7 @@ class CakeRoute {
  * @access public
  */
 	var $options = array();
+
 /**
  * Default parameters for a Route
  *
@@ -1260,7 +1290,7 @@ class CakeRoute {
 	}
 
 /**
- * Compiles the routes regular expression.  Modifies defaults property so all necessary keys are set
+ * Compiles the route's regular expression.  Modifies defaults property so all necessary keys are set
  * and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
@@ -1276,7 +1306,7 @@ class CakeRoute {
 
 /**
  * Builds a route regular expression.  Uses the template, defaults and options
- * properties to compile a regular expression that can be used to match/parse request strings.
+ * properties to compile a regular expression that can be used to parse request strings.
  *
  * @return void
  * @access protected
@@ -1324,7 +1354,7 @@ class CakeRoute {
 /**
  * Checks to see if the given URL can be parsed by this route.
  * If the route can be parsed an array of parameters will be returned if not
- * false will be returned.
+ * false will be returned. String urls are parsed if they match a routes regular expression.
  *
  * @param string $url The url to attempt to parse.
  * @return mixed Boolean false on failure, otherwise an array or parameters
@@ -1377,7 +1407,9 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to a url array.
+ * Apply persistent parameters to a url array. Persistant parameters are a special 
+ * key used during route creation to force route parameters to persist when omitted from 
+ * a url array.
  *
  * @param array $url The array to apply persistent parameters to.
  * @param array $params An array of persistent values to replace persistent ones.
@@ -1394,9 +1426,9 @@ class CakeRoute {
 	}
 
 /**
- * Attempt to match a url array.  If the url matches the routes pattern, then
- * return an array of parsed params.  If the url doesn't match the routes compiled pattern
- * returns false.
+ * Attempt to match a url array.  If the url matches the route parameters + settings, then
+ * return a generated string url.  If the url doesn't match the route parameters false will be returned.
+ * This method handles the reverse routing or conversion of url arrays into string urls.
  *
  * @param array $url An array of parameters to check matching with.
  * @return mixed Either a string url for the parameters if they match or false.
@@ -1476,10 +1508,11 @@ class CakeRoute {
 	}
 
 /**
- * Converts a matching route array into a url string.
+ * Converts a matching route array into a url string. Composes the string url using the template
+ * used to create the route.
  *
  * @param array $params The params to convert to a string url.
- * @return string Compiled route string.
+ * @return string Composed route string.
  * @access protected
  */
 	function _writeUrl($params) {

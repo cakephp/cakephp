@@ -269,14 +269,19 @@ class Inflector {
 /**
  * Adds custom inflection $rules, of either 'plural' or 'singular' $type.
  *
+ * ### Usage:
+ *
+ * {{{
+ * Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
+ * Inflector::rules('plural', array(
+ *     'rules' => array('/^(inflect)ors$/i' => '\1ables'),
+ *     'uninflected' => array('dontinflectme'),
+ *     'irregular' => array('red' => 'redlings')
+ * ));
+ * }}}
+ *
  * @param string $type The type of inflection, either 'singular' or 'plural'
- * @param array $rules Array of rules to be added. Example usage:
- *        Inflector::rules('plural', array('/^(inflect)or$/i' => '\1ables'));
- *        Inflector::rules('plural', array(
- *            'rules' => array('/^(inflect)ors$/i' => '\1ables'),
- *            'uninflected' => array('dontinflectme'),
- *            'irregular' => array('red' => 'redlings')
- *        ));
+ * @param array $rules Array of rules to be added.
  * @param boolean $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
  * @access public
