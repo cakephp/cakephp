@@ -61,7 +61,7 @@ class CacheHelper extends AppHelper {
  * @param string $file File to cache
  * @param string $out output to cache
  * @param boolean $cache
- * @return view ouput
+ * @return string view ouput
  */
 	function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
@@ -114,8 +114,8 @@ class CacheHelper extends AppHelper {
 /**
  * Parse file searching for no cache tags
  *
- * @param string $file
- * @param boolean $cache
+ * @param string $file The filename that needs to be parsed.
+ * @param string $cache The cached content
  * @access private
  */
 	function __parseFile($file, $cache) {
@@ -154,7 +154,7 @@ class CacheHelper extends AppHelper {
 /**
  * Parse the output and replace cache tags
  *
- * @param sting $cache
+ * @param string $cache Output to replace content in.
  * @return string with all replacements made to <cake:nocache><cake:nocache>
  * @access private
  */
@@ -187,9 +187,9 @@ class CacheHelper extends AppHelper {
 /**
  * Write a cached version of the file
  *
- * @param string $file
- * @param sting $timestamp
- * @return cached view
+ * @param string $content view content to write to a cache file.
+ * @param sting $timestamp Duration to set for cache file.
+ * @return boolean success of caching view.
  * @access private
  */
 	function __writeFile($content, $timestamp, $useCallbacks = false) {

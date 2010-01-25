@@ -39,6 +39,7 @@ class XmlHelper extends AppHelper {
 
 /**
  * Constructor
+ *
  * @return void
  */
 	function __construct() {
@@ -50,8 +51,9 @@ class XmlHelper extends AppHelper {
 /**
  * Returns an XML document header
  *
- * @param  array $attrib Header tag attributes
+ * @param array $attrib Header tag attributes
  * @return string XML header
+ * @access public
  */
 	function header($attrib = array()) {
 		if (Configure::read('App.encoding') !== null) {
@@ -71,10 +73,10 @@ class XmlHelper extends AppHelper {
 /**
  * Adds a namespace to any documents generated
  *
- * @param  string  $name The namespace name
- * @param  string  $url  The namespace URI; can be empty if in the default namespace map
+ * @param string $name The namespace name
+ * @param string $url The namespace URI; can be empty if in the default namespace map
  * @return boolean False if no URL is specified, and the namespace does not exist
- *                 default namespace map, otherwise true
+ *     default namespace map, otherwise true
  * @deprecated
  * @see Xml::addNs()
  */
@@ -88,6 +90,7 @@ class XmlHelper extends AppHelper {
  * @param  string  $name The namespace name or URI
  * @deprecated
  * @see Xml::removeNs()
+ * @access public
  */
 	function removeNs($name) {
 		return $this->Xml->removeGlobalNamespace($name);
@@ -96,11 +99,12 @@ class XmlHelper extends AppHelper {
 /**
  * Generates an XML element
  *
- * @param  string   $name The name of the XML element
- * @param  array    $attrib The attributes of the XML element
- * @param  mixed    $content XML element content
- * @param  boolean  $endTag Whether the end tag of the element should be printed
+ * @param string $name The name of the XML element
+ * @param array $attrib The attributes of the XML element
+ * @param mixed $content XML element content
+ * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
+ * @access public
  */
 	function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;
@@ -138,6 +142,7 @@ class XmlHelper extends AppHelper {
  * Create closing tag for current element
  *
  * @return string
+ * @access public
  */
 	function closeElem() {
 		$name = $this->Xml->name();
@@ -150,11 +155,12 @@ class XmlHelper extends AppHelper {
 /**
  * Serializes a model resultset into XML
  *
- * @param  mixed  $data The content to be converted to XML
- * @param  array  $options The data formatting options.  For a list of valid options, see
- *                         XmlNode::__construct().
+ * @param mixed $data The content to be converted to XML
+ * @param array $options The data formatting options.  For a list of valid options, see
+ *     XmlNode::__construct().
  * @return string A copy of $data in XML format
  * @see XmlNode
+ * @access public
  */
 	function serialize($data, $options = array()) {
 		$options += array('attributes' => false, 'format' => 'attributes');

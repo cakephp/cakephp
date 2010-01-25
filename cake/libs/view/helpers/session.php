@@ -27,7 +27,6 @@ if (!class_exists('cakesession')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
- *
  */
 class SessionHelper extends CakeSession {
 
@@ -36,7 +35,7 @@ class SessionHelper extends CakeSession {
  *
  * @var array
  */
-	var $helpers = null;
+	var $helpers = array();
 
 /**
  * Used to determine if methods implementation is used, or bypassed
@@ -62,6 +61,7 @@ class SessionHelper extends CakeSession {
  * Turn sessions on if 'Session.start' is set to false in core.php
  *
  * @param string $base
+ * @access public
  */
 	function activate($base = null) {
 		$this->__active = true;
@@ -70,11 +70,10 @@ class SessionHelper extends CakeSession {
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
- * In your view: $session->read('Controller.sessKey');
+ * In your view: `$session->read('Controller.sessKey');`
  * Calling the method without a param will return all session vars
  *
  * @param string $name the name of the session key you want to read
- *
  * @return values from the session vars
  * @access public
  */
@@ -88,7 +87,7 @@ class SessionHelper extends CakeSession {
 /**
  * Used to check is a session key has been set
  *
- * In your view: $session->check('Controller.sessKey');
+ * In your view: `$session->check('Controller.sessKey');`
  *
  * @param string $name
  * @return boolean
@@ -104,7 +103,7 @@ class SessionHelper extends CakeSession {
 /**
  * Returns last error encountered in a session
  *
- * In your view: $session->error();
+ * In your view: `$session->error();`
  *
  * @return string last error
  * @access public
@@ -120,7 +119,7 @@ class SessionHelper extends CakeSession {
  * Used to render the message set in Controller::Session::setFlash()
  *
  * In your view: $session->flash('somekey');
- * 					Will default to flash if no param is passed
+ * Will default to flash if no param is passed
  *
  * @param string $key The [Message.]key you are rendering in the view.
  * @return boolean|string Will return the value if $key is set, or false if not set.

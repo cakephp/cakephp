@@ -92,48 +92,9 @@ class HtmlHelper extends AppHelper {
 	);
 
 /**
- * Base URL
- *
- * @var string
- * @access public
- */
-	var $base = null;
-
-/**
- * URL to current action.
- *
- * @var string
- * @access public
- */
-	var $here = null;
-
-/**
- * Parameter array.
- *
- * @var array
- * @access public
- */
-	var $params = array();
-
-/**
- * Current action.
- *
- * @var string
- * @access public
- */
-	var $action = null;
-
-/**
- * Enter description here...
- *
- * @var array
- * @access public
- */
-	var $data = null;
-/**
  * Breadcrumbs.
  *
- * @var	array
+ * @var array
  * @access protected
  */
 	var $_crumbs = array();
@@ -155,7 +116,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Document type definitions
  *
- * @var	array
+ * @var array
  * @access private
  */
 	var $__docTypes = array(
@@ -209,7 +170,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link to an external resource and handles basic meta tags
  *
- * #### Options
+ * ### Options
  *
  * - `inline` Whether or not the link element should be output inline, or in scripts_for_layout.
  *
@@ -217,7 +178,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $url The address of the external resource or string for content attribute
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
- * @return string A completed <link /> element.
+ * @return string A completed `<link />` element.
  * @access public
  */
 	function meta($type, $url = null, $options = array()) {
@@ -280,7 +241,8 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a charset META-tag.
  *
- * @param  string  $charset The character set to be used in the meta tag. Example: "utf-8".
+ * @param string $charset The character set to be used in the meta tag. If empty,
+ *  The App.encoding value will be used. Example: "utf-8".
  * @return string A meta tag containing the specified character set.
  * @access public
  */
@@ -300,7 +262,7 @@ class HtmlHelper extends AppHelper {
  *
  * If the $url is empty, $title is used instead.
  *
- * #### Options
+ * ### Options
  *
  * - `escape` Set to false to disable escaping of title and attributes.
  *
@@ -308,7 +270,7 @@ class HtmlHelper extends AppHelper {
  * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
- * @return string An <a /> element.
+ * @return string An `<a />` element.
  * @access public
  */
 	function link($title, $url = null, $options = array(), $confirmMessage = false) {
@@ -353,7 +315,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Creates a link element for CSS stylesheets.
  *
- * #### Options 
+ * ### Options
  *
  * - `inline` If set to false, the generated tag appears in the head tag of the layout. Defaults to true
  *
@@ -418,14 +380,14 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Returns one or many <script> tags depending on the number of scripts given.
+ * Returns one or many `<script>` tags depending on the number of scripts given.
  *
  * If the filename is prefixed with "/", the path will be relative to the base path of your
  * application.  Otherwise, the path will be relative to your JavaScript path, usually webroot/js.
  *
  * Can include one or many Javascript files.
  *
- * #### Options
+ * ### Options
  *
  * - `inline` - Whether script should be output inline or into scripts_for_layout.
  * - `once` - Whether or not the script should be checked for uniqueness. If true scripts will only be
@@ -433,8 +395,9 @@ class HtmlHelper extends AppHelper {
  *
  * @param mixed $url String or array of javascript files to include
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
- * @return mixed String of <script /> tags or null if $inline is false or if $once is true and the file has been
+ * @return mixed String of `<script />` tags or null if $inline is false or if $once is true and the file has been
  *   included before.
+ * @access public
  */
 	function script($url, $options = array()) {
 		if (is_bool($options)) {
@@ -480,6 +443,7 @@ class HtmlHelper extends AppHelper {
 			$view->addScript($out);
 		}
 	}
+
 /**
  * Wrap $script in a script tag.
  *
@@ -491,6 +455,7 @@ class HtmlHelper extends AppHelper {
  * @param string $script The script to wrap
  * @param array $options The options to use.
  * @return mixed string or null depending on the value of `$options['inline']`
+ * @access public
  */
 	function scriptBlock($script, $options = array()) {
 		$options += array('safe' => true, 'inline' => true);
@@ -508,6 +473,7 @@ class HtmlHelper extends AppHelper {
 			return null;
 		}
 	}
+
 /**
  * Begin a script block that captures output until HtmlHelper::scriptEnd()
  * is called. This capturing block will capture all output between the methods
@@ -520,6 +486,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Options for the code block.
  * @return void
+ * @access public
  */
 	function scriptStart($options = array()) {
 		$options += array('safe' => true, 'inline' => true);
@@ -527,12 +494,14 @@ class HtmlHelper extends AppHelper {
 		ob_start();
 		return null;
 	}
+
 /**
  * End a Buffered section of Javascript capturing.
  * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
  * used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
+ * @access public
  */
 	function scriptEnd() {
 		$buffer = ob_get_clean();
@@ -540,10 +509,20 @@ class HtmlHelper extends AppHelper {
 		$this->_scriptBlockOptions = array();
 		return $this->scriptBlock($buffer, $options);
 	}
+
 /**
  * Builds CSS style data from an array of CSS properties
  *
- * @param array $data Style data array
+ * ### Usage:
+ *
+ * {{{
+ * echo $html->style(array('margin' => '10px', 'padding' => '10px'), true);
+ * 
+ * // creates
+ * 'margin:10px;padding:10px;'
+ * }}}
+ *
+ * @param array $data Style data array, keys will be used as property names, values as property values.
  * @param boolean $oneline Whether or not the style block should be displayed on one line.
  * @return string CSS styling data
  * @access public
@@ -567,7 +546,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $separator Text to separate crumbs.
  * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
- * @return string
+ * @return string Composed bread crumbs
  * @access public
  */
 	function getCrumbs($separator = '&raquo;', $startText = false) {
@@ -591,9 +570,19 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be 
+ * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
  * generated with the link pointed at `$options['url']`.  This method will set an empty
  * alt attribute if one is not supplied.
+ *
+ * ### Usage
+ *
+ * Create a regular image:
+ *
+ * `echo $html->image('cake_icon.png', array('alt' => 'CakePHP'));`
+ *
+ * Create an image link:
+ *
+ * `echo $html->image('cake_icon.png', array('alt' => 'CakePHP', 'url' => 'http://cakephp.org'));`
  *
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.
@@ -702,7 +691,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted block tag, i.e DIV, SPAN, P.
  *
- * #### Options
+ * ### Options
  *
  * - `escape` Whether or not the contents should be html_entity escaped.
  *
@@ -732,7 +721,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted DIV tag for HTML FORMs.
  *
- * #### Options
+ * ### Options
  *
  * - `escape` Whether or not the contents should be html_entity escaped.
  *
@@ -753,7 +742,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Returns a formatted P tag.
  *
- * #### Options
+ * ### Options
  *
  * - `escape` Whether or not the contents should be html_entity escaped.
  *

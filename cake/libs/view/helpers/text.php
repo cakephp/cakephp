@@ -45,10 +45,10 @@ class TextHelper extends AppHelper {
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
  * may include the \1 expression to include the $phrase found.
  *
- * Options:
+ * ### Options:
  *
- * - 'format' The piece of html with that the phrase will be highlighted
- * - 'html' If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
+ * - `format` The piece of html with that the phrase will be highlighted
+ * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
  *
  * @param string $text Text to search the phrase in
  * @param string $phrase The phrase that will be searched
@@ -166,16 +166,17 @@ class TextHelper extends AppHelper {
  * Cuts a string to the length of $length and replaces the last characters
  * with the ending if the text is longer than length.
  *
- * Options:
+ * ### Options:
  *
- * - 'ending' Will be used as Ending and appended to the trimmed string
- * - 'exact' If false, $text will not be cut mid-word
- * - 'html' If true, HTML tags would be handled correctly
+ * - `ending` Will be used as Ending and appended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ * - `html` If true, HTML tags would be handled correctly
  *
  * @param string  $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
+ * @access public
  */
 	function truncate($text, $length = 100, $options = array()) {
 		$default = array(
@@ -279,7 +280,8 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side determined by radius.
+ * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side
+ * determined by radius.
  *
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for

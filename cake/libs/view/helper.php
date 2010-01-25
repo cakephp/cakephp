@@ -26,9 +26,8 @@
 App::import('Core', 'Overloadable');
 
 /**
- * Backend for helpers.
- *
- * Long description for class
+ * Abstract base class for all other Helpers in CakePHP.
+ * Provides common methods and features.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view
@@ -57,11 +56,11 @@ class Helper extends Overloadable {
 	var $webroot = null;
 
 /**
- * Theme name
+ * The current theme name if any.
  *
  * @var string
  */
-	var $themeWeb = null;
+	var $theme = null;
 
 /**
  * URL to current action.
@@ -158,8 +157,9 @@ class Helper extends Overloadable {
 /**
  * Parses tag templates into $this->tags.
  *
- * @param $name file name
+ * @param $name file name inside app/config to load.
  * @return array merged tags from config/$name.php
+ * @access public
  */
 	function loadConfig($name = 'tags') {
 		if (file_exists(CONFIGS . $name .'.php')) {
@@ -174,18 +174,14 @@ class Helper extends Overloadable {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing to a combination of controller and action. Param
- * $url can be:
- *	+ Empty - the method will find adress to actuall controller/action.
- *	+ '/' - the method will find base URL of application.
- *	+ A combination of controller/action - the method will find url for it.
+ * Returns a URL pointing at the provided parameters.
  *
- * @param  mixed  $url    Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
- *                        or an array specifying any of the following: 'controller', 'action',
- *                        and/or 'plugin', in addition to named arguments (keyed array elements),
- *                        and standard URL arguments (indexed array elements)
- * @param boolean $full   If true, the full base URL will be prepended to the result
+ * @param mixed $url Either a relative string url like `/products/view/23` or
+ *    an array of url parameters.  Using an array for urls will allow you to leverage
+ *    the reverse routing features of CakePHP.
+ * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
+ * @access public
  */
 	function url($url = null, $full = false) {
 		return h(Router::url($url, $full));
@@ -194,19 +190,20 @@ class Helper extends Overloadable {
 /**
  * Checks if a file exists when theme is used, if no file is found default location is returned
  *
- * @param  string  $file
- * @return string  $webPath web path to file.
+ * @param string $file The file to create a webroot path to.
+ * @return string $webPath web path to file.
+ * @access public
  */
 	function webroot($file) {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
 		$webPath = "{$this->webroot}" . $asset[0];
 		$file = $asset[0];
-		
+
 		if (!empty($this->theme)) {
 			$file = trim($file, '/');
 			$theme = $this->theme . '/';
-			
+
 			if (DS === '\\') {
 				$file = str_replace('/', '\\', $file);
 			}
@@ -215,7 +212,7 @@ class Helper extends Overloadable {
 				$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
 			} else {
 				$viewPaths = App::path('views');
-				
+
 				foreach ($viewPaths as $viewPath) {
 					$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $file;
 
@@ -233,12 +230,13 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in 
+ * Adds a timestamp to a file based resource based on the value of `Asset.timestamp` in
  * Configure.  If Asset.timestamp is true and debug > 0, or Asset.timestamp == 'force'
  * a timestamp will be added.
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
  * @return string Path with a timestamp added, or not.
+ * @access public
  */
 	function assetTimestamp($path) {
 		$timestampEnabled = (
@@ -309,6 +307,7 @@ class Helper extends Overloadable {
  * @param string $insertBefore String to be inserted before options.
  * @param string $insertAfter String to be inserted ater options.
  * @return string Composed attributes.
+ * @access public
  */
 	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
@@ -334,6 +333,7 @@ class Helper extends Overloadable {
 
 /**
  * Formats an individual attribute, and returns the string value of the composed attribute.
+ * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
  *
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
@@ -343,7 +343,8 @@ class Helper extends Overloadable {
 	function __formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
 		$attributeFormat = '%s="%s"';
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled', 'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled',
+			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
 		if (is_array($value)) {
 			$value = '';
 		}
@@ -364,6 +365,7 @@ class Helper extends Overloadable {
  * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
  * @param boolean $setScope Sets the view scope to the model specified in $tagValue
  * @return void
+ * @access public
  */
 	function setEntity($entity, $setScope = false) {
 		$view =& ClassRegistry::getObject('view');
@@ -373,7 +375,7 @@ class Helper extends Overloadable {
 		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
 			return;
 		}
-		
+
 		if ($entity === null) {
 			$view->model = null;
 			$view->association = null;
@@ -382,7 +384,7 @@ class Helper extends Overloadable {
 			$view->entityPath = null;
 			return;
 		}
-		
+
 		$view->entityPath = $entity;
 		$model = $view->model;
 		$sameScope = $hasField = false;
@@ -391,7 +393,7 @@ class Helper extends Overloadable {
 		if (empty($parts)) {
 			return;
 		}
-		
+
 		$count = count($parts);
 		if ($count === 1) {
 			$sameScope = true;
@@ -412,7 +414,7 @@ class Helper extends Overloadable {
 				}
 			}
 		}
-		
+
 		if (ClassRegistry::isKeySet($model)) {
 			$ModelObj =& ClassRegistry::getObject($model);
 			for ($i = 0; $i < $count; $i++) {
@@ -476,7 +478,7 @@ class Helper extends Overloadable {
 			break;
 			default:
 				$reverse = array_reverse($parts);
-				
+
 				if ($hasField) {
 						$view->field = $field;
 						if (!is_numeric($reverse[1]) && $reverse[1] != $model) {
@@ -509,6 +511,7 @@ class Helper extends Overloadable {
  * Gets the currently-used model of the rendering context.
  *
  * @return string
+ * @access public
  */
 	function model() {
 		$view =& ClassRegistry::getObject('view');
@@ -523,6 +526,7 @@ class Helper extends Overloadable {
  * Gets the ID of the currently-used model of the rendering context.
  *
  * @return mixed
+ * @access public
  */
 	function modelID() {
 		$view =& ClassRegistry::getObject('view');
@@ -533,6 +537,7 @@ class Helper extends Overloadable {
  * Gets the currently-used model field of the rendering context.
  *
  * @return string
+ * @access public
  */
 	function field() {
 		$view =& ClassRegistry::getObject('view');
@@ -540,11 +545,12 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Returns false if given FORM field has no errors. Otherwise it returns the constant set in the array Model->validationErrors.
+ * Returns false if given FORM field has no errors. Otherwise it returns the constant set in
+ * the array Model->validationErrors.
  *
- * @param string $model		Model name as string
- * @param string $field		Fieldname as string
- * @param integer $modelID	Unique index identifying this record within the form
+ * @param string $model Model name as a string
+ * @param string $field Fieldname as a string
+ * @param integer $modelID Unique index identifying this record within the form
  * @return boolean True on errors.
  */
 	function tagIsInvalid($model = null, $field = null, $modelID = null) {
@@ -558,10 +564,14 @@ class Helper extends Overloadable {
 
 /**
  * Generates a DOM ID for the selected element, if one is not set.
+ * Uses the current View::entity() settings to generate a CamelCased id attribute.
  *
- * @param mixed $options
- * @param string $id
- * @return mixed
+ * @param mixed $options Either an array of html attributes to add $id into, or a string
+ *   with a view entity path to get a domId for.
+ * @param string $id The name of the 'id' attribute.
+ * @return mixed If $options was an array, an array will be returned with $id set.  If a string
+ *   was supplied, a string will be returned.
+ * @todo Refactor this method to not have as many input/output options.
  */
 	function domId($options = null, $id = 'id') {
 		$view =& ClassRegistry::getObject('view');
@@ -573,10 +583,10 @@ class Helper extends Overloadable {
 			$this->setEntity($options);
 			return $this->domId();
 		}
-		
+
 		$entity = $view->entity();
 		$model = array_shift($entity);
-		$dom = $model . join('',array_map(array('Inflector','camelize'),$entity));
+		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;
@@ -587,12 +597,17 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Gets the input field name for the current tag
+ * Gets the input field name for the current tag. Creates input name attributes
+ * using CakePHP's data[Model][field] formatting.
  *
- * @param array $options
- * @param string $key
- * @return array
+ * @param mixed $options If an array, should be an array of attributes that $key needs to be added to.
+ *   If a string or null, will be used as the View entity.
+ * @param string $field
+ * @param string $key The name of the attribute to be set, defaults to 'name'
+ * @return mixed If an array was given for $options, an array with $key set will be returned.
+ *   If a string was supplied a string will be returned.
  * @access protected
+ * @todo Refactor this method to not have as many input/output options.
  */
 	function _name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
@@ -631,10 +646,14 @@ class Helper extends Overloadable {
 /**
  * Gets the data for the current tag
  *
- * @param array $options
- * @param string $key
- * @return array
+ * @param mixed $options If an array, should be an array of attributes that $key needs to be added to.
+ *   If a string or null, will be used as the View entity.
+ * @param string $field
+ * @param string $key The name of the attribute to be set, defaults to 'value'
+ * @return mixed If an array was given for $options, an array with $key set will be returned.
+ *   If a string was supplied a string will be returned.
  * @access public
+ * @todo Refactor this method to not have as many input/output options.
  */
 	function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
@@ -647,11 +666,11 @@ class Helper extends Overloadable {
 		if (is_array($options) && isset($options[$key])) {
 			return $options;
 		}
-		
+
 		if (!empty($field)) {
 			$this->setEntity($field);
 		}
-		
+
 		$view =& ClassRegistry::getObject('view');
 		$result = null;
 
@@ -692,11 +711,13 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Sets the defaults for an input tag
+ * Sets the defaults for an input tag.  Will set the 
+ * name, value, and id attributes for an array of html attributes. Will also
+ * add a 'form-error' class if the field contains validation errors.
  *
- * @param array $options
- * @param string $key
- * @return array
+ * @param string $field The field name to initialize.
+ * @param array $options Array of options to use while initializing an input field.
+ * @return array Array options for the form input.
  * @access protected
  */
 	function _initInputField($field, $options = array()) {
@@ -716,10 +737,11 @@ class Helper extends Overloadable {
 /**
  * Adds the given class to the element options
  *
- * @param array $options
- * @param string $class
- * @param string $key
- * @return array
+ * @param array $options Array options/attributes to add a class to 
+ * @param string $class The classname being added.
+ * @param string $key the key to use for class.
+ * @return array Array of options with $key set.
+ * @access public
  */
 	function addClass($options = array(), $class = null, $key = 'class') {
 		if (isset($options[$key]) && trim($options[$key]) != '') {
@@ -735,37 +757,55 @@ class Helper extends Overloadable {
  *
  * This method can be overridden in subclasses to do generalized output post-processing
  *
- * @param  string  $str	String to be output.
+ * @param string $str String to be output.
  * @return string
+ * @deprecated This method will be removed in future versions.
  */
 	function output($str) {
 		return $str;
 	}
 
 /**
- * Before render callback.  Overridden in subclasses.
+ * Before render callback. beforeRender is called before the view file is rendered.
  *
+ * Overridden in subclasses.
+ *
+ * @return void
+ * @access public
  */
 	function beforeRender() {
 	}
 
 /**
- * After render callback.  Overridden in subclasses.
+ * After render callback.  afterRender is called after the view file is rendered
+ * but before the layout has been rendered.
  *
+ * Overridden in subclasses.
+ *
+ * @return void
+ * @access public
  */
 	function afterRender() {
 	}
 
 /**
- * Before layout callback.  Overridden in subclasses.
+ * Before layout callback.  beforeLayout is called before the layout is rendered.
  *
+ * Overridden in subclasses.
+ *
+ * @return void
+ * @access public
  */
 	function beforeLayout() {
 	}
 
 /**
- * After layout callback.  Overridden in subclasses.
+ * After layout callback.  afterLayout is called after the layout has rendered.
  *
+ * Overridden in subclasses.
+ *
+ * @return void
+ * @access public
  */
 	function afterLayout() {
 	}
@@ -801,6 +841,7 @@ class Helper extends Overloadable {
 /**
  * Resets the vars used by Helper::clean() to null
  *
+ * @return void
  * @access private
  */
 	function __reset() {
@@ -811,6 +852,7 @@ class Helper extends Overloadable {
 /**
  * Removes harmful content from output
  *
+ * @return void
  * @access private
  */
 	function __clean() {

@@ -4,12 +4,14 @@
  *
  * Provides jQuery specific Javascript for JsHelper.
  *
+ * Implements the JsHelper interface for jQuery.  All $options arrays
+ * support all options found in the JsHelper, as well as those in the jQuery
+ * documentation.
+ *
  * PHP versions 4 and 5
  *
- * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2006-2009, Cake Software Foundation, Inc.
- *								1785 E. Sahara Avenue, Suite 490-204
- *								Las Vegas, Nevada 89104
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
@@ -27,6 +29,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * Option mappings for jQuery
  *
  * @var array
+ * @access protected
  */
 	var $_optionMap = array(
 		'request' => array(
@@ -52,9 +55,10 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	);
 
 /**
- * callback arguments lists
+ * Callback arguments lists
  *
  * @var string
+ * @access protected
  */
 	var $_callbackArguments = array(
 		'slider' => array(
@@ -103,6 +107,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * when jQuery is put into noConflict() mode.
  *
  * @var string
+ * @access public
  */
 	 var $jQueryObject = '$';
 
@@ -114,8 +119,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $selection the selection to apply
  * @param string $options Array of options for method
  * @param string $callbacks Array of callback / special options.
+ * @return string Composed method string
  * @access public
- * @return string
  */
 	function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
 		$options = $this->_mapOptions($method, $options);
@@ -133,6 +138,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
+ * @access public
  */
 	function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {
@@ -155,6 +161,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $callback The Javascript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
+ * @access public
  */
 	function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
@@ -171,10 +178,11 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Create a domReady event. This is a special event in many libraries
+ * Create a domReady event. For jQuery
  *
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
+ * @access public
  */
 	function domReady($functionBody) {
 		$this->get('document');
@@ -187,6 +195,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
+ * @access public
  */
 	function each($callback) {
 		return $this->selection . '.each(function () {' . $callback . '});';
@@ -198,6 +207,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $name The name of the effect to trigger.
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
+ * @access public
  * @see JsBaseEngineHelper::effect()
  */
 	function effect($name, $options = array()) {
@@ -228,8 +238,9 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * If the 'update' key is set, success callback will be overridden.
  *
  * @param mixed $url
- * @param array $options
+ * @param array $options See JsHelper::request() for options.
  * @return string The completed ajax call.
+ * @access public
  */
 	function request($url, $options = array()) {
 		$url = $this->url($url);
@@ -266,6 +277,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
+ * @access public
  * @see JsHelper::sortable() for options list.
  */
 	function sortable($options = array()) {
@@ -280,6 +292,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the draggable element.
  * @return string Completed Draggable script.
+ * @access public
  * @see JsHelper::drag() for options list.
  */
 	function drag($options = array()) {
@@ -294,6 +307,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the droppable element.
  * @return string Completed Droppable script.
+ * @access public
  * @see JsHelper::drop() for options list.
  */
 	function drop($options = array()) {
@@ -308,6 +322,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param array $options Array of options for the droppable element.
  * @return string Completed Slider script.
+ * @access public
  * @see JsHelper::slider() for options list.
  */
 	function slider($options = array()) {
@@ -321,7 +336,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * form, errors will be created in the Javascript.
  *
  * @param array $options Options for the serialization
- * @return string completed form serialization script
+ * @return string completed form serialization script.
+ * @access public
  * @see JsHelper::serializeForm() for option list.
  */
 	function serializeForm($options = array()) {

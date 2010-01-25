@@ -57,6 +57,7 @@ class JsHelper extends AppHelper {
  * Scripts that are queued for output
  *
  * @var array
+ * @see JsHelper::buffer()
  * @access private
  */
 	var $__bufferedScripts = array();
@@ -186,7 +187,7 @@ class JsHelper extends AppHelper {
  * caches them to a file and returns a linked script.  If no scripts have been
  * buffered this method will return null
  *
- * Options
+ * ### Options
  *
  * - `inline` - Set to true to have scripts output as a script block inline
  *   if `cache` is also true, a script link tag will be generated. (default true)
@@ -198,6 +199,7 @@ class JsHelper extends AppHelper {
  * @param array $options options for the code block
  * @return mixed Completed javascript tag if there are scripts, if there are no buffered
  *   scripts null will be returned.
+ * @access public
  */
 	function writeBuffer($options = array()) {
 		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
@@ -230,7 +232,7 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Write a script to the cached scripts.
+ * Write a script to the buffered scripts.
  *
  * @param string $script Script string to add to the buffer.
  * @param boolean $top If true the script will be added to the top of the 
@@ -247,7 +249,7 @@ class JsHelper extends AppHelper {
 	}
 
 /**
- * Get all the cached scripts
+ * Get all the buffered scripts
  *
  * @param boolean $clear Whether or not to clear the script caches (default true)
  * @return array Array of scripts added to the request.
@@ -266,8 +268,8 @@ class JsHelper extends AppHelper {
 /**
  * Generates the object string for variables passed to javascript.
  *
- * @return string
- * @access public
+ * @return string Generated JSON object of all set vars
+ * @access protected
  */
 	function _createVars() {
 		if (!empty($this->__jsVars)) {
@@ -354,7 +356,7 @@ class JsHelper extends AppHelper {
  * both those for FormHelper::submit() and JsBaseEngine::request(), JsBaseEngine::event();
  *
  * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest
- * and require an iframe.
+ * and require an iframe or flash.
  *
  * @param string $title The display text of the submit button.
  * @param array $options Array of options to use.
@@ -402,7 +404,7 @@ class JsHelper extends AppHelper {
  * @param array $options Options to filter.
  * @param array $additional Array of additional keys to extract and include in the return options array.
  * @return array Array of js options and Htmloptions
- * @access public
+ * @access protected
  */
 	function _getHtmlOptions($options, $additional = array()) {
 		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
@@ -482,7 +484,7 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Create an alert message in Javascript
+ * Create an `alert()` message in Javascript
  *
  * @param string $message Message you want to alter.
  * @return string completed alert()
@@ -493,10 +495,11 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Redirects to a URL
+ * Redirects to a URL.  Creates a window.location modification snippet
+ * that can be used to trigger 'redirects' from Javascript.
  *
- * @param  mixed $url
- * @param  array  $options
+ * @param mixed $url
+ * @param array  $options
  * @return string completed redirect in javascript
  * @access public
  */
@@ -505,7 +508,7 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Create a confirm() message
+ * Create a `confirm()` message
  *
  * @param string $message Message you want confirmed.
  * @return string completed confirm()
@@ -530,7 +533,7 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Create a prompt() Javascript function
+ * Create a `prompt()` Javascript function
  *
  * @param string $message Message you want to prompt.
  * @param string $default Default message
@@ -545,7 +548,7 @@ class JsBaseEngineHelper extends AppHelper {
  * Generates a JavaScript object in JavaScript Object Notation (JSON)
  * from an array.  Will use native JSON encode method if available, and $useNative == true
  *
- * Options:
+ * ### Options:
  *
  * - `prefix` - String prepended to the returned data.
  * - `postfix` - String appended to the returned data.
@@ -647,9 +650,9 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * List of escaped elements:
  *
- *	+ "\r" => '\n'
- *	+ "\n" => '\n'
- *	+ '"' => '\"'
+ * - "\r" => '\n'
+ * - "\n" => '\n'
+ * - '"' => '\"'
  *
  * @param  string $script String that needs to get escaped.
  * @return string Escaped string.
@@ -812,7 +815,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * ### Supported Effects
  *
- * The following effects are supported by all JsEngines
+ * The following effects are supported by all core JsEngines
  *
  * - `show` - reveal an element.
  * - `hide` - hide an element.
@@ -867,7 +870,7 @@ class JsBaseEngineHelper extends AppHelper {
 
 /**
  * Create a draggable element.  Works on the currently selected element.
- * Additional options may be supported by your library.
+ * Additional options may be supported by the library implementation.
  *
  * ### Options
  *
@@ -891,7 +894,7 @@ class JsBaseEngineHelper extends AppHelper {
 
 /**
  * Create a droppable element. Allows for draggable elements to be dropped on it.
- * Additional options may be supported by your library.
+ * Additional options may be supported by the library implementation.
  *
  * ### Options
  *
@@ -913,6 +916,7 @@ class JsBaseEngineHelper extends AppHelper {
 
 /**
  * Create a sortable element.
+ * Additional options may be supported by the library implementation.
  *
  * ### Options
  *
@@ -937,7 +941,8 @@ class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Create a slider UI widget.  Comprised of a track and knob
+ * Create a slider UI widget.  Comprised of a track and knob.
+ * Additional options may be supported by the library implementation.
  *
  * ### Options
  *
@@ -984,11 +989,11 @@ class JsBaseEngineHelper extends AppHelper {
 /**
  * Parse an options assoc array into an Javascript object literal.
  * Similar to object() but treats any non-integer value as a string,
- * does not include { }
+ * does not include `{ }`
  *
  * @param array $options Options to be converted
  * @param array $safeKeys Keys that should not be escaped.
- * @return string
+ * @return string Parsed JSON options without enclosing { }.
  * @access protected
  */
 	function _parseOptions($options, $safeKeys = array()) {
