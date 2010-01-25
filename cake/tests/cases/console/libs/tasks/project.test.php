@@ -188,7 +188,7 @@ class ProjectTaskTest extends CakeTestCase {
 
 			$file =& new File($path . 'config' . DS . 'core.php');
 			$contents = $file->read();
-			$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default Salt left behind. %s');
+			$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
 		}
 
 /**
