@@ -1003,7 +1003,6 @@ class App extends Object {
  */
 	function __find($file, $recursive = true) {
 		static $appPath = false;
-		static $libsPath = false;
 
 		if (empty($this->search)) {
 			return null;
@@ -1018,11 +1017,10 @@ class App extends Object {
 		foreach ($this->search as $path) {
 			if ($appPath === false) {
 				$appPath = rtrim(APP, DS);
-				$libsPath = rtrim(LIBS, DS);
 			}
 			$path = rtrim($path, DS);
 
-			if ($path === $appPath || $path === $libsPath) {
+			if ($path === $appPath) {
 				$recursive = false;
 			}
 			if ($recursive === false) {
