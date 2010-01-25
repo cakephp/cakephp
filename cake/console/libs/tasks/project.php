@@ -90,6 +90,12 @@ class ProjectTask extends Shell {
 				$this->err(sprintf(__('Unable to generate random hash for \'Security.salt\', you should change it in %s', true), CONFIGS . 'core.php'));
 			}
 
+			if ($this->securityCipherSeed($path) === true ) {
+				$this->out(__('Random seed created for \'Security.cipherSeed\'', true));
+			} else {
+				$this->err(sprintf(__('Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', true), CONFIGS . 'core.php'));
+			}
+
 			$corePath = $this->corePath($path);
 			if ($corePath === true ) {
 				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', true), CAKE_CORE_INCLUDE_PATH));
@@ -214,6 +220,30 @@ class ProjectTask extends Shell {
 		}
 		return false;
 	}
+
+	/**
+	 * Generates and writes 'Security.cipherSeed'
+	 *
+	 * @param string $path Project path
+	 * @return boolean Success
+	 * @access public
+	 */
+		function securityCipherSeed($path) {
+			$File =& new File($path . 'config' . DS . 'core.php');
+			$contents = $File->read();
+			if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.cipherSeed\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
+				if (!class_exists('Security')) {
+					require LIBS . 'security.php';
+				}
+				$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
+				$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \''.$string.'\');', $contents);
+				if ($File->write($result)) {
+					return true;
+				}
+				return false;
+			}
+			return false;
+		}
 
 /**
  * Generates and writes CAKE_CORE_INCLUDE_PATH
