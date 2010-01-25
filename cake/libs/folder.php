@@ -270,7 +270,7 @@ class Folder extends Object {
  * @static
  */
 	function isAbsolute($path) {
-		return (bool) (preg_match('/^\\//', $path) || preg_match('/^[A-Z]:\\\\/i', $path));
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path));
 	}
 
 /**
@@ -423,14 +423,20 @@ class Folder extends Object {
 	function tree($path, $exceptions = true, $type = null) {
 		$original = $this->path;
 		$path = rtrim($path, DS);
+		if (!$this->cd($path)) {
+			if ($type === null) {
+				return array(array(), array());
+			}
+			return array();
+		}
 		$this->__files = array();
-		$this->__directories = array($path);
+		$this->__directories = array($this->realpath($path));
 		$directories = array();
 
-		if ($hidden === false) {
-			$hidden = true;
+		if ($exceptions === false) {
+			$exceptions = true;
 		}
-		while (count($this->__directories)) {
+		while (!empty($this->__directories)) {
 			$dir = array_pop($this->__directories);
 			$this->__tree($dir, $exceptions);
 			$directories[] = $dir;
@@ -451,15 +457,14 @@ class Folder extends Object {
  * Private method to list directories and files in each directory
  *
  * @param string $path The Path to read.
- * @param mixed $hidden Array of files to exclude from the read that will be performed.
+ * @param mixed $exceptions Array of files to exclude from the read that will be performed.
  * @access private
  */
-	function __tree($path, $hidden) {
-		if ($this->cd($path)) {
-			list($dirs, $files) = $this->read(false, $hidden, true);
-			$this->__directories = array_merge($this->__directories, $dirs);
-			$this->__files = array_merge($this->__files, $files);
-		}
+	function __tree($path, $exceptions) {
+		$this->path = $path;
+		list($dirs, $files) = $this->read(false, $exceptions, true);
+		$this->__directories = array_merge($this->__directories, $dirs);
+		$this->__files = array_merge($this->__files, $files);
 	}
 
 /**
