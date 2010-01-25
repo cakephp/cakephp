@@ -46,8 +46,10 @@ class ThemeView extends View {
  * Return all possible paths to find view files in order
  *
  * @param string $plugin
+ * @param boolean $cached Set to true to force dir scan.
  * @return array paths
- * @access private
+ * @access protected
+ * @todo Make theme path building respect $cached parameter.
  */
 	function _paths($plugin = null, $cached = true) {
 		$paths = parent::_paths($plugin, $cached);
