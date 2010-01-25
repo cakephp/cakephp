@@ -174,7 +174,7 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 	/**
-	 * test generation of Security.salt
+	 * test generation of Security.cipherSeed
 	 *
 	 * @return void
 	 * @access public
