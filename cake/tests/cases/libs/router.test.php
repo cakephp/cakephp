@@ -2388,12 +2388,24 @@ class CakeRouteTestCase extends CakeTestCase {
  */
 	function testParse() {
 		extract(Router::getNamedExpressions());
-		$route = new CakeRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$route =& new CakeRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
 		$route->compile();
 		$result = $route->parse('/posts/view/1');
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
 		$this->assertEqual($result['id'], '1');
+
+		$route =& new Cakeroute(
+			'/admin/:controller',
+			array('prefix' => 'admin', 'admin' => 1, 'action' => 'index')
+		);
+		$route->compile();
+		$result = $route->parse('/admin/');
+		$this->assertFalse($result);
+
+		$result = $route->parse('/admin/posts');
+		$this->assertEqual($result['controller'], 'posts');
+		$this->assertEqual($result['action'], 'index');
 	}
 }
 

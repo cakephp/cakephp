@@ -1307,7 +1307,7 @@ class CakeRoute {
 					$replacements[] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
-				$replacements[] = '(?:(?P<' . $name . '>[^/]+))?';
+				$replacements[] = '(?:(?P<' . $name . '>[^/]+))';
 				$search[] = '\\' . $namedElements[0][$i];
 			}
 			$names[] = $name;
@@ -1334,7 +1334,6 @@ class CakeRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-
 		if (!preg_match($this->_compiledRoute, $url, $route)) {
 			return false;
 		} else {
