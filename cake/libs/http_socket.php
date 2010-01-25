@@ -22,7 +22,8 @@ App::import('Core', array('CakeSocket', 'Set', 'Router'));
 /**
  * Cake network socket connection class.
  *
- * Core base class for HTTP network communication.
+ * Core base class for HTTP network communication. HttpSocket can be used as an
+ * Object Oriented replacement for cURL in many places.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -112,10 +113,10 @@ class HttpSocket extends CakeSocket {
  */
 	var $config = array(
 		'persistent' => false,
-		'host' 		 => 'localhost',
-		'protocol'   => 'tcp',
-		'port' 		 => 80,
-		'timeout' 	 =>	30,
+		'host' => 'localhost',
+		'protocol' => 'tcp',
+		'port' => 80,
+		'timeout' => 30,
 		'request' => array(
 			'uri' => array(
 				'scheme' => 'http',
@@ -142,7 +143,24 @@ class HttpSocket extends CakeSocket {
 /**
  * Build an HTTP Socket using the specified configuration.
  *
- * @param array $config	Configuration
+ * You can use a url string to set the url and use default configurations for
+ * all other options:
+ *
+ * `$http =& new HttpSockect('http://cakephp.org/');`
+ *
+ * Or use an array to configure multiple options:
+ *
+ * {{{
+ * $http =& new HttpSocket(array(
+ *    'host' => 'cakephp.org',
+ *    'timeout' => 20
+ * ));
+ * }}}
+ *
+ * See HttpSocket::$config for options that can be used.
+ *
+ * @param mixed $config Configuration information, either a string url or an array of options.
+ * @access public
  */
 	function __construct($config = array()) {
 		if (is_string($config)) {
@@ -158,7 +176,8 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Issue the specified request.
+ * Issue the specified request. HttpSocket::get() and HttpSocket::post() wrap this
+ * method and provide a more granular interface.
  *
  * @param mixed $request Either an URI string, or an array defining host/uri
  * @return mixed false on error, request body on success
@@ -270,15 +289,30 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a GET request to the specified URI, query, and request.
  *
- * @param mixed $uri URI to request (see {@link _parseUri()})
- * @param array $query Query to append to URI
+ * Using a string uri and an array of query string parameters:
+ *
+ * `$response = $http->get('http://google.com/search', array('q' => 'cakephp', 'client' => 'safari'));`
+ *
+ * Would do a GET request to `http://google.com/search?q=cakephp&client=safari`
+ *
+ * You could express the same thing using a uri array and query string parameters:
+ *
+ * {{{
+ * $response = $http->get(
+ *     array('host' => 'google.com', 'path' => '/search'),
+ *     array('q' => 'cakephp', 'client' => 'safari')
+ * );
+ * }}}
+ *
+ * @param mixed $uri URI to request. Either a string uri, or a uri array, see HttpSocket::_parseUri()
+ * @param array $query Querystring parameters to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
- * @return mixed Result of request
+ * @return mixed Result of request, either false on failure or the response to the request.
  * @access public
  */
 	function get($uri = null, $query = array(), $request = array()) {
 		if (!empty($query)) {
-			$uri =$this->_parseUri($uri);
+			$uri = $this->_parseUri($uri);
 			if (isset($uri['query'])) {
 				$uri['query'] = array_merge($uri['query'], $query);
 			} else {
@@ -294,10 +328,19 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a POST request to the specified URI, query, and request.
  *
- * @param mixed $uri URI to request (see {@link _parseUri()})
- * @param array $query Query to append to URI
+ * `post()` can be used to post simple data arrays to a url:
+ *
+ * {{{
+ * $response = $http->post('http://example.com', array(
+ *     'username' => 'batman',
+ *     'password' => 'bruce_w4yne'
+ * ));
+ * }}}
+ *
+ * @param mixed $uri URI to request. See HttpSocket::_parseUri()
+ * @param array $data Array of POST data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
- * @return mixed Result of request
+ * @return mixed Result of request, either false on failure or the response to the request.
  * @access public
  */
 	function post($uri = null, $data = array(), $request = array()) {
@@ -308,8 +351,8 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a PUT request to the specified URI, query, and request.
  *
- * @param mixed $uri URI to request (see {@link _parseUri()})
- * @param array $query Query to append to URI
+ * @param mixed $uri URI to request, See HttpSocket::_parseUri()
+ * @param array $data Array of PUT data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  * @access public
@@ -323,7 +366,7 @@ class HttpSocket extends CakeSocket {
  * Issues a DELETE request to the specified URI, query, and request.
  *
  * @param mixed $uri URI to request (see {@link _parseUri()})
- * @param array $query Query to append to URI
+ * @param array $data Query to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  * @access public
@@ -334,11 +377,31 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * undocumented function
+ * Normalizes urls into a $uriTemplate.  If no template is provided
+ * a default one will be used. Will generate the url using the
+ * current config information.
  *
- * @param unknown $url
- * @param unknown $uriTemplate
- * @return void
+ * ### Usage:
+ *
+ * After configuring part of the request parameters, you can use url() to generate
+ * urls.
+ *
+ * {{{
+ * $http->configUri('http://www.cakephp.org');
+ * $url = $http->url('/search?q=bar');
+ * }}}
+ *
+ * Would return `http://www.cakephp.org/search?q=bar`
+ *
+ * url() can also be used with custom templates:
+ *
+ * `$url = $http->url('http://www.cakephp/search?q=socket', '/%path?%query');`
+ *
+ * Would return `/search?q=socket`.
+ *
+ * @param mixed $url Either a string or array of url options to create a url with.
+ * @param string $uriTemplate A template string to use for url formatting.
+ * @return mixed Either false on failure or a string containing the composed url.
  * @access public
  */
 	function url($url = null, $uriTemplate = null) {
@@ -435,9 +498,9 @@ class HttpSocket extends CakeSocket {
  * Generic function to decode a $body with a given $encoding. Returns either an array with the keys
  * 'body' and 'header' or false on failure.
  *
- * @param string $body A string continaing the body to decode
- * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding
- * @return mixed Array or false
+ * @param string $body A string continaing the body to decode.
+ * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding.
+ * @return mixed Array of response headers and body or false.
  * @access protected
  */
 	function _decodeBody($body, $encoding = 'chunked') {
@@ -462,8 +525,8 @@ class HttpSocket extends CakeSocket {
  * Decodes a chunked message $body and returns either an array with the keys 'body' and 'header' or false as
  * a result.
  *
- * @param string $body A string continaing the chunked body to decode
- * @return mixed Array or false
+ * @param string $body A string continaing the chunked body to decode.
+ * @return mixed Array of response headers and body or false.
  * @access protected
  */
 	function _decodeChunkedBody($body) {
@@ -524,7 +587,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Parses and sets the specified URI into current request configuration.
  *
- * @param mixed $uri URI (see {@link _parseUri()})
+ * @param mixed $uri URI, See HttpSocket::_parseUri()
  * @return array Current configuration settings
  * @access protected
  */
@@ -557,9 +620,9 @@ class HttpSocket extends CakeSocket {
 /**
  * Takes a $uri array and turns it into a fully qualified URL string
  *
- * @param array $uri A $uri array, or uses $this->config if left empty
- * @param string $uriTemplate The Uri template/format to use
- * @return string A fully qualified URL formated according to $uriTemplate
+ * @param mixed $uri Either A $uri array, or a request string.  Will use $this->config if left empty.
+ * @param string $uriTemplate The Uri template/format to use.
+ * @return mixed A fully qualified URL formated according to $uriTemplate, or false on failure
  * @access protected
  */
 	function _buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
@@ -668,11 +731,12 @@ class HttpSocket extends CakeSocket {
  * - ?key[subKey]=value
  * - ?key[]=value1&key[]=value2
  *
- * A leading '?' mark in $query is optional and does not effect the outcome of this function. For the complete capabilities of this implementation
- * take a look at HttpSocketTest::testparseQuery()
+ * A leading '?' mark in $query is optional and does not effect the outcome of this function. 
+ * For the complete capabilities of this implementation take a look at HttpSocketTest::testparseQuery()
  *
  * @param mixed $query A query string to parse into an array or an array to return directly "as is"
- * @return array The $query parsed into a possibly multi-level array. If an empty $query is given, an empty array is returned.
+ * @return array The $query parsed into a possibly multi-level array. If an empty $query is
+ *     given, an empty array is returned.
  * @access protected
  */
 	function _parseQuery($query) {
@@ -857,10 +921,10 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * undocumented function
+ * Parses cookies in response headers.
  *
- * @param unknown $header
- * @return void
+ * @param array $header Header array containing one ore more 'Set-Cookie' headers.
+ * @return mixed Either false on no cookies, or an array of cookies recieved.
  * @access public
  * @todo Make this 100% RFC 2965 confirm
  */
@@ -899,10 +963,10 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * undocumented function
+ * Builds cookie headers for a request.
  *
- * @param unknown $cookies
- * @return void
+ * @param array $cookies Array of cookies to send with the request.
+ * @return string Cookie header string to be sent with the request.
  * @access public
  * @todo Refactor token escape mechanism to be configurable
  */
