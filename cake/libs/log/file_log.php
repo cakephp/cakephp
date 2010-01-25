@@ -21,7 +21,8 @@ if (!class_exists('File')) {
 	require LIBS . 'file.php';
 }
 /**
- * File Storage stream for Logging
+ * File Storage stream for Logging.  Writes logs to different files
+ * based on the type of log it is.
  *
  * @package cake
  * @subpackage cake.cake.libs.log
