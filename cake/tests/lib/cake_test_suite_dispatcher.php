@@ -224,12 +224,12 @@ class CakeTestSuiteDispatcher {
  */
 	function _runGroupTest() {
 		$Reporter =& CakeTestSuiteDispatcher::getReporter();
+		if ($this->params['codeCoverage']) {
+			CodeCoverageManager::init($this->params['group'], $Reporter);
+		}
 		if ('all' == $this->params['group']) {
 			$this->Manager->runAllTests($Reporter);
 		} else {
-			if ($this->params['codeCoverage']) {
-				CodeCoverageManager::init($this->params['group'], $Reporter);
-			}
 			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
 		}
 	}

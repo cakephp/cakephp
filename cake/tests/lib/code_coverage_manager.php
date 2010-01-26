@@ -530,50 +530,50 @@ class CodeCoverageManager {
 		$manager = CodeCoverageManager::getInstance();
 		$testManager =& new TestManager();
 
-		$path = TESTS . 'groups';
-
+		$path = TESTS;
 		if (!$isApp) {
-			$path = ROOT . DS . 'cake' . DS . 'tests' . DS . 'groups';
+			$path = ROOT . DS . 'cake' . DS . 'tests';
 		}
-
 		if (!!$manager->pluginTest) {
-			$path = APP . 'plugins' . DS . $manager->pluginTest . DS . 'tests' . DS . 'groups';
-
-			$pluginPaths = App::path('plugins');
-			foreach ($pluginPaths as $pluginPath) {
-				$tmpPath = $pluginPath . $manager->pluginTest . DS . 'tests' . DS. 'groups';
-				if (file_exists($tmpPath)) {
-					$path = $tmpPath;
-					break;
-				}
-			}
-		}
-		$path .= DS . $groupFile . $testManager->_groupExtension;
-
-		if (!file_exists($path)) {
-			trigger_error(__('This group file does not exist!', true));
-			return array();
+			$path = App::pluginPath($manager->pluginTest) . DS . 'tests';
 		}
 
 		$result = array();
-		$groupContent = file_get_contents($path);
-		$ds = '\s*\.\s*DS\s*\.\s*';
-		$pluginTest = 'APP\.\'plugins\'' . $ds . '\'' . $manager->pluginTest . '\'' . $ds . '\'tests\'' . $ds . '\'cases\'';
-		$pluginTest .= '|App::pluginPath\(\'' . $manager->pluginTest . '\'\)' . $ds . '\'tests\'' . $ds . '\'cases\'';
-		$pattern = '/\s*TestManager::addTestFile\(\s*\$this,\s*(' . $pluginTest . '|APP_TEST_CASES|CORE_TEST_CASES)' . $ds . '(.*?)\)/i';
-		preg_match_all($pattern, $groupContent, $matches);
+		if ($groupFile == 'all') {
+			$files = array_keys($testManager->getTestCaseList());
+			foreach ($files as $file) {
+				$file = str_replace(DS . 'tests' . DS . 'cases' . DS, DS, $file);
+				$file = str_replace('.test.php', '.php', $file);
+				$file = str_replace(DS . DS, DS, $file);
+				$result[] = $file;
+			}
+		} else {
+			$path .= DS . 'groups' . DS . $groupFile . $testManager->_groupExtension;
+			if (!file_exists($path)) {
+				trigger_error(__('This group file does not exist!', true));
+				return array();
+			}
 
-		foreach ($matches[2] as $file) {
-			$patterns = array(
-				'/\s*\.\s*DS\s*\.\s*/',
-				'/\s*APP_TEST_CASES\s*/',
-				'/\s*CORE_TEST_CASES\s*/',
-			);
+			$result = array();
+			$groupContent = file_get_contents($path);
+			$ds = '\s*\.\s*DS\s*\.\s*';
+			$pluginTest = 'APP\.\'plugins\'' . $ds . '\'' . $manager->pluginTest . '\'' . $ds . '\'tests\'' . $ds . '\'cases\'';
+			$pluginTest .= '|App::pluginPath\(\'' . $manager->pluginTest . '\'\)' . $ds . '\'tests\'' . $ds . '\'cases\'';
+			$pattern = '/\s*TestManager::addTestFile\(\s*\$this,\s*(' . $pluginTest . '|APP_TEST_CASES|CORE_TEST_CASES)' . $ds . '(.*?)\)/i';
+			preg_match_all($pattern, $groupContent, $matches);
 
-			$replacements = array(DS, '', '');
-			$file = preg_replace($patterns, $replacements, $file);
-			$file = str_replace("'", '', $file);
-			$result[] = $manager->__testObjectFileFromCaseFile($file, $isApp) . '.php';
+			foreach ($matches[2] as $file) {
+				$patterns = array(
+					'/\s*\.\s*DS\s*\.\s*/',
+					'/\s*APP_TEST_CASES\s*/',
+					'/\s*CORE_TEST_CASES\s*/',
+				);
+
+				$replacements = array(DS, '', '');
+				$file = preg_replace($patterns, $replacements, $file);
+				$file = str_replace("'", '', $file);
+				$result[] = $manager->__testObjectFileFromCaseFile($file, $isApp) . '.php';
+			}
 		}
 		return $result;
 	}
