@@ -5,7 +5,7 @@
  *
  * Simplifies the output of XML documents.
  *
- * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
