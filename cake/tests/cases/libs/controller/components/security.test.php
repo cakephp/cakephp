@@ -237,16 +237,16 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
+		$this->Controller->Session->write('_Token', serialize(array('allowedControllers' => array())));
 		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', array(
+		$this->Controller->Session->write('_Token', serialize(array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
-		));
+		)));
 		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireAuth('posted');
@@ -1144,6 +1144,20 @@ DIGEST;
 
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertEqual($this->Controller->params['_Token']['key'], $key);
+	}
+
+/**
+ * test that blackhole doesn't delete the _Token session key so repeat data submissions
+ * stay blackholed.
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/214
+ * @return void
+ */
+	function testBlackHoleNotDeletingSessionInformation() {
+		$this->Controller->Security->startup($this->Controller);
+
+		$this->Controller->Security->blackHole($this->Controller, 'auth');
+		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
 	}
 }
 ?>

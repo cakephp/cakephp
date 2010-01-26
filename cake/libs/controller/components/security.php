@@ -381,8 +381,6 @@ class SecurityComponent extends Object {
  * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
-		$this->Session->del('_Token');
-
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {
