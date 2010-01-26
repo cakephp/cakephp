@@ -12,7 +12,6 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
  * @link          http://www.cakephp.org
  * @package       cake

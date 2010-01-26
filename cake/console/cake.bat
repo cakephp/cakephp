@@ -11,7 +11,7 @@
 ::
 :: @filesource
 :: @copyright		Copyright 2005-2010, Cake Software Foundation, Inc.
-:: @link				http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+:: @link				http://cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
 :: @package			cake
 :: @subpackage		cake.cake.console
 :: @since			CakePHP(tm) v 1.2.0.5012
