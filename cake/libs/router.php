@@ -371,6 +371,8 @@ class Router {
  *
  * @param boolean $connect Set to true or false depending on whether you want or don't want default routes.
  * @return void
+ * @access public
+ * @static
  */
 	function defaults($connect = true) {
 		$self =& Router::getInstance();
@@ -861,6 +863,7 @@ class Router {
  *
  * @param array $url A url that didn't match any routes
  * @return string A generated url for the array
+ * @access protected
  * @see Router::url()
  */
 	function _handleNoRoute($url) {
@@ -956,6 +959,7 @@ class Router {
  * @param string $context An array with additional context information (controller / action)
  * @return boolean
  * @access public
+ * @static
  */
 	function matchNamed($param, $val, $rule, $context = array()) {
 		if ($rule === true || $rule === false) {
@@ -1020,6 +1024,7 @@ class Router {
  * @param array $param The params array that needs to be reversed.
  * @return string The string that is the reversed result of the array
  * @access public
+ * @static
  */
 	function reverse($params) {
 		$pass = $params['pass'];
@@ -1198,7 +1203,7 @@ class Router {
  *
  * @package cake.libs
  * @since 1.3.0
- * @see Router::connect
+ * @see Router::connect()
  */
 class CakeRoute {
 
