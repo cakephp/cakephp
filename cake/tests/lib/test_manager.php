@@ -23,7 +23,7 @@ define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
 /**
- * TestManager is the base class that handles loading and initiating the running 
+ * TestManager is the base class that handles loading and initiating the running
  * of TestCase and TestSuite classes that the user has selected.
  *
  * @package       cake
@@ -103,7 +103,7 @@ class TestManager {
 		if ($this->appTest) {
 			$test =& new TestSuite(__('All App Tests', true));
 		} else if ($this->pluginTest) {
-			$test =& new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($manager->pluginTest)));
+			$test =& new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
 		} else {
 			$test =& new TestSuite(__('All Core Tests', true));
 		}
