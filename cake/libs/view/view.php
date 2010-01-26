@@ -152,6 +152,7 @@ class View extends Object {
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var string
+ * @access public
  */
 	var $ext = '.ctp';
 
@@ -159,6 +160,7 @@ class View extends Object {
  * Sub-directory for this view file.
  *
  * @var string
+ * @access public
  */
 	var $subDir = null;
 	
@@ -166,6 +168,7 @@ class View extends Object {
  * Theme name.
  *
  * @var string
+ * @access public
  */
 	var $theme = null;
 
@@ -182,6 +185,7 @@ class View extends Object {
  * holds current errors for the model validation
  *
  * @var array
+ * @access public
  */
 	var $validationErrors = array();
 
@@ -189,6 +193,7 @@ class View extends Object {
  * True when the view has been rendered.
  *
  * @var boolean
+ * @access public
  */
 	var $hasRendered = false;
 
@@ -196,6 +201,7 @@ class View extends Object {
  * Array of loaded view helpers.
  *
  * @var array
+ * @access public
  */
 	var $loaded = array();
 
@@ -203,6 +209,7 @@ class View extends Object {
  * True if in scope of model-specific region
  *
  * @var boolean
+ * @access public
  */
 	var $modelScope = false;
 
@@ -210,6 +217,7 @@ class View extends Object {
  * Name of current model this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $model = null;
 
@@ -217,6 +225,7 @@ class View extends Object {
  * Name of association model this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $association = null;
 
@@ -224,6 +233,7 @@ class View extends Object {
  * Name of current model field this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $field = null;
 
@@ -231,6 +241,7 @@ class View extends Object {
  * Suffix of current field this view context is attached to
  *
  * @var string
+ * @access public
  */
 	var $fieldSuffix = null;
 
@@ -238,6 +249,7 @@ class View extends Object {
  * The current model ID this view context is attached to
  *
  * @var mixed
+ * @access public
  */
 	var $modelId = null;
 
@@ -245,6 +257,7 @@ class View extends Object {
  * List of generated DOM UUIDs
  *
  * @var array
+ * @access public
  */
 	var $uuids = array();
 
@@ -252,6 +265,7 @@ class View extends Object {
  * Holds View output.
  *
  * @var string
+ * @access public
  */
 	var $output = false;
 
@@ -279,12 +293,15 @@ class View extends Object {
  * Holds an array of paths.
  *
  * @var array
+ * @access private
  */
 	var $__paths = array();
 
 /**
  * Constructor
  *
+ * @param Controller $controller A controller object to pull View::__passedArgs from.
+ * @param boolean $register Should the View instance be registered in the ClassRegistry
  * @return View
  */
 	function __construct(&$controller, $register = true) {
@@ -311,10 +328,11 @@ class View extends Object {
  *
  * ### Special params
  *
- * - cache - enable caching for this element accepts boolean or strtotime compatible string.
+ * - `cache` - enable caching for this element accepts boolean or strtotime compatible string.
  *   Can also be an array. If `cache` is an array,
  *   `time` is used to specify duration of cache.
  *   `key` can be used to create unique cache files.
+ * - `plugin` - Load an element from a specific plugin.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
@@ -385,6 +403,7 @@ class View extends Object {
  * @param string $layout Layout to use
  * @param string $file Custom filename for view
  * @return string Rendered Element
+ * @access public
  */
 	function render($action = null, $layout = null, $file = null) {
 		if ($this->hasRendered) {
@@ -435,6 +454,7 @@ class View extends Object {
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
+ * @access public
  */
 	function renderLayout($content_for_layout, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -496,10 +516,13 @@ class View extends Object {
 	}
 
 /**
- * Render cached view
+ * Render cached view. Works in concert with CacheHelper and Dispatcher to 
+ * render cached view files.
  *
  * @param string $filename the cache file to include
  * @param string $timeStart the page render start time
+ * @return boolean Success of rendering the cached file.
+ * @access public
  */
 	function renderCache($filename, $timeStart) {
 		ob_start();
@@ -529,7 +552,7 @@ class View extends Object {
 /**
  * Returns a list of variables available in the current View context
  *
- * @return array
+ * @return array Array of the set view variable names.
  * @access public
  */
 	function getVars() {
@@ -539,7 +562,8 @@ class View extends Object {
 /**
  * Returns the contents of the given View variable(s)
  *
- * @return array
+ * @param string $var The view var you want the contents of.
+ * @return mixed The content of the named var if its set, otherwise null.
  * @access public
  */
 	function getVar($var) {
@@ -552,10 +576,11 @@ class View extends Object {
 
 /**
  * Adds a script block or other element to be inserted in $scripts_for_layout in
- * the <head /> of a document layout
+ * the `<head />` of a document layout
  *
- * @param string $name
- * @param string $content
+ * @param string $name Either the key name for the script, or the script content. Name can be used to
+ *   update/replace a script element.
+ * @param string $content The content of the script being added, optional.
  * @return void
  * @access public
  */
@@ -593,6 +618,7 @@ class View extends Object {
  * Returns the entity reference of the current context as an array of identity parts
  *
  * @return array An array containing the identity elements of an entity
+ * @access public
  */
 	function entity() {
 		$assoc = ($this->association) ? $this->association : $this->model;
@@ -622,6 +648,7 @@ class View extends Object {
  * @param mixed $two Value in case $one is a string (which then works as the key).
  *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
+ * @access public
  */
 	function set($one, $two = null) {
 		$data = null;
@@ -646,6 +673,7 @@ class View extends Object {
  * @param integer $code HTTP Error code (for instance: 404)
  * @param string $name Name of the error (for instance: Not Found)
  * @param string $message Error message as a web page
+ * @access public
  */
 	function error($code, $name, $message) {
 		header ("HTTP/1.1 {$code} {$name}");
@@ -661,6 +689,8 @@ class View extends Object {
  *
  * @param string $___viewFn Filename of the view
  * @param array $___dataForView Data to include in rendered view
+ * @param boolean $loadHelpers Boolean to indicate that helpers should be loaded.
+ * @param boolean $cached Whether or not to trigger the creation of a cache file.
  * @return string Rendered output
  * @access protected
  */
@@ -727,7 +757,8 @@ class View extends Object {
  * @param array $loaded List of helpers that are already loaded.
  * @param array $helpers List of helpers to load.
  * @param string $parent holds name of helper, if loaded helper has helpers
- * @return array
+ * @return array Array containing the loaded helpers.
+ * @access protected
  */
 	function &_loadHelpers(&$loaded, $helpers, $parent = null) {
 		foreach ($helpers as $i => $helper) {
@@ -792,7 +823,7 @@ class View extends Object {
  * CamelCased action names will be under_scored! This means that you can have
  * LongActionNames that refer to long_action_names.ctp views.
  *
- * @param string $action Controller action to find template filename for
+ * @param string $name Controller action to find template filename for
  * @return string Template filename
  * @access protected
  */
@@ -852,6 +883,7 @@ class View extends Object {
 /**
  * Returns layout filename for this template as a string.
  *
+ * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
  * @access protected
  */
@@ -885,10 +917,10 @@ class View extends Object {
  * Return a misssing view error message
  *
  * @param string $viewFileName the filename that should exist
- * @return cakeError
+ * @return false
+ * @access protected
  */
 	function _missingView($file, $error = 'missingView') {
-
 		if ($error === 'missingView') {
 			$this->cakeError('missingView', array(
 				'className' => $this->name,
@@ -910,7 +942,8 @@ class View extends Object {
 /**
  * Return all possible paths to find view files in order
  *
- * @param string $plugin
+ * @param string $plugin Optional plugin name to scan for view files.
+ * @param boolean $cached Set to true to force a refresh of view paths.
  * @return array paths
  * @access protected
  */
