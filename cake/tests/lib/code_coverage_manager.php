@@ -118,7 +118,7 @@ class CodeCoverageManager {
 	}
 
 /**
- * Stops/pauses code coverage collection. Does not clean the 
+ * Stops/pauses code coverage collection. Does not clean the
  * code coverage memory. Use clean() to clear code coverage memory
  *
  * @return void
@@ -159,7 +159,7 @@ class CodeCoverageManager {
 	}
 
 /**
- * Stops the current code coverage analyzation and dumps a nice report 
+ * Stops the current code coverage analyzation and dumps a nice report
  * depending on the reporter that was passed to start()
  *
  * @return void
@@ -559,6 +559,7 @@ class CodeCoverageManager {
 		$groupContent = file_get_contents($path);
 		$ds = '\s*\.\s*DS\s*\.\s*';
 		$pluginTest = 'APP\.\'plugins\'' . $ds . '\'' . $manager->pluginTest . '\'' . $ds . '\'tests\'' . $ds . '\'cases\'';
+		$pluginTest .= '|App::pluginPath\(\'' . $manager->pluginTest . '\'\)' . $ds . '\'tests\'' . $ds . '\'cases\'';
 		$pattern = '/\s*TestManager::addTestFile\(\s*\$this,\s*(' . $pluginTest . '|APP_TEST_CASES|CORE_TEST_CASES)' . $ds . '(.*?)\)/i';
 		preg_match_all($pattern, $groupContent, $matches);
 
