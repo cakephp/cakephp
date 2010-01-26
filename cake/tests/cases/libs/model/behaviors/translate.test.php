@@ -74,21 +74,25 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$TestModel =& new Tag();
 		$TestModel->translateTable = 'another_i18n';
 		$TestModel->Behaviors->attach('Translate', array('title'));
-		$this->assertEqual($TestModel->translateModel()->name, 'I18nModel');
-		$this->assertEqual($TestModel->translateModel()->useTable, 'another_i18n');
+		$translateModel =& $TestModel->Behaviors->Translate->translateModel($TestModel);
+		$this->assertEqual($translateModel->name, 'I18nModel');
+		$this->assertEqual($translateModel->useTable, 'another_i18n');
 
 		$TestModel =& new User();
 		$TestModel->Behaviors->attach('Translate', array('title'));
-		$this->assertEqual($TestModel->translateModel()->name, 'I18nModel');
-		$this->assertEqual($TestModel->translateModel()->useTable, 'i18n');
+		$translateModel =& $TestModel->Behaviors->Translate->translateModel($TestModel);
+		$this->assertEqual($translateModel->name, 'I18nModel');
+		$this->assertEqual($translateModel->useTable, 'i18n');
 
 		$TestModel =& new TranslatedArticle();
-		$this->assertEqual($TestModel->translateModel()->name, 'TranslateArticleModel');
-		$this->assertEqual($TestModel->translateModel()->useTable, 'article_i18n');
+		$translateModel =& $TestModel->Behaviors->Translate->translateModel($TestModel);
+		$this->assertEqual($translateModel->name, 'TranslateArticleModel');
+		$this->assertEqual($translateModel->useTable, 'article_i18n');
 
 		$TestModel =& new TranslatedItem();
-		$this->assertEqual($TestModel->translateModel()->name, 'TranslateTestModel');
-		$this->assertEqual($TestModel->translateModel()->useTable, 'i18n');
+		$translateModel =& $TestModel->Behaviors->Translate->translateModel($TestModel);
+		$this->assertEqual($translateModel->name, 'TranslateTestModel');
+		$this->assertEqual($translateModel->useTable, 'i18n');
 	}
 /**
  * testLocaleFalsePlain method
