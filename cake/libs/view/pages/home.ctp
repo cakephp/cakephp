@@ -4,12 +4,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.view.templates.pages
@@ -132,7 +132,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 </p>
 
 <ul>
-	<li><a href="http://www.cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
+	<li><a href="http://cakefoundation.org/"><?php __('Cake Software Foundation'); ?> </a>
 	<ul><li><?php __('Promoting development related to CakePHP'); ?></li></ul></li>
 	<li><a href="http://www.cakephp.org"><?php __('CakePHP'); ?> </a>
 	<ul><li><?php __('The Rapid Development Framework'); ?></li></ul></li>

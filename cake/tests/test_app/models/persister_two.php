@@ -7,12 +7,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2006-2009, Cake Software Foundation, Inc.
+ * Copyright 2006-2010, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.test_app.models
@@ -23,8 +23,8 @@ class PersisterTwo extends AppModel {
 	var $useTable = 'posts';
 	var $name = 'PersisterTwo';
 
-	var $actsAs = array('PersisterOneBehavior');
+	var $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');
 
-	var $hasMany = array('Comment');
+	var $hasMany = array('Comment', 'TestPlugin.TestPluginComment');
 }
 ?>

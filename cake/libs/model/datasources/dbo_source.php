@@ -5,12 +5,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources
@@ -1523,6 +1523,7 @@ class DboSource extends DataSource {
 		} else {
 			$combined = array_combine($fields, $values);
 		}
+
 		$fields = implode(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions)));
 
 		$alias = $joins = null;
@@ -1775,19 +1776,28 @@ class DboSource extends DataSource {
 
 /**
  * Creates a default set of conditions from the model if $conditions is null/empty.
+ * If conditions are supplied then they will be returned.  If a model doesn't exist and no conditions
+ * were provided either null or false will be returned based on what was input.
  *
  * @param object $model
- * @param mixed	 $conditions
+ * @param mixed $conditions Array of conditions, conditions string, null or false. If an array of conditions,
+ *   or string conditions those conditions will be returned.  With other values the model's existance will be checked.
+ *   If the model doesn't exist a null or false will be returned depending on the input value.
  * @param boolean $useAlias Use model aliases rather than table names when generating conditions
- * @return mixed
+ * @return mixed Either null, false, $conditions or an array of default conditions to use.
+ * @see DboSource::update()
+ * @see DboSource::conditions()
  * @access public
  */
 	function defaultConditions(&$model, $conditions, $useAlias = true) {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
-		if (!$model->exists()) {
+		$exists = $model->exists();
+		if (!$exists && $conditions !== null) {
 			return false;
+		} elseif (!$exists) {
+			return null;
 		}
 		$alias = $model->alias;
 
@@ -1961,9 +1971,11 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Creates a WHERE clause by parsing given conditions data.
+ * Creates a WHERE clause by parsing given conditions data.  If an array or string
+ * conditions are provided those conditions will be parsed and quoted.  If a boolean
+ * is given it will be integer cast as condition.  Null will return 1 = 1.
  *
- * @param mixed $conditions Array or string of conditions
+ * @param mixed $conditions Array or string of conditions, or any value.
  * @param boolean $quoteValues If true, values should be quoted
  * @param boolean $where If true, "WHERE " will be prepended to the return value
  * @param Model $model A reference to the Model instance making the query
@@ -1985,8 +1997,11 @@ class DboSource extends DataSource {
 			}
 			return $clause . implode(' AND ', $out);
 		}
+		if ($conditions === false || $conditions === true) {
+			return $clause . (int)$conditions . ' = 1';
+		}
 
-		if (empty($conditions) || trim($conditions) == '' || $conditions === true) {
+		if (empty($conditions) || trim($conditions) == '') {
 			return $clause . '1 = 1';
 		}
 		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';

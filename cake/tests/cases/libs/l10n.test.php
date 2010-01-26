@@ -5,12 +5,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -38,76 +38,46 @@ class L10nTest extends CakeTestCase {
 
 		// Catalog Entry
 		$l10n->get('en');
-		$result = $l10n->language;
-		$expected = 'English';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('eng', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'eng';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English');
+		$this->assertEqual($l10n->languagePath, array('eng', 'eng'));
+		$this->assertEqual($l10n->locale, 'eng');
 
 		// Map Entry
 		$l10n->get('eng');
-		$result = $l10n->language;
-		$expected = 'English';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('eng', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'eng';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English');
+		$this->assertEqual($l10n->languagePath, array('eng', 'eng'));
+		$this->assertEqual($l10n->locale, 'eng');
 
 		// Catalog Entry
 		$l10n->get('en-ca');
-		$result = $l10n->language;
-		$expected = 'English (Canadian)';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('en_ca', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'en_ca';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English (Canadian)');
+		$this->assertEqual($l10n->languagePath, array('en_ca', 'eng'));
+		$this->assertEqual($l10n->locale, 'en_ca');
 
 		// Default Entry
 		define('DEFAULT_LANGUAGE', 'en-us');
 
 		$l10n->get('use_default');
-		$result = $l10n->language;
-		$expected = 'English (United States)';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('en_us', 'eng');
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English (United States)');
+		$this->assertEqual($l10n->languagePath, array('en_us', 'eng'));
+		$this->assertEqual($l10n->locale, 'en_us');
 
-		$result = $l10n->locale;
-		$expected = 'en_us';
-		$this->assertEqual($result, $expected);
+		$l10n->get('es');
+		$l10n->get('');
+		$this->assertEqual($l10n->lang, 'en-us');
+
 
 		// Using $this->default
 		$l10n = new L10n();
+
 		$l10n->get('use_default');
-		$result = $l10n->language;
-		$expected = 'English (United States)';
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->languagePath;
-		$expected = array('en_us', 'eng', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'en_us';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English (United States)');
+		$this->assertEqual($l10n->languagePath, array('en_us', 'eng', 'eng'));
+		$this->assertEqual($l10n->locale, 'en_us');
 	}
 
 /**
@@ -122,45 +92,24 @@ class L10nTest extends CakeTestCase {
 
 		$l10n =& new L10n();
 		$l10n->get();
-		$result = $l10n->language;
-		$expected = 'English (Canadian)';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('en_ca', 'eng', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'en_ca';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English (Canadian)');
+		$this->assertEqual($l10n->languagePath, array('en_ca', 'eng', 'eng'));
+		$this->assertEqual($l10n->locale, 'en_ca');
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx';
 		$l10n->get();
-		$result = $l10n->language;
-		$expected = 'Spanish (Mexican)';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('es_mx', 'spa', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'es_mx';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'Spanish (Mexican)');
+		$this->assertEqual($l10n->languagePath, array('es_mx', 'spa', 'eng'));
+		$this->assertEqual($l10n->locale, 'es_mx');
 
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_xy,en_ca';
 		$l10n->get();
-		$result = $l10n->language;
-		$expected = 'English';
-		$this->assertEqual($result, $expected);
 
-		$result = $l10n->languagePath;
-		$expected = array('eng', 'eng', 'eng');
-		$this->assertEqual($result, $expected);
-
-		$result = $l10n->locale;
-		$expected = 'eng';
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($l10n->language, 'English');
+		$this->assertEqual($l10n->languagePath, array('eng', 'eng', 'eng'));
+		$this->assertEqual($l10n->locale, 'eng');
 
 		$_SERVER = $__SERVER;
 	}
