@@ -13,7 +13,7 @@
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.console.libs.templates.objects
  * @since         CakePHP(tm) v 1.3
