@@ -788,7 +788,7 @@ class Router {
 
 			$prefixExists = (array_intersect_key($url, array_flip($self->__prefixes)));
 			foreach ($self->__prefixes as $prefix) {
-				if (!isset($url[$prefix]) && !empty($params[$prefix]) && !$prefixExists) {
+				if (!empty($params[$prefix]) && !$prefixExists) {
 					$url[$prefix] = true;
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
 					unset($url[$prefix]);
@@ -812,7 +812,6 @@ class Router {
 
 				if ($match = $self->routes[$i]->match($url)) {
 					$output = trim($match, '/');
-					$url = array();
 					break;
 				}
 				$url = $originalUrl;
@@ -1537,14 +1536,12 @@ class CakeRoute {
 		$instance =& Router::getInstance();
 		$separator = $instance->named['separator'];
 
-		if (!empty($params['named'])) {
-			if (is_array($params['named'])) {
-				$named = array();
-				foreach ($params['named'] as $key => $value) {
-					$named[] = $key . $separator . $value;
-				}
-				$params['pass'] = $params['pass'] . '/' . implode('/', $named);;
+		if (!empty($params['named']) && is_array($params['named'])) {
+			$named = array();
+			foreach ($params['named'] as $key => $value) {
+				$named[] = $key . $separator . $value;
 			}
+			$params['pass'] = $params['pass'] . '/' . implode('/', $named);
 		}
 		$out = $this->template;
 
@@ -1554,7 +1551,7 @@ class CakeRoute {
 			if (isset($params[$key])) {
 				$string = $params[$key];
 			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key = $key . '/';
+				$key .= '/';
 			}
 			$search[] = ':' . $key;
 			$replace[] = $string;
