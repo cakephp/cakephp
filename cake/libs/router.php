@@ -717,6 +717,15 @@ class Router {
  * - '/' - the method will find base URL of application.
  * - A combination of controller/action - the method will find url for it.
  *
+ * There are a few 'special' parameters that can change the final URL string that is generated
+ * 
+ * - `base` - Set to false to remove the base path from the generated url. If your application
+ *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
+ *   cake relative urls are required when using requestAction.
+ * - `?` - Takes an array of query string parameters
+ * - `#` - Allows you to set url hash fragments.
+ * - `full_base` - If true the `FULL_BASE_URL` constant will be prepended to generated urls.
+ *
  * @param mixed $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
  *   and/or 'plugin', in addition to named arguments (keyed array elements),
