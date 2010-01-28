@@ -381,6 +381,23 @@ class ScaffoldViewTest extends CakeTestCase {
 	}
 
 /**
+ * test getting the view file name for themed scaffolds.
+ *
+ * @return void
+ */
+	function testGetViewFileNameWithTheme() {
+		$this->Controller->action = 'index';
+		$this->Controller->viewPath = 'posts';
+		$this->Controller->theme = 'test_theme';
+		$ScaffoldView =& new TestScaffoldView($this->Controller);
+
+		$result = $ScaffoldView->testGetFilename('index');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS 
+			. 'themed' . DS . 'test_theme' . DS . 'posts' . DS . 'scaffold.index.ctp';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test default index scaffold generation
  *
  * @access public
