@@ -306,7 +306,7 @@ class FormHelper extends AppHelper {
  *
  * {{{
  * array usage:
- * 
+ *
  * array('label' => 'save'); value="save"
  * array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
  * array('name' => 'Whatever'); value="Submit" name="Whatever"
@@ -389,7 +389,7 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Determine which fields of a form should be used for hash. 
+ * Determine which fields of a form should be used for hash.
  * Populates $this->fields
  *
  * @param mixed $field Reference to field to be secured
@@ -644,7 +644,7 @@ class FormHelper extends AppHelper {
  *
  * - `type` - Force the type of widget you want. e.g. `type => 'select'`
  * - `label` - Either a string label, or an array of options for the label. See FormHelper::label()
- * - `div` - Either `false` to disable the div, or an array of options for the div.  
+ * - `div` - Either `false` to disable the div, or an array of options for the div.
  *    See HtmlHelper::div() for more options.
  * - `options` - for widgets that take options e.g. radio, select
  * - `error` - control the error message that is produced
@@ -1412,6 +1412,8 @@ class FormHelper extends AppHelper {
  *
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `orderYear` - Ordering of year values in select options.
+ *   Possible values 'asc', 'desc'. Default 'desc'
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
@@ -1446,9 +1448,13 @@ class FormHelper extends AppHelper {
 		} elseif ($selected === false) {
 			$selected = null;
 		}
-		$yearOptions = array('min' => $minYear, 'max' => $maxYear);
+		$yearOptions = array('min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
+		if (isset($attributes['orderYear'])) {
+			$yearOptions['order'] = $attributes['orderYear'];
+			unset($attributes['orderYear']);
+		}
 		return $this->select(
-			$fieldName . ".year", $this->__generateOptions('year', $yearOptions),
+			$fieldName . '.year', $this->__generateOptions('year', $yearOptions),
 			$selected, $attributes
 		);
 	}
@@ -1862,7 +1868,7 @@ class FormHelper extends AppHelper {
 
 			if ($name !== null) {
 				if (
-					(!$selectedIsArray && !$selectedIsEmpty && (string)$selected == (string)$name) || 
+					(!$selectedIsArray && !$selectedIsEmpty && (string)$selected == (string)$name) ||
 					($selectedIsArray && in_array($name, $selected))
 				) {
 					if ($attributes['style'] === 'checkbox') {
@@ -2005,7 +2011,9 @@ class FormHelper extends AppHelper {
 				for ($i = $min; $i <= $max; $i++) {
 					$data[$i] = $i;
 				}
-				$data = array_reverse($data, true);
+				if ($options['order'] != 'asc') {
+					$data = array_reverse($data, true);
+				}
 			break;
 		}
 		$this->__options[$name] = $data;
