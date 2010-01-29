@@ -89,7 +89,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  */
 	function testDomReady() {
 		$result = $this->Jquery->domReady('foo.name = "bar";');
-		$expected = '$(document).bind("ready", function (event) {foo.name = "bar";});';
+		$expected = '$(document).ready(function () {foo.name = "bar";});';
 		$this->assertEqual($result, $expected);
 	}
 
