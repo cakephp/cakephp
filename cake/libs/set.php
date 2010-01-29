@@ -777,7 +777,8 @@ class Set {
  *
  * @param mixed $val1 First value
  * @param mixed $val2 Second value
- * @return array Computed difference
+ * @return array Returns the key => value pairs that are not common in $val1 and $val2
+ * The expression for this function is ($val1 - $val2) + ($val2 - ($val1 - $val2))
  * @access public
  * @static
  */
@@ -788,25 +789,15 @@ class Set {
 		if (empty($val2)) {
 			return (array)$val1;
 		}
-		$out = array();
-
-		foreach ($val1 as $key => $val) {
-			$exists = array_key_exists($key, $val2);
-
-			if ($exists && $val2[$key] != $val) {
-				$out[$key] = $val;
-			} elseif (!$exists) {
-				$out[$key] = $val;
-			}
-			unset($val2[$key]);
-		}
-
-		foreach ($val2 as $key => $val) {
-			if (!array_key_exists($key, $out)) {
-				$out[$key] = $val;
+		$intersection = array_intersect_key($val1,$val2);
+		while (list($key,) = each($intersection)) {
+			if ($val1[$key] == $val2[$key]) {
+				unset($val1[$key]);
+				unset($val2[$key]);
 			}
 		}
-		return $out;
+
+		return $val1 + $val2;
 	}
 
 /**
