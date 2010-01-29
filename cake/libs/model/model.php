@@ -1868,18 +1868,15 @@ class Model extends Overloadable {
  */
 	function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
-			$with = $data['with'];
-			$records = $this->{$data['with']}->find('all', array(
-				'conditions' => array_merge(array(
-					$this->{$with}->escapeField($data['foreignKey']) => $id
-				)),
-				'fields' => $this->{$with}->primaryKey,
+			$joinModel = $data['with'];
+			$records = $this->{$joinModel}->find('all', array(
+				'conditions' => array_merge(array($this->{$joinModel}->escapeField($data['foreignKey']) => $id)),
+				'fields' => $this->{$joinModel}->primaryKey,
 				'recursive' => -1
 			));
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$id = $record[$this->{$with}->alias][$this->{$with}->primaryKey];
-					$this->{$with}->delete($id);
+					$this->{$joinModel}->delete($record[$this->{$joinModel}->alias][$this->{$joinModel}->primaryKey]);
 				}
 			}
 		}
