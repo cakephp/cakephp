@@ -53,12 +53,12 @@ class DboSource extends DataSource {
 	var $alias = 'AS ';
 
 /**
- * Caches fields quoted in DboSource::name()
+ * Caches result from query parsing operations
  *
  * @var array
  * @access public
  */
-	var $fieldCache = array();
+	var $methodCache = array();
 
 /**
  * Bypass automatic adding of joined fields/associations.
@@ -481,6 +481,10 @@ class DboSource extends DataSource {
 			}
 			return $data;
 		}
+		$cacheKey = crc32($data);
+		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
+			return $this->methodCache[__FUNCTION__][$cacheKey];
+		}
 		$data = trim($data);
 		if (preg_match('/^\w+(\.\w+)*$/', $data)) { // string, string.string
 			if (strpos($data, '.') === false) { // string
@@ -499,7 +503,7 @@ class DboSource extends DataSource {
 		if (preg_match('/^(\w+(\.\w+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*(\w+)$/', $data, $matches)) {
 			return preg_replace('/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3]));
 		}
-		return $data;
+		return $this->methodCache[__FUNCTION__][$cacheKey] = $data;
 	}
 
 /**
@@ -1848,6 +1852,20 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
+		$cacheKey = array(
+			$model->useDbConfig,
+			$model->table,
+			array_keys($model->schema()),
+			$model->name,
+			$model->getVirtualField(),
+			$alias,
+			$fields,
+			$quote
+		);
+		$cacheKey = crc32(serialize($cacheKey));
+		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
+			return $this->methodCache[__FUNCTION__][$cacheKey];
+		}
 		$allFields = empty($fields);
 		if ($allFields) {
 			$fields = array_keys($model->schema());
@@ -1930,7 +1948,7 @@ class DboSource extends DataSource {
 						} else {
 							$field[0] = explode('.', $field[1]);
 							if (!Set::numeric($field[0])) {
-								$field[0] = implode('.', array_map(array($this, 'name'), $field[0]));
+								$field[0] = implode('.', array_map(array(&$this, 'name'), $field[0]));
 								$fields[$i] = preg_replace('/\(' . $field[1] . '\)/', '(' . $field[0] . ')', $fields[$i], 1);
 							}
 						}
@@ -1941,7 +1959,7 @@ class DboSource extends DataSource {
 		if (!empty($virtual)) {
 			$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
 		}
-		return array_unique($fields);
+		return $this->methodCache[__FUNCTION__][$cacheKey] = array_unique($fields);
 	}
 
 /**
@@ -1957,6 +1975,25 @@ class DboSource extends DataSource {
  * @access public
  */
 	function conditions($conditions, $quoteValues = true, $where = true, $model = null) {
+		if (is_object($model)) {
+			$cacheKey = array(
+				$model->useDbConfig,
+				$model->table,
+				$model->schema(),
+				$model->name,
+				$model->getVirtualField(),
+				$conditions,
+				$quoteValues,
+				$where
+			);
+		} else {
+			$cacheKey = array($conditions, $quoteValues, $where);
+		}
+		$cacheKey = crc32(serialize($cacheKey));
+		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
+			return $this->methodCache[__FUNCTION__][$cacheKey];
+		}
+
 		$clause = $out = '';
 
 		if ($where) {
@@ -1967,16 +2004,16 @@ class DboSource extends DataSource {
 			$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
 
 			if (empty($out)) {
-				return $clause . ' 1 = 1';
+				return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . ' 1 = 1';
 			}
-			return $clause . implode(' AND ', $out);
+			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . implode(' AND ', $out);
 		}
 		if ($conditions === false || $conditions === true) {
-			return $clause . (int)$conditions . ' = 1';
+			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . (int)$conditions . ' = 1';
 		}
 
 		if (empty($conditions) || trim($conditions) == '') {
-			return $clause . '1 = 1';
+			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . '1 = 1';
 		}
 		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';
 
@@ -1988,7 +2025,7 @@ class DboSource extends DataSource {
 		} else {
 			$conditions = $this->__quoteFields($conditions);
 		}
-		return $clause . $conditions;
+		return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . $conditions;
 	}
 
 /**
@@ -2088,9 +2125,6 @@ class DboSource extends DataSource {
 				}
 
 				if ($data != null) {
-					if (preg_match('/^\(\(\((.+)\)\)\)$/', $data)) {
-						$data = substr($data, 1, strlen($data) - 2);
-					}
 					$out[] = $data;
 					$data = null;
 				}
@@ -2153,7 +2187,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($bound) {
-			return String::insert($key . ' ' . trim($operator), $value);
+			return  String::insert($key . ' ' . trim($operator), $value);
 		}
 
 		if (!preg_match($operatorMatch, trim($operator))) {
@@ -2209,19 +2243,26 @@ class DboSource extends DataSource {
 			$end = preg_quote($this->endQuote);
 		}
 		$conditions = str_replace(array($start, $end), '', $conditions);
-		preg_match_all('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', $conditions, $replace, PREG_PATTERN_ORDER);
+		$conditions = preg_replace_callback('/(?:[\'\"][^\'\"\\\]*(?:\\\.[^\'\"\\\]*)*[\'\"])|([a-z0-9_' . $start . $end . ']*\\.[a-z0-9_' . $start . $end . ']*)/i', array(&$this, '__quoteMatchedField'), $conditions);
 
-		if (isset($replace['1']['0'])) {
-			$pregCount = count($replace['1']);
-
-			for ($i = 0; $i < $pregCount; $i++) {
-				if (!empty($replace['1'][$i]) && !is_numeric($replace['1'][$i])) {
-					$conditions = preg_replace('/\b' . preg_quote($replace['1'][$i]) . '\b/', $this->name($replace['1'][$i]), $conditions);
-				}
-			}
+		if ($conditions !== null) {
 			return $conditions;
 		}
 		return $original;
+	}
+
+/**
+ * Auxiliary function to qoute matches `Model.fields` from a preg_replace_callback call
+ *
+ * @param string matched string
+ * @return string quoted strig
+ * @access private
+ */
+	function __quoteMatchedField($match) {
+		if (is_numeric($match[0])) {
+			return $match[0];
+		}
+		return $this->name($match[0]);
 	}
 
 /**
@@ -2295,13 +2336,7 @@ class DboSource extends DataSource {
 			}
 
 			if (strpos($key, '.')) {
-				preg_match_all('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', $key, $matches, PREG_PATTERN_ORDER);
-				$pregCount = count($matches[0]);
-				for ($i = 0; $i < $pregCount; $i++) {
-					if (!is_numeric($matches[0][$i])) {
-						$key = preg_replace('/' . $matches[0][$i] . '/', $this->name($matches[0][$i]), $key);
-					}
-				}
+				$key = preg_replace_callback('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', array(&$this, '__quoteMatchedField'), $key);
 			}
 
 			$key = trim($key);
