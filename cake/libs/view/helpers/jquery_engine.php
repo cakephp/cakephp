@@ -178,15 +178,19 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 	}
 
 /**
- * Create a domReady event. For jQuery
+ * Create a domReady event. For jQuery. This method does not 
+ * bind a 'traditional event' as `$(document).bind('ready', fn)`
+ * Works in an entirely different fashion than  `$(document).ready()`
+ * The first will not run the function when eval()'d as part of a response
+ * The second will.  Because of the way that ajax pagination is done
+ * `$().ready()` is used.
  *
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
  * @access public
  */
 	function domReady($functionBody) {
-		$this->get('document');
-		return $this->event('ready', $functionBody, array('stop' => false));
+		return $this->jQueryObject . '(document).ready(function () {' . $functionBody . '});';
 	}
 
 /**
