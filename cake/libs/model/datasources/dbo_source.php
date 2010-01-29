@@ -494,7 +494,6 @@ class DboSource extends DataSource {
 			return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
 		}
 		if (preg_match('/^\w+\.\*$/', $data)) { // string.*
-			$items = explode('.', $data);
 			return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $data);
 		}
 		if (preg_match('/^(\w+)\((.*)\)$/', $data, $matches)) { // Functions

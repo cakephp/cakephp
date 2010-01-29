@@ -789,7 +789,7 @@ class Set {
 		if (empty($val2)) {
 			return (array)$val1;
 		}
-		$intersection = array_intersect_key($val1,$val2);
+		$intersection = array_intersect_key($val1, $val2);
 		while (list($key,) = each($intersection)) {
 			if ($val1[$key] == $val2[$key]) {
 				unset($val1[$key]);
