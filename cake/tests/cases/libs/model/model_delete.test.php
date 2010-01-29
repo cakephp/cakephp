@@ -501,6 +501,41 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * test deleteLinks with Multiple habtm associations
+ *
+ * @return void
+ */
+	function testDeleteLinksWithMultipleHabtmAssociations() {
+		$this->loadFixtures('JoinA', 'JoinB', 'JoinC', 'JoinAB', 'JoinAC');
+		$JoinA =& new JoinA();
+
+		//create two new join records to expose the issue.
+		$JoinA->JoinAsJoinC->create(array(
+			'join_a_id' => 1,
+			'join_c_id' => 2,
+		));
+		$JoinA->JoinAsJoinC->save();
+		$JoinA->JoinAsJoinB->create(array(
+			'join_a_id' => 1,
+			'join_b_id' => 2,
+		));
+		$JoinA->JoinAsJoinB->save();
+
+		$result = $JoinA->delete(1);
+		$this->assertTrue($result, 'Delete failed %s');
+
+		$joinedBs = $JoinA->JoinAsJoinB->find('count', array(
+			'conditions' => array('JoinAsJoinB.join_a_id' => 1)
+		));
+		$this->assertEqual($joinedBs, 0, 'JoinA/JoinB link records left over. %s');
+
+		$joinedBs = $JoinA->JoinAsJoinC->find('count', array(
+			'conditions' => array('JoinAsJoinC.join_a_id' => 1)
+		));
+		$this->assertEqual($joinedBs, 0, 'JoinA/JoinC link records left over. %s');
+	}
+
+/**
  * testHabtmDeleteLinksWhenNoPrimaryKeyInJoinTable method
  *
  * @access public
