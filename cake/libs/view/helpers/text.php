@@ -336,7 +336,11 @@ class TextHelper extends AppHelper {
  * @access public
  */
 	function toList($list, $and = 'and', $separator = ', ') {
-        return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
+		if (count($list) > 1) {
+			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
+		} else {
+			return array_pop($list);
+		}
 	}
 }
 ?>

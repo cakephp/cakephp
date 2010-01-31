@@ -355,6 +355,12 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	function testListGeneration() {
+		$result = $this->Text->toList(array());
+		$this->assertEqual($result, '');
+
+		$result = $this->Text->toList(array('One'));
+		$this->assertEqual($result, 'One');
+
 		$result = $this->Text->toList(array('Larry', 'Curly', 'Moe'));
 		$this->assertEqual($result, 'Larry, Curly and Moe');
 
