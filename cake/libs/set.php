@@ -790,11 +790,12 @@ class Set {
 			return (array)$val1;
 		}
 		$intersection = array_intersect_key($val1, $val2);
-		while (list($key,) = each($intersection)) {
+		while (($key = key($intersection)) !== null) {
 			if ($val1[$key] == $val2[$key]) {
 				unset($val1[$key]);
 				unset($val2[$key]);
 			}
+			next($intersection);
 		}
 
 		return $val1 + $val2;
