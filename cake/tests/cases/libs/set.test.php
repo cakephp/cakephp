@@ -1032,7 +1032,7 @@ class SetTest extends CakeTestCase {
 
 /**
  * testExtractWithArrays method
- * 
+ *
  * @access public
  * @return void
  */
@@ -1455,6 +1455,47 @@ class SetTest extends CakeTestCase {
 		$expected = array(
 			0 => array('name' => 'main')
 		);
+		$this->assertIdentical($result, $expected);
+
+		$a = array();
+		$b = array('name' => 'bob', 'address' => 'home');
+		$result = Set::diff($a, $b);
+		$this->assertIdentical($result, $b);
+
+
+		$a = array('name' => 'bob', 'address' => 'home');
+		$b = array();
+		$result = Set::diff($a, $b);
+		$this->assertIdentical($result, $a);
+
+		$a = array('key' => true, 'another' => false, 'name' => 'me');
+		$b = array('key' => 1, 'another' => 0);
+		$expected = array('name' => 'me');
+		$result = Set::diff($a, $b);
+		$this->assertIdentical($result, $expected);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => null);
+		$expected = array('key' => 'value', 'name' => 'me');
+		$result = Set::diff($a, $b);
+		$this->assertIdentical($result, $expected);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => 'value');
+		$expected = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$result = Set::diff($a, $b);
+		$this->assertIdentical($result, $expected);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array('key' => 'differentValue', 'another' => 'value');
+		$expected = array('key' => 'differentValue', 'another' => 'value', 'name' => 'me');
+		$result = Set::diff($b, $a);
+		$this->assertIdentical($result, $expected);
+
+		$a = array('key' => 'value', 'another' => null, 'name' => 'me');
+		$b = array(0 => 'differentValue', 1 => 'value');
+		$expected = $a + $b;
+		$result = Set::diff($a, $b);
 		$this->assertIdentical($result, $expected);
 	}
 
