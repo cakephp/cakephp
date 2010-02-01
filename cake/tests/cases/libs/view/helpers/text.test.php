@@ -100,7 +100,9 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertIdentical($this->Text->{$m}($text7, 255), $text7);
 		$this->assertIdentical($this->Text->{$m}($text7, 15), 'El moño está...');
 		$this->assertIdentical($this->Text->{$m}($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
-
+		$this->assertIdentical($this->Text->{$m}($text1, 25, 'Read more'), 'The quick brown Read more');
+		$this->assertIdentical($this->Text->{$m}($text1, 25, '<a href="http://www.google.com/">Read more</a>', true, true), 'The quick brown <a href="http://www.google.com/">Read more</a>');
+		
 		if ($this->method == 'truncate') {
 			$this->method = 'trim';
 			$this->testTruncate();
