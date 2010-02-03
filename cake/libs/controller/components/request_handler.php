@@ -230,6 +230,9 @@ class RequestHandlerComponent extends Object {
 		foreach ($_POST as $key => $val) {
 			unset($_POST[$key]);
 		}
+		if (is_array($url)) {
+			$url = Router::url($url + array('base' => false));
+		}
 		echo $this->requestAction($url, array('return'));
 		$this->_stop();
 	}
