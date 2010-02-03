@@ -674,7 +674,7 @@ class Debugger extends Object {
 			trigger_error(__('Please change the value of \'Security.salt\' in app/config/core.php to a salt value specific to your application', true), E_USER_NOTICE);
 		}
 
-		if (Configure::read('Security.cipherSeed') == '76859309657453542496749683645') {
+		if (Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
 			trigger_error(__('Please change the value of \'Security.cipherSeed\' in app/config/core.php to a numeric (digits only) seed value specific to your application', true), E_USER_NOTICE);
 		}
 	}
