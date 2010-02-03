@@ -167,7 +167,7 @@ class TextHelper extends AppHelper {
 			if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
 				return $text;
 			}
-			$totalLength = mb_strlen($ending);
+			$totalLength = mb_strlen(strip_tags($ending));
 			$openTags = array();
 			$truncate = '';
 			preg_match_all('/(<\/?([\w+]+)[^>]*>)?([^<>]*)/', $text, $tags, PREG_SET_ORDER);
@@ -209,7 +209,6 @@ class TextHelper extends AppHelper {
 					break;
 				}
 			}
-
 		} else {
 			if (mb_strlen($text) <= $length) {
 				return $text;

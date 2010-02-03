@@ -366,21 +366,24 @@ class Dispatcher extends Object {
 			$this->webroot = $base .'/';
 			return $base;
 		}
-			$file = '/' . basename($baseUrl);
-			$base = dirname($baseUrl);
 
-			if ($base === DS || $base === '.') {
-				$base = '';
-			}
-			$this->webroot = $base .'/';
+		$file = '/' . basename($baseUrl);
+		$base = dirname($baseUrl);
 
+		if ($base === DS || $base === '.') {
+			$base = '';
+		}
+		$this->webroot = $base .'/';
+
+		if (!empty($base)) {
 			if (strpos($this->webroot, $dir) === false) {
 				$this->webroot .= $dir . '/' ;
 			}
 			if (strpos($this->webroot, $webroot) === false) {
 				$this->webroot .= $webroot . '/';
 			}
-			return $base . $file;
+		}
+		return $base . $file;
 	}
 /**
  * Restructure params in case we're serving a plugin.
