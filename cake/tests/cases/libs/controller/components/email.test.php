@@ -284,6 +284,56 @@ TEMPDOC;
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
 
+
+/**
+ * testSmtpSendMultipleTo method
+ *
+ * @access public
+ * @return void
+ */
+	function testSmtpSendMultipleTo() {
+		if (!$this->skipIf(!fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
+		$this->Controller->EmailTest->reset();
+		$this->Controller->EmailTest->to = array('postmaster@localhost', 'root@localhost');
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP multiple To test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+
+		$this->Controller->EmailTest->_debug = true;
+		$this->Controller->EmailTest->sendAs = 'text';
+		$expect = <<<TEMPDOC
+<pre>Host: localhost
+Port: 25
+Timeout: 30
+To: postmaster@localhost, root@localhost
+From: noreply@example.com
+Subject: Cake SMTP multiple To test
+Header:
+
+To: postmaster@localhost, root@localhost
+From: noreply@example.com
+Reply-To: noreply@example.com
+Subject: Cake SMTP multiple To test
+X-Mailer: CakePHP Email Component
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bitParameters:
+
+Message:
+
+This is the body of the message
+
+</pre>
+TEMPDOC;
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+	}
+
 /**
  * testAuthenticatedSmtpSend method
  *
@@ -664,7 +714,7 @@ TEXTBLOC;
 		$this->Controller->EmailTest->reset();
 
 		$this->assertNull($this->Controller->EmailTest->template);
-		$this->assertNull($this->Controller->EmailTest->to);
+		$this->assertIdentical($this->Controller->EmailTest->to, array());
 		$this->assertNull($this->Controller->EmailTest->from);
 		$this->assertNull($this->Controller->EmailTest->replyTo);
 		$this->assertNull($this->Controller->EmailTest->return);
