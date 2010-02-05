@@ -163,10 +163,15 @@ class TreeBehavior extends ModelBehavior {
 				$Model->data[$Model->alias][$parent] = null;
 				$this->_addToWhitelist($Model, $parent);
 			} else {
-				list($node) = array_values($Model->find('first', array(
+				$values = $Model->find('first', array(
 					'conditions' => array($scope,$Model->escapeField() => $Model->id),
 					'fields' => array($Model->primaryKey, $parent, $left, $right ), 'recursive' => $recursive)
-				));
+				);
+
+				if ($values === false) {
+					return false;
+				}
+				list($node) = array_values($values);
 
 				$parentNode = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
