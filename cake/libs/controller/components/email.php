@@ -513,11 +513,11 @@ class EmailComponent extends Object{
  * @access public
  * @param array Associative array containing headers to be set.
  */
-    function header($headers) {
-        foreach ($headers as $header => $value) {
-            $this->__header[] = sprintf('%s: %s', trim($header), trim($value));
-        }
-    }
+	function header($headers) {
+		foreach ($headers as $header => $value) {
+			$this->__header[] = sprintf('%s: %s', trim($header), trim($value));
+		}
+	}
 /**
  * Create emails headers including (but not limited to) from email address, reply to,
  * bcc and cc.
@@ -529,12 +529,12 @@ class EmailComponent extends Object{
 
 		if ($this->delivery == 'smtp') {
 			if (is_array($this->to)) {
-				$this->__header[] = 'To: ' . implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+				$headers['To'] = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 			} else {
-				$this->__header[] = 'To: ' . $this->__formatAddress($this->to);
+				$headers['To'] = $this->_formatAddress($this->to);
 			}
 		}
-		$this->__header[] = 'From: ' . $this->__formatAddress($this->from);
+		$headers['From'] = $this->_formatAddress($this->from);
 
 		if (!empty($this->replyTo)) {
 			$headers['Reply-To'] = $this->_formatAddress($this->replyTo);
@@ -763,14 +763,14 @@ class EmailComponent extends Object{
 		$header = implode("\n", $this->__header);
 		$message = implode("\n", $this->__message);
 		if (is_array($this->to)) {
-			$to = implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
 			$to = $this->to;
 		}
 		if (ini_get('safe_mode')) {
-			return @mail($to, $this->__encode($this->subject), $message, $header);
+			return @mail($to, $this->_encode($this->subject), $message, $header);
 		}
-		return @mail($to, $this->__encode($this->subject), $message, $header, $this->additionalParams);
+		return @mail($to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
 	}
 
 /**
@@ -829,7 +829,7 @@ class EmailComponent extends Object{
 			$tos = $this->to;
 		}
 		foreach ($tos as $to) {
-			if (!$this->__smtpSend('RCPT TO: ' . $this->__formatAddress($to, true))) {
+			if (!$this->_smtpSend('RCPT TO: ' . $this->_formatAddress($to, true))) {
 				return false;
 			}
 		}
@@ -897,7 +897,7 @@ class EmailComponent extends Object{
 		$fm = '<pre>';
 
 		if (is_array($this->to)) {
-			$to = implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
 			$to = $this->to;
 		}
