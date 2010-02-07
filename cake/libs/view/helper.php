@@ -302,10 +302,12 @@ class Helper extends Overloadable {
  * 'escape' is a special option in that it controls the conversion of
  *  attributes to their html-entity encoded equivalents.  Set to false to disable html-encoding.
  *
+ * If value for any option key is set to `null` or `false`, that option will be excluded from output.
+ *
  * @param array $options Array of options.
  * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
  * @param string $insertBefore String to be inserted before options.
- * @param string $insertAfter String to be inserted ater options.
+ * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
  * @access public
  */
@@ -322,7 +324,9 @@ class Helper extends Overloadable {
 			$attributes = array();
 
 			foreach ($keys as $index => $key) {
-				$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
+				if ($values[$index] !== false && $values[$index] !== null) {
+					$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
+				}
 			}
 			$out = implode(' ', $attributes);
 		} else {
@@ -711,7 +715,7 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Sets the defaults for an input tag.  Will set the 
+ * Sets the defaults for an input tag.  Will set the
  * name, value, and id attributes for an array of html attributes. Will also
  * add a 'form-error' class if the field contains validation errors.
  *
@@ -737,7 +741,7 @@ class Helper extends Overloadable {
 /**
  * Adds the given class to the element options
  *
- * @param array $options Array options/attributes to add a class to 
+ * @param array $options Array options/attributes to add a class to
  * @param string $class The classname being added.
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
