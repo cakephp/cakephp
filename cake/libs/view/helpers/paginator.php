@@ -67,7 +67,7 @@ class PaginatorHelper extends AppHelper {
  *  - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
  *  - `$options['update']` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- *  - `$options['indicator']` DOM id of the element that will be shown when doing AJAX requests. **Only supported by 
+ *  - `$options['indicator']` DOM id of the element that will be shown when doing AJAX requests. **Only supported by
  *     AjaxHelper**
  *
  * @var array
@@ -368,7 +368,7 @@ class PaginatorHelper extends AppHelper {
  * Merges passed URL options with current pagination state to generate a pagination URL.
  *
  * @param array $options Pagination/URL options array
- * @param boolean $asArray Return the url as an array, or a URI string 
+ * @param boolean $asArray Return the url as an array, or a URI string
  * @param string $model Which model to paginate on
  * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
  * @access public
@@ -427,7 +427,7 @@ class PaginatorHelper extends AppHelper {
 		$url = array_merge(array('page' => $paging['page'] + ($which == 'Prev' ? $step * -1 : $step)), $url);
 
 		if ($this->{$check}($model)) {
-			return $this->link($title, $url, array_merge($options, compact('escape', 'class')));
+			return $this->Html->tag($tag, $this->link($title, $url, array_merge($options, compact('escape', 'class'))));
 		} else {
 			return $this->Html->tag($tag, $title, array_merge($options, compact('escape', 'class')));
 		}
@@ -514,7 +514,7 @@ class PaginatorHelper extends AppHelper {
  *
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
  * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
- *    set to 'range' to generate output like '1 - 3 of 13'.  Can also be set to a custom string, containing 
+ *    set to 'range' to generate output like '1 - 3 of 13'.  Can also be set to a custom string, containing
  *    the following placeholders `%page%`, `%pages%`, `%current%`, `%count%`, `%start%`, `%end%` and any
  *    custom content you would like.
  * - `separator` The separator string to use, default to ' of '
@@ -592,9 +592,9 @@ class PaginatorHelper extends AppHelper {
  * - `modulus` how many numbers to include on either side of the current page, defaults to 8.
  * - `separator` Separator content defaults to ' | '
  * - `tag` The tag to wrap links in, defaults to 'span'
- * - `first` Whether you want first links generated, set to an integer to define the number of 'first' 
+ * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
  *    links to generate
- * - `last` Whether you want last links generated, set to an integer to define the number of 'last' 
+ * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
  *    links to generate
  *
  * @param mixed $options Options for the numbers, (before, after, model, modulus, separator)
