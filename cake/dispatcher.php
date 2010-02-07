@@ -596,12 +596,18 @@ class Dispatcher extends Object {
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return false;
 		}
+		$filters = Configure::read('Asset.filter');
+		$isCss = strpos($url, 'ccss/') === 0;
+		$isJs = strpos($url, 'cjs/') === 0;
 
-		if (strpos($url, 'ccss/') === 0) {
-			include WWW_ROOT . DS . Configure::read('Asset.filter.css');
+		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
+			header('HTTP/1.1 404 Not Found');
+			return $this->_stop();
+		} elseif ($isCss) {
+			include WWW_ROOT . DS . $filter['css'];
 			$this->_stop();
-		} elseif (strpos($url, 'cjs/') === 0) {
-			include WWW_ROOT . DS . Configure::read('Asset.filter.js');
+		} elseif ($isJs) {
+			include WWW_ROOT . DS . $filters['js'];
 			$this->_stop();
 		}
 		$controller = null;
