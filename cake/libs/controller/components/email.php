@@ -393,7 +393,7 @@ class EmailComponent extends Object{
  */
 	function reset() {
 		$this->template = null;
-		$this->to = null;
+		$this->to = array();
 		$this->from = null;
 		$this->replyTo = null;
 		$this->return = null;
@@ -528,9 +528,13 @@ class EmailComponent extends Object{
         $headers = array();
 
 		if ($this->delivery == 'smtp') {
-			$headers['To'] = $this->_formatAddress($this->to);
-        }
-        $headers['From'] = $this->_formatAddress($this->from);
+			if (is_array($this->to)) {
+				$this->__header[] = 'To: ' . implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+			} else {
+				$this->__header[] = 'To: ' . $this->__formatAddress($this->to);
+			}
+		}
+		$this->__header[] = 'From: ' . $this->__formatAddress($this->from);
 
 		if (!empty($this->replyTo)) {
 			$headers['Reply-To'] = $this->_formatAddress($this->replyTo);
@@ -758,10 +762,15 @@ class EmailComponent extends Object{
 	function _mail() {
 		$header = implode("\n", $this->__header);
 		$message = implode("\n", $this->__message);
-		if (ini_get('safe_mode')) {
-			return @mail($this->to, $this->_encode($this->subject), $message, $header);
+		if (is_array($this->to)) {
+			$to = implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+		} else {
+			$to = $this->to;
 		}
-		return @mail($this->to, $this->_encode($this->subject), $message, $header, $this->additionalParams);
+		if (ini_get('safe_mode')) {
+			return @mail($to, $this->__encode($this->subject), $message, $header);
+		}
+		return @mail($to, $this->__encode($this->subject), $message, $header, $this->additionalParams);
 	}
 
 /**
@@ -814,8 +823,15 @@ class EmailComponent extends Object{
 			return false;
 		}
 
-		if (!$this->_smtpSend('RCPT TO: ' . $this->_formatAddress($this->to, true))) {
-			return false;
+		if (!is_array($this->to)) {
+			$tos = array($this->to);
+		} else {
+			$tos = $this->to;
+		}
+		foreach ($tos as $to) {
+			if (!$this->__smtpSend('RCPT TO: ' . $this->__formatAddress($to, true))) {
+				return false;
+			}
 		}
 
 		foreach ($this->cc as $cc) {
@@ -880,12 +896,17 @@ class EmailComponent extends Object{
 		$message = implode($nl, $this->__message);
 		$fm = '<pre>';
 
+		if (is_array($this->to)) {
+			$to = implode(', ', array_map(array($this, '__formatAddress'), $this->to));
+		} else {
+			$to = $this->to;
+		}
 		if ($this->delivery == 'smtp') {
 			$fm .= sprintf('%s %s%s', 'Host:', $this->smtpOptions['host'], $nl);
 			$fm .= sprintf('%s %s%s', 'Port:', $this->smtpOptions['port'], $nl);
 			$fm .= sprintf('%s %s%s', 'Timeout:', $this->smtpOptions['timeout'], $nl);
 		}
-		$fm .= sprintf('%s %s%s', 'To:', $this->to, $nl);
+		$fm .= sprintf('%s %s%s', 'To:', $to, $nl);
 		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);
 		$fm .= sprintf('%s %s%s', 'Subject:', $this->_encode($this->subject), $nl);
 		$fm .= sprintf('%s%3$s%3$s%s', 'Header:', $header, $nl);
