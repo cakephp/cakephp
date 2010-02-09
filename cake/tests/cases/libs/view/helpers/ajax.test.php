@@ -557,6 +557,13 @@ class AjaxHelperTest extends CakeTestCase {
 		$this->assertPattern("/Event.observe\('link[0-9]+', [\w\d,'\(\)\s{}]+Ajax\.Request\([\w\d\s,'\(\){}:\/]+onComplete:function\(request, json\) {test}/", $result);
 		$this->assertNoPattern('/^<a[^<>]+complete="test"[^<>]*>Ajax Link<\/a>/', $result);
 		$this->assertNoPattern('/^<a\s+[^<>]*url="[^"]*"[^<>]*>/', $result);
+
+		$result = $this->Ajax->link(
+			'Ajax Link',
+			array('controller' => 'posts', 'action' => 'index', '?' => array('one' => '1', 'two' => '2')),
+			array('update' => 'myDiv', 'id' => 'myLink')
+		);
+		$this->assertPattern('#/posts/\?one\=1\&two\=2#', $result);
 	}
 /**
  * testRemoteTimer method
