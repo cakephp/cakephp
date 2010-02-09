@@ -21,7 +21,7 @@
  */
 
 if (!defined('REQUEST_MOBILE_UA')) {
-	define('REQUEST_MOBILE_UA', '(iPhone|MIDP|AvantGo|BlackBerry|J2ME|Opera Mini|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
+	define('REQUEST_MOBILE_UA', '(Android|iPod|iPhone|MIDP|AvantGo|BlackBerry|J2ME|Opera Mini|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
 }
 
 /**
