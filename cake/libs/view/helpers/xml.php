@@ -160,9 +160,9 @@ class XmlHelper extends AppHelper {
  *
  * @param mixed $data The content to be converted to XML
  * @param array $options The data formatting options.  For a list of valid options, see
- *     XmlNode::__construct().
+ *     Xml::__construct().
  * @return string A copy of $data in XML format
- * @see XmlNode
+ * @see Xml::__construct()
  * @access public
  * @link http://book.cakephp.org/view/1474/serialize
  */
