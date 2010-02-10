@@ -189,6 +189,10 @@ class ViewTask extends Shell {
 		$this->Controller->interactive = false;
 		$tables = $this->Controller->listAll($this->connection, false);
 
+		$actions = null;
+		if (isset($this->args[1])) {
+			$actions = array($this->args[1]);
+		}
 		$this->interactive = false;
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
@@ -196,7 +200,9 @@ class ViewTask extends Shell {
 			$this->controllerPath = Inflector::underscore($this->controllerName);
 			if (App::import('Model', $model)) {
 				$vars = $this->__loadController();
-				$actions = $this->_methodsToBake();
+				if (!$actions) {
+					$actions = $this->_methodsToBake();
+				}
 				$this->bakeActions($actions, $vars);
 			}
 		}
@@ -440,6 +446,9 @@ class ViewTask extends Shell {
 		$this->out("<controller>");
 		$this->out("\tName of the controller views to bake. Can use Plugin.name");
 		$this->out("\tas a shortcut for plugin baking.");
+		$this->out();
+		$this->out("<action>");
+		$this->out("\tName of the action view to bake");
 		$this->out();
 		$this->out('Commands:');
 		$this->out();
