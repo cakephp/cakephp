@@ -1237,9 +1237,8 @@ class App extends Object {
 		if ($type === 'core') {
 			return App::core('libs');
 		}
-		
-		if (isset($this->{$type.'s'})) {
-			return $this->{$type.'s'};
+		if (isset($this->{$type . 's'})) {
+			return $this->{$type . 's'};
 		}
 		return $paths;
 	}
