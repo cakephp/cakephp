@@ -741,6 +741,7 @@ class ModelTask extends Shell {
 		$filename = $path . Inflector::underscore($name) . '.php';
 		$this->out("\nBaking model class for $name...");
 		$this->createFile($filename, $out);
+		ClassRegistry::flush();
 		return $out;
 	}
 
