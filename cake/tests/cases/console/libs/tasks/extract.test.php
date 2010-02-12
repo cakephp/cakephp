@@ -126,9 +126,17 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		// extract.ctp
-		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:6\n';
+		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
 		$this->assertPattern($pattern, $result);
-		$pattern = '/msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:7\n';
+		$pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
+		$this->assertPattern($pattern, $result);
+
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:74\n';
+		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertPattern($pattern, $result);
 
 		// extract.ctp - reading the domain.pot
@@ -143,7 +151,6 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertPattern($pattern, $result);
-
 
 		$Folder = new Folder($path);
 		$Folder->delete();

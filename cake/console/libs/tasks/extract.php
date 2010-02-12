@@ -264,7 +264,7 @@ class ExtractTask extends Shell {
 		$count = 0;
 		$tokenCount = count($this->__tokens);
 
-		while (($tokenCount - $count) > 7) {
+		while (($tokenCount - $count) > 1) {
 			list($countToken, $firstParenthesis) = array($this->__tokens[$count], $this->__tokens[$count + 1]);
 			if (!is_array($countToken)) {
 				$count++;
@@ -321,12 +321,12 @@ class ExtractTask extends Shell {
 	function __buildFiles() {
 		foreach ($this->__strings as $domain => $strings) {
 			foreach ($strings as $string => $files) {
-				$occurances = array();
+				$occurences = array();
 				foreach ($files as $file => $lines) {
-					$occurances[] = $file . ':' . implode(';', $lines);
+					$occurences[] = $file . ':' . implode(';', $lines);
 				}
-				$occurances = implode("\n#: ", $occurances);
-				$header = '#: ' . str_replace($this->__paths, '', $occurances) . "\n";
+				$occurences = implode("\n#: ", $occurences);
+				$header = '#: ' . str_replace($this->__paths, '', $occurences) . "\n";
 
 				if (strpos($string, "\0") === false) {
 					$sentence = "msgid \"{$string}\"\n";
