@@ -174,6 +174,12 @@ class ExtractTask extends Shell {
 		$this->out(__('Output Directory: ', true) . $this->__output);
 		$this->hr();
 		$this->__extractTokens();
+		$this->__buildFiles();
+		$this->__writeFiles();
+		$this->__paths = $this->__files = $this->__storage = array();
+		$this->__strings = $this->__tokens = array();
+		$this->out();
+		$this->out(__('Done.', true));
 	}
 
 /**
@@ -244,10 +250,6 @@ class ExtractTask extends Shell {
 			$this->__parse('__dn', array('domain', 'singular', 'plural'));
 			$this->__parse('__dcn', array('domain', 'singular', 'plural'));
 		}
-		$this->__buildFiles();
-		$this->__writeFiles();
-		$this->out();
-		$this->out(__('Done.', true));
 	}
 
 /**
