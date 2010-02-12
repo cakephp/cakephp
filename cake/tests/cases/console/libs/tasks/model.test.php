@@ -44,7 +44,7 @@ Mock::generatePartial(
 );
 Mock::generatePartial(
 	'ModelTask', 'MockModelTask',
-	array('in', 'out', 'createFile')
+	array('in', 'out', 'createFile', '_checkUnitTest')
 );
 /**
  * ModelTaskTest class
@@ -53,7 +53,7 @@ Mock::generatePartial(
  * @subpackage    cake.tests.cases.console.libs.tasks
  */
 class ModelTaskTest extends CakeTestCase {
-	var $fixtures = array('core.datatype', 'core.binary_test');
+	var $fixtures = array('core.datatype', 'core.binary_test', 'core.article');
 /**
  * setUp method
  *
@@ -87,6 +87,24 @@ class ModelTaskTest extends CakeTestCase {
 
 		$result = $this->Task->fixture('BinaryTest');
 		$this->assertPattern("/'data' => 'Lorem ipsum dolor sit amet'/", $result);
+	}
+/**
+ * test that execute passes runs bake depending with named model.
+ *
+ * @return void
+ * @access public
+ */
+	function testBakeModel() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$filename = '/my/path/article.php';
+		$this->Task->setReturnValue('_checkUnitTest', 1);
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$model =& new Model(array('name' => 'Article', 'table' => 'articles', 'ds' => 'test_suite'));
+		$this->Task->bake($model);
+
+		$this->assertEqual(count(ClassRegistry::keys()), 0);
+		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
 	}
 }
 ?>
