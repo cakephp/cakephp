@@ -190,8 +190,6 @@ class ThemeViewTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
-		$Configure = App::getInstance();
-		array_shift($Configure->views);
 	}
 
 /**
@@ -217,7 +215,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->action = 'index';
 		$this->Controller->theme = 'test_theme';
 
-		$ThemeView = new TestThemeView($this->Controller);
+		$ThemeView =& new TestThemeView($this->Controller);
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
 		$this->assertEqual($result, $expected);
@@ -225,7 +223,7 @@ class ThemeViewTest extends CakeTestCase {
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
 		$result = $ThemeView->getLayoutFileName('plugin_default');
 		$this->assertEqual($result, $expected);
-		
+
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'layouts' . DS .'default.ctp';
 		$result = $ThemeView->getLayoutFileName('default');
 		$this->assertEqual($result, $expected);
@@ -244,7 +242,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->action = 'display';
 		$this->Controller->params['pass'] = array('home');
 
-		$ThemeView = new TestThemeView($this->Controller);
+		$ThemeView =& new TestThemeView($this->Controller);
 		$ThemeView->theme = 'test_theme';
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS .'pages' . DS .'home.ctp';
 		$result = $ThemeView->getViewFileName('home');
@@ -285,7 +283,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->params['pass'] = array('home');
 
 		restore_error_handler();
-		$View = new TestThemeView($this->Controller);
+		$View =& new TestThemeView($this->Controller);
 		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
@@ -308,13 +306,39 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->theme = 'my_theme';
 
 		restore_error_handler();
-		$View = new TestThemeView($this->Controller);
+		$View =& new TestThemeView($this->Controller);
 		ob_start();
 		$result = $View->getLayoutFileName();
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
 		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
+	}
+
+/**
+ * test memory leaks that existed in _paths at one point.
+ *
+ * @return void
+ */
+	function testMemoryLeakInPaths() {
+		if ($this->skipIf(function_exists('get_memory_usage'), 'No memory measurement function, fail. %s')) {
+			return;
+		}
+		$this->Controller->plugin = null;
+		$this->Controller->name = 'Posts';
+		$this->Controller->viewPath = 'posts';
+		$this->Controller->layout = 'whatever';
+		$this->Controller->theme = 'test_theme';
+
+		$View =& new ThemeView($this->Controller);
+		$View->element('test_element');
+
+		$start = memory_get_usage();
+		for ($i = 0; $i < 10; $i++) {
+			$View->element('test_element');
+		}
+		$end = memory_get_usage();
+		$this->assertWithinMargin($start, $end, 2000);
 	}
 }
 ?>

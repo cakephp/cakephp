@@ -68,8 +68,7 @@ class ThemeView extends View {
 			}
 			$paths = array_merge($themePaths, $paths);
 		}
-		$this->__paths = $paths;
-		return $this->__paths;
+		return $paths;
 	}
 }
 ?>
