@@ -8,13 +8,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
@@ -70,6 +69,15 @@ class RequestHandlerTestController extends Controller {
 	function destination() {
 		$this->viewPath = 'posts';
 		$this->render('index');
+	}
+/**
+ * test method for ajax redirection + parameter parsing
+ *
+ * @return void
+ */
+	function param_method($one = null, $two = null) {
+		echo "one: $one two: $two";
+		$this->autoRender = false;
 	}
 }
 /**
@@ -541,6 +549,36 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		Configure::write('viewPaths', $_paths);
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
+/**
+ * test that the beforeRedirect callback properly converts
+ * array urls into their correct string ones, and adds base => false so
+ * the correct urls are generated.
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
+ * @return void
+ */
+	function testBeforeRedirectCallbackWithArrayUrl() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		), true);
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
+			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
+		));
+
+		$RequestHandler =& new NoStopRequestHandler();
+
+		ob_start();
+		$RequestHandler->beforeRedirect(
+			$this->Controller,
+			array('controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second')
+		);
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'one: first two: second');
+		App::build();
 	}
 }
 ?>

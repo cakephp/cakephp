@@ -8,13 +8,12 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *	Licensed under The Open Group Test Suite License
  *	Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.datasources
@@ -2097,6 +2096,30 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * test that booleans and null make logical condition strings.
+ *
+ * @return void
+ */
+	function testBooleanNullConditionsParsing() {
+		$result = $this->testDb->conditions(true);
+		$this->assertEqual($result, ' WHERE 1 = 1', 'true conditions failed %s');
+
+		$result = $this->testDb->conditions(false);
+		$this->assertEqual($result, ' WHERE 0 = 1', 'false conditions failed %s');
+
+		$result = $this->testDb->conditions(null);
+		$this->assertEqual($result, ' WHERE 1 = 1', 'null conditions failed %s');
+
+		$result = $this->testDb->conditions(array());
+		$this->assertEqual($result, ' WHERE 1 = 1', 'array() conditions failed %s');
+
+		$result = $this->testDb->conditions('');
+		$this->assertEqual($result, ' WHERE 1 = 1', '"" conditions failed %s');
+
+		$result = $this->testDb->conditions(' ', '"  " conditions failed %s');
+		$this->assertEqual($result, ' WHERE 1 = 1');
+	}
+/**
  * testStringConditionsParsing method
  *
  * @access public
@@ -3093,6 +3116,7 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
 		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
 	}
+
 /**
  * testStatements method
  *

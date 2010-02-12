@@ -7,15 +7,14 @@
  *
  * PHP versions 5
  *
- * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.model
  * @since         CakePHP(tm) v 0.10.0.0
@@ -1825,14 +1824,15 @@ class Model extends Overloadable {
  */
 	function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
-			$records = $this->{$data['with']}->find('all', array(
-				'conditions' => array_merge(array($this->{$data['with']}->escapeField($data['foreignKey']) => $id)),
-				'fields' => $this->{$data['with']}->primaryKey,
+			$joinModel = $data['with'];
+			$records = $this->{$joinModel}->find('all', array(
+				'conditions' => array_merge(array($this->{$joinModel}->escapeField($data['foreignKey']) => $id)),
+				'fields' => $this->{$joinModel}->primaryKey,
 				'recursive' => -1
 			));
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$this->{$data['with']}->delete($record[$this->{$data['with']}->alias][$this->{$data['with']}->primaryKey]);
+					$this->{$joinModel}->delete($record[$this->{$joinModel}->alias][$this->{$joinModel}->primaryKey]);
 				}
 			}
 		}

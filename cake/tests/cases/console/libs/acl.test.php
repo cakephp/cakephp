@@ -5,15 +5,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP :  Rapid Development Framework (http://www.cakephp.org)
+ * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2006-2010, Cake Software Foundation, Inc.
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
  * @copyright     Copyright 2006-2010, Cake Software Foundation, Inc.
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP Project
+ * @link          http://cakefoundation.org/projects/info/cakephp CakePHP Project
  * @package       cake
  * @subpackage    cake.tests.cases.console.libs.tasks
  * @since         CakePHP v 1.2.0.7726

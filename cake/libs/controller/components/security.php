@@ -7,15 +7,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://www.cakephp.org)
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @filesource
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://www.cakefoundation.org)
- * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
  * @since         CakePHP(tm) v 0.10.8.2156
@@ -381,8 +380,6 @@ class SecurityComponent extends Object {
  * @see SecurityComponent::$blackHoleCallback
  */
 	function blackHole(&$controller, $error = '') {
-		$this->Session->del('_Token');
-
 		if ($this->blackHoleCallback == null) {
 			$code = 404;
 			if ($error == 'login') {

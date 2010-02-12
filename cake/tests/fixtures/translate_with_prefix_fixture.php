@@ -29,21 +29,21 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
-class TranslateFixture extends CakeTestFixture {
+class TranslateWithPrefixFixture extends CakeTestFixture {
 /**
  * name property
  *
  * @var string 'Translate'
  * @access public
  */
-	var $name = 'Translate';
+	var $name = 'TranslateWithPrefix';
 /**
  * table property
  *
  * @var string 'i18n'
  * @access public
  */
-	var $table = 'i18n';
+	var $table = 'i18n_translate_with_prefixes';
 /**
  * fields property
  *
