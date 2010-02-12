@@ -683,6 +683,9 @@ STRINGEND;
 		$this->Task->expectAt(1, 'createFile', array(
 		$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
 		$this->Task->bake('Article', array(), array());
+
+		$this->assertEqual(count(ClassRegistry::keys()), 0);
+		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
@@ -699,6 +702,9 @@ STRINGEND;
 		$this->Task->setReturnValue('_checkUnitTest', 1);
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
 		$this->Task->execute();
+
+		$this->assertEqual(count(ClassRegistry::keys()), 0);
+		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
@@ -732,6 +738,9 @@ STRINGEND;
 		$this->Task->expectAt(4, 'createFile', array($filename, new PatternExpectation('/class Tag/')));
 
 		$this->Task->execute();
+
+		$this->assertEqual(count(ClassRegistry::keys()), 0);
+		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
@@ -762,6 +771,9 @@ STRINGEND;
 		$this->Task->expectOnce('createFile');
 		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
 		$this->Task->execute();
+
+		$this->assertEqual(count(ClassRegistry::keys()), 0);
+		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
