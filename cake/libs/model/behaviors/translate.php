@@ -465,6 +465,9 @@ class TranslateBehavior extends ModelBehavior {
  * @return bool
  */
 	function unbindTranslation(&$model, $fields = null) {
+		if (empty($fields) && empty($this->settings[$model->alias])) {
+			return false;
+		}
 		if (empty($fields)) {
 			return $this->unbindTranslation($model, $this->settings[$model->alias]);
 		}

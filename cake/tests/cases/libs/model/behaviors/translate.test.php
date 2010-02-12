@@ -877,5 +877,23 @@ class TranslateBehaviorTest extends CakeTestCase {
 		));
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * Test infinite loops not occuring with unbindTranslation()
+ *
+ * @return void
+ */
+	function testUnbindTranslationInfinteLoop() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel =& new TranslatedItem();
+		$TestModel->Behaviors->detach('Translate');
+		$TestModel->actsAs = array();
+		$TestModel->Behaviors->attach('Translate');
+		$TestModel->bindTranslation(array('title', 'content'), true);
+		$result = $TestModel->unbindTranslation();
+
+		$this->assertFalse($result);
+	}
 }
 ?>
