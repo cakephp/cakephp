@@ -421,7 +421,7 @@ class TestTask extends Shell {
 			$className = substr($fullClassName, 0, strlen($fullClassName) - 10);
 			return "new Test$fullClassName();\n\t\t\$this->{$className}->constructClasses();\n";
 		}
-		return "new $fullClassName()\n";
+		return "new $fullClassName();\n";
 	}
 
 /**

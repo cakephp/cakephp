@@ -520,7 +520,7 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  * @access public
  */
-	function testGenerateContsructor() {
+	function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
 		$this->assertEqual($result, $expected);
@@ -530,7 +530,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Task->generateConstructor('helper', 'FormHelper');
-		$expected = "new FormHelper()\n";
+		$expected = "new FormHelper();\n";
 		$this->assertEqual($result, $expected);
 	}
 
