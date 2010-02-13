@@ -321,7 +321,7 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	function testMemoryLeakInPaths() {
-		if ($this->skipIf(function_exists('get_memory_usage'), 'No memory measurement function, fail. %s')) {
+		if ($this->skipIf(!function_exists('memory_get_usage'), 'No memory measurement function, fail. %s')) {
 			return;
 		}
 		$this->Controller->plugin = null;
