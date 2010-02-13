@@ -69,6 +69,23 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
+ * Check that no fatal errors are issued doing normal things when Cache.disable is true.
+ *
+ * @return void
+ */
+	function testNonFatalErrorsWithCachedisable() {
+		Configure::write('Cache.disable', true);
+		Cache::config('test', array('engine' => 'File', 'path' => TMP, 'prefix' => 'error_test_'));
+
+		Cache::write('no_save', 'Noooo!', 'test');
+		Cache::read('no_save', 'test');
+		Cache::delete('no_save', 'test');
+		Cache::set('duration', '+10 minutes');
+
+		Configure::write('Cache.disable', false);
+	}
+
+/**
  * test configuring CacheEngines in App/libs
  *
  * @return void
@@ -157,7 +174,7 @@ class CacheTest extends CakeTestCase {
 		Cache::config('test_name');
 		$result = Cache::read('value_one');
 		$this->assertEqual($result, 'I am cached');
-		
+
 		Cache::delete('value_one');
 		Cache::config('default');
 		Cache::delete('value_one');
@@ -190,7 +207,7 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
- * test that configured returns an array of the currently configured cache 
+ * test that configured returns an array of the currently configured cache
  * settings
  *
  * @return void
@@ -225,7 +242,7 @@ class CacheTest extends CakeTestCase {
 	}
 
 /**
- * test that drop removes cache configs, and that further attempts to use that config 
+ * test that drop removes cache configs, and that further attempts to use that config
  * do not work.
  *
  * @return void
@@ -242,7 +259,7 @@ class CacheTest extends CakeTestCase {
 		$_testsConfig = Cache::config('tests');
 		$result = Cache::drop('tests');
 		$this->assertTrue($result);
-		
+
 		Cache::config('unconfigTest', array(
 			'engine' => 'TestAppCache'
 		));
