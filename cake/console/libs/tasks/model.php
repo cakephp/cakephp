@@ -62,15 +62,17 @@ class ModelTask extends Shell {
  * Holds tables found on connection.
  *
  * @var array
+ * @access protected
  */
-	var $__tables = array();
+	var $_tables = array();
 
 /**
  * Holds validation method map.
  *
  * @var array
+ * @access protected
  */
-	var $__validations = array();
+	var $_validations = array();
 
 /**
  * Execution method always used for tasks
@@ -111,7 +113,7 @@ class ModelTask extends Shell {
 	function all() {
 		$this->listAll($this->connection, false);
 		$unitTestExists = $this->_checkUnitTest();
-		foreach ($this->__tables as $table) {
+		foreach ($this->_tables as $table) {
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));
 			$object = $this->_getModelObject($modelClass);
@@ -184,7 +186,7 @@ class ModelTask extends Shell {
 		$db =& ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
 
-		if (in_array($useTable, $this->__tables)) {
+		if (in_array($useTable, $this->_tables)) {
 			$tempModel = new Model(array('name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection));
 			$fields = $tempModel->schema(true);
 			if (!array_key_exists('id', $fields)) {
@@ -202,7 +204,7 @@ class ModelTask extends Shell {
 
 		$prompt = __("Would you like to supply validation criteria \nfor the fields in your model?", true);
 		$wannaDoValidation = $this->in($prompt, array('y','n'), 'y');
-		if (array_search($useTable, $this->__tables) !== false && strtolower($wannaDoValidation) == 'y') {
+		if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) == 'y') {
 			$validate = $this->doValidation($tempModel);
 		}
 
@@ -335,7 +337,7 @@ class ModelTask extends Shell {
 	}
 
 /**
- * Populate the __validations array
+ * Populate the _validations array
  *
  * @return void
  */
@@ -354,7 +356,7 @@ class ModelTask extends Shell {
 				$default++;
 			}
 		}
-		$this->__validations = $choices;
+		$this->_validations = $choices;
 		return $choices;
 	}
 
@@ -366,7 +368,7 @@ class ModelTask extends Shell {
  * @return array Array of validation for the field.
  */
 	function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
-		$defaultChoice = count($this->__validations);
+		$defaultChoice = count($this->_validations);
 		$validate = $alreadyChosen = array();
 
 		$anotherValidator = 'y';
@@ -382,12 +384,12 @@ class ModelTask extends Shell {
 
 			$prompt = '';
 			for ($i = 1; $i < $defaultChoice; $i++) {
-				$prompt .= $i . ' - ' . $this->__validations[$i] . "\n";
+				$prompt .= $i . ' - ' . $this->_validations[$i] . "\n";
 			}
 			$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n", true), $defaultChoice);
 			$prompt .= __("... or enter in a valid regex validation string.\n", true);
 
-			$methods = array_flip($this->__validations);
+			$methods = array_flip($this->_validations);
 			$guess = $defaultChoice;
 			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
 				if ($fieldName == 'email') {
@@ -415,10 +417,10 @@ class ModelTask extends Shell {
 			} else {
 				$choice = $guess;
 			}
-			$validatorName = $this->__validations[$choice];
+			$validatorName = $this->_validations[$choice];
 			if ($choice != $defaultChoice) {
-				if (is_numeric($choice) && isset($this->__validations[$choice])) {
-					$validate[$validatorName] = $this->__validations[$choice];
+				if (is_numeric($choice) && isset($this->_validations[$choice])) {
+					$validate[$validatorName] = $this->_validations[$choice];
 				} else {
 					$validate[$validatorName] = $choice;
 				}
@@ -517,7 +519,7 @@ class ModelTask extends Shell {
  */
 	function findHasOneAndMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
-		foreach ($this->__tables as $otherTable) {
+		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
 			$modelFieldsTemp = $tempOtherModel->schema();
 
@@ -560,7 +562,7 @@ class ModelTask extends Shell {
  */
 	function findHasAndBelongsToMany(&$model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
-		foreach ($this->__tables as $otherTable) {
+		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
 			$modelFieldsTemp = $tempOtherModel->schema(true);
 
@@ -647,7 +649,7 @@ class ModelTask extends Shell {
 				$suggestedForeignKey = $this->_modelKey($alias);
 			} else {
 				$otherTable = Inflector::tableize($className);
-				if (in_array($otherTable, $this->__tables)) {
+				if (in_array($otherTable, $this->_tables)) {
 					if ($assocType < 3) {
 						$showKeys = $possibleKeys[$otherTable];
 					} else {
@@ -693,7 +695,7 @@ class ModelTask extends Shell {
  */
 	function _generatePossibleKeys() {
 		$possible = array();
-		foreach ($this->__tables as $otherTable) {
+		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = & new Model(array('table' => $otherTable, 'ds' => $this->connection));
 			$modelFieldsTemp = $tempOtherModel->schema(true);
 			foreach ($modelFieldsTemp as $fieldName => $field) {
@@ -764,18 +766,18 @@ class ModelTask extends Shell {
  * @access public
  */
 	function listAll($useDbConfig = null) {
-		$this->__tables = $this->getAllTables($useDbConfig);
+		$this->_tables = $this->getAllTables($useDbConfig);
 
 		if ($this->interactive === true) {
 			$this->out(__('Possible Models based on your current database:', true));
 			$this->_modelNames = array();
-			$count = count($this->__tables);
+			$count = count($this->_tables);
 			for ($i = 0; $i < $count; $i++) {
-				$this->_modelNames[] = $this->_modelName($this->__tables[$i]);
+				$this->_modelNames[] = $this->_modelName($this->_tables[$i]);
 				$this->out($i + 1 . ". " . $this->_modelNames[$i]);
 			}
 		}
-		return $this->__tables;
+		return $this->_tables;
 	}
 
 /**
@@ -796,7 +798,7 @@ class ModelTask extends Shell {
 		$fullTableName = $db->fullTableName($useTable, false);
 		$tableIsGood = false;
 
-		if (array_search($useTable, $this->__tables) === false) {
+		if (array_search($useTable, $this->_tables) === false) {
 			$this->out();
 			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'", true), $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?', true), array('y','n'), 'y');
