@@ -1174,7 +1174,8 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a `<button>` tag.
+ * Creates a `<button>` tag.  The type attribute defaults to `type="submit"`
+ * You can change it to a different value by using `$options['type']`.
  *
  * ### Options:
  *
