@@ -84,6 +84,15 @@ class ViewTask extends Shell {
 	var $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
+ * An array of action names that don't require templates.  These
+ * actions will not emit errors when doing bakeActions()
+ *
+ * @var array
+ * @access public
+ */
+	var $noTemplateActions = array('delete');
+
+/**
  * Override initialize
  *
  * @access public
@@ -381,10 +390,9 @@ class ViewTask extends Shell {
 		$this->Template->set('action', $action);
 		$this->Template->set('plugin', $this->plugin);
 		$this->Template->set($vars);
-		$output = $this->Template->generate('views', $this->getTemplate($action));
-
-		if (!empty($output)) {
-			return $output;
+		$template = $this->getTemplate($action);
+		if ($template) {
+			return $this->Template->generate('views', $template);
 		}
 		return false;
 	}
@@ -397,6 +405,9 @@ class ViewTask extends Shell {
  * @access public
  */
 	function getTemplate($action) {
+		if ($action != $this->template && in_array($action, $this->noTemplateActions)) {
+			return false;
+		}
 		if (!empty($this->template) && $action != $this->template) {
 			return $this->template;
 		} 

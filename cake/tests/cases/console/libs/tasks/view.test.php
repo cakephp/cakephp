@@ -113,7 +113,7 @@ class ViewTaskArticle extends Model {
 }
 
 /**
- * Test View Task Comments Controller 
+ * Test View Task Comments Controller
  *
  * @package cake
  * @subpackage cake.tests.cases.console.libs.tasks
@@ -261,6 +261,8 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Project =& new ViewTaskMockProjectTask();
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
+		
+		$this->_routing = Configure::read('Routing');
 	}
 
 /**
@@ -271,6 +273,7 @@ class ViewTaskTest extends CakeTestCase {
  */
 	function endTest() {
 		ClassRegistry::flush();
+		Configure::write('Routing', $this->_routing);
 	}
 
 /**
@@ -554,7 +557,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->args = array('ViewTaskComments', 'index', 'list');
 		$this->Task->params = array();
-		
+
 		$this->Task->expectCallCount('createFile', 1);
 		$this->Task->expectAt(0, 'createFile', array(
 			TMP . 'view_task_comments' . DS . 'list.ctp',
@@ -599,6 +602,24 @@ class ViewTaskTest extends CakeTestCase {
 		));
 
 		$this->Task->execute();
+	}
+
+/**
+ * test getting templates, make sure noTemplateActions works
+ *
+ * @return void
+ */
+	function testGetTemplate() {
+		$result = $this->Task->getTemplate('delete');
+		$this->assertFalse($result);
+
+		$result = $this->Task->getTemplate('add');
+		$this->assertEqual($result, 'form');
+
+		Configure::write('Routing.prefixes', array('admin'));
+
+		$result = $this->Task->getTemplate('admin_add');
+		$this->assertEqual($result, 'form');
 	}
 }
 ?>
