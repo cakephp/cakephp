@@ -744,6 +744,36 @@ STRINGEND;
 	}
 
 /**
+ * test that skipTables changes how all() works.
+ *
+ * @return void
+ */
+	function testSkipTablesAndAll() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('all');
+		$this->Task->setReturnValue('_checkUnitTest', true);
+		$this->Task->skipTables = array('tags');
+
+		$this->Task->Fixture->expectCallCount('bake', 4);
+		$this->Task->Test->expectCallCount('bake', 4);
+
+		$filename = '/my/path/article.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+
+		$filename = '/my/path/articles_tag.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTag/')));
+
+		$filename = '/my/path/category_thread.php';
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CategoryThread/')));
+
+		$filename = '/my/path/comment.php';
+		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class Comment/')));
+
+		$this->Task->execute();
+	}
+
+/**
  * test the interactive side of bake.
  *
  * @return void

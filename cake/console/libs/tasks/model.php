@@ -59,6 +59,14 @@ class ModelTask extends Shell {
 	var $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
 
 /**
+ * Tables to skip when running all()
+ *
+ * @var array
+ * @access protected
+ */
+	var $skipTables = array('i18n');
+
+/**
  * Holds tables found on connection.
  *
  * @var array
@@ -114,6 +122,9 @@ class ModelTask extends Shell {
 		$this->listAll($this->connection, false);
 		$unitTestExists = $this->_checkUnitTest();
 		foreach ($this->_tables as $table) {
+			if (in_array($table, $this->skipTables)) {
+				continue;
+			}
 			$modelClass = Inflector::classify($table);
 			$this->out(sprintf(__('Baking %s', true), $modelClass));
 			$object = $this->_getModelObject($modelClass);
