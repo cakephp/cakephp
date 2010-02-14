@@ -224,7 +224,7 @@ class Helper extends Overloadable {
 			}
 		}
 		if (strpos($webPath, '//') !== false) {
-			return str_replace('//', '/', $webPath);
+			return str_replace('//', '/', $webPath . $asset[1]);
 		}
 		return $webPath . $asset[1];
 	}
