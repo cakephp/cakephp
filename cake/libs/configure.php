@@ -384,8 +384,6 @@ class Configure extends Object {
  * @access private
  */
 	function __loadBootstrap($boot) {
-		$libPaths = $modelPaths = $behaviorPaths = $controllerPaths = $componentPaths = $viewPaths = $helperPaths = $pluginPaths = $vendorPaths = $localePaths = $shellPaths = null;
-
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
 
@@ -429,18 +427,9 @@ class Configure extends Object {
 				}
 				Cache::config('default');
 			}
-
+			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
-			}
-
-			if (App::path('controllers') == array()) {
-				App::build(array(
-					'models' => $modelPaths, 'views' => $viewPaths, 'controllers' => $controllerPaths,
-					'helpers' => $helperPaths, 'components' => $componentPaths, 'behaviors' => $behaviorPaths,
-					'plugins' => $pluginPaths, 'vendors' => $vendorPaths, 'locales' => $localePaths,
-					'shells' => $shellPaths, 'libs' => $libPaths
-				));
 			}
 		}
 	}
