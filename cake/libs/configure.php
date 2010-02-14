@@ -740,39 +740,23 @@ class App extends Object {
 		}
 		if (!$paths) {
 			$paths = array();
-			$openBasedir = ini_get('open_basedir');
-			if ($openBasedir) {
-				$all = explode(PATH_SEPARATOR, $openBasedir);
-				$all = array_flip(array_flip(array_merge(array(CAKE_CORE_INCLUDE_PATH), $all)));
-			} else {
-				$all = explode(PATH_SEPARATOR, ini_get('include_path'));
-				$all = array_flip(array_flip((array_merge(array(CAKE_CORE_INCLUDE_PATH), $all))));
-			}
-			foreach ($all as $path) {
-				if ($path !== DS) {
-					$path = rtrim($path, DS);
-				}
-				if (empty($path) || $path === '.') {
-					continue;
-				}
-				$cake = $path .  DS . 'cake' . DS;
-				$libs = $cake . 'libs' . DS;
-				if (is_dir($libs)) {
-					$paths['cake'][] = $cake;
-					$paths['libs'][] = $libs;
-					$paths['models'][] = $libs . 'model' . DS;
-					$paths['datasources'][] = $libs . 'model' . DS . 'datasources' . DS;
-					$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
-					$paths['controllers'][] = $libs . 'controller' . DS;
-					$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
-					$paths['views'][] = $libs . 'view' . DS;
-					$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
-					$paths['plugins'][] = $path . DS . 'plugins' . DS;
-					$paths['vendors'][] = $path . DS . 'vendors' . DS;
-					$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
-					break;
-				}
-			}
+			$libs = dirname(__FILE__) . DS;
+			$cake = dirname($libs) . DS;
+			$path = dirname($cake) . DS;
+
+			$paths['cake'][] = $cake;
+			$paths['libs'][] = $libs;
+			$paths['models'][] = $libs . 'model' . DS;
+			$paths['datasources'][] = $libs . 'model' . DS . 'datasources' . DS;
+			$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
+			$paths['controllers'][] = $libs . 'controller' . DS;
+			$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
+			$paths['views'][] = $libs . 'view' . DS;
+			$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
+			$paths['plugins'][] = $path . 'plugins' . DS;
+			$paths['vendors'][] = $path . 'vendors' . DS;
+			$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
+
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}
 		if ($type && isset($paths[$type])) {
