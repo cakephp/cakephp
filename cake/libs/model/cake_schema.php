@@ -238,9 +238,9 @@ class CakeSchema extends Object {
 					$model = $this->plugin . '.' . $model;
 				}
 				if (PHP5) {
-					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+					$Object = ClassRegistry::init(array('class' => $model, 'ds' => null));
 				} else {
-					$Object =& ClassRegistry::init(array('class' => $model, 'ds' => $connection));
+					$Object =& ClassRegistry::init(array('class' => $model, 'ds' => null));
 				}
 
 				if (is_object($Object) && $Object->useTable !== false) {

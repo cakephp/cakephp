@@ -370,6 +370,85 @@ class Testdescribe extends CakeTestModel {
 }
 
 /**
+ * SchemaCrossDatabase class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class SchemaCrossDatabase extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'SchemaCrossDatabase'
+ * @access public
+ */
+	var $name = 'SchemaCrossDatabase';
+
+/**
+ * useTable property
+ *
+ * @var string 'posts'
+ * @access public
+ */
+	var $useTable = 'cross_database';
+
+/**
+ * useDbConfig property
+ *
+ * @var string 'test2'
+ * @access public
+ */
+	var $useDbConfig = 'test2';
+}
+
+/**
+ * SchemaCrossDatabaseFixture class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.model
+ */
+class SchemaCrossDatabaseFixture extends CakeTestFixture {
+
+/**
+ * name property
+ *
+ * @var string 'CrossDatabase'
+ * @access public
+ */
+	var $name = 'CrossDatabase';
+
+/**
+ * table property
+ *
+ * @access public
+ */
+	var $table = 'cross_database';
+
+/**
+ * fields property
+ *
+ * @var array
+ * @access public
+ */
+	var $fields = array(
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'name' => 'string'
+	);
+
+/**
+ * records property
+ *
+ * @var array
+ * @access public
+ */
+	var $records = array(
+		array('id' => 1, 'name' => 'First'),
+		array('id' => 2, 'name' => 'Second'),
+	);
+}
+
+/**
  * CakeSchemaTest
  *
  * @package       cake
@@ -384,7 +463,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(
-		'core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype', 'core.auth_user'
+		'core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype', 'core.auth_user', 'core.author'
 	);
 
 /**
@@ -406,6 +485,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function tearDown() {
 		@unlink(TMP . 'tests' . DS .'schema.php');
 		unset($this->Schema);
+		ClassRegistry::flush();
 	}
 
 /**
@@ -468,6 +548,7 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
 	}
+
 /**
  * test reading schema from plugins.
  *
@@ -486,12 +567,56 @@ class CakeSchemaTest extends CakeTestCase {
 			'models' => true
 		));
 		unset($read['tables']['missing']);
-		$this->assertTrue(isset($read['tables']['posts']));
 		$this->assertTrue(isset($read['tables']['auth_users']));
-		$this->assertEqual(count($read['tables']), 2);
-
+		$this->assertTrue(isset($read['tables']['authors']));
+		$this->assertTrue(isset($read['tables']['comments']));
+		$this->assertTrue(isset($read['tables']['posts']));
+		$this->assertEqual(count($read['tables']), 4);
 
 		App::build();
+	}
+
+/**
+ * test reading schema with tables from another database.
+ *
+ * @return void
+ */
+	function testSchemaReadWithCrossDatabase() {
+		$config = new DATABASE_CONFIG();
+		$skip = $this->skipIf(
+			!isset($config->test) || !isset($config->test2),
+			 '%s Primary and secondary test databases not configured, skipping cross-database '
+			.'join tests.'
+			.' To run these tests, you must define $test and $test2 in your database configuration.'
+		);
+		if ($skip) {
+			return;
+		}
+
+		$db2 =& ConnectionManager::getDataSource('test2');
+		$fixture = new SchemaCrossDatabaseFixture();
+		$fixture->create($db2);
+		$fixture->insert($db2);
+
+		$read = $this->Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => array('SchemaCrossDatabase', 'SchemaPost')
+		));
+		unset($read['tables']['missing']);
+		$this->assertTrue(isset($read['tables']['posts']));
+		$this->assertFalse(isset($read['tables']['cross_database']));
+
+		$read = $this->Schema->read(array(
+			'connection' => 'test2',
+			'name' => 'TestApp',
+			'models' => array('SchemaCrossDatabase', 'SchemaPost')
+		));
+		unset($read['tables']['missing']);
+		$this->assertFalse(isset($read['tables']['posts']));
+		$this->assertTrue(isset($read['tables']['cross_database']));
+
+		$fixture->drop($db2);
 	}
 
 /**
@@ -642,7 +767,7 @@ class CakeSchemaTest extends CakeTestCase {
 				),
 				'change' => array(
 					'tableParameters' => array(
-						'charset' => 'utf8', 
+						'charset' => 'utf8',
 						'collate' => 'utf8_general_ci',
 						'engine' => 'MyISAM'
 					)
@@ -654,7 +779,7 @@ class CakeSchemaTest extends CakeTestCase {
 				),
 				'change' => array(
 					'tableParameters' => array(
-						'charset' => 'utf8', 
+						'charset' => 'utf8',
 						'collate' => 'utf8_general_ci',
 					)
 				)
