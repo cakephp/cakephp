@@ -114,6 +114,77 @@ class ConnectionManagerTest extends CakeTestCase {
 	}
 
 /**
+ * testGetPluginDataSourceAndPluginDriver method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetPluginDataSourceAndPluginDriver() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+
+		$name = 'test_plugin_source_and_driver';
+		$config = array('datasource' => 'TestPlugin.TestSource', 'driver' => 'TestPlugin.TestDriver');
+
+		$connection = ConnectionManager::create($name, $config);
+
+		$this->assertTrue(class_exists('TestSource'));
+		$this->assertTrue(class_exists('TestDriver'));
+		$this->assertEqual($connection->configKeyName, $name);
+		$this->assertEqual($connection->config, $config);
+
+		App::build();
+	}
+
+/**
+ * testGetLocalDataSourceAndPluginDriver method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetLocalDataSourceAndPluginDriver() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+
+		$name = 'test_local_source_and_plugin_driver';
+		$config = array('datasource' => 'dbo', 'driver' => 'TestPlugin.DboDummy');
+
+		$connection = ConnectionManager::create($name, $config);
+
+		$this->assertTrue(class_exists('DboSource'));
+		$this->assertTrue(class_exists('DboDummy'));
+		$this->assertEqual($connection->configKeyName, $name);
+
+		App::build();
+	}
+
+/**
+ * testGetPluginDataSourceAndLocalDriver method
+ *
+ * @access public
+ * @return void
+ */
+	function testGetPluginDataSourceAndLocalDriver() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'datasources' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+		));
+
+		$name = 'test_plugin_source_and_local_driver';
+		$config = array('datasource' => 'TestPlugin.TestSource', 'driver' => 'local_driver');
+
+		$connection = ConnectionManager::create($name, $config);
+
+		$this->assertTrue(class_exists('TestSource'));
+		$this->assertTrue(class_exists('TestLocalDriver'));
+		$this->assertEqual($connection->configKeyName, $name);
+		$this->assertEqual($connection->config, $config);
+		App::build();
+	}
+
+/**
  * testSourceList method
  *
  * @access public

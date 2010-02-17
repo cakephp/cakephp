@@ -256,14 +256,20 @@ class ConnectionManager extends Object {
 		$filename = $classname = $parent = $plugin = null;
 
 		if (!empty($config['driver'])) {
-			$source = $config['datasource'] . '_' . $config['driver'];
-
-			$filename = $config['datasource'] . DS . $source;
-			$classname = Inflector::camelize(strtolower($source));
 			$parent = $this->__connectionData(array('datasource' => $config['datasource']));
+			$parentSource = preg_replace('/_source$/', '', $parent['filename']);
+
+			list($plugin, $classname) = pluginSplit($config['driver']);
+			if ($plugin) {
+				$source = Inflector::underscore($classname);
+			} else {
+				$source = $parentSource . '_' . $config['driver'];
+				$classname = Inflector::camelize(strtolower($source));
+			}
+			$filename = $parentSource . DS . $source;
 		} else {
-			if (strpos($config['datasource'], '.') !== false) {
-				list($plugin, $classname) = explode('.', $config['datasource']);
+			list($plugin, $classname) = pluginSplit($config['datasource']);
+			if ($plugin) {
 				$filename = Inflector::underscore($classname);
 			} else {
 				$filename = $config['datasource'] . '_source';
