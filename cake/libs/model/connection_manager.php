@@ -259,8 +259,8 @@ class ConnectionManager extends Object {
 			$parent = $this->__connectionData(array('datasource' => $config['datasource']));
 			$parentSource = preg_replace('/_source$/', '', $parent['filename']);
 
-			if (strpos($config['driver'], '.') !== false) {
-				list($plugin, $classname) = explode('.', $config['driver']);
+			list($plugin, $classname) = pluginSplit($config['driver']);
+			if ($plugin) {
 				$source = Inflector::underscore($classname);
 			} else {
 				$source = $parentSource . '_' . $config['driver'];
@@ -268,8 +268,8 @@ class ConnectionManager extends Object {
 			}
 			$filename = $parentSource . DS . $source;
 		} else {
-			if (strpos($config['datasource'], '.') !== false) {
-				list($plugin, $classname) = explode('.', $config['datasource']);
+			list($plugin, $classname) = pluginSplit($config['datasource']);
+			if ($plugin) {
 				$filename = Inflector::underscore($classname);
 			} else {
 				$filename = $config['datasource'] . '_source';
