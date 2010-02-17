@@ -612,46 +612,29 @@ class Dispatcher extends Object {
 		}
 		$controller = null;
 		$ext = array_pop(explode('.', $url));
-		$pos = 0;
 		$parts = explode('/', $url);
+		$assetFile = null;
 
 		if ($parts[0] === 'theme') {
-			$pos = strlen($parts[0] . $parts[1]) + 1;
-		} else {
-			$pos = strlen($parts[0]);
-		}
-		$assetFile = null;
-		$paths = array();
-		$matched = false;
+			$themeName = $parts[1];
+			unset($parts[0], $parts[1]);
+			$fileFragment = implode('/', $parts);
 
-		if ($pos > 0) {
-			$plugin = substr($url, 0, $pos);
-			$url = preg_replace('/^' . preg_quote($plugin, '/') . '\//i', '', $url);
-
-			if (strpos($plugin, '/') !== false) {
-				list($plugin, $theme) = explode('/', $plugin);
-				$themePaths = App::path('views');
-
-				foreach ($themePaths as $viewPath) {
-					$path = $viewPath . 'themed' . DS . $theme . DS . 'webroot' . DS;
-					if ($plugin === 'theme' && (is_file($path . $url) && file_exists($path . $url))) {
-						$assetFile = $path . $url;
-						break;
-					}
-				}
-			}
-
-			if ($matched === false) {
-				$paths[] = App::pluginPath($plugin) . 'webroot' . DS;
-			}
-		}
-
-		if ($matched === false) {
-			foreach ($paths as $path) {
-				if (is_file($path . $url) && file_exists($path . $url)) {
-					$assetFile = $path . $url;
+			$viewPaths = App::path('views');
+			foreach ($viewPaths as $viewPath) {
+				$path = $viewPath . 'themed' . DS . $themeName . DS . 'webroot' . DS;
+				if (file_exists($path . $fileFragment)) {
+					$assetFile = $path . $fileFragment;
 					break;
 				}
+			}
+		} else {
+			$plugin = $parts[0];
+			unset($parts[0]);
+			$fileFragment = implode('/', $parts);
+			$pluginWebroot = App::pluginPath($plugin) . 'webroot' . DS;
+			if (file_exists($pluginWebroot . $fileFragment)) {
+				$assetFile = $pluginWebroot . $fileFragment;
 			}
 		}
 
