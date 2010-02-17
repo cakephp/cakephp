@@ -1905,6 +1905,12 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual('nested theme js file', $result);
 
 		ob_start();
+		$Dispatcher->asset('test_plugin/root.js');
+		$result = ob_get_clean();
+		$expected = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'root.js');
+		$this->assertEqual($result, $expected);
+
+		ob_start();
 		$Dispatcher->dispatch('test_plugin/flash/plugin_test.swf');
 		$result = ob_get_clean();
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'webroot' . DS . 'flash' . DS . 'plugin_test.swf');

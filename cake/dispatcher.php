@@ -617,7 +617,7 @@ class Dispatcher extends Object {
 
 		if ($parts[0] === 'theme') {
 			$pos = strlen($parts[0] . $parts[1]) + 1;
-		} elseif (count($parts) > 2) {
+		} else {
 			$pos = strlen($parts[0]);
 		}
 		$assetFile = null;
