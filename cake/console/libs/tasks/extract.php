@@ -321,12 +321,12 @@ class ExtractTask extends Shell {
 	function __buildFiles() {
 		foreach ($this->__strings as $domain => $strings) {
 			foreach ($strings as $string => $files) {
-				$occurences = array();
+				$occurrences = array();
 				foreach ($files as $file => $lines) {
-					$occurences[] = $file . ':' . implode(';', $lines);
+					$occurrences[] = $file . ':' . implode(';', $lines);
 				}
-				$occurences = implode("\n#: ", $occurences);
-				$header = '#: ' . str_replace($this->__paths, '', $occurences) . "\n";
+				$occurrences = implode("\n#: ", $occurrences);
+				$header = '#: ' . str_replace($this->__paths, '', $occurrences) . "\n";
 
 				if (strpos($string, "\0") === false) {
 					$sentence = "msgid \"{$string}\"\n";
@@ -371,6 +371,7 @@ class ExtractTask extends Shell {
  * @access private
  */
 	function __writeFiles() {
+		$overwriteAll = false;
 		foreach ($this->__storage as $domain => $sentences) {
 			$output = $this->__writeHeader();
 			foreach ($sentences as $sentence => $header) {
@@ -379,18 +380,19 @@ class ExtractTask extends Shell {
 
 			$filename = $domain . '.pot';
 			$File = new File($this->__output . $filename);
-			if ($File->exists()) {
-				$response = '';
-				while ($response == '') {
-					$this->out();
-					$response = $this->in(sprintf(__('Error: %s already exists in this location. Overwrite?', true), $filename), array('y', 'n'), 'y');
-					if (strtoupper($response) === 'N') {
-						$response = '';
-						while ($response == '') {
-							$response = $this->in(sprintf(__("What would you like to name this file?\nExample: %s", true), 'new_' . $filename), null, 'new_' . $filename);
-							$File = new File($this->__output . $response);
-						}
+			$response = '';
+			while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
+				$this->out();
+				$response = $this->in(sprintf(__('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', true), $filename), array('y', 'n', 'a'), 'y');
+				if (strtoupper($response) === 'N') {
+					$response = '';
+					while ($response == '') {
+						$response = $this->in(sprintf(__("What would you like to name this file?\nExample: %s", true), 'new_' . $filename), null, 'new_' . $filename);
+						$File = new File($this->__output . $response);
+						$filename = $response;
 					}
+				} elseif (strtoupper($response) === 'A') {
+					$overwriteAll = true;
 				}
 			}
 			$File->write($output);
