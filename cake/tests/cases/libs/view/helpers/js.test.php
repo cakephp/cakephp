@@ -502,7 +502,7 @@ CODE;
 		$this->Js->alert('hey you!', array('buffer' => true));
 		$this->Js->confirm('Are you sure?', array('buffer' => true));
 		$result = $this->Js->getBuffer(false);
-		
+
 		$expected = 'window.app = {"height":"tall","color":"purple"};';
 		$this->assertEqual($result[0], $expected);
 		$this->assertEqual($result[1], 'alert("hey you!");');
@@ -665,6 +665,13 @@ class JsBaseEngineTestCase extends CakeTestCase {
 			$result = $this->JsEngine->object($data);
 			$this->assertEqual($result, $expected);
 		}
+
+		$object = array('title' => 'New thing', 'indexes' => array(5, 6, 7, 8), 'object' => array('inner' => array('value' => 1)));
+		$result = $this->JsEngine->object($object, array('prefix' => 'PREFIX', 'postfix' => 'POSTFIX'));
+		$this->assertPattern('/^PREFIX/', $result);
+		$this->assertPattern('/POSTFIX$/', $result);
+		$this->assertNoPattern('/.PREFIX./', $result);
+		$this->assertNoPattern('/.POSTFIX./', $result);
 	}
 
 /**

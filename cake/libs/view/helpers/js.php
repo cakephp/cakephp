@@ -590,7 +590,7 @@ class JsBaseEngineHelper extends AppHelper {
 
 			foreach ($data as $key => $val) {
 				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, $options);
+					$val = $this->object($val);
 				} else {
 					$val = $this->value($val);
 				}
