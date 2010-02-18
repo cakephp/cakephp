@@ -632,7 +632,10 @@ class JavascriptHelper extends AppHelper {
 
 			foreach ($data as $key => $val) {
 				if (is_array($val) || is_object($val)) {
-					$val = $this->object($val, array_merge($options, array('block' => false)));
+					$val = $this->object(
+						$val,
+						array_merge($options, array('block' => false, 'prefix' => '', 'postfix' => ''))
+					);
 				} else {
 					$quoteStrings = (
 						!count($options['stringKeys']) ||
