@@ -4033,6 +4033,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->name('Function(Something.foo) AS x');
 		$expected = 'Function(`Something`.`foo`) AS `x`';
 		$this->assertEqual($result, $expected);
+
+		$result = $this->testDb->name('name-with-minus');
+		$expected = '`name-with-minus`';
+		$this->assertEqual($result, $expected);
 	}
 
 /**
