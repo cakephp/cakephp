@@ -252,6 +252,10 @@ class PaginatorHelper extends AppHelper {
  * @return string A "previous" link or $disabledTitle text if the link is disabled.
  */
 	public function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+		$defaults = array(
+			'rel' => 'prev'
+		);
+		$options = array_merge($defaults, (array)$options);
 		return $this->__pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
@@ -271,6 +275,10 @@ class PaginatorHelper extends AppHelper {
  * @return string A "next" link or or $disabledTitle text if the link is disabled.
  */
 	public function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+		$defaults = array(
+			'rel' => 'next'
+		);
+		$options = array_merge($defaults, (array)$options);
 		return $this->__pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
 	}
 
