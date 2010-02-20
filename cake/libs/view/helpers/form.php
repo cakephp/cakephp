@@ -676,7 +676,6 @@ class FormHelper extends AppHelper {
 		if (!isset($options['type'])) {
 			$magicType = true;
 			$options['type'] = 'text';
-			$fieldDef = array();
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
@@ -743,13 +742,10 @@ class FormHelper extends AppHelper {
 		}
 
 		$out = '';
-		$div = true;
 		$divOptions = array();
 
-		if (array_key_exists('div', $options)) {
-			$div = $options['div'];
-			unset($options['div']);
-		}
+		$div = $this->_extractOption('div', $options, true);
+		unset($options['div']);
 
 		if (!empty($div)) {
 			$divOptions['class'] = 'input';
@@ -762,7 +758,7 @@ class FormHelper extends AppHelper {
 			if (
 				isset($this->fieldset[$modelKey]) &&
 				in_array($fieldKey, $this->fieldset[$modelKey]['validates'])
-				) {
+			) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
@@ -779,11 +775,7 @@ class FormHelper extends AppHelper {
 		if ($options['type'] === 'radio') {
 			$label = false;
 			if (isset($options['options'])) {
-				if (is_array($options['options'])) {
-					$radioOptions = $options['options'];
-				} else {
-					$radioOptions = array($options['options']);
-				}
+				$radioOptions = (array)$options['options'];
 				unset($options['options']);
 			}
 		}
@@ -817,35 +809,23 @@ class FormHelper extends AppHelper {
 			$out = $this->label($fieldName, $labelText, $labelAttributes);
 		}
 
-		$error = null;
-		if (isset($options['error'])) {
-			$error = $options['error'];
-			unset($options['error']);
-		}
+		$error = $this->_extractOption('error', $options, null);
+		unset($options['error']);
 
-		$selected = null;
-		if (array_key_exists('selected', $options)) {
-			$selected = $options['selected'];
-			unset($options['selected']);
-		}
+		$selected = $this->_extractOption('selected', $options, null);
+		unset($options['selected']);
+
 		if (isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
 
-		$timeFormat = 12;
-		if (isset($options['timeFormat'])) {
-			$timeFormat = $options['timeFormat'];
-			unset($options['timeFormat']);
-		}
-
-		$dateFormat = 'MDY';
-		if (isset($options['dateFormat'])) {
-			$dateFormat = $options['dateFormat'];
-			unset($options['dateFormat']);
-		}
-
 		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
 			$options += array('empty' => false);
+		}
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
+			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
+			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
+			unset($options['dateFormat'], $options['timeFormat']);
 		}
 
 		$type = $options['type'];
@@ -919,6 +899,22 @@ class FormHelper extends AppHelper {
 			$out = $this->Html->tag($tag, $out, $divOptions);
 		}
 		return $out;
+	}
+
+/**
+ * Extracts a single option from an options array.
+ *
+ * @param string $name The name of the option to pull out.
+ * @param array $options The array of options you want to extract.
+ * @param mixed $default The default option value
+ * @return the contents of the option or default
+ * @access protected
+ */
+	function _extractOption($name, $options, $default = null) {
+		if (array_key_exists($name, $options)) {
+			return $options[$name];
+		}
+		return $default;
 	}
 
 /**
