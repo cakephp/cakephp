@@ -473,7 +473,7 @@ class Folder extends Object {
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 /**
  * Returns the size in bytes of this Folder.
