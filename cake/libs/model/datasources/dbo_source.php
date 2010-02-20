@@ -472,9 +472,6 @@ class DboSource extends DataSource {
 		if (is_object($data) && isset($data->type)) {
 			return $data->value;
 		}
-		if ($data == '*') {
-			return '*';
-		}
 		if ($data === '*') {
 			return '*';
 		}
@@ -492,20 +489,20 @@ class DboSource extends DataSource {
 			return $this->methodCache[__FUNCTION__][$cacheKey];
 		}
 		$data = trim($data);
-		if (preg_match('/^\w+(\.\w+)*$/', $data)) { // string, string.string
+		if (preg_match('/^[\w-]+(\.[\w-]+)*$/', $data)) { // string, string.string
 			if (strpos($data, '.') === false) { // string
 				return $this->startQuote . $data . $this->endQuote;
 			}
 			$items = explode('.', $data);
 			return $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
 		}
-		if (preg_match('/^\w+\.\*$/', $data)) { // string.*
+		if (preg_match('/^[\w-]+\.\*$/', $data)) { // string.*
 			return $this->startQuote . str_replace('.*', $this->endQuote . '.*', $data);
 		}
-		if (preg_match('/^(\w+)\((.*)\)$/', $data, $matches)) { // Functions
+		if (preg_match('/^([\w-]+)\((.*)\)$/', $data, $matches)) { // Functions
 			return $matches[1] . '(' . $this->name($matches[2]) . ')';
 		}
-		if (preg_match('/^(\w+(\.\w+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*(\w+)$/', $data, $matches)) {
+		if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*([\w-]+)$/', $data, $matches)) {
 			return preg_replace('/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3]));
 		}
 		return $this->methodCache[__FUNCTION__][$cacheKey] = $data;
