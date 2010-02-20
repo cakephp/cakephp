@@ -615,5 +615,35 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($result, 'one: first two: second');
 		App::build();
 	}
+
+/**
+ * test that the beforeRedirect callback properly converts
+ * array urls into their correct string ones, and adds base => false so
+ * the correct urls are generated.
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648-cakephp-1x/tickets/276
+ * @return void
+ */
+	function testBeforeRedirectCallbackWithArrayUrl() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		), true);
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
+			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
+		));
+
+		$RequestHandler =& new NoStopRequestHandler();
+
+		ob_start();
+		$RequestHandler->beforeRedirect(
+			$this->Controller,
+			array('controller' => 'request_handler_test', 'action' => 'param_method', 'first', 'second')
+		);
+		$result = ob_get_clean();
+		$this->assertEqual($result, 'one: first two: second');
+		App::build();
+	}
 }
 ?>

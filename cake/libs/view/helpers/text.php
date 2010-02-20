@@ -189,7 +189,7 @@ class TextHelper extends AppHelper {
 			if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
 				return $text;
 			}
-			$totalLength = mb_strlen($ending);
+			$totalLength = mb_strlen(strip_tags($ending));
 			$openTags = array();
 			$truncate = '';
 

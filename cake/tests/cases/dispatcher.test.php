@@ -1157,7 +1157,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->baseUrl();
 		$expected = '/index.php';
 		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/app/webroot/';
+		$expectedWebroot = '/';
 		$this->assertEqual($expectedWebroot, $Dispatcher->webroot);
 
 		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
@@ -1230,12 +1230,12 @@ class DispatcherTest extends CakeTestCase {
  */
 	function testMissingController() {
 		$Dispatcher =& new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
+		Configure::write('App.baseUrl', '/index.php');
 		$url = 'some_controller/home/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$expected = array('missingController', array(array(
 			'className' => 'SomeControllerController',
-			'webroot' => '/app/webroot/',
+			'webroot' => '/',
 			'url' => 'some_controller/home/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1258,7 +1258,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('privateAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => '_protected',
-			'webroot' => '/app/webroot/',
+			'webroot' => '/',
 			'url' => 'some_pages/_protected/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1273,7 +1273,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	function testMissingAction() {
 		$Dispatcher =& new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
+		Configure::write('App.baseUrl', '/index.php');
 		$url = 'some_pages/home/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
@@ -1281,7 +1281,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('missingAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => 'home',
-			'webroot' => '/app/webroot/',
+			'webroot' => '/',
 			'url' => '/index.php/some_pages/home/param:value/param2:value2',
 			'base' => '/index.php'
 		)));
@@ -1296,7 +1296,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('missingAction', array(array(
 			'className' => 'SomePagesController',
 			'action' => 'redirect',
-			'webroot' => '/app/webroot/',
+			'webroot' => '/',
 			'url' => '/index.php/some_pages/redirect/param:value/param2:value2',
 			'base' => '/index.php'
 		)));

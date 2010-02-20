@@ -221,6 +221,7 @@ class AjaxHelper extends AppHelper {
 			unset($confirm);
 		}
 		$htmlOptions = $this->__getHtmlOptions($options, array('url'));
+		$options += array('safe' => true);
 
 		unset($options['escape']);
 		if (empty($options['fallback']) || !isset($options['fallback'])) {
@@ -268,7 +269,14 @@ class AjaxHelper extends AppHelper {
 			$func = "new Ajax.Request(";
 		}
 
-		$func .= "'" . $this->url(isset($options['url']) ? $options['url'] : "") . "'";
+		$url = isset($options['url']) ? $options['url'] : "";
+		if (empty($options['safe'])) {
+			$url = $this->url($url);
+		} else {
+			$url = Router::url($url);
+		}
+
+		$func .= "'" . $url . "'";
 		$func .= ", " . $this->__optionsForAjax($options) . ")";
 
 		if (isset($options['before'])) {

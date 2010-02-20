@@ -166,10 +166,15 @@ class TreeBehavior extends ModelBehavior {
 				$Model->data[$Model->alias][$parent] = null;
 				$this->_addToWhitelist($Model, $parent);
 			} else {
-				list($node) = array_values($Model->find('first', array(
+				$values = $Model->find('first', array(
 					'conditions' => array($scope,$Model->escapeField() => $Model->id),
 					'fields' => array($Model->primaryKey, $parent, $left, $right ), 'recursive' => $recursive)
-				));
+				);
+
+				if ($values === false) {
+					return false;
+				}
+				list($node) = array_values($values);
 
 				$parentNode = $Model->find('first', array(
 					'conditions' => array($scope, $Model->escapeField() => $Model->data[$Model->alias][$parent]),
@@ -822,11 +827,16 @@ class TreeBehavior extends ModelBehavior {
 			$this->__sync($Model, $edge - $node[$left] + 1, '+', 'BETWEEN ' . $node[$left] . ' AND ' . $node[$right], $created);
 			$this->__sync($Model, $node[$right] - $node[$left] + 1, '-', '> ' . $node[$left], $created);
 		} else {
-			$parentNode = array_values($Model->find('first', array(
+			$values = $Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $parentId),
 				'fields' => array($Model->primaryKey, $left, $right),
 				'recursive' => $recursive
-			)));
+			));
+
+			if ($values === false) {
+				return false;
+			}
+			$parentNode = array_values($values);
 
 			if (empty($parentNode) || empty($parentNode[0])) {
 				return false;

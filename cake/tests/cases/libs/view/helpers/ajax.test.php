@@ -549,13 +549,12 @@ class AjaxHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/^<a[^<>]+complete="test"[^<>]*>Ajax Link<\/a>/', $result);
 		$this->assertNoPattern('/^<a\s+[^<>]*url="[^"]*"[^<>]*>/', $result);
 
-		$result = $this->Ajax->link('A & B', array('controller' => 'foo', 'action' => 'index'), array('escape' => false));
-		$this->assertPattern('/^<a[^<>]+>A & B<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
-		$this->assertPattern("/Event.observe\('link[0-9]+', [\w\d,'\(\)\s{}]+Ajax\.Request\([\w\d\s,'\(\){}:\/]/", $result);
-		$this->assertPattern('/^<a[^<>]+href="\/foo"[^<>]*>/', $result);
-
-		$result = $this->Ajax->link('A & B', array('controller' => 'foo', 'action' => 'index'));
-		$this->assertPattern('/^<a[^<>]+>A &amp; B<\/a><script [^<>]+>\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*[^<>]+\s*' . str_replace('/', '\\/', preg_quote('//]]>')) . '\s*<\/script>$/', $result);
+		$result = $this->Ajax->link(
+			'Ajax Link',
+			array('controller' => 'posts', 'action' => 'index', '?' => array('one' => '1', 'two' => '2')),
+			array('update' => 'myDiv', 'id' => 'myLink')
+		);
+		$this->assertPattern('#/posts\?one\=1\&two\=2#', $result);
 	}
 /**
  * testRemoteTimer method

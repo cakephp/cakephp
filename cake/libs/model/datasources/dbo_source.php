@@ -469,6 +469,12 @@ class DboSource extends DataSource {
  * @access public
  */
 	function name($data) {
+		if (is_object($data) && isset($data->type)) {
+			return $data->value;
+		}
+		if ($data == '*') {
+			return '*';
+		}
 		if ($data === '*') {
 			return '*';
 		}

@@ -649,5 +649,30 @@ class DboMssqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+/**
+ * testLastError
+ *
+ * @return void
+ * @access public
+ */
+	function testLastError() {
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
+		$this->db->simulate = false;
+		$query = 'SELECT [name] FROM [categories]';
+		$this->assertTrue($this->db->execute($query) !== false);
+		$this->assertNull($this->db->lastError());
+
+		$query = 'SELECT [inexistent_field] FROM [categories]';
+		$this->assertFalse($this->db->execute($query));
+		$this->assertNotNull($this->db->lastError());
+
+		$query = 'SELECT [name] FROM [categories]';
+		$this->assertTrue($this->db->execute($query) !== false);
+		$this->assertNull($this->db->lastError());
+
+		Configure::write('debug', $debug);
+	}
 }
 ?>

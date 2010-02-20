@@ -103,6 +103,13 @@ class DboMssql extends DboSource {
 	);
 
 /**
+ * Define if the last query had error
+ *
+ * @var string
+ * @access private
+ */
+	var $__lastQueryHadError = false;
+/**
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
  *
  * @param array $config Configuration data from app/config/databases.php
@@ -183,7 +190,9 @@ class DboMssql extends DboSource {
  * @access protected
  */
 	function _execute($sql) {
-		return mssql_query($sql, $this->connection);
+		$result = @mssql_query($sql, $this->connection);
+		$this->__lastQueryHadError = ($result === false);
+		return $result;
 	}
 
 /**
@@ -424,10 +433,9 @@ class DboMssql extends DboSource {
  * @return string Error message with error number
  */
 	function lastError() {
-		$error = mssql_get_last_message();
-
-		if ($error) {
-			if (!preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
+		if ($this->__lastQueryHadError) {
+			$error = mssql_get_last_message();
+			if ($error && !preg_match('/contexto de la base de datos a|contesto di database|changed database|contexte de la base de don|datenbankkontext/i', $error)) {
 				return $error;
 			}
 		}

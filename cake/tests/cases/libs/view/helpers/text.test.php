@@ -62,7 +62,6 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	function testTruncate() {
-		$m = 'truncate';
 		$text1 = 'The quick brown fox jumps over the lazy dog';
 		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
 		$text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
@@ -97,7 +96,6 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertIdentical($this->Text->truncate($text8, 15), 'Vive la R'.chr(195).chr(169).'pu...');
 		$this->assertIdentical($this->Text->truncate($text9, 10), 'НОПРСТУ...');
 	}
-
 /**
  * testHighlight method
  *
