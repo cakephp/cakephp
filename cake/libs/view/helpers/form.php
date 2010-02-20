@@ -674,6 +674,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!isset($options['type'])) {
+			$magicType = true;
 			$options['type'] = 'text';
 			$fieldDef = array();
 			if (isset($options['options'])) {
@@ -716,13 +717,19 @@ class FormHelper extends AppHelper {
 		}
 		$types = array('checkbox', 'radio', 'select');
 
-		if (!isset($options['options']) && in_array($options['type'], $types)) {
+		if (
+			(!isset($options['options']) && in_array($options['type'], $types)) ||
+			(isset($magicType) && $options['type'] == 'text')
+		) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
+				if ($options['type'] !== 'radio') {
+					$options['type'] = 'select';
+				}
 				$options['options'] = $varOptions;
 			}
 		}
