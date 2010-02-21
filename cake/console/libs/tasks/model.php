@@ -465,6 +465,10 @@ class ModelTask extends Shell {
 			return false;
 		}
 
+		if (empty($this->_tables)) {
+			$this->_tables = $this->getAllTables();
+		}
+
 		$associations = array(
 			'belongsTo' => array(), 'hasMany' => array(), 'hasOne'=> array(), 'hasAndBelongsToMany' => array()
 		);
@@ -532,7 +536,7 @@ class ModelTask extends Shell {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
-			$modelFieldsTemp = $tempOtherModel->schema();
+			$modelFieldsTemp = $tempOtherModel->schema(true);
 
 			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
 			$possibleJoinTable = preg_match($pattern , $otherTable);

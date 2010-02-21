@@ -708,6 +708,22 @@ STRINGEND;
 	}
 
 /**
+ * test that execute with a model name picks up hasMany associations.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithNamedModelHasManyCreated() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('article');
+		$filename = '/my/path/article.php';
+		$this->Task->setReturnValue('_checkUnitTest', 1);
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation("/'Comment' \=\> array\(/")));
+		$this->Task->execute();
+	}
+
+/**
  * test that execute runs all() when args[0] = all
  *
  * @return void
