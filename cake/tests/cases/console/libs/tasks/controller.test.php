@@ -318,21 +318,22 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
 
 		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Invalid article', true))") !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('Invalid %s', true), 'article'));") !== false);
 		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
 
 		$this->assertTrue(strpos($result, 'function add()') !== false);
 		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The article has been saved', true))") !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'article'));") !== false); 
 
 		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The article could not be saved. Please, try again.', true));") !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'article'));") !== false);
 
 		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Article deleted', true))") !== false);
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('%s deleted', true), 'Article'));") !== false);
 
+debug($result, true);
 
 		$result = $this->Task->bakeActions('Articles', 'admin_', true);
 
@@ -362,13 +363,13 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
 
 		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Invalid article', true), array('action' => 'index'))") !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(sprintf(__('Invalid %s', true), 'article'), array('action' => 'index'))") !== false);
 		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
 
 		$this->assertTrue(strpos($result, 'function add()') !== false);
 		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('The article has been saved.', true), array('action' => 'index'))") !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(sprintf(__('The %s has been saved.', true), 'article'), array('action' => 'index'))") !== false);
 
 		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
 		$this->assertTrue(strpos($result, "\$this->Article->Tag->find('list')") !== false);
@@ -376,7 +377,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted', true), array('action' => 'index'))") !== false);
+		$this->assertTrue(strpos($result, "\$this->flash(sprintf(__('%s deleted', true), 'Article'), array('action' => 'index'))") !== false);
 	}
 
 /**
