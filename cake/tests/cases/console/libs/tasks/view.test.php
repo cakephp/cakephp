@@ -454,6 +454,24 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
+ * Test all() with action parameter
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteIntoAllWithActionName() {
+		$this->Task->args = array('all', 'index');
+
+		$this->Task->Controller->setReturnValue('listAll', array('view_task_comments'));
+		$this->Task->Controller->expectOnce('listAll');
+
+		$this->Task->expectCallCount('createFile', 1);
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+
+		$this->Task->execute();
+	}
+
+/**
  * test `cake bake view $controller view`
  *
  * @return void
