@@ -244,6 +244,9 @@ class ShellDispatcher {
 		define('APP_DIR', $this->params['app']);
 		define('APP_PATH', $this->params['working'] . DS);
 		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
+		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
+			define('TMP', CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
+		}
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
