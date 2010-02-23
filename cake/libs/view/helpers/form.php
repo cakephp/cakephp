@@ -123,26 +123,49 @@ class FormHelper extends AppHelper {
 			$validates = array();
 			if (!empty($object->validate)) {
 				foreach ($object->validate as $validateField => $validateProperties) {
-					if (is_array($validateProperties)) {
-						$dims = Set::countDim($validateProperties);
-						if (($dims == 1 && !isset($validateProperties['required']) || (array_key_exists('required', $validateProperties) && $validateProperties['required'] !== false))) {
-							$validates[] = $validateField;
-						} elseif ($dims > 1) {
-							foreach ($validateProperties as $rule => $validateProp) {
-								if (is_array($validateProp) && (array_key_exists('required', $validateProp) && $validateProp['required'] !== false)) {
-									$validates[] = $validateField;
-								}
-							}
-						}
+					if ($this->_isRequiredField($validateProperties)) {
+						$validates[] = $validateField;
 					}
 				}
 			}
 			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
 			$key = $object->primaryKey;
-			$this->fieldset[$object->name] = array_merge($defaults,compact('fields', 'key', 'validates'));
+			$this->fieldset[$object->name] = array_merge($defaults, compact('fields', 'key', 'validates'));
 		}
 
 		return $object;
+	}
+
+/**
+ * Returns if a field is required to be filled based on validation properties from the validating object
+ *
+ * @return boolean true if field is required to be filled, false otherwise
+ * @access protected
+ */
+	function _isRequiredField($validateProperties) {
+		$required = false;
+		if (is_array($validateProperties)) {
+
+			$dims = Set::countDim($validateProperties);
+			if ($dims == 1) {
+				$validateProperties = array($validateProperties);
+			}
+
+			foreach ($validateProperties as $rule => $validateProp) {
+				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
+				if ($rule) {
+					$rule = is_array($rule) ? array_shift($rule) : $rule;
+					$rule = is_string($rule) ? strtolower($rule) : $rule;
+				}
+				$required = empty($validateProp);
+				$required = $required || (!empty($rule) && $rule === 'notempty');
+				$required = $required || (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] !== true);
+				if ($required) {
+					break;
+				}
+			}
+		}
+		return $required;
 	}
 
 /**
