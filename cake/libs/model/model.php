@@ -1557,14 +1557,14 @@ class Model extends Overloadable {
  *   validate the records, but not save them.
  * - atomic: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
- *   If false, we return an array similar to the $data array passed, but values are set to true/false
- *   depending on whether each record saved successfully.
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
  *
  * @param array $data Record data to save.  This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
- * @return mixed True on success, or false on failure
+ * @return mixed If atomic: True on success, or false on failure.
+ *               Otherwise: array similar to the $data array passed, but values are set to true/false
+ *               depending on whether each record saved successfully.
  * @access public
  * @link http://book.cakephp.org/view/84/Saving-Related-Model-Data-hasOne-hasMany-belongsTo
  * @link http://book.cakephp.org/view/75/Saving-Your-Data
