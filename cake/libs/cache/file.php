@@ -19,6 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+if (!class_exists('File')) {
+	require LIBS . 'file.php';
+}
 /**
  * File Storage engine for cache
  *
@@ -51,14 +54,6 @@ class FileEngine extends CacheEngine {
 	var $settings = array();
 
 /**
- * Set to true if FileEngine::init(); and FileEngine::__active(); do not fail.
- *
- * @var boolean
- * @access private
- */
-	var $__active = false;
-
-/**
  * True unless FileEngine::__active(); fails
  *
  * @var boolean
@@ -85,9 +80,6 @@ class FileEngine extends CacheEngine {
 			$settings
 		));
 		if (!isset($this->__File)) {
-			if (!class_exists('File')) {
-				require LIBS . 'file.php';
-			}
 			$this->__File =& new File($this->settings['path'] . DS . 'cake');
 		}
 
@@ -95,9 +87,9 @@ class FileEngine extends CacheEngine {
 			$this->settings['isWindows'] = true;
 		}
 
-		$this->settings['path'] = $this->__File->Folder->cd($this->settings['path']);
-		if (empty($this->settings['path'])) {
-			return false;
+		$path = $this->__File->Folder->cd($this->settings['path']);
+		if ($path) {
+			$this->settings['path'] = $path;
 		}
 		return $this->__active();
 	}
@@ -266,11 +258,9 @@ class FileEngine extends CacheEngine {
  * @access private
  */
 	function __active() {
-		if (!$this->__active && $this->__init && !is_writable($this->settings['path'])) {
+		if ($this->__init && !is_writable($this->settings['path'])) {
 			$this->__init = false;
 			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
-		} else {
-			$this->__active = true;
 		}
 		return true;
 	}

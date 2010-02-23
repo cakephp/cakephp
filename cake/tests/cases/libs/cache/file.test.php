@@ -355,5 +355,23 @@ class FileEngineTest extends CakeTestCase {
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'");
 		$this->assertIdentical(Cache::read('App.singleQuoteTest'), "'this is a quoted string'");
 	}
+
+/**
+ * check that FileEngine generates an error when a configured Path does not exist.
+ *
+ * @return void
+ */
+	function testErrorWhenPathDoesNotExist() {
+		if ($this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists. %s')) {
+			return;
+		}
+		$this->expectError();
+		Cache::config('failure', array(
+			'engine' => 'File',
+			'path' => TMP . 'tests' . DS . 'file_failure'
+		));
+
+		Cache::drop('failure');
+	}
 }
 ?>
