@@ -2333,9 +2333,9 @@ class DboSource extends DataSource {
 				continue;
 			}
 
-			if (preg_match('/\\x20ASC|\\x20DESC/i', $key, $_dir)) {
+			if (preg_match('/\\x20(ASC|DESC).*/i', $key, $_dir)) {
 				$dir = $_dir[0];
-				$key = preg_replace('/\\x20ASC|\\x20DESC/i', '', $key);
+				$key = preg_replace('/\\x20(ASC|DESC).*/i', '', $key);
 			}
 
 			if (strpos($key, '.')) {
