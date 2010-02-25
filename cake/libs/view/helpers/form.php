@@ -1097,11 +1097,17 @@ class FormHelper extends AppHelper {
 /**
  * Creates a submit button element.
  *
+ * ### Options
+ *
+ * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to 
+ *   FormHelper::input().
+ * - Other attributes will be assigned to the input element.
+ *
  * @param string $caption The label appearing on the button OR if string contains :// or the
  *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
  *  exists, AND the first character is /, image is relative to webroot,
  *  OR if the first character is not /, image is relative to webroot/img.
- * @param array $options 
+ * @param array $options Array of options.  See above.
  * @return string A HTML submit button
  */
 	function submit($caption = null, $options = array()) {
