@@ -56,9 +56,15 @@ if (!empty($validate)):
 	echo "\t);\n";
 endif;
 
+foreach ($associations as $assoc):
+	if (!empty($assoc)):
 ?>
 	//The Associations below have been created with all possible keys, those that are not needed can be removed
 <?php
+		break;
+	endif;
+endforeach;
+
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
