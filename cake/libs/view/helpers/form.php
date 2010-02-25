@@ -1200,12 +1200,17 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a submit button element.
+ * Creates a submit button element.  This method will generate `<input />` elements that
+ * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an 
+ * image path for $caption.
  *
  * ### Options
  *
  * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to 
  *   FormHelper::input().
+ * - `before` - Content to include before the input.
+ * - `after` - Content to include after the input.
+ * - `type` - Set to 'reset' for reset inputs.  Defaults to 'submit'
  * - Other attributes will be assigned to the input element.
  *
  * @param string $caption The label appearing on the button OR if string contains :// or the
