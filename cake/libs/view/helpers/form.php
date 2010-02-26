@@ -585,7 +585,7 @@ class FormHelper extends AppHelper {
  */
 	function inputs($fields = null, $blacklist = null) {
 		$fieldset = $legend = true;
-
+		$model = $this->model();
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields)) {
 				$legend = $fields['legend'];
@@ -605,7 +605,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (empty($fields)) {
-			$fields = array_keys($this->fieldset[$this->model()]['fields']);
+			$fields = array_keys($this->fieldset[$model]['fields']);
 		}
 
 		if ($legend === true) {
@@ -617,7 +617,7 @@ class FormHelper extends AppHelper {
 			if ($isEdit) {
 				$actionName = __('Edit %s', true);
 			}
-			$modelName = Inflector::humanize(Inflector::underscore($this->model()));
+			$modelName = Inflector::humanize(Inflector::underscore($model));
 			$legend = sprintf($actionName, __($modelName, true));
 		}
 
@@ -675,6 +675,10 @@ class FormHelper extends AppHelper {
  * - `before` - Content to place before the label + input.
  * - `after` - Content to place after the label + input.
  * - `between` - Content to place between the label + input.
+ * - `format` - format template for element order. Any element that is not in the array, will not be in the output.
+ *     Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
+ *     Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
+ *     Hidden input will not be formatted
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
@@ -685,7 +689,7 @@ class FormHelper extends AppHelper {
 		$this->setEntity($fieldName);
 
 		$options = array_merge(
-			array('before' => null, 'between' => null, 'after' => null),
+			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
 			$this->_inputDefaults,
 			$options
 		);
@@ -758,7 +762,6 @@ class FormHelper extends AppHelper {
 			$options['maxlength'] = array_sum(explode(',', $fieldDef['length']))+1;
 		}
 
-		$out = '';
 		$div = true;
 		$divOptions = array();
 
@@ -830,7 +833,7 @@ class FormHelper extends AppHelper {
 			if (isset($options['id'])) {
 				$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
 			}
-			$out = $this->label($fieldName, $labelText, $labelAttributes);
+			$label = $this->label($fieldName, $labelText, $labelAttributes);
 		}
 
 		$error = null;
@@ -865,76 +868,77 @@ class FormHelper extends AppHelper {
 		}
 
 		$type = $options['type'];
-		$before  = $options['before'];
-		$between = $options['between'];
-		$after = $options['after'];
-		unset($options['type'], $options['before'], $options['between'], $options['after']);
+		$out = array_merge(
+			array('before' => null, 'label' => null, 'between' => null, 'input' => null, 'after' => null, 'error' => null),
+			array('before' => $options['before'], 'label' => $label, 'between' => $options['between'], 'after' => $options['after'])
+		);
+		$format = null;
+		if (is_array($options['format']) && in_array('input', $options['format'])) {
+			$format = $options['format'];
+		}
+		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
 
 		switch ($type) {
 			case 'hidden':
-				$out = $this->hidden($fieldName, $options);
+				$input = $this->hidden($fieldName, $options);
+				$format = array('input');
 				unset($divOptions);
 			break;
 			case 'checkbox':
-				$out = $before . $this->checkbox($fieldName, $options) . $between . $out;
+				$input = $this->checkbox($fieldName, $options);
+				$format = $format ?: array('before', 'input', 'between', 'label', 'after', 'error');
 			break;
 			case 'radio':
-				$out = $before . $out . $this->radio($fieldName, $radioOptions, $options) . $between;
+				$input = $this->radio($fieldName, $radioOptions, $options);
 			break;
 			case 'text':
 			case 'password':
-				$out = $before . $out . $between . $this->{$type}($fieldName, $options);
-			break;
 			case 'file':
-				$out = $before . $out . $between . $this->file($fieldName, $options);
+				$input = $this->{$type}($fieldName, $options);
 			break;
 			case 'select':
-				$options = array_merge(array('options' => array()), $options);
+				$options += array('options' => array());
 				$list = $options['options'];
 				unset($options['options']);
-				$out = $before . $out . $between . $this->select(
-					$fieldName, $list, $selected, $options
-				);
+				$input = $this->select($fieldName, $list, $selected, $options);
 			break;
 			case 'time':
-				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, null, $timeFormat, $selected, $options
-				);
+				$input = $this->dateTime($fieldName, null, $timeFormat, $selected, $options);
 			break;
 			case 'date':
-				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, null, $selected, $options
-				);
+				$input = $this->dateTime($fieldName, $dateFormat, null, $selected, $options);
 			break;
 			case 'datetime':
-				$out = $before . $out . $between . $this->dateTime(
-					$fieldName, $dateFormat, $timeFormat, $selected, $options
-				);
+				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $selected, $options);
 			break;
 			case 'textarea':
 			default:
-				$out = $before . $out . $between . $this->textarea($fieldName, array_merge(
-					array('cols' => '30', 'rows' => '6'), $options
-				));
+				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
 			break;
 		}
 
-		if ($type != 'hidden') {
-			$out .= $after;
-			if ($error !== false) {
-				$errMsg = $this->error($fieldName, $error);
-				if ($errMsg) {
-					$out .= $errMsg;
-					$divOptions = $this->addClass($divOptions, 'error');
-				}
+		if ($type != 'hidden' && $error !== false) {
+			$errMsg = $this->error($fieldName, $error);
+			if ($errMsg) {
+				$divOptions = $this->addClass($divOptions, 'error');
+				$out['error'] = $errMsg;
 			}
 		}
-		if (isset($divOptions) && isset($divOptions['tag'])) {
+
+		$out['input'] = $input;
+		$format = $format ?: array('before', 'label', 'between', 'input', 'after', 'error');
+		$output = '';
+		foreach ($format as $element) {
+			$output .= $out[$element];
+			unset($out[$element]);
+		}
+
+		if (!empty($divOptions['tag'])) {
 			$tag = $divOptions['tag'];
 			unset($divOptions['tag']);
-			$out = $this->Html->tag($tag, $out, $divOptions);
+			$output = $this->Html->tag($tag, $output, $divOptions);
 		}
-		return $out;
+		return $output;
 	}
 
 /**
