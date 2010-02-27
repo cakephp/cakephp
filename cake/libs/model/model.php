@@ -2105,9 +2105,6 @@ class Model extends Overloadable {
 	function _findFirst($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query['limit'] = 1;
-			if (empty($query['conditions']) && !empty($this->id)) {
-				$query['conditions'] = array($this->escapeField() => $this->id);
-			}
 			return $query;
 		} elseif ($state == 'after') {
 			if (empty($results[0])) {
