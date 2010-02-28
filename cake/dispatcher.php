@@ -182,9 +182,7 @@ class Dispatcher extends Object {
  */
 	function _invoke(&$controller, $params) {
 		$controller->constructClasses();
-		$controller->Component->initialize($controller);
-		$controller->beforeFilter();
-		$controller->Component->startup($controller);
+		$controller->startupProcess();
 
 		$methods = array_flip($controller->methods);
 
@@ -208,8 +206,7 @@ class Dispatcher extends Object {
 		} elseif (empty($controller->output)) {
 			$controller->output = $output;
 		}
-		$controller->Component->shutdown($controller);
-		$controller->afterFilter();
+		$controller->shutdownProcess();
 
 		if (isset($params['return'])) {
 			return $controller->output;
