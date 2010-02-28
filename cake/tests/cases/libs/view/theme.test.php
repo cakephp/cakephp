@@ -321,7 +321,7 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	function testMemoryLeakInPaths() {
-		if ($this->skipIf(!function_exists('memory_get_usage'), 'No memory measurement function, fail. %s')) {
+		if ($this->skipIf(!function_exists('memory_get_usage'), 'No memory measurement function, cannot test for possible memory leak. %s')) {
 			return;
 		}
 		$this->Controller->plugin = null;
@@ -338,7 +338,7 @@ class ThemeViewTest extends CakeTestCase {
 			$View->element('test_element');
 		}
 		$end = memory_get_usage();
-		$this->assertWithinMargin($start, $end, 2000);
+		$this->assertWithinMargin($start, $end, 3500);
 	}
 }
 ?>
