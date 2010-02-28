@@ -542,7 +542,7 @@ class Controller extends Object {
  * @access public
  */
 	function shutdownProcess() {
-		$this->Component->triggerCallback('shutdown', $controller);
+		$this->Component->triggerCallback('shutdown', $this);
 		$this->afterFilter();
 	}
 
