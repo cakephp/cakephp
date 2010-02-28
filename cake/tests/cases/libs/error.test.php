@@ -328,6 +328,10 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError404() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
+		), true);
+
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found', 'url' => '/test_error'));
 		$result = ob_get_clean();
@@ -345,6 +349,8 @@ class ErrorHandlerTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertNoPattern('#<script>#', $result);
 		$this->assertNoPattern('#</script>#', $result);
+
+		App::build();
 	}
 
 /**
