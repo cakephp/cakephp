@@ -333,8 +333,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, 'if ($this->Article->delete($id))') !== false);
 		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('%s deleted', true), 'Article'));") !== false);
 
-debug($result, true);
-
 		$result = $this->Task->bakeActions('Articles', 'admin_', true);
 
 		$this->assertTrue(strpos($result, 'function admin_index() {') !== false);
