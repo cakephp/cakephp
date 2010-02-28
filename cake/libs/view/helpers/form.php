@@ -152,14 +152,11 @@ class FormHelper extends AppHelper {
 			}
 
 			foreach ($validateProperties as $rule => $validateProp) {
-				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
-				if ($rule) {
-					$rule = is_array($rule) ? array_shift($rule) : $rule;
-					$rule = is_string($rule) ? strtolower($rule) : $rule;
+				if (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] === true) {
+					return false;
 				}
-				$required = empty($validateProp);
-				$required = $required || (!empty($rule) && $rule === 'notempty');
-				$required = $required || (isset($validateProp['allowEmpty']) && $validateProp['allowEmpty'] !== true);
+				$rule = isset($validateProp['rule']) ? $validateProp['rule'] : false;
+				$required = $rule || empty($validateProp);
 				if ($required) {
 					break;
 				}

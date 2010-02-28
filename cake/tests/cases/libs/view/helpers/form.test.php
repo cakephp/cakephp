@@ -108,7 +108,7 @@ class Contact extends CakeTestModel {
 		'imalsorequired' => array('rule' => 'alphaNumeric', 'allowEmpty' => false),
 		'imrequiredtoo' => array('rule' => 'notEmpty'),
 		'required_one' => array('required' => array('rule' => array('notEmpty'))),
-		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric'),
+		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
 		'imalsonotrequired' => array('alpha' => array('rule' => 'alphaNumeric','allowEmpty' => true),
 		'between' => array('rule' => array('between', 5, 30))));
 
