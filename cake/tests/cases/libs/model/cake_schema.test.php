@@ -463,7 +463,9 @@ class CakeSchemaTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array(
-		'core.post', 'core.tag', 'core.posts_tag', 'core.comment', 'core.datatype', 'core.auth_user', 'core.author'
+		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment', 
+		'core.datatype', 'core.auth_user', 'core.author',
+		'core.test_plugin_article', 'core.user', 'core.comment'
 	);
 
 /**
@@ -559,6 +561,7 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
+
 		$Schema =& new CakeSchema();
 		$Schema->plugin = 'TestPlugin';
 		$read = $Schema->read(array(
@@ -569,10 +572,10 @@ class CakeSchemaTest extends CakeTestCase {
 		unset($read['tables']['missing']);
 		$this->assertTrue(isset($read['tables']['auth_users']));
 		$this->assertTrue(isset($read['tables']['authors']));
-		$this->assertTrue(isset($read['tables']['comments']));
+		$this->assertTrue(isset($read['tables']['test_plugin_comments']));
 		$this->assertTrue(isset($read['tables']['posts']));
 		$this->assertEqual(count($read['tables']), 4);
-
+		
 		App::build();
 	}
 
