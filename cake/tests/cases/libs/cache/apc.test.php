@@ -182,16 +182,16 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 
 		$result = Cache::increment('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(5, $result);
+		$this->assertEqual(6, $result);
 
 		$result = Cache::increment('test_increment', 2);
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 
 		$result = Cache::read('test_increment');
-		$this->assertEqual(7, $result);
+		$this->assertEqual(8, $result);
 	}
 }
 ?>
