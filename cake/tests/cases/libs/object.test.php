@@ -323,7 +323,7 @@ class ObjectTest extends CakeTestCase {
  *
  * @var string
  */
-	var $fixtures = array('core.post', 'core.comment');
+	var $fixtures = array('core.post', 'core.test_plugin_comment', 'core.comment');
 
 /**
  * setUp method
