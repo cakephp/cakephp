@@ -505,7 +505,7 @@ class Folder extends Object {
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 /**

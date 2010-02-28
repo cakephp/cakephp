@@ -81,6 +81,47 @@ class FolderTest extends CakeTestCase {
 	}
 
 /**
+ * test creation of single and mulitple paths.
+ *
+ * @return void
+ */
+	function testCreation() {
+		$folder =& new Folder(TMP . 'tests');
+		$result = $folder->create(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
+		$this->assertTrue($result);
+
+		rmdir(TMP . 'tests' . DS . 'first' . DS . 'second' . DS . 'third');
+		rmdir(TMP . 'tests' . DS . 'first' . DS . 'second');
+		rmdir(TMP . 'tests' . DS . 'first');
+
+		$folder =& new Folder(TMP . 'tests');
+		$result = $folder->create(TMP . 'tests' . DS . 'first');
+		$this->assertTrue($result);
+		rmdir(TMP . 'tests' . DS . 'first');
+	}
+/**
+ * test recurisve directory create failure.
+ *
+ * @return void
+ */
+	function testRecursiveCreateFailure() {
+		if ($this->skipIf(DS == '\\', 'Cant perform operations using permissions on windows. %s')) {
+			return;
+		}
+		$path = TMP . 'tests' . DS . 'one';
+		mkdir($path);
+		chmod($path, '0444');
+
+		$this->expectError();
+
+		$folder =& new Folder($path);
+		$result = $folder->create($path . DS . 'two' . DS . 'three');
+		$this->assertFalse($result);
+
+		chmod($path, '0777');
+		rmdir($path);
+	}
+/**
  * testOperations method
  *
  * @access public
