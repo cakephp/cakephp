@@ -1339,17 +1339,16 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testStartupProcess() {
-		Mock::generatePartial('AnotherTestController','MockedController', array('beforeFilter'));
+		Mock::generatePartial('AnotherTestController','MockedController', array('beforeFilter', 'afterFilter'));
 		Mock::generate('TestComponent', 'MockTestComponent', array('startup', 'initialize'));
 		$MockedController =& new MockedController();
 		$MockedController->components = array('MockTest');
 		$MockedController->Component =& new Component();
 		$MockedController->Component->init($MockedController);
-		$MockedController->startupProcess();
-
 		$MockedController->expectCallCount('beforeFilter', 1);
-		$MockedController->MockTest->expectOnce('initialize', array($MockedController));
-		$MockedController->MockTest->expectOnce('startup', array($MockedController));
+		$MockedController->MockTest->expectCallCount('initialize', 1);
+		$MockedController->MockTest->expectCallCount('startup', 1);
+		$MockedController->startupProcess();
 	}
 /**
  * Tests that the shutdown process calls the correct functions
@@ -1358,16 +1357,14 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testShutdownProcess() {
-		Mock::generatePartial('AnotherTestController','MockedController2', array('afterFilter'));
 		Mock::generate('TestComponent', 'MockTestComponent', array('shutdown'));
-		$MockedController =& new MockedController2();
+		$MockedController =& new MockedController();
 		$MockedController->components = array('MockTest');
 		$MockedController->Component =& new Component();
 		$MockedController->Component->init($MockedController);
-		$MockedController->shutdownProcess();
-
 		$MockedController->expectCallCount('afterFilter', 1);
-		$MockedController->MockTest->expectOnce('shutdown', array($MockedController));
+		$MockedController->MockTest->expectCallCount('shutdown', 1);
+		$MockedController->shutdownProcess();
 	}
 }
 ?>
