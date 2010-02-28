@@ -107,6 +107,7 @@ class Component extends Object {
  * @return void
  * @access public
  * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
+ * @deprecated See Component::triggerCallback()
  */
 	function startup(&$controller) {
 		$this->triggerCallback('startup', $controller);
@@ -119,6 +120,7 @@ class Component extends Object {
  * @param object $controller Controller with components to beforeRender
  * @return void
  * @access public
+ * @deprecated See Component::triggerCallback()
  */
 	function beforeRender(&$controller) {
 		$this->triggerCallback('beforeRender', $controller);
@@ -154,6 +156,7 @@ class Component extends Object {
  * @param object $controller Controller with components to shutdown
  * @return void
  * @access public
+ * @deprecated See Component::triggerCallback()
  */
 	function shutdown(&$controller) {
 		$this->triggerCallback('shutdown', $controller);

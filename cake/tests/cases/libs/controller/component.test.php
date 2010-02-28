@@ -290,6 +290,8 @@ class SomethingWithEmailComponent extends Object {
 	var $components = array('Email');
 }
 
+Mock::generate('Object', 'ComponentMockComponent', array('startup', 'beforeFilter', 'beforeRender', 'other'));
+
 /**
  * ComponentTest class
  *
@@ -414,6 +416,24 @@ class ComponentTest extends CakeTestCase {
 		$expected = !(defined('APP_CONTROLLER_EXISTS') && APP_CONTROLLER_EXISTS);
 		$this->assertEqual(isset($Controller->foo), $expected);
 		$this->assertFalse(isset($Controller->bar));
+	}
+
+/**
+ * test that triggerCallbacks fires methods on all the components, and can trigger any method.
+ *
+ * @return void
+ */
+	function testTriggerCallback() {
+		$Controller =& new ComponentTestController();
+		$Controller->components = array('ComponentMock');
+		$Controller->constructClasses();
+
+		$Controller->ComponentMock->expectOnce('beforeRender');
+		$Controller->Component->triggerCallback('beforeRender', $Controller);
+
+		$Controller->ComponentMock->expectNever('beforeFilter');
+		$Controller->ComponentMock->enabled = false;
+		$Controller->Component->triggerCallback('beforeFilter', $Controller);
 	}
 
 /**
