@@ -4857,6 +4857,7 @@ class ModelReadTest extends BaseModelTest {
  * Tests that the database configuration assigned to the model can be changed using
  * (before|after)Find callbacks
  *
+ * @access public
  * @return void
  */
 	function testCallbackSourceChange() {
@@ -4865,9 +4866,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual(3, count($TestModel->find('all')));
 
 		$this->expectError(new PatternExpectation('/Non-existent data source foo/i'));
-		if (defined('PHP_VERSION_ID') && PHP_VERSION_ID >= 50300) {
-			$this->expectError(new PatternExpectation('/Only variable references/i'));
-		}
 		$this->assertFalse($TestModel->find('all', array('connection' => 'foo')));
 	}
 
@@ -6378,6 +6376,21 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertTrue(isset($this->db->_queriesLog[0]['query']));
 		$this->assertNoPattern('/ORDER\s+BY/', $this->db->_queriesLog[0]['query']);
+	}
+
+/**
+ * Test that find('first') does not use the id set to the object.
+ *
+ * @return void
+ */
+	function testFindFirstNoIdUsed() {
+		$this->loadFixtures('Project');
+
+		$Project =& new Project();
+		$Project->id = 3;
+		$result = $Project->find('first');
+
+		$this->assertEqual($result['Project']['name'], 'Project 1', 'Wrong record retrieved');
 	}
 
 /**

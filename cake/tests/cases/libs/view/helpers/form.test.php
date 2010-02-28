@@ -2063,6 +2063,21 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		//Check that magic types still work for plural/singular vars
+		$view =& ClassRegistry::getObject('view');
+		$view->viewVars['types'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.type');
+		$expected = array(
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'ModelType'), 'Type', '/label',
+			'select' => array('name' => 'data[Model][type]', 'id' => 'ModelType'),
+			array('option' => array('value' => 'value')), 'good', '/option',
+			array('option' => array('value' => 'other')), 'bad', '/option',
+			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

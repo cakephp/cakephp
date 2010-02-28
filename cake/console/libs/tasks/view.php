@@ -289,9 +289,10 @@ class ViewTask extends Shell {
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj =& new $controllerClassName();
+		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
-		$modelObj =& ClassRegistry::getObject($controllerObj->modelKey);
+		$modelObj =& $controllerObj->{$controllerObj->modelClass};
 
 		if ($modelObj) {
 			$primaryKey = $modelObj->primaryKey;
@@ -302,13 +303,10 @@ class ViewTask extends Shell {
 			$fields = array_keys($schema);
 			$associations = $this->__associations($modelObj);
 		} else {
-			$primaryKey = null;
-			$displayField = null;
+			$primaryKey = $displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
-			$fields = array();
-			$schema = array();
-			$associations = array();
+			$fields = $schema = $associations = array();
 		}
 		$pluralVar = Inflector::variable($this->controllerName);
 		$pluralHumanName = $this->_pluralHumanName($this->controllerName);

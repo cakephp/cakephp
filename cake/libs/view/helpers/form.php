@@ -698,8 +698,8 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!isset($options['type'])) {
+			$magicType = true;
 			$options['type'] = 'text';
-			$fieldDef = array();
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
@@ -740,13 +740,19 @@ class FormHelper extends AppHelper {
 		}
 		$types = array('checkbox', 'radio', 'select');
 
-		if (!isset($options['options']) && in_array($options['type'], $types)) {
+		if (
+			(!isset($options['options']) && in_array($options['type'], $types)) ||
+			(isset($magicType) && $options['type'] == 'text')
+		) {
 			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
 			$varOptions = $view->getVar($varName);
 			if (is_array($varOptions)) {
+				if ($options['type'] !== 'radio') {
+					$options['type'] = 'select';
+				}
 				$options['options'] = $varOptions;
 			}
 		}
@@ -759,13 +765,9 @@ class FormHelper extends AppHelper {
 			$options['maxlength'] = array_sum(explode(',', $fieldDef['length']))+1;
 		}
 
-		$div = true;
 		$divOptions = array();
-
-		if (array_key_exists('div', $options)) {
-			$div = $options['div'];
-			unset($options['div']);
-		}
+		$div = $this->_extractOption('div', $options, true);
+		unset($options['div']);
 
 		if (!empty($div)) {
 			$divOptions['class'] = 'input';
@@ -778,7 +780,7 @@ class FormHelper extends AppHelper {
 			if (
 				isset($this->fieldset[$modelKey]) &&
 				in_array($fieldKey, $this->fieldset[$modelKey]['validates'])
-				) {
+			) {
 				$divOptions = $this->addClass($divOptions, 'required');
 			}
 			if (!isset($divOptions['tag'])) {
@@ -795,11 +797,7 @@ class FormHelper extends AppHelper {
 		if ($options['type'] === 'radio') {
 			$label = false;
 			if (isset($options['options'])) {
-				if (is_array($options['options'])) {
-					$radioOptions = $options['options'];
-				} else {
-					$radioOptions = array($options['options']);
-				}
+				$radioOptions = (array)$options['options'];
 				unset($options['options']);
 			}
 		}
@@ -833,35 +831,23 @@ class FormHelper extends AppHelper {
 			$label = $this->label($fieldName, $labelText, $labelAttributes);
 		}
 
-		$error = null;
-		if (isset($options['error'])) {
-			$error = $options['error'];
-			unset($options['error']);
-		}
+		$error = $this->_extractOption('error', $options, null);
+		unset($options['error']);
 
-		$selected = null;
-		if (array_key_exists('selected', $options)) {
-			$selected = $options['selected'];
-			unset($options['selected']);
-		}
+		$selected = $this->_extractOption('selected', $options, null);
+		unset($options['selected']);
+
 		if (isset($options['rows']) || isset($options['cols'])) {
 			$options['type'] = 'textarea';
 		}
 
-		$timeFormat = 12;
-		if (isset($options['timeFormat'])) {
-			$timeFormat = $options['timeFormat'];
-			unset($options['timeFormat']);
-		}
-
-		$dateFormat = 'MDY';
-		if (isset($options['dateFormat'])) {
-			$dateFormat = $options['dateFormat'];
-			unset($options['dateFormat']);
-		}
-
 		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
 			$options += array('empty' => false);
+		}
+		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
+			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
+			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
+			unset($options['dateFormat'], $options['timeFormat']);
 		}
 
 		$type = $options['type'];
@@ -936,6 +922,22 @@ class FormHelper extends AppHelper {
 			$output = $this->Html->tag($tag, $output, $divOptions);
 		}
 		return $output;
+	}
+
+/**
+ * Extracts a single option from an options array.
+ *
+ * @param string $name The name of the option to pull out.
+ * @param array $options The array of options you want to extract.
+ * @param mixed $default The default option value
+ * @return the contents of the option or default
+ * @access protected
+ */
+	function _extractOption($name, $options, $default = null) {
+		if (array_key_exists($name, $options)) {
+			return $options[$name];
+		}
+		return $default;
 	}
 
 /**
@@ -1224,13 +1226,24 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a submit button element.
+ * Creates a submit button element.  This method will generate `<input />` elements that
+ * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an 
+ * image path for $caption.
+ *
+ * ### Options
+ *
+ * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to 
+ *   FormHelper::input().
+ * - `before` - Content to include before the input.
+ * - `after` - Content to include after the input.
+ * - `type` - Set to 'reset' for reset inputs.  Defaults to 'submit'
+ * - Other attributes will be assigned to the input element.
  *
  * @param string $caption The label appearing on the button OR if string contains :// or the
  *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
  *  exists, AND the first character is /, image is relative to webroot,
  *  OR if the first character is not /, image is relative to webroot/img.
- * @param array $options
+ * @param array $options Array of options.  See above.
  * @return string A HTML submit button
  * @access public
  */
