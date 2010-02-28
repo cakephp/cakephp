@@ -109,7 +109,7 @@ class Component extends Object {
  * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
  */
 	function startup(&$controller) {
-		$this->triggerCallback($controller, 'startup');
+		$this->triggerCallback('startup', $controller);
 	}
 
 /**
@@ -121,7 +121,7 @@ class Component extends Object {
  * @access public
  */
 	function beforeRender(&$controller) {
-		$this->triggerCallback($controller, 'beforeRender');
+		$this->triggerCallback('beforeRender', $controller);
 	}
 
 /**
@@ -156,7 +156,7 @@ class Component extends Object {
  * @access public
  */
 	function shutdown(&$controller) {
-		$this->triggerCallback($controller, 'shutdown');
+		$this->triggerCallback('shutdown', $controller);
 	}
 
 /**
@@ -169,7 +169,7 @@ class Component extends Object {
  * @return void
  * @access public
  */
-	function triggerCallback(&$controller, $callback) {
+	function triggerCallback($callback, &$controller) {
 		foreach ($this->_primary as $name) {
 			$component =& $this->_loaded[$name];
 			if (method_exists($component, $callback) && $component->enabled === true) {
