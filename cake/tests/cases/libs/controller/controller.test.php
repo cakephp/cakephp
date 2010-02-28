@@ -366,6 +366,31 @@ class TestComponent extends Object {
  */
 	function beforeRedirect() {
 	}
+/**
+ * initialize method
+ *
+ * @access public
+ * @return void
+ */
+	function initialize(&$controller) {
+	}
+
+/**
+ * startup method
+ *
+ * @access public
+ * @return void
+ */
+	function startup(&$controller) {
+	}
+/**
+ * shutdown method
+ *
+ * @access public
+ * @return void
+ */
+	function shutdown(&$controller) {
+	}
 }
 
 /**
@@ -382,7 +407,6 @@ class AnotherTestController extends AppController {
  * @access public
  */
 	var $name = 'AnotherTest';
-
 /**
  * uses property
  *
@@ -1306,6 +1330,44 @@ class ControllerTest extends CakeTestCase {
 		$result = $Controller->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * Tests that the startup process calls the correct functions
+ *
+ * @access public
+ * @return void
+ */
+	function testStartupProcess() {
+		Mock::generatePartial('AnotherTestController','MockedController', array('beforeFilter'));
+		Mock::generate('TestComponent', 'MockTestComponent', array('startup', 'initialize'));
+		$MockedController =& new MockedController();
+		$MockedController->components = array('MockTest');
+		$MockedController->Component =& new Component();
+		$MockedController->Component->init($MockedController);
+		$MockedController->startupProcess();
+
+		$MockedController->expectCallCount('beforeFilter', 1);
+		$MockedController->MockTest->expectOnce('initialize', array($MockedController));
+		$MockedController->MockTest->expectOnce('startup', array($MockedController));
+	}
+/**
+ * Tests that the shutdown process calls the correct functions
+ *
+ * @access public
+ * @return void
+ */
+	function testShutdownProcess() {
+		Mock::generatePartial('AnotherTestController','MockedController2', array('afterFilter'));
+		Mock::generate('TestComponent', 'MockTestComponent', array('shutdown'));
+		$MockedController =& new MockedController2();
+		$MockedController->components = array('MockTest');
+		$MockedController->Component =& new Component();
+		$MockedController->Component->init($MockedController);
+		$MockedController->shutdownProcess();
+
+		$MockedController->expectCallCount('afterFilter', 1);
+		$MockedController->MockTest->expectOnce('shutdown', array($MockedController));
 	}
 }
 ?>
