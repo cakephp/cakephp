@@ -625,14 +625,14 @@ class ShellDispatcher {
 			$columns = max(1, floor($width / 30));
 			$rows = ceil(count($shellList) / $columns);
 
-			foreach($shellList as $shell => $types) {
+			foreach ($shellList as $shell => $types) {
 				sort($types);
 				$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
 			}
 			$out = array_chunk($shellList, $rows);
-			for($i = 0; $i < $rows; $i++) {
+			for ($i = 0; $i < $rows; $i++) {
 				$row = '';
-				for($j = 0; $j < $columns; $j++) {
+				for ($j = 0; $j < $columns; $j++) {
 					if (!isset($out[$j][$i])) {
 						continue;
  					}
