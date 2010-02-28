@@ -119,6 +119,7 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	function testInvaidConfig() {
+		$this->expectError();
 		Cache::config('Invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
