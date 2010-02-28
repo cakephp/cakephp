@@ -109,12 +109,7 @@ class Component extends Object {
  * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
  */
 	function startup(&$controller) {
-		foreach ($this->_primary as $name) {
-			$component =& $this->_loaded[$name];
-			if ($component->enabled === true && method_exists($component, 'startup')) {
-				$component->startup($controller);
-			}
-		}
+		$this->triggerCallback($controller, 'startup');
 	}
 
 /**
@@ -126,12 +121,7 @@ class Component extends Object {
  * @access public
  */
 	function beforeRender(&$controller) {
-		foreach ($this->_primary as $name) {
-			$component =& $this->_loaded[$name];
-			if ($component->enabled === true && method_exists($component,'beforeRender')) {
-				$component->beforeRender($controller);
-			}
-		}
+		$this->triggerCallback($controller, 'beforeRender');
 	}
 
 /**
@@ -166,10 +156,24 @@ class Component extends Object {
  * @access public
  */
 	function shutdown(&$controller) {
+		$this->triggerCallback($controller, 'shutdown');
+	}
+
+/**
+ * Trigger a callback on all primary components.  Will fire $callback on all components
+ * that have such a method.  You can implement and fire custom callbacks in addition to the
+ * standard ones.
+ *
+ * @param Controller $controller Controller instance
+ * @param string $callback Callback to trigger.
+ * @return void
+ * @access public
+ */
+	function triggerCallback(&$controller, $callback) {
 		foreach ($this->_primary as $name) {
 			$component =& $this->_loaded[$name];
-			if (method_exists($component,'shutdown') && $component->enabled === true) {
-				$component->shutdown($controller);
+			if (method_exists($component, $callback) && $component->enabled === true) {
+				$component->{$callback}($controller);
 			}
 		}
 	}
