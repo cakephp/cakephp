@@ -909,7 +909,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$out['input'] = $input;
-		$format = $format ?: array('before', 'label', 'between', 'input', 'after', 'error');
+		$format = $format ? $format : array('before', 'label', 'between', 'input', 'after', 'error');
 		$output = '';
 		foreach ($format as $element) {
 			$output .= $out[$element];
@@ -1227,12 +1227,12 @@ class FormHelper extends AppHelper {
 
 /**
  * Creates a submit button element.  This method will generate `<input />` elements that
- * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an 
+ * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an
  * image path for $caption.
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to 
+ * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to
  *   FormHelper::input().
  * - `before` - Content to include before the input.
  * - `after` - Content to include after the input.
@@ -1241,7 +1241,7 @@ class FormHelper extends AppHelper {
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to 
+ * - `div` - Include a wrapping div?  Defaults to true.  Accepts sub options similar to
  *   FormHelper::input().
  * - Other attributes will be assigned to the input element.
  *
