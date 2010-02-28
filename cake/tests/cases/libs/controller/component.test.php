@@ -426,6 +426,7 @@ class ComponentTest extends CakeTestCase {
 	function testTriggerCallback() {
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ComponentMock');
+		$Controller->uses = null;
 		$Controller->constructClasses();
 
 		$Controller->ComponentMock->expectOnce('beforeRender');
