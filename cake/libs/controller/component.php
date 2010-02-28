@@ -167,6 +167,13 @@ class Component extends Object {
  * that have such a method.  You can implement and fire custom callbacks in addition to the
  * standard ones.
  *
+ * example use, from inside a controller:
+ *
+ * `$this->Component->triggerCallback('beforeFilter', $this);`
+ *
+ * will trigger the beforeFilter callback on all components that have implemented one. You
+ * can trigger any method in this fashion.
+ *
  * @param Controller $controller Controller instance
  * @param string $callback Callback to trigger.
  * @return void
