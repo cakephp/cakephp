@@ -883,7 +883,7 @@ class FormHelper extends AppHelper {
 			break;
 			case 'checkbox':
 				$input = $this->checkbox($fieldName, $options);
-				$format = $format ?: array('before', 'input', 'between', 'label', 'after', 'error');
+				$format = $format ? $format : array('before', 'input', 'between', 'label', 'after', 'error');
 			break;
 			case 'radio':
 				$input = $this->radio($fieldName, $radioOptions, $options);

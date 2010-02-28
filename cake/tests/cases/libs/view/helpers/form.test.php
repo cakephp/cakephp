@@ -6019,7 +6019,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected,true);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6041,5 +6041,67 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 
+/**
+ * tests the ability to change the order of the form input placeholder "input", "label", "before", "between", "after", "error"
+ *
+ * @return void
+ */
+	function testInputTemplate() {
+		$result = $this->Form->input('Contact.email', array(
+			'type' => 'text', 'format' => array('input')
+		));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'ContactEmail'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.email', array(
+			'type' => 'text', 'format' => array('input', 'label'),
+			'label' => '<em>Email (required)</em>'
+		));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'ContactEmail'
+			)),
+			'label' => array('for' => 'ContactEmail'),
+			'em' => array(),
+			'Email (required)',
+			'/em',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.email', array(
+			'type' => 'text', 'format' => array('input', 'between', 'label', 'after'),
+			'between' => '<div>Something in the middle</div>',
+			'after' => '<span>Some text at the end</span>'
+		));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			array('input' => array(
+				'type' => 'text', 'name' => 'data[Contact][email]',
+				'id' => 'ContactEmail'
+			)),
+			array('div' => array()),
+			'Something in the middle',
+			'/div',
+			'label' => array('for' => 'ContactEmail'),
+			'Email',
+			'/label',
+			'span' => array(),
+			'Some text at the end',
+			'/span',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
 }
 ?>
