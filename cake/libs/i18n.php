@@ -461,7 +461,6 @@ class I18n extends Object {
  * @access private
  */
 	function __loadLocaleDefinition($file, $domain = null) {
-		$_this =& I18N::getInstance();
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
@@ -492,7 +491,7 @@ class I18n extends Object {
 
 			$len = strlen($value) - 1;
 			if ($value[$len] === $escape) {
-				$value = substr($value,0,$len);
+				$value = substr($value, 0, $len);
 				continue;
 			}
 
@@ -500,7 +499,7 @@ class I18n extends Object {
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
 			$value = explode(';', $value);
-			$_this->__escape = $escape;
+			$this->__escape = $escape;
 			foreach ($value as $i => $val) {
 				$val = trim($val, '"');
 				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$this, '__parseLiteralValue'), $val);
@@ -540,7 +539,7 @@ class I18n extends Object {
 			$delimiter = 'U00';
 			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
-		if (preg_match('/U([0-9a-fA-F]{4})/',$string,$match)){
+		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
 			return Multibyte::ascii(array(hexdec($match[1])));
 		}
 		return $string;
