@@ -75,7 +75,7 @@ class Configure extends Object {
  * @link http://book.cakephp.org/view/412/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
- * @return void
+ * @return boolean True if write was successful
  * @access public
  */
 	function write($config, $value = null) {
@@ -133,6 +133,7 @@ class Configure extends Object {
 			}
 			error_reporting($reporting);
 		}
+		return true;
 	}
 
 /**

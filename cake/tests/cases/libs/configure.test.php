@@ -108,16 +108,19 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testWrite() {
-		Configure::write('SomeName.someKey', 'myvalue');
+		$writeResult = Configure::write('SomeName.someKey', 'myvalue');
+		$this->assertTrue($writeResult);
 		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, 'myvalue');
 
-		Configure::write('SomeName.someKey', null);
+		$writeResult = Configure::write('SomeName.someKey', null);
+		$this->assertTrue($writeResult);
 		$result = Configure::read('SomeName.someKey');
 		$this->assertEqual($result, null);
 
 		$expected = array('One' => array('Two' => array('Three' => array('Four' => array('Five' => 'cool')))));
-		Configure::write('Key', $expected);
+		$writeResult = Configure::write('Key', $expected);
+		$this->assertTrue($writeResult);
 
 		$result = Configure::read('Key');
 		$this->assertEqual($expected, $result);
@@ -226,7 +229,7 @@ class ConfigureTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$result = Configure::load('config');
-		$this->assertTrue($result === null);
+		$this->assertTrue($result);
 
 		$result = Configure::load('../../index');
 		$this->assertFalse($result);
@@ -241,13 +244,13 @@ class ConfigureTest extends CakeTestCase {
 	function testLoadPlugin() {
 		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
 		$result = Configure::load('test_plugin.load');
-		$this->assertTrue($result === null);
+		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/load.php';
 		$config = Configure::read('plugin_load');
 		$this->assertEqual($config, $expected);
 
 		$result = Configure::load('test_plugin.more.load');
-		$this->assertTrue($result === null);
+		$this->assertTrue($result);
 		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
 		$config = Configure::read('plugin_more_load');
 		$this->assertEqual($config, $expected);
