@@ -540,6 +540,9 @@ class I18n extends Object {
 			$delimiter = 'U00';
 			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
+		if (preg_match('/U([0-9a-fA-F]{4})/',$string,$match)){
+			return Multibyte::ascii(array(hexdec($match[1])));
+		}
 		return $string;
 	}
 

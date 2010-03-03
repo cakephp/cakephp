@@ -2604,6 +2604,23 @@ class I18nTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+	function testTimeDefinitionJapanese(){
+		Configure::write('Config.language', 'ja_jp');
+		$result = __c('d_fmt', 5, true);
+		
+		$expected = "%Y年%m月%d日";
+		
+		$this->assertEqual($result, $expected);
+
+		$result = __c('am_pm', 5, true);
+		$expected = array("午前", "午後");
+		$this->assertEqual($result, $expected);
+
+		$result = __c('abmon', 5, true);
+		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * Singular method
  *
