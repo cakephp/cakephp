@@ -475,9 +475,6 @@ class DboSource extends DataSource {
 		if ($data === '*') {
 			return '*';
 		}
-		if (is_object($data) && isset($data->type)) {
-			return $data->value;
-		}
 		if (is_array($data)) {
 			foreach ($data as $i => $dataItem) {
 				$data[$i] = $this->name($dataItem);
