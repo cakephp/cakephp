@@ -31,14 +31,6 @@ class ViewTask extends BakeTask {
 	var $name = 'View';
 
 /**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
-
-/**
  * Tasks to be loaded by this Task
  *
  * @var array

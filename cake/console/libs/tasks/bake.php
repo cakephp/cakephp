@@ -26,6 +26,22 @@ class BakeTask extends Shell {
 	var $name = null;
 
 /**
+ * Name of plugin
+ *
+ * @var string
+ * @access public
+ */
+	var $plugin = null;
+
+/**
+ * The db connection being used for baking
+ *
+ * @var string
+ * @access public
+ */
+	var $connection = null;
+
+/**
  * Gets the path for output.  Checks the plugin property
  * and returns the correct path.
  *

@@ -17,22 +17,14 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+include_once dirname(__FILE__) . DS . 'bake.php';
 /**
  * Task class for creating and updating fixtures files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class FixtureTask extends Shell {
-
-/**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
+class FixtureTask extends BakeTask {
 
 /**
  * Tasks to be loaded by this Task
@@ -49,14 +41,6 @@ class FixtureTask extends Shell {
  * @access public
  */
 	var $path = null;
-
-/**
- * The db connection being used for baking
- *
- * @var string
- * @access public
- */
-	var $connection = null;
 
 /**
  * Schema instance

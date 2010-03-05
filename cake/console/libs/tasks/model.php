@@ -29,21 +29,6 @@ include_once dirname(__FILE__) . DS . 'bake.php';
 class ModelTask extends BakeTask {
 
 	var $name = 'Model';
-/**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
-
-/**
- * Name of the db connection used.
- *
- * @var string
- * @access public
- */
-	var $connection = null;
 
 /**
  * path to MODELS directory
