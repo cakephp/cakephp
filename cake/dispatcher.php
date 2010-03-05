@@ -603,7 +603,7 @@ class Dispatcher extends Object {
 			header('HTTP/1.1 404 Not Found');
 			return $this->_stop();
 		} elseif ($isCss) {
-			include WWW_ROOT . DS . $filter['css'];
+			include WWW_ROOT . DS . $filters['css'];
 			$this->_stop();
 		} elseif ($isJs) {
 			include WWW_ROOT . DS . $filters['js'];
