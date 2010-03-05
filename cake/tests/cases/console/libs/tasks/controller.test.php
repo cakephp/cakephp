@@ -389,12 +389,14 @@ class ControllerTaskTest extends CakeTestCase {
 	function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test_suite';
+		$this->Task->interactive = false;
 
 		$this->Task->Test->expectOnce('bake', array('Controller', 'Articles'));
 		$this->Task->bakeTest('Articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**

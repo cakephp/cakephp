@@ -487,11 +487,14 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function testBakeFixture() {
+		$this->Task->plugin = 'test_plugin';
+		$this->Task->interactive = true;
 		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
 		$this->Task->bakeFixture('Article', 'articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Fixture->interactive);
 	}
 
 /**
@@ -501,11 +504,14 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function testBakeTest() {
+		$this->Task->plugin = 'test_plugin';
+		$this->Task->interactive = true;
 		$this->Task->Test->expectAt(0, 'bake', array('Model', 'Article'));
 		$this->Task->bakeTest('Article');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**

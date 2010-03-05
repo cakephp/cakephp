@@ -752,6 +752,7 @@ class ModelTask extends BakeTask {
  * @access private
  */
 	function bakeTest($className) {
+		$this->Test->interactive = $this->interactive;
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
@@ -911,6 +912,7 @@ class ModelTask extends BakeTask {
  * @see FixtureTask::bake
  */
 	function bakeFixture($className, $useTable = null) {
+		$this->Fixture->interactive = $this->interactive;
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);
