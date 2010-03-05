@@ -48,10 +48,6 @@ class BakeShell extends Shell {
 		parent::loadTasks();
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
-			if (empty($this->{$task}->path)) {
-				$path = Inflector::underscore(Inflector::pluralize($this->command));
-				$this->{$task}->path = $this->params['working'] . DS . $path . DS;
-			}
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
@@ -63,10 +59,6 @@ class BakeShell extends Shell {
 			}
 			if (isset($this->params['plugin'])) {
 				$this->{$task}->plugin = $this->params['plugin'];
-			}
-			if (!is_dir($this->{$task}->path)) {
-				$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
-				$this->_stop();
 			}
 		}
 	}
