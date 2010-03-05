@@ -28,8 +28,6 @@ include_once dirname(__FILE__) . DS . 'bake.php';
  */
 class ModelTask extends BakeTask {
 
-	var $name = 'Model';
-
 /**
  * path to MODELS directory
  *

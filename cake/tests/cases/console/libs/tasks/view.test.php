@@ -255,6 +255,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Dispatcher =& new TestViewTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockViewTask($this->Dispatcher);
+		$this->Task->name = 'ViewTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 		$this->Task->Controller =& new ViewTaskMockControllerTask();

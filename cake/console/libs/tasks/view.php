@@ -28,8 +28,6 @@ include_once dirname(__FILE__) . DS . 'bake.php';
  */
 class ViewTask extends BakeTask {
 
-	var $name = 'View';
-
 /**
  * Tasks to be loaded by this Task
  *

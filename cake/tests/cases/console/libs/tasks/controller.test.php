@@ -101,6 +101,7 @@ class ControllerTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestControllerTaskMockShellDispatcher();
 		$this->Task =& new MockControllerTask($this->Dispatcher);
+		$this->Task->name = 'ControllerTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
@@ -158,6 +159,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @access public
  */
 	function testGetName() {
+		$this->Task->interactive = true;
 		$this->Task->setReturnValue('in', 1);
 
 		$this->Task->setReturnValueAt(0, 'in', 'q');

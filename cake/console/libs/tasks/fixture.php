@@ -222,10 +222,7 @@ class FixtureTask extends BakeTask {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
 
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
-		}
+		$path = $this->getPath();
 		$filename = Inflector::underscore($model) . '_fixture.php';
 
 		$this->Template->set('model', $model);
@@ -235,6 +232,19 @@ class FixtureTask extends BakeTask {
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);
 		return $content;
+	}
+
+/**
+ * Get the path to the fixtures.
+ *
+ * @return void
+ */
+	function getPath() {
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
+		}
+		return $path;
 	}
 
 /**

@@ -18,21 +18,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+include_once dirname(__FILE__) . DS . 'bake.php';
+
 /**
  * Task class for creating and updating test files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class TestTask extends Shell {
-
-/**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
+class TestTask extends BakeTask {
 
 /**
  * path to TESTS directory
@@ -66,12 +60,6 @@ class TestTask extends Shell {
  */
 	var $_fixtures = array();
 
-/**
- * Flag for interactive mode
- *
- * @var boolean
- */
-	var $interactive = false;
 
 /**
  * Execution method always used for tasks
@@ -434,10 +422,7 @@ class TestTask extends Shell {
  * @access public
  */
 	function testCaseFileName($type, $className) {
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests' . DS;
-		}
+		$path = $this->getPath();;
 		$path .= 'cases' . DS . Inflector::tableize($type) . DS;
 		if (strtolower($type) == 'controller') {
 			$className = $this->getRealClassName($type, $className);

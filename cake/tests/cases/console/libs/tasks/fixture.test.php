@@ -142,6 +142,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @access public
  */
 	function testImportRecordsFromDatabaseWithConditions() {
+		$this->Task->interactive = true;
 		$this->Task->setReturnValueAt(0, 'in', 'WHERE 1=1 LIMIT 10');
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';

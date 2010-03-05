@@ -28,8 +28,6 @@ include_once dirname(__FILE__) . DS . 'bake.php';
  */
 class ControllerTask extends BakeTask {
 
-	var $name = 'Controller';
-
 /**
  * Tasks to be loaded by this Task
  *

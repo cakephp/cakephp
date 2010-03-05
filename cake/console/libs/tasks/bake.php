@@ -18,12 +18,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class BakeTask extends Shell {
-/**
- * Name attribute, used in path generation.
- *
- * @var string
- */
-	var $name = null;
 
 /**
  * Name of plugin
@@ -42,6 +36,13 @@ class BakeTask extends Shell {
 	var $connection = null;
 
 /**
+ * Flag for interactive mode
+ *
+ * @var boolean
+ */
+	var $interactive = false;
+
+/**
  * Gets the path for output.  Checks the plugin property
  * and returns the correct path.
  *
@@ -51,7 +52,8 @@ class BakeTask extends Shell {
 	function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . Inflector::pluralize(Inflector::underscore($this->name)) . DS;
+			$name = substr($this->name, 0, strlen($this->name) - 4);
+			$path = $this->_pluginPath($this->plugin) . Inflector::pluralize(Inflector::underscore($name)) . DS;
 		}
 		return $path;
 	}
