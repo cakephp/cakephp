@@ -18,14 +18,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+include_once dirname(__FILE__) . DS . 'bake.php';
+
 /**
  * Task class for creating and updating model files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class ModelTask extends Shell {
+class ModelTask extends BakeTask {
 
+	var $name = 'Model';
 /**
  * Name of plugin
  *
@@ -751,10 +754,7 @@ class ModelTask extends Shell {
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$out = $this->Template->generate('classes', 'model');
 
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'models' . DS;
-		}
+		$path = $this->getPath();
 		$filename = $path . Inflector::underscore($name) . '.php';
 		$this->out("\nBaking model class for $name...");
 		$this->createFile($filename, $out);

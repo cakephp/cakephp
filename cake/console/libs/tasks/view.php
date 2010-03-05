@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'Controller', false);
+include_once dirname(__FILE__) . DS . 'bake.php';
 
 /**
  * Task class for creating and updating view files.
@@ -25,7 +26,9 @@ App::import('Controller', 'Controller', false);
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class ViewTask extends Shell {
+class ViewTask extends BakeTask {
+
+	var $name = 'View';
 
 /**
  * Name of plugin
@@ -370,10 +373,7 @@ class ViewTask extends Shell {
 		if ($content === true) {
 			$content = $this->getContent($action);
 		}
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'views' . DS;
-		}
+		$path = $this->getPath();
 		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
 		return $this->createFile($filename, $content);
 	}

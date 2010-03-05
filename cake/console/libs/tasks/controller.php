@@ -18,14 +18,17 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+include_once dirname(__FILE__) . DS . 'bake.php';
+
 /**
  * Task class for creating and updating controller files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class ControllerTask extends Shell {
+class ControllerTask extends BakeTask {
 
+	var $name = 'Controller';
 /**
  * Name of plugin
  *
@@ -318,10 +321,7 @@ class ControllerTask extends Shell {
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('classes', 'controller');
 
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'controllers' . DS;
-		}
+		$path = $this->getPath();
 		$filename = $path . $this->_controllerPath($controllerName) . '_controller.php';
 		if ($this->createFile($filename, $contents)) {
 			return $contents;
