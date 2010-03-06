@@ -321,16 +321,16 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function testGetInstance() {
-		$result = Debugger::getInstance();
+		$result =& Debugger::getInstance();
 		$this->assertIsA($result, 'Debugger');
 
-		$result = Debugger::getInstance('DebuggerTestCaseDebugger');
+		$result =& Debugger::getInstance('DebuggerTestCaseDebugger');
 		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
 
-		$result = Debugger::getInstance();
+		$result =& Debugger::getInstance();
 		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
 
-		$result = Debugger::getInstance('Debugger');
+		$result =& Debugger::getInstance('Debugger');
 		$this->assertIsA($result, 'Debugger');
 	}
 }
