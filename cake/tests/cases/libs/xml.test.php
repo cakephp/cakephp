@@ -932,7 +932,7 @@ class XmlTest extends CakeTestCase {
 
 		$expects = '<a:container xmlns:a="http://example.com/a" xmlns:b="http://example.com/b" xmlns:c="http://example.com/c" xmlns:d="http://example.com/d" xmlns:e="http://example.com/e" xmlns:f="http://example.com/f"><b:rule test=""><c:result>value</c:result></b:rule><d:rule test=""><e:result>value</e:result></d:rule></a:container>';
 
-		$_xml = XmlManager::getInstance();
+		$_xml =& XmlManager::getInstance();
 		$xml->addNamespace('f', 'http://example.com/f');
 		$result = $xml->toString(array('cdata' => false));
 		$this->assertEqual($expects, $result);
