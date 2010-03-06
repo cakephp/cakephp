@@ -172,6 +172,37 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test that execute passes runs bake depending with named model.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithNamedModelVariations() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->args = array('article');
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('articles');
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('Articles');
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('Article');
+		$filename = '/my/path/article_fixture.php';
+		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->execute();
+	}
+
+/**
  * test that execute runs all() when args[0] = all
  *
  * @return void

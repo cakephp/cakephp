@@ -70,7 +70,7 @@ class ControllerTask extends BakeTask {
 				return $this->all();
 			}
 
-			$controller = Inflector::camelize($this->args[0]);
+			$controller = $this->_controllerName($this->args[0]);
 			$actions = 'scaffold';
 
 			if (!empty($this->args[1]) && ($this->args[1] == 'public' || $this->args[1] == 'scaffold')) {

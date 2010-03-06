@@ -716,6 +716,32 @@ STRINGEND;
 	}
 
 /**
+ * test that execute passes with different inflections of the same name.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithNamedModelVariations() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->setReturnValue('_checkUnitTest', 1);
+
+		$this->Task->args = array('article');
+		$filename = '/my/path/article.php';
+
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('Articles');
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('articles');
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+	}
+
+/**
  * test that execute with a model name picks up hasMany associations.
  *
  * @return void

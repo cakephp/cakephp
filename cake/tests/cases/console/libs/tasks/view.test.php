@@ -505,6 +505,26 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test that both plural and singular forms can be used for baking views.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithControllerVariations() {
+		$this->Task->args = array('ViewTaskComments');
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->execute();
+		
+		$this->Task->args = array('ViewTaskComment');
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->execute();
+	}
+
+/**
  * test `cake bake view $controller -admin`
  * Which only bakes admin methods, not non-admin methods.
  *

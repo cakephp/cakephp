@@ -88,7 +88,7 @@ class ModelTask extends BakeTask {
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
-			$model = Inflector::camelize($this->args[0]);
+			$model = $this->_modelName($this->args[0]);
 			$object = $this->_getModelObject($model);
 			if ($this->bake($object, false)) {
 				if ($this->_checkUnitTest()) {

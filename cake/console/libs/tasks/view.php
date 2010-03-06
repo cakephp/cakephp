@@ -109,8 +109,8 @@ class ViewTask extends BakeTask {
 			$this->connection = 'default';
 		}
 		$controller = $action = $alias = null;
-		$this->controllerName = Inflector::camelize($this->args[0]);
-		$this->controllerPath = Inflector::underscore($this->controllerName);
+		$this->controllerName = $this->_controllerName($this->args[0]);
+		$this->controllerPath = $this->_controllerPath($this->controllerName);
 
 		$this->Project->interactive = false;
 		if (strtolower($this->args[0]) == 'all') {
