@@ -245,6 +245,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options See JsHelper::request() for options.
  * @return string The completed ajax call.
  * @access public
+ * @see JsBaseEngineHelper::request() for options list.
  */
 	function request($url, $options = array()) {
 		$url = $this->url($url);
@@ -282,7 +283,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
  * @access public
- * @see JsHelper::sortable() for options list.
+ * @see JsBaseEngineHelper::sortable() for options list.
  */
 	function sortable($options = array()) {
 		$template = '%s.sortable({%s});';
@@ -297,7 +298,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the draggable element.
  * @return string Completed Draggable script.
  * @access public
- * @see JsHelper::drag() for options list.
+ * @see JsBaseEngineHelper::drag() for options list.
  */
 	function drag($options = array()) {
 		$template = '%s.draggable({%s});';
@@ -312,7 +313,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the droppable element.
  * @return string Completed Droppable script.
  * @access public
- * @see JsHelper::drop() for options list.
+ * @see JsBaseEngineHelper::drop() for options list.
  */
 	function drop($options = array()) {
 		$template = '%s.droppable({%s});';
@@ -327,7 +328,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the droppable element.
  * @return string Completed Slider script.
  * @access public
- * @see JsHelper::slider() for options list.
+ * @see JsBaseEngineHelper::slider() for options list.
  */
 	function slider($options = array()) {
 		$callbacks = array('start', 'change', 'slide', 'stop');
@@ -342,7 +343,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param array $options Options for the serialization
  * @return string completed form serialization script.
  * @access public
- * @see JsHelper::serializeForm() for option list.
+ * @see JsBaseEngineHelper::serializeForm() for option list.
  */
 	function serializeForm($options = array()) {
 		$options = array_merge(array('isForm' => false, 'inline' => false), $options);

@@ -265,7 +265,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the sortable.
  * @return string Completed sortable script.
  * @access public
- * @see JsHelper::sortable() for options list.
+ * @see JsBaseEngineHelper::sortable() for options list.
  */
 	function sortable($options = array()) {
 		$options = $this->_processOptions('sortable', $options);
@@ -283,7 +283,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the draggable.
  * @return string Completed draggable script.
  * @access public
- * @see JsHelper::draggable() for options list.
+ * @see JsBaseEngineHelper::draggable() for options list.
  */
 	function drag($options = array()) {
 		$options = $this->_processOptions('drag', $options);
@@ -304,7 +304,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the droppable.
  * @return string Completed droppable script.
  * @access public
- * @see JsHelper::droppable() for options list.
+ * @see JsBaseEngineHelper::droppable() for options list.
  */
 	function drop($options = array()) {
 		$options = $this->_processOptions('drop', $options);
@@ -322,7 +322,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options for the slider.
  * @return string Completed slider script.
  * @access public
- * @see JsHelper::slider() for options list.
+ * @see JsBaseEngineHelper::slider() for options list.
  */
 	function slider($options = array()) {
 		$slider = $this->selection;
@@ -348,7 +348,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param array $options Array of options.
  * @return string Completed serializeForm() snippet
  * @access public
- * @see JsHelper::serializeForm()
+ * @see JsBaseEngineHelper::serializeForm()
  */
 	function serializeForm($options = array()) {
 		$options = array_merge(array('isForm' => false, 'inline' => false), $options);
