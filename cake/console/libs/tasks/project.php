@@ -314,12 +314,12 @@ class ProjectTask extends Shell {
 		$admin = '';
 		$prefixes = Configure::read('Routing.prefixes');
 		if (!empty($prefixes)) {
+			if (count($prefixes) == 1) {
+				return $prefixes[0] . '_';
+			}
 			if ($this->interactive) {
 				$this->out();
 				$this->out(__('You have more than one routing prefix configured', true));
-			}
-			if (count($prefixes) == 1) {
-				return $prefixes[0] . '_';
 			}
 			$options = array();
 			foreach ($prefixes as $i => $prefix) {
