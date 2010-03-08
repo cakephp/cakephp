@@ -786,15 +786,15 @@ class BehaviorTest extends CakeTestCase {
 				'Apple' => array('id' => 3),
 				'Parent' => array('id' => 2,'name' => 'Bright Red Apple', 'mytime' => '22:57:17'))
 		);
-		$result = $Apple->find('all', array('fields' => array('Apple.id', 'Parent.*'), 'conditions' => array('Apple.id <' => '4')));
-		//$this->assertEqual($result, $expected2);
+		$result = $Apple->find('all', array(
+			'fields' => array('Apple.id', 'Parent.id', 'Parent.name', 'Parent.mytime'),
+			'conditions' => array('Apple.id <' => '4')
+		));
+		$this->assertEqual($result, $expected2);
 
 		$Apple->Parent->Behaviors->disable('Test');
 		$result = $Apple->find('all');
 		$this->assertEqual($result, $expected);
-
-		$Apple->Parent->Behaviors->attach('Test', array('before' => 'off', 'after' => 'on'));
-		//$this->assertIdentical($Apple->find('all'), array());
 
 		$Apple->Parent->Behaviors->attach('Test', array('after' => 'off'));
 		$this->assertEqual($Apple->find('all'), $expected);
