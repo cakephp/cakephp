@@ -1159,7 +1159,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testExtensionParsingSetting() {
-		$router = Router::getInstance();
+		$router =& Router::getInstance();
 		$this->assertFalse($this->router->__parseExtensions);
 
 		$router->parseExtensions();

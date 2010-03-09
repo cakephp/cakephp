@@ -34,7 +34,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->ConnectionManager = ConnectionManager::getInstance();
+		$this->ConnectionManager =& ConnectionManager::getInstance();
 	}
 
 /**

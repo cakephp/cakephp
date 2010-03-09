@@ -101,6 +101,7 @@ class ControllerTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestControllerTaskMockShellDispatcher();
 		$this->Task =& new MockControllerTask($this->Dispatcher);
+		$this->Task->name = 'ControllerTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
@@ -158,6 +159,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @access public
  */
 	function testGetName() {
+		$this->Task->interactive = true;
 		$this->Task->setReturnValue('in', 1);
 
 		$this->Task->setReturnValueAt(0, 'in', 'q');
@@ -324,7 +326,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertTrue(strpos($result, 'function add()') !== false);
 		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
 		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'article'));") !== false); 
+		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('The %s has been saved', true), 'article'));") !== false);
 
 		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
 		$this->assertTrue(strpos($result, "\$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.', true), 'article'));") !== false);
@@ -387,12 +389,14 @@ class ControllerTaskTest extends CakeTestCase {
 	function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test_suite';
+		$this->Task->interactive = false;
 
 		$this->Task->Test->expectOnce('bake', array('Controller', 'Articles'));
 		$this->Task->bakeTest('Articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**
@@ -467,6 +471,58 @@ class ControllerTaskTest extends CakeTestCase {
 			$filename, new PatternExpectation('/\$scaffold/')
 		));
 
+		$this->Task->execute();
+	}
+
+/**
+ * test that both plural and singular forms work for controller baking.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithControllerNameVariations() {
+		$skip = $this->skipIf(!defined('ARTICLE_MODEL_CREATED'),
+			'Execute with scaffold param requires no Article, Tag or Comment model to be defined. %s');
+		if ($skip) {
+			return;
+		}
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->args = array('Articles');
+
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(0, 'createFile', array(
+			$filename, new PatternExpectation('/\$scaffold/')
+		));
+
+		$this->Task->execute();
+
+		$this->Task->args = array('Article');
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(1, 'createFile', array(
+			$filename, new PatternExpectation('/class ArticlesController/')
+		));
+		$this->Task->execute();
+
+		$this->Task->args = array('article');
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(2, 'createFile', array(
+			$filename, new PatternExpectation('/class ArticlesController/')
+		));
+
+		$this->Task->args = array('articles');
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(3, 'createFile', array(
+			$filename, new PatternExpectation('/class ArticlesController/')
+		));
+		$this->Task->execute();
+
+		$this->Task->args = array('Articles');
+		$filename = '/my/path/articles_controller.php';
+		$this->Task->expectAt(4, 'createFile', array(
+			$filename, new PatternExpectation('/class ArticlesController/')
+		));
+		$this->Task->execute();
 		$this->Task->execute();
 	}
 

@@ -588,7 +588,7 @@ class CodeCoverageManager {
  */
 	function __getExecutableLines($content) {
 		if (is_array($content)) {
-			$manager = CodeCoverageManager::getInstance();
+			$manager =& CodeCoverageManager::getInstance();
 			$result = array();
 			foreach ($content as $file) {
 				$result[$file] = $manager->__getExecutableLines(file_get_contents($file));

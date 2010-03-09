@@ -803,32 +803,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($label !== false) {
-			$labelAttributes = $this->domId(array(), 'for');
-			if ($options['type'] === 'date' || $options['type'] === 'datetime') {
-				if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
-					$labelAttributes['for'] .= 'Hour';
-				} else {
-					$labelAttributes['for'] .= 'Month';
-				}
-			} elseif ($options['type'] === 'time') {
-				$labelAttributes['for'] .= 'Hour';
-			}
-
-			if (is_array($label)) {
-				$labelText = null;
-				if (isset($label['text'])) {
-					$labelText = $label['text'];
-					unset($label['text']);
-				}
-				$labelAttributes = array_merge($labelAttributes, $label);
-			} else {
-				$labelText = $label;
-			}
-
-			if (isset($options['id'])) {
-				$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
-			}
-			$label = $this->label($fieldName, $labelText, $labelAttributes);
+			$label = $this->_inputLabel($fieldName, $label, $options);
 		}
 
 		$error = $this->_extractOption('error', $options, null);
@@ -938,6 +913,50 @@ class FormHelper extends AppHelper {
 			return $options[$name];
 		}
 		return $default;
+	}
+
+/**
+ * Generate a label for an input() call.
+ *
+ * @param array $options Options for the label element.
+ * @return string Generated label element
+ * @access protected
+ */
+	function _inputLabel($fieldName, $label, $options) {
+		$labelAttributes = $this->domId(array(), 'for');
+		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
+			if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
+				$labelAttributes['for'] .= 'Hour';
+				$idKey = 'hour';
+			} else {
+				$labelAttributes['for'] .= 'Month';
+				$idKey = 'month';
+			}
+			if (isset($options['id']) && isset($options['id'][$idKey])) {
+				$labelAttributes['for'] = $options['id'][$idKey];
+			}
+		} elseif ($options['type'] === 'time') {
+			$labelAttributes['for'] .= 'Hour';
+			if (isset($options['id']) && isset($options['id']['hour'])) {
+				$labelAttributes['for'] = $options['id']['hour'];
+			}
+		}
+
+		if (is_array($label)) {
+			$labelText = null;
+			if (isset($label['text'])) {
+				$labelText = $label['text'];
+				unset($label['text']);
+			}
+			$labelAttributes = array_merge($labelAttributes, $label);
+		} else {
+			$labelText = $label;
+		}
+
+		if (isset($options['id']) && is_string($options['id'])) {
+			$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
+		}
+		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
 
 /**
@@ -1752,7 +1771,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$elements = array('Day','Month','Year','Hour','Minute','Meridian');
+		$elements = array('Day', 'Month', 'Year', 'Hour', 'Minute', 'Meridian');
 		$defaults = array(
 			'minYear' => null, 'maxYear' => null, 'separator' => '-',
 			'interval' => 1, 'monthNames' => true
@@ -1779,6 +1798,10 @@ class FormHelper extends AppHelper {
 				}
 			} elseif (is_array($attributes['id'])) {
 				// check for missing ones and build selectAttr for each element
+				$attributes['id'] += array(
+					'month' => '', 'year' => '', 'day' => '',
+					'hour' => '', 'minute' => '', 'meridian' => ''
+				);
 				foreach ($elements as $element) {
 					$selectAttrName = 'select' . $element . 'Attr';
 					${$selectAttrName} = $attributes;

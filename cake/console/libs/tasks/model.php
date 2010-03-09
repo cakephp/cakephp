@@ -18,29 +18,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+include_once dirname(__FILE__) . DS . 'bake.php';
+
 /**
  * Task class for creating and updating model files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class ModelTask extends Shell {
-
-/**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
-
-/**
- * Name of the db connection used.
- *
- * @var string
- * @access public
- */
-	var $connection = null;
+class ModelTask extends BakeTask {
 
 /**
  * path to MODELS directory
@@ -102,7 +88,7 @@ class ModelTask extends Shell {
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
-			$model = Inflector::camelize($this->args[0]);
+			$model = $this->_modelName($this->args[0]);
 			$object = $this->_getModelObject($model);
 			if ($this->bake($object, false)) {
 				if ($this->_checkUnitTest()) {
@@ -751,10 +737,7 @@ class ModelTask extends Shell {
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));
 		$out = $this->Template->generate('classes', 'model');
 
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'models' . DS;
-		}
+		$path = $this->getPath();
 		$filename = $path . Inflector::underscore($name) . '.php';
 		$this->out("\nBaking model class for $name...");
 		$this->createFile($filename, $out);
@@ -769,6 +752,7 @@ class ModelTask extends Shell {
  * @access private
  */
 	function bakeTest($className) {
+		$this->Test->interactive = $this->interactive;
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
@@ -928,6 +912,7 @@ class ModelTask extends Shell {
  * @see FixtureTask::bake
  */
 	function bakeFixture($className, $useTable = null) {
+		$this->Fixture->interactive = $this->interactive;
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);

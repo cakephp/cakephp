@@ -255,6 +255,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Dispatcher =& new TestViewTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockViewTask($this->Dispatcher);
+		$this->Task->name = 'ViewTask';
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 		$this->Task->Controller =& new ViewTaskMockControllerTask();
@@ -500,6 +501,26 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
 		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
 
+		$this->Task->execute();
+	}
+
+/**
+ * test that both plural and singular forms can be used for baking views.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithControllerVariations() {
+		$this->Task->args = array('ViewTaskComments');
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
+		$this->Task->execute();
+		
+		$this->Task->args = array('ViewTaskComment');
+
+		$this->Task->expectAt(0, 'createFile', array(TMP . 'view_task_comments' . DS . 'index.ctp', '*'));
+		$this->Task->expectAt(1, 'createFile', array(TMP . 'view_task_comments' . DS . 'add.ctp', '*'));
 		$this->Task->execute();
 	}
 

@@ -17,22 +17,14 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
+include_once dirname(__FILE__) . DS . 'bake.php';
 /**
  * Task class for creating and updating fixtures files.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs.tasks
  */
-class FixtureTask extends Shell {
-
-/**
- * Name of plugin
- *
- * @var string
- * @access public
- */
-	var $plugin = null;
+class FixtureTask extends BakeTask {
 
 /**
  * Tasks to be loaded by this Task
@@ -49,14 +41,6 @@ class FixtureTask extends Shell {
  * @access public
  */
 	var $path = null;
-
-/**
- * The db connection being used for baking
- *
- * @var string
- * @access public
- */
-	var $connection = null;
 
 /**
  * Schema instance
@@ -95,7 +79,7 @@ class FixtureTask extends Shell {
 			if (strtolower($this->args[0]) == 'all') {
 				return $this->all();
 			}
-			$model = Inflector::camelize($this->args[0]);
+			$model = $this->_modelName($this->args[0]);
 			$this->bake($model);
 		}
 	}
@@ -238,10 +222,7 @@ class FixtureTask extends Shell {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
 
-		$path = $this->path;
-		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
-		}
+		$path = $this->getPath();
 		$filename = Inflector::underscore($model) . '_fixture.php';
 
 		$this->Template->set('model', $model);
@@ -251,6 +232,19 @@ class FixtureTask extends Shell {
 		$this->out("\nBaking test fixture for $model...");
 		$this->createFile($path . $filename, $content);
 		return $content;
+	}
+
+/**
+ * Get the path to the fixtures.
+ *
+ * @return void
+ */
+	function getPath() {
+		$path = $this->path;
+		if (isset($this->plugin)) {
+			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;
+		}
+		return $path;
 	}
 
 /**

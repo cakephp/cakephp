@@ -78,6 +78,8 @@ class ModelTaskTest extends CakeTestCase {
 	function startTest() {
 		$this->Dispatcher =& new TestModelTaskMockShellDispatcher();
 		$this->Task =& new MockModelTask($this->Dispatcher);
+		$this->Task->name = 'ModelTask';
+		$this->Task->interactive = true;
 		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
@@ -485,11 +487,14 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function testBakeFixture() {
+		$this->Task->plugin = 'test_plugin';
+		$this->Task->interactive = true;
 		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
 		$this->Task->bakeFixture('Article', 'articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Fixture->interactive);
 	}
 
 /**
@@ -499,11 +504,14 @@ class ModelTaskTest extends CakeTestCase {
  * @access public
  */
 	function testBakeTest() {
+		$this->Task->plugin = 'test_plugin';
+		$this->Task->interactive = true;
 		$this->Task->Test->expectAt(0, 'bake', array('Model', 'Article'));
 		$this->Task->bakeTest('Article');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
+		$this->assertEqual($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**
@@ -705,6 +713,32 @@ STRINGEND;
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
 		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
+	}
+
+/**
+ * test that execute passes with different inflections of the same name.
+ *
+ * @return void
+ * @access public
+ */
+	function testExecuteWithNamedModelVariations() {
+		$this->Task->connection = 'test_suite';
+		$this->Task->path = '/my/path/';
+		$this->Task->setReturnValue('_checkUnitTest', 1);
+
+		$this->Task->args = array('article');
+		$filename = '/my/path/article.php';
+
+		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('Articles');
+		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
+
+		$this->Task->args = array('articles');
+		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->execute();
 	}
 
 /**

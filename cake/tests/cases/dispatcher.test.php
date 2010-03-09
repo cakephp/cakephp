@@ -1843,7 +1843,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	function testAssets() {
 		Router::reload();
-		$Configure = Configure::getInstance();
+		$Configure =& Configure::getInstance();
 		$Configure->__objects = null;
 
 		App::build(array(

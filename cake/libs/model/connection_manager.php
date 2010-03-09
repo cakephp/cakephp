@@ -61,8 +61,8 @@ class ConnectionManager extends Object {
 	function __construct() {
 		if (class_exists('DATABASE_CONFIG')) {
 			$this->config =& new DATABASE_CONFIG();
+			$this->_getConnectionObjects();
 		}
-		$this->_getConnectionObjects();
 	}
 
 /**

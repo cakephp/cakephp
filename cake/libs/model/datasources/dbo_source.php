@@ -475,9 +475,6 @@ class DboSource extends DataSource {
 		if ($data === '*') {
 			return '*';
 		}
-		if (is_object($data) && isset($data->type)) {
-			return $data->value;
-		}
 		if (is_array($data)) {
 			foreach ($data as $i => $dataItem) {
 				$data[$i] = $this->name($dataItem);
@@ -1876,9 +1873,6 @@ class DboSource extends DataSource {
 		}
 		$fields = array_values(array_filter($fields));
 
-		if (!$quote) {
-			return $fields;
-		}
 		$virtual = array();
 		$virtualFields = $model->getVirtualField();
 		if (!empty($virtualFields)) {
@@ -1894,6 +1888,13 @@ class DboSource extends DataSource {
 				$fields = array_diff($fields, array($field));
 			}
 			$fields = array_values($fields);
+		}
+
+		if (!$quote) {
+			if (!empty($virtual)) {
+				$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
+			}
+			return $fields;
 		}
 		$count = count($fields);
 

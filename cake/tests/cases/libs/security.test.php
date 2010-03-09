@@ -90,7 +90,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	function testHash() {
-		$Security = Security::getInstance();
+		$Security =& Security::getInstance();
 		$_hashType =  $Security->hashType;
 
 		$key = 'someKey';
