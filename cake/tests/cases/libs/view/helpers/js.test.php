@@ -256,6 +256,20 @@ class JsHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that writeBuffer() sets domReady = false when the request is done by XHR.
+ * Including a domReady() when in XHR can cause issues as events aren't triggered by some libraries
+ *
+ * @return void
+ */
+	function testWriteBufferAndXhr() {
+		$this->_useMock();
+		$this->Js->params['isAjax'] = true;
+		$this->Js->buffer('alert("test");');
+		$this->Js->TestJsEngine->expectCallCount('dispatchMethod', 0);
+		$result = $this->Js->writeBuffer();
+	}
+
+/**
  * test that writeScripts makes files, and puts the events into them.
  *
  * @return void

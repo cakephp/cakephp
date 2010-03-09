@@ -185,7 +185,8 @@ class JsHelper extends AppHelper {
 /**
  * Writes all Javascript generated so far to a code block or
  * caches them to a file and returns a linked script.  If no scripts have been
- * buffered this method will return null
+ * buffered this method will return null.  If the request is an XHR(ajax) request
+ * onDomReady will be set to false. As the dom is already 'ready'.
  *
  * ### Options
  *
@@ -202,7 +203,11 @@ class JsHelper extends AppHelper {
  * @access public
  */
 	function writeBuffer($options = array()) {
-		$defaults = array('onDomReady' => true, 'inline' => true, 'cache' => false, 'clear' => true, 'safe' => true);
+		$domReady = isset($this->params['isAjax']) ? !$this->params['isAjax'] : true;
+		$defaults = array(
+			'onDomReady' => $domReady, 'inline' => true, 
+			'cache' => false, 'clear' => true, 'safe' => true
+		);
 		$options = array_merge($defaults, $options);
 		$script = implode("\n", $this->getBuffer($options['clear']));
 
