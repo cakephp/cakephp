@@ -450,7 +450,7 @@ class TimeHelper extends AppHelper {
 		}
 		$now = time();
 		if (!is_null($userOffset)) {
-			$now = 	$this->convert(time(), $userOffset);
+			$now = $this->convert(time(), $userOffset);
 		}
 		$inSeconds = $this->fromString($dateTime, $userOffset);
 		$backwards = ($inSeconds > $now);
