@@ -546,7 +546,23 @@ class DboPostgres extends DboSource {
 									$col['name'] = $field;
 								}
 								$fieldName = $this->name($field);
+
+								$default = isset($col['default']) ? $col['default'] : null;
+								$nullable = isset($col['null']) ? $col['null'] : null;
+								unset($col['default'], $col['null']);
 								$colList[] = 'ALTER COLUMN '. $fieldName .' TYPE ' . str_replace($fieldName, '', $this->buildColumn($col));
+
+								if (isset($nullable)) {
+									$nullable = ($nullable) ? 'DROP NOT NULL' : 'SET NOT NULL';
+									$colList[] = 'ALTER COLUMN '. $fieldName .'  ' . $nullable;
+								}
+
+								if (isset($default)) {
+									$colList[] = 'ALTER COLUMN '. $fieldName .'  SET DEFAULT ' . $default;
+								} else {
+									$colList[] = 'ALTER COLUMN '. $fieldName .'  DROP DEFAULT';
+								}
+
 							}
 						break;
 					}

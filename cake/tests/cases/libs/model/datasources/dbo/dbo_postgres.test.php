@@ -564,7 +564,7 @@ class DboPostgresTest extends CakeTestCase {
 			'alter_posts' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
 				'author_id' => array('type' => 'integer', 'null' => false),
-				'title' => array('type' => 'string', 'null' => false),
+				'title' => array('type' => 'string', 'null' => true),
 				'body' => array('type' => 'text'),
 				'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
 				'created' => array('type' => 'datetime'),
@@ -578,10 +578,10 @@ class DboPostgresTest extends CakeTestCase {
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
-				'author_id' => array('type' => 'integer', 'null' => false),
+				'author_id' => array('type' => 'integer', 'null' => true),
 				'title' => array('type' => 'string', 'null' => false),
 				'body' => array('type' => 'string', 'length' => 500),
-				'status' => array('type' => 'integer', 'length' => 3),
+				'status' => array('type' => 'integer', 'length' => 3, 'default' => 1),
 				'created' => array('type' => 'datetime'),
 				'updated' => array('type' => 'datetime'),
 			)
@@ -593,6 +593,9 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertTrue(isset($result['status']));
 		$this->assertFalse(isset($result['published']));
 		$this->assertEqual($result['body']['type'], 'string');
+		$this->assertEqual($result['status']['default'], 1);
+		$this->assertEqual($result['author_id']['null'], true);
+		$this->assertEqual($result['title']['null'], false);
 
 		$this->db->query($this->db->dropSchema($New));
 	}
