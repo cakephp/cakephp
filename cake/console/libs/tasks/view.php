@@ -211,6 +211,8 @@ class ViewTask extends BakeTask {
 		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
 
+		$this->DbConfig->interactive = $this->Controller->interactive = $this->interactive = true;
+
 		if (empty($this->connection)) {
 			$this->connection = $this->DbConfig->getConfig();
 		}
