@@ -676,23 +676,24 @@ class JsBaseEngineHelper extends AppHelper {
 		for ($i = 0; $i < $length; ++$i) {
 			$ord = ord($string{$i});
 			switch (true) {
-				case $ord == 0x08: // Backspace
+				case $ord == 0x08:
 					$return .= '\b';
 					break;
-				case $ord == 0x09: // Tab
+				case $ord == 0x09:
 					$return .= '\t';
 					break;
-				case $ord == 0x0A: // New Line
+				case $ord == 0x0A:
 					$return .= '\n';
 					break;
-				case $ord == 0x0C: // New Page
+				case $ord == 0x0C:
 					$return .= '\f';
 					break;
-				case $ord == 0x0D: // Carriage Return
+				case $ord == 0x0D:
 					$return .= '\r';
 					break;
-				case $ord == 0x22: // Character: "
-				case $ord == 0x5C: // Character: \
+				case $ord == 0x22:
+				case $ord == 0x2F:
+				case $ord == 0x5C:
 					$return .= '\\' . $string{$i};
 					break;
 				case (($ord >= 0x20) && ($ord <= 0x7F)):

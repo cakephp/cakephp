@@ -156,13 +156,13 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
  */
 	function testRequest() {
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1));
-		$expected = '$.ajax({url:"/posts/view/1"});';
+		$expected = '$.ajax({url:"\\/posts\\/view\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request(array('controller' => 'posts', 'action' => 'view', 1), array(
 			'update' => '#content'
 		));
-		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#content").html(data);}, url:"/posts/view/1"});';
+		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#content").html(data);}, url:"\/posts\/view\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -175,7 +175,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'data' => array('name' => 'jim', 'height' => '185cm'),
 			'wrapCallbacks' => false
 		));
-		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, success:doSuccess, type:"post", url:"/people/edit/1"});';
+		$expected = '$.ajax({beforeSend:doBefore, complete:doComplete, data:"name=jim&height=185cm", dataType:"json", error:handleError, success:doSuccess, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -184,7 +184,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'method' => 'post',
 			'wrapCallbacks' => false
 		));
-		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"/people/edit/1"});';
+		$expected = '$.ajax({dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -195,7 +195,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'data' => '$("#someId").serialize()',
 			'wrapCallbacks' => false
 		));
-		$expected = '$.ajax({data:$("#someId").serialize(), dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"/people/edit/1"});';
+		$expected = '$.ajax({data:$("#someId").serialize(), dataType:"html", success:function (data, textStatus) {$("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Jquery->request('/people/edit/1', array(
@@ -205,7 +205,7 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 			'dataExpression' => true,
 			'data' => '$("#someId").serialize()',
 		));
-		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"/people/edit/1"});';
+		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\\/people\\/edit\\/1"});';
 		$this->assertEqual($result, $expected);
 	}
 
