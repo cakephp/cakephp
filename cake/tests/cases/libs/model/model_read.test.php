@@ -76,7 +76,7 @@ class ModelReadTest extends BaseModelTest {
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
-		$message = '%s Postgresql and Oracle have strict GROUP BY and are incompatible with this test.';
+		$message = '%s Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
 			return;
@@ -4030,6 +4030,9 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', compact('conditions', 'recursive', 'order'));
 		$this->assertEqual($result, $expected);
 
+		if ($this->skipIf($this->db->config['driver'] == 'postgres', 'The rest of testFindAllWithConditionsHavingMixedDataTypes test is not compatible with Postgres')) {
+			return;
+		}
 		$conditions = array('id' => array('1', 2, '3.0'));
 		$order = 'Article.id ASC';
 		$result = $TestModel->find('all', compact('recursive', 'conditions', 'order'));
@@ -7240,6 +7243,9 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->field('other_field');
 		$this->assertEqual($result, 4);
 
+		if ($this->skipIf($this->db->config['driver'] == 'postgres', 'The rest of virtualFieds test is not compatible with Postgres')) {
+			return;
+		}
 		ClassRegistry::flush();
 		$Post =& ClassRegistry::init('Post');
 

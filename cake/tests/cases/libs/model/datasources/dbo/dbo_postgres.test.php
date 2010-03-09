@@ -677,7 +677,7 @@ class DboPostgresTest extends CakeTestCase {
 	*/
 	function testVirtualFields() {
 		$this->loadFixtures('Article', 'Comment');
-		$Article =& ClassRegistry::init('Article');
+		$Article = new Article;
 		$Article->virtualFields = array(
 			'next_id' => 'Article.id + 1',
 			'complex' => 'Article.title || Article.body',
@@ -689,6 +689,15 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($result['Article']['complex'], $result['Article']['title'] . $result['Article']['body']);
 		$this->assertEqual($result['Article']['functional'], $result['Article']['title']);
 		$this->assertEqual($result['Article']['subquery'], 6);
+	}
+
+	/**
+	* Tests additional order options for postgres
+	*/
+	function testOrderAdditionalParams() {
+		$result = $this->db->order(array('title' => 'DESC NULLS FIRSTS', 'body' => 'DESC'));
+		$expected = ' ORDER BY "title" DESC NULLS FIRSTS, "body" DESC';
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>
