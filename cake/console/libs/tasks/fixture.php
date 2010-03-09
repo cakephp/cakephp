@@ -106,7 +106,7 @@ class FixtureTask extends BakeTask {
  * @access private
  */
 	function __interactive() {
-		$this->interactive = true;
+		$this->DbConfig->interactive = $this->Model->interactive = $this->interactive = true;
 		$this->hr();
 		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
 		$this->hr();
