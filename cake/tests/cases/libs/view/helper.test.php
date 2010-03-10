@@ -385,6 +385,19 @@ class HelperTest extends CakeTestCase {
 		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
 		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
 		$this->assertEqual($result, array(3 => 3, 5 => 5));
+
+		$this->Helper->data = array('zero' => 0);
+		$this->Helper->setEntity('zero');
+		$result = $this->Helper->value(array('default' => 'something'), 'zero');
+		$this->assertEqual($result, array('value' => 0));
+
+		$this->Helper->data = array('zero' => '0');
+		$result = $this->Helper->value(array('default' => 'something'), 'zero');
+		$this->assertEqual($result, array('value' => '0'));
+
+		$this->Helper->setEntity('inexistent');
+		$result = $this->Helper->value(array('default' => 'something'), 'inexistent');
+		$this->assertEqual($result, array('value' => 'something'));
 	}
 
 /**

@@ -700,7 +700,7 @@ class Helper extends Overloadable {
 		}
 
 		if (is_array($options)) {
-			if (empty($result) && isset($options['default'])) {
+			if ($result === null && isset($options['default'])) {
 				$result = $options['default'];
 			}
 			unset($options['default']);
