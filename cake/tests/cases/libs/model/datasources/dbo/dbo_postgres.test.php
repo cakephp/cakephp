@@ -698,8 +698,8 @@ class DboPostgresTest extends CakeTestCase {
 	* Tests additional order options for postgres
 	*/
 	function testOrderAdditionalParams() {
-		$result = $this->db->order(array('title' => 'DESC NULLS FIRSTS', 'body' => 'DESC'));
-		$expected = ' ORDER BY "title" DESC NULLS FIRSTS, "body" DESC';
+		$result = $this->db->order(array('title' => 'DESC NULLS FIRST', 'body' => 'DESC'));
+		$expected = ' ORDER BY "title" DESC NULLS FIRST, "body" DESC';
 		$this->assertEqual($result, $expected);
 	}
 }
