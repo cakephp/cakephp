@@ -237,7 +237,7 @@ class HtmlHelper extends AppHelper {
 			}
 			$out .= sprintf($this->tags['metalink'], $attributes['link'], $this->_parseAttributes($attributes, array('link'), ' ', ' '));
 		} else {
-			$out = sprintf($this->tags['meta'], $this->_parseAttributes($attributes, array('type')));
+			$out = sprintf($this->tags['meta'], $this->_parseAttributes($attributes, array('type'), ' ', ' '));
 		}
 
 		if ($inline) {

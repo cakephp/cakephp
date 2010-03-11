@@ -380,11 +380,11 @@ class DboSource extends DataSource {
  * @return string SQL field
  */
 	function name($data) {
-		if ($data == '*') {
-			return '*';
-		}
 		if (is_object($data) && isset($data->type)) {
 			return $data->value;
+		}
+		if ($data == '*') {
+			return '*';
 		}
 		$array = is_array($data);
 		$data = (array)$data;
