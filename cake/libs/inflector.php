@@ -173,6 +173,29 @@ class Inflector {
 	);
 
 /**
+ * Default map of accented and special characters to ASCII characters
+ *
+ * @var array
+ * @access protected
+ */
+	var $_transliteration = array(
+		'/à|á|å|â/' => 'a',
+		'/è|é|ê|ẽ|ë/' => 'e',
+		'/ì|í|î/' => 'i',
+		'/ò|ó|ô|ø/' => 'o',
+		'/ù|ú|ů|û/' => 'u',
+		'/ç/' => 'c',
+		'/ñ/' => 'n',
+		'/ä|æ/' => 'ae',
+		'/ö/' => 'oe',
+		'/ü/' => 'ue',
+		'/Ä/' => 'Ae',
+		'/Ü/' => 'Ue',
+		'/Ö/' => 'Oe',
+		'/ß/' => 'ss'
+	);
+
+/**
  * Cached array identity map of pluralized words.
  *
  * @var array
@@ -267,7 +290,7 @@ class Inflector {
 	}
 
 /**
- * Adds custom inflection $rules, of either 'plural' or 'singular' $type.
+ * Adds custom inflection $rules, of either 'plural', 'singular' or 'transliteration' $type.
  *
  * ### Usage:
  *
@@ -278,9 +301,10 @@ class Inflector {
  *     'uninflected' => array('dontinflectme'),
  *     'irregular' => array('red' => 'redlings')
  * ));
+ * Inflector::rules('transliteration', array('/å/' => 'aa'));
  * }}}
  *
- * @param string $type The type of inflection, either 'singular' or 'plural'
+ * @param string $type The type of inflection, either 'singular', 'singular' or 'transliteration'
  * @param array $rules Array of rules to be added.
  * @param boolean $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
@@ -290,20 +314,31 @@ class Inflector {
  */
 	function rules($type, $rules, $reset = false) {
 		$_this =& Inflector::getInstance();
-		$type = '_'.$type;
+		$var = '_'.$type;
 
-		foreach ($rules as $rule => $pattern) {
-			if (is_array($pattern)) {
+		switch ($type) {
+			case 'transliteration':
 				if ($reset) {
-					$_this->{$type}[$rule] = $pattern;
+					$_this->_transliteration = $rules;
 				} else {
-					$_this->{$type}[$rule] = array_merge($pattern, $_this->{$type}[$rule]);
+					$_this->_transliteration = array_merge($rules, $_this->_transliteration, $rules);
 				}
-				unset($rules[$rule], $_this->{$type}['cache' . ucfirst($rule)], $_this->{$type}['merged'][$rule]);
-			}
-		}
-		$_this->{$type}['rules'] = array_merge($rules, $_this->{$type}['rules']);
+			break;
 
+			default:
+				foreach ($rules as $rule => $pattern) {
+					if (is_array($pattern)) {
+						if ($reset) {
+							$_this->{$var}[$rule] = $pattern;
+						} else {
+							$_this->{$var}[$rule] = array_merge($pattern, $_this->{$var}[$rule]);
+						}
+						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)], $_this->{$var}['merged'][$rule]);
+					}
+				}
+				$_this->{$var}['rules'] = array_merge($rules, $_this->{$var}['rules']);
+			break;
+		}
 	}
 
 /**
@@ -520,39 +555,28 @@ class Inflector {
  * @param string $string the string you want to slug
  * @param string $replacement will replace keys in map
  * @param array $map extra elements to map to the replacement
+ * @deprecated $map param will be removed in future versions. Use Inflector::rules() instead
  * @return string
  * @access public
  * @static
  * @link http://book.cakephp.org/view/572/Class-methods
  */
 	function slug($string, $replacement = '_', $map = array()) {
+		$_this =& Inflector::getInstance();
+
 		if (is_array($replacement)) {
 			$map = $replacement;
 			$replacement = '_';
 		}
 		$quotedReplacement = preg_quote($replacement, '/');
 
-		$default = array(
-			'/à|á|å|â/' => 'a',
-			'/è|é|ê|ẽ|ë/' => 'e',
-			'/ì|í|î/' => 'i',
-			'/ò|ó|ô|ø/' => 'o',
-			'/ù|ú|ů|û/' => 'u',
-			'/ç/' => 'c',
-			'/ñ/' => 'n',
-			'/ä|æ/' => 'ae',
-			'/ö/' => 'oe',
-			'/ü/' => 'ue',
-			'/Ä/' => 'Ae',
-			'/Ü/' => 'Ue',
-			'/Ö/' => 'Oe',
-			'/ß/' => 'ss',
+		$merge = array(
 			'/[^\s\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]/mu' => ' ',
 			'/\\s+/' => $replacement,
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$map = array_merge($map, $default);
+		$map = $map + $_this->_transliteration + $merge;
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }
