@@ -3237,6 +3237,36 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->data = array('Model' => array('tags' => array(1)));
+		$result = $this->Form->select(
+			'Model.tags', array('1' => 'first', 'Array' => 'Array'), null, array('multiple' => 'checkbox')
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'
+			),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => '1', 'id' => 'ModelTags1', 'checked' => 'checked'
+			)),
+			array('label' => array('for' => 'ModelTags1', 'class' => 'selected')),
+			'first',
+			'/label',
+			'/div',
+			
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => 'Array', 'id' => 'ModelTagsArray'
+			)),
+			array('label' => array('for' => 'ModelTagsArray')),
+			'Array',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
