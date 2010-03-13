@@ -410,6 +410,10 @@ class ModelTask extends BakeTask {
 					$this->out(__("You have already chosen that validation rule,\nplease choose again", true));
 					continue;
 				}
+				if (!isset($this->_validations[$choice])) {
+					$this->out(__('Please make a valid selection.', true));
+					continue;
+				}
 				$alreadyChosen[] = $choice;
 			} else {
 				$choice = $guess;
