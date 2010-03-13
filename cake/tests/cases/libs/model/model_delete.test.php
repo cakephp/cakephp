@@ -256,6 +256,23 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * test that delete() updates the correct records counterCache() records.
+ *
+ * @return void
+ */
+	function testDeleteUpdatingCounterCacheCorrectly() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User =& new CounterCacheUser();
+
+		$User->Post->delete(3);
+		$result = $User->read(null, 301);
+		$this->assertEqual($result['User']['post_count'], 0);
+
+		$result = $User->read(null, 66);
+		$this->assertEqual($result['User']['post_count'], 2);
+	}
+
+/**
  * testDeleteAll method
  *
  * @access public
