@@ -20,10 +20,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!defined('REQUEST_MOBILE_UA')) {
-	define('REQUEST_MOBILE_UA', '(Android|iPod|iPhone|MIDP|AvantGo|BlackBerry|J2ME|Opera Mini|DoCoMo|NetFront|Nokia|PalmOS|PalmSource|portalmmm|Plucker|ReqwirelessWeb|SonyEricsson|Symbian|UP\.Browser|Windows CE|Xiino)');
-}
-
 /**
  * Request object for handling HTTP requests
  *
@@ -103,6 +99,37 @@ class RequestHandlerComponent extends Object {
 		'pdf'			=> 'application/pdf',
 		'zip'			=> 'application/x-zip',
 		'tar'			=> 'application/x-tar'
+	);
+
+/**
+ * List of regular expressions for matching mobile device's user agent string
+ *
+ * @var array
+ * @access public
+ */
+	var $mobileUA = array(
+		'Android',
+		'AvantGo',
+		'BlackBerry',
+		'DoCoMo',
+		'iPod',
+		'iPhone',
+		'J2ME',
+		'MIDP',
+		'NetFront',
+		'Nokia',
+		'Opera Mini',
+		'PalmOS',
+		'PalmSource',
+		'portalmmm',
+		'Plucker',
+		'ReqwirelessWeb',
+		'SonyEricsson',
+		'Symbian',
+		'UP\.Browser',
+		'webOS',
+		'Windows CE',
+		'Xiino'
 	);
 
 /**
@@ -314,10 +341,16 @@ class RequestHandlerComponent extends Object {
  *
  * @return boolean True if user agent is a mobile web browser
  * @access public
+ * @deprecated Use of constant REQUEST_MOBILE_UA is deprecated and will be removed in future versions
  */
 	function isMobile() {
-		preg_match('/' . REQUEST_MOBILE_UA . '/i', env('HTTP_USER_AGENT'), $match);
-		if (!empty($match) || $this->accepts('wap')) {
+		if (defined('REQUEST_MOBILE_UA')) {
+			$regex = '/' . REQUEST_MOBILE_UA . '/i';
+		} else {
+			$regex = '/' . implode('|', $this->mobileUA) . '/i';
+		}
+
+		if (preg_match($regex, env('HTTP_USER_AGENT')) || $this->accepts('wap')) {
 			return true;
 		}
 		return false;

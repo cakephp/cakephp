@@ -427,8 +427,14 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function testMobileDeviceDetection() {
 		$this->assertFalse($this->RequestHandler->isMobile());
+
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3';
 		$this->assertTrue($this->RequestHandler->isMobile());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Some imaginary UA';
+		$this->RequestHandler->mobileUA []= 'imaginary';
+		$this->assertTrue($this->RequestHandler->isMobile());
+		array_pop($this->RequestHandler->mobileUA);
 	}
 
 /**
