@@ -130,7 +130,11 @@ class ContainableBehavior extends ModelBehavior {
 			if ($contain) {
 				$backupBindings = array();
 				foreach ($this->types as $relation) {
-					$backupBindings[$relation] = $instance->{$relation};
+					if (!empty($instance->__backAssociation[$relation])) {
+						$backupBindings[$relation] = $instance->__backAssociation[$relation];
+					} else {
+						$backupBindings[$relation] = $instance->{$relation};
+					}
 				}
 				foreach ($this->types as $type) {
 					$unbind = array();
