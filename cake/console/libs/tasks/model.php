@@ -410,7 +410,7 @@ class ModelTask extends BakeTask {
 					$this->out(__("You have already chosen that validation rule,\nplease choose again", true));
 					continue;
 				}
-				if (!isset($this->_validations[$choice])) {
+				if (!isset($this->_validations[$choice]) && is_numeric($choice)) {
 					$this->out(__('Please make a valid selection.', true));
 					continue;
 				}
@@ -418,7 +418,13 @@ class ModelTask extends BakeTask {
 			} else {
 				$choice = $guess;
 			}
-			$validatorName = $this->_validations[$choice];
+
+			if (isset($this->_validations[$choice])) {
+				$validatorName = $this->_validations[$choice];
+			} else {
+				$validatorName = Inflector::slug($choice);
+			}
+
 			if ($choice != $defaultChoice) {
 				if (is_numeric($choice) && isset($this->_validations[$choice])) {
 					$validate[$validatorName] = $this->_validations[$choice];
