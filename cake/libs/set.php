@@ -802,22 +802,6 @@ class Set {
 	}
 
 /**
- * Determines if two Sets or arrays are equal
- * This method is deprecated, and will be removed in a future release.
- *
- * @param array $val1 First value
- * @param array $val2 Second value
- * @return boolean true if they are equal, false otherwise
- * @access public
- * @static
- * @deprecated
- */
-	function isEqual($val1, $val2 = null) {
-		trigger_error(__('Set::isEqual() is deprecated. Please use standard comparison operators instead.', true), E_USER_WARNING);
-		return ($val1 == $val2);
-	}
-
-/**
  * Determines if one Set or array contains the exact keys and values of another.
  *
  * @param array $val1 First value
