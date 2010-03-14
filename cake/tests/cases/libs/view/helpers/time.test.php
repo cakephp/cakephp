@@ -758,7 +758,7 @@ class TimeHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Time->i18nFormat($time, '%c');
-		$expected = 'jue 14 ene 2010 13:59:28 ' . strftime('%Z');
+		$expected = 'jue 14 ene 2010 13:59:28 ' . strftime('%Z', $time);
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Time->i18nFormat($time, 'Time is %r, and date is %x');
