@@ -61,6 +61,15 @@ class DboSource extends DataSource {
 	var $methodCache = array();
 
 /**
+ * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
+ * into the memory cache.  Set to false to disable the use of the memory cache.
+ *
+ * @var boolean.
+ * @access public
+ */
+	var $cacheMethods = true ;
+
+/**
  * Bypass automatic adding of joined fields/associations.
  *
  * @var boolean
@@ -461,6 +470,41 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Empties the method caches.
+ * These caches are used by DboSource::name() and DboSource::conditions()
+ *
+ * @return void
+ */
+	function flushMethodCache() {
+		$this->methodCache = array();
+	}
+
+/**
+ * Cache a value into the methodCaches.  Will respect the value of DboSource::$cacheMethods.
+ * Will retrieve a value from the cache if $value is null.
+ *
+ * If caching is disabled and a write is attempted, the $value will be returned.
+ * A read will either return the value or null.
+ *
+ * @param string $method Name of the method being cached.
+ * @param string $key The keyname for the cache operation.
+ * @param mixed $value The value to cache into memory.
+ * @return mixed Either null on failure, or the value if its set.
+ */
+	function cacheMethod($method, $key, $value = null) {
+		if ($this->cacheMethods === false) {
+			if ($value !== null) {
+				return $value;
+			}
+			return null;
+		}
+		if ($value === null) {
+			return (isset($this->methodCache[$method][$key])) ? $this->methodCache[$method][$key] : null;
+		}
+		return $this->methodCache[$method][$key] = $value;
+	}
+
+/**
  * Returns a quoted name of $data for use in an SQL statement.
  * Strips fields out of SQL functions before quoting.
  *
@@ -482,27 +526,40 @@ class DboSource extends DataSource {
 			return $data;
 		}
 		$cacheKey = crc32($this->startQuote.$data.$this->endQuote);
-		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
-			return $this->methodCache[__FUNCTION__][$cacheKey];
+		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
+			return $return;
 		}
 		$data = trim($data);
 		if (preg_match('/^[\w-]+(\.[\w-]+)*$/', $data)) { // string, string.string
 			if (strpos($data, '.') === false) { // string
-				return $this->methodCache[__FUNCTION__][$cacheKey] = $this->startQuote . $data . $this->endQuote;
+				return $this->cacheMethod(__FUNCTION__, $cacheKey, $this->startQuote . $data . $this->endQuote);
 			}
 			$items = explode('.', $data);
-			return $this->methodCache[__FUNCTION__][$cacheKey] = $this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote;
+			return $this->cacheMethod(__FUNCTION__, $cacheKey, 
+				$this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote
+			);
 		}
 		if (preg_match('/^[\w-]+\.\*$/', $data)) { // string.*
-			return $this->methodCache[__FUNCTION__][$cacheKey] = $this->startQuote . str_replace('.*', $this->endQuote . '.*', $data);
+			return $this->cacheMethod(__FUNCTION__, $cacheKey, 
+				$this->startQuote . str_replace('.*', $this->endQuote . '.*', $data)
+			);
 		}
 		if (preg_match('/^([\w-]+)\((.*)\)$/', $data, $matches)) { // Functions
-			return $this->methodCache[__FUNCTION__][$cacheKey] = $matches[1] . '(' . $this->name($matches[2]) . ')';
+			return $this->cacheMethod(__FUNCTION__, $cacheKey,
+				 $matches[1] . '(' . $this->name($matches[2]) . ')'
+			);
 		}
-		if (preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*([\w-]+)$/', $data, $matches)) {
-			return $this->methodCache[__FUNCTION__][$cacheKey] = preg_replace('/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3]));
+		if (
+			preg_match('/^([\w-]+(\.[\w-]+|\(.*\))*)\s+' . preg_quote($this->alias) . '\s*([\w-]+)$/', $data, $matches
+		)) {
+			return $this->cacheMethod(
+				__FUNCTION__, $cacheKey,
+				preg_replace(
+					'/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3])
+				)
+			);
 		}
-		return $this->methodCache[__FUNCTION__][$cacheKey] = $data;
+		return $this->cacheMethod(__FUNCTION__, $cacheKey, $data);
 	}
 
 /**
