@@ -2050,8 +2050,8 @@ class DboSource extends DataSource {
 			$cacheKey = array($conditions, $quoteValues, $where);
 		}
 		$cacheKey = crc32(serialize($cacheKey));
-		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
-			return $this->methodCache[__FUNCTION__][$cacheKey];
+		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
+			return $return;
 		}
 
 		$clause = $out = '';
@@ -2064,16 +2064,16 @@ class DboSource extends DataSource {
 			$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
 
 			if (empty($out)) {
-				return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . ' 1 = 1';
+				return $this->cacheMethod(__FUNCTION__, $cacheKey, $clause . ' 1 = 1');
 			}
-			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . implode(' AND ', $out);
+			return $this->cacheMethod(__FUNCTION__, $cacheKey, $clause . implode(' AND ', $out));
 		}
 		if ($conditions === false || $conditions === true) {
-			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . (int)$conditions . ' = 1';
+			return $this->cacheMethod(__FUNCTION__, $cacheKey,  $clause . (int)$conditions . ' = 1');
 		}
 
 		if (empty($conditions) || trim($conditions) == '') {
-			return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . '1 = 1';
+			return $this->cacheMethod(__FUNCTION__, $cacheKey, $clause . '1 = 1');
 		}
 		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';
 
@@ -2085,7 +2085,7 @@ class DboSource extends DataSource {
 		} else {
 			$conditions = $this->__quoteFields($conditions);
 		}
-		return $this->methodCache[__FUNCTION__][$cacheKey] =  $clause . $conditions;
+		return $this->cacheMethod(__FUNCTION__, $cacheKey, $clause . $conditions);
 	}
 
 /**
