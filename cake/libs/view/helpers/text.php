@@ -268,18 +268,6 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Alias for truncate().
- *
- * @see TextHelper::truncate()
- * @access public
- */
-	function trim() {
-		trigger_error(__('TextHelper::trim() is deprecated. Use TextHelper::truncate() instead', true), E_USER_WARNING);
-		$args = func_get_args();
-		return call_user_func_array(array(&$this, 'truncate'), $args);
-	}
-
-/**
  * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side
  * determined by radius.
  *
