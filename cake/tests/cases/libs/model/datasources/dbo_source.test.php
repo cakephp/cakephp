@@ -4044,6 +4044,33 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that cacheMethod works as exepected
+ *
+ * @return void
+ */
+	function testCacheMethod() {
+		$this->testDb->cacheMethods = true;
+		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
+		$this->assertEqual($result, 'stuff');
+
+		$result = $this->testDb->cacheMethod('name', 'some-key');
+		$this->assertEqual($result, 'stuff');
+
+		$result = $this->testDb->cacheMethod('conditions', 'some-key');
+		$this->assertNull($result);
+
+		$result = $this->testDb->cacheMethod('name', 'other-key');
+		$this->assertNull($result);
+
+		$this->testDb->cacheMethods = false;
+		$result = $this->testDb->cacheMethod('name', 'some-key', 'stuff');
+		$this->assertEqual($result, 'stuff');
+
+		$result = $this->testDb->cacheMethod('name', 'some-key');
+		$this->assertNull($result);
+	}
+
+/**
  * testLog method
  *
  * @access public
