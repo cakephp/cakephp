@@ -3312,6 +3312,31 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->Article->resetBindings();
 	}
 /**
+ * testResetAddedAssociation method
+ *
+ * @access public
+ */
+	function testResetAddedAssociation() {
+		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
+
+		$this->Article->bindModel(array(
+			'hasMany' => array('ArticlesTag')
+		));
+		$this->assertTrue(!empty($this->Article->hasMany['ArticlesTag']));
+
+		$result = $this->Article->find('first', array(
+			'conditions' => array('Article.id' => 1),
+			'contain' => array('ArticlesTag')
+		));
+		$expected = array('Article', 'ArticlesTag');
+		$this->assertTrue(!empty($result));
+		$this->assertEqual('First Article', $result['Article']['title']);
+		$this->assertTrue(!empty($result['ArticlesTag']));
+		$this->assertEqual($expected, array_keys($result));
+
+		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
+	}
+/**
  * testResetAssociation method
  *
  * @access public
