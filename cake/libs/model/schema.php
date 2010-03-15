@@ -372,7 +372,7 @@ class CakeSchema extends Object {
  */
 	function compare($old, $new = null) {
 		if (empty($new)) {
-			$new = $this;
+			$new =& $this;
 		}
 		if (is_array($new)) {
 			if (isset($new['tables'])) {
@@ -406,6 +406,7 @@ class CakeSchema extends Object {
 					$tables[$table]['drop'] = $diff;
 				}
 			}
+
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
 					$diff = array_diff_assoc($value, $old[$table][$field]);
@@ -427,10 +428,13 @@ class CakeSchema extends Object {
 			if (isset($old[$table]['indexes']) && isset($new[$table]['indexes'])) {
 				$diff = $this->_compareIndexes($new[$table]['indexes'], $old[$table]['indexes']);
 				if ($diff) {
-					if (isset($tables[$table]['drop']['indexes']) && isset($diff['drop'])) {
+					if (!isset($tables[$table])) {
+						$tables[$table] = array();
+					}
+					if (isset($diff['drop'])) {
 						$tables[$table]['drop']['indexes'] = $diff['drop'];
 					}
-					if (isset($tables[$table]['add']['indexes']) && isset($diff['add'])) {
+					if ($diff && isset($diff['add'])) {
 						$tables[$table]['add']['indexes'] = $diff['add'];
 					}
 				}
