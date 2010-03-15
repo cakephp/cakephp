@@ -1334,7 +1334,12 @@ class Model extends Overloadable {
 							($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 						);
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
-							list($fields[], $values[]) = array($this->primaryKey, String::uuid());
+							if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
+								$j = array_search($this->primaryKey, $fields);
+								$values[$j] = String::uuid();
+							} else {
+								list($fields[], $values[]) = array($this->primaryKey, String::uuid());
+							}
 						}
 						break;
 					}
@@ -2667,7 +2672,7 @@ class Model extends Overloadable {
 	}
 
 /**
- * Escapes the field name and prepends the model name. Escaping is done according to the 
+ * Escapes the field name and prepends the model name. Escaping is done according to the
  * current database driver's rules.
  *
  * @param string $field Field to escape (e.g: id)
