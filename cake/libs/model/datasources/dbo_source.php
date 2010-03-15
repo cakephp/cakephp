@@ -493,10 +493,7 @@ class DboSource extends DataSource {
  */
 	function cacheMethod($method, $key, $value = null) {
 		if ($this->cacheMethods === false) {
-			if ($value !== null) {
-				return $value;
-			}
-			return null;
+			return $value;
 		}
 		if ($value === null) {
 			return (isset($this->methodCache[$method][$key])) ? $this->methodCache[$method][$key] : null;
