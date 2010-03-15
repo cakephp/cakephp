@@ -1273,7 +1273,12 @@ class Model extends Overloadable {
 							($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 						);
 						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
-							list($fields[], $values[]) = array($this->primaryKey, String::uuid());
+							if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
+								$j = array_search($this->primaryKey, $fields);
+								$values[$j] = String::uuid();
+							} else {
+								list($fields[], $values[]) = array($this->primaryKey, String::uuid());
+							}
 						}
 						break;
 					}
