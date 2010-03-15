@@ -321,7 +321,7 @@ class Inflector {
 				if ($reset) {
 					$_this->_transliteration = $rules;
 				} else {
-					$_this->_transliteration = array_merge($rules, $_this->_transliteration, $rules);
+					$_this->_transliteration = $rules + $_this->_transliteration;
 				}
 			break;
 
