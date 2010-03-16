@@ -1327,21 +1327,16 @@ class Model extends Overloadable {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				foreach ($this->_schema as $field => $properties) {
-					if ($this->primaryKey === $field) {
-						$fInfo = $this->_schema[$field];
-						$isUUID = ($fInfo['length'] == 36 &&
-							($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
-						);
-						if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
-							if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
-								$j = array_search($this->primaryKey, $fields);
-								$values[$j] = String::uuid();
-							} else {
-								list($fields[], $values[]) = array($this->primaryKey, String::uuid());
-							}
-						}
-						break;
+				$fInfo = $this->_schema[$this->primaryKey];
+				$isUUID = ($fInfo['length'] == 36 &&
+					($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
+				);
+				if (empty($this->data[$this->alias][$this->primaryKey]) && $isUUID) {
+					if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
+						$j = array_search($this->primaryKey, $fields);
+						$values[$j] = String::uuid();
+					} else {
+						list($fields[], $values[]) = array($this->primaryKey, String::uuid());
 					}
 				}
 
