@@ -1590,7 +1590,7 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Story->save();
 		$this->assertTrue($result);
 
-		$result = $Story->find('all');
+		$result = $Story->find('all', array('order' => array('Story.story')));
 		$expected = array(
 			array(
 				'Story' => array(
