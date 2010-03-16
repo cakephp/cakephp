@@ -1370,10 +1370,10 @@ class Model extends Overloadable {
 				}
 
 				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
-					$conditions = array_merge(
+					$conditions = array_filter(array_merge(
 						array($join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id),
 						(array)$this->hasAndBelongsToMany[$assoc]['conditions']
-					);
+					));
 					$links = $this->{$join}->find('all', array(
 						'conditions' => $conditions,
 						'recursive' => empty($this->hasAndBelongsToMany[$assoc]['conditions']) ? -1 : 0,
@@ -1397,7 +1397,7 @@ class Model extends Overloadable {
 				}
 
 				if (!empty($newValues)) {
-					$fields =  implode(',', $fields);
+					$fields = implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
