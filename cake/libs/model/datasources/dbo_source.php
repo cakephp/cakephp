@@ -1663,6 +1663,8 @@ class DboSource extends DataSource {
 				$originalField = $field;
 				if (strpos($field, '.') !== false) {
 					list($alias, $field) = explode('.', $field);
+					$field = ltrim($field, $this->startQuote);
+					$field = rtrim($field, $this->endQuote);
 				}
 				if (!$model->hasField($field)) {
 					$noJoin = false;
