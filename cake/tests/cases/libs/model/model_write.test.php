@@ -322,6 +322,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$data = array(
 			'OverallFavorite' => array(
+				'id' => 22,
 		 		'model_type' => '8-track',
 				'model_id' => '3',
 				'priority' => '1'
@@ -383,6 +384,7 @@ class ModelWriteTest extends BaseModelTest {
 		$User = new CounterCacheUser();
 		$Post = new CounterCachePost();
 		$data = array('Post' => array(
+			'id' => 22,
 			'title' => 'New Post',
 			'user_id' => 66
 		));
@@ -2007,7 +2009,7 @@ class ModelWriteTest extends BaseModelTest {
 				'DoomedSomethingElse' => array(
 					'className' => 'SomethingElse',
 					'joinTable' => 'join_things',
-					'conditions' => 'JoinThing.doomed = 1',
+					'conditions' => 'JoinThing.doomed = true',
 					'unique' => true
 				),
 				'NotDoomedSomethingElse' => array(
