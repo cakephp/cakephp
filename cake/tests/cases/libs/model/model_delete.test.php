@@ -580,6 +580,61 @@ class ModelDeleteTest extends BaseModelTest {
 		$exists = $Model->findById(1);
 		$this->assertTrue(is_array($exists));
 	}
+/**
+ * test for a habtm deletion error that occurs in postgres but should not.
+ * And should not occur in any dbo.
+ *
+ * @return void
+ */
+	function testDeleteHabtmPostgresFailure() {
+		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
+
+		$Article =& ClassRegistry::init('Article');
+		$Article->hasAndBelongsToMany['Tag']['unique'] = true;
+
+		$Tag =& ClassRegistry::init('Tag');
+		$Tag->bindModel(array('hasAndBelongsToMany' => array(
+			'Article' => array(
+				'className' => 'Article',
+				'unique' => true
+			)
+		)), true);
+
+		// Article 1 should have Tag.1 and Tag.2
+	    $before = $Article->find("all", array(
+			"conditions" => array("Article.id" => 1),
+		));
+		$this->assertEqual(count($before[0]['Tag']), 2, 'Tag count for Article.id = 1 is incorrect, should be 2 %s');
+
+		// From now on, Tag #1 is only associated with Post #1
+		$submitted_data = array(
+			"Tag" => array("id" => 1, 'tag' => 'tag1'),
+			"Article" => array(
+				"Article" => array(1)
+			)
+		);
+		$Tag->save($submitted_data);
+
+	    // One more submission (The other way around) to make sure the reverse save looks good.
+	    $submitted_data = array(
+			"Article" => array("id" => 2, 'title' => 'second article'),
+			"Tag" => array(
+				"Tag" => array(2, 3)
+			)
+		);
+	    // ERROR:
+	    // Postgresql: DELETE FROM "articles_tags" WHERE tag_id IN ('1', '3')
+	    // MySQL: DELETE `ArticlesTag` FROM `articles_tags` AS `ArticlesTag` WHERE `ArticlesTag`.`article_id` = 2 AND `ArticlesTag`.`tag_id` IN (1, 3)
+	    $Article->save($submitted_data);
+
+		// Want to make sure Article #1 has Tag #1 and Tag #2 still.
+		$after = $Article->find("all", array(
+			"conditions" => array("Article.id" => 1),
+		));
+
+		// Removing Article #2 from Tag #1 is all that should have happened.
+		$this->assertEqual(count($before[0]["Tag"]), count($after[0]["Tag"]));
+	}
 }
 
 ?>
