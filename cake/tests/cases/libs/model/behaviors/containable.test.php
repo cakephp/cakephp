@@ -3352,6 +3352,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
 	}
+
 /**
  * testResetAssociation method
  *

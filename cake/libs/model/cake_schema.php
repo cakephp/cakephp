@@ -465,6 +465,7 @@ class CakeSchema extends Object {
 					$tables[$table]['drop'] = $diff;
 				}
 			}
+
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
 					$diff = array_diff_assoc($value, $old[$table][$field]);

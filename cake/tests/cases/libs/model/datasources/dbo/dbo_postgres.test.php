@@ -166,8 +166,8 @@ class DboPostgresTest extends CakeTestCase {
  * @access public
  */
 	var $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article',
-		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author');
-
+		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author',
+	);
 /**
  * Actual DB connection used in testing
  *
@@ -503,16 +503,23 @@ class DboPostgresTest extends CakeTestCase {
 		)');
 		$model =& ClassRegistry::init('datatypes');
 		$schema = new CakeSchema(array('connection' => 'test_suite'));
-		$result = $schema->read(array('connection' => 'test_suite'));
-		$schema->tables = $result['tables']['missing'];
+		$result = $schema->read(array(
+			'connection' => 'test_suite',
+			'models' => array('Datatype')
+		));
+		$schema->tables = array('datatypes' => $result['tables']['datatypes']);
 		$result = $db1->createSchema($schema, 'datatypes');
 		$this->assertNoPattern('/timestamp DEFAULT/', $result);
 		$this->assertPattern('/timestamp\s*,/', $result);
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
+
 		$db1->query($result);
-		$result2 = $schema->read(array('connection' => 'test_suite'));
-		$schema->tables = $result2['tables']['missing'];
+		$result2 = $schema->read(array(
+			'connection' => 'test_suite',
+			'models' => array('Datatype')
+		));
+		$schema->tables = array('datatypes' => $result2['tables']['datatypes']);
 		$result2 = $db1->createSchema($schema, 'datatypes');
 		$this->assertEqual($result, $result2);
 

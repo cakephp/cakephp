@@ -1653,6 +1653,9 @@ class SetTest extends CakeTestCase {
 		$result = Set::combine($b, 'users.{n}.User.id', 'users.{n}.User.non-existant');
 		$expected = array(2 => null, 14 => null, 25 => null);
 		$this->assertIdentical($result, $expected);
+
+		$result = Set::combine($a, 'fail', 'fail');
+		$this->assertEqual($result, array());
 	}
 
 /**

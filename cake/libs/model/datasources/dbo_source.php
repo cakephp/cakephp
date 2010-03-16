@@ -1658,6 +1658,22 @@ class DboSource extends DataSource {
 		} elseif ($conditions === null) {
 			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false), true, true, $model);
 		} else {
+			$noJoin = true;
+			foreach ($conditions as $field => $value) {
+				$originalField = $field;
+				if (strpos($field, '.') !== false) {
+					list($alias, $field) = explode('.', $field);
+				}
+				if (!$model->hasField($field)) {
+					$noJoin = false;
+					break;
+				}
+				$conditions[$field] = $value;
+				unset($conditions[$originalField]);
+			}
+			if ($noJoin === true) {
+				return $this->conditions($conditions);
+			}
 			$idList = $model->find('all', array(
 				'fields' => "{$model->alias}.{$model->primaryKey}",
 				'conditions' => $conditions
