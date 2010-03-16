@@ -51,17 +51,20 @@ class ModelReadTest extends BaseModelTest {
 				'updated' => '2007-03-18 10:41:31'
 			)
 		);
+
 		$Something->JoinThing->create($joinThingData);
 		$Something->JoinThing->save();
 
 		$result = $Something->JoinThing->find('all', array('conditions' => array('something_else_id' => 2)));
-		$this->assertEqual($result[0]['JoinThing']['doomed'], 1);
-		$this->assertEqual($result[1]['JoinThing']['doomed'], 0);
+		$this->assertEqual($result[0]['JoinThing']['doomed'], true);
+		$this->assertEqual($result[1]['JoinThing']['doomed'], false);
 
 		$result = $Something->find('first');
 		$this->assertEqual(count($result['SomethingElse']), 2);
-		$this->assertEqual($result['SomethingElse'][0]['JoinThing']['doomed'], 1);
-		$this->assertEqual($result['SomethingElse'][1]['JoinThing']['doomed'], 0);
+
+		$doomed = Set::extract('/JoinThing/doomed', $result['SomethingElse']);
+		$this->assertTrue(in_array(true, $doomed));
+		$this->assertTrue(in_array(false, $doomed));
 	}
 
 /**
