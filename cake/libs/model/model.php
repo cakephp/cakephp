@@ -1584,6 +1584,11 @@ class Model extends Overloadable {
 		$validates = true;
 		$return = array();
 
+		if (empty($data) && $options['validate'] !== false) {
+			$result = $this->save($data, $options);
+			return !empty($result);
+		}
+
 		if ($options['atomic'] && $options['validate'] !== 'only') {
 			$db->begin($this);
 		}

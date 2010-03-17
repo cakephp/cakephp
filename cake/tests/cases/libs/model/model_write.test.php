@@ -3807,6 +3807,24 @@ class ModelWriteTest extends BaseModelTest {
         $this->assertEqual($resultsFkFalse, $expected);
     }
 
+/**
+ * test that saveAll behaves like plain save() when suplied empty data
+ *
+ * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @access public
+ * @return void
+ */
+	function testSaveAllEmptyData() {
+		$this->loadFixtures('Article', 'ProductUpdateAll');
+		$model =& new Article();
+		$result = $model->saveAll(array(), array('validate' => 'first'));
+		$this->assertTrue($result);
+
+		$model =& new ProductUpdateAll();
+		$result = $model->saveAll(array());
+		$this->assertFalse($result);
+	}
+
 }
 
 ?>
