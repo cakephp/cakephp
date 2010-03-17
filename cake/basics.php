@@ -345,7 +345,6 @@ if (!function_exists('array_combine')) {
  *
  * @see	debug()
  * @param array $var Variable to print out
- * @param boolean $showFrom If set to true, the method prints from where the function was called
  * @link http://book.cakephp.org/view/707/pr
  */
 	function pr($var) {
