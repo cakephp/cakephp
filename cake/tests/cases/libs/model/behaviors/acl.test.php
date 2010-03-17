@@ -332,10 +332,6 @@ class AclBehaviorTestCase extends CakeTestCase {
 		 $this->assertEqual($node[1]['Aro']['parent_id'], null);
 	}
 
-	 function getTests() {
-	   return array('start', 'startCase','testSetup','testAfterSave', 'endCase', 'end');
-	}
-
 /**
  * Test After Delete
  *
