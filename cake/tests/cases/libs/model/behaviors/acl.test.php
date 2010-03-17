@@ -303,8 +303,8 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)));
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result['Aro']['parent_id'], 5);
-
-		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
+		
+		$node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => $Person->id));
 		$this->assertEqual(count($node), 2);
 		$this->assertEqual($node[0]['Aro']['parent_id'], 5);
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
@@ -319,17 +319,21 @@ class AclBehaviorTestCase extends CakeTestCase {
 		 $this->Aro->create();
 		 $this->Aro->save($aroData);
  
-		 $Person->read(null, 8);
+		 $Person->read(null, $Person->id);
 		 $Person->set('mother_id', 1);
 		 $Person->save();
 		 $result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)));
 		 $this->assertTrue(is_array($result));
 		 $this->assertEqual($result['Aro']['parent_id'], 7);
  
-		 $node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => 8));
+		 $node = $Person->node(array('model' => 'AclPerson', 'foreign_key' => $Person->id));
 		 $this->assertEqual(sizeof($node), 2);
 		 $this->assertEqual($node[0]['Aro']['parent_id'], 7);
 		 $this->assertEqual($node[1]['Aro']['parent_id'], null);
+	}
+
+	 function getTests() {
+	   return array('start', 'startCase','testSetup','testAfterSave', 'endCase', 'end');
 	}
 
 /**
