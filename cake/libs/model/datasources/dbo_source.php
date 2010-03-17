@@ -532,12 +532,12 @@ class DboSource extends DataSource {
 				return $this->cacheMethod(__FUNCTION__, $cacheKey, $this->startQuote . $data . $this->endQuote);
 			}
 			$items = explode('.', $data);
-			return $this->cacheMethod(__FUNCTION__, $cacheKey, 
+			return $this->cacheMethod(__FUNCTION__, $cacheKey,
 				$this->startQuote . implode($this->endQuote . '.' . $this->startQuote, $items) . $this->endQuote
 			);
 		}
 		if (preg_match('/^[\w-]+\.\*$/', $data)) { // string.*
-			return $this->cacheMethod(__FUNCTION__, $cacheKey, 
+			return $this->cacheMethod(__FUNCTION__, $cacheKey,
 				$this->startQuote . str_replace('.*', $this->endQuote . '.*', $data)
 			);
 		}
@@ -1884,7 +1884,7 @@ class DboSource extends DataSource {
  */
 	function __scrubQueryData($data) {
 		foreach (array('conditions', 'fields', 'joins', 'order', 'limit', 'offset', 'group') as $key) {
-			if (!isset($data[$key]) || empty($data[$key])) {
+			if (empty($data[$key])) {
 				$data[$key] = array();
 			}
 		}
