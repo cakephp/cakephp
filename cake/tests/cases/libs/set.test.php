@@ -973,6 +973,20 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract('/ParentNode/name', $hasMany);
 		$expected = array('Second');
 		$this->assertEqual($result, $expected);
+		
+		$startingAtOne = array(
+			'Article' => array(
+				1=> array(
+					'id' => 1,
+					'approved' => 1,
+				),
+			)
+		);
+		
+		$expected = array(0 => array('Article' => array('id' => 1, 'approved' => 1)));
+		$result = Set::extract('/Article[approved=1]', $startingAtOne);
+		$this->assertEqual($result, $expected);
+
 	}
 /**
  * test that extract() still works when arrays don't contain a 0 index.
