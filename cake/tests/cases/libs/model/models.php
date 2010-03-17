@@ -2025,7 +2025,7 @@ class AssociationTest2 extends CakeTestModel {
  * @subpackage    cake.tests.cases.libs.model
  */
 class Callback extends CakeTestModel {
-	
+
 }
 /**
  * CallbackPostTestModel class
@@ -2445,7 +2445,7 @@ class Book extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasOne = array('OverallFavorite' => array('foreignKey' => 'model_id', 'dependent' => true, 'conditions' => array('model_type' => 'Book')));
+	var $hasOne = array('OverallFavorite' => array('foreignKey' => 'model_id', 'dependent' => true, 'conditions' => 'OverallFavorite.model_type = \'Book\''));
 }
 
 /**

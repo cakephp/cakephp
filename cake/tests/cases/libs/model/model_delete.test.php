@@ -157,6 +157,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->loadFixtures('Cd','Book','OverallFavorite');
 
 		$Cd =& new Cd();
+		$Book =& new Book();
 		$OverallFavorite =& new OverallFavorite();
 
 		$Cd->delete(1);
@@ -171,6 +172,16 @@ class ModelDeleteTest extends BaseModelTest {
 					'model_id' => 1,
 					'priority' => 2
 		)));
+
+		$this->assertTrue(is_array($result));
+		$this->assertEqual($result, $expected);
+
+		$Book->delete(1);
+
+		$result = $OverallFavorite->find('all', array(
+			'fields' => array('model_type', 'model_id', 'priority')
+		));
+		$expected = array();
 
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result, $expected);
