@@ -154,7 +154,7 @@ class MediaView extends View {
 					$contentTypes[0] = 'application/octetstream';
 				} else if (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 					$contentTypes[0] = 'application/force-download';
-					array_push($contentTypes, array(
+					array_merge($contentTypes, array(
 						'application/octet-stream',
 						'application/download'
 					));
