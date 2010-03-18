@@ -332,6 +332,23 @@ class BasicsTest extends CakeTestCase {
 		$this->assertFalse(file_exists(CACHE . 'models' . DS . 'basics_test.cache'));
 		$this->assertFalse(file_exists(CACHE . 'models' . DS . 'basics_test_2.cache'));
 		$this->assertFalse(file_exists(CACHE . 'models' . DS . 'basics_test_3.cache'));
+
+		// checking if empty files were not removed
+		$emptyExists = file_exists(CACHE . 'views' . DS . 'empty');
+		if (!$emptyExists) {
+			cache('views' . DS . 'empty', '');
+		}
+		cache('views' . DS . 'basics_test.php', 'simple cache write');
+		$this->assertTrue(file_exists(CACHE . 'views' . DS . 'basics_test.php'));
+		$this->assertTrue(file_exists(CACHE . 'views' . DS . 'empty'));
+
+		$result = clearCache();
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'views' . DS . 'empty'));
+		$this->assertFalse(file_exists(CACHE . 'views' . DS . 'basics_test.php'));
+		if (!$emptyExists) {
+			unlink(CACHE . 'views' . DS . 'empty');
+		}
 	}
 
 /**
