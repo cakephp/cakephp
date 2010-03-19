@@ -102,16 +102,7 @@ class File extends Object {
 			$this->name = basename($path);
 		}
 		$this->pwd();
-
-		if (!$this->exists()) {
-			if ($create === true) {
-				if ($this->safe($path) && $this->create() === false) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
+		!$this->exists() && $create && $this->safe($path) && $this->create();
 	}
 
 /**
