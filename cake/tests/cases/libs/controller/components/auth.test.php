@@ -625,7 +625,7 @@ class AuthTest extends CakeTestCase {
 	}
 
 /**
- * test that being redirected to the login page, with no post data does 
+ * test that being redirected to the login page, with no post data does
  * not set the session value.  Saving the session value in this circumstance
  * can cause the user to be redirected to an already public page.
  *
@@ -1429,6 +1429,8 @@ class AuthTest extends CakeTestCase {
 			'id' => 1, 'username' => 'gwoo', 'created' => '2007-03-17 01:16:23', 'updated' => date('Y-m-d H:i:s')
 		));
 		$this->assertEqual($user, $expected);
+		$sessionKey = $this->Controller->Auth->sessionKey;
+		$this->assertEqual('Auth.TestPluginAuthUser', $sessionKey);
 
 		// Reverting changes
 		Cache::delete('object_map', '_cake_core_');
