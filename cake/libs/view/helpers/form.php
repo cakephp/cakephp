@@ -1342,12 +1342,37 @@ class FormHelper extends AppHelper {
  * ### Attributes:
  *
  * - `showParents` - If included in the array and set to true, an additional option element
- *   will be added for the parent of each option group.
+ *   will be added for the parent of each option group. You can set an option with the same name
+ *   and it's key will be used for the value of the option.
  * - `multiple` - show a multiple select box.  If set to 'checkbox' multiple checkboxes will be
  *   created instead.
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+ *
+ * ### Using options
+ *
+ * A simple array will create normal options:
+ *
+ * {{{
+ * $options = array(1 => 'one', 2 => 'two);
+ * $this->Form->select('Model.field', $options));
+ * }}}
+ *
+ * While a nested options array will create optgroups with options inside them.
+ * {{{
+ * $options = array(
+ *    1 => 'bill',
+ *    'fred' => array(
+ *        2 => 'fred',
+ *        3 => 'fred jr.'
+ *     )
+ * );
+ * $this->Form->select('Model.field', $options);
+ * }}}
+ *
+ * In the above `2 => 'fred'` will not generate an option element.  You should enable the `showParents`
+ * attribute to show the fred option.
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
