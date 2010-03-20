@@ -65,6 +65,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$groups = $this->baseUrl() . '?show=groups';
 		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin');
+		sort($plugins);
 		include CAKE_TESTS_LIB . 'templates' . DS . 'menu.php';
 	}
 
