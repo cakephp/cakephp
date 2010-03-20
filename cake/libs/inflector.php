@@ -304,7 +304,7 @@ class Inflector {
  * Inflector::rules('transliteration', array('/å/' => 'aa'));
  * }}}
  *
- * @param string $type The type of inflection, either 'singular', 'singular' or 'transliteration'
+ * @param string $type The type of inflection, either 'plural', 'singular' or 'transliteration'
  * @param array $rules Array of rules to be added.
  * @param boolean $reset If true, will unset default inflections for all
  *        new rules that are being defined in $rules.
