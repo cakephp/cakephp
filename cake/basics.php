@@ -578,7 +578,7 @@ if (!function_exists('file_put_contents')) {
 				}
 
 				foreach ($files as $file) {
-					if (is_file($file)) {
+					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
 						@unlink($file);
 					}
 				}
@@ -599,7 +599,7 @@ if (!function_exists('file_put_contents')) {
 					return false;
 				}
 				foreach ($files as $file) {
-					if (is_file($file)) {
+					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
 						@unlink($file);
 					}
 				}
