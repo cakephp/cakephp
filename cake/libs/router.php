@@ -497,7 +497,7 @@ class Router {
 			}
 		}
 
-		if (!empty($ext)) {
+		if (!empty($ext) && !isset($out['url']['ext'])) {
 			$out['url']['ext'] = $ext;
 		}
 		return $out;
