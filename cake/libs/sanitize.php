@@ -80,7 +80,7 @@ class Sanitize {
 
 /**
  * Returns given string safe for display as HTML. Renders entities.
- * 
+ *
  * strip_tags() does not validating HTML syntax or structure, so it might strip whole passages
  * with broken HTML.
  *
@@ -97,9 +97,16 @@ class Sanitize {
  * @static
  */
 	function html($string, $options = array()) {
+		static $defaultCharset = false;
+		if ($defaultCharset === false) {
+			$defaultCharset = Configure::read('App.encoding');
+			if ($defaultCharset === null) {
+				$defaultCharset = 'UTF-8';
+			}
+		}
 		$default = array(
 			'remove' => false,
-			'charset' => 'UTF-8',
+			'charset' => $defaultCharset,
 			'quotes' => ENT_QUOTES
 		);
 
@@ -108,11 +115,8 @@ class Sanitize {
 		if ($options['remove']) {
 			$string = strip_tags($string);
 		}
-		$encoding = Configure::read('App.encoding');
-		if (empty($encoding)) {
-			$encoding = $options['charset'];
-		}
-		return htmlentities($string, $options['quotes'], $encoding);
+
+		return htmlentities($string, $options['quotes'], $options['charset']);
 	}
 
 /**
@@ -197,15 +201,15 @@ class Sanitize {
 /**
  * Sanitizes given array or value for safe input. Use the options to specify
  * the connection to use, and what filters should be applied (with a boolean
- * value). Valid filters: 
+ * value). Valid filters:
  *
  * - odd_spaces - removes any non space whitespace characters
  * - encode - Encode any html entities. Encode must be true for the `remove_html` to work.
  * - dollar - Escape `$` with `\$`
  * - carriage - Remove `\r`
- * - unicode - 
+ * - unicode -
  * - escape - Should the string be SQL escaped.
- * - backslash - 
+ * - backslash -
  * - remove_html - Strip HTML with strip_tags. `encode` must be true for this option to work.
  *
  * @param mixed $data Data to sanitize
