@@ -448,12 +448,14 @@ class AuthComponent extends Object {
 			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter().", true), E_USER_WARNING);
 			return false;
 		}
+		list($plugin, $model) = pluginSplit($this->userModel);
 		$defaults = array(
 			'loginAction' => array(
-				'controller' => Inflector::underscore(Inflector::pluralize($this->userModel)),
-				'action' => 'login'
+				'controller' => Inflector::underscore(Inflector::pluralize($model)),
+				'action' => 'login',
+				'plugin' => $plugin,
 			),
-			'sessionKey' => 'Auth.' . $this->userModel,
+			'sessionKey' => 'Auth.' . $model,
 			'logoutRedirect' => $this->loginAction,
 			'loginError' => __('Login failed. Invalid username or password.', true),
 			'authError' => __('You are not authorized to access that location.', true)
