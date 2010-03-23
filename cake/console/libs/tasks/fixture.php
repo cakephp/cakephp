@@ -370,7 +370,7 @@ class FixtureTask extends BakeTask {
 				$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
 			}
 		} else {
-			$condition = 'WHERE 1=1 ' . isset($this->params['count']) ? $this->params['count'] : 10;
+			$condition = 'WHERE 1=1 LIMIT ' . (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
 		App::import('Model', 'Model', false);
 		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
