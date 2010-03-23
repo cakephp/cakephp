@@ -231,6 +231,43 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
+ * test that importing with records works.  Make sure to try with postgres as its 
+ * handling of aliases is a workaround at best.
+ *
+ * @return void
+ */
+	function testImportWithRecords() {
+		$this->_initDb();
+
+		$defaultDb =& ConnectionManager::getDataSource('default');
+		$testSuiteDb =& ConnectionManager::getDataSource('test_suite');
+		$defaultConfig = $defaultDb->config;
+		$testSuiteConfig = $testSuiteDb->config;
+		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
+		$newTestSuiteDb =& ConnectionManager::getDataSource('new_test_suite');
+
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($newTestSuiteDb);
+		$Source->insert($newTestSuiteDb);
+
+		$defaultDb->config = $newTestSuiteDb->config;
+
+		$Fixture =& new CakeTestFixtureDefaultImportFixture();
+		$Fixture->fields = $Fixture->records = null;
+		$Fixture->import = array(
+			'model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite', 'records' => true
+		);
+		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+		$this->assertFalse(empty($Fixture->records[0]), 'No records loaded on importing fixture.');
+		$this->assertTrue(isset($Fixture->records[0]['name']), 'No name loaded for first record');
+
+		$defaultDb->config = $defaultConfig;
+
+		$Source->drop($newTestSuiteDb);	
+	}
+
+/**
  * test create method
  *
  * @access public

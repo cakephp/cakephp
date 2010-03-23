@@ -68,7 +68,10 @@ class CakeTestFixture extends Object {
  */
 	function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
-			$import = array_merge(array('connection' => 'default', 'records' => false), is_array($this->import) ? $this->import : array('model' => $this->import));
+			$import = array_merge(
+				array('connection' => 'default', 'records' => false), 
+				is_array($this->import) ? $this->import : array('model' => $this->import)
+			);
 
 			if (isset($import['model']) && App::import('Model', $import['model'])) {
 				ClassRegistry::config(array('ds' => $import['connection']));
@@ -93,7 +96,7 @@ class CakeTestFixture extends Object {
 			if (isset($import['records']) && $import['records'] !== false && isset($model) && isset($db)) {
 				$this->records = array();
 				$query = array(
-					'fields' => array_keys($this->fields),
+					'fields' => $db->fields($model, null, array_keys($this->fields)),
 					'table' => $db->fullTableName($model->table),
 					'alias' => $model->alias,
 					'conditions' => array(),
@@ -101,10 +104,6 @@ class CakeTestFixture extends Object {
 					'limit' => null,
 					'group' => null
 				);
-
-				foreach ($query['fields'] as $index => $field) {
-					$query['fields'][$index] = $db->name($query['alias']) . '.' . $db->name($field);
-				}
 				$records = $db->fetchAll($db->buildStatement($query, $model), false, $model->alias);
 
 				if ($records !== false && !empty($records)) {
