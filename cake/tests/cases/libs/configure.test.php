@@ -301,7 +301,7 @@ class ConfigureTest extends CakeTestCase {
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class AppImportTest extends UnitTestCase {
+class AppImportTest extends CakeTestCase {
 
 /**
  * testBuild method
@@ -581,8 +581,27 @@ class AppImportTest extends UnitTestCase {
 		$result = App::import('Datasource', 'TestPlugin.TestSource');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestSource'));
-
 		App::build();
+	}
+
+/**
+ * test that building helper paths actually works.
+ *
+ * @return void
+ * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/410
+ */
+	function testImportingHelpersFromAlternatePaths() {
+		App::build();
+		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');
+		App::import('Helper', 'Banana');
+		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper was not found because the path does not exist.');
+
+		App::build(array(
+			'helpers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS)
+		));
+		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');
+		App::import('Helper', 'Banana');
+		$this->assertTrue(class_exists('BananaHelper'), 'BananaHelper was not loaded.');
 	}
 
 /**
