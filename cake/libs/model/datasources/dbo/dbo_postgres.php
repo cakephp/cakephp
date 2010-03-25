@@ -455,10 +455,36 @@ class DboPostgres extends DboSource {
 						$build = explode('.', $fields[$i]);
 						$fields[$i] = $prepend . $this->name($build[0]) . '.' . $this->name($build[1]) . ' AS ' . $this->name($build[0] . '__' . $build[1]);
 					}
+				} else {
+					$fields[$i] = preg_replace_callback('/\(([\s\.\w]+)\)/',  array(&$this, '__quoteFunctionField'), $fields[$i]);
 				}
 			}
 		}
 		return $fields;
+	}
+
+/**
+ * Auxiliary function to quote matched `(Model.fields)` from a preg_replace_callback call
+ *
+ * @param string matched string
+ * @return string quoted strig
+ * @access private
+ */
+	function __quoteFunctionField($match) {
+		$prepend = '';
+		if (strpos($match[1], 'DISTINCT') !== false) {
+			$prepend = 'DISTINCT ';
+			$match[1] = trim(str_replace('DISTINCT', '', $match[1]));
+		}
+		if (strpos($match[1], '.') === false) {
+			$match[1] = $this->name($alias . '.' . $match[1]);
+		} else {
+			$parts = explode('.', $match[1]);
+			if (!Set::numeric($parts)) {
+				$match[1] = $this->name($match[1]);
+			}
+		}
+		return '(' . $prepend .$match[1] . ')';
 	}
 
 /**

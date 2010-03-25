@@ -682,9 +682,9 @@ class DboPostgresTest extends CakeTestCase {
 		$this->db->query($this->db->dropSchema($schema1));
 	}
 
-	/**
-	* Test it is possible to use virtual field with postgresql
-	*/
+/**
+* Test it is possible to use virtual field with postgresql
+*/
 	function testVirtualFields() {
 		$this->loadFixtures('Article', 'Comment');
 		$Article = new Article;
@@ -701,12 +701,23 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($result['Article']['subquery'], 6);
 	}
 
-	/**
-	* Tests additional order options for postgres
-	*/
+/**
+* Tests additional order options for postgres
+*/
 	function testOrderAdditionalParams() {
 		$result = $this->db->order(array('title' => 'DESC NULLS FIRST', 'body' => 'DESC'));
 		$expected = ' ORDER BY "title" DESC NULLS FIRST, "body" DESC';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+* Test it is possible to do a SELECT COUNT(DISTINCT Model.field) query in postgres and it gets correctly quoted
+*/
+	function testQuoteDistinctInFunction() {
+		$this->loadFixtures('Article');
+		$Article = new Article;
+		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT Article.id)'));
+		$expected = array('COUNT(DISTINCT "Article"."id")');
 		$this->assertEqual($result, $expected);
 	}
 }
