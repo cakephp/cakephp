@@ -1035,10 +1035,10 @@ class SetTest extends CakeTestCase {
 
 		$result = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
-		
+
 		$startingAtOne = array(
 			'Article' => array(
-				1=> array(
+				1 => array(
 					'id' => 1,
 					'approved' => 1,
 				),
