@@ -664,6 +664,7 @@ class XmlNode extends Object {
 
 		foreach ($this->children as $child) {
 			$key = $camelize ? Inflector::camelize($child->name) : $child->name;
+			//debug($key);
 
 			if (is_a($child, 'XmlTextNode')) {
 				$out['value'] = $child->value;
@@ -688,7 +689,7 @@ class XmlNode extends Object {
 				if (isset($out[$key]) || isset($multi[$key])) {
 					if (!isset($multi[$key])) {
 						$multi[$key] = array($out[$key]);
-						unset($out[$key]);
+						//unset($out[$key]);
 					}
 					$multi[$key][] = $value;
 				} elseif (!empty($value)) {
