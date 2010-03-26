@@ -44,13 +44,6 @@ class SessionComponent extends CakeSession {
  */
 	var $__active = true;
 /**
- * Used to determine if Session has been started
- *
- * @var boolean
- * @access private
- */
-	var $__started = false;
-/**
  * Used to determine if request are from an Ajax request
  *
  * @var boolean
@@ -89,7 +82,7 @@ class SessionComponent extends CakeSession {
  * @access public
  */
 	function startup(&$controller) {
-		if ($this->__started === false && $this->__active === true) {
+		if ($this->started() === false && $this->__active === true) {
 			$this->__start();
 		}
 	}
@@ -299,15 +292,14 @@ class SessionComponent extends CakeSession {
  * @access private
  */
 	function __start() {
-		if ($this->__started === false) {
+		if ($this->started() === false) {
 			if (!$this->id() && parent::start()) {
-				$this->__started = true;
 				parent::_checkValid();
 			} else {
-				$this->__started = parent::start();
+				parent::start();
 			}
 		}
-		return $this->__started;
+		return $this->started();
 	}
 }
 
