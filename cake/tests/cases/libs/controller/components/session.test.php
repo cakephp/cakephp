@@ -112,13 +112,13 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session.start', false);
 		$Session =& new SessionComponent();
 		$this->assertFalse($Session->__active);
-		$this->assertFalse($Session->__started);
+		$this->assertFalse($Session->started());
 		$Session->startup(new SessionTestController());
 
 		Configure::write('Session.start', true);
 		$Session =& new SessionComponent();
 		$this->assertTrue($Session->__active);
-		$this->assertFalse($Session->__started);
+		$this->assertFalse($Session->started());
 		$Session->startup(new SessionTestController());
 		$this->assertTrue(isset($_SESSION));
 
