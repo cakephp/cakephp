@@ -118,9 +118,9 @@ class CakeSession extends Object {
  * Session Started
  *
  * @var boolean
- * @access public
+ * @access protected
  */
-	var $started = false;
+	var $_started = false;
 /**
  * Constructor.
  *
@@ -192,15 +192,15 @@ class CakeSession extends Object {
  * @access public
  */
 	function start() {
-		if ($this->started) {
+		if ($this->started()) {
 			return true;
 		}
 		if (function_exists('session_write_close')) {
 			session_write_close();
 		}
 		$this->__initSession();
-		$this->started = $this->__startSession();
-		return $this->started;
+		$this->_started = $this->__startSession();
+		return $this->started();
 	}
 
 /**
@@ -210,7 +210,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (isset($_SESSION)) {
+		if (isset($_SESSION) && $this->_started) {
 			return true;
 		}
 		return false;
@@ -243,7 +243,7 @@ class CakeSession extends Object {
 			$this->id = $id;
 			session_id($this->id);
 		}
-		if (isset($_SESSION)) {
+		if ($this->started()) {
 			return session_id();
 		} else {
 			return $this->id;
