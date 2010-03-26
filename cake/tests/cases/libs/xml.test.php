@@ -1266,6 +1266,43 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expected);
+
+		$text = '<main><first label="first type node 1" /><first label="first type node 2" /><second label="second type node" /></main>';
+		$xml =  new Xml($text);
+		$result = $xml->toArray();
+		$expected = array(
+		    'Main' => array(
+		        'First' => array(
+		            array('label' => 'first type node 1'),
+		            array('label' => 'first type node 2')
+		        ),
+		        'Second' => array('label'=>'second type node')
+		    )
+		);
+		$this->assertIdentical($result,$expected);
+
+		$text = '<main><first label="first type node 1" /><first label="first type node 2" /><second label="second type node" /><collection><fifth label="fifth type node"/><third label="third type node 1"/><third label="third type node 2"/><third label="third type node 3"/><fourth label="fourth type node"/></collection></main>';
+		$xml =  new Xml($text);
+		$result = $xml->toArray();
+		$expected = array(
+		    'Main' => array(
+		        'First' => array(
+		            array('label' => 'first type node 1'),
+		            array('label' => 'first type node 2')
+		        ),
+		        'Second' => array('label'=>'second type node'),
+				'Collection' => array(
+					'Fifth' => array('label' => 'fifth type node'),
+					'Third' => array(
+						array('label' => 'third type node 1'),
+						array('label' => 'third type node 2'),
+						array('label' => 'third type node 3'),
+					),
+					'Fourth' => array('label' => 'fourth type node'),
+				)
+		    )
+		);
+		$this->assertIdentical($result,$expected);
 	}
 
 /**
