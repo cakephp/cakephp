@@ -121,6 +121,7 @@ class CakeSession extends Object {
  * @access protected
  */
 	var $_started = false;
+
 /**
  * Constructor.
  *
