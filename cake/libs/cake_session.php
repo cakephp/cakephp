@@ -129,6 +129,7 @@ class CakeSession extends Object {
  * @access public
  */
 	var $host = null;
+
 /**
  * Constructor.
  *
