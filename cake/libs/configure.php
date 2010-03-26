@@ -683,11 +683,13 @@ class App extends Object {
 				$merge = array_merge($merge, (array)$core[$type]);
 			}
 
-			$_this->{$type} = $default;
+			if (empty($_this->{$type}) || empty($paths)) {
+				$_this->{$type} = $default;
+			}
 
 			if (!empty($paths[$type])) {
 				$path = array_flip(array_flip(array_merge(
-					$_this->{$type}, (array)$paths[$type], $merge
+					(array)$paths[$type], $_this->{$type}, $merge
 				)));
 				$_this->{$type} = array_values($path);
 			} else {

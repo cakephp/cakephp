@@ -323,8 +323,8 @@ class AppImportTest extends CakeTestCase {
 		$new = App::path('models');
 
 		$expected = array(
-			APP . 'models' . DS,
 			'/path/to/models/',
+			APP . 'models' . DS,
 			APP,
 			ROOT . DS . LIBS . 'model' . DS
 		);
@@ -599,9 +599,12 @@ class AppImportTest extends CakeTestCase {
 		App::build(array(
 			'helpers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS)
 		));
+		App::build(array('vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH)));
 		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');
 		App::import('Helper', 'Banana');
 		$this->assertTrue(class_exists('BananaHelper'), 'BananaHelper was not loaded.');
+
+		App::build();
 	}
 
 /**
