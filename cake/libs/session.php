@@ -124,6 +124,13 @@ class CakeSession extends Object {
  */
 	var $_started = false;
 /**
+ * Hostname
+ *
+ * @var string
+ * @access public
+ */
+	var $host = null;
+/**
  * Constructor.
  *
  * @param string $base The base path for the Session
