@@ -189,16 +189,15 @@ class I18n extends Object {
 					}
 				}
 				if (strlen($trans)) {
-					$singular = $trans;
-					return $singular;
+					return $trans;
 				}
 			}
 		}
 
 		if (!empty($plurals)) {
-			return($plural);
+			return $plural;
 		}
-		return($singular);
+		return $singular;
 	}
 
 /**
@@ -317,7 +316,7 @@ class I18n extends Object {
 
 		if (empty($this->__domains[$this->category][$this->__lang][$domain])) {
 			$this->__domains[$this->category][$this->__lang][$domain] = array();
-			return($domain);
+			return $domain;
 		}
 
 		if ($head = $this->__domains[$this->category][$this->__lang][$domain][""]) {
@@ -338,7 +337,7 @@ class I18n extends Object {
 				unset($this->__domains[$this->category][$this->__lang][$domain][null]);
 			}
 		}
-		return($domain);
+		return $domain;
 	}
 
 /**
