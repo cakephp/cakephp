@@ -873,6 +873,7 @@ class SetTest extends CakeTestCase {
 		$expected = array('Second');
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * test parent selectors with extract
  *
