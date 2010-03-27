@@ -1370,5 +1370,25 @@ class XmlTest extends CakeTestCase {
 		$result = $result[0]->first();
 		$this->assertEqual($result->value, '012345');
 	}
+
+/**
+ * test that creating an xml object does not leak memory
+ *
+ * @return void
+ */
+	function testMemoryLeakInConstructor() {
+		if ($this->skipIf(!function_exists('memory_get_usage'), 'Cannot test memory leaks without memory_get_usage')) {
+			return;
+		}
+		$data = '<?xml version="1.0" encoding="UTF-8"?><content>TEST</content>';
+		$start = memory_get_usage();
+		for ($i = 0; $i <= 300; $i++) {
+			$test =& new XML($data);
+			$test->__destruct();
+			unset($test);
+		}
+		$end = memory_get_usage();
+		$this->assertWithinMargin($start, $end, 3600, 'Memory leaked %s');
+	}
 }
 ?>
