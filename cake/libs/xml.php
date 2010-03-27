@@ -691,7 +691,6 @@ class XmlNode extends Object {
 
 		foreach ($this->children as $child) {
 			$key = $camelize ? Inflector::camelize($child->name) : $child->name;
-			//debug($key);
 
 			if (is_a($child, 'XmlTextNode')) {
 				$out['value'] = $child->value;
@@ -873,7 +872,7 @@ class Xml extends XmlNode {
 		parent::__construct('#document');
 
 		if ($options['root'] !== '#document') {
-			$Root = $this->createNode($options['root']);
+			$Root =& $this->createNode($options['root']);
 		} else {
 			$Root =& $this;
 		}
@@ -955,6 +954,8 @@ class Xml extends XmlNode {
 				break;
 			}
 		}
+		xml_parser_free($this->__parser);
+		$this->__parser = null;
 		return true;
 	}
 
@@ -1132,9 +1133,6 @@ class Xml extends XmlNode {
  * @access private
  */
 	function __destruct() {
-		if (is_resource($this->__parser)) {
-			xml_parser_free($this->__parser);
-		}
 		$this->_killParent(true);
 	}
 
