@@ -975,6 +975,80 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 /**
+ * test parent selectors with extract
+ *
+ * @return void
+ */
+	function testExtractParentSelector() {
+		$a = array(
+			'Model' => array(
+				'0' => array(
+					'id' => 18,
+					'SubModelsModel' => array(
+						'id' => 1,
+						'submodel_id' => 66,
+						'model_id' => 18,
+						'type' => 1
+					),
+				),
+				'1' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 2,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 1
+					),
+				),
+				'2' => array(
+					'id' => 17,
+					'SubModelsModel' => array(
+						'id' => 3,
+						'submodel_id' => 66,
+						'model_id' => 17,
+						'type' => 2
+					),
+				),
+				'3' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 4,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 2
+					)
+				)
+			)
+		);
+
+		$expected = array(
+			array(
+				'Model' => array(
+					'id' => 17,
+					'SubModelsModel' => array(
+						'id' => 3,
+						'submodel_id' => 66,
+						'model_id' => 17,
+						'type' => 2
+					),
+				)
+			),
+			array(
+				'Model' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 4,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 2
+					)
+				)
+			)
+		);
+		$r = Set::extract('/Model/SubModelsModel[type=2]/..', $a);
+		$this->assertEqual($r, $expected);
+	}
+/**
  * test that extract() still works when arrays don't contain a 0 index.
  *
  * @return void
