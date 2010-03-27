@@ -420,43 +420,15 @@ class SetTest extends CakeTestCase {
 			array('a' => array('II' => array('a' => 3, 'III' => array('a' => array('foo' => 4))))),
 		);
 
-		$nonSequential = array(
-			'User' => array(
-				0  => array('id' => 1),
-				2  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
-			),
-		);
-
-		$nonZero = array(
-			'User' => array(
-				2  => array('id' => 1),
-				4  => array('id' => 2),
-				6  => array('id' => 3),
-				9  => array('id' => 4),
-				3  => array('id' => 5),
-			),
-		);
-
 		$expected = array(array('a' => $c[2]['a']));
 		$r = Set::extract('/a/II[a=3]/..', $c);
 		$this->assertEqual($r, $expected);
 
 		$expected = array(1, 2, 3, 4, 5);
 		$this->assertEqual(Set::extract('/User/id', $a), $expected);
-		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
-
-		$result = Set::extract('/User/id', $nonZero);
-		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
 
 		$expected = array(1, 2, 3, 4, 5);
 		$this->assertEqual(Set::extract('/User/id', $a), $expected);
-		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
-
-		$result = Set::extract('/User/id', $nonZero);
-		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
 
 		$expected = array(
 			array('id' => 1), array('id' => 2), array('id' => 3), array('id' => 4), array('id' => 5)
@@ -550,30 +522,6 @@ class SetTest extends CakeTestCase {
 
 		$expected = array(array('id', 'name'), array('id', 'name'), array('id', 'name'), array('id', 'name'));
 		$r = Set::extract('/User/@*', $tricky);
-		$this->assertEqual($r, $expected);
-
-		$nonZero = array(
-			1 => array(
-				'User' => array(
-					'id' => 1,
-					'name' => 'John',
-				)
-			),
-			2 => array(
-				'User' => array(
-					'id' => 2,
-					'name' => 'Bob',
-				)
-			),
-			3 => array(
-				'User' => array(
-					'id' => 3,
-					'name' => 'Tony',
-				)
-			)
-		);
-		$expected = array(1, 2, 3);
-		$r = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($r, $expected);
 
 		$common = array(
@@ -1030,6 +978,81 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 
+/**
+ * test that extract() still works when arrays don't contain a 0 index.
+ *
+ * @return void
+ */
+	function testExtractWithNonZeroArrays() {
+		$nonZero = array(
+			1 => array(
+				'User' => array(
+					'id' => 1,
+					'name' => 'John',
+				)
+			),
+			2 => array(
+				'User' => array(
+					'id' => 2,
+					'name' => 'Bob',
+				)
+			),
+			3 => array(
+				'User' => array(
+					'id' => 3,
+					'name' => 'Tony',
+				)
+			)
+		);
+		$expected = array(1, 2, 3);
+		$r = Set::extract('/User/id', $nonZero);
+		$this->assertEqual($r, $expected);
+		
+		$nonSequential = array(
+			'User' => array(
+				0  => array('id' => 1),
+				2  => array('id' => 2),
+				6  => array('id' => 3),
+				9  => array('id' => 4),
+				3  => array('id' => 5),
+			),
+		);
+
+		$nonZero = array(
+			'User' => array(
+				2  => array('id' => 1),
+				4  => array('id' => 2),
+				6  => array('id' => 3),
+				9  => array('id' => 4),
+				3  => array('id' => 5),
+			),
+		);
+
+		$expected = array(1, 2, 3, 4, 5);
+		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
+
+		$result = Set::extract('/User/id', $nonZero);
+		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
+
+		$expected = array(1, 2, 3, 4, 5);
+		$this->assertEqual(Set::extract('/User/id', $nonSequential), $expected);
+
+		$result = Set::extract('/User/id', $nonZero);
+		$this->assertEqual($result, $expected, 'Failed non zero array key extract');
+
+		$startingAtOne = array(
+			'Article' => array(
+				1 => array(
+					'id' => 1,
+					'approved' => 1,
+				),
+			)
+		);
+
+		$expected = array(0 => array('Article' => array('id' => 1, 'approved' => 1)));
+		$result = Set::extract('/Article[approved=1]', $startingAtOne);
+		$this->assertEqual($result, $expected);
+	}
 /**
  * testExtractWithArrays method
  *

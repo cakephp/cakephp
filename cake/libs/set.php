@@ -437,7 +437,8 @@ class Set {
 						$items = array($items);
 					} elseif (!isset($items[0])) {
 						$current = current($items);
-						if ((is_array($current) && count($items) <= 1) || !is_array($current)) {
+						$currentKey = key($items);
+						if (!is_array($current) || (is_array($current) && count($items) <= 1 && !is_numeric($currentKey))) {
 							$items = array($items);
 						}
 					}

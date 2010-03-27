@@ -2688,7 +2688,7 @@ class Model extends Overloadable {
 			$field = $this->primaryKey;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		if (strpos($field, $db->name($alias)) === 0) {
+		if (strpos($field, $db->name($alias) . '.') === 0) {
 			return $field;
 		}
 		return $db->name($alias . '.' . $field);
