@@ -798,65 +798,8 @@ class SetTest extends CakeTestCase {
 
 		$r = Set::extract('/Comment/User[name=/bob|tod/]/..', $habtm);
 		$this->assertEqual($r[0]['Comment']['User']['name'], 'bob');
-		// Currently failing, needs fix
 		$this->assertEqual($r[1]['Comment']['User']['name'], 'tod');
 		$this->assertEqual(count($r), 2);
-
-		$tree = array(
-			array(
-				'Category' => array(
-					'name' => 'Category 1'
-				),
-				'children' => array(
-					array(
-						'Category' => array(
-							'name' => 'Category 1.1'
-						)
-					)
-				)
-			),
-			array(
-				'Category' => array(
-					'name' => 'Category 2'
-				),
-				'children' => array(
-					array(
-						'Category' => array(
-							'name' => 'Category 2.1'
-						)
-					),
-					array(
-						'Category' => array(
-							'name' => 'Category 2.2'
-						)
-					),
-				)
-			),
-			array(
-				'Category' => array(
-					'name' => 'Category 3'
-				),
-				'children' => array(
-					array(
-						'Category' => array(
-							'name' => 'Category 3.1'
-						)
-					)
-				)
-			)
-		);
-
-		$expected = array(array('Category' => $tree[1]['Category']));
-		$r = Set::extract('/Category[name=Category 2]', $tree);
-		$this->assertEqual($r, $expected);
-
-		$expected = array(array('Category' => $tree[1]['Category'], 'children' => $tree[1]['children']));
-		$r = Set::extract('/Category[name=Category 2]/..', $tree);
-		$this->assertEqual($r, $expected);
-
-		$expected = array(array('children' => $tree[1]['children'][0]), array('children' => $tree[1]['children'][1]));
-		$r = Set::extract('/Category[name=Category 2]/../children', $tree);
-		$this->assertEqual($r, $expected);
 
 		$mixedKeys = array(
 			'User' => array(
@@ -871,55 +814,8 @@ class SetTest extends CakeTestCase {
 				'stringKey' => array()
 			)
 		);
-
 		$expected = array('Neo', 'Morpheus');
 		$r = Set::extract('/User/name', $mixedKeys);
-		$this->assertEqual($r, $expected);
-
-		$single = array(
-			array(
-				'CallType' => array(
-					'name' => 'Internal Voice'
-				),
-				'x' => array(
-					'hour' => 7
-				)
-			)
-		);
-
-		$expected = array(7);
-		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $single);
-		$this->assertEqual($r, $expected);
-
-		$multiple = array(
-			array(
-				'CallType' => array(
-					'name' => 'Internal Voice'
-				),
-				'x' => array(
-					'hour' => 7
-				)
-			),
-			array(
-				'CallType' => array(
-					'name' => 'Internal Voice'
-				),
-				'x' => array(
-					'hour' => 2
-				)
-			),
-			array(
-				'CallType' => array(
-					'name' => 'Internal Voice'
-				),
-				'x' => array(
-					'hour' => 1
-				)
-			)
-		);
-
-		$expected = array(7,2,1);
-		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $multiple);
 		$this->assertEqual($r, $expected);
 
 		$f = array(
@@ -976,6 +872,182 @@ class SetTest extends CakeTestCase {
 		$result = Set::extract('/ParentNode/name', $hasMany);
 		$expected = array('Second');
 		$this->assertEqual($result, $expected);
+	}
+/**
+ * test parent selectors with extract
+ *
+ * @return void
+ */
+	function testExtractParentSelector() {
+		$tree = array(
+			array(
+				'Category' => array(
+					'name' => 'Category 1'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 1.1'
+						)
+					)
+				)
+			),
+			array(
+				'Category' => array(
+					'name' => 'Category 2'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 2.1'
+						)
+					),
+					array(
+						'Category' => array(
+							'name' => 'Category 2.2'
+						)
+					),
+				)
+			),
+			array(
+				'Category' => array(
+					'name' => 'Category 3'
+				),
+				'children' => array(
+					array(
+						'Category' => array(
+							'name' => 'Category 3.1'
+						)
+					)
+				)
+			)
+		);
+
+		$expected = array(array('Category' => $tree[1]['Category']));
+		$r = Set::extract('/Category[name=Category 2]', $tree);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('Category' => $tree[1]['Category'], 'children' => $tree[1]['children']));
+		$r = Set::extract('/Category[name=Category 2]/..', $tree);
+		$this->assertEqual($r, $expected);
+
+		$expected = array(array('children' => $tree[1]['children'][0]), array('children' => $tree[1]['children'][1]));
+		$r = Set::extract('/Category[name=Category 2]/../children', $tree);
+		$this->assertEqual($r, $expected);
+
+		$single = array(
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 7
+				)
+			)
+		);
+
+		$expected = array(7);
+		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $single);
+		$this->assertEqual($r, $expected);
+
+		$multiple = array(
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 7
+				)
+			),
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 2
+				)
+			),
+			array(
+				'CallType' => array(
+					'name' => 'Internal Voice'
+				),
+				'x' => array(
+					'hour' => 1
+				)
+			)
+		);
+
+		$expected = array(7,2,1);
+		$r = Set::extract('/CallType[name=Internal Voice]/../x/hour', $multiple);
+		$this->assertEqual($r, $expected);
+
+		$a = array(
+			'Model' => array(
+				'0' => array(
+					'id' => 18,
+					'SubModelsModel' => array(
+						'id' => 1,
+						'submodel_id' => 66,
+						'model_id' => 18,
+						'type' => 1
+					),
+				),
+				'1' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 2,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 1
+					),
+				),
+				'2' => array(
+					'id' => 17,
+					'SubModelsModel' => array(
+						'id' => 3,
+						'submodel_id' => 66,
+						'model_id' => 17,
+						'type' => 2
+					),
+				),
+				'3' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 4,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 2
+					)
+				)
+			)
+		);
+
+		$expected = array(
+			array(
+				'Model' => array(
+					'id' => 17,
+					'SubModelsModel' => array(
+						'id' => 3,
+						'submodel_id' => 66,
+						'model_id' => 17,
+						'type' => 2
+					),
+				)
+			),
+			array(
+				'Model' => array(
+					'id' => 0,
+					'SubModelsModel' => array(
+						'id' => 4,
+						'submodel_id' => 66,
+						'model_id' => 0,
+						'type' => 2
+					)
+				)
+			)
+		);
+		$r = Set::extract('/Model/SubModelsModel[type=2]/..', $a);
+		$this->assertEqual($r, $expected);
 	}
 
 /**
