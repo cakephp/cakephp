@@ -175,15 +175,6 @@ class SessionHelper extends CakeSession {
 		trigger_error(__('You can not write to a Session from the view', true), E_USER_WARNING);
 	}
 /**
- * Session id
- *
- * @return string Session id
- * @access public
- */
-	function id() {
-		return parent::id();
-	}
-/**
  * Determine if Session has been started
  * and attempt to start it if not
  *
