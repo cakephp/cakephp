@@ -2871,7 +2871,8 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 			)
-		), array('atomic' => false));
+		), array('validate' => true, 'atomic' => false));
+
 		$this->assertIdentical($result, array(true, false));
 
 		$result = $TestModel->saveAll(array(
@@ -2887,7 +2888,7 @@ class ModelWriteTest extends BaseModelTest {
 					'published' => 'Y',
 					'user_id' => 2
 			))
-		), array('atomic' => false));
+		), array('validate' => true, 'atomic' => false));
 		$this->assertIdentical($result, array('Article' => true, 'Comment' => array(true, true)));
 	}
 
@@ -2985,7 +2986,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Comment' => array(
 				array('comment' => '', 'published' => 'Y', 'user_id' => 1),
 			)
-		));
+		), array('validate' => true));
 		$expected = array('Comment' => array(false));
 		$this->assertEqual($result, $expected);
 
@@ -3318,7 +3319,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 		));
-		$result = $TestModel->saveAll($data, array('atomic' => false));
+		$result = $TestModel->saveAll($data, array('validate' => true, 'atomic' => false));
 		$this->assertEqual($result, array(true, false));
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));

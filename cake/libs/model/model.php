@@ -1556,9 +1556,9 @@ class Model extends Overloadable {
  *
  * #### Options
  *
- * - validate: Set to false to disable validation, true to validate each record before
- *   saving, 'first' to validate *all* records before any are saved, or 'only' to only
- *   validate the records, but not save them.
+ * - validate: Set to false to disable validation, true to validate each record before saving,
+ *   'first' to validate *all* records before any are saved (default),
+ *   or 'only' to only validate the records, but not save them.
  * - atomic: If true (default), will attempt to save all records in a single transaction.
  *   Should be set to false if database/table does not support transactions.
  * - fieldList: Equivalent to the $fieldList parameter in Model::save()
@@ -1579,7 +1579,7 @@ class Model extends Overloadable {
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 
-		$options = array_merge(array('validate' => true, 'atomic' => true), $options);
+		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
 		$validates = true;
 		$return = array();
@@ -1626,6 +1626,7 @@ class Model extends Overloadable {
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
+						$return = array();
 						continue;
 					break;
 					default:
@@ -1731,6 +1732,7 @@ class Model extends Overloadable {
 				break;
 				case ($options['validate'] === 'first'):
 					$options['validate'] = true;
+					$return = array();
 					continue;
 				break;
 				default:
