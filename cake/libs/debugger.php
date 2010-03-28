@@ -41,7 +41,7 @@ if (!class_exists('String')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs
- * @link          http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link          http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 class Debugger extends Object {
 
@@ -210,7 +210,7 @@ class Debugger extends Object {
  * @see exportVar
  * @access public
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
 */
 	function dump($var) {
 		$_this =& Debugger::getInstance();
@@ -225,7 +225,7 @@ class Debugger extends Object {
  * @param $level int type of log to use. Defaults to LOG_DEBUG
  * @return void
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	function log($var, $level = LOG_DEBUG) {
 		$_this =& Debugger::getInstance();
@@ -324,7 +324,7 @@ class Debugger extends Object {
  * @return string Formatted stack trace
  * @access public
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	function trace($options = array()) {
 		$_this =& Debugger::getInstance();
@@ -436,7 +436,7 @@ class Debugger extends Object {
  * @return array Set of lines highlighted
  * @access public
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	function excerpt($file, $line, $context = 2) {
 		$data = $lines = array();
@@ -469,7 +469,7 @@ class Debugger extends Object {
  * @return string Variable as a formatted string
  * @access public
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	function exportVar($var, $recursion = 0) {
 		$_this =& Debugger::getInstance();
@@ -686,7 +686,7 @@ class Debugger extends Object {
  * @param object $debugger A reference to the Debugger object
  * @access public
  * @static
- * @link http://book.cakephp.org/view/460/Using-the-Debugger-Class
+ * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	function invoke(&$debugger) {
 		set_error_handler(array(&$debugger, 'handleError'));

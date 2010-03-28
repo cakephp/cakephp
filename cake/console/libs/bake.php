@@ -27,7 +27,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs
- * @link          http://book.cakephp.org/view/113/Code-Generation-with-Bake
+ * @link          http://book.cakephp.org/view/1522/Code-Generation-with-Bake
  */
 class BakeShell extends Shell {
 

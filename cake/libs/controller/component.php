@@ -84,7 +84,7 @@ class Component extends Object {
  * @param object $controller Controller with components to initialize
  * @return void
  * @access public
- * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
 	function initialize(&$controller) {
 		foreach (array_keys($this->_loaded) as $name) {
@@ -106,7 +106,7 @@ class Component extends Object {
  * @param object $controller Controller with components to startup
  * @return void
  * @access public
- * @link http://book.cakephp.org/view/65/MVC-Class-Access-Within-Components
+ * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  * @deprecated See Component::triggerCallback()
  */
 	function startup(&$controller) {

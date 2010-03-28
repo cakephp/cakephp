@@ -23,14 +23,14 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs
- * @link          http://book.cakephp.org/view/42/The-Configuration-Class
+ * @link          http://book.cakephp.org/view/924/The-Configuration-Class
  */
 class Configure extends Object {
 
 /**
  * Current debug level.
  *
- * @link          http://book.cakephp.org/view/44/CakePHP-Core-Configuration-Variables
+ * @link          http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables
  * @var integer
  * @access public
  */
@@ -72,7 +72,7 @@ class Configure extends Object {
  * ));
  * }}}
  *
- * @link http://book.cakephp.org/view/412/write
+ * @link http://book.cakephp.org/view/926/write
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
@@ -145,7 +145,7 @@ class Configure extends Object {
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  * }}}
  *
- * @link http://book.cakephp.org/view/413/read
+ * @link http://book.cakephp.org/view/927/read
  * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
  * @access public
@@ -195,7 +195,7 @@ class Configure extends Object {
  * Configure::delete('Name.key'); will delete only the Configure::Name[key]
  * }}}
  *
- * @link http://book.cakephp.org/view/414/delete
+ * @link http://book.cakephp.org/view/928/delete
  * @param string $var the var to be deleted
  * @return void
  * @access public
@@ -222,7 +222,7 @@ class Configure extends Object {
  * - To load config files from app/config use `Configure::load('configure_file');`.
  * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
  *
- * @link http://book.cakephp.org/view/415/load
+ * @link http://book.cakephp.org/view/929/load
  * @param string $fileName name of file to load, extension must be .php and only the name
  *     should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
@@ -273,7 +273,7 @@ class Configure extends Object {
  *
  * Usage `Configure::version();`
  *
- * @link http://book.cakephp.org/view/416/version
+ * @link http://book.cakephp.org/view/930/version
  * @return string Current version of CakePHP
  * @access public
  */
@@ -825,7 +825,7 @@ class App extends Object {
 /**
  * Finds classes based on $name or specific file(s) to search.
  *
- * @link          http://book.cakephp.org/view/529/Using-App-import
+ * @link          http://book.cakephp.org/view/934/Using-App-import
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as
  *                    an single array to $type,
  * @param string $name Name of the Class or a unique name for the file

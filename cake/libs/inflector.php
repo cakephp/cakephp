@@ -28,7 +28,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs
- * @link          http://book.cakephp.org/view/491/Inflector
+ * @link          http://book.cakephp.org/view/1478/Inflector
  */
 class Inflector {
 
@@ -348,7 +348,7 @@ class Inflector {
  * @return string Word in plural
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function pluralize($word) {
 		$_this =& Inflector::getInstance();
@@ -395,7 +395,7 @@ class Inflector {
  * @return string Word in singular
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function singularize($word) {
 		$_this =& Inflector::getInstance();
@@ -444,7 +444,7 @@ class Inflector {
  * @return string Camelized word. LikeThis.
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function camelize($lowerCaseAndUnderscoredWord) {
 		$_this =& Inflector::getInstance();
@@ -462,7 +462,7 @@ class Inflector {
  * @return string Underscore-syntaxed version of the $camelCasedWord
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function underscore($camelCasedWord) {
 		$_this =& Inflector::getInstance();
@@ -481,7 +481,7 @@ class Inflector {
  * @return string Human-readable string
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function humanize($lowerCaseAndUnderscoredWord) {
 		$_this =& Inflector::getInstance();
@@ -499,7 +499,7 @@ class Inflector {
  * @return string Name of the database table for given class
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function tableize($className) {
 		$_this =& Inflector::getInstance();
@@ -517,7 +517,7 @@ class Inflector {
  * @return string Class name
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function classify($tableName) {
 		$_this =& Inflector::getInstance();
@@ -535,7 +535,7 @@ class Inflector {
  * @return string in variable form
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function variable($string) {
 		$_this =& Inflector::getInstance();
@@ -559,7 +559,7 @@ class Inflector {
  * @return string
  * @access public
  * @static
- * @link http://book.cakephp.org/view/572/Class-methods
+ * @link http://book.cakephp.org/view/1479/Class-methods
  */
 	function slug($string, $replacement = '_', $map = array()) {
 		$_this =& Inflector::getInstance();
