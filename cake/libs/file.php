@@ -88,7 +88,7 @@ class File extends Object {
  * @param string $path Path to file
  * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
- * @access private
+ * @access public
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		parent::__construct();
@@ -97,21 +97,12 @@ class File extends Object {
 			$this->name = basename($path);
 		}
 		$this->pwd();
-
-		if (!$this->exists()) {
-			if ($create === true) {
-				if ($this->safe($path) && $this->create() === false) {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}
+		!$this->exists() && $create === true && $this->safe($path) && $this->create();
 	}
 /**
  * Closes the current file if it is opened
  *
- * @access private
+ * @access public
  */
 	function __destruct() {
 		$this->close();
