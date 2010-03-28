@@ -492,7 +492,8 @@ class DbAcl extends AclBase {
 }
 
 /**
- * In this file you can extend the AclBase.
+ * IniAcl implements an access control system using an INI file.  An example 
+ * of the ini file used can be found in /config/acl.ini.php.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.iniacl
@@ -515,8 +516,9 @@ class IniAcl extends AclBase {
 	}
 
 /**
- * Main ACL check function. Checks to see if the ARO (access request object) has access to the ACO (access control object).
- * Looks at the acl.ini.php file for permissions (see instructions in /config/acl.ini.php).
+ * Main ACL check function. Checks to see if the ARO (access request object) has access to the 
+ * ACO (access control object).Looks at the acl.ini.php file for permissions 
+ * (see instructions in /config/acl.ini.php).
  *
  * @param string $aro ARO
  * @param string $aco ACO
