@@ -207,7 +207,7 @@ class Debugger extends Object {
  *
  * @param $var mixed the variable to dump
  * @return void
- * @see exportVar
+ * @see Debugger::exportVar()
  * @access public
  * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
@@ -218,8 +218,8 @@ class Debugger extends Object {
 	}
 
 /**
- * Creates a detailed stack trace log at the time of invocation, much like dump()
- * but to debug.log.
+ * Creates an entry in the log file.  The log entry will contain a stack trace from where it was called.
+ * as well as export the variable using exportVar. By default the log is written to the debug log.
  *
  * @param $var mixed Variable or content to log
  * @param $level int type of log to use. Defaults to LOG_DEBUG
@@ -320,8 +320,17 @@ class Debugger extends Object {
 /**
  * Outputs a stack trace based on the supplied options.
  *
+ * ### Options
+ *
+ * - `depth` - The number of stack frames to return. Defaults to 999
+ * - `format` - The format you want the return.  Defaults to the currently selected format.  If
+ *    format is 'array' or 'points' the return will be an array.
+ * - `args` - Should arguments for functions be shown?  If true, the arguments for each method call
+ *   will be displayed.
+ * - `start` - The stack frame to start generating a trace from.  Defaults to 0
+ *
  * @param array $options Format for outputting stack trace
- * @return string Formatted stack trace
+ * @return mixed Formatted stack trace
  * @access public
  * @static
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
@@ -523,7 +532,7 @@ class Debugger extends Object {
  * @param string $var Object to convert
  * @return string
  * @access private
- * @see Debugger:exportVar()
+ * @see Debugger::exportVar()
  */
 	function __object($var) {
 		$out = array();
@@ -552,7 +561,8 @@ class Debugger extends Object {
  * Switches output format, updates format strings
  *
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
- *        straight HTML output, or 'text' for unformatted text.
+ *    straight HTML output, or 'txt' for unformatted text.
+ * @param array $strings Template strings to be used for the output format.
  * @access protected
  */
 	function output($format = null, $strings = array()) {
