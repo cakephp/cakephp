@@ -283,7 +283,7 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	function testNode() {
-		$Aco = new DbAcoTest();
+		$Aco =& new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
 		$expected = array(2, 1);
 		$this->assertEqual($result, $expected);
@@ -317,7 +317,19 @@ class AclNodeTest extends CakeTestCase {
 		$result = $Aco->node('');
 		$this->assertEqual($result, null);
 	}
-	/**
+
+/**
+ * test that node() doesn't dig deeper than it should.
+ *
+ * @return void
+ */
+	function testNodeWithDuplicatePathSegments() {
+		$Aco =& new DbAcoTest();
+		$nodes = $Aco->node('ROOT/Users');
+		$this->assertEqual($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
+	}
+
+/**
  * testNodeArrayFind method
  *
  * @access public
