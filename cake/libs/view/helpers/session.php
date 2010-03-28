@@ -52,6 +52,8 @@ class SessionHelper extends CakeSession {
 	function __construct($base = null) {
 		if (Configure::read('Session.start') === true) {
 			parent::__construct($base, false);
+			$this->start();
+			$this->__active = true;
 		} else {
 			$this->__active = false;
 		}
@@ -177,26 +179,16 @@ class SessionHelper extends CakeSession {
 	}
 
 /**
- * Session id
- *
- * @return string Session id
- * @access public
- */
-	function id() {
-		return parent::id();
-	}
-
-/**
  * Determine if Session has been started
  * and attempt to start it if not
  *
  * @return boolean true if Session is already started, false if
  * Session could not be started
- * @access public
+ * @access private
  */
 	function __start() {
-		if (!parent::started()) {
-			parent::start();
+		if (!$this->started()) {
+			return $this->start();
 		}
 		return true;
 	}
