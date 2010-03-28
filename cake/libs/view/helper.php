@@ -191,7 +191,7 @@ class Helper extends Overloadable {
  * Checks if a file exists when theme is used, if no file is found default location is returned
  *
  * @param string $file The file to create a webroot path to.
- * @return string $webPath web path to file.
+ * @return string Web accessible path to file.
  * @access public
  */
 	function webroot($file) {
@@ -250,9 +250,11 @@ class Helper extends Overloadable {
 	}
 
 /**
- * Used to remove harmful tags from content
+ * Used to remove harmful tags from content.  Removes a number of well known XSS attacks
+ * from content.  However, is not guaranteed to remove all possiblities.  Escaping
+ * content is the best way to prevent all possible attacks.
  *
- * @param mixed $output
+ * @param mixed $output Either an array of strings to clean or a single string to clean.
  * @return cleaned content for output
  * @access public
  */

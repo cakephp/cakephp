@@ -87,6 +87,7 @@ class CakeSocket extends Object {
  * Constructor.
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
+ * @see CakeSocket::$_baseConfig
  */
 	function __construct($config = array()) {
 		parent::__construct();
@@ -181,7 +182,7 @@ class CakeSocket extends Object {
  */
 	function lastError() {
 		if (!empty($this->lastError)) {
-			return $this->lastError['num'].': '.$this->lastError['str'];
+			return $this->lastError['num'] . ': ' . $this->lastError['str'];
 		} else {
 			return null;
 		}

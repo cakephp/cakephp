@@ -448,7 +448,7 @@ class View extends Object {
  * Renders a layout. Returns output from _render(). Returns false on error.
  * Several variables are created for use in layout.
  *
- * - `title_for_layout` - contains page title
+ * - `title_for_layout` - A backwards compatible place holder, you should set this value if you want more control.
  * - `content_for_layout` - contains rendered view file
  * - `scripts_for_layout` - contains scripts added to header
  *
