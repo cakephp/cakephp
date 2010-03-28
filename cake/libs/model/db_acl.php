@@ -111,7 +111,8 @@ class AclNode extends AppModel {
 					'conditions' => array(
 						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
 						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
-						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string')
+						$db->name("{$type}{$i}.alias") . ' = ' . $db->value($alias, 'string'),
+						$db->name("{$type}{$j}.id") . ' = ' . $db->name("{$type}{$i}.parent_id")
 					)
 				);
 
