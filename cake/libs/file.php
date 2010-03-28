@@ -97,7 +97,7 @@ class File extends Object {
 			$this->name = basename($path);
 		}
 		$this->pwd();
-		!$this->exists() && $create === true && $this->safe($path) && $this->create();
+		!$this->exists() && $create && $this->safe($path) && $this->create();
 	}
 /**
  * Closes the current file if it is opened
