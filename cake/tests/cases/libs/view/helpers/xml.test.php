@@ -218,6 +218,13 @@ class XmlHelperTest extends CakeTestCase {
 		$result = $this->Xml->serialize($data);
 		$expected = '<pages id="2" url="http://www.url.com/rb/153/?id=bbbb&amp;t=access" />';
 		$this->assertIdentical($result, $expected);
+
+		$test = array(
+			'Test' => array('test' => true)
+		);
+		$expected = '<test test="1" />';
+		$result = $this->Xml->serialize($test);
+		$this->assertidentical($expected, $result);
 	}
 
 /**
