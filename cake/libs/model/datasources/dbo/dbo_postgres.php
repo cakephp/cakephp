@@ -286,7 +286,7 @@ class DboPostgres extends DboSource {
 			return $parent;
 		}
 
-		if ($data === null) {
+		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		}
 		if (empty($column)) {

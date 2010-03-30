@@ -375,6 +375,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->db2->value(1, 'boolean'), 'TRUE');
 		$this->assertEqual($this->db2->value('1', 'boolean'), 'TRUE');
 		$this->assertEqual($this->db2->value(null, 'boolean'), "NULL");
+		$this->assertEqual($this->db2->value(array()), "NULL");
 	}
 
 /**
