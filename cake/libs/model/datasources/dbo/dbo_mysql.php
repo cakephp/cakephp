@@ -424,7 +424,7 @@ class DboMysqlBase extends DboSource {
 	function listDetailedSources($name = null) {
 		$condition = '';
 		if (is_string($name)) {
-			$condition = ' WHERE Name = ' . $this->value($name);
+			$condition = ' LIKE ' . $this->value($name);
 		}
 		$result = $this->query('SHOW TABLE STATUS FROM ' . $this->name($this->config['database']) . $condition . ';');
 		if (!$result) {
