@@ -600,7 +600,7 @@ class DboPostgres extends DboSource {
 								}
 
 								if (isset($default)) {
-									$colList[] = 'ALTER COLUMN '. $fieldName .'  SET DEFAULT ' . $default;
+									$colList[] = 'ALTER COLUMN '. $fieldName .'  SET DEFAULT ' . $this->value($default, $field);
 								} else {
 									$colList[] = 'ALTER COLUMN '. $fieldName .'  DROP DEFAULT';
 								}
