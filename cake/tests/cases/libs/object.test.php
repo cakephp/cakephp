@@ -409,6 +409,13 @@ class ObjectTest extends CakeTestCase {
 
 		@unlink(CACHE . 'persistent' . DS . 'objecttestmodel.php');
 
+		$data = new TestObject;
+		$this->object->testPersist('Tags.Tag', true, $data);
+		$this->assertTrue(file_exists(CACHE . 'persistent' . DS . 'tags.tag.php'));
+		$this->object->testPersist('Tags.Tag', true, $data);
+		$this->assertEqual($this->object->{'Tags.Tag'}, $data);
+		
+		@unlink(CACHE . 'persistent' . DS . 'tags.tag.php');
 		Configure::write('Cache.disable', $cacheDisable);
 	}
 /**

@@ -247,7 +247,7 @@ class Object {
 		$file = 'persistent' . DS . strtolower($name) . '.php';
 		$objectArray = array(&$object);
 		$data = str_replace('\\', '\\\\', serialize($objectArray));
-		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
+		$data = '<?php $' . Inflector::slug($name) . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
 		$duration = '+999 days';
 		if (Configure::read() >= 1) {
 			$duration = '+10 seconds';
@@ -287,7 +287,7 @@ class Object {
 				unset($vars);
 			break;
 			default:
-				$vars = unserialize(${$name});
+				$vars = unserialize(${Inflector::slug($name)});
 				$this->{$name} = $vars['0'];
 				unset($vars);
 			break;
