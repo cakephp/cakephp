@@ -99,6 +99,23 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue($result);
 		rmdir(TMP . 'tests' . DS . 'first');
 	}
+
+/**
+ * test that creation of folders with trailing ds works
+ *
+ * @return void
+ */
+	function testCreateWithTrailingDs() {
+		$folder =& new Folder(TMP);
+		$path = TMP . 'tests' . DS . 'trailing' . DS . 'dir' . DS;
+		$folder->create($path);
+
+		$this->assertTrue(is_dir($path), 'Folder was not made');
+
+		$folder =& new Folder(TMP . 'tests' . DS . 'trailing');
+		$this->assertTrue($folder->delete());
+	}
+
 /**
  * test recurisve directory create failure.
  *
