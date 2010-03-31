@@ -248,7 +248,7 @@ class JavascriptHelper extends AppHelper {
 				$url = JS_URL . $url;
 			}
 			if (strpos($url, '?') === false) {
-				if (substr($url, -3) !== '.js') {
+				if (!preg_match('/.*\.(js|php)$/i', $url)) {
 					$url .= '.js';
 				}
 			}

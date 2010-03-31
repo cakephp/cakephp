@@ -173,8 +173,8 @@ class JavascriptTest extends CakeTestCase {
 		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Javascript->link('jquery-1.1.2');
-		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.js"></script>';
+		$result = $this->Javascript->link('jquery-1.1.2.php');
+		$expected = '<script type="text/javascript" src="js/jquery-1.1.2.php"></script>';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Javascript->link('/plugin/js/jquery-1.1.2');
