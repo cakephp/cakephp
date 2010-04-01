@@ -829,7 +829,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->set('title', 'someTitle');
 		$this->assertIdentical($Controller->viewVars['title'], 'someTitle');
-		$this->assertNotEqual($Controller->pageTitle, 'someTitle');
+		$this->assertTrue(empty($Controller->pageTitle));
 
 		$Controller->viewVars = array();
 		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
