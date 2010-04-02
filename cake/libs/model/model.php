@@ -179,14 +179,6 @@ class Model extends Overloadable {
 	var $logTransactions = false;
 
 /**
- * Whether or not to enable transactions for this model (i.e. BEGIN/COMMIT/ROLLBACK statements)
- *
- * @var boolean
- * @access public
- */
-	var $transactional = false;
-
-/**
  * Whether or not to cache queries for this model.  This enables in-memory
  * caching only, the results are not stored beyond the current request.
  *
