@@ -746,6 +746,27 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that plugin short cut routes behave properly. Parse and reverse route correctly.
+ *
+ * @return void
+ */
+	function testPluginShortcutRoutes() {
+		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
+		$this->assertEqual($result, '/test_plugin', 'Plugin shortcut index action failed.');
+	
+		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'view', 1));
+		$this->assertEqual($result, '/test_plugin/view/1', 'Plugin shortcut with passed args failed.');
+
+		$result = Router::url(array(
+			'plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'view',
+			1, 'sort' => 'title', 'dir' => 'asc'
+		));
+		$this->assertEqual(
+			$result, '/test_plugin/view/1/sort:title/dir:asc', 'Plugin shortcut with passed + named args failed.'
+		);
+	}
+
+/**
  * test that you can leave active plugin routes with plugin = null
  *
  * @return void
