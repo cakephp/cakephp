@@ -218,6 +218,28 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 	}
 
+/**
+ * test sort() works with plugin shortcut routes.
+ *
+ * @return void
+ */
+	function testSortWithPluginShortcuts() {
+		Router::reload();
+		Router::parse('/');
+		Router::setRequestInfo(array(
+			array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'something', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'test_plugin/something')),
+			array('base' => '/', 'here' => '/test_plugin/', 'webroot' => '/')
+		));
+
+		$result = $this->Paginator->sort('title');
+		$expected = array(
+			'a' => array('href' => '/test_plugin/something/page:1/sort:title/direction:asc'),
+			'Title',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 
 /**
  * testSortLinksUsingDirectionOption method
