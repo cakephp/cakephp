@@ -780,6 +780,32 @@ HTMLBLOC;
  * @return void
  * @access public
  */
+	function testSendWithAttachments() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Attachment Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->attachments = array(
+			__FILE__,
+			'some-name.php' => __FILE__
+		);
+		$body = '<p>This is the body of the message</p>';
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send($body));
+		$msg = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/' . preg_quote('Content-Disposition: attachment; filename="email.test.php"') . '/', $msg);
+		$this->assertPattern('/' . preg_quote('Content-Disposition: attachment; filename="some-name.php"') . '/', $msg);
+	}
+
+/**
+ * testSendAsIsNotIgnoredIfAttachmentsPresent method
+ *
+ * @return void
+ * @access public
+ */
 	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
@@ -812,7 +838,7 @@ HTMLBLOC;
 	}
 
 /**
- * undocumented function
+ * testNoDoubleNewlinesInHeaders function
  *
  * @return void
  * @access public

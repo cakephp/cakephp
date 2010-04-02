@@ -556,15 +556,15 @@ class EmailComponent extends Object{
 		if ($this->delivery == 'smtp') {
 			$headers['Subject'] = $this->_encode($this->subject);
 		}
-		
+
 		if ($this->messageId !== false) {
 			if ($this->messageId === true) {
 				$headers['Message-ID'] = '<' . String::UUID() . '@' . env('HTTP_HOST') . '>';
 			} else {
-				$headers['Message-ID'] = $this->messageId; 
+				$headers['Message-ID'] = $this->messageId;
 			}
 		}
-		
+
 		$headers['X-Mailer'] = $this->xMailer;
 
 		if (!empty($this->headers)) {
@@ -624,14 +624,17 @@ class EmailComponent extends Object{
  */
 	function _attachFiles() {
 		$files = array();
-		foreach ($this->attachments as $attachment) {
+		foreach ($this->attachments as $filename => $attachment) {
 			$file = $this->_findFiles($attachment);
 			if (!empty($file)) {
-				$files[] = $file;
+				if (is_int($filename)) {
+					$filename = basename($file);
+				}
+				$files[$filename] = $file;
 			}
 		}
 
-		foreach ($files as $file) {
+		foreach ($files as $filename => $file) {
 			$handle = fopen($file, 'rb');
 			$data = fread($handle, filesize($file));
 			$data = chunk_split(base64_encode($data)) ;
@@ -640,7 +643,7 @@ class EmailComponent extends Object{
 			$this->__message[] = '--' . $this->__boundary;
 			$this->__message[] = 'Content-Type: application/octet-stream';
 			$this->__message[] = 'Content-Transfer-Encoding: base64';
-			$this->__message[] = 'Content-Disposition: attachment; filename="' . basename($file) . '"';
+			$this->__message[] = 'Content-Disposition: attachment; filename="' . basename($filename) . '"';
 			$this->__message[] = '';
 			$this->__message[] = $data;
 			$this->__message[] = '';
