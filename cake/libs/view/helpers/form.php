@@ -1673,7 +1673,12 @@ class FormHelper extends AppHelper {
 			if (is_array($options) && isset($options[$key])) {
 				return $options;
 			}
-			$name = $this->field();
+
+			$view = ClassRegistry::getObject('view');
+			$name = $view->field;
+			if (!empty($view->fieldSuffix)) {
+				$name .= '[' . $view->fieldSuffix . ']';
+			}
 
 			if (is_array($options)) {
 				$options[$key] = $name;
