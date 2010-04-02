@@ -51,11 +51,7 @@ class ErrorHandler extends Object {
 	function __construct($method, $messages) {
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
-		if (Configure::read() > 0 || $method == 'error') {
-			call_user_func_array(array(&$this, $method), $messages);
-		} else {
-			call_user_func_array(array(&$this, 'error404'), $messages);
-		}
+		call_user_func_array(array(&$this, $method), $messages);
 	}
 
 /**
@@ -78,9 +74,11 @@ class ErrorHandler extends Object {
  */
 	function error404($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->error(array('code' => '404',
-							'name' => 'Not found',
-							'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message)));
+		$this->error(array(
+			'code' => '404',
+			'name' => 'Not found',
+			'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message)
+		));
 		$this->_stop();
 	}
 
