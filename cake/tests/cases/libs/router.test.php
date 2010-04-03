@@ -2497,10 +2497,10 @@ class PluginShortRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['controller'], 'test_plugin');
 		$this->assertEqual($result['action'], 'add');
 
-		$result = $route->parse('/test_plugin/edit/1');
+		$result = $route->parse('/test_plugin/add/1');
 		$this->assertEqual($result['plugin'], 'test_plugin');
 		$this->assertEqual($result['controller'], 'test_plugin');
-		$this->assertEqual($result['action'], 'edit');
+		$this->assertEqual($result['action'], 'add');
 		$this->assertEqual($result['_args_'], '1', 'Passed args were wrong.');
 	}
 }

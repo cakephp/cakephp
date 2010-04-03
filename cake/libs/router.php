@@ -1631,6 +1631,9 @@ class PluginShortRoute extends CakeRoute {
 		if (!App::import('Controller', $controllerName)) {
 			return false;
 		}
+		if (!method_exists($pluginName . 'Controller', $params['action'])) {
+			return false;
+		}
 		$params['controller'] = $params['plugin'];
 		return $params;
 	}
