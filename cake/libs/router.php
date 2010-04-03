@@ -568,6 +568,9 @@ class Router {
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
+			$shortPlugin = array_merge($match, array('routeClass' => 'PluginShortRoute'));
+			$this->connect('/:plugin', array('action' => 'index'), $shortPlugin);
+			$this->connect('/:plugin/:action/*', array(), $shortPlugin);
 			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 		}
@@ -1578,7 +1581,21 @@ class CakeRoute {
 	}
 }
 
+/**
+ * PluginShortRoute is a specialized route class to handle routes
+ * where the controller and plugin are named the same.  It allows you
+ * to omit the controller key from the template and the defaults.
+ * When a url is parsed, this class will attempt to import a controller
+ * with the same name.  If that succeeds the request array will be modified.
+ *
+ * @package cake.libs
+ */
 class PluginShortRoute extends CakeRoute {
+/**
+ * A cache for all the plugins in the application
+ *
+ * @var string
+ */
 	var $_plugins = array();
 /**
  * Constructor  Sets up the plugin sets.
@@ -1594,7 +1611,6 @@ class PluginShortRoute extends CakeRoute {
 	}
 /**
  * Parses urls and creates the correct request parameter set.
- * Plugin short cut routes have the same plugin and controller keys.
  * If there is no controller available in the plugin with the same
  * name as the plugin, this route cannot pass.
  *
@@ -1603,7 +1619,11 @@ class PluginShortRoute extends CakeRoute {
  */
 	function parse($url) {
 		$params = parent::parse($url);
-		if (!isset($params['plugin']) || (isset($params['plugin']) && !isset($this->_plugins[$params['plugin']]))) {
+		if (
+			$params == false ||
+			!isset($params['plugin']) || 
+			(isset($params['plugin']) && !isset($this->_plugins[$params['plugin']]))
+		) {
 			return false;
 		}
 		$pluginName = Inflector::camelize($params['plugin']);
@@ -1614,5 +1634,6 @@ class PluginShortRoute extends CakeRoute {
 		$params['controller'] = $params['plugin'];
 		return $params;
 	}
+
 }
 ?>
