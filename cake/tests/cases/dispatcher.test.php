@@ -1534,15 +1534,9 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = $pluginUrl;
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = $pluginUrl;
-		$this->assertIdentical($controller->plugin, $expected);
-
-		$expected = $plugin;
-		$this->assertIdentical($controller->name, $expected);
-
-		$expected = 'index';
-		$this->assertIdentical($controller->action, $expected);
+		$this->assertIdentical($controller->plugin, 'my_plugin');
+		$this->assertIdentical($controller->name, 'MyPlugin');
+		$this->assertIdentical($controller->action, 'index');
 
 		$expected = $pluginUrl;
 		$this->assertEqual($controller->params['controller'], $expected);
@@ -1556,15 +1550,9 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = 'admin/my_plugin/add/5/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = 'my_plugin';
-		$this->assertIdentical($controller->plugin, $expected);
-
-		$expected = 'MyPlugin';
-		$this->assertIdentical($controller->name, $expected);
-
-		$expected = 'admin_add';
-		$this->assertIdentical($controller->action, $expected);
+		$this->assertIdentical($controller->plugin, 'my_plugin');
+		$this->assertIdentical($controller->name, 'MyPlugin');
+		$this->assertIdentical($controller->action, 'admin_add');
 
 		$expected = array(0 => 5, 'param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->passedArgs, $expected);
@@ -1575,15 +1563,9 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->base = false;
 
 		$controller = $Dispatcher->dispatch('admin/articles_test', array('return' => 1));
-
-		$expected = 'articles_test';
-		$this->assertIdentical($controller->plugin, $expected);
-
-		$expected = 'ArticlesTest';
-		$this->assertIdentical($controller->name, $expected);
-
-		$expected = 'admin_index';
-		$this->assertIdentical($controller->action, $expected);
+		$this->assertIdentical($controller->plugin, 'articles_test');
+		$this->assertIdentical($controller->name, 'ArticlesTest');
+		$this->assertIdentical($controller->action, 'admin_index');
 
 		$expected = array(
 			'pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
@@ -1633,6 +1615,9 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'my_plugin/add';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertFalse(isset($controller->params['pass'][0]));
+		$this->assertEqual($controller->params['controller'], 'my_plugin');
+		$this->assertEqual($controller->params['action'], 'add');
+		$this->assertEqual($controller->params['plugin'], 'my_plugin');
 
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
