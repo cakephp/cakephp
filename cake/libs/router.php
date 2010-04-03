@@ -1411,6 +1411,7 @@ class CakeRoute {
 			$route['pass'] = $route['named'] = array();
 			$route += $this->defaults;
 
+			//move numerically indexed elements from the defaults into pass.
 			foreach ($route as $key => $value) {
 				if (is_integer($key)) {
 					$route['pass'][] = $value;
@@ -1574,6 +1575,44 @@ class CakeRoute {
 		}
 		$out = str_replace('//', '/', $out);
 		return $out;
+	}
+}
+
+class PluginShortRoute extends CakeRoute {
+	var $_plugins = array();
+/**
+ * Constructor  Sets up the plugin sets.
+ *
+ * @return void
+ */
+	function PluginShortRoute($template, $defaults = array(), $options = array()) {
+		parent::CakeRoute($template, $defaults, $options);
+		$plugins = App::objects('plugin');
+		foreach ($plugins as $plugin) {
+			$this->_plugins[Inflector::underscore($plugin)] = true;
+		}
+	}
+/**
+ * Parses urls and creates the correct request parameter set.
+ * Plugin short cut routes have the same plugin and controller keys.
+ * If there is no controller available in the plugin with the same
+ * name as the plugin, this route cannot pass.
+ *
+ * @param string $url Url string to parse.
+ * @return mixed False on failure, or an array of request parameters
+ */
+	function parse($url) {
+		$params = parent::parse($url);
+		if (!isset($params['plugin']) || (isset($params['plugin']) && !isset($this->_plugins[$params['plugin']]))) {
+			return false;
+		}
+		$pluginName = Inflector::camelize($params['plugin']);
+		$controllerName = $pluginName . '.' . $pluginName;
+		if (!App::import('Controller', $controllerName)) {
+			return false;
+		}
+		$params['controller'] = $params['plugin'];
+		return $params;
 	}
 }
 ?>

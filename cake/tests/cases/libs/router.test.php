@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Router', 'Debugger'));
+App::import('Core', array('Router'));
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
@@ -2436,5 +2436,72 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['action'], 'index');
 	}
 }
+//SimpleTest::ignore('RouterTest');
+//SimpleTest::ignore('CakeRouteTestCase');
 
+/**
+ * Test case for PluginShortRoute
+ *
+ * @package cake.test.cases.libs
+ */
+class PluginShortRouteTestCase extends CakeTestCase {
+/**
+ * startTest method
+ *
+ * @access public
+ * @return void
+ */
+	function startTest() {
+		$this->_routing = Configure::read('Routing');
+		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
+
+		App::build(array(
+			'plugins' =>  array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			)
+		));
+		App::objects('plugin', null, false);
+		Router::reload();
+	}
+
+/**
+ * end the test and reset the environment
+ *
+ * @return void
+ **/
+	function endTest() {
+		Configure::write('Routing', $this->_routing);
+		App::build();
+	}
+
+/**
+ * test the parsing for plugin short routes.
+ *
+ * @return void
+ */
+	function testParsing() {
+		$route =& new PluginShortRoute('/:plugin', array('action' => 'index'));
+
+		$result = $route->parse('/non_existant_plugin');
+		$this->assertFalse($result, 'Route matched when it should fail.');
+
+		$result = $route->parse('/test_plugin');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'index');
+
+		$route =& new PluginShortRoute('/:plugin/:action/*');
+
+		$result = $route->parse('/test_plugin/add');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'add');
+
+		$result = $route->parse('/test_plugin/edit/1');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'edit');
+		$this->assertEqual($result['_args_'], '1', 'Passed args were wrong.');
+	}
+}
 ?>
