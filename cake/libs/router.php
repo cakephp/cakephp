@@ -572,20 +572,14 @@ class Router {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}
-			$pluginPiped = implode('|', $plugins);
-			$match = array('plugin' => $pluginPiped);
-			$shortPlugin = array('plugin' => $pluginPiped, 'routeClass' => 'PluginShortRoute');
+			$match = array('plugin' => implode('|', $plugins));
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
 				$indexParams = $params + array('action' => 'index');
-				$this->connect("/{$prefix}/:plugin", $indexParams, $shortPlugin);
-				$this->connect("/{$prefix}/:plugin/:action/*", $params, $shortPlugin);
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
-			$this->connect('/:plugin', array('action' => 'index'), $shortPlugin);
-			$this->connect('/:plugin/:action/*', array(), $shortPlugin);
 			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 		}
@@ -925,7 +919,7 @@ class Router {
 
 		$urlOut = array_filter(array($url['controller'], $url['action']));
 
-		if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+		if (isset($url['plugin'])) {
 			array_unshift($urlOut, $url['plugin']);
 		}
 
@@ -1550,10 +1544,6 @@ class CakeRoute {
  * @access protected
  */
 	function _writeUrl($params) {
-		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
-			unset($params['controller']);
-		}
-
 		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
@@ -1594,64 +1584,5 @@ class CakeRoute {
 		$out = str_replace('//', '/', $out);
 		return $out;
 	}
-}
-
-/**
- * PluginShortRoute is a specialized route class to handle routes
- * where the controller and plugin are named the same.  It allows you
- * to omit the controller key from the template and the defaults.
- * When a url is parsed, this class will attempt to import a controller
- * with the same name.  If that succeeds the request array will be modified.
- *
- * @package cake.libs
- */
-class PluginShortRoute extends CakeRoute {
-/**
- * A cache for all the plugins in the application
- *
- * @var string
- */
-	var $_plugins = array();
-/**
- * Constructor  Sets up the plugin sets.
- *
- * @return void
- */
-	function PluginShortRoute($template, $defaults = array(), $options = array()) {
-		parent::CakeRoute($template, $defaults, $options);
-		$plugins = App::objects('plugin');
-		foreach ($plugins as $plugin) {
-			$this->_plugins[Inflector::underscore($plugin)] = true;
-		}
-	}
-/**
- * Parses urls and creates the correct request parameter set.
- * If there is no controller available in the plugin with the same
- * name as the plugin, this route cannot pass.
- *
- * @param string $url Url string to parse.
- * @return mixed False on failure, or an array of request parameters
- */
-	function parse($url) {
-		$params = parent::parse($url);
-		if (
-			$params == false ||
-			!isset($params['plugin']) || 
-			(isset($params['plugin']) && !isset($this->_plugins[$params['plugin']]))
-		) {
-			return false;
-		}
-		$pluginName = Inflector::camelize($params['plugin']);
-		$controllerName = $pluginName . '.' . $pluginName;
-		if (!App::import('Controller', $controllerName)) {
-			return false;
-		}
-		if (!method_exists($pluginName . 'Controller', $params['action'])) {
-			return false;
-		}
-		$params['controller'] = $params['plugin'];
-		return $params;
-	}
-
 }
 ?>
