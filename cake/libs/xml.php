@@ -302,10 +302,10 @@ class XmlNode extends Object {
  * @access private
  */
 	function __tagOptions($name, $option = null) {
-		if (isset($this->__tags[$name])) {
-			$tagOpts = $this->__tags[$name];
-		} elseif (isset($this->__tags[strtolower($name)])) {
-			$tagOpts = $this->__tags[strtolower($name)];
+		if (isset($this->_tags[$name])) {
+			$tagOpts = $this->_tags[$name];
+		} elseif (isset($this->_tags[strtolower($name)])) {
+			$tagOpts = $this->_tags[strtolower($name)];
 		} else {
 			return null;
 		}
@@ -810,18 +810,18 @@ class Xml extends XmlNode {
  * XML document header
  *
  * @var string
- * @access private
+ * @access protected
  */
-	private $__header = null;
+	protected $_header = null;
 
 /**
  * Default array keys/object properties to use as tag names when converting objects or array
  * structures to XML. Set by passing $options['tags'] to this object's constructor.
  *
  * @var array
- * @access private
+ * @access protected
  */
-	private $__tags = array();
+	protected $_tags = array();
 
 /**
  * XML document version
@@ -868,7 +868,7 @@ class Xml extends XmlNode {
 		foreach (array('version', 'encoding', 'namespaces') as $key) {
 			$this->{$key} = $options[$key];
 		}
-		$this->__tags = $options['tags'];
+		$this->_tags = $options['tags'];
 		parent::__construct('#document');
 
 		if ($options['root'] !== '#document') {
@@ -898,7 +898,7 @@ class Xml extends XmlNode {
 			return false;
 		}
 		$this->__rawData = null;
-		$this->__header = null;
+		$this->_header = null;
 
 		if (strstr($input, "<")) {
 			$this->__rawData = $input;
@@ -926,7 +926,7 @@ class Xml extends XmlNode {
 	function parse() {
 		$this->__initParser();
 		$this->__rawData = trim($this->__rawData);
-		$this->__header = trim(str_replace(
+		$this->_header = trim(str_replace(
 			array('<' . '?', '?' . '>'),
 			array('', ''),
 			substr($this->__rawData, 0, strpos($this->__rawData, '?' . '>'))
@@ -1098,8 +1098,8 @@ class Xml extends XmlNode {
 		$data = parent::toString($options, 0);
 
 		if ($options['header']) {
-			if (!empty($this->__header)) {
-				return $this->header($this->__header)  . "\n" . $data;
+			if (!empty($this->_header)) {
+				return $this->header($this->_header)  . "\n" . $data;
 			}
 			return $this->header()  . "\n" . $data;
 		}

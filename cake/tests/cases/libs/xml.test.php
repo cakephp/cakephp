@@ -20,6 +20,25 @@
 App::import('Core', 'Xml');
 
 /**
+ * Test XML Class
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.libs
+ */
+class TestXml extends Xml {
+
+/**
+ * Return the protected _header instance variable
+ *
+ * @return string Header
+ * @access public
+ */
+	function getHeader() {
+		return $this->_header;
+	}
+}
+
+/**
  * XmlTest class
  *
  * @package       cake
@@ -488,17 +507,17 @@ class XmlTest extends CakeTestCase {
 		$raw = '<?xml version="1.0" encoding="ISO-8859-1" ?><prices><price>1.0</price></prices>';
 		$array = array('Prices' => array('price' => 1.0));
 
-		$xml = new Xml($raw);
+		$xml = new TestXml($raw);
 		$this->assertEqual($xml->toArray(), $array);
-		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+		$this->assertEqual($xml->getHeader(), 'xml version="1.0" encoding="ISO-8859-1"');
 
-		$xml = new Xml(' ' . $raw);
+		$xml = new TestXml(' ' . $raw);
 		$this->assertEqual($xml->toArray(), $array);
-		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+		$this->assertEqual($xml->getHeader(), 'xml version="1.0" encoding="ISO-8859-1"');
 
-		$xml = new Xml("\n" . $raw);
+		$xml = new TestXml("\n" . $raw);
 		$this->assertEqual($xml->toArray(), $array);
-		$this->assertEqual($xml->__header, 'xml version="1.0" encoding="ISO-8859-1"');
+		$this->assertEqual($xml->getHeader(), 'xml version="1.0" encoding="ISO-8859-1"');
 	}
 
 	/* Not implemented yet */
