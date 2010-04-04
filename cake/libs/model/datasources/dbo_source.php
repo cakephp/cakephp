@@ -1944,6 +1944,7 @@ class DboSource extends DataSource {
 			$fields = String::tokenize($fields);
 		}
 		$fields = array_values(array_filter($fields));
+		$allFields = $allFields || in_array('*', $fields) || in_array($model->alias . '.*', $fields);
 
 		$virtual = array();
 		$virtualFields = $model->getVirtualField();

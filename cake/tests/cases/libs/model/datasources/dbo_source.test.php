@@ -4267,6 +4267,24 @@ class DboSourceTest extends CakeTestCase {
 			'(NOW()) AS  `Article__this_moment`',
 		);
 		$this->assertEqual($expected, $result);
+
+		$result = $this->db->fields($Article, null, array('Article.*'));
+		$expected = array(
+			'`Article`.*',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->db->fields($Article, null, array('*'));
+		$expected = array(
+			'*',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
