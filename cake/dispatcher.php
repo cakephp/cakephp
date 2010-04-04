@@ -398,23 +398,14 @@ class Dispatcher extends Object {
  * @access private
  */
 	function &__getController() {
-		$original = $params = $this->params;
-
 		$controller = false;
-		$ctrlClass = $this->__loadController($params);
+		$ctrlClass = $this->__loadController($this->params);
 		if (!$ctrlClass) {
 			return $controller;
 		}
 		$name = $ctrlClass;
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			if (
-				empty($params['plugin']) && 
-				strtolower(get_parent_class($ctrlClass)) === strtolower($name . 'AppController')
-			) {
-				$params = $this->_restructureParams($params);
-			}
-			$this->params = $params;
 			$controller =& new $ctrlClass();
 		}
 		return $controller;

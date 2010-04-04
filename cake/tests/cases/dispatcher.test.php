@@ -340,6 +340,14 @@ class ArticlesTestController extends ArticlesTestAppController {
 	function admin_index() {
 		return true;
 	}
+/**
+ * fake index method.
+ *
+ * @return void
+ */
+	function index() {
+		return true;
+	}
 }
 
 /**
@@ -1423,7 +1431,10 @@ class DispatcherTest extends CakeTestCase {
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
-		Router::connect('/my_plugin/:controller/*', array('plugin'=>'my_plugin', 'controller'=>'pages', 'action'=>'display'));
+		Router::connect(
+			'/my_plugin/:controller/*', 
+			array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'display')
+		);
 
 		$Dispatcher->base = false;
 		$url = 'my_plugin/some_pages/home/param:value/param2:value2';
@@ -1472,7 +1483,10 @@ class DispatcherTest extends CakeTestCase {
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
-		Router::connect('/my_plugin/:controller/:action/*', array('plugin'=>'my_plugin', 'controller'=>'pages', 'action'=>'display'));
+		Router::connect(
+			'/my_plugin/:controller/:action/*',
+			array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'display')
+		);
 
 		$Dispatcher->base = false;
 
@@ -1508,6 +1522,13 @@ class DispatcherTest extends CakeTestCase {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
+		$plugins = App::objects('plugin');
+		$plugins[] = 'MyPlugin';
+		$plugins[] = 'ArticlesTest';
+
+		$app = App::getInstance();
+		$app->__objects['plugin'] = $plugins;
+
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
@@ -1526,7 +1547,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
-		/* Simulates the Route for a real plugin, installed in APP/plugins */
+		// Simulates the Route for a real plugin, installed in APP/plugins
 		Router::connect('/my_plugin/:controller/:action/*', array('plugin' => 'my_plugin'));
 
 		$plugin = 'MyPlugin';
@@ -1550,6 +1571,12 @@ class DispatcherTest extends CakeTestCase {
 
 		$url = 'admin/my_plugin/add/5/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+
+		$this->assertEqual($controller->params['plugin'], 'my_plugin');
+		$this->assertEqual($controller->params['controller'], 'my_plugin');
+		$this->assertEqual($controller->params['action'], 'admin_add');
+		$this->assertEqual($controller->params['pass'], array(5));
+		$this->assertEqual($controller->params['named'], array('param' => 'value', 'param2' => 'value2'));
 		$this->assertIdentical($controller->plugin, 'my_plugin');
 		$this->assertIdentical($controller->name, 'MyPlugin');
 		$this->assertIdentical($controller->action, 'admin_add');
@@ -1557,6 +1584,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array(0 => 5, 'param'=>'value', 'param2'=>'value2');
 		$this->assertEqual($controller->passedArgs, $expected);
 
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		$Dispatcher =& new TestDispatcher();
@@ -1568,8 +1596,16 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertIdentical($controller->action, 'admin_index');
 
 		$expected = array(
-			'pass'=> array(), 'named' => array(), 'controller' => 'articles_test', 'plugin' => 'articles_test', 'action' => 'admin_index',
-			'prefix' => 'admin', 'admin' =>  true, 'form' => array(), 'url' => array('url' => 'admin/articles_test'), 'return' => 1
+			'pass'=> array(),
+			'named' => array(),
+			'controller' => 'articles_test',
+			'plugin' => 'articles_test',
+			'action' => 'admin_index',
+			'prefix' => 'admin',
+			'admin' =>  true,
+			'form' => array(), 
+			'url' => array('url' => 'admin/articles_test'),
+			'return' => 1
 		);
 		$this->assertEqual($controller->params, $expected);
 	}
