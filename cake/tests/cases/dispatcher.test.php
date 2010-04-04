@@ -1405,11 +1405,9 @@ class DispatcherTest extends CakeTestCase {
 		$Router =& Router::getInstance();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'TestDispatchPages';
-		$this->assertEqual($expected, $controller->name);
+		$this->assertEqual($controller->name, 'TestDispatchPages');
 
-		$expected = array('param' => 'value', 'param2' => 'value2');
-		$this->assertIdentical($expected, $controller->passedArgs);
+		$this->assertIdentical($controller->passedArgs, array('param' => 'value', 'param2' => 'value2'));
 		$this->assertTrue($controller->params['admin']);
 
 		$expected = '/cake/repo/branches/1.2.x.x/index.php/admin/test_dispatch_pages/index/param:value/param2:value2';
@@ -1452,17 +1450,10 @@ class DispatcherTest extends CakeTestCase {
 
 		$this->assertEqual($expected, $result);
 
-		$expected = 'my_plugin';
-		$this->assertIdentical($expected, $controller->plugin);
-
-		$expected = 'SomePages';
-		$this->assertIdentical($expected, $controller->name);
-
-		$expected = 'some_pages';
-		$this->assertIdentical($expected, $controller->params['controller']);
-
-		$expected = array('0' => 'home', 'param'=>'value', 'param2'=>'value2');
-		$this->assertIdentical($expected, $controller->passedArgs);
+		$this->assertIdentical($controller->plugin, 'my_plugin');
+		$this->assertIdentical($controller->name, 'SomePages');
+		$this->assertIdentical($controller->params['controller'], 'some_pages');
+		$this->assertIdentical($controller->passedArgs, array('0' => 'home', 'param'=>'value', 'param2'=>'value2'));
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/some_pages/home/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
@@ -1493,17 +1484,10 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'my_plugin/other_pages/index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$expected = 'my_plugin';
-		$this->assertIdentical($expected, $controller->plugin);
-
-		$expected = 'OtherPages';
-		$this->assertIdentical($expected, $controller->name);
-
-		$expected = 'index';
-		$this->assertIdentical($expected, $controller->action);
-
-		$expected = array('param' => 'value', 'param2' => 'value2');
-		$this->assertIdentical($expected, $controller->passedArgs);
+		$this->assertIdentical($controller->plugin, 'my_plugin');
+		$this->assertIdentical($controller->name, 'OtherPages');
+		$this->assertIdentical($controller->action, 'index');
+		$this->assertIdentical($controller->passedArgs, array('param' => 'value', 'param2' => 'value2'));
 
 		$expected = '/cake/repo/branches/1.2.x.x/my_plugin/other_pages/index/param:value/param2:value2';
 		$this->assertIdentical($expected, $controller->here);
