@@ -21,6 +21,12 @@ if (!class_exists('CakeSession')) {
 	App::import('Core', 'CakeSession');
 }
 
+class TestCakeSession extends CakeSession {
+	public function setUserAgent($value) {
+		$this->_userAgent = $value;
+	}
+}
+
 /**
  * CakeSessionTest class
  *
@@ -67,7 +73,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Session =& new CakeSession();
+		$this->Session =& new TestCakeSession();
 		$this->Session->start();
 		$this->Session->_checkValid();
 	}
@@ -331,7 +337,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testCheckUserAgentFalse() {
 		Configure::write('Session.checkAgent', false);
-		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
+		$this->Session->setUserAgent(md5('http://randomdomainname.com' . Configure::read('Security.salt')));
 		$this->assertTrue($this->Session->valid());
 	}
 
@@ -343,7 +349,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testCheckUserAgentTrue() {
 		Configure::write('Session.checkAgent', true);
-		$this->Session->_userAgent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
+		$this->Session->setUserAgent(md5('http://randomdomainname.com' . Configure::read('Security.salt')));
 		$this->assertFalse($this->Session->valid());
 	}
 
