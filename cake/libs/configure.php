@@ -584,7 +584,7 @@ class App extends Object {
  * @var boolean
  * @access private
  */
-	var $__cache = false;
+	private $__cache = false;
 
 /**
  * Holds key/value pairs of $type => file path.
@@ -592,7 +592,7 @@ class App extends Object {
  * @var array
  * @access private
  */
-	var $__map = array();
+	private $__map = array();
 
 /**
  * Holds paths for deep searching of files.
@@ -600,7 +600,7 @@ class App extends Object {
  * @var array
  * @access private
  */
-	var $__paths = array();
+	private $__paths = array();
 
 /**
  * Holds loaded files.
@@ -608,7 +608,7 @@ class App extends Object {
  * @var array
  * @access private
  */
-	var $__loaded = array();
+	private $__loaded = array();
 
 /**
  * Holds and key => value array of object types.
@@ -616,7 +616,7 @@ class App extends Object {
  * @var array
  * @access private
  */
-	var $__objects = array();
+	private $__objects = array();
 
 /**
  * Used to read information stored path

@@ -35,7 +35,7 @@ class Cache {
  * @var array
  * @access private
  */
-	var $__config = array();
+	private $__config = array();
 
 /**
  * Holds name of the current configuration name being used.
@@ -43,7 +43,7 @@ class Cache {
  * @var array
  * @access private
  */
-	var $__name = 'default';
+	private $__name = 'default';
 
 /**
  * Whether to reset the settings with the next call to Cache::set();
@@ -51,7 +51,7 @@ class Cache {
  * @var array
  * @access private
  */
-	var $__reset = false;
+	private $__reset = false;
 
 /**
  * Engine instances keyed by configuration name.

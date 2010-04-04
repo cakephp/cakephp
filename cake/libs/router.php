@@ -41,7 +41,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__prefixes = array();
+	private $__prefixes = array();
 
 /**
  * Directive for Router to parse out file extensions for mapping to Content-types.
@@ -49,7 +49,7 @@ class Router {
  * @var boolean
  * @access private
  */
-	var $__parseExtensions = false;
+	private $__parseExtensions = false;
 
 /**
  * List of valid extensions to parse from a URL.  If null, any extension is allowed.
@@ -57,7 +57,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__validExtensions = null;
+	private $__validExtensions = null;
 
 /**
  * 'Constant' regular expression definitions for named route elements
@@ -65,7 +65,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__named = array(
+	private $__named = array(
 		'Action'	=> 'index|show|add|create|edit|update|remove|del|delete|view|item',
 		'Year'		=> '[12][0-9]{3}',
 		'Month'		=> '0[1-9]|1[012]',
@@ -93,7 +93,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__currentRoute = array();
+	private $__currentRoute = array();
 
 /**
  * Default HTTP request method => controller action map.
@@ -101,7 +101,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__resourceMap = array(
+	private $__resourceMap = array(
 		array('action' => 'index',	'method' => 'GET',		'id' => false),
 		array('action' => 'view',	'method' => 'GET',		'id' => true),
 		array('action' => 'add',	'method' => 'POST',		'id' => false),
@@ -116,7 +116,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__resourceMapped = array();
+	private $__resourceMapped = array();
 
 /**
  * Maintains the parameter stack for the current request
@@ -124,7 +124,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__params = array();
+	private $__params = array();
 
 /**
  * Maintains the path stack for the current request
@@ -132,7 +132,7 @@ class Router {
  * @var array
  * @access private
  */
-	var $__paths = array();
+	private $__paths = array();
 
 /**
  * Keeps Router state to determine if default routes have already been connected
@@ -140,7 +140,7 @@ class Router {
  * @var boolean
  * @access private
  */
-	var $__defaultsMapped = false;
+	private $__defaultsMapped = false;
 
 /**
  * Keeps track of whether the connection of default routes is enabled or disabled.
@@ -148,7 +148,7 @@ class Router {
  * @var boolean
  * @access private
  */
-	var $__connectDefaults = true;
+	private $__connectDefaults = true;
 
 /**
  * Constructor for Router.
@@ -1273,7 +1273,7 @@ class CakeRoute {
  * @var array
  * @access private
  */
-	var $__headerMap = array(
+	private $__headerMap = array(
 		'type' => 'content_type',
 		'method' => 'request_method',
 		'server' => 'server_name'

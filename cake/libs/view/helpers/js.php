@@ -51,7 +51,7 @@ class JsHelper extends AppHelper {
  * @see JsHelper::set()
  * @access private
  */
-	var $__jsVars = array();
+	private $__jsVars = array();
 
 /**
  * Scripts that are queued for output
@@ -60,7 +60,7 @@ class JsHelper extends AppHelper {
  * @see JsHelper::buffer()
  * @access private
  */
-	var $__bufferedScripts = array();
+	private $__bufferedScripts = array();
 
 /**
  * Current Javascript Engine that is being used
@@ -68,7 +68,7 @@ class JsHelper extends AppHelper {
  * @var string
  * @access private
  */
-	var $__engineName;
+	private $__engineName;
 
 /**
  * The javascript variable created by set() variables.

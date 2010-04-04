@@ -75,7 +75,7 @@ class DboSource extends DataSource {
  * @var boolean
  * @access private
  */
-	var $__bypass = false;
+	private $__bypass = false;
 
 /**
  * The set of valid SQL operations usable in a WHERE statement
@@ -83,7 +83,7 @@ class DboSource extends DataSource {
  * @var array
  * @access private
  */
-	var $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
+	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
  * Index of basic SQL commands

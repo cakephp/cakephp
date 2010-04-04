@@ -272,7 +272,7 @@ class EmailComponent extends Object{
  * @var array
  * @access private
  */
-	var $__header = array();
+	private $__header = array();
 
 /**
  * If set, boundary to use for multipart mime messages
@@ -280,7 +280,7 @@ class EmailComponent extends Object{
  * @var string
  * @access private
  */
-	var $__boundary = null;
+	private $__boundary = null;
 
 /**
  * Temporary store of message lines
@@ -288,7 +288,7 @@ class EmailComponent extends Object{
  * @var array
  * @access private
  */
-	var $__message = array();
+	private $__message = array();
 
 /**
  * Variable that holds SMTP connection
@@ -296,7 +296,7 @@ class EmailComponent extends Object{
  * @var resource
  * @access private
  */
-	var $__smtpConnection = null;
+	private $__smtpConnection = null;
 
 /**
  * Initialize component

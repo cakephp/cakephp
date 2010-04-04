@@ -53,7 +53,7 @@ class RequestHandlerComponent extends Object {
  * @var string
  * @access private
  */
-	var $__responseTypeSet = null;
+	private $__responseTypeSet = null;
 
 /**
  * Holds the copy of Controller::$params
@@ -71,7 +71,7 @@ class RequestHandlerComponent extends Object {
  * @access private
  * @see RequestHandlerComponent::setContent
  */
-	var $__requestContent = array(
+	private $__requestContent = array(
 		'javascript'	=> 'text/javascript',
 		'js'			=> 'text/javascript',
 		'json'			=> 'application/json',
@@ -141,7 +141,7 @@ class RequestHandlerComponent extends Object {
  * @access private
  * @see Router::parseExtensions()
  */
-	var $__acceptTypes = array();
+	private $__acceptTypes = array();
 
 /**
  * The template to use when rendering the given content type.
@@ -149,7 +149,7 @@ class RequestHandlerComponent extends Object {
  * @var string
  * @access private
  */
-	var $__renderType = null;
+	private $__renderType = null;
 
 /**
  * Contains the file extension parsed out by the Router
@@ -167,7 +167,7 @@ class RequestHandlerComponent extends Object {
  * @access private
  * @see RequestHandler::__initializeTypes()
  */
-	var $__typesInitialized = false;
+	private $__typesInitialized = false;
 
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT

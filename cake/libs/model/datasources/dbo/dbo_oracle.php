@@ -53,7 +53,7 @@ class DboOracle extends DboSource {
  *
  * @var boolean
  */
-	var $__transactionStarted = false;
+	private $__transactionStarted = false;
 
 /**
  * Enter description here...

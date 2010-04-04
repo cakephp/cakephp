@@ -32,7 +32,7 @@ class Component extends Object {
  * @var object
  * @access private
  */
-	var $__controllerVars = array('plugin' => null, 'name' => null, 'base' => null);
+	private $__controllerVars = array('plugin' => null, 'name' => null, 'base' => null);
 
 /**
  * List of loaded components.
@@ -57,7 +57,7 @@ class Component extends Object {
  * @var array
  * @access private
  */
-	var $__settings = array();
+	private $__settings = array();
 
 /**
  * Used to initialize the components for current controller.

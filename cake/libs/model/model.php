@@ -310,7 +310,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__associationKeys = array(
+	private $__associationKeys = array(
 		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 		'hasOne' => array('className', 'foreignKey','conditions', 'fields','order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
@@ -323,7 +323,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
+	private $__associations = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 
 /**
  * Holds model associations temporarily to allow for dynamic (un)binding.
@@ -331,7 +331,7 @@ class Model extends Overloadable {
  * @var array
  * @access private
  */
-	var $__backAssociation = array();
+	private $__backAssociation = array();
 
 /**
  * The ID of the model record that was last inserted.
@@ -339,7 +339,7 @@ class Model extends Overloadable {
  * @var integer
  * @access private
  */
-	var $__insertID = null;
+	private $__insertID = null;
 
 /**
  * The number of records returned by the last query.
@@ -347,7 +347,7 @@ class Model extends Overloadable {
  * @var integer
  * @access private
  */
-	var $__numRows = null;
+	private $__numRows = null;
 
 /**
  * The number of records affected by the last query.
@@ -355,7 +355,7 @@ class Model extends Overloadable {
  * @var integer
  * @access private
  */
-	var $__affectedRows = null;
+	private $__affectedRows = null;
 
 /**
  * List of valid finder method options, supplied as the first parameter to find().

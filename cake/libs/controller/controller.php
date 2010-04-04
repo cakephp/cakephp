@@ -353,7 +353,7 @@ class Controller extends Object {
  * @var array Associative array of HTTP codes and their associated messages.
  * @access private
  */
-	var $__httpCodes = null;
+	private $__httpCodes = null;
 
 /**
  * Constructor.

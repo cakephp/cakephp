@@ -154,7 +154,7 @@ class DataSource extends Object {
  * @var array
  * @access private
  */
-	var $__descriptions = array();
+	private $__descriptions = array();
 
 /**
  * Holds a list of sources (tables) contained in the DataSource

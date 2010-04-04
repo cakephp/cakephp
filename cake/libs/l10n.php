@@ -98,7 +98,7 @@ class L10n extends Object {
  * @var array
  * @access private
  */
-	var $__l10nMap = array(/* Afrikaans */ 'afr' => 'af',
+	private $__l10nMap = array(/* Afrikaans */ 'afr' => 'af',
 								/* Albanian */ 'alb' => 'sq',
 								/* Arabic */ 'ara' => 'ar',
 								/* Armenian - Armenia */ 'hye' => 'hy',
@@ -184,7 +184,7 @@ class L10n extends Object {
  * @var array
  * @access private
  */
-	var $__l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr'),
+	private $__l10nCatalog = array('af' => array('language' => 'Afrikaans', 'locale' => 'afr', 'localeFallback' => 'afr', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'ar' => array('language' => 'Arabic', 'locale' => 'ara', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
 										'ar-ae' => array('language' => 'Arabic (U.A.E.)', 'locale' => 'ar_ae', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),
 										'ar-bh' => array('language' => 'Arabic (Bahrain)', 'locale' => 'ar_bh', 'localeFallback' => 'ara', 'charset' => 'utf-8', 'direction' => 'rtl'),

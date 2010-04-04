@@ -36,7 +36,7 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	var $__replace = array();
+	private $__replace = array();
 
 /**
  * Array of string that are replace with there var replace above.
@@ -45,7 +45,7 @@ class CacheHelper extends AppHelper {
  * @var array
  * @access private
  */
-	var $__match = array();
+	private $__match = array();
 
 /**
  * cache action time

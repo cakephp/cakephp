@@ -32,7 +32,7 @@ class ExtractTask extends Shell {
  * @var string
  * @access private
  */
-	var $__paths = array();
+	private $__paths = array();
 
 /**
  * Files from where to extract
@@ -40,7 +40,7 @@ class ExtractTask extends Shell {
  * @var array
  * @access private
  */
-	var $__files = array();
+	private $__files = array();
 
 /**
  * Merge all domains string into the default.pot file
@@ -48,7 +48,7 @@ class ExtractTask extends Shell {
  * @var boolean
  * @access private
  */
-	var $__merge = false;
+	private $__merge = false;
 
 /**
  * Current file being processed
@@ -56,7 +56,7 @@ class ExtractTask extends Shell {
  * @var string
  * @access private
  */
-	var $__file = null;
+	private $__file = null;
 
 /**
  * Contains all content waiting to be write
@@ -64,7 +64,7 @@ class ExtractTask extends Shell {
  * @var string
  * @access private
  */
-	var $__storage = array();
+	private $__storage = array();
 
 /**
  * Extracted tokens
@@ -72,7 +72,7 @@ class ExtractTask extends Shell {
  * @var array
  * @access private
  */
-	var $__tokens = array();
+	private $__tokens = array();
 
 /**
  * Extracted strings
@@ -80,7 +80,7 @@ class ExtractTask extends Shell {
  * @var array
  * @access private
  */
-	var $__strings = array();
+	private $__strings = array();
 
 /**
  * Destination path
@@ -88,7 +88,7 @@ class ExtractTask extends Shell {
  * @var string
  * @access private
  */
-	var $__output = null;
+	private $__output = null;
 
 /**
  * Execution method always used for tasks

@@ -40,7 +40,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @var string
  */
-	var $__defaultModel = null;
+	private $__defaultModel = null;
 
 /**
  * The class used for 'Ajax' pagination links.

@@ -124,7 +124,7 @@ class CookieComponent extends Object {
  * @var string
  * @access private
  */
-	var $__values = array();
+	private $__values = array();
 
 /**
  * Type of encryption to use.
@@ -136,7 +136,7 @@ class CookieComponent extends Object {
  * @access private
  * @todo add additional encryption methods
  */
-	var $__type = 'cipher';
+	private $__type = 'cipher';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
@@ -144,7 +144,7 @@ class CookieComponent extends Object {
  * @var string
  * @access private
  */
-	var $__reset = null;
+	private $__reset = null;
 
 /**
  * Expire time of the cookie
@@ -154,7 +154,7 @@ class CookieComponent extends Object {
  * @var string
  * @access private
  */
-	var $__expires = 0;
+	private $__expires = 0;
 
 /**
  * Main execution method.

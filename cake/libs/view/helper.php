@@ -133,7 +133,7 @@ class Helper extends Overloadable {
  * @access private
  * @var mixed
  */
-	var $__tainted = null;
+	private $__tainted = null;
 
 /**
  * Holds the cleaned content.
@@ -141,7 +141,7 @@ class Helper extends Overloadable {
  * @access private
  * @var mixed
  */
-	var $__cleaned = null;
+	private $__cleaned = null;
 
 /**
  * Default overload methods

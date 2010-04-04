@@ -245,14 +245,14 @@ class BehaviorCollection extends Object {
  *
  * @var array
  */
-	var $__methods = array();
+	private $__methods = array();
 
 /**
  * Keeps a list of all methods which have been mapped with regular expressions
  *
  * @var array
  */
-	var $__mappedMethods = array();
+	private $__mappedMethods = array();
 
 /**
  * Attaches a model object and loads a list of behaviors

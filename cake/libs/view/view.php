@@ -275,7 +275,7 @@ class View extends Object {
  * @var array
  * @access protected
  */
-	var $__passedVars = array(
+	private $__passedVars = array(
 		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
 		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
 		'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
@@ -287,7 +287,7 @@ class View extends Object {
  * @var array
  * @access private
  */
-	var $__scripts = array();
+	private $__scripts = array();
 
 /**
  * Holds an array of paths.
@@ -295,7 +295,7 @@ class View extends Object {
  * @var array
  * @access private
  */
-	var $__paths = array();
+	private $__paths = array();
 
 /**
  * Constructor

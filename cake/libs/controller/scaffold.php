@@ -135,7 +135,7 @@ class Scaffold extends Object {
  * @var array
  * @access private
  */
-	var $__passedVars = array(
+	private $__passedVars = array(
 		'action', 'base', 'webroot', 'layout', 'name',
 		'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction'
 	);

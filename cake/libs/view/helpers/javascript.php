@@ -130,7 +130,7 @@ class JavascriptHelper extends AppHelper {
  * @var string
  * @access private
  */
-	var $__scriptBuffer = null;
+	private $__scriptBuffer = null;
 
 /**
  * Constructor. Checks for presence of native PHP JSON extension to use for object encoding

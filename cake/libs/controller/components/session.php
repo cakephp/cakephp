@@ -38,7 +38,7 @@ class SessionComponent extends CakeSession {
  * @var boolean
  * @access private
  */
-	var $__active = true;
+	private $__active = true;
 
 /**
  * Used to determine if request are from an Ajax request
@@ -46,7 +46,7 @@ class SessionComponent extends CakeSession {
  * @var boolean
  * @access private
  */
-	var $__bare = 0;
+	private $__bare = 0;
 
 /**
  * Class constructor

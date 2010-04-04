@@ -144,7 +144,7 @@ class AjaxHelper extends AppHelper {
  *
  * @var array
  */
-	var $__ajaxBuffer = array();
+	private $__ajaxBuffer = array();
 
 /**
  * Returns link to remote action

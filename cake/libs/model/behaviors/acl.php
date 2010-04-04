@@ -34,7 +34,7 @@ class AclBehavior extends ModelBehavior {
  * @var array
  * @access protected
  */
-	var $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco');
+	private $__typeMaps = array('requester' => 'Aro', 'controlled' => 'Aco');
 
 /**
  * Sets up the configuation for the model, and loads ACL models if they haven't been already

@@ -55,7 +55,7 @@ class DboMssql extends DboSource {
  *
  * @var array
  */
-	var $__fieldMappings = array();
+	private $__fieldMappings = array();
 
 /**
  * Base configuration settings for MS SQL driver
@@ -108,7 +108,7 @@ class DboMssql extends DboSource {
  * @var string
  * @access private
  */
-	var $__lastQueryHadError = false;
+	private $__lastQueryHadError = false;
 /**
  * MS SQL DBO driver constructor; sets SQL Server error reporting defaults
  *

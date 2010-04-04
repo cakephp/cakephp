@@ -61,7 +61,7 @@ class I18n extends Object {
  * @var string
  * @access private
  */
-	var $__lang = null;
+	private $__lang = null;
 
 /**
  * Translation strings for a specific domain read from the .mo or .po files
@@ -69,7 +69,7 @@ class I18n extends Object {
  * @var array
  * @access private
  */
-	var $__domains = array();
+	private $__domains = array();
 
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
@@ -78,7 +78,7 @@ class I18n extends Object {
  * @var boolean
  * @access private
  */
-	var $__noLocale = false;
+	private $__noLocale = false;
 
 /**
  * Determine if $__domains cache should be wrote
@@ -86,7 +86,7 @@ class I18n extends Object {
  * @var boolean
  * @access private
  */
-	var $__cache = false;
+	private $__cache = false;
 
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
@@ -95,7 +95,7 @@ class I18n extends Object {
  * @var array
  * @access private
  */
-	var $__categories = array(
+	private $__categories = array(
 		 'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 

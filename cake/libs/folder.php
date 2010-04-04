@@ -66,7 +66,7 @@ class Folder extends Object {
  * @var array
  * @access private
  */
-	var $__messages = array();
+	private $__messages = array();
 
 /**
  * Holds errors from last method.
@@ -74,7 +74,7 @@ class Folder extends Object {
  * @var array
  * @access private
  */
-	var $__errors = false;
+	private $__errors = false;
 
 /**
  * Holds array of complete directory paths.
@@ -82,7 +82,7 @@ class Folder extends Object {
  * @var array
  * @access private
  */
-	var $__directories;
+	private $__directories;
 
 /**
  * Holds array of complete file paths.
@@ -90,7 +90,7 @@ class Folder extends Object {
  * @var array
  * @access private
  */
-	var $__files;
+	private $__files;
 
 /**
  * Constructor.

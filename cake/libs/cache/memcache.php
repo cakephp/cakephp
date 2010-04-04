@@ -33,7 +33,7 @@ class MemcacheEngine extends CacheEngine {
  * @var Memcache
  * @access private
  */
-	var $__Memcache = null;
+	private $__Memcache = null;
 
 /**
  * Settings

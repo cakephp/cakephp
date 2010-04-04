@@ -267,7 +267,7 @@ class Multibyte extends Object {
  * @var array
  * @access private
  */
-	var $__caseFold = array();
+	private $__caseFold = array();
 
 /**
  * Holds an array of Unicode code point ranges
@@ -275,7 +275,7 @@ class Multibyte extends Object {
  * @var array
  * @access private
  */
-	var $__codeRange = array();
+	private $__codeRange = array();
 
 /**
  * Holds the current code point range
@@ -283,7 +283,7 @@ class Multibyte extends Object {
  * @var string
  * @access private
  */
-	var $__table = null;
+	private $__table = null;
 
 /**
  * Gets a reference to the Multibyte object instance

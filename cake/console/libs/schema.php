@@ -38,7 +38,7 @@ class SchemaShell extends Shell {
  * @var boolean
  * @access private
  */
-	var $__dry = null;
+	private $__dry = null;
 
 /**
  * Override initialize

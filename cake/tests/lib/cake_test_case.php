@@ -125,7 +125,7 @@ class CakeTestCase extends UnitTestCase {
  * @var boolean
  * @access private
  */
-	var $__truncated = true;
+	private $__truncated = true;
 
 /**
  * savedGetData property
@@ -133,7 +133,7 @@ class CakeTestCase extends UnitTestCase {
  * @var array
  * @access private
  */
-	var $__savedGetData = array();
+	private $__savedGetData = array();
 
 /**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)

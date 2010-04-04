@@ -86,7 +86,7 @@ class XmlNode extends Object {
  * @var XmlNode
  * @access private
  */
-	var $__parent = null;
+	private $__parent = null;
 
 /**
  * Constructor.
@@ -788,7 +788,7 @@ class Xml extends XmlNode {
  * @var resource
  * @access private
  */
-	var $__parser;
+	private $__parser;
 
 /**
  * File handle to XML indata file.
@@ -796,7 +796,7 @@ class Xml extends XmlNode {
  * @var resource
  * @access private
  */
-	var $__file;
+	private $__file;
 
 /**
  * Raw XML string data (for loading purposes)
@@ -804,7 +804,7 @@ class Xml extends XmlNode {
  * @var string
  * @access private
  */
-	var $__rawData = null;
+	private $__rawData = null;
 
 /**
  * XML document header
@@ -812,7 +812,7 @@ class Xml extends XmlNode {
  * @var string
  * @access private
  */
-	var $__header = null;
+	private $__header = null;
 
 /**
  * Default array keys/object properties to use as tag names when converting objects or array
@@ -821,7 +821,7 @@ class Xml extends XmlNode {
  * @var array
  * @access private
  */
-	var $__tags = array();
+	private $__tags = array();
 
 /**
  * XML document version

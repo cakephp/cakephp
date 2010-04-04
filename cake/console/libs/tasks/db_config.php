@@ -40,7 +40,7 @@ class DbConfigTask extends Shell {
  * @var array
  * @access private
  */
-	var $__defaultConfig = array(
+	private $__defaultConfig = array(
 		'name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null

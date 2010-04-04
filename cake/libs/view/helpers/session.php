@@ -42,7 +42,7 @@ class SessionHelper extends CakeSession {
  *
  * @var boolean
  */
-	var $__active = true;
+	private $__active = true;
 
 /**
  * Class constructor
