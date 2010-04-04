@@ -55,29 +55,28 @@ class CakeSocketTest extends CakeTestCase {
  */
 	function testConstruct() {
 		$this->Socket->__construct();
-		$baseConfig = $this->Socket->_baseConfig;
-		$this->assertIdentical($baseConfig, array(
+		$config = $this->Socket->config;
+		$this->assertIdentical($config, array(
 			'persistent'	=> false,
 			'host'			=> 'localhost',
-			'protocol'		=> 'tcp',
+			'protocol'		=> getprotobyname('tcp'),
 			'port'			=> 80,
 			'timeout'		=> 30
 		));
 
 		$this->Socket->reset();
 		$this->Socket->__construct(array('host' => 'foo-bar'));
-		$baseConfig['host'] = 'foo-bar';
-		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
-		$this->assertIdentical($this->Socket->config, $baseConfig);
+		$config['host'] = 'foo-bar';
+		$this->assertIdentical($this->Socket->config, $config);
 
 		$this->Socket = new CakeSocket(array('host' => 'www.cakephp.org', 'port' => 23, 'protocol' => 'udp'));
-		$baseConfig = $this->Socket->_baseConfig;
+		$config = $this->Socket->config;
 
-		$baseConfig['host'] = 'www.cakephp.org';
-		$baseConfig['port'] = 23;
-		$baseConfig['protocol'] = 17;
+		$config['host'] = 'www.cakephp.org';
+		$config['port'] = 23;
+		$config['protocol'] = 17;
 
-		$this->assertIdentical($this->Socket->config, $baseConfig);
+		$this->assertIdentical($this->Socket->config, $config);
 	}
 
 /**
