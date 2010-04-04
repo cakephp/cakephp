@@ -32,7 +32,7 @@ class DbConfigTask extends Shell {
  * @var string
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * Default configuration settings to use
@@ -52,7 +52,7 @@ class DbConfigTask extends Shell {
  *
  * @var string
  */
-	var $databaseClassName = 'DATABASE_CONFIG';
+	public $databaseClassName = 'DATABASE_CONFIG';
 
 /**
  * initialization callback

@@ -34,7 +34,7 @@ class ComponentsGroupTest extends TestSuite {
  * @var string 'All core components'
  * @access public
  */
-	var $label = 'All Components';
+	public $label = 'All Components';
 
 /**
  * CoreComponentsGroupTest method

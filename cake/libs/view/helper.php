@@ -39,77 +39,77 @@ class Helper extends Overloadable {
  *
  * @var array
  */
-	var $helpers = null;
+	public $helpers = null;
 
 /**
  * Base URL
  *
  * @var string
  */
-	var $base = null;
+	public $base = null;
 
 /**
  * Webroot path
  *
  * @var string
  */
-	var $webroot = null;
+	public $webroot = null;
 
 /**
  * The current theme name if any.
  *
  * @var string
  */
-	var $theme = null;
+	public $theme = null;
 
 /**
  * URL to current action.
  *
  * @var string
  */
-	var $here = null;
+	public $here = null;
 
 /**
  * Parameter array.
  *
  * @var array
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Current action.
  *
  * @var string
  */
-	var $action = null;
+	public $action = null;
 
 /**
  * Plugin path
  *
  * @var string
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * POST data for models
  *
  * @var array
  */
-	var $data = null;
+	public $data = null;
 
 /**
  * List of named arguments
  *
  * @var array
  */
-	var $namedArgs = null;
+	public $namedArgs = null;
 
 /**
  * URL argument separator character
  *
  * @var string
  */
-	var $argSeparator = null;
+	public $argSeparator = null;
 
 /**
  * Contains model validation errors of form post-backs
@@ -117,7 +117,7 @@ class Helper extends Overloadable {
  * @access public
  * @var array
  */
-	var $validationErrors = null;
+	public $validationErrors = null;
 
 /**
  * Holds tag templates.
@@ -125,7 +125,7 @@ class Helper extends Overloadable {
  * @access public
  * @var array
  */
-	var $tags = array();
+	public $tags = array();
 
 /**
  * Holds the content to be cleaned.

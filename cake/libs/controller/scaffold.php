@@ -39,7 +39,7 @@ class Scaffold extends Object {
  * @var Controller
  * @access public
  */
-	var $controller = null;
+	public $controller = null;
 
 /**
  * Name of the controller to scaffold
@@ -47,7 +47,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Action to be performed.
@@ -55,7 +55,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $action = null;
+	public $action = null;
 
 /**
  * Name of current model this view context is attached to
@@ -63,7 +63,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $model = null;
+	public $model = null;
 
 /**
  * Path to View.
@@ -71,7 +71,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $viewPath;
+	public $viewPath;
 
 /**
  * Path parts for creating links in views.
@@ -79,7 +79,7 @@ class Scaffold extends Object {
  * @var string Base URL
  * @access public
  */
-	var $base = null;
+	public $base = null;
 
 /**
  * Name of layout to use with this View.
@@ -87,7 +87,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $layout = 'default';
+	public $layout = 'default';
 
 /**
  * Array of parameter data
@@ -95,7 +95,7 @@ class Scaffold extends Object {
  * @var array
  * @access public
  */
-	var $params;
+	public $params;
 
 /**
  * File extension. Defaults to Cake's template ".ctp".
@@ -103,7 +103,7 @@ class Scaffold extends Object {
  * @var array
  * @access public
  */
-	var $ext = '.ctp';
+	public $ext = '.ctp';
 
 /**
  * Sub-directory for this view file.
@@ -111,7 +111,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $subDir = null;
+	public $subDir = null;
 
 /**
  * Plugin name.
@@ -119,7 +119,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * valid session.
@@ -146,7 +146,7 @@ class Scaffold extends Object {
  * @var string
  * @access public
  */
-	var $scaffoldTitle = null;
+	public $scaffoldTitle = null;
 
 /**
  * Construct and set up given controller with given parameters.
@@ -433,7 +433,7 @@ class Scaffold extends Object {
 /**
  * When methods are now present in a controller
  * scaffoldView is used to call default Scaffold methods if:
- * `var $scaffold;` is placed in the controller's class definition.
+ * `public $scaffold;` is placed in the controller's class definition.
  *
  * @param array $params Parameters for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error

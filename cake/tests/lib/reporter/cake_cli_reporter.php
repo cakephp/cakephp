@@ -39,14 +39,14 @@ class CakeCliReporter extends CakeBaseReporter {
  *
  * @var string
  */
-	var $separator = '->';
+	public $separator = '->';
 
 /**
  * array of 'request' parameters
  *
  * @var array
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Constructor

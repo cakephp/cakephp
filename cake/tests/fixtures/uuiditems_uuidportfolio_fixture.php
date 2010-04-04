@@ -32,7 +32,7 @@ class UuiditemsUuidportfolioFixture extends CakeTestFixture {
  * @var string 'UuiditemsUuidportfolio'
  * @access public
  */
-	var $name = 'UuiditemsUuidportfolio';
+	public $name = 'UuiditemsUuidportfolio';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class UuiditemsUuidportfolioFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
 		'uuiditem_id' => array('type' => 'string', 'length' => 36, 'null' => false),
 		'uuidportfolio_id' => array('type' => 'string', 'length' => 36, 'null' => false)
@@ -52,7 +52,7 @@ class UuiditemsUuidportfolioFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => '4850fd8f-cc5c-449f-bf34-0c5240cf8569', 'uuiditem_id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'uuidportfolio_id' => '4806e091-6940-4d2b-b227-303740cf8569'),
 		array('id' => '4850fee5-d24c-4ea0-9759-0c2e40cf8569', 'uuiditem_id' => '48298a29-81c0-4c26-a7fb-413140cf8569', 'uuidportfolio_id' => '480af662-eb8c-47d3-886b-230540cf8569'),
 		array('id' => '4851af6e-fa18-403d-b57e-437d40cf8569', 'uuiditem_id' => '482b7756-8da0-419a-b21f-27da40cf8569', 'uuidportfolio_id' => '4806e091-6940-4d2b-b227-303740cf8569'),

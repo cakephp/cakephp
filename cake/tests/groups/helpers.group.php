@@ -34,7 +34,7 @@ class HelpersGroupTest extends TestSuite {
  * @var string 'All core helpers'
  * @access public
  */
-	var $label = 'All Helpers';
+	public $label = 'All Helpers';
 
 /**
  * HelpersGroupTest method

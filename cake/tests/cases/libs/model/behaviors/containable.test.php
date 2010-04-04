@@ -34,7 +34,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.article', 'core.article_featured', 'core.article_featureds_tags', 'core.articles_tag', 'core.attachment', 'core.category',
 		'core.comment', 'core.featured', 'core.tag', 'core.user'
 	);

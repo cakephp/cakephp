@@ -34,7 +34,7 @@ class AllCoreJavascriptHelpersGroupTest extends TestSuite {
  * @var string 'All core helpers'
  * @access public
  */
-	var $label = 'Js Helper and all Engine Helpers';
+	public $label = 'Js Helper and all Engine Helpers';
 /**
  * AllCoreHelpersGroupTest method
  *

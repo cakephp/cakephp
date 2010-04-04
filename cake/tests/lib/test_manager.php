@@ -49,14 +49,14 @@ class TestManager {
  *
  * @var boolean
  */
-	var $appTest = false;
+	public $appTest = false;
 
 /**
  * Is this test a plugin test?
  *
  * @var mixed boolean false or string name of the plugin being used.
  */
-	var $pluginTest = false;
+	public $pluginTest = false;
 
 /**
  * Constructor for the TestManager class

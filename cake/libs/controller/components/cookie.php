@@ -43,7 +43,7 @@ class CookieComponent extends Object {
  * @var string
  * @access public
  */
-	var $name = 'CakeCookie';
+	public $name = 'CakeCookie';
 
 /**
  * The time a cookie will remain valid.
@@ -56,7 +56,7 @@ class CookieComponent extends Object {
  * @var mixed
  * @access public
  */
-	var $time = null;
+	public $time = null;
 
 /**
  * Cookie path.
@@ -65,14 +65,14 @@ class CookieComponent extends Object {
  * $this->Cookie->path = '/';
  *
  * The path on the server in which the cookie will be available on.
- * If  var $cookiePath is set to '/foo/', the cookie will only be available
+ * If  public $cookiePath is set to '/foo/', the cookie will only be available
  * within the /foo/ directory and all sub-directories such as /foo/bar/ of domain.
  * The default value is the entire domain.
  *
  * @var string
  * @access public
  */
-	var $path = '/';
+	public $path = '/';
 
 /**
  * Domain path.
@@ -88,7 +88,7 @@ class CookieComponent extends Object {
  * @var string
  * @access public
  */
-	var $domain = '';
+	public $domain = '';
 
 /**
  * Secure HTTPS only cookie.
@@ -102,7 +102,7 @@ class CookieComponent extends Object {
  * @var boolean
  * @access public
  */
-	var $secure = false;
+	public $secure = false;
 
 /**
  * Encryption key.
@@ -113,7 +113,7 @@ class CookieComponent extends Object {
  * @var string
  * @access protected
  */
-	var $key = null;
+	public $key = null;
 
 /**
  * Values stored in the cookie.
@@ -381,7 +381,7 @@ class CookieComponent extends Object {
 	}
 
 /**
- * Encrypts $value using var $type method in Security class
+ * Encrypts $value using public $type method in Security class
  *
  * @param string $value Value to encrypt
  * @return string encrypted string
@@ -400,7 +400,7 @@ class CookieComponent extends Object {
 	}
 
 /**
- * Decrypts $value using var $type method in Security class
+ * Decrypts $value using public $type method in Security class
  *
  * @param array $values Values to decrypt
  * @return string decrypted string

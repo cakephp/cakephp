@@ -34,7 +34,7 @@ class DboPostgres extends DboSource {
  * @var string
  * @access public
  */
-	var $description = "PostgreSQL DBO Driver";
+	public $description = "PostgreSQL DBO Driver";
 
 /**
  * Index of basic SQL commands
@@ -65,7 +65,7 @@ class DboPostgres extends DboSource {
 		'encoding' => ''
 	);
 
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => 'serial NOT NULL'),
 		'string' => array('name'  => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
@@ -87,7 +87,7 @@ class DboPostgres extends DboSource {
  * @var string
  * @access public
  */
-	var $startQuote = '"';
+	public $startQuote = '"';
 
 /**
  * Ending Quote
@@ -95,7 +95,7 @@ class DboPostgres extends DboSource {
  * @var string
  * @access public
  */
-	var $endQuote = '"';
+	public $endQuote = '"';
 
 /**
  * Contains mappings of custom auto-increment sequences, if a table uses a sequence name

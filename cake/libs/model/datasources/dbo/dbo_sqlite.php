@@ -33,21 +33,21 @@ class DboSqlite extends DboSource {
  *
  * @var unknown_type
  */
-	var $description = "SQLite DBO Driver";
+	public $description = "SQLite DBO Driver";
 
 /**
  * Opening quote for quoted identifiers
  *
  * @var string
  */
-	var $startQuote = '"';
+	public $startQuote = '"';
 
 /**
  * Closing quote for quoted identifiers
  *
  * @var string
  */
-	var $endQuote = '"';
+	public $endQuote = '"';
 
 /**
  * Keeps the transaction statistics of CREATE/UPDATE/DELETE queries
@@ -84,7 +84,7 @@ class DboSqlite extends DboSource {
  *
  * @var array
  */
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => 'integer primary key'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
@@ -104,7 +104,7 @@ class DboSqlite extends DboSource {
  * @var array
  * @access public
  */
-	var $fieldParameters = array(
+	public $fieldParameters = array(
 		'collate' => array(
 			'value' => 'COLLATE',
 			'quote' => false,

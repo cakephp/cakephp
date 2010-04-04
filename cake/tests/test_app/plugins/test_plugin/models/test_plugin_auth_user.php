@@ -27,14 +27,14 @@ class TestPluginAuthUser extends TestPluginAppModel {
  *
  * @var string
  */
-	var $name = 'TestPluginAuthUser';
+	public $name = 'TestPluginAuthUser';
 
 /**
  * useTable property
  *
  * @var string
  */
-	var $useTable = 'auth_users';
+	public $useTable = 'auth_users';
 
 /**
  * useDbConfig property
@@ -42,5 +42,5 @@ class TestPluginAuthUser extends TestPluginAppModel {
  * @var string 'test_suite'
  * @access public
  */
-	var $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test_suite';
 }

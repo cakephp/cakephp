@@ -34,7 +34,7 @@ class TheJsTestController extends Controller {
  * @var string 'TheTest'
  * @access public
  */
-	var $name = 'TheTest';
+	public $name = 'TheTest';
 
 /**
  * uses property
@@ -42,7 +42,7 @@ class TheJsTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 }
 
 /**
@@ -78,7 +78,7 @@ class TestJavascriptObject {
  * @var string 'value1'
  * @access public
  */
-	var $property1 = 'value1';
+	public $property1 = 'value1';
 
 /**
  * property2 property
@@ -86,7 +86,7 @@ class TestJavascriptObject {
  * @var int 2
  * @access public
  */
-	var $property2 = 2;
+	public $property2 = 2;
 }
 
 /**
@@ -103,14 +103,14 @@ class JavascriptTest extends CakeTestCase {
  *
  * @var string
  */
-	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+	public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
 
 /**
  * Regexp for CDATA end block
  *
  * @var string
  */
-	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+	public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 
 /**
  * setUp method

@@ -34,7 +34,7 @@ class RoutingSystemGroupTest extends TestSuite {
  * @var string 'Routing system'
  * @access public
  */
-	var $label = 'Router and Dispatcher';
+	public $label = 'Router and Dispatcher';
 
 /**
  * RoutingSystemGroupTest method

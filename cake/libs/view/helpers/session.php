@@ -35,7 +35,7 @@ class SessionHelper extends CakeSession {
  *
  * @var array
  */
-	var $helpers = array();
+	public $helpers = array();
 
 /**
  * Used to determine if methods implementation is used, or bypassed

@@ -36,7 +36,7 @@ class BakeGroupTest extends TestSuite {
  * @var string 'All core cache engines'
  * @access public
  */
-	var $label = 'All Tasks related to bake.';
+	public $label = 'All Tasks related to bake.';
 
 /**
  * BakeGroupTest method

@@ -99,7 +99,7 @@ class ValidationTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $Validation = null;
+	public $Validation = null;
 
 /**
  * setup method

@@ -38,7 +38,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @var bool false
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * fixtures property
@@ -46,7 +46,7 @@ class TranslateBehaviorTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.translated_item', 'core.translate', 'core.translate_table',
 		'core.translated_article', 'core.translate_article', 'core.user', 'core.comment', 'core.tag', 'core.articles_tag',
 		'core.translate_with_prefix'

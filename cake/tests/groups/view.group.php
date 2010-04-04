@@ -34,7 +34,7 @@ class ViewsGroupTest extends TestSuite {
  * @var string 'All core views'
  * @access public
  */
-	var $label = 'View and ThemeView';
+	public $label = 'View and ThemeView';
 
 /**
  * ViewsGroupTest method

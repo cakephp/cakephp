@@ -34,7 +34,7 @@ class DboOracleTest extends CakeTestCase {
 /**
  * fixtures property
  */
-	var $fixtures = array('core.oracle_user');
+	public $fixtures = array('core.oracle_user');
 
 /**
  * setup method

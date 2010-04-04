@@ -38,7 +38,7 @@ class XmlNode extends Object {
  * @var string
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Node namespace
@@ -46,7 +46,7 @@ class XmlNode extends Object {
  * @var string
  * @access public
  */
-	var $namespace = null;
+	public $namespace = null;
 
 /**
  * Namespaces defined for this node and all child nodes
@@ -54,7 +54,7 @@ class XmlNode extends Object {
  * @var array
  * @access public
  */
-	var $namespaces = array();
+	public $namespaces = array();
 
 /**
  * Value of node
@@ -62,7 +62,7 @@ class XmlNode extends Object {
  * @var string
  * @access public
  */
-	var $value;
+	public $value;
 
 /**
  * Attributes on this node
@@ -70,7 +70,7 @@ class XmlNode extends Object {
  * @var array
  * @access public
  */
-	var $attributes = array();
+	public $attributes = array();
 
 /**
  * This node's children
@@ -78,7 +78,7 @@ class XmlNode extends Object {
  * @var array
  * @access public
  */
-	var $children = array();
+	public $children = array();
 
 /**
  * Reference to parent node.
@@ -829,7 +829,7 @@ class Xml extends XmlNode {
  * @var string
  * @access private
  */
-	var $version = '1.0';
+	public $version = '1.0';
 
 /**
  * XML document encoding
@@ -837,7 +837,7 @@ class Xml extends XmlNode {
  * @var string
  * @access private
  */
-	var $encoding = 'UTF-8';
+	public $encoding = 'UTF-8';
 
 /**
  * Constructor.  Sets up the XML parser with options, gives it this object as
@@ -1337,14 +1337,14 @@ class XmlTextNode extends XmlNode {
  *
  * @var string
  */
-	var $name = '#text';
+	public $name = '#text';
 
 /**
  * The text/data value which this node contains
  *
  * @var string
  */
-	var $value = null;
+	public $value = null;
 
 /**
  * Construct text node with the given parent object and data
@@ -1420,7 +1420,7 @@ class XmlManager {
  * @var array
  * @access public
  */
-	var $namespaces = array();
+	public $namespaces = array();
 
 /**
  * Global XML document parsing/generation settings.
@@ -1428,7 +1428,7 @@ class XmlManager {
  * @var array
  * @access public
  */
-	var $options = array();
+	public $options = array();
 
 /**
  * Map of common namespace URIs
@@ -1436,7 +1436,7 @@ class XmlManager {
  * @access private
  * @var array
  */
-	var $defaultNamespaceMap = array(
+	public $defaultNamespaceMap = array(
 		'dc'     => 'http://purl.org/dc/elements/1.1/',					// Dublin Core
 		'dct'    => 'http://purl.org/dc/terms/',						// Dublin Core Terms
 		'g'			=> 'http://base.google.com/ns/1.0',					// Google Base

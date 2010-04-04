@@ -43,7 +43,7 @@ class Dispatcher extends Object {
  * @var string
  * @access public
  */
-	var $base = false;
+	public $base = false;
 
 /**
  * webroot path
@@ -51,7 +51,7 @@ class Dispatcher extends Object {
  * @var string
  * @access public
  */
-	var $webroot = '/';
+	public $webroot = '/';
 
 /**
  * Current URL
@@ -59,7 +59,7 @@ class Dispatcher extends Object {
  * @var string
  * @access public
  */
-	var $here = false;
+	public $here = false;
 
 /**
  * the params for this request
@@ -67,7 +67,7 @@ class Dispatcher extends Object {
  * @var string
  * @access public
  */
-	var $params = null;
+	public $params = null;
 
 /**
  * Constructor.

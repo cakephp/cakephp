@@ -32,21 +32,21 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  *
  * @var string
  */
-	var $name = 'FixtureTest';
+	public $name = 'FixtureTest';
 
 /**
  * table property
  *
  * @var string
  */
-	var $table = 'fixture_tests';
+	public $table = 'fixture_tests';
 
 /**
  * Fields array
  *
  * @var array
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer',  'key' => 'primary'),
 		'name' => array('type' => 'string', 'length' => '255'),
 		'created' => array('type' => 'datetime')
@@ -57,7 +57,7 @@ class CakeTestFixtureTestFixture extends CakeTestFixture {
  *
  * @var array
  */
-	var $records = array(
+	public $records = array(
 		array('name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'),
 		array('name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'),
 		array('name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00')
@@ -77,14 +77,14 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  *
  * @var string
  */
-	var $name = 'ImportFixture';
+	public $name = 'ImportFixture';
 
 /**
  * Import property
  *
  * @var mixed
  */
-	var $import = array('table' => 'fixture_tests', 'connection' => 'test_suite');
+	public $import = array('table' => 'fixture_tests', 'connection' => 'test_suite');
 }
 
 /**
@@ -100,7 +100,7 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
  *
  * @var string
  */
-	var $name = 'ImportFixture';
+	public $name = 'ImportFixture';
 }
 
 /**
@@ -110,9 +110,9 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
  * @subpackage    cake.cake.tests.cases.libs.
  */
 class FixtureImportTestModel extends Model {
-	var $name = 'FixtureImport';
-	var $useTable = 'fixture_tests';
-	var $useDbConfig = 'test_suite';
+	public $name = 'FixtureImport';
+	public $useTable = 'fixture_tests';
+	public $useDbConfig = 'test_suite';
 }
 Mock::generate('DboSource', 'FixtureMockDboSource');
 

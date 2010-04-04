@@ -21,9 +21,9 @@
  */
 class TestPluginAppSchema extends CakeSchema {
 
-	var $name = 'TestPluginApp';
+	public $name = 'TestPluginApp';
 
-	var $acos = array(
+	public $acos = array(
 		'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'length' => 10, 'key' => 'primary'),
 		'parent_id' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
 		'model' => array('type'=>'string', 'null' => true),

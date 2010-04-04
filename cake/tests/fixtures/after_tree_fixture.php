@@ -33,7 +33,7 @@ class AfterTreeFixture extends CakeTestFixture {
  * @var string 'AfterTree'
  * @access public
  */
-	var $name = 'AfterTree';
+	public $name = 'AfterTree';
 
 /**
  * fields property
@@ -41,7 +41,7 @@ class AfterTreeFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer'),
 		'lft' => array('type' => 'integer'),
@@ -55,7 +55,7 @@ class AfterTreeFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('parent_id' => null, 'lft' => 1,  'rght' => 2, 'name' => 'One'),
 		array('parent_id' => null, 'lft' => 3,  'rght' => 4, 'name' => 'Two'),
 		array('parent_id' => null, 'lft' => 5,  'rght' => 6, 'name' => 'Three'),

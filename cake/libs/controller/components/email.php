@@ -37,7 +37,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $to = null;
+	public $to = null;
 
 /**
  * The mail which the email is sent from
@@ -45,7 +45,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $from = null;
+	public $from = null;
 
 /**
  * The email the recipient will reply to
@@ -53,7 +53,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $replyTo = null;
+	public $replyTo = null;
 
 /**
  * The read receipt email
@@ -61,7 +61,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $readReceipt = null;
+	public $readReceipt = null;
 
 /**
  * The mail that will be used in case of any errors like
@@ -72,7 +72,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $return = null;
+	public $return = null;
 
 /**
  * Carbon Copy
@@ -83,7 +83,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $cc = array();
+	public $cc = array();
 
 /**
  * Blind Carbon Copy
@@ -94,7 +94,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $bcc = array();
+	public $bcc = array();
 
 /**
  * The subject of the email
@@ -102,7 +102,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $subject = null;
+	public $subject = null;
 
 /**
  * Associative array of a user defined headers
@@ -111,7 +111,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $headers = array();
+	public $headers = array();
 
 /**
  * List of additional headers
@@ -121,7 +121,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $additionalParams = null;
+	public $additionalParams = null;
 
 /**
  * Layout for the View
@@ -129,7 +129,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $layout = 'default';
+	public $layout = 'default';
 
 /**
  * Template for the view
@@ -137,7 +137,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $template = null;
+	public $template = null;
 
 /**
  * as per RFC2822 Section 2.1.1
@@ -145,7 +145,7 @@ class EmailComponent extends Object{
  * @var integer
  * @access public
  */
-	var $lineLength = 70;
+	public $lineLength = 70;
 
 /**
  * @deprecated see lineLength
@@ -163,7 +163,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $sendAs = 'text';
+	public $sendAs = 'text';
 
 /**
  * What method should the email be sent by
@@ -176,7 +176,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $delivery = 'mail';
+	public $delivery = 'mail';
 
 /**
  * charset the email is sent in
@@ -184,7 +184,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $charset = 'utf-8';
+	public $charset = 'utf-8';
 
 /**
  * List of files that should be attached to the email.
@@ -194,7 +194,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $attachments = array();
+	public $attachments = array();
 
 /**
  * What mailer should EmailComponent identify itself as
@@ -202,7 +202,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $xMailer = 'CakePHP Email Component';
+	public $xMailer = 'CakePHP Email Component';
 
 /**
  * The list of paths to search if an attachment isnt absolute
@@ -210,7 +210,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $filePaths = array();
+	public $filePaths = array();
 
 /**
  * List of options to use for smtp mail method
@@ -226,7 +226,7 @@ class EmailComponent extends Object{
  * @var array
  * @access public
  */
-	var $smtpOptions = array(
+	public $smtpOptions = array(
 		'port'=> 25, 'host' => 'localhost', 'timeout' => 30
 	);
 
@@ -237,7 +237,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $smtpError = null;
+	public $smtpError = null;
 
 /**
  * Contains the rendered plain text message if one was sent.
@@ -245,7 +245,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $textMessage = null;
+	public $textMessage = null;
 
 /**
  * Contains the rendered HTML message if one was sent.
@@ -253,7 +253,7 @@ class EmailComponent extends Object{
  * @var string
  * @access public
  */
-	var $htmlMessage = null;
+	public $htmlMessage = null;
 
 /**
  * Whether to generate a Message-ID header for the
@@ -264,7 +264,7 @@ class EmailComponent extends Object{
  * @var mixed
  * @access public
  */
-	var $messageId = true;
+	public $messageId = true;
 
 /**
  * Temporary store of message header lines

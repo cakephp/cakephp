@@ -32,7 +32,7 @@ class DeviceFixture extends CakeTestFixture {
  * @var string 'Device'
  * @access public
  */
-	var $name = 'Device';
+	public $name = 'Device';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class DeviceFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'device_type_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false),
@@ -53,7 +53,7 @@ class DeviceFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('device_type_id' => 1, 'name' => 'Device 1', 'typ' => 1),
 		array('device_type_id' => 1, 'name' => 'Device 2', 'typ' => 1),
 		array('device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)

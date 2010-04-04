@@ -36,7 +36,7 @@ class AclNodeTwoTestBase extends AclNode {
  * @var string 'test_suite'
  * @access public
  */
-	var $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test_suite';
 
 /**
  * cacheSources property
@@ -44,7 +44,7 @@ class AclNodeTwoTestBase extends AclNode {
  * @var bool false
  * @access public
  */
-	var $cacheSources = false;
+	public $cacheSources = false;
 }
 
 /**
@@ -61,7 +61,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * @var string 'AroTwoTest'
  * @access public
  */
-	var $name = 'AroTwoTest';
+	public $name = 'AroTwoTest';
 
 /**
  * useTable property
@@ -69,7 +69,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * @var string 'aro_twos'
  * @access public
  */
-	var $useTable = 'aro_twos';
+	public $useTable = 'aro_twos';
 
 /**
  * hasAndBelongsToMany property
@@ -77,7 +77,7 @@ class AroTwoTest extends AclNodeTwoTestBase {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('AcoTwoTest' => array('with' => 'PermissionTwoTest'));
+	public $hasAndBelongsToMany = array('AcoTwoTest' => array('with' => 'PermissionTwoTest'));
 }
 
 /**
@@ -94,7 +94,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * @var string 'AcoTwoTest'
  * @access public
  */
-	var $name = 'AcoTwoTest';
+	public $name = 'AcoTwoTest';
 
 /**
  * useTable property
@@ -102,7 +102,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * @var string 'aco_twos'
  * @access public
  */
-	var $useTable = 'aco_twos';
+	public $useTable = 'aco_twos';
 
 /**
  * hasAndBelongsToMany property
@@ -110,7 +110,7 @@ class AcoTwoTest extends AclNodeTwoTestBase {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('AroTwoTest' => array('with' => 'PermissionTwoTest'));
+	public $hasAndBelongsToMany = array('AroTwoTest' => array('with' => 'PermissionTwoTest'));
 }
 
 /**
@@ -127,7 +127,7 @@ class PermissionTwoTest extends CakeTestModel {
  * @var string 'PermissionTwoTest'
  * @access public
  */
-	var $name = 'PermissionTwoTest';
+	public $name = 'PermissionTwoTest';
 
 /**
  * useTable property
@@ -135,7 +135,7 @@ class PermissionTwoTest extends CakeTestModel {
  * @var string 'aros_aco_twos'
  * @access public
  */
-	var $useTable = 'aros_aco_twos';
+	public $useTable = 'aros_aco_twos';
 
 /**
  * cacheQueries property
@@ -143,7 +143,7 @@ class PermissionTwoTest extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $cacheQueries = false;
+	public $cacheQueries = false;
 
 /**
  * belongsTo property
@@ -151,7 +151,7 @@ class PermissionTwoTest extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('AroTwoTest' => array('foreignKey' => 'aro_id'), 'AcoTwoTest' => array('foreignKey' => 'aco_id'));
+	public $belongsTo = array('AroTwoTest' => array('foreignKey' => 'aro_id'), 'AcoTwoTest' => array('foreignKey' => 'aco_id'));
 
 /**
  * actsAs property
@@ -159,7 +159,7 @@ class PermissionTwoTest extends CakeTestModel {
  * @var mixed null
  * @access public
  */
-	var $actsAs = null;
+	public $actsAs = null;
 }
 
 /**
@@ -207,7 +207,7 @@ class AclComponentTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
+	public $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
 
 /**
  * startTest method

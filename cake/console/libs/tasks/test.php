@@ -34,7 +34,7 @@ class TestTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $path = TESTS;
+	public $path = TESTS;
 
 /**
  * Tasks used.
@@ -42,7 +42,7 @@ class TestTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $tasks = array('Template');
+	public $tasks = array('Template');
 
 /**
  * class types that methods can be generated for
@@ -50,7 +50,7 @@ class TestTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
+	public $classTypes =  array('Model', 'Controller', 'Component', 'Behavior', 'Helper');
 
 /**
  * Internal list of fixtures that have been added so far.

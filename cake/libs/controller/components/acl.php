@@ -506,7 +506,7 @@ class IniAcl extends AclBase {
  * @var array
  * @access public
  */
-	var $config = null;
+	public $config = null;
 
 /**
  * The constructor must be overridden, as AclBase is abstract.

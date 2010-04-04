@@ -36,7 +36,7 @@ class BaseModelTest extends CakeTestCase {
  * @var bool false
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * fixtures property
@@ -44,7 +44,7 @@ class BaseModelTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.category', 'core.category_thread', 'core.user', 'core.my_category', 'core.my_product',
 		'core.my_user', 'core.my_categories_my_users', 'core.my_categories_my_products',
 		'core.article', 'core.featured', 'core.article_featureds_tags', 'core.article_featured',

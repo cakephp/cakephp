@@ -40,7 +40,7 @@ class CakeSession extends Object {
  * @var boolean
  * @access public
  */
-	var $valid = false;
+	public $valid = false;
 
 /**
  * Error messages for this session
@@ -48,7 +48,7 @@ class CakeSession extends Object {
  * @var array
  * @access public
  */
-	var $error = false;
+	public $error = false;
 
 /**
  * User agent string
@@ -64,7 +64,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $path = '/';
+	public $path = '/';
 
 /**
  * Error number of last occurred error
@@ -72,7 +72,7 @@ class CakeSession extends Object {
  * @var integer
  * @access public
  */
-	var $lastError = null;
+	public $lastError = null;
 
 /**
  * 'Security.level' setting, "high", "medium", or "low".
@@ -80,7 +80,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $security = null;
+	public $security = null;
 
 /**
  * Start time for this session.
@@ -88,7 +88,7 @@ class CakeSession extends Object {
  * @var integer
  * @access public
  */
-	var $time = false;
+	public $time = false;
 
 /**
  * Time when this session becomes invalid.
@@ -96,7 +96,7 @@ class CakeSession extends Object {
  * @var integer
  * @access public
  */
-	var $sessionTime = false;
+	public $sessionTime = false;
 
 /**
  * Keeps track of keys to watch for writes on
@@ -104,7 +104,7 @@ class CakeSession extends Object {
  * @var array
  * @access public
  */
-	var $watchKeys = array();
+	public $watchKeys = array();
 
 /**
  * Current Session id
@@ -112,7 +112,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $id = null;
+	public $id = null;
 
 /**
  * Session Started
@@ -128,7 +128,7 @@ class CakeSession extends Object {
  * @var string
  * @access public
  */
-	var $host = null;
+	public $host = null;
 
 /**
  * Constructor.

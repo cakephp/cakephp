@@ -35,7 +35,7 @@ class CakeSocket extends Object {
  * @var string
  * @access public
  */
-	var $description = 'Remote DataSource Network Socket Interface';
+	public $description = 'Remote DataSource Network Socket Interface';
 
 /**
  * Base configuration settings for the socket connection
@@ -57,7 +57,7 @@ class CakeSocket extends Object {
  * @var array
  * @access public
  */
-	var $config = array();
+	public $config = array();
 
 /**
  * Reference to socket connection resource
@@ -65,7 +65,7 @@ class CakeSocket extends Object {
  * @var resource
  * @access public
  */
-	var $connection = null;
+	public $connection = null;
 
 /**
  * This boolean contains the current state of the CakeSocket class
@@ -73,7 +73,7 @@ class CakeSocket extends Object {
  * @var boolean
  * @access public
  */
-	var $connected = false;
+	public $connected = false;
 
 /**
  * This variable contains an array with the last error number (num) and string (str)
@@ -81,7 +81,7 @@ class CakeSocket extends Object {
  * @var array
  * @access public
  */
-	var $lastError = array();
+	public $lastError = array();
 
 /**
  * Constructor.

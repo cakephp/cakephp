@@ -34,7 +34,7 @@ class TheHtmlTestController extends Controller {
  * @var string 'TheTest'
  * @access public
  */
-	var $name = 'TheTest';
+	public $name = 'TheTest';
 
 /**
  * uses property
@@ -42,7 +42,7 @@ class TheHtmlTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 }
 
 Mock::generate('View', 'HtmlHelperMockView');
@@ -60,20 +60,20 @@ class HtmlHelperTest extends CakeTestCase {
  *
  * @var string
  */
-	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+	public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
 /**
  * Regexp for CDATA end block
  *
  * @var string
  */
-	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+	public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 /**
  * html property
  *
  * @var object
  * @access public
  */
-	var $Html = null;
+	public $Html = null;
 
 /**
  * Backup of app encoding configuration setting

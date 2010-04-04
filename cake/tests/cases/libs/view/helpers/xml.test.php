@@ -36,7 +36,7 @@ class TestXml extends Object {
  * @var string ''
  * @access public
  */
-	var $content = '';
+	public $content = '';
 
 /**
  * construct method

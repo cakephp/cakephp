@@ -40,7 +40,7 @@ class InflectorTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $Inflector = null;
+	public $Inflector = null;
 
 /**
  * setUp method

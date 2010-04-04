@@ -34,7 +34,7 @@ class XmlGroupTest extends TestSuite {
  * @var string 'All core views'
  * @access public
  */
-	var $label = 'Xml based classes (Xml, XmlHelper and RssHelper)';
+	public $label = 'Xml based classes (Xml, XmlHelper and RssHelper)';
 
 /**
  * XmlGroupTest method

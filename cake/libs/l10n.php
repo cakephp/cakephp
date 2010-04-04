@@ -32,7 +32,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $language = 'English (United States)';
+	public $language = 'English (United States)';
 
 /**
  * Locale search paths
@@ -40,7 +40,7 @@ class L10n extends Object {
  * @var array
  * @access public
  */
-	var $languagePath = array('eng');
+	public $languagePath = array('eng');
 
 /**
  * ISO 639-3 for current locale
@@ -48,7 +48,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $lang = 'eng';
+	public $lang = 'eng';
 
 /**
  * Locale
@@ -56,7 +56,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $locale = 'en_us';
+	public $locale = 'en_us';
 
 /**
  * Default ISO 639-3 language.
@@ -66,7 +66,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $default = null;
+	public $default = null;
 
 /**
  * Encoding used for current locale
@@ -74,7 +74,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $charset = 'utf-8';
+	public $charset = 'utf-8';
 
 /**
  * Text direction for current locale
@@ -82,7 +82,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $direction = 'ltr';
+	public $direction = 'ltr';
 
 /**
  * Set to true if a locale is found
@@ -90,7 +90,7 @@ class L10n extends Object {
  * @var string
  * @access public
  */
-	var $found = false;
+	public $found = false;
 
 /**
  * Maps ISO 639-3 to I10n::__l10nCatalog

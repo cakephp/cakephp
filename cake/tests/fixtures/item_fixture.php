@@ -32,7 +32,7 @@ class ItemFixture extends CakeTestFixture {
  * @var string 'Item'
  * @access public
  */
-	var $name = 'Item';
+	public $name = 'Item';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class ItemFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'syfile_id' => array('type' => 'integer', 'null' => false),
 		'published' => array('type' => 'boolean', 'null' => false),
@@ -53,7 +53,7 @@ class ItemFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('syfile_id' => 1, 'published' => 0, 'name' => 'Item 1'),
 		array('syfile_id' => 2, 'published' => 0, 'name' => 'Item 2'),
 		array('syfile_id' => 3, 'published' => 0, 'name' => 'Item 3'),

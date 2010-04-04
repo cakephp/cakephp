@@ -27,7 +27,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $category = '';
+	public $category = '';
 
 /**
  * "group", "case" or "all"
@@ -35,7 +35,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $type = '';
+	public $type = '';
 
 /**
  * Path to the test case/group file
@@ -43,7 +43,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $file = '';
+	public $file = '';
 
 /**
  * Storage for plugins that have tests
@@ -51,7 +51,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $plugins = array();
+	public $plugins = array();
 
 /**
  * Convenience variable to avoid duplicated code
@@ -59,7 +59,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $isPluginTest = false;
+	public $isPluginTest = false;
 
 /**
  * Stores if the user wishes to get a code coverage analysis report
@@ -67,7 +67,7 @@ class TestSuiteShell extends Shell {
  * @var string
  * @access public
  */
-	var $doCoverage = false;
+	public $doCoverage = false;
 
 /**
  * Initialization method installs Simpletest and loads all plugins

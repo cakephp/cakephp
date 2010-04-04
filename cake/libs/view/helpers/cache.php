@@ -53,7 +53,7 @@ class CacheHelper extends AppHelper {
  * @var object
  * @access public
  */
-	var $cacheAction;
+	public $cacheAction;
 
 /**
  * Main method used to cache a view

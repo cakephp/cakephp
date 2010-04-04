@@ -52,7 +52,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#useDbConfig-1058
  */
-	var $useDbConfig = 'default';
+	public $useDbConfig = 'default';
 
 /**
  * Custom database table name, or null/false if no table association is desired.
@@ -61,7 +61,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#useTable-1059
  */
-	var $useTable = null;
+	public $useTable = null;
 
 /**
  * Custom display field name. Display fields are used by Scaffold, in SELECT boxes' OPTION elements.
@@ -70,7 +70,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#displayField-1062
  */
-	var $displayField = null;
+	public $displayField = null;
 
 /**
  * Value of the primary key ID of the record that this model is currently pointing to.
@@ -79,7 +79,7 @@ class Model extends Overloadable {
  * @var mixed
  * @access public
  */
-	var $id = false;
+	public $id = false;
 
 /**
  * Container for the data that this model gets from persistent storage (usually, a database).
@@ -88,7 +88,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#data-1065
  */
-	var $data = array();
+	public $data = array();
 
 /**
  * Table name for this Model.
@@ -96,7 +96,7 @@ class Model extends Overloadable {
  * @var string
  * @access public
  */
-	var $table = false;
+	public $table = false;
 
 /**
  * The name of the primary key field for this model.
@@ -105,7 +105,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#primaryKey-1061
  */
-	var $primaryKey = null;
+	public $primaryKey = null;
 
 /**
  * Field-by-field table metadata.
@@ -125,7 +125,7 @@ class Model extends Overloadable {
  * @link http://book.cakephp.org/view/1057/Model-Attributes#validate-1067
  * @link http://book.cakephp.org/view/1143/Data-Validation
  */
-	var $validate = array();
+	public $validate = array();
 
 /**
  * List of validation errors.
@@ -134,7 +134,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1182/Validating-Data-from-the-Controller
  */
-	var $validationErrors = array();
+	public $validationErrors = array();
 
 /**
  * Database table prefix for tables in model.
@@ -143,7 +143,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#tablePrefix-1060
  */
-	var $tablePrefix = null;
+	public $tablePrefix = null;
 
 /**
  * Name of the model.
@@ -152,7 +152,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#name-1068
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Alias name for model.
@@ -160,7 +160,7 @@ class Model extends Overloadable {
  * @var string
  * @access public
  */
-	var $alias = null;
+	public $alias = null;
 
 /**
  * List of table names included in the model description. Used for associations.
@@ -168,7 +168,7 @@ class Model extends Overloadable {
  * @var array
  * @access public
  */
-	var $tableToModel = array();
+	public $tableToModel = array();
 
 /**
  * Whether or not to log transactions for this model.
@@ -176,7 +176,7 @@ class Model extends Overloadable {
  * @var boolean
  * @access public
  */
-	var $logTransactions = false;
+	public $logTransactions = false;
 
 /**
  * Whether or not to cache queries for this model.  This enables in-memory
@@ -186,7 +186,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#cacheQueries-1069
  */
-	var $cacheQueries = false;
+	public $cacheQueries = false;
 
 /**
  * Detailed list of belongsTo associations.
@@ -195,7 +195,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1042/belongsTo
  */
-	var $belongsTo = array();
+	public $belongsTo = array();
 
 /**
  * Detailed list of hasOne associations.
@@ -204,7 +204,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1041/hasOne
  */
-	var $hasOne = array();
+	public $hasOne = array();
 
 /**
  * Detailed list of hasMany associations.
@@ -213,7 +213,7 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1043/hasMany
  */
-	var $hasMany = array();
+	public $hasMany = array();
 
 /**
  * Detailed list of hasAndBelongsToMany associations.
@@ -222,19 +222,19 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1044/hasAndBelongsToMany-HABTM
  */
-	var $hasAndBelongsToMany = array();
+	public $hasAndBelongsToMany = array();
 
 /**
  * List of behaviors to load when the model object is initialized. Settings can be
  * passed to behaviors by using the behavior name as index. Eg:
  *
- * var $actsAs = array('Translate', 'MyBehavior' => array('setting1' => 'value1'))
+ * public $actsAs = array('Translate', 'MyBehavior' => array('setting1' => 'value1'))
  *
  * @var array
  * @access public
  * @link http://book.cakephp.org/view/1072/Using-Behaviors
  */
-	var $actsAs = null;
+	public $actsAs = null;
 
 /**
  * Holds the Behavior objects currently bound to this model.
@@ -242,7 +242,7 @@ class Model extends Overloadable {
  * @var BehaviorCollection
  * @access public
  */
-	var $Behaviors = null;
+	public $Behaviors = null;
 
 /**
  * Whitelist of fields allowed to be saved.
@@ -250,7 +250,7 @@ class Model extends Overloadable {
  * @var array
  * @access public
  */
-	var $whitelist = array();
+	public $whitelist = array();
 
 /**
  * Whether or not to cache sources for this model.
@@ -258,7 +258,7 @@ class Model extends Overloadable {
  * @var boolean
  * @access public
  */
-	var $cacheSources = true;
+	public $cacheSources = true;
 
 /**
  * Type of find query currently executing.
@@ -266,7 +266,7 @@ class Model extends Overloadable {
  * @var string
  * @access public
  */
-	var $findQueryType = null;
+	public $findQueryType = null;
 
 /**
  * Number of associations to recurse through during find calls. Fetches only
@@ -276,33 +276,33 @@ class Model extends Overloadable {
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#recursive-1063
  */
-	var $recursive = 1;
+	public $recursive = 1;
 
 /**
  * The column name(s) and direction(s) to order find results by default.
  *
- * var $order = "Post.created DESC";
- * var $order = array("Post.view_count DESC", "Post.rating DESC");
+ * public $order = "Post.created DESC";
+ * public $order = array("Post.view_count DESC", "Post.rating DESC");
  *
  * @var string
  * @access public
  * @link http://book.cakephp.org/view/1057/Model-Attributes#order-1064
  */
-	var $order = null;
+	public $order = null;
 
 /**
  * Array of virtual fields this model has.  Virtual fields are aliased
  * SQL expressions. Fields added to this property will be read as other fields in a model
  * but will not be saveable.
  *
- * `var $virtualFields = array('two' => '1 + 1');`
+ * `public $virtualFields = array('two' => '1 + 1');`
  *
  * Is a simplistic example of how to set virtualFields
  *
  * @var array
  * @access public
  */
-	var $virtualFields = array();
+	public $virtualFields = array();
 
 /**
  * Default list of association keys.
@@ -633,10 +633,10 @@ class Model extends Overloadable {
  * @param string $assoc Association name
  * @param string $className Class name
  * @deprecated $this->$className use $this->$assoc instead. $assoc is the 'key' in the associations array;
- * 	examples: var $hasMany = array('Assoc' => array('className' => 'ModelName'));
+ * 	examples: public $hasMany = array('Assoc' => array('className' => 'ModelName'));
  * 					usage: $this->Assoc->modelMethods();
  *
- * 				var $hasMany = array('ModelName');
+ * 				public $hasMany = array('ModelName');
  * 					usage: $this->ModelName->modelMethods();
  * @return void
  * @access private

@@ -40,7 +40,7 @@ class ModelBehavior extends Object {
  * @access public
  * @see Model::$alias
  */
-	var $settings = array();
+	public $settings = array();
 
 /**
  * Allows the mapping of preg-compatible regular expressions to public or
@@ -51,7 +51,7 @@ class ModelBehavior extends Object {
  * @var array
  * @access public
  */
-	var $mapMethods = array();
+	public $mapMethods = array();
 
 /**
  * Setup this behavior with the specified configuration settings.
@@ -222,7 +222,7 @@ class BehaviorCollection extends Object {
  * @var string
  * @access public
  */
-	var $modelName = null;
+	public $modelName = null;
 
 /**
  * Lists the currently-attached behavior objects

@@ -32,7 +32,7 @@ class ErrorHandler extends Object {
  * @var filehandle
  * @access public
  */
-	var $stdout;
+	public $stdout;
 
 /**
  * Standard error stream.
@@ -40,7 +40,7 @@ class ErrorHandler extends Object {
  * @var filehandle
  * @access public
  */
-	var $stderr;
+	public $stderr;
 
 /**
  * Class constructor.

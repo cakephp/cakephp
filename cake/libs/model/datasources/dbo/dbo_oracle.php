@@ -34,14 +34,14 @@ class DboOracle extends DboSource {
  * @var unknown_type
  * @access public
  */
-	var $config = array();
+	public $config = array();
 
 /**
  * Enter description here...
  *
  * @var unknown_type
  */
-	var $alias = '';
+	public $alias = '';
 
 /**
  * Sequence names as introspected from the database
@@ -61,7 +61,7 @@ class DboOracle extends DboSource {
  * @var unknown_type
  * @access public
  */
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => ''),
 		'string' => array('name' => 'varchar2', 'limit' => '255'),
 		'text' => array('name' => 'varchar2'),
@@ -82,7 +82,7 @@ class DboOracle extends DboSource {
  * @var unknown_type
  * @access protected
  */
-	var $connection;
+	public $connection;
 
 /**
  * Enter description here...

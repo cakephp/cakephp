@@ -32,7 +32,7 @@ class ControllerGroupTest extends TestSuite {
  * @var string 'All cake/libs/controller/* (Not yet implemented)'
  * @access public
  */
-	var $label = 'Component, Controllers, Scaffold test cases.';
+	public $label = 'Component, Controllers, Scaffold test cases.';
 /**
  * LibControllerGroupTest method
  *

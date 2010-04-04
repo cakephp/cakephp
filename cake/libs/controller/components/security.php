@@ -32,7 +32,7 @@ class SecurityComponent extends Object {
  * @var string
  * @access public
  */
-	var $blackHoleCallback = null;
+	public $blackHoleCallback = null;
 
 /**
  * List of controller actions for which a POST request is required
@@ -41,7 +41,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requirePost()
  */
-	var $requirePost = array();
+	public $requirePost = array();
 
 /**
  * List of controller actions for which a GET request is required
@@ -50,7 +50,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireGet()
  */
-	var $requireGet = array();
+	public $requireGet = array();
 
 /**
  * List of controller actions for which a PUT request is required
@@ -59,7 +59,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requirePut()
  */
-	var $requirePut = array();
+	public $requirePut = array();
 
 /**
  * List of controller actions for which a DELETE request is required
@@ -68,7 +68,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireDelete()
  */
-	var $requireDelete = array();
+	public $requireDelete = array();
 
 /**
  * List of actions that require an SSL-secured connection
@@ -77,7 +77,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireSecure()
  */
-	var $requireSecure = array();
+	public $requireSecure = array();
 
 /**
  * List of actions that require a valid authentication key
@@ -86,7 +86,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireAuth()
  */
-	var $requireAuth = array();
+	public $requireAuth = array();
 
 /**
  * List of actions that require an HTTP-authenticated login (basic or digest)
@@ -95,7 +95,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireLogin()
  */
-	var $requireLogin = array();
+	public $requireLogin = array();
 
 /**
  * Login options for SecurityComponent::requireLogin()
@@ -104,7 +104,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireLogin()
  */
-	var $loginOptions = array('type' => '', 'prompt' => null);
+	public $loginOptions = array('type' => '', 'prompt' => null);
 
 /**
  * An associative array of usernames/passwords used for HTTP-authenticated logins.
@@ -114,7 +114,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireLogin()
  */
-	var $loginUsers = array();
+	public $loginUsers = array();
 
 /**
  * Controllers from which actions of the current controller are allowed to receive
@@ -124,7 +124,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireAuth()
  */
-	var $allowedControllers = array();
+	public $allowedControllers = array();
 
 /**
  * Actions from which actions of the current controller are allowed to receive
@@ -134,7 +134,7 @@ class SecurityComponent extends Object {
  * @access public
  * @see SecurityComponent::requireAuth()
  */
-	var $allowedActions = array();
+	public $allowedActions = array();
 
 /**
  * Form fields to disable
@@ -142,7 +142,7 @@ class SecurityComponent extends Object {
  * @var array
  * @access public
  */
-	var $disabledFields = array();
+	public $disabledFields = array();
 
 /**
  * Whether to validate POST data.  Set to false to disable for data coming from 3rd party
@@ -151,7 +151,7 @@ class SecurityComponent extends Object {
  * @var boolean
  * @access public
  */
-	var $validatePost = true;
+	public $validatePost = true;
 
 /**
  * Other components used by the Security component
@@ -159,7 +159,7 @@ class SecurityComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('RequestHandler', 'Session');
+	public $components = array('RequestHandler', 'Session');
 
 /**
  * Holds the current action of the controller

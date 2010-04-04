@@ -37,7 +37,7 @@ class I18n extends Object {
  * @var I10n
  * @access public
  */
-	var $l10n = null;
+	public $l10n = null;
 
 /**
  * Current domain of translation
@@ -45,7 +45,7 @@ class I18n extends Object {
  * @var string
  * @access public
  */
-	var $domain = null;
+	public $domain = null;
 
 /**
  * Current category of translation
@@ -53,7 +53,7 @@ class I18n extends Object {
  * @var string
  * @access public
  */
-	var $category = 'LC_MESSAGES';
+	public $category = 'LC_MESSAGES';
 
 /**
  * Current language used for translations

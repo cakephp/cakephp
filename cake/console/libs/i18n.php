@@ -32,7 +32,7 @@ class I18nShell extends Shell {
  * @var string
  * @access public
  */
-	var $dataSource = 'default';
+	public $dataSource = 'default';
 
 /**
  * Contains tasks to load and instantiate
@@ -40,7 +40,7 @@ class I18nShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Extract');
+	public $tasks = array('DbConfig', 'Extract');
 
 /**
  * Override startup of the Shell

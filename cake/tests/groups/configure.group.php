@@ -34,7 +34,7 @@ class ConfigureGroupTest extends TestSuite {
  * @var string 'Configure, Loader, ClassRegistry Tests'
  * @access public
  */
-	var $label = 'Configure, App and ClassRegistry';
+	public $label = 'Configure, App and ClassRegistry';
 
 /**
  * ConfigureGroupTest method

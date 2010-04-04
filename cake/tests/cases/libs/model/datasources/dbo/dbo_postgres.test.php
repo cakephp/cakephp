@@ -35,7 +35,7 @@ class DboPostgresTestDb extends DboPostgres {
  * @var array
  * @access public
  */
-	var $simulated = array();
+	public $simulated = array();
 
 /**
  * execute method
@@ -74,7 +74,7 @@ class PostgresTestModel extends Model {
  * @var string 'PostgresTestModel'
  * @access public
  */
-	var $name = 'PostgresTestModel';
+	public $name = 'PostgresTestModel';
 
 /**
  * useTable property
@@ -82,7 +82,7 @@ class PostgresTestModel extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * belongsTo property
@@ -90,7 +90,7 @@ class PostgresTestModel extends Model {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'PostgresClientTestModel' => array(
 			'foreignKey' => 'client_id'
 		)
@@ -168,7 +168,7 @@ class PostgresClientTestModel extends Model {
  * @var string 'PostgresClientTestModel'
  * @access public
  */
-	var $name = 'PostgresClientTestModel';
+	public $name = 'PostgresClientTestModel';
 
 /**
  * useTable property
@@ -176,7 +176,7 @@ class PostgresClientTestModel extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method
@@ -210,7 +210,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var boolean
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * Fixtures
@@ -218,7 +218,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var object
  * @access public
  */
-	var $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article',
+	public $fixtures = array('core.user', 'core.binary_test', 'core.comment', 'core.article',
 		'core.tag', 'core.articles_tag', 'core.attachment', 'core.person', 'core.post', 'core.author',
 	);
 /**
@@ -227,7 +227,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	var $db = null;
+	public $db = null;
 
 /**
  * Simulated DB connection used in testing
@@ -235,7 +235,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	var $db2 = null;
+	public $db2 = null;
 
 /**
  * Skip if cannot connect to postgres

@@ -24,7 +24,7 @@ class TemplateTask extends Shell {
  *
  * @var array
  */
-	var $templateVars = array();
+	public $templateVars = array();
 
 /**
  * Paths to look for templates on.
@@ -32,7 +32,7 @@ class TemplateTask extends Shell {
  *
  * @var array
  */
-	var $templatePaths = array();
+	public $templatePaths = array();
 
 /**
  * Initialize callback.  Setup paths for the template task.

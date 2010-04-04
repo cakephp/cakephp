@@ -33,7 +33,7 @@ class ScaffoldMockController extends Controller {
  * @var string 'ScaffoldMock'
  * @access public
  */
-	var $name = 'ScaffoldMock';
+	public $name = 'ScaffoldMock';
 
 /**
  * scaffold property
@@ -41,7 +41,7 @@ class ScaffoldMockController extends Controller {
  * @var mixed
  * @access public
  */
-	var $scaffold;
+	public $scaffold;
 }
 
 /**
@@ -58,7 +58,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * @var string 'ScaffoldMock'
  * @access public
  */
-	var $name = 'ScaffoldMock';
+	public $name = 'ScaffoldMock';
 
 /**
  * scaffold property
@@ -66,7 +66,7 @@ class ScaffoldMockControllerWithFields extends Controller {
  * @var mixed
  * @access public
  */
-	var $scaffold;
+	public $scaffold;
 
 /**
  * function _beforeScaffold
@@ -120,7 +120,7 @@ class ScaffoldMock extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'articles';
+	public $useTable = 'articles';
 
 /**
  * belongsTo property
@@ -128,7 +128,7 @@ class ScaffoldMock extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'User' => array(
 			'className' => 'ScaffoldUser',
 			'foreignKey' => 'user_id',
@@ -141,7 +141,7 @@ class ScaffoldMock extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array(
+	public $hasMany = array(
 		'Comment' => array(
 			'className' => 'ScaffoldComment',
 			'foreignKey' => 'article_id',
@@ -152,7 +152,7 @@ class ScaffoldMock extends CakeTestModel {
  *
  * @var string
  */
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'ScaffoldTag' => array(
 			'className' => 'ScaffoldTag',
 			'foreignKey' => 'something_id',
@@ -176,7 +176,7 @@ class ScaffoldUser extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'users';
+	public $useTable = 'users';
 
 /**
  * hasMany property
@@ -184,7 +184,7 @@ class ScaffoldUser extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array(
+	public $hasMany = array(
 		'Article' => array(
 			'className' => 'ScaffoldMock',
 			'foreignKey' => 'article_id',
@@ -206,7 +206,7 @@ class ScaffoldComment extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * belongsTo property
@@ -214,7 +214,7 @@ class ScaffoldComment extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'Article' => array(
 			'className' => 'ScaffoldMock',
 			'foreignKey' => 'article_id',
@@ -235,7 +235,7 @@ class ScaffoldTag extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'tags';
+	public $useTable = 'tags';
 }
 /**
  * TestScaffoldView class
@@ -271,7 +271,7 @@ class ScaffoldViewTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
+	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 
 /**
  * startTest method
@@ -669,7 +669,7 @@ class ScaffoldTest extends CakeTestCase {
  * @var SecurityTestController
  * @access public
  */
-	var $Controller;
+	public $Controller;
 
 /**
  * fixtures property
@@ -677,7 +677,7 @@ class ScaffoldTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
+	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 /**
  * startTest method
  *

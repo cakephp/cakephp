@@ -35,7 +35,7 @@ class ContactTestController extends Controller {
  * @var string 'ContactTest'
  * @access public
  */
-	var $name = 'ContactTest';
+	public $name = 'ContactTest';
 
 /**
  * uses property
@@ -43,7 +43,7 @@ class ContactTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 }
 
 /**
@@ -60,7 +60,7 @@ class Contact extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * useTable property
@@ -68,7 +68,7 @@ class Contact extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * name property
@@ -76,7 +76,7 @@ class Contact extends CakeTestModel {
  * @var string 'Contact'
  * @access public
  */
-	var $name = 'Contact';
+	public $name = 'Contact';
 
 /**
  * Default schema
@@ -101,7 +101,7 @@ class Contact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array(
+	public $validate = array(
 		'non_existing' => array(),
 		'idontexist' => array(),
 		'imrequired' => array('rule' => array('between', 5, 30), 'allowEmpty' => false),
@@ -128,7 +128,7 @@ class Contact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
+	public $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
 }
 
 /**
@@ -145,7 +145,7 @@ class ContactTagsContact extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * name property
@@ -153,7 +153,7 @@ class ContactTagsContact extends CakeTestModel {
  * @var string 'Contact'
  * @access public
  */
-	var $name = 'ContactTagsContact';
+	public $name = 'ContactTagsContact';
 
 /**
  * Default schema
@@ -193,7 +193,7 @@ class ContactNonStandardPk extends Contact {
  * @var string 'pk'
  * @access public
  */
-	var $primaryKey = 'pk';
+	public $primaryKey = 'pk';
 
 /**
  * name property
@@ -201,7 +201,7 @@ class ContactNonStandardPk extends Contact {
  * @var string 'ContactNonStandardPk'
  * @access public
  */
-	var $name = 'ContactNonStandardPk';
+	public $name = 'ContactNonStandardPk';
 
 /**
  * schema method
@@ -231,7 +231,7 @@ class ContactTag extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema definition
@@ -261,7 +261,7 @@ class UserForm extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * primaryKey property
@@ -269,7 +269,7 @@ class UserForm extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * name property
@@ -277,7 +277,7 @@ class UserForm extends CakeTestModel {
  * @var string 'UserForm'
  * @access public
  */
-	var $name = 'UserForm';
+	public $name = 'UserForm';
 
 /**
  * hasMany property
@@ -285,7 +285,7 @@ class UserForm extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array(
+	public $hasMany = array(
 		'OpenidUrl' => array('className' => 'OpenidUrl', 'foreignKey' => 'user_form_id'
 	));
 
@@ -320,7 +320,7 @@ class OpenidUrl extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * primaryKey property
@@ -328,7 +328,7 @@ class OpenidUrl extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * name property
@@ -336,7 +336,7 @@ class OpenidUrl extends CakeTestModel {
  * @var string 'OpenidUrl'
  * @access public
  */
-	var $name = 'OpenidUrl';
+	public $name = 'OpenidUrl';
 
 /**
  * belongsTo property
@@ -344,7 +344,7 @@ class OpenidUrl extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('UserForm' => array(
+	public $belongsTo = array('UserForm' => array(
 		'className' => 'UserForm', 'foreignKey' => 'user_form_id'
 	));
 
@@ -354,7 +354,7 @@ class OpenidUrl extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $validate = array('openid_not_registered' => array());
+	public $validate = array('openid_not_registered' => array());
 
 /**
  * schema method
@@ -396,7 +396,7 @@ class ValidateUser extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * useTable property
@@ -404,7 +404,7 @@ class ValidateUser extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * name property
@@ -412,7 +412,7 @@ class ValidateUser extends CakeTestModel {
  * @var string 'ValidateUser'
  * @access public
  */
-	var $name = 'ValidateUser';
+	public $name = 'ValidateUser';
 
 /**
  * hasOne property
@@ -420,7 +420,7 @@ class ValidateUser extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasOne = array('ValidateProfile' => array(
+	public $hasOne = array('ValidateProfile' => array(
 		'className' => 'ValidateProfile', 'foreignKey' => 'user_id'
 	));
 
@@ -465,7 +465,7 @@ class ValidateProfile extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * useTable property
@@ -473,7 +473,7 @@ class ValidateProfile extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema property
@@ -496,7 +496,7 @@ class ValidateProfile extends CakeTestModel {
  * @var string 'ValidateProfile'
  * @access public
  */
-	var $name = 'ValidateProfile';
+	public $name = 'ValidateProfile';
 
 /**
  * hasOne property
@@ -504,7 +504,7 @@ class ValidateProfile extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasOne = array('ValidateItem' => array(
+	public $hasOne = array('ValidateItem' => array(
 		'className' => 'ValidateItem', 'foreignKey' => 'profile_id'
 	));
 
@@ -514,7 +514,7 @@ class ValidateProfile extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('ValidateUser' => array(
+	public $belongsTo = array('ValidateUser' => array(
 		'className' => 'ValidateUser', 'foreignKey' => 'user_id'
 	));
 
@@ -545,7 +545,7 @@ class ValidateItem extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * useTable property
@@ -553,7 +553,7 @@ class ValidateItem extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * name property
@@ -561,7 +561,7 @@ class ValidateItem extends CakeTestModel {
  * @var string 'ValidateItem'
  * @access public
  */
-	var $name = 'ValidateItem';
+	public $name = 'ValidateItem';
 
 /**
  * schema property
@@ -586,7 +586,7 @@ class ValidateItem extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('ValidateProfile' => array('foreignKey' => 'profile_id'));
+	public $belongsTo = array('ValidateProfile' => array('foreignKey' => 'profile_id'));
 
 /**
  * beforeValidate method
@@ -614,7 +614,7 @@ class TestMail extends CakeTestModel {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 
 /**
  * useTable property
@@ -622,7 +622,7 @@ class TestMail extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * name property
@@ -630,7 +630,7 @@ class TestMail extends CakeTestModel {
  * @var string 'TestMail'
  * @access public
  */
-	var $name = 'TestMail';
+	public $name = 'TestMail';
 }
 
 /**
@@ -647,7 +647,7 @@ class FormHelperTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(null);
+	public $fixtures = array(null);
 
 /**
  * setUp method

@@ -32,7 +32,7 @@ class TranslatedItemFixture extends CakeTestFixture {
  * @var string 'TranslatedItem'
  * @access public
  */
-	var $name = 'TranslatedItem';
+	public $name = 'TranslatedItem';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class TranslatedItemFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'slug' => array('type' => 'string', 'null' => false)
 	);
@@ -51,7 +51,7 @@ class TranslatedItemFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('slug' => 'first_translated'),
 		array('slug' => 'second_translated'),
 		array('slug' => 'third_translated')

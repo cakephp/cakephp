@@ -34,7 +34,7 @@ class Configure extends Object {
  * @var integer
  * @access public
  */
-	var $debug = 0;
+	public $debug = 0;
 
 /**
  * Returns a singleton instance of the Configure class.
@@ -452,7 +452,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $types = array(
+	public $types = array(
 		'class' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'file' => array('suffix' => '.php', 'extends' => null, 'core' => true),
 		'model' => array('suffix' => '.php', 'extends' => 'AppModel', 'core' => false),
@@ -473,7 +473,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $models = array();
+	public $models = array();
 
 /**
  * List of additional path(s) where behavior files reside.
@@ -481,7 +481,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $behaviors = array();
+	public $behaviors = array();
 
 /**
  * List of additional path(s) where controller files reside.
@@ -489,7 +489,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $controllers = array();
+	public $controllers = array();
 
 /**
  * List of additional path(s) where component files reside.
@@ -497,7 +497,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $components = array();
+	public $components = array();
 
 /**
  * List of additional path(s) where datasource files reside.
@@ -505,7 +505,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $datasources = array();
+	public $datasources = array();
 
 /**
  * List of additional path(s) where libs files reside.
@@ -513,14 +513,14 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $libs = array();
+	public $libs = array();
 /**
  * List of additional path(s) where view files reside.
  *
  * @var array
  * @access public
  */
-	var $views = array();
+	public $views = array();
 
 /**
  * List of additional path(s) where helper files reside.
@@ -528,7 +528,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $helpers = array();
+	public $helpers = array();
 
 /**
  * List of additional path(s) where plugins reside.
@@ -536,7 +536,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $plugins = array();
+	public $plugins = array();
 
 /**
  * List of additional path(s) where vendor packages reside.
@@ -544,7 +544,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $vendors = array();
+	public $vendors = array();
 
 /**
  * List of additional path(s) where locale files reside.
@@ -552,7 +552,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $locales = array();
+	public $locales = array();
 
 /**
  * List of additional path(s) where console shell files reside.
@@ -560,7 +560,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $shells = array();
+	public $shells = array();
 
 /**
  * Paths to search for files.
@@ -568,7 +568,7 @@ class App extends Object {
  * @var array
  * @access public
  */
-	var $search = array();
+	public $search = array();
 
 /**
  * Whether or not to return the file that is loaded.
@@ -576,7 +576,7 @@ class App extends Object {
  * @var boolean
  * @access public
  */
-	var $return = false;
+	public $return = false;
 
 /**
  * Determines if $__maps and $__paths cache should be written.

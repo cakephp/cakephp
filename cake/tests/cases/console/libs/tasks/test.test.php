@@ -61,7 +61,7 @@ class TestTaskArticle extends Model {
  * @var string
  * @access public
  */
-	var $name = 'TestTaskArticle';
+	public $name = 'TestTaskArticle';
 
 /**
  * Table name to use
@@ -69,7 +69,7 @@ class TestTaskArticle extends Model {
  * @var string
  * @access public
  */
-	var $useTable = 'articles';
+	public $useTable = 'articles';
 
 /**
  * HasMany Associations
@@ -77,7 +77,7 @@ class TestTaskArticle extends Model {
  * @var array
  * @access public
  */
-	var $hasMany = array(
+	public $hasMany = array(
 		'Comment' => array(
 			'className' => 'TestTask.TestTaskComment',
 			'foreignKey' => 'article_id',
@@ -90,7 +90,7 @@ class TestTaskArticle extends Model {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Tag' => array(
 			'className' => 'TestTaskTag',
 			'joinTable' => 'articles_tags',
@@ -141,7 +141,7 @@ class TestTaskTag extends Model {
  * @var string
  * @access public
  */
-	var $name = 'TestTaskTag';
+	public $name = 'TestTaskTag';
 
 /**
  * Table name
@@ -149,7 +149,7 @@ class TestTaskTag extends Model {
  * @var string
  * @access public
  */
-	var $useTable = 'tags';
+	public $useTable = 'tags';
 
 /**
  * Has and Belongs To Many Associations
@@ -157,7 +157,7 @@ class TestTaskTag extends Model {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array(
+	public $hasAndBelongsToMany = array(
 		'Article' => array(
 			'className' => 'TestTaskArticle',
 			'joinTable' => 'articles_tags',
@@ -190,7 +190,7 @@ class TestTaskComment extends TestTaskAppModel {
  * @var string
  * @access public
  */
-	var $name = 'TestTaskComment';
+	public $name = 'TestTaskComment';
 
 /**
  * Table name
@@ -198,7 +198,7 @@ class TestTaskComment extends TestTaskAppModel {
  * @var string
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * Belongs To Associations
@@ -206,7 +206,7 @@ class TestTaskComment extends TestTaskAppModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'Article' => array(
 			'className' => 'TestTaskArticle',
 			'foreignKey' => 'article_id',
@@ -228,7 +228,7 @@ class TestTaskCommentsController extends Controller {
  * @var string
  * @access public
  */
-	var $name = 'TestTaskComments';
+	public $name = 'TestTaskComments';
 
 /**
  * Models to use
@@ -236,7 +236,7 @@ class TestTaskCommentsController extends Controller {
  * @var array
  * @access public
  */
-	var $uses = array('TestTaskComment', 'TestTaskTag');
+	public $uses = array('TestTaskComment', 'TestTaskTag');
 }
 
 /**
@@ -253,7 +253,7 @@ class TestTaskTest extends CakeTestCase {
  * @var string
  * @access public
  */
-	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
  * startTest method

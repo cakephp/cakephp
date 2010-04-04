@@ -20,7 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Comment extends AppModel {
-	var $useTable = 'comments';
-	var $name = 'Comment';
+	public $useTable = 'comments';
+	public $name = 'Comment';
 }
 ?>

@@ -63,7 +63,7 @@ class ViewTaskComment extends Model {
  * @var string
  * @access public
  */
-	var $name = 'ViewTaskComment';
+	public $name = 'ViewTaskComment';
 
 /**
  * Table name
@@ -71,7 +71,7 @@ class ViewTaskComment extends Model {
  * @var string
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * Belongs To Associations
@@ -79,7 +79,7 @@ class ViewTaskComment extends Model {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'Article' => array(
 			'className' => 'ViewTaskArticle',
 			'foreignKey' => 'article_id'
@@ -101,7 +101,7 @@ class ViewTaskArticle extends Model {
  * @var string
  * @access public
  */
-	var $name = 'ViewTaskArticle';
+	public $name = 'ViewTaskArticle';
 
 /**
  * Table name
@@ -109,7 +109,7 @@ class ViewTaskArticle extends Model {
  * @var string
  * @access public
  */
-	var $useTable = 'articles';
+	public $useTable = 'articles';
 }
 
 /**
@@ -126,7 +126,7 @@ class ViewTaskCommentsController extends Controller {
  * @var string
  * @access public
  */
-	var $name = 'ViewTaskComments';
+	public $name = 'ViewTaskComments';
 
 /**
  * Testing public controller action
@@ -161,7 +161,7 @@ class ViewTaskArticlesController extends Controller {
  * @var string
  * @access public
  */
-	var $name = 'ViewTaskArticles';
+	public $name = 'ViewTaskArticles';
 
 /**
  * Test public controller action
@@ -241,7 +241,7 @@ class ViewTaskTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
  * startTest method

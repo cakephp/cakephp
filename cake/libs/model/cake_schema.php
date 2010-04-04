@@ -33,7 +33,7 @@ class CakeSchema extends Object {
  * @var string
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Path to write location
@@ -41,7 +41,7 @@ class CakeSchema extends Object {
  * @var string
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * File to write
@@ -49,7 +49,7 @@ class CakeSchema extends Object {
  * @var string
  * @access public
  */
-	var $file = 'schema.php';
+	public $file = 'schema.php';
 
 /**
  * Connection used for read
@@ -57,14 +57,14 @@ class CakeSchema extends Object {
  * @var string
  * @access public
  */
-	var $connection = 'default';
+	public $connection = 'default';
 
 /**
  * plugin name.
  *
  * @var string
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * Set of tables
@@ -72,7 +72,7 @@ class CakeSchema extends Object {
  * @var array
  * @access public
  */
-	var $tables = array();
+	public $tables = array();
 
 /**
  * Constructor

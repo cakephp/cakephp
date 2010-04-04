@@ -32,7 +32,7 @@ class Shell extends Object {
  * @var ShellDispatcher
  * @access public
  */
-	var $Dispatch = null;
+	public $Dispatch = null;
 
 /**
  * If true, the script will ask for permission to perform actions.
@@ -40,7 +40,7 @@ class Shell extends Object {
  * @var boolean
  * @access public
  */
-	var $interactive = true;
+	public $interactive = true;
 
 /**
  * Holds the DATABASE_CONFIG object for the app. Null if database.php could not be found,
@@ -49,7 +49,7 @@ class Shell extends Object {
  * @var DATABASE_CONFIG
  * @access public
  */
-	var $DbConfig = null;
+	public $DbConfig = null;
 
 /**
  * Contains command switches parsed from the command line.
@@ -57,7 +57,7 @@ class Shell extends Object {
  * @var array
  * @access public
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Contains arguments parsed from the command line.
@@ -65,7 +65,7 @@ class Shell extends Object {
  * @var array
  * @access public
  */
-	var $args = array();
+	public $args = array();
 
 /**
  * The file name of the shell that was invoked.
@@ -73,7 +73,7 @@ class Shell extends Object {
  * @var string
  * @access public
  */
-	var $shell = null;
+	public $shell = null;
 
 /**
  * The class name of the shell that was invoked.
@@ -81,7 +81,7 @@ class Shell extends Object {
  * @var string
  * @access public
  */
-	var $className = null;
+	public $className = null;
 
 /**
  * The command called if public methods are available.
@@ -89,7 +89,7 @@ class Shell extends Object {
  * @var string
  * @access public
  */
-	var $command = null;
+	public $command = null;
 
 /**
  * The name of the shell in camelized.
@@ -97,7 +97,7 @@ class Shell extends Object {
  * @var string
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * An alias for the shell
@@ -105,7 +105,7 @@ class Shell extends Object {
  * @var string
  * @access public
  */
-	var $alias = null;
+	public $alias = null;
 
 /**
  * Contains tasks to load and instantiate
@@ -113,7 +113,7 @@ class Shell extends Object {
  * @var array
  * @access public
  */
-	var $tasks = array();
+	public $tasks = array();
 
 /**
  * Contains the loaded tasks
@@ -121,7 +121,7 @@ class Shell extends Object {
  * @var array
  * @access public
  */
-	var $taskNames = array();
+	public $taskNames = array();
 
 /**
  * Contains models to load and instantiate
@@ -129,7 +129,7 @@ class Shell extends Object {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  *  Constructs this Shell instance.
@@ -224,10 +224,10 @@ class Shell extends Object {
 	}
 
 /**
- * if var $uses = true
+ * if public $uses = true
  * Loads AppModel file and constructs AppModel class
  * makes $this->AppModel available to subclasses
- * if var $uses is an array of models will load those models
+ * if public $uses is an array of models will load those models
  *
  * @return bool
  * @access protected
@@ -265,7 +265,7 @@ class Shell extends Object {
 	}
 
 /**
- * Loads tasks defined in var $tasks
+ * Loads tasks defined in public $tasks
  *
  * @return bool
  * @access public

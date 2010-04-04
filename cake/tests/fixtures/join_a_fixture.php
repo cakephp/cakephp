@@ -32,7 +32,7 @@ class JoinAFixture extends CakeTestFixture {
  * @var string 'JoinA'
  * @access public
  */
-	var $name = 'JoinA';
+	public $name = 'JoinA';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class JoinAFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'default' => ''),
 		'body' => array('type' => 'text'),
@@ -54,7 +54,7 @@ class JoinAFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('name' => 'Join A 1', 'body' => 'Join A 1 Body', 'created' => '2008-01-03 10:54:23', 'updated' => '2008-01-03 10:54:23'),
 		array('name' => 'Join A 2', 'body' => 'Join A 2 Body', 'created' => '2008-01-03 10:54:24', 'updated' => '2008-01-03 10:54:24'),
 		array('name' => 'Join A 3', 'body' => 'Join A 2 Body', 'created' => '2008-01-03 10:54:25', 'updated' => '2008-01-03 10:54:24')

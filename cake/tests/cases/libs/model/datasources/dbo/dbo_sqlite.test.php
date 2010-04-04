@@ -33,7 +33,7 @@ class DboSqliteTestDb extends DboSqlite {
  * @var array
  * @access public
  */
-	var $simulated = array();
+	public $simulated = array();
 
 /**
  * execute method
@@ -72,7 +72,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var boolean
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * Fixtures
@@ -80,7 +80,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var object
  * @access public
  */
-	var $fixtures = array('core.user');
+	public $fixtures = array('core.user');
 
 /**
  * Actual DB connection used in testing
@@ -88,7 +88,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	var $db = null;
+	public $db = null;
 
 /**
  * Simulated DB connection used in testing
@@ -96,7 +96,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	var $db2 = null;
+	public $db2 = null;
 
 /**
  * Skip if cannot connect to SQLite

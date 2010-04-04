@@ -36,7 +36,7 @@ class NumberTreeTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $settings = array(
+	public $settings = array(
 		'modelClass' => 'NumberTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
@@ -49,7 +49,7 @@ class NumberTreeTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.number_tree');
+	public $fixtures = array('core.number_tree');
 
 /**
  * testInitialize method
@@ -1281,7 +1281,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $settings = array(
+	public $settings = array(
 		'modelClass' => 'FlagTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
@@ -1294,7 +1294,7 @@ class ScopedTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.flag_tree', 'core.ad', 'core.campaign', 'core.translate', 'core.number_tree_two');
+	public $fixtures = array('core.flag_tree', 'core.ad', 'core.campaign', 'core.translate', 'core.number_tree_two');
 
 /**
  * testStringScope method
@@ -1575,7 +1575,7 @@ class AfterTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $settings = array(
+	public $settings = array(
 		'modelClass' => 'AfterTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
@@ -1588,7 +1588,7 @@ class AfterTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.after_tree');
+	public $fixtures = array('core.after_tree');
 
 /**
  * Tests the afterSave callback in the model
@@ -1623,7 +1623,7 @@ class UnconventionalTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $settings = array(
+	public $settings = array(
 		'modelClass' => 'UnconventionalTree',
 		'leftField' => 'left',
 		'rightField' => 'right',
@@ -1636,7 +1636,7 @@ class UnconventionalTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.unconventional_tree');
+	public $fixtures = array('core.unconventional_tree');
 }
 
 /**
@@ -1653,7 +1653,7 @@ class UuidTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $settings = array(
+	public $settings = array(
 		'modelClass' => 'UuidTree',
 		'leftField' => 'lft',
 		'rightField' => 'rght',
@@ -1666,7 +1666,7 @@ class UuidTreeTest extends NumberTreeTest {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.uuid_tree');
+	public $fixtures = array('core.uuid_tree');
 
 /**
  * testMovePromote method

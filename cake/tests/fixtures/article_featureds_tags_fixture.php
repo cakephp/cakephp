@@ -32,7 +32,7 @@ class ArticleFeaturedsTagsFixture extends CakeTestFixture {
  * @var string 'ArticleFeaturedsTags'
  * @access public
  */
-	var $name = 'ArticleFeaturedsTags';
+	public $name = 'ArticleFeaturedsTags';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class ArticleFeaturedsTagsFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'article_featured_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'integer', 'null' => false),
 		'indexes' => array('UNIQUE_FEATURED' => array('column'=> array('article_featured_id', 'tag_id'), 'unique'=> 1))

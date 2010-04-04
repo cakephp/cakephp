@@ -38,7 +38,7 @@ class BlueberryComponent extends Object {
  * @access public
  * @return void
  */
-	var $testName = null;
+	public $testName = null;
 
 /**
  * initialize method
@@ -85,7 +85,7 @@ class AuthBlueberryUser extends CakeTestModel {
  * @var string 'AuthBlueberryUser'
  * @access public
  */
-	var $name = 'AuthBlueberryUser';
+	public $name = 'AuthBlueberryUser';
 
 /**
  * useTable property
@@ -93,7 +93,7 @@ class AuthBlueberryUser extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 }
 if (!class_exists('AppController')) {
 	/**
@@ -109,7 +109,7 @@ if (!class_exists('AppController')) {
 	 * @access public
 	 * @return void
 	 */
-		var $components = array('Blueberry');
+		public $components = array('Blueberry');
 	/**
 	 * beforeRender method
 	 *
@@ -157,7 +157,7 @@ class TestErrorController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * index method
@@ -185,7 +185,7 @@ class BlueberryController extends AppController {
  * @access public
  * @return void
  */
-	var $name = 'BlueberryController';
+	public $name = 'BlueberryController';
 
 /**
  * uses property
@@ -193,7 +193,7 @@ class BlueberryController extends AppController {
  * @access public
  * @return void
  */
-	var $uses = array('AuthBlueberryUser');
+	public $uses = array('AuthBlueberryUser');
 
 /**
  * components property
@@ -201,7 +201,7 @@ class BlueberryController extends AppController {
  * @access public
  * @return void
  */
-	var $components = array('Auth');
+	public $components = array('Auth');
 }
 
 /**

@@ -36,7 +36,7 @@ class ConnectionManager extends Object {
  * @var DATABASE_CONFIG
  * @access public
  */
-	var $config = null;
+	public $config = null;
 
 /**
  * Holds instances DataSource objects

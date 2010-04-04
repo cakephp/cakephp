@@ -549,7 +549,7 @@ class CacheEngine {
  * @var int
  * @access public
  */
-	var $settings = array();
+	public $settings = array();
 
 /**
  * Initialize the cache engine

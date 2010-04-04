@@ -73,7 +73,7 @@
  */
 class DATABASE_CONFIG {
 
-	var $default = array(
+	public $default = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
@@ -83,7 +83,7 @@ class DATABASE_CONFIG {
 		'prefix' => '',
 	);
 
-	var $test = array(
+	public $test = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',

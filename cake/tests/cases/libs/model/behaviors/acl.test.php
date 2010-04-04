@@ -36,7 +36,7 @@ class AclPerson extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $name = 'AclPerson';
+	public $name = 'AclPerson';
 
 /**
  * useTable property
@@ -44,7 +44,7 @@ class AclPerson extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $useTable = 'people';
+	public $useTable = 'people';
 
 /**
  * actsAs property
@@ -52,7 +52,7 @@ class AclPerson extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl' => 'requester');
+	public $actsAs = array('Acl' => 'requester');
 
 /**
  * belongsTo property
@@ -60,7 +60,7 @@ class AclPerson extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'Mother' => array(
 			'className' => 'AclPerson',
 			'foreignKey' => 'mother_id',
@@ -73,7 +73,7 @@ class AclPerson extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array(
+	public $hasMany = array(
 		'Child' => array(
 			'className' => 'AclPerson',
 			'foreignKey' => 'mother_id'
@@ -116,7 +116,7 @@ class AclUser extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $name = 'User';
+	public $name = 'User';
 
 /**
  * useTable property
@@ -124,7 +124,7 @@ class AclUser extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $useTable = 'users';
+	public $useTable = 'users';
 
 /**
  * actsAs property
@@ -132,7 +132,7 @@ class AclUser extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl');
+	public $actsAs = array('Acl');
 
 /**
  * parentNode
@@ -158,7 +158,7 @@ class AclPost extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $name = 'Post';
+	public $name = 'Post';
 
 /**
  * useTable property
@@ -166,7 +166,7 @@ class AclPost extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 
 /**
  * actsAs property
@@ -174,7 +174,7 @@ class AclPost extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl' => 'controlled');
+	public $actsAs = array('Acl' => 'controlled');
 
 /**
  * parentNode
@@ -200,7 +200,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @var Aco
  * @access public
  */
-	var $Aco;
+	public $Aco;
 
 /**
  * Aro property
@@ -208,7 +208,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @var Aro
  * @access public
  */
-	var $Aro;
+	public $Aro;
 
 /**
  * fixtures property
@@ -216,7 +216,7 @@ class AclBehaviorTestCase extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.person', 'core.user', 'core.post', 'core.aco', 'core.aro', 'core.aros_aco');
+	public $fixtures = array('core.person', 'core.user', 'core.post', 'core.aco', 'core.aro', 'core.aros_aco');
 
 /**
  * Set up the test

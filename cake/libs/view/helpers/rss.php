@@ -35,7 +35,7 @@ class RssHelper extends XmlHelper {
  * @var array
  * @access public
  */
-	var $helpers = array('Time');
+	public $helpers = array('Time');
 
 /**
  * Base URL
@@ -43,7 +43,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $base = null;
+	public $base = null;
 
 /**
  * URL to current action.
@@ -51,7 +51,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $here = null;
+	public $here = null;
 
 /**
  * Parameter array.
@@ -59,7 +59,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var array
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Current action.
@@ -67,7 +67,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $action = null;
+	public $action = null;
 
 /**
  * POSTed model data
@@ -75,7 +75,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var array
  */
-	var $data = null;
+	public $data = null;
 
 /**
  * Name of the current model
@@ -83,7 +83,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $model = null;
+	public $model = null;
 
 /**
  * Name of the current field
@@ -91,7 +91,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $field = null;
+	public $field = null;
 
 /**
  * Default spec version of generated RSS
@@ -99,7 +99,7 @@ class RssHelper extends XmlHelper {
  * @access public
  * @var string
  */
-	var $version = '2.0';
+	public $version = '2.0';
 
 /**
  * Returns an RSS document wrapped in `<rss />` tags

@@ -43,7 +43,7 @@ class File extends Object {
  * @var Folder
  * @access public
  */
-	var $Folder = null;
+	public $Folder = null;
 
 /**
  * Filename
@@ -51,7 +51,7 @@ class File extends Object {
  * @var string
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * file info
@@ -59,7 +59,7 @@ class File extends Object {
  * @var string
  * @access public
  */
-	var $info = array();
+	public $info = array();
 
 /**
  * Holds the file handler resource if the file is opened
@@ -67,7 +67,7 @@ class File extends Object {
  * @var resource
  * @access public
  */
-	var $handle = null;
+	public $handle = null;
 
 /**
  * enable locking for file reading and writing
@@ -75,7 +75,7 @@ class File extends Object {
  * @var boolean
  * @access public
  */
-	var $lock = null;
+	public $lock = null;
 
 /**
  * path property
@@ -85,7 +85,7 @@ class File extends Object {
  * @var mixed null
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * Constructor

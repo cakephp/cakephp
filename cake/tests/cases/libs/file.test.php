@@ -33,7 +33,7 @@ class FileTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $File = null;
+	public $File = null;
 
 /**
  * testBasic method

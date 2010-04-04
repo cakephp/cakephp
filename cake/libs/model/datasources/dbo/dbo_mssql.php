@@ -33,21 +33,21 @@ class DboMssql extends DboSource {
  *
  * @var string
  */
-	var $description = "MS SQL DBO Driver";
+	public $description = "MS SQL DBO Driver";
 
 /**
  * Starting quote character for quoted identifiers
  *
  * @var string
  */
-	var $startQuote = "[";
+	public $startQuote = "[";
 
 /**
  * Ending quote character for quoted identifiers
  *
  * @var string
  */
-	var $endQuote = "]";
+	public $endQuote = "]";
 
 /**
  * Creates a map between field aliases and numeric indexes.  Workaround for the
@@ -76,7 +76,7 @@ class DboMssql extends DboSource {
  *
  * @var array
  */
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => 'IDENTITY (1, 1) NOT NULL'),
 		'string'	=> array('name' => 'varchar', 'limit' => '255'),
 		'text'		=> array('name' => 'text'),

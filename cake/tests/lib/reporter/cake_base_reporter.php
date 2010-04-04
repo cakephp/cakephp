@@ -55,7 +55,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @var array
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Character set for the output of test reporting.

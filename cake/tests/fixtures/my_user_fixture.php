@@ -32,7 +32,7 @@ class MyUserFixture extends CakeTestFixture {
  * @var string 'MyUser'
  * @access public
  */
-	var $name = 'MyUser';
+	public $name = 'MyUser';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class MyUserFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'firstname' => array('type' => 'string', 'null' => false),
 	);
@@ -51,7 +51,7 @@ class MyUserFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => 1, 'firstname' => 'userA'),
 		array('id' => 2, 'firstname' => 'userB')
 	);

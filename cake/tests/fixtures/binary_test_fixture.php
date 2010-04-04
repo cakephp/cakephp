@@ -32,7 +32,7 @@ class BinaryTestFixture extends CakeTestFixture {
  * @var string 'BinaryTest'
  * @access public
  */
-	var $name = 'BinaryTest';
+	public $name = 'BinaryTest';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class BinaryTestFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'data' => 'binary'
 	);
@@ -51,7 +51,7 @@ class BinaryTestFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array();
+	public $records = array();
 }
 
 ?>

@@ -39,7 +39,7 @@ class DboMssqlTestDb extends DboMssql {
  * @var array
  * @access public
  */
-	var $simulated = array();
+	public $simulated = array();
 
 /**
  * simalate property
@@ -47,14 +47,14 @@ class DboMssqlTestDb extends DboMssql {
  * @var array
  * @access public
  */
-	var $simulate = true;
+	public $simulate = true;
 /**
  * fetchAllResultsStack
  *
  * @var array
  * @access public
  */
-	var $fetchAllResultsStack = array();
+	public $fetchAllResultsStack = array();
 
 /**
  * execute method
@@ -143,7 +143,7 @@ class MssqlTestModel extends Model {
  * @var string 'MssqlTestModel'
  * @access public
  */
-	var $name = 'MssqlTestModel';
+	public $name = 'MssqlTestModel';
 
 /**
  * useTable property
@@ -151,7 +151,7 @@ class MssqlTestModel extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * _schema property
@@ -186,7 +186,7 @@ class MssqlTestModel extends Model {
  * @var array
  * @access public
  */
-	var $belongsTo = array(
+	public $belongsTo = array(
 		'MssqlClientTestModel' => array(
 			'foreignKey' => 'client_id'
 		)
@@ -244,14 +244,14 @@ class MssqlClientTestModel extends Model {
  * @var string 'MssqlAssociatedTestModel'
  * @access public
  */
-	var $name = 'MssqlClientTestModel';
+	public $name = 'MssqlClientTestModel';
 /**
  * useTable property
  *
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 /**
  * _schema property
  *
@@ -280,7 +280,7 @@ class DboMssqlTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	var $db = null;
+	public $db = null;
 
 /**
  * autoFixtures property
@@ -288,14 +288,14 @@ class DboMssqlTest extends CakeTestCase {
  * @var bool false
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 /**
  * fixtures property
  *
  * @var array
  * @access public
  */
-	var $fixtures = array('core.category');
+	public $fixtures = array('core.category');
 /**
  * Skip if cannot connect to mssql
  *

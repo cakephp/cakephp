@@ -34,7 +34,7 @@ class TestSuiteGroupTest extends TestSuite {
  * @var string 'Socket and HttpSocket tests'
  * @access public
  */
-	var $label = 'TestSuite';
+	public $label = 'TestSuite';
 
 /**
  * TestSuiteGroupTest method

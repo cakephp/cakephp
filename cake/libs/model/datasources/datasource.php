@@ -32,7 +32,7 @@ class DataSource extends Object {
  * @var boolean
  * @access public
  */
-	var $connected = false;
+	public $connected = false;
 
 /**
  * Print full query debug info?
@@ -40,7 +40,7 @@ class DataSource extends Object {
  * @var boolean
  * @access public
  */
-	var $fullDebug = false;
+	public $fullDebug = false;
 
 /**
  * Error description of last query
@@ -48,7 +48,7 @@ class DataSource extends Object {
  * @var unknown_type
  * @access public
  */
-	var $error = null;
+	public $error = null;
 
 /**
  * String to hold how many rows were affected by the last SQL operation.
@@ -56,7 +56,7 @@ class DataSource extends Object {
  * @var string
  * @access public
  */
-	var $affected = null;
+	public $affected = null;
 
 /**
  * Number of rows in current resultset
@@ -64,7 +64,7 @@ class DataSource extends Object {
  * @var int
  * @access public
  */
-	var $numRows = null;
+	public $numRows = null;
 
 /**
  * Time the last query took
@@ -72,7 +72,7 @@ class DataSource extends Object {
  * @var int
  * @access public
  */
-	var $took = null;
+	public $took = null;
 
 /**
  * The starting character that this DataSource uses for quoted identifiers.
@@ -80,7 +80,7 @@ class DataSource extends Object {
  * @var string
  * @access public
  */
-	var $startQuote = null;
+	public $startQuote = null;
 
 /**
  * The ending character that this DataSource uses for quoted identifiers.
@@ -88,7 +88,7 @@ class DataSource extends Object {
  * @var string
  * @access public
  */
-	var $endQuote = null;
+	public $endQuote = null;
 
 /**
  * Enter description here...
@@ -170,7 +170,7 @@ class DataSource extends Object {
  * @var array
  * @access public
  */
-	var $connection = null;
+	public $connection = null;
 
 /**
  * The DataSource configuration
@@ -178,7 +178,7 @@ class DataSource extends Object {
  * @var array
  * @access public
  */
-	var $config = array();
+	public $config = array();
 
 /**
  * The DataSource configuration key name
@@ -186,7 +186,7 @@ class DataSource extends Object {
  * @var string
  * @access public
  */
-	var $configKeyName = null;
+	public $configKeyName = null;
 
 /**
  * Whether or not this DataSource is in the middle of a transaction
@@ -203,7 +203,7 @@ class DataSource extends Object {
  * @var boolean
  * @access public
  */
-	var $cacheSources = true;
+	public $cacheSources = true;
 
 /**
  * Constructor.

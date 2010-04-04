@@ -36,7 +36,7 @@ class NoCrossContaminationGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $label = 'No Cross Contamination';
+	public $label = 'No Cross Contamination';
 
 /**
  * blacklist property
@@ -44,7 +44,7 @@ class NoCrossContaminationGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $blacklist = array('cake_test_case.test.php', 'object.test.php');
+	public $blacklist = array('cake_test_case.test.php', 'object.test.php');
 
 /**
  * NoCrossContaminationGroupTest method

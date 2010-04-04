@@ -25,7 +25,7 @@ class BakeTask extends Shell {
  * @var string
  * @access public
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * The db connection being used for baking
@@ -33,14 +33,14 @@ class BakeTask extends Shell {
  * @var string
  * @access public
  */
-	var $connection = null;
+	public $connection = null;
 
 /**
  * Flag for interactive mode
  *
  * @var boolean
  */
-	var $interactive = false;
+	public $interactive = false;
 
 /**
  * Gets the path for output.  Checks the plugin property

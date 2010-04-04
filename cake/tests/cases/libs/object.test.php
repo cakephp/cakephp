@@ -33,7 +33,7 @@ class RequestActionPost extends CakeTestModel {
  * @var string 'ControllerPost'
  * @access public
  */
-	var $name = 'RequestActionPost';
+	public $name = 'RequestActionPost';
 
 /**
  * useTable property
@@ -41,7 +41,7 @@ class RequestActionPost extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 }
 
 /**
@@ -58,7 +58,7 @@ class RequestActionController extends Controller {
 * @var array
 * @access public
 */
-	var $uses = array('RequestActionPost');
+	public $uses = array('RequestActionPost');
 
 /**
 * test_request_action method
@@ -136,7 +136,7 @@ class RequestActionPersistentController extends Controller {
 * @var array
 * @access public
 */
-	var $uses = array('PersisterOne');
+	public $uses = array('PersisterOne');
 
 /**
 * persistModel property
@@ -144,7 +144,7 @@ class RequestActionPersistentController extends Controller {
 * @var array
 * @access public
 */
-	var $persistModel = true;
+	public $persistModel = true;
 
 /**
  * post pass, testing post passing
@@ -170,7 +170,7 @@ class TestObject extends Object {
  * @var string 'Joel'
  * @access public
  */
-	var $firstName = 'Joel';
+	public $firstName = 'Joel';
 
 /**
  * lastName property
@@ -178,7 +178,7 @@ class TestObject extends Object {
  * @var string 'Moss'
  * @access public
  */
-	var $lastName = 'Moss';
+	public $lastName = 'Moss';
 
 /**
  * methodCalls property
@@ -186,7 +186,7 @@ class TestObject extends Object {
  * @var array
  * @access public
  */
-	var $methodCalls = array();
+	public $methodCalls = array();
 
 /**
  * emptyMethod method
@@ -306,8 +306,8 @@ class TestObject extends Object {
  * @subpackage    cake.tests.cases.libs
  */
 class ObjectTestModel extends CakeTestModel {
-	var $useTable = false;
-	var $name = 'ObjectTestModel';
+	public $useTable = false;
+	public $name = 'ObjectTestModel';
 }
 
 /**
@@ -323,7 +323,7 @@ class ObjectTest extends CakeTestCase {
  *
  * @var string
  */
-	var $fixtures = array('core.post', 'core.test_plugin_comment', 'core.comment');
+	public $fixtures = array('core.post', 'core.test_plugin_comment', 'core.comment');
 
 /**
  * setUp method

@@ -32,7 +32,7 @@ class HtmlHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $tags = array(
+	public $tags = array(
 		'meta' => '<meta%s/>',
 		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',

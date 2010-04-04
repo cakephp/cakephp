@@ -36,7 +36,7 @@ class XcacheEngine extends CacheEngine {
  * @var array
  * @access public
  */
-	var $settings = array();
+	public $settings = array();
 
 /**
  * Initialize the Cache Engine

@@ -35,7 +35,7 @@ class ModelGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $label = 'All Model tests';
+	public $label = 'All Model tests';
 
 /**
  * ModelGroupTest method

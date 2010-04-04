@@ -18,8 +18,8 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class TestsAppsController extends AppController {
-	var $name = 'TestsApps';
-	var $uses = array();
+	public $name = 'TestsApps';
+	public $uses = array();
 
 	function index() {
 	}

@@ -26,15 +26,15 @@
  */
 class CounterCachePostFixture extends CakeTestFixture {
 
-	var $name = 'CounterCachePost';
+	public $name = 'CounterCachePost';
 
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'title' => array('type' => 'string', 'length' => 255, 'null' => false),
 		'user_id' => array('type' => 'integer', 'null' => true),
 	);
 
-    var $records = array(
+    public $records = array(
 		array('id' => 1, 'title' => 'Rock and Roll',  'user_id' => 66),
 		array('id' => 2, 'title' => 'Music',   'user_id' => 66),
 		array('id' => 3, 'title' => 'Food',   'user_id' => 301),

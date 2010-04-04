@@ -35,7 +35,7 @@ class DboMysqlTestDb extends DboMysql {
  * @var array
  * @access public
  */
-	var $simulated = array();
+	public $simulated = array();
 
 /**
  * testing property
@@ -43,7 +43,7 @@ class DboMysqlTestDb extends DboMysql {
  * @var bool true
  * @access public
  */
-	var $testing = true;
+	public $testing = true;
 
 /**
  * execute method
@@ -85,7 +85,7 @@ class MysqlTestModel extends Model {
  * @var string 'MysqlTestModel'
  * @access public
  */
-	var $name = 'MysqlTestModel';
+	public $name = 'MysqlTestModel';
 
 /**
  * useTable property
@@ -93,7 +93,7 @@ class MysqlTestModel extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * find method
@@ -160,14 +160,14 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-	var $fixtures = array('core.binary_test');
+	public $fixtures = array('core.binary_test');
 /**
  * The Dbo instance to be tested
  *
  * @var DboSource
  * @access public
  */
-	var $Db = null;
+	public $Db = null;
 
 /**
  * Skip if cannot connect to mysql

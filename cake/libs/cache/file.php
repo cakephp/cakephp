@@ -51,7 +51,7 @@ class FileEngine extends CacheEngine {
  * @see CacheEngine::__defaults
  * @access public
  */
-	var $settings = array();
+	public $settings = array();
 
 /**
  * True unless FileEngine::__active(); fails

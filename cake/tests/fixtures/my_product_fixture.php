@@ -32,7 +32,7 @@ class MyProductFixture extends CakeTestFixture {
  * @var string 'MyProduct'
  * @access public
  */
-	var $name = 'MyProduct';
+	public $name = 'MyProduct';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class MyProductFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false),
 	);
@@ -51,7 +51,7 @@ class MyProductFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => 1, 'name' => 'book'),
 		array('id' => 2, 'name' => 'computer'),
 	);

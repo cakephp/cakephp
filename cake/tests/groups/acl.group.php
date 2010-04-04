@@ -34,7 +34,7 @@ class AclAndAuthGroupTest extends TestSuite {
  * @var string 'Acl and Auth Tests'
  * @access public
  */
-	var $label = 'Acl and Auth';
+	public $label = 'Acl and Auth';
 
 /**
  * AclAndAuthGroupTest method

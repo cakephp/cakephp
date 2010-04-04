@@ -37,12 +37,12 @@ class MagicDb extends Object {
  *
  * @var array
  */
-	var $db = array();
+	public $db = array();
 
 /**
  * Reads a MagicDb from various formats
  *
- * @var $magicDb mixed Can be an array containing the db, a magic db as a string, or a filename pointing to a magic db in .db or magic.db.php format
+ * @public $magicDb mixed Can be an array containing the db, a magic db as a string, or a filename pointing to a magic db in .db or magic.db.php format
  * @return boolean Returns false if reading / validation failed or true on success.
  * @author        Felix
  */
@@ -186,7 +186,7 @@ class MagicFileResource extends Object{
  * @var unknown
  * @access public
  */
-	var $resource = null;
+	public $resource = null;
 
 /**
  * undocumented variable
@@ -194,7 +194,7 @@ class MagicFileResource extends Object{
  * @var unknown
  * @access public
  */
-	var $offset = 0;
+	public $offset = 0;
 
 /**
  * undocumented function

@@ -33,7 +33,7 @@ class UuidTreeFixture extends CakeTestFixture {
  * @var string 'UuidTree'
  * @access public
  */
-	var $name = 'UuidTree';
+	public $name = 'UuidTree';
 
 /**
  * fields property
@@ -41,7 +41,7 @@ class UuidTreeFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id'	=> array('type' => 'string', 'length' => 36, 'key' => 'primary'),
 		'name'	=> array('type' => 'string','null' => false),
 		'parent_id' => array('type' => 'string', 'length' => 36, 'null' => true),

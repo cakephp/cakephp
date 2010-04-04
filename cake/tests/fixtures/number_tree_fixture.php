@@ -36,7 +36,7 @@ class NumberTreeFixture extends CakeTestFixture {
  * @var string 'NumberTree'
  * @access public
  */
-	var $name = 'NumberTree';
+	public $name = 'NumberTree';
 
 /**
  * fields property
@@ -44,7 +44,7 @@ class NumberTreeFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id'	=> array('type' => 'integer','key' => 'primary'),
 		'name'	=> array('type' => 'string','null' => false),
 		'parent_id' => 'integer',

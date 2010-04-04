@@ -24,7 +24,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 class TestPluginComment extends TestPluginAppModel {
-	var $useTable = 'test_plugin_comments';
-	var $name = 'TestPluginComment';
+	public $useTable = 'test_plugin_comments';
+	public $name = 'TestPluginComment';
 }
 ?>

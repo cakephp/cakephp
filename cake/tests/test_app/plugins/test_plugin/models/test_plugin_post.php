@@ -26,12 +26,12 @@ class TestPluginPost extends TestPluginAppModel {
  *
  * @var string
  */
-	var $name = 'Post';
+	public $name = 'Post';
 
 /**
  * useTable property
  *
  * @var string
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 }

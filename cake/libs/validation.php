@@ -35,7 +35,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
-	var $check = null;
+	public $check = null;
 
 /**
  * Set to a valid regular expression in the class methods.
@@ -44,7 +44,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
-	var $regex = null;
+	public $regex = null;
 
 /**
  * Some complex patterns needed in multiple places
@@ -63,7 +63,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
-	var $country = null;
+	public $country = null;
 
 /**
  * Some class methods use a deeper validation when set to true
@@ -71,7 +71,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
-	var $deep = null;
+	public $deep = null;
 
 /**
  * Some class methods use the $type param to determine which validation to perfom in the method
@@ -79,7 +79,7 @@ class Validation extends Object {
  * @var string
  * @access public
  */
-	var $type = null;
+	public $type = null;
 
 /**
  * Holds an array of errors messages set in this class.
@@ -88,7 +88,7 @@ class Validation extends Object {
  * @var array
  * @access public
  */
-	var $errors = array();
+	public $errors = array();
 
 /**
  * Gets a reference to the Validation object instance

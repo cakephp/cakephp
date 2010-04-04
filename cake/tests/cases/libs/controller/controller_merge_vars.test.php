@@ -34,13 +34,13 @@ if (!class_exists('AppController')) {
  *
  * @var array
  */
-		var $components = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
+		public $components = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
 /**
  * helpers
  *
  * @var array
  */
-		var $helpers = array('MergeVar' => array('format' => 'html', 'terse'));
+		public $helpers = array('MergeVar' => array('format' => 'html', 'terse'));
 	}
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
@@ -67,14 +67,14 @@ class MergeVariablesController extends AppController {
  *
  * @var string
  */
-	var $name = 'MergeVariables';
+	public $name = 'MergeVariables';
 
 /**
  * uses
  *
  * @var arrays
  */
-	var $uses = array();
+	public $uses = array();
 }
 
 /**
@@ -89,14 +89,14 @@ class MergeVarPluginAppController extends AppController {
  *
  * @var array
  */
-	var $components = array('Auth' => array('setting' => 'val', 'otherVal'));
+	public $components = array('Auth' => array('setting' => 'val', 'otherVal'));
 
 /**
  * helpers
  *
  * @var array
  */
-	var $helpers = array('Javascript');
+	public $helpers = array('Javascript');
 }
 
 /**
@@ -111,14 +111,14 @@ class MergePostsController extends MergeVarPluginAppController {
  *
  * @var string
  */
-	var $name = 'MergePosts';
+	public $name = 'MergePosts';
 
 /**
  * uses
  *
  * @var array
  */
-	var $uses = array();
+	public $uses = array();
 }
 
 

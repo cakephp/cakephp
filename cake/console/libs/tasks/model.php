@@ -34,7 +34,7 @@ class ModelTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $path = MODELS;
+	public $path = MODELS;
 
 /**
  * tasks
@@ -42,7 +42,7 @@ class ModelTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
+	public $tasks = array('DbConfig', 'Fixture', 'Test', 'Template');
 
 /**
  * Tables to skip when running all()
@@ -50,7 +50,7 @@ class ModelTask extends BakeTask {
  * @var array
  * @access protected
  */
-	var $skipTables = array('i18n');
+	public $skipTables = array('i18n');
 
 /**
  * Holds tables found on connection.

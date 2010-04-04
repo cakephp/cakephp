@@ -64,14 +64,14 @@ class JsHelperTestCase extends CakeTestCase {
  *
  * @var string
  */
-	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+	public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
 
 /**
  * Regexp for CDATA end block
  *
  * @var string
  */
-	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+	public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 
 /**
  * startTest method

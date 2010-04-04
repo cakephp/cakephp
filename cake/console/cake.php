@@ -37,7 +37,7 @@ class ShellDispatcher {
  * @var filehandle
  * @access public
  */
-	var $stdin;
+	public $stdin;
 
 /**
  * Standard output stream.
@@ -45,7 +45,7 @@ class ShellDispatcher {
  * @var filehandle
  * @access public
  */
-	var $stdout;
+	public $stdout;
 
 /**
  * Standard error stream.
@@ -53,7 +53,7 @@ class ShellDispatcher {
  * @var filehandle
  * @access public
  */
-	var $stderr;
+	public $stderr;
 
 /**
  * Contains command switches parsed from the command line.
@@ -61,7 +61,7 @@ class ShellDispatcher {
  * @var array
  * @access public
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Contains arguments parsed from the command line.
@@ -69,7 +69,7 @@ class ShellDispatcher {
  * @var array
  * @access public
  */
-	var $args = array();
+	public $args = array();
 
 /**
  * The file name of the shell that was invoked.
@@ -77,7 +77,7 @@ class ShellDispatcher {
  * @var string
  * @access public
  */
-	var $shell = null;
+	public $shell = null;
 
 /**
  * The class name of the shell that was invoked.
@@ -85,7 +85,7 @@ class ShellDispatcher {
  * @var string
  * @access public
  */
-	var $shellClass = null;
+	public $shellClass = null;
 
 /**
  * The command called if public methods are available.
@@ -93,7 +93,7 @@ class ShellDispatcher {
  * @var string
  * @access public
  */
-	var $shellCommand = null;
+	public $shellCommand = null;
 
 /**
  * The path locations of shells.
@@ -101,7 +101,7 @@ class ShellDispatcher {
  * @var array
  * @access public
  */
-	var $shellPaths = array();
+	public $shellPaths = array();
 
 /**
  * The path to the current shell location.
@@ -109,7 +109,7 @@ class ShellDispatcher {
  * @var string
  * @access public
  */
-	var $shellPath = null;
+	public $shellPath = null;
 
 /**
  * The name of the shell in camelized.
@@ -117,7 +117,7 @@ class ShellDispatcher {
  * @var string
  * @access public
  */
-	var $shellName = null;
+	public $shellName = null;
 
 /**
  * Constructor

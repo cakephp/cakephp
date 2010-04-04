@@ -32,7 +32,7 @@ class FixtureTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig', 'Model', 'Template');
+	public $tasks = array('DbConfig', 'Model', 'Template');
 
 /**
  * path to fixtures directory
@@ -40,7 +40,7 @@ class FixtureTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * Schema instance
@@ -153,7 +153,7 @@ class FixtureTask extends BakeTask {
  *
  * @param string $model Name of model to bake.
  * @param string $useTable Name of table to use.
- * @param array $importOptions Options for var $import
+ * @param array $importOptions Options for public $import
  * @return string Baked fixture content
  * @access public
  */

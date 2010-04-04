@@ -34,7 +34,7 @@ class SessionTestController extends Controller {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * session_id method
@@ -61,7 +61,7 @@ class OrangeSessionTestController extends Controller {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * session_id method

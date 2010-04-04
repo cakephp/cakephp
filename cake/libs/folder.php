@@ -41,7 +41,7 @@ class Folder extends Object {
  * @var string
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * Sortedness. Whether or not list results
@@ -50,7 +50,7 @@ class Folder extends Object {
  * @var boolean
  * @access public
  */
-	var $sort = false;
+	public $sort = false;
 
 /**
  * Mode to be used on create. Does nothing on windows platforms.
@@ -58,7 +58,7 @@ class Folder extends Object {
  * @var integer
  * @access public
  */
-	var $mode = 0755;
+	public $mode = 0755;
 
 /**
  * Holds messages from last method.

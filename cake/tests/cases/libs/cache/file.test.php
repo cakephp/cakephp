@@ -35,7 +35,7 @@ class FileEngineTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $config = array();
+	public $config = array();
 
 /**
  * startCase method

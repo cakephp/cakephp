@@ -34,7 +34,7 @@ class JsHelper extends AppHelper {
  * @var boolean
  * @access public
  */
-	var $bufferScripts = true;
+	public $bufferScripts = true;
 
 /**
  * helpers
@@ -42,7 +42,7 @@ class JsHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $helpers = array('Html', 'Form');
+	public $helpers = array('Html', 'Form');
 
 /**
  * Variables to pass to Javascript.
@@ -76,7 +76,7 @@ class JsHelper extends AppHelper {
  * @var string
  * @access public
  */
-	var $setVariable = APP_DIR;
+	public $setVariable = APP_DIR;
 
 /**
  * Constructor - determines engine helper
@@ -442,7 +442,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @var boolean
  * @access public
  */
-	var $useNative = false;
+	public $useNative = false;
 
 /**
  * The js snippet for the current selection.
@@ -450,7 +450,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @var string
  * @access public
  */
-	var $selection;
+	public $selection;
 
 /**
  * Collection of option maps. Option maps allow other helpers to use generic names for engine
@@ -469,7 +469,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
+	public $bufferedMethods = array('event', 'sortable', 'drag', 'drop', 'slider');
 
 /**
  * Contains a list of callback names -> default arguments.

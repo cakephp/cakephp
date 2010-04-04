@@ -36,7 +36,7 @@ class FormHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $helpers = array('Html');
+	public $helpers = array('Html');
 
 /**
  * Holds the fields array('field_name' => array('type'=> 'string', 'length'=> 100),
@@ -44,7 +44,7 @@ class FormHelper extends AppHelper {
  *
  * @access public
  */
-	var $fieldset = array();
+	public $fieldset = array();
 
 /**
  * Options used by DateTime fields
@@ -62,7 +62,7 @@ class FormHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $fields = array();
+	public $fields = array();
 
 /**
  * Defines the type of form being created.  Set by FormHelper::create().
@@ -70,7 +70,7 @@ class FormHelper extends AppHelper {
  * @var string
  * @access public
  */
-	var $requestType = null;
+	public $requestType = null;
 
 /**
  * The default model being used for the current form.
@@ -78,7 +78,7 @@ class FormHelper extends AppHelper {
  * @var string
  * @access public
  */
-	var $defaultModel = null;
+	public $defaultModel = null;
 
 
 /**

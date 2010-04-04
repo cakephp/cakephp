@@ -32,7 +32,7 @@ class AcoTwoFixture extends CakeTestFixture {
  * @var string 'AcoTwo'
  * @access public
  */
-	var $name = 'AcoTwo';
+	public $name = 'AcoTwo';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class AcoTwoFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id'		=> array('type' => 'integer', 'key' => 'primary'),
 		'parent_id'	=> array('type' => 'integer', 'length' => 10, 'null' => true),
 		'model'		=> array('type' => 'string', 'null' => true),
@@ -56,7 +56,7 @@ class AcoTwoFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('parent_id' => null,	'model' => null, 'foreign_key' => null, 'alias' => 'ROOT',		'lft' => 1,  'rght' => 20),
 		array('parent_id' => 1,		'model' => null, 'foreign_key' => null, 'alias' => 'tpsReports', 'lft' => 2,  'rght' => 9),
 		array('parent_id' => 2,		'model' => null, 'foreign_key' => null, 'alias' => 'view',		'lft' => 3,  'rght' => 6),

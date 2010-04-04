@@ -33,7 +33,7 @@ class SecurityTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $sut = null;
+	public $sut = null;
 
 /**
  * setUp method

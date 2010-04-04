@@ -51,7 +51,7 @@ Mock::generate('ControllerTask', 'BakeShellMockControllerTask');
 
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {
-		var $name = 'Users';
+		public $name = 'Users';
 	}
 }
 
@@ -63,7 +63,7 @@ class BakeShellTestCase extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.user');
+	public $fixtures = array('core.user');
 
 /**
  * start test

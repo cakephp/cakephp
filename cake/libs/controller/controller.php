@@ -43,7 +43,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Stores the current URL, relative to the webroot of the application.
@@ -51,7 +51,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $here = null;
+	public $here = null;
 
 /**
  * The webroot of the application.
@@ -59,7 +59,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $webroot = null;
+	public $webroot = null;
 
 /**
  * The name of the currently requested controller action.
@@ -67,12 +67,12 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $action = null;
+	public $action = null;
 
 /**
  * An array containing the class names of models this controller uses.
  *
- * Example: `var $uses = array('Product', 'Post', 'Comment');`
+ * Example: `public $uses = array('Product', 'Post', 'Comment');`
  *
  * Can be set to array() to use no models.  Can be set to false to
  * use no models and prevent the merging of $uses with AppController
@@ -81,19 +81,19 @@ class Controller extends Object {
  * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-	var $uses = false;
+	public $uses = false;
 
 /**
  * An array containing the names of helpers this controller uses. The array elements should
  * not contain the "Helper" part of the classname.
  *
- * Example: `var $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
+ * Example: `public $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-	var $helpers = array('Session', 'Html', 'Form');
+	public $helpers = array('Session', 'Html', 'Form');
 
 /**
  * Parameters received in the current request: GET and POST data, information
@@ -103,7 +103,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Data POSTed to the controller using the HtmlHelper. Data here is accessible
@@ -112,7 +112,7 @@ class Controller extends Object {
  * @var array
  * @access public
  */
-	var $data = array();
+	public $data = array();
 
 /**
  * Holds pagination defaults for controller actions. The keys that can be included
@@ -123,7 +123,7 @@ class Controller extends Object {
  * the name of the model as a key for a pagination array:
  *
  * {{{
- * var $paginate = array(
+ * public $paginate = array(
  * 		'Post' => array(...),
  * 		'Comment' => array(...)
  * 	);
@@ -133,7 +133,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1231/Pagination
  */
-	var $paginate = array('limit' => 20, 'page' => 1);
+	public $paginate = array('limit' => 20, 'page' => 1);
 
 /**
  * The name of the views subfolder containing views for this controller.
@@ -141,7 +141,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $viewPath = null;
+	public $viewPath = null;
 
 /**
  * The name of the layouts subfolder containing layouts for this controller.
@@ -149,7 +149,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $layoutPath = null;
+	public $layoutPath = null;
 
 /**
  * Contains variables to be handed to the view.
@@ -157,7 +157,7 @@ class Controller extends Object {
  * @var array
  * @access public
  */
-	var $viewVars = array();
+	public $viewVars = array();
 
 /**
  * An array containing the class names of the models this controller uses.
@@ -165,7 +165,7 @@ class Controller extends Object {
  * @var array Array of model objects.
  * @access public
  */
-	var $modelNames = array();
+	public $modelNames = array();
 
 /**
  * Base URL path.
@@ -173,7 +173,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $base = null;
+	public $base = null;
 
 /**
  * The name of the layout file to render the view inside of. The name specified
@@ -184,7 +184,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
  */
-	var $layout = 'default';
+	public $layout = 'default';
 
 /**
  * Set to true to automatically render the view
@@ -193,7 +193,7 @@ class Controller extends Object {
  * @var boolean
  * @access public
  */
-	var $autoRender = true;
+	public $autoRender = true;
 
 /**
  * Set to true to automatically render the layout around views.
@@ -201,7 +201,7 @@ class Controller extends Object {
  * @var boolean
  * @access public
  */
-	var $autoLayout = true;
+	public $autoLayout = true;
 
 /**
  * Instance of Component used to handle callbacks.
@@ -209,19 +209,19 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $Component = null;
+	public $Component = null;
 
 /**
  * Array containing the names of components this controller uses. Component names
  * should not contain the "Component" portion of the classname.
  *
- * Example: `var $components = array('Session', 'RequestHandler', 'Acl');`
+ * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
  *
  * @var array
  * @access public
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
-	var $components = array('Session');
+	public $components = array('Session');
 
 /**
  * The name of the View class this controller sends output to.
@@ -229,7 +229,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $view = 'View';
+	public $view = 'View';
 
 /**
  * File extension for view templates. Defaults to Cake's conventional ".ctp".
@@ -237,7 +237,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $ext = '.ctp';
+	public $ext = '.ctp';
 
 /**
  * The output of the requested action.  Contains either a variable
@@ -247,7 +247,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $output = null;
+	public $output = null;
 
 /**
  * Automatically set to the name of a plugin.
@@ -255,7 +255,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * Used to define methods a controller that will be cached. To cache a
@@ -265,7 +265,7 @@ class Controller extends Object {
  * Example:
  *
  * {{{
- * var $cacheAction = array(
+ * public $cacheAction = array(
  *		'view/23/' => 21600,
  *		'recalled/' => 86400
  *	);
@@ -278,7 +278,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1380/Caching-in-the-Controller
  */
-	var $cacheAction = false;
+	public $cacheAction = false;
 
 /**
  * Used to create cached instances of models a controller uses.
@@ -288,7 +288,7 @@ class Controller extends Object {
  * @var boolean
  * @access public
  */
-	var $persistModel = false;
+	public $persistModel = false;
 
 /**
  * Holds all params passed and named.
@@ -296,7 +296,7 @@ class Controller extends Object {
  * @var mixed
  * @access public
  */
-	var $passedArgs = array();
+	public $passedArgs = array();
 
 /**
  * Triggers Scaffolding
@@ -305,7 +305,7 @@ class Controller extends Object {
  * @access public
  * @link http://book.cakephp.org/view/1103/Scaffolding
  */
-	var $scaffold = false;
+	public $scaffold = false;
 
 /**
  * Holds current methods of the controller
@@ -314,7 +314,7 @@ class Controller extends Object {
  * @access public
  * @link
  */
-	var $methods = array();
+	public $methods = array();
 
 /**
  * This controller's primary model class name, the Inflector::classify()'ed version of
@@ -325,7 +325,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $modelClass = null;
+	public $modelClass = null;
 
 /**
  * This controller's model key name, an underscored version of the controller's $modelClass property.
@@ -335,7 +335,7 @@ class Controller extends Object {
  * @var string
  * @access public
  */
-	var $modelKey = null;
+	public $modelKey = null;
 
 /**
  * Holds any validation errors produced by the last call of the validateErrors() method/
@@ -343,7 +343,7 @@ class Controller extends Object {
  * @var array Validation errors, or false if none
  * @access public
  */
-	var $validationErrors = null;
+	public $validationErrors = null;
 
 /**
  * Contains a list of the HTTP codes that CakePHP recognizes. These may be

@@ -41,21 +41,21 @@ if (!class_exists('AppController')) {
 	 * @var array
 	 * @access public
 	 */
-		var $helpers = array('Html', 'Javascript');
+		public $helpers = array('Html', 'Javascript');
 	/**
 	 * uses property
 	 *
 	 * @var array
 	 * @access public
 	 */
-		var $uses = array('ControllerPost');
+		public $uses = array('ControllerPost');
 	/**
 	 * components property
 	 *
 	 * @var array
 	 * @access public
 	 */
-		var $components = array('Cookie');
+		public $components = array('Cookie');
 	}
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
@@ -75,7 +75,7 @@ class ControllerPost extends CakeTestModel {
  * @var string 'ControllerPost'
  * @access public
  */
-	var $name = 'ControllerPost';
+	public $name = 'ControllerPost';
 
 /**
  * useTable property
@@ -83,7 +83,7 @@ class ControllerPost extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 
 /**
  * invalidFields property
@@ -91,7 +91,7 @@ class ControllerPost extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $invalidFields = array('name' => 'error_msg');
+	public $invalidFields = array('name' => 'error_msg');
 
 /**
  * lastQuery property
@@ -99,7 +99,7 @@ class ControllerPost extends CakeTestModel {
  * @var mixed null
  * @access public
  */
-	var $lastQuery = null;
+	public $lastQuery = null;
 
 /**
  * beforeFind method
@@ -144,7 +144,7 @@ class ControllerCommentsController extends AppController {
  * @var string 'ControllerPost'
  * @access public
  */
-	var $name = 'ControllerComments';
+	public $name = 'ControllerComments';
 }
 
 /**
@@ -161,7 +161,7 @@ class ControllerComment extends CakeTestModel {
  * @var string 'ControllerComment'
  * @access public
  */
-	var $name = 'Comment';
+	public $name = 'Comment';
 
 /**
  * useTable property
@@ -169,7 +169,7 @@ class ControllerComment extends CakeTestModel {
  * @var string 'comments'
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * data property
@@ -177,7 +177,7 @@ class ControllerComment extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $data = array('name' => 'Some Name');
+	public $data = array('name' => 'Some Name');
 
 /**
  * alias property
@@ -185,7 +185,7 @@ class ControllerComment extends CakeTestModel {
  * @var string 'ControllerComment'
  * @access public
  */
-	var $alias = 'ControllerComment';
+	public $alias = 'ControllerComment';
 }
 
 /**
@@ -202,7 +202,7 @@ class ControllerAlias extends CakeTestModel {
  * @var string 'ControllerAlias'
  * @access public
  */
-	var $name = 'ControllerAlias';
+	public $name = 'ControllerAlias';
 
 /**
  * alias property
@@ -210,7 +210,7 @@ class ControllerAlias extends CakeTestModel {
  * @var string 'ControllerSomeAlias'
  * @access public
  */
-	var $alias = 'ControllerSomeAlias';
+	public $alias = 'ControllerSomeAlias';
 
 /**
  * useTable property
@@ -218,7 +218,7 @@ class ControllerAlias extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 }
 
 /**
@@ -235,7 +235,7 @@ class ControllerPaginateModel extends CakeTestModel {
  * @var string
  * @access public
  */
-	var $name = 'ControllerPaginateModel';
+	public $name = 'ControllerPaginateModel';
 
 /**
  * useTable property
@@ -243,7 +243,7 @@ class ControllerPaginateModel extends CakeTestModel {
  * @var string'
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * paginate method
@@ -279,14 +279,14 @@ class NameTest extends CakeTestModel {
  * @var string 'Name'
  * @access public
  */
-	var $name = 'Name';
+	public $name = 'Name';
 
 /**
  * useTable property
  * @var string 'names'
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * alias property
@@ -294,7 +294,7 @@ class NameTest extends CakeTestModel {
  * @var string 'ControllerComment'
  * @access public
  */
-	var $alias = 'Name';
+	public $alias = 'Name';
 }
 
 /**
@@ -310,7 +310,7 @@ class TestController extends AppController {
  * @var string 'Name'
  * @access public
  */
-	var $name = 'TestController';
+	public $name = 'TestController';
 
 /**
  * helpers property
@@ -318,7 +318,7 @@ class TestController extends AppController {
  * @var array
  * @access public
  */
-	var $helpers = array('Session', 'Xml');
+	public $helpers = array('Session', 'Xml');
 
 /**
  * components property
@@ -326,7 +326,7 @@ class TestController extends AppController {
  * @var array
  * @access public
  */
-	var $components = array('Security');
+	public $components = array('Security');
 
 /**
  * uses property
@@ -334,7 +334,7 @@ class TestController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array('ControllerComment', 'ControllerAlias');
+	public $uses = array('ControllerComment', 'ControllerAlias');
 
 /**
  * index method
@@ -406,14 +406,14 @@ class AnotherTestController extends AppController {
  * @var string 'Name'
  * @access public
  */
-	var $name = 'AnotherTest';
+	public $name = 'AnotherTest';
 /**
  * uses property
  *
  * @var array
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 }
 
 /**
@@ -430,7 +430,7 @@ class ControllerTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.post', 'core.comment', 'core.name');
+	public $fixtures = array('core.post', 'core.comment', 'core.name');
 
 /**
  * endTest

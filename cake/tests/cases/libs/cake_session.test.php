@@ -35,7 +35,7 @@ class CakeSessionTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.session');
+	public $fixtures = array('core.session');
 
 /**
  * startCase method

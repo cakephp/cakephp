@@ -32,7 +32,7 @@ class BookFixture extends CakeTestFixture {
  * @var string 'Book'
  * @access public
  */
-	var $name = 'Book';
+	public $name = 'Book';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class BookFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'isbn' => array('type' => 'string', 'length' => 13),
 		'title' => array('type' => 'string', 'length' =>  255),
@@ -55,7 +55,7 @@ class BookFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => 1, 'isbn' => '1234567890', 'title' => 'Faust', 'author' => 'Johann Wolfgang von Goethe')
 	);
 }

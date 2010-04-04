@@ -41,7 +41,7 @@ class ViewPostsController extends Controller {
  * @var string 'Posts'
  * @access public
  */
-	var $name = 'Posts';
+	public $name = 'Posts';
 
 /**
  * uses property
@@ -49,7 +49,7 @@ class ViewPostsController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 
 /**
  * index method
@@ -178,7 +178,7 @@ class TestAfterHelper extends Helper {
  * @var string ''
  * @access public
  */
-	var $property = '';
+	public $property = '';
 
 /**
  * beforeLayout method

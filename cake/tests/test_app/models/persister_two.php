@@ -20,11 +20,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class PersisterTwo extends AppModel {
-	var $useTable = 'posts';
-	var $name = 'PersisterTwo';
+	public $useTable = 'posts';
+	public $name = 'PersisterTwo';
 
-	var $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');
+	public $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');
 
-	var $hasMany = array('Comment', 'TestPlugin.TestPluginComment');
+	public $hasMany = array('Comment', 'TestPlugin.TestPluginComment');
 }
 ?>

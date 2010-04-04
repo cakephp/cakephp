@@ -99,7 +99,7 @@ class MyPluginController extends MyPluginAppController {
  * @var string 'MyPlugin'
  * @access public
  */
-	var $name = 'MyPlugin';
+	public $name = 'MyPlugin';
 
 /**
  * uses property
@@ -107,7 +107,7 @@ class MyPluginController extends MyPluginAppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * index method
@@ -155,7 +155,7 @@ class SomePagesController extends AppController {
  * @var string 'SomePages'
  * @access public
  */
-	var $name = 'SomePages';
+	public $name = 'SomePages';
 
 /**
  * uses property
@@ -163,7 +163,7 @@ class SomePagesController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * display method
@@ -221,7 +221,7 @@ class OtherPagesController extends MyPluginAppController {
  * @var string 'OtherPages'
  * @access public
  */
-	var $name = 'OtherPages';
+	public $name = 'OtherPages';
 
 /**
  * uses property
@@ -229,7 +229,7 @@ class OtherPagesController extends MyPluginAppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * display method
@@ -267,7 +267,7 @@ class TestDispatchPagesController extends AppController {
  * @var string 'TestDispatchPages'
  * @access public
  */
-	var $name = 'TestDispatchPages';
+	public $name = 'TestDispatchPages';
 
 /**
  * uses property
@@ -275,7 +275,7 @@ class TestDispatchPagesController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * admin_index method
@@ -321,7 +321,7 @@ class ArticlesTestController extends ArticlesTestAppController {
  * @var string 'ArticlesTest'
  * @access public
  */
-	var $name = 'ArticlesTest';
+	public $name = 'ArticlesTest';
 
 /**
  * uses property
@@ -329,7 +329,7 @@ class ArticlesTestController extends ArticlesTestAppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * admin_index method
@@ -356,7 +356,7 @@ class SomePostsController extends AppController {
  * @var string 'SomePosts'
  * @access public
  */
-	var $name = 'SomePosts';
+	public $name = 'SomePosts';
 
 /**
  * uses property
@@ -364,7 +364,7 @@ class SomePostsController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * autoRender property
@@ -372,7 +372,7 @@ class SomePostsController extends AppController {
  * @var bool false
  * @access public
  */
-	var $autoRender = false;
+	public $autoRender = false;
 
 /**
  * beforeFilter method
@@ -424,7 +424,7 @@ class TestCachedPagesController extends AppController {
  * @var string 'TestCachedPages'
  * @access public
  */
-	var $name = 'TestCachedPages';
+	public $name = 'TestCachedPages';
 
 /**
  * uses property
@@ -432,7 +432,7 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * helpers property
@@ -440,7 +440,7 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	var $helpers = array('Cache');
+	public $helpers = array('Cache');
 
 /**
  * cacheAction property
@@ -448,7 +448,7 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	var $cacheAction = array(
+	public $cacheAction = array(
 		'index' => '+2 sec',
 		'test_nocache_tags' => '+2 sec',
 		'view' => '+2 sec'
@@ -460,7 +460,7 @@ class TestCachedPagesController extends AppController {
  * @var string 'posts'
  * @access public
  */
-	var $viewPath = 'posts';
+	public $viewPath = 'posts';
 
 /**
  * index method
@@ -516,7 +516,7 @@ class TimesheetsController extends AppController {
  * @var string 'Timesheets'
  * @access public
  */
-	var $name = 'Timesheets';
+	public $name = 'Timesheets';
 
 /**
  * uses property
@@ -524,7 +524,7 @@ class TimesheetsController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * index method

@@ -32,7 +32,7 @@ class ProjectFixture extends CakeTestFixture {
  * @var string 'Project'
  * @access public
  */
-	var $name = 'Project';
+	public $name = 'Project';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class ProjectFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => array('type' => 'string', 'null' => false)
 	);
@@ -51,7 +51,7 @@ class ProjectFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('name' => 'Project 1'),
 		array('name' => 'Project 2'),
 		array('name' => 'Project 3')

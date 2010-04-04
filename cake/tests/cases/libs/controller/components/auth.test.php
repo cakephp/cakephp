@@ -37,7 +37,7 @@ class TestAuthComponent extends AuthComponent {
  * @var bool false
  * @access public
  */
-	var $testStop = false;
+	public $testStop = false;
 
 /**
  * Sets default login state
@@ -72,7 +72,7 @@ class AuthUser extends CakeTestModel {
  * @var string 'AuthUser'
  * @access public
  */
-	var $name = 'AuthUser';
+	public $name = 'AuthUser';
 
 /**
  * useDbConfig property
@@ -80,7 +80,7 @@ class AuthUser extends CakeTestModel {
  * @var string 'test_suite'
  * @access public
  */
-	var $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test_suite';
 
 /**
  * parentNode method
@@ -134,7 +134,7 @@ class AuthUserCustomField extends AuthUser {
  * @var string 'AuthUser'
  * @access public
  */
-	var $name = 'AuthUserCustomField';
+	public $name = 'AuthUserCustomField';
 }
 
 /**
@@ -151,7 +151,7 @@ class UuidUser extends CakeTestModel {
  * @var string 'AuthUser'
  * @access public
  */
-	var $name = 'UuidUser';
+	public $name = 'UuidUser';
 
 /**
  * useDbConfig property
@@ -159,7 +159,7 @@ class UuidUser extends CakeTestModel {
  * @var string 'test_suite'
  * @access public
  */
-	var $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test_suite';
 
 /**
  * useTable property
@@ -167,7 +167,7 @@ class UuidUser extends CakeTestModel {
  * @var string 'uuid'
  * @access public
  */
-	var $useTable = 'uuids';
+	public $useTable = 'uuids';
 
 /**
  * parentNode method
@@ -221,7 +221,7 @@ class AuthTestController extends Controller {
  * @var string 'AuthTest'
  * @access public
  */
-	var $name = 'AuthTest';
+	public $name = 'AuthTest';
 
 /**
  * uses property
@@ -229,7 +229,7 @@ class AuthTestController extends Controller {
  * @var array
  * @access public
  */
-	var $uses = array('AuthUser');
+	public $uses = array('AuthUser');
 
 /**
  * components property
@@ -237,7 +237,7 @@ class AuthTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Session', 'Auth', 'Acl');
+	public $components = array('Session', 'Auth', 'Acl');
 
 /**
  * testUrl property
@@ -245,7 +245,7 @@ class AuthTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $testUrl = null;
+	public $testUrl = null;
 
 /**
  * construct method
@@ -374,7 +374,7 @@ class AjaxAuthController extends Controller {
  * @var string 'AjaxAuth'
  * @access public
  */
-	var $name = 'AjaxAuth';
+	public $name = 'AjaxAuth';
 
 /**
  * components property
@@ -382,7 +382,7 @@ class AjaxAuthController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Session', 'TestAuth');
+	public $components = array('Session', 'TestAuth');
 
 /**
  * uses property
@@ -390,7 +390,7 @@ class AjaxAuthController extends Controller {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * testUrl property
@@ -398,7 +398,7 @@ class AjaxAuthController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $testUrl = null;
+	public $testUrl = null;
 
 /**
  * beforeFilter method
@@ -453,7 +453,7 @@ class AuthTest extends CakeTestCase {
  * @var string 'Auth'
  * @access public
  */
-	var $name = 'Auth';
+	public $name = 'Auth';
 
 /**
  * fixtures property
@@ -461,7 +461,7 @@ class AuthTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.uuid', 'core.auth_user', 'core.auth_user_custom_field', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
+	public $fixtures = array('core.uuid', 'core.auth_user', 'core.auth_user_custom_field', 'core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action');
 
 /**
  * initialized property
@@ -469,7 +469,7 @@ class AuthTest extends CakeTestCase {
  * @var bool false
  * @access public
  */
-	var $initialized = false;
+	public $initialized = false;
 
 /**
  * startTest method

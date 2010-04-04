@@ -35,14 +35,14 @@ class DboSource extends DataSource {
  * @var string
  * @access public
  */
-	var $description = "Database Data Source";
+	public $description = "Database Data Source";
 
 /**
  * index definition, standard cake, primary, index, unique
  *
  * @var array
  */
-	var $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
+	public $index = array('PRI' => 'primary', 'MUL' => 'index', 'UNI' => 'unique');
 
 /**
  * Database keyword used to assign aliases to identifiers.
@@ -50,7 +50,7 @@ class DboSource extends DataSource {
  * @var string
  * @access public
  */
-	var $alias = 'AS ';
+	public $alias = 'AS ';
 
 /**
  * Caches result from query parsing operations
@@ -58,7 +58,7 @@ class DboSource extends DataSource {
  * @var array
  * @access public
  */
-	var $methodCache = array();
+	public $methodCache = array();
 
 /**
  * Whether or not to cache the results of DboSource::name() and DboSource::conditions()
@@ -67,7 +67,7 @@ class DboSource extends DataSource {
  * @var boolean.
  * @access public
  */
-	var $cacheMethods = true ;
+	public $cacheMethods = true ;
 
 /**
  * Bypass automatic adding of joined fields/associations.
@@ -103,7 +103,7 @@ class DboSource extends DataSource {
  * @var array
  * @access public
  */
-	var $tableParameters = array();
+	public $tableParameters = array();
 
 /**
  * List of engine specific additional field parameters used on table creating
@@ -111,7 +111,7 @@ class DboSource extends DataSource {
  * @var array
  * @access public
  */
-	var $fieldParameters = array();
+	public $fieldParameters = array();
 
 /**
  * Constructor

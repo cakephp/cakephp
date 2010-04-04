@@ -33,7 +33,7 @@ class ClassRegisterModel extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 }
 
 /**
@@ -50,7 +50,7 @@ class RegisterArticle extends ClassRegisterModel {
  * @var string 'RegisterArticle'
  * @access public
  */
-	var $name = 'RegisterArticle';
+	public $name = 'RegisterArticle';
 }
 
 /**
@@ -67,7 +67,7 @@ class RegisterArticleFeatured extends ClassRegisterModel {
  * @var string 'RegisterArticleFeatured'
  * @access public
  */
-	var $name = 'RegisterArticleFeatured';
+	public $name = 'RegisterArticleFeatured';
 }
 
 /**
@@ -84,7 +84,7 @@ class RegisterArticleTag extends ClassRegisterModel {
  * @var string 'RegisterArticleTag'
  * @access public
  */
-	var $name = 'RegisterArticleTag';
+	public $name = 'RegisterArticleTag';
 }
 
 /**
@@ -101,7 +101,7 @@ class RegistryPluginAppModel extends ClassRegisterModel {
  * @var string 'something_'
  * @access public
  */
-	var $tablePrefix = 'something_';
+	public $tablePrefix = 'something_';
 }
 
 /**
@@ -118,7 +118,7 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
  * @var string 'TestRegistryPluginModel'
  * @access public
  */
-	var $name = 'TestRegistryPluginModel';
+	public $name = 'TestRegistryPluginModel';
 }
 
 /**
@@ -135,7 +135,7 @@ class RegisterCategory extends ClassRegisterModel {
  * @var string 'RegisterCategory'
  * @access public
  */
-	var $name = 'RegisterCategory';
+	public $name = 'RegisterCategory';
 }
 
 /**

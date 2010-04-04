@@ -30,7 +30,7 @@ class CakeTestSuiteDispatcher {
  *
  * @var array
  */
-	var $params = array(
+	public $params = array(
 		'codeCoverage' => false,
 		'group' => null,
 		'case' => null,
@@ -53,7 +53,7 @@ class CakeTestSuiteDispatcher {
  *
  * @var TestManager subclass
  */
-	var $Manager;
+	public $Manager;
 
 /**
  * Baseurl for the request

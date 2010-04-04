@@ -37,7 +37,7 @@ class DbAclNodeTestBase extends AclNode {
  * @var string 'test_suite'
  * @access public
  */
-	var $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test_suite';
 
 /**
  * cacheSources property
@@ -45,7 +45,7 @@ class DbAclNodeTestBase extends AclNode {
  * @var bool false
  * @access public
  */
-	var $cacheSources = false;
+	public $cacheSources = false;
 }
 
 /**
@@ -62,7 +62,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @var string 'DbAroTest'
  * @access public
  */
-	var $name = 'DbAroTest';
+	public $name = 'DbAroTest';
 
 /**
  * useTable property
@@ -70,7 +70,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @var string 'aros'
  * @access public
  */
-	var $useTable = 'aros';
+	public $useTable = 'aros';
 
 /**
  * hasAndBelongsToMany property
@@ -78,7 +78,7 @@ class DbAroTest extends DbAclNodeTestBase {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('DbAcoTest' => array('with' => 'DbPermissionTest'));
+	public $hasAndBelongsToMany = array('DbAcoTest' => array('with' => 'DbPermissionTest'));
 }
 
 /**
@@ -95,7 +95,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @var string 'DbAcoTest'
  * @access public
  */
-	var $name = 'DbAcoTest';
+	public $name = 'DbAcoTest';
 
 /**
  * useTable property
@@ -103,7 +103,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @var string 'acos'
  * @access public
  */
-	var $useTable = 'acos';
+	public $useTable = 'acos';
 
 /**
  * hasAndBelongsToMany property
@@ -111,7 +111,7 @@ class DbAcoTest extends DbAclNodeTestBase {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('DbAroTest' => array('with' => 'DbPermissionTest'));
+	public $hasAndBelongsToMany = array('DbAroTest' => array('with' => 'DbPermissionTest'));
 }
 
 /**
@@ -128,7 +128,7 @@ class DbPermissionTest extends CakeTestModel {
  * @var string 'DbPermissionTest'
  * @access public
  */
-	var $name = 'DbPermissionTest';
+	public $name = 'DbPermissionTest';
 
 /**
  * useTable property
@@ -136,7 +136,7 @@ class DbPermissionTest extends CakeTestModel {
  * @var string 'aros_acos'
  * @access public
  */
-	var $useTable = 'aros_acos';
+	public $useTable = 'aros_acos';
 
 /**
  * cacheQueries property
@@ -144,7 +144,7 @@ class DbPermissionTest extends CakeTestModel {
  * @var bool false
  * @access public
  */
-	var $cacheQueries = false;
+	public $cacheQueries = false;
 
 /**
  * belongsTo property
@@ -152,7 +152,7 @@ class DbPermissionTest extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('DbAroTest' => array('foreignKey' => 'aro_id'), 'DbAcoTest' => array('foreignKey' => 'aco_id'));
+	public $belongsTo = array('DbAroTest' => array('foreignKey' => 'aro_id'), 'DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
 
 /**
@@ -169,7 +169,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @var string 'DbAcoActionTest'
  * @access public
  */
-	var $name = 'DbAcoActionTest';
+	public $name = 'DbAcoActionTest';
 
 /**
  * useTable property
@@ -177,7 +177,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @var string 'aco_actions'
  * @access public
  */
-	var $useTable = 'aco_actions';
+	public $useTable = 'aco_actions';
 
 /**
  * belongsTo property
@@ -185,7 +185,7 @@ class DbAcoActionTest extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('DbAcoTest' => array('foreignKey' => 'aco_id'));
+	public $belongsTo = array('DbAcoTest' => array('foreignKey' => 'aco_id'));
 }
 
 /**
@@ -202,7 +202,7 @@ class DbAroUserTest extends CakeTestModel {
  * @var string 'AuthUser'
  * @access public
  */
-	var $name = 'AuthUser';
+	public $name = 'AuthUser';
 
 /**
  * useTable property
@@ -210,7 +210,7 @@ class DbAroUserTest extends CakeTestModel {
  * @var string 'auth_users'
  * @access public
  */
-	var $useTable = 'auth_users';
+	public $useTable = 'auth_users';
 	/**
  * bindNode method
  *
@@ -263,7 +263,7 @@ class AclNodeTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
+	public $fixtures = array('core.aro', 'core.aco', 'core.aros_aco', 'core.aco_action', 'core.auth_user');
 
 /**
  * setUp method

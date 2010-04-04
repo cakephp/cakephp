@@ -32,7 +32,7 @@ class MessageFixture extends CakeTestFixture {
  * @var string 'Message'
  * @access public
  */
-	var $name = 'Message';
+	public $name = 'Message';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class MessageFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'thread_id' => array('type' => 'integer', 'null' => false),
 		'name' => array('type' => 'string', 'null' => false)
@@ -52,7 +52,7 @@ class MessageFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('thread_id' => 1, 'name' => 'Thread 1, Message 1'),
 		array('thread_id' => 2, 'name' => 'Thread 2, Message 1'),
 		array('thread_id' => 3, 'name' => 'Thread 3, Message 1')

@@ -30,7 +30,7 @@ class PluginTask extends Shell {
  * Tasks
  *
  */
-	var $tasks = array('Model', 'Controller', 'View');
+	public $tasks = array('Model', 'Controller', 'View');
 
 /**
  * path to CONTROLLERS directory
@@ -38,7 +38,7 @@ class PluginTask extends Shell {
  * @var array
  * @access public
  */
-	var $path = null;
+	public $path = null;
 
 /**
  * initialize

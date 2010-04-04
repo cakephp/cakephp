@@ -44,7 +44,7 @@ Mock::generatePartial(
 );
 
 class TEST_DATABASE_CONFIG {
-	var $default = array(
+	public $default = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',
@@ -54,7 +54,7 @@ class TEST_DATABASE_CONFIG {
 		'prefix' => '',
 	);
 
-	var $otherOne = array(
+	public $otherOne = array(
 		'driver' => 'mysql',
 		'persistent' => false,
 		'host' => 'localhost',

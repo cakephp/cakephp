@@ -35,7 +35,7 @@ class UnconventionalTreeFixture extends CakeTestFixture {
  * @var string 'FlagTree'
  * @access public
  */
-	var $name = 'UnconventionalTree';
+	public $name = 'UnconventionalTree';
 
 /**
  * fields property
@@ -43,7 +43,7 @@ class UnconventionalTreeFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id'	=> array('type' => 'integer','key' => 'primary'),
 		'name'	=> array('type' => 'string','null' => false),
 		'join' => 'integer',

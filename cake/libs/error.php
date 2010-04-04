@@ -30,14 +30,14 @@ App::import('Controller', 'App');
  * @subpackage    cake.cake.libs
  */
 class CakeErrorController extends AppController {
-	var $name = 'CakeError';
+	public $name = 'CakeError';
 
 /**
  * Uses Property
  *
  * @var array
  */
-	var $uses = array();
+	public $uses = array();
 
 /**
  * __construct
@@ -73,7 +73,7 @@ class ErrorHandler extends Object {
  * @var Controller
  * @access public
  */
-	var $controller = null;
+	public $controller = null;
 
 /**
  * Class constructor.

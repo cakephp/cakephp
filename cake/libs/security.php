@@ -32,7 +32,7 @@ class Security extends Object {
  * @var string
  * @access public
  */
-	var $hashType = null;
+	public $hashType = null;
 
 /**
  * Singleton implementation to get object instance.

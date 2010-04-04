@@ -34,7 +34,7 @@ class DboMysqli extends DboMysqlBase {
  *
  * @var unknown_type
  */
-	var $description = "Mysqli DBO Driver";
+	public $description = "Mysqli DBO Driver";
 
 /**
  * Base configuration settings for Mysqli driver

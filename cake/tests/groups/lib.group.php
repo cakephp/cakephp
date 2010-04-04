@@ -34,7 +34,7 @@ class LibGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $label = 'All core, non MVC element libs';
+	public $label = 'All core, non MVC element libs';
 
 /**
  * LibGroupTest method

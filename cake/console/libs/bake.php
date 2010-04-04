@@ -37,7 +37,7 @@ class BakeShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
 
 /**
  * Override loadTasks() to handle paths

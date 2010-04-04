@@ -52,7 +52,7 @@ class SecurityTestController extends Controller {
  * @var string 'SecurityTest'
  * @access public
  */
-	var $name = 'SecurityTest';
+	public $name = 'SecurityTest';
 
 /**
  * components property
@@ -60,7 +60,7 @@ class SecurityTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Session', 'TestSecurity');
+	public $components = array('Session', 'TestSecurity');
 
 /**
  * failed property
@@ -68,7 +68,7 @@ class SecurityTestController extends Controller {
  * @var bool false
  * @access public
  */
-	var $failed = false;
+	public $failed = false;
 
 /**
  * Used for keeping track of headers in test
@@ -76,7 +76,7 @@ class SecurityTestController extends Controller {
  * @var array
  * @access public
  */
-	var $testHeaders = array();
+	public $testHeaders = array();
 
 /**
  * fail method
@@ -127,7 +127,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @var SecurityTestController
  * @access public
  */
-	var $Controller;
+	public $Controller;
 
 /**
  * oldSalt property
@@ -135,7 +135,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @var string
  * @access public
  */
-	var $oldSalt;
+	public $oldSalt;
 
 /**
  * setUp method

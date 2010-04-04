@@ -32,7 +32,7 @@ class PostFixture extends CakeTestFixture {
  * @var string 'Post'
  * @access public
  */
-	var $name = 'Post';
+	public $name = 'Post';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class PostFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'author_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
@@ -56,7 +56,7 @@ class PostFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('author_id' => 1, 'title' => 'First Post', 'body' => 'First Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 		array('author_id' => 3, 'title' => 'Second Post', 'body' => 'Second Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 		array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')

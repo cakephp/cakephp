@@ -33,7 +33,7 @@ class PaginatorHelper extends AppHelper {
  *
  * @var array
  */
-	var $helpers = array('Html');
+	public $helpers = array('Html');
 
 /**
  * Holds the default model for paged recordsets
@@ -73,12 +73,12 @@ class PaginatorHelper extends AppHelper {
  * @var array
  * @access public
  */
-	var $options = array();
+	public $options = array();
 
 /**
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
  *
- * Use `var $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
+ * Use `public $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
  * or choose a non JsHelper Helper.  If you want to use a specific library with JsHelper declare JsHelper and its
  * adapter before including PaginatorHelper in your helpers array.
  *

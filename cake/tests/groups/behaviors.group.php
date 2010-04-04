@@ -34,7 +34,7 @@ class BehaviorsGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $label = 'All core behavior test cases.';
+	public $label = 'All core behavior test cases.';
 
 /**
  * BehaviorsGroupTest method

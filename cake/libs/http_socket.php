@@ -36,7 +36,7 @@ class HttpSocket extends CakeSocket {
  * @var string
  * @access public
  */
-	var $description = 'HTTP-based DataSource Interface';
+	public $description = 'HTTP-based DataSource Interface';
 
 /**
  * When one activates the $quirksMode by setting it to true, all checks meant to
@@ -46,7 +46,7 @@ class HttpSocket extends CakeSocket {
  * @var boolean
  * @access public
  */
-	var $quirksMode = false;
+	public $quirksMode = false;
 
 /**
  * The default values to use for a request
@@ -54,7 +54,7 @@ class HttpSocket extends CakeSocket {
  * @var array
  * @access public
  */
-	var $request = array(
+	public $request = array(
 		'method' => 'GET',
 		'uri' => array(
 			'scheme' => 'http',
@@ -88,7 +88,7 @@ class HttpSocket extends CakeSocket {
 * @var array
 * @access public
 */
-	var $response = array(
+	public $response = array(
 		'raw' => array(
 			'status-line' => null,
 			'header' => null,
@@ -111,7 +111,7 @@ class HttpSocket extends CakeSocket {
  * @var array
  * @access public
  */
-	var $config = array(
+	public $config = array(
 		'persistent' => false,
 		'host' => 'localhost',
 		'protocol' => 'tcp',
@@ -138,7 +138,7 @@ class HttpSocket extends CakeSocket {
  * @var string
  * @access public
  */
-	var $lineBreak = "\r\n";
+	public $lineBreak = "\r\n";
 
 /**
  * Build an HTTP Socket using the specified configuration.

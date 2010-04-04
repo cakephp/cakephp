@@ -29,7 +29,7 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * Used for runtime configuration of model
  */
-	var $runtime = array();
+	public $runtime = array();
 
 /**
  * Callback
@@ -517,9 +517,9 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
  * @subpackage    cake.cake.libs.model.behaviors
  */
 	class I18nModel extends AppModel {
-		var $name = 'I18nModel';
-		var $useTable = 'i18n';
-		var $displayField = 'field';
+		public $name = 'I18nModel';
+		public $useTable = 'i18n';
+		public $displayField = 'field';
 	}
 }
 ?>

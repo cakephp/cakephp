@@ -69,9 +69,9 @@ if (!$imported) {
 	App::import('Core', 'Model');
 
 	class Article extends Model {
-		var $name = 'Article';
-		var $hasMany = array('Comment');
-		var $hasAndBelongsToMany = array('Tag');
+		public $name = 'Article';
+		public $hasMany = array('Comment');
+		public $hasAndBelongsToMany = array('Tag');
 	}
 
 }
@@ -90,7 +90,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
  * startTest method

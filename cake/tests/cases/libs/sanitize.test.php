@@ -33,7 +33,7 @@ class SanitizeDataTest extends CakeTestModel {
  * @var string 'SanitizeDataTest'
  * @access public
  */
-	var $name = 'SanitizeDataTest';
+	public $name = 'SanitizeDataTest';
 
 /**
  * useTable property
@@ -41,7 +41,7 @@ class SanitizeDataTest extends CakeTestModel {
  * @var string 'data_tests'
  * @access public
  */
-	var $useTable = 'data_tests';
+	public $useTable = 'data_tests';
 }
 
 /**
@@ -58,7 +58,7 @@ class SanitizeArticle extends CakeTestModel {
  * @var string 'Article'
  * @access public
  */
-	var $name = 'SanitizeArticle';
+	public $name = 'SanitizeArticle';
 
 /**
  * useTable property
@@ -66,7 +66,7 @@ class SanitizeArticle extends CakeTestModel {
  * @var string 'articles'
  * @access public
  */
-	var $useTable = 'articles';
+	public $useTable = 'articles';
 }
 
 /**
@@ -83,7 +83,7 @@ class SanitizeTest extends CakeTestCase {
  * @var bool false
  * @access public
  */
-	var $autoFixtures = false;
+	public $autoFixtures = false;
 
 /**
  * fixtures property
@@ -91,7 +91,7 @@ class SanitizeTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.data_test', 'core.article');
+	public $fixtures = array('core.data_test', 'core.article');
 
 /**
  * startTest method

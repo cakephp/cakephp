@@ -36,7 +36,7 @@ class DboMysqliTestDb extends DboMysqli {
  * @var array
  * @access public
  */
-	var $simulated = array();
+	public $simulated = array();
 
 /**
  * testing property
@@ -44,7 +44,7 @@ class DboMysqliTestDb extends DboMysqli {
  * @var bool true
  * @access public
  */
-	var $testing = true;
+	public $testing = true;
 
 /**
  * execute method
@@ -86,7 +86,7 @@ class MysqliTestModel extends Model {
  * @var string 'MysqlTestModel'
  * @access public
  */
-	var $name = 'MysqliTestModel';
+	public $name = 'MysqliTestModel';
 
 /**
  * useTable property
@@ -94,7 +94,7 @@ class MysqliTestModel extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method
@@ -133,14 +133,14 @@ class MysqliTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqliTest extends CakeTestCase {
-	var $fixtures = array('core.datatype');
+	public $fixtures = array('core.datatype');
 /**
  * The Dbo instance to be tested
  *
  * @var DboSource
  * @access public
  */
-	var $Db = null;
+	public $Db = null;
 
 /**
  * Skip if cannot connect to mysqli

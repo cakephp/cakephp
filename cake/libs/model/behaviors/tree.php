@@ -36,7 +36,7 @@ class TreeBehavior extends ModelBehavior {
  *
  * @var array
  */
-	var $errors = array();
+	public $errors = array();
 
 /**
  * Defaults

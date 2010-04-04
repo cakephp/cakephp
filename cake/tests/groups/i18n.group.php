@@ -34,7 +34,7 @@ class i18nGroupTest extends TestSuite {
  * @var string
  * @access public
  */
-	var $label = 'i18n, l10n and multibyte tests';
+	public $label = 'i18n, l10n and multibyte tests';
 
 /**
  * LibGroupTest method

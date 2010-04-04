@@ -60,7 +60,7 @@ class SchemaShellTestSchema extends CakeSchema {
  * @var string 'MyApp'
  * @access public
  */
-	var $name = 'SchemaShellTest';
+	public $name = 'SchemaShellTest';
 
 /**
  * connection property
@@ -68,7 +68,7 @@ class SchemaShellTestSchema extends CakeSchema {
  * @var string 'test_suite'
  * @access public
  */
-	var $connection = 'test_suite';
+	public $connection = 'test_suite';
 
 /**
  * comments property
@@ -76,7 +76,7 @@ class SchemaShellTestSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $comments = array(
+	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 		'user_id' => array('type' => 'integer', 'null' => false),
@@ -94,7 +94,7 @@ class SchemaShellTestSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $articles = array(
+	public $articles = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'user_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
 		'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
@@ -121,7 +121,7 @@ class SchemaShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author', 
+	public $fixtures = array('core.article', 'core.user', 'core.post', 'core.auth_user', 'core.author', 
 		'core.comment', 'core.test_plugin_comment'
 	);
 

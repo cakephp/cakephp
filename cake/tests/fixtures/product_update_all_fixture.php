@@ -25,17 +25,17 @@
  * @subpackage    cake.tests.fixtures
  */
 class ProductUpdateAllFixture extends CakeTestFixture {
-	var $name = 'ProductUpdateAll';
-	var $table = 'product_update_all';
+	public $name = 'ProductUpdateAll';
+	public $table = 'product_update_all';
 
-    var $fields = array(
+    public $fields = array(
             'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
             'name' => array('type'=>'string', 'null' => false, 'length' => 29),
             'groupcode' => array('type'=>'integer', 'null' => false, 'length' => 4),
             'group_id' => array('type'=>'integer', 'null' => false, 'length' => 8),
             'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
             );
-    var $records = array(
+    public $records = array(
         array(
             'id'  => 1,
             'name'  => 'product one',

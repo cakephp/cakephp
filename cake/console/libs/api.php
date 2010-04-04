@@ -34,7 +34,7 @@ class ApiShell extends Shell {
  * @var array
  * @access public
  */
-	var $paths = array();
+	public $paths = array();
 
 /**
  * Override intialize of the Shell

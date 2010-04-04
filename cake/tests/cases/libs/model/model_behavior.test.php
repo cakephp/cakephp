@@ -38,7 +38,7 @@ class TestBehavior extends ModelBehavior {
  * @var array
  * @access public
  */
-	var $mapMethods = array('/test(\w+)/' => 'testMethod', '/look for\s+(.+)/' => 'speakEnglish');
+	public $mapMethods = array('/test(\w+)/' => 'testMethod', '/look for\s+(.+)/' => 'speakEnglish');
 
 /**
  * setup method
@@ -423,7 +423,7 @@ class BehaviorTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.apple', 'core.sample', 'core.article', 'core.user', 'core.comment',
 		'core.attachment', 'core.tag', 'core.articles_tag'
 	);

@@ -36,7 +36,7 @@ class RequestHandlerTestController extends Controller {
  * @var string
  * @access public
  */
-	var $name = 'RequestHandlerTest';
+	public $name = 'RequestHandlerTest';
 
 /**
  * uses property
@@ -44,7 +44,7 @@ class RequestHandlerTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 
 /**
  * construct method
@@ -94,7 +94,7 @@ class RequestHandlerTestDisabledController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 
 /**
  * construct method
@@ -135,7 +135,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @var RequestHandlerTestController
  * @access public
  */
-	var $Controller;
+	public $Controller;
 
 /**
  * RequestHandler property
@@ -143,7 +143,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @var RequestHandlerComponent
  * @access public
  */
-	var $RequestHandler;
+	public $RequestHandler;
 
 /**
  * startTest method

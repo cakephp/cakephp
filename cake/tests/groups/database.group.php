@@ -35,7 +35,7 @@ class DatabaseGroupTest extends TestSuite {
  * @var string 'All model tests'
  * @access public
  */
-	var $label = 'Datasources, Schema and DbAcl tests';
+	public $label = 'Datasources, Schema and DbAcl tests';
 
 /**
  * ModelGroupTest method

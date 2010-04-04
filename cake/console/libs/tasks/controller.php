@@ -34,7 +34,7 @@ class ControllerTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $tasks = array('Model', 'Test', 'Template', 'DbConfig', 'Project');
+	public $tasks = array('Model', 'Test', 'Template', 'DbConfig', 'Project');
 
 /**
  * path to CONTROLLERS directory
@@ -42,7 +42,7 @@ class ControllerTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $path = CONTROLLERS;
+	public $path = CONTROLLERS;
 
 /**
  * Override initialize

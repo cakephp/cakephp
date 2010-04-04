@@ -31,21 +31,21 @@ class DboMysqlBase extends DboSource {
  *
  * @var string
  */
-	var $description = "MySQL DBO Base Driver";
+	public $description = "MySQL DBO Base Driver";
 
 /**
  * Start quote
  *
  * @var string
  */
-	var $startQuote = "`";
+	public $startQuote = "`";
 
 /**
  * End quote
  *
  * @var string
  */
-	var $endQuote = "`";
+	public $endQuote = "`";
 
 /**
  * use alias for update and delete. Set to true if version >= 4.1
@@ -73,7 +73,7 @@ class DboMysqlBase extends DboSource {
  * @var array
  * @access public
  */
-	var $fieldParameters = array(
+	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
 		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault')
@@ -85,7 +85,7 @@ class DboMysqlBase extends DboSource {
  * @var array
  * @access public
  */
-	var $tableParameters = array(
+	public $tableParameters = array(
 		'charset' => array('value' => 'DEFAULT CHARSET', 'quote' => false, 'join' => '=', 'column' => 'charset'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => '=', 'column' => 'Collation'),
 		'engine' => array('value' => 'ENGINE', 'quote' => false, 'join' => '=', 'column' => 'Engine')
@@ -96,7 +96,7 @@ class DboMysqlBase extends DboSource {
  *
  * @var array
  */
-	var $columns = array(
+	public $columns = array(
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
@@ -511,7 +511,7 @@ class DboMysql extends DboMysqlBase {
  *
  * @var unknown_type
  */
-	var $description = "MySQL DBO Driver";
+	public $description = "MySQL DBO Driver";
 
 /**
  * Base configuration settings for MySQL driver

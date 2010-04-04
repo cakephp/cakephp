@@ -109,7 +109,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @var string
  * @access public
  */
-	 var $jQueryObject = '$';
+	 public $jQueryObject = '$';
 
 /**
  * Helper function to wrap repetitive simple method templating.

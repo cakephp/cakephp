@@ -40,7 +40,7 @@ class SocketGroupTest extends TestSuite {
  * @var string 'Socket and HttpSocket tests'
  * @access public
  */
-	var $label = 'CakeSocket and HttpSocket tests';
+	public $label = 'CakeSocket and HttpSocket tests';
 
 /**
  * SocketGroupTest method

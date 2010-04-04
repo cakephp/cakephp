@@ -44,7 +44,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @var array
  * @access public
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * stdout property
@@ -52,7 +52,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @var string
  * @access public
  */
-	var $stdout = '';
+	public $stdout = '';
 
 /**
  * stderr property
@@ -60,7 +60,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @var string
  * @access public
  */
-	var $stderr = '';
+	public $stderr = '';
 
 /**
  * stopped property
@@ -68,7 +68,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @var string
  * @access public
  */
-	var $stopped = null;
+	public $stopped = null;
 
 /**
  * TestShell
@@ -76,7 +76,7 @@ class TestShellDispatcher extends ShellDispatcher {
  * @var mixed
  * @access public
  */
-	var $TestShell;
+	public $TestShell;
 
 /**
  * _initEnvironment method

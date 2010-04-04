@@ -170,7 +170,7 @@ class HttpSocketTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $Socket = null;
+	public $Socket = null;
 
 /**
  * RequestSocket property
@@ -178,7 +178,7 @@ class HttpSocketTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $RequestSocket = null;
+	public $RequestSocket = null;
 
 /**
  * This function sets up a TestHttpSocket instance we are going to use for testing

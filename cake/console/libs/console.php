@@ -30,7 +30,7 @@ class ConsoleShell extends Shell {
  * @var array
  * @access public
  */
-	var $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
+	public $associations = array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany');
 
 /**
  * Chars that describe invalid commands
@@ -38,7 +38,7 @@ class ConsoleShell extends Shell {
  * @var array
  * @access public
  */
-	var $badCommandChars = array('$', ';');
+	public $badCommandChars = array('$', ';');
 
 /**
  * Available models
@@ -46,7 +46,7 @@ class ConsoleShell extends Shell {
  * @var array
  * @access public
  */
-	var $models = array();
+	public $models = array();
 
 /**
  * Override intialize of the Shell

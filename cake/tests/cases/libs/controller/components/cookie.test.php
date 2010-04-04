@@ -34,7 +34,7 @@ class CookieComponentTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Cookie');
+	public $components = array('Cookie');
 
 /**
  * beforeFilter method
@@ -66,7 +66,7 @@ class CookieComponentTest extends CakeTestCase {
  * @var CookieComponentTestController
  * @access public
  */
-	var $Controller;
+	public $Controller;
 
 /**
  * start

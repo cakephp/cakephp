@@ -32,7 +32,7 @@ class UuidFixture extends CakeTestFixture {
  * @var string 'Uuid'
  * @access public
  */
-	var $name = 'Uuid';
+	public $name = 'Uuid';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class UuidFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
 		'title' => 'string',
 		'count' => array('type' => 'integer', 'default' => 0),
@@ -54,7 +54,7 @@ class UuidFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => '47c36f9c-bc00-4d17-9626-4e183ca6822b', 'title' => 'Unique record 1', 'count' => 2, 'created' => '2008-03-13 01:16:23', 'updated' => '2008-03-13 01:18:31'),
 		array('id' => '47c36f9c-f2b0-43f5-b3f7-4e183ca6822b', 'title' => 'Unique record 2', 'count' => 4, 'created' => '2008-03-13 01:18:24', 'updated' => '2008-03-13 01:20:32'),
 		array('id' => '47c36f9c-0ffc-4084-9b03-4e183ca6822b', 'title' => 'Unique record 3', 'count' => 5, 'created' => '2008-03-13 01:20:25', 'updated' => '2008-03-13 01:22:33'),

@@ -34,14 +34,14 @@ class AjaxTestController extends Controller {
  * @var string 'AjaxTest'
  * @access public
  */
-	var $name = 'AjaxTest';
+	public $name = 'AjaxTest';
 /**
  * uses property
  *
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 }
 /**
  * PostAjaxTest class
@@ -56,14 +56,14 @@ class PostAjaxTest extends Model {
  * @var string 'id'
  * @access public
  */
-	var $primaryKey = 'id';
+	public $primaryKey = 'id';
 /**
  * useTable property
  *
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 /**
  * schema method
  *
@@ -108,7 +108,7 @@ class TestJavascriptHelper extends JavascriptHelper {
  * @var mixed
  * @access public
  */
-	var $codeBlocks;
+	public $codeBlocks;
 /**
  * codeBlock method
  *
@@ -135,13 +135,13 @@ class AjaxHelperTest extends CakeTestCase {
  *
  * @var string
  */
-	var $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+	public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
 /**
  * Regexp for CDATA end block
  *
  * @var string
  */
-	var $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+	public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
 /**
  * setUp method
  *

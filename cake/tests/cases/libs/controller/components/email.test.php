@@ -134,7 +134,7 @@ class EmailTestController extends Controller {
  * @var string 'EmailTest'
  * @access public
  */
-	var $name = 'EmailTest';
+	public $name = 'EmailTest';
 
 /**
  * uses property
@@ -142,7 +142,7 @@ class EmailTestController extends Controller {
  * @var mixed null
  * @access public
  */
-	var $uses = null;
+	public $uses = null;
 
 /**
  * components property
@@ -150,7 +150,7 @@ class EmailTestController extends Controller {
  * @var array
  * @access public
  */
-	var $components = array('Session', 'EmailTest');
+	public $components = array('Session', 'EmailTest');
 
 /**
  * pageTitle property
@@ -158,7 +158,7 @@ class EmailTestController extends Controller {
  * @var string
  * @access public
  */
-	var $pageTitle = 'EmailTest';
+	public $pageTitle = 'EmailTest';
 }
 
 /**
@@ -175,7 +175,7 @@ class EmailComponentTest extends CakeTestCase {
  * @var EmailTestController
  * @access public
  */
-	var $Controller;
+	public $Controller;
 
 /**
  * name property
@@ -183,7 +183,7 @@ class EmailComponentTest extends CakeTestCase {
  * @var string 'Email'
  * @access public
  */
-	var $name = 'Email';
+	public $name = 'Email';
 
 /**
  * setUp method

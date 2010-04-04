@@ -34,7 +34,7 @@ class MyAppSchema extends CakeSchema {
  * @var string 'MyApp'
  * @access public
  */
-	var $name = 'MyApp';
+	public $name = 'MyApp';
 
 /**
  * connection property
@@ -42,7 +42,7 @@ class MyAppSchema extends CakeSchema {
  * @var string 'test_suite'
  * @access public
  */
-	var $connection = 'test_suite';
+	public $connection = 'test_suite';
 
 /**
  * comments property
@@ -50,7 +50,7 @@ class MyAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $comments = array(
+	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'post_id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 		'user_id' => array('type' => 'integer', 'null' => false),
@@ -68,7 +68,7 @@ class MyAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $posts = array(
+	public $posts = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'author_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
 		'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
@@ -115,7 +115,7 @@ class TestAppSchema extends CakeSchema {
  * @var string 'MyApp'
  * @access public
  */
-	var $name = 'MyApp';
+	public $name = 'MyApp';
 
 /**
  * comments property
@@ -123,7 +123,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $comments = array(
+	public $comments = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0,'key' => 'primary'),
 		'article_id' => array('type' => 'integer', 'null' => false),
 		'user_id' => array('type' => 'integer', 'null' => false),
@@ -141,7 +141,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $posts = array(
+	public $posts = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'author_id' => array('type' => 'integer', 'null' => false),
 		'title' => array('type' => 'string', 'null' => false),
@@ -159,7 +159,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $posts_tags = array(
+	public $posts_tags = array(
 		'post_id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
 		'tag_id' => array('type' => 'string', 'null' => false, 'key' => 'primary'),
 		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1)),
@@ -172,7 +172,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $tags = array(
+	public $tags = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'tag' => array('type' => 'string', 'null' => false),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null),
@@ -187,7 +187,7 @@ class TestAppSchema extends CakeSchema {
  * @var array
  * @access public
  */
-	var $datatypes = array(
+	public $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => ''),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
@@ -229,7 +229,7 @@ class SchemaPost extends CakeTestModel {
  * @var string 'SchemaPost'
  * @access public
  */
-	var $name = 'SchemaPost';
+	public $name = 'SchemaPost';
 
 /**
  * useTable property
@@ -237,7 +237,7 @@ class SchemaPost extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'posts';
+	public $useTable = 'posts';
 
 /**
  * hasMany property
@@ -245,7 +245,7 @@ class SchemaPost extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasMany = array('SchemaComment');
+	public $hasMany = array('SchemaComment');
 
 /**
  * hasAndBelongsToMany property
@@ -253,7 +253,7 @@ class SchemaPost extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('SchemaTag');
+	public $hasAndBelongsToMany = array('SchemaTag');
 }
 
 /**
@@ -270,7 +270,7 @@ class SchemaComment extends CakeTestModel {
  * @var string 'SchemaComment'
  * @access public
  */
-	var $name = 'SchemaComment';
+	public $name = 'SchemaComment';
 
 /**
  * useTable property
@@ -278,7 +278,7 @@ class SchemaComment extends CakeTestModel {
  * @var string 'comments'
  * @access public
  */
-	var $useTable = 'comments';
+	public $useTable = 'comments';
 
 /**
  * belongsTo property
@@ -286,7 +286,7 @@ class SchemaComment extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $belongsTo = array('SchemaPost');
+	public $belongsTo = array('SchemaPost');
 }
 
 /**
@@ -303,7 +303,7 @@ class SchemaTag extends CakeTestModel {
  * @var string 'SchemaTag'
  * @access public
  */
-	var $name = 'SchemaTag';
+	public $name = 'SchemaTag';
 
 /**
  * useTable property
@@ -311,7 +311,7 @@ class SchemaTag extends CakeTestModel {
  * @var string 'tags'
  * @access public
  */
-	var $useTable = 'tags';
+	public $useTable = 'tags';
 
 /**
  * hasAndBelongsToMany property
@@ -319,7 +319,7 @@ class SchemaTag extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('SchemaPost');
+	public $hasAndBelongsToMany = array('SchemaPost');
 }
 
 /**
@@ -336,7 +336,7 @@ class SchemaDatatype extends CakeTestModel {
  * @var string 'SchemaDatatype'
  * @access public
  */
-	var $name = 'SchemaDatatype';
+	public $name = 'SchemaDatatype';
 
 /**
  * useTable property
@@ -344,7 +344,7 @@ class SchemaDatatype extends CakeTestModel {
  * @var string 'datatypes'
  * @access public
  */
-	var $useTable = 'datatypes';
+	public $useTable = 'datatypes';
 }
 
 /**
@@ -366,7 +366,7 @@ class Testdescribe extends CakeTestModel {
  * @var string 'Testdescribe'
  * @access public
  */
-	var $name = 'Testdescribe';
+	public $name = 'Testdescribe';
 }
 
 /**
@@ -383,7 +383,7 @@ class SchemaCrossDatabase extends CakeTestModel {
  * @var string 'SchemaCrossDatabase'
  * @access public
  */
-	var $name = 'SchemaCrossDatabase';
+	public $name = 'SchemaCrossDatabase';
 
 /**
  * useTable property
@@ -391,7 +391,7 @@ class SchemaCrossDatabase extends CakeTestModel {
  * @var string 'posts'
  * @access public
  */
-	var $useTable = 'cross_database';
+	public $useTable = 'cross_database';
 
 /**
  * useDbConfig property
@@ -399,7 +399,7 @@ class SchemaCrossDatabase extends CakeTestModel {
  * @var string 'test2'
  * @access public
  */
-	var $useDbConfig = 'test2';
+	public $useDbConfig = 'test2';
 }
 
 /**
@@ -416,14 +416,14 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * @var string 'CrossDatabase'
  * @access public
  */
-	var $name = 'CrossDatabase';
+	public $name = 'CrossDatabase';
 
 /**
  * table property
  *
  * @access public
  */
-	var $table = 'cross_database';
+	public $table = 'cross_database';
 
 /**
  * fields property
@@ -431,7 +431,7 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'id' => array('type' => 'integer', 'key' => 'primary'),
 		'name' => 'string'
 	);
@@ -442,7 +442,7 @@ class SchemaCrossDatabaseFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('id' => 1, 'name' => 'First'),
 		array('id' => 2, 'name' => 'Second'),
 	);
@@ -462,7 +462,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.post', 'core.tag', 'core.posts_tag', 'core.test_plugin_comment', 
 		'core.datatype', 'core.auth_user', 'core.author',
 		'core.test_plugin_article', 'core.user', 'core.comment'

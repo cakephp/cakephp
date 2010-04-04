@@ -20,7 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Post extends AppModel {
-	var $useTable = 'posts';
-	var $name = 'Post';
+	public $useTable = 'posts';
+	public $name = 'Post';
 }
 ?>

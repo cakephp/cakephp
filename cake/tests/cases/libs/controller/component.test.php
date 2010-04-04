@@ -36,7 +36,7 @@ if (!class_exists('AppController')) {
  * @var string 'App'
  * @access public
  */
-		var $name = 'App';
+		public $name = 'App';
 
 /**
  * uses property
@@ -44,7 +44,7 @@ if (!class_exists('AppController')) {
  * @var array
  * @access public
  */
-		var $uses = array();
+		public $uses = array();
 
 /**
  * helpers property
@@ -52,7 +52,7 @@ if (!class_exists('AppController')) {
  * @var array
  * @access public
  */
-		var $helpers = array();
+		public $helpers = array();
 
 /**
  * components property
@@ -60,7 +60,7 @@ if (!class_exists('AppController')) {
  * @var array
  * @access public
  */
-		var $components = array('Orange' => array('colour' => 'blood orange'));
+		public $components = array('Orange' => array('colour' => 'blood orange'));
 	}
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
@@ -80,7 +80,7 @@ class ParamTestComponent extends Object {
  * @var string 'ParamTest'
  * @access public
  */
-	var $name = 'ParamTest';
+	public $name = 'ParamTest';
 
 /**
  * components property
@@ -88,7 +88,7 @@ class ParamTestComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('Banana' => array('config' => 'value'));
+	public $components = array('Banana' => array('config' => 'value'));
 
 /**
  * initialize method
@@ -123,7 +123,7 @@ class ComponentTestController extends AppController {
  * @var string 'ComponentTest'
  * @access public
  */
-	var $name = 'ComponentTest';
+	public $name = 'ComponentTest';
 
 /**
  * uses property
@@ -131,7 +131,7 @@ class ComponentTestController extends AppController {
  * @var array
  * @access public
  */
-	var $uses = array();
+	public $uses = array();
 }
 
 /**
@@ -148,7 +148,7 @@ class AppleComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('Orange');
+	public $components = array('Orange');
 
 /**
  * testName property
@@ -156,7 +156,7 @@ class AppleComponent extends Object {
  * @var mixed null
  * @access public
  */
-	var $testName = null;
+	public $testName = null;
 
 /**
  * startup method
@@ -184,7 +184,7 @@ class OrangeComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('Banana');
+	public $components = array('Banana');
 
 /**
  * initialize method
@@ -225,7 +225,7 @@ class BananaComponent extends Object {
  * @var string 'BananaField'
  * @access public
  */
-	var $testField = 'BananaField';
+	public $testField = 'BananaField';
 
 /**
  * startup method
@@ -253,7 +253,7 @@ class MutuallyReferencingOneComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('MutuallyReferencingTwo');
+	public $components = array('MutuallyReferencingTwo');
 }
 
 /**
@@ -270,7 +270,7 @@ class MutuallyReferencingTwoComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('MutuallyReferencingOne');
+	public $components = array('MutuallyReferencingOne');
 }
 
 /**
@@ -287,7 +287,7 @@ class SomethingWithEmailComponent extends Object {
  * @var array
  * @access public
  */
-	var $components = array('Email');
+	public $components = array('Email');
 }
 
 Mock::generate('Object', 'ComponentMockComponent', array('startup', 'beforeFilter', 'beforeRender', 'other'));

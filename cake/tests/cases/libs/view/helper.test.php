@@ -33,7 +33,7 @@ class HelperTestPost extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method
@@ -60,7 +60,7 @@ class HelperTestPost extends Model {
  * @var array
  * @access public
  */
-	var $hasAndBelongsToMany = array('HelperTestTag'=> array('with' => 'HelperTestPostsTag'));
+	public $hasAndBelongsToMany = array('HelperTestTag'=> array('with' => 'HelperTestPostsTag'));
 }
 
 /**
@@ -77,7 +77,7 @@ class HelperTestComment extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method
@@ -112,7 +112,7 @@ class HelperTestTag extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method
@@ -145,7 +145,7 @@ class HelperTestPostsTag extends Model {
  * @var bool false
  * @access public
  */
-	var $useTable = false;
+	public $useTable = false;
 
 /**
  * schema method

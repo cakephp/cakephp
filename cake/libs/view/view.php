@@ -40,14 +40,14 @@ class View extends Object {
  * @var string Base URL
  * @access public
  */
-	var $base = null;
+	public $base = null;
 
 /**
  * Stores the current URL (for links etc.)
  *
  * @var string Current URL
  */
-	var $here = null;
+	public $here = null;
 
 /**
  * Name of the plugin.
@@ -55,7 +55,7 @@ class View extends Object {
  * @link          http://manual.cakephp.org/chapter/plugins
  * @var string
  */
-	var $plugin = null;
+	public $plugin = null;
 
 /**
  * Name of the controller.
@@ -63,7 +63,7 @@ class View extends Object {
  * @var string Name of controller
  * @access public
  */
-	var $name = null;
+	public $name = null;
 
 /**
  * Action to be performed.
@@ -71,28 +71,28 @@ class View extends Object {
  * @var string Name of action
  * @access public
  */
-	var $action = null;
+	public $action = null;
 
 /**
  * Array of parameter data
  *
  * @var array Parameter data
  */
-	var $params = array();
+	public $params = array();
 
 /**
  * Current passed params
  *
  * @var mixed
  */
-	var $passedArgs = array();
+	public $passedArgs = array();
 
 /**
  * Array of data
  *
  * @var array Parameter data
  */
-	var $data = array();
+	public $data = array();
 
 /**
  * An array of names of built-in helpers to include.
@@ -100,14 +100,14 @@ class View extends Object {
  * @var mixed A single name as a string or a list of names as an array.
  * @access public
  */
-	var $helpers = array('Html');
+	public $helpers = array('Html');
 
 /**
  * Path to View.
  *
  * @var string Path to View
  */
-	var $viewPath = null;
+	public $viewPath = null;
 
 /**
  * Variables for the view
@@ -115,7 +115,7 @@ class View extends Object {
  * @var array
  * @access public
  */
-	var $viewVars = array();
+	public $viewVars = array();
 
 /**
  * Name of layout to use with this View.
@@ -123,14 +123,14 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $layout = 'default';
+	public $layout = 'default';
 
 /**
  * Path to Layout.
  *
  * @var string Path to Layout
  */
-	var $layoutPath = null;
+	public $layoutPath = null;
 
 /**
  * Turns on or off Cake's conventional mode of rendering views. On by default.
@@ -138,7 +138,7 @@ class View extends Object {
  * @var boolean
  * @access public
  */
-	var $autoRender = true;
+	public $autoRender = true;
 
 /**
  * Turns on or off Cake's conventional mode of finding layout files. On by default.
@@ -146,7 +146,7 @@ class View extends Object {
  * @var boolean
  * @access public
  */
-	var $autoLayout = true;
+	public $autoLayout = true;
 
 /**
  * File extension. Defaults to Cake's template ".ctp".
@@ -154,7 +154,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $ext = '.ctp';
+	public $ext = '.ctp';
 
 /**
  * Sub-directory for this view file.
@@ -162,7 +162,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $subDir = null;
+	public $subDir = null;
 	
 /**
  * Theme name.
@@ -170,7 +170,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $theme = null;
+	public $theme = null;
 
 /**
  * Used to define methods a controller that will be cached.
@@ -179,7 +179,7 @@ class View extends Object {
  * @var mixed
  * @access public
  */
-	var $cacheAction = false;
+	public $cacheAction = false;
 
 /**
  * holds current errors for the model validation
@@ -187,7 +187,7 @@ class View extends Object {
  * @var array
  * @access public
  */
-	var $validationErrors = array();
+	public $validationErrors = array();
 
 /**
  * True when the view has been rendered.
@@ -195,7 +195,7 @@ class View extends Object {
  * @var boolean
  * @access public
  */
-	var $hasRendered = false;
+	public $hasRendered = false;
 
 /**
  * Array of loaded view helpers.
@@ -203,7 +203,7 @@ class View extends Object {
  * @var array
  * @access public
  */
-	var $loaded = array();
+	public $loaded = array();
 
 /**
  * True if in scope of model-specific region
@@ -211,7 +211,7 @@ class View extends Object {
  * @var boolean
  * @access public
  */
-	var $modelScope = false;
+	public $modelScope = false;
 
 /**
  * Name of current model this view context is attached to
@@ -219,7 +219,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $model = null;
+	public $model = null;
 
 /**
  * Name of association model this view context is attached to
@@ -227,7 +227,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $association = null;
+	public $association = null;
 
 /**
  * Name of current model field this view context is attached to
@@ -235,7 +235,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $field = null;
+	public $field = null;
 
 /**
  * Suffix of current field this view context is attached to
@@ -243,7 +243,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $fieldSuffix = null;
+	public $fieldSuffix = null;
 
 /**
  * The current model ID this view context is attached to
@@ -251,7 +251,7 @@ class View extends Object {
  * @var mixed
  * @access public
  */
-	var $modelId = null;
+	public $modelId = null;
 
 /**
  * List of generated DOM UUIDs
@@ -259,7 +259,7 @@ class View extends Object {
  * @var array
  * @access public
  */
-	var $uuids = array();
+	public $uuids = array();
 
 /**
  * Holds View output.
@@ -267,7 +267,7 @@ class View extends Object {
  * @var string
  * @access public
  */
-	var $output = false;
+	public $output = false;
 
 /**
  * List of variables to collect from the associated controller

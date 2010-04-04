@@ -32,7 +32,7 @@ class Router {
  * @var array
  * @access public
  */
-	var $routes = array();
+	public $routes = array();
 
 /**
  * List of action prefixes used in connected routes.
@@ -80,7 +80,7 @@ class Router {
  * @var string
  * @access public
  */
-	var $named = array(
+	public $named = array(
 		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
 		'greedy' => true,
 		'separator' => ':',
@@ -1224,7 +1224,7 @@ class CakeRoute {
  * @var array
  * @access public
  */
-	var $keys = array();
+	public $keys = array();
 
 /**
  * An array of additional parameters for the Route.
@@ -1232,7 +1232,7 @@ class CakeRoute {
  * @var array
  * @access public
  */
-	var $options = array();
+	public $options = array();
 
 /**
  * Default parameters for a Route
@@ -1240,7 +1240,7 @@ class CakeRoute {
  * @var array
  * @access public
  */
-	var $defaults = array();
+	public $defaults = array();
 
 /**
  * The routes template string.
@@ -1248,7 +1248,7 @@ class CakeRoute {
  * @var string
  * @access public
  */
-	var $template = null;
+	public $template = null;
 
 /**
  * Is this route a greedy route?  Greedy routes have a `/*` in their

@@ -52,14 +52,14 @@ class TestShell extends Shell {
  * @var name
  * @access public
  */
-	var $name = 'TestShell';
+	public $name = 'TestShell';
 /**
  * stopped property
  *
  * @var integer
  * @access public
  */
-	var $stopped;
+	public $stopped;
 
 /**
  * stop method
@@ -105,7 +105,7 @@ class ShellTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	var $fixtures = array(
+	public $fixtures = array(
 		'core.post', 'core.comment', 'core.article', 'core.user',
 		'core.tag', 'core.articles_tag', 'core.attachment'
 	);

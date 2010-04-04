@@ -38,8 +38,8 @@ class CakeTestDispatcher extends Dispatcher {
  * @var Controller
  * @access public
  */
-	var $controller;
-	var $testCase;
+	public $controller;
+	public $testCase;
 
 /**
  * testCase method
@@ -92,7 +92,7 @@ class CakeTestCase extends UnitTestCase {
  * @var array
  * @access public
  */
-	var $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
+	public $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
 
 /**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -101,7 +101,7 @@ class CakeTestCase extends UnitTestCase {
  * @var array
  * @access public
  */
-	var $autoFixtures = true;
+	public $autoFixtures = true;
 
 /**
  * Set this to false to avoid tables to be dropped if they already exist
@@ -109,7 +109,7 @@ class CakeTestCase extends UnitTestCase {
  * @var boolean
  * @access public
  */
-	var $dropTables = true;
+	public $dropTables = true;
 
 /**
  * Maps fixture class names to fixture identifiers as included in CakeTestCase::$fixtures
@@ -731,7 +731,7 @@ class CakeTestCase extends UnitTestCase {
 	}
 
 /**
- * Load fixtures specified in var $fixtures.
+ * Load fixtures specified in public $fixtures.
  *
  * @return void
  * @access protected

@@ -106,8 +106,8 @@
  * Enable cache checking.
  *
  * If set to true, for view caching you must still use the controller
- * var $cacheAction inside your controllers to define caching settings.
- * You can either set it controller-wide by setting var $cacheAction = true,
+ * public $cacheAction inside your controllers to define caching settings.
+ * You can either set it controller-wide by setting public $cacheAction = true,
  * or in each action using $this->cacheAction = true.
  *
  */

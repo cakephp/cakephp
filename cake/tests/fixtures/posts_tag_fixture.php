@@ -32,7 +32,7 @@ class PostsTagFixture extends CakeTestFixture {
  * @var string 'PostsTag'
  * @access public
  */
-	var $name = 'PostsTag';
+	public $name = 'PostsTag';
 
 /**
  * fields property
@@ -40,7 +40,7 @@ class PostsTagFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $fields = array(
+	public $fields = array(
 		'post_id' => array('type' => 'integer', 'null' => false),
 		'tag_id' => array('type' => 'string', 'null' => false),
 		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
@@ -52,7 +52,7 @@ class PostsTagFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array(
+	public $records = array(
 		array('post_id' => 1, 'tag_id' => 'tag1'),
 		array('post_id' => 1, 'tag_id' => 'tag2'),
 		array('post_id' => 2, 'tag_id' => 'tag1'),

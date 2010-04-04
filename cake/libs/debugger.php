@@ -51,7 +51,7 @@ class Debugger extends Object {
  * @var array
  * @access public
  */
-	var $errors = array();
+	public $errors = array();
 
 /**
  * Contains the base URL for error code documentation.
@@ -59,7 +59,7 @@ class Debugger extends Object {
  * @var string
  * @access public
  */
-	var $helpPath = null;
+	public $helpPath = null;
 
 /**
  * The current output format.

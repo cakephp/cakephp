@@ -40,7 +40,7 @@ class ThemePostsController extends Controller {
  * @var string 'ThemePosts'
  * @access public
  */
-	var $name = 'ThemePosts';
+	public $name = 'ThemePosts';
 
 /**
  * index method

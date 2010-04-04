@@ -25,16 +25,16 @@
  * @subpackage    cake.tests.fixtures
  */
 class GroupUpdateAllFixture extends CakeTestFixture {
-    var $name = 'GroupUpdateAll';
-    var $table = 'group_update_all';
+    public $name = 'GroupUpdateAll';
+    public $table = 'group_update_all';
 
-    var $fields = array(
+    public $fields = array(
             'id' => array('type'=>'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
             'name' => array('type'=>'string', 'null' => false, 'length' => 29),
             'code' => array('type'=>'integer', 'null' => false, 'length' => 4),
             'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
             );
-    var $records = array(
+    public $records = array(
         array(
             'id'  => 1,
             'name'  => 'group one',

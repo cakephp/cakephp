@@ -34,7 +34,7 @@ class AclShell extends Shell {
  * @var AclComponent
  * @access public
  */
-	var $Acl;
+	public $Acl;
 
 /**
  * Contains arguments parsed from the command line.
@@ -42,7 +42,7 @@ class AclShell extends Shell {
  * @var array
  * @access public
  */
-	var $args;
+	public $args;
 
 /**
  * Contains database source to use
@@ -50,7 +50,7 @@ class AclShell extends Shell {
  * @var string
  * @access public
  */
-	var $connection = 'default';
+	public $connection = 'default';
 
 /**
  * Contains tasks to load and instantiate
@@ -58,7 +58,7 @@ class AclShell extends Shell {
  * @var array
  * @access public
  */
-	var $tasks = array('DbConfig');
+	public $tasks = array('DbConfig');
 
 /**
  * Override startup of the Shell

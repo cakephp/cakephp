@@ -34,7 +34,7 @@ class ViewTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
+	public $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
 
 /**
  * path to VIEWS directory
@@ -42,7 +42,7 @@ class ViewTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $path = VIEWS;
+	public $path = VIEWS;
 
 /**
  * Name of the controller being used
@@ -50,7 +50,7 @@ class ViewTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $controllerName = null;
+	public $controllerName = null;
 
 /**
  * Path to controller to put views
@@ -58,7 +58,7 @@ class ViewTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $controllerPath = null;
+	public $controllerPath = null;
 
 /**
  * The template file to use
@@ -66,7 +66,7 @@ class ViewTask extends BakeTask {
  * @var string
  * @access public
  */
-	var $template = null;
+	public $template = null;
 
 /**
  * Actions to use for scaffolding
@@ -74,7 +74,7 @@ class ViewTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $scaffoldActions = array('index', 'view', 'add', 'edit');
+	public $scaffoldActions = array('index', 'view', 'add', 'edit');
 
 /**
  * An array of action names that don't require templates.  These
@@ -83,7 +83,7 @@ class ViewTask extends BakeTask {
  * @var array
  * @access public
  */
-	var $noTemplateActions = array('delete');
+	public $noTemplateActions = array('delete');
 
 /**
  * Override initialize

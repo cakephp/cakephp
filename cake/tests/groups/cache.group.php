@@ -34,7 +34,7 @@ class CacheGroupTest extends TestSuite {
  * @var string 'All core cache engines'
  * @access public
  */
-	var $label = 'Cache and all CacheEngines';
+	public $label = 'Cache and all CacheEngines';
 
 /**
  * CacheGroupTest method

@@ -31,7 +31,7 @@ class ProjectTask extends Shell {
  *
  * @var string
  */
-	var $configPath = null;
+	public $configPath = null;
 
 /**
  * Checks that given project path does not already exist, and

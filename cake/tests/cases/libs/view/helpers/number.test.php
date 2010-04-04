@@ -33,7 +33,7 @@ class NumberHelperTest extends CakeTestCase {
  * @var mixed null
  * @access public
  */
-	var $helper = null;
+	public $helper = null;
 
 /**
  * setUp method
