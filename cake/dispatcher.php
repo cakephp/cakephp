@@ -366,29 +366,6 @@ class Dispatcher extends Object {
 		}
 		return $base . $file;
 	}
-/**
- * Restructure params in case we're serving a plugin.
- *
- * @param array $params Array on where to re-set 'controller', 'action', and 'pass' indexes
- * @param boolean $reverse  If true all the params are shifted one forward, so plugin becomes
- *   controller, controller becomes action etc.  If false, plugin is made equal to controller
- * @return array Restructured array
- * @access protected
- */
-	function _restructureParams($params, $reverse = false) {
-		if ($reverse === true) {
-			extract(Router::getArgs($params['action']));
-			$params = array_merge($params, array(
-				'controller'=> $params['plugin'],
-				'action'=> $params['controller'],
-				'pass' => array_merge($pass, $params['pass']),
-				'named' => array_merge($named, $params['named'])
-			));
-		} else {
-			$params['plugin'] = $params['controller'];
-		}
-		return $params;
-	}
 
 /**
  * Get controller to use, either plugin controller or application controller
