@@ -24,9 +24,9 @@ echo "<?php\n";
 ?>
 class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
 
-	var $name = '<?php echo $controllerName; ?>';
+	public $name = '<?php echo $controllerName; ?>';
 <?php if ($isScaffold): ?>
-	var $scaffold;
+	public $scaffold;
 <?php else: ?>
 <?php
 if (count($helpers)):
@@ -42,7 +42,7 @@ if (count($helpers)):
 endif;
 
 if (count($components)):
-	echo "\tvar \$components = array(";
+	echo "\tpublic \$components = array(";
 	for ($i = 0, $len = count($components); $i < $len; $i++):
 		if ($i != $len - 1):
 			echo "'" . Inflector::camelize($components[$i]) . "', ";

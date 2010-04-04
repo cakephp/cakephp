@@ -22,23 +22,23 @@
 
 echo "<?php\n"; ?>
 class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
-	var $name = '<?php echo $name; ?>';
+	public $name = '<?php echo $name; ?>';
 <?php if ($useDbConfig != 'default'): ?>
-	var $useDbConfig = '<?php echo $useDbConfig; ?>';
+	public $useDbConfig = '<?php echo $useDbConfig; ?>';
 <?php endif;?>
 <?php if ($useTable && $useTable !== Inflector::tableize($name)):
 	$table = "'$useTable'";
-	echo "\tvar \$useTable = $table;\n";
+	echo "\tpublic \$useTable = $table;\n";
 endif;
 if ($primaryKey !== 'id'): ?>
-	var $primaryKey = '<?php echo $primaryKey; ?>';
+	public $primaryKey = '<?php echo $primaryKey; ?>';
 <?php endif;
 if ($displayField): ?>
-	var $displayField = '<?php echo $displayField; ?>';
+	public $displayField = '<?php echo $displayField; ?>';
 <?php endif;
 
 if (!empty($validate)):
-	echo "\tvar \$validate = array(\n";
+	echo "\tpublic \$validate = array(\n";
 	foreach ($validate as $field => $validations):
 		echo "\t\t'$field' => array(\n";
 		foreach ($validations as $key => $validator):
@@ -68,7 +68,7 @@ endforeach;
 foreach (array('hasOne', 'belongsTo') as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
-		echo "\n\tvar \$$assocType = array(";
+		echo "\n\tpublic \$$assocType = array(";
 		foreach ($associations[$assocType] as $i => $relation):
 			$out = "\n\t\t'{$relation['alias']}' => array(\n";
 			$out .= "\t\t\t'className' => '{$relation['className']}',\n";
@@ -88,7 +88,7 @@ endforeach;
 
 if (!empty($associations['hasMany'])):
 	$belongsToCount = count($associations['hasMany']);
-	echo "\n\tvar \$hasMany = array(";
+	echo "\n\tpublic \$hasMany = array(";
 	foreach ($associations['hasMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";
@@ -113,7 +113,7 @@ endif;
 
 if (!empty($associations['hasAndBelongsToMany'])):
 	$habtmCount = count($associations['hasAndBelongsToMany']);
-	echo "\n\tvar \$hasAndBelongsToMany = array(";
+	echo "\n\tpublic \$hasAndBelongsToMany = array(";
 	foreach ($associations['hasAndBelongsToMany'] as $i => $relation):
 		$out = "\n\t\t'{$relation['alias']}' => array(\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";

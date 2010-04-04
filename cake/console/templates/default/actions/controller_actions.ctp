@@ -19,12 +19,12 @@
  */
 ?>
 
-	function <?php echo $admin ?>index() {
+	public function <?php echo $admin ?>index() {
 		$this-><?php echo $currentModelName ?>->recursive = 0;
 		$this->set('<?php echo $pluralName ?>', $this->paginate());
 	}
 
-	function <?php echo $admin ?>view($id = null) {
+	public function <?php echo $admin ?>view($id = null) {
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), '<?php echo strtolower($singularHumanName) ?>'));
@@ -37,7 +37,7 @@
 	}
 
 <?php $compact = array(); ?>
-	function <?php echo $admin ?>add() {
+	public function <?php echo $admin ?>add() {
 		if (!empty($this->data)) {
 			$this-><?php echo $currentModelName; ?>->create();
 			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
@@ -71,7 +71,7 @@
 	}
 
 <?php $compact = array(); ?>
-	function <?php echo $admin; ?>edit($id = null) {
+	public function <?php echo $admin; ?>edit($id = null) {
 		if (!$id && empty($this->data)) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(sprintf(__('Invalid %s', true), '<?php echo strtolower($singularHumanName); ?>'));
@@ -114,7 +114,7 @@
 	?>
 	}
 
-	function <?php echo $admin; ?>delete($id = null) {
+	public function <?php echo $admin; ?>delete($id = null) {
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(sprintf(__('Invalid id for %s', true), '<?php echo strtolower($singularHumanName); ?>'));
