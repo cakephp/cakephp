@@ -37,7 +37,7 @@ class FileEngine extends CacheEngine {
  * @var File
  * @access protected
  */
-	var $_File = null;
+	protected $_File = null;
 
 /**
  * Settings
@@ -59,7 +59,7 @@ class FileEngine extends CacheEngine {
  * @var boolean
  * @access protected
  */
-	var $_init = true;
+	protected $_init = true;
 
 /**
  * Initialize the Cache Engine

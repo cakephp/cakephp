@@ -32,7 +32,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @var integer
  * @access protected
  */
-	var $_timeStart = 0;
+	protected $_timeStart = 0;
 
 /**
  * Time the test runs ended
@@ -40,7 +40,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @var integer
  * @access protected
  */
-	var $_timeEnd = 0;
+	protected $_timeEnd = 0;
 
 /**
  * Duration of all test methods.
@@ -48,7 +48,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @var integer
  * @access protected
  */
-	var $_timeDuration = 0;
+	protected $_timeDuration = 0;
 
 /**
  * Array of request parameters.  Usually parsed GET params.
@@ -63,7 +63,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @var string
  * @access protected
  */
-	var $_characterSet;
+	protected $_characterSet;
 
 /**
  * Does nothing yet. The first output will

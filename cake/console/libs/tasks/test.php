@@ -58,7 +58,7 @@ class TestTask extends BakeTask {
  * @var string
  * @access protected
  */
-	var $_fixtures = array();
+	protected $_fixtures = array();
 
 
 /**

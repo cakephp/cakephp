@@ -45,7 +45,7 @@ class TestAuthComponent extends AuthComponent {
  * @var bool true
  * @access protected
  */
-	var $_loggedIn = true;
+	protected $_loggedIn = true;
 
 /**
  * stop method

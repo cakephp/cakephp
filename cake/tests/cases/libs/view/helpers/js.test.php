@@ -26,7 +26,7 @@ Mock::generate('JsBaseEngineHelper', 'TestJsEngineHelper', array('methodOne'));
 Mock::generate('View', 'JsHelperMockView');
 
 class OptionEngineHelper extends JsBaseEngineHelper {
-	var $_optionMap = array(
+	protected $_optionMap = array(
 		'request' => array(
 			'complete' => 'success',
 			'request' => 'beforeSend',

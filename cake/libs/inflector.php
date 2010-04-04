@@ -38,7 +38,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_plural = array(
+	protected $_plural = array(
 		'rules' => array(
 			'/(s)tatus$/i' => '\1\2tatuses',
 			'/(quiz)$/i' => '\1zes',
@@ -106,7 +106,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_singular = array(
+	protected $_singular = array(
 		'rules' => array(
 			'/(s)tatuses$/i' => '\1\2tatus',
 			'/^(.*)(menu)s$/i' => '\1\2',
@@ -157,7 +157,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_uninflected = array(
+	protected $_uninflected = array(
 		'Amoyese', 'bison', 'Borghese', 'bream', 'breeches', 'britches', 'buffalo', 'cantus',
 		'carp', 'chassis', 'clippers', 'cod', 'coitus', 'Congoese', 'contretemps', 'corps',
 		'debris', 'diabetes', 'djinn', 'eland', 'elk', 'equipment', 'Faroese', 'flounder',
@@ -178,7 +178,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_transliteration = array(
+	protected $_transliteration = array(
 		'/à|á|å|â/' => 'a',
 		'/è|é|ê|ẽ|ë/' => 'e',
 		'/ì|í|î/' => 'i',
@@ -201,7 +201,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_pluralized = array();
+	protected $_pluralized = array();
 
 /**
  * Cached array identity map of singularized words.
@@ -209,7 +209,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_singularized = array();
+	protected $_singularized = array();
 
 /**
  * Cached Underscore Inflections
@@ -217,7 +217,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_underscore = array();
+	protected $_underscore = array();
 
 /**
  * Cached Camelize Inflections
@@ -225,7 +225,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_camelize = array();
+	protected $_camelize = array();
 
 /**
  * Classify cached inflecctions
@@ -233,7 +233,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_classify = array();
+	protected $_classify = array();
 
 /**
  * Tablize cached inflections
@@ -241,7 +241,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_tableize = array();
+	protected $_tableize = array();
 
 /**
  * Humanize cached inflections
@@ -249,7 +249,7 @@ class Inflector {
  * @var array
  * @access protected
  */
-	var $_humanize = array();
+	protected $_humanize = array();
 
 /**
  * Gets a reference to the Inflector object instance

@@ -460,7 +460,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_optionMap = array();
+	protected $_optionMap = array();
 
 /**
  * An array of lowercase method names in the Engine that are buffered unless otherwise disabled.
@@ -477,7 +477,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_callbackArguments = array();
+	protected $_callbackArguments = array();
 
 /**
  * Constructor.

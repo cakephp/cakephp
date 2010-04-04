@@ -88,7 +88,7 @@ class MediaView extends View {
  * @var array
  * @access protected
  */
-	var $_headers = array();
+	protected $_headers = array();
 
 /**
  * Constructor

@@ -1257,7 +1257,7 @@ class CakeRoute {
  * @var string
  * @access protected
  */
-	var $_greedy = false;
+	protected $_greedy = false;
 
 /**
  * The compiled route regular expresssion
@@ -1265,7 +1265,7 @@ class CakeRoute {
  * @var string
  * @access protected
  */
-	var $_compiledRoute = null;
+	protected $_compiledRoute = null;
 
 /**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.

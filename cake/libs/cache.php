@@ -58,7 +58,7 @@ class Cache {
  *
  * @var array
  */
-	var $_engines = array();
+	protected $_engines = array();
 
 /**
  * Returns a singleton instance

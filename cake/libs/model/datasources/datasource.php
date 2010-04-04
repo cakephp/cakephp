@@ -96,7 +96,7 @@ class DataSource extends Object {
  * @var array
  * @access protected
  */
-	var $_result = null;
+	protected $_result = null;
 
 /**
  * Queries count.
@@ -104,7 +104,7 @@ class DataSource extends Object {
  * @var int
  * @access protected
  */
-	var $_queriesCnt = 0;
+	protected $_queriesCnt = 0;
 
 /**
  * Total duration of all queries.
@@ -112,7 +112,7 @@ class DataSource extends Object {
  * @var unknown_type
  * @access protected
  */
-	var $_queriesTime = null;
+	protected $_queriesTime = null;
 
 /**
  * Log of queries executed by this DataSource
@@ -120,7 +120,7 @@ class DataSource extends Object {
  * @var unknown_type
  * @access protected
  */
-	var $_queriesLog = array();
+	protected $_queriesLog = array();
 
 /**
  * Maximum number of items in query log
@@ -130,7 +130,7 @@ class DataSource extends Object {
  * @var int Maximum number of queries in the queries log.
  * @access protected
  */
-	var $_queriesLogMax = 200;
+	protected $_queriesLogMax = 200;
 
 /**
  * Caches serialzed results of executed queries
@@ -138,7 +138,7 @@ class DataSource extends Object {
  * @var array Maximum number of queries in the queries log.
  * @access protected
  */
-	var $_queryCache = array();
+	protected $_queryCache = array();
 
 /**
  * The default configuration of a specific DataSource
@@ -146,7 +146,7 @@ class DataSource extends Object {
  * @var array
  * @access protected
  */
-	var $_baseConfig = array();
+	protected $_baseConfig = array();
 
 /**
  * Holds references to descriptions loaded by the DataSource
@@ -162,7 +162,7 @@ class DataSource extends Object {
  * @var array
  * @access protected
  */
-	var $_sources = null;
+	protected $_sources = null;
 
 /**
  * A reference to the physical connection of this DataSource
@@ -194,7 +194,7 @@ class DataSource extends Object {
  * @var boolean
  * @access protected
  */
-	var $_transactionStarted = false;
+	protected $_transactionStarted = false;
 
 /**
  * Whether or not source data like available tables and schema descriptions

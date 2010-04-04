@@ -87,7 +87,7 @@ class FormHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_inputDefaults = array();
+	protected $_inputDefaults = array();
 
 /**
  * Introspects model information and extracts information related

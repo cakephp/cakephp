@@ -81,7 +81,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @var string
  * @access protected
  */
-	var $_appEncoding;
+	protected $_appEncoding;
 
 /**
  * Backup of asset configuration settings
@@ -89,7 +89,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @var string
  * @access protected
  */
-	var $_asset;
+	protected $_asset;
 
 /**
  * Backup of debug configuration setting
@@ -97,7 +97,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @var integer
  * @access protected
  */
-	var $_debug;
+	protected $_debug;
 
 /**
  * setUp method

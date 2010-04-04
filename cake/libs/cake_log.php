@@ -54,7 +54,7 @@ class CakeLog {
  * @var array
  * @access protected
  */
-	var $_streams = array();
+	protected $_streams = array();
 
 /**
  * Get an instance

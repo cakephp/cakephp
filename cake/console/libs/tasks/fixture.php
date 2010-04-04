@@ -48,7 +48,7 @@ class FixtureTask extends BakeTask {
  * @var object
  * @access protected
  */
-	var $_Schema = null;
+	protected $_Schema = null;
 
 /**
  * Override initialize

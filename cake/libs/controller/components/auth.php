@@ -38,7 +38,7 @@ class AuthComponent extends Object {
  * @var boolean
  * @access private
  */
-	var $_loggedIn = false;
+	protected $_loggedIn = false;
 
 /**
  * Other components utilized by AuthComponent
@@ -244,7 +244,7 @@ class AuthComponent extends Object {
  * @var array
  * @access protected
  */
-	var $_methods = array();
+	protected $_methods = array();
 
 /**
  * Initializes AuthComponent for use in the controller

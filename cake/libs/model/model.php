@@ -114,7 +114,7 @@ class Model extends Overloadable {
  * @access protected
  * @link http://book.cakephp.org/view/1057/Model-Attributes#_schema-1066
  */
-	var $_schema = null;
+	protected $_schema = null;
 
 /**
  * List of validation rules. Append entries for validation as ('field_name' => '/^perl_compat_regexp$/')
@@ -363,7 +363,7 @@ class Model extends Overloadable {
  * @var array
  * @access protected
  */
-	var $_findMethods = array(
+	protected $_findMethods = array(
 		'all' => true, 'first' => true, 'count' => true,
 		'neighbors' => true, 'list' => true, 'threaded' => true
 	);

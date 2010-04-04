@@ -230,7 +230,7 @@ class BehaviorCollection extends Object {
  * @var array
  * @access private
  */
-	var $_attached = array();
+	protected $_attached = array();
 
 /**
  * Lists the currently-attached behavior objects which are disabled
@@ -238,7 +238,7 @@ class BehaviorCollection extends Object {
  * @var array
  * @access private
  */
-	var $_disabled = array();
+	protected $_disabled = array();
 
 /**
  * Keeps a list of all methods of attached behaviors

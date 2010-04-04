@@ -150,7 +150,7 @@ class EmailComponent extends Object{
 /**
  * @deprecated see lineLength
  */
-	var $_lineLength = null;
+	protected $_lineLength = null;
 
 /**
  * What format should the email be sent in

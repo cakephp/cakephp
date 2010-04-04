@@ -53,7 +53,7 @@ class Test extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
@@ -101,7 +101,7 @@ class TestAlias extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id'=> array('type' => 'integer', 'null' => '', 'default' => '1', 'length' => '8', 'key'=>'primary'),
 		'name'=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email'=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
@@ -141,7 +141,7 @@ class TestValidate extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'title' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'body' => array('type' => 'string', 'null' => '1', 'default' => '', 'length' => ''),
@@ -2168,7 +2168,7 @@ class ValidationTest1 extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array();
+	protected $_schema = array();
 
 /**
  * validate property

@@ -67,7 +67,7 @@ class Debugger extends Object {
  * @var string
  * @access protected
  */
-	var $_outputFormat = 'js';
+	protected $_outputFormat = 'js';
 
 /**
  * Templates used when generating trace or error strings.  Can be global or indexed by the format
@@ -76,7 +76,7 @@ class Debugger extends Object {
  * @var string
  * @access protected
  */
-	var $_templates = array(
+	protected $_templates = array(
 		'log' => array(
 			'trace' => '{:reference} - {:path}, line {:line}',
 			'error' => "{:error} ({:code}): {:description} in [{:file}, line {:line}]"
@@ -111,7 +111,7 @@ class Debugger extends Object {
  * @var string
  * @access private
  */
-	var $_data = array();
+	protected $_data = array();
 
 /**
  * Constructor.

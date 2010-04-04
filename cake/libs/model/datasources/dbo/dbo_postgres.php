@@ -42,7 +42,7 @@ class DboPostgres extends DboSource {
  * @var array
  * @access protected
  */
-	var $_commands = array(
+	protected $_commands = array(
 		'begin'    => 'BEGIN',
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
@@ -54,7 +54,7 @@ class DboPostgres extends DboSource {
  * @var array
  * @access protected
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => true,
 		'host' => 'localhost',
 		'login' => 'root',
@@ -103,7 +103,7 @@ class DboPostgres extends DboSource {
  *
  * @var array
  */
-	var $_sequenceMap = array();
+	protected $_sequenceMap = array();
 
 /**
  * Connects to the database using options in the given configuration array.

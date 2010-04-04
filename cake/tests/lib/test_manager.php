@@ -35,14 +35,14 @@ class TestManager {
  *
  * @var string
  */
-	var $_testExtension = '.test.php';
+	protected $_testExtension = '.test.php';
 
 /**
  * Extension suffix for group test case files.
  *
  * @var string
  */
-	var $_groupExtension = '.group.php';
+	protected $_groupExtension = '.group.php';
 
 /**
  * Is this test an AppTest?

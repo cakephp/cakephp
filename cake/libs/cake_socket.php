@@ -43,7 +43,7 @@ class CakeSocket extends Object {
  * @var array
  * @access protected
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent'	=> false,
 		'host'			=> 'localhost',
 		'protocol'		=> 'tcp',

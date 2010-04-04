@@ -53,7 +53,7 @@ class TestModel extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'client_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '11'),
 		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),

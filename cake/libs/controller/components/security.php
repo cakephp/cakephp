@@ -166,7 +166,7 @@ class SecurityComponent extends Object {
  *
  * @var string
  */
-	var $_action = null;
+	protected $_action = null;
 
 /**
  * Initialize the SecurityComponent

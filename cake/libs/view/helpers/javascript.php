@@ -73,7 +73,7 @@ class JavascriptHelper extends AppHelper {
  * @access protected
  * @see JavascriptHelper::codeBlock()
  */
-	var $_blockOptions = array();
+	protected $_blockOptions = array();
 
 /**
  * Caches events written by event() for output at the end of page execution
@@ -82,7 +82,7 @@ class JavascriptHelper extends AppHelper {
  * @access protected
  * @see JavascriptHelper::event()
  */
-	var $_cachedEvents = array();
+	protected $_cachedEvents = array();
 
 /**
  * Indicates whether generated events should be cached for later output (can be written at the
@@ -93,7 +93,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::event()
  * @see JavascriptHelper::writeEvents()
  */
-	var $_cacheEvents = false;
+	protected $_cacheEvents = false;
 
 /**
  * Indicates whether cached events should be written to an external file
@@ -103,7 +103,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::event()
  * @see JavascriptHelper::writeEvents()
  */
-	var $_cacheToFile = false;
+	protected $_cacheToFile = false;
 
 /**
  * Indicates whether *all* generated JavaScript should be cached for later output
@@ -113,7 +113,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::codeBlock()
  * @see JavascriptHelper::blockEnd()
  */
-	var $_cacheAll = false;
+	protected $_cacheAll = false;
 
 /**
  * Contains event rules attached with CSS selectors.  Used with the event:Selectors JavaScript
@@ -124,7 +124,7 @@ class JavascriptHelper extends AppHelper {
  * @see JavascriptHelper::event()
  * @link          http://alternateidea.com/event-selectors/
  */
-	var $_rules = array();
+	protected $_rules = array();
 
 /**
  * @var string

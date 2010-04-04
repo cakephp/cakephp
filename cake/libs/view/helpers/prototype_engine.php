@@ -28,14 +28,14 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @var boolean
  */
-	var $_multiple = false;
+	protected $_multiple = false;
 
 /**
  * Option mappings for Prototype
  *
  * @var array
  */
-	var $_optionMap = array(
+	protected $_optionMap = array(
 		'request' => array(
 			'async' => 'asynchronous',
 			'data' => 'parameters',
@@ -75,7 +75,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @var array
  */
-	var $_callbackArguments = array(
+	protected $_callbackArguments = array(
 		'slider' => array(
 			'onSlide' => 'value',
 			'onChange' => 'value',

@@ -38,7 +38,7 @@ class AclComponent extends Object {
  * @var object
  * @access protected
  */
-	var $_Instance = null;
+	protected $_Instance = null;
 
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`

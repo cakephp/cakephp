@@ -33,7 +33,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  *
  * @var array
  */
-	var $_optionMap = array(
+	protected $_optionMap = array(
 		'request' => array(
 			'complete' => 'onComplete',
 			'success' => 'onSuccess',
@@ -71,7 +71,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  *
  * @var array
  */
-	var $_callbackArguments = array(
+	protected $_callbackArguments = array(
 		'slider' => array(
 			'onTick' => 'position',
 			'onChange' => 'step',

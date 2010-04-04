@@ -91,7 +91,7 @@ class DboSource extends DataSource {
  * @var array
  * @access protected
  */
-	var $_commands = array(
+	protected $_commands = array(
 		'begin' => 'BEGIN',
 		'commit' => 'COMMIT',
 		'rollback' => 'ROLLBACK'

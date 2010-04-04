@@ -55,14 +55,14 @@ class DboSqlite extends DboSource {
  * @var array
  * @access protected
  */
-	var $_queryStats = array();
+	protected $_queryStats = array();
 
 /**
  * Base configuration settings for SQLite driver
  *
  * @var array
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => true,
 		'database' => null
 	);
@@ -73,7 +73,7 @@ class DboSqlite extends DboSource {
  * @var array
  * @access protected
  */
-	var $_commands = array(
+	protected $_commands = array(
 		'begin'    => 'BEGIN TRANSACTION',
 		'commit'   => 'COMMIT TRANSACTION',
 		'rollback' => 'ROLLBACK TRANSACTION'

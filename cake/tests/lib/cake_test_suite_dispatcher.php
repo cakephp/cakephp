@@ -46,7 +46,7 @@ class CakeTestSuiteDispatcher {
  *
  * @var string
  */
-	var $_managerClass = 'TestManager';
+	protected $_managerClass = 'TestManager';
 
 /**
  * The Instance of the Manager being used.
@@ -60,14 +60,14 @@ class CakeTestSuiteDispatcher {
  *
  * @var string
  */
-	var $_baseUrl;
+	protected $_baseUrl;
 
 /**
  * Base dir of the request.  Used for accessing assets.
  *
  * @var string
  */
-	var $_baseDir;
+	protected $_baseDir;
 
 /**
  * constructor

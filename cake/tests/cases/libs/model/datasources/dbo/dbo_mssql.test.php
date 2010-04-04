@@ -159,7 +159,7 @@ class MssqlTestModel extends Model {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
 		'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
 		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -258,7 +258,7 @@ class MssqlClientTestModel extends Model {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
 		'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),

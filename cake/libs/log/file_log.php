@@ -34,7 +34,7 @@ class FileLog {
  *
  * @var string
  */
-	var $_path = null;
+	protected $_path = null;
 
 /**
  * Constructs a new File Logger.

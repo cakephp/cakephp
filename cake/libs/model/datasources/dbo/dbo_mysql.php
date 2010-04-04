@@ -53,7 +53,7 @@ class DboMysqlBase extends DboSource {
  * @var boolean
  * @access protected
  */
-	var $_useAlias = true;
+	protected $_useAlias = true;
 
 /**
  * Index of basic SQL commands
@@ -61,7 +61,7 @@ class DboMysqlBase extends DboSource {
  * @var array
  * @access protected
  */
-	var $_commands = array(
+	protected $_commands = array(
 		'begin'    => 'START TRANSACTION',
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'
@@ -518,7 +518,7 @@ class DboMysql extends DboMysqlBase {
  *
  * @var array
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => true,
 		'host' => 'localhost',
 		'login' => 'root',

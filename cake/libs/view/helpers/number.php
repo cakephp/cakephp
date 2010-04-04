@@ -37,7 +37,7 @@ class NumberHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_currencies = array(
+	protected $_currencies = array(
 		'USD' => array(
 			'before' => '$', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => ',',
 			'decimals' => '.', 'negative' => '()', 'escape' => true
@@ -58,7 +58,7 @@ class NumberHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_currencyDefaults = array(
+	protected $_currencyDefaults = array(
 		'before'=>'', 'after' => '', 'zero' => '0', 'places' => 2, 'thousands' => ',',
 		'decimals' => '.','negative' => '()', 'escape' => true
 	);

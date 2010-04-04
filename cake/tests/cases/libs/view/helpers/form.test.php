@@ -84,7 +84,7 @@ class Contact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -161,7 +161,7 @@ class ContactTagsContact extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'contact_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'contact_tag_id' => array(
 			'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'
@@ -239,7 +239,7 @@ class ContactTag extends Model {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
 		'created' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
@@ -295,7 +295,7 @@ class UserForm extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'other' => array('type' => 'text', 'null' => true, 'default' => null, 'length' => null),
@@ -362,7 +362,7 @@ class OpenidUrl extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'user_form_id' => array(
 			'type' => 'user_form_id', 'null' => '', 'default' => '', 'length' => '8'
@@ -430,7 +430,7 @@ class ValidateUser extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -481,7 +481,7 @@ class ValidateProfile extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'user_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'full_name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
@@ -569,7 +569,7 @@ class ValidateItem extends CakeTestModel {
  * @var array
  * @access protected
  */
-	var $_schema = array(
+	protected $_schema = array(
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'profile_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'text', 'null' => '', 'default' => '', 'length' => '255'),

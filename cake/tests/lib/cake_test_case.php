@@ -117,7 +117,7 @@ class CakeTestCase extends UnitTestCase {
  * @var array
  * @access protected
  */
-	var $_fixtureClassMap = array();
+	protected $_fixtureClassMap = array();
 
 /**
  * truncated property

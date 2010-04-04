@@ -97,7 +97,7 @@ class HtmlHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_crumbs = array();
+	protected $_crumbs = array();
 
 /**
  * Names of script files that have been included once
@@ -112,7 +112,7 @@ class HtmlHelper extends AppHelper {
  * @var array
  * @access protected
  */
-	var $_scriptBlockOptions = array();
+	protected $_scriptBlockOptions = array();
 /**
  * Document type definitions
  *

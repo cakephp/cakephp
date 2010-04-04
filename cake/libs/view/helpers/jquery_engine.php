@@ -31,7 +31,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @var array
  * @access protected
  */
-	var $_optionMap = array(
+	protected $_optionMap = array(
 		'request' => array(
 			'type' => 'dataType',
 			'before' => 'beforeSend',
@@ -60,7 +60,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @var string
  * @access protected
  */
-	var $_callbackArguments = array(
+	protected $_callbackArguments = array(
 		'slider' => array(
 			'start' => 'event, ui',
 			'slide' => 'event, ui',

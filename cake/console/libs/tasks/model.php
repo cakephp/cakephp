@@ -58,7 +58,7 @@ class ModelTask extends BakeTask {
  * @var array
  * @access protected
  */
-	var $_tables = array();
+	protected $_tables = array();
 
 /**
  * Holds validation method map.
@@ -66,7 +66,7 @@ class ModelTask extends BakeTask {
  * @var array
  * @access protected
  */
-	var $_validations = array();
+	protected $_validations = array();
 
 /**
  * Execution method always used for tasks

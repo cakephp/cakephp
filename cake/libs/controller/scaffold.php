@@ -127,7 +127,7 @@ class Scaffold extends Object {
  * @var boolean
  * @access public
  */
-	var $_validSession = null;
+	protected $_validSession = null;
 
 /**
  * List of variables to collect from the associated controller

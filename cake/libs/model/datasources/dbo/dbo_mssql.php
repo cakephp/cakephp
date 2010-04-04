@@ -62,7 +62,7 @@ class DboMssql extends DboSource {
  *
  * @var array
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => true,
 		'host' => 'localhost',
 		'login' => 'root',
@@ -96,7 +96,7 @@ class DboMssql extends DboSource {
  * @var array
  * @access protected
  */
-	var $_commands = array(
+	protected $_commands = array(
 		'begin'    => 'BEGIN TRANSACTION',
 		'commit'   => 'COMMIT',
 		'rollback' => 'ROLLBACK'

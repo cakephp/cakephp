@@ -56,7 +56,7 @@ class CakeSession extends Object {
  * @var string
  * @access protected
  */
-	var $_userAgent = '';
+	protected $_userAgent = '';
 
 /**
  * Path to where the session is active.
@@ -120,7 +120,7 @@ class CakeSession extends Object {
  * @var boolean
  * @access protected
  */
-	var $_started = false;
+	protected $_started = false;
 
 /**
  * Hostname

@@ -44,7 +44,7 @@ class ConnectionManager extends Object {
  * @var array
  * @access protected
  */
-	var $_dataSources = array();
+	protected $_dataSources = array();
 
 /**
  * Contains a list of all file and class names used in Connection settings
@@ -52,7 +52,7 @@ class ConnectionManager extends Object {
  * @var array
  * @access protected
  */
-	var $_connectionsEnum = array();
+	protected $_connectionsEnum = array();
 
 /**
  * Constructor.

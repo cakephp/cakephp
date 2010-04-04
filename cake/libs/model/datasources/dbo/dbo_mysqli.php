@@ -41,7 +41,7 @@ class DboMysqli extends DboMysqlBase {
  *
  * @var array
  */
-	var $_baseConfig = array(
+	protected $_baseConfig = array(
 		'persistent' => true,
 		'host' => 'localhost',
 		'login' => 'root',
