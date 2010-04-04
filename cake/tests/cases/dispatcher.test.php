@@ -1584,9 +1584,13 @@ class DispatcherTest extends CakeTestCase {
 	function testAutomaticPluginDispatchWithShortAccess() {
 		$_POST = array();
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
+		$plugins = App::objects('plugin');
+		$plugins[] = 'MyPlugin';
+
+		$app = App::getInstance();
+		$app->__objects['plugin'] = $plugins;
 
 		Router::reload();
-		Router::connect('/my_plugin/:controller/:action/*', array('plugin' => 'my_plugin'));
 
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
