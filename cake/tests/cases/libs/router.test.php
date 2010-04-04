@@ -751,6 +751,15 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testPluginShortcutRoutes() {
+		App::build(array(
+			'plugins' =>  array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+			)
+		), true);
+		App::objects('plugin', null, false);
+		Configure::write('Routing.prefixes', array('admin'));
+		Router::reload();
+
 		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
 		$this->assertEqual($result, '/test_plugin', 'Plugin shortcut index action failed.');
 	
@@ -764,6 +773,29 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual(
 			$result, '/test_plugin/view/1/sort:title/dir:asc', 'Plugin shortcut with passed + named args failed.'
 		);
+
+		$result = Router::parse('/test_plugin');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'index');
+
+		$result = Router::parse('/test_plugin/add');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'add');
+
+		$result = Router::parse('/admin/test_plugin');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'index');
+		$this->assertEqual($result['prefix'], 'admin');
+
+		$result = Router::parse('/admin/test_plugin/add/1');
+		$this->assertEqual($result['plugin'], 'test_plugin');
+		$this->assertEqual($result['controller'], 'test_plugin');
+		$this->assertEqual($result['action'], 'add');
+		$this->assertEqual($result['prefix'], 'admin');
+		$this->assertEqual($result['pass'], array(1));
 	}
 
 /**
@@ -2436,8 +2468,6 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['action'], 'index');
 	}
 }
-//SimpleTest::ignore('RouterTest');
-//SimpleTest::ignore('CakeRouteTestCase');
 
 /**
  * Test case for PluginShortRoute
