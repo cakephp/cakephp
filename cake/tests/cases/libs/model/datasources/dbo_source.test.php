@@ -1400,7 +1400,7 @@ class DboSourceTest extends CakeTestCase {
 
 		$queryData = array();
 
-		foreach ($this->Model->Category2->__associations as $type) {
+		foreach ($this->Model->Category2->associations() as $type) {
 			foreach ($this->Model->Category2->{$type} as $assoc => $assocData) {
 				$linkModel =& $this->Model->Category2->{$assoc};
 				$external = isset($assocData['external']);
@@ -2185,7 +2185,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function _buildRelatedModels(&$model) {
-		foreach ($model->__associations as $type) {
+		foreach ($model->associations() as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				if (is_string($assocData)) {
 					$className = $assocData;

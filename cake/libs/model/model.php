@@ -2815,6 +2815,16 @@ class Model extends Overloadable {
 	}
 
 /**
+ * Get associations
+ *
+ * @return array
+ * @access public
+ */
+	function associations() {
+		return $this->__associations;
+	}
+
+/**
  * Gets all the models with which this model is associated.
  *
  * @param string $type Only result associations of this type

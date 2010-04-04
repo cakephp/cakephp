@@ -779,7 +779,7 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($model);
 		}
 
-		$_associations = $model->__associations;
+		$_associations = $model->associations();
 
 		if ($model->recursive == -1) {
 			$_associations = array();
@@ -922,7 +922,7 @@ class DboSource extends DataSource {
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
-						foreach ($linkModel->__associations as $type1) {
+						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel =& $linkModel->{$assoc1};
 								$tmpStack = $stack;
@@ -991,7 +991,7 @@ class DboSource extends DataSource {
 
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
-						foreach ($linkModel->__associations as $type1) {
+						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel =& $linkModel->{$assoc1};
 

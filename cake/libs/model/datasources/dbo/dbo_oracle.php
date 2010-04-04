@@ -1026,7 +1026,7 @@ class DboOracle extends DboSource {
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
 
-						foreach ($linkModel->__associations as $type1) {
+						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 								$deepModel =& $linkModel->{$assoc1};
 								$tmpStack = $stack;
@@ -1088,7 +1088,7 @@ class DboOracle extends DboSource {
 				if (!empty($fetch) && is_array($fetch)) {
 					if ($recursive > 0) {
 
-						foreach ($linkModel->__associations as $type1) {
+						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
 
 								$deepModel =& $linkModel->{$assoc1};
