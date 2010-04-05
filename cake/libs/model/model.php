@@ -493,13 +493,11 @@ class Model extends Overloadable {
  */
 	public function __call($method, $params) {
 		$result = $this->Behaviors->dispatchMethod($this, $method, $params);
-
 		if ($result !== array('unhandled')) {
 			return $result;
 		}
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$return = $db->query($method, $params, $this);
-
 		return $return;
 	}
 
