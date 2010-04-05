@@ -206,9 +206,8 @@ class Scaffold extends Object {
  * Outputs the content of a scaffold method passing it through the Controller::afterFilter()
  *
  * @return void
- * @access protected
  */
-	function _output() {
+	protected function _output() {
 		$this->controller->afterFilter();
 		echo($this->controller->output);
 	}
@@ -550,9 +549,8 @@ class ScaffoldView extends ThemeView {
  * Override _getViewFileName
  *
  * @return string action
- * @access protected
  */
-	function _getViewFileName($name = null) {
+	protected function _getViewFileName($name = null) {
 		if ($name === null) {
 			$name = $this->action;
 		}

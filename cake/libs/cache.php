@@ -136,9 +136,8 @@ class Cache {
  *
  * @param string $name Name of the config array that needs an engine instance built
  * @return void
- * @access protected
  */
-	function _buildEngine($name) {
+	protected function _buildEngine($name) {
 		$config = $this->__config[$name];
 
 		list($plugin, $class) = pluginSplit($config['engine']);

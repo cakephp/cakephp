@@ -742,9 +742,8 @@ class XmlNode extends Object {
  * if given the $recursive parameter.
  *
  * @param boolean $recursive Recursively delete elements.
- * @access protected
  */
-	function _killParent($recursive = true) {
+	protected function _killParent($recursive = true) {
 		unset($this->__parent, $this->_log);
 		if ($recursive && $this->hasChildren()) {
 			for ($i = 0; $i < count($this->children); $i++) {

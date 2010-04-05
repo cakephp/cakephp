@@ -66,9 +66,8 @@ class TestShell extends Shell {
  *
  * @param integer $status
  * @return void
- * @access protected
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->stopped = $status;
 	}
 }

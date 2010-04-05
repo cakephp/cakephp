@@ -681,9 +681,8 @@ class View extends Object {
  * @param boolean $loadHelpers Boolean to indicate that helpers should be loaded.
  * @param boolean $cached Whether or not to trigger the creation of a cache file.
  * @return string Rendered output
- * @access protected
  */
-	function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
+	protected function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
 		$loadedHelpers = array();
 
 		if ($this->helpers != false && $loadHelpers === true) {
@@ -747,9 +746,8 @@ class View extends Object {
  * @param array $helpers List of helpers to load.
  * @param string $parent holds name of helper, if loaded helper has helpers
  * @return array Array containing the loaded helpers.
- * @access protected
  */
-	function &_loadHelpers(&$loaded, $helpers, $parent = null) {
+	protected function &_loadHelpers(&$loaded, $helpers, $parent = null) {
 		foreach ($helpers as $i => $helper) {
 			$options = array();
 
@@ -814,9 +812,8 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @access protected
  */
-	function _getViewFileName($name = null) {
+	protected function _getViewFileName($name = null) {
 		$subDir = null;
 
 		if (!is_null($this->subDir)) {
@@ -874,9 +871,8 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @access protected
  */
-	function _getLayoutFileName($name = null) {
+	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {
 			$name = $this->layout;
 		}
@@ -907,9 +903,8 @@ class View extends Object {
  *
  * @param string $viewFileName the filename that should exist
  * @return false
- * @access protected
  */
-	function _missingView($file, $error = 'missingView') {
+	protected function _missingView($file, $error = 'missingView') {
 		if ($error === 'missingView') {
 			$this->cakeError('missingView', array(
 				'className' => $this->name,
@@ -934,9 +929,8 @@ class View extends Object {
  * @param string $plugin Optional plugin name to scan for view files.
  * @param boolean $cached Set to true to force a refresh of view paths.
  * @return array paths
- * @access protected
  */
-	function _paths($plugin = null, $cached = true) {
+	protected function _paths($plugin = null, $cached = true) {
 		if ($plugin === null && $cached === true && !empty($this->__paths)) {
 			return $this->__paths;
 		}

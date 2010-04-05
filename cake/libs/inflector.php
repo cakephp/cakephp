@@ -272,9 +272,8 @@ class Inflector {
  * @param string $key Original value
  * @param string $value Inflected value
  * @return string Inflected value, from cache
- * @access protected
  */
-	function _cache($type, $key, $value = false) {
+	protected function _cache($type, $key, $value = false) {
 		$key = '_' . $key;
 		$type = '_' . $type;
 		if ($value !== false) {

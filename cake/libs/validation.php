@@ -562,9 +562,8 @@ class Validation extends Object {
  *
  * @param string $check IP Address to test
  * @return boolean Success
- * @access protected
  */
-	function _ipv4($check) {
+	protected function _ipv4($check) {
 		if (function_exists('filter_var')) {
 			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV4)) !== false;
 		}
@@ -579,9 +578,8 @@ class Validation extends Object {
  *
  * @param string $check IP Address to test
  * @return boolean Success
- * @access protected
  */
-	function _ipv6($check) {
+	protected function _ipv6($check) {
 		if (function_exists('filter_var')) {
 			return filter_var($check, FILTER_VALIDATE_IP, array('flags' => FILTER_FLAG_IPV6)) !== false;
 		}
@@ -912,9 +910,8 @@ class Validation extends Object {
  * Runs a regular expression match.
  *
  * @return boolean Success of match
- * @access protected
  */
-	function _check() {
+	protected function _check() {
 		$_this =& Validation::getInstance();
 		if (preg_match($_this->regex, $_this->check)) {
 			$_this->error[] = false;
@@ -931,9 +928,8 @@ class Validation extends Object {
  *
  * @param array $params Parameters sent to validation method
  * @return void
- * @access protected
  */
-	function _extract($params) {
+	protected function _extract($params) {
 		$_this =& Validation::getInstance();
 		extract($params, EXTR_OVERWRITE);
 
@@ -959,9 +955,8 @@ class Validation extends Object {
  *
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
  * @return boolean Success
- * @access protected
  */
-	function _luhn() {
+	protected function _luhn() {
 		$_this =& Validation::getInstance();
 		if ($_this->deep !== true) {
 			return true;

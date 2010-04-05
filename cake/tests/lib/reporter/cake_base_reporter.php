@@ -150,9 +150,8 @@ class CakeBaseReporter extends SimpleReporter {
  * but in a separate function to reduce dependancies.
  *
  * @return float Time in microseconds
- * @access protected
  */
-	function _getTime() {
+	protected function _getTime() {
 		list($usec, $sec) = explode(' ', microtime());
 		return ((float)$sec + (float)$usec);
 	}

@@ -582,9 +582,8 @@ class DboMysql extends DboMysqlBase {
  *
  * @param string $sql SQL statement
  * @return resource Result resource identifier
- * @access protected
  */
-	function _execute($sql) {
+	protected function _execute($sql) {
 		return mysql_query($sql, $this->connection);
 	}
 

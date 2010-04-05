@@ -192,9 +192,8 @@ class Shell extends Object {
 /**
  * Displays a header for the shell
  *
- * @access protected
  */
-	function _welcome() {
+	protected function _welcome() {
 		$this->Dispatch->clear();
 		$this->out();
 		$this->out('Welcome to CakePHP v' . Configure::version() . ' Console');
@@ -209,9 +208,8 @@ class Shell extends Object {
  * makes $this->DbConfig available to subclasses
  *
  * @return bool
- * @access protected
  */
-	function _loadDbConfig() {
+	protected function _loadDbConfig() {
 		if (config('database') && class_exists('DATABASE_CONFIG')) {
 			$this->DbConfig =& new DATABASE_CONFIG();
 			return true;
@@ -228,9 +226,8 @@ class Shell extends Object {
  * if public $uses is an array of models will load those models
  *
  * @return bool
- * @access protected
  */
-	function _loadModels() {
+	protected function _loadModels() {
 		if ($this->uses === null || $this->uses === false) {
 			return;
 		}
@@ -424,9 +421,8 @@ class Shell extends Object {
  *
  * @param integer $expectedNum Expected number of paramters
  * @param string $command Command
- * @access protected
  */
-	function _checkArgs($expectedNum, $command = null) {
+	protected function _checkArgs($expectedNum, $command = null) {
 		if (!$command) {
 			$command = $this->command;
 		}
@@ -496,9 +492,8 @@ class Shell extends Object {
  * Action to create a Unit Test
  *
  * @return boolean Success
- * @access protected
  */
-	function _checkUnitTest() {
+	protected function _checkUnitTest() {
 		if (App::import('vendor', 'simpletest' . DS . 'simpletest')) {
 			return true;
 		}
@@ -530,9 +525,8 @@ class Shell extends Object {
  *
  * @param string $name Controller class name
  * @return string Path to controller
- * @access protected
  */
-	function _controllerPath($name) {
+	protected function _controllerPath($name) {
 		return strtolower(Inflector::underscore($name));
 	}
 
@@ -541,9 +535,8 @@ class Shell extends Object {
  *
  * @param string $name Controller class name
  * @return string Controller plural name
- * @access protected
  */
-	function _controllerName($name) {
+	protected function _controllerName($name) {
 		return Inflector::pluralize(Inflector::camelize($name));
 	}
 
@@ -552,9 +545,8 @@ class Shell extends Object {
  *
  * @param string $name Name
  * @return string Camelized and singularized controller name
- * @access protected
  */
-	function _modelName($name) {
+	protected function _modelName($name) {
 		return Inflector::camelize(Inflector::singularize($name));
 	}
 
@@ -563,9 +555,8 @@ class Shell extends Object {
  *
  * @param string $name Controller class name
  * @return string Singular model key
- * @access protected
  */
-	function _modelKey($name) {
+	protected function _modelKey($name) {
 		return Inflector::underscore(Inflector::singularize($name)) . '_id';
 	}
 
@@ -574,9 +565,8 @@ class Shell extends Object {
  *
  * @param string $key Foreign key
  * @return string Model name
- * @access protected
  */
-	function _modelNameFromKey($key) {
+	protected function _modelNameFromKey($key) {
 		return Inflector::camelize(str_replace('_id', '', $key));
 	}
 
@@ -585,9 +575,8 @@ class Shell extends Object {
  *
  * @param string $name
  * @return string $name
- * @access protected
  */
-	function _singularName($name) {
+	protected function _singularName($name) {
 		return Inflector::variable(Inflector::singularize($name));
 	}
 
@@ -596,9 +585,8 @@ class Shell extends Object {
  *
  * @param string $name Name to use
  * @return string Plural name for views
- * @access protected
  */
-	function _pluralName($name) {
+	protected function _pluralName($name) {
 		return Inflector::variable(Inflector::pluralize($name));
 	}
 
@@ -607,9 +595,8 @@ class Shell extends Object {
  *
  * @param string $name Controller name
  * @return string Singular human name
- * @access protected
  */
-	function _singularHumanName($name) {
+	protected function _singularHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::singularize($name)));
 	}
 
@@ -618,9 +605,8 @@ class Shell extends Object {
  *
  * @param string $name Controller name
  * @return string Plural human name
- * @access protected
  */
-	function _pluralHumanName($name) {
+	protected function _pluralHumanName($name) {
 		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
 	}
 

@@ -229,9 +229,8 @@ class AclShell extends Shell {
  * @param array $node Array of node information.
  * @param integer $indent indent level.
  * @return void
- * @access protected
  */
-	function _outputNode($class, $node, $indent) {
+	protected function _outputNode($class, $node, $indent) {
 		$indent = str_repeat('  ', $indent);
 		$data = $node[$class];
 		if ($data['alias']) {

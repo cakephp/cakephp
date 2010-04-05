@@ -386,9 +386,8 @@ class PaginatorHelper extends AppHelper {
 /**
  * Protected method for generating prev/next links
  *
- * @access protected
  */
-	function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
+	protected function __pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
 		$check = 'has' . $which;
 		$_defaults = array(
 			'url' => array(), 'step' => 1, 'escape' => true,
@@ -464,9 +463,8 @@ class PaginatorHelper extends AppHelper {
  * @param string $model Model name to get parameters for.
  * @param integer $page Page number you are checking.
  * @return boolean Whether model has $page
- * @access protected
  */
-	function __hasPage($model, $page) {
+	protected function __hasPage($model, $page) {
 		$params = $this->params($model);
 		if (!empty($params)) {
 			if ($params["{$page}Page"] == true) {

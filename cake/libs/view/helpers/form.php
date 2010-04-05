@@ -95,9 +95,8 @@ class FormHelper extends AppHelper {
  * $this->fieldset.
  *
  * @return Model Returns a model instance
- * @access protected
  */
-	function &_introspectModel($model) {
+	protected function &_introspectModel($model) {
 		$object = null;
 		if (is_string($model) && strpos($model, '.') !== false) {
 			$path = explode('.', $model);
@@ -140,9 +139,8 @@ class FormHelper extends AppHelper {
  * Returns if a field is required to be filled based on validation properties from the validating object
  *
  * @return boolean true if field is required to be filled, false otherwise
- * @access protected
  */
-	function _isRequiredField($validateProperties) {
+	protected function _isRequiredField($validateProperties) {
 		$required = false;
 		if (is_array($validateProperties)) {
 
@@ -900,9 +898,8 @@ class FormHelper extends AppHelper {
  * @param array $options The array of options you want to extract.
  * @param mixed $default The default option value
  * @return the contents of the option or default
- * @access protected
  */
-	function _extractOption($name, $options, $default = null) {
+	protected function _extractOption($name, $options, $default = null) {
 		if (array_key_exists($name, $options)) {
 			return $options[$name];
 		}
@@ -914,9 +911,8 @@ class FormHelper extends AppHelper {
  *
  * @param array $options Options for the label element.
  * @return string Generated label element
- * @access protected
  */
-	function _inputLabel($fieldName, $label, $options) {
+	protected function _inputLabel($fieldName, $label, $options) {
 		$labelAttributes = $this->domId(array(), 'for');
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
 			if (isset($options['dateFormat']) && $options['dateFormat'] === 'NONE') {
@@ -1864,9 +1860,8 @@ class FormHelper extends AppHelper {
  * @param array $options
  * @param string $key
  * @return array
- * @access protected
  */
-	function _name($options = array(), $field = null, $key = 'name') {
+	protected function _name($options = array(), $field = null, $key = 'name') {
 		if ($this->requestType == 'get') {
 			if ($options === null) {
 				$options = array();
@@ -2104,9 +2099,8 @@ class FormHelper extends AppHelper {
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
- * @access protected
  */
-	function _initInputField($field, $options = array()) {
+	protected function _initInputField($field, $options = array()) {
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 			unset($options['secure']);

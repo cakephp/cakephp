@@ -225,9 +225,8 @@ class MediaView extends View {
  * Method to set headers
  * @param mixed $header
  * @param boolean $boolean
- * @access protected
  */
-	function _header($header, $boolean = true) {
+	protected function _header($header, $boolean = true) {
 		if (is_array($header)) {
 			foreach ($header as $string => $boolean) {
 				if (is_numeric($string)) {
@@ -244,9 +243,8 @@ class MediaView extends View {
 
 /**
  * Method to output headers
- * @access protected
  */
-	function _output() {
+	protected function _output() {
 		foreach ($this->_headers as $key => $value) {
 			$header = key($value);
 			header($header, $value[$header]);

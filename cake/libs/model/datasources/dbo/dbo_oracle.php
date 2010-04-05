@@ -259,9 +259,8 @@ class DboOracle extends DboSource {
  *
  * @param string $sql
  * @return false if sql is nor a SELECT
- * @access protected
  */
-	function _scrapeSQL($sql) {
+	protected function _scrapeSQL($sql) {
 		$sql = str_replace("\"", '', $sql);
 		$preFrom = preg_split('/\bFROM\b/', $sql);
 		$preFrom = $preFrom[0];
@@ -330,9 +329,8 @@ class DboOracle extends DboSource {
  *
  * @param string $sql SQL statement
  * @return resource Result resource identifier or null
- * @access protected
  */
-	function _execute($sql) {
+	protected function _execute($sql) {
 		$this->_statementId = @ociparse($this->connection, $sql);
 		if (!$this->_statementId) {
 			$this->_setError($this->connection);

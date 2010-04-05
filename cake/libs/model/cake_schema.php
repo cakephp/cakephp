@@ -110,9 +110,8 @@ class CakeSchema extends Object {
  *
  * @param array $data loaded object properties
  * @return void
- * @access protected
  */
-	function _build($data) {
+	protected function _build($data) {
 		$file = null;
 		foreach ($data as $key => $val) {
 			if (!empty($val)) {

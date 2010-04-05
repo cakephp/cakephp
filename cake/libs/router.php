@@ -1321,9 +1321,8 @@ class CakeRoute {
  * properties to compile a regular expression that can be used to parse request strings.
  *
  * @return void
- * @access protected
  */
-	function _writeRoute() {
+	protected function _writeRoute() {
 		if (empty($this->template) || ($this->template === '/')) {
 			$this->_compiledRoute = '#^/*$#';
 			$this->keys = array();
@@ -1522,9 +1521,8 @@ class CakeRoute {
  *
  * @param array $params The params to convert to a string url.
  * @return string Composed route string.
- * @access protected
  */
-	function _writeUrl($params) {
+	protected function _writeUrl($params) {
 		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
 			unset($params['controller']);
 		}

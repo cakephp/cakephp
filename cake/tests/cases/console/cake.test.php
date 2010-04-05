@@ -82,9 +82,8 @@ class TestShellDispatcher extends ShellDispatcher {
  * _initEnvironment method
  *
  * @return void
- * @access protected
  */
-	function _initEnvironment() {
+	protected function _initEnvironment() {
 	}
 
 /**
@@ -122,9 +121,8 @@ class TestShellDispatcher extends ShellDispatcher {
  * _stop method
  *
  * @return void
- * @access protected
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		$this->stopped = 'Stopped with status: ' . $status;
 		return $status;
 	}
@@ -144,9 +142,8 @@ class TestShellDispatcher extends ShellDispatcher {
  *
  * @param mixed $plugin
  * @return mixed
- * @access protected
  */
-	function _getShell($plugin = null) {
+	protected function _getShell($plugin = null) {
 		if (isset($this->TestShell)) {
 			return $this->TestShell;
 		}

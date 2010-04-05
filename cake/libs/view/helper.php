@@ -146,9 +146,8 @@ class Helper extends Overloadable {
 /**
  * Default overload methods
  *
- * @access protected
  */
-	function get__($name) {}
+	protected function get__($name) {}
 	function set__($name, $value) {}
 	function call__($method, $params) {
 		trigger_error(sprintf(__('Method %1$s::%2$s does not exist', true), get_class($this), $method), E_USER_WARNING);
@@ -714,9 +713,8 @@ class Helper extends Overloadable {
  * @param string $field The field name to initialize.
  * @param array $options Array of options to use while initializing an input field.
  * @return array Array options for the form input.
- * @access protected
  */
-	function _initInputField($field, $options = array()) {
+	protected function _initInputField($field, $options = array()) {
 		if ($field !== null) {
 			$this->setEntity($field);
 		}

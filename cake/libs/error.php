@@ -433,9 +433,8 @@ class ErrorHandler extends Object {
 /**
  * Output message
  *
- * @access protected
  */
-	function _outputMessage($template) {
+	protected function _outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
 		echo $this->controller->output;

@@ -179,9 +179,8 @@ class Dispatcher extends Object {
  * @param array $params Parameters with at least the 'action' to invoke
  * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
  * @return string Output as sent by controller
- * @access protected
  */
-	function _invoke(&$controller, $params) {
+	protected function _invoke(&$controller, $params) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
@@ -370,9 +369,8 @@ class Dispatcher extends Object {
  * @param boolean $reverse  If true all the params are shifted one forward, so plugin becomes
  *   controller, controller becomes action etc.  If false, plugin is made equal to controller
  * @return array Restructured array
- * @access protected
  */
-	function _restructureParams($params, $reverse = false) {
+	protected function _restructureParams($params, $reverse = false) {
 		if ($reverse === true) {
 			extract(Router::getArgs($params['action']));
 			$params = array_merge($params, array(
@@ -648,9 +646,8 @@ class Dispatcher extends Object {
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void
- * @access protected
  */
-	function _deliverAsset($assetFile, $ext) {
+	protected function _deliverAsset($assetFile, $ext) {
 		$ob = @ini_get("zlib.output_compression") !== '1' && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 		if ($ob && Configure::read('Asset.compress')) {
 			ob_start();

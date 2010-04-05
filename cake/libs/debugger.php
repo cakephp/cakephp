@@ -562,9 +562,8 @@ class Debugger extends Object {
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings to be used for the output format.
- * @access protected
  */
-	function output($format = null, $strings = array()) {
+	protected function output($format = null, $strings = array()) {
 		$_this =& Debugger::getInstance();
 		$data = null;
 

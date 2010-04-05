@@ -430,9 +430,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param string $message Message to parse
  * @return array Parsed message (with indexed elements such as raw, status, header, body)
- * @access protected
  */
-	function _parseResponse($message) {
+	protected function _parseResponse($message) {
 		if (is_array($message)) {
 			return $message;
 		} elseif (!is_string($message)) {
@@ -494,9 +493,8 @@ class HttpSocket extends CakeSocket {
  * @param string $body A string continaing the body to decode.
  * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding.
  * @return mixed Array of response headers and body or false.
- * @access protected
  */
-	function _decodeBody($body, $encoding = 'chunked') {
+	protected function _decodeBody($body, $encoding = 'chunked') {
 		if (!is_string($body)) {
 			return false;
 		}
@@ -520,9 +518,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param string $body A string continaing the chunked body to decode.
  * @return mixed Array of response headers and body or false.
- * @access protected
  */
-	function _decodeChunkedBody($body) {
+	protected function _decodeChunkedBody($body) {
 		if (!is_string($body)) {
 			return false;
 		}
@@ -582,9 +579,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $uri URI, See HttpSocket::_parseUri()
  * @return array Current configuration settings
- * @access protected
  */
-	function _configUri($uri = null) {
+	protected function _configUri($uri = null) {
 		if (empty($uri)) {
 			return false;
 		}
@@ -616,9 +612,8 @@ class HttpSocket extends CakeSocket {
  * @param mixed $uri Either A $uri array, or a request string.  Will use $this->config if left empty.
  * @param string $uriTemplate The Uri template/format to use.
  * @return mixed A fully qualified URL formated according to $uriTemplate, or false on failure
- * @access protected
  */
-	function _buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
+	protected function _buildUri($uri = array(), $uriTemplate = '%scheme://%user:%pass@%host:%port/%path?%query#%fragment') {
 		if (is_string($uri)) {
 			$uri = array('host' => $uri);
 		}
@@ -664,9 +659,8 @@ class HttpSocket extends CakeSocket {
  * @param string $uri URI to parse
  * @param mixed $base If true use default URI config, otherwise indexed array to set 'scheme', 'host', 'port', etc.
  * @return array Parsed URI
- * @access protected
  */
-	function _parseUri($uri = null, $base = array()) {
+	protected function _parseUri($uri = null, $base = array()) {
 		$uriBase = array(
 			'scheme' => array('http', 'https'),
 			'host' => null,
@@ -730,9 +724,8 @@ class HttpSocket extends CakeSocket {
  * @param mixed $query A query string to parse into an array or an array to return directly "as is"
  * @return array The $query parsed into a possibly multi-level array. If an empty $query is
  *     given, an empty array is returned.
- * @access protected
  */
-	function _parseQuery($query) {
+	protected function _parseQuery($query) {
 		if (is_array($query)) {
 			return $query;
 		}
@@ -788,9 +781,8 @@ class HttpSocket extends CakeSocket {
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
  * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
- * @access protected
  */
-	function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
+	protected function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
 		$asteriskMethods = array('OPTIONS');
 
 		if (is_string($request)) {
@@ -822,9 +814,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param array $data Data to serialize
  * @return string Serialized variable
- * @access protected
  */
-	function _httpSerialize($data = array()) {
+	protected function _httpSerialize($data = array()) {
 		if (is_string($data)) {
 			return $data;
 		}
@@ -839,9 +830,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param array $header Header to build
  * @return string Header built from array
- * @access protected
  */
-	function _buildHeader($header, $mode = 'standard') {
+	protected function _buildHeader($header, $mode = 'standard') {
 		if (is_string($header)) {
 			return $header;
 		} elseif (!is_array($header)) {
@@ -868,9 +858,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param array $header Header as an indexed array (field => value)
  * @return array Parsed header
- * @access protected
  */
-	function _parseHeader($header) {
+	protected function _parseHeader($header) {
 		if (is_array($header)) {
 			foreach ($header as $field => $value) {
 				unset($header[$field]);

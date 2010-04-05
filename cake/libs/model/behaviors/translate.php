@@ -332,9 +332,8 @@ class TranslateBehavior extends ModelBehavior {
  * Get selected locale for model
  *
  * @return mixed string or false
- * @access protected
  */
-	function _getLocale(&$model) {
+	protected function _getLocale(&$model) {
 		if (!isset($model->locale) || is_null($model->locale)) {
 			if (!class_exists('I18n')) {
 				App::import('Core', 'i18n');

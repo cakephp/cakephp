@@ -351,9 +351,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $message Plain text or Unicode message.
  * @return string Browser readable message.
- * @access protected
  */
-	function _htmlEntities($message) {
+	protected function _htmlEntities($message) {
 		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
 	}
 }

@@ -490,9 +490,8 @@ class Model extends Overloadable {
  * @param string $method Name of method to call.
  * @param array $params Parameters for the method.
  * @return mixed Whatever is returned by called method
- * @access protected
  */
-	function call__($method, $params) {
+	protected function call__($method, $params) {
 		$result = $this->Behaviors->dispatchMethod($this, $method, $params);
 
 		if ($result !== array('unhandled')) {
@@ -1511,9 +1510,8 @@ class Model extends Overloadable {
  * @param array $data The fields of the record that will be updated
  * @return array Returns updated foreign key values, along with an 'old' key containing the old
  *     values, or empty if no foreign keys are updated.
- * @access protected
  */
-	function _prepareUpdateFields($data) {
+	protected function _prepareUpdateFields($data) {
 		$foreignKeys = array();
 		foreach ($this->belongsTo as $assoc => $info) {
 			if ($info['counterCache']) {
@@ -1819,9 +1817,8 @@ class Model extends Overloadable {
  * @param string $id ID of record that was deleted
  * @param boolean $cascade Set to true to delete records that depend on this record
  * @return void
- * @access protected
  */
-	function _deleteDependent($id, $cascade) {
+	protected function _deleteDependent($id, $cascade) {
 		if (!empty($this->__backAssociation)) {
 			$savedAssociatons = $this->__backAssociation;
 			$this->__backAssociation = array();
@@ -1861,9 +1858,8 @@ class Model extends Overloadable {
  *
  * @param string $id ID of record that was deleted
  * @return void
- * @access protected
  */
-	function _deleteLinks($id) {
+	protected function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $assoc => $data) {
 			$joinModel = $data['with'];
 			$records = $this->{$joinModel}->find('all', array(
@@ -2208,9 +2204,8 @@ class Model extends Overloadable {
  * @param mixed $query
  * @param array $results
  * @return array
- * @access protected
  */
-	function _findNeighbors($state, $query, $results = array()) {
+	protected function _findNeighbors($state, $query, $results = array()) {
 		if ($state == 'before') {
 			$query = array_merge(array('recursive' => 0), $query);
 			extract($query);
@@ -2267,9 +2262,8 @@ class Model extends Overloadable {
  * @param mixed $query
  * @param array $results
  * @return array Threaded results
- * @access protected
  */
-	function _findThreaded($state, $query, $results = array()) {
+	protected function _findThreaded($state, $query, $results = array()) {
 		if ($state == 'before') {
 			return $query;
 		} elseif ($state == 'after') {

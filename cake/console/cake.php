@@ -166,9 +166,8 @@ class ShellDispatcher {
 /**
  * Defines current working environment.
  *
- * @access protected
  */
-	function _initEnvironment() {
+	protected function _initEnvironment() {
 		$this->stdin = fopen('php://stdin', 'r');
 		$this->stdout = fopen('php://stdout', 'w');
 		$this->stderr = fopen('php://stderr', 'w');
@@ -389,9 +388,8 @@ class ShellDispatcher {
  *
  * @param string $plugin Optionally the name of a plugin
  * @return mixed False if no shell could be found or an object on success
- * @access protected
  */
-	function _getShell($plugin = null) {
+	protected function _getShell($plugin = null) {
 		foreach ($this->shellPaths as $path) {
 			$this->shellPath = $path . $this->shell . '.php';
 			$pluginShellPath =  DS . $plugin . DS . 'vendors' . DS . 'shells' . DS;
@@ -641,9 +639,8 @@ class ShellDispatcher {
  *
  * @param $status see http://php.net/exit for values
  * @return void
- * @access protected
  */
-	function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		exit($status);
 	}
 }

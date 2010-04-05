@@ -247,9 +247,8 @@ class FixtureTask extends BakeTask {
  *
  * @param array $table Table schema array
  * @return string fields definitions
- * @access protected
  */
-	function _generateSchema($tableInfo) {
+	protected function _generateSchema($tableInfo) {
 		$schema = $this->_Schema->generateTable('f', $tableInfo);
 		return substr($schema, 10, -2);
 	}
@@ -259,9 +258,8 @@ class FixtureTask extends BakeTask {
  *
  * @param array $table Table schema array
  * @return array Array of records to use in the fixture.
- * @access protected
  */
-	function _generateRecords($tableInfo, $recordCount = 1) {
+	protected function _generateRecords($tableInfo, $recordCount = 1) {
 		$records = array();
 		for ($i = 0; $i < $recordCount; $i++) {
 			$record = array();
@@ -331,9 +329,8 @@ class FixtureTask extends BakeTask {
  *
  * @param array $records Array of records to be converted to string
  * @return string A string value of the $records array.
- * @access protected
  */
-	function _makeRecordString($records) {
+	protected function _makeRecordString($records) {
 		$out = "array(\n";
 		foreach ($records as $record) {
 			$values = array();
@@ -355,9 +352,8 @@ class FixtureTask extends BakeTask {
  * @param string $modelName name of the model to take records from.
  * @param string $useTable Name of table to use.
  * @return array Array of records.
- * @access protected
  */
-	function _getRecordsFromTable($modelName, $useTable = null) {
+	protected function _getRecordsFromTable($modelName, $useTable = null) {
 		if ($this->interactive) {
 			$condition = null;
 			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);

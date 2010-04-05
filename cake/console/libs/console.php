@@ -323,9 +323,8 @@ class ConsoleShell extends Shell {
  *
  * @param string $modelToCheck
  * @return boolean true if is an available model, false otherwise
- * @access protected
  */
-	function _isValidModel($modelToCheck) {
+	protected function _isValidModel($modelToCheck) {
 		return in_array($modelToCheck, $this->models);
 	}
 
@@ -334,9 +333,8 @@ class ConsoleShell extends Shell {
  * all routes found
  *
  * @return boolean True if config reload was a success, otherwise false
- * @access protected
  */
-	function _loadRoutes() {
+	protected function _loadRoutes() {
 		$router =& Router::getInstance();
 
 		$router->reload();

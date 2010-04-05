@@ -106,9 +106,8 @@ class DboMysqli extends DboMysqlBase {
  *
  * @param string $sql SQL statement
  * @return resource Result resource identifier
- * @access protected
  */
-	function _execute($sql) {
+	protected function _execute($sql) {
 		if (preg_match('/^\s*call/i', $sql)) {
 			return $this->_executeProcedure($sql);
 		}
@@ -120,9 +119,8 @@ class DboMysqli extends DboMysqlBase {
  *
  * @param string $sql SQL statement (procedure call)
  * @return resource Result resource identifier for first recordset
- * @access protected
  */
-	function _executeProcedure($sql) {
+	protected function _executeProcedure($sql) {
 		$answer = mysqli_multi_query($this->connection, $sql);
 
 		$firstResult = mysqli_store_result($this->connection);

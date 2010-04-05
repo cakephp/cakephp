@@ -798,9 +798,8 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model Model instance
  * @param mixed $parentId
  * @return boolean true on success, false on failure
- * @access protected
  */
-	function _setParent(&$Model, $parentId = null, $created = false) {
+	protected function _setParent(&$Model, $parentId = null, $created = false) {
 		extract($this->settings[$Model->alias]);
 		list($node) = array_values($Model->find('first', array(
 			'conditions' => array($scope, $Model->escapeField() => $Model->id),

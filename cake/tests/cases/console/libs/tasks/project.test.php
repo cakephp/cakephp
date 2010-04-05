@@ -80,9 +80,8 @@ class ProjectTaskTest extends CakeTestCase {
  * creates a test project that is used for testing project task.
  *
  * @return void
- * @access protected
  */
-	function _setupTestProject() {
+	protected function _setupTestProject() {
 		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'n');

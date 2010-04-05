@@ -58,9 +58,8 @@ class CakeTestDispatcher extends Dispatcher {
  * @param array $params
  * @param boolean $missingAction
  * @return Controller
- * @access protected
  */
-	function _invoke(&$controller, $params, $missingAction = false) {
+	protected function _invoke(&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
 
 		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
@@ -682,9 +681,8 @@ class CakeTestCase extends UnitTestCase {
  * Initialize DB connection.
  *
  * @return void
- * @access protected
  */
-	function _initDb() {
+	protected function _initDb() {
 		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
 
 		$_prefix = null;
@@ -718,9 +716,8 @@ class CakeTestCase extends UnitTestCase {
  * Load fixtures specified in public $fixtures.
  *
  * @return void
- * @access protected
  */
-	function _loadFixtures() {
+	protected function _loadFixtures() {
 		if (!isset($this->fixtures) || empty($this->fixtures)) {
 			return;
 		}

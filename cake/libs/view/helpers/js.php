@@ -268,9 +268,8 @@ class JsHelper extends AppHelper {
  * Generates the object string for variables passed to javascript.
  *
  * @return string Generated JSON object of all set vars
- * @access protected
  */
-	function _createVars() {
+	protected function _createVars() {
 		if (!empty($this->__jsVars)) {
 			$setVar = (strpos($this->setVariable, '.')) ? $this->setVariable : 'window.' . $this->setVariable;
 			$this->buffer($setVar . ' = ' . $this->object($this->__jsVars) . ';', true);
@@ -400,9 +399,8 @@ class JsHelper extends AppHelper {
  * @param array $options Options to filter.
  * @param array $additional Array of additional keys to extract and include in the return options array.
  * @return array Array of js options and Htmloptions
- * @access protected
  */
-	function _getHtmlOptions($options, $additional = array()) {
+	protected function _getHtmlOptions($options, $additional = array()) {
 		$htmlKeys = array_merge(array('class', 'id', 'escape', 'onblur', 'onfocus', 'rel', 'title'), $additional);
 		$htmlOptions = array();
 		foreach ($htmlKeys as $key) {
@@ -656,9 +654,8 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param string $string The string that needs to be utf8->hex encoded
  * @return void
- * @access protected
  */
-	function _utf8ToHex($string) {
+	protected function _utf8ToHex($string) {
 		$length = strlen($string);
 		$return = '';
 		for ($i = 0; $i < $length; ++$i) {
@@ -972,9 +969,8 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Options to be converted
  * @param array $safeKeys Keys that should not be escaped.
  * @return string Parsed JSON options without enclosing { }.
- * @access protected
  */
-	function _parseOptions($options, $safeKeys = array()) {
+	protected function _parseOptions($options, $safeKeys = array()) {
 		$out = array();
 		$safeKeys = array_flip($safeKeys);
 		foreach ($options as $key => $value) {
@@ -994,9 +990,8 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $method Name of method whose options are being worked with.
  * @param array $options Array of options to map.
  * @return array Array of mapped options.
- * @access protected
  */
-	function _mapOptions($method, $options) {
+	protected function _mapOptions($method, $options) {
 		if (!isset($this->_optionMap[$method])) {
 			return $options;
 		}
@@ -1017,9 +1012,8 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options being parsed
  * @param string $callbacks Additional Keys that contain callbacks
  * @return array Array of options with callbacks added.
- * @access protected
  */
-	function _prepareCallbacks($method, $options, $callbacks = array()) {
+	protected function _prepareCallbacks($method, $options, $callbacks = array()) {
 		$wrapCallbacks = true;
 		if (isset($options['wrapCallbacks'])) {
 			$wrapCallbacks = $options['wrapCallbacks'];
@@ -1054,9 +1048,8 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $method Name of method processing options for.
  * @param array $options Array of options to process.
  * @return string Parsed options string.
- * @access protected
  */
-	function _processOptions($method, $options) {
+	protected function _processOptions($method, $options) {
 		$options = $this->_mapOptions($method, $options);
 		$options = $this->_prepareCallbacks($method, $options);
 		$options = $this->_parseOptions($options, array_keys($this->_callbackArguments[$method]));
@@ -1068,9 +1061,8 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @param array $parameters Array of parameters to convert to a query string
  * @return string Querystring fragment
- * @access protected
  */
-	function _toQuerystring($parameters) {
+	protected function _toQuerystring($parameters) {
 		$out = '';
 		$keys = array_keys($parameters);
 		$count = count($parameters);

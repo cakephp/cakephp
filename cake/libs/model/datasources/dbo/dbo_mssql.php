@@ -187,9 +187,8 @@ class DboMssql extends DboSource {
  *
  * @param string $sql SQL statement
  * @return resource Result resource identifier
- * @access protected
  */
-	function _execute($sql) {
+	protected function _execute($sql) {
 		$result = @mssql_query($sql, $this->connection);
 		$this->__lastQueryHadError = ($result === false);
 		return $result;
@@ -701,9 +700,8 @@ class DboMssql extends DboSource {
  * @param string $table
  * @param string $fields
  * @param array $values
- * @access protected
  */
-	function insertMulti($table, $fields, $values) {
+	protected function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
 		$hasPrimaryKey = $primaryKey != null && (
 			(is_array($fields) && in_array($primaryKey, $fields)

@@ -394,9 +394,8 @@ class Controller extends Object {
  * Merge components, helpers, and uses vars from AppController and PluginAppController.
  *
  * @return void
- * @access protected
  */
-	function __mergeVars() {
+	protected function __mergeVars() {
 		$pluginName = Inflector::camelize($this->plugin);
 		$pluginController = $pluginName . 'AppController';
 

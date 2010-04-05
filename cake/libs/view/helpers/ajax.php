@@ -914,9 +914,8 @@ class AjaxHelper extends AppHelper {
  *
  * @param array $options Option array where a callback is specified
  * @return array Options with their callbacks properly set
- * @access protected
  */
-	function _buildCallbacks($options) {
+	protected function _buildCallbacks($options) {
 		$callbacks = array();
 
 		foreach ($this->callbacks as $callback) {

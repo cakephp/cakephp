@@ -1556,9 +1556,8 @@ class DboSource extends DataSource {
  * @param boolean $quoteValues If values should be quoted, or treated as SQL snippets
  * @param boolean $alias Include the model alias in the field name
  * @return array Fields and values, quoted and preparted
- * @access protected
  */
-	function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
+	protected function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
 		$updates = array();
@@ -1624,9 +1623,8 @@ class DboSource extends DataSource {
  * @param Model $model
  * @param mixed $conditions
  * @return array List of record IDs
- * @access protected
  */
-	function _matchRecords(&$model, $conditions = null) {
+	protected function _matchRecords(&$model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
@@ -1670,9 +1668,8 @@ class DboSource extends DataSource {
  *
  * @param object $model
  * @return array
- * @access protected
  */
-	function _getJoins($model) {
+	protected function _getJoins($model) {
 		$join = array();
 		$joins = array_merge($model->getAssociated('hasOne'), $model->getAssociated('belongsTo'));
 
@@ -2528,9 +2525,8 @@ class DboSource extends DataSource {
  * @param string $table
  * @param string $fields
  * @param array $values
- * @access protected
  */
-	function insertMulti($table, $fields, $values) {
+	protected function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
 			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));

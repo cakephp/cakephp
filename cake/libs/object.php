@@ -156,9 +156,8 @@ class Object {
  *
  * @param array $properties An associative array containing properties and corresponding values.
  * @return void
- * @access protected
  */
-	function _set($properties = array()) {
+	protected function _set($properties = array()) {
 		if (is_array($properties) && !empty($properties)) {
 			$vars = get_object_vars($this);
 			foreach ($properties as $key => $val) {
@@ -236,9 +235,8 @@ class Object {
  * @param string $name name used for object to cache
  * @param object $object the object to persist
  * @return boolean true on save, throws error if file can not be created
- * @access protected
  */
-	function _savePersistent($name, &$object) {
+	protected function _savePersistent($name, &$object) {
 		$file = 'persistent' . DS . strtolower($name) . '.php';
 		$objectArray = array(&$object);
 		$data = str_replace('\\', '\\\\', serialize($objectArray));

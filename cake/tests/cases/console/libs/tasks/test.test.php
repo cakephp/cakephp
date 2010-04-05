@@ -119,9 +119,8 @@ class TestTaskArticle extends Model {
  * Example protected method
  *
  * @return void
- * @access protected
  */
-	function _innerMethod() {
+	protected function _innerMethod() {
 	}
 }
 

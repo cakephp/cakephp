@@ -587,9 +587,8 @@ class CakeSession extends Object {
  * Helper method to create a new session.
  *
  * @return void
- * @access protected
  */
-	function _checkValid() {
+	protected function _checkValid() {
 		if ($this->read('Config')) {
 			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
 				$time = $this->read('Config.time');

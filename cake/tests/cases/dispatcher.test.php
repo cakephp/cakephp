@@ -40,9 +40,8 @@ class TestDispatcher extends Dispatcher {
  * @param mixed $params
  * @param mixed $missingAction
  * @return void
- * @access protected
  */
-	function _invoke(&$controller, $params) {
+	protected function _invoke(&$controller, $params) {
 		restore_error_handler();
 		if ($result = parent::_invoke($controller, $params)) {
 			if ($result[0] === 'missingAction') {
@@ -68,9 +67,8 @@ class TestDispatcher extends Dispatcher {
  * _stop method
  *
  * @return void
- * @access protected
  */
-	function _stop() {
+	protected function _stop() {
 		return true;
 	}
 }
@@ -184,9 +182,8 @@ class SomePagesController extends AppController {
  * protected method
  *
  * @return void
- * @access protected
  */
-	function _protected() {
+	protected function _protected() {
 		return true;
 	}
 

@@ -294,9 +294,8 @@ class TestTask extends BakeTask {
  *
  * @param Model $subject A Model class to scan for associations and pull fixtures off of.
  * @return void
- * @access protected
  */
-	function _processModel(&$subject) {
+	protected function _processModel(&$subject) {
 		$this->_addFixture($subject->name);
 		$associated = $subject->getAssociated();
 		foreach ($associated as $alias => $type) {
@@ -319,9 +318,8 @@ class TestTask extends BakeTask {
  *
  * @param Controller $subject A controller to pull model names off of.
  * @return void
- * @access protected
  */
-	function _processController(&$subject) {
+	protected function _processController(&$subject) {
 		$subject->constructClasses();
 		$models = array(Inflector::classify($subject->name));
 		if (!empty($subject->uses)) {
@@ -338,9 +336,8 @@ class TestTask extends BakeTask {
  *
  * @param string $name Name of the Model class that a fixture might be required for.
  * @return void
- * @access protected
  */
-	function _addFixture($name) {
+	protected function _addFixture($name) {
 		$parent = get_parent_class($name);
 		$prefix = 'app.';
 		if (strtolower($parent) != 'appmodel' && strtolower(substr($parent, -8)) == 'appmodel') {

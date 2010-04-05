@@ -71,9 +71,8 @@ class AclComponent extends Object {
 /**
  * Empty class defintion, to be overridden in subclasses.
  *
- * @access protected
  */
-	function _initACL() {
+	protected function _initACL() {
 	}
 
 /**
@@ -460,9 +459,8 @@ class DbAcl extends AclBase {
  *
  * @param array $keys Permission model info
  * @return array ACO keys
- * @access protected
  */
-	function _getAcoKeys($keys) {
+	protected function _getAcoKeys($keys) {
 		$newKeys = array();
 		$keys = array_keys($keys);
 		foreach ($keys as $key) {

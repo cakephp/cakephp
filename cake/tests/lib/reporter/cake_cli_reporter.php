@@ -163,9 +163,8 @@ class CakeCliReporter extends CakeBaseReporter {
  * Get the time and memory stats for this test case/group
  *
  * @return string String content to display
- * @access protected
  */
-	function _timeStats() {
+	protected function _timeStats() {
 		$out = 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
 		if (function_exists('memory_get_peak_usage')) {
 			$out .= 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";

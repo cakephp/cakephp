@@ -191,9 +191,8 @@ class Component extends Object {
  * @param object $object Object with a Components array
  * @param object $parent the parent of the current object
  * @return void
- * @access protected
  */
-	function _loadComponents(&$object, $parent = null) {
+	protected function _loadComponents(&$object, $parent = null) {
 		$base = $this->__controllerVars['base'];
 		$normal = Set::normalize($object->components);
 		foreach ((array)$normal as $component => $config) {

@@ -421,9 +421,8 @@ class SecurityComponent extends Object {
  * @param string $method The HTTP method to assign controller actions to
  * @param array $actions Controller actions to set the required HTTP method to.
  * @return void
- * @access protected
  */
-	function _requireMethod($method, $actions = array()) {
+	protected function _requireMethod($method, $actions = array()) {
 		if (isset($actions[0]) && is_array($actions[0])) {
 			$actions = $actions[0];
 		}
@@ -435,9 +434,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool true if $method is required
- * @access protected
  */
-	function _methodsRequired(&$controller) {
+	protected function _methodsRequired(&$controller) {
 		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
 			$property = 'require' . $method;
 			if (is_array($this->$property) && !empty($this->$property)) {
@@ -460,9 +458,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool true if secure connection required
- * @access protected
  */
-	function _secureRequired(&$controller) {
+	protected function _secureRequired(&$controller) {
 		if (is_array($this->requireSecure) && !empty($this->requireSecure)) {
 			$requireSecure = array_map('strtolower', $this->requireSecure);
 
@@ -482,9 +479,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool true if authentication required
- * @access protected
  */
-	function _authRequired(&$controller) {
+	protected function _authRequired(&$controller) {
 		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
 			$requireAuth = array_map('strtolower', $this->requireAuth);
 
@@ -518,9 +514,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool true if login is required
- * @access protected
  */
-	function _loginRequired(&$controller) {
+	protected function _loginRequired(&$controller) {
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
 			$requireLogin = array_map('strtolower', $this->requireLogin);
 
@@ -566,9 +561,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool true if submitted form is valid
- * @access protected
  */
-	function _validatePost(&$controller) {
+	protected function _validatePost(&$controller) {
 		if (empty($controller->data)) {
 			return true;
 		}
@@ -647,9 +641,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return bool Success
- * @access protected
  */
-	function _generateToken(&$controller) {
+	protected function _generateToken(&$controller) {
 		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
 				$tokenData = unserialize($this->Session->read('_Token'));
@@ -693,9 +686,8 @@ class SecurityComponent extends Object {
  *
  * @param array $options Default login options
  * @return void
- * @access protected
  */
-	function _setLoginDefaults(&$options) {
+	protected function _setLoginDefaults(&$options) {
 		$options = array_merge(array(
 			'type' => 'basic',
 			'realm' => env('SERVER_NAME'),
@@ -712,9 +704,8 @@ class SecurityComponent extends Object {
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
- * @access protected
  */
-	function _callback(&$controller, $method, $params = array()) {
+	protected function _callback(&$controller, $method, $params = array()) {
 		if (is_callable(array($controller, $method))) {
 			return call_user_func_array(array(&$controller, $method), empty($params) ? null : $params);
 		} else {

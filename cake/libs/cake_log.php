@@ -117,9 +117,8 @@ class CakeLog {
  *
  * @param string $loggerName the plugin.className of the logger class you want to build.
  * @return mixed boolean false on any failures, string of classname to use if search was successful.
- * @access protected
  */
-	function _getLogger($loggerName) {
+	protected function _getLogger($loggerName) {
 		list($plugin, $loggerName) = pluginSplit($loggerName);
 
 		if ($plugin) {
@@ -173,9 +172,8 @@ class CakeLog {
  * Configures the automatic/default stream a FileLog.
  *
  * @return void
- * @access protected
  */
-	function _autoConfig() {
+	protected function _autoConfig() {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
 		}
