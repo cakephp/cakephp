@@ -106,9 +106,8 @@ class SecurityTestController extends Controller {
  *
  * @param string $status
  * @return void
- * @access public
  */
-	function header($status) {
+	public function header($status) {
 		$this->testHeaders[] = $status;
 	}
 }

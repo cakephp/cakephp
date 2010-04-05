@@ -114,9 +114,8 @@ class RequestHandlerTestDisabledController extends Controller {
  * beforeFilter method
  *
  * @return void
- * @access public
  */
-	function beforeFilter() {
+	public function beforeFilter() {
 		$this->RequestHandler->enabled = false;
 	}
 }

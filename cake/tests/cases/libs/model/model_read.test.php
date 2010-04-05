@@ -3505,9 +3505,8 @@ class ModelReadTest extends BaseModelTest {
  * test find('neighbors')
  *
  * @return void
- * @access public
  */
-	function testFindNeighbors() {
+	public function testFindNeighbors() {
 		$this->loadFixtures('User', 'Article');
 		$TestModel =& new Article();
 
@@ -5379,9 +5378,8 @@ class ModelReadTest extends BaseModelTest {
  * testFindAllRecursiveWithHabtm method
  *
  * @return void
- * @access public
  */
-	function testFindAllRecursiveWithHabtm() {
+	public function testFindAllRecursiveWithHabtm() {
 		$this->loadFixtures(
 			'MyCategoriesMyUsers',
 			'MyCategoriesMyProducts',

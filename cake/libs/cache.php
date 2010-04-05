@@ -361,9 +361,8 @@ class Cache {
  *   default config will be used.
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *    or if there was an error fetching it.
- * @access public
  */
-	function increment($key, $offset = 1, $config = null) {
+	public function increment($key, $offset = 1, $config = null) {
 		$self =& Cache::getInstance();
 
 		if (!$config) {
@@ -395,9 +394,8 @@ class Cache {
  *   default config will be used.
  * @return mixed new value, or false if the data doesn't exist, is not integer,
  *   or if there was an error fetching it
- * @access public
  */
-	function decrement($key, $offset = 1, $config = null) {
+	public function decrement($key, $offset = 1, $config = null) {
 		$self =& Cache::getInstance();
 
 		if (!$config) {
@@ -558,9 +556,8 @@ class CacheEngine {
  *
  * @param array $params Associative array of parameters for the engine
  * @return boolean True if the engine has been succesfully initialized, false if not
- * @access public
  */
-	function init($settings = array()) {
+	public function init($settings = array()) {
 		$this->settings = array_merge(
 			array('prefix' => 'cake_', 'duration'=> 3600, 'probability'=> 100),
 			$this->settings,
@@ -577,9 +574,8 @@ class CacheEngine {
  *
  * Permanently remove all expired and deleted data
  *
- * @access public
  */
-	function gc() {
+	public function gc() {
 	}
 
 /**
@@ -589,9 +585,8 @@ class CacheEngine {
  * @param mixed $value Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
- * @access public
  */
-	function write($key, &$value, $duration) {
+	public function write($key, &$value, $duration) {
 		trigger_error(sprintf(__('Method write() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 
@@ -600,9 +595,8 @@ class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
- * @access public
  */
-	function read($key) {
+	public function read($key) {
 		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 
@@ -612,9 +606,8 @@ class CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to add
  * @return New incremented value, false otherwise
- * @access public
  */
-	function increment($key, $offset = 1) {
+	public function increment($key, $offset = 1) {
 		trigger_error(sprintf(__('Method increment() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
@@ -623,9 +616,8 @@ class CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $value How much to substract
  * @return New incremented value, false otherwise
- * @access public
  */
-	function decrement($key, $offset = 1) {
+	public function decrement($key, $offset = 1) {
 		trigger_error(sprintf(__('Method decrement() not implemented in %s', true), get_class($this)), E_USER_ERROR);
 	}
 /**
@@ -633,9 +625,8 @@ class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
- * @access public
  */
-	function delete($key) {
+	public function delete($key) {
 	}
 
 /**
@@ -643,18 +634,16 @@ class CacheEngine {
  *
  * @param boolean $check if true will check expiration, otherwise delete all
  * @return boolean True if the cache was succesfully cleared, false otherwise
- * @access public
  */
-	function clear($check) {
+	public function clear($check) {
 	}
 
 /**
  * Cache Engine settings
  *
  * @return array settings
- * @access public
  */
-	function settings() {
+	public function settings() {
 		return $this->settings;
 	}
 
@@ -663,9 +652,8 @@ class CacheEngine {
  *
  * @param string $key the key passed over
  * @return mixed string $key or false
- * @access public
  */
-	function key($key) {
+	public function key($key) {
 		if (empty($key)) {
 			return false;
 		}

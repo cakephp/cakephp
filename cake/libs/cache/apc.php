@@ -36,9 +36,8 @@ class ApcEngine extends CacheEngine {
  * @param array $setting array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  * @see CacheEngine::__defaults
- * @access public
  */
-	function init($settings = array()) {
+	public function init($settings = array()) {
 		parent::init(array_merge(array('engine' => 'Apc', 'prefix' => Inflector::slug(APP_DIR) . '_'), $settings));
 		return function_exists('apc_cache_info');
 	}
@@ -50,9 +49,8 @@ class ApcEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
- * @access public
  */
-	function write($key, &$value, $duration) {
+	public function write($key, &$value, $duration) {
 		$expires = time() + $duration;
 		apc_store($key.'_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
@@ -63,9 +61,8 @@ class ApcEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
- * @access public
  */
-	function read($key) {
+	public function read($key) {
 		$time = time();
 		$cachetime = intval(apc_fetch($key.'_expires'));
 		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
@@ -81,9 +78,8 @@ class ApcEngine extends CacheEngine {
  * @param integer $offset How much to increment
  * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
- * @access public
  */
-	function increment($key, $offset = 1) {
+	public function increment($key, $offset = 1) {
 		return apc_inc($key, $offset);
 	}
 
@@ -94,9 +90,8 @@ class ApcEngine extends CacheEngine {
  * @param integer $offset How much to substract
  * @param integer $duration How long to cache the data, in seconds
  * @return New decremented value, false otherwise
- * @access public
  */
-	function decrement($key, $offset = 1) {
+	public function decrement($key, $offset = 1) {
 		return apc_dec($key, $offset);
 	}
 
@@ -105,9 +100,8 @@ class ApcEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
- * @access public
  */
-	function delete($key) {
+	public function delete($key) {
 		return apc_delete($key);
 	}
 
@@ -115,9 +109,8 @@ class ApcEngine extends CacheEngine {
  * Delete all keys from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
- * @access public
  */
-	function clear() {
+	public function clear() {
 		return apc_clear_cache('user');
 	}
 }

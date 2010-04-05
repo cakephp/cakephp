@@ -78,9 +78,8 @@ class MagicDb extends Object {
  *
  * @param string $data A MagicDb string to turn into an array
  * @return array A parsed MagicDb array or an empty array if the $data param was invalid. Returns the db property if $data is not set.
- * @access public
  */
-	function toArray($data = null) {
+	public function toArray($data = null) {
 		if (is_array($data)) {
 			return $data;
 		}
@@ -132,9 +131,8 @@ class MagicDb extends Object {
  *
  * @param mixed $magicDb A $magicDb string / array to validate (optional)
  * @return boolean True if the $magicDb / instance db validates, false if not
- * @access public
  */
-	function validates($magicDb = null) {
+	public function validates($magicDb = null) {
 		if (is_null($magicDb)) {
 			$magicDb = $this->db;
 		} elseif (!is_array($magicDb)) {
@@ -150,9 +148,8 @@ class MagicDb extends Object {
  * @param string $file Absolute path to the file to analyze
  * @param array $options TBT
  * @return mixed
- * @access public
  */
-	function analyze($file, $options = array()) {
+	public function analyze($file, $options = array()) {
 		if (!is_string($file)) {
 			return false;
 		}
@@ -201,9 +198,8 @@ class MagicFileResource extends Object{
  *
  * @param unknown $file
  * @return void
- * @access public
  */
-	function __construct($file) {
+	public function __construct($file) {
 		if (file_exists($file)) {
 			$this->resource =& new File($file);
 		} else {
@@ -216,9 +212,8 @@ class MagicFileResource extends Object{
  *
  * @param unknown $magic
  * @return void
- * @access public
  */
-	function test($magic) {
+	public function test($magic) {
 		$offset = null;
 		$type = null;
 		$expected = null;
@@ -245,9 +240,8 @@ class MagicFileResource extends Object{
  * @param unknown $type
  * @param unknown $length
  * @return void
- * @access public
  */
-	function read($length = null) {
+	public function read($length = null) {
 		if (!is_object($this->resource)) {
 			return substr($this->resource, $this->offset, $length);
 		}
@@ -260,9 +254,8 @@ class MagicFileResource extends Object{
  * @param unknown $type
  * @param unknown $expected
  * @return void
- * @access public
  */
-	function extract($offset, $type, $expected) {
+	public function extract($offset, $type, $expected) {
 		switch ($type) {
 			case 'string':
 				$this->offset($offset);
@@ -280,9 +273,8 @@ class MagicFileResource extends Object{
  * @param unknown $offset
  * @param unknown $whence
  * @return void
- * @access public
  */
-	function offset($offset = null) {
+	public function offset($offset = null) {
 		if (is_null($offset)) {
 			if (!is_object($this->resource)) {
 				return $this->offset;

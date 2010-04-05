@@ -32,9 +32,8 @@ class TestManagerTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$this->TestManager =& new TestManager();
 		$this->Reporter =& new CakeHtmlReporter();
 	}
@@ -43,9 +42,8 @@ class TestManagerTest extends CakeTestCase {
  * testRunAllTests method
  *
  * @return void
- * @access public
  */
-	function testRunAllTests() {
+	public function testRunAllTests() {
 		$folder =& new Folder($this->TestManager->_getTestsPath());
 		$extension = str_replace('.', '\.', $this->TestManager->getExtension('test'));
 		$out = $folder->findRecursive('.*' . $extension);
@@ -60,9 +58,8 @@ class TestManagerTest extends CakeTestCase {
  * testRunTestCase method
  *
  * @return void
- * @access public
  */
-	function testRunTestCase() {
+	public function testRunTestCase() {
 		$file = md5(time());
 		$result = $this->TestManager->runTestCase($file, $this->Reporter);
 		$this->assertError('Test case ' . $file . ' cannot be found');
@@ -77,45 +74,40 @@ class TestManagerTest extends CakeTestCase {
  * testRunGroupTest method
  *
  * @return void
- * @access public
  */
-	function testRunGroupTest() {
+	public function testRunGroupTest() {
 	}
 
 /**
  * testAddTestCasesFromDirectory method
  *
  * @return void
- * @access public
  */
-	function testAddTestCasesFromDirectory() {
+	public function testAddTestCasesFromDirectory() {
 	}
 
 /**
  * testAddTestFile method
  *
  * @return void
- * @access public
  */
-	function testAddTestFile() {
+	public function testAddTestFile() {
 	}
 
 /**
  * testGetTestCaseList method
  *
  * @return void
- * @access public
  */
-	function testGetTestCaseList() {
+	public function testGetTestCaseList() {
 	}
 
 /**
  * testGetGroupTestList method
  *
  * @return void
- * @access public
  */
-	function testGetGroupTestList() {
+	public function testGetGroupTestList() {
 	}
 }
 ?>

@@ -44,9 +44,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $test_name Name class of test.
  * @return void
- * @access public
  */
-	function paintFooter($test_name) {
+	public function paintFooter($test_name) {
 		if ($this->getFailCount() + $this->getExceptionCount() == 0) {
 			echo "OK\n";
 		} else {
@@ -76,9 +75,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $test_name Name class of test.
  * @return void
- * @access public
  */
-	function paintHeader($test_name) {
+	public function paintHeader($test_name) {
 		$this->paintDocumentStart();
 		echo "$test_name\n";
 		flush();
@@ -90,9 +88,8 @@ class CakeTextReporter extends CakeBaseReporter {
  * @param string $message Failure message displayed in
  *    the context of the other tests.
  * @return void
- * @access public
  */
-	function paintFail($message) {
+	public function paintFail($message) {
 		parent::paintFail($message);
 		echo $this->getFailCount() . ") $message\n";
 		$breadcrumb = $this->getTestList();
@@ -106,9 +103,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $message Message to be shown.
  * @return void
- * @access public
  */
-	function paintError($message) {
+	public function paintError($message) {
 		parent::paintError($message);
 		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
 		$breadcrumb = $this->getTestList();
@@ -122,9 +118,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param Exception $exception Exception to describe.
  * @return void
- * @access public
  */
-	function paintException($exception) {
+	public function paintException($exception) {
 		parent::paintException($exception);
 		$message = 'Unexpected exception of type [' . get_class($exception) .
 				'] with message ['. $exception->getMessage() .
@@ -142,9 +137,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $message Text of skip condition.
  * @return void
- * @access public
  */
-	function paintSkip($message) {
+	public function paintSkip($message) {
 		parent::paintSkip($message);
 		echo "Skip: $message\n";
 	}
@@ -154,9 +148,8 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @param string $message Text to show.
  * @return void
- * @access public
  */
-	function paintFormattedMessage($message) {
+	public function paintFormattedMessage($message) {
 		echo "$message\n";
 		flush();
 	}

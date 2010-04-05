@@ -55,9 +55,8 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param array $setting array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @access public
  */
-	function init($settings = array()) {
+	public function init($settings = array()) {
 		if (!class_exists('Memcache')) {
 			return false;
 		}
@@ -101,9 +100,8 @@ class MemcacheEngine extends CacheEngine {
  * @param mixed $value Data to be cached
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
- * @access public
  */
-	function write($key, &$value, $duration) {
+	public function write($key, &$value, $duration) {
 		$expires = time() + $duration;
 		$this->__Memcache->set($key . '_expires', $expires, $this->settings['compress'], $expires);
 		return $this->__Memcache->set($key, $value, $this->settings['compress'], $expires);
@@ -114,9 +112,8 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
- * @access public
  */
-	function read($key) {
+	public function read($key) {
 		$time = time();
 		$cachetime = intval($this->__Memcache->get($key . '_expires'));
 		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
@@ -132,9 +129,8 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to increment
  * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
- * @access public
  */
-	function increment($key, $offset = 1) {
+	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			trigger_error(sprintf(__('Method increment() not implemented for compressed cache in %s', true), get_class($this)), E_USER_ERROR);
 		}
@@ -148,9 +144,8 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to substract
  * @param integer $duration How long to cache the data, in seconds
  * @return New decremented value, false otherwise
- * @access public
  */
-	function decrement($key, $offset = 1) {
+	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			trigger_error(sprintf(__('Method decrement() not implemented for compressed cache in %s', true), get_class($this)), E_USER_ERROR);
 		}
@@ -162,9 +157,8 @@ class MemcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
- * @access public
  */
-	function delete($key) {
+	public function delete($key) {
 		return $this->__Memcache->delete($key);
 	}
 
@@ -172,9 +166,8 @@ class MemcacheEngine extends CacheEngine {
  * Delete all keys from the cache
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
- * @access public
  */
-	function clear() {
+	public function clear() {
 		return $this->__Memcache->flush();
 	}
 
@@ -184,9 +177,8 @@ class MemcacheEngine extends CacheEngine {
  * @param string $host host ip address or name
  * @param integer $port Server port
  * @return boolean True if memcache server was connected
- * @access public
  */
-	function connect($host, $port = 11211) {
+	public function connect($host, $port = 11211) {
 		if ($this->__Memcache->getServerStatus($host, $port) === 0) {
 			if ($this->__Memcache->connect($host, $port)) {
 				return true;

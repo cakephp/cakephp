@@ -751,9 +751,8 @@ class Model extends Overloadable {
  *
  * @param string $tableName Name of the custom table
  * @return void
- * @access public
  */
-	function setSource($tableName) {
+	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
@@ -837,9 +836,8 @@ class Model extends Overloadable {
  * @param string $field The name of the field to be deconstructed
  * @param mixed $data An array or object to be deconstructed into a field
  * @return mixed The resulting data that should be assigned to a field
- * @access public
  */
-	function deconstruct($field, $data) {
+	public function deconstruct($field, $data) {
 		if (!is_array($data)) {
 			return $data;
 		}
@@ -912,9 +910,8 @@ class Model extends Overloadable {
  *
  * @param mixed $field Set to true to reload schema, or a string to return a specific field
  * @return array Array of table metadata
- * @access public
  */
-	function schema($field = false) {
+	public function schema($field = false) {
 		if (!is_array($this->_schema) || $field === true) {
 			$db =& ConnectionManager::getDataSource($this->useDbConfig);
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
@@ -938,9 +935,8 @@ class Model extends Overloadable {
  * Returns an associative array of field names and column types.
  *
  * @return array Field types indexed by field name
- * @access public
  */
-	function getColumnTypes() {
+	public function getColumnTypes() {
 		$columns = $this->schema();
 		if (empty($columns)) {
 			trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
@@ -957,9 +953,8 @@ class Model extends Overloadable {
  *
  * @param string $column The name of the model column
  * @return string Column type
- * @access public
  */
-	function getColumnType($column) {
+	public function getColumnType($column) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$cols = $this->schema();
 		$model = null;
@@ -986,9 +981,8 @@ class Model extends Overloadable {
  * @return mixed If $name is a string, returns a boolean indicating whether the field exists.
  *               If $name is an array of field names, returns the first field that exists,
  *               or false if none exist.
- * @access public
  */
-	function hasField($name, $checkVirtual = false) {
+	public function hasField($name, $checkVirtual = false) {
 		if (is_array($name)) {
 			foreach ($name as $n) {
 				if ($this->hasField($n, $checkVirtual)) {
@@ -1019,9 +1013,8 @@ class Model extends Overloadable {
  *
  * @param mixed $name Name of field to look for
  * @return boolean indicating whether the field exists as a model virtual field.
- * @access public
  */
-	function isVirtualField($field) {
+	public function isVirtualField($field) {
 		if (empty($this->virtualFields) || !is_string($field)) {
 			return false;
 		}
@@ -1044,9 +1037,8 @@ class Model extends Overloadable {
  * @return mixed If $field is string expression bound to virtual field $field
  *    If $field is null, returns an array of all model virtual fields
  *    or false if none $field exist.
- * @access public
  */
-	function getVirtualField($field = null) {
+	public function getVirtualField($field = null) {
 		if ($field == null) {
 			return empty($this->virtualFields) ? false : $this->virtualFields;
 		}
@@ -1464,9 +1456,8 @@ class Model extends Overloadable {
  * @param boolean $created True if a new record was created, otherwise only associations with
  *   'counterScope' defined get updated
  * @return void
- * @access public
  */
-	function updateCounterCache($keys = array(), $created = false) {
+	public function updateCounterCache($keys = array(), $created = false) {
 		$keys = empty($keys) ? $this->data[$this->alias] : $keys;
 		$keys['old'] = isset($keys['old']) ? $keys['old'] : array();
 
@@ -1964,9 +1955,8 @@ class Model extends Overloadable {
  * to ascertain the existence of the record in persistent storage.
  *
  * @return boolean True if such a record exists
- * @access public
  */
-	function exists() {
+	public function exists() {
 		if ($this->getID() === false) {
 			return false;
 		}
@@ -1980,9 +1970,8 @@ class Model extends Overloadable {
  *
  * @param array $conditions SQL conditions array
  * @return boolean True if such a record exists
- * @access public
  */
-	function hasAny($conditions = null) {
+	public function hasAny($conditions = null) {
 		return ($this->find('count', array('conditions' => $conditions, 'recursive' => -1)) != false);
 	}
 
@@ -2339,9 +2328,8 @@ class Model extends Overloadable {
  * to those originally defined in the model.
  *
  * @return boolean Success
- * @access public
  */
-	function resetAssociations() {
+	public function resetAssociations() {
 		if (!empty($this->__backAssociation)) {
 			foreach ($this->__associations as $type) {
 				if (isset($this->__backAssociation[$type])) {
@@ -2368,9 +2356,8 @@ class Model extends Overloadable {
  * @param array $fields Field/value pairs to search (if no values specified, they are pulled from $this->data)
  * @param boolean $or If false, all fields specified must match in order for a false return value
  * @return boolean False if any records matching any fields are found
- * @access public
  */
-	function isUnique($fields, $or = true) {
+	public function isUnique($fields, $or = true) {
 		if (!is_array($fields)) {
 			$fields = func_get_args();
 			if (is_bool($fields[count($fields) - 1])) {
@@ -2639,9 +2626,8 @@ class Model extends Overloadable {
  * @param string $field The name of the field to invalidate
  * @param mixed $value Name of validation rule that was not failed, or validation message to
  *    be returned. If no validation key is provided, defaults to true.
- * @access public
  */
-	function invalidate($field, $value = true) {
+	public function invalidate($field, $value = true) {
 		if (!is_array($this->validationErrors)) {
 			$this->validationErrors = array();
 		}
@@ -2653,9 +2639,8 @@ class Model extends Overloadable {
  *
  * @param string $field Returns true if the input string ends in "_id"
  * @return boolean True if the field is a foreign key listed in the belongsTo array.
- * @access public
  */
-	function isForeignKey($field) {
+	public function isForeignKey($field) {
 		$foreignKeys = array();
 		if (!empty($this->belongsTo)) {
 			foreach ($this->belongsTo as $assoc => $data) {
@@ -2672,9 +2657,8 @@ class Model extends Overloadable {
  * @param string $field Field to escape (e.g: id)
  * @param string $alias Alias for the model (e.g: Post)
  * @return string The name of the escaped field for this Model (i.e. id becomes `Post`.`id`).
- * @access public
  */
-	function escapeField($field = null, $alias = null) {
+	public function escapeField($field = null, $alias = null) {
 		if (empty($alias)) {
 			$alias = $this->alias;
 		}
@@ -2693,9 +2677,8 @@ class Model extends Overloadable {
  *
  * @param integer $list Index on which the composed ID is located
  * @return mixed The ID of the current record, false if no ID
- * @access public
  */
-	function getID($list = 0) {
+	public function getID($list = 0) {
 		if (empty($this->id) || (is_array($this->id) && isset($this->id[0]) && empty($this->id[0]))) {
 			return false;
 		}
@@ -2725,9 +2708,8 @@ class Model extends Overloadable {
  * Returns the ID of the last record this model inserted.
  *
  * @return mixed Last inserted ID
- * @access public
  */
-	function getLastInsertID() {
+	public function getLastInsertID() {
 		return $this->getInsertID();
 	}
 
@@ -2735,9 +2717,8 @@ class Model extends Overloadable {
  * Returns the ID of the last record this model inserted.
  *
  * @return mixed Last inserted ID
- * @access public
  */
-	function getInsertID() {
+	public function getInsertID() {
 		return $this->__insertID;
 	}
 
@@ -2745,9 +2726,8 @@ class Model extends Overloadable {
  * Sets the ID of the last record this model inserted
  *
  * @param mixed Last inserted ID
- * @access public
  */
-	function setInsertID($id) {
+	public function setInsertID($id) {
 		$this->__insertID = $id;
 	}
 
@@ -2755,9 +2735,8 @@ class Model extends Overloadable {
  * Returns the number of rows returned from the last query.
  *
  * @return int Number of rows
- * @access public
  */
-	function getNumRows() {
+	public function getNumRows() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastNumRows();
 	}
@@ -2766,9 +2745,8 @@ class Model extends Overloadable {
  * Returns the number of rows affected by the last query.
  *
  * @return int Number of rows
- * @access public
  */
-	function getAffectedRows() {
+	public function getAffectedRows() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db->lastAffected();
 	}
@@ -2778,9 +2756,8 @@ class Model extends Overloadable {
  *
  * @param string $dataSource The name of the DataSource, as defined in app/config/database.php
  * @return boolean True on success
- * @access public
  */
-	function setDataSource($dataSource = null) {
+	public function setDataSource($dataSource = null) {
 		$oldConfig = $this->useDbConfig;
 
 		if ($dataSource != null) {
@@ -2807,9 +2784,8 @@ class Model extends Overloadable {
  * Not safe for use with some versions of PHP4, because this class is overloaded.
  *
  * @return object A DataSource object
- * @access public
  */
-	function &getDataSource() {
+	public function &getDataSource() {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		return $db;
 	}
@@ -2818,9 +2794,8 @@ class Model extends Overloadable {
  * Get associations
  *
  * @return array
- * @access public
  */
-	function associations() {
+	public function associations() {
 		return $this->__associations;
 	}
 
@@ -2829,9 +2804,8 @@ class Model extends Overloadable {
  *
  * @param string $type Only result associations of this type
  * @return array Associations
- * @access public
  */
-	function getAssociated($type = null) {
+	public function getAssociated($type = null) {
 		if ($type == null) {
 			$associated = array();
 			foreach ($this->__associations as $assoc) {
@@ -2876,9 +2850,8 @@ class Model extends Overloadable {
  * @param mixed $with The 'with' key of the model association
  * @param array $keys Any join keys which must be merged with the keys queried
  * @return array
- * @access public
  */
-	function joinModel($assoc, $keys = array()) {
+	public function joinModel($assoc, $keys = array()) {
 		if (is_string($assoc)) {
 			return array($assoc, array_keys($this->{$assoc}->schema()));
 		} elseif (is_array($assoc)) {

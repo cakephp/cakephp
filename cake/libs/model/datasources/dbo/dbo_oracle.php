@@ -165,9 +165,8 @@ class DboOracle extends DboSource {
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
- * @access public
  */
-	function connect() {
+	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
 		$config['charset'] = !empty($config['charset']) ? $config['charset'] : null;
@@ -246,9 +245,8 @@ class DboOracle extends DboSource {
  * Disconnects from database.
  *
  * @return boolean True if the database could be disconnected, else false
- * @access public
  */
-	function disconnect() {
+	public function disconnect() {
 		if ($this->connection) {
 			$this->connected = !ocilogoff($this->connection);
 			return !$this->connected;
@@ -311,9 +309,8 @@ class DboOracle extends DboSource {
  * @param integer $limit Maximum number of rows to return
  * @param integer $offset Row to begin returning
  * @return modified SQL Query
- * @access public
  */
-	function limit($limit = -1, $offset = 0) {
+	public function limit($limit = -1, $offset = 0) {
 		$this->_limit = (int) $limit;
 		$this->_offset = (int) $offset;
 	}
@@ -323,9 +320,8 @@ class DboOracle extends DboSource {
  * this returns false.
  *
  * @return integer Number of rows in resultset
- * @access public
  */
-	function lastNumRows() {
+	public function lastNumRows() {
 		return $this->_numRows;
 	}
 
@@ -381,9 +377,8 @@ class DboOracle extends DboSource {
  * Enter description here...
  *
  * @return unknown
- * @access public
  */
-	function fetchRow() {
+	public function fetchRow() {
 		if ($this->_currentRow >= $this->_numRows) {
 			ocifreestatement($this->_statementId);
 			$this->_map = null;
@@ -421,9 +416,8 @@ class DboOracle extends DboSource {
  *
  * @param string $sequence
  * @return bool
- * @access public
  */
-	function sequenceExists($sequence) {
+	public function sequenceExists($sequence) {
 		$sql = "SELECT SEQUENCE_NAME FROM USER_SEQUENCES WHERE SEQUENCE_NAME = '$sequence'";
 		if (!$this->execute($sql)) {
 			return false;
@@ -436,9 +430,8 @@ class DboOracle extends DboSource {
  *
  * @param string $sequence
  * @return bool
- * @access public
  */
-	function createSequence($sequence) {
+	public function createSequence($sequence) {
 		$sql = "CREATE SEQUENCE $sequence";
 		return $this->execute($sql);
 	}
@@ -448,9 +441,8 @@ class DboOracle extends DboSource {
  *
  * @param unknown_type $table
  * @return unknown
- * @access public
  */
-	function createTrigger($table) {
+	public function createTrigger($table) {
 		$sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";
 		return $this->execute($sql);
 	}
@@ -460,9 +452,8 @@ class DboOracle extends DboSource {
  * raised and the application exits.
  *
  * @return array tablenames in the database
- * @access public
  */
-	function listSources() {
+	public function listSources() {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -486,9 +477,8 @@ class DboOracle extends DboSource {
  *
  * @param object instance of a model to inspect
  * @return array Fields in table. Keys are name and type
- * @access public
  */
-	function describe(&$model) {
+	public function describe(&$model) {
 		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
@@ -744,9 +734,8 @@ class DboOracle extends DboSource {
  *
  * @param unknown_type $var
  * @return unknown
- * @access public
  */
-	function name($name) {
+	public function name($name) {
 		if (strpos($name, '.') !== false && strpos($name, '"') === false) {
 			list($model, $field) = explode('.', $name);
 			if ($field[0] == "_") {
@@ -802,9 +791,8 @@ class DboOracle extends DboSource {
  *
  * @param string $real Real database-layer column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
- * @access public
  */
-	function column($real) {
+	public function column($real) {
 		if (is_array($real)) {
 			$col = $real['name'];
 
@@ -853,9 +841,8 @@ class DboOracle extends DboSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @return string Quoted and escaped
- * @access public
  */
-	function value($data, $column = null, $safe = false) {
+	public function value($data, $column = null, $safe = false) {
 		$parent = parent::value($data, $column, $safe);
 
 		if ($parent != null) {
@@ -894,9 +881,8 @@ class DboOracle extends DboSource {
  *
  * @param string
  * @return integer
- * @access public
  */
-	function lastInsertId($source) {
+	public function lastInsertId($source) {
 		$sequence = $this->_sequenceMap[$source];
 		$sql = "SELECT $sequence.currval FROM dual";
 
@@ -914,9 +900,8 @@ class DboOracle extends DboSource {
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message with error number
- * @access public
  */
-	function lastError() {
+	public function lastError() {
 		return $this->_error;
 	}
 
@@ -924,9 +909,8 @@ class DboOracle extends DboSource {
  * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
  *
  * @return int Number of affected rows
- * @access public
  */
-	function lastAffected() {
+	public function lastAffected() {
 		return $this->_statementId ? ocirowcount($this->_statementId): false;
 	}
 

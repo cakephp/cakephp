@@ -53,9 +53,8 @@ class FixtureTask extends BakeTask {
 /**
  * Override initialize
  *
- * @access public
  */
-	function __construct(&$dispatch) {
+	public function __construct(&$dispatch) {
 		parent::__construct($dispatch);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
 	}
@@ -64,9 +63,8 @@ class FixtureTask extends BakeTask {
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processess.
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -126,9 +124,8 @@ class FixtureTask extends BakeTask {
  *
  * @param string $modelName Name of model you are dealing with.
  * @return array Array of import options.
- * @access public
  */
-	function importOptions($modelName) {
+	public function importOptions($modelName) {
 		$options = array();
 		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
 		if ($doSchema == 'y') {
@@ -155,9 +152,8 @@ class FixtureTask extends BakeTask {
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for public $import
  * @return string Baked fixture content
- * @access public
  */
-	function bake($model, $useTable = false, $importOptions = array()) {
+	public function bake($model, $useTable = false, $importOptions = array()) {
 		if (!class_exists('CakeSchema')) {
 			App::import('Model', 'CakeSchema', false);
 		}
@@ -216,9 +212,8 @@ class FixtureTask extends BakeTask {
  * @param string $model name of the model being generated
  * @param string $fixture Contents of the fixture file.
  * @return string Content saved into fixture file.
- * @access public
  */
-	function generateFixtureFile($model, $otherVars) {
+	public function generateFixtureFile($model, $otherVars) {
 		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
 		$vars = array_merge($defaults, $otherVars);
 
@@ -394,9 +389,8 @@ class FixtureTask extends BakeTask {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake fixture <arg1> <params>");
 		$this->hr();

@@ -71,9 +71,8 @@ class ModelTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		App::import('Model', 'Model', false);
 
 		if (empty($this->args)) {
@@ -277,9 +276,8 @@ class ModelTask extends BakeTask {
  *
  * @param array $fields Array of fields that might have a primary key.
  * @return string Name of field that is a primary key.
- * @access public
  */
-	function findPrimaryKey($fields) {
+	public function findPrimaryKey($fields) {
 		foreach ($fields as $name => $field) {
 			if (isset($field['key']) && $field['key'] == 'primary') {
 				break;
@@ -311,9 +309,8 @@ class ModelTask extends BakeTask {
  *
  * @param object $model Model to have validations generated for.
  * @return array $validate Array of user selected validations.
- * @access public
  */
-	function doValidation(&$model) {
+	public function doValidation(&$model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -446,9 +443,8 @@ class ModelTask extends BakeTask {
  *
  * @param object $model
  * @return array $assocaitons
- * @access public
  */
-	function doAssociations(&$model) {
+	public function doAssociations(&$model) {
 		if (!is_object($model)) {
 			return false;
 		}
@@ -772,9 +768,8 @@ class ModelTask extends BakeTask {
  * outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
- * @access public
  */
-	function listAll($useDbConfig = null) {
+	public function listAll($useDbConfig = null) {
 		$this->_tables = $this->getAllTables($useDbConfig);
 
 		if ($this->interactive === true) {
@@ -855,9 +850,8 @@ class ModelTask extends BakeTask {
  * Forces the user to specify the model he wants to bake, and returns the selected model name.
  *
  * @return string the model name
- * @access public
  */
-	function getName($useDbConfig = null) {
+	public function getName($useDbConfig = null) {
 		$this->listAll($useDbConfig);
 
 		$enteredModel = '';
@@ -886,9 +880,8 @@ class ModelTask extends BakeTask {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake model <arg1>");
 		$this->hr();

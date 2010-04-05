@@ -164,9 +164,8 @@ class Sanitize {
  *
  * @param string $str String to sanitize
  * @return string sanitized string
- * @access public
  */
-	function stripAll($str) {
+	public function stripAll($str) {
 		$str = Sanitize::stripWhitespace($str);
 		$str = Sanitize::stripImages($str);
 		$str = Sanitize::stripScripts($str);

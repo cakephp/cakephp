@@ -46,9 +46,8 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param array $config
  * @return mixed
- * @access public
  */
-	function setup(&$model, $config = array()) {
+	public function setup(&$model, $config = array()) {
 		$db =& ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
 			trigger_error(
@@ -68,9 +67,8 @@ class TranslateBehavior extends ModelBehavior {
  * Callback
  *
  * @return void
- * @access public
  */
-	function cleanup(&$model) {
+	public function cleanup(&$model) {
 		$this->unbindTranslation($model);
 		unset($this->settings[$model->alias]);
 		unset($this->runtime[$model->alias]);
@@ -81,9 +79,8 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param array $query
  * @return array Modified query
- * @access public
  */
-	function beforeFind(&$model, $query) {
+	public function beforeFind(&$model, $query) {
 		$locale = $this->_getLocale($model);
 		if (empty($locale)) {
 			return $query;
@@ -207,9 +204,8 @@ class TranslateBehavior extends ModelBehavior {
  * @param array $results
  * @param boolean $primary
  * @return array Modified results
- * @access public
  */
-	function afterFind(&$model, $results, $primary) {
+	public function afterFind(&$model, $results, $primary) {
 		$this->runtime[$model->alias]['fields'] = array();
 		$locale = $this->_getLocale($model);
 
@@ -250,9 +246,8 @@ class TranslateBehavior extends ModelBehavior {
  * beforeValidate Callback
  *
  * @return boolean
- * @access public
  */
-	function beforeValidate(&$model) {
+	public function beforeValidate(&$model) {
 		$locale = $this->_getLocale($model);
 		if (empty($locale)) {
 			return true;
@@ -284,9 +279,8 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param boolean $created
  * @return void
- * @access public
  */
-	function afterSave(&$model, $created) {
+	public function afterSave(&$model, $created) {
 		if (!isset($this->runtime[$model->alias]['beforeSave'])) {
 			return true;
 		}
@@ -327,9 +321,8 @@ class TranslateBehavior extends ModelBehavior {
  * afterDelete Callback
  *
  * @return void
- * @access public
  */
-	function afterDelete(&$model) {
+	public function afterDelete(&$model) {
 		$RuntimeModel =& $this->translateModel($model);
 		$conditions = array('model' => $model->alias, 'foreign_key' => $model->id);
 		$RuntimeModel->deleteAll($conditions);
@@ -358,9 +351,8 @@ class TranslateBehavior extends ModelBehavior {
  * Get instance of model for translations
  *
  * @return object
- * @access public
  */
-	function &translateModel(&$model) {
+	public function &translateModel(&$model) {
 		if (!isset($this->runtime[$model->alias]['model'])) {
 			if (!isset($model->translateModel) || empty($model->translateModel)) {
 				$className = 'I18nModel';

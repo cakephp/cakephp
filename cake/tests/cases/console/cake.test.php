@@ -91,9 +91,8 @@ class TestShellDispatcher extends ShellDispatcher {
  * stderr method
  *
  * @return void
- * @access public
  */
-	function stderr($string) {
+	public function stderr($string) {
 		$this->stderr .= rtrim($string, ' ');
 	}
 
@@ -101,9 +100,8 @@ class TestShellDispatcher extends ShellDispatcher {
  * stdout method
  *
  * @return void
- * @access public
  */
-	function stdout($string, $newline = true) {
+	public function stdout($string, $newline = true) {
 		if ($newline) {
 			$this->stdout .= rtrim($string, ' ') . "\n";
 		} else {
@@ -115,9 +113,8 @@ class TestShellDispatcher extends ShellDispatcher {
  * clear method
  *
  * @return void
- * @access public
  */
-	function clear() {
+	public function clear() {
 
 	}
 
@@ -137,9 +134,8 @@ class TestShellDispatcher extends ShellDispatcher {
  *
  * @param mixed $plugin
  * @return mixed
- * @access public
  */
-	function getShell($plugin = null) {
+	public function getShell($plugin = null) {
 		return $this->_getShell($plugin);
 	}
 
@@ -170,9 +166,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		App::build(array(
 			'plugins' => array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
@@ -188,9 +183,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		App::build();
 	}
 
@@ -198,9 +192,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * testParseParams method
  *
  * @return void
- * @access public
  */
-	function testParseParams() {
+	public function testParseParams() {
 		$Dispatcher =& new TestShellDispatcher();
 
 		$params = array(
@@ -457,9 +450,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * testBuildPaths method
  *
  * @return void
- * @access public
  */
-	function testBuildPaths() {
+	public function testBuildPaths() {
 		$Dispatcher =& new TestShellDispatcher();
 
 		$result = $Dispatcher->shellPaths;
@@ -480,9 +472,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify loading of (plugin-) shells
  *
  * @return void
- * @access public
  */
-	function testGetShell() {
+	public function testGetShell() {
 		$this->skipIf(class_exists('SampleShell'), '%s SampleShell Class already loaded');
 		$this->skipIf(class_exists('ExampleShell'), '%s ExampleShell Class already loaded');
 
@@ -509,9 +500,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify correct dispatch of Shell subclasses with a main method
  *
  * @return void
- * @access public
  */
-	function testDispatchShellWithMain() {
+	public function testDispatchShellWithMain() {
 		Mock::generate('Shell', 'MockWithMainShell', array('main', '_secret'));
 
 		$Dispatcher =& new TestShellDispatcher();
@@ -600,9 +590,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify correct dispatch of Shell subclasses without a main method
  *
  * @return void
- * @access public
  */
-	function testDispatchShellWithoutMain() {
+	public function testDispatchShellWithoutMain() {
 		Mock::generate('Shell', 'MockWithoutMainShell', array('initDb', '_secret'));
 
 		$Dispatcher =& new TestShellDispatcher();
@@ -672,9 +661,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify correct dispatch of custom classes with a main method
  *
  * @return void
- * @access public
  */
-	function testDispatchNotAShellWithMain() {
+	public function testDispatchNotAShellWithMain() {
 		Mock::generate('Object', 'MockWithMainNotAShell',
 			array('main', 'initialize', 'loadTasks', 'startup', '_secret'));
 
@@ -752,9 +740,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify correct dispatch of custom classes without a main method
  *
  * @return void
- * @access public
  */
-	function testDispatchNotAShellWithoutMain() {
+	public function testDispatchNotAShellWithoutMain() {
 		Mock::generate('Object', 'MockWithoutMainNotAShell',
 			array('initDb', 'initialize', 'loadTasks', 'startup', '_secret'));
 
@@ -823,9 +810,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * the name of the task
  *
  * @return void
- * @access public
  */
-	function testDispatchTask() {
+	public function testDispatchTask() {
 		Mock::generate('Shell', 'MockWeekShell', array('main'));
 		Mock::generate('Shell', 'MockOnSundayTask', array('execute'));
 
@@ -871,9 +857,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * Verify shifting of arguments
  *
  * @return void
- * @access public
  */
-	function testShiftArgs() {
+	public function testShiftArgs() {
 		$Dispatcher =& new TestShellDispatcher();
 
 		$Dispatcher->args = array('a', 'b', 'c');
@@ -901,9 +886,8 @@ class ShellDispatcherTest extends CakeTestCase {
  * testHelpCommand method
  *
  * @return void
- * @access public
  */
-	function testHelpCommand() {
+	public function testHelpCommand() {
 		$Dispatcher =& new TestShellDispatcher();
 
 		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";

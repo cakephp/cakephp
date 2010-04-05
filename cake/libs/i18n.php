@@ -103,9 +103,8 @@ class I18n extends Object {
  * Return a static instance of the I18n class
  *
  * @return object I18n
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new I18n();
@@ -124,9 +123,8 @@ class I18n extends Object {
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @return string translated string.
- * @access public
  */
-	function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
+	public function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
 		$_this =& I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {

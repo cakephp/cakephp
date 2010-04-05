@@ -58,18 +58,16 @@ class DbConfigTask extends Shell {
  * initialization callback
  *
  * @var string
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		$this->path = $this->params['working'] . DS . 'config' . DS;
 	}
 
 /**
  * Execution method always used for tasks
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
 			$this->_stop();
@@ -244,9 +242,8 @@ class DbConfigTask extends Shell {
  *
  * @param array $configs Configuration settings to use
  * @return boolean Success
- * @access public
  */
-	function bake($configs) {
+	public function bake($configs) {
 		if (!is_dir($this->path)) {
 			$this->err($this->path . ' not found');
 			return false;

@@ -313,9 +313,8 @@ class DboSqlite extends DboSource {
  *
  * @param mixed $table A string or model class representing the table to be truncated
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
- * @access public
  */
-	function truncate($table) {
+	public function truncate($table) {
 		return $this->execute('DELETE From ' . $this->fullTableName($table));
 	}
 

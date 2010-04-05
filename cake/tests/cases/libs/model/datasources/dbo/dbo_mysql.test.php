@@ -172,9 +172,8 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * Skip if cannot connect to mysql
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mysql', '%s MySQL connection not available');
 	}
@@ -182,9 +181,8 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->model = new MysqlTestModel();
 	}
@@ -192,9 +190,8 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->model);
 		ClassRegistry::flush();
 	}
@@ -221,9 +218,8 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * Test Dbo value method
  *
- * @access public
  */
-	function testQuoting() {
+	public function testQuoting() {
 		$result = $this->db->fields($this->model);
 		$expected = array(
 			'`MysqlTestModel`.`id`',
@@ -320,9 +316,8 @@ class DboMysqlTest extends CakeTestCase {
  * testIndexDetection method
  *
  * @return void
- * @access public
  */
-	function testIndexDetection() {
+	public function testIndexDetection() {
 		$this->db->cacheSources = false;
 
 		$name = $this->db->fullTableName('simple');
@@ -513,9 +508,8 @@ class DboMysqlTest extends CakeTestCase {
  * testColumn method
  *
  * @return void
- * @access public
  */
-	function testColumn() {
+	public function testColumn() {
 		$result = $this->db->column('varchar(50)');
 		$expected = 'string';
 		$this->assertEqual($result, $expected);

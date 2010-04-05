@@ -186,9 +186,8 @@ class ExtractTask extends Shell {
  * Show help options
  *
  * @return void
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->out(__('CakePHP Language String Extraction:', true));
 		$this->hr();
 		$this->out(__('The Extract script generates .pot file(s) with translations', true));

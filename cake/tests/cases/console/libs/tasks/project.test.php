@@ -55,9 +55,8 @@ class ProjectTaskTest extends CakeTestCase {
  * startTest method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new TestProjectTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockProjectTask($this->Dispatcher);
@@ -69,9 +68,8 @@ class ProjectTaskTest extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		ClassRegistry::flush();
 
 		$Folder =& new Folder($this->Task->path . 'bake_test_app');
@@ -95,9 +93,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test bake() method and directory creation.
  *
  * @return void
- * @access public
  */
-	function testBake() {
+	public function testBake() {
 		$this->_setupTestProject();
 
 		$path = $this->Task->path . 'bake_test_app';
@@ -117,9 +114,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test bake() method with -empty flag,  directory creation and empty files.
  *
  * @return void
- * @access public
  */
-	function testBakeEmptyFlag() {
+	public function testBakeEmptyFlag() {
 		$this->Task->params['empty'] = true;
 		$this->_setupTestProject();
 		$path = $this->Task->path . 'bake_test_app';
@@ -159,9 +155,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test generation of Security.salt
  *
  * @return void
- * @access public
  */
-	function testSecuritySaltGeneration() {
+	public function testSecuritySaltGeneration() {
 		$this->_setupTestProject();
 
 		$path = $this->Task->path . 'bake_test_app' . DS;
@@ -177,9 +172,8 @@ class ProjectTaskTest extends CakeTestCase {
 	 * test generation of Security.cipherSeed
 	 *
 	 * @return void
-	 * @access public
-	 */
-		function testSecurityCipherSeedGeneration() {
+		 */
+		public function testSecurityCipherSeedGeneration() {
 			$this->_setupTestProject();
 
 			$path = $this->Task->path . 'bake_test_app' . DS;
@@ -195,9 +189,8 @@ class ProjectTaskTest extends CakeTestCase {
  * Test that index.php is generated correctly.
  *
  * @return void
- * @access public
  */
-	function testIndexPhpGeneration() {
+	public function testIndexPhpGeneration() {
 		$this->_setupTestProject();
 
 		$path = $this->Task->path . 'bake_test_app' . DS;
@@ -216,9 +209,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test getPrefix method, and that it returns Routing.prefix or writes to config file.
  *
  * @return void
- * @access public
  */
-	function testGetPrefix() {
+	public function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'admin_');
@@ -239,9 +231,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test cakeAdmin() writing core.php
  *
  * @return void
- * @access public
  */
-	function testCakeAdmin() {
+	public function testCakeAdmin() {
 		$file =& new File(CONFIGS . 'core.php');
 		$contents = $file->read();;
 		$file =& new File(TMP . 'tests' . DS . 'core.php');
@@ -260,9 +251,8 @@ class ProjectTaskTest extends CakeTestCase {
  * test getting the prefix with more than one prefix setup
  *
  * @return void
- * @access public
  */
-	function testGetPrefixWithMultiplePrefixes() {
+	public function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
 		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
@@ -276,9 +266,8 @@ class ProjectTaskTest extends CakeTestCase {
  * Test execute method with one param to destination folder.
  *
  * @return void
- * @access public
  */
-	function testExecute() {
+	public function testExecute() {
 		$this->Task->params['skel'] = CAKE_CORE_INCLUDE_PATH . DS . CAKE . DS . 'console' . DS. 'templates' . DS . 'skel';
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 

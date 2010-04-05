@@ -69,9 +69,8 @@ class BakeShellTestCase extends CakeTestCase {
  * start test
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatch =& new BakeShellMockShellDispatcher();
 		$this->Shell =& new MockBakeShell();
 		$this->Shell->Dispatch =& $this->Dispatch;
@@ -82,9 +81,8 @@ class BakeShellTestCase extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		unset($this->Dispatch, $this->Shell);
 	}
 
@@ -92,9 +90,8 @@ class BakeShellTestCase extends CakeTestCase {
  * test bake all
  *
  * @return void
- * @access public
  */
-	function testAllWithModelName() {
+	public function testAllWithModelName() {
 		App::import('Model', 'User');
 		$userExists = class_exists('User');
 		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {

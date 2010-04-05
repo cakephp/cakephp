@@ -778,9 +778,8 @@ HTMLBLOC;
  * undocumented function
  *
  * @return void
- * @access public
  */
-	function testSendWithAttachments() {
+	public function testSendWithAttachments() {
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Attachment Test';
@@ -804,9 +803,8 @@ HTMLBLOC;
  * testSendAsIsNotIgnoredIfAttachmentsPresent method
  *
  * @return void
- * @access public
  */
-	function testSendAsIsNotIgnoredIfAttachmentsPresent() {
+	public function testSendAsIsNotIgnoredIfAttachmentsPresent() {
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Attachment Test';
@@ -841,9 +839,8 @@ HTMLBLOC;
  * testNoDoubleNewlinesInHeaders function
  *
  * @return void
- * @access public
  */
-	function testNoDoubleNewlinesInHeaders() {
+	public function testNoDoubleNewlinesInHeaders() {
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'Attachment Test';

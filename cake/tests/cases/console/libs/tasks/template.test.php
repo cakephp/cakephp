@@ -57,9 +57,8 @@ class TemplateTaskTest extends CakeTestCase {
  * startTest method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new TestTemplateTaskMockShellDispatcher();
 		$this->Task =& new MockTemplateTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
@@ -70,9 +69,8 @@ class TemplateTaskTest extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
@@ -81,9 +79,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test that set sets variables
  *
  * @return void
- * @access public
  */
-	function testSet() {
+	public function testSet() {
 		$this->Task->set('one', 'two');
 		$this->assertTrue(isset($this->Task->templateVars['one']));
 		$this->assertEqual($this->Task->templateVars['one'], 'two');
@@ -99,9 +96,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test finding themes installed in
  *
  * @return void
- * @access public
  */
-	function testFindingInstalledThemesForBake() {
+	public function testFindingInstalledThemesForBake() {
 		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS;
 		$this->Task->Dispatch->shellPaths = array($consoleLibs);
 		$this->Task->initialize();
@@ -113,9 +109,8 @@ class TemplateTaskTest extends CakeTestCase {
  * that the user is not bugged.  If there are more, find and return the correct theme name
  *
  * @return void
- * @access public
  */
-	function testGetThemePath() {
+	public function testGetThemePath() {
 		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
 		$this->Task->expectCallCount('in', 1);
@@ -139,9 +134,8 @@ class TemplateTaskTest extends CakeTestCase {
  * test generate
  *
  * @return void
- * @access public
  */
-	function testGenerate() {
+	public function testGenerate() {
 		App::build(array(
 			'shells' => array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS
@@ -159,9 +153,8 @@ class TemplateTaskTest extends CakeTestCase {
  * ensure fallback to default works.
  *
  * @return void
- * @access public
  */
-	function testGenerateWithTemplateFallbacks() {
+	public function testGenerateWithTemplateFallbacks() {
 		App::build(array(
 			'shells' => array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS,

@@ -189,9 +189,8 @@ class XmlNode extends Object {
  *
  * @param object $object Object to get properties from
  * @return array Properties from object
- * @access public
  */
-	function normalize($object, $keyName = null, $options = array()) {
+	public function normalize($object, $keyName = null, $options = array()) {
 		if (is_a($object, 'XmlNode')) {
 			return $object;
 		}
@@ -324,9 +323,8 @@ class XmlNode extends Object {
 /**
  * Returns the fully-qualified XML node name, with namespace
  *
- * @access public
  */
-	function name() {
+	public function name() {
 		if (!empty($this->namespace)) {
 			$_this =& XmlManager::getInstance();
 			if (!isset($_this->options['verifyNs']) || !$_this->options['verifyNs'] || in_array($this->namespace, array_keys($_this->namespaces))) {
@@ -339,9 +337,8 @@ class XmlNode extends Object {
 /**
  * Sets the parent node of this XmlNode.
  *
- * @access public
  */
-	function setParent(&$parent) {
+	public function setParent(&$parent) {
 		if (strtolower(get_class($this)) == 'xml') {
 			return;
 		}
@@ -368,9 +365,8 @@ class XmlNode extends Object {
  * Returns a copy of self.
  *
  * @return object Cloned instance
- * @access public
  */
-	function cloneNode() {
+	public function cloneNode() {
 		return clone($this);
 	}
 
@@ -379,9 +375,8 @@ class XmlNode extends Object {
  *
  * @param object An XmlNode or subclass instance
  * @return boolean True if the nodes match, false otherwise
- * @access public
  */
-	function compare($node) {
+	public function compare($node) {
 		$keys = array(get_object_vars($this), get_object_vars($node));
 		return ($keys[0] === $keys[1]);
 	}
@@ -392,9 +387,8 @@ class XmlNode extends Object {
  * @param object $child XmlNode with appended child
  * @param array $options XML generator options for objects and arrays
  * @return object A reference to the appended child node
- * @access public
  */
-	function &append(&$child, $options = array()) {
+	public function &append(&$child, $options = array()) {
 		if (empty($child)) {
 			$return = false;
 			return $return;
@@ -445,9 +439,8 @@ class XmlNode extends Object {
  * Returns first child node, or null if empty.
  *
  * @return object First XmlNode
- * @access public
  */
-	function &first() {
+	public function &first() {
 		if (isset($this->children[0])) {
 			return $this->children[0];
 		} else {
@@ -460,9 +453,8 @@ class XmlNode extends Object {
  * Returns last child node, or null if empty.
  *
  * @return object Last XmlNode
- * @access public
  */
-	function &last() {
+	public function &last() {
 		if (count($this->children) > 0) {
 			return $this->children[count($this->children) - 1];
 		} else {
@@ -476,9 +468,8 @@ class XmlNode extends Object {
  *
  * @param string $id Name of child node
  * @return object Child XmlNode
- * @access public
  */
-	function &child($id) {
+	public function &child($id) {
 		$null = null;
 
 		if (is_int($id)) {
@@ -502,9 +493,8 @@ class XmlNode extends Object {
  *
  * @param string $name Tag name of child nodes
  * @return array An array of XmlNodes with the given tag name
- * @access public
  */
-	function children($name) {
+	public function children($name) {
 		$nodes = array();
 		$count = count($this->children);
 		for ($i = 0; $i < $count; $i++) {
@@ -519,9 +509,8 @@ class XmlNode extends Object {
  * Gets a reference to the next child node in the list of this node's parent.
  *
  * @return object A reference to the XmlNode object
- * @access public
  */
-	function &nextSibling() {
+	public function &nextSibling() {
 		$null = null;
 		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
@@ -539,9 +528,8 @@ class XmlNode extends Object {
  * Gets a reference to the previous child node in the list of this node's parent.
  *
  * @return object A reference to the XmlNode object
- * @access public
  */
-	function &previousSibling() {
+	public function &previousSibling() {
 		$null = null;
 		$count = count($this->__parent->children);
 		for ($i = 0; $i < $count; $i++) {
@@ -559,9 +547,8 @@ class XmlNode extends Object {
  * Returns parent node.
  *
  * @return object Parent XmlNode
- * @access public
  */
-	function &parent() {
+	public function &parent() {
 		return $this->__parent;
 	}
 
@@ -569,9 +556,8 @@ class XmlNode extends Object {
  * Returns the XML document to which this node belongs
  *
  * @return object Parent XML object
- * @access public
  */
-	function &document() {
+	public function &document() {
 		$document =& $this;
 		while (true) {
 			if (get_class($document) == 'Xml' || $document == null) {
@@ -586,9 +572,8 @@ class XmlNode extends Object {
  * Returns true if this structure has child nodes.
  *
  * @return bool
- * @access public
  */
-	function hasChildren() {
+	public function hasChildren() {
 		if (is_array($this->children) && !empty($this->children)) {
 			return true;
 		}
@@ -599,9 +584,8 @@ class XmlNode extends Object {
  * Returns this XML structure as a string.
  *
  * @return string String representation of the XML structure.
- * @access public
  */
-	function toString($options = array(), $depth = 0) {
+	public function toString($options = array(), $depth = 0) {
 		if (is_int($options)) {
 			$depth = $options;
 			$options = array();
@@ -683,9 +667,8 @@ class XmlNode extends Object {
  *
  * @param boolean $camelize true will camelize child nodes, false will not alter node names
  * @return array Array representation
- * @access public
  */
-	function toArray($camelize = true) {
+	public function toArray($camelize = true) {
 		$out = $this->attributes;
 		$multi = null;
 
@@ -891,9 +874,8 @@ class Xml extends XmlNode {
  *
  * @param string $input XML string, a path to a file, or an HTTP resource to load
  * @return boolean Success
- * @access public
  */
-	function load($input) {
+	public function load($input) {
 		if (!is_string($input)) {
 			return false;
 		}
@@ -994,9 +976,8 @@ class Xml extends XmlNode {
  * @param string $msg Error message
  * @param integer $code Error code
  * @param integer $line Line in file
- * @access public
  */
-	function error($msg, $code = 0, $line = 0) {
+	public function error($msg, $code = 0, $line = 0) {
 		if (Configure::read('debug')) {
 			echo $msg . " " . $code . " " . $line;
 		}
@@ -1007,9 +988,8 @@ class Xml extends XmlNode {
  *
  * @param integer $code Error code
  * @return string Error message
- * @access public
  */
-	function getError($code) {
+	public function getError($code) {
 		$r = @xml_error_string($code);
 		return $r;
 	}
@@ -1020,9 +1000,8 @@ class Xml extends XmlNode {
  * Get next element. NOT implemented.
  *
  * @return object
- * @access public
  */
-	function &next() {
+	public function &next() {
 		$return = null;
 		return $return;
 	}
@@ -1031,9 +1010,8 @@ class Xml extends XmlNode {
  * Get previous element. NOT implemented.
  *
  * @return object
- * @access public
  */
-	function &previous() {
+	public function &previous() {
 		$return = null;
 		return $return;
 	}
@@ -1042,9 +1020,8 @@ class Xml extends XmlNode {
  * Get parent element. NOT implemented.
  *
  * @return object
- * @access public
  */
-	function &parent() {
+	public function &parent() {
 		$return = null;
 		return $return;
 	}
@@ -1086,9 +1063,8 @@ class Xml extends XmlNode {
  * Return string representation of current object.
  *
  * @return string String representation
- * @access public
  */
-	function toString($options = array()) {
+	public function toString($options = array()) {
 		if (is_bool($options)) {
 			$options = array('header' => $options);
 		}
@@ -1379,9 +1355,8 @@ class XmlTextNode extends XmlNode {
  * Return string representation of current text node object.
  *
  * @return string String representation
- * @access public
  */
-	function toString($options = array(), $depth = 0) {
+	public function toString($options = array(), $depth = 0) {
 		if (is_int($options)) {
 			$depth = $options;
 			$options = array();
@@ -1453,9 +1428,8 @@ class XmlManager {
  * Returns a reference to the global XML object that manages app-wide XML settings
  *
  * @return object
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 
 		if (!$instance) {

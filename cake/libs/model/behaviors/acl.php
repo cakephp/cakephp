@@ -41,9 +41,8 @@ class AclBehavior extends ModelBehavior {
  *
  * @param mixed $config
  * @return void
- * @access public
  */
-	function setup(&$model, $config = array()) {
+	public function setup(&$model, $config = array()) {
 		if (is_string($config)) {
 			$config = array('type' => $config);
 		}
@@ -68,9 +67,8 @@ class AclBehavior extends ModelBehavior {
  *
  * @param mixed $ref
  * @return array
- * @access public
  */
-	function node(&$model, $ref = null) {
+	public function node(&$model, $ref = null) {
 		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
 		if (empty($ref)) {
 			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
@@ -83,9 +81,8 @@ class AclBehavior extends ModelBehavior {
  *
  * @param boolean $created True if this is a new record
  * @return void
- * @access public
  */
-	function afterSave(&$model, $created) {
+	public function afterSave(&$model, $created) {
 		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
 		$parent = $model->parentNode();
 		if (!empty($parent)) {
@@ -108,9 +105,8 @@ class AclBehavior extends ModelBehavior {
  * Destroys the ARO/ACO node bound to the deleted record
  *
  * @return void
- * @access public
  */
-	function afterDelete(&$model) {
+	public function afterDelete(&$model) {
 		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {

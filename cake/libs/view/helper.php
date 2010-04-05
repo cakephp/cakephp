@@ -159,9 +159,8 @@ class Helper extends Overloadable {
  *
  * @param $name file name inside app/config to load.
  * @return array merged tags from config/$name.php
- * @access public
  */
-	function loadConfig($name = 'tags') {
+	public function loadConfig($name = 'tags') {
 		if (file_exists(CONFIGS . $name .'.php')) {
 			require(CONFIGS . $name .'.php');
 			if (isset($tags)) {
@@ -181,9 +180,8 @@ class Helper extends Overloadable {
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
- * @access public
  */
-	function url($url = null, $full = false) {
+	public function url($url = null, $full = false) {
 		return h(Router::url($url, $full));
 	}
 
@@ -192,9 +190,8 @@ class Helper extends Overloadable {
  *
  * @param string $file The file to create a webroot path to.
  * @return string Web accessible path to file.
- * @access public
  */
-	function webroot($file) {
+	public function webroot($file) {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
 		$webPath = "{$this->webroot}" . $asset[0];
@@ -236,9 +233,8 @@ class Helper extends Overloadable {
  *
  * @param string $path The file path to timestamp, the path must be inside WWW_ROOT
  * @return string Path with a timestamp added, or not.
- * @access public
  */
-	function assetTimestamp($path) {
+	public function assetTimestamp($path) {
 		$timestampEnabled = (
 			(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
 			Configure::read('Asset.timestamp') === 'force'
@@ -256,9 +252,8 @@ class Helper extends Overloadable {
  *
  * @param mixed $output Either an array of strings to clean or a single string to clean.
  * @return cleaned content for output
- * @access public
  */
-	function clean($output) {
+	public function clean($output) {
 		$this->__reset();
 		if (empty($output)) {
 			return null;
@@ -311,9 +306,8 @@ class Helper extends Overloadable {
  * @param string $insertBefore String to be inserted before options.
  * @param string $insertAfter String to be inserted after options.
  * @return string Composed attributes.
- * @access public
  */
-	function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
 		if (is_array($options)) {
 			$options = array_merge(array('escape' => true), $options);
 
@@ -371,9 +365,8 @@ class Helper extends Overloadable {
  * @param mixed $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"
  * @param boolean $setScope Sets the view scope to the model specified in $tagValue
  * @return void
- * @access public
  */
-	function setEntity($entity, $setScope = false) {
+	public function setEntity($entity, $setScope = false) {
 		$view =& ClassRegistry::getObject('view');
 
 		if ($setScope) {
@@ -517,9 +510,8 @@ class Helper extends Overloadable {
  * Gets the currently-used model of the rendering context.
  *
  * @return string
- * @access public
  */
-	function model() {
+	public function model() {
 		$view =& ClassRegistry::getObject('view');
 		if (!empty($view->association)) {
 			return $view->association;
@@ -532,9 +524,8 @@ class Helper extends Overloadable {
  * Gets the ID of the currently-used model of the rendering context.
  *
  * @return mixed
- * @access public
  */
-	function modelID() {
+	public function modelID() {
 		$view =& ClassRegistry::getObject('view');
 		return $view->modelId;
 	}
@@ -543,9 +534,8 @@ class Helper extends Overloadable {
  * Gets the currently-used model field of the rendering context.
  *
  * @return string
- * @access public
  */
-	function field() {
+	public function field() {
 		$view =& ClassRegistry::getObject('view');
 		return $view->field;
 	}
@@ -747,9 +737,8 @@ class Helper extends Overloadable {
  * @param string $class The classname being added.
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
- * @access public
  */
-	function addClass($options = array(), $class = null, $key = 'class') {
+	public function addClass($options = array(), $class = null, $key = 'class') {
 		if (isset($options[$key]) && trim($options[$key]) != '') {
 			$options[$key] .= ' ' . $class;
 		} else {
@@ -777,9 +766,8 @@ class Helper extends Overloadable {
  * Overridden in subclasses.
  *
  * @return void
- * @access public
  */
-	function beforeRender() {
+	public function beforeRender() {
 	}
 
 /**
@@ -789,9 +777,8 @@ class Helper extends Overloadable {
  * Overridden in subclasses.
  *
  * @return void
- * @access public
  */
-	function afterRender() {
+	public function afterRender() {
 	}
 
 /**
@@ -800,9 +787,8 @@ class Helper extends Overloadable {
  * Overridden in subclasses.
  *
  * @return void
- * @access public
  */
-	function beforeLayout() {
+	public function beforeLayout() {
 	}
 
 /**
@@ -811,9 +797,8 @@ class Helper extends Overloadable {
  * Overridden in subclasses.
  *
  * @return void
- * @access public
  */
-	function afterLayout() {
+	public function afterLayout() {
 	}
 
 /**

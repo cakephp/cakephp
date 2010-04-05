@@ -965,9 +965,8 @@ class NumberTreeTest extends CakeTestCase {
  * testRemoveNoChildren method
  *
  * @return void
- * @access public
  */
-	function testRemoveNoChildren() {
+	public function testRemoveNoChildren() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1033,9 +1032,8 @@ class NumberTreeTest extends CakeTestCase {
  * testRemoveAndDeleteNoChildren method
  *
  * @return void
- * @access public
  */
-	function testRemoveAndDeleteNoChildren() {
+	public function testRemoveAndDeleteNoChildren() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1508,9 +1506,8 @@ class ScopedTreeTest extends NumberTreeTest {
  * testGenerateTreeListWithSelfJoin method
  *
  * @return void
- * @access public
  */
-	function testAliasesWithScopeInTwoTreeAssociations() {
+	public function testAliasesWithScopeInTwoTreeAssociations() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1672,9 +1669,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testMovePromote method
  *
  * @return void
- * @access public
  */
-	function testMovePromote() {
+	public function testMovePromote() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1699,9 +1695,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testMoveWithWhitelist method
  *
  * @return void
- * @access public
  */
-	function testMoveWithWhitelist() {
+	public function testMoveWithWhitelist() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1727,9 +1722,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testRemoveNoChildren method
  *
  * @return void
- * @access public
  */
-	function testRemoveNoChildren() {
+	public function testRemoveNoChildren() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1762,9 +1756,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testRemoveAndDeleteNoChildren method
  *
  * @return void
- * @access public
  */
-	function testRemoveAndDeleteNoChildren() {
+	public function testRemoveAndDeleteNoChildren() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1795,9 +1788,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testChildren method
  *
  * @return void
- * @access public
  */
-	function testChildren() {
+	public function testChildren() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1824,9 +1816,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testNoAmbiguousColumn method
  *
  * @return void
- * @access public
  */
-	function testNoAmbiguousColumn() {
+	public function testNoAmbiguousColumn() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->initialize(2, 2);
@@ -1858,9 +1849,8 @@ class UuidTreeTest extends NumberTreeTest {
  * testGenerateTreeListWithSelfJoin method
  *
  * @return void
- * @access public
  */
-	function testGenerateTreeListWithSelfJoin() {
+	public function testGenerateTreeListWithSelfJoin() {
 		extract($this->settings);
 		$this->Tree =& new $modelClass();
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>

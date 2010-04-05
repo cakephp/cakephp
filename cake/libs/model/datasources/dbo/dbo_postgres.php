@@ -389,9 +389,8 @@ class DboPostgres extends DboSource {
  * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
- * @access public
  */
-	function truncate($table, $reset = 0) {
+	public function truncate($table, $reset = 0) {
 		if (parent::truncate($table)) {
 			$table = $this->fullTableName($table, false);
 			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {

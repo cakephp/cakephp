@@ -340,9 +340,8 @@ class L10n extends Object {
  * the method will get the settings from L10n::__setLanguage();
  *
  * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
- * @access public
  */
-	function get($language = null) {
+	public function get($language = null) {
 		if ($language !== null) {
 			return $this->__setLanguage($language);
 		} elseif ($this->__autoLanguage() === false) {
@@ -434,9 +433,8 @@ class L10n extends Object {
  * @param mixed $mixed 2/3 char string (language/locale), array of those strings, or null
  * @return mixed string language/locale, array of those values, whole map as an array, 
  *    or false when language/locale doesn't exist
- * @access public
  */
-	function map($mixed = null) {
+	public function map($mixed = null) {
 		if (is_array($mixed)) {
 			$result = array();
 			foreach ($mixed as $_mixed) {
@@ -462,9 +460,8 @@ class L10n extends Object {
  * @param mixed $language string requested language, array of requested languages, or null for whole catalog
  * @return mixed array catalog record for requested language, array of catalog records, whole catalog, 
  *    or false when language doesn't exist
- * @access public
  */
-	function catalog($language = null) {
+	public function catalog($language = null) {
 		if (is_array($language)) {
 			$result = array();
 			foreach ($language as $_language) {

@@ -31,9 +31,8 @@ class Overloadable extends Object {
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
- * @access public
  */
-	function overload() { }
+	public function overload() { }
 
 /**
  * Magic method handler.
@@ -63,9 +62,8 @@ class Overloadable2 extends Object {
 /**
  * Overload implementation. No need for implementation in PHP5.
  *
- * @access public
  */
-	function overload() { }
+	public function overload() { }
 
 /**
  * Magic method handler.

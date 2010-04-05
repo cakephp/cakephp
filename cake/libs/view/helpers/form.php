@@ -336,9 +336,8 @@ class FormHelper extends AppHelper {
  *
  * @param mixed $options as a string will use $options as the value of button,
  * @return string a closing FORM tag optional submit button.
- * @access public
  */
-	function end($options = null) {
+	public function end($options = null) {
 		if (!empty($this->params['models'])) {
 			$models = $this->params['models'][0];
 		}
@@ -379,9 +378,8 @@ class FormHelper extends AppHelper {
  *
  * @param array $fields The list of fields to use when generating the hash
  * @return string A hidden input field with a security hash
- * @access public
  */
-	function secure($fields = array()) {
+	public function secure($fields = array()) {
 		if (!isset($this->params['_Token']) || empty($this->params['_Token'])) {
 			return;
 		}
@@ -447,9 +445,8 @@ class FormHelper extends AppHelper {
  *
  * @param string $field This should be "Modelname.fieldname"
  * @return boolean If there are errors this method returns true, else false.
- * @access public
  */
-	function isFieldError($field) {
+	public function isFieldError($field) {
 		$this->setEntity($field);
 		return (bool)$this->tagIsInvalid();
 	}
@@ -468,9 +465,8 @@ class FormHelper extends AppHelper {
  * @param mixed $text Error message or array of $options
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
- * @access public
  */
-	function error($field, $text = null, $options = array()) {
+	public function error($field, $text = null, $options = array()) {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
 		$options = array_merge($defaults, $options);
 		$this->setEntity($field);
@@ -578,9 +574,8 @@ class FormHelper extends AppHelper {
  * @param mixed $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
  * @return string Completed form inputs.
- * @access public
  */
-	function inputs($fields = null, $blacklist = null) {
+	public function inputs($fields = null, $blacklist = null) {
 		$fieldset = $legend = true;
 		$model = $this->model();
 		if (is_array($fields)) {
@@ -680,9 +675,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
  * @return string Completed form widget.
- * @access public
  */
-	function input($fieldName, $options = array()) {
+	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
 
 		$options = array_merge(
@@ -973,9 +967,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string An HTML text input element.
- * @access public
  */
-	function checkbox($fieldName, $options = array()) {
+	public function checkbox($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
 		$value = current($this->value());
 		$output = "";
@@ -1021,9 +1014,8 @@ class FormHelper extends AppHelper {
  * @param array $options Radio button options array.
  * @param array $attributes Array of HTML attributes, and special attributes above.
  * @return string Completed radio widget set.
- * @access public
  */
-	function radio($fieldName, $options = array(), $attributes = array()) {
+	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 		$legend = false;
 
@@ -1104,9 +1096,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated HTML text input element
- * @access public
  */
-	function text($fieldName, $options = array()) {
+	public function text($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, array_merge(
 			array('type' => 'text'), $options
 		));
@@ -1123,9 +1114,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, like in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated password input.
- * @access public
  */
-	function password($fieldName, $options = array()) {
+	public function password($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
 		return sprintf(
 			$this->Html->tags['password'],
@@ -1144,9 +1134,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes, and special options above.
  * @return string A generated HTML text input element
- * @access public
  */
-	function textarea($fieldName, $options = array()) {
+	public function textarea($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
 		$value = null;
 
@@ -1171,9 +1160,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form of "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated hidden input
- * @access public
  */
-	function hidden($fieldName, $options = array()) {
+	public function hidden($fieldName, $options = array()) {
 		$secure = true;
 
 		if (isset($options['secure'])) {
@@ -1202,9 +1190,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated file input.
- * @access public
  */
-	function file($fieldName, $options = array()) {
+	public function file($fieldName, $options = array()) {
 		$options = array_merge($options, array('secure' => false));
 		$options = $this->_initInputField($fieldName, $options);
 		$view =& ClassRegistry::getObject('view');
@@ -1229,9 +1216,8 @@ class FormHelper extends AppHelper {
  * @param string $title The button's caption. Not automatically HTML encoded
  * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
- * @access public
  */
-	function button($title, $options = array()) {
+	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false);
 		if ($options['escape']) {
 			$title = h($title);
@@ -1270,9 +1256,8 @@ class FormHelper extends AppHelper {
  *  OR if the first character is not /, image is relative to webroot/img.
  * @param array $options Array of options.  See above.
  * @return string A HTML submit button
- * @access public
  */
-	function submit($caption = null, $options = array()) {
+	public function submit($caption = null, $options = array()) {
 		if (!$caption) {
 			$caption = __('Submit', true);
 		}
@@ -1381,9 +1366,8 @@ class FormHelper extends AppHelper {
  *   from POST data will be used when available.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
- * @access public
  */
-	function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
+	public function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
 		$select = array();
 		$showParents = false;
 		$escapeOptions = true;
@@ -1479,9 +1463,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes HTML attributes for the select element
  * @return string A generated day select box.
- * @access public
  */
-	function day($fieldName, $selected = null, $attributes = array()) {
+	public function day($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		$selected = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
 
@@ -1509,9 +1492,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
  * @return string Completed year select input
- * @access public
  */
-	function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
+	public function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
@@ -1561,9 +1543,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes Attributes for the select element
  * @return string A generated month select dropdown.
- * @access public
  */
-	function month($fieldName, $selected = null, $attributes = array()) {
+	public function month($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		$selected = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
 
@@ -1597,9 +1578,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
  * @return string Completed hour select input
- * @access public
  */
-	function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
+	public function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		$selected = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
 
@@ -1631,9 +1611,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @return string Completed minute select input.
- * @access public
  */
-	function minute($fieldName, $selected = null, $attributes = array()) {
+	public function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		$selected = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
 
@@ -1694,9 +1673,8 @@ class FormHelper extends AppHelper {
  * @param string $attributes Array of Attributes
  * @param bool $showEmpty Show/Hide an empty option
  * @return string Completed meridian select input
- * @access public
  */
-	function meridian($fieldName, $selected = null, $attributes = array()) {
+	public function meridian($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
@@ -1742,9 +1720,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
  * @return string Generated set of select boxes for the date and time formats chosen.
- * @access public
  */
-	function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
+	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
 		$year = $month = $day = $hour = $min = $meridian = null;
 

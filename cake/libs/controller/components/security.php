@@ -174,9 +174,8 @@ class SecurityComponent extends Object {
  * @param object $controller Controller instance for the request
  * @param array $settings Settings to set to the component
  * @return void
- * @access public
  */
-	function initialize(&$controller, $settings = array()) {
+	public function initialize(&$controller, $settings = array()) {
 		$this->_set($settings);
 	}
 
@@ -185,9 +184,8 @@ class SecurityComponent extends Object {
  *
  * @param object $controller Instantiating controller
  * @return void
- * @access public
  */
-	function startup(&$controller) {
+	public function startup(&$controller) {
 		$this->_action = strtolower($controller->action);
 		$this->_methodsRequired($controller);
 		$this->_secureRequired($controller);
@@ -214,9 +212,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require a POST request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requirePost() {
+	public function requirePost() {
 		$args = func_get_args();
 		$this->_requireMethod('Post', $args);
 	}
@@ -225,9 +222,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require a GET request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requireGet() {
+	public function requireGet() {
 		$args = func_get_args();
 		$this->_requireMethod('Get', $args);
 	}
@@ -236,9 +232,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require a PUT request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requirePut() {
+	public function requirePut() {
 		$args = func_get_args();
 		$this->_requireMethod('Put', $args);
 	}
@@ -247,9 +242,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require a DELETE request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requireDelete() {
+	public function requireDelete() {
 		$args = func_get_args();
 		$this->_requireMethod('Delete', $args);
 	}
@@ -258,9 +252,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requireSecure() {
+	public function requireSecure() {
 		$args = func_get_args();
 		$this->_requireMethod('Secure', $args);
 	}
@@ -269,9 +262,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require an authenticated request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requireAuth() {
+	public function requireAuth() {
 		$args = func_get_args();
 		$this->_requireMethod('Auth', $args);
 	}
@@ -280,9 +272,8 @@ class SecurityComponent extends Object {
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
  *
  * @return void
- * @access public
  */
-	function requireLogin() {
+	public function requireLogin() {
 		$args = func_get_args();
 		$base = $this->loginOptions;
 
@@ -305,9 +296,8 @@ class SecurityComponent extends Object {
  *
  * @param string $type Either 'basic', 'digest', or null. If null/empty, will try both.
  * @return mixed If successful, returns an array with login name and password, otherwise null.
- * @access public
  */
-	function loginCredentials($type = null) {
+	public function loginCredentials($type = null) {
 		switch (strtolower($type)) {
 			case 'basic':
 				$login = array('username' => env('PHP_AUTH_USER'), 'password' => env('PHP_AUTH_PW'));
@@ -344,9 +334,8 @@ class SecurityComponent extends Object {
  *
  * @param array $options Set of options for header
  * @return string HTTP-authentication request header
- * @access public
  */
-	function loginRequest($options = array()) {
+	public function loginRequest($options = array()) {
 		$options = array_merge($this->loginOptions, $options);
 		$this->_setLoginDefaults($options);
 		$auth = 'WWW-Authenticate: ' . ucfirst($options['type']);
@@ -366,9 +355,8 @@ class SecurityComponent extends Object {
  *
  * @param string $digest Digest authentication response
  * @return array Digest authentication parameters
- * @access public
  */
-	function parseDigestAuthData($digest) {
+	public function parseDigestAuthData($digest) {
 		if (substr($digest, 0, 7) == 'Digest ') {
 			$digest = substr($digest, 7);
 		}

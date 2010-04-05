@@ -986,9 +986,8 @@ class AjaxHelper extends AppHelper {
  * Executed after a view has rendered, used to include bufferred code
  * blocks.
  *
- * @access public
  */
-	function afterRender() {
+	public function afterRender() {
 		if (env('HTTP_X_UPDATE') != null && !empty($this->__ajaxBuffer)) {
 			@ob_end_clean();
 

@@ -299,9 +299,8 @@ class DboMssqlTest extends CakeTestCase {
 /**
  * Skip if cannot connect to mssql
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mssql', '%s SQL Server connection not available');
 	}
@@ -309,9 +308,8 @@ class DboMssqlTest extends CakeTestCase {
 /**
  * Make sure all fixtures tables are being created
  *
- * @access public
  */
-	function start() {
+	public function start() {
 		$this->db->simulate = false;
 		parent::start();
 		$this->db->simulate = true;
@@ -319,9 +317,8 @@ class DboMssqlTest extends CakeTestCase {
 /**
  * Make sure all fixtures tables are being dropped
  *
- * @access public
  */
-	function end() {
+	public function end() {
 		$this->db->simulate = false;
 		parent::end();
 		$this->db->simulate = true;
@@ -329,9 +326,8 @@ class DboMssqlTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$db = ConnectionManager::getDataSource('test_suite');
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
@@ -496,9 +492,8 @@ class DboMssqlTest extends CakeTestCase {
  * testBuildColumn
  *
  * @return unknown_type
- * @access public
  */
-	function testBuildColumn() {
+	public function testBuildColumn() {
 		$column = array('name' => 'id', 'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary');
 		$result = $this->db->buildColumn($column);
 		$expected = '[id] int IDENTITY (1, 1) NOT NULL';
@@ -554,9 +549,8 @@ class DboMssqlTest extends CakeTestCase {
  * testBuildIndex method
  *
  * @return void
- * @access public
  */
-	function testBuildIndex() {
+	public function testBuildIndex() {
 		$indexes = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'client_id' => array('column' => 'client_id', 'unique' => 1)
@@ -581,9 +575,8 @@ class DboMssqlTest extends CakeTestCase {
  * testUpdateAllSyntax method
  *
  * @return void
- * @access public
  */
-	function testUpdateAllSyntax() {
+	public function testUpdateAllSyntax() {
 		$fields = array('MssqlTestModel.client_id' => '[MssqlTestModel].[client_id] + 1');
 		$conditions = array('MssqlTestModel.updated <' => date('2009-01-01 00:00:00'));
 		$this->db->update($this->model, $fields, null, $conditions);
@@ -598,9 +591,8 @@ class DboMssqlTest extends CakeTestCase {
  * testGetPrimaryKey method
  *
  * @return void
- * @access public
  */
-	function testGetPrimaryKey() {
+	public function testGetPrimaryKey() {
 		// When param is a model
 		$result = $this->db->getPrimaryKey($this->model);
 		$this->assertEqual($result, 'id');
@@ -622,9 +614,8 @@ class DboMssqlTest extends CakeTestCase {
  * testInsertMulti
  *
  * @return void
- * @access public
  */
-	function testInsertMulti() {
+	public function testInsertMulti() {
 		$fields = array('id', 'name', 'login');
 		$values = array('(1, \'Larry\', \'PhpNut\')', '(2, \'Renan\', \'renan.saddam\')');
 		$this->db->simulated = array();
@@ -653,9 +644,8 @@ class DboMssqlTest extends CakeTestCase {
  * testLastError
  *
  * @return void
- * @access public
  */
-	function testLastError() {
+	public function testLastError() {
 		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
 

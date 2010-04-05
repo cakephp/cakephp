@@ -92,9 +92,8 @@ class Dispatcher extends Object {
  * @param string $url URL information to work on
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
- * @access public
  */
-	function dispatch($url = null, $additionalParams = array()) {
+	public function dispatch($url = null, $additionalParams = array()) {
 		if ($this->base === false) {
 			$this->base = $this->baseUrl();
 		}
@@ -236,9 +235,8 @@ class Dispatcher extends Object {
  *
  * @param string $fromUrl URL to mine for parameter information.
  * @return array Parameters found in POST and GET.
- * @access public
  */
-	function parseParams($fromUrl) {
+	public function parseParams($fromUrl) {
 		$params = array();
 
 		if (isset($_POST)) {
@@ -315,9 +313,8 @@ class Dispatcher extends Object {
  * Returns a base URL and sets the proper webroot
  *
  * @return string Base URL
- * @access public
  */
-	function baseUrl() {
+	public function baseUrl() {
 		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
@@ -461,9 +458,8 @@ class Dispatcher extends Object {
  * constructs a new one, using the PHP_SELF constant and other variables.
  *
  * @return string URI
- * @access public
  */
-	function uri() {
+	public function uri() {
 		foreach (array('HTTP_X_REWRITE_URL', 'REQUEST_URI', 'argv') as $var) {
 			if ($uri = env($var)) {
 				if ($var == 'argv') {
@@ -508,9 +504,8 @@ class Dispatcher extends Object {
  * @param string $uri Request URI
  * @param string $base Base path
  * @return string URL
- * @access public
  */
-	function getUrl($uri = null, $base = null) {
+	public function getUrl($uri = null, $base = null) {
 		if (empty($_GET['url'])) {
 			if ($uri == null) {
 				$uri = $this->uri();
@@ -557,9 +552,8 @@ class Dispatcher extends Object {
  * Outputs cached dispatch view cache
  *
  * @param string $url Requested URL
- * @access public
  */
-	function cached($url) {
+	public function cached($url) {
 		if (Configure::read('Cache.check') === true) {
 			$path = $this->here;
 			if ($this->here == '/') {
@@ -594,9 +588,8 @@ class Dispatcher extends Object {
  *
  * @param $url string $url Requested URL
  * @return boolean True on success if the asset file was found and sent
- * @access public
  */
-	function asset($url) {
+	public function asset($url) {
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return false;
 		}

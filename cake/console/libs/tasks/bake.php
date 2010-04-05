@@ -47,9 +47,8 @@ class BakeTask extends Shell {
  * and returns the correct path.
  *
  * @return string Path to output.
- * @access public
  */
-	function getPath() {
+	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
 			$name = substr($this->name, 0, strlen($this->name) - 4);

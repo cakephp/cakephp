@@ -1054,9 +1054,8 @@ class BehaviorTest extends CakeTestCase {
  * undocumented function
  *
  * @return void
- * @access public
  */
-	function testBindModelCallsInBehaviors() {
+	public function testBindModelCallsInBehaviors() {
 		$this->loadFixtures('Article', 'Comment');
 
 		// hasMany

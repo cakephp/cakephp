@@ -3482,9 +3482,8 @@ class DboSourceTest extends CakeTestCase {
  * testComplexSortExpression method
  *
  * @return void
- * @access public
  */
-	function testComplexSortExpression() {
+	public function testComplexSortExpression() {
 		$result = $this->testDb->order(array('(Model.field > 100) DESC', 'Model.field ASC'));
 		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field`\s+>\s+100\)\s+DESC,\s+`Model`\.`field`\s+ASC\s*$/", $result);
 	}

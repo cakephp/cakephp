@@ -127,9 +127,8 @@ class ShellDispatcher {
  *
  * @param array $args the argv
  * @return void
- * @access public
  */
-	function ShellDispatcher($args = array()) {
+	public function ShellDispatcher($args = array()) {
 		set_time_limit(0);
 
 		$this->__initConstants();
@@ -281,9 +280,8 @@ class ShellDispatcher {
  * Clear the console
  *
  * @return void
- * @access public
  */
-	function clear() {
+	public function clear() {
 		if (empty($this->params['noclear'])) {
 			if ( DS === '/') {
 				passthru('clear');
@@ -297,9 +295,8 @@ class ShellDispatcher {
  * Dispatches a CLI request
  *
  * @return boolean
- * @access public
  */
-	function dispatch() {
+	public function dispatch() {
 		$arg = $this->shiftArgs();
 
 		if (!$arg) {
@@ -429,9 +426,8 @@ class ShellDispatcher {
  * @param mixed $options Array or string of options.
  * @param string $default Default input value.
  * @return Either the default value, or the user-provided input.
- * @access public
  */
-	function getInput($prompt, $options = null, $default = null) {
+	public function getInput($prompt, $options = null, $default = null) {
 		if (!is_array($options)) {
 			$printOptions = '';
 		} else {
@@ -462,9 +458,8 @@ class ShellDispatcher {
  * @param string $string String to output.
  * @param boolean $newline If true, the outputs gets an added newline.
  * @return integer Returns the number of bytes output to stdout.
- * @access public
  */
-	function stdout($string, $newline = true) {
+	public function stdout($string, $newline = true) {
 		if ($newline) {
 			return fwrite($this->stdout, $string . "\n");
 		} else {
@@ -476,9 +471,8 @@ class ShellDispatcher {
  * Outputs to the stderr filehandle.
  *
  * @param string $string Error text to output.
- * @access public
  */
-	function stderr($string) {
+	public function stderr($string) {
 		fwrite($this->stderr, $string);
 	}
 
@@ -486,9 +480,8 @@ class ShellDispatcher {
  * Parses command line options
  *
  * @param array $params Parameters to parse
- * @access public
  */
-	function parseParams($params) {
+	public function parseParams($params) {
 		$this->__parseParams($params);
 		$defaults = array('app' => 'app', 'root' => dirname(dirname(dirname(__FILE__))), 'working' => null, 'webroot' => 'webroot');
 		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
@@ -562,18 +555,16 @@ class ShellDispatcher {
  * Removes first argument and shifts other arguments up
  *
  * @return mixed Null if there are no arguments otherwise the shifted argument
- * @access public
  */
-	function shiftArgs() {
+	public function shiftArgs() {
 		return array_shift($this->args);
 	}
 
 /**
  * Shows console help
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->clear();
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");

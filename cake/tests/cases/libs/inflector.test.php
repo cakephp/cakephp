@@ -262,9 +262,8 @@ class InflectorTest extends CakeTestCase {
  * testInflectorUnderscore method
  *
  * @return void
- * @access public
  */
-	function testInflectorUnderscore() {
+	public function testInflectorUnderscore() {
 		$this->assertIdentical(Inflector::underscore('TestThing'), 'test_thing');
 		$this->assertIdentical(Inflector::underscore('testThing'), 'test_thing');
 		$this->assertIdentical(Inflector::underscore('TestThingExtra'), 'test_thing_extra');

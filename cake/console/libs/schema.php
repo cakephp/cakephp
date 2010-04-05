@@ -43,9 +43,8 @@ class SchemaShell extends Shell {
 /**
  * Override initialize
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
@@ -54,9 +53,8 @@ class SchemaShell extends Shell {
 /**
  * Override startup
  *
- * @access public
  */
-	function startup() {
+	public function startup() {
 		$name = $file = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
@@ -97,9 +95,8 @@ class SchemaShell extends Shell {
 /**
  * Override main
  *
- * @access public
  */
-	function main() {
+	public function main() {
 		$this->help();
 	}
 
@@ -107,9 +104,8 @@ class SchemaShell extends Shell {
  * Read and output contents of schema object
  * path to read as second arg
  *
- * @access public
  */
-	function view() {
+	public function view() {
 		$File = new File($this->Schema->path . DS . $this->params['file']);
 		if ($File->exists()) {
 			$this->out($File->read());
@@ -125,9 +121,8 @@ class SchemaShell extends Shell {
  * Read database and Write schema object
  * accepts a connection as first arg or path to save as second arg
  *
- * @access public
  */
-	function generate() {
+	public function generate() {
 		$this->out(__('Generating Schema...', true));
 		$options = array();
 		if (isset($this->params['f'])) {
@@ -197,9 +192,8 @@ class SchemaShell extends Shell {
  * If -write contains a full path name the file will be saved there. If -write only
  * contains no DS, that will be used as the file name, in the same dir as the schema file.
  *
- * @access public
  */
-	function dump() {
+	public function dump() {
 		$write = false;
 		$Schema = $this->Schema->load();
 		if (!$Schema) {
@@ -427,9 +421,8 @@ class SchemaShell extends Shell {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$help = <<<TEXT
 The Schema Shell generates a schema object from
 the database and updates the database from the schema.

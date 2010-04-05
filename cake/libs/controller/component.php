@@ -64,9 +64,8 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to load
  * @return void
- * @access public
  */
-	function init(&$controller) {
+	public function init(&$controller) {
 		if (!is_array($controller->components)) {
 			return;
 		}
@@ -131,9 +130,8 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to beforeRedirect
  * @return void
- * @access public
  */
-	function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
+	public function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
 		$response = array();
 
 		foreach ($this->_primary as $name) {
@@ -177,9 +175,8 @@ class Component extends Object {
  * @param Controller $controller Controller instance
  * @param string $callback Callback to trigger.
  * @return void
- * @access public
  */
-	function triggerCallback($callback, &$controller) {
+	public function triggerCallback($callback, &$controller) {
 		foreach ($this->_primary as $name) {
 			$component =& $this->_loaded[$name];
 			if (method_exists($component, $callback) && $component->enabled === true) {

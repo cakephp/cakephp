@@ -102,9 +102,8 @@ class CakeSocket extends Object {
  * Connect the socket to the given host and port.
  *
  * @return boolean Success
- * @access public
  */
-	function connect() {
+	public function connect() {
 		if ($this->connection != null) {
 			$this->disconnect();
 		}
@@ -136,9 +135,8 @@ class CakeSocket extends Object {
  * Get the host name of the current connection.
  *
  * @return string Host name
- * @access public
  */
-	function host() {
+	public function host() {
 		if (Validation::ip($this->config['host'])) {
 			return gethostbyaddr($this->config['host']);
 		} else {
@@ -150,9 +148,8 @@ class CakeSocket extends Object {
  * Get the IP address of the current connection.
  *
  * @return string IP address
- * @access public
  */
-	function address() {
+	public function address() {
 		if (Validation::ip($this->config['host'])) {
 			return $this->config['host'];
 		} else {
@@ -164,9 +161,8 @@ class CakeSocket extends Object {
  * Get all IP addresses associated with the current connection.
  *
  * @return array IP addresses
- * @access public
  */
-	function addresses() {
+	public function addresses() {
 		if (Validation::ip($this->config['host'])) {
 			return array($this->config['host']);
 		} else {
@@ -178,9 +174,8 @@ class CakeSocket extends Object {
  * Get the last error as a string.
  *
  * @return string Last error
- * @access public
  */
-	function lastError() {
+	public function lastError() {
 		if (!empty($this->lastError)) {
 			return $this->lastError['num'] . ': ' . $this->lastError['str'];
 		} else {
@@ -193,9 +188,8 @@ class CakeSocket extends Object {
  *
  * @param integer $errNum Error code
  * @param string $errStr Error string
- * @access public
  */
-	function setLastError($errNum, $errStr) {
+	public function setLastError($errNum, $errStr) {
 		$this->lastError = array('num' => $errNum, 'str' => $errStr);
 	}
 
@@ -204,9 +198,8 @@ class CakeSocket extends Object {
  *
  * @param string $data The data to write to the socket
  * @return boolean Success
- * @access public
  */
-	function write($data) {
+	public function write($data) {
 		if (!$this->connected) {
 			if (!$this->connect()) {
 				return false;
@@ -222,9 +215,8 @@ class CakeSocket extends Object {
  *
  * @param integer $length Optional buffer length to read; defaults to 1024
  * @return mixed Socket data
- * @access public
  */
-	function read($length = 1024) {
+	public function read($length = 1024) {
 		if (!$this->connected) {
 			if (!$this->connect()) {
 				return false;
@@ -248,18 +240,16 @@ class CakeSocket extends Object {
  * Abort socket operation.
  *
  * @return boolean Success
- * @access public
  */
-	function abort() {
+	public function abort() {
 	}
 
 /**
  * Disconnect the socket from the current connection.
  *
  * @return boolean Success
- * @access public
  */
-	function disconnect() {
+	public function disconnect() {
 		if (!is_resource($this->connection)) {
 			$this->connected = false;
 			return true;
@@ -285,9 +275,8 @@ class CakeSocket extends Object {
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *
  * @return boolean True on success
- * @access public
  */
-	function reset($state = null) {
+	public function reset($state = null) {
 		if (empty($state)) {
 			static $initalState = array();
 			if (empty($initalState)) {

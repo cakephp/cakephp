@@ -135,9 +135,8 @@ class CakeSession extends Object {
  *
  * @param string $base The base path for the Session
  * @param boolean $start Should session be started right now
- * @access public
  */
-	function __construct($base = null, $start = true) {
+	public function __construct($base = null, $start = true) {
 		App::import('Core', array('Set', 'Security'));
 		$this->time = time();
 
@@ -198,9 +197,8 @@ class CakeSession extends Object {
  * Starts the Session.
  *
  * @return boolean True if session was started
- * @access public
  */
-	function start() {
+	public function start() {
 		if ($this->started()) {
 			return true;
 		}
@@ -230,9 +228,8 @@ class CakeSession extends Object {
  *
  * @param string $name Variable name to check for
  * @return boolean True if variable is there
- * @access public
  */
-	function check($name) {
+	public function check($name) {
 		if (empty($name)) {
 			return false;
 		}
@@ -245,9 +242,8 @@ class CakeSession extends Object {
  *
  * @param id $name string
  * @return string Session id
- * @access public
  */
-	function id($id = null) {
+	public function id($id = null) {
 		if ($id) {
 			$this->id = $id;
 			session_id($this->id);
@@ -264,9 +260,8 @@ class CakeSession extends Object {
  *
  * @param string $name Session variable to remove
  * @return boolean Success
- * @access public
  */
-	function delete($name) {
+	public function delete($name) {
 		if ($this->check($name)) {
 			if (in_array($name, $this->watchKeys)) {
 				trigger_error(sprintf(__('Deleting session key {%s}', true), $name), E_USER_NOTICE);
@@ -317,9 +312,8 @@ class CakeSession extends Object {
  * Returns last occurred error as a string, if any.
  *
  * @return mixed Error description as a string, or false.
- * @access public
  */
-	function error() {
+	public function error() {
 		if ($this->lastError) {
 			return $this->__error($this->lastError);
 		} else {
@@ -331,9 +325,8 @@ class CakeSession extends Object {
  * Returns true if session is valid.
  *
  * @return boolean Success
- * @access public
  */
-	function valid() {
+	public function valid() {
 		if ($this->read('Config')) {
 			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
 				if ($this->error === false) {
@@ -352,9 +345,8 @@ class CakeSession extends Object {
  *
  * @param mixed $name The name of the session variable (or a path as sent to Set.extract)
  * @return mixed The value of the session variable
- * @access public
  */
-	function read($name = null) {
+	public function read($name = null) {
 		if (is_null($name)) {
 			return $this->__returnSessionVars();
 		}
@@ -389,9 +381,8 @@ class CakeSession extends Object {
  *
  * @param mixed $var The variable path to watch
  * @return void
- * @access public
  */
-	function watch($var) {
+	public function watch($var) {
 		if (empty($var)) {
 			return false;
 		}
@@ -405,9 +396,8 @@ class CakeSession extends Object {
  *
  * @param mixed $var The variable path to watch
  * @return void
- * @access public
  */
-	function ignore($var) {
+	public function ignore($var) {
 		if (!in_array($var, $this->watchKeys)) {
 			return;
 		}
@@ -426,9 +416,8 @@ class CakeSession extends Object {
  * @param mixed $name Name of variable
  * @param string $value Value to write
  * @return boolean True if the write was successful, false if the write failed
- * @access public
  */
-	function write($name, $value) {
+	public function write($name, $value) {
 		if (empty($name)) {
 			return false;
 		}
@@ -443,9 +432,8 @@ class CakeSession extends Object {
  * Helper method to destroy invalid sessions.
  *
  * @return void
- * @access public
  */
-	function destroy() {
+	public function destroy() {
 		$_SESSION = array();
 		$this->__construct($this->path);
 		$this->start();
@@ -671,9 +659,8 @@ class CakeSession extends Object {
 /**
  * Restarts this session.
  *
- * @access public
  */
-	function renew() {
+	public function renew() {
 		$this->__regenerateId();
 	}
 

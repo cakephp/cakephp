@@ -42,9 +42,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Method executed before each test
  *
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->User =& ClassRegistry::init('User');
 		$this->Article =& ClassRegistry::init('Article');
 		$this->Tag =& ClassRegistry::init('Tag');
@@ -67,9 +66,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * Method executed after each test
  *
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		unset($this->Article);
 		unset($this->User);
 		unset($this->Tag);
@@ -3330,9 +3328,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetAddedAssociation method
  *
- * @access public
  */
-	function testResetAddedAssociation() {
+	public function testResetAddedAssociation() {
 		$this->assertTrue(empty($this->Article->hasMany['ArticlesTag']));
 
 		$this->Article->bindModel(array(
@@ -3356,9 +3353,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetAssociation method
  *
- * @access public
  */
-	function testResetAssociation() {
+	public function testResetAssociation() {
 		$this->Article->Behaviors->attach('Containable');
 		$this->Article->Comment->Behaviors->attach('Containable');
 		$this->Article->User->Behaviors->attach('Containable');
@@ -3388,9 +3384,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetDeeperHasOneAssociations method
  *
- * @access public
  */
-	function testResetDeeperHasOneAssociations() {
+	public function testResetDeeperHasOneAssociations() {
 		$this->Article->User->unbindModel(array(
 			'hasMany' => array('ArticleFeatured', 'Comment')
 		), false);
@@ -3449,9 +3444,8 @@ class ContainableBehaviorTest extends CakeTestCase {
 /**
  * testResetMultipleHabtmAssociations method
  *
- * @access public
  */
-	function testResetMultipleHabtmAssociations() {
+	public function testResetMultipleHabtmAssociations() {
 		$articleHabtm = array(
 			'hasAndBelongsToMany' => array(
 				'Tag' => array(

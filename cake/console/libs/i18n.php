@@ -45,9 +45,8 @@ class I18nShell extends Shell {
 /**
  * Override startup of the Shell
  *
- * @access public
  */
-	function startup() {
+	public function startup() {
 		$this->_welcome();
 		if (isset($this->params['datasource'])) {
 			$this->dataSource = $this->params['datasource'];
@@ -64,9 +63,8 @@ class I18nShell extends Shell {
 /**
  * Override main() for help message hook
  *
- * @access public
  */
-	function main() {
+	public function main() {
 		$this->out(__('I18n Shell', true));
 		$this->hr();
 		$this->out(__('[E]xtract POT file from sources', true));
@@ -98,9 +96,8 @@ class I18nShell extends Shell {
 /**
  * Initialize I18N database.
  *
- * @access public
  */
-	function initdb() {
+	public function initdb() {
 		$this->Dispatch->args = array('schema', 'create', 'i18n');
 		$this->Dispatch->dispatch();
 	}
@@ -108,9 +105,8 @@ class I18nShell extends Shell {
 /**
  * Show help screen.
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out(__('I18n Shell:', true));
 		$this->hr();

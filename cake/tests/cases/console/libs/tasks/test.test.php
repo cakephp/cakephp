@@ -103,18 +103,16 @@ class TestTaskArticle extends Model {
  * Example public method
  *
  * @return void
- * @access public
  */
-	function doSomething() {
+	public function doSomething() {
 	}
 
 /**
  * Example Secondary public method
  *
  * @return void
- * @access public
  */
-	function doSomethingElse() {
+	public function doSomethingElse() {
 	}
 
 /**
@@ -259,9 +257,8 @@ class TestTaskTest extends CakeTestCase {
  * startTest method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockTestTask($this->Dispatcher);
@@ -274,9 +271,8 @@ class TestTaskTest extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		ClassRegistry::flush();
 	}
 
@@ -284,9 +280,8 @@ class TestTaskTest extends CakeTestCase {
  * Test that file path generation doesn't continuously append paths.
  *
  * @return void
- * @access public
  */
-	function testFilePathGeneration() {
+	public function testFilePathGeneration() {
 		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
 
 		$this->Task->Dispatch->expectNever('stderr');
@@ -320,9 +315,8 @@ class TestTaskTest extends CakeTestCase {
  * test that the generation of fixtures works correctly.
  *
  * @return void
- * @access public
  */
-	function testFixtureArrayGenerationFromModel() {
+	public function testFixtureArrayGenerationFromModel() {
 		$subject = ClassRegistry::init('TestTaskArticle');
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
@@ -335,9 +329,8 @@ class TestTaskTest extends CakeTestCase {
  * test that the generation of fixtures works correctly.
  *
  * @return void
- * @access public
  */
-	function testFixtureArrayGenerationFromController() {
+	public function testFixtureArrayGenerationFromController() {
 		$subject = new TestTaskCommentsController();
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
@@ -350,9 +343,8 @@ class TestTaskTest extends CakeTestCase {
  * test user interaction to get object type
  *
  * @return void
- * @access public
  */
-	function testGetObjectType() {
+	public function testGetObjectType() {
 		$this->Task->expectOnce('_stop');
 		$this->Task->setReturnValueAt(0, 'in', 'q');
 		$this->Task->getObjectType();
@@ -366,9 +358,8 @@ class TestTaskTest extends CakeTestCase {
  * creating test subjects should clear the registry so the registry is always fresh
  *
  * @return void
- * @access public
  */
-	function testRegistryClearWhenBuildingTestObjects() {
+	public function testRegistryClearWhenBuildingTestObjects() {
 		ClassRegistry::flush();
 		$model = ClassRegistry::init('TestTaskComment');
 		$model->bindModel(array(
@@ -391,9 +382,8 @@ class TestTaskTest extends CakeTestCase {
  * test that getClassName returns the user choice as a classname.
  *
  * @return void
- * @access public
  */
-	function testGetClassName() {
+	public function testGetClassName() {
 		$objects = App::objects('model');
 		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
 		if ($skip) {
@@ -413,9 +403,8 @@ class TestTaskTest extends CakeTestCase {
  * Test the user interaction for defining additional fixtures.
  *
  * @return void
- * @access public
  */
-	function testGetUserFixtures() {
+	public function testGetUserFixtures() {
 		$this->Task->setReturnValueAt(0, 'in', 'y');
 		$this->Task->setReturnValueAt(1, 'in', 'app.pizza, app.topping, app.side_dish');
 		$result = $this->Task->getUserFixtures();
@@ -427,9 +416,8 @@ class TestTaskTest extends CakeTestCase {
  * test that resolving classnames works
  *
  * @return void
- * @access public
  */
-	function testGetRealClassname() {
+	public function testGetRealClassname() {
 		$result = $this->Task->getRealClassname('Model', 'Post');
 		$this->assertEqual($result, 'Post');
 
@@ -451,9 +439,8 @@ class TestTaskTest extends CakeTestCase {
  * as PHP4 classnames are all lower case, breaking the plugin path inflection.
  *
  * @return void
- * @access public
  */
-	function testBakeModelTest() {
+	public function testBakeModelTest() {
 		$this->Task->setReturnValue('createFile', true);
 		$this->Task->setReturnValue('isLoadableClass', true);
 
@@ -485,9 +472,8 @@ class TestTaskTest extends CakeTestCase {
  * causing issues with inflection of path name from classname.
  *
  * @return void
- * @access public
  */
-	function testBakeControllerTest() {
+	public function testBakeControllerTest() {
 		$this->Task->setReturnValue('createFile', true);
 		$this->Task->setReturnValue('isLoadableClass', true);
 
@@ -519,9 +505,8 @@ class TestTaskTest extends CakeTestCase {
  * test Constructor generation ensure that constructClasses is called for controllers
  *
  * @return void
- * @access public
  */
-	function testGenerateConstructor() {
+	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
 		$this->assertEqual($result, $expected);
@@ -539,9 +524,8 @@ class TestTaskTest extends CakeTestCase {
  * Test that mock class generation works for the appropriate classes
  *
  * @return void
- * @access public
  */
-	function testMockClassGeneration() {
+	public function testMockClassGeneration() {
 		$result = $this->Task->hasMockClass('controller');
 		$this->assertTrue($result);
 	}
@@ -550,9 +534,8 @@ class TestTaskTest extends CakeTestCase {
  * test bake() with a -plugin param
  *
  * @return void
- * @access public
  */
-	function testBakeWithPlugin() {
+	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'TestTest';
 
 		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'form.test.php';
@@ -564,9 +547,8 @@ class TestTaskTest extends CakeTestCase {
  * Test filename generation for each type + plugins
  *
  * @return void
- * @access public
  */
-	function testTestCaseFileName() {
+	public function testTestCaseFileName() {
 		$this->Task->path = '/my/path/tests/';
 
 		$result = $this->Task->testCaseFileName('Model', 'Post');
@@ -599,9 +581,8 @@ class TestTaskTest extends CakeTestCase {
  * test execute with a type defined
  *
  * @return void
- * @access public
  */
-	function testExecuteWithOneArg() {
+	public function testExecuteWithOneArg() {
 		$this->Task->args[0] = 'Model';
 		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
 		$this->Task->setReturnValue('isLoadableClass', true);
@@ -613,9 +594,8 @@ class TestTaskTest extends CakeTestCase {
  * test execute with type and class name defined
  *
  * @return void
- * @access public
  */
-	function testExecuteWithTwoArgs() {
+	public function testExecuteWithTwoArgs() {
 		$this->Task->args = array('Model', 'TestTaskTag');
 		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
 		$this->Task->setReturnValue('isLoadableClass', true);

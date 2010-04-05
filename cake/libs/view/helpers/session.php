@@ -63,9 +63,8 @@ class SessionHelper extends CakeSession {
  * Turn sessions on if 'Session.start' is set to false in core.php
  *
  * @param string $base
- * @access public
  */
-	function activate($base = null) {
+	public function activate($base = null) {
 		$this->__active = true;
 	}
 
@@ -77,9 +76,8 @@ class SessionHelper extends CakeSession {
  *
  * @param string $name the name of the session key you want to read
  * @return values from the session vars
- * @access public
  */
-	function read($name = null) {
+	public function read($name = null) {
 		if ($this->__active === true && $this->__start()) {
 			return parent::read($name);
 		}
@@ -93,9 +91,8 @@ class SessionHelper extends CakeSession {
  *
  * @param string $name
  * @return boolean
- * @access public
  */
-	function check($name) {
+	public function check($name) {
 		if ($this->__active === true && $this->__start()) {
 			return parent::check($name);
 		}
@@ -108,9 +105,8 @@ class SessionHelper extends CakeSession {
  * In your view: `$session->error();`
  *
  * @return string last error
- * @access public
  */
-	function error() {
+	public function error() {
 		if ($this->__active === true && $this->__start()) {
 			return parent::error();
 		}
@@ -125,9 +121,8 @@ class SessionHelper extends CakeSession {
  *
  * @param string $key The [Message.]key you are rendering in the view.
  * @return boolean|string Will return the value if $key is set, or false if not set.
- * @access public
  */
-	function flash($key = 'flash') {
+	public function flash($key = 'flash') {
 		$out = false;
 
 		if ($this->__active === true && $this->__start()) {
@@ -159,9 +154,8 @@ class SessionHelper extends CakeSession {
  * Used to check is a session is valid in a view
  *
  * @return boolean
- * @access public
  */
-	function valid() {
+	public function valid() {
 		if ($this->__active === true && $this->__start()) {
 			return parent::valid();
 		}
@@ -172,9 +166,8 @@ class SessionHelper extends CakeSession {
  * This method should not be used in a view
  *
  * @return boolean
- * @access public
  */
-	function write() {
+	public function write() {
 		trigger_error(__('You can not write to a Session from the view', true), E_USER_WARNING);
 	}
 

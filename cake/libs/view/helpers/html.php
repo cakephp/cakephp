@@ -137,9 +137,8 @@ class HtmlHelper extends AppHelper {
  * @param mixed $options Link attributes e.g. array('id'=>'selected')
  * @return void
  * @see HtmlHelper::link() for details on $options that can be used.
- * @access public
  */
-	function addCrumb($name, $link = null, $options = null) {
+	public function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
 	}
 
@@ -158,9 +157,8 @@ class HtmlHelper extends AppHelper {
  *
  * @param string $type Doctype to use.
  * @return string Doctype string
- * @access public
  */
-	function docType($type = 'xhtml-strict') {
+	public function docType($type = 'xhtml-strict') {
 		if (isset($this->__docTypes[$type])) {
 			return $this->__docTypes[$type];
 		}
@@ -179,9 +177,8 @@ class HtmlHelper extends AppHelper {
  * @param array $options Other attributes for the generated tag. If the type attribute is html,
  *    rss, atom, or icon, the mime-type is returned.
  * @return string A completed `<link />` element.
- * @access public
  */
-	function meta($type, $url = null, $options = array()) {
+	public function meta($type, $url = null, $options = array()) {
 		$inline = isset($options['inline']) ? $options['inline'] : true;
 		unset($options['inline']);
 
@@ -244,9 +241,8 @@ class HtmlHelper extends AppHelper {
  * @param string $charset The character set to be used in the meta tag. If empty,
  *  The App.encoding value will be used. Example: "utf-8".
  * @return string A meta tag containing the specified character set.
- * @access public
  */
-	function charset($charset = null) {
+	public function charset($charset = null) {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
@@ -271,9 +267,8 @@ class HtmlHelper extends AppHelper {
  * @param array $options Array of HTML attributes.
  * @param string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
- * @access public
  */
-	function link($title, $url = null, $options = array(), $confirmMessage = false) {
+	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
 		$escapeTitle = true;
 		if ($url !== null) {
 			$url = $this->url($url);
@@ -325,9 +320,8 @@ class HtmlHelper extends AppHelper {
  * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
  * @param array $options Array of HTML attributes.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
- * @access public
  */
-	function css($path, $rel = null, $options = array()) {
+	public function css($path, $rel = null, $options = array()) {
 		$options += array('inline' => true);
 		if (is_array($path)) {
 			$out = '';
@@ -397,9 +391,8 @@ class HtmlHelper extends AppHelper {
  * @param mixed $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
  * @return mixed String of `<script />` tags or null if $inline is false or if $once is true and the file has been
  *   included before.
- * @access public
  */
-	function script($url, $options = array()) {
+	public function script($url, $options = array()) {
 		if (is_bool($options)) {
 			list($inline, $options) = array($options, array());
 			$options['inline'] = $inline;
@@ -455,9 +448,8 @@ class HtmlHelper extends AppHelper {
  * @param string $script The script to wrap
  * @param array $options The options to use.
  * @return mixed string or null depending on the value of `$options['inline']`
- * @access public
  */
-	function scriptBlock($script, $options = array()) {
+	public function scriptBlock($script, $options = array()) {
 		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
 			$script  = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
@@ -486,9 +478,8 @@ class HtmlHelper extends AppHelper {
  *
  * @param array $options Options for the code block.
  * @return void
- * @access public
  */
-	function scriptStart($options = array()) {
+	public function scriptStart($options = array()) {
 		$options += array('safe' => true, 'inline' => true);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
@@ -501,9 +492,8 @@ class HtmlHelper extends AppHelper {
  * used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
- * @access public
  */
-	function scriptEnd() {
+	public function scriptEnd() {
 		$buffer = ob_get_clean();
 		$options = $this->_scriptBlockOptions;
 		$this->_scriptBlockOptions = array();
@@ -525,9 +515,8 @@ class HtmlHelper extends AppHelper {
  * @param array $data Style data array, keys will be used as property names, values as property values.
  * @param boolean $oneline Whether or not the style block should be displayed on one line.
  * @return string CSS styling data
- * @access public
  */
-	function style($data, $oneline = true) {
+	public function style($data, $oneline = true) {
 		if (!is_array($data)) {
 			return $data;
 		}
@@ -547,9 +536,8 @@ class HtmlHelper extends AppHelper {
  * @param string $separator Text to separate crumbs.
  * @param string $startText This will be the first crumb, if false it defaults to first crumb in array
  * @return string Composed bread crumbs
- * @access public
  */
-	function getCrumbs($separator = '&raquo;', $startText = false) {
+	public function getCrumbs($separator = '&raquo;', $startText = false) {
 		if (!empty($this->_crumbs)) {
 			$out = array();
 			if ($startText) {
@@ -587,9 +575,8 @@ class HtmlHelper extends AppHelper {
  * @param string $path Path to the image file, relative to the app/webroot/img/ directory.
  * @param array $options Array of HTML attributes.
  * @return string completed img tag
- * @access public
  */
-	function image($path, $options = array()) {
+	public function image($path, $options = array()) {
 		if (is_array($path)) {
 			$path = $this->url($path);
 		} elseif (strpos($path, '://') === false) {
@@ -624,9 +611,8 @@ class HtmlHelper extends AppHelper {
  * @param array $trOptions HTML options for TR elements.
  * @param array $thOptions HTML options for TH elements.
  * @return string Completed table headers
- * @access public
  */
-	function tableHeaders($names, $trOptions = null, $thOptions = null) {
+	public function tableHeaders($names, $trOptions = null, $thOptions = null) {
 		$out = array();
 		foreach ($names as $arg) {
 			$out[] = sprintf($this->tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
@@ -644,9 +630,8 @@ class HtmlHelper extends AppHelper {
  * @param bool $continueOddEven If false, will use a non-static $count variable,
  *    so that the odd/even count is reset to zero just for that call.
  * @return string Formatted HTML
- * @access public
  */
-	function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
+	public function tableCells($data, $oddTrOptions = null, $evenTrOptions = null, $useCount = false, $continueOddEven = true) {
 		if (empty($data[0]) || !is_array($data[0])) {
 			$data = array($data);
 		}
@@ -700,9 +685,8 @@ class HtmlHelper extends AppHelper {
  *   If null, only a start tag will be printed
  * @param array $options Additional HTML attributes of the DIV tag, see above.
  * @return string The formatted tag element
- * @access public
  */
-	function tag($name, $text = null, $options = array()) {
+	public function tag($name, $text = null, $options = array()) {
 		if (is_array($options) && isset($options['escape']) && $options['escape']) {
 			$text = h($text);
 			unset($options['escape']);
@@ -730,9 +714,8 @@ class HtmlHelper extends AppHelper {
  *   If null, only a start tag will be printed
  * @param array $options Additional HTML attributes of the DIV tag
  * @return string The formatted DIV element
- * @access public
  */
-	function div($class = null, $text = null, $options = array()) {
+	public function div($class = null, $text = null, $options = array()) {
 		if (!empty($class)) {
 			$options['class'] = $class;
 		}
@@ -750,9 +733,8 @@ class HtmlHelper extends AppHelper {
  * @param string $text String content that will appear inside the p element.
  * @param array $options Additional HTML attributes of the P tag
  * @return string The formatted P element
- * @access public
  */
-	function para($class, $text, $options = array()) {
+	public function para($class, $text, $options = array()) {
 		if (isset($options['escape'])) {
 			$text = h($text);
 		}
@@ -775,9 +757,8 @@ class HtmlHelper extends AppHelper {
  * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
  * @return string The nested list
- * @access public
  */
-	function nestedList($list, $options = array(), $itemOptions = array(), $tag = 'ul') {
+	public function nestedList($list, $options = array(), $itemOptions = array(), $tag = 'ul') {
 		if (is_string($options)) {
 			$tag = $options;
 			$options = array();

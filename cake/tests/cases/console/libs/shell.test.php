@@ -114,9 +114,8 @@ class ShellTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$this->Dispatcher =& new TestShellMockShellDispatcher();
 		$this->Shell =& new TestShell($this->Dispatcher);
 	}
@@ -125,9 +124,8 @@ class ShellTest extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		ClassRegistry::flush();
 	}
 
@@ -135,9 +133,8 @@ class ShellTest extends CakeTestCase {
  * testConstruct method
  *
  * @return void
- * @access public
  */
-	function testConstruct() {
+	public function testConstruct() {
 		$this->assertIsA($this->Shell->Dispatch, 'TestShellMockShellDispatcher');
 		$this->assertEqual($this->Shell->name, 'TestShell');
 		$this->assertEqual($this->Shell->alias, 'TestShell');
@@ -147,9 +144,8 @@ class ShellTest extends CakeTestCase {
  * testInitialize method
  *
  * @return void
- * @access public
  */
-	function testInitialize() {
+	public function testInitialize() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
@@ -180,9 +176,8 @@ class ShellTest extends CakeTestCase {
  * testIn method
  *
  * @return void
- * @access public
  */
-	function testIn() {
+	public function testIn() {
 		$this->Shell->Dispatch->setReturnValueAt(0, 'getInput', 'n');
 		$this->Shell->Dispatch->expectAt(0, 'getInput', array('Just a test?', array('y', 'n'), 'n'));
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
@@ -218,9 +213,8 @@ class ShellTest extends CakeTestCase {
  * testOut method
  *
  * @return void
- * @access public
  */
-	function testOut() {
+	public function testOut() {
 		$this->Shell->Dispatch->expectAt(0, 'stdout', array("Just a test\n", false));
 		$this->Shell->out('Just a test');
 
@@ -238,9 +232,8 @@ class ShellTest extends CakeTestCase {
  * testErr method
  *
  * @return void
- * @access public
  */
-	function testErr() {
+	public function testErr() {
 		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Just a test\n"));
 		$this->Shell->err('Just a test');
 
@@ -258,9 +251,8 @@ class ShellTest extends CakeTestCase {
  * testNl
  *
  * @return void
- * @access public
  */
-	function testNl() {
+	public function testNl() {
 		$this->assertEqual($this->Shell->nl(), "\n");
 		$this->assertEqual($this->Shell->nl(true), "\n");
 		$this->assertEqual($this->Shell->nl(false), "");
@@ -272,9 +264,8 @@ class ShellTest extends CakeTestCase {
  * testHr
  *
  * @return void
- * @access public
  */
-	function testHr() {
+	public function testHr() {
 		$bar = '---------------------------------------------------------------';
 
 		$this->Shell->Dispatch->expectAt(0, 'stdout', array('', false));
@@ -297,9 +288,8 @@ class ShellTest extends CakeTestCase {
  * testError
  *
  * @return void
- * @access public
  */
-	function testError() {
+	public function testError() {
 		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Error: Foo Not Found\n"));
 		$this->Shell->error('Foo Not Found');
 		$this->assertIdentical($this->Shell->stopped, 1);
@@ -316,9 +306,8 @@ class ShellTest extends CakeTestCase {
  * testLoadTasks method
  *
  * @return void
- * @access public
  */
-	function testLoadTasks() {
+	public function testLoadTasks() {
 		$this->assertTrue($this->Shell->loadTasks());
 
 		$this->Shell->tasks = null;
@@ -359,9 +348,8 @@ class ShellTest extends CakeTestCase {
  * testShortPath method
  *
  * @return void
- * @access public
  */
-	function testShortPath() {
+	public function testShortPath() {
 		$path = $expected = DS . 'tmp' . DS . 'ab' . DS . 'cd';
 		$this->assertEqual($this->Shell->shortPath($path), $expected);
 
@@ -401,9 +389,8 @@ class ShellTest extends CakeTestCase {
  * testCreateFile method
  *
  * @return void
- * @access public
  */
-	function testCreateFile() {
+	public function testCreateFile() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
 
 		$path = TMP . 'shell_test';
@@ -452,9 +439,8 @@ class ShellTest extends CakeTestCase {
  * testCreateFileWindows method
  *
  * @return void
- * @access public
  */
-	function testCreateFileWindows() {
+	public function testCreateFileWindows() {
 		$this->skipUnless(DIRECTORY_SEPARATOR === '\\', 'testCreateFileWindows supported on Windows only');
 
 		$path = TMP . 'shell_test';

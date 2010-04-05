@@ -42,9 +42,8 @@ class BakeShell extends Shell {
 /**
  * Override loadTasks() to handle paths
  *
- * @access public
  */
-	function loadTasks() {
+	public function loadTasks() {
 		parent::loadTasks();
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
@@ -66,9 +65,8 @@ class BakeShell extends Shell {
 /**
  * Override main() to handle action
  *
- * @access public
  */
-	function main() {
+	public function main() {
 		if (!is_dir($this->DbConfig->path)) {
 			if ($this->Project->execute()) {
 				$this->DbConfig->path = $this->params['working'] . DS . 'config' . DS;
@@ -129,9 +127,8 @@ class BakeShell extends Shell {
 /**
  * Quickly bake the MVC
  *
- * @access public
  */
-	function all() {
+	public function all() {
 		$this->hr();
 		$this->out('Bake All');
 		$this->hr();
@@ -199,9 +196,8 @@ class BakeShell extends Shell {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->out('CakePHP Bake:');
 		$this->hr();
 		$this->out('The Bake script generates controllers, views and models for your application.');

@@ -69,9 +69,8 @@ class FileEngine extends CacheEngine {
  *
  * @param array $setting array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @access public
  */
-	function init($settings = array()) {
+	public function init($settings = array()) {
 		parent::init(array_merge(
 			array(
 				'engine' => 'File', 'path' => CACHE, 'prefix'=> 'cake_', 'lock'=> false,
@@ -98,9 +97,8 @@ class FileEngine extends CacheEngine {
  * Garbage collection. Permanently remove all expired and deleted data
  *
  * @return boolean True if garbage collection was succesful, false on failure
- * @access public
  */
-	function gc() {
+	public function gc() {
 		return $this->clear(true);
 	}
 
@@ -111,9 +109,8 @@ class FileEngine extends CacheEngine {
  * @param mixed $data Data to be cached
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
- * @access public
  */
-	function write($key, &$data, $duration) {
+	public function write($key, &$data, $duration) {
 		if ($data === '' || !$this->_init) {
 			return false;
 		}
@@ -151,9 +148,8 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
- * @access public
  */
-	function read($key) {
+	public function read($key) {
 		if ($this->_setKey($key) === false || !$this->_init || !$this->_File->exists()) {
 			return false;
 		}
@@ -184,9 +180,8 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
- * @access public
  */
-	function delete($key) {
+	public function delete($key) {
 		if ($this->_setKey($key) === false || !$this->_init) {
 			return false;
 		}
@@ -198,9 +193,8 @@ class FileEngine extends CacheEngine {
  *
  * @param boolean $check Optional - only delete expired cache items
  * @return boolean True if the cache was succesfully cleared, false otherwise
- * @access public
  */
-	function clear($check) {
+	public function clear($check) {
 		if (!$this->_init) {
 			return false;
 		}

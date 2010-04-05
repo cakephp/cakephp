@@ -41,9 +41,8 @@ class Overloadable extends Object {
 /**
  * Overload implementation.
  *
- * @access public
  */
-	function overload() {
+	public function overload() {
 		if (function_exists('overload')) {
 			if (func_num_args() > 0) {
 				foreach (func_get_args() as $class) {
@@ -101,9 +100,8 @@ class Overloadable2 extends Object {
 /**
  * Overload implementation.
  *
- * @access public
  */
-	function overload() {
+	public function overload() {
 		if (function_exists('overload')) {
 			if (func_num_args() > 0) {
 				foreach (func_get_args() as $class) {

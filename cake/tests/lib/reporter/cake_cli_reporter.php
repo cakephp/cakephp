@@ -68,9 +68,8 @@ class CakeCliReporter extends CakeBaseReporter {
  *
  * @param string $message Message of the fail.
  * @return void
- * @access public
  */
-	function paintFail($message) {
+	public function paintFail($message) {
 		parent::paintFail($message);
 		$message .= $this->_getBreadcrumb();
 		fwrite(STDERR, 'FAIL' . $this->separator . $message);
@@ -81,9 +80,8 @@ class CakeCliReporter extends CakeBaseReporter {
  *
  * @param string $message Message of the Error
  * @return void
- * @access public
  */
-	function paintError($message) {
+	public function paintError($message) {
 		parent::paintError($message);
 		$message .= $this->_getBreadcrumb();
 		fwrite(STDERR, 'ERROR' . $this->separator . $message);
@@ -94,9 +92,8 @@ class CakeCliReporter extends CakeBaseReporter {
  *
  * @param string $message Message of the Error
  * @return void
- * @access public
  */
-	function paintException($exception) {
+	public function paintException($exception) {
 		parent::paintException($exception);
 		$message .= sprintf('Unexpected exception of type [%s] with message [%s] in [%s] line [%s]',
 			get_class($exception),

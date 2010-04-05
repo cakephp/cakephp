@@ -50,9 +50,8 @@ class CakeTestFixture extends Object {
 /**
  * Instantiate the fixture.
  *
- * @access public
  */
-	function __construct() {
+	public function __construct() {
 		App::import('Model', 'CakeSchema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
 
@@ -126,9 +125,8 @@ class CakeTestFixture extends Object {
  *
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
- * @access public
  */
-	function create(&$db) {
+	public function create(&$db) {
 		if (!isset($this->fields) || empty($this->fields)) {
 			return false;
 		}
@@ -144,9 +142,8 @@ class CakeTestFixture extends Object {
  *
  * @param object	$db	An instance of the database object used to create the fixture table
  * @return boolean True on success, false on failure
- * @access public
  */
-	function drop(&$db) {
+	public function drop(&$db) {
 		$this->Schema->_build(array($this->table => $this->fields));
 		return (
 			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false
@@ -159,9 +156,8 @@ class CakeTestFixture extends Object {
  *
  * @param object $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
- * @access public
  */
-	function insert(&$db) {
+	public function insert(&$db) {
 		if (!isset($this->_insert)) {
 			$values = array();
 
@@ -182,9 +178,8 @@ class CakeTestFixture extends Object {
  *
  * @param object $db A reference to a db instance
  * @return boolean
- * @access public
  */
-	function truncate(&$db) {
+	public function truncate(&$db) {
 		$fullDebug = $db->fullDebug;
 		$db->fullDebug = false;
 		$return = $db->truncate($this->table);

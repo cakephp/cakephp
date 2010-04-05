@@ -160,9 +160,8 @@ class HttpSocket extends CakeSocket {
  * See HttpSocket::$config for options that can be used.
  *
  * @param mixed $config Configuration information, either a string url or an array of options.
- * @access public
  */
-	function __construct($config = array()) {
+	public function __construct($config = array()) {
 		if (is_string($config)) {
 			$this->_configUri($config);
 		} elseif (is_array($config)) {
@@ -181,9 +180,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $request Either an URI string, or an array defining host/uri
  * @return mixed false on error, request body on success
- * @access public
  */
-	function request($request = array()) {
+	public function request($request = array()) {
 		$this->reset(false);
 
 		if (is_string($request)) {
@@ -308,9 +306,8 @@ class HttpSocket extends CakeSocket {
  * @param array $query Querystring parameters to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
- * @access public
  */
-	function get($uri = null, $query = array(), $request = array()) {
+	public function get($uri = null, $query = array(), $request = array()) {
 		if (!empty($query)) {
 			$uri = $this->_parseUri($uri);
 			if (isset($uri['query'])) {
@@ -341,9 +338,8 @@ class HttpSocket extends CakeSocket {
  * @param array $data Array of POST data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
- * @access public
  */
-	function post($uri = null, $data = array(), $request = array()) {
+	public function post($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'POST', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -355,9 +351,8 @@ class HttpSocket extends CakeSocket {
  * @param array $data Array of PUT data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
- * @access public
  */
-	function put($uri = null, $data = array(), $request = array()) {
+	public function put($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -369,9 +364,8 @@ class HttpSocket extends CakeSocket {
  * @param array $data Query to append to URI
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
- * @access public
  */
-	function delete($uri = null, $data = array(), $request = array()) {
+	public function delete($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -402,9 +396,8 @@ class HttpSocket extends CakeSocket {
  * @param mixed $url Either a string or array of url options to create a url with.
  * @param string $uriTemplate A template string to use for url formatting.
  * @return mixed Either false on failure or a string containing the composed url.
- * @access public
  */
-	function url($url = null, $uriTemplate = null) {
+	public function url($url = null, $uriTemplate = null) {
 		if (is_null($url)) {
 			$url = '/';
 		}
@@ -1042,9 +1035,8 @@ class HttpSocket extends CakeSocket {
  *
  * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reseted
  * @return boolean True on success
- * @access public
  */
-	function reset($full = true) {
+	public function reset($full = true) {
 		static $initalState = array();
 		if (empty($initalState)) {
 			$initalState = get_class_vars(__CLASS__);

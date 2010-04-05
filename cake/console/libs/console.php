@@ -51,9 +51,8 @@ class ConsoleShell extends Shell {
 /**
  * Override intialize of the Shell
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		require_once CAKE . 'dispatcher.php';
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('model');
@@ -76,9 +75,8 @@ class ConsoleShell extends Shell {
 /**
  * Prints the help message
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$out  = 'Console help:';
 		$out .= '-------------';
 		$out .= 'The interactive console is a tool for testing parts of your app before you';
@@ -139,9 +137,8 @@ class ConsoleShell extends Shell {
 /**
  * Override main() to handle action
  *
- * @access public
  */
-	function main($command = null) {
+	public function main($command = null) {
 		while (true) {
 			if (empty($command)) {
 				$command = trim($this->in(''));

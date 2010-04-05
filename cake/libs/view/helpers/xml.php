@@ -53,9 +53,8 @@ class XmlHelper extends AppHelper {
  *
  * @param array $attrib Header tag attributes
  * @return string XML header
- * @access public
  */
-	function header($attrib = array()) {
+	public function header($attrib = array()) {
 		if (Configure::read('App.encoding') !== null) {
 			$this->encoding = Configure::read('App.encoding');
 		}
@@ -90,9 +89,8 @@ class XmlHelper extends AppHelper {
  * @param  string  $name The namespace name or URI
  * @deprecated
  * @see Xml::removeNs()
- * @access public
  */
-	function removeNs($name) {
+	public function removeNs($name) {
 		return $this->Xml->removeGlobalNamespace($name);
 	}
 
@@ -104,9 +102,8 @@ class XmlHelper extends AppHelper {
  * @param mixed $content XML element content
  * @param boolean $endTag Whether the end tag of the element should be printed
  * @return string XML
- * @access public
  */
-	function elem($name, $attrib = array(), $content = null, $endTag = true) {
+	public function elem($name, $attrib = array(), $content = null, $endTag = true) {
 		$namespace = null;
 		if (isset($attrib['namespace'])) {
 			$namespace = $attrib['namespace'];
@@ -142,9 +139,8 @@ class XmlHelper extends AppHelper {
  * Create closing tag for current element
  *
  * @return string
- * @access public
  */
-	function closeElem() {
+	public function closeElem() {
 		$name = $this->Xml->name();
 		if ($parent =& $this->Xml->parent()) {
 			$this->Xml =& $parent;
@@ -160,9 +156,8 @@ class XmlHelper extends AppHelper {
  *     XmlNode::__construct().
  * @return string A copy of $data in XML format
  * @see XmlNode
- * @access public
  */
-	function serialize($data, $options = array()) {
+	public function serialize($data, $options = array()) {
 		$options += array('attributes' => false, 'format' => 'attributes');
 		$data =& new Xml($data, $options);
 		return $data->toString($options + array('header' => false));

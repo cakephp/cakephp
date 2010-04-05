@@ -120,9 +120,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $options Array of options for method
  * @param string $callbacks Array of callback / special options.
  * @return string Composed method string
- * @access public
  */
-	function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
+	public function _methodTemplate($method, $template, $options, $extraSafeKeys = array()) {
 		$options = $this->_mapOptions($method, $options);
 		$options = $this->_prepareCallbacks($method, $options);
 		$callbacks = array_keys($this->_callbackArguments[$method]);
@@ -138,9 +137,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
- * @access public
  */
-	function get($selector) {
+	public function get($selector) {
 		if ($selector == 'window' || $selector == 'document') {
 			$this->selection = $this->jQueryObject . '(' . $selector .')';
 		} else {
@@ -161,9 +159,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $callback The Javascript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
- * @access public
  */
-	function event($type, $callback, $options = array()) {
+	public function event($type, $callback, $options = array()) {
 		$defaults = array('wrap' => true, 'stop' => true);
 		$options = array_merge($defaults, $options);
 
@@ -187,9 +184,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  *
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
- * @access public
  */
-	function domReady($functionBody) {
+	public function domReady($functionBody) {
 		return $this->jQueryObject . '(document).ready(function () {' . $functionBody . '});';
 	}
 
@@ -199,9 +195,8 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
- * @access public
  */
-	function each($callback) {
+	public function each($callback) {
 		return $this->selection . '.each(function () {' . $callback . '});';
 	}
 

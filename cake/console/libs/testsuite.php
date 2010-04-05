@@ -73,9 +73,8 @@ class TestSuiteShell extends Shell {
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		$corePath = App::core('cake');
 		if (isset($corePath[0])) {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
@@ -100,9 +99,8 @@ class TestSuiteShell extends Shell {
  * Parse the arguments given into the Shell object properties.
  *
  * @return void
- * @access public
  */
-	function parseArgs() {
+	public function parseArgs() {
 		if (empty($this->args)) {
 			return;
 		}
@@ -146,9 +144,8 @@ class TestSuiteShell extends Shell {
  * Main entry point to this shell
  *
  * @return void
- * @access public
  */
-	function main() {
+	public function main() {
 		$this->out(__('CakePHP Test Shell', true));
 		$this->hr();
 
@@ -174,9 +171,8 @@ class TestSuiteShell extends Shell {
  * Help screen
  *
  * @return void
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->out('Usage: ');
 		$this->out("\tcake testsuite category test_type file");
 		$this->out("\t\t- category - \"app\", \"core\" or name of a plugin");

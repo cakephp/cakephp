@@ -40,9 +40,8 @@ class SessionTestController extends Controller {
  * session_id method
  *
  * @return string
- * @access public
  */
-	function session_id() {
+	public function session_id() {
 		return $this->Session->id();
 	}
 }
@@ -67,9 +66,8 @@ class OrangeSessionTestController extends Controller {
  * session_id method
  *
  * @return string
- * @access public
  */
-	function session_id() {
+	public function session_id() {
 		return $this->Session->id();
 	}
 }

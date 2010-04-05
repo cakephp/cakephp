@@ -57,9 +57,8 @@ class SubjectCakeTestCase extends CakeTestCase {
  * testDummy method
  *
  * @return void
- * @access public
  */
-	function testDummy() {
+	public function testDummy() {
 	}
 }
 
@@ -294,9 +293,8 @@ class CakeTestCaseTest extends CakeTestCase {
  * testGetTests Method
  *
  * @return void
- * @access public
  */
-	function testGetTests() {
+	public function testGetTests() {
 		$result = $this->Case->getTests();
 		$this->assertEqual(array_slice($result, 0, 2), array('start', 'startCase'));
 		$this->assertEqual(array_slice($result, -2), array('endCase', 'end'));

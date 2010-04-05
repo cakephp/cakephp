@@ -242,9 +242,8 @@ class Debugger extends Object {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
- * @access public
  */
-	function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() == 0 || $code === 2048 || $code === 8192) {
 			return;
 		}

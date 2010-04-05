@@ -84,9 +84,8 @@ class AclPerson extends CakeTestModel {
  * parentNode method
  *
  * @return void
- * @access public
  */
-	function parentNode() {
+	public function parentNode() {
 		if (!$this->id && empty($this->data)) {
 			return null;
 		}
@@ -137,9 +136,8 @@ class AclUser extends CakeTestModel {
 /**
  * parentNode
  *
- * @access public
  */
-	function parentNode() {
+	public function parentNode() {
 		return null;
 	}
 }
@@ -179,9 +177,8 @@ class AclPost extends CakeTestModel {
 /**
  * parentNode
  *
- * @access public
  */
-	function parentNode() {
+	public function parentNode() {
 		return null;
 	}
 }
@@ -222,9 +219,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * Set up the test
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		Configure::write('Acl.database', 'test_suite');
 
 		$this->Aco =& new Aco();
@@ -235,9 +231,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		ClassRegistry::flush();
 		unset($this->Aro, $this->Aco);
 	}
@@ -246,9 +241,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * Test Setup of AclBehavior
  *
  * @return void
- * @access public
  */
-	function testSetup() {
+	public function testSetup() {
 		$User =& new AclUser();
 		$this->assertTrue(isset($User->Behaviors->Acl->settings['User']));
 		$this->assertEqual($User->Behaviors->Acl->settings['User']['type'], 'requester');
@@ -264,9 +258,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * test After Save
  *
  * @return void
- * @access public
  */
-	function testAfterSave() {
+	public function testAfterSave() {
 		$Post =& new AclPost();
 		$data = array(
 			'Post' => array(
@@ -336,9 +329,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * Test After Delete
  *
  * @return void
- * @access public
  */
-	function testAfterDelete() {
+	public function testAfterDelete() {
 		$aroData = array(
 			'Aro' => array(
 				'model' => 'AclPerson',
@@ -390,9 +382,8 @@ class AclBehaviorTestCase extends CakeTestCase {
  * Test Node()
  *
  * @return void
- * @access public
  */
-	function testNode() {
+	public function testNode() {
 		$Person =& new AclPerson();
 		$aroData = array(
 			'Aro' => array(

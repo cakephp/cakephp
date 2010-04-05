@@ -53,9 +53,8 @@ class ExtractTaskTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$this->Dispatcher =& new TestExtractTaskMockShellDispatcher();
 		$this->Task =& new ExtractTask($this->Dispatcher);
 	}
@@ -64,9 +63,8 @@ class ExtractTaskTest extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		ClassRegistry::flush();
 	}
 
@@ -74,9 +72,8 @@ class ExtractTaskTest extends CakeTestCase {
  * testExecute method
  *
  * @return void
- * @access public
  */
-	function testExecute() {
+	public function testExecute() {
 		$path = TMP . 'tests' . DS . 'extract_task_test';
 		new Folder($path . DS . 'locale', true);
 

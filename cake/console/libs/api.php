@@ -39,9 +39,8 @@ class ApiShell extends Shell {
 /**
  * Override intialize of the Shell
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		$this->paths = array_merge($this->paths, array(
 			'behavior' => LIBS . 'model' . DS . 'behaviors' . DS,
 			'cache' => LIBS . 'cache' . DS,
@@ -57,9 +56,8 @@ class ApiShell extends Shell {
 /**
  * Override main() to handle action
  *
- * @access public
  */
-	function main() {
+	public function main() {
 		if (empty($this->args)) {
 			return $this->help();
 		}
@@ -140,9 +138,8 @@ class ApiShell extends Shell {
 /**
  * Show help for this shell.
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$head  = "Usage: cake api [<type>] <className> [-m <method>]\n";
 		$head .= "-----------------------------------------------\n";
 		$head .= "Parameters:\n\n";

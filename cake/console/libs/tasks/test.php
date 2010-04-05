@@ -64,9 +64,8 @@ class TestTask extends BakeTask {
 /**
  * Execution method always used for tasks
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -114,9 +113,8 @@ class TestTask extends BakeTask {
  *
  * @param string $type Type of object to bake test case for ie. Model, Controller
  * @param string $className the 'cake name' for the class ie. Posts for the PostsController
- * @access public
  */
-	function bake($type, $className) {
+	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
 			$this->out(__('Bake is detecting possible fixtures..', true));
 			$testSubject =& $this->buildTestSubject($type, $className);
@@ -155,9 +153,8 @@ class TestTask extends BakeTask {
  * Interact with the user and get their chosen type. Can exit the script.
  *
  * @return string Users chosen type.
- * @access public
  */
-	function getObjectType() {
+	public function getObjectType() {
 		$this->hr();
 		$this->out(__("Select an object type:", true));
 		$this->hr();
@@ -180,9 +177,8 @@ class TestTask extends BakeTask {
  *
  * @param string $objectType Type of object to list classes for i.e. Model, Controller.
  * @return string Class name the user chose.
- * @access public
  */
-	function getClassName($objectType) {
+	public function getClassName($objectType) {
 		$options = App::objects(strtolower($objectType));
 		$this->out(sprintf(__('Choose a %s class', true), $objectType));
 		$keys = array();
@@ -204,9 +200,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.
  * @return boolean
- * @access public
  */
-	function typeCanDetectFixtures($type) {
+	public function typeCanDetectFixtures($type) {
 		$type = strtolower($type);
 		return ($type == 'controller' || $type == 'model');
 	}
@@ -217,9 +212,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.
  * @return boolean
- * @access public
  */
-	function isLoadableClass($type, $class) {
+	public function isLoadableClass($type, $class) {
 		return App::import($type, $class);
 	}
 
@@ -230,9 +224,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $class the Classname of the class the test is being generated for.
  * @return object And instance of the class that is going to be tested.
- * @access public
  */
-	function &buildTestSubject($type, $class) {
+	public function &buildTestSubject($type, $class) {
 		ClassRegistry::flush();
 		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
@@ -250,9 +243,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $class the Classname of the class the test is being generated for.
  * @return string Real classname
- * @access public
  */
-	function getRealClassName($type, $class) {
+	public function getRealClassName($type, $class) {
 		if (strtolower($type) == 'model') {
 			return $class;
 		}
@@ -265,9 +257,8 @@ class TestTask extends BakeTask {
  *
  * @param string $className Name of class to look at.
  * @return array Array of method names.
- * @access public
  */
-	function getTestableMethods($className) {
+	public function getTestableMethods($className) {
 		$classMethods = get_class_methods($className);
 		$parentMethods = get_class_methods(get_parent_class($className));
 		$thisMethods = array_diff($classMethods, $parentMethods);
@@ -286,9 +277,8 @@ class TestTask extends BakeTask {
  *
  * @param object $subject The object you want to generate fixtures for.
  * @return array Array of fixtures to be included in the test.
- * @access public
  */
-	function generateFixtureList(&$subject) {
+	public function generateFixtureList(&$subject) {
 		$this->_fixtures = array();
 		if (is_a($subject, 'Model')) {
 			$this->_processModel($subject);
@@ -365,9 +355,8 @@ class TestTask extends BakeTask {
  * Interact with the user to get additional fixtures they want to use.
  *
  * @return array Array of fixtures the user wants to add.
- * @access public
  */
-	function getUserFixtures() {
+	public function getUserFixtures() {
 		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?', true), array('y','n'), 'n');
 		$fixtures = array();
 		if (strtolower($proceed) == 'y') {
@@ -385,9 +374,8 @@ class TestTask extends BakeTask {
  *
  * @param string $type The type of object tests are being generated for eg. controller.
  * @return boolean
- * @access public
  */
-	function hasMockClass($type) {
+	public function hasMockClass($type) {
 		$type = strtolower($type);
 		return $type == 'controller';
 	}
@@ -398,9 +386,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.
  * @return string Constructor snippet for the thing you are building.
- * @access public
  */
-	function generateConstructor($type, $fullClassName) {
+	public function generateConstructor($type, $fullClassName) {
 		$type = strtolower($type);
 		if ($type == 'model') {
 			return "ClassRegistry::init('$fullClassName');\n";
@@ -419,9 +406,8 @@ class TestTask extends BakeTask {
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $className the Classname of the class the test is being generated for.
  * @return string filename the test should be created on.
- * @access public
  */
-	function testCaseFileName($type, $className) {
+	public function testCaseFileName($type, $className) {
 		$path = $this->getPath();;
 		$path .= 'cases' . DS . Inflector::tableize($type) . DS;
 		if (strtolower($type) == 'controller') {
@@ -434,9 +420,8 @@ class TestTask extends BakeTask {
  * Show help file.
  *
  * @return void
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake test <type> <class>");
 		$this->hr();

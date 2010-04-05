@@ -135,9 +135,8 @@ class JavascriptHelper extends AppHelper {
 /**
  * Constructor. Checks for presence of native PHP JSON extension to use for object encoding
  *
- * @access public
  */
-	function __construct($options = array()) {
+	public function __construct($options = array()) {
 		if (!empty($options)) {
 			foreach ($options as $key => $val) {
 				if (is_numeric($key)) {

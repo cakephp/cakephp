@@ -255,9 +255,8 @@ class Inflector {
  * Gets a reference to the Inflector object instance
  *
  * @return object
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 
 		if (!$instance) {

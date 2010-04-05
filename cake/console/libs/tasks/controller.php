@@ -47,17 +47,15 @@ class ControllerTask extends BakeTask {
 /**
  * Override initialize
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 	}
 
 /**
  * Execution method always used for tasks
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -382,9 +380,8 @@ class ControllerTask extends BakeTask {
  * @param string $useDbConfig Database configuration name
  * @param boolean $interactive Whether you are using listAll interactively and want options output.
  * @return array Set of controllers
- * @access public
  */
-	function listAll($useDbConfig = null) {
+	public function listAll($useDbConfig = null) {
 		if (is_null($useDbConfig)) {
 			$useDbConfig = $this->connection;
 		}
@@ -408,9 +405,8 @@ class ControllerTask extends BakeTask {
  *
  * @param string $useDbConfig Connection name to get a controller name for.
  * @return string Controller name
- * @access public
  */
-	function getName($useDbConfig = null) {
+	public function getName($useDbConfig = null) {
 		$controllers = $this->listAll($useDbConfig);
 		$enteredController = '';
 
@@ -439,9 +435,8 @@ class ControllerTask extends BakeTask {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake controller <arg1> <arg2>...");
 		$this->hr();

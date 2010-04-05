@@ -167,9 +167,8 @@ class ModelWriteTest extends BaseModelTest {
  * x sql error: "Column id specified twice")
  *
  * @return void
- * @access public
  */
-	function testSaveUuidNull() {
+	public function testSaveUuidNull() {
 		// SQLite does not support non-integer primary keys
 		$this->skipIf($this->db->config['driver'] == 'sqlite');
 
@@ -508,9 +507,8 @@ class ModelWriteTest extends BaseModelTest {
  * test Counter Cache With Self Joining table
  *
  * @return void
- * @access public
  */
-	function testCounterCacheWithSelfJoin() {
+	public function testCounterCacheWithSelfJoin() {
 		$skip = $this->skipIf(
 			($this->db->config['driver'] == 'sqlite'),
 			'SQLite 2.x does not support ALTER TABLE ADD COLUMN'

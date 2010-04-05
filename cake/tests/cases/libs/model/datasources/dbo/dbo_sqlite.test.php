@@ -101,9 +101,8 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Skip if cannot connect to SQLite
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'sqlite', '%s SQLite connection not available');
 	}
@@ -111,18 +110,16 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Set up test suite database connection
  *
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->_initDb();
 	}
 
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		Configure::write('Cache.disable', true);
 		$this->startTest();
 		$this->db =& ConnectionManager::getDataSource('test_suite');
@@ -132,9 +129,8 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('Cache.disable', false);
 		unset($this->db2);
 	}
@@ -142,9 +138,8 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Tests that SELECT queries from DboSqlite::listSources() are not cached
  *
- * @access public
  */
-	function testTableListCacheDisabling() {
+	public function testTableListCacheDisabling() {
 		$this->assertFalse(in_array('foo_test', $this->db->listSources()));
 
 		$this->db->query('CREATE TABLE foo_test (test VARCHAR(255));');
@@ -189,9 +184,8 @@ class DboSqliteTest extends CakeTestCase {
 /**
  * Tests that cached table descriptions are saved under the sanitized key name
  *
- * @access public
  */
-	function testCacheKeyName() {
+	public function testCacheKeyName() {
 		Configure::write('Cache.disable', false);
 
 		$dbName = 'db' . rand() . '$(*%&).db';

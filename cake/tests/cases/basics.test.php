@@ -32,9 +32,8 @@ class BasicsTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		App::build(array(
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
 		));
@@ -45,9 +44,8 @@ class BasicsTest extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		App::build();
 		Configure::write('Config.language', $this->_language);
 	}
@@ -56,9 +54,8 @@ class BasicsTest extends CakeTestCase {
  * test the array_diff_key compatibility function.
  *
  * @return void
- * @access public
  */
-	function testArrayDiffKey() {
+	public function testArrayDiffKey() {
 		$one = array('one' => 1, 'two' => 2, 'three' => 3);
 		$two = array('one' => 'one', 'two' => 'two');
 		$result = array_diff_key($one, $two);
@@ -87,9 +84,8 @@ class BasicsTest extends CakeTestCase {
  * testHttpBase method
  *
  * @return void
- * @access public
  */
-	function testEnv() {
+	public function testEnv() {
 		$this->skipIf(!function_exists('ini_get') || ini_get('safe_mode') === '1', '%s safe mode is on');
 
 		$__SERVER = $_SERVER;
@@ -194,9 +190,8 @@ class BasicsTest extends CakeTestCase {
  * Test h()
  *
  * @return void
- * @access public
  */
-	function testH() {
+	public function testH() {
 		$string = '<foo>';
 		$result = h($string);
 		$this->assertEqual('&lt;foo&gt;', $result);
@@ -211,9 +206,8 @@ class BasicsTest extends CakeTestCase {
  * Test a()
  *
  * @return void
- * @access public
  */
-	function testA() {
+	public function testA() {
 		$result = a('this', 'that', 'bar');
 		$this->assertEqual(array('this', 'that', 'bar'), $result);
 	}
@@ -222,9 +216,8 @@ class BasicsTest extends CakeTestCase {
  * Test aa()
  *
  * @return void
- * @access public
  */
-	function testAa() {
+	public function testAa() {
 		$result = aa('a', 'b', 'c', 'd');
 		$expected = array('a' => 'b', 'c' => 'd');
 		$this->assertEqual($expected, $result);
@@ -238,9 +231,8 @@ class BasicsTest extends CakeTestCase {
  * Test am()
  *
  * @return void
- * @access public
  */
-	function testAm() {
+	public function testAm() {
 		$result = am(array('one', 'two'), 2, 3, 4);
 		$expected = array('one', 'two', 2, 3, 4);
 		$this->assertEqual($result, $expected);
@@ -254,9 +246,8 @@ class BasicsTest extends CakeTestCase {
  * test cache()
  *
  * @return void
- * @access public
  */
-	function testCache() {
+	public function testCache() {
 		$_cacheDisable = Configure::read('Cache.disable');
 		if ($this->skipIf($_cacheDisable, 'Cache is disabled, skipping cache() tests. %s')) {
 			return;
@@ -290,9 +281,8 @@ class BasicsTest extends CakeTestCase {
  * test clearCache()
  *
  * @return void
- * @access public
  */
-	function testClearCache() {
+	public function testClearCache() {
 		$cacheOff = Configure::read('Cache.disable');
 		if ($this->skipIf($cacheOff, 'Cache is disabled, skipping clearCache() tests. %s')) {
 			return;
@@ -355,9 +345,8 @@ class BasicsTest extends CakeTestCase {
  * test __()
  *
  * @return void
- * @access public
  */
-	function test__() {
+	public function test__() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __('Plural Rule 1', true);
@@ -379,9 +368,8 @@ class BasicsTest extends CakeTestCase {
  * test __n()
  *
  * @return void
- * @access public
  */
-	function test__n() {
+	public function test__n() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __n('%d = 1', '%d = 0 or > 1', 0, true);
@@ -407,9 +395,8 @@ class BasicsTest extends CakeTestCase {
  * test __d()
  *
  * @return void
- * @access public
  */
-	function test__d() {
+	public function test__d() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __d('default', 'Plural Rule 1', true);
@@ -435,9 +422,8 @@ class BasicsTest extends CakeTestCase {
  * test __dn()
  *
  * @return void
- * @access public
  */
-	function test__dn() {
+	public function test__dn() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dn('default', '%d = 1', '%d = 0 or > 1', 0, true);
@@ -467,9 +453,8 @@ class BasicsTest extends CakeTestCase {
  * test __c()
  *
  * @return void
- * @access public
  */
-	function test__c() {
+	public function test__c() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __c('Plural Rule 1', 6, true);
@@ -491,9 +476,8 @@ class BasicsTest extends CakeTestCase {
  * test __dc()
  *
  * @return void
- * @access public
  */
-	function test__dc() {
+	public function test__dc() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dc('default', 'Plural Rule 1', 6, true);
@@ -523,9 +507,8 @@ class BasicsTest extends CakeTestCase {
  * test __dcn()
  *
  * @return void
- * @access public
  */
-	function test__dcn() {
+	public function test__dcn() {
 		Configure::write('Config.language', 'rule_1_po');
 
 		$result = __dcn('default', '%d = 1', '%d = 0 or > 1', 0, 6, true);
@@ -551,9 +534,8 @@ class BasicsTest extends CakeTestCase {
  * test LogError()
  *
  * @return void
- * @access public
  */
-	function testLogError() {
+	public function testLogError() {
 		@unlink(LOGS . 'error.log');
 
 		LogError('Testing LogError() basic function');
@@ -569,9 +551,8 @@ class BasicsTest extends CakeTestCase {
  * test fileExistsInPath()
  *
  * @return void
- * @access public
  */
-	function testFileExistsInPath() {
+	public function testFileExistsInPath() {
 		$this->skipUnless(function_exists('ini_set'), '%s ini_set function not available');
 
 		$_includePath = ini_get('include_path');
@@ -614,9 +595,8 @@ class BasicsTest extends CakeTestCase {
  * test convertSlash()
  *
  * @return void
- * @access public
  */
-	function testConvertSlash() {
+	public function testConvertSlash() {
 		$result = convertSlash('\path\to\location\\');
 		$expected = '\path\to\location\\';
 		$this->assertEqual($result, $expected);
@@ -630,9 +610,8 @@ class BasicsTest extends CakeTestCase {
  * test debug()
  *
  * @return void
- * @access public
  */
-	function testDebug() {
+	public function testDebug() {
 		ob_start();
 			debug('this-is-a-test');
 		$result = ob_get_clean();
@@ -654,9 +633,8 @@ class BasicsTest extends CakeTestCase {
  * test pr()
  *
  * @return void
- * @access public
  */
-	function testPr() {
+	public function testPr() {
 		ob_start();
 			pr('this is a test');
 		$result = ob_get_clean();
@@ -674,9 +652,8 @@ class BasicsTest extends CakeTestCase {
  * test params()
  *
  * @return void
- * @access public
  */
-	function testParams() {
+	public function testParams() {
 		$this->assertNull(params('weekend'));
 		$this->assertNull(params(array()));
 		$this->assertEqual(params(array('weekend')), array('weekend'));
@@ -692,9 +669,8 @@ class BasicsTest extends CakeTestCase {
  * test stripslashes_deep()
  *
  * @return void
- * @access public
  */
-	function testStripslashesDeep() {
+	public function testStripslashesDeep() {
 		$this->skipIf(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is on');
 
 		$this->assertEqual(stripslashes_deep("tes\'t"), "tes't");
@@ -730,9 +706,8 @@ class BasicsTest extends CakeTestCase {
  * test stripslashes_deep() with magic_quotes_sybase on
  *
  * @return void
- * @access public
  */
-	function testStripslashesDeepSybase() {
+	public function testStripslashesDeepSybase() {
 		$this->skipUnless(ini_get('magic_quotes_sybase') === '1', '%s magic_quotes_sybase is off');
 
 		$this->assertEqual(stripslashes_deep("tes\'t"), "tes\'t");
@@ -764,9 +739,8 @@ class BasicsTest extends CakeTestCase {
  * test ife()
  *
  * @return void
- * @access public
  */
-	function testIfe() {
+	public function testIfe() {
 		$this->assertEqual(ife(true, 'a', 'b'), 'a');
 		$this->assertEqual(ife(' ', 'a', 'b'), 'a');
 		$this->assertEqual(ife('test', 'a', 'b'), 'a');

@@ -145,9 +145,8 @@ class DboMysqliTest extends CakeTestCase {
 /**
  * Skip if cannot connect to mysqli
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'mysqli', '%s MySQLi connection not available');
 	}
@@ -155,18 +154,16 @@ class DboMysqliTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$this->model = new MysqliTestModel();
 	}
 
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		unset($this->model);
 		ClassRegistry::flush();
 	}
@@ -175,9 +172,8 @@ class DboMysqliTest extends CakeTestCase {
  * testIndexDetection method
  *
  * @return void
- * @access public
  */
-	function testIndexDetection() {
+	public function testIndexDetection() {
 		$this->db->cacheSources = false;
 
 		$name = $this->db->fullTableName('simple');
@@ -238,9 +234,8 @@ class DboMysqliTest extends CakeTestCase {
  * testColumn method
  *
  * @return void
- * @access public
  */
-	function testColumn() {
+	public function testColumn() {
 		$result = $this->db->column('varchar(50)');
 		$expected = 'string';
 		$this->assertEqual($result, $expected);
@@ -286,9 +281,8 @@ class DboMysqliTest extends CakeTestCase {
  * test transaction commands.
  *
  * @return void
- * @access public
  */
-	function testTransactions() {
+	public function testTransactions() {
 		$this->db->testing = false;
 		$result = $this->db->begin($this->model);
 		$this->assertTrue($result);

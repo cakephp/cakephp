@@ -37,17 +37,15 @@ class MagicDbTest extends UnitTestCase {
 /**
  * Sets up a MagicDb class instance for testing
  *
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		$this->Db =& new MagicDb();
 	}
 /**
  * MagicDb::analyze should properly detect the file type and output additional info as requested.
  *
- * @access public
  */
-	function testAnalyze() {
+	public function testAnalyze() {
 		$r = $this->Db->read(MagicDbTestData::get('magic.db'));
 		$this->assertTrue($r === true);
 
@@ -61,9 +59,8 @@ class MagicDbTest extends UnitTestCase {
  * MagicDb::read should properly read MagicDb databases from .php-/.db-files and plain data arguments passed in and return false if the file wasn't found or
  * if the readed data did not validate.
  *
- * @access public
  */
-	function testRead() {
+	public function testRead() {
 		$this->Db->db = array();
 
 		$r = $this->Db->read(true);
@@ -99,9 +96,8 @@ class MagicDbTest extends UnitTestCase {
 /**
  * MagicDb::toArray should either return the MagicDb::db property, or the parsed array data if a magic.db dump is passed in as the first argument
  *
- * @access public
  */
-	function testToArray() {
+	public function testToArray() {
 		$this->Db->db = array();
 
 		$r = $this->Db->toArray();
@@ -125,9 +121,8 @@ class MagicDbTest extends UnitTestCase {
 /**
  * The MagicDb::validates function should return if the array passed to it or the local db property contains a valid MagicDb record set
  *
- * @access public
  */
-	function testValidates() {
+	public function testValidates() {
 		$r = $this->Db->validates(array());
 		$this->assertTrue($r === false);
 
@@ -174,9 +169,8 @@ class MagicDbTestData extends Object {
  * Returns the test data for a given key
  *
  * @param string $key
- * @access public
  */
-	function get($key) {
+	public function get($key) {
 /**
  * data property
  *

@@ -204,9 +204,8 @@ class OrangeComponent extends Object {
  *
  * @param Controller $controller
  * @return string
- * @access public
  */
-	function startup(&$controller) {
+	public function startup(&$controller) {
 		$controller->foo = 'pass';
 	}
 }
@@ -232,9 +231,8 @@ class BananaComponent extends Object {
  *
  * @param Controller $controller
  * @return string
- * @access public
  */
-	function startup(&$controller) {
+	public function startup(&$controller) {
 		$controller->bar = 'fail';
 	}
 }
@@ -569,9 +567,8 @@ class ComponentTest extends CakeTestCase {
  * Test that SessionComponent doesn't get added if its already in the components array.
  *
  * @return void
- * @access public
  */
-	function testDoubleLoadingOfSessionComponent() {
+	public function testDoubleLoadingOfSessionComponent() {
 		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
 			return;
 		}

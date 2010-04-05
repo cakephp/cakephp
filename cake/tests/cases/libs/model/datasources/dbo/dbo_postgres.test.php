@@ -240,9 +240,8 @@ class DboPostgresTest extends CakeTestCase {
 /**
  * Skip if cannot connect to postgres
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->_initDb();
 		$this->skipUnless($this->db->config['driver'] == 'postgres', '%s PostgreSQL connection not available');
 	}
@@ -250,18 +249,16 @@ class DboPostgresTest extends CakeTestCase {
 /**
  * Set up test suite database connection
  *
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->_initDb();
 	}
 
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function setUp() {
+	public function setUp() {
 		Configure::write('Cache.disable', true);
 		$this->startTest();
 		$this->db =& ConnectionManager::getDataSource('test_suite');
@@ -272,9 +269,8 @@ class DboPostgresTest extends CakeTestCase {
 /**
  * Sets up a Dbo class instance for testing
  *
- * @access public
  */
-	function tearDown() {
+	public function tearDown() {
 		Configure::write('Cache.disable', false);
 		unset($this->db2);
 	}
@@ -282,9 +278,8 @@ class DboPostgresTest extends CakeTestCase {
 /**
  * Test field quoting method
  *
- * @access public
  */
-	function testFieldQuoting() {
+	public function testFieldQuoting() {
 		$fields = array(
 			'"PostgresTestModel"."id" AS "PostgresTestModel__id"',
 			'"PostgresTestModel"."client_id" AS "PostgresTestModel__client_id"',
@@ -558,9 +553,8 @@ class DboPostgresTest extends CakeTestCase {
  * Check that the create statement for a schema generated table is the same as the original sql
  *
  * @return void
- * @access public
  */
-	function testCakeSchema() {
+	public function testCakeSchema() {
 		$db1 =& ConnectionManager::getDataSource('test_suite');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));

@@ -129,9 +129,8 @@ class ErrorHandler extends Object {
  * Displays an error page (e.g. 404 Not found).
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function error($params) {
+	public function error($params) {
 		extract($params, EXTR_OVERWRITE);
 		$this->controller->set(array(
 			'code' => $code,
@@ -146,9 +145,8 @@ class ErrorHandler extends Object {
  * Convenience method to display a 404 page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function error404($params) {
+	public function error404($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		if (!isset($url)) {
@@ -169,9 +167,8 @@ class ErrorHandler extends Object {
  * Convenience method to display a 500 page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function error500($params) {
+	public function error500($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		if (!isset($url)) {
@@ -191,9 +188,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Controller web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingController($params) {
+	public function missingController($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$controllerName = str_replace('Controller', '', $className);
@@ -209,9 +205,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Action web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingAction($params) {
+	public function missingAction($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$controllerName = str_replace('Controller', '', $className);
@@ -228,9 +223,8 @@ class ErrorHandler extends Object {
  * Renders the Private Action web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function privateAction($params) {
+	public function privateAction($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -245,9 +239,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Table web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingTable($params) {
+	public function missingTable($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
@@ -264,9 +257,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Database web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingDatabase($params = array()) {
+	public function missingDatabase($params = array()) {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
@@ -279,9 +271,8 @@ class ErrorHandler extends Object {
  * Renders the Missing View web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingView($params) {
+	public function missingView($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -297,9 +288,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Layout web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingLayout($params) {
+	public function missingLayout($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->layout = 'default';
@@ -314,9 +304,8 @@ class ErrorHandler extends Object {
  * Renders the Database Connection web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingConnection($params) {
+	public function missingConnection($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
@@ -332,9 +321,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Helper file web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingHelperFile($params) {
+	public function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -349,9 +337,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Helper class web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingHelperClass($params) {
+	public function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -366,9 +353,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Behavior file web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingBehaviorFile($params) {
+	public function missingBehaviorFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -383,9 +369,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Behavior class web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingBehaviorClass($params) {
+	public function missingBehaviorClass($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -400,9 +385,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Component file web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingComponentFile($params) {
+	public function missingComponentFile($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -418,9 +402,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Component class web page.
  *
  * @param array $params Parameters for controller
- * @access public
  */
-	function missingComponentClass($params) {
+	public function missingComponentClass($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(
@@ -436,9 +419,8 @@ class ErrorHandler extends Object {
  * Renders the Missing Model class web page.
  *
  * @param unknown_type $params Parameters for controller
- * @access public
  */
-	function missingModel($params) {
+	public function missingModel($params) {
 		extract($params, EXTR_OVERWRITE);
 
 		$this->controller->set(array(

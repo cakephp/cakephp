@@ -106,9 +106,8 @@ class RssHelper extends XmlHelper {
  *
  * @param array $attrib `<rss />` tag attributes
  * @return string An RSS document
- * @access public
  */
-	function document($attrib = array(), $content = null) {
+	public function document($attrib = array(), $content = null) {
 		if ($content === null) {
 			$content = $attrib;
 			$attrib = array();
@@ -127,9 +126,8 @@ class RssHelper extends XmlHelper {
  * @param mixed $elements Named array elements which are converted to tags
  * @param mixed $content Content (`<item />`'s belonging to this channel
  * @return string An RSS `<channel />`
- * @access public
  */
-	function channel($attrib = array(), $elements = array(), $content = null) {
+	public function channel($attrib = array(), $elements = array(), $content = null) {
 		$view =& ClassRegistry::getObject('view');
 
 		if (!isset($elements['title']) && !empty($view->pageTitle)) {
@@ -174,9 +172,8 @@ class RssHelper extends XmlHelper {
  * @param mixed $callback A string function name, or array containing an object
  *     and a string method name
  * @return string A set of RSS `<item />` elements
- * @access public
  */
-	function items($items, $callback = null) {
+	public function items($items, $callback = null) {
 		if ($callback != null) {
 			$items = array_map($callback, $items);
 		}
@@ -196,9 +193,8 @@ class RssHelper extends XmlHelper {
  * @param array $attrib The attributes of the `<item />` element
  * @param array $elements The list of elements contained in this `<item />`
  * @return string An RSS `<item />` element
- * @access public
  */
-	function item($att = array(), $elements = array()) {
+	public function item($att = array(), $elements = array()) {
 		$content = null;
 
 		if (isset($elements['link']) && !isset($elements['guid'])) {

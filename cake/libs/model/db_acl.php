@@ -67,9 +67,8 @@ class AclNode extends AppModel {
  *
  * @param mixed $ref Array with 'model' and 'foreign_key', model object, or string value
  * @return array Node found in database
- * @access public
  */
-	function node($ref = null) {
+	public function node($ref = null) {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$type = $this->alias;
 		$result = null;

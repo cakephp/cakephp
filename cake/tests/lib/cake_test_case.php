@@ -46,9 +46,8 @@ class CakeTestDispatcher extends Dispatcher {
  *
  * @param CakeTestCase $testCase
  * @return void
- * @access public
  */
-	function testCase(&$testCase) {
+	public function testCase(&$testCase) {
 		$this->testCase =& $testCase;
 	}
 
@@ -140,9 +139,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method about to get executed.
  * @return void
- * @access public
  */
-	function startCase() {
+	public function startCase() {
 	}
 
 /**
@@ -150,9 +148,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method about that was executed.
  * @return void
- * @access public
  */
-	function endCase() {
+	public function endCase() {
 	}
 
 /**
@@ -160,9 +157,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method about to get executed.
  * @return void
- * @access public
  */
-	function startTest($method) {
+	public function startTest($method) {
 	}
 
 /**
@@ -170,9 +166,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method about that was executed.
  * @return void
- * @access public
  */
-	function endTest($method) {
+	public function endTest($method) {
 	}
 
 /**
@@ -182,9 +177,8 @@ class CakeTestCase extends UnitTestCase {
  * @param mixed $compare
  * @param string $message
  * @return boolean|null
- * @access public
  */
-	function assert(&$expectation, $compare, $message = '%s') {
+	public function assert(&$expectation, $compare, $message = '%s') {
 		if ($this->_should_skip) {
 			return;
 		}
@@ -197,9 +191,8 @@ class CakeTestCase extends UnitTestCase {
  * @param boolean $shouldSkip
  * @param string $message
  * @return boolean
- * @access public
  */
-	function skipIf($shouldSkip, $message = '%s') {
+	public function skipIf($shouldSkip, $message = '%s') {
 		parent::skipIf($shouldSkip, $message);
 		return $shouldSkip;
 	}
@@ -210,9 +203,8 @@ class CakeTestCase extends UnitTestCase {
  * @param Controller $controller	Controller that's about to be invoked.
  * @param array $params	Additional parameters as sent by testAction().
  * @return void
- * @access public
  */
-	function startController(&$controller, $params = array()) {
+	public function startController(&$controller, $params = array()) {
 		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
 			if (!isset($this->db)) {
 				$this->_initDb();
@@ -279,9 +271,8 @@ class CakeTestCase extends UnitTestCase {
  * @param Controller $controller Controller that has been invoked.
  * @param array $params	Additional parameters as sent by testAction().
  * @return void
- * @access public
  */
-	function endController(&$controller, $params = array()) {
+	public function endController(&$controller, $params = array()) {
 		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures) && $this->dropTables) {
 			foreach ($this->_actionFixtures as $fixture) {
 				$fixture->drop($this->db);
@@ -307,9 +298,8 @@ class CakeTestCase extends UnitTestCase {
  * @param string $url Cake URL to execute (e.g: /articles/view/455)
  * @param mixed $params Parameters (see above), or simply a string of what to return
  * @return mixed Whatever is returned depending of requested result
- * @access public
  */
-	function testAction($url, $params = array()) {
+	public function testAction($url, $params = array()) {
 		$default = array(
 			'return' => 'result',
 			'fixturize' => false,
@@ -395,9 +385,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method just started.
  * @return void
- * @access public
  */
-	function before($method) {
+	public function before($method) {
 		parent::before($method);
 
 		if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
@@ -426,9 +415,8 @@ class CakeTestCase extends UnitTestCase {
  * Runs as first test to create tables.
  *
  * @return void
- * @access public
  */
-	function start() {
+	public function start() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			Configure::write('Cache.disable', true);
 			$cacheSources = $this->db->cacheSources;
@@ -455,9 +443,8 @@ class CakeTestCase extends UnitTestCase {
  * Runs as last test to drop tables.
  *
  * @return void
- * @access public
  */
-	function end() {
+	public function end() {
 		if (isset($this->_fixtures) && isset($this->db)) {
 			if ($this->dropTables) {
 				foreach (array_reverse($this->_fixtures) as $fixture) {
@@ -478,9 +465,8 @@ class CakeTestCase extends UnitTestCase {
  *
  * @param string $method Test method just finished.
  * @return void
- * @access public
  */
-	function after($method) {
+	public function after($method) {
 		$isTestMethod = !in_array(strtolower($method), array('start', 'end'));
 
 		if (isset($this->_fixtures) && isset($this->db) && $isTestMethod) {
@@ -505,9 +491,8 @@ class CakeTestCase extends UnitTestCase {
  * name "test". This method should be overridden if you want a different rule.
  *
  * @return array List of test names.
- * @access public
  */
-	function getTests() {
+	public function getTests() {
 		return array_merge(
 			array('start', 'startCase'),
 			array_diff(parent::getTests(), array('testAction', 'testaction')),
@@ -570,9 +555,8 @@ class CakeTestCase extends UnitTestCase {
  * @param array $expected An array, see above
  * @param string $message SimpleTest failure output string
  * @return boolean
- * @access public
  */
-	function assertTags($string, $expected, $fullDebug = false) {
+	public function assertTags($string, $expected, $fullDebug = false) {
 		$regex = array();
 		$normalized = array();
 		foreach ((array) $expected as $key => $val) {

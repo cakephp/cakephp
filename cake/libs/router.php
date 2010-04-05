@@ -1286,9 +1286,8 @@ class CakeRoute {
  * @param array $defaults Array of defaults for the route.
  * @param string $params Array of parameters and additional options for the Route
  * @return void
- * @access public
  */
-	function CakeRoute($template, $defaults = array(), $options = array()) {
+	public function CakeRoute($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;
@@ -1298,9 +1297,8 @@ class CakeRoute {
  * Check if a Route has been compiled into a regular expression.
  *
  * @return boolean
- * @access public
  */
-	function compiled() {
+	public function compiled() {
 		return !empty($this->_compiledRoute);
 	}
 
@@ -1309,9 +1307,8 @@ class CakeRoute {
  * and populates $this->names with the named routing elements.
  *
  * @return array Returns a string regular expression of the compiled route.
- * @access public
  */
-	function compile() {
+	public function compile() {
 		if ($this->compiled()) {
 			return $this->_compiledRoute;
 		}
@@ -1373,9 +1370,8 @@ class CakeRoute {
  *
  * @param string $url The url to attempt to parse.
  * @return mixed Boolean false on failure, otherwise an array or parameters
- * @access public
  */
-	function parse($url) {
+	public function parse($url) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
@@ -1429,9 +1425,8 @@ class CakeRoute {
  * @param array $url The array to apply persistent parameters to.
  * @param array $params An array of persistent values to replace persistent ones.
  * @return array An array with persistent parameters applied.
- * @access public
  */
-	function persistParams($url, $params) {
+	public function persistParams($url, $params) {
 		foreach ($this->options['persist'] as $persistKey) {
 			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
 				$url[$persistKey] = $params[$persistKey];
@@ -1447,9 +1442,8 @@ class CakeRoute {
  *
  * @param array $url An array of parameters to check matching with.
  * @return mixed Either a string url for the parameters if they match or false.
- * @access public
  */
-	function match($url) {
+	public function match($url) {
 		if (!$this->compiled()) {
 			$this->compile();
 		}

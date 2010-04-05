@@ -60,9 +60,8 @@ class ClassRegistry {
  * Return a singleton instance of the ClassRegistry.
  *
  * @return ClassRegistry instance
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new ClassRegistry();

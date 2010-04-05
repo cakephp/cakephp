@@ -58,9 +58,8 @@ class PluginTaskTest extends CakeTestCase {
  * startTest method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new TestPluginTaskMockShellDispatcher();
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task =& new MockPluginTask($this->Dispatcher);
@@ -72,9 +71,8 @@ class PluginTaskTest extends CakeTestCase {
  * startCase methods
  *
  * @return void
- * @access public
  */
-	function startCase() {
+	public function startCase() {
 		$this->_paths = $paths = App::path('plugins');
 		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
@@ -84,9 +82,8 @@ class PluginTaskTest extends CakeTestCase {
  * endCase
  *
  * @return void
- * @access public
  */
-	function endCase() {
+	public function endCase() {
 		App::build(array('plugins' => $this->_paths));
 	}
 
@@ -94,9 +91,8 @@ class PluginTaskTest extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		ClassRegistry::flush();
 	}
 
@@ -104,9 +100,8 @@ class PluginTaskTest extends CakeTestCase {
  * test bake()
  *
  * @return void
- * @access public
  */
-	function testBakeFoldersAndFiles() {
+	public function testBakeFoldersAndFiles() {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->bake('BakeTestPlugin');
@@ -192,9 +187,8 @@ class PluginTaskTest extends CakeTestCase {
  * test execute with no args, flowing into interactive,
  *
  * @return void
- * @access public
  */
-	function testExecuteWithNoArgs() {
+	public function testExecuteWithNoArgs() {
 		$this->Task->setReturnValueAt(0, 'in', 'TestPlugin');
 		$this->Task->setReturnValueAt(1, 'in', '3');
 		$this->Task->setReturnValueAt(2, 'in', 'y');
@@ -218,9 +212,8 @@ class PluginTaskTest extends CakeTestCase {
  * Test Execute
  *
  * @return void
- * @access public
  */
-	function testExecuteWithOneArg() {
+	public function testExecuteWithOneArg() {
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');
 		$this->Task->Dispatch->args = array('BakeTestPlugin');
@@ -243,9 +236,8 @@ class PluginTaskTest extends CakeTestCase {
  * test execute chaining into MVC parts
  *
  * @return void
- * @access public
  */
-	function testExecuteWithTwoArgs() {
+	public function testExecuteWithTwoArgs() {
 		$this->Task->Model =& new PluginTestMockModelTask();
 		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
 		$this->Task->setReturnValueAt(1, 'in', 'y');

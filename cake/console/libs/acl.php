@@ -63,9 +63,8 @@ class AclShell extends Shell {
 /**
  * Override startup of the Shell
  *
- * @access public
  */
-	function startup() {
+	public function startup() {
 		if (isset($this->params['connection'])) {
 			$this->connection = $this->params['connection'];
 		}
@@ -102,9 +101,8 @@ class AclShell extends Shell {
 /**
  * Override main() for help message hook
  *
- * @access public
  */
-	function main() {
+	public function main() {
 		$out  = __("Available ACL commands:", true) . "\n";
 		$out .= "\t - create\n";
 		$out .= "\t - delete\n";
@@ -124,9 +122,8 @@ class AclShell extends Shell {
 /**
  * Creates an ARO/ACO node
  *
- * @access public
  */
-	function create() {
+	public function create() {
 		$this->_checkArgs(3, 'create');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -159,9 +156,8 @@ class AclShell extends Shell {
 /**
  * Delete an ARO/ACO node.
  *
- * @access public
  */
-	function delete() {
+	public function delete() {
 		$this->_checkArgs(2, 'delete');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -178,9 +174,8 @@ class AclShell extends Shell {
 /**
  * Set parent for an ARO/ACO node.
  *
- * @access public
  */
-	function setParent() {
+	public function setParent() {
 		$this->_checkArgs(3, 'setParent');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -204,9 +199,8 @@ class AclShell extends Shell {
 /**
  * Get path to specified ARO/ACO node.
  *
- * @access public
  */
-	function getPath() {
+	public function getPath() {
 		$this->_checkArgs(2, 'getPath');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -250,9 +244,8 @@ class AclShell extends Shell {
 /**
  * Check permission for a given ARO to a given ACO.
  *
- * @access public
  */
-	function check() {
+	public function check() {
 		$this->_checkArgs(3, 'check');
 		extract($this->__getParams());
 
@@ -266,9 +259,8 @@ class AclShell extends Shell {
 /**
  * Grant permission for a given ARO to a given ACO.
  *
- * @access public
  */
-	function grant() {
+	public function grant() {
 		$this->_checkArgs(3, 'grant');
 		extract($this->__getParams());
 
@@ -282,9 +274,8 @@ class AclShell extends Shell {
 /**
  * Deny access for an ARO to an ACO.
  *
- * @access public
  */
-	function deny() {
+	public function deny() {
 		$this->_checkArgs(3, 'deny');
 		extract($this->__getParams());
 
@@ -298,9 +289,8 @@ class AclShell extends Shell {
 /**
  * Set an ARO to inhermit permission to an ACO.
  *
- * @access public
  */
-	function inherit() {
+	public function inherit() {
 		$this->_checkArgs(3, 'inherit');
 		extract($this->__getParams());
 
@@ -314,9 +304,8 @@ class AclShell extends Shell {
 /**
  * Show a specific ARO/ACO node.
  *
- * @access public
  */
-	function view() {
+	public function view() {
 		$this->_checkArgs(1, 'view');
 		$this->checkNodeType();
 		extract($this->__dataVars());
@@ -376,9 +365,8 @@ class AclShell extends Shell {
 /**
  * Initialize ACL database.
  *
- * @access public
  */
-	function initdb() {
+	public function initdb() {
 		$this->Dispatch->args = array('schema', 'run', 'create', 'DbAcl');
 		$this->Dispatch->dispatch();
 	}
@@ -386,9 +374,8 @@ class AclShell extends Shell {
 /**
  * Show help screen.
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$head = "-----------------------------------------------\n";
 		$head .= __("Usage: cake acl <command> <arg1> <arg2>...", true) . "\n";
 		$head .= "-----------------------------------------------\n";
@@ -482,9 +469,8 @@ class AclShell extends Shell {
 /**
  * Check that first argument specifies a valid Node type (ARO/ACO)
  *
- * @access public
  */
-	function checkNodeType() {
+	public function checkNodeType() {
 		if (!isset($this->args[0])) {
 			return false;
 		}
@@ -499,9 +485,8 @@ class AclShell extends Shell {
  * @param string $type Node type (ARO/ACO)
  * @param integer $id Node id
  * @return boolean Success
- * @access public
  */
-	function nodeExists() {
+	public function nodeExists() {
 		if (!$this->checkNodeType() && !isset($this->args[1])) {
 			return false;
 		}

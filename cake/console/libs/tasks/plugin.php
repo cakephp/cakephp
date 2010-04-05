@@ -222,9 +222,8 @@ class PluginTask extends Shell {
  * Help
  *
  * @return void
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake plugin <arg1> <arg2>...");
 		$this->hr();

@@ -79,9 +79,8 @@ class CakeBaseReporter extends SimpleReporter {
  * 
  * @param string $charset The character set to output with. Defaults to UTF-8
  * @param array $params Array of request parameters the reporter should use. See above.
- * @access public
  */
-	function CakeBaseReporter($charset = 'utf-8', $params = array()) {
+	public function CakeBaseReporter($charset = 'utf-8', $params = array()) {
 		$this->SimpleReporter();
 		if (!$charset) {
 			$charset = 'utf-8';

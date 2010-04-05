@@ -36,9 +36,8 @@ class TimeHelper extends AppHelper {
  *    Accepts the special specifier %S which mimics th modifier S for date()
  * @param string UNIX timestamp
  * @return string windows safe and date() function compatible format for strftime
- * @access public
  */
-	function convertSpecifiers($format, $time = null) {
+	public function convertSpecifiers($format, $time = null) {
 		if (!$time) {
 			$time = time();
 		}
@@ -141,9 +140,8 @@ class TimeHelper extends AppHelper {
  * @param string $serverTime UNIX timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string UNIX timestamp
- * @access public
  */
-	function convert($serverTime, $userOffset) {
+	public function convert($serverTime, $userOffset) {
 		$serverOffset = $this->serverOffset();
 		$gmtTime = $serverTime - $serverOffset;
 		$userTime = $gmtTime + $userOffset * (60*60);
@@ -154,9 +152,8 @@ class TimeHelper extends AppHelper {
  * Returns server's offset from GMT in seconds.
  *
  * @return int Offset
- * @access public
  */
-	function serverOffset() {
+	public function serverOffset() {
 		return date('Z', time());
 	}
 
@@ -166,9 +163,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Parsed timestamp
- * @access public
  */
-	function fromString($dateString, $userOffset = null) {
+	public function fromString($dateString, $userOffset = null) {
 		if (empty($dateString)) {
 			return false;
 		}
@@ -192,9 +188,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  */
-	function nice($dateString = null, $userOffset = null) {
+	public function nice($dateString = null, $userOffset = null) {
 		if ($dateString != null) {
 			$date = $this->fromString($dateString, $userOffset);
 		} else {
@@ -215,9 +210,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Described, relative date string
- * @access public
  */
-	function niceShort($dateString = null, $userOffset = null) {
+	public function niceShort($dateString = null, $userOffset = null) {
 		$date = $dateString ? $this->fromString($dateString, $userOffset) : time();
 
 		$y = $this->isThisYear($date) ? '' : ' %Y';
@@ -242,9 +236,8 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @access public
  */
-	function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
+	public function daysAsSql($begin, $end, $fieldName, $userOffset = null) {
 		$begin = $this->fromString($begin, $userOffset);
 		$end = $this->fromString($end, $userOffset);
 		$begin = date('Y-m-d', $begin) . ' 00:00:00';
@@ -261,9 +254,8 @@ class TimeHelper extends AppHelper {
  * @param string $fieldName Name of database field to compare with
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Partial SQL string.
- * @access public
  */
-	function dayAsSql($dateString, $fieldName, $userOffset = null) {
+	public function dayAsSql($dateString, $fieldName, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return $this->daysAsSql($dateString, $dateString, $fieldName);
 	}
@@ -274,9 +266,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is today
- * @access public
  */
-	function isToday($dateString, $userOffset = null) {
+	public function isToday($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', time());
 	}
@@ -286,9 +277,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current week
- * @access public
  */
-	function isThisWeek($dateString, $userOffset = null) {
+	public function isThisWeek($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date('W Y', $date) == date('W Y', time());
 	}
@@ -298,9 +288,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string is within current month
- * @access public
  */
-	function isThisMonth($dateString, $userOffset = null) {
+	public function isThisMonth($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString);
 		return date('m Y',$date) == date('m Y', time());
 	}
@@ -310,9 +299,8 @@ class TimeHelper extends AppHelper {
  *
  * @param string $dateString Datetime string or Unix timestamp
  * @return boolean True if datetime string is within current year
- * @access public
  */
-	function isThisYear($dateString, $userOffset = null) {
+	public function isThisYear($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return  date('Y', $date) == date('Y', time());
 	}
@@ -323,9 +311,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string was yesterday
- * @access public
  */
-	function wasYesterday($dateString, $userOffset = null) {
+	public function wasYesterday($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('yesterday'));
 	}
@@ -336,9 +323,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return boolean True if datetime string was yesterday
- * @access public
  */
-	function isTomorrow($dateString, $userOffset = null) {
+	public function isTomorrow($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date('Y-m-d', $date) == date('Y-m-d', strtotime('tomorrow'));
 	}
@@ -349,9 +335,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString
  * @param boolean $range if true returns a range in Y-m-d format
  * @return boolean True if datetime string is within current week
- * @access public
  */
-	function toQuarter($dateString, $range = false) {
+	public function toQuarter($dateString, $range = false) {
 		$time = $this->fromString($dateString);
 		$date = ceil(date('m', $time) / 3);
 
@@ -386,9 +371,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string to be represented as a Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return integer Unix timestamp
- * @access public
  */
-	function toUnix($dateString, $userOffset = null) {
+	public function toUnix($dateString, $userOffset = null) {
 		return $this->fromString($dateString, $userOffset);
 	}
 
@@ -398,9 +382,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  */
-	function toAtom($dateString, $userOffset = null) {
+	public function toAtom($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date('Y-m-d\TH:i:s\Z', $date);
 	}
@@ -411,9 +394,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  */
-	function toRSS($dateString, $userOffset = null) {
+	public function toRSS($dateString, $userOffset = null) {
 		$date = $this->fromString($dateString, $userOffset);
 		return date("r", $date);
 	}
@@ -441,9 +423,8 @@ class TimeHelper extends AppHelper {
  * @param string $dateString Datetime string or Unix timestamp
  * @param array $options Default format if timestamp is used in $dateString
  * @return string Relative time string.
- * @access public
  */
-	function timeAgoInWords($dateTime, $options = array()) {
+	public function timeAgoInWords($dateTime, $options = array()) {
 		$userOffset = null;
 		if (is_array($options) && isset($options['userOffset'])) {
 			$userOffset = $options['userOffset'];
@@ -622,9 +603,8 @@ class TimeHelper extends AppHelper {
  * @param mixed $dateString the datestring or unix timestamp to compare
  * @param int $userOffset User's offset from GMT (in hours)
  * @return bool
- * @access public
  */
-	function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
+	public function wasWithinLast($timeInterval, $dateString, $userOffset = null) {
 		$tmp = str_replace(' ', '', $timeInterval);
 		if (is_numeric($tmp)) {
 			$timeInterval = $tmp . ' ' . __('days', true);
@@ -645,9 +625,8 @@ class TimeHelper extends AppHelper {
  *
  * @param string $dateString Datetime string
  * @return string Formatted date string
- * @access public
  */
-	function gmt($string = null) {
+	public function gmt($string = null) {
 		if ($string != null) {
 			$string = $this->fromString($string);
 		} else {
@@ -674,9 +653,8 @@ class TimeHelper extends AppHelper {
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted date string
- * @access public
  */
-	function format($format, $date = null, $invalid = false, $userOffset = null) {
+	public function format($format, $date = null, $invalid = false, $userOffset = null) {
 		$time = $this->fromString($date, $userOffset);
 		$_time = $this->fromString($format, $userOffset);
 
@@ -699,9 +677,8 @@ class TimeHelper extends AppHelper {
  * @param boolean $invalid flag to ignore results of fromString == false
  * @param int $userOffset User's offset from GMT (in hours)
  * @return string Formatted and translated date string @access public
- * @access public
  */
-	function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
+	public function i18nFormat($date, $format = null, $invalid = false, $userOffset = null) {
 		$date = $this->fromString($date, $userOffset);
 		if ($date === false && $invalid !== false) {
 			return $invalid;

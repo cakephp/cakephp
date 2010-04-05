@@ -221,9 +221,8 @@ class DataSource extends Object {
  *
  * @param mixed $data
  * @return array Array of sources available in this datasource.
- * @access public
  */
-	function listSources($data = null) {
+	public function listSources($data = null) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
@@ -250,9 +249,8 @@ class DataSource extends Object {
  *
  * @param boolean $reset Whether or not the source list should be reset.
  * @return array Array of sources available in this datasource
- * @access public
  */
-	function sources($reset = false) {
+	public function sources($reset = false) {
 		if ($reset === true) {
 			$this->_sources = null;
 		}
@@ -264,9 +262,8 @@ class DataSource extends Object {
  *
  * @param Model $model
  * @return array Array of Metadata for the $model
- * @access public
  */
-	function describe(&$model) {
+	public function describe(&$model) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
@@ -288,9 +285,8 @@ class DataSource extends Object {
  * Begin a transaction
  *
  * @return boolean Returns true if a transaction is not in progress
- * @access public
  */
-	function begin(&$model) {
+	public function begin(&$model) {
 		return !$this->_transactionStarted;
 	}
 
@@ -298,9 +294,8 @@ class DataSource extends Object {
  * Commit a transaction
  *
  * @return boolean Returns true if a transaction is in progress
- * @access public
  */
-	function commit(&$model) {
+	public function commit(&$model) {
 		return $this->_transactionStarted;
 	}
 
@@ -308,9 +303,8 @@ class DataSource extends Object {
  * Rollback a transaction
  *
  * @return boolean Returns true if a transaction is in progress
- * @access public
  */
-	function rollback(&$model) {
+	public function rollback(&$model) {
 		return $this->_transactionStarted;
 	}
 
@@ -319,9 +313,8 @@ class DataSource extends Object {
  *
  * @param string $real Real  column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
- * @access public
  */
-	function column($real) {
+	public function column($real) {
 		return false;
 	}
 
@@ -334,9 +327,8 @@ class DataSource extends Object {
  * @param array $fields An Array of fields to be saved.
  * @param array $values An Array of values to save.
  * @return boolean success
- * @access public
  */
-	function create(&$model, $fields = null, $values = null) {
+	public function create(&$model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -348,9 +340,8 @@ class DataSource extends Object {
  * @param Model $model The model being read.
  * @param array $queryData An array of query data used to find the data you want
  * @return mixed
- * @access public
  */
-	function read(&$model, $queryData = array()) {
+	public function read(&$model, $queryData = array()) {
 		return false;
 	}
 
@@ -363,9 +354,8 @@ class DataSource extends Object {
  * @param array $fields Array of fields to be updated
  * @param array $values Array of values to be update $fields to.
  * @return boolean Success
- * @access public
  */
-	function update(&$model, $fields = null, $values = null) {
+	public function update(&$model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -376,9 +366,8 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
- * @access public
  */
-	function delete(&$model, $id = null) {
+	public function delete(&$model, $id = null) {
 		if ($id == null) {
 			$id = $model->id;
 		}
@@ -389,9 +378,8 @@ class DataSource extends Object {
  *
  * @param unknown_type $source
  * @return mixed Last ID key generated in previous INSERT
- * @access public
  */
-	function lastInsertId($source = null) {
+	public function lastInsertId($source = null) {
 		return false;
 	}
 
@@ -400,9 +388,8 @@ class DataSource extends Object {
  *
  * @param unknown_type $source
  * @return integer Number of rows returned by last operation
- * @access public
  */
-	function lastNumRows($source = null) {
+	public function lastNumRows($source = null) {
 		return false;
 	}
 
@@ -411,9 +398,8 @@ class DataSource extends Object {
  *
  * @param unknown_type $source
  * @return integer Number of rows affected by last query.
- * @access public
  */
-	function lastAffected($source = null) {
+	public function lastAffected($source = null) {
 		return false;
 	}
 
@@ -423,9 +409,8 @@ class DataSource extends Object {
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.
- * @access public
  */
-	function enabled() {
+	public function enabled() {
 		return true;
 	}
 /**
@@ -433,9 +418,8 @@ class DataSource extends Object {
  *
  * @param string $interface The name of the interface (method)
  * @return boolean True on success
- * @access public
  */
-	function isInterfaceSupported($interface) {
+	public function isInterfaceSupported($interface) {
 		static $methods = false;
 		if ($methods === false) {
 			$methods = array_map('strtolower', get_class_methods($this));
@@ -449,9 +433,8 @@ class DataSource extends Object {
  *
  * @param array $config The configuration array
  * @return void
- * @access public
  */
-	function setConfig($config = array()) {
+	public function setConfig($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $this->config, $config);
 	}
 
@@ -572,9 +555,8 @@ class DataSource extends Object {
  * @param Model $model Model instance
  * @param string $key Key name to make
  * @return string Key name for model.
- * @access public
  */
-	function resolveKey(&$model, $key) {
+	public function resolveKey(&$model, $key) {
 		return $model->alias . $key;
 	}
 
@@ -582,9 +564,8 @@ class DataSource extends Object {
  * Closes the current datasource.
  *
  * @return void
- * @access public
  */
-	function __destruct() {
+	public function __destruct() {
 		if ($this->_transactionStarted) {
 			$null = null;
 			$this->rollback($null);

@@ -88,17 +88,15 @@ class ViewTask extends BakeTask {
 /**
  * Override initialize
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 	}
 
 /**
  * Execution method always used for tasks
  *
- * @access public
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->args)) {
 			$this->__interactive();
 		}
@@ -359,9 +357,8 @@ class ViewTask extends BakeTask {
  * @param string $action Action to bake
  * @param string $content Content to write
  * @return boolean Success
- * @access public
  */
-	function bake($action, $content = '') {
+	public function bake($action, $content = '') {
 		if ($content === true) {
 			$content = $this->getContent($action);
 		}
@@ -376,9 +373,8 @@ class ViewTask extends BakeTask {
  * @param string $action name to generate content to
  * @param array $vars passed for use in templates
  * @return string content from template
- * @access public
  */
-	function getContent($action, $vars = null) {
+	public function getContent($action, $vars = null) {
 		if (!$vars) {
 			$vars = $this->__loadController();
 		}
@@ -398,9 +394,8 @@ class ViewTask extends BakeTask {
  *
  * @param string $action name
  * @return string template name
- * @access public
  */
-	function getTemplate($action) {
+	public function getTemplate($action) {
 		if ($action != $this->template && in_array($action, $this->noTemplateActions)) {
 			return false;
 		}
@@ -425,9 +420,8 @@ class ViewTask extends BakeTask {
 /**
  * Displays help contents
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake view <arg1> <arg2>...");
 		$this->hr();

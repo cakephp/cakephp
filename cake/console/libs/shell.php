@@ -174,9 +174,8 @@ class Shell extends Object {
  * acts as constructor for subclasses
  * allows configuration of tasks prior to shell execution
  *
- * @access public
  */
-	function initialize() {
+	public function initialize() {
 		$this->_loadModels();
 	}
 
@@ -185,9 +184,8 @@ class Shell extends Object {
  * allows for checking and configuring prior to command or main execution
  * can be overriden in subclasses
  *
- * @access public
  */
-	function startup() {
+	public function startup() {
 		$this->_welcome();
 	}
 
@@ -268,9 +266,8 @@ class Shell extends Object {
  * Loads tasks defined in public $tasks
  *
  * @return bool
- * @access public
  */
-	function loadTasks() {
+	public function loadTasks() {
 		if ($this->tasks === null || $this->tasks === false || $this->tasks === true || empty($this->tasks)) {
 			return true;
 		}
@@ -329,9 +326,8 @@ class Shell extends Object {
  * @param mixed $options Array or string of options.
  * @param string $default Default input value.
  * @return Either the default value, or the user-provided input.
- * @access public
  */
-	function in($prompt, $options = null, $default = null) {
+	public function in($prompt, $options = null, $default = null) {
 		if (!$this->interactive) {
 			return $default;
 		}
@@ -363,9 +359,8 @@ class Shell extends Object {
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
  * @return integer Returns the number of bytes returned from writing to stdout.
- * @access public
  */
-	function out($message = null, $newlines = 1) {
+	public function out($message = null, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
@@ -378,9 +373,8 @@ class Shell extends Object {
  *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
- * @access public
  */
-	function err($message = null, $newlines = 1) {
+	public function err($message = null, $newlines = 1) {
 		if (is_array($message)) {
 			$message = implode($this->nl(), $message);
 		}
@@ -402,9 +396,8 @@ class Shell extends Object {
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
  * @param integer $newlines Number of newlines to pre- and append
- * @access public
  */
-	function hr($newlines = 0) {
+	public function hr($newlines = 0) {
 		$this->out(null, $newlines);
 		$this->out('---------------------------------------------------------------');
 		$this->out(null, $newlines);
@@ -416,9 +409,8 @@ class Shell extends Object {
  *
  * @param string $title Title of the error
  * @param string $message An optional error message
- * @access public
  */
-	function error($title, $message = null) {
+	public function error($title, $message = null) {
 		$this->err(sprintf(__('Error: %s', true), $title));
 
 		if (!empty($message)) {
@@ -453,9 +445,8 @@ class Shell extends Object {
  * @param string $path Where to put the file.
  * @param string $contents Content to put in the file.
  * @return boolean Success
- * @access public
  */
-	function createFile($path, $contents) {
+	public function createFile($path, $contents) {
 		$path = str_replace(DS . DS, DS, $path);
 
 		$this->out();
@@ -491,9 +482,8 @@ class Shell extends Object {
 /**
  * Outputs usage text on the standard output. Implement it in subclasses.
  *
- * @access public
  */
-	function help() {
+	public function help() {
 		if ($this->command != null) {
 			$this->err("Unknown {$this->name} command `{$this->command}`.");
 			$this->err("For usage, try `cake {$this->shell} help`.", 2);
@@ -528,9 +518,8 @@ class Shell extends Object {
  *
  * @param string $file Absolute file path
  * @return sting short path
- * @access public
  */
-	function shortPath($file) {
+	public function shortPath($file) {
 		$shortPath = str_replace(ROOT, null, $file);
 		$shortPath = str_replace('..' . DS, '', $shortPath);
 		return str_replace(DS . DS, DS, $shortPath);

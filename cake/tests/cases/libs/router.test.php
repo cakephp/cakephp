@@ -1858,9 +1858,8 @@ class RouterTest extends CakeTestCase {
  * testStripPlugin
  *
  * @return void
- * @access public
  */
-	function testStripPlugin() {
+	public function testStripPlugin() {
 		$pluginName = 'forums';
 		$url = 'example.com/' . $pluginName . '/';
 		$expected = 'example.com';
@@ -1875,9 +1874,8 @@ class RouterTest extends CakeTestCase {
  * This test needs some improvement and actual requestAction() usage
  *
  * @return void
- * @access public
  */
-	function testCurrentRoute() {
+	public function testCurrentRoute() {
 		$url = array('controller' => 'pages', 'action' => 'display', 'government');
 		Router::connect('/government', $url);
 		Router::parse('/government');
@@ -1888,9 +1886,8 @@ class RouterTest extends CakeTestCase {
  * testRequestRoute
  *
  * @return void
- * @access public
  */
-	function testRequestRoute() {
+	public function testRequestRoute() {
 		$url = array('controller' => 'products', 'action' => 'display', 5);
 		Router::connect('/government', $url);
 		Router::parse('/government');
@@ -1915,9 +1912,8 @@ class RouterTest extends CakeTestCase {
  * testGetParams
  *
  * @return void
- * @access public
  */
-	function testGetParams() {
+	public function testGetParams() {
 		$paths = array('base' => '/', 'here' => '/products/display/5', 'webroot' => '/webroot');
 		$params = array('param1' => '1', 'param2' => '2');
 		Router::setRequestInfo(array($params, $paths));

@@ -34,9 +34,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $test_name Name class of test.
  * @return void
- * @access public
  */
-	function paintHeader($testName) {
+	public function paintHeader($testName) {
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
@@ -138,9 +137,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * scratching your head over out of date test data.
  *
  * @return void
- * @access public
  */
-	function sendNoCacheHeaders() {
+	public function sendNoCacheHeaders() {
 		if (!headers_sent()) {
 			header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 			header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
@@ -156,9 +154,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $test_name Name class of test.
  * @return void
- * @access public
  */
-	function paintFooter($test_name) {
+	public function paintFooter($test_name) {
 		$colour = ($this->getFailCount() + $this->getExceptionCount() > 0 ? "red" : "green");
 		echo "</ul>\n";
 		echo "<div style=\"";
@@ -253,9 +250,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param string $message Failure message displayed in
  *   the context of the other tests.
  * @return void
- * @access public
  */
-	function paintFail($message) {
+	public function paintFail($message) {
 		parent::paintFail($message);
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
@@ -273,9 +269,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $message Pass message displayed in the context of the other tests.
  * @return void
- * @access public
  */
-	function paintPass($message) {
+	public function paintPass($message) {
 		parent::paintPass($message);
 
 		if (isset($this->params['show_passes']) && $this->params['show_passes']) {
@@ -294,9 +289,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $message Message is ignored.
  * @return void
- * @access public
  */
-	function paintError($message) {
+	public function paintError($message) {
 		parent::paintError($message);
 		echo "<li class='error'>\n";
 		echo "<span>Error</span>";
@@ -312,9 +306,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param Exception $exception Exception to display.
  * @return void
- * @access public
  */
-	function paintException($exception) {
+	public function paintException($exception) {
 		parent::paintException($exception);
 		echo "<li class='fail'>\n";
 		echo "<span>Exception</span>";
@@ -334,9 +327,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $message Text of skip condition.
  * @return void
- * @access public
  */
-	function paintSkip($message) {
+	public function paintSkip($message) {
 		parent::paintSkip($message);
 		echo "<li class='skipped'>\n";
 		echo "<span>Skipped</span> ";
@@ -349,9 +341,8 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @param string $message Text to show.
  * @return void
- * @access public
  */
-	function paintFormattedMessage($message) {
+	public function paintFormattedMessage($message) {
 		echo '<pre>' . $this->_htmlEntities($message) . '</pre>';
 	}
 

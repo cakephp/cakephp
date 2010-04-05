@@ -249,9 +249,8 @@ class ControllerPaginateModel extends CakeTestModel {
  * paginate method
  *
  * @return void
- * @access public
  */
-	function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
+	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
 		$this->extra = $extra;
 	}
 
@@ -669,9 +668,8 @@ class ControllerTest extends CakeTestCase {
  * testPaginatePassedArgs method
  *
  * @return void
- * @access public
  */
-	function testPaginatePassedArgs() {
+	public function testPaginatePassedArgs() {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost');
 		$Controller->passedArgs[] = array('1', '2', '3');

@@ -158,9 +158,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  *
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
- * @access public
  */
-	function domReady($functionBody) {
+	public function domReady($functionBody) {
 		$this->selection = 'document';
 		return $this->event('dom:loaded', $functionBody, array('stop' => false));
 	}
@@ -171,9 +170,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param string $method The method you want to apply to the selection
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
- * @access public
  */
-	function each($callback) {
+	public function each($callback) {
 		return $this->selection . '.each(function (item, index) {' . $callback . '});';
 	}
 
@@ -229,9 +227,8 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @param mixed $url
  * @param array $options
  * @return string The completed ajax call.
- * @access public
  */
-	function request($url, $options = array()) {
+	public function request($url, $options = array()) {
 		$url = '"'. $this->url($url) . '"';
 		$options = $this->_mapOptions('request', $options);
 		$type = '.Request';

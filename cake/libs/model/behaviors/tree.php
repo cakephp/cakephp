@@ -55,9 +55,8 @@ class TreeBehavior extends ModelBehavior {
  * @param object $Model instance of model
  * @param array $config array of configuration settings.
  * @return void
- * @access public
  */
-	function setup(&$Model, $config = array()) {
+	public function setup(&$Model, $config = array()) {
 		if (!is_array($config)) {
 			$config = array('type' => $config);
 		}
@@ -81,9 +80,8 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model Model instance.
  * @param boolean $created indicates whether the node just saved was created or updated
  * @return boolean true on success, false on failure
- * @access public
  */
-	function afterSave(&$Model, $created) {
+	public function afterSave(&$Model, $created) {
 		extract($this->settings[$Model->alias]);
 		if ($created) {
 			if ((isset($Model->data[$Model->alias][$parent])) && $Model->data[$Model->alias][$parent]) {
@@ -102,9 +100,8 @@ class TreeBehavior extends ModelBehavior {
  *
  * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the delete
- * @access public
  */
-	function beforeDelete(&$Model) {
+	public function beforeDelete(&$Model) {
 		extract($this->settings[$Model->alias]);
 		list($name, $data) = array($Model->alias, $Model->read());
 		$data = $data[$name];
@@ -135,9 +132,8 @@ class TreeBehavior extends ModelBehavior {
  * @since         1.2
  * @param AppModel $Model Model instance
  * @return boolean true to continue, false to abort the save
- * @access public
  */
-	function beforeSave(&$Model) {
+	public function beforeSave(&$Model) {
 		extract($this->settings[$Model->alias]);
 
 		$this->_addToWhitelist($Model, array($left, $right));
@@ -205,9 +201,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $id The ID of the record to read or false to read all top level nodes
  * @param boolean $direct whether to count direct, or all, children
  * @return integer number of child nodes
- * @access public
  */
-	function childcount(&$Model, $id = null, $direct = false) {
+	public function childcount(&$Model, $id = null, $direct = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -251,9 +246,8 @@ class TreeBehavior extends ModelBehavior {
  * @param integer $page Page number, for accessing paged data
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of child nodes
- * @access public
  */
-	function children(&$Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
+	public function children(&$Model, $id = null, $direct = false, $fields = null, $order = null, $limit = null, $page = 1, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -308,9 +302,8 @@ class TreeBehavior extends ModelBehavior {
  * @param string $spacer The character or characters which will be repeated
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array An associative array of records, where the id is the key, and the display field is the value
- * @access public
  */
-	function generatetreelist(&$Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
+	public function generatetreelist(&$Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
 		$overrideRecursive = $recursive;
 		extract($this->settings[$Model->alias]);
 		if (!is_null($overrideRecursive)) {
@@ -363,9 +356,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $id The ID of the record to read
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of data for the parent node
- * @access public
  */
-	function getparentnode(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getparentnode(&$Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -396,9 +388,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $fields Either a single string of a field name, or an array of field names
  * @param integer $recursive The number of levels deep to fetch associated records
  * @return array Array of nodes from top most parent to current node
- * @access public
  */
-	function getpath(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getpath(&$Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -433,9 +424,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node or true to move to last position
  * @return boolean true on success, false on failure
- * @access public
  */
-	function movedown(&$Model, $id = null, $number = 1) {
+	public function movedown(&$Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -491,9 +481,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $id The ID of the record to move
  * @param mixed $number how many places to move the node, or true to move to first position
  * @return boolean true on success, false on failure
- * @access public
  */
-	function moveup(&$Model, $id = null, $number = 1) {
+	public function moveup(&$Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -555,9 +544,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $missingParentAction 'return' to do nothing and return, 'delete' to
  * delete, or the id of the parent to set as the parent_id
  * @return boolean true on success, false on failure
- * @access public
  */
-	function recover(&$Model, $mode = 'parent', $missingParentAction = null) {
+	public function recover(&$Model, $mode = 'parent', $missingParentAction = null) {
 		if (is_array($mode)) {
 			extract (array_merge(array('mode' => 'parent'), $mode));
 		}
@@ -672,9 +660,8 @@ class TreeBehavior extends ModelBehavior {
  * @param mixed $id The ID of the record to remove
  * @param boolean $delete whether to delete the node after reparenting children (if any)
  * @return boolean true on success, false on failure
- * @access public
  */
-	function removefromtree(&$Model, $id = null, $delete = false) {
+	public function removefromtree(&$Model, $id = null, $delete = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -740,9 +727,8 @@ class TreeBehavior extends ModelBehavior {
  * @param AppModel $Model Model instance
  * @return mixed true if the tree is valid or empty, otherwise an array of (error type [index, node],
  *  [incorrect left/right index,node id], message)
- * @access public
  */
-	function verify(&$Model) {
+	public function verify(&$Model) {
 		extract($this->settings[$Model->alias]);
 		if (!$Model->find('count', array('conditions' => $scope))) {
 			return true;

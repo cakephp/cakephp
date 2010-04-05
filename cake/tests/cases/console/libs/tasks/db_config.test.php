@@ -77,9 +77,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * startTest method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new TestDbConfigTaskMockShellDispatcher();
 		$this->Task =& new MockDbConfigTask($this->Dispatcher);
 		$this->Task->Dispatch =& $this->Dispatcher;
@@ -93,9 +92,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * endTest method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
 	}
@@ -104,9 +102,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * Test the getConfig method.
  *
  * @return void
- * @access public
  */
-	function testGetConfig() {
+	public function testGetConfig() {
 		$this->Task->setReturnValueAt(0, 'in', 'otherOne');
 		$result = $this->Task->getConfig();
 		$this->assertEqual($result, 'otherOne');
@@ -116,9 +113,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * test that initialize sets the path up.
  *
  * @return void
- * @access public
  */
-	function testInitialize() {
+	public function testInitialize() {
 		$this->assertTrue(empty($this->Task->path));
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
@@ -130,9 +126,8 @@ class DbConfigTaskTest extends CakeTestCase {
  * test execute and by extension __interactive
  *
  * @return void
- * @access public
  */
-	function testExecuteIntoInteractive() {
+	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
 
 		$this->Task->expectOnce('_stop');

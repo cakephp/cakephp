@@ -38,9 +38,8 @@ class ProjectTask extends Shell {
  * finds the app directory in it. Then it calls bake() with that information.
  *
  * @param string $project Project path
- * @access public
  */
-	function execute($project = null) {
+	public function execute($project = null) {
 		if ($project === null) {
 			if (isset($this->args[0])) {
 				$project = $this->args[0];
@@ -187,9 +186,8 @@ class ProjectTask extends Shell {
  *
  * @param string $dir Path to project
  * @return boolean Success
- * @access public
  */
-	function createHome($dir) {
+	public function createHome($dir) {
 		$app = basename($dir);
 		$path = $dir . 'views' . DS . 'pages' . DS;
 		$source = CAKE . 'console' . DS . 'templates' . DS .'default' . DS . 'views' . DS . 'home.ctp';
@@ -202,9 +200,8 @@ class ProjectTask extends Shell {
  *
  * @param string $path Project path
  * @return boolean Success
- * @access public
  */
-	function securitySalt($path) {
+	public function securitySalt($path) {
 		$File =& new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.salt\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
@@ -226,9 +223,8 @@ class ProjectTask extends Shell {
 	 *
 	 * @param string $path Project path
 	 * @return boolean Success
-	 * @access public
-	 */
-		function securityCipherSeed($path) {
+		 */
+		public function securityCipherSeed($path) {
 			$File =& new File($path . 'config' . DS . 'core.php');
 			$contents = $File->read();
 			if (preg_match('/([\\t\\x20]*Configure::write\\(\\\'Security.cipherSeed\\\',[\\t\\x20\'A-z0-9]*\\);)/', $contents, $match)) {
@@ -250,9 +246,8 @@ class ProjectTask extends Shell {
  *
  * @param string $path Project path
  * @return boolean Success
- * @access public
  */
-	function corePath($path) {
+	public function corePath($path) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
 			$File =& new File($path . 'webroot' . DS . 'index.php');
 			$contents = $File->read();
@@ -285,9 +280,8 @@ class ProjectTask extends Shell {
  *
  * @param string $name Name to use as admin routing
  * @return boolean Success
- * @access public
  */
-	function cakeAdmin($name) {
+	public function cakeAdmin($name) {
 		$path = (empty($this->configPath)) ? CONFIGS : $this->configPath;
 		$File =& new File($path . 'core.php');
 		$contents = $File->read();
@@ -308,9 +302,8 @@ class ProjectTask extends Shell {
  * Checks for Configure::read('Routing.prefixes') and forces user to input it if not enabled
  *
  * @return string Admin route to use
- * @access public
  */
-	function getPrefix() {
+	public function getPrefix() {
 		$admin = '';
 		$prefixes = Configure::read('Routing.prefixes');
 		if (!empty($prefixes)) {
@@ -353,9 +346,8 @@ class ProjectTask extends Shell {
  * Help
  *
  * @return void
- * @access public
  */
-	function help() {
+	public function help() {
 		$this->hr();
 		$this->out("Usage: cake bake project <arg1>");
 		$this->hr();

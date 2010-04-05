@@ -40,9 +40,8 @@ class Configure extends Object {
  * Returns a singleton instance of the Configure class.
  *
  * @return Configure instance
- * @access public
  */
-	function &getInstance($boot = true) {
+	public function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
 			if (!class_exists('Set')) {
@@ -76,9 +75,8 @@ class Configure extends Object {
  * @param array $config Name of var to write
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
- * @access public
  */
-	function write($config, $value = null) {
+	public function write($config, $value = null) {
 		$_this =& Configure::getInstance();
 
 		if (!is_array($config)) {
@@ -148,9 +146,8 @@ class Configure extends Object {
  * @link http://book.cakephp.org/view/927/read
  * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
- * @access public
  */
-	function read($var = 'debug') {
+	public function read($var = 'debug') {
 		$_this =& Configure::getInstance();
 
 		if ($var === 'debug') {
@@ -198,9 +195,8 @@ class Configure extends Object {
  * @link http://book.cakephp.org/view/928/delete
  * @param string $var the var to be deleted
  * @return void
- * @access public
  */
-	function delete($var = null) {
+	public function delete($var = null) {
 		$_this =& Configure::getInstance();
 
 		if (strpos($var, '.') === false) {
@@ -226,9 +222,8 @@ class Configure extends Object {
  * @param string $fileName name of file to load, extension must be .php and only the name
  *     should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
- * @access public
  */
-	function load($fileName) {
+	public function load($fileName) {
 		$found = $plugin = $pluginPath = false;
 		list($plugin, $fileName) = pluginSplit($fileName);
 		if ($plugin) {
@@ -275,9 +270,8 @@ class Configure extends Object {
  *
  * @link http://book.cakephp.org/view/930/version
  * @return string Current version of CakePHP
- * @access public
  */
-	function version() {
+	public function version() {
 		$_this =& Configure::getInstance();
 
 		if (!isset($_this->Cake['version'])) {
@@ -300,9 +294,8 @@ class Configure extends Object {
  * @param string $name file name.
  * @param array $data array of values to store.
  * @return void
- * @access public
  */
-	function store($type, $name, $data = array()) {
+	public function store($type, $name, $data = array()) {
 		$write = true;
 		$content = '';
 
@@ -627,9 +620,8 @@ class App extends Object {
  *
  * @param string $type type of path
  * @return string array
- * @access public
  */
-	function path($type) {
+	public function path($type) {
 		$_this =& App::getInstance();
 		if (!isset($_this->{$type})) {
 			return array();
@@ -644,9 +636,8 @@ class App extends Object {
  * @param array $paths paths defines in config/bootstrap.php
  * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
- * @access public
  */
-	function build($paths = array(), $reset = false) {
+	public function build($paths = array(), $reset = false) {
 		$_this =& App::getInstance();
 		$defaults = array(
 			'models' => array(MODELS),
@@ -723,9 +714,8 @@ class App extends Object {
  * @param string $type valid values are: 'model', 'behavior', 'controller', 'component',
  *    'view', 'helper', 'datasource', 'libs', and 'cake'
  * @return array numeric keyed array of core lib paths
- * @access public
  */
-	function core($type = null) {
+	public function core($type = null) {
 		static $paths = false;
 		if ($paths === false) {
 			$paths = Cache::read('core_paths', '_cake_core_');
@@ -765,9 +755,8 @@ class App extends Object {
  *   type will be used.
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
  * @return mixed Either false on incorrect / miss.  Or an array of found objects.
- * @access public
  */
-	function objects($type, $path = null, $cache = true) {
+	public function objects($type, $path = null, $cache = true) {
 		$objects = array();
 		$extension = false;
 		$name = $type;
@@ -838,9 +827,8 @@ class App extends Object {
  * @param boolean $return, return the loaded file, the file must have a return
  *                         statement in it to work: return $variable;
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
- * @access public
  */
-	function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
+	public function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -958,9 +946,8 @@ class App extends Object {
  * Returns a single instance of App.
  *
  * @return object
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new App();

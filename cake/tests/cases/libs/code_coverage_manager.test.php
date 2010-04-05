@@ -31,9 +31,8 @@ class CodeCoverageManagerTest extends CakeTestCase {
 /**
  * Skip if XDebug not installed
  *
- * @access public
  */
-	function skip() {
+	public function skip() {
 		$this->skipIf(!extension_loaded('xdebug'), '%s XDebug not installed');
 	}
 
@@ -183,9 +182,8 @@ class CodeCoverageManagerTest extends CakeTestCase {
 /**
 		 * Constructor. Defaults to an empty array.
 		 *
-		 * @access public
-		 */
-			function __construct() {
+				 */
+			public function __construct() {
 				if (func_num_args() == 1 && is_array(func_get_arg(0))) {
 					\$this->value = func_get_arg(0);
 				} else {
@@ -197,9 +195,8 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		 * Returns the contents of the Set object
 		 *
 		 * @return array
-		 * @access public
-		 */
-			function &get() {
+				 */
+			public function &get() {
 				return \$this->value;
 			}
 
@@ -213,9 +210,8 @@ class CodeCoverageManagerTest extends CakeTestCase {
 		 * @param array \$arr1 Array to be merged
 		 * @param array \$arr2 Array to merge with
 		 * @return array Merged array
-		 * @access public
-		 */
-			function merge(\$arr1, \$arr2 = null) {
+				 */
+			public function merge(\$arr1, \$arr2 = null) {
 				\$args = func_get_args();
 
 				if (isset(\$this) && is_a(\$this, 'set')) {

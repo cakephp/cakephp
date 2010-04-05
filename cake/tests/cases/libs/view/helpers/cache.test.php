@@ -250,9 +250,8 @@ class CacheHelperTest extends CakeTestCase {
  * testComplexNoCache method
  *
  * @return void
- * @access public
  */
-	function testComplexNoCache () {
+	public function testComplexNoCache () {
 		$this->Controller->cache_parsing();
 		$this->Controller->params = array(
 			'controller' => 'cache_test',

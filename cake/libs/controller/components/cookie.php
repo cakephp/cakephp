@@ -160,9 +160,8 @@ class CookieComponent extends Object {
  * Main execution method.
  *
  * @param object $controller A reference to the instantiating controller object
- * @access public
  */
-	function initialize(&$controller, $settings) {
+	public function initialize(&$controller, $settings) {
 		$this->key = Configure::read('Security.salt');
 		$this->_set($settings);
 	}
@@ -170,9 +169,8 @@ class CookieComponent extends Object {
 /**
  * Start CookieComponent for use in the controller
  *
- * @access public
  */
-	function startup() {
+	public function startup() {
 		$this->__expire($this->time);
 
 		if (isset($_COOKIE[$this->name])) {
@@ -196,9 +194,8 @@ class CookieComponent extends Object {
  * @param mixed $value Value
  * @param boolean $encrypt Set to true to encrypt value, false otherwise
  * @param string $expires Can be either Unix timestamp, or date string
- * @access public
  */
-	function write($key, $value = null, $encrypt = true, $expires = null) {
+	public function write($key, $value = null, $encrypt = true, $expires = null) {
 		if (is_null($encrypt)) {
 			$encrypt = true;
 		}
@@ -234,9 +231,8 @@ class CookieComponent extends Object {
  *
  * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
  * @return string or null, value for specified key
- * @access public
  */
-	function read($key = null) {
+	public function read($key = null) {
 		if (empty($this->__values) && isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}
@@ -270,9 +266,8 @@ class CookieComponent extends Object {
  *
  * @param string $key Key of the value to be deleted
  * @return void
- * @access public
  */
-	function delete($key) {
+	public function delete($key) {
 		if (empty($this->__values)) {
 			$this->read();
 		}
@@ -293,9 +288,8 @@ class CookieComponent extends Object {
  * Failure to do so will result in header already sent errors.
  *
  * @return void
- * @access public
  */
-	function destroy() {
+	public function destroy() {
 		if (isset($_COOKIE[$this->name])) {
 			$this->__values = $this->__decrypt($_COOKIE[$this->name]);
 		}

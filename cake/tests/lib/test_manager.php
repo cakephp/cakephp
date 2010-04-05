@@ -62,9 +62,8 @@ class TestManager {
  * Constructor for the TestManager class
  *
  * @return void
- * @access public
  */
-	function TestManager() {
+	public function TestManager() {
 		$this->_installSimpleTest();
 		if (isset($_GET['app'])) {
 			$this->appTest = true;
@@ -78,9 +77,8 @@ class TestManager {
  * Includes the required simpletest files in order for the testsuite to run
  *
  * @return void
- * @access public
  */
-	function _installSimpleTest() {
+	public function _installSimpleTest() {
 		App::import('Vendor', array(
 			'simpletest' . DS . 'unit_tester',
 			'simpletest' . DS . 'mock_objects',
@@ -96,9 +94,8 @@ class TestManager {
  * @param Object $reporter Reporter object for the tests being run.
  * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
  * @return mixed
- * @access public
  */
-	function runAllTests(&$reporter, $testing = false) {
+	public function runAllTests(&$reporter, $testing = false) {
 		$testCases =& $this->_getTestFileList($this->_getTestsPath());
 		if ($this->appTest) {
 			$test =& new TestSuite(__('All App Tests', true));
@@ -126,9 +123,8 @@ class TestManager {
  * @param Object $reporter Reporter instance to attach to the test case.
  * @param boolean $testing Set to true if testing, otherwise test case will be run.
  * @return mixed Result of test case being run.
- * @access public
  */
-	function runTestCase($testCaseFile, &$reporter, $testing = false) {
+	public function runTestCase($testCaseFile, &$reporter, $testing = false) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
@@ -151,9 +147,8 @@ class TestManager {
  * @param string $groupTestName GroupTest that you want to run.
  * @param Object $reporter Reporter instance to use with the group test being run.
  * @return mixed Results of group test being run.
- * @access public
  */
-	function runGroupTest($groupTestName, &$reporter) {
+	public function runGroupTest($groupTestName, &$reporter) {
 		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
 
 		if (!file_exists($filePath)) {
@@ -401,9 +396,8 @@ class TestManager {
  *
  * @param string $type Type of test to get, either 'test' or 'group'
  * @return string Extension suffix for test.
- * @access public
  */
-	function getExtension($type = 'test') {
+	public function getExtension($type = 'test') {
 		if ($type == 'test' || $type == 'case') {
 			return $this->_testExtension;
 		}

@@ -139,9 +139,8 @@ class CakeSchema extends Object {
  *
  * @param array $events schema object properties
  * @return boolean Should process continue
- * @access public
  */
-	function before($event = array()) {
+	public function before($event = array()) {
 		return true;
 	}
 
@@ -149,9 +148,8 @@ class CakeSchema extends Object {
  * After callback to be implemented in subclasses
  *
  * @param array $events schema object properties
- * @access public
  */
-	function after($event = array()) {
+	public function after($event = array()) {
 	}
 
 /**
@@ -159,9 +157,8 @@ class CakeSchema extends Object {
  *
  * @param array $options schema object properties
  * @return array Set of name and tables
- * @access public
  */
-	function &load($options = array()) {
+	public function &load($options = array()) {
 		if (is_string($options)) {
 			$options = array('path' => $options);
 		}
@@ -198,9 +195,8 @@ class CakeSchema extends Object {
  *
  * @param array $options schema object properties
  * @return array Array indexed by name and tables
- * @access public
  */
-	function read($options = array()) {
+	public function read($options = array()) {
 		extract(array_merge(
 			array(
 				'connection' => $this->connection,
@@ -319,9 +315,8 @@ class CakeSchema extends Object {
  * @param mixed $object schema object or options array
  * @param array $options schema object properties to override object
  * @return mixed false or string written to file
- * @access public
  */
-	function write($object, $options = array()) {
+	public function write($object, $options = array()) {
 		if (is_object($object)) {
 			$object = get_object_vars($object);
 			$this->_build($object);
@@ -427,9 +422,8 @@ class CakeSchema extends Object {
  * @param mixed $old Schema object or array
  * @param mixed $new Schema object or array
  * @return array Tables (that are added, dropped, or changed)
- * @access public
  */
-	function compare($old, $new = null) {
+	public function compare($old, $new = null) {
 		if (empty($new)) {
 			$new =& $this;
 		}
@@ -513,9 +507,8 @@ class CakeSchema extends Object {
  *
  * @param array $values options keys(type, null, default, key, length, extra)
  * @return array Formatted values
- * @access public
  */
-	function __values($values) {
+	public function __values($values) {
 		$vals = array();
 		if (is_array($values)) {
 			foreach ($values as $key => $val) {
@@ -535,9 +528,8 @@ class CakeSchema extends Object {
  *
  * @param array $Obj model object
  * @return array Formatted columns
- * @access public
  */
-	function __columns(&$Obj) {
+	public function __columns(&$Obj) {
 		$db =& ConnectionManager::getDataSource($Obj->useDbConfig);
 		$fields = $Obj->schema(true);
 		$columns = $props = array();

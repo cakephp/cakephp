@@ -118,9 +118,8 @@ class File extends Object {
  * Creates the File.
  *
  * @return boolean Success
- * @access public
  */
-	function create() {
+	public function create() {
 		$dir = $this->Folder->pwd();
 		if (is_dir($dir) && is_writable($dir) && !$this->exists()) {
 			$old = umask(0);
@@ -138,9 +137,8 @@ class File extends Object {
  * @param string $mode A valid 'fopen' mode string (r|w|a ...)
  * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return boolean True on success, false on failure
- * @access public
  */
-	function open($mode = 'r', $force = false) {
+	public function open($mode = 'r', $force = false) {
 		if (!$force && is_resource($this->handle)) {
 			return true;
 		}
@@ -165,9 +163,8 @@ class File extends Object {
  * @param string $mode A `fread` compatible mode.
  * @param boolean $force If true then the file will be re-opened even if its already opened, otherwise it won't
  * @return mixed string on success, false on failure
- * @access public
  */
-	function read($bytes = false, $mode = 'rb', $force = false) {
+	public function read($bytes = false, $mode = 'rb', $force = false) {
 		if ($bytes === false && $this->lock === null) {
 			return file_get_contents($this->path);
 		}
@@ -202,9 +199,8 @@ class File extends Object {
  * @param mixed $offset The $offset in bytes to seek. If set to false then the current offset is returned.
  * @param integer $seek PHP Constant SEEK_SET | SEEK_CUR | SEEK_END determining what the $offset is relative to
  * @return mixed True on success, false on failure (set mode), false on failure or integer offset on success (get mode)
- * @access public
  */
-	function offset($offset = false, $seek = SEEK_SET) {
+	public function offset($offset = false, $seek = SEEK_SET) {
 		if ($offset === false) {
 			if (is_resource($this->handle)) {
 				return ftell($this->handle);
@@ -222,9 +218,8 @@ class File extends Object {
  *
  * @param string $data Data to prepare for writing.
  * @return string The with converted line endings.
- * @access public
  */
-	function prepare($data, $forceWindows = false) {
+	public function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
 		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";
@@ -239,9 +234,8 @@ class File extends Object {
  * @param string $mode Mode of writing. {@link http://php.net/fwrite See fwrite()}.
  * @param string $force force the file to open
  * @return boolean Success
- * @access public
  */
-	function write($data, $mode = 'w', $force = false) {
+	public function write($data, $mode = 'w', $force = false) {
 		$success = false;
 		if ($this->open($mode, $force) === true) {
 			if ($this->lock !== null) {
@@ -266,9 +260,8 @@ class File extends Object {
  * @param string $data Data to write
  * @param string $force force the file to open
  * @return boolean Success
- * @access public
  */
-	function append($data, $force = false) {
+	public function append($data, $force = false) {
 		return $this->write($data, 'a', $force);
 	}
 
@@ -276,9 +269,8 @@ class File extends Object {
  * Closes the current file if it is opened.
  *
  * @return boolean True if closing was successful or file was already closed, otherwise false
- * @access public
  */
-	function close() {
+	public function close() {
 		if (!is_resource($this->handle)) {
 			return true;
 		}
@@ -289,9 +281,8 @@ class File extends Object {
  * Deletes the File.
  *
  * @return boolean Success
- * @access public
  */
-	function delete() {
+	public function delete() {
 		clearstatcache();
 		if ($this->exists()) {
 			return unlink($this->path);
@@ -303,9 +294,8 @@ class File extends Object {
  * Returns the File info.
  *
  * @return string The File extension
- * @access public
  */
-	function info() {
+	public function info() {
 		if ($this->info == null) {
 			$this->info = pathinfo($this->path);
 		}
@@ -319,9 +309,8 @@ class File extends Object {
  * Returns the File extension.
  *
  * @return string The File extension
- * @access public
  */
-	function ext() {
+	public function ext() {
 		if ($this->info == null) {
 			$this->info();
 		}
@@ -335,9 +324,8 @@ class File extends Object {
  * Returns the File name without extension.
  *
  * @return string The File name without extension.
- * @access public
  */
-	function name() {
+	public function name() {
 		if ($this->info == null) {
 			$this->info();
 		}
@@ -355,9 +343,8 @@ class File extends Object {
  * @param string $name The name of the file to make safe if different from $this->name
  * @param strin $ext The name of the extension to make safe if different from $this->ext
  * @return string $ext the extension of the file
- * @access public
  */
-	function safe($name = null, $ext = null) {
+	public function safe($name = null, $ext = null) {
 		if (!$name) {
 			$name = $this->name;
 		}
@@ -372,9 +359,8 @@ class File extends Object {
  *
  * @param mixed $maxsize in MB or true to force
  * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
- * @access public
  */
-	function md5($maxsize = 5) {
+	public function md5($maxsize = 5) {
 		if ($maxsize === true) {
 			return md5_file($this->path);
 		}
@@ -391,9 +377,8 @@ class File extends Object {
  * Returns the full path of the File.
  *
  * @return string Full path to file
- * @access public
  */
-	function pwd() {
+	public function pwd() {
 		if (is_null($this->path)) {
 			$this->path = $this->Folder->slashTerm($this->Folder->pwd()) . $this->name;
 		}
@@ -404,9 +389,8 @@ class File extends Object {
  * Returns true if the File exists.
  *
  * @return boolean true if it exists, false otherwise
- * @access public
  */
-	function exists() {
+	public function exists() {
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -414,9 +398,8 @@ class File extends Object {
  * Returns the "chmod" (permissions) of the File.
  *
  * @return string Permissions for the file
- * @access public
  */
-	function perms() {
+	public function perms() {
 		if ($this->exists()) {
 			return substr(sprintf('%o', fileperms($this->path)), -4);
 		}
@@ -427,9 +410,8 @@ class File extends Object {
  * Returns the Filesize
  *
  * @return integer size of the file in bytes, or false in case of an error
- * @access public
  */
-	function size() {
+	public function size() {
 		if ($this->exists()) {
 			return filesize($this->path);
 		}
@@ -440,9 +422,8 @@ class File extends Object {
  * Returns true if the File is writable.
  *
  * @return boolean true if its writable, false otherwise
- * @access public
  */
-	function writable() {
+	public function writable() {
 		return is_writable($this->path);
 	}
 
@@ -450,9 +431,8 @@ class File extends Object {
  * Returns true if the File is executable.
  *
  * @return boolean true if its executable, false otherwise
- * @access public
  */
-	function executable() {
+	public function executable() {
 		return is_executable($this->path);
 	}
 
@@ -460,9 +440,8 @@ class File extends Object {
  * Returns true if the File is readable.
  *
  * @return boolean true if file is readable, false otherwise
- * @access public
  */
-	function readable() {
+	public function readable() {
 		return is_readable($this->path);
 	}
 
@@ -470,9 +449,8 @@ class File extends Object {
  * Returns the File's owner.
  *
  * @return integer the Fileowner
- * @access public
  */
-	function owner() {
+	public function owner() {
 		if ($this->exists()) {
 			return fileowner($this->path);
 		}
@@ -483,9 +461,8 @@ class File extends Object {
  * Returns the File's group.
  *
  * @return integer the Filegroup
- * @access public
  */
-	function group() {
+	public function group() {
 		if ($this->exists()) {
 			return filegroup($this->path);
 		}
@@ -496,9 +473,8 @@ class File extends Object {
  * Returns last access time.
  *
  * @return integer timestamp Timestamp of last access time
- * @access public
  */
-	function lastAccess() {
+	public function lastAccess() {
 		if ($this->exists()) {
 			return fileatime($this->path);
 		}
@@ -509,9 +485,8 @@ class File extends Object {
  * Returns last modified time.
  *
  * @return integer timestamp Timestamp of last modification
- * @access public
  */
-	function lastChange() {
+	public function lastChange() {
 		if ($this->exists()) {
 			return filemtime($this->path);
 		}
@@ -522,9 +497,8 @@ class File extends Object {
  * Returns the current folder.
  *
  * @return Folder Current folder
- * @access public
  */
-	function &Folder() {
+	public function &Folder() {
 		return $this->Folder;
 	}
 
@@ -534,9 +508,8 @@ class File extends Object {
  * @param string $dest destination for the copy
  * @param boolean $overwrite Overwrite $dest if exists
  * @return boolean Succes
- * @access public
  */
-	function copy($dest, $overwrite = true) {
+	public function copy($dest, $overwrite = true) {
 		if (!$this->exists() || is_file($dest) && !$overwrite) {
 			return false;
 		}

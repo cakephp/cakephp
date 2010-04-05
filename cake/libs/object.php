@@ -59,9 +59,8 @@ class Object {
  * Each class can override this method as necessary.
  *
  * @return string The name of this class
- * @access public
  */
-	function toString() {
+	public function toString() {
 		$class = get_class($this);
 		return $class;
 	}
@@ -75,9 +74,8 @@ class Object {
  * @param array $extra if array includes the key "return" it sets the AutoRender to true.
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
- * @access public
  */
-	function requestAction($url, $extra = array()) {
+	public function requestAction($url, $extra = array()) {
 		if (empty($url)) {
 			return false;
 		}
@@ -102,9 +100,8 @@ class Object {
  * @param string $method  Name of the method to call
  * @param array $params  Parameter list to use when calling $method
  * @return mixed  Returns the result of the method call
- * @access public
  */
-	function dispatchMethod($method, $params = array()) {
+	public function dispatchMethod($method, $params = array()) {
 		switch (count($params)) {
 			case 0:
 				return $this->{$method}();
@@ -130,9 +127,8 @@ class Object {
  *
  * @param $status see http://php.net/exit for values
  * @return void
- * @access public
  */
-	function _stop($status = 0) {
+	public function _stop($status = 0) {
 		exit($status);
 	}
 
@@ -143,9 +139,8 @@ class Object {
  * @param string $msg Log message
  * @param integer $type Error type constant. Defined in app/config/core.php.
  * @return boolean Success of log write
- * @access public
  */
-	function log($msg, $type = LOG_ERROR) {
+	public function log($msg, $type = LOG_ERROR) {
 		if (!class_exists('CakeLog')) {
 			require LIBS . 'cake_log.php';
 		}
@@ -182,9 +177,8 @@ class Object {
  * @param string $method Method to be called in the error class (AppError or ErrorHandler classes)
  * @param array $messages Message that is to be displayed by the error class
  * @return error message
- * @access public
  */
-	function cakeError($method, $messages = array()) {
+	public function cakeError($method, $messages = array()) {
 		if (!class_exists('ErrorHandler')) {
 			App::import('Core', 'Error');
 

@@ -76,9 +76,8 @@ class CodeCoverageManager {
  * Returns a singleton instance
  *
  * @return object
- * @access public
  */
-	function &getInstance() {
+	public function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new CodeCoverageManager();
@@ -642,9 +641,8 @@ class CodeCoverageManager {
  * Displays a notification concerning group test results
  *
  * @return void
- * @access public
  */
-	function __paintGroupResultHeader($report) {
+	public function __paintGroupResultHeader($report) {
 		return '<div class="code-coverage-results"><p class="note">Please keep in mind that the coverage can vary a little bit depending on how much the different tests in the group interfere. If for example, TEST A calls a line from TEST OBJECT B, the coverage for TEST OBJECT B will be a little greater than if you were running the corresponding test case for TEST OBJECT B alone.</p><pre>' . $report . '</pre></div>';
 	}
 
@@ -749,9 +747,8 @@ class CodeCoverageManager {
  *
  * @param string $isApp
  * @return void
- * @access public
  */
-	function __getTestFilesPath($isApp = true) {
+	public function __getTestFilesPath($isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
 		$path = ROOT . DS;
 

@@ -32,9 +32,8 @@ class CustomValidator {
  *
  * @param string $email
  * @return boolean
- * @access public
  */
-	function customValidate($check) {
+	public function customValidate($check) {
 		return preg_match('/^[0-9]{3}$/', $check);
 	}
 }
@@ -145,9 +144,8 @@ class ValidationTest extends CakeTestCase {
  * testNotEmptyISO88591Encoding method
  *
  * @return void
- * @access public
  */
-	function testNotEmptyISO88591AppEncoding() {
+	public function testNotEmptyISO88591AppEncoding() {
 		Configure::write('App.encoding', 'ISO-8859-1');
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
@@ -1783,9 +1781,8 @@ class ValidationTest extends CakeTestCase {
  * testIpBoth method
  *
  * @return void
- * @access public
  */	
-	function testIpBoth() {
+	public function testIpBoth() {
 		$this->assertTrue(Validation::ip('0.0.0.0'));
 		$this->assertTrue(Validation::ip('192.168.1.156'));
 		$this->assertTrue(Validation::ip('255.255.255.255'));

@@ -69,9 +69,8 @@ class NumberHelper extends AppHelper {
  * @param float $number	A floating point number.
  * @param integer $precision The precision of the returned number.
  * @return float Enter description here...
- * @access public
  */
-	function precision($number, $precision = 3) {
+	public function precision($number, $precision = 3) {
 		return sprintf("%01.{$precision}f", $number);
 	}
 
@@ -80,9 +79,8 @@ class NumberHelper extends AppHelper {
  *
  * @param integer $length Size in bytes
  * @return string Human readable size
- * @access public
  */
-	function toReadableSize($size) {
+	public function toReadableSize($size) {
 		switch (true) {
 			case $size < 1024:
 				return sprintf(__n('%d Byte', '%d Bytes', $size, true), $size);
@@ -103,9 +101,8 @@ class NumberHelper extends AppHelper {
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
  * @return string Percentage string
- * @access public
  */
-	function toPercentage($number, $precision = 2) {
+	public function toPercentage($number, $precision = 2) {
 		return $this->precision($number, $precision) . '%';
 	}
 
@@ -116,9 +113,8 @@ class NumberHelper extends AppHelper {
  * @param integer $options if int then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
- * @access public
  */
-	function format($number, $options = false) {
+	public function format($number, $options = false) {
 		$places = 0;
 		if (is_int($options)) {
 			$places = $options;
@@ -173,9 +169,8 @@ class NumberHelper extends AppHelper {
  *   set at least 'before' and 'after' options.
  * @param array $options
  * @return string Number formatted as a currency.
- * @access public
  */
-	function currency($number, $currency = 'USD', $options = array()) {
+	public function currency($number, $currency = 'USD', $options = array()) {
 		$default = $this->_currencyDefaults;
 
 		if (isset($this->_currencies[$currency])) {
@@ -242,9 +237,8 @@ class NumberHelper extends AppHelper {
  * @param array $options The array of options for this format.
  * @return void
  * @see NumberHelper::currency()
- * @access public
  */
-	function addFormat($formatName, $options) {
+	public function addFormat($formatName, $options) {
 		$this->_currencies[$formatName] = $options + $this->_currencyDefaults;
 	}
 

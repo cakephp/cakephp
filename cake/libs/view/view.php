@@ -338,9 +338,8 @@ class View extends Object {
  * @param array $params Array of data to be made available to the for rendered
  *    view (i.e. the Element)
  * @return string Rendered Element
- * @access public
  */
-	function element($name, $params = array(), $loadHelpers = false) {
+	public function element($name, $params = array(), $loadHelpers = false) {
 		$file = $plugin = $key = null;
 
 		if (isset($params['plugin'])) {
@@ -403,9 +402,8 @@ class View extends Object {
  * @param string $layout Layout to use
  * @param string $file Custom filename for view
  * @return string Rendered Element
- * @access public
  */
-	function render($action = null, $layout = null, $file = null) {
+	public function render($action = null, $layout = null, $file = null) {
 		if ($this->hasRendered) {
 			return true;
 		}
@@ -454,9 +452,8 @@ class View extends Object {
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
- * @access public
  */
-	function renderLayout($content_for_layout, $layout = null) {
+	public function renderLayout($content_for_layout, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
 		if (empty($layoutFileName)) {
 			return $this->output;
@@ -522,9 +519,8 @@ class View extends Object {
  * @param string $filename the cache file to include
  * @param string $timeStart the page render start time
  * @return boolean Success of rendering the cached file.
- * @access public
  */
-	function renderCache($filename, $timeStart) {
+	public function renderCache($filename, $timeStart) {
 		ob_start();
 		include ($filename);
 
@@ -553,9 +549,8 @@ class View extends Object {
  * Returns a list of variables available in the current View context
  *
  * @return array Array of the set view variable names.
- * @access public
  */
-	function getVars() {
+	public function getVars() {
 		return array_keys($this->viewVars);
 	}
 
@@ -564,9 +559,8 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @return mixed The content of the named var if its set, otherwise null.
- * @access public
  */
-	function getVar($var) {
+	public function getVar($var) {
 		if (!isset($this->viewVars[$var])) {
 			return null;
 		} else {
@@ -582,9 +576,8 @@ class View extends Object {
  *   update/replace a script element.
  * @param string $content The content of the script being added, optional.
  * @return void
- * @access public
  */
-	function addScript($name, $content = null) {
+	public function addScript($name, $content = null) {
 		if (empty($content)) {
 			if (!in_array($name, array_values($this->__scripts))) {
 				$this->__scripts[] = $name;
@@ -600,9 +593,8 @@ class View extends Object {
  * @param string $object Type of object, i.e. 'form' or 'link'
  * @param string $url The object's target URL
  * @return string
- * @access public
  */
-	function uuid($object, $url) {
+	public function uuid($object, $url) {
 		$c = 1;
 		$url = Router::url($url);
 		$hash = $object . substr(md5($object . $url), 0, 10);
@@ -618,9 +610,8 @@ class View extends Object {
  * Returns the entity reference of the current context as an array of identity parts
  *
  * @return array An array containing the identity elements of an entity
- * @access public
  */
-	function entity() {
+	public function entity() {
 		$assoc = ($this->association) ? $this->association : $this->model;
 		if (!empty($this->entityPath)) {
 			$path = explode('.', $this->entityPath);
@@ -648,9 +639,8 @@ class View extends Object {
  * @param mixed $two Value in case $one is a string (which then works as the key).
  *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
- * @access public
  */
-	function set($one, $two = null) {
+	public function set($one, $two = null) {
 		$data = null;
 		if (is_array($one)) {
 			if (is_array($two)) {
@@ -673,9 +663,8 @@ class View extends Object {
  * @param integer $code HTTP Error code (for instance: 404)
  * @param string $name Name of the error (for instance: Not Found)
  * @param string $message Error message as a web page
- * @access public
  */
-	function error($code, $name, $message) {
+	public function error($code, $name, $message) {
 		header ("HTTP/1.1 {$code} {$name}");
 		print ($this->_render(
 			$this->_getLayoutFileName('error'),

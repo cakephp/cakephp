@@ -31,9 +31,8 @@ class TestXml extends Xml {
  * Return the protected _header instance variable
  *
  * @return string Header
- * @access public
  */
-	function getHeader() {
+	public function getHeader() {
 		return $this->_header;
 	}
 }

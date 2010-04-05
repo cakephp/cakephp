@@ -116,9 +116,8 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @return boolean Success
- * @access public
  */
-	function notEmpty($check) {
+	public function notEmpty($check) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -144,9 +143,8 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @return boolean Success
- * @access public
  */
-	function alphaNumeric($check) {
+	public function alphaNumeric($check) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -171,9 +169,8 @@ class Validation extends Object {
  * @param integer $min Minimum value in range (inclusive)
  * @param integer $max Maximum value in range (inclusive)
  * @return boolean Success
- * @access public
  */
-	function between($check, $min, $max) {
+	public function between($check, $min, $max) {
 		$length = mb_strlen($check);
 		return ($length >= $min && $length <= $max);
 	}
@@ -187,9 +184,8 @@ class Validation extends Object {
  *
  * @param mixed $check Value to check
  * @return boolean Success
- * @access public
  */
-	function blank($check) {
+	public function blank($check) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -292,9 +288,8 @@ class Validation extends Object {
  *    less or equal <=, is less <, equal to ==, not equal !=
  * @param integer $check2 only needed if $check1 is a string
  * @return boolean Success
- * @access public
  */
-	function comparison($check1, $operator = null, $check2 = null) {
+	public function comparison($check1, $operator = null, $check2 = null) {
 		if (is_array($check1)) {
 			extract($check1, EXTR_OVERWRITE);
 		}
@@ -352,9 +347,8 @@ class Validation extends Object {
  *								As and array: array('check' => value, 'regex' => 'valid regular expression')
  * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
  * @return boolean Success
- * @access public
  */
-	function custom($check, $regex = null) {
+	public function custom($check, $regex = null) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -384,9 +378,8 @@ class Validation extends Object {
  * 							my 12/2006 separators can be a space, period, dash, forward slash
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
- * @access public
  */
-	function date($check, $format = 'ymd', $regex = null) {
+	public function date($check, $format = 'ymd', $regex = null) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -422,10 +415,9 @@ class Validation extends Object {
  *
  * @param string $check a valid time string
  * @return boolean Success
- * @access public
  */
 
-	function time($check) {
+	public function time($check) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -438,9 +430,8 @@ class Validation extends Object {
  *
  * @param string $check a valid boolean
  * @return boolean Success
- * @access public
  */
-	function boolean($check) {
+	public function boolean($check) {
 		$booleanList = array(0, 1, '0', '1', true, false);
 		return in_array($check, $booleanList, true);
 	}
@@ -453,9 +444,8 @@ class Validation extends Object {
  * @param integer $places if set $check value must have exactly $places after the decimal point
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
- * @access public
  */
-	function decimal($check, $places = null, $regex = null) {
+	public function decimal($check, $places = null, $regex = null) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->regex = $regex;
@@ -478,9 +468,8 @@ class Validation extends Object {
  * @param boolean $deep Perform a deeper validation (if true), by also checking availability of host
  * @param string $regex Regex to use (if none it will use built in regex)
  * @return boolean Success
- * @access public
  */
-	function email($check, $deep = false, $regex = null) {
+	public function email($check, $deep = false, $regex = null) {
 		$_this =& Validation::getInstance();
 		$_this->__reset();
 		$_this->check = $check;
@@ -518,9 +507,8 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param mixed $comparedTo Value to compare
  * @return boolean Success
- * @access public
  */
-	function equalTo($check, $comparedTo) {
+	public function equalTo($check, $comparedTo) {
 		return ($check === $comparedTo);
 	}
 
@@ -530,9 +518,8 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param array $extensions file extenstions to allow
  * @return boolean Success
- * @access public
  */
-	function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
+	public function extension($check, $extensions = array('gif', 'jpeg', 'png', 'jpg')) {
 		if (is_array($check)) {
 			return Validation::extension(array_shift($check), $extensions);
 		}
@@ -556,9 +543,8 @@ class Validation extends Object {
  * @param string $check The string to test.
  * @param string $type The IP Version to test against
  * @return boolean Success
- * @access public
  */
-	function ip($check, $type = 'both') {
+	public function ip($check, $type = 'both') {
 		$_this =& Validation::getInstance();
 		$success = false;
 		$type = strtolower($type);
@@ -611,9 +597,8 @@ class Validation extends Object {
  * @param string $check The string to test
  * @param integer $min The minimal string length
  * @return boolean Success
- * @access public
  */
-	function minLength($check, $min) {
+	public function minLength($check, $min) {
 		$length = mb_strlen($check);
 		return ($length >= $min);
 	}
@@ -624,9 +609,8 @@ class Validation extends Object {
  * @param string $check The string to test
  * @param integer $max The maximal string length
  * @return boolean Success
- * @access public
  */
-	function maxLength($check, $max) {
+	public function maxLength($check, $max) {
 		$length = mb_strlen($check);
 		return ($length <= $max);
 	}
@@ -637,9 +621,8 @@ class Validation extends Object {
  * @param string $check Value to check
  * @param string $symbolPosition Where symbol is located (left/right)
  * @return boolean Success
- * @access public
  */
-	function money($check, $symbolPosition = 'left') {
+	public function money($check, $symbolPosition = 'left') {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 
@@ -663,9 +646,8 @@ class Validation extends Object {
  * @param mixed $check Value to check
  * @param mixed $options Options for the check.
  * @return boolean Success
- * @access public
  */
-	function multiple($check, $options = array()) {
+	public function multiple($check, $options = array()) {
 		$defaults = array('in' => null, 'max' => null, 'min' => null);
 		$options = array_merge($defaults, $options);
 		$check = array_filter((array)$check);
@@ -693,9 +675,8 @@ class Validation extends Object {
  *
  * @param string $check Value to check
  * @return boolean Succcess
- * @access public
  */
-	function numeric($check) {
+	public function numeric($check) {
 		return is_numeric($check);
 	}
 
@@ -706,9 +687,8 @@ class Validation extends Object {
  * @param string $regex Regular expression to use
  * @param string $country Country code (defaults to 'all')
  * @return boolean Success
- * @access public
  */
-	function phone($check, $regex = null, $country = 'all') {
+	public function phone($check, $regex = null, $country = 'all') {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$_this->regex = $regex;
@@ -740,9 +720,8 @@ class Validation extends Object {
  * @param string $regex Regular expression to use
  * @param string $country Country to use for formatting
  * @return boolean Success
- * @access public
  */
-	function postal($check, $regex = null, $country = null) {
+	public function postal($check, $regex = null, $country = null) {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$_this->regex = $regex;
@@ -789,9 +768,8 @@ class Validation extends Object {
  * @param integer $lower Lower limit
  * @param integer $upper Upper limit
  * @return boolean Success
- * @access public
  */
-	function range($check, $lower = null, $upper = null) {
+	public function range($check, $lower = null, $upper = null) {
 		if (!is_numeric($check)) {
 			return false;
 		}
@@ -808,9 +786,8 @@ class Validation extends Object {
  * @param string $regex Regular expression to use
  * @param string $country Country
  * @return boolean Success
- * @access public
  */
-	function ssn($check, $regex = null, $country = null) {
+	public function ssn($check, $regex = null, $country = null) {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$_this->regex = $regex;
@@ -843,9 +820,8 @@ class Validation extends Object {
  * 
  * @param string $check Value to check
  * @return boolean Success
- * @access public
  */
-	function uuid($check) {
+	public function uuid($check) {
 		$_this =& Validation::getInstance();
 		$_this->check = $check;
 		$_this->regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
@@ -868,9 +844,8 @@ class Validation extends Object {
  * @param string $check Value to check
  * @param boolean $strict Require URL to be prefixed by a valid scheme (one of http(s)/ftp(s)/file/news/gopher)
  * @return boolean Success
- * @access public
  */
-	function url($check, $strict = false) {
+	public function url($check, $strict = false) {
 		$_this =& Validation::getInstance();
 		$_this->__populateIp();
 		$_this->check = $check;
@@ -890,9 +865,8 @@ class Validation extends Object {
  * @param string $check Value to check
  * @param array $list List to check against
  * @return boolean Succcess
- * @access public
  */
-	function inList($check, $list) {
+	public function inList($check, $list) {
 		return in_array($check, $list);
 	}
 
@@ -904,9 +878,8 @@ class Validation extends Object {
  * @param string $method class method name for validation to run
  * @param array $args arguments to send to method
  * @return mixed user-defined class class method returns
- * @access public
  */
-	function userDefined($check, $object, $method, $args = null) {
+	public function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array(&$object, $method), array($check, $args));
 	}
 

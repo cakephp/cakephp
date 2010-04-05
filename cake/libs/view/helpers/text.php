@@ -54,9 +54,8 @@ class TextHelper extends AppHelper {
  * @param string $phrase The phrase that will be searched
  * @param array $options An array of html attributes and options.
  * @return string The highlighted text
- * @access public
  */
-	function highlight($text, $phrase, $options = array()) {
+	public function highlight($text, $phrase, $options = array()) {
 		if (empty($phrase)) {
 			return $text;
 		}
@@ -98,9 +97,8 @@ class TextHelper extends AppHelper {
  *
  * @param string $text Text
  * @return string The text without links
- * @access public
  */
-	function stripLinks($text) {
+	public function stripLinks($text) {
 		return preg_replace('|<a\s+[^>]+>|im', '', preg_replace('|<\/a>|im', '', $text));
 	}
 
@@ -111,9 +109,8 @@ class TextHelper extends AppHelper {
  * @param string $text Text to add links to
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @access public
  */
-	function autoLinkUrls($text, $options = array()) {
+	public function autoLinkUrls($text, $options = array()) {
 		$linkOptions = 'array(';
 		foreach ($options as $option => $value) {
 			$value = var_export($value, true);
@@ -134,9 +131,8 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @access public
  */
-	function autoLinkEmails($text, $options = array()) {
+	public function autoLinkEmails($text, $options = array()) {
 		$linkOptions = 'array(';
 		foreach ($options as $option => $value) {
 			$value = var_export($value, true);
@@ -154,9 +150,8 @@ class TextHelper extends AppHelper {
  * @param string $text Text
  * @param array $options Array of HTML options.
  * @return string The text with links
- * @access public
  */
-	function autoLink($text, $options = array()) {
+	public function autoLink($text, $options = array()) {
 		return $this->autoLinkEmails($this->autoLinkUrls($text, $options), $options);
 	}
 
@@ -176,9 +171,8 @@ class TextHelper extends AppHelper {
  * @param integer $length Length of returned string, including ellipsis.
  * @param array $options An array of html attributes and options.
  * @return string Trimmed string.
- * @access public
  */
-	function truncate($text, $length = 100, $options = array()) {
+	public function truncate($text, $length = 100, $options = array()) {
 		$default = array(
 			'ending' => '...', 'exact' => true, 'html' => false
 		);
@@ -276,9 +270,8 @@ class TextHelper extends AppHelper {
  * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
  * @param string $ending Ending that will be appended
  * @return string Modified string
- * @access public
  */
-	function excerpt($text, $phrase, $radius = 100, $ending = '...') {
+	public function excerpt($text, $phrase, $radius = 100, $ending = '...') {
 		if (empty($text) or empty($phrase)) {
 			return $this->truncate($text, $radius * 2, array('ending' => $ending));
 		}
@@ -321,9 +314,8 @@ class TextHelper extends AppHelper {
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'
  * @param string $separator The separator used to join all othe other items together. Defaults to ', '
  * @return string The glued together string.
- * @access public
  */
-	function toList($list, $and = 'and', $separator = ', ') {
+	public function toList($list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
 		} else {

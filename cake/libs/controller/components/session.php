@@ -66,9 +66,8 @@ class SessionComponent extends CakeSession {
  *
  * @param object $controller Instantiating controller
  * @return void
- * @access public
  */
-	function startup(&$controller) {
+	public function startup(&$controller) {
 		if ($this->started() === false && $this->__active === true) {
 			$this->__start();
 		}
@@ -79,9 +78,8 @@ class SessionComponent extends CakeSession {
  *
  * @param string $base The base path for the Session
  * @return void
- * @access public
  */
-	function activate($base = null) {
+	public function activate($base = null) {
 		if ($this->__active === true) {
 			return;
 		}
@@ -98,9 +96,8 @@ class SessionComponent extends CakeSession {
  * 							This should be in a Controller.key format for better organizing
  * @param string $value The value you want to store in a session.
  * @return boolean Success
- * @access public
  */
-	function write($name, $value = null) {
+	public function write($name, $value = null) {
 		if ($this->__active === true) {
 			$this->__start();
 			if (is_array($name)) {
@@ -127,9 +124,8 @@ class SessionComponent extends CakeSession {
  *
  * @param string $name the name of the session key you want to read
  * @return mixed value from the session vars
- * @access public
  */
-	function read($name = null) {
+	public function read($name = null) {
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::read($name);
@@ -144,9 +140,8 @@ class SessionComponent extends CakeSession {
  *
  * @param string $name the name of the session key you want to delete
  * @return boolean true is session variable is set and can be deleted, false is variable was not set.
- * @access public
  */
-	function delete($name) {
+	public function delete($name) {
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::delete($name);
@@ -161,9 +156,8 @@ class SessionComponent extends CakeSession {
  *
  * @param string $name the name of the session key you want to check
  * @return boolean true is session variable is set, false if not
- * @access public
  */
-	function check($name) {
+	public function check($name) {
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::check($name);
@@ -177,9 +171,8 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->error();
  *
  * @return string Last session error
- * @access public
  */
-	function error() {
+	public function error() {
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::error();
@@ -198,9 +191,8 @@ class SessionComponent extends CakeSession {
  * @param string $element Element to wrap flash message in.
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
- * @access public
  */
-	function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
+	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
 		if ($this->__active === true) {
 			$this->__start();
 			$this->write('Message.' . $key, compact('message', 'element', 'params'));
@@ -213,9 +205,8 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->renew();
  *
  * @return void
- * @access public
  */
-	function renew() {
+	public function renew() {
 		if ($this->__active === true) {
 			$this->__start();
 			parent::renew();
@@ -228,9 +219,8 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->valid();
  *
  * @return boolean true is session is valid, false is session is invalid
- * @access public
  */
-	function valid() {
+	public function valid() {
 		if ($this->__active === true) {
 			$this->__start();
 			return parent::valid();
@@ -244,9 +234,8 @@ class SessionComponent extends CakeSession {
  * In your controller: $this->Session->destroy();
  *
  * @return void
- * @access public
  */
-	function destroy() {
+	public function destroy() {
 		if ($this->__active === true) {
 			$this->__start();
 			parent::destroy();
@@ -261,9 +250,8 @@ class SessionComponent extends CakeSession {
  *
  * @param $id string
  * @return string
- * @access public
  */
-	function id($id = null) {
+	public function id($id = null) {
 		return parent::id($id);
 	}
 

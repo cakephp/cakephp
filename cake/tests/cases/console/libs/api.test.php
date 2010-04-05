@@ -55,9 +55,8 @@ class ApiShellTest extends CakeTestCase {
  * setUp method
  *
  * @return void
- * @access public
  */
-	function startTest() {
+	public function startTest() {
 		$this->Dispatcher =& new ApiShellMockShellDispatcher();
 		$this->Shell =& new MockApiShell($this->Dispatcher);
 		$this->Shell->Dispatch =& $this->Dispatcher;
@@ -67,9 +66,8 @@ class ApiShellTest extends CakeTestCase {
  * tearDown method
  *
  * @return void
- * @access public
  */
-	function endTest() {
+	public function endTest() {
 		ClassRegistry::flush();
 	}
 
@@ -77,9 +75,8 @@ class ApiShellTest extends CakeTestCase {
  * Test that method names are detected properly including those with no arguments.
  *
  * @return void
- * @access public
  */
-	function testMethodNameDetection () {
+	public function testMethodNameDetection () {
 		$this->Shell->setReturnValueAt(0, 'in', 'q');
 		$this->Shell->expectAt(0, 'out', array('Controller'));
 		$expected = array(

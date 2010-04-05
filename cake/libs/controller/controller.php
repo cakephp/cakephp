@@ -519,9 +519,8 @@ class Controller extends Object {
  * - triggers Component `startup` methods.
  *
  * @return void
- * @access public
  */
-	function startupProcess() {
+	public function startupProcess() {
 		$this->Component->initialize($this);
 		$this->beforeFilter();
 		$this->Component->triggerCallback('startup', $this);
@@ -535,9 +534,8 @@ class Controller extends Object {
  * - calls the Controller's `afterFilter` method.
  *
  * @return void
- * @access public
  */
-	function shutdownProcess() {
+	public function shutdownProcess() {
 		$this->Component->triggerCallback('shutdown', $this);
 		$this->afterFilter();
 	}
@@ -608,9 +606,8 @@ class Controller extends Object {
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created error returned if models not found.
- * @access public
  */
-	function loadModel($modelClass = null, $id = null) {
+	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
@@ -738,9 +735,8 @@ class Controller extends Object {
  *
  * @param string $status The header message that is being set.
  * @return void
- * @access public
  */
-	function header($status) {
+	public function header($status) {
 		header($status);
 	}
 
@@ -783,9 +779,8 @@ class Controller extends Object {
  * @param mixed  Any other parameters passed to this method will be passed as
  *    parameters to the new action.
  * @return mixed Returns the return value of the called action
- * @access public
  */
-	function setAction($action) {
+	public function setAction($action) {
 		$this->action = $action;
 		$args = func_get_args();
 		unset($args[0]);
@@ -811,9 +806,8 @@ class Controller extends Object {
  * Returns number of errors in a submitted FORM.
  *
  * @return integer Number of errors
- * @access public
  */
-	function validate() {
+	public function validate() {
 		$args = func_get_args();
 		$errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
 
@@ -830,9 +824,8 @@ class Controller extends Object {
  *
  * @param mixed A list of models as a variable argument
  * @return array Validation errors, or false if none
- * @access public
  */
-	function validateErrors() {
+	public function validateErrors() {
 		$objects = func_get_args();
 
 		if (empty($objects)) {
