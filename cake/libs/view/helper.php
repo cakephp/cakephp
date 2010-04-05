@@ -148,8 +148,8 @@ class Helper extends Overloadable {
  *
  */
 	protected function get__($name) {}
-	function set__($name, $value) {}
-	function call__($method, $params) {
+	protected function set__($name, $value) {}
+	protected function call__($method, $params) {
 		trigger_error(sprintf(__('Method %1$s::%2$s does not exist', true), get_class($this), $method), E_USER_WARNING);
 	}
 
@@ -548,7 +548,7 @@ class Helper extends Overloadable {
  * @param integer $modelID Unique index identifying this record within the form
  * @return boolean True on errors.
  */
-	function tagIsInvalid($model = null, $field = null, $modelID = null) {
+	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
 		$view =& ClassRegistry::getObject('view');
 		$errors = $this->validationErrors;
 		$entity = $view->entity();
@@ -568,7 +568,7 @@ class Helper extends Overloadable {
  *   was supplied, a string will be returned.
  * @todo Refactor this method to not have as many input/output options.
  */
-	function domId($options = null, $id = 'id') {
+	public function domId($options = null, $id = 'id') {
 		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
@@ -604,7 +604,7 @@ class Helper extends Overloadable {
  * @access protected
  * @todo Refactor this method to not have as many input/output options.
  */
-	function _name($options = array(), $field = null, $key = 'name') {
+	protected function _name($options = array(), $field = null, $key = 'name') {
 		$view =& ClassRegistry::getObject('view');
 		if ($options === null) {
 			$options = array();
@@ -650,7 +650,7 @@ class Helper extends Overloadable {
  * @access public
  * @todo Refactor this method to not have as many input/output options.
  */
-	function value($options = array(), $field = null, $key = 'value') {
+	public function value($options = array(), $field = null, $key = 'value') {
 		if ($options === null) {
 			$options = array();
 		} elseif (is_string($options)) {
@@ -754,7 +754,7 @@ class Helper extends Overloadable {
  * @return string
  * @deprecated This method will be removed in future versions.
  */
-	function output($str) {
+	public function output($str) {
 		return $str;
 	}
 
