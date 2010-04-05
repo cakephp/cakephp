@@ -162,6 +162,16 @@ class TestView extends View {
 		$error =& new ViewTestErrorHandler($method, $messages);
 		return $error;
 	}
+
+/**
+ * Test only function to return instance scripts.
+ *
+ * @return array Scripts
+ * @access public
+ */
+	function scripts() {
+		return $this->_scripts;
+	}
 }
 
 /**
@@ -457,12 +467,13 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testAddInlineScripts() {
-		$this->View->addScript('prototype.js');
-		$this->View->addScript('prototype.js');
-		$this->assertEqual($this->View->__scripts, array('prototype.js'));
+		$View = new TestView($this->Controller);
+		$View->addScript('prototype.js');
+		$View->addScript('prototype.js');
+		$this->assertEqual($View->scripts(), array('prototype.js'));
 
-		$this->View->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
-		$this->assertEqual($this->View->__scripts, array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
+		$View->addScript('mainEvent', 'Event.observe(window, "load", function() { doSomething(); }, true);');
+		$this->assertEqual($View->scripts(), array('prototype.js', 'mainEvent' => 'Event.observe(window, "load", function() { doSomething(); }, true);'));
 	}
 
 /**

@@ -285,9 +285,9 @@ class View extends Object {
  * Scripts (and/or other <head /> tags) for the layout
  *
  * @var array
- * @access private
+ * @access protected
  */
-	private $__scripts = array();
+	protected $_scripts = array();
 
 /**
  * Holds an array of paths.
@@ -461,7 +461,7 @@ class View extends Object {
 
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
-			'scripts_for_layout' => implode("\n\t", $this->__scripts),
+			'scripts_for_layout' => implode("\n\t", $this->_scripts),
 		));
 
 		if (!isset($dataForLayout['title_for_layout'])) {
@@ -579,11 +579,11 @@ class View extends Object {
  */
 	public function addScript($name, $content = null) {
 		if (empty($content)) {
-			if (!in_array($name, array_values($this->__scripts))) {
-				$this->__scripts[] = $name;
+			if (!in_array($name, array_values($this->_scripts))) {
+				$this->_scripts[] = $name;
 			}
 		} else {
-			$this->__scripts[$name] = $content;
+			$this->_scripts[$name] = $content;
 		}
 	}
 
