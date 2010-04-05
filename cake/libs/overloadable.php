@@ -29,9 +29,5 @@
  * Load the interface class based on the version of PHP.
  *
  */
-if (!PHP5) {
-	require(LIBS . 'overloadable_php4.php');
-} else {
-	require(LIBS . 'overloadable_php5.php');
-}
+require(LIBS . 'overloadable_php5.php');
 ?>
