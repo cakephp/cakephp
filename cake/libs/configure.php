@@ -439,7 +439,7 @@ class Configure extends Object {
 /**
  * Class/file loader and path management.
  *
- * @link          http://book.cakephp.org/view/499/The-App-Class
+ * @link          http://book.cakephp.org/view/933/The-App-Class
  * @since         CakePHP(tm) v 1.2.0.6001
  * @package       cake
  * @subpackage    cake.cake.libs
