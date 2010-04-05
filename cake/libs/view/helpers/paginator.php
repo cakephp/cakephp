@@ -25,6 +25,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
+ * @link http://book.cakephp.org/view/1458/Paginator
  */
 class PaginatorHelper extends AppHelper {
 

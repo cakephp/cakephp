@@ -26,6 +26,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
+ * @link http://book.cakephp.org/view/1376/Cache
  */
 class CacheHelper extends AppHelper {
 

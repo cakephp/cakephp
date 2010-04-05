@@ -26,6 +26,7 @@ App::import('Helper', 'Xml');
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
+ * @link http://book.cakephp.org/view/1460/RSS
  */
 class RssHelper extends XmlHelper {
 

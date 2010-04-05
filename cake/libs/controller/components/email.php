@@ -27,6 +27,7 @@ App::import('Core', 'Multibyte');
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
+ * @link http://book.cakephp.org/view/1283/Email
  *
  */
 class EmailComponent extends Object{
@@ -225,6 +226,7 @@ class EmailComponent extends Object{
  *
  * @var array
  * @access public
+ * @link http://book.cakephp.org/view/1290/Sending-A-Message-Using-SMTP
  */
 	var $smtpOptions = array(
 		'port'=> 25, 'host' => 'localhost', 'timeout' => 30
@@ -390,6 +392,7 @@ class EmailComponent extends Object{
  * Reset all EmailComponent internal variables to be able to send out a new email.
  *
  * @access public
+ * @link http://book.cakephp.org/view/1285/Sending-Multiple-Emails-in-a-loop
  */
 	function reset() {
 		$this->template = null;

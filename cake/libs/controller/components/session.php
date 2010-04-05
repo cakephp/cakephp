@@ -28,6 +28,7 @@ if (!class_exists('cakesession')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
+ * @link http://book.cakephp.org/view/1310/Sessions
  *
  */
 class SessionComponent extends CakeSession {
@@ -99,6 +100,7 @@ class SessionComponent extends CakeSession {
  * @param string $value The value you want to store in a session.
  * @return boolean Success
  * @access public
+ * @link http://book.cakephp.org/view/1312/write
  */
 	function write($name, $value = null) {
 		if ($this->__active === true) {
@@ -128,6 +130,7 @@ class SessionComponent extends CakeSession {
  * @param string $name the name of the session key you want to read
  * @return mixed value from the session vars
  * @access public
+ * @link http://book.cakephp.org/view/1314/read
  */
 	function read($name = null) {
 		if ($this->__active === true) {
@@ -145,6 +148,7 @@ class SessionComponent extends CakeSession {
  * @param string $name the name of the session key you want to delete
  * @return boolean true is session variable is set and can be deleted, false is variable was not set.
  * @access public
+ * @link http://book.cakephp.org/view/1316/delete
  */
 	function delete($name) {
 		if ($this->__active === true) {
@@ -162,6 +166,7 @@ class SessionComponent extends CakeSession {
  * @param string $name the name of the session key you want to check
  * @return boolean true is session variable is set, false if not
  * @access public
+ * @link http://book.cakephp.org/view/1315/check
  */
 	function check($name) {
 		if ($this->__active === true) {
@@ -178,6 +183,7 @@ class SessionComponent extends CakeSession {
  *
  * @return string Last session error
  * @access public
+ * @link http://book.cakephp.org/view/1318/error
  */
 	function error() {
 		if ($this->__active === true) {
@@ -199,6 +205,7 @@ class SessionComponent extends CakeSession {
  * @param array $params Parameters to be sent to layout as view variables
  * @param string $key Message key, default is 'flash'
  * @access public
+ * @link http://book.cakephp.org/view/1313/setFlash
  */
 	function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
 		if ($this->__active === true) {
@@ -245,6 +252,7 @@ class SessionComponent extends CakeSession {
  *
  * @return void
  * @access public
+ * @link http://book.cakephp.org/view/1317/destroy
  */
 	function destroy() {
 		if ($this->__active === true) {

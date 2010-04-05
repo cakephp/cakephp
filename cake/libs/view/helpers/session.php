@@ -27,6 +27,7 @@ if (!class_exists('cakesession')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
+ * @link http://book.cakephp.org/view/1465/Session
  */
 class SessionHelper extends CakeSession {
 
@@ -78,6 +79,7 @@ class SessionHelper extends CakeSession {
  * @param string $name the name of the session key you want to read
  * @return values from the session vars
  * @access public
+ * @link http://book.cakephp.org/view/1466/Methods
  */
 	function read($name = null) {
 		if ($this->__active === true && $this->__start()) {
@@ -94,6 +96,7 @@ class SessionHelper extends CakeSession {
  * @param string $name
  * @return boolean
  * @access public
+ * @link http://book.cakephp.org/view/1466/Methods
  */
 	function check($name) {
 		if ($this->__active === true && $this->__start()) {
@@ -109,6 +112,7 @@ class SessionHelper extends CakeSession {
  *
  * @return string last error
  * @access public
+ * @link http://book.cakephp.org/view/1466/Methods
  */
 	function error() {
 		if ($this->__active === true && $this->__start()) {
@@ -126,6 +130,8 @@ class SessionHelper extends CakeSession {
  * @param string $key The [Message.]key you are rendering in the view.
  * @return boolean|string Will return the value if $key is set, or false if not set.
  * @access public
+ * @link http://book.cakephp.org/view/1466/Methods
+ * @link http://book.cakephp.org/view/1467/flash
  */
 	function flash($key = 'flash') {
 		$out = false;

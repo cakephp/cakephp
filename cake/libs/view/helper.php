@@ -182,6 +182,7 @@ class Helper extends Overloadable {
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
  * @access public
+ * @link http://book.cakephp.org/view/1448/url
  */
 	function url($url = null, $full = false) {
 		return h(Router::url($url, $full));
