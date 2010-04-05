@@ -21,18 +21,13 @@
  */
 
 /**
- * Included libs
- */
-App::import('Core', 'Overloadable');
-
-/**
  * Abstract base class for all other Helpers in CakePHP.
  * Provides common methods and features.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view
  */
-class Helper extends Overloadable {
+class Helper {
 
 /**
  * List of helpers used by this helper
@@ -147,9 +142,7 @@ class Helper extends Overloadable {
  * Default overload methods
  *
  */
-	protected function get__($name) {}
-	protected function set__($name, $value) {}
-	protected function call__($method, $params) {
+	protected function __call($method, $params) {
 		trigger_error(sprintf(__('Method %1$s::%2$s does not exist', true), get_class($this), $method), E_USER_WARNING);
 	}
 
