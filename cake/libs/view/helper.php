@@ -139,6 +139,14 @@ class Helper {
 	private $__cleaned = null;
 
 /**
+ * Default Constructor
+ *
+ */
+	public function __construct() {
+		// Nothing to see here.
+	}
+
+/**
  * Default overload methods
  *
  */
