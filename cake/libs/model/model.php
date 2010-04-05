@@ -491,7 +491,7 @@ class Model extends Overloadable {
  * @param array $params Parameters for the method.
  * @return mixed Whatever is returned by called method
  */
-	protected function call__($method, $params) {
+	public function __call($method, $params) {
 		$result = $this->Behaviors->dispatchMethod($this, $method, $params);
 
 		if ($result !== array('unhandled')) {
@@ -500,9 +500,6 @@ class Model extends Overloadable {
 		$db =& ConnectionManager::getDataSource($this->useDbConfig);
 		$return = $db->query($method, $params, $this);
 
-		if (!PHP5) {
-			$this->resetAssociations();
-		}
 		return $return;
 	}
 
