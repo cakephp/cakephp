@@ -631,30 +631,33 @@ class CakeTestCase extends UnitTestCase {
 				}
 				$attrs = array();
 				$explanations = array();
+				$i = 1;
 				foreach ($attributes as $attr => $val) {
 					if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
 						$attrs[] = $matches[1];
 						$explanations[] = sprintf('Regex "%s" matches', $matches[1]);
 						continue;
 					} else {
-						$quotes = '"';
+						$quotes = '["\']';
 						if (is_numeric($attr)) {
 							$attr = $val;
 							$val = '.+?';
 							$explanations[] = sprintf('Attribute "%s" present', $attr);
 						} elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-							$quotes = '"?';
+							$quotes = '["\']?';
 							$val = $matches[1];
 							$explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
 						} else {
 							$explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
 							$val = preg_quote($val, '/');
 						}
-						$attrs[] = '[\s]+'.preg_quote($attr, '/').'='.$quotes.$val.$quotes;
+						$attrs[] = '[\s]+' . preg_quote($attr, '/') . '=' . $quotes . $val . $quotes;
 					}
+					$i++;
 				}
 				if ($attrs) {
 					$permutations = $this->__array_permute($attrs);
+
 					$permutationTokens = array();
 					foreach ($permutations as $permutation) {
 						$permutationTokens[] = implode('', $permutation);

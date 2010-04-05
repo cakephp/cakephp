@@ -138,7 +138,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($this->Case->assertTags($input, $pattern));
+		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Attributes in wrong order. %s');
 
 		$input = "<a    href=\"/test.html\"\t\n\tclass=\"active\"\tid=\"primary\">\t<span>My link</span></a>";
 		$pattern = array(
@@ -148,7 +148,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/span',
 			'/a'
 		);
-		$this->assertTrue($this->Case->assertTags($input, $pattern));
+		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Whitespace consumption %s');
 
 		$input = '<p class="info"><a href="/test.html" class="active"><strong onClick="alert(\'hey\');">My link</strong></a></p>';
 		$pattern = array(
@@ -161,6 +161,37 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/p'
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern));
+	}
+
+/**
+ * test that assertTags knows how to handle correct quoting.
+ *
+ * @return void
+ */
+	function testAssertTagsQuotes() {
+		$input = '<a href="/test.html" class="active">My link</a>';
+		$pattern = array(
+			'a' => array('href' => '/test.html', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Double quoted attributes %s');
+
+		$input = "<a href='/test.html' class='active'>My link</a>";
+		$pattern = array(
+			'a' => array('href' => '/test.html', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Single quoted attributes %s');
+		
+		$input = "<a href='/test.html' class='active'>My link</a>";
+		$pattern = array(
+			'a' => array('href' => 'preg:/.*\.html/', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Single quoted attributes %s');
 	}
 
 /**
