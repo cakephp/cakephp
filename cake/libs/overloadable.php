@@ -21,13 +21,87 @@
 /**
  * Overloadable class selector
  *
+ * Load the interface class based on the version of PHP.
+ *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
+class Overloadable extends Object {
 
 /**
- * Load the interface class based on the version of PHP.
+ * Overload implementation. No need for implementation in PHP5.
  *
  */
-require(LIBS . 'overloadable_php5.php');
+	public function overload() { }
+
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @return mixed Return value from method
+ * @access private
+ */
+	function __call($method, $params) {
+		if (!method_exists($this, 'call__')) {
+			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
+		}
+		return $this->call__($method, $params);
+	}
+}
+
+/**
+ * Overloadable2 class selector
+ *
+ * Load the interface class based on the version of PHP.
+ *
+ * @package       cake
+ */
+class Overloadable2 extends Object {
+
+/**
+ * Overload implementation. No need for implementation in PHP5.
+ *
+ */
+	public function overload() { }
+
+/**
+ * Magic method handler.
+ *
+ * @param string $method Method name
+ * @param array $params Parameters to send to method
+ * @return mixed Return value from method
+ * @access private
+ */
+	function __call($method, $params) {
+		if (!method_exists($this, 'call__')) {
+			trigger_error(sprintf(__('Magic method handler call__ not defined in %s', true), get_class($this)), E_USER_ERROR);
+		}
+		return $this->call__($method, $params);
+	}
+
+/**
+ * Getter.
+ *
+ * @param mixed $name What to get
+ * @param mixed $value Where to store returned value
+ * @return boolean Success
+ * @access private
+ */
+	function __get($name) {
+		return $this->get__($name);
+	}
+
+/**
+ * Setter.
+ *
+ * @param mixed $name What to set
+ * @param mixed $value Value to set
+ * @return boolean Success
+ * @access private
+ */
+	function __set($name, $value) {
+		return $this->set__($name, $value);
+	}
+}
 ?>
