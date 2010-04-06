@@ -180,6 +180,7 @@ class Helper {
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string  Full translated URL with base path.
+ * @link http://book.cakephp.org/view/1448/url
  */
 	public function url($url = null, $full = false) {
 		return h(Router::url($url, $full));

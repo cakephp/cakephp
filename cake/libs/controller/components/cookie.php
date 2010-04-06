@@ -30,6 +30,7 @@ App::import('Core', 'Security');
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
+ * @link http://book.cakephp.org/view/1280/Cookies
  *
  */
 class CookieComponent extends Object {

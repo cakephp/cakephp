@@ -27,6 +27,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
+ * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {
 
@@ -182,6 +183,7 @@ class FormHelper extends AppHelper {
  * @param string $model The model object which the form is being defined for
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
+ * @link http://book.cakephp.org/view/1384/Creating-Forms
  */
 	function create($model = null, $options = array()) {
 		$created = $id = false;
@@ -334,6 +336,8 @@ class FormHelper extends AppHelper {
  *
  * @param mixed $options as a string will use $options as the value of button,
  * @return string a closing FORM tag optional submit button.
+ * @access public
+ * @link http://book.cakephp.org/view/1389/Closing-the-Form
  */
 	public function end($options = null) {
 		if (!empty($this->params['models'])) {
@@ -443,6 +447,8 @@ class FormHelper extends AppHelper {
  *
  * @param string $field This should be "Modelname.fieldname"
  * @return boolean If there are errors this method returns true, else false.
+ * @access public
+ * @link http://book.cakephp.org/view/1426/isFieldError
  */
 	public function isFieldError($field) {
 		$this->setEntity($field);
@@ -463,6 +469,8 @@ class FormHelper extends AppHelper {
  * @param mixed $text Error message or array of $options
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
+ * @access public
+ * @link http://book.cakephp.org/view/1423/error
  */
 	public function error($field, $text = null, $options = array()) {
 		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
@@ -517,6 +525,7 @@ class FormHelper extends AppHelper {
  * @param string $text Text that will appear in the label field.
  * @param mixed $options An array of HTML attributes, or a string, to be used as a class name.
  * @return string The formatted LABEL element
+ * @link http://book.cakephp.org/view/1427/label
  */
 	function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
@@ -673,6 +682,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
  * @return string Completed form widget.
+ * @access public
+ * @link http://book.cakephp.org/view/1390/Automagic-Form-Elements
  */
 	public function input($fieldName, $options = array()) {
 		$this->setEntity($fieldName);
@@ -963,6 +974,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string An HTML text input element.
+ * @access public
+ * @link http://book.cakephp.org/view/1414/checkbox
  */
 	public function checkbox($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
@@ -1010,6 +1023,8 @@ class FormHelper extends AppHelper {
  * @param array $options Radio button options array.
  * @param array $attributes Array of HTML attributes, and special attributes above.
  * @return string Completed radio widget set.
+ * @access public
+ * @link http://book.cakephp.org/view/1429/radio
  */
 	public function radio($fieldName, $options = array(), $attributes = array()) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
@@ -1092,6 +1107,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated HTML text input element
+ * @access public
+ * @link http://book.cakephp.org/view/1432/text
  */
 	public function text($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, array_merge(
@@ -1110,6 +1127,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, like in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated password input.
+ * @access public
+ * @link http://book.cakephp.org/view/1428/password
  */
 	public function password($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
@@ -1130,6 +1149,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes, and special options above.
  * @return string A generated HTML text input element
+ * @access public
+ * @link http://book.cakephp.org/view/1433/textarea
  */
 	public function textarea($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
@@ -1156,6 +1177,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form of "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated hidden input
+ * @access public
+ * @link http://book.cakephp.org/view/1425/hidden
  */
 	public function hidden($fieldName, $options = array()) {
 		$secure = true;
@@ -1186,6 +1209,8 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
  * @param array $options Array of HTML attributes.
  * @return string A generated file input.
+ * @access public
+ * @link http://book.cakephp.org/view/1424/file
  */
 	public function file($fieldName, $options = array()) {
 		$options = array_merge($options, array('secure' => false));
@@ -1212,6 +1237,8 @@ class FormHelper extends AppHelper {
  * @param string $title The button's caption. Not automatically HTML encoded
  * @param array $options Array of options and HTML attributes.
  * @return string A HTML button tag.
+ * @access public
+ * @link http://book.cakephp.org/view/1415/button
  */
 	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false);
@@ -1252,6 +1279,8 @@ class FormHelper extends AppHelper {
  *  OR if the first character is not /, image is relative to webroot/img.
  * @param array $options Array of options.  See above.
  * @return string A HTML submit button
+ * @access public
+ * @link http://book.cakephp.org/view/1431/submit
  */
 	public function submit($caption = null, $options = array()) {
 		if (!$caption) {
@@ -1362,6 +1391,8 @@ class FormHelper extends AppHelper {
  *   from POST data will be used when available.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
+ * @access public
+ * @link http://book.cakephp.org/view/1430/select
  */
 	public function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
 		$select = array();
@@ -1459,6 +1490,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes HTML attributes for the select element
  * @return string A generated day select box.
+ * @access public
+ * @link http://book.cakephp.org/view/1419/day
  */
 	public function day($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1488,6 +1521,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
  * @return string Completed year select input
+ * @access public
+ * @link http://book.cakephp.org/view/1416/year
  */
 	public function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1539,6 +1574,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes Attributes for the select element
  * @return string A generated month select dropdown.
+ * @access public
+ * @link http://book.cakephp.org/view/1417/month
  */
 	public function month($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1574,6 +1611,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
  * @return string Completed hour select input
+ * @access public
+ * @link http://book.cakephp.org/view/1420/hour
  */
 	public function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1607,6 +1646,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @return string Completed minute select input.
+ * @access public
+ * @link http://book.cakephp.org/view/1421/minute
  */
 	public function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1669,6 +1710,8 @@ class FormHelper extends AppHelper {
  * @param string $attributes Array of Attributes
  * @param bool $showEmpty Show/Hide an empty option
  * @return string Completed meridian select input
+ * @access public
+ * @link http://book.cakephp.org/view/1422/meridian
  */
 	public function meridian($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
@@ -1716,6 +1759,8 @@ class FormHelper extends AppHelper {
  * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
  * @return string Generated set of select boxes for the date and time formats chosen.
+ * @access public
+ * @link http://book.cakephp.org/view/1418/dateTime
  */
 	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);

@@ -23,6 +23,7 @@ App::import('Core', array('String', 'Security'));
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
+ * @link http://book.cakephp.org/view/1296/Security-Component
  */
 class SecurityComponent extends Object {
 
@@ -212,6 +213,7 @@ class SecurityComponent extends Object {
  * Sets the actions that require a POST request, or empty for all actions
  *
  * @return void
+ * @link http://book.cakephp.org/view/1299/requirePost
  */
 	public function requirePost() {
 		$args = func_get_args();
@@ -252,6 +254,7 @@ class SecurityComponent extends Object {
  * Sets the actions that require a request that is SSL-secured, or empty for all actions
  *
  * @return void
+ * @link http://book.cakephp.org/view/1300/requireSecure
  */
 	public function requireSecure() {
 		$args = func_get_args();
@@ -262,6 +265,7 @@ class SecurityComponent extends Object {
  * Sets the actions that require an authenticated request, or empty for all actions
  *
  * @return void
+ * @link http://book.cakephp.org/view/1301/requireAuth
  */
 	public function requireAuth() {
 		$args = func_get_args();
@@ -272,6 +276,7 @@ class SecurityComponent extends Object {
  * Sets the actions that require an HTTP-authenticated request, or empty for all actions
  *
  * @return void
+ * @link http://book.cakephp.org/view/1302/requireLogin
  */
 	public function requireLogin() {
 		$args = func_get_args();
@@ -296,6 +301,7 @@ class SecurityComponent extends Object {
  *
  * @param string $type Either 'basic', 'digest', or null. If null/empty, will try both.
  * @return mixed If successful, returns an array with login name and password, otherwise null.
+ * @link http://book.cakephp.org/view/1303/loginCredentials-string-type
  */
 	public function loginCredentials($type = null) {
 		switch (strtolower($type)) {
@@ -334,6 +340,7 @@ class SecurityComponent extends Object {
  *
  * @param array $options Set of options for header
  * @return string HTTP-authentication request header
+ * @link http://book.cakephp.org/view/1304/loginRequest-array-options
  */
 	public function loginRequest($options = array()) {
 		$options = array_merge($this->loginOptions, $options);
@@ -355,6 +362,7 @@ class SecurityComponent extends Object {
  *
  * @param string $digest Digest authentication response
  * @return array Digest authentication parameters
+ * @link http://book.cakephp.org/view/1305/parseDigestAuthData-string-digest
  */
 	public function parseDigestAuthData($digest) {
 		if (substr($digest, 0, 7) == 'Digest ') {
@@ -383,6 +391,7 @@ class SecurityComponent extends Object {
  * @return string Digest authentication hash
  * @access public
  * @see SecurityComponent::parseDigestAuthData()
+ * @link http://book.cakephp.org/view/1306/generateDigestResponseHash-array-data
  */
 	function generateDigestResponseHash($data) {
 		return md5(
@@ -401,6 +410,7 @@ class SecurityComponent extends Object {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @access public
  * @see SecurityComponent::$blackHoleCallback
+ * @link http://book.cakephp.org/view/1307/blackHole-object-controller-string-error
  */
 	function blackHole(&$controller, $error = '') {
 		if ($this->blackHoleCallback == null) {

@@ -607,7 +607,7 @@ class Shell extends Object {
  * @return string Plural human name
  */
 	protected function _pluralHumanName($name) {
-		return Inflector::humanize(Inflector::underscore(Inflector::pluralize($name)));
+		return Inflector::humanize(Inflector::underscore($name));
 	}
 
 /**
