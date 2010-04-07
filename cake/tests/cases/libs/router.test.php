@@ -741,7 +741,7 @@ class RouterTest extends CakeTestCase {
 			'lang' => 'en',
 			'controller' => 'shows', 'action' => 'index', 'page' => '1',
 		));
-		$expected = '/en/shows/page:1';
+		$expected = '/en/shows/shows/page:1';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1125,7 +1125,7 @@ class RouterTest extends CakeTestCase {
 		Router::parse('/');
 
 		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
-		$expected = '/admin/test_plugin';
+		$expected = '/admin/test_plugin/test_plugin';
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
