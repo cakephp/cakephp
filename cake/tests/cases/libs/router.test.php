@@ -1943,6 +1943,7 @@ class RouterTest extends CakeTestCase {
 			)
 		), true);
 		App::objects('plugin', null, false);
+		Router::reload();
 
 		$plugins = App::objects('plugin');
 		$plugin = Inflector::underscore($plugins[0]);
@@ -1955,6 +1956,17 @@ class RouterTest extends CakeTestCase {
 			'named' => array(), 'pass' => array()
 		);
 		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
+		$this->assertEqual($result, '/test_plugin');
+
+		$result = Router::parse('/test_plugin');
+		$expected = array(
+			'plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index',
+			'named' => array(), 'pass' => array()
+		);
+
+		$this->assertEqual($result, $expected, 'Plugin shortcut route broken. %s');
 	}
 
 /**
