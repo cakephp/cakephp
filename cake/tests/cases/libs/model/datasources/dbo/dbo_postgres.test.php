@@ -795,6 +795,14 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT Article.id)'));
 		$expected = array('COUNT(DISTINCT "Article"."id")');
 		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT id)'));
+		$expected = array('COUNT(DISTINCT "id")');
+		$this->assertEqual($result, $expected);
+
+		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
+		$expected = array('COUNT(DISTINCT FUNC("id"))');
+		$this->assertEqual($result, $expected);
 	}
 }
 ?>
