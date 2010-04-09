@@ -264,7 +264,7 @@ class JavascriptHelper extends AppHelper {
 					$url .= '.js';
 				}
 			}
-			$url = $this->webroot($this->assetTimestamp($url));
+			$url = $this->assetTimestamp($this->webroot($url));
 
 			if (Configure::read('Asset.filter.js')) {
 				$pos = strpos($url, JS_URL);

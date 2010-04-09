@@ -304,14 +304,15 @@ class HtmlHelperTest extends CakeTestCase {
 	function testImageWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
+		$this->Html->webroot = '/';
 		$result = $this->Html->image('cake.icon.png');
-		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
+		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.png');
-		$this->assertTags($result, array('img' => array('src' => 'preg:/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
+		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/longer/';
@@ -331,30 +332,42 @@ class HtmlHelperTest extends CakeTestCase {
  * @link https://trac.cakephp.org/ticket/6490
  */
 	function testImageTagWithTheme() {
+		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
+			return;
+		}
+		App::import('Core', 'File');
+
+		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
+		$file =& new File($testfile, true);
+
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
-		
+
+		$this->Html->webroot = '/';
 		$this->Html->theme = 'test_theme';
-		$result = $this->Html->image('cake.power.gif');
+		$result = $this->Html->image('__cake_test_image.gif');
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
 
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
-		$result = $this->Html->image('cake.power.gif');
+		$result = $this->Html->image('__cake_test_image.gif');
 		
 		$this->assertTags($result, array(
 			'img' => array(
-				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/cake\.power\.gif\?\d+/',
+				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
 		$this->Html->webroot = $webroot;
+		
+		$dir =& new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$dir->delete();
 	}
 	
 /**
@@ -364,6 +377,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testThemeAssetsInMainWebrootPath() {
+		Configure::write('Asset.timestamp', false);
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
@@ -542,6 +556,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testScript() {
+		Configure::write('Asset.timestamp', false);
 		$result = $this->Html->script('foo');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')

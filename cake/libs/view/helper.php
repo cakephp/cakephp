@@ -241,7 +241,8 @@ class Helper {
 			Configure::read('Asset.timestamp') === 'force'
 		);
 		if (strpos($path, '?') === false && $timestampEnabled) {
-			$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $path));
+			$filepath = preg_replace('/^' . preg_quote($this->webroot, '/') . '/', '', $path);
+			$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $filepath));
 		}
 		return $path;
 	}

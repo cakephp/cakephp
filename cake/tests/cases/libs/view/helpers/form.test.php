@@ -1225,6 +1225,31 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDisableSecurityUsingForm method
+ *
+ * @access public
+ * @return void
+ */
+	function testDisableSecurityUsingForm() {
+		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token']['disabledFields'] = array();
+		$this->Form->create();
+
+		$this->Form->hidden('Addresses.id', array('value' => '123456'));
+		$this->Form->input('Addresses.title');
+		$this->Form->input('Addresses.first_name', array('secure' => false));
+		$this->Form->input('Addresses.city', array('type' => 'textarea', 'secure' => false));
+		$this->Form->input('Addresses.zip', array(
+			'type' => 'select', 'options' => array(1,2), 'secure' => false
+		));
+
+		$result = $this->Form->fields;
+		$expected = array(
+			'Addresses.id' => '123456', 'Addresses.title',
+		);
+		$this->assertEqual($result, $expected);
+	}
+/**
  * testPasswordValidation method
  *
  * test validation errors on password input.

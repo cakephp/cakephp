@@ -540,17 +540,29 @@ class Router {
  * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created
  * in the order below:
  *
+ * For each of the Routing.prefixes the following routes are created. Routes containing `:plugin` are only
+ * created when your application has one or more plugins.
+ *
+ * - `/:prefix/:plugin` a plugin shortcut route.
+ * - `/:prefix/:plugin/:action/*` a plugin shortcut route.
  * - `/:prefix/:plugin/:controller`
  * - `/:prefix/:plugin/:controller/:action/*`
  * - `/:prefix/:controller`
  * - `/:prefix/:controller/:action/*`
+ *
+ * If plugins are found in your application the following routes are created:
+ *
+ * - `/:plugin` a plugin shortcut route.
+ * - `/:plugin/:action/*` a plugin shortcut route.
  * - `/:plugin/:controller`
  * - `/:plugin/:controller/:action/*`
+ *
+ * And lastly the following catch-all routes are connected.
+ *
  * - `/:controller'
  * - `/:controller/:action/*'
  *
- * A prefix route is generated for each Routing.prefixes declared in core.php. You can disable the
- * connection of default routes with Router::defaults().
+ * You can disable the connection of default routes with Router::defaults().
  *
  * @return void
  * @access private
@@ -560,7 +572,8 @@ class Router {
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}
-			$match = array('plugin' => implode('|', $plugins));
+			$pluginPattern = implode('|', $plugins);
+			$match = array('plugin' => $pluginPattern);
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
@@ -568,6 +581,8 @@ class Router {
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
+			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
+			$this->connect('/:plugin', array('action' => 'index'), $shortParams);
 			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
 		}
@@ -907,7 +922,7 @@ class Router {
 
 		$urlOut = array_filter(array($url['controller'], $url['action']));
 
-		if (isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+		if (isset($url['plugin'])) {
 			array_unshift($urlOut, $url['plugin']);
 		}
 
@@ -1406,6 +1421,7 @@ class CakeRoute {
 			$route['pass'] = $route['named'] = array();
 			$route += $this->defaults;
 
+			//move numerically indexed elements from the defaults into pass.
 			foreach ($route as $key => $value) {
 				if (is_integer($key)) {
 					$route['pass'][] = $value;
@@ -1523,10 +1539,6 @@ class CakeRoute {
  * @return string Composed route string.
  */
 	protected function _writeUrl($params) {
-		if (isset($params['plugin'], $params['controller']) && $params['plugin'] === $params['controller']) {
-			unset($params['controller']);
-		}
-
 		if (isset($params['prefix'], $params['action'])) {
 			$params['action'] = str_replace($params['prefix'] . '_', '', $params['action']);
 			unset($params['prefix']);
@@ -1568,4 +1580,47 @@ class CakeRoute {
 		return $out;
 	}
 }
+
+/**
+ * Plugin short route, that copies the plugin param to the controller parameters
+ * It is used for supporting /:plugin routes.
+ *
+ * @package cake.libs
+ */
+class PluginShortRoute extends CakeRoute {
+
+/**
+ * Parses a string url into an array.  If a plugin key is found, it will be copied to the 
+ * controller parameter
+ *
+ * @param string $url The url to parse
+ * @return mixed false on failure, or an array of request parameters
+ */
+	public function parse($url) {
+		$params = parent::parse($url);
+		if (!$params) {
+			return false;
+		}
+		$params['controller'] = $params['plugin'];
+		return $params;
+	}
+
+/**
+ * Reverse route plugin shortcut urls.  If the plugin and controller
+ * are not the same the match is an auto fail.
+ *
+ * @param array $url Array of parameters to convert to a string.
+ * @return mixed either false or a string url.
+ */
+	public function match($url) {
+		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
+			return false;
+		}
+		$this->defaults['controller'] = $url['controller'];
+		$result = parent::match($url);
+		unset($this->defaults['controller']);
+		return $result;
+	}
+}
+
 ?>

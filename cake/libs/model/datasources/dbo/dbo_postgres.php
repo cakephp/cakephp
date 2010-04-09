@@ -492,7 +492,7 @@ class DboPostgres extends DboSource {
 			$match[1] = trim(str_replace('DISTINCT', '', $match[1]));
 		}
 		if (strpos($match[1], '.') === false) {
-			$match[1] = $this->name($alias . '.' . $match[1]);
+			$match[1] = $this->name($match[1]);
 		} else {
 			$parts = explode('.', $match[1]);
 			if (!Set::numeric($parts)) {
