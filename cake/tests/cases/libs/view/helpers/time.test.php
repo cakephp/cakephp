@@ -661,7 +661,9 @@ class TimeHelperTest extends CakeTestCase {
 			'locales' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'locale' . DS)
 		), true);
 		Configure::write('Config.language', 'time_test');
+
 		$time = 1263487419; // Thu Jan 14 11:43:39 2010
+		date_default_timezone_set('Etc/GMT+5');
 
 		$result = $this->Time->convertSpecifiers('%a', $time);
 		$expected = 'jue';
