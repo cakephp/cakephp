@@ -707,73 +707,73 @@ class ValidationTest extends CakeTestCase {
 
 		//American Express
 		$this->Validation->check = '370482756063980';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//BankCard
 		$this->Validation->check = '5610745867413420';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Diners Club 14
 		$this->Validation->check = '30155483651028';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//2004 MasterCard/Diners Club Alliance International 14
 		$this->Validation->check = '36747701998969';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//2004 MasterCard/Diners Club Alliance US & Canada 16
 		$this->Validation->check = '5597511346169950';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Discover
 		$this->Validation->check = '6011802876467237';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//enRoute
 		$this->Validation->check = '201496944158937';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//JCB 15 digit
 		$this->Validation->check = '210034762247893';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//JCB 16 digit
 		$this->Validation->check = '3096806857839939';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Maestro (debit card)
 		$this->Validation->check = '5020147409985219';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Mastercard
 		$this->Validation->check = '5580424361774366';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Solo 16
 		$this->Validation->check = '6767432107064987';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Solo 18
 		$this->Validation->check = '676714834398858593';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Solo 19
 		$this->Validation->check = '6767838565218340113';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Switch 16
 		$this->Validation->check = '5641829171515733';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Switch 18
 		$this->Validation->check = '493622764224625174';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Switch 19
 		$this->Validation->check = '6759603460617628716';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//VISA 13 digit
 		$this->Validation->check = '4024007174754';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//VISA 16 digit
 		$this->Validation->check = '4916375389940009';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Visa Electron
 		$this->Validation->check = '4175003346287100';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 		//Voyager
 		$this->Validation->check = '869940697287073';
-		$this->assertTrue($this->Validation->_luhn());
+		$this->assertTrue($this->Validation->luhn());
 
 		$this->Validation->check = '0000000000000000';
-		$this->assertFalse($this->Validation->_luhn());
+		$this->assertFalse($this->Validation->luhn());
 
 		$this->Validation->check = '869940697287173';
-		$this->assertFalse($this->Validation->_luhn());
+		$this->assertFalse($this->Validation->luhn());
 	}
 
 /**

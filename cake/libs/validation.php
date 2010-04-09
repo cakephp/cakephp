@@ -210,7 +210,7 @@ class Validation extends Object {
  * @param string $regex A custom regex can also be passed, this will be used instead of the defined regex values
  * @return boolean Success
  * @access public
- * @see Validation::_luhn()
+ * @see Validation::luhn()
  */
 	function cc($check, $type = 'fast', $deep = false, $regex = null) {
 		$_this =& Validation::getInstance();
@@ -231,7 +231,7 @@ class Validation extends Object {
 
 		if (!is_null($_this->regex)) {
 			if ($_this->_check()) {
-				return $_this->_luhn();
+				return $_this->luhn();
 			}
 		}
 		$cards = array(
@@ -258,7 +258,7 @@ class Validation extends Object {
 				$_this->regex = $cards['all'][strtolower($value)];
 
 				if ($_this->_check()) {
-					return $_this->_luhn();
+					return $_this->luhn();
 				}
 			}
 		} elseif ($_this->type == 'all') {
@@ -266,14 +266,14 @@ class Validation extends Object {
 				$_this->regex = $value;
 
 				if ($_this->_check()) {
-					return $_this->_luhn();
+					return $_this->luhn();
 				}
 			}
 		} else {
 			$_this->regex = $cards['fast'];
 
 			if ($_this->_check()) {
-				return $_this->_luhn();
+				return $_this->luhn();
 			}
 		}
 	}
@@ -956,7 +956,7 @@ class Validation extends Object {
  * @see http://en.wikipedia.org/wiki/Luhn_algorithm
  * @return boolean Success
  */
-	protected function _luhn() {
+	public function luhn() {
 		$_this =& Validation::getInstance();
 		if ($_this->deep !== true) {
 			return true;
