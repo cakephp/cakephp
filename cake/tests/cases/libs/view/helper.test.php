@@ -467,6 +467,10 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css?someparam');
 		$this->assertEqual($result, CSS_URL . 'cake.generic.css?someparam');
 
+		$this->Helper->webroot = '/some/dir/';
+		$result = $this->Helper->assetTimestamp('/some/dir/' . CSS_URL . 'cake.generic.css');
+		$this->assertPattern('/' . preg_quote(CSS_URL . 'cake.generic.css?', '/') . '[0-9]+/', $result);
+
 		Configure::write('debug', $_debug);
 		Configure::write('Asset.timestamp', $_timestamp);
 	}
