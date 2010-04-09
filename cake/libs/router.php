@@ -1596,6 +1596,7 @@ class CakeRoute {
  * @package cake.libs
  */
 class PluginShortRoute extends CakeRoute {
+
 /**
  * Parses a string url into an array.  If a plugin key is found, it will be copied to the 
  * controller parameter
