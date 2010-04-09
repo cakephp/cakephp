@@ -27,6 +27,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
+ * @link http://book.cakephp.org/view/958/The-Pages-Controller
  */
 class PagesController extends AppController {
 

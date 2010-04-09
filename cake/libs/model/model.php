@@ -41,7 +41,7 @@ if (!class_exists('Overloadable')) {
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model
- * @link          http://book.cakephp.org/view/66/Models
+ * @link          http://book.cakephp.org/view/1000/Models
  */
 class Model extends Overloadable {
 

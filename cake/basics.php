@@ -52,6 +52,7 @@ if (!function_exists('clone')) {
  * `config('config1', 'config2');`
  *
  * @return boolean Success
+ * @link http://book.cakephp.org/view/1125/config
  */
 	function config() {
 		$args = func_get_args();
@@ -82,6 +83,7 @@ if (!function_exists('clone')) {
  *
  * @param string $name Filename without the .php part
  * @deprecated Will be removed in 2.0
+ * @link http://book.cakephp.org/view/1140/uses
  */
 	function uses() {
 		$args = func_get_args();
@@ -99,6 +101,7 @@ if (!function_exists('clone')) {
  * @param boolean $showHtml If set to true, the method prints the debug data in a screen-friendly way.
  * @param boolean $showFrom If set to true, the method prints from where the function was called.
  * @link http://book.cakephp.org/view/1190/Basic-Debugging
+ * @link http://book.cakephp.org/view/1128/debug
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read() > 0) {

@@ -25,6 +25,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
+ * @link http://book.cakephp.org/view/1320/ACL
  */
 class AclBehavior extends ModelBehavior {
 
@@ -69,6 +70,7 @@ class AclBehavior extends ModelBehavior {
  * @param mixed $ref
  * @return array
  * @access public
+ * @link http://book.cakephp.org/view/1322/node
  */
 	function node(&$model, $ref = null) {
 		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
