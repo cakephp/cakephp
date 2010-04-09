@@ -358,7 +358,7 @@ class HtmlHelper extends AppHelper {
 					$path .= '.css';
 				}
 			}
-			$url = $this->webroot($this->assetTimestamp($path));
+			$url = $this->assetTimestamp($this->webroot($path));
 
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, CSS_URL);
@@ -434,7 +434,7 @@ class HtmlHelper extends AppHelper {
 			if (strpos($url, '?') === false && strpos($url, '.js') === false) {
 				$url .= '.js';
 			}
-			$url = $this->webroot($this->assetTimestamp($url));
+			$url = $this->assetTimestamp($this->webroot($url));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(JS_URL, 'cjs/', $url);
@@ -608,7 +608,7 @@ class HtmlHelper extends AppHelper {
 			if ($path[0] !== '/') {
 				$path = IMAGES_URL . $path;
 			}
-			$path = $this->webroot($this->assetTimestamp($path));
+			$path = $this->assetTimestamp($this->webroot($path));
 		}
 
 		if (!isset($options['alt'])) {
