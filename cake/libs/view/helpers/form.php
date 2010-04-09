@@ -1412,6 +1412,9 @@ class FormHelper extends AppHelper {
 			$escapeOptions = $attributes['escape'];
 			unset($attributes['escape']);
 		}
+		if (isset($attributes['secure'])) {
+			$secure = $attributes['secure'];
+		}
 		if (isset($attributes['empty'])) {
 			$showEmpty = $attributes['empty'];
 			unset($attributes['empty']);
@@ -1452,7 +1455,9 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			$this->__secure();
+			if (!isset($secure) || $secure == true) { 
+				$this->__secure();
+			}
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
 				$attributes, array('name', 'value'))
 			);
