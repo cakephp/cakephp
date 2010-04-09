@@ -890,9 +890,8 @@ class Validation extends Object {
  * @param mixed $check The value to check or an array of parameters for the method to be called.
  * @param string $classPrefix The prefix for the class to do the validation.
  * @return mixed Return of Passed method, false on failure
- * @access protected
- **/
-	function _pass($method, $check, $classPrefix) {
+ */
+	protected function _pass($method, $check, $classPrefix) {
 		$className = ucwords($classPrefix) . 'Validation';
 		if (!class_exists($className)) {
 			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
@@ -985,7 +984,7 @@ class Validation extends Object {
  * @return void
  * @access private
  */
-	function __populateIp() {
+	private function __populateIp() {
 		if (!isset($this->__pattern['IPv6'])) {
 			$pattern  = '((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}';
 			$pattern .= '(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})';
@@ -1016,7 +1015,7 @@ class Validation extends Object {
  * @return void
  * @access private
  */
-	function __reset() {
+	private function __reset() {
 		$this->check = null;
 		$this->regex = null;
 		$this->country = null;
