@@ -259,7 +259,7 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
 		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertPattern('/var \$scaffold/', $result);
+		$this->assertPattern('/public \$scaffold/', $result);
 		$this->assertNoPattern('/helpers/', $result);
 		$this->assertNoPattern('/components/', $result);
 
