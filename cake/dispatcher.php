@@ -72,12 +72,12 @@ class Dispatcher extends Object {
 /**
  * Constructor.
  */
-	function __construct($url = null, $base = false) {
+	public function __construct($url = null, $base = false) {
 		if ($base !== false) {
 			Configure::write('App.base', $base);
 		}
 		if ($url !== null) {
-			return $this->dispatch($url);
+			$this->dispatch($url);
 		}
 	}
 
