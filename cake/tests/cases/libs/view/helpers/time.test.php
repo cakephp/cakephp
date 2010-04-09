@@ -662,6 +662,7 @@ class TimeHelperTest extends CakeTestCase {
 		), true);
 		Configure::write('Config.language', 'time_test');
 		$time = 1263487419; // Thu Jan 14 11:43:39 2010
+		date_default_timezone_set('Etc/GMT+5');
 
 		$result = $this->Time->convertSpecifiers('%a', $time);
 		$expected = 'jue';
