@@ -144,8 +144,8 @@ class FixtureTaskTest extends CakeTestCase {
 		$result = $this->Task->bake('Article', false, array('fromTable' => true, 'schema' => 'Article', 'records' => false));
 
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/var \$records/', $result);
-		$this->assertPattern('/var \$import/', $result);
+		$this->assertPattern('/public \$records/', $result);
+		$this->assertPattern('/public \$import/', $result);
 		$this->assertPattern("/'title' => 'First Article'/", $result, 'Missing import data %s');
 		$this->assertPattern('/Second Article/', $result, 'Missing import data %s');
 		$this->assertPattern('/Third Article/', $result, 'Missing import data %s');
@@ -265,28 +265,28 @@ class FixtureTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Article');
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/var \$fields/', $result);
-		$this->assertPattern('/var \$records/', $result);
-		$this->assertNoPattern('/var \$import/', $result);
+		$this->assertPattern('/public \$fields/', $result);
+		$this->assertPattern('/public \$records/', $result);
+		$this->assertNoPattern('/public \$import/', $result);
 
 		$result = $this->Task->bake('Article', 'comments');
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
-		$this->assertPattern('/var \$name \= \'Article\';/', $result);
-		$this->assertPattern('/var \$table \= \'comments\';/', $result);
-		$this->assertPattern('/var \$fields = array\(/', $result);
+		$this->assertPattern('/public \$name \= \'Article\';/', $result);
+		$this->assertPattern('/public \$table \= \'comments\';/', $result);
+		$this->assertPattern('/public \$fields = array\(/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertPattern("/var \\\$import \= array\('records' \=\> true\);/", $result);
-		$this->assertNoPattern('/var \$records/', $result);
+		$this->assertPattern("/public \\\$import \= array\('records' \=\> true\);/", $result);
+		$this->assertNoPattern('/public \$records/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertPattern("/var \\\$import \= array\('model' \=\> 'Article'\);/", $result);
-		$this->assertNoPattern('/var \$fields/', $result);
+		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\);/", $result);
+		$this->assertNoPattern('/public \$fields/', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertPattern("/var \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\);/", $result);
-		$this->assertNoPattern('/var \$fields/', $result);
-		$this->assertNoPattern('/var \$records/', $result);
+		$this->assertPattern("/public \\\$import \= array\('model' \=\> 'Article'\, 'records' \=\> true\);/", $result);
+		$this->assertNoPattern('/public \$fields/', $result);
+		$this->assertNoPattern('/public \$records/', $result);
 	}
 
 /**
