@@ -36,14 +36,12 @@ class CakeTestFixture extends Object {
 /**
  * Cake's DBO driver (e.g: DboMysql).
  *
- * @access public
  */
 	public $db = null;
 
 /**
  * Full Table Name
  *
- * @access public
  */
 	public $table = null;
 
@@ -131,7 +129,7 @@ class CakeTestFixture extends Object {
 			return false;
 		}
 
-		$this->Schema->_build(array($this->table => $this->fields));
+		$this->Schema->build(array($this->table => $this->fields));
 		return (
 			$db->execute($db->createSchema($this->Schema), array('log' => false)) !== false
 		);
@@ -144,7 +142,7 @@ class CakeTestFixture extends Object {
  * @return boolean True on success, false on failure
  */
 	public function drop(&$db) {
-		$this->Schema->_build(array($this->table => $this->fields));
+		$this->Schema->build(array($this->table => $this->fields));
 		return (
 			$db->execute($db->dropSchema($this->Schema), array('log' => false)) !== false
 		);

@@ -102,7 +102,7 @@ class CakeSchema extends Object {
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
-		$this->_build($options);
+		$this->build($options);
 	}
 
 /**
@@ -111,7 +111,7 @@ class CakeSchema extends Object {
  * @param array $data loaded object properties
  * @return void
  */
-	protected function _build($data) {
+	public function build($data) {
 		$file = null;
 		foreach ($data as $key => $val) {
 			if (!empty($val)) {
@@ -162,7 +162,7 @@ class CakeSchema extends Object {
 			$options = array('path' => $options);
 		}
 
-		$this->_build($options);
+		$this->build($options);
 		extract(get_object_vars($this));
 
 		$class =  $name .'Schema';
@@ -318,7 +318,7 @@ class CakeSchema extends Object {
 	public function write($object, $options = array()) {
 		if (is_object($object)) {
 			$object = get_object_vars($object);
-			$this->_build($object);
+			$this->build($object);
 		}
 
 		if (is_array($object)) {
