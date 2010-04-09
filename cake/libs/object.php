@@ -128,7 +128,7 @@ class Object {
  * @param $status see http://php.net/exit for values
  * @return void
  */
-	public function _stop($status = 0) {
+	protected function _stop($status = 0) {
 		exit($status);
 	}
 
