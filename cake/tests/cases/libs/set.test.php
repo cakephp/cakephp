@@ -919,7 +919,6 @@ class SetTest extends CakeTestCase {
 				)
 			)
 		);
-
 		$expected = array(array('Category' => $tree[1]['Category']));
 		$r = Set::extract('/Category[name=Category 2]', $tree);
 		$this->assertEqual($r, $expected);
@@ -1076,6 +1075,14 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/User/id', $nonZero);
 		$this->assertEqual($r, $expected);
 		
+		$expected = array(
+			array('User' => array('id' => 1, 'name' => 'John')),
+			array('User' => array('id' => 2, 'name' => 'Bob')),
+			array('User' => array('id' => 3, 'name' => 'Tony')),
+		);
+		$result = Set::extract('/User', $nonZero);
+		$this->assertEqual($result, $expected);
+
 		$nonSequential = array(
 			'User' => array(
 				0  => array('id' => 1),
@@ -1137,6 +1144,55 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual(Set::extract('/Level1/Level2', $data), array(array('Level2' => array('test1', 'test2'))));
 		$this->assertEqual(Set::extract('/Level1/Level2bis', $data), array(array('Level2bis' => array('test3', 'test4'))));
 	}
+
+/**
+ * test extract() with elements that have non-array children.
+ *
+ * @return void
+ */
+	function testExtractWithNonArrayElements() {
+		$data = array(
+			'node' => array(
+				array('foo'),
+				'bar'
+			)
+		);
+		$result = Set::extract('/node', $data);
+		$expected = array(
+			array('node' => array('foo')),
+			'bar'
+		);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'node' => array(
+				'foo' => array('bar'),
+				'bar' => array('foo')
+			)
+		);
+		$result = Set::extract('/node', $data);
+		$expected = array(
+			array('foo' => array('bar')),
+			array('bar' => array('foo')),
+		);
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'node' => array(
+				'foo' => array(
+					'bar'
+				),
+				'bar' => 'foo'
+			)
+		);
+		$result = Set::extract('/node', $data);
+		$expected = array(
+			array('foo' => array('bar')),
+			'foo'
+		);
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * testMatches method
  *
