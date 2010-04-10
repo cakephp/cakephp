@@ -482,7 +482,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern('/class TestTaskCommentsControllerTestCase extends CakeTestCase/', $result);
 
 		$this->assertPattern('/class TestTestTaskCommentsController extends TestTaskCommentsController/', $result);
-		$this->assertPattern('/var \$autoRender = false/', $result);
+		$this->assertPattern('/public \$autoRender = false/', $result);
 		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
 
 		$this->assertPattern('/function startTest\(\)/', $result);
