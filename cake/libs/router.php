@@ -1348,11 +1348,12 @@ class CakeRoute {
 			return;
 		}
 		$route = $this->template;
-		$names = $replacements = $search = array();
+		$names = $routeParams = array();
 		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
+			$search = '\\' . $namedElements[0][$i];
 			if (isset($this->options[$name])) {
 				$option = null;
 				if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
@@ -1360,15 +1361,12 @@ class CakeRoute {
 				}
 				$slashParam = '/\\' . $namedElements[0][$i];
 				if (strpos($parsed, $slashParam) !== false) {
-					$replacements[] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
-					$search[] = $slashParam;
+					$routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				} else {
-					$search[] = '\\' . $namedElements[0][$i];
-					$replacements[] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+					$routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
-				$replacements[] = '(?:(?P<' . $name . '>[^/]+))';
-				$search[] = '\\' . $namedElements[0][$i];
+				$routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
 			}
 			$names[] = $name;
 		}
@@ -1376,7 +1374,8 @@ class CakeRoute {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 			$this->_greedy = true;
 		}
-		$parsed = str_replace($search, $replacements, $parsed);
+		krsort($routeParams);
+		$parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 	}

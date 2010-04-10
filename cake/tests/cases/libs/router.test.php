@@ -2120,6 +2120,21 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that route parameters that overlap don't cause errors.
+ *
+ * @return void
+ */
+	function testRouteParameterOverlap() {
+		$route =& new CakeRoute('/invoices/add/:idd/:id', array('controller' => 'invoices', 'action' => 'add'));
+		$result = $route->compile();
+		$this->assertPattern($result, '/invoices/add/1/3');
+
+		$route =& new CakeRoute('/invoices/add/:id/:idd', array('controller' => 'invoices', 'action' => 'add'));
+		$result = $route->compile();
+		$this->assertPattern($result, '/invoices/add/1/3');
+	}
+
+/**
  * test compiling routes with keys that have patterns
  *
  * @return void
