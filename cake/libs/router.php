@@ -574,14 +574,15 @@ class Router {
 			}
 			$pluginPattern = implode('|', $plugins);
 			$match = array('plugin' => $pluginPattern);
+			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
 				$indexParams = $params + array('action' => 'index');
+				$this->connect("/{$prefix}/:plugin", $indexParams, $shortParams);
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
-			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
 			$this->connect('/:plugin', array('action' => 'index'), $shortParams);
 			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
