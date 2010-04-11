@@ -583,7 +583,7 @@ class CakeSession extends Object {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
 			}
-			return false;
+			return true;
 		} elseif (!isset($_SESSION)) {
 			session_cache_limiter ("must-revalidate");
 			session_start();
