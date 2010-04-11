@@ -1517,7 +1517,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
-		$url = 'my_plugin/add/param:value/param2:value2';
+		$url = 'my_plugin/my_plugin/add/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
@@ -1553,7 +1553,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher =& new TestDispatcher();
 		$Dispatcher->base = false;
 
-		$url = 'admin/my_plugin/add/5/param:value/param2:value2';
+		$url = 'admin/my_plugin/my_plugin/add/5/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$this->assertEqual($controller->params['plugin'], 'my_plugin');
@@ -1621,48 +1621,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($controller->params['plugin'], 'my_plugin');
 		$this->assertEqual($controller->params['action'], 'index');
 		$this->assertFalse(isset($controller->params['pass'][0]));
-
-		$url = 'my_plugin/my_plugin/add';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertFalse(isset($controller->params['pass'][0]));
-
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
-
-		$url = 'my_plugin/my_plugin/add/0';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertTrue(isset($controller->params['pass'][0]));
-
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
-
-		$url = 'my_plugin/add';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertFalse(isset($controller->params['pass'][0]));
-		$this->assertEqual($controller->params['controller'], 'my_plugin');
-		$this->assertEqual($controller->params['action'], 'add');
-		$this->assertEqual($controller->params['plugin'], 'my_plugin');
-
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
-
-		$url = 'my_plugin/add/0';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$this->assertEqual($controller->params['controller'], 'my_plugin');
-		$this->assertEqual($controller->params['plugin'], 'my_plugin');
-		$this->assertEqual($controller->params['action'], 'add');
-		$this->assertIdentical('0', $controller->params['pass'][0]);
-
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
-
-		$url = 'my_plugin/add/1';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$this->assertEqual($controller->params['controller'], 'my_plugin');
-		$this->assertEqual($controller->params['plugin'], 'my_plugin');
-		$this->assertEqual($controller->params['action'], 'add');
-		$this->assertIdentical('1', $controller->params['pass'][0]);
 	}
 
 /**
