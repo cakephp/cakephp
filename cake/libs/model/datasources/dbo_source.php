@@ -419,7 +419,7 @@ class DboSource extends DataSource {
  * @param array $resut REference to the fetched row
  * @return void
  */
-	function fetchVirtualField(&$result) {
+	public function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
 				if (strpos($field, '__') === false) {
@@ -464,7 +464,7 @@ class DboSource extends DataSource {
  *
  * @return void
  */
-	function flushMethodCache() {
+	public function flushMethodCache() {
 		$this->methodCache = array();
 	}
 
@@ -480,7 +480,7 @@ class DboSource extends DataSource {
  * @param mixed $value The value to cache into memory.
  * @return mixed Either null on failure, or the value if its set.
  */
-	function cacheMethod($method, $key, $value = null) {
+	public function cacheMethod($method, $key, $value = null) {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
@@ -590,7 +590,7 @@ class DboSource extends DataSource {
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return void
  */
-	function showLog($sorted = false) {
+	public function showLog($sorted = false) {
 		$log = $this->getLog($sorted, false);
 		if (empty($log['log'])) {
 			return;
@@ -735,7 +735,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
-	function read(&$model, $queryData = array(), $recursive = null) {
+	public function read(&$model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
 
 		$null = null;
@@ -875,7 +875,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
@@ -1378,7 +1378,7 @@ class DboSource extends DataSource {
  * @see DboSource::renderJoinStatement()
  * @see DboSource::buildStatement()
  */
-	function buildJoinStatement($join) {
+	public function buildJoinStatement($join) {
 		$data = array_merge(array(
 			'type' => null,
 			'alias' => null,
@@ -1404,7 +1404,7 @@ class DboSource extends DataSource {
  * @access public
  * @see DboSource::renderStatement()
  */
-	function buildStatement($query, &$model) {
+	public function buildStatement($query, &$model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1862,7 +1862,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	function _constructVirtualFields(&$model, $alias, $fields) {
+	protected function _constructVirtualFields(&$model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
@@ -2527,7 +2527,7 @@ class DboSource extends DataSource {
  * @param string $fields
  * @param array $values
  */
-	protected function insertMulti($table, $fields, $values) {
+	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
 			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
