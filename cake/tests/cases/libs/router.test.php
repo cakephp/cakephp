@@ -1149,6 +1149,12 @@ class RouterTest extends CakeTestCase {
 		$expected = '/admin/test_plugin/show_tickets/edit/6';
 		$this->assertEqual($result, $expected);
 
+		$result = Router::url(array(
+			'plugin' => 'test_plugin', 'controller' => 'show_tickets', 'action' => 'index', 'admin' => true
+		));
+		$expected = '/admin/test_plugin/show_tickets';
+		$this->assertEqual($result, $expected);
+
 		App::build(array('plugins' => $paths));
 	}
 
