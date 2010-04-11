@@ -52,7 +52,6 @@ class CakeTestFixture extends Object {
 	public function __construct() {
 		App::import('Model', 'CakeSchema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
-
 		$this->init();
 	}
 
@@ -60,10 +59,8 @@ class CakeTestFixture extends Object {
  * Initialize the fixture.
  *
  * @param object	Cake's DBO driver (e.g: DboMysql).
- * @access public
- *
  */
-	function init() {
+	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array_merge(
 				array('connection' => 'default', 'records' => false), 
