@@ -74,8 +74,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Session =& new TestCakeSession();
-		$this->Session->start();
-		$this->Session->_checkValid();
+		$this->Session->destroy();
 	}
 
 /**
