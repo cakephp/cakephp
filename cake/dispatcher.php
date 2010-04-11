@@ -380,7 +380,6 @@ class Dispatcher extends Object {
 		if (!$ctrlClass) {
 			return $controller;
 		}
-		$name = $ctrlClass;
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
 			$controller =& new $ctrlClass();
@@ -398,13 +397,10 @@ class Dispatcher extends Object {
 	function __loadController($params) {
 		$pluginName = $pluginPath = $controller = null;
 		if (!empty($params['plugin'])) {
-			$pluginName = Inflector::camelize($params['plugin']);
+			$pluginName = $controller = Inflector::camelize($params['plugin']);
 			$pluginPath = $pluginName . '.';
-			$this->params['controller'] = $params['plugin'];
-			$controller = $pluginName;
 		}
 		if (!empty($params['controller'])) {
-			$this->params['controller'] = $params['controller'];
 			$controller = Inflector::camelize($params['controller']);
 		}
 		if ($pluginPath . $controller) {
