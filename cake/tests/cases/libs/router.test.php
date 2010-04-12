@@ -1741,12 +1741,38 @@ class RouterTest extends CakeTestCase {
 
 		Router::setRequestInfo(array(
 			array('controller' => 'users', 'action' => 'login', 'company' => true, 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/')
 		));
 
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => false));
 		$expected = '/login';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test url generation with prefixes and custom routes
+ *
+ * @return void
+ */
+	function testUrlWritingWithPrefixesAndCustomRoutes() {
+		Router::connect(
+			'/admin/login', 
+			array('controller' => 'users', 'action' => 'login', 'prefix' => 'admin', 'admin' => true)
+		);
+		Router::setRequestInfo(array(
+			array('controller' => 'posts', 'action' => 'index', 'admin' => true, 'prefix' => 'admin',
+				'form' => array(), 'url' => array(), 'plugin' => null
+			),
+			array('base' => '/', 'here' => '/', 'webroot' => '/')
+		));
+		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'admin' => true));
+		$this->assertEqual($result, '/admin/login');
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'login'));
+		$this->assertEqual($result, '/admin/login');
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'admin_login'));
+		$this->assertEqual($result, '/admin/login');
 	}
 
 /**

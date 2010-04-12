@@ -770,9 +770,6 @@ class Router {
 			} else {
 				$params = end($self->__params);
 			}
-			if (isset($params['prefix']) && strpos($params['action'], $params['prefix']) === 0) {
-				$params['action'] = substr($params['action'], strlen($params['prefix']) + 1);
-			}
 		}
 		$path = array('base' => null);
 
@@ -817,6 +814,9 @@ class Router {
 					$url[$prefix] = true;
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
 					unset($url[$prefix]);
+				}
+				if (isset($url[$prefix]) && strpos($url['action'], $prefix) === 0) {
+					$url['action'] = substr($url['action'], strlen($prefix) + 1);
 				}
 			}
 
