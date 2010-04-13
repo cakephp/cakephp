@@ -117,17 +117,10 @@ class TextHelper extends AppHelper {
  * @access public
  * @link http://book.cakephp.org/view/1469/Text#autoLinkUrls-1619
  */
-	function autoLinkUrls($text, $options = array()) {
-		$linkOptions = 'array(';
-		foreach ($options as $option => $value) {
-			$value = var_export($value, true);
-			$linkOptions .= "'$option' => $value, ";
-		}
-		$linkOptions .= ')';
-
-		$text = preg_replace_callback('#(?<!href="|">)((?:http|https|ftp|nntp)://[^ <]+)#i', create_function('$matches',
-			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $linkOptions . ');'), $text);
-
+	function autoLinkUrls($text, $htmlOptions = array()) {
+		$options = var_export($htmlOptions, true);
+		$text = preg_replace_callback('#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', create_function('$matches',
+			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $options . ');'), $text);
 		return preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
 			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . strtolower($matches[0]),' . $linkOptions . ');'), $text);
 	}

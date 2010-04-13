@@ -207,6 +207,36 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLink($text);
 		$expected = 'Text with a partial <a href="http://www.cakephp.org">www.cakephp.org</a> URL and <a href="mailto:test@cakephp\.org">test@cakephp\.org</a> email address';
 		$this->assertPattern('#^' . $expected . '$#', $result);
+
+		$text = 'This is a test text with URL http://www.cakephp.org';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($result, $expected);
+
+		$text = 'This is a test text with URL http://www.cakephp.org and some more text';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a> and some more text';
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($result, $expected);
+
+		$text = "This is a test text with URL http://www.cakephp.org\tand some more text";
+		$expected = "This is a test text with URL <a href=\"http://www.cakephp.org\">http://www.cakephp.org</a>\tand some more text";
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($result, $expected);
+
+		$text = 'This is a test text with URL http://www.cakephp.org(and some more text)';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>(and some more text)';
+		$result = $this->Text->autoLink($text);
+		$this->assertEqual($result, $expected);
+
+		$text = 'This is a test text with URL http://www.cakephp.org';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text, array('class'=>'link'));
+		$this->assertEqual($result, $expected);
+
+		$text = 'This is a test text with URL http://www.cakephp.org';
+		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link" id="MyLink">http://www.cakephp.org</a>';
+		$result = $this->Text->autoLink($text, array('class'=>'link', 'id'=>'MyLink'));
+		$this->assertEqual($result, $expected);
 	}
 
 /**
