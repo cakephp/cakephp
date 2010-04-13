@@ -231,7 +231,12 @@ class DboPostgres extends DboSource {
 					if (!empty($c['char_length'])) {
 						$length = intval($c['char_length']);
 					} elseif (!empty($c['oct_length'])) {
-						$length = intval($c['oct_length']);
+						if ($c['type'] == 'character varying') {
+							$length = null;
+							$c['type'] = 'text';
+						} else {
+							$length = intval($c['oct_length']);
+						}
 					} else {
 						$length = $this->length($c['type']);
 					}
