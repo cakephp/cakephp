@@ -662,7 +662,8 @@ class TimeHelperTest extends CakeTestCase {
 		), true);
 		Configure::write('Config.language', 'time_test');
 		$time = 1263487419; // Thu Jan 14 11:43:39 2010
-		$time = strtotime('-5 hours', $time);
+		$offset = 5 * 60 * 60;
+		$time = $time - date('Z') - $offset - (date('I', $time) * 60 * 60);
 
 		$result = $this->Time->convertSpecifiers('%a', $time);
 		$expected = 'jue';
@@ -753,7 +754,8 @@ class TimeHelperTest extends CakeTestCase {
 		), true);
 		Configure::write('Config.language', 'time_test');
 		$time = 1263495568; //Thu Jan 14 13:59:28 2010
-		$time = strtotime('-5 hours', $time);
+		$offset = 5 * 60 * 60;
+		$time = $time - date('Z') - $offset - (date('I', $time) * 60 * 60);
 
 		$result = $this->Time->i18nFormat($time);
 		$expected = '14/01/10';
