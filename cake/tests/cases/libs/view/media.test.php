@@ -73,7 +73,7 @@ class TestMediaView extends MediaView {
 	var $headers = array();
 
 /**
- * active property to mock the status of a remote conenction
+ * active property to mock the status of a remote connection
  *
  * @var boolean true
  * @access public

@@ -208,7 +208,11 @@ class MediaView extends View {
 			$this->_output();
 			$this->_clearBuffer();
 
-			while (!feof($handle) && $this->_isActive()) {
+			while (!feof($handle)) {
+				if (!$this->_isActive()) {
+					fclose($handle);
+					return false;
+				}
 				set_time_limit(0);
 				$buffer = fread($handle, $chunkSize);
 				echo $buffer;
@@ -253,7 +257,7 @@ class MediaView extends View {
 	}
 
 /**
- * Returns true if connectios is still active
+ * Returns true if connection is still active
  * @return boolean
  * @access protected
  */
