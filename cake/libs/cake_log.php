@@ -54,21 +54,7 @@ class CakeLog {
  * @var array
  * @access protected
  */
-	protected $_streams = array();
-
-/**
- * Get an instance
- *
- * @return void
- * @static
- */
-	function &getInstance() {
-		static $instance = array();
-		if (!isset($instance[0])) {
-			$instance[0] =& new CakeLog();
-		}
-		return $instance[0];
-	}
+	protected static $_streams = array();
 
 /**
  * Configure and add a new logging stream to CakeLog
@@ -101,13 +87,12 @@ class CakeLog {
 			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
 			return false;
 		}
-		$self =& CakeLog::getInstance();
-		$className = $self->_getLogger($config['engine']);
+		$className = self::_getLogger($config['engine']);
 		if (!$className) {
 			return false;
 		}
 		unset($config['engine']);
-		$self->_streams[$key] = new $className($config);
+		self::$_streams[$key] = new $className($config);
 		return true;
 	}
 
@@ -118,7 +103,7 @@ class CakeLog {
  * @param string $loggerName the plugin.className of the logger class you want to build.
  * @return mixed boolean false on any failures, string of classname to use if search was successful.
  */
-	protected function _getLogger($loggerName) {
+	protected static function _getLogger($loggerName) {
 		list($plugin, $loggerName) = pluginSplit($loggerName);
 
 		if ($plugin) {
@@ -149,9 +134,8 @@ class CakeLog {
  * @access public
  * @static
  */
-	function configured() {
-		$self =& CakeLog::getInstance();
-		return array_keys($self->_streams);
+	public static function configured() {
+		return array_keys(self::$_streams);
 	}
 
 /**
@@ -163,9 +147,8 @@ class CakeLog {
  * @access public
  * @static
  */
-	function drop($streamName) {
-		$self =& CakeLog::getInstance();
-		unset($self->_streams[$streamName]);
+	public static function drop($streamName) {
+		unset(self::$_streams[$streamName]);
 	}
 
 /**
@@ -173,11 +156,11 @@ class CakeLog {
  *
  * @return void
  */
-	protected function _autoConfig() {
+	protected static function _autoConfig() {
 		if (!class_exists('FileLog')) {
 			App::import('Core', 'log/FileLog');
 		}
-		$this->_streams['default'] =& new FileLog(array('path' => LOGS));
+		self::$_streams['default'] = new FileLog(array('path' => LOGS));
 	}
 
 /**
@@ -206,7 +189,7 @@ class CakeLog {
  * @access public
  * @static
  */
-	function write($type, $message) {
+	public static function write($type, $message) {
 		if (!defined('LOG_ERROR')) {
 			define('LOG_ERROR', 2);
 		}
@@ -225,13 +208,10 @@ class CakeLog {
 		if (is_int($type) && isset($levels[$type])) {
 			$type = $levels[$type];
 		}
-		$self =& CakeLog::getInstance();
-		if (empty($self->_streams)) {
-			$self->_autoConfig();
+		if (empty(self::$_streams)) {
+			self::_autoConfig();
 		}
-		$keys = array_keys($self->_streams);
-		foreach ($keys as $key) {
-			$logger =& $self->_streams[$key];
+		foreach (self::$_streams as $key => $logger) {
 			$logger->write($type, $message);
 		}
 		return true;
@@ -250,7 +230,7 @@ class CakeLog {
  * @param array $context Context
  * @return void
  */
-	function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if ($code === 2048 || $code === 8192) {
 			return;
 		}
