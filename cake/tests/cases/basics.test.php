@@ -203,31 +203,6 @@ class BasicsTest extends CakeTestCase {
 	}
 
 /**
- * Test a()
- *
- * @return void
- */
-	public function testA() {
-		$result = a('this', 'that', 'bar');
-		$this->assertEqual(array('this', 'that', 'bar'), $result);
-	}
-
-/**
- * Test aa()
- *
- * @return void
- */
-	public function testAa() {
-		$result = aa('a', 'b', 'c', 'd');
-		$expected = array('a' => 'b', 'c' => 'd');
-		$this->assertEqual($expected, $result);
-
-		$result = aa('a', 'b', 'c', 'd', 'e');
-		$expected = array('a' => 'b', 'c' => 'd', 'e' => null);
-		$this->assertEqual($result, $expected);
-	}
-
-/**
  * Test am()
  *
  * @return void
@@ -733,25 +708,6 @@ class BasicsTest extends CakeTestCase {
 			'g' => "te'''st"
 			);
 		$this->assertEqual(stripslashes_deep($nested), $expected);
-	}
-
-/**
- * test ife()
- *
- * @return void
- */
-	public function testIfe() {
-		$this->assertEqual(ife(true, 'a', 'b'), 'a');
-		$this->assertEqual(ife(' ', 'a', 'b'), 'a');
-		$this->assertEqual(ife('test', 'a', 'b'), 'a');
-		$this->assertEqual(ife(23, 'a', 'b'), 'a');
-		$this->assertEqual(ife(array('t' => 'est'), 'a', 'b'), 'a');
-
-		$this->assertEqual(ife(false, 'a', 'b'), 'b');
-		$this->assertEqual(ife(null, 'a', 'b'), 'b');
-		$this->assertEqual(ife('', 'a', 'b'), 'b');
-		$this->assertEqual(ife(0, 'a', 'b'), 'b');
-		$this->assertEqual(ife(array(), 'a', 'b'), 'b');
 	}
 
 /**

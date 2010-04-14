@@ -32,19 +32,6 @@
 	define('YEAR', 31536000);
 
 /**
- * Patch for PHP < 5.0
- */
-if (!function_exists('clone')) {
-	if (version_compare(PHP_VERSION, '5.0') < 0) {
-		eval ('
-		function clone($object)
-		{
-			return $object;
-		}');
-	}
-}
-
-/**
  * Loads configuration files. Receives a set of configuration files
  * to load.
  * Example:
@@ -163,37 +150,6 @@ if (!function_exists('sortByKey')) {
 		return $out;
 	}
 }
-if (!function_exists('array_combine')) {
-
-/**
- * Combines given identical arrays by using the first array's values as keys,
- * and the second one's values as values. (Implemented for backwards compatibility with PHP4)
- *
- * @param array $a1 Array to use for keys
- * @param array $a2 Array to use for values
- * @return mixed Outputs either combined array or false.
- * @deprecated Will be removed in 2.0
- */
-	function array_combine($a1, $a2) {
-		$a1 = array_values($a1);
-		$a2 = array_values($a2);
-		$c1 = count($a1);
-		$c2 = count($a2);
-
-		if ($c1 != $c2) {
-			return false;
-		}
-		if ($c1 <= 0) {
-			return false;
-		}
-		$output = array();
-
-		for ($i = 0; $i < $c1; $i++) {
-			$output[$a1[$i]] = $a2[$i];
-		}
-		return $output;
-	}
-}
 
 /**
  * Convenience method for htmlspecialchars.
@@ -242,104 +198,6 @@ if (!function_exists('array_combine')) {
 			return $parts;
 		}
 		return array($plugin, $name);
-	}
-
-/**
- * Returns an array of all the given parameters.
- *
- * Example:
- *
- * `a('a', 'b')`
- *
- * Would return:
- *
- * `array('a', 'b')`
- *
- * @return array Array of given parameters
- * @link http://book.cakephp.org/view/1122/a
- * @deprecated Will be removed in 2.0
- */
-	function a() {
-		$args = func_get_args();
-		return $args;
-	}
-
-/**
- * Constructs associative array from pairs of arguments.
- *
- * Example:
- *
- * `aa('a','b')`
- *
- * Would return:
- *
- * `array('a'=>'b')`
- *
- * @return array Associative array
- * @link http://book.cakephp.org/view/1123/aa
- * @deprecated Will be removed in 2.0
- */
-	function aa() {
-		$args = func_get_args();
-		$argc = count($args);
-		for ($i = 0; $i < $argc; $i++) {
-			if ($i + 1 < $argc) {
-				$a[$args[$i]] = $args[$i + 1];
-			} else {
-				$a[$args[$i]] = null;
-			}
-			$i++;
-		}
-		return $a;
-	}
-
-/**
- * Convenience method for echo().
- *
- * @param string $text String to echo
- * @link http://book.cakephp.org/view/1129/e
- * @deprecated Will be removed in 2.0
- */
-	function e($text) {
-		echo $text;
-	}
-
-/**
- * Convenience method for strtolower().
- *
- * @param string $str String to lowercase
- * @return string Lowercased string
- * @link http://book.cakephp.org/view/1134/low
- * @deprecated Will be removed in 2.0
- */
-	function low($str) {
-		return strtolower($str);
-	}
-
-/**
- * Convenience method for strtoupper().
- *
- * @param string $str String to uppercase
- * @return string Uppercased string
- * @link http://book.cakephp.org/view/1139/up
- * @deprecated Will be removed in 2.0
- */
-	function up($str) {
-		return strtoupper($str);
-	}
-
-/**
- * Convenience method for str_replace().
- *
- * @param string $search String to be replaced
- * @param string $replace String to insert
- * @param string $subject String to search
- * @return string Replaced string
- * @link http://book.cakephp.org/view/1137/r
- * @deprecated Will be removed in 2.0
- */
-	function r($search, $replace, $subject) {
-		return str_replace($search, $replace, $subject);
 	}
 
 /**
@@ -472,36 +330,6 @@ if (!function_exists('array_combine')) {
 		}
 		return null;
 	}
-if (!function_exists('file_put_contents')) {
-
-/**
- * Writes data into file.
- *
- * If file exists, it will be overwritten. If data is an array, it will be implode()ed with an empty string.
- *
- * @param string $fileName File name.
- * @param mixed  $data String or array.
- * @return boolean Success
- * @deprecated Will be removed in 2.0
- */
-	function file_put_contents($fileName, $data) {
-		if (is_array($data)) {
-			$data = implode('', $data);
-		}
-		$res = @fopen($fileName, 'w+b');
-
-		if ($res) {
-			$write = @fwrite($res, $data);
-			if ($write === false) {
-				return false;
-			} else {
-				@fclose($res);
-				return $write;
-			}
-		}
-		return false;
-	}
-}
 
 /**
  * Reads/writes temporary data to cache files or session.
@@ -848,62 +676,6 @@ if (!function_exists('file_put_contents')) {
 	}
 
 /**
- * Computes the difference of arrays using keys for comparison.
- *
- * @param array First array
- * @param array Second array
- * @return array Array with different keys
- * @deprecated Will be removed in 2.0
- */
-	if (!function_exists('array_diff_key')) {
-		function array_diff_key() {
-			$valuesDiff = array();
-
-			$argc = func_num_args();
-			if ($argc < 2) {
-				return false;
-			}
-
-			$args = func_get_args();
-			foreach ($args as $param) {
-				if (!is_array($param)) {
-					return false;
-				}
-			}
-
-			foreach ($args[0] as $valueKey => $valueData) {
-				for ($i = 1; $i < $argc; $i++) {
-					if (array_key_exists($valueKey, $args[$i])) {
-						continue 2;
-					}
-				}
-				$valuesDiff[$valueKey] = $valueData;
-			}
-			return $valuesDiff;
-		}
-	}
-
-/**
- * Computes the intersection of arrays using keys for comparison
- *
- * @param array First array
- * @param array Second array
- * @return array Array with interesected keys
- * @deprecated Will be removed in 2.0
- */
-	if (!function_exists('array_intersect_key')) {
-		function array_intersect_key($arr1, $arr2) {
-			$res = array();
-			foreach ($arr1 as $key => $value) {
-				if (array_key_exists($key, $arr2)) {
-					$res[$key] = $arr1[$key];
-				}
-			}
-			return $res;
-		}
-	}
-
-/**
  * Shortcut to Log::write.
  *
  * @param string $message Message to write to log
@@ -952,65 +724,4 @@ if (!function_exists('file_put_contents')) {
 		return $string;
 	}
 
-/**
- * Implements http_build_query for PHP4.
- *
- * @param string $data Data to set in query string
- * @param string $prefix If numeric indices, prepend this to index for elements in base array.
- * @param string $argSep String used to separate arguments
- * @param string $baseKey Base key
- * @return string URL encoded query string
- * @see http://php.net/http_build_query
- * @deprecated Will be removed in 2.0
- */
-	if (!function_exists('http_build_query')) {
-		function http_build_query($data, $prefix = null, $argSep = null, $baseKey = null) {
-			if (empty($argSep)) {
-				$argSep = ini_get('arg_separator.output');
-			}
-			if (is_object($data)) {
-				$data = get_object_vars($data);
-			}
-			$out = array();
-
-			foreach ((array)$data as $key => $v) {
-				if (is_numeric($key) && !empty($prefix)) {
-					$key = $prefix . $key;
-				}
-				$key = urlencode($key);
-
-				if (!empty($baseKey)) {
-					$key = $baseKey . '[' . $key . ']';
-				}
-
-				if (is_array($v) || is_object($v)) {
-					$out[] = http_build_query($v, $prefix, $argSep, $key);
-				} else {
-					$out[] = $key . '=' . urlencode($v);
-				}
-			}
-			return implode($argSep, $out);
-		}
-	}
-
-/**
- * Wraps ternary operations. If $condition is a non-empty value, $val1 is returned, otherwise $val2.
- * Don't use for isset() conditions, or wrap your variable with @ operator:
- * Example:
- *
- * `ife(isset($variable), @$variable, 'default');`
- *
- * @param mixed $condition Conditional expression
- * @param mixed $val1 Value to return in case condition matches
- * @param mixed $val2 Value to return if condition doesn't match
- * @return mixed $val1 or $val2, depending on whether $condition evaluates to a non-empty expression.
- * @link http://book.cakephp.org/view/1133/ife
- * @deprecated Will be removed in 2.0
- */
-	function ife($condition, $val1 = null, $val2 = null) {
-		if (!empty($condition)) {
-			return $val1;
-		}
-		return $val2;
-	}
 ?>
