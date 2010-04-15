@@ -80,7 +80,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @param string $charset The character set to output with. Defaults to UTF-8
  * @param array $params Array of request parameters the reporter should use. See above.
  */
-	public function CakeBaseReporter($charset = 'utf-8', $params = array()) {
+	function __construct($charset = 'utf-8', $params = array()) {
 		$this->SimpleReporter();
 		if (!$charset) {
 			$charset = 'utf-8';
@@ -97,7 +97,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @param integer $size 
  * @return void
  */
-	function paintGroupStart($test_name, $size) {
+	public function paintGroupStart($test_name, $size) {
 		if (empty($this->_timeStart)) {
 			$this->_timeStart = $this->_getTime();
 		}
@@ -111,7 +111,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @param string $test_name Name of the test that is being run.
  * @return void
  */
-	function paintGroupEnd($test_name) {
+	public function paintGroupEnd($test_name) {
 		$this->_timeEnd = $this->_getTime();
 		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
 		parent::paintGroupEnd($test_name);
@@ -124,7 +124,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @param string $method The method name being run.
  * @return void
  */
-	function paintMethodStart($method) {
+	public function paintMethodStart($method) {
 		parent::paintMethodStart($method);
 		if (!empty($this->params['codeCoverage'])) {
 			CodeCoverageManager::start();
@@ -138,7 +138,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @param string $method The name of the method being run.
  * @return void
  */
-	function paintMethodEnd($method) {
+	public function paintMethodEnd($method) {
 		parent::paintMethodEnd($method);
 		if (!empty($this->params['codeCoverage'])) {
 			CodeCoverageManager::stop();
@@ -162,7 +162,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return mixed
  */
-	function testCaseList() {
+	public function testCaseList() {
 		$testList = TestManager::getTestCaseList();
 		return $testList;
 	}
@@ -173,7 +173,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return void
  */
-	function groupTestList() {
+	public function groupTestList() {
 		$testList = TestManager::getGroupTestList();
 		return $testList;
 	}
@@ -184,7 +184,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return void
  */
-	function paintDocumentStart() {
+	public function paintDocumentStart() {
 
 	}
 
@@ -194,7 +194,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return void
  */
-	function paintDocumentEnd() {
+	public function paintDocumentEnd() {
 		
 	}
 
@@ -204,7 +204,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return void
  */
-	function paintTestMenu() {
+	public function paintTestMenu() {
 		
 	}
 
@@ -213,7 +213,7 @@ class CakeBaseReporter extends SimpleReporter {
  *
  * @return string The base url for the request.
  */
-	function baseUrl() {
+	public function baseUrl() {
 		if (!empty($_SERVER['PHP_SELF'])) {
 			return $_SERVER['PHP_SELF'];
 		}

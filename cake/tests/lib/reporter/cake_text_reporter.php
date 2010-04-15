@@ -32,7 +32,7 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function paintDocumentStart() {
+	public function paintDocumentStart() {
 		if (!SimpleReporter::inCli()) {
 			header('Content-type: text/plain');
 		}
@@ -161,7 +161,7 @@ class CakeTextReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function testCaseList() {
+	public function testCaseList() {
 		$testCases = parent::testCaseList();
 		$app = $this->params['app'];
 		$plugin = $this->params['plugin'];

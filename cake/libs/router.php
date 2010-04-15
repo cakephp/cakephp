@@ -1302,7 +1302,7 @@ class CakeRoute {
  * @param string $params Array of parameters and additional options for the Route
  * @return void
  */
-	public function CakeRoute($template, $defaults = array(), $options = array()) {
+	public function __construct($template, $defaults = array(), $options = array()) {
 		$this->template = $template;
 		$this->defaults = (array)$defaults;
 		$this->options = (array)$options;

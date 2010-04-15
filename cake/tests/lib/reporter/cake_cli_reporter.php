@@ -55,11 +55,11 @@ class CakeCliReporter extends CakeBaseReporter {
  * @param array $params 
  * @return void
  */
-	function CakeCLIReporter($charset = 'utf-8', $params = array()) {
-		$this->CakeBaseReporter($charset, $params);
+	function __construct($charset = 'utf-8', $params = array()) {
+		parent::__construct($charset, $params);
 	}
 
-	function setFailDetailSeparator($separator) {
+	public function setFailDetailSeparator($separator) {
 		$this->separator = $separator;
 	}
 
@@ -110,7 +110,7 @@ class CakeCliReporter extends CakeBaseReporter {
  *
  * @return string The string for the breadcrumb
  */
-	function _getBreadcrumb() {
+	protected function _getBreadcrumb() {
 		$breadcrumb = $this->getTestList();
 		array_shift($breadcrumb);
 		$out = "\n\tin " . implode("\n\tin ", array_reverse($breadcrumb));
@@ -124,7 +124,7 @@ class CakeCliReporter extends CakeBaseReporter {
  * @param string $message The message of the skip
  * @return void
  */
-	function paintSkip($message) {
+	public function paintSkip($message) {
 		parent::paintSkip($message);
 		fwrite(STDOUT, 'SKIP' . $this->separator . $message . "\n\n");
 	}
@@ -132,7 +132,7 @@ class CakeCliReporter extends CakeBaseReporter {
 /**
  * Paint a footer with test case name, timestamp, counts of fails and exceptions.
  */
-	function paintFooter($test_name) {
+	public function paintFooter($test_name) {
 		$buffer = $this->getTestCaseProgress() . '/' . $this->getTestCaseCount() . ' test cases complete: ';
 
 		if (0 < ($this->getFailCount() + $this->getExceptionCount())) {

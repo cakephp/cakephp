@@ -48,7 +48,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function paintDocumentStart() {
+	public function paintDocumentStart() {
 		ob_start();
 		$baseDir = $this->params['baseDir'];
 		include CAKE_TESTS_LIB . 'templates' . DS . 'header.php';
@@ -60,7 +60,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function paintTestMenu() {
+	public function paintTestMenu() {
 		$groups = $this->baseUrl() . '?show=groups';
 		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin');
@@ -73,7 +73,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function testCaseList() {
+	public function testCaseList() {
 		$testCases = parent::testCaseList();
 		$app = $this->params['app'];
 		$plugin = $this->params['plugin'];
@@ -107,7 +107,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function groupTestList() {
+	public function groupTestList() {
 		$groupTests = parent::groupTestList();
 		$app = $this->params['app'];
 		$plugin = $this->params['plugin'];
@@ -189,7 +189,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function _paintLinks() {
+	protected function _paintLinks() {
 		$show = $query = array();
 		if (!empty($this->params['group'])) {
 			$show['show'] = 'groups';
@@ -221,7 +221,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param array $url Url hash to be converted
  * @return string Converted url query string
  */
-	function _queryString($url) {
+	protected function _queryString($url) {
 		$out = '?';
 		$params = array();
 		foreach ($url as $key => $value) {
@@ -236,7 +236,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	function paintDocumentEnd() {
+	public function paintDocumentEnd() {
 		$baseDir = $this->params['baseDir'];
 		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
 		ob_end_flush();
