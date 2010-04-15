@@ -531,7 +531,7 @@ class Dispatcher extends Object {
 				}
 				$controller = null;
 				$view =& new View($controller);
-				$return = $view->renderCache($filename, getMicrotime());
+				$return = $view->renderCache($filename, microtime(true));
 				if (!$return) {
 					ClassRegistry::removeObject('view');
 				}

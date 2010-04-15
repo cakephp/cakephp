@@ -99,7 +99,7 @@ class CakeBaseReporter extends SimpleReporter {
  */
 	public function paintGroupStart($test_name, $size) {
 		if (empty($this->_timeStart)) {
-			$this->_timeStart = $this->_getTime();
+			$this->_timeStart = microtime(true);
 		}
 		parent::paintGroupStart($test_name, $size);
 	}
@@ -112,7 +112,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @return void
  */
 	public function paintGroupEnd($test_name) {
-		$this->_timeEnd = $this->_getTime();
+		$this->_timeEnd = microtime(true);
 		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
 		parent::paintGroupEnd($test_name);
 	}
@@ -143,17 +143,6 @@ class CakeBaseReporter extends SimpleReporter {
 		if (!empty($this->params['codeCoverage'])) {
 			CodeCoverageManager::stop();
 		}
-	}
-
-/**
- * Get the current time in microseconds. Similar to getMicrotime in basics.php
- * but in a separate function to reduce dependancies.
- *
- * @return float Time in microseconds
- */
-	protected function _getTime() {
-		list($usec, $sec) = explode(' ', microtime());
-		return ((float)$sec + (float)$usec);
 	}
 
 /**

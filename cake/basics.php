@@ -106,18 +106,6 @@
 			echo $var . "\n</pre>\n";
 		}
 	}
-if (!function_exists('getMicrotime')) {
-
-/**
- * Returns microtime for execution time checking
- *
- * @return float Microtime
- */
-	function getMicrotime() {
-		list($usec, $sec) = explode(' ', microtime());
-		return ((float)$usec + (float)$sec);
-	}
-}
 if (!function_exists('sortByKey')) {
 
 /**

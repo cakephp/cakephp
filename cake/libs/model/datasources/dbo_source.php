@@ -232,10 +232,10 @@ class DboSource extends DataSource {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 
-		$t = getMicrotime();
+		$t = microtime(true);
 		$this->_result = $this->_execute($sql);
 		if ($options['stats']) {
-			$this->took = round((getMicrotime() - $t) * 1000, 0);
+			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->affected = $this->lastAffected();
 			$this->error = $this->lastError();
 			$this->numRows = $this->lastNumRows();

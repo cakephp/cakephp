@@ -525,7 +525,7 @@ class View extends Object {
 		include ($filename);
 
 		if (Configure::read() > 0 && $this->layout != 'xml') {
-			echo "<!-- Cached Render Time: " . round(getMicrotime() - $timeStart, 4) . "s -->";
+			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
 		}
 		$out = ob_get_clean();
 
