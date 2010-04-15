@@ -41,13 +41,13 @@ class Configure extends Object {
  *
  * @return Configure instance
  */
-	public function &getInstance($boot = true) {
+	public static function &getInstance($boot = true) {
 		static $instance = array();
 		if (!$instance) {
 			if (!class_exists('Set')) {
 				require LIBS . 'set.php';
 			}
-			$instance[0] =& new Configure();
+			$instance[0] = new Configure();
 			$instance[0]->__loadBootstrap($boot);
 		}
 		return $instance[0];
@@ -76,8 +76,8 @@ class Configure extends Object {
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
  */
-	public function write($config, $value = null) {
-		$_this =& Configure::getInstance();
+	public static function write($config, $value = null) {
+		$_this = Configure::getInstance();
 
 		if (!is_array($config)) {
 			$config = array($config => $value);
@@ -147,8 +147,8 @@ class Configure extends Object {
  * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
  */
-	public function read($var = 'debug') {
-		$_this =& Configure::getInstance();
+	public static function read($var = 'debug') {
+		$_this = Configure::getInstance();
 
 		if ($var === 'debug') {
 			return $_this->debug;
@@ -196,8 +196,8 @@ class Configure extends Object {
  * @param string $var the var to be deleted
  * @return void
  */
-	public function delete($var = null) {
-		$_this =& Configure::getInstance();
+	public static function delete($var = null) {
+		$_this = Configure::getInstance();
 
 		if (strpos($var, '.') === false) {
 			unset($_this->{$var});
@@ -223,7 +223,7 @@ class Configure extends Object {
  *     should be used, not the extenstion
  * @return mixed false if file not found, void if load successful
  */
-	public function load($fileName) {
+	public static function load($fileName) {
 		$found = $plugin = $pluginPath = false;
 		list($plugin, $fileName) = pluginSplit($fileName);
 		if ($plugin) {
@@ -271,8 +271,8 @@ class Configure extends Object {
  * @link http://book.cakephp.org/view/930/version
  * @return string Current version of CakePHP
  */
-	public function version() {
-		$_this =& Configure::getInstance();
+	public static function version() {
+		$_this = Configure::getInstance();
 
 		if (!isset($_this->Cake['version'])) {
 			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
@@ -295,7 +295,7 @@ class Configure extends Object {
  * @param array $data array of values to store.
  * @return void
  */
-	public function store($type, $name, $data = array()) {
+	public static function store($type, $name, $data = array()) {
 		$write = true;
 		$content = '';
 
@@ -305,7 +305,7 @@ class Configure extends Object {
 		if (is_null($type)) {
 			$write = false;
 		}
-		Configure::__writeConfig($content, $name, $write);
+		Configure::getInstance()->__writeConfig($content, $name, $write);
 	}
 
 /**
@@ -318,7 +318,7 @@ class Configure extends Object {
  * @return void
  * @access private
  */
-	function __writeConfig($content, $name, $write = true) {
+	private function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 
 		if (Configure::read() > 0) {
@@ -345,39 +345,14 @@ class Configure extends Object {
 	}
 
 /**
- * @deprecated
- * @see App::objects()
- */
-	function listObjects($type, $path = null, $cache = true) {
-		return App::objects($type, $path, $cache);
-	}
-
-/**
- * @deprecated
- * @see App::core()
- */
-	function corePaths($type = null) {
-		return App::core($type);
-	}
-
-/**
- * @deprecated
- * @see App::build()
- */
-	function buildPaths($paths) {
-		return App::build($paths);
-	}
-
-/**
  * Loads app/config/bootstrap.php.
  * If the alternative paths are set in this file
  * they will be added to the paths vars.
  *
  * @param boolean $boot Load application bootstrap (if true)
  * @return void
- * @access private
  */
-	function __loadBootstrap($boot) {
+	private function __loadBootstrap($boot) {
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
 
@@ -621,8 +596,8 @@ class App extends Object {
  * @param string $type type of path
  * @return string array
  */
-	public function path($type) {
-		$_this =& App::getInstance();
+	public static function path($type) {
+		$_this = App::getInstance();
 		if (!isset($_this->{$type})) {
 			return array();
 		}
@@ -637,8 +612,8 @@ class App extends Object {
  * @param boolean $reset true will set paths, false merges paths [default] false
  * @return void
  */
-	public function build($paths = array(), $reset = false) {
-		$_this =& App::getInstance();
+	public static function build($paths = array(), $reset = false) {
+		$_this = App::getInstance();
 		$defaults = array(
 			'models' => array(MODELS),
 			'behaviors' => array(BEHAVIORS),
@@ -696,8 +671,8 @@ class App extends Object {
  * @param string $plugin CamelCased plugin name to find the path of.
  * @return string full path to the plugin.
  */
-	function pluginPath($plugin) {
-		$_this =& App::getInstance();
+	public static function pluginPath($plugin) {
+		$_this = App::getInstance();
 		$pluginDir = Inflector::underscore($plugin);
 		for ($i = 0, $length = count($_this->plugins); $i < $length; $i++) {
 			if (is_dir($_this->plugins[$i] . $pluginDir)) {
@@ -715,7 +690,7 @@ class App extends Object {
  *    'view', 'helper', 'datasource', 'libs', and 'cake'
  * @return array numeric keyed array of core lib paths
  */
-	public function core($type = null) {
+	public static function core($type = null) {
 		static $paths = false;
 		if ($paths === false) {
 			$paths = Cache::read('core_paths', '_cake_core_');
@@ -756,7 +731,7 @@ class App extends Object {
  * @param boolean $cache Set to false to rescan objects of the chosen type. Defaults to true.
  * @return mixed Either false on incorrect / miss.  Or an array of found objects.
  */
-	public function objects($type, $path = null, $cache = true) {
+	public static function objects($type, $path = null, $cache = true) {
 		$objects = array();
 		$extension = false;
 		$name = $type;
@@ -767,7 +742,7 @@ class App extends Object {
 			$extension = true;
 			$name = $type . str_replace(DS, '', $path);
 		}
-		$_this =& App::getInstance();
+		$_this = App::getInstance();
 
 		if (empty($_this->__objects) && $cache === true) {
 			$_this->__objects = Cache::read('object_map', '_cake_core_');
@@ -828,7 +803,7 @@ class App extends Object {
  *                         statement in it to work: return $variable;
  * @return boolean true if Class is already in memory or if file is found and loaded, false if not
  */
-	public function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
+	public static function import($type = null, $name = null, $parent = true, $search = array(), $file = null, $return = false) {
 		$plugin = $directory = null;
 
 		if (is_array($type)) {
@@ -879,7 +854,7 @@ class App extends Object {
 			list($plugin, $name) = explode('.', $name);
 			$plugin = Inflector::camelize($plugin);
 		}
-		$_this =& App::getInstance();
+		$_this = App::getInstance();
 		$_this->return = $return;
 
 		if (isset($ext)) {
@@ -947,10 +922,10 @@ class App extends Object {
  *
  * @return object
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new App();
+			$instance[0] = new App();
 			$instance[0]->__map = (array)Cache::read('file_map', '_cake_core_');
 		}
 		return $instance[0];
@@ -964,7 +939,7 @@ class App extends Object {
  * @return mixed boolean on fail, $file directory path on success
  * @access private
  */
-	function __find($file, $recursive = true) {
+	private function __find($file, $recursive = true) {
 		static $appPath = false;
 
 		if (empty($this->search)) {
@@ -1019,7 +994,7 @@ class App extends Object {
  * @return boolean
  * @access private
  */
-	function __load($file) {
+	private function __load($file) {
 		if (empty($file)) {
 			return false;
 		}
@@ -1046,7 +1021,7 @@ class App extends Object {
  * @return void
  * @access private
  */
-	function __map($file, $name, $type, $plugin) {
+	private function __map($file, $name, $type, $plugin) {
 		if ($plugin) {
 			$this->__map['Plugin'][$plugin][$type][$name] = $file;
 		} else {
@@ -1063,7 +1038,7 @@ class App extends Object {
  * @return mixed, file path if found, false otherwise
  * @access private
  */
-	function __mapped($name, $type, $plugin) {
+	private function __mapped($name, $type, $plugin) {
 		if ($plugin) {
 			if (isset($this->__map['Plugin'][$plugin][$type]) && isset($this->__map['Plugin'][$plugin][$type][$name])) {
 				return $this->__map['Plugin'][$plugin][$type][$name];
@@ -1084,7 +1059,7 @@ class App extends Object {
  * @param string $name Class name to overload
  * @access private
  */
-	function __overload($type, $name, $parent) {
+	private function __overload($type, $name, $parent) {
 		if (($type === 'Model' || $type === 'Helper') && $parent !== false) {
 			Overloadable::overload($name);
 		}
@@ -1100,7 +1075,7 @@ class App extends Object {
  * @return array
  * @access private
  */
-	function __settings($type, $plugin, $parent) {
+	private function __settings($type, $plugin, $parent) {
 		if (!$parent) {
 			return array('class' => null, 'suffix' => null, 'path' => null);
 		}
@@ -1193,7 +1168,7 @@ class App extends Object {
  * @return array list of paths
  * @access private
  */
-	function __paths($type) {
+	private function __paths($type) {
 		$type = strtolower($type);
 		$paths = array();
 
@@ -1215,7 +1190,7 @@ class App extends Object {
  * @return void
  * @access private
  */
-	function __remove($name, $type, $plugin) {
+	private function __remove($name, $type, $plugin) {
 		if ($plugin) {
 			unset($this->__map['Plugin'][$plugin][$type][$name]);
 		} else {
@@ -1231,7 +1206,7 @@ class App extends Object {
  * @return array  List of directories or files in directory
  * @access private
  */
-	function __list($path, $suffix = false, $extension = false) {
+	private function __list($path, $suffix = false, $extension = false) {
 		if (!class_exists('Folder')) {
 			require LIBS . 'folder.php';
 		}
