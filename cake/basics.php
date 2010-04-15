@@ -471,19 +471,14 @@ if (!function_exists('sortByKey')) {
  * @return mixed translated string if $return is false string will be echoed
  * @link http://book.cakephp.org/view/1121/__
  */
-	function __($singular, $return = false) {
+	function __($singular) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($singular);
-		} else {
-			return I18n::translate($singular);
-		}
+		return I18n::translate($singular);
 	}
 
 /**
@@ -496,19 +491,14 @@ if (!function_exists('sortByKey')) {
  * @param boolean $return true to return, false to echo
  * @return mixed plural form of translated string if $return is false string will be echoed
  */
-	function __n($singular, $plural, $count, $return = false) {
+	function __n($singular, $plural, $count) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($singular, $plural, null, 6, $count);
-		} else {
-			return I18n::translate($singular, $plural, null, 6, $count);
-		}
+		return I18n::translate($singular, $plural, null, 6, $count);
 	}
 
 /**
@@ -519,19 +509,14 @@ if (!function_exists('sortByKey')) {
  * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
-	function __d($domain, $msg, $return = false) {
+	function __d($domain, $msg) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($msg, null, $domain);
-		} else {
-			return I18n::translate($msg, null, $domain);
-		}
+		return I18n::translate($msg, null, $domain);
 	}
 
 /**
@@ -546,19 +531,14 @@ if (!function_exists('sortByKey')) {
  * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
-	function __dn($domain, $singular, $plural, $count, $return = false) {
+	function __dn($domain, $singular, $plural, $count) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($singular, $plural, $domain, 6, $count);
-		} else {
-			return I18n::translate($singular, $plural, $domain, 6, $count);
-		}
+		return I18n::translate($singular, $plural, $domain, 6, $count);
 	}
 
 /**
@@ -584,19 +564,14 @@ if (!function_exists('sortByKey')) {
  * @param boolean $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
-	function __dc($domain, $msg, $category, $return = false) {
+	function __dc($domain, $msg, $category) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($msg, null, $domain, $category);
-		} else {
-			return I18n::translate($msg, null, $domain, $category);
-		}
+		return I18n::translate($msg, null, $domain, $category);
 	}
 
 /**
@@ -626,19 +601,14 @@ if (!function_exists('sortByKey')) {
  * @param boolean $return true to return, false to echo
  * @return plural form of translated string if $return is false string will be echoed
  */
-	function __dcn($domain, $singular, $plural, $count, $category, $return = false) {
+	function __dcn($domain, $singular, $plural, $count, $category) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($singular, $plural, $domain, $category, $count);
-		} else {
-			return I18n::translate($singular, $plural, $domain, $category, $count);
-		}
+		return I18n::translate($singular, $plural, $domain, $category, $count);
 	}
 
 /**
@@ -660,19 +630,14 @@ if (!function_exists('sortByKey')) {
  * @param string $return true to return, false to echo
  * @return translated string if $return is false string will be echoed
  */
-	function __c($msg, $category, $return = false) {
+	function __c($msg, $category) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-
-		if ($return === false) {
-			echo I18n::translate($msg, null, null, $category);
-		} else {
-			return I18n::translate($msg, null, null, $category);
-		}
+		return I18n::translate($msg, null, null, $category);
 	}
 
 /**
