@@ -220,17 +220,17 @@ class ViewTask extends BakeTask {
 
 		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
-		$prompt = sprintf(__("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", true),  $this->controllerName);
+		$prompt = sprintf(__("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist."),  $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
 			$this->interactive = false;
 		}
 
-		$prompt = __("Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).", true);
+		$prompt = __("Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
 		$wannaDoScaffold = $this->in($prompt, array('y','n'), 'y');
 
-		$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?", true), array('y','n'), 'n');
+		$wannaDoAdmin = $this->in(__("Would you like to create the views for admin routing?"), array('y','n'), 'n');
 
 		if (strtolower($wannaDoScaffold) == 'y' || strtolower($wannaDoAdmin) == 'y') {
 			$vars = $this->__loadController();
@@ -249,7 +249,7 @@ class ViewTask extends BakeTask {
 			}
 			$this->hr();
 			$this->out();
-			$this->out(__("View Scaffolding Complete.\n", true));
+			$this->out(__("View Scaffolding Complete.\n"));
 		} else {
 			$this->customAction();
 		}
@@ -267,7 +267,7 @@ class ViewTask extends BakeTask {
  */
 	function __loadController() {
 		if (!$this->controllerName) {
-			$this->err(__('Controller not found', true));
+			$this->err(__('Controller not found'));
 		}
 
 		$import = $this->controllerName;
@@ -277,7 +277,7 @@ class ViewTask extends BakeTask {
 
 		if (!App::import('Controller', $import)) {
 			$file = $this->controllerPath . '_controller.php';
-			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", true), $file));
+			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller."), $file));
 			$this->_stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
@@ -329,25 +329,25 @@ class ViewTask extends BakeTask {
 	function customAction() {
 		$action = '';
 		while ($action == '') {
-			$action = $this->in(__('Action Name? (use lowercase_underscored function name)', true));
+			$action = $this->in(__('Action Name? (use lowercase_underscored function name)'));
 			if ($action == '') {
-				$this->out(__('The action name you supplied was empty. Please try again.', true));
+				$this->out(__('The action name you supplied was empty. Please try again.'));
 			}
 		}
 		$this->out();
 		$this->hr();
-		$this->out(__('The following view will be created:', true));
+		$this->out(__('The following view will be created:'));
 		$this->hr();
-		$this->out(sprintf(__('Controller Name: %s', true), $this->controllerName));
-		$this->out(sprintf(__('Action Name:     %s', true), $action));
-		$this->out(sprintf(__('Path:            %s', true), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(sprintf(__('Controller Name: %s'), $this->controllerName));
+		$this->out(sprintf(__('Action Name:     %s'), $action));
+		$this->out(sprintf(__('Path:            %s'), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
-		$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
+		$looksGood = $this->in(__('Look okay?'), array('y','n'), 'y');
 		if (strtolower($looksGood) == 'y') {
 			$this->bake($action);
 			$this->_stop();
 		} else {
-			$this->out(__('Bake Aborted.', true));
+			$this->out(__('Bake Aborted.'));
 		}
 	}
 

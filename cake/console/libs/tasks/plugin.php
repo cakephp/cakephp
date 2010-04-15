@@ -68,10 +68,10 @@ class PluginTask extends Shell {
 			$pluginPath = $this->_pluginPath($plugin);
 			$this->Dispatch->shiftArgs();
 			if (is_dir($pluginPath)) {
-				$this->out(sprintf(__('Plugin: %s', true), $plugin));
-				$this->out(sprintf(__('Path: %s', true), $pluginPath));
+				$this->out(sprintf(__('Plugin: %s'), $plugin));
+				$this->out(sprintf(__('Path: %s'), $pluginPath));
 			} elseif (isset($this->args[0])) {
-				$this->err(sprintf(__('%s in path %s not found.', true), $plugin, $pluginPath));
+				$this->err(sprintf(__('%s in path %s not found.'), $plugin, $pluginPath));
 				$this->_stop();
 			} else {
 				$this->__interactive($plugin);
@@ -88,7 +88,7 @@ class PluginTask extends Shell {
 				$this->{$task}->path = $pluginPath . Inflector::underscore(Inflector::pluralize($task)) . DS;
 
 				if (!is_dir($this->{$task}->path)) {
-					$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s", true), $task, $this->{$task}->path));
+					$this->err(sprintf(__("%s directory could not be found.\nBe sure you have created %s"), $task, $this->{$task}->path));
 				}
 				$this->{$task}->loadTasks();
 				return $this->{$task}->execute();
@@ -104,11 +104,11 @@ class PluginTask extends Shell {
  */
 	function __interactive($plugin = null) {
 		while ($plugin === null) {
-			$plugin = $this->in(__('Enter the name of the plugin in CamelCase format', true));
+			$plugin = $this->in(__('Enter the name of the plugin in CamelCase format'));
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->err(sprintf(__("An error occured trying to bake: %s in %s", true), $plugin, $this->path . Inflector::underscore($pluginPath)));
+			$this->err(sprintf(__("An error occured trying to bake: %s in %s"), $plugin, $this->path . Inflector::underscore($pluginPath)));
 		}
 	}
 
@@ -127,14 +127,14 @@ class PluginTask extends Shell {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(sprintf(__("Plugin Name: %s", true),  $plugin));
-		$this->out(sprintf(__("Plugin Directory: %s", true), $this->path . $pluginPath));
+		$this->out(sprintf(__("Plugin Name: %s"),  $plugin));
+		$this->out(sprintf(__("Plugin Directory: %s"), $this->path . $pluginPath));
 		$this->hr();
 
-		$looksGood = $this->in(__('Look okay?', true), array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__('Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
-			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
+			$verbose = $this->in(__('Do you want verbose output?'), array('y', 'n'), 'n');
 
 			$Folder =& new Folder($this->path . $pluginPath);
 			$directories = array(
@@ -190,7 +190,7 @@ class PluginTask extends Shell {
 			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
 
 			$this->hr();
-			$this->out(sprintf(__("Created: %s in %s", true), $plugin, $this->path . $pluginPath));
+			$this->out(sprintf(__('Created: %s in %s'), $plugin, $this->path . $pluginPath));
 			$this->hr();
 		}
 
@@ -209,7 +209,7 @@ class PluginTask extends Shell {
 			foreach ($pathOptions as $i => $option) {
 				$this->out($i + 1 .'. ' . $option);
 			}
-			$prompt = __('Choose a plugin path from the paths above.', true);
+			$prompt = __('Choose a plugin path from the paths above.');
 			$choice = $this->in($prompt);
 			if (intval($choice) > 0 && intval($choice) <= $max) {
 				$valid = true;

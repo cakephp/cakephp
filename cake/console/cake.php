@@ -322,7 +322,7 @@ class ShellDispatcher {
 		$Shell = $this->_getShell($plugin);
 
 		if (!$Shell) {
-			$title = sprintf(__('Error: Class %s could not be loaded.', true), $this->shellClass);
+			$title = sprintf(__('Error: Class %s could not be loaded.'), $this->shellClass);
 			$this->stderr($title . "\n");
 			return false;
 		}
@@ -374,8 +374,8 @@ class ShellDispatcher {
 			}
 		}
 
-		$title = sprintf(__('Error: Unknown %1$s command %2$s.', true), $this->shellName, $arg);
-		$message = sprintf(__('For usage try `cake %s help`', true), $this->shell);
+		$title = sprintf(__('Error: Unknown %1$s command %2$s.'), $this->shellName, $arg);
+		$message = sprintf(__('For usage try `cake %s help`'), $this->shell);
 		$this->stderr($title . "\n" . $message . "\n");
 		return false;
 	}

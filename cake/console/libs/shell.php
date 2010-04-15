@@ -408,7 +408,7 @@ class Shell extends Object {
  * @param string $message An optional error message
  */
 	public function error($title, $message = null) {
-		$this->err(sprintf(__('Error: %s', true), $title));
+		$this->err(sprintf(__('Error: %s'), $title));
 
 		if (!empty($message)) {
 			$this->err($message);
@@ -446,17 +446,17 @@ class Shell extends Object {
 		$path = str_replace(DS . DS, DS, $path);
 
 		$this->out();
-		$this->out(sprintf(__("Creating file %s", true), $path));
+		$this->out(sprintf(__('Creating file %s'), $path));
 
 		if (is_file($path) && $this->interactive === true) {
-			$prompt = sprintf(__('File `%s` exists, overwrite?', true), $path);
+			$prompt = sprintf(__('File `%s` exists, overwrite?'), $path);
 			$key = $this->in($prompt,  array('y', 'n', 'q'), 'n');
 
 			if (strtolower($key) == 'q') {
-				$this->out(__('Quitting.', true), 2);
+				$this->out(__('Quitting.'), 2);
 				$this->_stop();
 			} elseif (strtolower($key) != 'y') {
-				$this->out(sprintf(__('Skip `%s`', true), $path), 2);
+				$this->out(sprintf(__('Skip `%s`'), $path), 2);
 				return false;
 			}
 		}
@@ -467,10 +467,10 @@ class Shell extends Object {
 		if ($File = new File($path, true)) {
 			$data = $File->prepare($contents);
 			$File->write($data);
-			$this->out(sprintf(__('Wrote `%s`', true), $path));
+			$this->out(sprintf(__('Wrote `%s`'), $path));
 			return true;
 		} else {
-			$this->err(sprintf(__('Could not write to `%s`.', true), $path), 2);
+			$this->err(sprintf(__('Could not write to `%s`.'), $path), 2);
 			return false;
 		}
 	}

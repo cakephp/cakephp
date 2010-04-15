@@ -76,7 +76,7 @@ class BakeShell extends Shell {
 		}
 
 		if (!config('database')) {
-			$this->out(__("Your database configuration was not found. Take a moment to create one.", true));
+			$this->out(__('Your database configuration was not found. Take a moment to create one.'));
 			$this->args = null;
 			return $this->DbConfig->execute();
 		}
@@ -91,7 +91,7 @@ class BakeShell extends Shell {
 		$this->out('[T]est case');
 		$this->out('[Q]uit');
 
-		$classToBake = strtoupper($this->in(__('What would you like to Bake?', true), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
+		$classToBake = strtoupper($this->in(__('What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -118,7 +118,7 @@ class BakeShell extends Shell {
 				exit(0);
 				break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.', true));
+				$this->out(__('You have made an invalid selection. Please choose a type of class to Bake by entering D, M, V, F, T, or C.'));
 		}
 		$this->hr();
 		$this->main();
@@ -164,7 +164,7 @@ class BakeShell extends Shell {
 		$modelBaked = $this->Model->bake($object, false);
 
 		if ($modelBaked && $modelExists === false) {
-			$this->out(sprintf(__('%s Model was baked.', true), $model));
+			$this->out(sprintf(__('%s Model was baked.'), $model));
 			if ($this->_checkUnitTest()) {
 				$this->Model->bakeFixture($model);
 				$this->Model->bakeTest($model);
@@ -175,7 +175,7 @@ class BakeShell extends Shell {
 		if ($modelExists === true) {
 			$controller = $this->_controllerName($name);
 			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
-				$this->out(sprintf(__('%s Controller was baked.', true), $name));
+				$this->out(sprintf(__('%s Controller was baked.'), $name));
 				if ($this->_checkUnitTest()) {
 					$this->Controller->bakeTest($controller);
 				}
@@ -183,12 +183,12 @@ class BakeShell extends Shell {
 			if (App::import('Controller', $controller)) {
 				$this->View->args = array($controller);
 				$this->View->execute();
-				$this->out(sprintf(__('%s Views were baked.', true), $name));
+				$this->out(sprintf(__('%s Views were baked.'), $name));
 			}
-			$this->out(__('Bake All complete', true));
+			$this->out(__('Bake All complete'));
 			array_shift($this->args);
 		} else {
-			$this->err(__('Bake All could not continue without a valid model', true));
+			$this->err(__('Bake All could not continue without a valid model'));
 		}
 		$this->_stop();
 	}
@@ -221,7 +221,6 @@ class BakeShell extends Shell {
 		$this->out("\n\tbake fixture\n\t\tbakes fixtures. run 'bake fixture help' for more info.");
 		$this->out("\n\tbake test\n\t\tbakes unit tests. run 'bake test help' for more info.");
 		$this->out();
-
 	}
 }
 ?>

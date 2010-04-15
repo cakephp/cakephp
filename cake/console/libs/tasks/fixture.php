@@ -127,16 +127,16 @@ class FixtureTask extends BakeTask {
  */
 	public function importOptions($modelName) {
 		$options = array();
-		$doSchema = $this->in(__('Would you like to import schema for this fixture?', true), array('y', 'n'), 'n');
+		$doSchema = $this->in(__('Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
 		if ($doSchema == 'y') {
 			$options['schema'] = $modelName;
 		}
-		$doRecords = $this->in(__('Would you like to use record importing for this fixture?', true), array('y', 'n'), 'n');
+		$doRecords = $this->in(__('Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
 		if ($doRecords == 'y') {
 			$options['records'] = true;
 		}
 		if ($doRecords == 'n') {
-			$prompt = sprintf(__("Would you like to build this fixture with data from %s's table?", true), $modelName);
+			$prompt = sprintf(__("Would you like to build this fixture with data from %s's table?"), $modelName);
 			$fromTable = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($fromTable) == 'y') {
 				$options['fromTable'] = true;
@@ -356,7 +356,7 @@ class FixtureTask extends BakeTask {
 	protected function _getRecordsFromTable($modelName, $useTable = null) {
 		if ($this->interactive) {
 			$condition = null;
-			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10", true);
+			$prompt = __("Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1 LIMIT 10");
 			while (!$condition) {
 				$condition = $this->in($prompt, null, 'WHERE 1=1 LIMIT 10');
 			}
