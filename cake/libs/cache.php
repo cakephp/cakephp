@@ -534,7 +534,7 @@ class CacheEngine {
  * @return boolean True if the data was succesfully cached, false on failure
  */
 	public function write($key, &$value, $duration) {
-		trigger_error(sprintf(__('Method write() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method write() not implemented in %s'), get_class($this)), E_USER_ERROR);
 	}
 
 /**
@@ -544,7 +544,7 @@ class CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
-		trigger_error(sprintf(__('Method read() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method read() not implemented in %s'), get_class($this)), E_USER_ERROR);
 	}
 
 /**
@@ -555,7 +555,7 @@ class CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
-		trigger_error(sprintf(__('Method increment() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method increment() not implemented in %s'), get_class($this)), E_USER_ERROR);
 	}
 /**
  * Decrement a number under the key and return decremented value
@@ -565,7 +565,7 @@ class CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
-		trigger_error(sprintf(__('Method decrement() not implemented in %s', true), get_class($this)), E_USER_ERROR);
+		trigger_error(sprintf(__('Method decrement() not implemented in %s'), get_class($this)), E_USER_ERROR);
 	}
 /**
  * Delete a key from the cache
