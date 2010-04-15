@@ -238,7 +238,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	public function paintDocumentEnd() {
 		$baseDir = $this->params['baseDir'];
-		include CAKE_TESTS_LIB . 'templates' . DS . 'footer.php';
+		include CAKE_TESTS_LIB . 'templates/footer.php';
 		ob_end_flush();
 	}
 

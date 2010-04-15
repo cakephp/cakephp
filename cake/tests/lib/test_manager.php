@@ -176,7 +176,7 @@ class TestManager {
  * @access public
  * @static
  */
-	function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
+	public static function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
 		$manager = new TestManager();
 		$testCases = $manager->_getTestFileList($directory);
 		foreach ($testCases as $testCase) {
@@ -193,7 +193,7 @@ class TestManager {
  * @access public
  * @static
  */
-	function addTestFile(&$groupTest, $file) {
+	public static function addTestFile(&$groupTest, $file) {
 		$manager = new TestManager();
 
 		if (file_exists($file . $manager->_testExtension)) {
