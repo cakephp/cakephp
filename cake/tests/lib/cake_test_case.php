@@ -494,11 +494,19 @@ class CakeTestCase extends UnitTestCase {
 	public function getTests() {
 		return array_merge(
 			array('start', 'startCase'),
-			array_diff(parent::getTests(), array('testAction', 'testaction')),
+			array_diff(parent::getTests(), array('testAction')),
 			array('endCase', 'end')
 		);
 	}
 
+/**
+ * Accessor for checking whether or not fixtures were truncated 
+ *
+ * @return void
+ */
+	public function getTruncated() {
+		return $this->__truncated;
+	}
 /**
  * Chooses which fixtures to load for a given test
  *
