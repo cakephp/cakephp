@@ -17,12 +17,12 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php printf(__('Private Method in %s', true), $controller); ?></h2>
+<h2><?php printf(__('Private Method in %s'), $controller); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('%s%s cannot be accessed directly.', true), '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('%s%s cannot be accessed directly.'), '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>'); ?>
 </p>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'private_action.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'private_action.ctp'); ?>
 </p>

@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php __('Scaffold Error'); ?></h2>
+<h2><?php echo __('Scaffold Error'); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php __('Method _scaffoldError in was not found in the controller'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php echo __('Method _scaffoldError in was not found in the controller'); ?>
 </p>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'scaffold_error.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'scaffold_error.ctp'); ?>
 </p>
 <pre>
 &lt;?php

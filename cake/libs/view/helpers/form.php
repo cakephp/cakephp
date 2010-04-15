@@ -358,7 +358,7 @@ class FormHelper extends AppHelper {
 				$submitOptions = $options;
 
 				if (!$submit) {
-					$submit = __('Submit', true);
+					$submit = __('Submit');
 				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
@@ -499,7 +499,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = sprintf(__('Error in field %s', true), Inflector::humanize($this->field()));
+				$error = sprintf(__('Error in field %s'), Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
@@ -542,7 +542,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
+			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}
 
 		if (is_string($options)) {
@@ -608,16 +608,16 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$actionName = __('New %s', true);
+			$actionName = __('New %s');
 			$isEdit = (
 				strpos($this->action, 'update') !== false ||
 				strpos($this->action, 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __('Edit %s', true);
+				$actionName = __('Edit %s');
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __($modelName, true));
+			$legend = sprintf($actionName, __($modelName));
 		}
 
 		$out = null;
@@ -1034,7 +1034,7 @@ class FormHelper extends AppHelper {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
-			$legend = __(Inflector::humanize($this->field()), true);
+			$legend = __(Inflector::humanize($this->field()));
 		}
 		$label = true;
 
@@ -1284,7 +1284,7 @@ class FormHelper extends AppHelper {
  */
 	public function submit($caption = null, $options = array()) {
 		if (!$caption) {
-			$caption = __('Submit', true);
+			$caption = __('Submit');
 		}
 		$out = null;
 		$div = true;
@@ -2090,18 +2090,18 @@ class FormHelper extends AppHelper {
 			break;
 			case 'month':
 				if ($options['monthNames'] === true) {
-					$data['01'] = __('January', true);
-					$data['02'] = __('February', true);
-					$data['03'] = __('March', true);
-					$data['04'] = __('April', true);
-					$data['05'] = __('May', true);
-					$data['06'] = __('June', true);
-					$data['07'] = __('July', true);
-					$data['08'] = __('August', true);
-					$data['09'] = __('September', true);
-					$data['10'] = __('October', true);
-					$data['11'] = __('November', true);
-					$data['12'] = __('December', true);
+					$data['01'] = __('January');
+					$data['02'] = __('February');
+					$data['03'] = __('March');
+					$data['04'] = __('April');
+					$data['05'] = __('May');
+					$data['06'] = __('June');
+					$data['07'] = __('July');
+					$data['08'] = __('August');
+					$data['09'] = __('September');
+					$data['10'] = __('October');
+					$data['11'] = __('November');
+					$data['12'] = __('December');
 				} else if (is_array($options['monthNames'])) {
 					$data = $options['monthNames'];
 				} else {

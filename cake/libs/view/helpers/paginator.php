@@ -95,7 +95,7 @@ class PaginatorHelper extends AppHelper {
 		App::import('Helper', $ajaxProvider);
 		$classname = $ajaxProvider . 'Helper';
 		if (!is_callable(array($classname, 'link'))) {
-			trigger_error(sprintf(__('%s does not implement a link() method, it is incompatible with PaginatorHelper', true), $classname), E_USER_WARNING);
+			trigger_error(sprintf(__('%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname), E_USER_WARNING);
 		}
 	}
 
@@ -295,7 +295,7 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($key)) {
 			$key = $title;
-			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)), true);
+			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
 		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
@@ -515,7 +515,7 @@ class PaginatorHelper extends AppHelper {
 			array(
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
-				'separator' => __(' of ', true)
+				'separator' => __(' of ')
 			),
 		$options);
 

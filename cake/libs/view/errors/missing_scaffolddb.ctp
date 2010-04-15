@@ -17,16 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php __('Missing Database Connection'); ?></h2>
+<h2><?php echo __('Missing Database Connection'); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php __('Scaffold requires a database connection'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php echo __('Scaffold requires a database connection'); ?>
 </p>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('Confirm you have created the file: %s', true), APP_DIR . DS . 'config' . DS . 'database.php'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('Confirm you have created the file: %s'), APP_DIR . DS . 'config' . DS . 'database.php'); ?>
 </p>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_scaffolddb.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_scaffolddb.ctp'); ?>
 </p>
