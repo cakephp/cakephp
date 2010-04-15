@@ -257,7 +257,7 @@ class Configure extends Object {
 		}
 
 		if (!isset($config)) {
-			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php', true), $fileName), E_USER_WARNING);
+			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php'), $fileName), E_USER_WARNING);
 			return false;
 		}
 		return Configure::write($config);
@@ -357,14 +357,14 @@ class Configure extends Object {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
 
 			if (!include(CONFIGS . 'core.php')) {
-				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
 			}
 
 			if (Configure::read('Cache.disable') !== true) {
 				$cache = Cache::config('default');
 
 				if (empty($cache['settings'])) {
-					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php', true), E_USER_WARNING);
+					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php'), E_USER_WARNING);
 					$cache = Cache::config('default', array('engine' => 'File'));
 				}
 				$path = $prefix = $duration = null;
@@ -398,7 +398,7 @@ class Configure extends Object {
 			}
 			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", true), CONFIGS), E_USER_ERROR);
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
 			}
 		}
 	}

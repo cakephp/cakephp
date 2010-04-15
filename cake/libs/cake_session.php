@@ -264,12 +264,12 @@ class CakeSession extends Object {
 	public function delete($name) {
 		if ($this->check($name)) {
 			if (in_array($name, $this->watchKeys)) {
-				trigger_error(sprintf(__('Deleting session key {%s}', true), $name), E_USER_NOTICE);
+				trigger_error(sprintf(__('Deleting session key {%s}'), $name), E_USER_NOTICE);
 			}
 			$this->__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return ($this->check($name) == false);
 		}
-		$this->__setError(2, sprintf(__("%s doesn't exist", true), $name));
+		$this->__setError(2, sprintf(__("%s doesn't exist"), $name));
 		return false;
 	}
 
@@ -372,7 +372,7 @@ class CakeSession extends Object {
 		if (!empty($_SESSION)) {
 			return $_SESSION;
 		}
-		$this->__setError(2, "No Session vars set");
+		$this->__setError(2, 'No Session vars set');
 		return false;
 	}
 
@@ -422,7 +422,7 @@ class CakeSession extends Object {
 			return false;
 		}
 		if (in_array($name, $this->watchKeys)) {
-			trigger_error(sprintf(__('Writing session key {%s}: %s', true), $name, Debugger::exportVar($value)), E_USER_NOTICE);
+			trigger_error(sprintf(__('Writing session key {%s}: %s'), $name, Debugger::exportVar($value)), E_USER_NOTICE);
 		}
 		$this->__overwrite($_SESSION, Set::insert($_SESSION, $name, $value));
 		return (Set::classicExtract($_SESSION, $name) === $value);

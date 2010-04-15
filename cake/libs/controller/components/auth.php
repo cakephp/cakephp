@@ -416,7 +416,7 @@ class AuthComponent extends Object {
 				if (isset($controller->Acl)) {
 					$this->Acl =& $controller->Acl;
 				} else {
-					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.', true), E_USER_WARNING);
+					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.'), E_USER_WARNING);
 				}
 			break;
 			case 'model':
@@ -459,7 +459,7 @@ class AuthComponent extends Object {
  */
 	function __setDefaults() {
 		if (empty($this->userModel)) {
-			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter().", true), E_USER_WARNING);
+			trigger_error(__("Could not find \$userModel. Please set AuthComponent::\$userModel in beforeFilter()."), E_USER_WARNING);
 			return false;
 		}
 		list($plugin, $model) = pluginSplit($this->userModel);
@@ -471,8 +471,8 @@ class AuthComponent extends Object {
 			),
 			'sessionKey' => 'Auth.' . $model,
 			'logoutRedirect' => $this->loginAction,
-			'loginError' => __('Login failed. Invalid username or password.', true),
-			'authError' => __('You are not authorized to access that location.', true)
+			'loginError' => __('Login failed. Invalid username or password.'),
+			'authError' => __('You are not authorized to access that location.')
 		);
 		foreach ($defaults as $key => $value) {
 			if (empty($this->{$key})) {
@@ -527,7 +527,7 @@ class AuthComponent extends Object {
 				$this->mapActions();
 				if (!isset($this->actionMap[$this->params['action']])) {
 					trigger_error(
-						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', true), $this->params['action'], $this->params['controller']),
+						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->params['action'], $this->params['controller']),
 						E_USER_WARNING
 					);
 				} else {
@@ -552,13 +552,13 @@ class AuthComponent extends Object {
 					$action = $this->action(':action');
 				}
 				if (empty($object)) {
-					trigger_error(sprintf(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', true), get_class($object)), E_USER_WARNING);
+					trigger_error(sprintf(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object'), get_class($object)), E_USER_WARNING);
 					return;
 				}
 				if (method_exists($object, 'isAuthorized')) {
 					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
 				} elseif ($object) {
-					trigger_error(sprintf(__('%s::isAuthorized() is not defined.', true), get_class($object)), E_USER_WARNING);
+					trigger_error(sprintf(__('%s::isAuthorized() is not defined.'), get_class($object)), E_USER_WARNING);
 				}
 			break;
 			case null:
@@ -566,7 +566,7 @@ class AuthComponent extends Object {
 				return true;
 			break;
 			default:
-				trigger_error(__('Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.', true), E_USER_WARNING);
+				trigger_error(__('Auth::isAuthorized() - $authorize is set to an incorrect value.  Allowed settings are: "actions", "crud", "model" or null.'), E_USER_WARNING);
 			break;
 		}
 		return $valid;
@@ -811,7 +811,7 @@ class AuthComponent extends Object {
 		}
 
 		if (empty($model)) {
-			trigger_error(__('Auth::getModel() - Model is not set or could not be found', true), E_USER_WARNING);
+			trigger_error(__('Auth::getModel() - Model is not set or could not be found'), E_USER_WARNING);
 			return null;
 		}
 

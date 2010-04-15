@@ -84,7 +84,7 @@ class CakeLog {
  */
 	function config($key, $config) {
 		if (empty($config['engine'])) {
-			trigger_error(__('Missing logger classname', true), E_USER_WARNING);
+			trigger_error(__('Missing logger classname'), E_USER_WARNING);
 			return false;
 		}
 		$className = self::_getLogger($config['engine']);
@@ -114,12 +114,12 @@ class CakeLog {
 			}
 		}
 		if (!class_exists($loggerName)) {
-			trigger_error(sprintf(__('Could not load logger class %s', true), $loggerName), E_USER_WARNING);
+			trigger_error(sprintf(__('Could not load logger class %s'), $loggerName), E_USER_WARNING);
 			return false;
 		}
 		if (!is_callable(array($loggerName, 'write'))) {
 			trigger_error(
-				sprintf(__('logger class %s does not implement a write method.', true), $loggerName),
+				sprintf(__('logger class %s does not implement a write method.'), $loggerName),
 				E_USER_WARNING
 			);
 			return false;
