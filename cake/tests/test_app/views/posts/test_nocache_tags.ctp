@@ -21,11 +21,11 @@
 	<cake:nocache>
 	<span class="notice">
 		<?php
-			__('Your tmp directory is ');
+			echo __('Your tmp directory is ');
 			if (is_writable(TMP)):
-				__('writable.');
+				echo __('writable.');
 			else:
-				__('NOT writable.');
+				echo __('NOT writable.');
 			endif;
 		?>
 	</span>
@@ -34,12 +34,12 @@
 <p>
 	<span class="notice">
 		<?php
-			__('Your cache is ');
+			echo __('Your cache is ');
 			if (Cache::isInitialized()):
-				__('set up and initialized properly.');
+				echo __('set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>' . $settings['engine'];
-				__(' is being used to cache, to change this edit config/core.php ');
+				echo __(' is being used to cache, to change this edit config/core.php ');
 				echo '</p>';
 
 				echo 'Settings: <ul>';
@@ -49,10 +49,10 @@
 				echo '</ul>';
 
 			else:
-				__('NOT working.');
+				echo __('NOT working.');
 				echo '<br />';
 				if (is_writable(TMP)):
-					__('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
+					echo __('Edit: config/core.php to insure you have the newset version of this file and the variable $cakeCache set properly');
 				endif;
 			endif;
 		?>
@@ -61,15 +61,15 @@
 <p>
 	<span class="notice">
 		<?php
-			__('Your database configuration file is ');
+			echo __('Your database configuration file is ');
 			$filePresent = null;
 			if (file_exists(CONFIGS.'database.php')):
-				__('present.');
+				echo __('present.');
 				$filePresent = true;
 			else:
-				__('NOT present.');
+				echo __('NOT present.');
 				echo '<br/>';
-				__('Rename config/database.php.default to config/database.php');
+				echo __('Rename config/database.php.default to config/database.php');
 			endif;
 		?>
 	</span>

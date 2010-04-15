@@ -3,12 +3,12 @@ $count = 10;
 $messages = array('count' => 10);
 
 // Plural
-__n('You have %d new message.', 'You have %d new messages.', $count);
-__n('You deleted %d message.', 'You deleted %d messages.', $messages['count']);
+echo __n('You have %d new message.', 'You have %d new messages.', $count);
+echo __n('You deleted %d message.', 'You deleted %d messages.', $messages['count']);
 
 // Domain Plural
-__dn('domain', 'You have %d new message (domain).', 'You have %d new messages (domain).', '10');
-__dn('domain', 'You deleted %d message (domain).', 'You deleted %d messages (domain).', $messages['count']);
+echo __dn('domain', 'You have %d new message (domain).', 'You have %d new messages (domain).', '10');
+echo __dn('domain', 'You deleted %d message (domain).', 'You deleted %d messages (domain).', $messages['count']);
 
 // Duplicated Message
-__('Editing this Page');
+echo __('Editing this Page');
