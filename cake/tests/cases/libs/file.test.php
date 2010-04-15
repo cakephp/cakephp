@@ -461,7 +461,7 @@ class FileTest extends CakeTestCase {
 			$shortPath = substr($tmpFile, strlen(ROOT));
 
 			$message = '[FileTest] Skipping %s because "%s" not writeable!';
-			$message = sprintf(__($message, true), $caller, $shortPath).$assertLine;
+			$message = sprintf(__($message), $caller, $shortPath).$assertLine;
 			$this->_reporter->paintSkip($message);
 		}
 		return false;

@@ -2439,7 +2439,7 @@ class I18nTest extends CakeTestCase {
 		$string .= "broken up over multiple lines.\n";
 		$string .= "This is the third line.\n";
 		$string .= "This is the forth line.";
-		$result = __($string, true);
+		$result = __($string);
 
 		$expected = "This is a multiline translation\n";
 		$expected .= "broken up over multiple lines.\n";
@@ -2452,17 +2452,17 @@ class I18nTest extends CakeTestCase {
 		$string .= "broken up over multiple lines.\r\n";
 		$string .= "This is the third line.\r\n";
 		$string .= "This is the forth line.";
-		$result = __($string, true);
+		$result = __($string);
 		$this->assertEqual($result, $expected);
 
 		$singular = "valid\nsecond line";
 		$plural = "valids\nsecond line";
 
-		$result = __n($singular, $plural, 1, true);
+		$result = __n($singular, $plural, 1);
 		$expected = "v\nsecond line";
 		$this->assertEqual($result, $expected);
 
-		$result = __n($singular, $plural, 2, true);
+		$result = __n($singular, $plural, 2);
 		$expected = "vs\nsecond line";
 		$this->assertEqual($result, $expected);
 
@@ -2474,11 +2474,11 @@ class I18nTest extends CakeTestCase {
 		$singular = "%d = 1\n" . $string;
 		$plural = "%d = 0 or > 1\n" . $string;
 
-		$result = __n($singular, $plural, 1, true);
+		$result = __n($singular, $plural, 1);
 		$expected = "%d is 1\n" . $string;
 		$this->assertEqual($result, $expected);
 
-		$result = __n($singular, $plural, 2, true);
+		$result = __n($singular, $plural, 2);
 		$expected = "%d is 2-4\n" . $string;
 		$this->assertEqual($result, $expected);
 
@@ -2491,11 +2491,11 @@ class I18nTest extends CakeTestCase {
 		$singular = "%d = 1\r\n" . $string;
 		$plural = "%d = 0 or > 1\r\n" . $string;
 
-		$result = __n($singular, $plural, 1, true);
+		$result = __n($singular, $plural, 1);
 		$expected = "%d is 1\n" . str_replace("\r\n", "\n", $string);
 		$this->assertEqual($result, $expected);
 
-		$result = __n($singular, $plural, 2, true);
+		$result = __n($singular, $plural, 2);
 		$expected = "%d is 2-4\n" . str_replace("\r\n", "\n", $string);
 		$this->assertEqual($result, $expected);
 	}
@@ -2508,7 +2508,7 @@ class I18nTest extends CakeTestCase {
  */
 	function testPoNoTranslationNeeded () {
 		Configure::write('Config.language', 'po');
-		$result = __('No Translation needed', true);
+		$result = __('No Translation needed');
 		$this->assertEqual($result, 'No Translation needed');
 	}
 
@@ -2520,7 +2520,7 @@ class I18nTest extends CakeTestCase {
  */
 	function testPoQuotedString () {
 		$expected = 'this is a "quoted string" (translated)';
-		$this->assertEqual(__('this is a "quoted string"', true), $expected);
+		$this->assertEqual(__('this is a "quoted string"'), $expected);
 	}
 
 /**
@@ -2532,15 +2532,15 @@ class I18nTest extends CakeTestCase {
 	function testFloatValue() {
 		Configure::write('Config.language', 'rule_9_po');
 
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)1, true);
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)1);
 		$expected = '%d is 1 (translated)';
 		$this->assertEqual($result, $expected);
 
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)2, true);
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)2);
 		$expected = "%d ends in 2-4, not 12-14 (translated)";
 		$this->assertEqual($result, $expected);
 
-		$result = __n('%d = 1', '%d = 0 or > 1', (float)5, true);
+		$result = __n('%d = 1', '%d = 0 or > 1', (float)5);
 		$expected = "%d everything else (translated)";
 		$this->assertEqual($result, $expected);
 	}
@@ -2591,32 +2591,32 @@ class I18nTest extends CakeTestCase {
 
 	function testTimeDefinition() {
 		Configure::write('Config.language', 'po');
-		$result = __c('d_fmt', 5, true);
+		$result = __c('d_fmt', 5);
 		$expected = '%m/%d/%Y';
 		$this->assertEqual($result, $expected);
 
-		$result = __c('am_pm', 5, true);
+		$result = __c('am_pm', 5);
 		$expected = array('AM', 'PM');
 		$this->assertEqual($result, $expected);
 
-		$result = __c('abmon', 5, true);
+		$result = __c('abmon', 5);
 		$expected = array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec');
 		$this->assertEqual($result, $expected);
 	}
 
 	function testTimeDefinitionJapanese(){
 		Configure::write('Config.language', 'ja_jp');
-		$result = __c('d_fmt', 5, true);
+		$result = __c('d_fmt', 5);
 		
 		$expected = "%Y年%m月%d日";
 		
 		$this->assertEqual($result, $expected);
 
-		$result = __c('am_pm', 5, true);
+		$result = __c('am_pm', 5);
 		$expected = array("午前", "午後");
 		$this->assertEqual($result, $expected);
 
-		$result = __c('abmon', 5, true);
+		$result = __c('abmon', 5);
 		$expected = array(" 1月", " 2月", " 3月", " 4月", " 5月", " 6月", " 7月", " 8月", " 9月", "10月", "11月", "12月");
 		$this->assertEqual($result, $expected);
 	}
@@ -2628,7 +2628,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function __domainCategorySingular($domain = 'test_plugin', $category = 3) {
-		$singular = __dc($domain, 'Plural Rule 1', $category, true);
+		$singular = __dc($domain, 'Plural Rule 1', $category);
 		return $singular;
 	}
 
@@ -2641,7 +2641,7 @@ class I18nTest extends CakeTestCase {
 	function __domainCategoryPlural($domain = 'test_plugin', $category = 3) {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category, true), (float)$number);
+			$plurals[] =  sprintf(__dcn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, $category), (float)$number);
 		}
 		return $plurals;
 	}
@@ -2653,7 +2653,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function __domainSingular($domain = 'test_plugin') {
-		$singular = __d($domain, 'Plural Rule 1', true);
+		$singular = __d($domain, 'Plural Rule 1');
 		return $singular;
 	}
 
@@ -2666,7 +2666,7 @@ class I18nTest extends CakeTestCase {
 	function __domainPlural($domain = 'test_plugin') {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number, true), (float)$number );
+			$plurals[] =  sprintf(__dn($domain, '%d = 1', '%d = 0 or > 1', (float)$number), (float)$number );
 		}
 		return $plurals;
 	}
@@ -2678,7 +2678,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function __category($category = 3) {
-		$singular = __c('Plural Rule 1', $category, true);
+		$singular = __c('Plural Rule 1', $category);
 		return $singular;
 	}
 
@@ -2689,7 +2689,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function __singular() {
-		$singular = __('Plural Rule 1', true);
+		$singular = __('Plural Rule 1');
 		return $singular;
 	}
 
@@ -2702,7 +2702,7 @@ class I18nTest extends CakeTestCase {
 	function __plural() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number, true), (float)$number );
+			$plurals[] =  sprintf(__n('%d = 1', '%d = 0 or > 1', (float)$number), (float)$number);
 		}
 		return $plurals;
 	}
@@ -2714,7 +2714,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	function __singularFromCore() {
-		$singular = __('Plural Rule 1 (from core)', true);
+		$singular = __('Plural Rule 1 (from core)');
 		return $singular;
 	}
 
@@ -2727,7 +2727,7 @@ class I18nTest extends CakeTestCase {
 	function __pluralFromCore() {
 		$plurals = array();
 		for ($number = 0; $number <= 25; $number++) {
-			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number, true), (float)$number );
+			$plurals[] =  sprintf(__n('%d = 1 (from core)', '%d = 0 or > 1 (from core)', (float)$number), (float)$number );
 		}
 		return $plurals;
 	}
