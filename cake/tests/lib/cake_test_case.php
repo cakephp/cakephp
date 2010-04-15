@@ -693,14 +693,14 @@ class CakeTestCase extends UnitTestCase {
 		if ($testDbAvailable) {
 			// Try for test DB
 			restore_error_handler();
-			@$db =& ConnectionManager::getDataSource('test');
+			@$db = ConnectionManager::getDataSource('test');
 			set_error_handler('simpleTestErrorHandler');
 			$testDbAvailable = $db->isConnected();
 		}
 
 		// Try for default DB
 		if (!$testDbAvailable) {
-			$db =& ConnectionManager::getDataSource('default');
+			$db = ConnectionManager::getDataSource('default');
 			$_prefix = $db->config['prefix'];
 			$db->config['prefix'] = 'test_suite_';
 		}
@@ -709,7 +709,7 @@ class CakeTestCase extends UnitTestCase {
 		$db->config['prefix'] = $_prefix;
 
 		// Get db connection
-		$this->db =& ConnectionManager::getDataSource('test_suite');
+		$this->db = ConnectionManager::getDataSource('test_suite');
 		$this->db->cacheSources  = false;
 
 		ClassRegistry::config(array('ds' => 'test_suite'));
@@ -789,7 +789,7 @@ class CakeTestCase extends UnitTestCase {
  * @return array
  * @access private
  */
-	function __array_permute($items, $perms = array()) {
+	private function __array_permute($items, $perms = array()) {
 		static $permuted;
 		if (empty($perms)) {
 			$permuted = array();

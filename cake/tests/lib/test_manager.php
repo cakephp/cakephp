@@ -365,7 +365,7 @@ class TestManager {
 				$result = APP_TEST_GROUPS;
 			}
 		} else if (!empty($this->pluginTest)) {
-			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
+			$_pluginBasePath = APP . 'plugins/' . $this->pluginTest . '/tests';
 			$pluginPath = App::pluginPath($this->pluginTest);
 			if (file_exists($pluginPath . DS . 'tests')) {
 				$_pluginBasePath = $pluginPath . DS . 'tests';
