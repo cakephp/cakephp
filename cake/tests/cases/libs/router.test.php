@@ -1125,7 +1125,7 @@ class RouterTest extends CakeTestCase {
 		Router::parse('/');
 
 		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
-		$expected = '/admin/test_plugin/test_plugin';
+		$expected = '/admin/test_plugin';
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
@@ -1147,6 +1147,12 @@ class RouterTest extends CakeTestCase {
 			'admin' => true, 'prefix' => 'admin'
 		));
 		$expected = '/admin/test_plugin/show_tickets/edit/6';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array(
+			'plugin' => 'test_plugin', 'controller' => 'show_tickets', 'action' => 'index', 'admin' => true
+		));
+		$expected = '/admin/test_plugin/show_tickets';
 		$this->assertEqual($result, $expected);
 
 		App::build(array('plugins' => $paths));
@@ -1735,12 +1741,38 @@ class RouterTest extends CakeTestCase {
 
 		Router::setRequestInfo(array(
 			array('controller' => 'users', 'action' => 'login', 'company' => true, 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
+			array('base' => '/', 'here' => '/', 'webroot' => '/base/')
 		));
 
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => false));
 		$expected = '/login';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test url generation with prefixes and custom routes
+ *
+ * @return void
+ */
+	function testUrlWritingWithPrefixesAndCustomRoutes() {
+		Router::connect(
+			'/admin/login', 
+			array('controller' => 'users', 'action' => 'login', 'prefix' => 'admin', 'admin' => true)
+		);
+		Router::setRequestInfo(array(
+			array('controller' => 'posts', 'action' => 'index', 'admin' => true, 'prefix' => 'admin',
+				'form' => array(), 'url' => array(), 'plugin' => null
+			),
+			array('base' => '/', 'here' => '/', 'webroot' => '/')
+		));
+		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'admin' => true));
+		$this->assertEqual($result, '/admin/login');
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'login'));
+		$this->assertEqual($result, '/admin/login');
+
+		$result = Router::url(array('controller' => 'users', 'action' => 'admin_login'));
+		$this->assertEqual($result, '/admin/login');
 	}
 
 /**
@@ -2113,6 +2145,21 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertPattern($result, '/test_plugin/posts/index');
 		$this->assertPattern($result, '/test_plugin/posts/edit/5');
 		$this->assertPattern($result, '/test_plugin/posts/edit/5/name:value/nick:name');
+	}
+
+/**
+ * test that route parameters that overlap don't cause errors.
+ *
+ * @return void
+ */
+	function testRouteParameterOverlap() {
+		$route =& new CakeRoute('/invoices/add/:idd/:id', array('controller' => 'invoices', 'action' => 'add'));
+		$result = $route->compile();
+		$this->assertPattern($result, '/invoices/add/1/3');
+
+		$route =& new CakeRoute('/invoices/add/:id/:idd', array('controller' => 'invoices', 'action' => 'add'));
+		$result = $route->compile();
+		$this->assertPattern($result, '/invoices/add/1/3');
 	}
 
 /**

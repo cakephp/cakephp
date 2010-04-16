@@ -561,6 +561,7 @@ class DboPostgresTest extends CakeTestCase {
 		$db1->query('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
 			id serial NOT NULL,
 			"varchar" character varying(40) NOT NULL,
+			"full_length" character varying NOT NULL,
 			"timestamp" timestamp without time zone,
 			date date,
 			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
@@ -573,7 +574,9 @@ class DboPostgresTest extends CakeTestCase {
 		));
 		$schema->tables = array('datatypes' => $result['tables']['datatypes']);
 		$result = $db1->createSchema($schema, 'datatypes');
+
 		$this->assertNoPattern('/timestamp DEFAULT/', $result);
+		$this->assertPattern('/\"full_length\"\s*text\s.*,/', $result);
 		$this->assertPattern('/timestamp\s*,/', $result);
 
 		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));

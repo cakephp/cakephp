@@ -206,17 +206,20 @@ class MediaView extends View {
 					'Content-Length: ' . $fileSize));
 			}
 			$this->_output();
-			@ob_end_clean();
+			$this->_clearBuffer();
 
-			while (!feof($handle) && connection_status() == 0 && !connection_aborted()) {
+			while (!feof($handle)) {
+				if (!$this->_isActive()) {
+					fclose($handle);
+					return false;
+				}
 				set_time_limit(0);
 				$buffer = fread($handle, $chunkSize);
 				echo $buffer;
-				@flush();
-				@ob_flush();
+				$this->_flushBuffer();
 			}
 			fclose($handle);
-			exit(0);
+			return;
 		}
 		return false;
 	}
@@ -249,6 +252,33 @@ class MediaView extends View {
 			$header = key($value);
 			header($header, $value[$header]);
 		}
+	}
+
+/**
+ * Returns true if connection is still active
+ * @return boolean
+ * @access protected
+ */
+	function _isActive() {
+		return connection_status() == 0 && !connection_aborted();
+	}
+
+/**
+ * Clears the contents of the topmost output buffer and discards them
+ * @return boolean
+ * @access protected
+ */
+	function _clearBuffer() {
+		return @ob_end_clean();
+	}
+
+/**
+ * Flushes the contents of the output buffer
+ * @access protected
+ */
+	function _flushBuffer() {
+		@flush();
+		@ob_flush();
 	}
 }
 ?>

@@ -574,14 +574,15 @@ class Router {
 			}
 			$pluginPattern = implode('|', $plugins);
 			$match = array('plugin' => $pluginPattern);
+			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
 
 			foreach ($this->__prefixes as $prefix) {
 				$params = array('prefix' => $prefix, $prefix => true);
 				$indexParams = $params + array('action' => 'index');
+				$this->connect("/{$prefix}/:plugin", $indexParams, $shortParams);
 				$this->connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 				$this->connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 			}
-			$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
 			$this->connect('/:plugin', array('action' => 'index'), $shortParams);
 			$this->connect('/:plugin/:controller', array('action' => 'index'), $match);
 			$this->connect('/:plugin/:controller/:action/*', array(), $match);
@@ -769,9 +770,6 @@ class Router {
 			} else {
 				$params = end($self->__params);
 			}
-			if (isset($params['prefix']) && strpos($params['action'], $params['prefix']) === 0) {
-				$params['action'] = substr($params['action'], strlen($params['prefix']) + 1);
-			}
 		}
 		$path = array('base' => null);
 
@@ -816,6 +814,9 @@ class Router {
 					$url[$prefix] = true;
 				} elseif (isset($url[$prefix]) && !$url[$prefix]) {
 					unset($url[$prefix]);
+				}
+				if (isset($url[$prefix]) && strpos($url['action'], $prefix) === 0) {
+					$url['action'] = substr($url['action'], strlen($prefix) + 1);
 				}
 			}
 
@@ -1344,11 +1345,12 @@ class CakeRoute {
 			return;
 		}
 		$route = $this->template;
-		$names = $replacements = $search = array();
+		$names = $routeParams = array();
 		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
+			$search = '\\' . $namedElements[0][$i];
 			if (isset($this->options[$name])) {
 				$option = null;
 				if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
@@ -1356,15 +1358,12 @@ class CakeRoute {
 				}
 				$slashParam = '/\\' . $namedElements[0][$i];
 				if (strpos($parsed, $slashParam) !== false) {
-					$replacements[] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
-					$search[] = $slashParam;
+					$routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				} else {
-					$search[] = '\\' . $namedElements[0][$i];
-					$replacements[] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+					$routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
-				$replacements[] = '(?:(?P<' . $name . '>[^/]+))';
-				$search[] = '\\' . $namedElements[0][$i];
+				$routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
 			}
 			$names[] = $name;
 		}
@@ -1372,7 +1371,8 @@ class CakeRoute {
 			$parsed = preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
 			$this->_greedy = true;
 		}
-		$parsed = str_replace($search, $replacements, $parsed);
+		krsort($routeParams);
+		$parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 	}
