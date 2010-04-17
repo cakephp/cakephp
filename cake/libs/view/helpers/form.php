@@ -216,7 +216,7 @@ class FormHelper extends AppHelper {
 		$object =& $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
 
-		$modelEntity = $this->model()
+		$modelEntity = $this->model();
 		if (isset($this->fieldset[$modelEntity]['key'])) {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
