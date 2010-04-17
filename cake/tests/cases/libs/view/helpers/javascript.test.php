@@ -441,6 +441,22 @@ class JavascriptTest extends CakeTestCase {
 		$result = $this->Javascript->object($object, array('quoteKeys' => false, 'stringKeys' => array('key1', 'key3')));
 		$this->assertEqual($result, $expected);
 
+		$expected = '{?Object?:{?key1?:"val1",?key2?:"val2",?key3?:"val3"}}';
+		$result = $this->Javascript->object($object, array('q' => '?'));
+		$this->assertEqual($result, $expected);
+		
+		$expected = '{?Object?:{?key1?:"val1",?key2?:val2,?key3?:"val3"}}';
+		$result = $this->Javascript->object($object, array(
+			'q' => '?', 'stringKeys' => array('key3', 'key1')
+		));
+		$this->assertEqual($result, $expected);
+
+		$expected = '{?Object?:{?key1?:val1,?key2?:"val2",?key3?:val3}}';
+		$result = $this->Javascript->object($object, array(
+			'q' => '?', 'stringKeys' => array('key3', 'key1'), 'quoteKeys' => false
+		));
+		$this->assertEqual($result, $expected);
+
 		$this->Javascript->useNative = $oldNative;
 	}
 
