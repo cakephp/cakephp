@@ -175,7 +175,10 @@ class Cache extends Object {
 			return false;
 		}
 
-		$engine = $_this->__config[$_this->__name]['engine'];
+		$engine = $_this->__config[$_this->__name]['engine'];	
+		if (isset($settings['engine'])) {
+			$engine = $settings['engine'];
+		}
 
 		if (!empty($settings)) {
 			$_this->__reset = true;
@@ -289,6 +292,7 @@ class Cache extends Object {
 		if (!$key = $_this->_Engine[$engine]->key($key)) {
 			return false;
 		}
+	
 		$success = $_this->_Engine[$engine]->read($settings['prefix'] . $key);
 
 		if ($config !== null && $config !== $_this->__name) {
