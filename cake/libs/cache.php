@@ -156,8 +156,7 @@ class Cache {
 		if (!isset(self::$_config[$name])) {
 			return false;
 		}
-		unset(self::$_config[$name]);
-		unset(self::$_engines[$name]);
+		unset(self::$_config[$name], self::$_engines[$name]);
 		return true;
 	}
 
