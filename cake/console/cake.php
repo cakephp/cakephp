@@ -128,7 +128,7 @@ class ShellDispatcher {
  * @param array $args the argv
  * @return void
  */
-	public function ShellDispatcher($args = array()) {
+	public function __construct($args = array()) {
 		set_time_limit(0);
 
 		$this->__initConstants();
