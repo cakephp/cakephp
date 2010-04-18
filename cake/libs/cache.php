@@ -486,7 +486,7 @@ class Cache {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class CacheEngine {
+abstract class CacheEngine {
 
 /**
  * Settings of current engine instance
@@ -520,22 +520,19 @@ class CacheEngine {
  * Garbage collection
  *
  * Permanently remove all expired and deleted data
- *
+ * @return void
  */
-	public function gc() {
-	}
+	abstract public function gc();
 
 /**
  * Write value for a key into cache
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param mixed $duration How long to cache the data, in seconds
+ * @param mixed $duration How long to cache for.
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$value, $duration) {
-		trigger_error(sprintf(__('Method write() not implemented in %s'), get_class($this)), E_USER_ERROR);
-	}
+	abstract public function write($key, $value, $duration);
 
 /**
  * Read a key from the cache
@@ -543,9 +540,7 @@ class CacheEngine {
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
-	public function read($key) {
-		trigger_error(sprintf(__('Method read() not implemented in %s'), get_class($this)), E_USER_ERROR);
-	}
+	abstract public function read($key);
 
 /**
  * Increment a number under the key and return incremented value
@@ -554,9 +549,8 @@ class CacheEngine {
  * @param integer $offset How much to add
  * @return New incremented value, false otherwise
  */
-	public function increment($key, $offset = 1) {
-		trigger_error(sprintf(__('Method increment() not implemented in %s'), get_class($this)), E_USER_ERROR);
-	}
+	abstract public function increment($key, $offset = 1);
+
 /**
  * Decrement a number under the key and return decremented value
  *
@@ -564,17 +558,15 @@ class CacheEngine {
  * @param integer $value How much to substract
  * @return New incremented value, false otherwise
  */
-	public function decrement($key, $offset = 1) {
-		trigger_error(sprintf(__('Method decrement() not implemented in %s'), get_class($this)), E_USER_ERROR);
-	}
+	abstract public function decrement($key, $offset = 1);
+
 /**
  * Delete a key from the cache
  *
  * @param string $key Identifier for the data
  * @return boolean True if the value was succesfully deleted, false if it didn't exist or couldn't be removed
  */
-	public function delete($key) {
-	}
+	abstract public function delete($key);
 
 /**
  * Delete all keys from the cache
@@ -582,8 +574,7 @@ class CacheEngine {
  * @param boolean $check if true will check expiration, otherwise delete all
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
-	public function clear($check) {
-	}
+	abstract public function clear($check);
 
 /**
  * Cache Engine settings

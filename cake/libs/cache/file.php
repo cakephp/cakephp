@@ -110,7 +110,7 @@ class FileEngine extends CacheEngine {
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$data, $duration) {
+	public function write($key, $data, $duration) {
 		if ($data === '' || !$this->_init) {
 			return false;
 		}
@@ -225,6 +225,26 @@ class FileEngine extends CacheEngine {
 		}
 		$dir->close();
 		return true;
+	}
+
+/**
+ * Not implemented
+ *
+ * @return void
+ * @throws BadMethodCallException
+ */
+	public function decrement($key, $offset = 1) {
+		throw new BadMethodCallException('Files cannot be atomically decremented.');
+	}
+
+/**
+ * Not implemented
+ *
+ * @return void
+ * @throws BadMethodCallException
+ */
+	public function increment($key, $offset = 1) {
+		throw new BadMethodCallException('Files cannot be atomically incremented.');
 	}
 
 /**
