@@ -50,7 +50,7 @@ class ApcEngine extends CacheEngine {
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$value, $duration) {
+	public function write($key, $value, $duration) {
 		$expires = time() + $duration;
 		apc_store($key.'_expires', $expires, $duration);
 		return apc_store($key, $value, $duration);
@@ -110,8 +110,18 @@ class ApcEngine extends CacheEngine {
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
-	public function clear() {
+	public function clear($check) {
 		return apc_clear_cache('user');
+	}
+
+/**
+ * Garbage collection not implemented in APC
+ *
+ * @return void
+ * @throws BadMethodCallException
+ */
+	public function gc() {
+		throw new BadMethodCallException(__('Cannot gc() with APC.'));
 	}
 }
 ?>
