@@ -22,9 +22,6 @@
  * Included libraries.
  *
  */
-if (!class_exists('Object')) {
-	require LIBS . 'object.php';
-}
 if (!class_exists('Folder')) {
 	require LIBS . 'folder.php';
 }
@@ -35,7 +32,7 @@ if (!class_exists('Folder')) {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class File extends Object {
+class File {
 
 /**
  * Folder object of the File
@@ -96,7 +93,6 @@ class File extends Object {
  * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
-		parent::__construct();
 		$this->Folder =& new Folder(dirname($path), $create, $mode);
 		if (!is_dir($path)) {
 			$this->name = basename($path);

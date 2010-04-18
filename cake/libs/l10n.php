@@ -24,7 +24,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class L10n extends Object {
+class L10n {
 
 /**
  * The language for current locale
@@ -331,7 +331,6 @@ class L10n extends Object {
 		if (defined('DEFAULT_LANGUAGE')) {
 			$this->default = DEFAULT_LANGUAGE;
 		}
-		parent::__construct();
 	}
 
 /**

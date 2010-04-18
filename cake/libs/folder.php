@@ -22,9 +22,6 @@
  * Included libraries.
  *
  */
-if (!class_exists('Object')) {
-	require LIBS . 'object.php';
-}
 
 /**
  * Folder structure browser, lists folders and files.
@@ -33,7 +30,7 @@ if (!class_exists('Object')) {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Folder extends Object {
+class Folder {
 
 /**
  * Path to Folder.
@@ -100,7 +97,6 @@ class Folder extends Object {
  * @param mixed $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
 	function __construct($path = false, $create = false, $mode = false) {
-		parent::__construct();
 		if (empty($path)) {
 			$path = TMP;
 		}
