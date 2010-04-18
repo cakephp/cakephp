@@ -1060,9 +1060,7 @@ class App extends Object {
  * @access private
  */
 	private function __overload($type, $name, $parent) {
-		if (($type === 'Model' || $type === 'Helper') && $parent !== false) {
-			Overloadable::overload($name);
-		}
+		
 	}
 
 /**

@@ -27,10 +27,6 @@ App::import('Core', array('ClassRegistry', 'Validation', 'Set', 'String'));
 App::import('Model', 'ModelBehavior', false);
 App::import('Model', 'ConnectionManager', false);
 
-if (!class_exists('Overloadable')) {
-	require LIBS . 'overloadable.php';
-}
-
 /**
  * Object-relational mapper.
  *
@@ -43,7 +39,7 @@ if (!class_exists('Overloadable')) {
  * @subpackage    cake.cake.libs.model
  * @link          http://book.cakephp.org/view/1000/Models
  */
-class Model extends Overloadable {
+class Model extends Object {
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -2997,7 +2993,5 @@ class Model extends Overloadable {
 	function __wakeup() {
 	}
 }
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	Overloadable::overload('Model');
-}
+
 ?>
