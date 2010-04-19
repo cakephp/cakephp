@@ -208,8 +208,7 @@ class Debugger {
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
 */
 	public static function dump($var) {
-		$_this =& Debugger::getInstance();
-		pr($_this->exportVar($var));
+		pr(self::exportVar($var));
 	}
 
 /**
@@ -223,9 +222,8 @@ class Debugger {
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function log($var, $level = LOG_DEBUG) {
-		$_this =& Debugger::getInstance();
-		$source = $_this->trace(array('start' => 1)) . "\n";
-		CakeLog::write($level, "\n" . $source . $_this->exportVar($var));
+		$source = self::trace(array('start' => 1)) . "\n";
+		CakeLog::write($level, "\n" . $source . self::exportVar($var));
 	}
 
 /**
@@ -251,7 +249,7 @@ class Debugger {
 		if (empty($line)) {
 			$line = '??';
 		}
-		$path = $_this->trimPath($file);
+		$path = self::trimPath($file);
 
 		$info = compact('code', 'description', 'file', 'line');
 		if (!in_array($info, $_this->errors)) {
@@ -297,7 +295,7 @@ class Debugger {
 		$data = compact(
 			'level', 'error', 'code', 'helpID', 'description', 'file', 'path', 'line', 'context'
 		);
-		echo $_this->_output($data);
+		echo self::_output($data);
 
 		if (Configure::read('log')) {
 			$tpl = $_this->_templates['log']['error'];
@@ -385,7 +383,7 @@ class Debugger {
 				} else {
 					$tpl = $_this->_templates['base']['traceLine'];
 				}
-				$trace['path'] = Debugger::trimPath($trace['file']);
+				$trace['path'] = self::trimPath($trace['file']);
 				$trace['reference'] = $reference;
 				unset($trace['object'], $trace['args']);
 				$back[] = String::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
@@ -471,7 +469,6 @@ class Debugger {
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function exportVar($var, $recursion = 0) {
-		$_this =& Debugger::getInstance();
 		switch (strtolower(gettype($var))) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
@@ -487,17 +484,17 @@ class Debugger {
 				return '"' . h($var) . '"';
 			break;
 			case 'object':
-				return get_class($var) . "\n" . $_this->__object($var);
+				return get_class($var) . "\n" . self::_object($var);
 			case 'array':
 				$out = "array(";
 				$vars = array();
 				foreach ($var as $key => $val) {
 					if ($recursion >= 0) {
 						if (is_numeric($key)) {
-							$vars[] = "\n\t" . $_this->exportVar($val, $recursion - 1);
+							$vars[] = "\n\t" . self::exportVar($val, $recursion - 1);
 						} else {
-							$vars[] = "\n\t" .$_this->exportVar($key, $recursion - 1)
-										. ' => ' . $_this->exportVar($val, $recursion - 1);
+							$vars[] = "\n\t" . self::exportVar($key, $recursion - 1)
+										. ' => ' . self::exportVar($val, $recursion - 1);
 						}
 					}
 				}
@@ -521,10 +518,9 @@ class Debugger {
  *
  * @param string $var Object to convert
  * @return string
- * @access private
  * @see Debugger::exportVar()
  */
-	function __object($var) {
+	protected static function _object($var) {
 		$out = array();
 
 		if (is_object($var)) {
