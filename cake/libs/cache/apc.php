@@ -114,14 +114,5 @@ class ApcEngine extends CacheEngine {
 		return apc_clear_cache('user');
 	}
 
-/**
- * Garbage collection not implemented in APC
- *
- * @return void
- * @throws BadMethodCallException
- */
-	public function gc() {
-		throw new BadMethodCallException(__('Cannot gc() with APC.'));
-	}
 }
 ?>

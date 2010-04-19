@@ -178,16 +178,6 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Not implemented - Memcache does not provide a native way to do garbage collection
- *
- * @return void
- * @throws BadMethodCallException
- */
-	public function gc() {
-		throw new BadMethodCallException(__('Cannot gc() with Memcache.'));
-	}
-
-/**
  * Connects to a server in connection pool
  *
  * @param string $host host ip address or name

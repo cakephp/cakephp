@@ -521,7 +521,7 @@ abstract class CacheEngine {
  * Permanently remove all expired and deleted data
  * @return void
  */
-	abstract public function gc();
+	public function gc() { }
 
 /**
  * Write value for a key into cache

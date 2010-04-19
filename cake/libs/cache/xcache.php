@@ -49,7 +49,8 @@ class XcacheEngine extends CacheEngine {
  */
 	public function init($settings) {
 		parent::init(array_merge(array(
-			'engine' => 'Xcache', 'prefix' => Inflector::slug(APP_DIR) . '_', 'PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'
+			'engine' => 'Xcache', 'prefix' => Inflector::slug(APP_DIR) . '_
+			PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'
 			), $settings)
 		);
 		return function_exists('xcache_info');
@@ -63,7 +64,7 @@ class XcacheEngine extends CacheEngine {
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$value, $duration) {
+	public function write($key, $value, $duration) {
 		$expires = time() + $duration;
 		xcache_set($key . '_expires', $expires, $duration);
 		return xcache_set($key, $value, $duration);
