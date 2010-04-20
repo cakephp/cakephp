@@ -494,9 +494,12 @@ class FormHelper extends AppHelper {
 				$error--;
 			}
 			if (is_array($text)) {
-				$options = array_merge($options, $text);
+				$options = array_merge($options, array_intersect_key($text, $defaults));
+				if (isset($text['attributes']) && is_array($text['attributes'])) {
+					$options = array_merge($options, $text['attributes']);
+				}
 				$text = isset($text[$error]) ? $text[$error] : null;
-				unset($options[$error]);
+				unset($options[$error]);			
 			}
 
 			if ($text != null) {
