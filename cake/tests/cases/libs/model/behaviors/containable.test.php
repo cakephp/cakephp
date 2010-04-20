@@ -3594,6 +3594,50 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test that autoFields doesn't splice in fields from other databases.
+ *
+ * @return void
+ */
+	function testAutoFieldsWithMultipleDatabases() {
+		$config = new DATABASE_CONFIG();
+
+		$skip = $this->skipIf(
+			!isset($config->test) || !isset($config->test2),
+			 '%s Primary and secondary test databases not configured, skipping cross-database '
+			.'join tests.'
+			.' To run these tests, you must define $test and $test2 in your database configuration.'
+		);
+		if ($skip) {
+			return;
+		}
+
+		$db =& ConnectionManager::getDataSource('test2');
+		$this->_fixtures[$this->_fixtureClassMap['User']]->create($db);
+		$this->_fixtures[$this->_fixtureClassMap['User']]->insert($db);
+
+		$this->Article->User->setDataSource('test2');
+
+		$result = $this->Article->find('all', array(
+			'fields' => array('Article.title'),
+			'contain' => array('User')
+		));
+		$this->assertTrue(isset($result[0]['Article']));
+		$this->assertTrue(isset($result[0]['User']));
+
+		$this->_fixtures[$this->_fixtureClassMap['User']]->drop($db);
+	}
+/**
+ * test that autoFields doesn't splice in columns that aren't part of the join.
+ *
+ * @return void
+ */
+	function testAutoFieldsWithRecursiveNegativeOne() {
+		$this->Article->recursive = -1;
+		$result = $this->Article->field('title', array('Article.title' => 'First Article'));
+		$this->assertNoErrors();
+		$this->assertEqual($result, 'First Article', 'Field is wrong');
+	}
+/**
  * containments method
  *
  * @param mixed $Model
