@@ -27,6 +27,13 @@
 class Router {
 
 /**
+ * Instance for the singleton
+ *
+ * @var Router
+ */
+	protected static $_instance;
+
+/**
  * Array of routes connected with Router::connect()
  *
  * @var array
@@ -184,12 +191,10 @@ class Router {
  * @return Router Instance of the Router.
  */
 	public static function &getInstance() {
-		static $instance = array();
-
-		if (!$instance) {
-			$instance[0] =& new Router();
+		if (!self::$_instance) {
+			self::$_instance = new Router();
 		}
-		return $instance[0];
+		return self::$_instance;
 	}
 
 /**
