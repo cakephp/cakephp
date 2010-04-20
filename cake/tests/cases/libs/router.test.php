@@ -105,54 +105,47 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testResourceRoutes() {
-		Router::mapResources('Posts');
+		$resources = Router::mapResources('Posts');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'index', '[method]' => 'GET'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
+		$this->assertEqual($resources, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts/13');
 		$this->assertEqual($result, array('pass' => array('13'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => '13', '[method]' => 'GET'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$result = Router::parse('/posts');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$result = Router::parse('/posts/13');
 		$this->assertEqual($result, array('pass' => array('13'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '13', '[method]' => 'PUT'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$result = Router::parse('/posts/475acc39-a328-44d3-95fb-015000000000');
 		$this->assertEqual($result, array('pass' => array('475acc39-a328-44d3-95fb-015000000000'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => '475acc39-a328-44d3-95fb-015000000000', '[method]' => 'PUT'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$result = Router::parse('/posts/13');
 		$this->assertEqual($result, array('pass' => array('13'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'delete', 'id' => '13', '[method]' => 'DELETE'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts/add');
 		$this->assertEqual($result, array('pass' => array(), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'add'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		Router::reload();
-		Router::mapResources('Posts', array('id' => '[a-z0-9_]+'));
+		$resources = Router::mapResources('Posts', array('id' => '[a-z0-9_]+'));
+		$this->assertEqual($resources, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$result = Router::parse('/posts/add');
 		$this->assertEqual($result, array('pass' => array('add'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'view', 'id' => 'add', '[method]' => 'GET'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
 		$result = Router::parse('/posts/name');
 		$this->assertEqual($result, array('pass' => array('name'), 'named' => array(), 'plugin' => '', 'controller' => 'posts', 'action' => 'edit', 'id' => 'name', '[method]' => 'PUT'));
-		$this->assertEqual($this->router->__resourceMapped, array('posts'));
 	}
 
 /**
@@ -1165,11 +1158,10 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testExtensionParsingSetting() {
-		$router =& Router::getInstance();
-		$this->assertFalse($this->router->__parseExtensions);
+		$this->assertFalse(Router::extensions());
 
-		$router->parseExtensions();
-		$this->assertTrue($this->router->__parseExtensions);
+		$router->parseExtensions('rss');
+		$this->assertEqual(Router::extensions(), array('rss'));
 	}
 
 /**
