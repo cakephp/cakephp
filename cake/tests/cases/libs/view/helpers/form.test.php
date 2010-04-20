@@ -3307,7 +3307,7 @@ class FormHelperTest extends CakeTestCase {
 			'first',
 			'/label',
 			'/div',
-			
+
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][tags][]',

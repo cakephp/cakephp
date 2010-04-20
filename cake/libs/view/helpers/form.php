@@ -469,7 +469,8 @@ class FormHelper extends AppHelper {
  * - `class` string  The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
- * @param mixed $text Error message or array of $options
+ * @param mixed $text Error message or array of $options. If array, `attributes` key
+ * will get used as html attributes for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
@@ -499,7 +500,7 @@ class FormHelper extends AppHelper {
 					$options = array_merge($options, $text['attributes']);
 				}
 				$text = isset($text[$error]) ? $text[$error] : null;
-				unset($options[$error]);			
+				unset($options[$error]);
 			}
 
 			if ($text != null) {
@@ -1458,7 +1459,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if (!isset($secure) || $secure == true) { 
+			if (!isset($secure) || $secure == true) {
 				$this->__secure();
 			}
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
