@@ -3574,6 +3574,39 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEqual($expected, $this->Article->hasAndBelongsToMany);
 	}
 /**
+ * test that autoFields doesn't splice in fields from other databases.
+ *
+ * @return void
+ */
+	function testAutoFieldsWithMultipleDatabases() {
+		$config = new DATABASE_CONFIG();
+
+		$skip = $this->skipIf(
+			!isset($config->test) || !isset($config->test2),
+			 '%s Primary and secondary test databases not configured, skipping cross-database '
+			.'join tests.'
+			.' To run these tests, you must define $test and $test2 in your database configuration.'
+		);
+		if ($skip) {
+			return;
+		}
+
+		$db =& ConnectionManager::getDataSource('test2');
+		$this->_fixtures[$this->_fixtureClassMap['User']]->create($db);
+		$this->_fixtures[$this->_fixtureClassMap['User']]->insert($db);
+
+		$this->Article->User->setDataSource('test2');
+
+		$result = $this->Article->find('all', array(
+			'fields' => array('Article.title'),
+			'contain' => array('User')
+		));
+		$this->assertTrue(isset($result[0]['Article']));
+		$this->assertTrue(isset($result[0]['User']));
+
+		$this->_fixtures[$this->_fixtureClassMap['User']]->drop($db);
+	}
+/**
  * containments method
  *
  * @param mixed $Model
