@@ -3627,6 +3627,17 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->_fixtures[$this->_fixtureClassMap['User']]->drop($db);
 	}
 /**
+ * test that autoFields doesn't splice in columns that aren't part of the join.
+ *
+ * @return void
+ */
+	function testAutoFieldsWithRecursiveNegativeOne() {
+		$this->Article->recursive = -1;
+		$result = $this->Article->field('title', array('Article.title' => 'First Article'));
+		$this->assertNoErrors();
+		$this->assertEqual($result, 'First Article', 'Field is wrong');
+	}
+/**
  * containments method
  *
  * @param mixed $Model
