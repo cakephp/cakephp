@@ -177,9 +177,6 @@ class Router {
  */
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');
-		if (!empty($routing['admin'])) {
-			$this->__prefixes[] = $routing['admin'];
-		}
 		if (!empty($routing['prefixes'])) {
 			$this->__prefixes = array_merge($this->__prefixes, (array)$routing['prefixes']);
 		}
