@@ -168,12 +168,10 @@ class Router {
 	}
 
 /**
- * Sets the Routing prefixes. Includes compatibilty for existing Routing.admin
- * configurations.
+ * Sets the Routing prefixes.
  *
  * @return void
  * @access private
- * @todo Remove support for Routing.admin in future versions.
  */
 	function __setPrefixes() {
 		$routing = Configure::read('Routing');

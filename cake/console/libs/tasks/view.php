@@ -440,7 +440,7 @@ class ViewTask extends BakeTask {
 		$this->out("\tWill read the given controller for methods");
 		$this->out("\tand bake corresponding views.");
 		$this->out("\tUsing the -admin flag will only bake views for actions");
-		$this->out("\tthat begin with Routing.admin.");
+		$this->out("\tthat begin with Routing.prefixes.");
 		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
 		$this->out("\t(index,view,add,edit)");
 		$this->out();

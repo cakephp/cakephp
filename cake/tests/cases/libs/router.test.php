@@ -571,7 +571,6 @@ class RouterTest extends CakeTestCase {
 		$expected = '/page/my-page';
 		$this->assertEqual($result, $expected);
 
-		Configure::write('Routing.admin', 'admin');
 		Router::reload();
 
 		Router::setRequestInfo(array(
@@ -980,7 +979,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * Test that Routing.prefixes and Routing.admin are used when a Router instance is created
+ * Test that Routing.prefixes are used when a Router instance is created
  * or reset
  *
  * @return void

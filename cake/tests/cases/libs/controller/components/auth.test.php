@@ -1467,8 +1467,8 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testLoginActionRedirect() {
-		$admin = Configure::read('Routing.admin');
-		Configure::write('Routing.admin', 'admin');
+		$admin = Configure::read('Routing.prefixes');
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		$url = '/admin/auth_test/login';
@@ -1494,7 +1494,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->assertNull($this->Controller->testUrl);
 
-		Configure::write('Routing.admin', $admin);
+		Configure::write('Routing.prefixes', $admin);
 	}
 
 /**
