@@ -36,7 +36,7 @@ if (!class_exists('AclShell')) {
 
 Mock::generatePartial(
 	'ShellDispatcher', 'TestAclShellMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch')
 );
 Mock::generatePartial(
 	'AclShell', 'MockAclShell',
@@ -330,6 +330,18 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->expectAt(2, 'out', array('  [2] admins'));
 		$this->Task->expectAt(3, 'out', array('    [4] Elrond'));
 		$this->Task->getPath();
+	}
+
+/**
+ * test that initdb makes the correct call.
+ *
+ * @return void
+ */
+	function testInitDb() {
+		$this->Task->Dispatch->expectOnce('dispatch');
+		$this->Task->initdb();
+
+		$this->assertEqual($this->Task->Dispatch->args, array('schema', 'create', 'DbAcl'));
 	}
 }
 ?>
