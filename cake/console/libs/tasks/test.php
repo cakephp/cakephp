@@ -423,7 +423,7 @@ class TestTask extends BakeTask {
  */
 	function testCaseFileName($type, $className) {
 		$path = $this->getPath();;
-		$path .= 'cases' . DS . Inflector::tableize($type) . DS;
+		$path .= 'cases' . DS . strtolower($type) . 's' . DS;
 		if (strtolower($type) == 'controller') {
 			$className = $this->getRealClassName($type, $className);
 		}

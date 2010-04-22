@@ -401,6 +401,27 @@ class InflectorTest extends CakeTestCase {
 	}
 
 /**
+ * test that setting new rules clears the inflector caches.
+ *
+ * @return void
+ */
+	function testRulesClearsCaches() {
+		$this->assertEqual(Inflector::singularize('Bananas'), 'Banana');
+		$this->assertEqual(Inflector::tableize('Banana'), 'bananas');
+		$this->assertEqual(Inflector::pluralize('Banana'), 'Bananas');
+
+		Inflector::rules('singular', array(
+			'rules' => array('/(.*)nas$/i' => '\1zzz')
+		));
+		$this->assertEqual(Inflector::singularize('Bananas'), 'Banazzz', 'Was inflected with old rules. %s');
+
+		Inflector::rules('plural', array(
+			'rules' => array('/(.*)na$/i' => '\1zzz')
+		));
+		$this->assertEqual(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules. %s');
+	}
+
+/**
  * Test resetting inflection rules.
  *
  * @return void
