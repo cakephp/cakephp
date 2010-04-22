@@ -129,6 +129,14 @@ class Contact extends CakeTestModel {
  * @access public
  */
 	var $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
+
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	var $belongsTo = array('User' => array('className' => 'UserForm'));
 }
 
 /**
@@ -299,7 +307,7 @@ class UserForm extends CakeTestModel {
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'other' => array('type' => 'text', 'null' => true, 'default' => null, 'length' => null),
-		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
+		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10),
 		'something' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
@@ -5653,6 +5661,20 @@ class FormHelperTest extends CakeTestCase {
 			'*/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('User.stuff');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'UserStuff'),
+			'Stuff',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[User][stuff]',
+				'id' => 'UserStuff', 'maxlength' => 10
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected, true);
 	}
 
 /**

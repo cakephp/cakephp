@@ -131,7 +131,7 @@ class FormHelper extends AppHelper {
 			}
 			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
 			$key = $object->primaryKey;
-			$this->fieldset[$object->name] = array_merge($defaults, compact('fields', 'key', 'validates'));
+			$this->fieldset[$model] = array_merge($defaults, compact('fields', 'key', 'validates'));
 		}
 
 		return $object;
