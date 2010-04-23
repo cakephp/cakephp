@@ -159,7 +159,7 @@ class TestManager {
 	function runGroupTest($groupTestName, &$reporter) {
 		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
 
-		if (!file_exists($filePath) || strpos($testCaseFileWithPath, '..')) {
+		if (!file_exists($filePath) || strpos($filePath, '..')) {
 			trigger_error(sprintf(
 					__("Group test %s cannot be found at %s", true), 
 					htmlentities($groupTestName), 
