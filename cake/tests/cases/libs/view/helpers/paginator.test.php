@@ -45,12 +45,12 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => true,
 				'pageCount' => 7,
 				'defaults' => array(
-					'order' => 'Article.date ASC',
+					'order' => array('Article.date' => 'asc'),
 					'limit' => 9,
 					'conditions' => array()
 				),
 				'options' => array(
-					'order' => 'Article.date ASC',
+					'order' => array('Article.date' => 'asc'),
 					'limit' => 9,
 					'page' => 1,
 					'conditions' => array()
@@ -295,9 +295,15 @@ class PaginatorHelperTest extends CakeTestCase {
  */
 	function testSortKey() {
 		$result = $this->Paginator->sortKey(null, array(
-				'order' => array('Article.title' => 'desc'
+			'order' => array('Article.title' => 'desc'
 		)));
 		$this->assertEqual('Article.title', $result);
+
+		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article.title'));
+		$this->assertEqual($result, 'Article.title');
+
+		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article'));
+		$this->assertEqual($result, 'Article');
 	}
 
 /**
