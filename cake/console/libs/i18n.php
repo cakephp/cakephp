@@ -54,7 +54,7 @@ class I18nShell extends Shell {
 
 		if ($this->command && !in_array($this->command, array('help'))) {
 			if (!config('database')) {
-				$this->out(__('Your database configuration was not found. Take a moment to create one.', true), true);
+				$this->out(__('Your database configuration was not found. Take a moment to create one.'), true);
 				return $this->DbConfig->execute();
 			}
 		}
@@ -65,14 +65,14 @@ class I18nShell extends Shell {
  *
  */
 	public function main() {
-		$this->out(__('I18n Shell', true));
+		$this->out(__('I18n Shell'));
 		$this->hr();
-		$this->out(__('[E]xtract POT file from sources', true));
-		$this->out(__('[I]nitialize i18n database table', true));
-		$this->out(__('[H]elp', true));
-		$this->out(__('[Q]uit', true));
+		$this->out(__('[E]xtract POT file from sources'));
+		$this->out(__('[I]nitialize i18n database table'));
+		$this->out(__('[H]elp'));
+		$this->out(__('[Q]uit'));
 
-		$choice = strtolower($this->in(__('What would you like to do?', true), array('E', 'I', 'H', 'Q')));
+		$choice = strtolower($this->in(__('What would you like to do?'), array('E', 'I', 'H', 'Q')));
 		switch ($choice) {
 			case 'e':
 				$this->Extract->execute();
@@ -87,7 +87,7 @@ class I18nShell extends Shell {
 				exit(0);
 			break;
 			default:
-				$this->out(__('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.', true));
+				$this->out(__('You have made an invalid selection. Please choose a command to execute by entering E, I, H, or Q.'));
 		}
 		$this->hr();
 		$this->main();
@@ -108,12 +108,12 @@ class I18nShell extends Shell {
  */
 	public function help() {
 		$this->hr();
-		$this->out(__('I18n Shell:', true));
+		$this->out(__('I18n Shell:'));
 		$this->hr();
-		$this->out(__('I18n Shell initializes i18n database table for your application', true));
-		$this->out(__('and generates .pot file(s) with translations.', true));
+		$this->out(__('I18n Shell initializes i18n database table for your application'));
+		$this->out(__('and generates .pot file(s) with translations.'));
 		$this->hr();
-		$this->out(__('usage:', true));
+		$this->out(__('usage:'));
 		$this->out('   cake i18n help');
 		$this->out('   cake i18n initdb [-datasource custom]');
 		$this->out();

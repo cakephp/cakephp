@@ -374,7 +374,7 @@ class TreeBehavior extends ModelBehavior {
 		if (!is_null($overrideRecursive)) {
 			$recursive = $overrideRecursive;
 		}
-		$parentId = $Model->read($parent, $id);
+		$parentId = $Model->find('first', array('conditions' => array($Model->primaryKey => $id), 'fields' => array($parent), 'recursive' => -1));
 
 		if ($parentId) {
 			$parentId = $parentId[$Model->alias][$parent];

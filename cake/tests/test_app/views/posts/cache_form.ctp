@@ -2,7 +2,7 @@
 <cake:nocache>
 	<?php echo $form->create('User');?>
 		<fieldset>
-	 		<legend><?php __('Add User');?></legend>
+	 		<legend><?php echo __('Add User');?></legend>
 		<?php
 			echo $form->input('username');
 			echo $form->input('email');

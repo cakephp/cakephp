@@ -27,10 +27,6 @@ App::import('Core', array('ClassRegistry', 'Validation', 'Set', 'String'));
 App::import('Model', 'ModelBehavior', false);
 App::import('Model', 'ConnectionManager', false);
 
-if (!class_exists('Overloadable')) {
-	require LIBS . 'overloadable.php';
-}
-
 /**
  * Object-relational mapper.
  *
@@ -43,7 +39,7 @@ if (!class_exists('Overloadable')) {
  * @subpackage    cake.cake.libs.model
  * @link          http://book.cakephp.org/view/1000/Models
  */
-class Model extends Overloadable {
+class Model extends Object {
 
 /**
  * The name of the DataSource connection that this Model uses
@@ -933,7 +929,7 @@ class Model extends Overloadable {
 	public function getColumnTypes() {
 		$columns = $this->schema();
 		if (empty($columns)) {
-			trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()', true), E_USER_WARNING);
+			trigger_error(__('(Model::getColumnTypes) Unable to build model field data. If you are using a model without a database table, try implementing schema()'), E_USER_WARNING);
 		}
 		$cols = array();
 		foreach ($columns as $field => $values) {
@@ -1875,7 +1871,7 @@ class Model extends Overloadable {
  *
  * @param mixed $conditions Conditions to match
  * @param boolean $cascade Set to true to delete records that depend on this record
- * @param boolean $callbacks Run callbacks (not being used)
+ * @param boolean $callbacks Run callbacks
  * @return boolean True on success, false on failure
  * @access public
  * @link http://book.cakephp.org/view/1038/deleteAll
@@ -2494,7 +2490,7 @@ class Model extends Overloadable {
 				if (isset($validator['message'])) {
 					$message = $validator['message'];
 				} else {
-					$message = __('This field cannot be left blank', true);
+					$message = __('This field cannot be left blank');
 				}
 
 				if (
@@ -2542,7 +2538,7 @@ class Model extends Overloadable {
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
-							trigger_error(sprintf(__('Could not find validation handler %s for %s', true), $rule, $fieldName), E_USER_WARNING);
+							trigger_error(sprintf(__('Could not find validation handler %s for %s'), $rule, $fieldName), E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
@@ -2848,7 +2844,7 @@ class Model extends Overloadable {
 			return array($with, array_unique(array_merge($assoc[$with], $keys)));
 		}
 		trigger_error(
-			sprintf(__('Invalid join model settings in %s', true), $model->alias),
+			sprintf(__('Invalid join model settings in %s'), $model->alias),
 			E_USER_WARNING
 		);
 	}
@@ -2997,7 +2993,5 @@ class Model extends Overloadable {
 	function __wakeup() {
 	}
 }
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	Overloadable::overload('Model');
-}
+
 ?>

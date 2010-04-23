@@ -59,7 +59,7 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$prompt = __("What is the full path for this app including the app directory name?\n Example:", true);
+			$prompt = __("What is the full path for this app including the app directory name?\n Example:");
 			$default = $this->params['working'] . DS . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
@@ -67,7 +67,7 @@ class ProjectTask extends Shell {
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$prompt = sprintf(__('A project already exists in this location: %s Overwrite?', true), $project);
+				$prompt = sprintf(__('A project already exists in this location: %s Overwrite?'), $project);
 				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
@@ -78,35 +78,35 @@ class ProjectTask extends Shell {
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
 			if ($this->createHome($path)) {
-				$this->out(__('Welcome page created', true));
+				$this->out(__('Welcome page created'));
 			} else {
-				$this->out(__('The Welcome page was NOT created', true));
+				$this->out(__('The Welcome page was NOT created'));
 			}
 
 			if ($this->securitySalt($path) === true ) {
-				$this->out(__('Random hash key created for \'Security.salt\'', true));
+				$this->out(__('Random hash key created for \'Security.salt\''));
 			} else {
-				$this->err(sprintf(__('Unable to generate random hash for \'Security.salt\', you should change it in %s', true), CONFIGS . 'core.php'));
+				$this->err(sprintf(__('Unable to generate random hash for \'Security.salt\', you should change it in %s'), CONFIGS . 'core.php'));
 			}
 
 			if ($this->securityCipherSeed($path) === true ) {
-				$this->out(__('Random seed created for \'Security.cipherSeed\'', true));
+				$this->out(__('Random seed created for \'Security.cipherSeed\''));
 			} else {
-				$this->err(sprintf(__('Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', true), CONFIGS . 'core.php'));
+				$this->err(sprintf(__('Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s'), CONFIGS . 'core.php'));
 			}
 
 			$corePath = $this->corePath($path);
 			if ($corePath === true ) {
-				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', true), CAKE_CORE_INCLUDE_PATH));
-				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', true), CAKE_CORE_INCLUDE_PATH));
-				$this->out(__('Remember to check these value after moving to production server', true));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php'), CAKE_CORE_INCLUDE_PATH));
+				$this->out(sprintf(__('CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php'), CAKE_CORE_INCLUDE_PATH));
+				$this->out(__('Remember to check these value after moving to production server'));
 			} elseif ($corePath === false) {
-				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', true), $path . 'webroot' .DS .'index.php'));
+				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s'), $path . 'webroot' .DS .'index.php'));
 			}
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
-				$this->err(sprintf(__('Could not set permissions on %s', true), $path . DS .'tmp'));
-				$this->out(sprintf(__('chmod -R 0777 %s', true), $path . DS .'tmp'));
+				$this->err(sprintf(__('Could not set permissions on %s'), $path . DS .'tmp'));
+				$this->out(sprintf(__('chmod -R 0777 %s'), $path . DS .'tmp'));
 			}
 
 			$this->params['working'] = $path;
@@ -133,25 +133,25 @@ class ProjectTask extends Shell {
 		while (!$skel) {
 			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
-				$this->out(__('The directory path you supplied was empty. Please try again.', true));
+				$this->out(__('The directory path you supplied was empty. Please try again.'));
 			} else {
 				while (is_dir($skel) === false) {
-					$skel = $this->in(__('Directory path does not exist please choose another:', true));
+					$skel = $this->in(__('Directory path does not exist please choose another:'));
 				}
 			}
 		}
 
 		$app = basename($path);
 
-		$this->out(__('Bake Project', true));
-		$this->out(__("Skel Directory: ", true) . $skel);
-		$this->out(__("Will be copied to: ", true) . $path);
+		$this->out(__('Bake Project'));
+		$this->out(__('Skel Directory: ') . $skel);
+		$this->out(__('Will be copied to: ') . $path);
 		$this->hr();
 
-		$looksGood = $this->in(__('Look okay?', true), array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__('Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
-			$verbose = $this->in(__('Do you want verbose output?', true), array('y', 'n'), 'n');
+			$verbose = $this->in(__('Do you want verbose output?'), array('y', 'n'), 'n');
 
 			$Folder = new Folder($skel);
 			if (!empty($this->params['empty'])) {
@@ -159,10 +159,10 @@ class ProjectTask extends Shell {
 			}
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
-				$this->out(sprintf(__("Created: %s in %s", true), $app, $path));
+				$this->out(sprintf(__('Created: %s in %s'), $app, $path));
 				$this->hr();
 			} else {
-				$this->err(sprintf(__(" '%s' could not be created properly", true), $app));
+				$this->err(sprintf(__(" '%s' could not be created properly"), $app));
 				return false;
 			}
 
@@ -174,7 +174,7 @@ class ProjectTask extends Shell {
 
 			return true;
 		} elseif (strtolower($looksGood) == 'q') {
-			$this->out(__('Bake Aborted.', true));
+			$this->out(__('Bake Aborted.'));
 		} else {
 			$this->execute(false);
 			return false;
@@ -312,7 +312,7 @@ class ProjectTask extends Shell {
 			}
 			if ($this->interactive) {
 				$this->out();
-				$this->out(__('You have more than one routing prefix configured', true));
+				$this->out(__('You have more than one routing prefix configured'));
 			}
 			$options = array();
 			foreach ($prefixes as $i => $prefix) {
@@ -321,19 +321,19 @@ class ProjectTask extends Shell {
 					$this->out($i + 1 . '. ' . $prefix);
 				}
 			}
-			$selection = $this->in(__('Please choose a prefix to bake with.', true), $options, 1);
+			$selection = $this->in(__('Please choose a prefix to bake with.'), $options, 1);
 			return $prefixes[$selection - 1] . '_';
 		}
 		if ($this->interactive) {
 			$this->hr();
 			$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
-			$this->out(__('What would you like the prefix route to be?', true));
-			$this->out(__('Example: www.example.com/admin/controller', true));
+			$this->out(__('What would you like the prefix route to be?'));
+			$this->out(__('Example: www.example.com/admin/controller'));
 			while ($admin == '') {
-				$admin = $this->in(__("Enter a routing prefix:", true), null, 'admin');
+				$admin = $this->in(__('Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__('Unable to write to /app/config/core.php.', true));
+				$this->out(__('Unable to write to /app/config/core.php.'));
 				$this->out('You need to enable Configure::write(\'Routing.prefixes\',array(\'admin\')) in /app/config/core.php to use prefix routing.');
 				$this->_stop();
 			}

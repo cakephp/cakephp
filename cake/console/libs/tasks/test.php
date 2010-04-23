@@ -90,8 +90,8 @@ class TestTask extends BakeTask {
 	function __interactive($type = null) {
 		$this->interactive = true;
 		$this->hr();
-		$this->out(__('Bake Tests', true));
-		$this->out(sprintf(__("Path: %s", true), $this->path));
+		$this->out(__('Bake Tests'));
+		$this->out(sprintf(__('Path: %s'), $this->path));
 		$this->hr();
 
 		$selection = null;
@@ -116,7 +116,7 @@ class TestTask extends BakeTask {
  */
 	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
-			$this->out(__('Bake is detecting possible fixtures..', true));
+			$this->out(__('Bake is detecting possible fixtures..'));
 			$testSubject =& $this->buildTestSubject($type, $className);
 			$this->generateFixtureList($testSubject);
 		} elseif ($this->interactive) {
@@ -156,7 +156,7 @@ class TestTask extends BakeTask {
  */
 	public function getObjectType() {
 		$this->hr();
-		$this->out(__("Select an object type:", true));
+		$this->out(__('Select an object type:'));
 		$this->hr();
 
 		$keys = array();
@@ -165,7 +165,7 @@ class TestTask extends BakeTask {
 			$keys[] = $key;
 		}
 		$keys[] = 'q';
-		$selection = $this->in(__("Enter the type of object to bake a test for or (q)uit", true), $keys, 'q');
+		$selection = $this->in(__('Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
 		if ($selection == 'q') {
 			return $this->_stop();
 		}
@@ -180,13 +180,13 @@ class TestTask extends BakeTask {
  */
 	public function getClassName($objectType) {
 		$options = App::objects(strtolower($objectType));
-		$this->out(sprintf(__('Choose a %s class', true), $objectType));
+		$this->out(sprintf(__('Choose a %s class'), $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {
 			$this->out(++$key . '. ' . $option);
 			$keys[] = $key;
 		}
-		$selection = $this->in(__('Choose an existing class, or enter the name of a class that does not exist', true));
+		$selection = $this->in(__('Choose an existing class, or enter the name of a class that does not exist'));
 		if (isset($options[$selection - 1])) {
 			return $options[$selection - 1];
 		}
@@ -354,10 +354,10 @@ class TestTask extends BakeTask {
  * @return array Array of fixtures the user wants to add.
  */
 	public function getUserFixtures() {
-		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?', true), array('y','n'), 'n');
+		$proceed = $this->in(__('Bake could not detect fixtures, would you like to add some?'), array('y','n'), 'n');
 		$fixtures = array();
 		if (strtolower($proceed) == 'y') {
-			$fixtureList = $this->in(__("Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'", true));
+			$fixtureList = $this->in(__("Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
 			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
 			$fixtures = explode(',', $fixtureListTrimmed);
 		}
@@ -406,7 +406,7 @@ class TestTask extends BakeTask {
  */
 	public function testCaseFileName($type, $className) {
 		$path = $this->getPath();;
-		$path .= 'cases' . DS . Inflector::tableize($type) . DS;
+		$path .= 'cases' . DS . strtolower($type) . 's' . DS;
 		if (strtolower($type) == 'controller') {
 			$className = $this->getRealClassName($type, $className);
 		}

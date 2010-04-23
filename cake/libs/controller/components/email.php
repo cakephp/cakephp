@@ -683,7 +683,7 @@ class EmailComponent extends Object{
 		$formatted = array();
 
 		if ($this->_lineLength !== null) {
-			trigger_error(__('_lineLength cannot be accessed please use lineLength', true), E_USER_WARNING);
+			trigger_error(__('_lineLength cannot be accessed please use lineLength'), E_USER_WARNING);
 			$this->lineLength = $this->_lineLength;
 		}
 
@@ -916,8 +916,11 @@ class EmailComponent extends Object{
 		$fm .= sprintf('%s%3$s%3$s%s', 'Message:', $message, $nl);
 		$fm .= '</pre>';
 
-		$this->Controller->Session->setFlash($fm, 'default', null, 'email');
-		return true;
+		if (isset($this->Controller->Session)) {
+			$this->Controller->Session->setFlash($fm, 'default', null, 'email');
+			return true;
+		}
+		return $fm;
 	}
 
 }

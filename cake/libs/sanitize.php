@@ -40,7 +40,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function paranoid($string, $allowed = array()) {
+	public static function paranoid($string, $allowed = array()) {
 		$allow = null;
 		if (!empty($allowed)) {
 			foreach ($allowed as $value) {
@@ -68,7 +68,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function escape($string, $connection = 'default') {
+	public static function escape($string, $connection = 'default') {
 		$db =& ConnectionManager::getDataSource($connection);
 		if (is_numeric($string) || $string === null || is_bool($string)) {
 			return $string;
@@ -96,7 +96,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function html($string, $options = array()) {
+	public static function html($string, $options = array()) {
 		static $defaultCharset = false;
 		if ($defaultCharset === false) {
 			$defaultCharset = Configure::read('App.encoding');
@@ -127,7 +127,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function stripWhitespace($str) {
+	public static function stripWhitespace($str) {
 		$r = preg_replace('/[\n\r\t]+/', '', $str);
 		return preg_replace('/\s{2,}/', ' ', $r);
 	}
@@ -140,7 +140,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function stripImages($str) {
+	public static function stripImages($str) {
 		$str = preg_replace('/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i', '$1$3$5<br />', $str);
 		$str = preg_replace('/(<img[^>]+alt=")([^"]*)("[^>]*>)/i', '$2<br />', $str);
 		$str = preg_replace('/<img[^>]*>/i', '', $str);
@@ -155,7 +155,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function stripScripts($str) {
+	public static function stripScripts($str) {
 		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/i', '', $str);
 	}
 
@@ -165,7 +165,7 @@ class Sanitize {
  * @param string $str String to sanitize
  * @return string sanitized string
  */
-	public function stripAll($str) {
+	public static function stripAll($str) {
 		$str = Sanitize::stripWhitespace($str);
 		$str = Sanitize::stripImages($str);
 		$str = Sanitize::stripScripts($str);
@@ -186,7 +186,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function stripTags() {
+	public static function stripTags() {
 		$params = params(func_get_args());
 		$str = $params[0];
 
@@ -217,7 +217,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function clean($data, $options = array()) {
+	public static function clean($data, $options = array()) {
 		if (empty($data)) {
 			return $data;
 		}
@@ -281,7 +281,7 @@ class Sanitize {
  * @access public
  * @static
  */
-	function formatColumns(&$model) {
+	public static function formatColumns(&$model) {
 		foreach ($model->data as $name => $values) {
 			if ($name == $model->alias) {
 				$curModel =& $model;

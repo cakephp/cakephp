@@ -29,7 +29,7 @@ App::import('Core', 'l10n');
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class I18n extends Object {
+class I18n {
 
 /**
  * Instance of the I10n class for localization

@@ -156,7 +156,7 @@ class ErrorHandler extends Object {
 		$this->controller->header("HTTP/1.0 404 Not Found");
 		$this->controller->set(array(
 			'code' => '404',
-			'name' => __('Not Found', true),
+			'name' => __('Not Found'),
 			'message' => h($url),
 			'base' => $this->controller->base
 		));
@@ -178,7 +178,7 @@ class ErrorHandler extends Object {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
-			'name' => __('An Internal Error Has Occurred', true),
+			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
 			'base' => $this->controller->base
 		));
@@ -196,7 +196,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'controller' => $className,
 			'controllerName' => $controllerName,
-			'title' => __('Missing Controller', true)
+			'title' => __('Missing Controller')
 		));
 		$this->_outputMessage('missingController');
 	}
@@ -214,7 +214,7 @@ class ErrorHandler extends Object {
 			'controller' => $className,
 			'controllerName' => $controllerName,
 			'action' => $action,
-			'title' => __('Missing Method in Controller', true)
+			'title' => __('Missing Method in Controller')
 		));
 		$this->_outputMessage('missingAction');
 	}
@@ -230,7 +230,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'controller' => $className,
 			'action' => $action,
-			'title' => __('Trying to access private method in class', true)
+			'title' => __('Trying to access private method in class')
 		));
 		$this->_outputMessage('privateAction');
 	}
@@ -248,7 +248,7 @@ class ErrorHandler extends Object {
 			'code' => '500',
 			'model' => $className,
 			'table' => $table,
-			'title' => __('Missing Database Table', true)
+			'title' => __('Missing Database Table')
 		));
 		$this->_outputMessage('missingTable');
 	}
@@ -262,7 +262,7 @@ class ErrorHandler extends Object {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
-			'title' => __('Scaffold Missing Database Connection', true)
+			'title' => __('Scaffold Missing Database Connection')
 		));
 		$this->_outputMessage('missingScaffolddb');
 	}
@@ -279,7 +279,7 @@ class ErrorHandler extends Object {
 			'controller' => $className,
 			'action' => $action,
 			'file' => $file,
-			'title' => __('Missing View', true)
+			'title' => __('Missing View')
 		));
 		$this->_outputMessage('missingView');
 	}
@@ -295,7 +295,7 @@ class ErrorHandler extends Object {
 		$this->controller->layout = 'default';
 		$this->controller->set(array(
 			'file' => $file,
-			'title' => __('Missing Layout', true)
+			'title' => __('Missing Layout')
 		));
 		$this->_outputMessage('missingLayout');
 	}
@@ -312,7 +312,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'code' => '500',
 			'model' => $className,
-			'title' => __('Missing Database Connection', true)
+			'title' => __('Missing Database Connection')
 		));
 		$this->_outputMessage('missingConnection');
 	}
@@ -328,7 +328,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
-			'title' => __('Missing Helper File', true)
+			'title' => __('Missing Helper File')
 		));
 		$this->_outputMessage('missingHelperFile');
 	}
@@ -344,7 +344,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'helperClass' => Inflector::camelize($helper) . "Helper",
 			'file' => $file,
-			'title' => __('Missing Helper Class', true)
+			'title' => __('Missing Helper Class')
 		));
 		$this->_outputMessage('missingHelperClass');
 	}
@@ -360,7 +360,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
 			'file' => $file,
-			'title' => __('Missing Behavior File', true)
+			'title' => __('Missing Behavior File')
 		));
 		$this->_outputMessage('missingBehaviorFile');
 	}
@@ -376,7 +376,7 @@ class ErrorHandler extends Object {
 		$this->controller->set(array(
 			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
 			'file' => $file,
-			'title' => __('Missing Behavior Class', true)
+			'title' => __('Missing Behavior Class')
 		));
 		$this->_outputMessage('missingBehaviorClass');
 	}
@@ -393,7 +393,7 @@ class ErrorHandler extends Object {
 			'controller' => $className,
 			'component' => $component,
 			'file' => $file,
-			'title' => __('Missing Component File', true)
+			'title' => __('Missing Component File')
 		));
 		$this->_outputMessage('missingComponentFile');
 	}
@@ -410,7 +410,7 @@ class ErrorHandler extends Object {
 			'controller' => $className,
 			'component' => $component,
 			'file' => $file,
-			'title' => __('Missing Component Class', true)
+			'title' => __('Missing Component Class')
 		));
 		$this->_outputMessage('missingComponentClass');
 	}
@@ -425,7 +425,7 @@ class ErrorHandler extends Object {
 
 		$this->controller->set(array(
 			'model' => $className,
-			'title' => __('Missing Model', true)
+			'title' => __('Missing Model')
 		));
 		$this->_outputMessage('missingModel');
 	}

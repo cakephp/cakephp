@@ -307,7 +307,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 	function drop($options = array()) {
 		if (empty($options['drag'])) {
 			trigger_error(
-				__('MootoolsEngine::drop() requires a "drag" option to properly function', true), E_USER_WARNING
+				__('MootoolsEngine::drop() requires a "drag" option to properly function'), E_USER_WARNING
 			);
 			return false;
 		}

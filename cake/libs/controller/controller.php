@@ -363,7 +363,7 @@ class Controller extends Object {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
-				__("Controller::__construct() : Can not get or parse my own class name, exiting.");
+				echo __("Controller::__construct() : Can not get or parse my own class name, exiting.");
 				$this->_stop();
 			}
 			$this->name = $r[1];
@@ -796,7 +796,7 @@ class Controller extends Object {
  */
 	function isAuthorized() {
 		trigger_error(sprintf(
-			__('%s::isAuthorized() is not defined.', true), $this->name
+			__('%s::isAuthorized() is not defined.'), $this->name
 		), E_USER_WARNING);
 		return false;
 	}
@@ -1088,9 +1088,7 @@ class Controller extends Object {
 
 		if (!is_object($object)) {
 			trigger_error(sprintf(
-				__('Controller::paginate() - can\'t find model %1$s in controller %2$sController',
-					true
-				), $object, $this->name
+				__('Controller::paginate() - can\'t find model %1$s in controller %2$sController'), $object, $this->name
 			), E_USER_WARNING);
 			return array();
 		}

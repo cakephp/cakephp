@@ -149,7 +149,7 @@ class JsHelper extends AppHelper {
 		if (method_exists($this, $method . '_')) {
 			return $this->dispatchMethod($method . '_', $params);
 		}
-		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined', true), $method), E_USER_WARNING);
+		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined'), $method), E_USER_WARNING);
 	}
 
 /**
@@ -751,7 +751,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return object instance of $this. Allows chained methods.
  */
 	public function get($selector) {
-		trigger_error(sprintf(__('%s does not have get() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have get() implemented'), get_class($this)), E_USER_WARNING);
 		return $this;
 	}
 
@@ -769,7 +769,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed event handler
  */
 	public function event($type, $callback, $options = array()) {
-		trigger_error(sprintf(__('%s does not have event() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have event() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -779,7 +779,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed domReady method
  */
 	public function domReady($functionBody) {
-		trigger_error(sprintf(__('%s does not have domReady() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have domReady() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -789,7 +789,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed iteration
  */
 	function each($callback) {
-		trigger_error(sprintf(__('%s does not have each() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have each() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -816,7 +816,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string completed string with effect.
  */
 	public function effect($name, $options) {
-		trigger_error(sprintf(__('%s does not have effect() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have effect() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -845,7 +845,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string XHR request.
  */
 	public function request($url, $options = array()) {
-		trigger_error(sprintf(__('%s does not have request() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have request() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -868,7 +868,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drag script
  */
 	public function drag($options = array()) {
-		trigger_error(sprintf(__('%s does not have drag() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have drag() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -889,7 +889,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed drop script
  */
 	public function drop($options = array()) {
-		trigger_error(sprintf(__('%s does not have drop() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have drop() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -914,7 +914,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed sortable script.
  */
 	public function sortable() {
-		trigger_error(sprintf(__('%s does not have sortable() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have sortable() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -938,7 +938,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return string Completed slider script
  */
 	public function slider() {
-		trigger_error(sprintf(__('%s does not have slider() implemented', true), get_class($this)), E_USER_WARNING);
+		trigger_error(sprintf(__('%s does not have slider() implemented'), get_class($this)), E_USER_WARNING);
 	}
 
 /**
@@ -957,7 +957,7 @@ class JsBaseEngineHelper extends AppHelper {
  */
 	public function serializeForm() {
 		trigger_error(
-			sprintf(__('%s does not have serializeForm() implemented', true), get_class($this)), E_USER_WARNING
+			sprintf(__('%s does not have serializeForm() implemented'), get_class($this)), E_USER_WARNING
 		);
 	}
 

@@ -24,7 +24,7 @@
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class CakeTestFixture extends Object {
+class CakeTestFixture {
 
 /**
  * Name of the object
@@ -52,7 +52,6 @@ class CakeTestFixture extends Object {
 	public function __construct() {
 		App::import('Model', 'CakeSchema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
-
 		$this->init();
 	}
 
@@ -60,10 +59,8 @@ class CakeTestFixture extends Object {
  * Initialize the fixture.
  *
  * @param object	Cake's DBO driver (e.g: DboMysql).
- * @access public
- *
  */
-	function init() {
+	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
 			$import = array_merge(
 				array('connection' => 'default', 'records' => false), 
@@ -72,16 +69,16 @@ class CakeTestFixture extends Object {
 
 			if (isset($import['model']) && App::import('Model', $import['model'])) {
 				ClassRegistry::config(array('ds' => $import['connection']));
-				$model =& ClassRegistry::init($import['model']);
-				$db =& ConnectionManager::getDataSource($model->useDbConfig);
+				$model = ClassRegistry::init($import['model']);
+				$db = ConnectionManager::getDataSource($model->useDbConfig);
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 				ClassRegistry::config(array('ds' => 'test_suite'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
-				$model =& new Model(null, $import['table'], $import['connection']);
-				$db =& ConnectionManager::getDataSource($import['connection']);
+				$model = new Model(null, $import['table'], $import['connection']);
+				$db = ConnectionManager::getDataSource($import['connection']);
 				$db->cacheSources = false;
 				$model->useDbConfig = $import['connection'];
 				$model->name = Inflector::camelize(Inflector::singularize($import['table']));

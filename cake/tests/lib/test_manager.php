@@ -63,7 +63,7 @@ class TestManager {
  *
  * @return void
  */
-	public function TestManager() {
+	public function __construct() {
 		$this->_installSimpleTest();
 		if (isset($_GET['app'])) {
 			$this->appTest = true;
@@ -96,13 +96,13 @@ class TestManager {
  * @return mixed
  */
 	public function runAllTests(&$reporter, $testing = false) {
-		$testCases =& $this->_getTestFileList($this->_getTestsPath());
+		$testCases = $this->_getTestFileList($this->_getTestsPath());
 		if ($this->appTest) {
-			$test =& new TestSuite(__('All App Tests', true));
+			$test = new TestSuite(__('All App Tests', true));
 		} else if ($this->pluginTest) {
-			$test =& new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
+			$test = new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
 		} else {
-			$test =& new TestSuite(__('All Core Tests', true));
+			$test = new TestSuite(__('All Core Tests', true));
 		}
 
 		if ($testing) {
@@ -136,7 +136,7 @@ class TestManager {
 			return true;
 		}
 
-		$test =& new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		$test = new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$test->addTestFile($testCaseFileWithPath);
 		return $test->run($reporter);
 	}
@@ -156,7 +156,7 @@ class TestManager {
 		}
 
 		require_once $filePath;
-		$test =& new TestSuite(sprintf(__('%s group test', true), $groupTestName));
+		$test = new TestSuite(sprintf(__('%s group test', true), $groupTestName));
 		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
 			$testCase = new $groupTest();
 			$test->addTestCase($testCase);
@@ -176,9 +176,9 @@ class TestManager {
  * @access public
  * @static
  */
-	function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
-		$manager =& new TestManager();
-		$testCases =& $manager->_getTestFileList($directory);
+	public static function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
+		$manager = new TestManager();
+		$testCases = $manager->_getTestFileList($directory);
 		foreach ($testCases as $testCase) {
 			$groupTest->addTestFile($testCase);
 		}
@@ -193,8 +193,8 @@ class TestManager {
  * @access public
  * @static
  */
-	function addTestFile(&$groupTest, $file) {
-		$manager =& new TestManager();
+	public static function addTestFile(&$groupTest, $file) {
+		$manager = new TestManager();
 
 		if (file_exists($file . $manager->_testExtension)) {
 			$file .= $manager->_testExtension;
@@ -211,7 +211,7 @@ class TestManager {
  * @static
  */
 	function &getTestCaseList() {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 		$return = $manager->_getTestCaseList($manager->_getTestsPath());
 		return $return;
 	}
@@ -222,7 +222,7 @@ class TestManager {
  * @param string $directory Directory to get test case list from.
  */
 	protected function &_getTestCaseList($directory = '.') {
-		$fileList =& $this->_getTestFileList($directory);
+		$fileList = $this->_getTestFileList($directory);
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {
 			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
@@ -247,7 +247,7 @@ class TestManager {
  * @static
  */
 	function &getGroupTestList() {
-		$manager =& new TestManager();
+		$manager = new TestManager();
 		$return = $manager->_getTestGroupList($manager->_getTestsPath('groups'));
 		return $return;
 	}
@@ -268,7 +268,7 @@ class TestManager {
  * @param string $directory The directory to get group tests from.
  */
 	protected function &_getTestGroupList($directory = '.') {
-		$fileList =& $this->_getTestGroupFileList($directory);
+		$fileList = $this->_getTestGroupFileList($directory);
 		$groupTests = array();
 
 		foreach ($fileList as $groupTestFile) {
@@ -365,7 +365,7 @@ class TestManager {
 				$result = APP_TEST_GROUPS;
 			}
 		} else if (!empty($this->pluginTest)) {
-			$_pluginBasePath = APP . 'plugins' . DS . $this->pluginTest . DS . 'tests';
+			$_pluginBasePath = APP . 'plugins/' . $this->pluginTest . '/tests';
 			$pluginPath = App::pluginPath($this->pluginTest);
 			if (file_exists($pluginPath . DS . 'tests')) {
 				$_pluginBasePath = $pluginPath . DS . 'tests';

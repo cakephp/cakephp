@@ -2,15 +2,15 @@
 /**
  * ValidationTest file
  *
- * PHP versions 4 and 5
+ * PHP Version 5.x
  *
  * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
- * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ * Licensed under The Open Group Test Suite License
+ * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -32,8 +32,9 @@ class CustomValidator {
  *
  * @param string $email
  * @return boolean
+ * @access public
  */
-	public function customValidate($check) {
+	function customValidate($check) {
 		return preg_match('/^[0-9]{3}$/', $check);
 	}
 }
@@ -93,21 +94,12 @@ class TestDeValidation {
 class ValidationTest extends CakeTestCase {
 
 /**
- * Validation property
- *
- * @var mixed null
- * @access public
- */
-	public $Validation = null;
-
-/**
  * setup method
  *
  * @access public
  * @return void
  */
 	function setUp() {
-		$this->Validation =& Validation::getInstance();
 		$this->_appEncoding = Configure::read('App.encoding');
 	}
 
@@ -137,15 +129,15 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::notEmpty('π'));
 		$this->assertFalse(Validation::notEmpty("\t "));
 		$this->assertFalse(Validation::notEmpty(""));
-
 	}
 
 /**
  * testNotEmptyISO88591Encoding method
  *
  * @return void
+ * @access public
  */
-	public function testNotEmptyISO88591AppEncoding() {
+	function testNotEmptyISO88591AppEncoding() {
 		Configure::write('App.encoding', 'ISO-8859-1');
 		$this->assertTrue(Validation::notEmpty('abcdefg'));
 		$this->assertTrue(Validation::notEmpty('fasdf '));
@@ -170,10 +162,9 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::alphaNumeric('0'));
 		$this->assertTrue(Validation::alphaNumeric('abçďĕʑʘπй'));
 		$this->assertTrue(Validation::alphaNumeric('ˇˆๆゞ'));
-		$this->assertTrue(Validation::alphaNumeric('אกあアꀀ豈'));
+		$this->assertTrue(Validation::alphaNumeric('אกあアꀀ豈'));
 		$this->assertTrue(Validation::alphaNumeric('ǅᾈᾨ'));
 		$this->assertTrue(Validation::alphaNumeric('ÆΔΩЖÇ'));
-
 
 		$this->assertFalse(Validation::alphaNumeric('12 234'));
 		$this->assertFalse(Validation::alphaNumeric('dfd 234'));
@@ -213,7 +204,7 @@ class ValidationTest extends CakeTestCase {
 	function testBetween() {
 		$this->assertTrue(Validation::between('abcdefg', 1, 7));
 		$this->assertTrue(Validation::between('', 0, 7));
-		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
+		$this->assertTrue(Validation::between('אกあアꀀ豈', 1, 7));
 
 		$this->assertFalse(Validation::between('abcdefg', 1, 6));
 		$this->assertFalse(Validation::between('ÆΔΩЖÇ', 1, 3));
@@ -257,7 +248,7 @@ class ValidationTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testcc() {
+	function testCc() {
 		//American Express
 		$this->assertTrue(Validation::cc('370482756063980', array('amex')));
 		$this->assertTrue(Validation::cc('349106433773483', array('amex')));
@@ -703,77 +694,52 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function testLuhn() {
-		$this->Validation->deep = true;
-
 		//American Express
-		$this->Validation->check = '370482756063980';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('370482756063980', true));
 		//BankCard
-		$this->Validation->check = '5610745867413420';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('5610745867413420', true));
 		//Diners Club 14
-		$this->Validation->check = '30155483651028';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('30155483651028', true));
 		//2004 MasterCard/Diners Club Alliance International 14
-		$this->Validation->check = '36747701998969';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('36747701998969', true));
 		//2004 MasterCard/Diners Club Alliance US & Canada 16
-		$this->Validation->check = '5597511346169950';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('5597511346169950', true));
 		//Discover
-		$this->Validation->check = '6011802876467237';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('6011802876467237', true));
 		//enRoute
-		$this->Validation->check = '201496944158937';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('201496944158937', true));
 		//JCB 15 digit
-		$this->Validation->check = '210034762247893';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('210034762247893', true));
 		//JCB 16 digit
-		$this->Validation->check = '3096806857839939';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('3096806857839939', true));
 		//Maestro (debit card)
-		$this->Validation->check = '5020147409985219';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('5020147409985219', true));
 		//Mastercard
-		$this->Validation->check = '5580424361774366';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('5580424361774366', true));
 		//Solo 16
-		$this->Validation->check = '6767432107064987';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('6767432107064987', true));
 		//Solo 18
-		$this->Validation->check = '676714834398858593';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('676714834398858593', true));
 		//Solo 19
-		$this->Validation->check = '6767838565218340113';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('6767838565218340113', true));
 		//Switch 16
-		$this->Validation->check = '5641829171515733';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('5641829171515733', true));
 		//Switch 18
-		$this->Validation->check = '493622764224625174';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('493622764224625174', true));
 		//Switch 19
-		$this->Validation->check = '6759603460617628716';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('6759603460617628716', true));
 		//VISA 13 digit
-		$this->Validation->check = '4024007174754';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('4024007174754', true));
 		//VISA 16 digit
-		$this->Validation->check = '4916375389940009';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('4916375389940009', true));
 		//Visa Electron
-		$this->Validation->check = '4175003346287100';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('4175003346287100', true));
 		//Voyager
-		$this->Validation->check = '869940697287073';
-		$this->assertTrue($this->Validation->luhn());
+		$this->assertTrue(Validation::luhn('869940697287073', true));
 
-		$this->Validation->check = '0000000000000000';
-		$this->assertFalse($this->Validation->luhn());
+		$this->assertFalse(Validation::luhn('0000000000000000', true));
 
-		$this->Validation->check = '869940697287173';
-		$this->assertFalse($this->Validation->luhn());
+		$this->assertFalse(Validation::luhn('869940697287173', true));
 	}
 
 /**
@@ -1718,21 +1684,18 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
- * testIp method
+ * testIpV4 method
  *
  * @access public
  * @return void
  */
-	function testIpv4() {
-		$this->assertTrue(Validation::ip('0.0.0.0', 'IPv4'));
-		$this->assertTrue(Validation::ip('192.168.1.156', 'IPv4'));
-		$this->assertTrue(Validation::ip('255.255.255.255', 'IPv4'));
-
-		$this->assertFalse(Validation::ip('127.0.0', 'IPv4'));
-		$this->assertFalse(Validation::ip('127.0.0.a', 'IPv4'));
-		$this->assertFalse(Validation::ip('127.0.0.256', 'IPv4'));
-
-		$this->assertFalse(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334', 'IPv4'));
+	function testIpV4() {
+		$this->assertTrue(Validation::ip('0.0.0.0'));
+		$this->assertTrue(Validation::ip('192.168.1.156'));
+		$this->assertTrue(Validation::ip('255.255.255.255'));
+		$this->assertFalse(Validation::ip('127.0.0'));
+		$this->assertFalse(Validation::ip('127.0.0.a'));
+		$this->assertFalse(Validation::ip('127.0.0.256'));
 	}
 
 /**
@@ -1773,31 +1736,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::ip('1:2:3::4:5:6:7:8:9', 'IPv6'));
 		$this->assertFalse(Validation::ip('::ffff:2.3.4', 'IPv6'));
 		$this->assertFalse(Validation::ip('::ffff:257.1.2.3', 'IPv6'));
-
-		$this->assertFalse(Validation::ip('0.0.0.0', 'IPv6'));
-	}
-
-/**
- * testIpBoth method
- *
- * @return void
- */
-	function testIpBoth() {
-		$this->assertTrue(Validation::ip('0.0.0.0'));
-		$this->assertTrue(Validation::ip('192.168.1.156'));
-		$this->assertTrue(Validation::ip('255.255.255.255'));
-
-		$this->assertFalse(Validation::ip('127.0.0'));
-		$this->assertFalse(Validation::ip('127.0.0.a'));
-		$this->assertFalse(Validation::ip('127.0.0.256'));
-
-		$this->assertTrue(Validation::ip('2001:0db8:85a3:0000:0000:8a2e:0370:7334'));
-		$this->assertTrue(Validation::ip('2001:db8:85a3:0:0:8a2e:370:7334'));
-		$this->assertTrue(Validation::ip('2001:db8:85a3::8a2e:370:7334'));
-
-		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:37023:7334'));
-		$this->assertFalse(Validation::ip('2001:db8:85a3::8a2e:370k:7334'));
-		$this->assertFalse(Validation::ip('1:2:3:4:5:6:7:8:9'));
 	}
 
 /**
@@ -1873,35 +1811,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::url('www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
-		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
-
-		$this->assertTrue(Validation::url('http://cakephp.org:80'));
-		$this->assertTrue(Validation::url('http://cakephp.org:443'));
-		$this->assertTrue(Validation::url('http://cakephp.org:2000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:27000'));
-		$this->assertTrue(Validation::url('http://cakephp.org:65000'));
-
-		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]'));
-		$this->assertTrue(Validation::url('[::1]'));
-		$this->assertTrue(Validation::url('[2001:0db8::1428:57ab]:80'));
-		$this->assertTrue(Validation::url('[::1]:80'));
-		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]'));
-		$this->assertTrue(Validation::url('http://[::1]'));
-		$this->assertTrue(Validation::url('http://[2001:0db8::1428:57ab]:80'));
-		$this->assertTrue(Validation::url('http://[::1]:80'));
-
-		$this->assertFalse(Validation::url('[1::2::3]'));
-	}
-
-	function testUuid() {
-		$this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
-		$this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
-		$this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
-		$this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
-		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
-		$this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
-		$this->assertFalse(Validation::uuid('550e8400-e29b-11d-a716-446655440000'));
-		$this->assertFalse(Validation::uuid('550e8400-e29-11d4-a716-446655440000'));
 	}
 
 /**
@@ -2119,7 +2028,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::postal('B2A 2AB', null, 'ca'));
 		$this->assertTrue(Validation::postal('X0A 0A2', null, 'ca'));
 		$this->assertTrue(Validation::postal('G4V 4C3', null, 'ca'));
-		$this->assertTrue(Validation::postal('L4J8D6', null, 'ca'));
 
 		$this->assertFalse(Validation::postal('111', null, 'us'));
 		$this->assertFalse(Validation::postal('1111', null, 'us'));
@@ -2199,5 +2107,12 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
 	}
 
+	// function testFile() {
+	// 	$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
+	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
+	// 	$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
+	// }
 }
 ?>

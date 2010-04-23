@@ -46,7 +46,7 @@ class FileLog {
  * @param array $options Options for the FileLog, see above.
  * @return void
  */
-	function FileLog($options = array()) {
+	function __construct($options = array()) {
 		$options += array('path' => LOGS);
 		$this->_path = $options['path'];
 	}
@@ -58,7 +58,7 @@ class FileLog {
  * @param string $message The message you want to log.
  * @return boolean success of write.
  */
-	function write($type, $message) {
+	public function write($type, $message) {
 		$debugTypes = array('notice', 'info', 'debug');
 
 		if ($type == 'error' || $type == 'warning') {

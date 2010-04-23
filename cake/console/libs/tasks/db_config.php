@@ -358,7 +358,7 @@ class DbConfigTask extends Shell {
 
 		$connections = array_keys($configs);
 		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__('Use Database Config', true) .':', $connections, 'default');
+			$useDbConfig = $this->in(__('Use Database Config') .':', $connections, 'default');
 		}
 		return $useDbConfig;
 	}

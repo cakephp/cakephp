@@ -129,6 +129,14 @@ class Contact extends CakeTestModel {
  * @access public
  */
 	public $hasAndBelongsToMany = array('ContactTag' => array('with' => 'ContactTagsContact'));
+
+/**
+ * hasAndBelongsToMany property
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('User' => array('className' => 'UserForm'));
 }
 
 /**
@@ -299,7 +307,7 @@ class UserForm extends CakeTestModel {
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'other' => array('type' => 'text', 'null' => true, 'default' => null, 'length' => null),
-		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
+		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10),
 		'something' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
@@ -1776,7 +1784,12 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->validationErrors['Model']['field'] = 'minLength';
-		$result = $this->Form->input('Model.field', array('error' => array('minLength' => __('Le login doit contenir au moins 2 caractères', true))));
+		$result = $this->Form->input('Model.field', array(
+			'error' => array(
+				'minLength' => 'Le login doit contenir au moins 2 caractères',
+				'maxLength' => 'login too large'
+			)
+		));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'ModelField'),
@@ -1786,6 +1799,28 @@ class FormHelperTest extends CakeTestCase {
 			array('div' => array('class' => 'error-message')),
 			'Le login doit contenir au moins 2 caractères',
 			'/div',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->validationErrors['Model']['field'] = 'maxLength';
+		$result = $this->Form->input('Model.field', array(
+			'error' => array(
+				'wrap' => 'span',
+				'attributes' => array('rel' => 'fake'),
+				'minLength' => 'Le login doit contenir au moins 2 caractères',
+				'maxLength' => 'login too large',
+			)
+		));
+		$expected = array(
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'ModelField'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'data[Model][field]', 'id' => 'ModelField', 'class' => 'form-error'),
+			array('span' => array('class' => 'error-message', 'rel' => 'fake')),
+			'login too large',
+			'/span',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -3280,7 +3315,7 @@ class FormHelperTest extends CakeTestCase {
 			'first',
 			'/label',
 			'/div',
-			
+
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
@@ -5626,6 +5661,20 @@ class FormHelperTest extends CakeTestCase {
 			'*/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('User.stuff');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'UserStuff'),
+			'Stuff',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[User][stuff]',
+				'id' => 'UserStuff', 'maxlength' => 10
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected, true);
 	}
 
 /**

@@ -75,7 +75,7 @@ class ErrorHandler extends Object {
 		$this->error(array(
 			'code' => '404',
 			'name' => 'Not found',
-			'message' => sprintf(__("The requested address %s was not found on this server.", true), $url, $message)
+			'message' => sprintf(__('The requested address %s was not found on this server.'), $url, $message)
 		));
 		$this->_stop();
 	}
@@ -88,7 +88,7 @@ class ErrorHandler extends Object {
 	public function missingController($params) {
 		extract($params, EXTR_OVERWRITE);
 		$controllerName = str_replace('Controller', '', $className);
-		$this->stderr(sprintf(__("Missing Controller '%s'", true), $controllerName));
+		$this->stderr(sprintf(__("Missing Controller '%s'"), $controllerName));
 		$this->_stop();
 	}
 
@@ -99,7 +99,7 @@ class ErrorHandler extends Object {
  */
 	public function missingAction($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Method '%s' in '%s'", true), $action, $className));
+		$this->stderr(sprintf(__("Missing Method '%s' in '%s'"), $action, $className));
 		$this->_stop();
 	}
 
@@ -110,7 +110,7 @@ class ErrorHandler extends Object {
  */
 	public function privateAction($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Trying to access private method '%s' in '%s'", true), $action, $className));
+		$this->stderr(sprintf(__("Trying to access private method '%s' in '%s'"), $action, $className));
 		$this->_stop();
 	}
 
@@ -121,7 +121,7 @@ class ErrorHandler extends Object {
  */
 	public function missingTable($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing database table '%s' for model '%s'", true), $table, $className));
+		$this->stderr(sprintf(__("Missing database table '%s' for model '%s'"), $table, $className));
 		$this->_stop();
 	}
 
@@ -131,7 +131,7 @@ class ErrorHandler extends Object {
  * @param array $params Parameters
  */
 	public function missingDatabase($params = array()) {
-		$this->stderr(__("Missing Database", true));
+		$this->stderr(__('Missing Database'));
 		$this->_stop();
 	}
 
@@ -142,7 +142,7 @@ class ErrorHandler extends Object {
  */
 	public function missingView($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing View '%s' for '%s' in '%s'", true), $file, $action, $className));
+		$this->stderr(sprintf(__("Missing View '%s' for '%s' in '%s'"), $file, $action, $className));
 		$this->_stop();
 	}
 
@@ -153,7 +153,7 @@ class ErrorHandler extends Object {
  */
 	public function missingLayout($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Layout '%s'", true), $file));
+		$this->stderr(sprintf(__("Missing Layout '%s'"), $file));
 		$this->_stop();
 	}
 
@@ -164,7 +164,7 @@ class ErrorHandler extends Object {
  */
 	public function missingConnection($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(__("Missing Database Connection. Try 'cake bake'", true));
+		$this->stderr(__("Missing Database Connection. Try 'cake bake'"));
 		$this->_stop();
 	}
 
@@ -175,7 +175,7 @@ class ErrorHandler extends Object {
  */
 	public function missingHelperFile($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Helper file '%s' for '%s'", true), $file, Inflector::camelize($helper)));
+		$this->stderr(sprintf(__("Missing Helper file '%s' for '%s'"), $file, Inflector::camelize($helper)));
 		$this->_stop();
 	}
 
@@ -186,7 +186,7 @@ class ErrorHandler extends Object {
  */
 	public function missingHelperClass($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Helper class '%s' in '%s'", true), Inflector::camelize($helper), $file));
+		$this->stderr(sprintf(__("Missing Helper class '%s' in '%s'"), Inflector::camelize($helper), $file));
 		$this->_stop();
 	}
 
@@ -197,7 +197,7 @@ class ErrorHandler extends Object {
  */
 	public function missingComponentFile($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Component file '%s' for '%s'", true), $file, Inflector::camelize($component)));
+		$this->stderr(sprintf(__("Missing Component file '%s' for '%s'"), $file, Inflector::camelize($component)));
 		$this->_stop();
 	}
 
@@ -208,7 +208,7 @@ class ErrorHandler extends Object {
  */
 	public function missingComponentClass($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing Component class '%s' in '%s'", true), Inflector::camelize($component), $file));
+		$this->stderr(sprintf(__("Missing Component class '%s' in '%s'"), Inflector::camelize($component), $file));
 		$this->_stop();
 	}
 
@@ -219,7 +219,7 @@ class ErrorHandler extends Object {
  */
 	public function missingModel($params) {
 		extract($params, EXTR_OVERWRITE);
-		$this->stderr(sprintf(__("Missing model '%s'", true), $className));
+		$this->stderr(sprintf(__("Missing model '%s'"), $className));
 		$this->_stop();
 	}
 

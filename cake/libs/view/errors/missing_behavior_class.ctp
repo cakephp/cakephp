@@ -19,12 +19,12 @@
 ?>
 <h2><?php __('Missing Behavior Class'); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.', true), $behaviorClass); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $behaviorClass); ?>
 </p>
 <p  class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('Create the class below in file: %s', true), APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('Create the class below in file: %s'), APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -34,6 +34,6 @@ class <?php echo $behaviorClass;?> extends ModelBehavior {
 ?&gt;
 </pre>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_class.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_class.ctp'); ?>
 </p>

@@ -505,7 +505,7 @@ class HttpSocket extends CakeSocket {
 
 		if (!is_callable(array(&$this, $decodeMethod))) {
 			if (!$this->quirksMode) {
-				trigger_error(sprintf(__('HttpSocket::_decodeBody - Unknown encoding: %s. Activate quirks mode to surpress error.', true), h($encoding)), E_USER_WARNING);
+				trigger_error(sprintf(__('HttpSocket::_decodeBody - Unknown encoding: %s. Activate quirks mode to surpress error.'), h($encoding)), E_USER_WARNING);
 			}
 			return array('body' => $body, 'header' => false);
 		}
@@ -530,7 +530,7 @@ class HttpSocket extends CakeSocket {
 		while ($chunkLength !== 0) {
 			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
 				if (!$this->quirksMode) {
-					trigger_error(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.', true), E_USER_WARNING);
+					trigger_error(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.'), E_USER_WARNING);
 					return false;
 				}
 				break;
@@ -788,7 +788,7 @@ class HttpSocket extends CakeSocket {
 		if (is_string($request)) {
 			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
 			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
-				trigger_error(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.', true), E_USER_WARNING);
+				trigger_error(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'), E_USER_WARNING);
 				return false;
 			}
 			return $request;
@@ -803,7 +803,7 @@ class HttpSocket extends CakeSocket {
 		$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
-			trigger_error(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', true), join(',', $asteriskMethods)), E_USER_WARNING);
+			trigger_error(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.'), join(',', $asteriskMethods)), E_USER_WARNING);
 			return false;
 		}
 		return $request['method'].' '.$request['uri'].' '.$versionToken.$this->lineBreak;

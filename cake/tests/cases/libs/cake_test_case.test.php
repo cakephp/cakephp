@@ -296,13 +296,13 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	function testAfter() {
 		$this->Case->after('testDummy');
-		$this->assertFalse($this->Case->__truncated);
+		$this->assertFalse($this->Case->getTruncated());
 
 		$this->Case->fixtures = array('core.post');
 		$this->Case->before('start');
 		$this->Case->start();
 		$this->Case->after('testDummy');
-		$this->assertTrue($this->Case->__truncated);
+		$this->assertTrue($this->Case->getTruncated());
 	}
 
 /**

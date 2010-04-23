@@ -489,12 +489,12 @@ class DboSqlite extends DboSource {
 		extract($column);
 
 		if (empty($name) || empty($type)) {
-			trigger_error(__('Column name or type not defined in schema', true), E_USER_WARNING);
+			trigger_error(__('Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(sprintf(__('Column type %s does not exist', true), $type), E_USER_WARNING);
+			trigger_error(sprintf(__('Column type %s does not exist'), $type), E_USER_WARNING);
 			return null;
 		}
 

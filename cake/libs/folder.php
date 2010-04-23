@@ -19,21 +19,13 @@
  */
 
 /**
- * Included libraries.
- *
- */
-if (!class_exists('Object')) {
-	require LIBS . 'object.php';
-}
-
-/**
  * Folder structure browser, lists folders and files.
  * Provides an Object interface for Common directory related tasks.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Folder extends Object {
+class Folder {
 
 /**
  * Path to Folder.
@@ -100,7 +92,6 @@ class Folder extends Object {
  * @param mixed $mode Mode (CHMOD) to apply to created folder, false to ignore
  */
 	function __construct($path = false, $create = false, $mode = false) {
-		parent::__construct();
 		if (empty($path)) {
 			$path = TMP;
 		}
@@ -368,11 +359,11 @@ class Folder extends Object {
 
 		if ($recursive === false && is_dir($path)) {
 			if (@chmod($path, intval($mode, 8))) {
-				$this->__messages[] = sprintf(__('%s changed to %s', true), $path, $mode);
+				$this->__messages[] = sprintf(__('%s changed to %s'), $path, $mode);
 				return true;
 			}
 
-			$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $path, $mode);
+			$this->__errors[] = sprintf(__('%s NOT changed to %s'), $path, $mode);
 			return false;
 		}
 
@@ -389,9 +380,9 @@ class Folder extends Object {
 					}
 
 					if (@chmod($fullpath, intval($mode, 8))) {
-						$this->__messages[] = sprintf(__('%s changed to %s', true), $fullpath, $mode);
+						$this->__messages[] = sprintf(__('%s changed to %s'), $fullpath, $mode);
 					} else {
-						$this->__errors[] = sprintf(__('%s NOT changed to %s', true), $fullpath, $mode);
+						$this->__errors[] = sprintf(__('%s NOT changed to %s'), $fullpath, $mode);
 					}
 				}
 			}
@@ -476,7 +467,7 @@ class Folder extends Object {
 		}
 
 		if (is_file($pathname)) {
-			$this->__errors[] = sprintf(__('%s is a file', true), $pathname);
+			$this->__errors[] = sprintf(__('%s is a file'), $pathname);
 			return false;
 		}
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
@@ -486,11 +477,11 @@ class Folder extends Object {
 				$old = umask(0);
 				if (mkdir($pathname, $mode)) {
 					umask($old);
-					$this->__messages[] = sprintf(__('%s created', true), $pathname);
+					$this->__messages[] = sprintf(__('%s created'), $pathname);
 					return true;
 				} else {
 					umask($old);
-					$this->__errors[] = sprintf(__('%s NOT created', true), $pathname);
+					$this->__errors[] = sprintf(__('%s NOT created'), $pathname);
 					return false;
 				}
 			}
@@ -563,9 +554,9 @@ class Folder extends Object {
 					}
 					if (is_file($file) === true) {
 						if (@unlink($file)) {
-							$this->__messages[] = sprintf(__('%s removed', true), $file);
+							$this->__messages[] = sprintf(__('%s removed'), $file);
 						} else {
-							$this->__errors[] = sprintf(__('%s NOT removed', true), $file);
+							$this->__errors[] = sprintf(__('%s NOT removed'), $file);
 						}
 					} elseif (is_dir($file) === true && $this->delete($file) === false) {
 						return false;
@@ -574,10 +565,10 @@ class Folder extends Object {
 			}
 			$path = substr($path, 0, strlen($path) - 1);
 			if (rmdir($path) === false) {
-				$this->__errors[] = sprintf(__('%s NOT removed', true), $path);
+				$this->__errors[] = sprintf(__('%s NOT removed'), $path);
 				return false;
 			} else {
-				$this->__messages[] = sprintf(__('%s removed', true), $path);
+				$this->__messages[] = sprintf(__('%s removed'), $path);
 			}
 		}
 		return true;
@@ -612,7 +603,7 @@ class Folder extends Object {
 		$mode = $options['mode'];
 
 		if (!$this->cd($fromDir)) {
-			$this->__errors[] = sprintf(__('%s not found', true), $fromDir);
+			$this->__errors[] = sprintf(__('%s not found'), $fromDir);
 			return false;
 		}
 
@@ -621,7 +612,7 @@ class Folder extends Object {
 		}
 
 		if (!is_writable($toDir)) {
-			$this->__errors[] = sprintf(__('%s not writable', true), $toDir);
+			$this->__errors[] = sprintf(__('%s not writable'), $toDir);
 			return false;
 		}
 
@@ -635,9 +626,9 @@ class Folder extends Object {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
-							$this->__messages[] = sprintf(__('%s copied to %s', true), $from, $to);
+							$this->__messages[] = sprintf(__('%s copied to %s'), $from, $to);
 						} else {
-							$this->__errors[] = sprintf(__('%s NOT copied to %s', true), $from, $to);
+							$this->__errors[] = sprintf(__('%s NOT copied to %s'), $from, $to);
 						}
 					}
 
@@ -648,11 +639,11 @@ class Folder extends Object {
 							$old = umask(0);
 							chmod($to, $mode);
 							umask($old);
-							$this->__messages[] = sprintf(__('%s created', true), $to);
+							$this->__messages[] = sprintf(__('%s created'), $to);
 							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
-							$this->__errors[] = sprintf(__('%s not created', true), $to);
+							$this->__errors[] = sprintf(__('%s not created'), $to);
 						}
 					}
 				}

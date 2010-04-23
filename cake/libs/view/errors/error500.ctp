@@ -19,6 +19,6 @@
 ?>
 <h2><?php echo $name; ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('An Internal Error Has Occurred.', true), "<strong>'{$message}'</strong>"); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('An Internal Error Has Occurred.'), "<strong>'{$message}'</strong>"); ?>
 </p>

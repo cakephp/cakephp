@@ -70,11 +70,18 @@ class CakeTestSuiteDispatcher {
 	protected $_baseDir;
 
 /**
+ * reporter instance used for the request
+ *
+ * @var CakeBaseReporter
+ */
+	protected static $_Reporter = null;
+
+/**
  * constructor
  *
  * @return void
  */
-	function CakeTestSuiteDispatcher() {
+	function __construct() {
 		$this->_baseUrl = $_SERVER['PHP_SELF'];
 		$dir = rtrim(dirname($this->_baseUrl), '\\');
 		$this->_baseDir = ($dir === '/') ? $dir : $dir . '/';
@@ -109,9 +116,9 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _checkSimpleTest() {
-		if (!App::import('Vendor', 'simpletest' . DS . 'reporter')) {
+		if (!App::import('Vendor', 'simpletest/reporter')) {
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates' . DS . 'simpletest.php';
+			include CAKE_TESTS_LIB . 'templates/simpletest.php';
 			exit();
 		}
 	}
@@ -125,7 +132,7 @@ class CakeTestSuiteDispatcher {
 	function _checkXdebug() {
 		if (!extension_loaded('xdebug')) {
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates' . DS . 'xdebug.php';
+			include CAKE_TESTS_LIB . 'templates/xdebug.php';
 			exit();
 		}
 	}
@@ -176,21 +183,20 @@ class CakeTestSuiteDispatcher {
  * @static
  */
 	function &getReporter() {
-		static $Reporter = NULL;
-		if (!$Reporter) {
+		if (!self::$_Reporter) {
 			$type = strtolower($this->params['output']);
 			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
-			$coreFile = CAKE_TESTS_LIB . 'reporter' . DS . 'cake_' . $type . '_reporter.php';
+			$coreFile = CAKE_TESTS_LIB . 'reporter/cake_' . $type . '_reporter.php';
 
 			$appClass = $this->params['output'] . 'Reporter';
-			$appFile = APPLIBS . 'test_suite' . DS . 'reporter' . DS . $type . '_reporter.php';
+			$appFile = APPLIBS . 'test_suite/reporter/' . $type . '_reporter.php';
 			if (include_once $coreFile) {
-				$Reporter =& new $coreClass(null, $this->params);
+				self::$_Reporter = new $coreClass(null, $this->params);
 			} elseif (include_once $appFile) {
-				$Reporter =& new $appClass(null, $this->params);
+				self::$_Reporter = new $appClass(null, $this->params);
 			}
 		}
-		return $Reporter;
+		return self::$_Reporter;
 	}
 
 /**
@@ -223,7 +229,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runGroupTest() {
-		$Reporter =& CakeTestSuiteDispatcher::getReporter();
+		$Reporter = CakeTestSuiteDispatcher::getReporter();
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::init($this->params['group'], $Reporter);
 		}
@@ -240,7 +246,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
-		$Reporter =& CakeTestSuiteDispatcher::getReporter();
+		$Reporter = CakeTestSuiteDispatcher::getReporter();
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::init($this->params['case'], $Reporter);
 		}

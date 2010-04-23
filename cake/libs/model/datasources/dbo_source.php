@@ -232,10 +232,10 @@ class DboSource extends DataSource {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 
-		$t = getMicrotime();
+		$t = microtime(true);
 		$this->_result = $this->_execute($sql);
 		if ($options['stats']) {
-			$this->took = round((getMicrotime() - $t) * 1000, 0);
+			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->affected = $this->lastAffected();
 			$this->error = $this->lastError();
 			$this->numRows = $this->lastNumRows();
@@ -419,7 +419,7 @@ class DboSource extends DataSource {
  * @param array $resut REference to the fetched row
  * @return void
  */
-	function fetchVirtualField(&$result) {
+	public function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
 				if (strpos($field, '__') === false) {
@@ -464,7 +464,7 @@ class DboSource extends DataSource {
  *
  * @return void
  */
-	function flushMethodCache() {
+	public function flushMethodCache() {
 		$this->methodCache = array();
 	}
 
@@ -480,7 +480,7 @@ class DboSource extends DataSource {
  * @param mixed $value The value to cache into memory.
  * @return mixed Either null on failure, or the value if its set.
  */
-	function cacheMethod($method, $key, $value = null) {
+	public function cacheMethod($method, $key, $value = null) {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
@@ -590,7 +590,7 @@ class DboSource extends DataSource {
  * @param boolean $sorted Get the queries sorted by time taken, defaults to false.
  * @return void
  */
-	function showLog($sorted = false) {
+	public function showLog($sorted = false) {
 		$log = $this->getLog($sorted, false);
 		if (empty($log['log'])) {
 			return;
@@ -646,11 +646,11 @@ class DboSource extends DataSource {
 		if (Configure::read() > 0) {
 			$out = null;
 			if ($error) {
-				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:', true) . "</b> {$this->error}</span>", E_USER_WARNING);
+				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms', true), $this->affected, $this->numRows, $this->took) . ']</small>');
+				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms'), $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
-			pr(sprintf('<p style="text-align:left"><b>' . __('Query:', true) . '</b> %s %s</p>', $sql, $out));
+			pr(sprintf('<p style="text-align:left"><b>' . __('Query:') . '</b> %s %s</p>', $sql, $out));
 		}
 	}
 
@@ -735,7 +735,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
-	function read(&$model, $queryData = array(), $recursive = null) {
+	public function read(&$model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
 
 		$null = null;
@@ -875,11 +875,11 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read() > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:', true), $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:'), $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}
@@ -1378,7 +1378,7 @@ class DboSource extends DataSource {
  * @see DboSource::renderJoinStatement()
  * @see DboSource::buildStatement()
  */
-	function buildJoinStatement($join) {
+	public function buildJoinStatement($join) {
 		$data = array_merge(array(
 			'type' => null,
 			'alias' => null,
@@ -1404,7 +1404,7 @@ class DboSource extends DataSource {
  * @access public
  * @see DboSource::renderStatement()
  */
-	function buildStatement($query, &$model) {
+	public function buildStatement($query, &$model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1862,7 +1862,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	function _constructVirtualFields(&$model, $alias, $fields) {
+	protected function _constructVirtualFields(&$model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name("{$alias}__{$field}");
@@ -2451,7 +2451,7 @@ class DboSource extends DataSource {
  */
 	public function length($real) {
 		if (!preg_match_all('/([\w\s]+)(?:\((\d+)(?:,(\d+))?\))?(\sunsigned)?(\szerofill)?/', $real, $result)) {
-			trigger_error(__("FIXME: Can't parse field: " . $real, true), E_USER_WARNING);
+			trigger_error(__("FIXME: Can't parse field: " . $real), E_USER_WARNING);
 			$col = str_replace(array(')', 'unsigned'), '', $real);
 			$limit = null;
 
@@ -2527,7 +2527,7 @@ class DboSource extends DataSource {
  * @param string $fields
  * @param array $values
  */
-	protected function insertMulti($table, $fields, $values) {
+	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
 		if (is_array($fields)) {
 			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
@@ -2558,7 +2558,7 @@ class DboSource extends DataSource {
  */
 	public function createSchema($schema, $tableName = null) {
 		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			trigger_error(__('Invalid schema object'), E_USER_WARNING);
 			return null;
 		}
 		$out = '';
@@ -2619,7 +2619,7 @@ class DboSource extends DataSource {
  */
 	public function dropSchema($schema, $table = null) {
 		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object', true), E_USER_WARNING);
+			trigger_error(__('Invalid schema object'), E_USER_WARNING);
 			return null;
 		}
 		$out = '';
@@ -2644,12 +2644,12 @@ class DboSource extends DataSource {
 		extract(array_merge(array('null' => true), $column));
 
 		if (empty($name) || empty($type)) {
-			trigger_error(__('Column name or type not defined in schema', true), E_USER_WARNING);
+			trigger_error(__('Column name or type not defined in schema'), E_USER_WARNING);
 			return null;
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(sprintf(__('Column type %s does not exist', true), $type), E_USER_WARNING);
+			trigger_error(sprintf(__('Column type %s does not exist'), $type), E_USER_WARNING);
 			return null;
 		}
 

@@ -110,7 +110,7 @@ class FileEngine extends CacheEngine {
  * @param mixed $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  */
-	public function write($key, &$data, $duration) {
+	public function write($key, $data, $duration) {
 		if ($data === '' || !$this->_init) {
 			return false;
 		}
@@ -228,6 +228,26 @@ class FileEngine extends CacheEngine {
 	}
 
 /**
+ * Not implemented
+ *
+ * @return void
+ * @throws BadMethodCallException
+ */
+	public function decrement($key, $offset = 1) {
+		throw new BadMethodCallException(__('Files cannot be atomically decremented.'));
+	}
+
+/**
+ * Not implemented
+ *
+ * @return void
+ * @throws BadMethodCallException
+ */
+	public function increment($key, $offset = 1) {
+		throw new BadMethodCallException(__('Files cannot be atomically incremented.'));
+	}
+
+/**
  * Get absolute file for a given key
  *
  * @param string $key The key
@@ -254,7 +274,7 @@ class FileEngine extends CacheEngine {
 	function __active() {
 		if ($this->_init && !is_writable($this->settings['path'])) {
 			$this->_init = false;
-			trigger_error(sprintf(__('%s is not writable', true), $this->settings['path']), E_USER_WARNING);
+			trigger_error(sprintf(__('%s is not writable'), $this->settings['path']), E_USER_WARNING);
 		}
 		return true;
 	}

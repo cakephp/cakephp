@@ -56,7 +56,7 @@ class Security extends Object {
  * @access public
  * @static
  */
-	function inactiveMins() {
+	public static function inactiveMins() {
 		switch (Configure::read('Security.level')) {
 			case 'high':
 				return 10;
@@ -78,7 +78,7 @@ class Security extends Object {
  * @access public
  * @static
  */
-	function generateAuthKey() {
+	public static function generateAuthKey() {
 		if (!class_exists('String')) {
 			App::import('Core', 'String');
 		}
@@ -110,7 +110,7 @@ class Security extends Object {
  * @access public
  * @static
  */
-	function hash($string, $type = null, $salt = false) {
+	public static function hash($string, $type = null, $salt = false) {
 		$_this =& Security::getInstance();
 
 		if ($salt) {
@@ -154,7 +154,7 @@ class Security extends Object {
  * @static
  * @see Security::hash()
  */
-	function setHash($hash) {
+	public static function setHash($hash) {
 		$_this =& Security::getInstance();
 		$_this->hashType = $hash;
 	}
@@ -168,9 +168,9 @@ class Security extends Object {
  * @access public
  * @static
  */
-	function cipher($text, $key) {
+	public static function cipher($text, $key) {
 		if (empty($key)) {
-			trigger_error(__('You cannot use an empty key for Security::cipher()', true), E_USER_WARNING);
+			trigger_error(__('You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
 			return '';
 		}
 

@@ -112,7 +112,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		} else {
 			$file = $this->Schema->path . DS . $this->params['file'];
-			$this->err(sprintf(__('Schema file (%s) could not be found.', true), $file));
+			$this->err(sprintf(__('Schema file (%s) could not be found.'), $file));
 			$this->_stop();
 		}
 	}
@@ -123,7 +123,7 @@ class SchemaShell extends Shell {
  *
  */
 	public function generate() {
-		$this->out(__('Generating Schema...', true));
+		$this->out(__('Generating Schema...'));
 		$options = array();
 		if (isset($this->params['f'])) {
 			$options = array('models' => false);
@@ -177,10 +177,10 @@ class SchemaShell extends Shell {
 		}
 
 		if ($this->Schema->write($content)) {
-			$this->out(sprintf(__('Schema file: %s generated', true), $content['file']));
+			$this->out(sprintf(__('Schema file: %s generated'), $content['file']));
 			$this->_stop();
 		} else {
-			$this->err(__('Schema file: %s generated', true));
+			$this->err(__('Schema file: %s generated'));
 			$this->_stop();
 		}
 	}
@@ -197,7 +197,7 @@ class SchemaShell extends Shell {
 		$write = false;
 		$Schema = $this->Schema->load();
 		if (!$Schema) {
-			$this->err(__('Schema could not be loaded', true));
+			$this->err(__('Schema could not be loaded'));
 			$this->_stop();
 		}
 		if (isset($this->params['write'])) {
@@ -222,10 +222,10 @@ class SchemaShell extends Shell {
 			}
 
 			if ($File->write($contents)) {
-				$this->out(sprintf(__('SQL dump file created in %s', true), $File->pwd()));
+				$this->out(sprintf(__('SQL dump file created in %s'), $File->pwd()));
 				$this->_stop();
 			} else {
-				$this->err(__('SQL dump could not be created', true));
+				$this->err(__('SQL dump could not be created'));
 				$this->_stop();
 			}
 		}
@@ -269,7 +269,7 @@ class SchemaShell extends Shell {
 		
 		if (isset($this->params['dry'])) {
 			$this->__dry = true;
-			$this->out(__('Performing a dry run.', true));
+			$this->out(__('Performing a dry run.'));
 		}
 
 		$options = array('name' => $name, 'plugin' => $plugin);
@@ -281,7 +281,7 @@ class SchemaShell extends Shell {
 		$Schema =& $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded', true), $this->Schema->path . DS . $this->Schema->file));
+			$this->err(sprintf(__('%s could not be loaded'), $this->Schema->path . DS . $this->Schema->file));
 			$this->_stop();
 		}
 		$table = null;
@@ -312,26 +312,26 @@ class SchemaShell extends Shell {
 			$create[$table] = $db->createSchema($Schema, $table);
 		}
 		if (empty($drop) || empty($create)) {
-			$this->out(__('Schema is up to date.', true));
+			$this->out(__('Schema is up to date.'));
 			$this->_stop();
 		}
 
-		$this->out("\n" . __('The following table(s) will be dropped.', true));
+		$this->out("\n" . __('The following table(s) will be dropped.'));
 		$this->out(array_keys($drop));
 
-		if ('y' == $this->in(__('Are you sure you want to drop the table(s)?', true), array('y', 'n'), 'n')) {
-			$this->out(__('Dropping table(s).', true));
+		if ('y' == $this->in(__('Are you sure you want to drop the table(s)?'), array('y', 'n'), 'n')) {
+			$this->out(__('Dropping table(s).'));
 			$this->__run($drop, 'drop', $Schema);
 		}
 
-		$this->out("\n" . __('The following table(s) will be created.', true));
+		$this->out("\n" . __('The following table(s) will be created.'));
 		$this->out(array_keys($create));
 
-		if ('y' == $this->in(__('Are you sure you want to create the table(s)?', true), array('y', 'n'), 'y')) {
-			$this->out(__('Creating table(s).', true));
+		if ('y' == $this->in(__('Are you sure you want to create the table(s)?'), array('y', 'n'), 'y')) {
+			$this->out(__('Creating table(s).'));
 			$this->__run($create, 'create', $Schema);
 		}
-		$this->out(__('End create.', true));
+		$this->out(__('End create.'));
 	}
 
 /**
@@ -343,7 +343,7 @@ class SchemaShell extends Shell {
 	function __update(&$Schema, $table = null) {
 		$db =& ConnectionManager::getDataSource($this->Schema->connection);
 
-		$this->out(__('Comparing Database to Schema...', true));
+		$this->out(__('Comparing Database to Schema...'));
 		$options = array();
 		if (isset($this->params['f'])) {
 			$options['models'] = false;
@@ -362,19 +362,19 @@ class SchemaShell extends Shell {
 		}
 
 		if (empty($contents)) {
-			$this->out(__('Schema is up to date.', true));
+			$this->out(__('Schema is up to date.'));
 			$this->_stop();
 		}
 
-		$this->out("\n" . __('The following statements will run.', true));
+		$this->out("\n" . __('The following statements will run.'));
 		$this->out(array_map('trim', $contents));
-		if ('y' == $this->in(__('Are you sure you want to alter the tables?', true), array('y', 'n'), 'n')) {
+		if ('y' == $this->in(__('Are you sure you want to alter the tables?'), array('y', 'n'), 'n')) {
 			$this->out();
-			$this->out(__('Updating Database...', true));
+			$this->out(__('Updating Database...'));
 			$this->__run($contents, 'update', $Schema);
 		}
 
-		$this->out(__('End update.', true));
+		$this->out(__('End update.'));
 	}
 
 /**
@@ -384,7 +384,7 @@ class SchemaShell extends Shell {
  */
 	function __run($contents, $event, &$Schema) {
 		if (empty($contents)) {
-			$this->err(__('Sql could not be run', true));
+			$this->err(__('Sql could not be run'));
 			return;
 		}
 		Configure::write('debug', 2);
@@ -392,10 +392,10 @@ class SchemaShell extends Shell {
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
-				$this->out(sprintf(__('%s is up to date.', true), $table));
+				$this->out(sprintf(__('%s is up to date.'), $table));
 			} else {
 				if ($this->__dry === true) {
-					$this->out(sprintf(__('Dry run for %s :', true), $table));
+					$this->out(sprintf(__('Dry run for %s :'), $table));
 					$this->out($sql);
 				} else {
 					if (!$Schema->before(array($event => $table))) {
@@ -411,7 +411,7 @@ class SchemaShell extends Shell {
 					if (!empty($error)) {
 						$this->out($error);
 					} else {
-						$this->out(sprintf(__('%s updated.', true), $table));
+						$this->out(sprintf(__('%s updated.'), $table));
 					}
 				}
 			}

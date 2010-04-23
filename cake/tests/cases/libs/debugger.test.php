@@ -251,9 +251,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
-		View::$__passedVars = array
-		View::$__scripts = array
-		View::$__paths = array
 		View::$webroot = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));

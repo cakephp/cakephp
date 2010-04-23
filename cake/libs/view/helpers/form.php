@@ -130,7 +130,7 @@ class FormHelper extends AppHelper {
 			}
 			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
 			$key = $object->primaryKey;
-			$this->fieldset[$object->name] = array_merge($defaults, compact('fields', 'key', 'validates'));
+			$this->fieldset[$model] = array_merge($defaults, compact('fields', 'key', 'validates'));
 		}
 
 		return $object;
@@ -214,8 +214,9 @@ class FormHelper extends AppHelper {
 		$object =& $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
 
-		if (isset($this->fieldset[$this->model()]['key'])) {
-			$data = $this->fieldset[$this->model()];
+		$modelEntity = $this->model();
+		if (isset($this->fieldset[$modelEntity]['key'])) {
+			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->data[$model]) &&
 				!empty($this->data[$model][$data['key']])
@@ -358,7 +359,7 @@ class FormHelper extends AppHelper {
 				$submitOptions = $options;
 
 				if (!$submit) {
-					$submit = __('Submit', true);
+					$submit = __('Submit');
 				}
 			}
 			$out .= $this->submit($submit, $submitOptions);
@@ -466,7 +467,8 @@ class FormHelper extends AppHelper {
  * - `class` string  The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
- * @param mixed $text Error message or array of $options
+ * @param mixed $text Error message or array of $options. If array, `attributes` key
+ * will get used as html attributes for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
@@ -491,7 +493,10 @@ class FormHelper extends AppHelper {
 				$error--;
 			}
 			if (is_array($text)) {
-				$options = array_merge($options, $text);
+				$options = array_merge($options, array_intersect_key($text, $defaults));
+				if (isset($text['attributes']) && is_array($text['attributes'])) {
+					$options = array_merge($options, $text['attributes']);
+				}
 				$text = isset($text[$error]) ? $text[$error] : null;
 				unset($options[$error]);
 			}
@@ -499,7 +504,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = sprintf(__('Error in field %s', true), Inflector::humanize($this->field()));
+				$error = sprintf(__('Error in field %s'), Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
@@ -542,7 +547,7 @@ class FormHelper extends AppHelper {
 			if (substr($text, -3) == '_id') {
 				$text = substr($text, 0, strlen($text) - 3);
 			}
-			$text = __(Inflector::humanize(Inflector::underscore($text)), true);
+			$text = __(Inflector::humanize(Inflector::underscore($text)));
 		}
 
 		if (is_string($options)) {
@@ -608,16 +613,16 @@ class FormHelper extends AppHelper {
 		}
 
 		if ($legend === true) {
-			$actionName = __('New %s', true);
+			$actionName = __('New %s');
 			$isEdit = (
 				strpos($this->action, 'update') !== false ||
 				strpos($this->action, 'edit') !== false
 			);
 			if ($isEdit) {
-				$actionName = __('Edit %s', true);
+				$actionName = __('Edit %s');
 			}
 			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __($modelName, true));
+			$legend = sprintf($actionName, __($modelName));
 		}
 
 		$out = null;
@@ -1034,7 +1039,7 @@ class FormHelper extends AppHelper {
 			$legend = $attributes['legend'];
 			unset($attributes['legend']);
 		} elseif (count($options) > 1) {
-			$legend = __(Inflector::humanize($this->field()), true);
+			$legend = __(Inflector::humanize($this->field()));
 		}
 		$label = true;
 
@@ -1284,7 +1289,7 @@ class FormHelper extends AppHelper {
  */
 	public function submit($caption = null, $options = array()) {
 		if (!$caption) {
-			$caption = __('Submit', true);
+			$caption = __('Submit');
 		}
 		$out = null;
 		$div = true;
@@ -1449,7 +1454,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if (!isset($secure) || $secure == true) { 
+			if (!isset($secure) || $secure == true) {
 				$this->__secure();
 			}
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
@@ -2090,18 +2095,18 @@ class FormHelper extends AppHelper {
 			break;
 			case 'month':
 				if ($options['monthNames'] === true) {
-					$data['01'] = __('January', true);
-					$data['02'] = __('February', true);
-					$data['03'] = __('March', true);
-					$data['04'] = __('April', true);
-					$data['05'] = __('May', true);
-					$data['06'] = __('June', true);
-					$data['07'] = __('July', true);
-					$data['08'] = __('August', true);
-					$data['09'] = __('September', true);
-					$data['10'] = __('October', true);
-					$data['11'] = __('November', true);
-					$data['12'] = __('December', true);
+					$data['01'] = __('January');
+					$data['02'] = __('February');
+					$data['03'] = __('March');
+					$data['04'] = __('April');
+					$data['05'] = __('May');
+					$data['06'] = __('June');
+					$data['07'] = __('July');
+					$data['08'] = __('August');
+					$data['09'] = __('September');
+					$data['10'] = __('October');
+					$data['11'] = __('November');
+					$data['12'] = __('December');
 				} else if (is_array($options['monthNames'])) {
 					$data = $options['monthNames'];
 				} else {

@@ -227,7 +227,7 @@ class CakeSocket extends Object {
 			$buffer = fread($this->connection, $length);
 			$info = stream_get_meta_data($this->connection);
 			if ($info['timed_out']) {
-				$this->setLastError(E_WARNING, __('Connection timed out', true));
+				$this->setLastError(E_WARNING, __('Connection timed out'));
 				return false;
 			}
 			return $buffer;

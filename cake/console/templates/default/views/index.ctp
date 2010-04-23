@@ -18,13 +18,13 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> index">
-	<h2><?php echo "<?php __('{$pluralHumanName}');?>";?></h2>
+	<h2><?php echo "<?php echo __('{$pluralHumanName}');?>";?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
 	<?php  foreach ($fields as $field):?>
 		<th><?php echo "<?php echo \$this->Paginator->sort('{$field}');?>";?></th>
 	<?php endforeach;?>
-		<th class="actions"><?php echo "<?php __('Actions');?>";?></th>
+		<th class="actions"><?php echo "<?php echo __('Actions');?>";?></th>
 	</tr>
 	<?php
 	echo "<?php
@@ -53,9 +53,9 @@
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?php echo \$this->Html->link(__('View', true), array('action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$this->Html->link(__('Edit', true), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-	 	echo "\t\t\t<?php echo \$this->Html->link(__('Delete', true), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?', true), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?php echo \$this->Html->link(__('View'), array('action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$this->Html->link(__('Edit'), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+	 	echo "\t\t\t<?php echo \$this->Html->link(__('Delete'), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, sprintf(__('Are you sure you want to delete # %s?'), \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -65,28 +65,28 @@
 	<p>
 	<?php echo "<?php
 	echo \$this->Paginator->counter(array(
-	'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%', true)
+	'format' => __('Page %page% of %pages%, showing %current% records out of %count% total, starting on record %start%, ending on %end%')
 	));
 	?>";?>
 	</p>
 
 	<div class="paging">
-	<?php echo "\t<?php echo \$this->Paginator->prev('<< '.__('previous', true), array(), null, array('class'=>'disabled'));?>\n";?>
+	<?php echo "\t<?php echo \$this->Paginator->prev('<< '.__('previous'), array(), null, array('class'=>'disabled'));?>\n";?>
 	 | <?php echo "\t<?php echo \$this->Paginator->numbers();?>\n"?> |
-	<?php echo "\t<?php echo \$this->Paginator->next(__('next', true).' >>', array(), null, array('class' => 'disabled'));?>\n";?>
+	<?php echo "\t<?php echo \$this->Paginator->next(__('next').' >>', array(), null, array('class' => 'disabled'));?>\n";?>
 	</div>
 </div>
 <div class="actions">
-	<h3><?php echo "<?php __('Actions'); ?>"; ?></h3>
+	<h3><?php echo "<?php echo __('Actions'); ?>"; ?></h3>
 	<ul>
-		<li><?php echo "<?php echo \$this->Html->link(sprintf(__('New %s', true), __('{$singularHumanName}', true)), array('action' => 'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$this->Html->link(sprintf(__('New %s'), __('{$singularHumanName}')), array('action' => 'add')); ?>";?></li>
 <?php
 	$done = array();
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('List %s', true), __('" . Inflector::humanize($details['controller']) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('New %s', true), __('" . Inflector::humanize(Inflector::underscore($alias)) . "', true)), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('List %s'), __('" . Inflector::humanize($details['controller']) . "')), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('New %s'), __('" . Inflector::humanize(Inflector::underscore($alias)) . "')), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}

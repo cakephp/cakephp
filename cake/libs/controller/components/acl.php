@@ -52,7 +52,7 @@ class AclComponent extends Object {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				trigger_error(sprintf(__('Could not find %s.', true), $name), E_USER_WARNING);
+				trigger_error(sprintf(__('Could not find %s.'), $name), E_USER_WARNING);
 			}
 		}
 		$this->_Instance =& new $name();
@@ -169,7 +169,7 @@ class AclBase extends Object {
  */
 	function __construct() {
 		if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase")) {
-			trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration.", true), E_USER_ERROR);
+			trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
 			return NULL;
 		}
 	}
@@ -258,12 +258,12 @@ class DbAcl extends AclBase {
 		$acoPath = $this->Aco->node($aco);
 
 		if (empty($aroPath) || empty($acoPath)) {
-			trigger_error(__("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: ", true) . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
 		if ($acoPath == null || $acoPath == array()) {
-			trigger_error(__("DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: ", true) . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__("DbAcl::check() - Failed ACO node lookup in permissions check.  Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
 			return false;
 		}
 
@@ -271,7 +271,7 @@ class DbAcl extends AclBase {
 		$acoNode = $acoPath[0];
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(sprintf(__("ACO permissions key %s does not exist in DbAcl::check()", true), $action), E_USER_NOTICE);
+			trigger_error(sprintf(__("ACO permissions key %s does not exist in DbAcl::check()"), $action), E_USER_NOTICE);
 			return false;
 		}
 
@@ -345,7 +345,7 @@ class DbAcl extends AclBase {
 		$save = array();
 
 		if ($perms == false) {
-			trigger_error(__('DbAcl::allow() - Invalid node', true), E_USER_WARNING);
+			trigger_error(__('DbAcl::allow() - Invalid node'), E_USER_WARNING);
 			return false;
 		}
 		if (isset($perms[0])) {

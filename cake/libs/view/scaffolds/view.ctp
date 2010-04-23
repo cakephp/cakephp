@@ -18,7 +18,7 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> view">
-<h2><?php printf(__("View %s", true), $singularHumanName); ?></h2>
+<h2><?php printf(__('View %s'), $singularHumanName); ?></h2>
 	<dl>
 <?php
 $i = 0;
@@ -47,20 +47,20 @@ foreach ($scaffoldFields as $_field) {
 	</dl>
 </div>
 <div class="actions">
-	<h3><?php __('Actions'); ?></h3>
+	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 <?php
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('Edit %s', true), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('Delete %s', true), $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete', true).' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('List %s', true), $pluralHumanName), array('action' => 'index')). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('New %s', true), $singularHumanName), array('action' => 'add')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('Edit %s'), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('Delete %s'), $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('List %s'), $pluralHumanName), array('action' => 'index')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(sprintf(__('New %s'), $singularHumanName), array('action' => 'add')). " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>" . $this->Html->link(sprintf(__('List %s', true), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-				echo "\t\t<li>" . $this->Html->link(sprintf(__('New %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(sprintf(__('List %s'), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(sprintf(__('New %s'), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}

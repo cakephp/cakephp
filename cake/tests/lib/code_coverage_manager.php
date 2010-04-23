@@ -77,7 +77,7 @@ class CodeCoverageManager {
  *
  * @return object
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new CodeCoverageManager();
@@ -93,8 +93,8 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function init($testCaseFile, &$reporter) {
-		$manager =& CodeCoverageManager::getInstance();
+	public static function init($testCaseFile, &$reporter) {
+		$manager = CodeCoverageManager::getInstance();
 		$manager->reporter =& $reporter;
 		$testCaseFile = str_replace(DS . DS, DS, $testCaseFile);
 		$thisFile = str_replace('.php', '.test.php', basename(__FILE__));
@@ -112,7 +112,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function start() {
+	public static function start() {
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 	}
 
@@ -123,7 +123,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function stop() {
+	public static function stop() {
 		xdebug_stop_code_coverage(false);
 	}
 
@@ -134,7 +134,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function clear() {
+	public static function clear() {
 		xdebug_stop_code_coverage();
 	}
 
@@ -143,7 +143,7 @@ class CodeCoverageManager {
  *
  * @return void
  */
-	function setParams(&$reporter) {
+	public static function setParams(&$reporter) {
 		if ($reporter->params['app']) {
 			$this->appTest = true;
 		}
@@ -164,8 +164,8 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function report($output = true) {
-		$manager =& CodeCoverageManager::getInstance();
+	public static function report($output = true) {
+		$manager = CodeCoverageManager::getInstance();
 
 		CodeCoverageManager::stop();
 		CodeCoverageManager::clear();
@@ -214,7 +214,7 @@ class CodeCoverageManager {
  *
  * @return void
  */
-	function _getCoverageData() {
+	protected function _getCoverageData() {
 		$coverageData = array();
 		$dump = xdebug_get_code_coverage();
 
@@ -256,7 +256,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
+	public static function reportCaseHtmlDiff($testObjectFile, $coverageData, $execCodeLines, $numContextLines) {
 		$manager = CodeCoverageManager::getInstance();
 		$total = count($testObjectFile);
 		$lines = array();
@@ -375,7 +375,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function reportCaseCli($testObjectFile, $coverageData, $execCodeLines) {
+	public static function reportCaseCli($testObjectFile, $coverageData, $execCodeLines) {
 		$manager = CodeCoverageManager::getInstance();
 		$lineCount = $coveredCount = 0;
 		$report = '';
@@ -406,7 +406,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function reportGroupHtml($testObjectFiles, $coverageData, $execCodeLines, $numContextLines) {
+	public static function reportGroupHtml($testObjectFiles, $coverageData, $execCodeLines, $numContextLines) {
 		$manager = CodeCoverageManager::getInstance();
 		$report = '';
 
@@ -447,7 +447,7 @@ class CodeCoverageManager {
  * @return void
  * @static
  */
-	function reportGroupCli($testObjectFiles, $coverageData, $execCodeLines) {
+	public static function reportGroupCli($testObjectFiles, $coverageData, $execCodeLines) {
 		$manager = CodeCoverageManager::getInstance();
 		$report = '';
 
@@ -482,7 +482,7 @@ class CodeCoverageManager {
  * @return string name of the test object file
  * @access private
  */
-	function __testObjectFileFromCaseFile($file, $isApp = true) {
+	private function __testObjectFileFromCaseFile($file, $isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
 		$path = $manager->__getTestFilesPath($isApp);
 		$folderPrefixMap = array(
@@ -497,10 +497,10 @@ class CodeCoverageManager {
 				break;
 			}
 		}
-		$testManager =& new TestManager();
-		$testFile = str_replace(array('/', $testManager->_testExtension), array(DS, '.php'), $file);
+		$testManager = new TestManager();
+		$testFile = str_replace(array('/', $testManager->getExtension('test')), array(DS, '.php'), $file);
 
-		$folder =& new Folder();
+		$folder = new Folder();
 		$folder->cd(ROOT . DS . CAKE_TESTS_LIB);
 		$contents = $folder->read();
 
@@ -525,9 +525,9 @@ class CodeCoverageManager {
  * @return array names of the test object files
  * @access private
  */
-	function __testObjectFilesFromGroupFile($groupFile, $isApp = true) {
+	private function __testObjectFilesFromGroupFile($groupFile, $isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
-		$testManager =& new TestManager();
+		$testManager = new TestManager();
 
 		$path = TESTS;
 		if (!$isApp) {
@@ -585,9 +585,9 @@ class CodeCoverageManager {
  * @return array array of lines
  * @access private
  */
-	function __getExecutableLines($content) {
+	private function __getExecutableLines($content) {
 		if (is_array($content)) {
-			$manager =& CodeCoverageManager::getInstance();
+			$manager = CodeCoverageManager::getInstance();
 			$result = array();
 			foreach ($content as $file) {
 				$result[$file] = $manager->__getExecutableLines(file_get_contents($file));
@@ -616,7 +616,7 @@ class CodeCoverageManager {
  * @return string the number of newlines in a given arg
  * @access private
  */
-	function __replaceWithNewlines() {
+	private function __replaceWithNewlines() {
 		$args = func_get_args();
 		$numLineBreaks = count(explode("\n", $args[0][0]));
 		return str_pad('', $numLineBreaks - 1, "\n");
@@ -630,8 +630,8 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __paintHeader($lineCount, $coveredCount, $report) {
-		$manager =& CodeCoverageManager::getInstance();
+	private function __paintHeader($lineCount, $coveredCount, $report) {
+		$manager = CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		return $report = '<h2>Code Coverage: ' . $codeCoverage . '%</h2>
 						<div class="code-coverage-results"><pre>' . $report . '</pre></div>';
@@ -642,7 +642,7 @@ class CodeCoverageManager {
  *
  * @return void
  */
-	public function __paintGroupResultHeader($report) {
+	private function __paintGroupResultHeader($report) {
 		return '<div class="code-coverage-results"><p class="note">Please keep in mind that the coverage can vary a little bit depending on how much the different tests in the group interfere. If for example, TEST A calls a line from TEST OBJECT B, the coverage for TEST OBJECT B will be a little greater than if you were running the corresponding test case for TEST OBJECT B alone.</p><pre>' . $report . '</pre></div>';
 	}
 
@@ -654,8 +654,8 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __paintGroupResultLine($file, $lineCount, $coveredCount) {
-		$manager =& CodeCoverageManager::getInstance();
+	private function __paintGroupResultLine($file, $lineCount, $coveredCount) {
+		$manager = CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		$class = 'result-bad';
 
@@ -676,8 +676,8 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __paintGroupResultLineCli($file, $lineCount, $coveredCount) {
-		$manager =& CodeCoverageManager::getInstance();
+	private function __paintGroupResultLineCli($file, $lineCount, $coveredCount) {
+		$manager = CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		$class = 'bad';
 		if ($codeCoverage > 50) {
@@ -697,8 +697,8 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __paintHeaderCli($lineCount, $coveredCount, $report) {
-		$manager =& CodeCoverageManager::getInstance();
+	private function __paintHeaderCli($lineCount, $coveredCount, $report) {
+		$manager = CodeCoverageManager::getInstance();
 		$codeCoverage = $manager->__calcCoverage($lineCount, $coveredCount);
 		$class = 'bad';
 		if ($codeCoverage > 50) {
@@ -716,7 +716,7 @@ class CodeCoverageManager {
  * @package       default
  * @access private
  */
-	function __paintCodeline($class, $num, $line) {
+	private function __paintCodeline($class, $num, $line) {
 		$line = h($line);
 
 		if (trim($line) == '') {
@@ -733,7 +733,7 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __calcCoverage($lineCount, $coveredCount) {
+	private function __calcCoverage($lineCount, $coveredCount) {
 		if ($coveredCount > $lineCount) {
 			trigger_error(__('Sorry, you cannot have more covered lines than total lines!', true));
 		}
@@ -748,7 +748,7 @@ class CodeCoverageManager {
  * @param string $isApp
  * @return void
  */
-	public function __getTestFilesPath($isApp = true) {
+	private function __getTestFilesPath($isApp = true) {
 		$manager = CodeCoverageManager::getInstance();
 		$path = ROOT . DS;
 
@@ -782,7 +782,7 @@ class CodeCoverageManager {
  * @return void
  * @access private
  */
-	function __array_strpos($arr, $needle, $reverse = false) {
+	private function __array_strpos($arr, $needle, $reverse = false) {
 		if (!is_array($arr) || empty($arr)) {
 			return false;
 		}

@@ -17,16 +17,16 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php __('Missing View'); ?></h2>
+<h2><?php echo __('Missing View'); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('The view for %1$s%2$s was not found.', true), '<em>' . $controller . 'Controller::</em>', '<em>' . $action . '()</em>'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('The view for %1$s%2$s was not found.'), '<em>' . $controller . 'Controller::</em>', '<em>' . $action . '()</em>'); ?>
 </p>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('Confirm you have created the file: %s', true), $file); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('Confirm you have created the file: %s'), $file); ?>
 </p>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_view.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_view.ctp'); ?>
 </p>

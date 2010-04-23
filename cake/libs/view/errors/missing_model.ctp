@@ -17,14 +17,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php __('Missing Model'); ?></h2>
+<h2><?php echo __('Missing Model'); ?></h2>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('<em>%s</em> could not be found.', true), $model); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('<em>%s</em> could not be found.'), $model); ?>
 </p>
 <p class="error">
-	<strong><?php __('Error'); ?>: </strong>
-	<?php printf(__('Create the class %s in file: %s', true), '<em>' . $model . '</em>', APP_DIR . DS . 'models' . DS . Inflector::underscore($model) . '.php'); ?>
+	<strong><?php echo __('Error'); ?>: </strong>
+	<?php printf(__('Create the class %s in file: %s'), '<em>' . $model . '</em>', APP_DIR . DS . 'models' . DS . Inflector::underscore($model) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
@@ -36,6 +36,6 @@ class <?php echo $model;?> extends AppModel {
 ?&gt;
 </pre>
 <p class="notice">
-	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_model.ctp'); ?>
+	<strong><?php echo __('Notice'); ?>: </strong>
+	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_model.ctp'); ?>
 </p>
