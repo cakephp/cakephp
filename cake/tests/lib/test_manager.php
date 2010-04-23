@@ -138,7 +138,7 @@ class TestManager {
 		$manager =& new TestManager();
 		$filePath = $manager->_getTestsPath('groups') . DS . strtolower($groupTestName) . $manager->_groupExtension;
 
-		if (!file_exists($filePath) || strpos($testCaseFileWithPath, '..')) {
+		if (!file_exists($filePath) || strpos($filePath, '..')) {
 			trigger_error(
 				sprintf("Group test %s cannot be found at %s", htmlentities($groupTestName), htmlentities($filePath)),
 				E_USER_ERROR
