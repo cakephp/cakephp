@@ -472,10 +472,11 @@ class Validation {
  * @return boolean Success
  */
 	public static function money($check, $symbolPosition = 'left') {
+		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?';
 		if ($symbolPosition == 'right') {
-			$regex = '/^(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u';
+			$regex = '/^' . $money . '(?<!\x{00a2})\p{Sc}?$/u';
 		} else {
-			$regex = '/^(?!\x{00a2})\p{Sc}?(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?$/u';
+			$regex = '/^(?!\x{00a2})\p{Sc}?' . $money . '$/u';
 		}
 		return self::_check($check, $regex);
 	}
