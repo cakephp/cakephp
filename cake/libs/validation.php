@@ -28,7 +28,7 @@ if (!class_exists('Multibyte')) {
  * @subpackage    cake.cake.libs
  * @since         CakePHP v 1.2.0.3830
  */
-class Validation extends Object {
+class Validation {
 
 /**
  * Some complex patterns needed in multiple places
