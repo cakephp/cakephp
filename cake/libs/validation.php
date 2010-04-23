@@ -430,8 +430,16 @@ class Validation {
  * @param string $ipVersion The IP Protocol version to validate against
  * @return boolean Success
  */
-	public function ip($check, $type = 'IPv4') {
-		return (boolean) filter_var($check, FILTER_VALIDATE_IP);
+	public function ip($check, $type = 'both') {
+		$type = strtolower($type);
+		$filterFlags = array();
+		if ($type === 'ipv4' || $type === 'both') {
+			$filterFlags[] = FILTER_FLAG_IPV4;
+		}
+		if ($type === 'ipv6' || $type === 'both') {
+			$filterFlags[] = FILTER_FLAG_IPV6;
+		}
+		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $filterFlags));
 	}
 
 /**
