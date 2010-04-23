@@ -319,10 +319,7 @@ class JsHelper extends AppHelper {
 			$event = $this->event('click', $requestString, $options);
 		}
 		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$opts = array();
-			if (isset($options['safe'])) {
-				$opts['safe'] = $options['safe'];
-			}
+			$opts = array_intersect_key(array('safe' => null), $options);
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
@@ -397,7 +394,8 @@ class JsHelper extends AppHelper {
 			$event = $this->event('click', $requestString, $options);
 		}
 		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$out .= $this->Html->scriptBlock($event, $options);
+			$opts = array_intersect_key(array('safe' => null), $options);
+			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
 	}
