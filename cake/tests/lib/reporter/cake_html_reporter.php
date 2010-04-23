@@ -27,7 +27,17 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
  * @subpackage cake.tests.lib
  */
 class CakeHtmlReporter extends CakeBaseReporter {
-
+/**
+ * Constructor
+ *
+ * @param string $charset 
+ * @param string $params 
+ * @return void
+ */
+	function CakeHtmlReporter($charset = 'utf-8', $params = array()) {
+		$params = array_map(array($this, '_htmlEntities'), $params);
+		$this->CakeBaseReporter($charset, $params);
+	}
 /**
  * Paints the top of the web page setting the
  * title to the name of the starting test.
@@ -40,7 +50,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
-		echo "<h2>$testName</h2>\n";
+		printf("<h2>%s</h2>\n", $this->_htmlEntities($testName));
 		echo "<ul class='tests'>\n";
 	}
 
