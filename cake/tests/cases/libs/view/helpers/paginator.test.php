@@ -45,12 +45,12 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => true,
 				'pageCount' => 7,
 				'defaults' => array(
-					'order' => 'Article.date ASC',
+					'order' => array('Article.date' => 'asc'),
 					'limit' => 9,
 					'conditions' => array()
 				),
 				'options' => array(
-					'order' => 'Article.date ASC',
+					'order' => array('Article.date' => 'asc'),
 					'limit' => 9,
 					'page' => 1,
 					'conditions' => array()
@@ -134,7 +134,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
 		$this->Paginator->options(array('url' => array('param')));
@@ -302,9 +302,15 @@ class PaginatorHelperTest extends CakeTestCase {
  */
 	function testSortKey() {
 		$result = $this->Paginator->sortKey(null, array(
-				'order' => array('Article.title' => 'desc'
+			'order' => array('Article.title' => 'desc'
 		)));
 		$this->assertEqual('Article.title', $result);
+
+		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article.title'));
+		$this->assertEqual($result, 'Article.title');
+
+		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article'));
+		$this->assertEqual($result, 'Article');
 	}
 
 /**
