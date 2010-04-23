@@ -457,6 +457,43 @@ CODE;
 	}
 
 /**
+ * test that no buffer works with submit() and that parameters are leaking into the script tag.
+ *
+ * @return void
+ */
+	function testSubmitWithNoBuffer() {
+		$this->_useMock();
+		$options = array('update' => '#content', 'id' => 'test-submit', 'buffer' => false, 'safe' => false);
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeform', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'serialize-code', array('serializeForm', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'ajax-code', array('request', '*'));
+		$this->Js->TestJsEngine->setReturnValue('dispatchMethod', 'event-handler', array('event', '*'));
+
+		$this->Js->TestJsEngine->expectAt(0, 'dispatchMethod', array('get', '*'));
+		$this->Js->TestJsEngine->expectAt(1, 'dispatchMethod', array(new PatternExpectation('/serializeForm/i'), '*'));
+		$this->Js->TestJsEngine->expectAt(2, 'dispatchMethod', array('request', '*'));
+
+		$params = array(
+			'update' => $options['update'], 'buffer' => false, 'safe' => false, 'data' => 'serialize-code',
+			'method' => 'post', 'dataExpression' => true
+		);
+		$this->Js->TestJsEngine->expectAt(3, 'dispatchMethod', array(
+			'event', array('click', "ajax-code", $params)
+		));
+
+		$result = $this->Js->submit('Save', $options);
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'id' => $options['id'], 'value' => 'Save'),
+			'/div',
+			'script' => array('type' => 'text/javascript'),
+			'event-handler',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test that Object::Object() is not breaking json output in JsHelper
  *
  * @return void
