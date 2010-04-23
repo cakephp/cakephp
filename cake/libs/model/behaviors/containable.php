@@ -182,24 +182,35 @@ class ContainableBehavior extends ModelBehavior {
 		}
 
 		$query['fields'] = (array)$query['fields'];
-		if (!empty($Model->belongsTo)) {
-			foreach ($Model->belongsTo as $assoc => $data) {
-				if (!empty($data['fields'])) {
-					foreach ((array) $data['fields'] as $field) {
-						$query['fields'][] = (strpos($field, '.') === false ? $assoc . '.' : '') . $field;
+		foreach (array('hasOne', 'belongsTo') as $type) {
+			if (!empty($Model->{$type})) {
+				foreach ($Model->{$type} as $assoc => $data) {
+					if ($Model->useDbConfig == $Model->{$assoc}->useDbConfig && !empty($data['fields'])) {
+						foreach ((array) $data['fields'] as $field) {
+							$query['fields'][] = (strpos($field, '.') === false ? $assoc . '.' : '') . $field;
+						}
 					}
 				}
 			}
 		}
+
 		if (!empty($mandatory[$Model->alias])) {
 			foreach ($mandatory[$Model->alias] as $field) {
 				if ($field == '--primaryKey--') {
 					$field = $Model->primaryKey;
 				} else if (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
 					list($modelName, $field) = explode('.', $field);
-					$field = $modelName . '.' . (($field === '--primaryKey--') ? $Model->$modelName->primaryKey : $field);
+					if ($Model->useDbConfig == $Model->{$modelName}->useDbConfig) {
+						$field = $modelName . '.' . (
+							($field === '--primaryKey--') ? $Model->$modelName->primaryKey : $field
+						);
+					} else {
+						$field = null;
+					}
 				}
-				$query['fields'][] = $field;
+				if ($field !== null) {
+					$query['fields'][] = $field;
+				}
 			}
 		}
 		$query['fields'] = array_unique($query['fields']);

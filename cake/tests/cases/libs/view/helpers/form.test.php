@@ -4703,6 +4703,23 @@ class FormHelperTest extends CakeTestCase {
 		)));
 	}
 /**
+ * test that datetime() works with GET style forms.
+ *
+ * @return void
+ */
+	function testDateTimeWithGetForms() {
+		extract($this->dateRegex);
+		$this->Form->create('Contact', array('type' => 'get'));
+		$result = $this->Form->datetime('created');
+
+		$this->assertPattern('/name="created\[year\]"/', $result, 'year name attribute is wrong.');
+		$this->assertPattern('/name="created\[month\]"/', $result, 'month name attribute is wrong.');
+		$this->assertPattern('/name="created\[day\]"/', $result, 'day name attribute is wrong.');
+		$this->assertPattern('/name="created\[hour\]"/', $result, 'hour name attribute is wrong.');
+		$this->assertPattern('/name="created\[min\]"/', $result, 'min name attribute is wrong.');
+		$this->assertPattern('/name="created\[meridian\]"/', $result, 'meridian name attribute is wrong.');
+	}
+/**
  * testEditFormWithData method
  *
  * test auto populating form elements from submitted data.
