@@ -561,9 +561,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function testBeforeRedirectCallbackWithArrayUrl() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		), true);
+		$_paths = Configure::read('viewPaths');
+		Configure::write('viewPaths', array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS));
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
@@ -578,7 +577,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		);
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'one: first two: second');
-		App::build();
+		Configure::write('viewPaths', $_paths);
 	}
 }
 ?>
