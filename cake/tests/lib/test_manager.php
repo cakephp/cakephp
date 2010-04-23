@@ -50,7 +50,7 @@ class TestManager {
 			$this->appTest = true;
 		}
 		if (isset($_GET['plugin'])) {
-			$this->pluginTest = $_GET['plugin'];
+			$this->pluginTest = htmlentities($_GET['plugin']);
 		}
 	}
 /**
@@ -110,8 +110,11 @@ class TestManager {
 
 		$testCaseFileWithPath = $manager->_getTestsPath() . DS . $testCaseFile;
 
-		if (!file_exists($testCaseFileWithPath)) {
-			trigger_error("Test case {$testCaseFile} cannot be found", E_USER_ERROR);
+		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
+			trigger_error(
+				sprintf("Test case %s cannot be found", htmlentities($testCaseFile)),
+				E_USER_ERROR
+			);
 			return false;
 		}
 
@@ -135,8 +138,11 @@ class TestManager {
 		$manager =& new TestManager();
 		$filePath = $manager->_getTestsPath('groups') . DS . strtolower($groupTestName) . $manager->_groupExtension;
 
-		if (!file_exists($filePath)) {
-			trigger_error("Group test {$groupTestName} cannot be found at {$filePath}", E_USER_ERROR);
+		if (!file_exists($filePath) || strpos($testCaseFileWithPath, '..')) {
+			trigger_error(
+				sprintf("Group test %s cannot be found at %s", htmlentities($groupTestName), htmlentities($filePath)),
+				E_USER_ERROR
+			);
 		}
 
 		require_once $filePath;
