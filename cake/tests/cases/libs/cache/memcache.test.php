@@ -52,7 +52,11 @@ class MemcacheEngineTest extends CakeTestCase {
 	function setUp() {
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
-		Cache::config('memcache', array('engine' => 'Memcache', 'prefix' => 'cake_'));
+		Cache::config('memcache', array(
+			'engine' => 'Memcache',
+			'prefix' => 'cake_',
+			'duration' => 3600
+		));
 	}
 
 /**
@@ -266,5 +270,41 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::read('test_increment');
 		$this->assertEqual(8, $result);
 	}
+
+/**
+ * test that configurations don't conflict, when a file engine is declared after a memcache one.
+ *
+ * @return void
+ */
+	function testConfigurationConflict() {
+		Cache::config('long_memcache', array(
+		  'engine' => 'Memcache',
+		  'duration'=> '+2 seconds',
+		  'servers' => array('127.0.0.1:11211'),
+		));
+		Cache::config('short_memcache', array(
+		  'engine' => 'Memcache',
+		  'duration'=> '+1 seconds',
+		  'servers' => array('127.0.0.1:11211'),
+		));
+		Cache::config('some_file', array('engine' => 'File'));
+
+		$this->assertTrue(Cache::write('duration_test', 'yay', 'long_memcache'));
+		$this->assertTrue(Cache::write('short_duration_test', 'boo', 'short_memcache'));
+
+		$this->assertEqual(Cache::read('duration_test', 'long_memcache'), 'yay', 'Value was not read %s');
+		$this->assertEqual(Cache::read('short_duration_test', 'short_memcache'), 'boo', 'Value was not read %s');
+
+		sleep(1);
+		$this->assertEqual(Cache::read('duration_test', 'long_memcache'), 'yay', 'Value was not read %s');
+
+		sleep(2);
+		$this->assertFalse(Cache::read('short_duration_test', 'short_memcache'), 'Cache was not invalidated %s');
+		$this->assertFalse(Cache::read('duration_test', 'long_memcache'), 'Value did not expire %s');
+
+		Cache::delete('duration_test', 'long_memcache');
+		Cache::delete('short_duration_test', 'short_memcache');
+	}
+
 }
 ?>

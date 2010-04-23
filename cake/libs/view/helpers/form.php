@@ -130,7 +130,7 @@ class FormHelper extends AppHelper {
 			}
 			$defaults = array('fields' => array(), 'key' => 'id', 'validates' => array());
 			$key = $object->primaryKey;
-			$this->fieldset[$object->name] = array_merge($defaults, compact('fields', 'key', 'validates'));
+			$this->fieldset[$model] = array_merge($defaults, compact('fields', 'key', 'validates'));
 		}
 
 		return $object;
@@ -214,8 +214,9 @@ class FormHelper extends AppHelper {
 		$object =& $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
 
-		if (isset($this->fieldset[$this->model()]['key'])) {
-			$data = $this->fieldset[$this->model()];
+		$modelEntity = $this->model();
+		if (isset($this->fieldset[$modelEntity]['key'])) {
+			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->data[$model]) &&
 				!empty($this->data[$model][$data['key']])
@@ -466,7 +467,8 @@ class FormHelper extends AppHelper {
  * - `class` string  The classname for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
- * @param mixed $text Error message or array of $options
+ * @param mixed $text Error message or array of $options. If array, `attributes` key
+ * will get used as html attributes for error container
  * @param array $options Rendering options for <div /> wrapper tag
  * @return string If there are errors this method returns an error message, otherwise null.
  * @access public
@@ -491,7 +493,10 @@ class FormHelper extends AppHelper {
 				$error--;
 			}
 			if (is_array($text)) {
-				$options = array_merge($options, $text);
+				$options = array_merge($options, array_intersect_key($text, $defaults));
+				if (isset($text['attributes']) && is_array($text['attributes'])) {
+					$options = array_merge($options, $text['attributes']);
+				}
 				$text = isset($text[$error]) ? $text[$error] : null;
 				unset($options[$error]);
 			}
@@ -1449,7 +1454,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($tag) || isset($template)) {
-			if (!isset($secure) || $secure == true) { 
+			if (!isset($secure) || $secure == true) {
 				$this->__secure();
 			}
 			$select[] = sprintf($tag, $attributes['name'], $this->_parseAttributes(
