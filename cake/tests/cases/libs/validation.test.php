@@ -1877,6 +1877,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://www.cakephp.org', true));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/'));
 		$this->assertTrue(Validation::url('http://example.com/~userdir/subdir/index.html'));
+		$this->assertTrue(Validation::url('http://www.zwischenraume.de'));
+		$this->assertTrue(Validation::url('http://www.zwischenraume.cz'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
 		$this->assertTrue(Validation::url('http://cakephp.org:443'));
