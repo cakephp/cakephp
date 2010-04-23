@@ -787,7 +787,7 @@ class Validation extends Object {
 	}
 
 /**
- * Lazily popualate the IP address patterns used for validations
+ * Lazily populate the IP address patterns used for validations
  *
  * @return void
  */
