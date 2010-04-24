@@ -666,11 +666,14 @@ class Validation {
  * @return boolean Success
  */
 	public static function url($check, $strict = false) {
-		$flags = array(FILTER_FLAG_HOST_REQUIRED);
-		if ($strict === true) {
-			$flags[] = FILTER_FLAG_SCHEME_REQUIRED;
-		}
-		return (boolean)filter_var($check, FILTER_VALIDATE_URL, $flags);
+		self::__populateIp();
+		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z]|(%[0-9a-f]{2}))';
+		$regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
+			'(?:' . self::$__pattern['IPv4'] . '|' . self::$__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:\/?|\/' . $validChars . '*)?' .
+			'(?:\?' . $validChars . '*)?' .
+			'(?:#' . $validChars . '*)?$/i';
+		return self::_check($check, $regex);
 	}
 
 /**
