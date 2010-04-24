@@ -97,13 +97,6 @@ class AclComponent extends Object {
 	}
 
 /**
- * Empty class defintion, to be overridden in subclasses.
- *
- */
-	protected function _initACL() {
-	}
-
-/**
  * Pass-thru function for ACL check instance.  Check methods
  * are used to check whether or not an ARO can access an ACO
  *
@@ -164,6 +157,7 @@ class AclComponent extends Object {
  * @return boolean Success
  */
 	public function grant($aro, $aco, $action = "*") {
+		trigger_error(__('AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
 		return $this->_Instance->grant($aro, $aco, $action);
 	}
 
@@ -176,6 +170,7 @@ class AclComponent extends Object {
  * @return boolean Success
  */
 	public function revoke($aro, $aco, $action = "*") {
+		trigger_error(__('AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
 		return $this->_Instance->revoke($aro, $aco, $action);
 	}
 }

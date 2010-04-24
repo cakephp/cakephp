@@ -483,18 +483,18 @@ class AclComponentTest extends CakeTestCase {
  */
 	function testDbGrant() {
 		$this->assertFalse($this->Acl->check('Samir', 'tpsReports', 'create'));
-		$this->Acl->grant('Samir', 'tpsReports', 'create');
+		$this->Acl->allow('Samir', 'tpsReports', 'create');
 		$this->assertTrue($this->Acl->check('Samir', 'tpsReports', 'create'));
 
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'read'));
-		$this->Acl->grant('Micheal', 'view', array('read', 'create', 'update'));
+		$this->Acl->allow('Micheal', 'view', array('read', 'create', 'update'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'read'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'create'));
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'update'));
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'delete'));
 
 		$this->expectError('DbAcl::allow() - Invalid node');
-		$this->assertFalse($this->Acl->grant('Peter', 'ROOT/tpsReports/DoesNotExist', 'create'));
+		$this->assertFalse($this->Acl->allow('Peter', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
 /**
@@ -505,11 +505,11 @@ class AclComponentTest extends CakeTestCase {
  */
 	function testDbRevoke() {
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'read'));
-		$this->Acl->revoke('Bobs', 'tpsReports', 'read');
+		$this->Acl->deny('Bobs', 'tpsReports', 'read');
 		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'read'));
 
 		$this->assertTrue($this->Acl->check('users', 'printers', 'read'));
-		$this->Acl->revoke('users', 'printers', 'read');
+		$this->Acl->deny('users', 'printers', 'read');
 		$this->assertFalse($this->Acl->check('users', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Samir', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Peter', 'printers', 'read'));
