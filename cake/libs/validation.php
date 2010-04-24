@@ -430,8 +430,16 @@ class Validation {
  * @param string $ipVersion The IP Protocol version to validate against
  * @return boolean Success
  */
-	public function ip($check, $type = 'IPv4') {
-		return (boolean) filter_var($check, FILTER_VALIDATE_IP);
+	public function ip($check, $type = 'both') {
+		$type = strtolower($type);
+		$flags = array();
+		if ($type === 'ipv4' || $type === 'both') {
+			$flags[] = FILTER_FLAG_IPV4;
+		}
+		if ($type === 'ipv6' || $type === 'both') {
+			$flags[] = FILTER_FLAG_IPV6;
+		}
+		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
 	}
 
 /**
@@ -464,10 +472,11 @@ class Validation {
  * @return boolean Success
  */
 	public static function money($check, $symbolPosition = 'left') {
+		$money = '(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?';
 		if ($symbolPosition == 'right') {
-			$regex = '/^(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?(?<!\x{00a2})\p{Sc}?$/u';
+			$regex = '/^' . $money . '(?<!\x{00a2})\p{Sc}?$/u';
 		} else {
-			$regex = '/^(?!\x{00a2})\p{Sc}?(?!0,?\d)(?:\d{1,3}(?:([, .])\d{3})?(?:\1\d{3})*|(?:\d+))((?!\1)[,.]\d{2})?$/u';
+			$regex = '/^(?!\x{00a2})\p{Sc}?' . $money . '$/u';
 		}
 		return self::_check($check, $regex);
 	}
