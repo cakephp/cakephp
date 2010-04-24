@@ -1885,14 +1885,15 @@ class Model extends Object {
 		if (!$cascade && !$callbacks) {
 			return $db->delete($this, $conditions);
 		} else {
-			$ids = Set::extract(
-				$this->find('all', array_merge(array(
-					'fields' => "{$this->alias}.{$this->primaryKey}",
-					'recursive' => 0), compact('conditions'))
-				),
-				"{n}.{$this->alias}.{$this->primaryKey}"
+			$ids = $this->find('all', array_merge(array(
+				'fields' => "{$this->alias}.{$this->primaryKey}",
+				'recursive' => 0), compact('conditions'))
 			);
+			if ($ids === false) {
+				return false;
+			}
 
+			$ids = Set::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
 			if (empty($ids)) {
 				return true;
 			}
