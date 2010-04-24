@@ -36,16 +36,6 @@ class SecurityTest extends CakeTestCase {
 	public $sut = null;
 
 /**
- * setUp method
- *
- * @access public
- * @return void
- */
-	function setUp() {
-		$this->sut =& Security::getInstance();
-	}
-
-/**
  * testInactiveMins method
  *
  * @access public
@@ -90,8 +80,7 @@ class SecurityTest extends CakeTestCase {
  * @return void
  */
 	function testHash() {
-		$Security =& Security::getInstance();
-		$_hashType =  $Security->hashType;
+		$_hashType = Security::$hashType;
 
 		$key = 'someKey';
 		$hash = 'someHash';
@@ -109,7 +98,7 @@ class SecurityTest extends CakeTestCase {
 
 		$hashType = 'sha1';
 		Security::setHash($hashType);
-		$this->assertIdentical($this->sut->hashType, $hashType);
+		$this->assertIdentical(Security::$hashType, $hashType);
 		$this->assertIdentical(strlen(Security::hash($key, null, true)), 40);
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 40);
 
@@ -118,7 +107,7 @@ class SecurityTest extends CakeTestCase {
 
 		$hashType = 'md5';
 		Security::setHash($hashType);
-		$this->assertIdentical($this->sut->hashType, $hashType);
+		$this->assertIdentical(Security::$hashType, $hashType);
 		$this->assertIdentical(strlen(Security::hash($key, null, false)), 32);
 		$this->assertIdentical(strlen(Security::hash($key, null, true)), 32);
 
