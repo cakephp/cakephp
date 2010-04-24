@@ -1911,6 +1911,20 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that route classes must extend CakeRoute
+ *
+ * @return void
+ */
+	function testCustomRouteException() {
+		try {
+			Router::connect('/:controller', array(), array('routeClass' => 'Object'));
+			$this->$this->assertFalse(true, 'No exception thrown when an invalid class was used.');
+		} catch (Exception $e) {
+			$this->assertTrue(true, 'Exception correctly thrown');
+		}
+	}
+
+/**
  * test reversing parameter arrays back into strings.
  *
  * @return void

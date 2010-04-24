@@ -269,11 +269,9 @@ class Router {
 			$routeClass = $options['routeClass'];
 			unset($options['routeClass']);
 		}
-		//TODO 2.0 refactor this to use a string class name, throw exception, and then construct.
-		$Route =& new $routeClass($route, $defaults, $options);
-		if ($routeClass !== 'CakeRoute' && !is_subclass_of($Route, 'CakeRoute')) {
-			trigger_error(__('Route classes must extend CakeRoute'), E_USER_WARNING);
-			return false;
+		$Route = new $routeClass($route, $defaults, $options);
+		if (!$Route instanceof CakeRoute) {
+			throw new Exception(__('Route classes must extend CakeRoute'));
 		}
 		$self->routes[] =& $Route;
 		return $self->routes;
