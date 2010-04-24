@@ -63,10 +63,11 @@ class FixtureTask extends BakeTask {
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processess.
  *
+ * @return void
  */
 	public function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			$this->_interactive();
 		}
 
 		if (isset($this->args[0])) {
@@ -85,10 +86,9 @@ class FixtureTask extends BakeTask {
 /**
  * Bake All the Fixtures at once.  Will only bake fixtures for models that exist.
  *
- * @access public
  * @return void
  */
-	function all() {
+	public function all() {
 		$this->interactive = false;
 		$this->Model->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
@@ -101,9 +101,9 @@ class FixtureTask extends BakeTask {
 /**
  * Interactive baking function
  *
- * @access private
+ * @return void
  */
-	function __interactive() {
+	protected function _interactive() {
 		$this->DbConfig->interactive = $this->Model->interactive = $this->interactive = true;
 		$this->hr();
 		$this->out(sprintf("Bake Fixture\nPath: %s", $this->path));
@@ -232,9 +232,9 @@ class FixtureTask extends BakeTask {
 /**
  * Get the path to the fixtures.
  *
- * @return void
+ * @return string Path for the fixtures
  */
-	function getPath() {
+	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
 			$path = $this->_pluginPath($this->plugin) . 'tests' . DS . 'fixtures' . DS;

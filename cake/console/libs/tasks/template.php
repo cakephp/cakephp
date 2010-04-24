@@ -40,7 +40,7 @@ class TemplateTask extends Shell {
  * @access public
  * @return void
  */
-	function initialize() {
+	public function initialize() {
 		$this->templatePaths = $this->_findThemes();
 	}
 
@@ -51,7 +51,7 @@ class TemplateTask extends Shell {
  *
  * @return array Array of bake themes that are installed.
  */
-	function _findThemes() {
+	protected function _findThemes() {
 		$paths = App::path('shells');
 		$core = array_pop($paths);
 		$core = str_replace('libs' . DS, '', $core);
@@ -99,7 +99,7 @@ class TemplateTask extends Shell {
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
  */
-	function set($one, $two = null) {
+	public function set($one, $two = null) {
 		$data = null;
 		if (is_array($one)) {
 			if (is_array($two)) {
@@ -129,7 +129,7 @@ class TemplateTask extends Shell {
  * @access public
  * @return contents of generated code template
  */
-	function generate($directory, $filename, $vars = null) {
+	public function generate($directory, $filename, $vars = null) {
 		if ($vars !== null) {
 			$this->set($vars);
 		}
@@ -157,7 +157,7 @@ class TemplateTask extends Shell {
  *
  * @return string returns the path to the selected theme.
  */
-	function getThemePath() {
+	public function getThemePath() {
 		if (count($this->templatePaths) == 1) {
 			$paths = array_values($this->templatePaths);
 			return $paths[0];
@@ -194,7 +194,7 @@ class TemplateTask extends Shell {
  * @access public
  * @return string filename will exit program if template is not found.
  */
-	function _findTemplate($path, $directory, $filename) {
+	public function _findTemplate($path, $directory, $filename) {
 		$themeFile = $path . $directory . DS . $filename . '.ctp';
 		if (file_exists($themeFile)) {
 			return $themeFile;

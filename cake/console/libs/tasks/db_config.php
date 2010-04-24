@@ -69,7 +69,7 @@ class DbConfigTask extends Shell {
  */
 	public function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			$this->_interactive();
 			$this->_stop();
 		}
 	}
@@ -77,9 +77,9 @@ class DbConfigTask extends Shell {
 /**
  * Interactive interface
  *
- * @access private
+ * @return void
  */
-	function __interactive() {
+	protected function _interactive() {
 		$this->hr();
 		$this->out('Database Configuration:');
 		$this->hr();
@@ -175,7 +175,7 @@ class DbConfigTask extends Shell {
 			$config = compact('name', 'driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
 
 			while ($this->__verify($config) == false) {
-				$this->__interactive();
+				$this->_interactive();
 			}
 			$dbConfigs[] = $config;
 			$doneYet = $this->in('Do you wish to add another database configuration?', null, 'n');
@@ -194,9 +194,8 @@ class DbConfigTask extends Shell {
  * Output verification message and bake if it looks good
  *
  * @return boolean True if user says it looks good, false otherwise
- * @access private
  */
-	function __verify($config) {
+	private function __verify($config) {
 		$config = array_merge($this->__defaultConfig, $config);
 		extract($config);
 		$this->out();
@@ -347,7 +346,7 @@ class DbConfigTask extends Shell {
  *
  * @return void
  */
-	function getConfig() {
+	public function getConfig() {
 		App::import('Model', 'ConnectionManager', false);
 
 		$useDbConfig = 'default';

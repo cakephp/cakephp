@@ -67,11 +67,11 @@ class TestTask extends BakeTask {
  */
 	public function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			$this->_interactive();
 		}
 
 		if (count($this->args) == 1) {
-			$this->__interactive($this->args[0]);
+			$this->_interactive($this->args[0]);
 		}
 
 		if (count($this->args) > 1) {
@@ -87,7 +87,7 @@ class TestTask extends BakeTask {
  *
  * @access private
  */
-	function __interactive($type = null) {
+	protected function _interactive($type = null) {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(__('Bake Tests'));
