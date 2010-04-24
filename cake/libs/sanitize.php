@@ -187,7 +187,7 @@ class Sanitize {
  * @static
  */
 	public static function stripTags() {
-		$params = params(func_get_args());
+		$params = func_get_args();
 		$str = $params[0];
 
 		for ($i = 1, $count = count($params); $i < $count; $i++) {
