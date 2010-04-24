@@ -787,6 +787,19 @@ class App extends Object {
 	}
 
 /**
+ * Allows you to modify the object listings that App maintains inside of it
+ * Useful for testing 
+ *
+ * @param string $type Type of object listing you are changing
+ * @param array $values The values $type should be set to.
+ * @return void
+ */
+	public static function setObjects($type, $values) {
+		$_this = App::getInstance();
+		$_this->__objects[$type] = $values;
+	}
+
+/**
  * Finds classes based on $name or specific file(s) to search.
  *
  * @link          http://book.cakephp.org/view/934/Using-App-import
