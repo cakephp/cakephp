@@ -151,6 +151,20 @@ class TestView extends View {
 	}
 
 /**
+ * _render wrapper for testing (temporary).
+ *
+ * @param string $___viewFn 
+ * @param string $___dataForView 
+ * @param string $loadHelpers 
+ * @param string $cached 
+ * @return void
+ * @author Mark Story
+ */
+	function render_($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
+		return $this->_render($___viewFn, $___dataForView, $loadHelpers, $cached);
+	}
+
+/**
  * cakeError method
  *
  * @param mixed $method
@@ -159,7 +173,7 @@ class TestView extends View {
  * @return void
  */
 	function cakeError($method, $messages) {
-		$error =& new ViewTestErrorHandler($method, $messages);
+		$error = new ViewTestErrorHandler($method, $messages);
 		return $error;
 	}
 
@@ -207,7 +221,7 @@ class TestAfterHelper extends Helper {
  * @return void
  */
 	function afterLayout() {
-		$View =& ClassRegistry::getObject('afterView');
+		$View = ClassRegistry::getObject('afterView');
 		$View->output .= 'modified in the afterlife';
 	}
 }
@@ -506,9 +520,9 @@ class ViewTest extends CakeTestCase {
  */
 	function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
-		$View = new View($Controller);
+		$View = new TestView($Controller);
 		$empty = array();
-		$helpers = $View->_loadHelpers($empty, array('cache'));
+		$helpers = $View->loadHelpers($empty, array('cache'));
 		$View->loaded = $helpers;
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEqual($result, 'this is the test element');
@@ -576,11 +590,11 @@ class ViewTest extends CakeTestCase {
 		$View = new TestView($this->PostsController);
 
 		$loaded = array();
-		$result = $View->loadHelpers($loaded, array('Html', 'Form', 'Ajax'));
+		$result = $View->loadHelpers($loaded, array('Html', 'Form', 'Paginator'));
 		$this->assertTrue(is_object($result['Html']));
 		$this->assertTrue(is_object($result['Form']));
 		$this->assertTrue(is_object($result['Form']->Html));
-		$this->assertTrue(is_object($result['Ajax']->Html));
+		$this->assertTrue(is_object($result['Paginator']->Html));
 
 		$View->plugin = 'test_plugin';
 		$result = $View->loadHelpers($loaded, array('TestPlugin.PluggedHelper'));
@@ -595,7 +609,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testHelperCallbackTriggering() {
 		$this->PostsController->helpers = array('Session', 'Html', 'CallbackMock');
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$loaded = array();
 		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
 		$View->loaded['CallbackMock']->expectOnce('beforeRender');
@@ -613,7 +627,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testBeforeLayout() {
 		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$out = $View->render('index');
 		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
 	}
@@ -628,7 +642,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
 		$this->PostsController->set('variable', 'values');
 
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		ClassRegistry::addObject('afterView', $View);
 
 		$content = 'This is my view output';
@@ -644,35 +658,35 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testRenderLoadHelper() {
-		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Ajax');
-		$View =& new TestView($this->PostsController);
+		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
+		$View = new TestView($this->PostsController);
 
-		$result = $View->_render($View->getViewFileName('index'), array());
+		$result = $View->render_($View->getViewFileName('index'), array());
 		$this->assertEqual($result, 'posts index');
 
 		$helpers = $View->loaded;
-		$this->assertTrue(is_object($helpers['html']));
-		$this->assertTrue(is_object($helpers['form']));
-		$this->assertTrue(is_object($helpers['form']->Html));
-		$this->assertTrue(is_object($helpers['ajax']->Html));
+		$this->assertTrue($helpers['html'] instanceof HtmlHelper);
+		$this->assertTrue($helpers['form'] instanceof FormHelper);
+		$this->assertTrue($helpers['form']->Html instanceof HtmlHelper);
+		$this->assertTrue($helpers['number'] instanceof NumberHelper);
 
-		$this->PostsController->helpers = array('Html', 'Form', 'Ajax', 'TestPlugin.PluggedHelper');
-		$View =& new TestView($this->PostsController);
+		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
+		$View = new TestView($this->PostsController);
 
-		$result = $View->_render($View->getViewFileName('index'), array());
+		$result = $View->render_($View->getViewFileName('index'), array());
 		$this->assertEqual($result, 'posts index');
 
 		$helpers = $View->loaded;
-		$this->assertTrue(is_object($helpers['html']));
-		$this->assertTrue(is_object($helpers['form']));
-		$this->assertTrue(is_object($helpers['form']->Html));
-		$this->assertTrue(is_object($helpers['ajax']->Html));
-		$this->assertTrue(is_object($helpers['pluggedHelper']->OtherHelper));
+		$this->assertTrue($helpers['html'] instanceof HtmlHelper);
+		$this->assertTrue($helpers['form'] instanceof FormHelper);
+		$this->assertTrue($helpers['form']->Html instanceof HtmlHelper);
+		$this->assertTrue($helpers['number'] instanceof NumberHelper);
+		$this->assertTrue($helpers['pluggedHelper']->OtherHelper instanceof OtherHelperHelper);
 
-		$this->assertTrue(is_object($View->Html));
-		$this->assertTrue(is_object($View->Form));
-		$this->assertTrue(is_object($View->Form->Html));
-		$this->assertTrue(is_object($View->PluggedHelper->OtherHelper));
+		$this->assertTrue($View->Html instanceof HtmlHelper);
+		$this->assertTrue($View->Form instanceof FormHelper);
+		$this->assertTrue($View->Form->Html instanceof HtmlHelper);
+		$this->assertTrue($View->PluggedHelper->OtherHelper instanceof OtherHelperHelper);
 		$this->assertReference($View->Form, $View->loaded['form']);
 		$this->assertReference($View->Html, $View->loaded['html']);
 		$this->assertReference($View->PluggedHelper->OtherHelper, $View->loaded['otherHelper']);
@@ -685,7 +699,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testRender() {
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
 
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
@@ -697,7 +711,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->set('pause', 3);
 		$this->PostsController->set('page_title', 'yo what up');
 
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render(false, 'flash'));
 
 		$this->assertPattern("/<title>yo what up<\/title>/", $result);
@@ -711,7 +725,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->params['action'] = 'index';
 		Configure::write('Cache.check', true);
 
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
 
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
@@ -728,9 +742,9 @@ class ViewTest extends CakeTestCase {
 		$_check = Configure::read('Cache.check');
 		Configure::write('Cache.check', true);
 
-		$Controller =& new ViewPostsController();
+		$Controller = new ViewPostsController();
 		$Controller->cacheAction = '1 day';
-		$View =& new View($Controller);
+		$View = new View($Controller);
 		$View->loaded['cache'] = new ViewTestMockCacheHelper();
 		$View->loaded['cache']->expectCallCount('cache', 2);
 
@@ -747,10 +761,10 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testViewVarOverwritingLocalHelperVar() {
-		$Controller =& new ViewPostsController();
+		$Controller = new ViewPostsController();
 		$Controller->helpers = array('Session', 'Html');
 		$Controller->set('html', 'I am some test html');
-		$View =& new View($Controller);
+		$View = new View($Controller);
 		$result = $View->render('helper_overwrite', false);
 
 		$this->assertPattern('/I am some test html/', $result);
@@ -764,7 +778,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testViewFileName() {
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 
 		$result = $View->getViewFileName('index');
 		$this->assertPattern('/posts(\/|\\\)index.ctp/', $result);
@@ -796,7 +810,7 @@ class ViewTest extends CakeTestCase {
 			return;
 		}
 		$view = 'test_view';
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$path = CACHE . 'views' . DS . 'view_cache_'.$view;
 
 		$cacheText = '<!--cachetime:'.time().'-->some cacheText';
@@ -868,7 +882,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testSet() {
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$View->viewVars = array();
 		$View->set('somekey', 'someValue');
 		$this->assertIdentical($View->viewVars, array('somekey' => 'someValue'));
@@ -894,7 +908,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testEntityReference() {
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$View->model = 'Post';
 		$View->field = 'title';
 		$this->assertEqual($View->entity(), array('Post', 'title'));
@@ -924,7 +938,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);
 
 		$this->PostsController->ext = ".bad";
-		$View =& new TestView($this->PostsController);
+		$View = new TestView($this->PostsController);
 		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
 
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);

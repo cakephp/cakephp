@@ -52,7 +52,7 @@ class View extends Object {
 /**
  * Name of the plugin.
  *
- * @link          http://manual.cakephp.org/chapter/plugins
+ * @link http://manual.cakephp.org/chapter/plugins
  * @var string
  */
 	public $plugin = null;
