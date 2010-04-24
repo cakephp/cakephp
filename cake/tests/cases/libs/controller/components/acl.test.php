@@ -17,9 +17,6 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 
 /**
@@ -185,15 +182,6 @@ class DbAclTwoTest extends DbAcl {
 }
 
 /**
- * IniAclTest class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller.components
- */
-class IniAclTest extends IniAcl {
-}
-
-/**
  * Short description for class.
  *
  * @package       cake
@@ -240,6 +228,41 @@ class AclComponentTest extends CakeTestCase {
  */
 	function tearDown() {
 		unset($this->Acl);
+	}
+
+/**
+ * test that construtor throws an exception when Acl.classname is a 
+ * non-existant class
+ *
+ * @return void
+ */
+	function testConstrutorException() {
+		$this->expectException();
+		Configure::write('Acl.classname', 'AclClassNameThatDoesNotExist');
+		$acl = new AclComponent();
+	}
+
+/**
+ * test that adapter() allows control of the interal implementation AclComponent uses.
+ *
+ * @return void
+ */
+	function testAdapter() {
+		$implementation = new IniAcl();
+		$this->assertNull($this->Acl->adapter($implementation));
+
+		$this->assertEqual($this->Acl->adapter(), $implementation, 'Returned object is different %s');
+	}
+
+/**
+ * test that adapter() whines when the class is not an AclBase
+ *
+ * @return void
+ */
+	function testAdapterException() {
+		$this->expectException();
+		$thing = new StdClass();
+		$this->Acl->adapter($thing);
 	}
 
 /**
@@ -513,11 +536,9 @@ class AclComponentTest extends CakeTestCase {
  * @return void
  */
 	function testIniReadConfigFile() {
-		Configure::write('Acl.classname', 'IniAclTest');
-		unset($this->Acl);
-		$this->Acl = new AclComponent();
+		$Ini = new IniAcl();
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
-		$result = $this->Acl->_Instance->readConfigFile($iniFile);
+		$result = $Ini->readConfigFile($iniFile);
 		$expected = array(
 			'admin' => array(
 				'groups' => 'administrators',
@@ -562,12 +583,11 @@ class AclComponentTest extends CakeTestCase {
  * @return void
  */
 	function testIniCheck() {
-		Configure::write('Acl.classname', 'IniAclTest');
-		unset($this->Acl);
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 
-		$this->Acl = new AclComponent();
-		$this->Acl->_Instance->config= $this->Acl->_Instance->readConfigFile($iniFile);
+		$Ini = new IniAcl();
+		$Ini->config = $Ini->readConfigFile($iniFile);
+		$this->Acl->adapter($Ini);
 
 		$this->assertFalse($this->Acl->check('admin', 'ads'));
 		$this->assertTrue($this->Acl->check('admin', 'posts'));

@@ -44,19 +44,46 @@ class AclComponent extends Object {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
+ * @throws Exception when Acl.classname could not be loaded.
  */
-	function __construct() {
+	public function __construct() {
 		$name = Inflector::camelize(strtolower(Configure::read('Acl.classname')));
 		if (!class_exists($name)) {
 			if (App::import('Component', $name)) {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				trigger_error(sprintf(__('Could not find %s.'), $name), E_USER_WARNING);
+				throw new Exception(sprintf(__('Could not find %s.'), $name));
 			}
 		}
-		$this->_Instance =& new $name();
-		$this->_Instance->initialize($this);
+		$this->adapter($name);
+	}
+
+/**
+ * Sets or gets the Adapter object currently in the AclComponent.
+ *
+ * `$this->Acl->adapter();` will get the current adapter class while
+ * `$this->Acl->adapter($obj);` will set the adapter class
+ *
+ * Will call the initialize method on the adapter if setting a new one.
+ *
+ * @param mixed $adapter Instance of AclBase or a string name of the class to use. (optional)
+ * @return mixed either null, or instance of AclBase
+ * @throws Exception when the given class is not an AclBase
+ */
+	public function adapter($adapter = null) {
+		if ($adapter) {
+			if (is_string($adapter)) {
+				$adapter = new $adapter();
+			}
+			if (!$adapter instanceof AclBase) {
+				throw new Exception(__('AclComponent adapters must extend AclBase'));
+			}
+			$this->_Instance = $adapter;
+			$this->_Instance->initialize($this);
+			return;
+		}
+		return $this->_Instance;
 	}
 
 /**
@@ -161,18 +188,7 @@ class AclComponent extends Object {
  * @subpackage    cake.cake.libs.controller.components
  * @abstract
  */
-class AclBase extends Object {
-
-/**
- * This class should never be instantiated, just subclassed.
- *
- */
-	function __construct() {
-		if (strcasecmp(get_class($this), "AclBase") == 0 || !is_subclass_of($this, "AclBase")) {
-			trigger_error(__("[acl_base] The AclBase class constructor has been called, or the class was instantiated. This class must remain abstract. Please refer to the Cake docs for ACL configuration."), E_USER_ERROR);
-			return NULL;
-		}
-	}
+abstract class AclBase extends Object {
 
 /**
  * Empty method to be overridden in subclasses
@@ -181,16 +197,14 @@ class AclBase extends Object {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  */
-	public function check($aro, $aco, $action = "*") {
-	}
+	public abstract function check($aro, $aco, $action = "*");
 
 /**
  * Empty method to be overridden in subclasses
  *
  * @param object $component Component
  */
-	public function initialize(&$component) {
-	}
+	public abstract function initialize($component);
 }
 
 /**
@@ -234,7 +248,7 @@ class DbAcl extends AclBase {
  * @param AclComponent $component
  * @return void
  */
-	public function initialize(&$component) {
+	public function initialize($component) {
 		$component->Aro =& $this->Aro;
 		$component->Aco =& $this->Aco;
 	}
@@ -494,10 +508,13 @@ class IniAcl extends AclBase {
 	public $config = null;
 
 /**
- * The constructor must be overridden, as AclBase is abstract.
+ * Initialize method
  *
+ * @param AclBase $component 
+ * @return void
  */
-	function __construct() {
+	public function initialize($component) {
+		
 	}
 
 /**
