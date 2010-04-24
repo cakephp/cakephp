@@ -2533,7 +2533,7 @@ class Model extends Object {
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
 						} elseif (method_exists('Validation', $rule)) {
-							$valid = $Validation->dispatchMethod($rule, $ruleParams);
+							$valid = call_user_func_array(array('Validation', $rule), $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
