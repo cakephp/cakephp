@@ -2449,7 +2449,6 @@ class Model extends Object {
 			$data = array();
 		}
 
-		$Validation =& Validation::getInstance();
 		$exists = $this->exists();
 
 		$_validate = $this->validate;
@@ -2533,7 +2532,7 @@ class Model extends Object {
 							$ruleParams[] = $validator;
 							$ruleParams[0] = array($fieldName => $ruleParams[0]);
 							$valid = $this->Behaviors->dispatchMethod($this, $rule, $ruleParams);
-						} elseif (method_exists($Validation, $rule)) {
+						} elseif (method_exists('Validation', $rule)) {
 							$valid = $Validation->dispatchMethod($rule, $ruleParams);
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
