@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-class TestPluginLog {
+class TestPluginLog implements CakeLogInterface {
 
 	function write($type, $message) {
 		

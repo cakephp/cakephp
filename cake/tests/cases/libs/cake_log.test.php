@@ -72,13 +72,17 @@ class CakeLogTest extends CakeTestCase {
  * @return void
  */
 	function testImportingLoggerFailure() {
-		$this->expectError('Missing logger classname');
+		$this->expectException();
 		CakeLog::config('fail', array());
+	}
 
-		$this->expectError('Could not load logger class born to fail');
-		CakeLog::config('fail', array('engine' => 'born to fail'));
-
-		$this->expectError('logger class stdClass does not implement a write method.');
+/**
+ * test that loggers have to implement the correct interface.
+ *
+ * @return void
+ */
+	function testNotImplementingInterface() {
+		$this->expectException();
 		CakeLog::config('fail', array('engine' => 'stdClass'));
 	}
 
