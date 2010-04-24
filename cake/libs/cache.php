@@ -126,6 +126,9 @@ class Cache {
 		}
 		$cacheClass = $class . 'Engine';
 		self::$_engines[$name] = new $cacheClass();
+		if (!self::$_engines[$name] instanceof CacheEngine) {
+			throw new Exception(__('Cache engines must use CacheEngine as a base class.'));
+		}
 		if (self::$_engines[$name]->init($config)) {
 			if (time() % self::$_engines[$name]->settings['probability'] === 0) {
 				self::$_engines[$name]->gc();

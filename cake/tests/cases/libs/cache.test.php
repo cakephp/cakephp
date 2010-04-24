@@ -21,6 +21,8 @@ if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
 
+Mock::generate('StdClass', 'RubbishEngine');
+
 /**
  * CacheTest class
  *
@@ -129,6 +131,18 @@ class CacheTest extends CakeTestCase {
 		));
 		$read = Cache::read('Test', 'Invalid');
 		$this->assertEqual($read, null);
+	}
+
+/**
+ * test that trying to configure classes that don't extend CacheEngine fail.
+ *
+ * @return void
+ */
+	function testAttemptingToConfigureANonCacheEngineClass() {
+		$this->expectException();
+		Cache::config('Garbage', array(
+			'engine' => 'Rubbish'
+		));
 	}
 
 /**
