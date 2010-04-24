@@ -1830,13 +1830,25 @@ class PaginatorHelperTest extends CakeTestCase {
  *
  * @return void
  */
-	function testAjaxLinkGeneration() {
+	function testAjaxLinkGenerationNumbers() {
 		$this->Paginator->Js->expectCallCount('link', 2);
 		$result = $this->Paginator->numbers(array(
 			'modulus'=> '2', 
 			'url'=> array('controller' => 'projects', 'action' => 'sort'),
 			'update' => 'list'
 		));
+	}
+
+/**
+ * test that paginatorHelper::link() uses JsHelper to make links when 'update' key is present
+ *
+ * @return void
+ */
+	function testAjaxLinkGenerationLink() {
+		$this->Paginator->Js->expectCallCount('link', 1);
+		$this->Paginator->Js->setReturnValue('link', 'I am a link');
+		$result = $this->Paginator->link('test', array('controller' => 'posts'), array('update' => '#content'));
+		$this->assertEqual($result, 'I am a link');
 	}
 
 /**
