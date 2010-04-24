@@ -976,7 +976,8 @@ class Router {
 /**
  * Generates a well-formed querystring from $q
  *
- * @param mixed $q Query string
+ * @param mixed $q Query string Either a string of already compiled query string arguments or
+ *    an array of arguments to convert into a query string.
  * @param array $extra Extra querystring parameters.
  * @param bool $escape Whether or not to use escaped &
  * @return array
