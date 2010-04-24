@@ -249,6 +249,7 @@ class Router {
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
+ * @throws Exception
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		$self =& Router::getInstance();
