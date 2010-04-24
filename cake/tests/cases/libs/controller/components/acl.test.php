@@ -174,12 +174,14 @@ class DbAclTwoTest extends DbAcl {
  * @return void
  */
 	function __construct() {
-		$this->Aro =& new AroTwoTest();
-		$this->Aro->Permission =& new PermissionTwoTest();
-		$this->Aco =& new AcoTwoTest();
-		$this->Aro->Permission =& new PermissionTwoTest();
+		$this->Aro = new AroTwoTest();
+		$this->Aro->Permission = new PermissionTwoTest();
+		$this->Aco = new AcoTwoTest();
+		$this->Aro->Permission = new PermissionTwoTest();
 	}
 }
+
+Mock::generate('AclInterface', 'MockAclImplementation');
 
 /**
  * Short description for class.
@@ -189,33 +191,14 @@ class DbAclTwoTest extends DbAcl {
  */
 class AclComponentTest extends CakeTestCase {
 /**
- * fixtures property
- *
- * @var array
- * @access public
- */
-	public $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
-/**
  * startTest method
  *
  * @access public
  * @return void
  */
 	function startTest() {
-		$this->Acl =& new AclComponent();
-	}
-
-/**
- * before method
- *
- * @param mixed $method
- * @access public
- * @return void
- */
-	function before($method) {
-		Configure::write('Acl.classname', 'DbAclTwoTest');
-		Configure::write('Acl.database', 'test_suite');
-		parent::before($method);
+		Configure::write('Acl.classname', 'MockAclImplementation');
+		$this->Acl = new AclComponent();
 	}
 
 /**
@@ -246,7 +229,8 @@ class AclComponentTest extends CakeTestCase {
  * @return void
  */
 	function testAdapter() {
-		$implementation = new IniAcl();
+		$implementation = new MockAclImplementation();
+		$implementation->expectOnce('initialize', array($this->Acl));
 		$this->assertNull($this->Acl->adapter($implementation));
 
 		$this->assertEqual($this->Acl->adapter(), $implementation, 'Returned object is different %s');
@@ -288,7 +272,7 @@ class IniAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIniReadConfigFile() {
+	function testReadConfigFile() {
 		$Ini = new IniAcl();
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 		$result = $Ini->readConfigFile($iniFile);
@@ -335,7 +319,7 @@ class IniAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testIniCheck() {
+	function testCheck() {
 		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 
 		$Ini = new IniAcl();
@@ -376,20 +360,11 @@ class DbAclTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Acl =& new AclComponent();
-	}
+		$this->_settings = Configure::read('Acl');
 
-/**
- * before method
- *
- * @param mixed $method
- * @access public
- * @return void
- */
-	function before($method) {
 		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test_suite');
-		parent::before($method);
+		$this->Acl = new AclComponent();
 	}
 
 /**
@@ -398,8 +373,9 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function tearDown() {
+	function endTest() {
 		unset($this->Acl);
+		Configure::write('Acl', $this->_settings);
 	}
 
 /**
@@ -408,7 +384,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAclCreate() {
+	function testCreate() {
 		$this->Acl->Aro->create(array('alias' => 'Chotchkey'));
 		$this->assertTrue($this->Acl->Aro->save());
 
@@ -436,7 +412,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testAclCreateWithParent() {
+	function testCreateWithParent() {
 		$parent = $this->Acl->Aro->findByAlias('Peter', null, null, -1);
 		$this->Acl->Aro->create();
 		$this->Acl->Aro->save(array(
@@ -456,7 +432,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbAclAllow() {
+	function testAllow() {
 		$this->assertFalse($this->Acl->check('Micheal', 'tpsReports', 'read'));
 		$this->assertTrue($this->Acl->allow('Micheal', 'tpsReports', array('read', 'delete', 'update')));
 		$this->assertTrue($this->Acl->check('Micheal', 'tpsReports', 'update'));
@@ -497,7 +473,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbAclCheck() {
+	function testCheck() {
 		$this->assertTrue($this->Acl->check('Samir', 'print', 'read'));
 		$this->assertTrue($this->Acl->check('Lumbergh', 'current', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
@@ -530,7 +506,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbAclCascadingDeny() {
+	function testAclCascadingDeny() {
 		$this->Acl->inherit('Bobs', 'ROOT', '*');
 		$this->assertTrue($this->Acl->check('admin', 'tpsReports', 'delete'));
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'delete'));
@@ -545,7 +521,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbAclDeny() {
+	function testDeny() {
 		$this->assertTrue($this->Acl->check('Micheal', 'smash', 'delete'));
 		$this->Acl->deny('Micheal', 'smash', 'delete');
 		$this->assertFalse($this->Acl->check('Micheal', 'smash', 'delete'));
@@ -600,7 +576,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbInherit() {
+	function testInherit() {
 		//parent doesn't have access inherit should still deny
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'delete'));
 		$this->Acl->inherit('Milton', 'smash', 'delete');
@@ -618,7 +594,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbGrant() {
+	function testGrant() {
 		$this->assertFalse($this->Acl->check('Samir', 'tpsReports', 'create'));
 		$this->Acl->allow('Samir', 'tpsReports', 'create');
 		$this->assertTrue($this->Acl->check('Samir', 'tpsReports', 'create'));
@@ -640,7 +616,7 @@ class DbAclTestCase extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testDbRevoke() {
+	function testRevoke() {
 		$this->assertTrue($this->Acl->check('Bobs', 'tpsReports', 'read'));
 		$this->Acl->deny('Bobs', 'tpsReports', 'read');
 		$this->assertFalse($this->Acl->check('Bobs', 'tpsReports', 'read'));
