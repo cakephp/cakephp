@@ -76,8 +76,8 @@ class AclComponent extends Object {
 			if (is_string($adapter)) {
 				$adapter = new $adapter();
 			}
-			if (!$adapter instanceof AclBase) {
-				throw new Exception(__('AclComponent adapters must extend AclBase'));
+			if (!$adapter instanceof AclInterface) {
+				throw new Exception(__('AclComponent adapters must implement AclInterface'));
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);
@@ -176,14 +176,13 @@ class AclComponent extends Object {
 }
 
 /**
- * Access Control List abstract class. Not to be instantiated.
- * Subclasses of this class are used by AclComponent to perform ACL checks in Cake.
+ * Access Control List interface.
+ * Implementing classes are used by AclComponent to perform ACL checks in Cake.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
- * @abstract
  */
-abstract class AclBase extends Object {
+interface AclInterface {
 
 /**
  * Empty method to be overridden in subclasses
@@ -192,14 +191,44 @@ abstract class AclBase extends Object {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  */
-	public abstract function check($aro, $aco, $action = "*");
+	public function check($aro, $aco, $action = "*");
 
 /**
- * Empty method to be overridden in subclasses
+ * Allow methods are used to grant an ARO access to an ACO.
  *
- * @param object $component Component
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
  */
-	public abstract function initialize($component);
+	public function allow($aro, $aco, $action = "*");
+
+/**
+ * Deny methods are used to remove permission from an ARO to access an ACO.
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function deny($aro, $aco, $action = "*");
+
+/**
+ * Inherit methods modify the permission for an ARO to be that of its parent object.
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function inherit($aro, $aco, $action = "*");
+
+/**
+ * Initialization method for the Acl implementation
+ *
+ * @param AclComponent $component
+ */
+	public function initialize($component);
 }
 
 /**
@@ -222,7 +251,7 @@ abstract class AclBase extends Object {
  * @package       cake
  * @subpackage    cake.cake.libs.model
  */
-class DbAcl extends AclBase {
+class DbAcl extends Object implements AclInterface {
 
 /**
  * Constructor
@@ -492,7 +521,7 @@ class DbAcl extends AclBase {
  * @package       cake
  * @subpackage    cake.cake.libs.model.iniacl
  */
-class IniAcl extends AclBase {
+class IniAcl extends Object implements AclInterface {
 
 /**
  * Array with configuration, parsed from ini file
@@ -509,6 +538,42 @@ class IniAcl extends AclBase {
  * @return void
  */
 	public function initialize($component) {
+		
+	}
+
+/**
+ * No op method, allow cannot be done with IniAcl
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function allow($aro, $aco, $action = "*") {
+		
+	}
+
+/**
+ * No op method, deny cannot be done with IniAcl
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function deny($aro, $aco, $action = "*") {
+		
+	}
+
+/**
+ * No op method, inherit cannot be done with IniAcl
+ *
+ * @param string $aro ARO The requesting object identifier.
+ * @param string $aco ACO The controlled object identifier.
+ * @param string $action Action (defaults to *)
+ * @return boolean Success
+ */
+	public function inherit($aro, $aco, $action = "*") {
 		
 	}
 
