@@ -1366,6 +1366,11 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'test_dispatch_pages/camelCased';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual('TestDispatchPages', $controller->name);
+	
+		$url = 'test_dispatch_pages/camelCased/something. .';
+		$controller = $Dispatcher->dispatch($url, array('return' => 1));
+		$this->assertEqual($controller->params['pass'][0], 'something. .', 'Period was chopped off. %s');
+		
 	}
 
 /**
