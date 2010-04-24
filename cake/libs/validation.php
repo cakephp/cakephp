@@ -432,14 +432,14 @@ class Validation {
  */
 	public function ip($check, $type = 'both') {
 		$type = strtolower($type);
-		$filterFlags = array();
+		$flags = array();
 		if ($type === 'ipv4' || $type === 'both') {
-			$filterFlags[] = FILTER_FLAG_IPV4;
+			$flags[] = FILTER_FLAG_IPV4;
 		}
 		if ($type === 'ipv6' || $type === 'both') {
-			$filterFlags[] = FILTER_FLAG_IPV6;
+			$flags[] = FILTER_FLAG_IPV6;
 		}
-		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $filterFlags));
+		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
 	}
 
 /**
