@@ -205,23 +205,6 @@ if (!function_exists('sortByKey')) {
 	}
 
 /**
- * Display parameters.
- *
- * @param mixed $p Parameter as string or array
- * @return string
- * @deprecated Will be removed in 2.0
- */
-	function params($p) {
-		if (!is_array($p) || count($p) == 0) {
-			return null;
-		}
-		if (is_array($p[0]) && count($p) == 1) {
-			return $p[0];
-		}
-		return $p;
-	}
-
-/**
  * Merge a group of arrays
  *
  * @param array First array
