@@ -1679,6 +1679,22 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that requests with a trailing dot don't loose the do.
+ *
+ * @return void
+ */
+	function testParsingWithTrailingPeriodAndParseExtensions() {
+		Router::reload();
+		Router::parseExtensions('json');
+
+		$result = Router::parse('/posts/view/something.');
+		$this->assertEqual($result['pass'][0], 'something.', 'Period was chopped off %s');
+
+		$result = Router::parse('/posts/view/something. . .');
+		$this->assertEqual($result['pass'][0], 'something. . .', 'Period was chopped off %s');
+	}
+
+/**
  * testParsingWithPrefixes method
  *
  * @access public
