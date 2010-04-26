@@ -303,8 +303,20 @@ class CakeRequestTestCase extends CakeTestCase {
 				'size' => 123
 			)
 		);
-
 		$this->assertEqual($request->data, $expected);
+		
+		$_FILES = array(
+			'something' => array(
+				'name' => 'something.txt',
+				'type' => 'text/plain',
+				'tmp_name' => '/some/file',
+				'error' => 0,
+				'size' => 123
+			)
+		);
+		$request = new CakeRequest();
+		$this->assertEqual($request->params['form'], $_FILES);
+		
 	}
 
 /**

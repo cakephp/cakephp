@@ -26,7 +26,10 @@ class CakeRequest {
 	public $params = array();
 
 /**
- * Array of POST data
+ * Array of POST data.  Will contain form data as well as uploaded files.
+ * Will only contain data from inputs that start with 'data'.  So
+ * `<input name="some_input" />` will not end up in data. However,
+ * `<input name="data[something]" />`
  *
  * @var array
  */
