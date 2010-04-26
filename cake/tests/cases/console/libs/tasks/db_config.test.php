@@ -123,7 +123,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	}
 
 /**
- * test execute and by extension __interactive
+ * test execute and by extension _interactive
  *
  * @return void
  */

@@ -622,19 +622,27 @@ class HttpSocketTest extends CakeTestCase {
 	function testGet() {
 		$this->RequestSocket->reset();
 
-		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/')));
+		$this->RequestSocket->expect('request', array(array('method' => 'GET', 'uri' => 'http://www.google.com/')));
 		$this->RequestSocket->get('http://www.google.com/');
 
-		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=bar')));
+		$this->RequestSocket->expect('request', array(
+			array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=bar')
+		));
 		$this->RequestSocket->get('http://www.google.com/', array('foo' => 'bar'));
 
-		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=bar')));
+		$this->RequestSocket->expect('request', array(
+			array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=bar')
+		));
 		$this->RequestSocket->get('http://www.google.com/', 'foo=bar');
 
-		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=23&foobar=42')));
+		$this->RequestSocket->expect('request', array(
+			array('method' => 'GET', 'uri' => 'http://www.google.com/?foo=23&foobar=42')
+		));
 		$this->RequestSocket->get('http://www.google.com/?foo=bar', array('foobar' => '42', 'foo' => '23'));
 
-		$this->RequestSocket->expect('request', a(array('method' => 'GET', 'uri' => 'http://www.google.com/', 'auth' => array('user' => 'foo', 'pass' => 'bar'))));
+		$this->RequestSocket->expect('request', array(
+			array('method' => 'GET', 'uri' => 'http://www.google.com/', 'auth' => array('user' => 'foo', 'pass' => 'bar'))
+		));
 		$this->RequestSocket->get('http://www.google.com/', null, array('auth' => array('user' => 'foo', 'pass' => 'bar')));
 	}
 
@@ -648,14 +656,20 @@ class HttpSocketTest extends CakeTestCase {
 		$this->RequestSocket->reset();
 
 		foreach (array('POST', 'PUT', 'DELETE') as $method) {
-			$this->RequestSocket->expect('request', a(array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => array())));
-			$this->RequestSocket->{low($method)}('http://www.google.com/');
+			$this->RequestSocket->expect('request', array(
+				array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => array())
+			));
+			$this->RequestSocket->{strtolower($method)}('http://www.google.com/');
 
-			$this->RequestSocket->expect('request', a(array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => array('Foo' => 'bar'))));
-			$this->RequestSocket->{low($method)}('http://www.google.com/', array('Foo' => 'bar'));
+			$this->RequestSocket->expect('request', array(
+				array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => array('Foo' => 'bar'))
+			));
+			$this->RequestSocket->{strtolower($method)}('http://www.google.com/', array('Foo' => 'bar'));
 
-			$this->RequestSocket->expect('request', a(array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => null, 'line' => 'Hey Server')));
-			$this->RequestSocket->{low($method)}('http://www.google.com/', null, array('line' => 'Hey Server'));
+			$this->RequestSocket->expect('request', array(
+				array('method' => $method, 'uri' => 'http://www.google.com/', 'body' => null, 'line' => 'Hey Server')
+			));
+			$this->RequestSocket->{strtolower($method)}('http://www.google.com/', null, array('line' => 'Hey Server'));
 		}
 	}
 

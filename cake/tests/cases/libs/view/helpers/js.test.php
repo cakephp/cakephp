@@ -83,13 +83,13 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
-		$this->Js =& new JsHelper('JsBase');
-		$this->Js->Html =& new HtmlHelper();
-		$this->Js->Form =& new FormHelper();
-		$this->Js->Form->Html =& new HtmlHelper();
-		$this->Js->JsBaseEngine =& new JsBaseEngineHelper();
+		$this->Js = new JsHelper('JsBase');
+		$this->Js->Html = new HtmlHelper();
+		$this->Js->Form = new FormHelper();
+		$this->Js->Form->Html = new HtmlHelper();
+		$this->Js->JsBaseEngine = new JsBaseEngineHelper();
 
-		$view =& new JsHelperMockView();
+		$view = new JsHelperMockView();
 		ClassRegistry::addObject('view', $view);
 	}
 
@@ -111,11 +111,11 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function _useMock() {
-		$this->Js =& new JsHelper(array('TestJs'));
-		$this->Js->TestJsEngine =& new TestJsEngineHelper($this);
-		$this->Js->Html =& new HtmlHelper();
-		$this->Js->Form =& new FormHelper();
-		$this->Js->Form->Html =& new HtmlHelper();
+		$this->Js = new JsHelper(array('TestJs'));
+		$this->Js->TestJsEngine = new TestJsEngineHelper($this);
+		$this->Js->Html = new HtmlHelper();
+		$this->Js->Form = new FormHelper();
+		$this->Js->Form->Html = new HtmlHelper();
 	}
 
 /**
@@ -124,16 +124,16 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function testConstruction() {
-		$js =& new JsHelper();
+		$js = new JsHelper();
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'JqueryEngine'));
 
-		$js =& new JsHelper(array('mootools'));
+		$js = new JsHelper(array('mootools'));
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'mootoolsEngine'));
 
-		$js =& new JsHelper('prototype');
+		$js = new JsHelper('prototype');
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'prototypeEngine'));
 
-		$js =& new JsHelper('MyPlugin.Dojo');
+		$js = new JsHelper('MyPlugin.Dojo');
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'MyPlugin.DojoEngine'));
 	}
 
@@ -148,7 +148,7 @@ class JsHelperTestCase extends CakeTestCase {
 
 		$this->Js->methodOne();
 
-		$this->Js->TestEngine =& new StdClass();
+		$this->Js->TestEngine = new StdClass();
 		$this->expectError();
 		$this->Js->someMethodThatSurelyDoesntExist();
 	}
@@ -228,7 +228,7 @@ class JsHelperTestCase extends CakeTestCase {
 		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false, 'clear' => false));
 
 		ClassRegistry::removeObject('view');
-		$view =& new JsHelperMockView();
+		$view = new JsHelperMockView();
 		ClassRegistry::addObject('view', $view);
 
 		$view->expectCallCount('addScript', 1);
@@ -244,7 +244,7 @@ class JsHelperTestCase extends CakeTestCase {
 	function testWriteBufferNotInline() {
 		$this->Js->set('foo', 1);
 
-		$view =& new JsHelperMockView();
+		$view = new JsHelperMockView();
 		ClassRegistry::removeObject('view');
 		ClassRegistry::addObject('view', $view);
 		$view->expectCallCount('addScript', 1);

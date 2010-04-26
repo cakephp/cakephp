@@ -583,23 +583,6 @@ class BasicsTest extends CakeTestCase {
 	}
 
 /**
- * test params()
- *
- * @return void
- */
-	public function testParams() {
-		$this->assertNull(params('weekend'));
-		$this->assertNull(params(array()));
-		$this->assertEqual(params(array('weekend')), array('weekend'));
-
-		$nested = array(array('weekend'));
-		$this->assertEqual(params($nested), array('weekend'));
-
-		$multiple = array(array('weekend'), 'jean-luc', 'godard');
-		$this->assertEqual(params($multiple), $multiple);
-	}
-
-/**
  * test stripslashes_deep()
  *
  * @return void

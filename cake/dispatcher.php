@@ -99,7 +99,7 @@ class Dispatcher extends Object {
 		}
 
 		if (is_array($url)) {
-			$url = $this->__extractParams($url, $additionalParams);
+			$url = $this->_extractParams($url, $additionalParams);
 		} else {
 			if ($url) {
 				$_GET['url'] = $url;
@@ -112,7 +112,7 @@ class Dispatcher extends Object {
 		if ($this->asset($url) || $this->cached($url)) {
 			$this->_stop();
 		}
-		$controller =& $this->__getController();
+		$controller = $this->_getController();
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
@@ -221,9 +221,8 @@ class Dispatcher extends Object {
  * @param array $url Array or request parameters
  * @param array $additionalParams Array of additional parameters.
  * @return string $url The generated url string.
- * @access private
  */
-	function __extractParams($url, $additionalParams = array()) {
+	protected function _extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
 		$this->params = array_merge($defaults, $url, $additionalParams);
 		return Router::url($url);
@@ -368,9 +367,8 @@ class Dispatcher extends Object {
  *
  * @param array $params Array of parameters
  * @return mixed name of controller if not loaded, or object if loaded
- * @access private
  */
-	function &__getController() {
+	protected function &_getController() {
 		$controller = false;
 		$ctrlClass = $this->__loadController($this->params);
 		if (!$ctrlClass) {

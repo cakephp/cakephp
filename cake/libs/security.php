@@ -24,7 +24,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Security extends Object {
+class Security {
 
 /**
  * Default hash method
@@ -32,22 +32,7 @@ class Security extends Object {
  * @var string
  * @access public
  */
-	public $hashType = null;
-
-/**
- * Singleton implementation to get object instance.
- *
- * @return object
- * @access public
- * @static
- */
-	function &getInstance() {
-		static $instance = array();
-		if (!$instance) {
-			$instance[0] =& new Security;
-		}
-		return $instance[0];
-	}
+	public static $hashType = null;
 
 /**
  * Get allowed minutes of inactivity based on security level.
@@ -111,8 +96,6 @@ class Security extends Object {
  * @static
  */
 	public static function hash($string, $type = null, $salt = false) {
-		$_this =& Security::getInstance();
-
 		if ($salt) {
 			if (is_string($salt)) {
 				$string = $salt . $string;
@@ -122,7 +105,7 @@ class Security extends Object {
 		}
 
 		if (empty($type)) {
-			$type = $_this->hashType;
+			$type = self::$hashType;
 		}
 		$type = strtolower($type);
 
@@ -155,8 +138,7 @@ class Security extends Object {
  * @see Security::hash()
  */
 	public static function setHash($hash) {
-		$_this =& Security::getInstance();
-		$_this->hashType = $hash;
+		self::$hashType = $hash;
 	}
 
 /**

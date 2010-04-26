@@ -38,6 +38,24 @@
 	}
 
 /**
+ * CakeLogStreamInterface is the interface that should be implemented
+ * by all classes that are going to be used as Log streams.
+ *
+ * @package cake.libs
+ */
+interface CakeLogInterface {
+/**
+ * Write method to handle writes being made to the Logger
+ *
+ * @param string $type 
+ * @param string $message 
+ * @return void
+ * @author Mark Story
+ */
+	public function write($type, $message);
+}
+
+/**
  * Logs messages to configured Log adapters.  One or more adapters can be configured
  * using CakeLogs's methods.  If you don't configure any adapters, and write to the logs
  * a default FileLog will be autoconfigured for you.
@@ -80,19 +98,23 @@ class CakeLog {
  * @param string $key The keyname for this logger, used to revmoe the logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
+ * @throws Exception
  * @static
  */
 	function config($key, $config) {
 		if (empty($config['engine'])) {
-			trigger_error(__('Missing logger classname'), E_USER_WARNING);
-			return false;
+			throw new Exception(__('Missing logger classname'));
 		}
-		$className = self::_getLogger($config['engine']);
-		if (!$className) {
-			return false;
-		}
+		$loggerName = $config['engine'];
 		unset($config['engine']);
-		self::$_streams[$key] = new $className($config);
+		$className = self::_getLogger($loggerName);
+		$logger = new $className($config);
+		if (!$logger instanceof CakeLogInterface) {
+			throw new Exception(sprintf(
+				__('logger class %s does not implement a write method.'), $loggerName
+			));
+		}
+		self::$_streams[$key] = $logger;
 		return true;
 	}
 
@@ -114,15 +136,7 @@ class CakeLog {
 			}
 		}
 		if (!class_exists($loggerName)) {
-			trigger_error(sprintf(__('Could not load logger class %s'), $loggerName), E_USER_WARNING);
-			return false;
-		}
-		if (!is_callable(array($loggerName, 'write'))) {
-			trigger_error(
-				sprintf(__('logger class %s does not implement a write method.'), $loggerName),
-				E_USER_WARNING
-			);
-			return false;
+			throw new Exception(sprintf(__('Could not load class %s'), $loggerName));
 		}
 		return $loggerName;
 	}

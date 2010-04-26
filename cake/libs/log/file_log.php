@@ -27,7 +27,7 @@ if (!class_exists('File')) {
  * @package cake
  * @subpackage cake.cake.libs.log
  */
-class FileLog {
+class FileLog implements CakeLogInterface {
 
 /**
  * Path to save log files on.

@@ -27,7 +27,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.view
  */
-class Helper {
+class Helper extends Object {
 
 /**
  * List of helpers used by this helper

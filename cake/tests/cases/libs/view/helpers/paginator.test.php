@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript', 'Js'));
+App::import('Helper', array('Html', 'Paginator', 'Form', 'Js'));
 
 Mock::generate('JsHelper', 'PaginatorMockJsHelper');
 
@@ -36,7 +36,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Paginator = new PaginatorHelper(array('ajax' => 'Ajax'));
+		$this->Paginator = new PaginatorHelper();
 		$this->Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
@@ -57,11 +57,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->Paginator->Html =& new HtmlHelper();
-		$this->Paginator->Ajax =& new AjaxHelper();
-		$this->Paginator->Ajax->Html =& new HtmlHelper();
-		$this->Paginator->Ajax->Javascript =& new JavascriptHelper();
-		$this->Paginator->Ajax->Form =& new FormHelper();
+		$this->Paginator->Html = new HtmlHelper();
+		$this->Paginator->Js = new PaginatorMockJsHelper();
 
 		Configure::write('Routing.prefixes', array());
 		Router::reload();
@@ -134,7 +131,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true'), 'bare' => 0),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
 			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
 		$this->Paginator->options(array('url' => array('param')));
@@ -153,10 +150,6 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-
-		$result = $this->Paginator->numbers(array('modulus'=> '2', 'url'=> array('controller'=>'projects', 'action'=>'sort'),'update'=>'list'));
-		$this->assertPattern('/\/projects\/sort\/page:2/', $result);
-		$this->assertPattern('/<script type="text\/javascript">\s*' . str_replace('/', '\\/', preg_quote('//<![CDATA[')) . '\s*Event.observe/', $result);
 
 		$result = $this->Paginator->sort('TestTitle', 'title');
 		$expected = array(
@@ -1833,12 +1826,38 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Ensure that the internal link class object is called when the update key is present
+ *
+ * @return void
+ */
+	function testAjaxLinkGenerationNumbers() {
+		$this->Paginator->Js->expectCallCount('link', 2);
+		$result = $this->Paginator->numbers(array(
+			'modulus'=> '2', 
+			'url'=> array('controller' => 'projects', 'action' => 'sort'),
+			'update' => 'list'
+		));
+	}
+
+/**
+ * test that paginatorHelper::link() uses JsHelper to make links when 'update' key is present
+ *
+ * @return void
+ */
+	function testAjaxLinkGenerationLink() {
+		$this->Paginator->Js->expectCallCount('link', 1);
+		$this->Paginator->Js->setReturnValue('link', 'I am a link');
+		$result = $this->Paginator->link('test', array('controller' => 'posts'), array('update' => '#content'));
+		$this->assertEqual($result, 'I am a link');
+	}
+
+/**
  * test that mock classes injected into paginatorHelper are called when using link()
  *
  * @return void
  */
 	function testMockAjaxProviderClassInjection() {
-		$Paginator =& new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
+		$Paginator = new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
@@ -1850,12 +1869,12 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array()
 			)
 		);
-		$Paginator->PaginatorMockJs =& new PaginatorMockJsHelper();
+		$Paginator->PaginatorMockJs = new PaginatorMockJsHelper();
 		$Paginator->PaginatorMockJs->expectOnce('link');
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
-		$this->expectError();
-		$Paginator =& new PaginatorHelper(array('ajax' => 'Form'));
+		$this->expectException();
+		$Paginator = new PaginatorHelper(array('ajax' => 'Form'));
 	}
 }
 ?>

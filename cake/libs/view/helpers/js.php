@@ -119,7 +119,7 @@ class JsHelper extends AppHelper {
  * @param array $params Parameters for the method being called.
  * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
  */
-	public function call__($method, $params) {
+	public function __call($method, $params) {
 		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
 			$buffer = false;
 			if (in_array(strtolower($method), $this->{$this->__engineName}->bufferedMethods)) {

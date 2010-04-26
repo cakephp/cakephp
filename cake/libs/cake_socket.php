@@ -27,7 +27,7 @@ App::import('Core', 'Validation');
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class CakeSocket extends Object {
+class CakeSocket {
 
 /**
  * Object description
@@ -90,8 +90,6 @@ class CakeSocket extends Object {
  * @see CakeSocket::$_baseConfig
  */
 	function __construct($config = array()) {
-		parent::__construct();
-
 		$this->config = array_merge($this->_baseConfig, $config);
 		if (!is_numeric($this->config['protocol'])) {
 			$this->config['protocol'] = getprotobyname($this->config['protocol']);

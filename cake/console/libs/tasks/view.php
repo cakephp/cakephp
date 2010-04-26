@@ -98,7 +98,7 @@ class ViewTask extends BakeTask {
  */
 	public function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			$this->_interactive();
 		}
 		if (empty($this->args[0])) {
 			return;
@@ -144,7 +144,7 @@ class ViewTask extends BakeTask {
  *
  * @return array Array of action names that should be baked
  */
-	function _methodsToBake() {
+	protected function _methodsToBake() {
 		$methods =  array_diff(
 			array_map('strtolower', get_class_methods($this->controllerName . 'Controller')),
 			array_map('strtolower', get_class_methods('appcontroller'))
@@ -176,7 +176,7 @@ class ViewTask extends BakeTask {
  *
  * @return void
  */
-	function all() {
+	public function all() {
 		$this->Controller->interactive = false;
 		$tables = $this->Controller->listAll($this->connection, false);
 
@@ -202,9 +202,8 @@ class ViewTask extends BakeTask {
 /**
  * Handles interactive baking
  *
- * @access private
  */
-	function __interactive() {
+	protected function _interactive() {
 		$this->hr();
 		$this->out(sprintf("Bake View\nPath: %s", $this->path));
 		$this->hr();
@@ -265,7 +264,7 @@ class ViewTask extends BakeTask {
  * @return array Returns an variables to be made available to a view template
  * @access private
  */
-	function __loadController() {
+	private function __loadController() {
 		if (!$this->controllerName) {
 			$this->err(__('Controller not found'));
 		}
@@ -314,7 +313,7 @@ class ViewTask extends BakeTask {
  * @param array $actions Array of actions to make files for.
  * @return void
  */
-	function bakeActions($actions, $vars) {
+	public function bakeActions($actions, $vars) {
 		foreach ($actions as $action) {
 			$content = $this->getContent($action, $vars);
 			$this->bake($action, $content);
@@ -326,7 +325,7 @@ class ViewTask extends BakeTask {
  *
  * @return void
  */
-	function customAction() {
+	public function customAction() {
 		$action = '';
 		while ($action == '') {
 			$action = $this->in(__('Action Name? (use lowercase_underscored function name)'));
@@ -463,7 +462,7 @@ class ViewTask extends BakeTask {
  * @return  array $associations
  * @access private
  */
-	function __associations(&$model) {
+	private function __associations(&$model) {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 

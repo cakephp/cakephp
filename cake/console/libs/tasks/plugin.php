@@ -54,7 +54,7 @@ class PluginTask extends Shell {
  *
  * @return void
  */
-	function execute() {
+	public function execute() {
 		if (empty($this->params['skel'])) {
 			$this->params['skel'] = '';
 			if (is_dir(CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel') === true) {
@@ -74,10 +74,10 @@ class PluginTask extends Shell {
 				$this->err(sprintf(__('%s in path %s not found.'), $plugin, $pluginPath));
 				$this->_stop();
 			} else {
-				$this->__interactive($plugin);
+				$this->_interactive($plugin);
 			}
 		} else {
-			return $this->__interactive();
+			return $this->_interactive();
 		}
 
 		if (isset($this->args[0])) {
@@ -102,7 +102,7 @@ class PluginTask extends Shell {
  * @access private
  * @return void
  */
-	function __interactive($plugin = null) {
+	protected function _interactive($plugin = null) {
 		while ($plugin === null) {
 			$plugin = $this->in(__('Enter the name of the plugin in CamelCase format'));
 		}
@@ -119,7 +119,7 @@ class PluginTask extends Shell {
  * @access public
  * @return bool
  */
-	function bake($plugin) {
+	public function bake($plugin) {
 		$pluginPath = Inflector::underscore($plugin);
 
 		$pathOptions = App::path('plugins');
@@ -200,9 +200,9 @@ class PluginTask extends Shell {
 /**
  * find and change $this->path to the user selection
  *
- * @return void
+ * @return string plugin path
  */
-	function findPath($pathOptions) {
+	public function findPath($pathOptions) {
 		$valid = false;
 		$max = count($pathOptions);
 		while (!$valid) {

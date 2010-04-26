@@ -57,7 +57,7 @@ class ControllerTask extends BakeTask {
  */
 	public function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			$this->_interactive();
 		}
 
 		if (isset($this->args[0])) {
@@ -101,10 +101,9 @@ class ControllerTask extends BakeTask {
 /**
  * Bake All the controllers at once.  Will only bake controllers for models that exist.
  *
- * @access public
  * @return void
  */
-	function all() {
+	public function all() {
 		$this->interactive = false;
 		$this->listAll($this->connection, false);
 		ClassRegistry::config('Model', array('ds' => $this->connection));
@@ -124,9 +123,9 @@ class ControllerTask extends BakeTask {
 /**
  * Interactive
  *
- * @access private
+ * @return void
  */
-	function __interactive() {
+	protected function _interactive() {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(sprintf(__("Bake Controller\nPath: %s"), $this->path));
@@ -210,7 +209,7 @@ class ControllerTask extends BakeTask {
  *
  * @return void
  */
-	function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
+	public function confirmController($controllerName, $useDynamicScaffold, $helpers, $components) {
 		$this->out();
 		$this->hr();
 		$this->out(__('The following controller will be created:'));
@@ -248,7 +247,7 @@ class ControllerTask extends BakeTask {
  *
  * @return array Array containing (bakeRegular, bakeAdmin) answers
  */
-	function _askAboutMethods() {
+	protected function _askAboutMethods() {
 		$wannaBakeCrud = $this->in(
 			__("Would you like to create some basic class methods \n(index(), add(), view(), edit())?"),
 			array('y','n'), 'n'
@@ -269,7 +268,7 @@ class ControllerTask extends BakeTask {
  * @return string Baked actions
  * @access private
  */
-	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
+	public function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $modelImport = $this->_modelName($controllerName);
 		if ($this->plugin) {
 			$modelImport = $this->plugin . '.' . $modelImport;
@@ -301,9 +300,8 @@ class ControllerTask extends BakeTask {
  * @param array $components Components to use in controller
  * @param array $uses Models to use in controller
  * @return string Baked controller
- * @access private
  */
-	function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));
@@ -323,9 +321,8 @@ class ControllerTask extends BakeTask {
  *
  * @param string $className Controller class name
  * @return string Baked test
- * @access private
  */
-	function bakeTest($className) {
+	public function bakeTest($className) {
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		$this->Test->interactive = $this->interactive;
@@ -337,7 +334,7 @@ class ControllerTask extends BakeTask {
  *
  * @return array Helpers that the user wants to use.
  */
-	function doHelpers() {
+	public function doHelpers() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?"),
 			__("Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Ajax, Javascript, Time'")
@@ -349,7 +346,7 @@ class ControllerTask extends BakeTask {
  *
  * @return array Components the user wants to use.
  */
-	function doComponents() {
+	public function doComponents() {
 		return $this->_doPropertyChoices(
 			__("Would you like this controller to use any components?"),
 			__("Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'")
@@ -363,7 +360,7 @@ class ControllerTask extends BakeTask {
  * @param sting $example A question for a comma separated list, with examples.
  * @return array Array of values for property.
  */
-	function _doPropertyChoices($prompt, $example) {
+	protected function _doPropertyChoices($prompt, $example) {
 		$proceed = $this->in($prompt, array('y','n'), 'n');
 		$property = array();
 		if (strtolower($proceed) == 'y') {

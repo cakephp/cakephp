@@ -249,6 +249,7 @@ class Router {
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
+ * @throws Exception
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		$self =& Router::getInstance();
@@ -269,11 +270,9 @@ class Router {
 			$routeClass = $options['routeClass'];
 			unset($options['routeClass']);
 		}
-		//TODO 2.0 refactor this to use a string class name, throw exception, and then construct.
-		$Route =& new $routeClass($route, $defaults, $options);
-		if ($routeClass !== 'CakeRoute' && !is_subclass_of($Route, 'CakeRoute')) {
-			trigger_error(__('Route classes must extend CakeRoute'), E_USER_WARNING);
-			return false;
+		$Route = new $routeClass($route, $defaults, $options);
+		if (!$Route instanceof CakeRoute) {
+			throw new Exception(__('Route classes must extend CakeRoute'));
 		}
 		$self->routes[] =& $Route;
 		return $self->routes;
@@ -977,7 +976,8 @@ class Router {
 /**
  * Generates a well-formed querystring from $q
  *
- * @param mixed $q Query string
+ * @param mixed $q Query string Either a string of already compiled query string arguments or
+ *    an array of arguments to convert into a query string.
  * @param array $extra Extra querystring parameters.
  * @param bool $escape Whether or not to use escaped &
  * @return array

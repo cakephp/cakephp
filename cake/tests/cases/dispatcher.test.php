@@ -1464,8 +1464,7 @@ class DispatcherTest extends CakeTestCase {
 		$plugins[] = 'MyPlugin';
 		$plugins[] = 'ArticlesTest';
 
-		$app = App::getInstance();
-		$app->__objects['plugin'] = $plugins;
+		App::setObjects('plugin', $plugins);
 
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
@@ -1560,9 +1559,7 @@ class DispatcherTest extends CakeTestCase {
 		$plugins = App::objects('plugin');
 		$plugins[] = 'MyPlugin';
 
-		$app = App::getInstance();
-		$app->__objects['plugin'] = $plugins;
-
+		App::setObjects('plugin', $plugins);
 		Router::reload();
 
 		$Dispatcher =& new TestDispatcher();
