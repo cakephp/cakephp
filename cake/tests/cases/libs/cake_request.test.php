@@ -59,6 +59,255 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test parsing of FILES array
+ *
+ * @return void
+ */
+	function testFILESParsing() {
+		$_FILES = array('data' => array('name' => array(
+			'File' => array(
+					array('data' => 'cake_mssql_patch.patch'),
+					array('data' => 'controller.diff'),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => 'jquery-1.2.1.js'),
+			),
+			'type' => array(
+				'File' => array(
+					array('data' => ''),
+					array('data' => ''),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => 'application/x-javascript'),
+			),
+			'tmp_name' => array(
+				'File' => array(
+					array('data' => '/private/var/tmp/phpy05Ywj'),
+					array('data' => '/private/var/tmp/php7MBztY'),
+					array('data' => ''),
+					array('data' => ''),
+				),
+				'Post' => array('attachment' => '/private/var/tmp/phpEwlrIo'),
+			),
+			'error' => array(
+				'File' => array(
+					array('data' => 0),
+					array('data' => 0),
+					array('data' => 4),
+					array('data' => 4)
+				),
+				'Post' => array('attachment' => 0)
+			),
+			'size' => array(
+				'File' => array(
+					array('data' => 6271),
+					array('data' => 350),
+					array('data' => 0),
+					array('data' => 0),
+				),
+				'Post' => array('attachment' => 80469)
+			),
+		));
+
+		$request = new CakeRequest();
+		$expected = array(
+			'File' => array(
+				array('data' => array(
+					'name' => 'cake_mssql_patch.patch',
+					'type' => '',
+					'tmp_name' => '/private/var/tmp/phpy05Ywj',
+					'error' => 0,
+					'size' => 6271,
+				)),
+				array(
+					'data' => array(
+					'name' => 'controller.diff',
+					'type' => '',
+					'tmp_name' => '/private/var/tmp/php7MBztY',
+					'error' => 0,
+					'size' => 350,
+				)),
+				array('data' => array(
+					'name' => '',
+					'type' => '',
+					'tmp_name' => '',
+					'error' => 4,
+					'size' => 0,
+				)),
+				array('data' => array(
+					'name' => '',
+					'type' => '',
+					'tmp_name' => '',
+					'error' => 4,
+					'size' => 0,
+				)),
+			),
+			'Post' => array('attachment' => array(
+				'name' => 'jquery-1.2.1.js',
+				'type' => 'application/x-javascript',
+				'tmp_name' => '/private/var/tmp/phpEwlrIo',
+				'error' => 0,
+				'size' => 80469,
+			))
+		);
+		$this->assertEqual($request->data, $expected);
+
+		$_FILES = array(
+			'data' => array(
+				'name' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 'born on.txt',
+							'passport' => 'passport.txt',
+							'drivers_license' => 'ugly pic.jpg'
+						),
+						2 => array(
+							'birth_cert' => 'aunt betty.txt',
+							'passport' => 'betty-passport.txt',
+							'drivers_license' => 'betty-photo.jpg'
+						),
+					),
+				),
+				'type' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 'application/octet-stream',
+							'passport' => 'application/octet-stream',
+							'drivers_license' => 'application/octet-stream',
+						),
+						2 => array(
+							'birth_cert' => 'application/octet-stream',
+							'passport' => 'application/octet-stream',
+							'drivers_license' => 'application/octet-stream',
+						)
+					)
+				),
+				'tmp_name' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => '/private/var/tmp/phpbsUWfH',
+							'passport' => '/private/var/tmp/php7f5zLt',
+ 							'drivers_license' => '/private/var/tmp/phpMXpZgT',
+						),
+						2 => array(
+							'birth_cert' => '/private/var/tmp/php5kHZt0',
+ 							'passport' => '/private/var/tmp/phpnYkOuM',
+ 							'drivers_license' => '/private/var/tmp/php9Rq0P3',
+						)
+					)
+				),
+				'error' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 0,
+							'passport' => 0,
+ 							'drivers_license' => 0,
+						),
+						2 => array(
+							'birth_cert' => 0,
+ 							'passport' => 0,
+ 							'drivers_license' => 0,
+						)
+					)
+				),
+				'size' => array(
+					'Document' => array(
+						1 => array(
+							'birth_cert' => 123,
+							'passport' => 458,
+ 							'drivers_license' => 875,
+						),
+						2 => array(
+							'birth_cert' => 876,
+ 							'passport' => 976,
+ 							'drivers_license' => 9783,
+						)
+					)
+				)
+			)
+		);
+
+		$request = new CakeRequest();
+		$expected = array(
+			'Document' => array(
+				1 => array(
+					'birth_cert' => array(
+						'name' => 'born on.txt',
+						'tmp_name' => '/private/var/tmp/phpbsUWfH',
+						'error' => 0,
+						'size' => 123,
+						'type' => 'application/octet-stream',
+					),
+					'passport' => array(
+						'name' => 'passport.txt',
+						'tmp_name' => '/private/var/tmp/php7f5zLt',
+						'error' => 0,
+						'size' => 458,
+						'type' => 'application/octet-stream',
+					),
+					'drivers_license' => array(
+						'name' => 'ugly pic.jpg',
+						'tmp_name' => '/private/var/tmp/phpMXpZgT',
+						'error' => 0,
+						'size' => 875,
+						'type' => 'application/octet-stream',
+					),
+				),
+				2 => array(
+					'birth_cert' => array(
+						'name' => 'aunt betty.txt',
+						'tmp_name' => '/private/var/tmp/php5kHZt0',
+						'error' => 0,
+						'size' => 876,
+						'type' => 'application/octet-stream',
+					),
+					'passport' => array(
+						'name' => 'betty-passport.txt',
+						'tmp_name' => '/private/var/tmp/phpnYkOuM',
+						'error' => 0,
+						'size' => 976,
+						'type' => 'application/octet-stream',
+					),
+					'drivers_license' => array(
+						'name' => 'betty-photo.jpg',
+						'tmp_name' => '/private/var/tmp/php9Rq0P3',
+						'error' => 0,
+						'size' => 9783,
+						'type' => 'application/octet-stream',
+					),
+				),
+			)
+		);
+		$this->assertEqual($request->data, $expected);
+
+
+		$_FILES = array(
+			'data' => array(
+				'name' => array('birth_cert' => 'born on.txt'),
+				'type' => array('birth_cert' => 'application/octet-stream'),
+				'tmp_name' => array('birth_cert' => '/private/var/tmp/phpbsUWfH'),
+				'error' => array('birth_cert' => 0),
+				'size' => array('birth_cert' => 123)
+			)
+		);
+
+		$request = new CakeRequest();
+		$expected = array(
+			'birth_cert' => array(
+				'name' => 'born on.txt',
+				'type' => 'application/octet-stream',
+				'tmp_name' => '/private/var/tmp/phpbsUWfH',
+				'error' => 0,
+				'size' => 123
+			)
+		);
+
+		$this->assertEqual($request->data, $expected);
+	}
+
+/**
  * test method overrides coming in from POST data.
  *
  * @return void
@@ -71,6 +320,10 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_POST = array('_method' => 'DELETE');
 		$request = new CakeRequest();
 		$this->assertEqual(env('REQUEST_METHOD'), 'DELETE');
+
+		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
+		$request = new CakeRequest();
+		$this->assertEqual(env('REQUEST_METHOD'), 'PUT');
 	}
 
 /**

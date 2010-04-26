@@ -120,14 +120,14 @@ class CakeRequest {
 						foreach ($fields as $field => $value) {
 							if (is_array($value)) {
 								foreach ($value as $k => $v) {
-									$this->params['data'][$model][$field][$k][$key] = $v;
+									$this->data[$model][$field][$k][$key] = $v;
 								}
 							} else {
-								$this->params['data'][$model][$field][$key] = $value;
+								$this->data[$model][$field][$key] = $value;
 							}
 						}
 					} else {
-						$this->params['data'][$model][$key] = $fields;
+						$this->data[$model][$key] = $fields;
 					}
 				}
 			}
