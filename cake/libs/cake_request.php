@@ -48,10 +48,6 @@ class CakeRequest {
 		if (isset($_POST)) {
 			$this->_processPost();
 		}
-		if (isset($params['form']['data'])) {
-			$params['data'] = $params['form']['data'];
-			unset($params['form']['data']);
-		}
 		if (isset($_GET)) {
 			$this->_processGet();
 		}
@@ -136,5 +132,33 @@ class CakeRequest {
 				}
 			}
 		}
+	}
+
+/**
+ * Get the IP the client is using, or says they are using.
+ *
+ * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
+ *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
+ * @return void
+ */
+	public function getClientIp($safe = true) {
+		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
+			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
+		} else {
+			if (env('HTTP_CLIENT_IP') != null) {
+				$ipaddr = env('HTTP_CLIENT_IP');
+			} else {
+				$ipaddr = env('REMOTE_ADDR');
+			}
+		}
+
+		if (env('HTTP_CLIENTADDRESS') != null) {
+			$tmpipaddr = env('HTTP_CLIENTADDRESS');
+
+			if (!empty($tmpipaddr)) {
+				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
+			}
+		}
+		return trim($ipaddr);
 	}
 }
