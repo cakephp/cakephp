@@ -78,19 +78,11 @@ class FileEngine extends CacheEngine {
 			),
 			$settings
 		));
-		if (!isset($this->_File)) {
-			$this->_File =& new File($this->settings['path'] . DS . 'cake');
-		}
 
 		if (DIRECTORY_SEPARATOR === '\\') {
 			$this->settings['isWindows'] = true;
 		}
-
-		$path = $this->_File->Folder->cd($this->settings['path']);
-		if ($path) {
-			$this->settings['path'] = $path;
-		}
-		return $this->__active();
+		return $this->_active();
 	}
 
 /**
@@ -115,7 +107,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		if ($this->_setKey($key) === false) {
+		if ($this->_setKey($key, true) === false) {
 			return false;
 		}
 
@@ -134,12 +126,11 @@ class FileEngine extends CacheEngine {
 		}
 
 		if ($this->settings['lock']) {
-			$this->_File->lock = true;
+			//$this->_File->lock = true;
 		}
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
-		$success = $this->_File->write($contents);
-		$this->_File->close();
+		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents);
 		return $success;
 	}
 
@@ -150,20 +141,27 @@ class FileEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
-		if ($this->_setKey($key) === false || !$this->_init || !$this->_File->exists()) {
+		if (!$this->_init || $this->_setKey($key) === false) {
 			return false;
 		}
 		if ($this->settings['lock']) {
-			$this->_File->lock = true;
+			//$this->_File->lock = true;
 		}
+		$this->_File->rewind();
 		$time = time();
-		$cachetime = intval($this->_File->read(11));
+		$cachetime = intval($this->_File->current());
 
 		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
-			$this->_File->close();
 			return false;
 		}
-		$data = $this->_File->read(true);
+		
+		$data = '';
+		$this->_File->next();
+		while ($this->_File->valid()) {
+			$data .= $this->_File->current();
+			$this->_File->next();
+		}
+		$data = trim($data);
 
 		if ($data !== '' && !empty($this->settings['serialize'])) {
 			if ($this->settings['isWindows']) {
@@ -171,7 +169,6 @@ class FileEngine extends CacheEngine {
 			}
 			$data = unserialize((string)$data);
 		}
-		$this->_File->close();
 		return $data;
 	}
 
@@ -185,7 +182,7 @@ class FileEngine extends CacheEngine {
 		if ($this->_setKey($key) === false || !$this->_init) {
 			return false;
 		}
-		return $this->_File->delete();
+		return unlink($this->_File->getRealPath());
 	}
 
 /**
@@ -208,20 +205,19 @@ class FileEngine extends CacheEngine {
 				continue;
 			}
 			if ($check) {
-				$mtime = $this->_File->lastChange();
+				$mtime = $this->_File->getMTime();
 
-				if ($mtime === false || $mtime > $threshold) {
+				if ($mtime > $threshold) {
 					continue;
 				}
 
-				$expires = $this->_File->read(11);
-				$this->_File->close();
+				$expires = (int)$this->_File->current();
 
 				if ($expires > $now) {
 					continue;
 				}
 			}
-			$this->_File->delete();
+			unlink($this->_File->getRealPath());
 		}
 		$dir->close();
 		return true;
@@ -252,16 +248,17 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key The key
  * @return mixed Absolute cache file for the given key or false if erroneous
- * @access private
+ * @access protected
  */
-	function _setKey($key) {
-		$this->_File->Folder->cd($this->settings['path']);
-		if ($key !== $this->_File->name) {
-			$this->_File->name = $key;
-			$this->_File->path = null;
-		}
-		if (!$this->_File->Folder->inPath($this->_File->pwd(), true)) {
+	protected function _setKey($key, $createKey = false) {
+		$path = new SplFileInfo($this->settings['path'] . DS . $key);
+
+		if (!$createKey && !$path->isFile()) {
 			return false;
+		}
+
+		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
+			$this->_File = $path->openFile('a+');
 		}
 	}
 
@@ -269,10 +266,11 @@ class FileEngine extends CacheEngine {
  * Determine is cache directory is writable
  *
  * @return boolean
- * @access private
+ * @access protected
  */
-	function __active() {
-		if ($this->_init && !is_writable($this->settings['path'])) {
+	protected function _active() {
+		$dir = new SplFileInfo($this->settings['path']);
+		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
 			trigger_error(sprintf(__('%s is not writable'), $this->settings['path']), E_USER_WARNING);
 		}
