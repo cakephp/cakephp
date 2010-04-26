@@ -79,6 +79,10 @@ class CakeRequest {
 			}
 			unset($this->params['form']['_method']);
 		}
+		if (isset($this->params['form']['data'])) {
+			$this->data = $this->params['form']['data'];
+			unset($this->params['form']['data']);
+		}
 	}
 
 /**
@@ -93,9 +97,9 @@ class CakeRequest {
 			$url = $_GET;
 		}
 		if (isset($this->params['url'])) {
-			$this->params['url'] = array_merge($this->params['url'], $url);
+			$this->url = array_merge($this->url, $url);
 		} else {
-			$this->params['url'] = $url;
+			$this->url = $url;
 		}
 	}
 

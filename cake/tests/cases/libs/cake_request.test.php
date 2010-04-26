@@ -38,6 +38,23 @@ class CakeRequestTestCase extends CakeTestCase {
 			'two' => 'banana'
 		);
 		$request = new CakeRequest();
-		$this->assertEqual($request->params['url'], $_GET);
+		$this->assertEqual($request->url, $_GET);
+	}
+
+/**
+ * test parsing POST data into the object.
+ *
+ * @return void
+ */
+	function testPostParsing() {
+		$_POST = array('data' => array(
+			'Article' => array('title')
+		));
+		$request = new CakeRequest();
+		$this->assertEqual($request->data, $_POST['data']);
+
+		$_POST = array('one' => 1, 'two' => 'three');
+		$request = new CakeRequest();
+		$this->assertEqual($request->params['form'], $_POST);
 	}
 }
