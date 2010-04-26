@@ -37,10 +37,8 @@ class Set {
  * @param array $arr1 Array to be merged
  * @param array $arr2 Array to merge with
  * @return array Merged array
- * @access public
- * @static
  */
-	function merge($arr1, $arr2 = null) {
+	public static function merge($arr1, $arr2 = null) {
 		$args = func_get_args();
 
 		$r = (array)current($args);
@@ -64,14 +62,11 @@ class Set {
  * @param mixed $var Either an array to filter, or value when in callback
  * @param boolean $isArray Force to tell $var is an array when $var is empty
  * @return mixed Either filtered array, or true/false when in callback
- * @access public
- * @static
  */
-	function filter($var, $isArray = false) {
+	public static function filter($var, $isArray = false) {
 		if (is_array($var) && (!empty($var) || $isArray)) {
 			return array_filter($var, array('Set', 'filter'));
 		}
-
 		if ($var === 0 || $var === '0' || !empty($var)) {
 			return true;
 		}
@@ -84,10 +79,8 @@ class Set {
  * @param mixed $array Original array
  * @param mixed $array2 Differences to push
  * @return array Combined array
- * @access public
- * @static
  */
-	function pushDiff($array, $array2) {
+	public static function pushDiff($array, $array2) {
 		if (empty($array) && !empty($array2)) {
 			return $array2;
 		}
@@ -112,10 +105,8 @@ class Set {
  * @param string $class A class name of the type of object to map to
  * @param string $tmp A temporary class name used as $class if $class is an array
  * @return object Hierarchical object
- * @access public
- * @static
  */
-	function map($class = 'stdClass', $tmp = 'stdClass') {
+	public static function map($class = 'stdClass', $tmp = 'stdClass') {
 		if (is_array($class)) {
 			$val = $class;
 			$class = $tmp;
@@ -136,9 +127,8 @@ class Set {
  *
  * @param mixed $array Data from where to get the array.
  * @return array Array from $array.
- * @access private
  */
-	function __array($array) {
+	private function __array($array) {
 		if (empty($array)) {
 			$array = array();
 		} elseif (is_object($array)) {
@@ -161,10 +151,8 @@ class Set {
  * @param string $class Class name
  * @param boolean $primary whether to assign first array key as the _name_
  * @return mixed Mapped object
- * @access private
- * @static
  */
-	function __map(&$array, $class, $primary = false) {
+	public static function __map(&$array, $class, $primary = false) {
 		if ($class === true) {
 			$out = new stdClass;
 		} else {
@@ -224,10 +212,8 @@ class Set {
  *
  * @param array $array The array to check.  If null, the value of the current Set object
  * @return boolean true if values are numeric, false otherwise
- * @access public
- * @static
  */
-	function numeric($array = null) {
+	public static function numeric($array = null) {
 		if (empty($array)) {
 			return null;
 		}
@@ -262,10 +248,8 @@ class Set {
  * @param mixed $select Key in $list to return
  * @param mixed $list can be an array or a comma-separated list.
  * @return string the value of the array key or null if no match
- * @access public
- * @static
  */
-	function enum($select, $list = null) {
+	public static function enum($select, $list = null) {
 		if (empty($list)) {
 			$list = array('no', 'yes');
 		}
@@ -286,11 +270,8 @@ class Set {
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @param array $keys An array containing one or more Set::extract()-style key paths
  * @return array An array of strings extracted from $keys and formatted with $format
- * @access public
- * @static
  */
-	function format($data, $format, $keys) {
-
+	public static function format($data, $format, $keys) {
 		$extracted = array();
 		$count = count($keys);
 
@@ -367,10 +348,8 @@ class Set {
  * @param array $data An array of data to extract from
  * @param array $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
  * @return array An array of matched items
- * @access public
- * @static
  */
-	function extract($path, $data = null, $options = array()) {
+	public static function extract($path, $data = null, $options = array()) {
 		if (is_string($data)) {
 			$tmp = $data;
 			$data = $path;
@@ -517,10 +496,8 @@ class Set {
  * @param array $data  An array of data to execute the match on
  * @param integer $i Optional: The 'nth'-number of the item being matched.
  * @return boolean
- * @access public
- * @static
  */
-	function matches($conditions, $data = array(), $i = null, $length = null) {
+	public static function matches($conditions, $data = array(), $i = null, $length = null) {
 		if (empty($conditions)) {
 			return true;
 		}
@@ -592,10 +569,8 @@ class Set {
  * @param array $data Array from where to extract
  * @param mixed $path As an array, or as a dot-separated string.
  * @return array Extracted data
- * @access public
- * @static
  */
-	function classicExtract($data, $path = null) {
+	public static function classicExtract($data, $path = null) {
 		if (empty($path)) {
 			return $data;
 		}
@@ -681,10 +656,8 @@ class Set {
  * @param mixed $path A dot-separated string.
  * @param array $data Data to insert
  * @return array
- * @access public
- * @static
  */
-	function insert($list, $path, $data = null) {
+	public static function insert($list, $path, $data = null) {
 		if (!is_array($path)) {
 			$path = explode('.', $path);
 		}
@@ -712,10 +685,8 @@ class Set {
  * @param mixed $list From where to remove
  * @param mixed $path A dot-separated string.
  * @return array Array with $path removed from its value
- * @access public
- * @static
  */
-	function remove($list, $path = null) {
+	public static function remove($list, $path = null) {
 		if (empty($path)) {
 			return $list;
 		}
@@ -746,10 +717,8 @@ class Set {
  * @param mixed $data Data to check on
  * @param mixed $path A dot-separated string.
  * @return boolean true if path is found, false otherwise
- * @access public
- * @static
  */
-	function check($data, $path = null) {
+	public static function check($data, $path = null) {
 		if (empty($path)) {
 			return $data;
 		}
@@ -780,10 +749,8 @@ class Set {
  * @param mixed $val2 Second value
  * @return array Returns the key => value pairs that are not common in $val1 and $val2
  * The expression for this function is ($val1 - $val2) + ($val2 - ($val1 - $val2))
- * @access public
- * @static
  */
-	function diff($val1, $val2 = null) {
+	public static function diff($val1, $val2 = null) {
 		if (empty($val1)) {
 			return (array)$val2;
 		}
@@ -808,10 +775,8 @@ class Set {
  * @param array $val1 First value
  * @param array $val2 Second value
  * @return boolean true if $val1 contains $val2, false otherwise
- * @access public
- * @static
  */
-	function contains($val1, $val2 = null) {
+	public static function contains($val1, $val2 = null) {
 		if (empty($val1) || empty($val2)) {
 			return false;
 		}
@@ -836,10 +801,8 @@ class Set {
  * @param boolean $all Set to true to count the dimension considering all elements in array
  * @param integer $count Start the dimension count at this number
  * @return integer The number of dimensions in $array
- * @access public
- * @static
  */
-	function countDim($array = null, $all = false, $count = 0) {
+	public static function countDim($array = null, $all = false, $count = 0) {
 		if ($all) {
 			$depth = array($count);
 			if (is_array($array) && reset($array) !== false) {
@@ -866,10 +829,8 @@ class Set {
  * @param string $sep If $list is a string, it will be split into an array with $sep
  * @param boolean $trim If true, separated strings will be trimmed
  * @return array
- * @access public
- * @static
  */
-	function normalize($list, $assoc = true, $sep = ',', $trim = true) {
+	public static function normalize($list, $assoc = true, $sep = ',', $trim = true) {
 		if (is_string($list)) {
 			$list = explode($sep, $list);
 			if ($trim) {
@@ -919,10 +880,8 @@ class Set {
  * @param mixed $path2 As an array, or as a dot-separated string.
  * @param string $groupPath As an array, or as a dot-separated string.
  * @return array Combined array
- * @access public
- * @static
  */
-	function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
+	public static function combine($data, $path1 = null, $path2 = null, $groupPath = null) {
 		if (empty($data)) {
 			return array();
 		}
@@ -944,10 +903,8 @@ class Set {
 		if (!empty($path2) && is_array($path2)) {
 			$format = array_shift($path2);
 			$vals = Set::format($data, $format, $path2);
-
 		} elseif (!empty($path2)) {
 			$vals = Set::extract($data, $path2);
-
 		} else {
 			$count = count($keys);
 			for ($i = 0; $i < $count; $i++) {
@@ -981,10 +938,8 @@ class Set {
  * Converts an object into an array.
  * @param object $object Object to reverse
  * @return array Array representation of given object
- * @public
- * @static
  */
-	function reverse($object) {
+	public static function reverse($object) {
 		$out = array();
 		if (is_a($object, 'XmlNode')) {
 			$out = $object->toArray();
@@ -1030,10 +985,8 @@ class Set {
  * @param array $data Array to flatten
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
  * @return array
- * @access public
- * @static
  */
-	function flatten($data, $separator = '.') {
+	public static function flatten($data, $separator = '.') {
 		$result = array();
 		$path = null;
 
@@ -1064,9 +1017,8 @@ class Set {
  * @param array $results
  * @param string $key
  * @return array
- * @access private
  */
-	function __flatten($results, $key = null) {
+	private function __flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			$id = $k;
@@ -1089,9 +1041,8 @@ class Set {
  * @param string $path A Set-compatible path to the array value
  * @param string $dir Direction of sorting - either ascending (ASC), or descending (DESC)
  * @return array Sorted array of data
- * @static
  */
-	function sort($data, $path, $dir) {
+	public static function sort($data, $path, $dir) {
 		$result = Set::__flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
 
@@ -1126,28 +1077,20 @@ class Set {
  *                                to array_map, reduce will handoff to array_reduce, and pass will
  *                                use call_user_func_array().
  * @return mixed Result of the callback when applied to extracted data
- * @access public
- * @static
  */
-	function apply($path, $data, $callback, $options = array()) {
+	public static function apply($path, $data, $callback, $options = array()) {
 		$defaults = array('type' => 'pass');
 		$options = array_merge($defaults, $options);
-
 		$extracted = Set::extract($path, $data);
 
 		if ($options['type'] === 'map') {
-			$result = array_map($callback, $extracted);
-
+			return array_map($callback, $extracted);
 		} elseif ($options['type'] === 'reduce') {
-			$result = array_reduce($extracted, $callback);
-
+			return array_reduce($extracted, $callback);
 		} elseif ($options['type'] === 'pass') {
-			$result = call_user_func_array($callback, array($extracted));
-		} else {
-			return null;
+			return call_user_func_array($callback, array($extracted));
 		}
-
-		return  $result;
+		return null;
 	}
 }
 ?>
