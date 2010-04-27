@@ -393,4 +393,88 @@ class CakeRequestTestCase extends CakeTestCase {
 		$result = $request->referer(true);
 		$this->assertIdentical($result, '/recipes/add');
 	}
+
+/**
+ * test the simple uses of is()
+ *
+ * @return void
+ */
+	function testIsHttpMethods() {
+		$request = new CakeRequest();
+
+		$this->assertFalse($request->is('undefined-behavior'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->assertTrue($request->is('get'));
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$this->assertTrue($request->is('POST'));
+
+		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$this->assertTrue($request->is('put'));
+		$this->assertFalse($request->is('get'));
+
+		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$this->assertTrue($request->is('delete'));
+
+		$_SERVER['REQUEST_METHOD'] = 'delete';
+		$this->assertFalse($request->is('delete'));
+	}
+
+/**
+ * test ajax, flash and friends
+ *
+ * @return void
+ */
+	function testisAjaxFlashAndFriends() {
+		$request = new CakeRequest();
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
+		$this->assertTrue($request->is('flash'));
+
+		$_SERVER['HTTP_USER_AGENT'] = 'Adobe Flash';
+		$this->assertTrue($request->is('flash'));
+
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->assertTrue($request->is('ajax'));
+
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHTTPREQUEST';
+		$this->assertFalse($request->is('ajax'));
+		
+		$_SERVER['HTTP_USER_AGENT'] = 'Android 2.0';
+		$this->assertTrue($request->is('mobile'));
+	}
+
+/**
+ * test is(ssl)
+ *
+ * @return void
+ */
+	function testIsSsl() {
+		$request = new CakeRequest();
+
+		$_SERVER['HTTPS'] = 1;
+		$this->assertTrue($request->is('ssl'));
+		
+		$_SERVER['HTTPS'] = 'on';
+		$this->assertTrue($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = '1';
+		$this->assertTrue($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = 'I am not empty';
+		$this->assertTrue($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = 1;
+		$this->assertTrue($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = 'off';
+		$this->assertFalse($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = false;
+		$this->assertFalse($request->is('ssl'));
+
+		$_SERVER['HTTPS'] = '';
+		$this->assertFalse($request->is('ssl'));
+	}
 }
