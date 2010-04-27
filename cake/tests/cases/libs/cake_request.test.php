@@ -480,4 +480,19 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_SERVER['HTTPS'] = '';
 		$this->assertFalse($request->is('ssl'));
 	}
+
+/**
+ * test getting request params with object properties.
+ *
+ * @return void
+ */
+	function test__get() {
+		$request = new CakeRequest();
+		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
+
+		$this->assertEqual($request->controller, 'posts');
+		$this->assertEqual($request->action, 'view');
+		$this->assertEqual($request->plugin, 'blogs');
+		$this->assertIdentical($request->banana, null);
+	}
 }

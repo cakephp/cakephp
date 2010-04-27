@@ -226,6 +226,18 @@ class CakeRequest {
 	}
 
 /**
+ * Magic get method allows access to parsed routing parameters directly on the object.
+ *
+ * @return mixed Either the value of the parameter or null
+ */
+	public function __get($name) {
+		if (isset($this->params[$name])) {
+			return $this->params[$name];
+		}
+		return null;
+	}
+
+/**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
  * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called 
  * with `is($type)` or `is$Type()`.
