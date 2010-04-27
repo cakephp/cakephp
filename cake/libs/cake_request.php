@@ -45,6 +45,9 @@ class CakeRequest {
 /**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
+ * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
+ * various formats and ways to define detectors.
+ *
  * @var array
  */
 	protected $_detectors = array(
@@ -57,28 +60,10 @@ class CakeRequest {
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
 		'mobile' => array('env' => 'HTTP_USER_AGENT', 'options' => array(
-			'Android',
-			'AvantGo',
-			'BlackBerry',
-			'DoCoMo',
-			'iPod',
-			'iPhone',
-			'J2ME',
-			'MIDP',
-			'NetFront',
-			'Nokia',
-			'Opera Mini',
-			'PalmOS',
-			'PalmSource',
-			'portalmmm',
-			'Plucker',
-			'ReqwirelessWeb',
-			'SonyEricsson',
-			'Symbian',
-			'UP\.Browser',
-			'webOS',
-			'Windows CE',
-			'Xiino'	
+			'Android', 'AvantGo', 'BlackBerry', 'DoCoMo', 'iPod', 'iPhone',
+			'J2ME', 'MIDP', 'NetFront', 'Nokia', 'Opera Mini', 'PalmOS', 'PalmSource',
+			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\.Browser',
+			'webOS', 'Windows CE', 'Xiino'
 		))
 	);
 /**
@@ -229,6 +214,18 @@ class CakeRequest {
 	}
 
 /**
+ * Missing method handler, handles wrapping older style isAjax() type methods
+ *
+ * @return void
+ */
+	public function __call($name, $params) {
+		if (strpos($name, 'is') === 0) {
+			$type = strtolower(substr($name, 2));
+			return $this->is($type);
+		}
+	}
+
+/**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
  * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called 
  * with `is($type)` or `is$Type()`.
@@ -242,15 +239,17 @@ class CakeRequest {
 			return false;
 		}
 		$detect = $this->_detectors[$type];
-		if (isset($detect['env']) && isset($detect['value'])) {
-			return env($detect['env']) == $detect['value'];
-		}
-		if (isset($detect['env']) && isset($detect['pattern'])) {
-			return (bool)preg_match($detect['pattern'], env($detect['env']));
-		}
-		if (isset($detect['env']) && isset($detect['options'])) {
-			$pattern = '/' . implode('|', $detect['options']) . '/i';
-			return (bool)preg_match($pattern, env($detect['env']));
+		if (isset($detect['env'])) {
+			if (isset($detect['value'])) {
+				return env($detect['env']) == $detect['value'];
+			}
+			if (isset($detect['pattern'])) {
+				return (bool)preg_match($detect['pattern'], env($detect['env']));
+			}
+			if (isset($detect['options'])) {
+				$pattern = '/' . implode('|', $detect['options']) . '/i';
+				return (bool)preg_match($pattern, env($detect['env']));
+			}
 		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
 			return call_user_func($detect['callback'], $this);

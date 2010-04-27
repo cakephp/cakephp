@@ -416,6 +416,7 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
 		$this->assertTrue($request->is('delete'));
+		$this->assertTrue($request->isDelete());
 
 		$_SERVER['REQUEST_METHOD'] = 'delete';
 		$this->assertFalse($request->is('delete'));
@@ -440,9 +441,11 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHTTPREQUEST';
 		$this->assertFalse($request->is('ajax'));
-		
+		$this->assertFalse($request->isAjax());
+
 		$_SERVER['HTTP_USER_AGENT'] = 'Android 2.0';
 		$this->assertTrue($request->is('mobile'));
+		$this->assertTrue($request->isMobile());
 	}
 
 /**
