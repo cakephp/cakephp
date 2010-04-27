@@ -33,7 +33,7 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	function testConstructionGetParsing() {
-		$GET = array(
+		$_GET = array(
 			'one' => 'param',
 			'two' => 'banana'
 		);
@@ -359,5 +359,38 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
 		$this->assertEqual($request->getClientIP(), '10.0.1.2');
+	}
+
+/**
+ * test the referer function.
+ *
+ * @return void
+ */
+	function testReferer() {
+		$request = new CakeRequest();
+
+		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
+		$result = $request->referer();
+		$this->assertIdentical($result, 'http://cakephp.org');
+
+		$_SERVER['HTTP_REFERER'] = '';
+		$result = $request->referer();
+		$this->assertIdentical($result, '/');
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/some/path';
+		$result = $request->referer(true);
+		$this->assertIdentical($result, '/some/path');
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . '/some/path';
+		$result = $request->referer();
+		$this->assertIdentical($result, FULL_BASE_URL . '/some/path');
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . 'some/path';
+		$result = $request->referer(true);
+		$this->assertIdentical($result, '/some/path');
+
+		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . 'recipes/add';
+		$result = $request->referer(true);
+		$this->assertIdentical($result, '/recipes/add');
 	}
 }

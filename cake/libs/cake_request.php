@@ -2,7 +2,7 @@
 /**
  * A class that helps wrap Request information and particulars about a single request.
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -164,4 +164,29 @@ class CakeRequest {
 		}
 		return trim($ipaddr);
 	}
+
+/**
+ * Returns the referer that referred this request.
+ *
+ * @param boolean $local Attempt to return a local address. Local addresses do not contain hostnames.
+ * @return string The referring address for this request.
+ */
+	public function referer($local = false) {
+		$ref = env('HTTP_REFERER');
+		$base = '';
+		if (defined('FULL_BASE_URL')) {
+			$base = FULL_BASE_URL;
+		}
+		if (!empty($ref)) {
+			if ($local && strpos($ref, $base) === 0) {
+				$ref = substr($ref, strlen($base));
+				if ($ref[0] != '/') {
+					$ref = '/' . $ref;
+				}
+			}
+			return $ref;
+		}
+		return '/';
+	}
+
 }
