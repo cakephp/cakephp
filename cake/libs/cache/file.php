@@ -19,9 +19,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('File')) {
-	require LIBS . 'file.php';
-}
 /**
  * File Storage engine for cache
  *
@@ -32,9 +29,9 @@ if (!class_exists('File')) {
 class FileEngine extends CacheEngine {
 
 /**
- * Instance of File class
+ * Instance of SplFileObject class
  *
- * @var File
+ * @var _File
  * @access protected
  */
 	protected $_File = null;
@@ -126,11 +123,17 @@ class FileEngine extends CacheEngine {
 		}
 
 		if ($this->settings['lock']) {
-			//$this->_File->lock = true;
+			$this->_File->flock(LOCK_EX);
 		}
+
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
 		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents);
+
+		if ($this->settings['lock']) {
+			$this->_File->flock(LOCK_EX);
+		}
+
 		return $success;
 	}
 
@@ -144,9 +147,11 @@ class FileEngine extends CacheEngine {
 		if (!$this->_init || $this->_setKey($key) === false) {
 			return false;
 		}
+
 		if ($this->settings['lock']) {
-			//$this->_File->lock = true;
+			$this->_File->flock(LOCK_SH);
 		}
+
 		$this->_File->rewind();
 		$time = time();
 		$cachetime = intval($this->_File->current());
@@ -161,6 +166,11 @@ class FileEngine extends CacheEngine {
 			$data .= $this->_File->current();
 			$this->_File->next();
 		}
+
+		if ($this->settings['lock']) {
+			$this->_File->flock(LOCK_SH);
+		}
+
 		$data = trim($data);
 
 		if ($data !== '' && !empty($this->settings['serialize'])) {
@@ -244,10 +254,11 @@ class FileEngine extends CacheEngine {
 	}
 
 /**
- * Get absolute file for a given key
+ * Sets the current cache key this class is managing
  *
  * @param string $key The key
- * @return mixed Absolute cache file for the given key or false if erroneous
+ * @param boolean $createKey Whether the key should be created if it doesn't exists, or not
+ * @return boolean true if the cache key could be set, false otherwise
  * @access protected
  */
 	protected function _setKey($key, $createKey = false) {
@@ -260,6 +271,8 @@ class FileEngine extends CacheEngine {
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$this->_File = $path->openFile('a+');
 		}
+
+		return true;
 	}
 
 /**
