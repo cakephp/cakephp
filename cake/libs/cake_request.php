@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-class CakeRequest {
+class CakeRequest implements ArrayAccess {
 /**
  * Array of parameters parsed from the url.
  *
@@ -216,7 +216,9 @@ class CakeRequest {
 /**
  * Missing method handler, handles wrapping older style isAjax() type methods
  *
- * @return void
+ * @param string $name The method called
+ * @param array $params Array of parameters for the method call
+ * @return mixed
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
@@ -228,7 +230,8 @@ class CakeRequest {
 /**
  * Magic get method allows access to parsed routing parameters directly on the object.
  *
- * @return mixed Either the value of the parameter or null
+ * @param string $name The property being accessed.
+ * @return mixed Either the value of the parameter or null.
  */
 	public function __get($name) {
 		if (isset($this->params[$name])) {
@@ -269,4 +272,47 @@ class CakeRequest {
 		return false;
 	}
 
+/**
+ * Array access read implementation
+ *
+ * @param string $name Name of the key being accessed.
+ * @return mixed
+ */
+	public function offsetGet($name) {
+		if (isset($this->params[$name])) {
+			return $this->params[$name];
+		}
+		return null;
+	}
+
+/**
+ * Array access write implementation
+ *
+ * @param string $name Name of the key being written
+ * @param mixed $value The value being written.
+ * @return void
+ */
+	public function offsetSet($name, $value) {
+		$this->params[$name] = $value;
+	}
+
+/**
+ * Array access isset() implementation
+ *
+ * @param string $name thing to check.
+ * @return boolean
+ */
+	public function offsetExists($name) {
+		return isset($this->params[$name]);
+	}
+
+/**
+ * Array access unset() implementation
+ *
+ * @param $name Name to unset.
+ * @return void
+ */
+	public function offsetUnset($name) {
+		unset($this->params[$name]);
+	}
 }

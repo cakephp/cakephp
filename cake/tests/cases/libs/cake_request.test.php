@@ -495,4 +495,29 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->plugin, 'blogs');
 		$this->assertIdentical($request->banana, null);
 	}
+
+/**
+ * test the array access implementation
+ *
+ * @return void
+ */
+	function testArrayAccess() {
+		$request = new CakeRequest();
+		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
+		
+		$this->assertEqual($request['controller'], 'posts');
+		
+		$request['slug'] = 'speedy-slug';
+		$this->assertEqual($request->slug, 'speedy-slug');
+		$this->assertEqual($request['slug'], 'speedy-slug');
+
+		$this->assertTrue(isset($request['action']));
+		$this->assertFalse(isset($request['wrong-param']));
+
+		$this->assertTrue(isset($request['plugin']));
+		unset($request['plugin']);
+		$this->assertFalse(isset($request['plugin']));
+		$this->assertNull($request['plugin']);
+		$this->assertNull($request->plugin);
+	}
 }
