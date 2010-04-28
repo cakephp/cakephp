@@ -620,6 +620,7 @@ class Dispatcher extends Object {
 		}
 
 		App::import('View', 'Media', false);
+		$controller = null;
 		$Media = new MediaView($controller);
 		if (isset($Media->mimeType[$ext])) {
 			$contentType = $Media->mimeType[$ext];
