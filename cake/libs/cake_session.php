@@ -131,6 +131,14 @@ class CakeSession extends Object {
 	var $host = null;
 
 /**
+ * Session timeout multiplier factor
+ *
+ * @var ineteger
+ * @access public
+ */
+	var $timeout = null;
+
+/**
  * Constructor.
  *
  * @param string $base The base path for the Session
@@ -190,6 +198,18 @@ class CakeSession extends Object {
 			}
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
+			switch ($this->security) {
+				case 'medium':
+					$this->factor = 100;
+				break;
+				case 'low':
+					$this->factor = 300;
+				break;
+				case 'high':
+				default:
+					$this->factor = 10;
+				break;
+			}
 		}
 		parent::__construct();
 	}
@@ -467,20 +487,20 @@ class CakeSession extends Object {
 
 		switch ($this->security) {
 			case 'high':
-				$this->cookieLifeTime = 0;
+				$this->cookieLifeTime = Configure::read('Session.timeout') * $this->factor;
 				if ($iniSet) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
 			case 'medium':
-				$this->cookieLifeTime = 7 * 86400;
+				$this->cookieLifeTime = Configure::read('Session.timeout') * $this->factor;
 				if ($iniSet) {
 					ini_set('session.referer_check', $this->host);
 				}
 			break;
 			case 'low':
 			default:
-				$this->cookieLifeTime = 788940000;
+				$this->cookieLifeTime = Configure::read('Session.timeout') * $this->factor;
 			break;
 		}
 
@@ -604,15 +624,14 @@ class CakeSession extends Object {
 			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
 				$time = $this->read('Config.time');
 				$this->write('Config.time', $this->sessionTime);
-
 				if (Configure::read('Security.level') === 'high') {
 					$check = $this->read('Config.timeout');
 					$check = $check - 1;
-					$this->write('Config.timeout', $check);
+					$this->write('Config.timeout', $this->factor);
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
-						$this->write('Config.timeout', 10);
+						$this->write('Config.timeout', $this->factor);
 					}
 				}
 				$this->valid = true;
@@ -624,7 +643,7 @@ class CakeSession extends Object {
 		} else {
 			$this->write('Config.userAgent', $this->_userAgent);
 			$this->write('Config.time', $this->sessionTime);
-			$this->write('Config.timeout', 10);
+			$this->write('Config.timeout', $this->factor);
 			$this->valid = true;
 			$this->__setError(1, 'Session is valid');
 		}
