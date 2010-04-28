@@ -198,18 +198,18 @@ class CakeSession extends Object {
 			}
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
-			switch ($this->security) {
-				case 'medium':
-					$this->factor = 100;
-				break;
-				case 'low':
-					$this->factor = 300;
-				break;
-				case 'high':
-				default:
-					$this->factor = 10;
-				break;
-			}
+		}
+		switch ($this->security) {
+			case 'medium':
+				$this->factor = 100;
+			break;
+			case 'low':
+				$this->factor = 300;
+			break;
+			case 'high':
+			default:
+				$this->factor = 10;
+			break;
 		}
 		parent::__construct();
 	}
