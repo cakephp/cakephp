@@ -326,6 +326,7 @@ class EmailComponent extends Object{
  * Send an email using the specified content, template and layout
  *
  * @param mixed $content Either an array of text lines, or a string with contents
+ *  If you are rendering a template this variable will be sent to the templates as `$content`
  * @param string $template Template to use when sending email
  * @param string $layout Layout to use to enclose email body
  * @return boolean Success
