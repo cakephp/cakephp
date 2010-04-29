@@ -322,7 +322,7 @@ class Scaffold extends Object {
 				if ($this->ScaffoldModel->save($this->controller->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
 						$message = __(
-							sprintf('The %1$s has been %2$s', Inflector::humanize($this->modelKey), $success), 
+							sprintf('The %1$s has been %2$s', Inflector::humanize($this->modelKey), $success),
 							true
 						);
 						if ($this->_validSession) {
@@ -403,9 +403,9 @@ class Scaffold extends Object {
 				}
 			} else {
 				$message = __(sprintf(
-					'There was an error deleting the %1$s with id: %2$d', 
+					'There was an error deleting the %1$s with id: %2$d',
 					Inflector::humanize($this->modelClass), $id
-				), true));
+				), true);
 				if ($this->_validSession) {
 					$this->controller->Session->setFlash($message);
 					$this->controller->redirect($this->redirect);
