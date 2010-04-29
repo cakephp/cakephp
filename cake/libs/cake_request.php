@@ -273,6 +273,45 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Add a new detector to the list of detectors that a request can use.
+ * There are several different formats and types of detectors that can be set.
+ *
+ * ### Environment value comparison
+ *
+ * An environment value comparison, compares a value fetched from `env()` to a known value
+ * the environment value is equality checked against the provided value.
+ *
+ * e.g `addDetector('post', array('env' => 'REQUEST_METHOD', 'value' => 'POST'))`
+ *
+ * ### Pattern value comparison
+ *
+ * Pattern value comparison allows you to compare a value fetched from `env()` to a regular expression.
+ * 
+ * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));
+ *
+ * ### Option based comparison
+ *
+ * Option based comparisons use a list of options to create a regular expression.  Subsequent calls
+ * to add an already defined options detector will merge the options.
+ *
+ * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
+ *
+ * ### Callback detectors
+ *
+ * Callback detectors allow you to provide a 'callback' type to handle the check.  The callback will
+ * recieve the request object as its only parameter.
+ *
+ * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
+ *
+ * @param string $name The name of the detector.
+ * @param array $options  The options for the detector definition.  See above.
+ * @return void
+ */
+	public function addDetector($name, $options) {
+		
+	}
+
+/**
  * Array access read implementation
  *
  * @param string $name Name of the key being accessed.
