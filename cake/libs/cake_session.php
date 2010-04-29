@@ -201,10 +201,10 @@ class CakeSession extends Object {
 		}
 		switch ($this->security) {
 			case 'medium':
-				$this->factor = 100;
+				$this->factor = 5040;
 			break;
 			case 'low':
-				$this->factor = 300;
+				$this->factor = 2628000;
 			break;
 			case 'high':
 			default:
@@ -773,10 +773,10 @@ class CakeSession extends Object {
 	function __write($id, $data) {
 		switch (Configure::read('Security.level')) {
 			case 'medium':
-				$factor = 100;
+				$factor = 5040;
 			break;
 			case 'low':
-				$factor = 300;
+				$factor = 2628000;
 			break;
 			case 'high':
 			default:

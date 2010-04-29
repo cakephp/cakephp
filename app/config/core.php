@@ -189,8 +189,8 @@
  * Valid values:
  *
  * 'high'	Session timeout in 'Session.timeout' x 10
- * 'medium'	Session timeout in 'Session.timeout' x 100
- * 'low'		Session timeout in 'Session.timeout' x 300
+ * 'medium'	Session timeout in 'Session.timeout' x 5040
+ * 'low'		Session timeout in 'Session.timeout' x 2628000
  *
  * CakePHP session IDs are also regenerated between requests if
  * 'Security.level' is set to 'high'.
