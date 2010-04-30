@@ -697,6 +697,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testFileUploadArrayStructure method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testFileUploadArrayStructure() {
@@ -949,6 +950,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testGetUrl method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testGetUrl() {
@@ -988,6 +990,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithModRewrite method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testBaseUrlAndWebrootWithModRewrite() {
@@ -1063,6 +1066,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlwithModRewriteAlias method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testBaseUrlwithModRewriteAlias() {
@@ -1097,6 +1101,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithBaseUrl method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testBaseUrlAndWebrootWithBaseUrl() {
@@ -1166,6 +1171,7 @@ class DispatcherTest extends CakeTestCase {
 /**
  * testBaseUrlAndWebrootWithBase method
  *
+ * @todo moved to CakeRequest. Remove when refactored.
  * @return void
  */
 	public function testBaseUrlAndWebrootWithBase() {

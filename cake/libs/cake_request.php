@@ -52,6 +52,20 @@ class CakeRequest implements ArrayAccess {
 	public $url;
 
 /**
+ * Base url path.
+ *
+ * @var string
+ */
+	public $base = false;
+
+/**
+ * webroot directory for the request.
+ *
+ * @var string
+ */
+	public $webroot = '/';
+
+/**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
  * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
@@ -78,9 +92,16 @@ class CakeRequest implements ArrayAccess {
 /**
  * Constructor 
  *
+ * @param string $url Url string to use
+ * @param array $additionalParams Additional parameters that are melded with other request parameters
  * @return void
  */
-	public function __construct() {
+	public function __construct($url = null, $additionalParams = array()) {
+		$this->base = $this->baseUrl();
+		if (empty($url)) {
+			$url = $this->getUrl();
+		}
+		$this->url = $url;
 		if (isset($_POST)) {
 			$this->_processPost();
 		}
@@ -88,6 +109,10 @@ class CakeRequest implements ArrayAccess {
 			$this->_processGet();
 		}
 		$this->_processFiles();
+
+		if (!empty($additionalParams)) {
+			$this->params = array_merge($this->params, $additionalParams);
+		}
 	}
 
 /**
@@ -132,9 +157,156 @@ class CakeRequest implements ArrayAccess {
 			$url = array_merge($this->params['url'], $url);
 		}
 		$this->query = $url;
-		if (isset($this->query['url'])) {
-			$this->url = $this->query['url'];
+	}
+
+/**
+ * Returns the REQUEST_URI from the server environment, or, failing that,
+ * constructs a new one, using the PHP_SELF constant and other variables.
+ *
+ * @return string URI
+ */
+	public function uri() {
+		foreach (array('HTTP_X_REWRITE_URL', 'REQUEST_URI', 'argv') as $var) {
+			if ($uri = env($var)) {
+				if ($var == 'argv') {
+					$uri = $uri[0];
+				}
+				break;
+			}
 		}
+		$base = preg_replace('/^\//', '', '' . Configure::read('App.baseUrl'));
+
+		if ($base) {
+			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
+		}
+		if (PHP_SAPI == 'isapi') {
+			$uri = preg_replace('/^(?:\/)?(?:\/)?(?:\?)?(?:url=)?/', '', $uri);
+		}
+		if (!empty($uri)) {
+			if (key($_GET) && strpos(key($_GET), '?') !== false) {
+				unset($_GET[key($_GET)]);
+			}
+			$uri = explode('?', $uri, 2);
+
+			if (isset($uri[1])) {
+				parse_str($uri[1], $_GET);
+			}
+			$uri = $uri[0];
+		} else {
+			$uri = env('QUERY_STRING');
+		}
+		if (is_string($uri) && strpos($uri, 'index.php') !== false) {
+			list(, $uri) = explode('index.php', $uri, 2);
+		}
+		if (empty($uri) || $uri == '/' || $uri == '//') {
+			return '';
+		}
+		return str_replace('//', '/', '/' . $uri);
+	}
+
+/**
+ * Returns and sets the $_GET[url] derived from the REQUEST_URI
+ *
+ * @param string $uri Request URI
+ * @param string $base Base path
+ * @return string URL
+ */
+	public function getUrl($uri = null, $base = null) {
+		if (empty($_GET['url'])) {
+			if ($uri == null) {
+				$uri = $this->uri();
+			}
+			if ($base == null) {
+				$base = $this->base;
+			}
+			$url = null;
+			$tmpUri = preg_replace('/^(?:\?)?(?:\/)?/', '', $uri);
+			$baseDir = preg_replace('/^\//', '', dirname($base)) . '/';
+
+			if ($tmpUri === '/' || $tmpUri == $baseDir || $tmpUri == $base) {
+				$url = '/';
+			} else {
+				if ($base && strpos($uri, $base) !== false) {
+					$elements = explode($base, $uri);
+				} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
+					$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
+				} else {
+					$elements = array();
+				}
+
+				if (!empty($elements[1])) {
+					$url = $elements[1];
+				} else {
+					$url = '/';
+				}
+
+				if (strpos($url, '/') === 0 && $url != '/') {
+					$url = substr($url, 1);
+				}
+			}
+		} else {
+			$url = $_GET['url'];
+		}
+		if ($url{0} == '/') {
+			$url = substr($url, 1);
+		}
+		return $url;
+	}
+
+/**
+ * Returns a base URL and sets the proper webroot
+ *
+ * @return string Base URL
+ */
+	public function baseUrl() {
+		$dir = $webroot = null;
+		$config = Configure::read('App');
+		extract($config);
+
+		if (!$base) {
+			$base = $this->base;
+		}
+
+		if ($base !== false) {
+			$this->webroot = $base . '/';
+			return $this->base = $base;
+		}
+		if (!$baseUrl) {
+			$replace = array('<', '>', '*', '\'', '"');
+			$base = str_replace($replace, '', dirname(env('PHP_SELF')));
+
+			if ($webroot === 'webroot' && $webroot === basename($base)) {
+				$base = dirname($base);
+			}
+			if ($dir === 'app' && $dir === basename($base)) {
+				$base = dirname($base);
+			}
+
+			if ($base === DS || $base === '.') {
+				$base = '';
+			}
+
+			$this->webroot = $base .'/';
+			return $base;
+		}
+
+		$file = '/' . basename($baseUrl);
+		$base = dirname($baseUrl);
+
+		if ($base === DS || $base === '.') {
+			$base = '';
+		}
+		$this->webroot = $base .'/';
+
+		if (!empty($base)) {
+			if (strpos($this->webroot, $dir) === false) {
+				$this->webroot .= $dir . '/' ;
+			}
+			if (strpos($this->webroot, $webroot) === false) {
+				$this->webroot .= $webroot . '/';
+			}
+		}
+		return $base . $file;
 	}
 
 /**
