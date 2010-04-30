@@ -110,6 +110,7 @@ class Contact extends CakeTestModel {
 		'required_one' => array('required' => array('rule' => array('notEmpty'))),
 		'imnotrequired' => array('required' => false, 'rule' => 'alphaNumeric', 'allowEmpty' => true),
 		'imalsonotrequired' => array('alpha' => array('rule' => 'alphaNumeric','allowEmpty' => true),
+		'imnotrequiredeither' => array('required' => true, 'rule' => array('between', 5, 30), 'allowEmpty' => true),
 		'between' => array('rule' => array('between', 5, 30))));
 
 /**
@@ -5588,6 +5589,20 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array(
 				'type' => 'text', 'name' => 'data[Contact][imalsonotrequired]',
 				'id' => 'ContactImalsonotrequired'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.iamnotrequiredeither');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'ContactIamnotrequiredeither'),
+			'Iamnotrequiredeither',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][iamnotrequiredeither]',
+				'id' => 'ContactIamnotrequiredeither'
 			),
 			'/div'
 		);
