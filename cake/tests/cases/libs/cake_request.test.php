@@ -549,5 +549,22 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['HTTP_USER_AGENT'] = 'iPhone 3.0';
 		$this->assertTrue($request->isMobile());
+
+		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, '_detectCallback')));
+
+		$request->return = true;
+		$this->assertTrue($request->isCallMe());
+
+		$request->return = false;
+		$this->assertFalse($request->isCallMe());
+	}
+
+/**
+ * helper function for testing callbacks.
+ *
+ * @return void
+ */
+	function _detectCallback($request) {
+		return $request->return == true;
 	}
 }
