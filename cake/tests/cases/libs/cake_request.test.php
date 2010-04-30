@@ -304,7 +304,7 @@ class CakeRequestTestCase extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($request->data, $expected);
-		
+
 		$_FILES = array(
 			'something' => array(
 				'name' => 'something.txt',
@@ -316,7 +316,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		);
 		$request = new CakeRequest();
 		$this->assertEqual($request->params['form'], $_FILES);
-		
+
 	}
 
 /**
@@ -458,7 +458,7 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['HTTPS'] = 1;
 		$this->assertTrue($request->is('ssl'));
-		
+
 		$_SERVER['HTTPS'] = 'on';
 		$this->assertTrue($request->is('ssl'));
 
@@ -504,9 +504,9 @@ class CakeRequestTestCase extends CakeTestCase {
 	function testArrayAccess() {
 		$request = new CakeRequest();
 		$request->params = array('controller' => 'posts', 'action' => 'view', 'plugin' => 'blogs');
-		
+
 		$this->assertEqual($request['controller'], 'posts');
-		
+
 		$request['slug'] = 'speedy-slug';
 		$this->assertEqual($request->slug, 'speedy-slug');
 		$this->assertEqual($request['slug'], 'speedy-slug');
@@ -519,5 +519,35 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertFalse(isset($request['plugin']));
 		$this->assertNull($request['plugin']);
 		$this->assertNull($request->plugin);
+	}
+
+/**
+ * test adding detectors and having them work.
+ *
+ * @return void
+ */
+	function testAddDetector() {
+		$request = new CakeRequest();
+		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
+
+		$_SERVER['TEST_VAR'] = 'something';
+		$this->assertTrue($request->is('compare'), 'Value match failed %s.');
+
+		$_SERVER['TEST_VAR'] = 'wrong';
+		$this->assertFalse($request->is('compare'), 'Value mis-match failed %s.');
+
+		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
+		$_SERVER['TEST_VAR'] = 'banana';
+		$this->assertTrue($request->isBanana());
+
+		$_SERVER['TEST_VAR'] = 'wrong value';
+		$this->assertFalse($request->isBanana());
+
+		$request->addDetector('mobile', array('options' => array('Imagination')));
+		$_SERVER['HTTP_USER_AGENT'] = 'Imagination land';
+		$this->assertTrue($request->isMobile());
+
+		$_SERVER['HTTP_USER_AGENT'] = 'iPhone 3.0';
+		$this->assertTrue($request->isMobile());
 	}
 }

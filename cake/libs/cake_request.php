@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'Set');
+
 class CakeRequest implements ArrayAccess {
 /**
  * Array of parameters parsed from the url.
@@ -308,7 +310,10 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function addDetector($name, $options) {
-		
+		if (isset($this->_detectors[$name]) && isset($options['options'])) {
+			$options = Set::merge($this->_detectors[$name], $options);
+		}
+		$this->_detectors[$name] = $options;
 	}
 
 /**
