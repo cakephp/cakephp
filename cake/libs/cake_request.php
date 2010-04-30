@@ -42,7 +42,14 @@ class CakeRequest implements ArrayAccess {
  *
  * @var array
  */
-	public $url = array();
+	public $query = array();
+
+/**
+ * The url string used for the request.
+ *
+ * @var string
+ */
+	public $url;
 
 /**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
@@ -122,9 +129,11 @@ class CakeRequest implements ArrayAccess {
 			$url = $_GET;
 		}
 		if (isset($this->params['url'])) {
-			$this->url = array_merge($this->url, $url);
-		} else {
-			$this->url = $url;
+			$url = array_merge($this->params['url'], $url);
+		}
+		$this->query = $url;
+		if (isset($this->query['url'])) {
+			$this->url = $this->query['url'];
 		}
 	}
 

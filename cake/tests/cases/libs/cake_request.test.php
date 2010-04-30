@@ -38,7 +38,17 @@ class CakeRequestTestCase extends CakeTestCase {
 			'two' => 'banana'
 		);
 		$request = new CakeRequest();
-		$this->assertEqual($request->url, $_GET);
+		$this->assertEqual($request->query, $_GET);
+		
+		$_GET = array(
+			'one' => 'param',
+			'two' => 'banana',
+			'url' => '/some/path/here'
+		);
+		$request = new CakeRequest();
+		$this->assertEqual($request->query, $_GET);
+		$this->assertEqual($request->url, $_GET['url']);
+		
 	}
 
 /**
