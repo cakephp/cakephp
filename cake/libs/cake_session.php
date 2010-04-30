@@ -562,12 +562,10 @@ class CakeSession extends Object {
 				);
 			break;
 			default:
-				if (empty($_SESSION)) {
-					$config = CONFIGS . Configure::read('Session.save') . '.php';
+				$config = CONFIGS . Configure::read('Session.save') . '.php';
 
-					if (is_file($config)) {
-						require($config);
-					}
+				if (is_file($config)) {
+					require($config);
 				}
 			break;
 		}
