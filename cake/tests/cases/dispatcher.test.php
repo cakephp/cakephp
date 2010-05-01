@@ -579,8 +579,8 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testParseParamsWithoutZerosAndEmptyPost() {
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/testcontroller/testaction/params1/params2/params3");
+		$Dispatcher = new Dispatcher();
+		$test = $Dispatcher->parseParams(new CakeRequest("/testcontroller/testaction/params1/params2/params3"));
 		$this->assertIdentical($test['controller'], 'testcontroller');
 		$this->assertIdentical($test['action'], 'testaction');
 		$this->assertIdentical($test['pass'][0], 'params1');
@@ -596,9 +596,10 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testParseParamsReturnsPostedData() {
 		$_POST['testdata'] = "My Posted Content";
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/");
-		$this->assertTrue($test['form'], "Parsed URL not returning post data");
+		$Dispatcher = new Dispatcher();
+
+		$test = $Dispatcher->parseParams(new CakeRequest("/"));
+		$this->assertTrue(isset($test['form']), "Parsed URL not returning post data");
 		$this->assertIdentical($test['form']['testdata'], "My Posted Content");
 	}
 
@@ -608,8 +609,8 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testParseParamsWithSingleZero() {
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/testcontroller/testaction/1/0/23");
+		$Dispatcher = new Dispatcher();
+		$test = $Dispatcher->parseParams(new CakeRequest("/testcontroller/testaction/1/0/23"));
 		$this->assertIdentical($test['controller'], 'testcontroller');
 		$this->assertIdentical($test['action'], 'testaction');
 		$this->assertIdentical($test['pass'][0], '1');
@@ -623,8 +624,8 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testParseParamsWithManySingleZeros() {
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/testcontroller/testaction/0/0/0/0/0/0");
+		$Dispatcher = new Dispatcher();
+		$test = $Dispatcher->parseParams(new CakeRequest("/testcontroller/testaction/0/0/0/0/0/0"));
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][0]);
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][1]);
 		$this->assertPattern('/\\A(?:0)\\z/', $test['pass'][2]);
@@ -639,8 +640,9 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testParseParamsWithManyZerosInEachSectionOfUrl() {
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
+		$Dispatcher = new Dispatcher();
+		$request = new CakeRequest("/testcontroller/testaction/000/0000/00000/000000/000000/0000000");
+		$test = $Dispatcher->parseParams($request);
 		$this->assertPattern('/\\A(?:000)\\z/', $test['pass'][0]);
 		$this->assertPattern('/\\A(?:0000)\\z/', $test['pass'][1]);
 		$this->assertPattern('/\\A(?:00000)\\z/', $test['pass'][2]);
@@ -655,8 +657,9 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testParseParamsWithMixedOneToManyZerosInEachSectionOfUrl() {
-		$Dispatcher =& new Dispatcher();
-		$test = $Dispatcher->parseParams("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
+		$Dispatcher = new Dispatcher();
+		$request = new CakeRequest("/testcontroller/testaction/01/0403/04010/000002/000030/0000400");
+		$test = $Dispatcher->parseParams($request);
 		$this->assertPattern('/\\A(?:01)\\z/', $test['pass'][0]);
 		$this->assertPattern('/\\A(?:0403)\\z/', $test['pass'][1]);
 		$this->assertPattern('/\\A(?:04010)\\z/', $test['pass'][2]);

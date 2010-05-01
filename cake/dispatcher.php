@@ -90,19 +90,21 @@ class Dispatcher extends Object {
  * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
  * Actions).
  *
- * @param string $url URL information to work on
+ * @param mixed $url Either a string url or a CakeRequest object information to work on.  If $url is a string
+ *   It will be used to create the request object.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
  */
 	public function dispatch($url = null, $additionalParams = array()) {
 		if (is_array($url)) {
 			$url = $this->_extractParams($url, $additionalParams);
-		} else {
-			if ($url) {
-				$_GET['url'] = $url;
-			}
 		}
-		$request = $this->parseParams($url, $additionalParams);
+		if ($url instanceof CakeRequest) {
+			$request = $url;
+		} else {
+			$request = new CakeRequest($url);
+		}
+		$request = $this->parseParams($request, $additionalParams);
 		$this->params = $request;
 
 		if ($this->asset($request->url) || $this->cached($request->url)) {
@@ -229,15 +231,15 @@ class Dispatcher extends Object {
 /**
  * Returns array of GET and POST parameters. GET parameters are taken from given URL.
  *
- * @param string $fromUrl URL to mine for parameter information.
+ * @param CakeRequest $fromUrl CakeRequest object to mine for parameter information.
  * @return array Parameters found in POST and GET.
  */
-	public function parseParams($fromUrl, $additionalParams = array()) {
+	public function parseParams(CakeRequest $request, $additionalParams = array()) {
 		$namedExpressions = Router::getNamedExpressions();
 		extract($namedExpressions);
 		include CONFIGS . 'routes.php';
 
-		$request = Router::parse(new CakeRequest());
+		$request = Router::parse($request);
 
 		if (!empty($additionalParams)) {
 			$request->params = array_merge($request->params, $additionalParams);
