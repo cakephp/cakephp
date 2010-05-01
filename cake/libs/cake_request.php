@@ -59,7 +59,7 @@ class CakeRequest implements ArrayAccess {
 	public $base = false;
 
 /**
- * webroot directory for the request.
+ * webroot path segment for the request.
  *
  * @var string
  */
@@ -175,7 +175,7 @@ class CakeRequest implements ArrayAccess {
 			}
 		}
 
-		$base = preg_replace('/^\//', '', '' . Configure::read('App.baseUrl'));
+		$base = trim(Configure::read('App.baseUrl'), '/');
 
 		if ($base) {
 			$uri = preg_replace('/^(?:\/)?(?:' . preg_quote($base, '/') . ')?(?:url=)?/', '', $uri);
@@ -208,41 +208,31 @@ class CakeRequest implements ArrayAccess {
 /**
  * Returns and sets the $_GET[url] derived from the REQUEST_URI
  *
- * @param string $uri Request URI
- * @param string $base Base path
  * @return string URL
  */
-	public function _url($uri = null, $base = null) {
+	protected function _url() {
 		if (empty($_GET['url'])) {
-			if ($uri == null) {
-				$uri = $this->uri();
-			}
-			if ($base == null) {
-				$base = $this->base;
-			}
+			$uri = $this->uri();
+			$base = $this->base;
+
 			$url = null;
 			$tmpUri = preg_replace('/^(?:\?)?(?:\/)?/', '', $uri);
-			$baseDir = preg_replace('/^\//', '', dirname($base)) . '/';
+			$baseDir = trim(dirname($base) . '/', '/');
 
 			if ($tmpUri === '/' || $tmpUri == $baseDir || $tmpUri == $base) {
 				$url = '/';
 			} else {
+				$elements = array();
 				if ($base && strpos($uri, $base) !== false) {
 					$elements = explode($base, $uri);
 				} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
 					$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
-				} else {
-					$elements = array();
 				}
 
 				if (!empty($elements[1])) {
 					$url = $elements[1];
 				} else {
 					$url = '/';
-				}
-
-				if (strpos($url, '/') === 0 && $url != '/') {
-					$url = substr($url, 1);
 				}
 			}
 		} else {
@@ -259,7 +249,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @return string Base URL
  */
-	public function _base() {
+	protected function _base() {
 		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);
@@ -270,7 +260,7 @@ class CakeRequest implements ArrayAccess {
 
 		if ($base !== false) {
 			$this->webroot = $base . '/';
-			return $this->base = $base;
+			return $base;
 		}
 		if (!$baseUrl) {
 			$replace = array('<', '>', '*', '\'', '"');
