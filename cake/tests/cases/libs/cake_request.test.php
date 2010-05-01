@@ -64,6 +64,21 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test addParams() method
+ *
+ * @return void
+ */
+	function testAddParams() {
+		$request = new CakeRequest('some/path');
+		$request->params = array('controller' => 'posts', 'action' => 'view');
+		$request->addParams(array('plugin' => null, 'action' => 'index'));
+
+		$this->assertEqual($request->controller, 'posts');
+		$this->assertEqual($request->action, 'index');
+		$this->assertEqual($request->plugin, null);
+	}
+
+/**
  * test parsing POST data into the object.
  *
  * @return void
