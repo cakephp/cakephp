@@ -13,6 +13,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
+		$this->_app = Configure::read('App');
 	}
 
 /**
@@ -25,6 +26,7 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
+		Configure::write('App', $this->_app);
 	}
 
 /**
@@ -582,7 +584,7 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	public function testGetUrl() {
+	public function XXtestGetUrl() {
 		$request = new CakeRequest();
 		$request->base = '/app/webroot/index.php';
 		$uri = '/app/webroot/index.php/posts/add';
@@ -626,21 +628,28 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testBaseUrlAndWebrootWithModRewrite() {
+		Configure::write('App.baseUrl', false);
+
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
+		$_GET['url'] = 'posts/view/1';
 
 		$request = new CakeRequest();
 		$this->assertEqual($request->base, '/1.2.x.x');
 		$this->assertEqual($request->webroot, '/1.2.x.x/');
+		$this->assertEqual($request->url, 'posts/view/1');
+
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/index.php';
+		$_GET['url'] = 'posts/add';
 		$request = new CakeRequest();
 
 		$this->assertEqual($request->base, '');
 		$this->assertEqual($request->webroot, '/');
+		$this->assertEqual($request->url, 'posts/add');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/test/webroot/index.php';
@@ -713,6 +722,30 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test base, webroot, and url parsing when there is no url rewriting
+ *
+ * @return void
+ */
+	function testBaseUrlWithNoModRewrite() {
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake/index.php';
+		$_SERVER['PHP_SELF'] = '/cake/index.php/posts/index';
+		$_SERVER['REQUEST_URI'] = '/cake/index.php/posts/index';
+
+		Configure::write('App', array(
+			'dir' => APP_DIR,
+			'webroot' => WEBROOT_DIR,
+			'base' => false,
+			'baseUrl' => '/cake/index.php'
+		));
+
+		$request = new CakeRequest();
+		$this->assertEqual($request->base, '/cake/index.php');
+		$this->assertEqual($request->webroot, '/cake/app/webroot/');
+		$this->assertEqual($request->url, 'posts/index');
+	}
+
+/**
  * testBaseUrlAndWebrootWithBaseUrl method
  *
  * @return void
@@ -767,27 +800,4 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEqual($request->webroot, '/dbhauser/app/webroot/');
 	}
 
-/**
- * testBaseUrlAndWebrootWithBase method
- *
- * 
- * @return void
- */
-	public function testBaseUrlAndWebrootWithBase() {
-		$request = new CakeRequest();
-		$result = $request->base;
-
-		$expected = '/app';
-		$this->assertEqual($expected, $result);
-
-		$expectedWebroot = '/app/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
-
-		Configure::write('App.dir', 'testbed');
-		$request = new CakeRequest();
-		$request->base = '/cake/testbed/webroot';
-
-		$this->assertEqual($request->base, '/cake/testbed/webroot');
-		$this->assertEqual($request->webroot, '/cake/testbed/webroot/');
-	}
 }

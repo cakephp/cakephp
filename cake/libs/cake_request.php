@@ -174,6 +174,7 @@ class CakeRequest implements ArrayAccess {
 				break;
 			}
 		}
+
 		$base = preg_replace('/^\//', '', '' . Configure::read('App.baseUrl'));
 
 		if ($base) {
