@@ -97,9 +97,9 @@ class CakeRequest implements ArrayAccess {
  * @return void
  */
 	public function __construct($url = null, $additionalParams = array()) {
-		$this->base = $this->baseUrl();
+		$this->base = $this->_base();
 		if (empty($url)) {
-			$url = $this->getUrl();
+			$url = $this->_url();
 		}
 		$this->url = $url;
 		if (isset($_POST)) {
@@ -211,7 +211,7 @@ class CakeRequest implements ArrayAccess {
  * @param string $base Base path
  * @return string URL
  */
-	public function getUrl($uri = null, $base = null) {
+	public function _url($uri = null, $base = null) {
 		if (empty($_GET['url'])) {
 			if ($uri == null) {
 				$uri = $this->uri();
@@ -258,7 +258,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @return string Base URL
  */
-	public function baseUrl() {
+	public function _base() {
 		$dir = $webroot = null;
 		$config = Configure::read('App');
 		extract($config);

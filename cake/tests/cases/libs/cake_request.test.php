@@ -626,73 +626,59 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testBaseUrlAndWebrootWithModRewrite() {
-		$request = new CakeRequest();
-
-		$request->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/1.2.x.x/app/webroot/index.php';
-		$result = $request->baseUrl();
-		$expected = '/1.2.x.x';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/1.2.x.x/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
 
-		$request->base = false;
+		$request = new CakeRequest();
+		$this->assertEqual($request->base, '/1.2.x.x');
+		$this->assertEqual($request->webroot, '/1.2.x.x/');
+
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/app/webroot';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/index.php';
-		$result = $request->baseUrl();
-		$expected = '';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$request = new CakeRequest();
 
-		$request->base = false;
+		$this->assertEqual($request->base, '');
+		$this->assertEqual($request->webroot, '/');
+
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/test/';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/1.2.x.x/test/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/webroot/index.php';
-		$result = $request->baseUrl();
-		$expected = '';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$request = new CakeRequest();
 
-		$request->base = false;
+		$this->assertEqual('', $request->base);
+		$this->assertEqual('/', $request->webroot);
+
+
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
 		$_SERVER['SCRIPT_FILENAME'] = '/some/apps/where/app/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/some/apps/where/app/webroot/index.php';
-		$result = $request->baseUrl();
-		$expected = '/some/apps/where';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/some/apps/where/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$request = new CakeRequest();
 
+		$this->assertEqual($request->base, '/some/apps/where');
+		$this->assertEqual($request->webroot, '/some/apps/where/');
 
 		Configure::write('App.dir', 'auth');
 
-		$request->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
 		$_SERVER['SCRIPT_FILENAME'] = '/cake/repo/branches/demos/auth/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
 
-		$result = $request->baseUrl();
-		$expected = '/demos/auth';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/demos/auth/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$request = new CakeRequest();
+
+		$this->assertEqual($request->base, '/demos/auth');
+		$this->assertEqual($request->webroot, '/demos/auth/');
 
 		Configure::write('App.dir', 'code');
 
-		$request->base = false;
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
 		$_SERVER['SCRIPT_FILENAME'] = '/Library/WebServer/Documents/clients/PewterReport/code/webroot/index.php';
 		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
-		$result = $request->baseUrl();
-		$expected = '/clients/PewterReport/code';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/clients/PewterReport/code/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$request = new CakeRequest();
+
+		$this->assertEqual($request->base, '/clients/PewterReport/code');
+		$this->assertEqual($request->webroot, '/clients/PewterReport/code/');
 	}
 
 /**
@@ -709,11 +695,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.base', '/control');
 
 		$request = new CakeRequest();
-		$result = $request->baseUrl();
-		$expected = '/control';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/control/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/control');
+		$this->assertEqual($request->webroot, '/control/');
 
 		Configure::write('App.base', false);
 		Configure::write('App.dir', 'affiliate');
@@ -723,11 +707,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_SERVER['SCRIPT_FILENAME'] = '/var/www/abtravaff/html/newaffiliate/index.php';
 		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
 		$request = new CakeRequest();
-		$result = $request->baseUrl();
-		$expected = '/newaffiliate';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/newaffiliate/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/newaffiliate');
+		$this->assertEqual($request->webroot, '/newaffiliate/');
 	}
 
 /**
@@ -740,61 +722,49 @@ class CakeRequestTestCase extends CakeTestCase {
 		Configure::write('App.baseUrl', '/app/webroot/index.php');
 
 		$request = new CakeRequest();
-		$expected = '/app/webroot/index.php';
-		$this->assertEqual($request->base, $expected);
-		$expectedWebroot = '/app/webroot/';
-		$this->assertEqual($request->webroot, $expectedWebroot);
+		$this->assertEqual($request->base, '/app/webroot/index.php');
+		$this->assertEqual($request->webroot, '/app/webroot/');
 
 		Configure::write('App.baseUrl', '/app/webroot/test.php');
 		$request = new CakeRequest();
-		$expected = '/app/webroot/test.php';
-		$this->assertEqual($request->base, $expected);
-		$expectedWebroot = '/app/webroot/';
-		$this->assertEqual($request->webroot, $expectedWebroot);
+		$this->assertEqual($request->base, '/app/webroot/test.php');
+		$this->assertEqual($request->webroot, '/app/webroot/');
 
 		Configure::write('App.baseUrl', '/app/index.php');
 		$request = new CakeRequest();
-		$expected = '/app/index.php';
-		$this->assertEqual($request->base, $expected);
-		$expectedWebroot = '/app/webroot/';
-		$this->assertEqual($request->webroot, $expectedWebroot);
+		$this->assertEqual($request->base, '/app/index.php');
+		$this->assertEqual($request->webroot, '/app/webroot/');
 
 		Configure::write('App.baseUrl', '/index.php');
 		$request = new CakeRequest();
-		$expected = '/index.php';
-		$this->assertEqual($request->base, $expected);
-		$expectedWebroot = '/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/index.php');
+		$this->assertEqual($request->webroot, '/');
 
 		Configure::write('App.baseUrl', '/CakeBB/app/webroot/index.php');
 		$request = new CakeRequest();
-		$expected = '/CakeBB/app/webroot/index.php';
-		$this->assertEqual($expected, $request->base);
-		$expectedWebroot = '/CakeBB/app/webroot/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+		$this->assertEqual($request->base, '/CakeBB/app/webroot/index.php');
+		$this->assertEqual($request->webroot, '/CakeBB/app/webroot/');
 
 		Configure::write('App.baseUrl', '/CakeBB/app/index.php');
 		$request = new CakeRequest();
-		$expected = '/CakeBB/app/index.php';
-		$this->assertEqual($expected, $request->base);
-		$expectedWebroot = '/CakeBB/app/webroot/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/CakeBB/app/index.php');
+		$this->assertEqual($request->webroot, '/CakeBB/app/webroot/');
 
 		Configure::write('App.baseUrl', '/CakeBB/index.php');
 		$request = new CakeRequest();
-		$expected = '/CakeBB/index.php';
-		$this->assertEqual($expected, $request->base);
-		$expectedWebroot = '/CakeBB/app/webroot/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/CakeBB/index.php');
+		$this->assertEqual($request->webroot, '/CakeBB/app/webroot/');
 
 		Configure::write('App.baseUrl', '/dbhauser/index.php');
 		$_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
 		$_SERVER['SCRIPT_FILENAME'] = '/kunden/homepages/4/d181710652/htdocs/joomla/dbhauser/index.php';
 		$request = new CakeRequest();
-		$expected = '/dbhauser/index.php';
-		$this->assertEqual($expected, $request->base);
-		$expectedWebroot = '/dbhauser/app/webroot/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/dbhauser/index.php');
+		$this->assertEqual($request->webroot, '/dbhauser/app/webroot/');
 	}
 
 /**
@@ -805,26 +775,19 @@ class CakeRequestTestCase extends CakeTestCase {
  */
 	public function testBaseUrlAndWebrootWithBase() {
 		$request = new CakeRequest();
-		$request->base = '/app';
-		$result = $request->baseUrl();
+		$result = $request->base;
+
 		$expected = '/app';
 		$this->assertEqual($expected, $result);
+
 		$expectedWebroot = '/app/';
 		$this->assertEqual($expectedWebroot, $request->webroot);
 
-		$request->base = '';
-		$result = $request->baseUrl();
-		$expected = '';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
-
 		Configure::write('App.dir', 'testbed');
+		$request = new CakeRequest();
 		$request->base = '/cake/testbed/webroot';
-		$result = $request->baseUrl();
-		$expected = '/cake/testbed/webroot';
-		$this->assertEqual($expected, $result);
-		$expectedWebroot = '/cake/testbed/webroot/';
-		$this->assertEqual($expectedWebroot, $request->webroot);
+
+		$this->assertEqual($request->base, '/cake/testbed/webroot');
+		$this->assertEqual($request->webroot, '/cake/testbed/webroot/');
 	}
 }
