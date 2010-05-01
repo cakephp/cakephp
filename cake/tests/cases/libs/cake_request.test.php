@@ -53,6 +53,17 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * Test that querystring args provided in the url string are parsed.
+ *
+ * @return void
+ */
+	function testQueryStringParsingFromInputUrl() {
+		$_GET = array();
+		$request = new CakeRequest('some/path?one=something&two=else');
+		$this->assertEqual($request->query, array('one' => 'something', 'two' => 'else'));
+	}
+
+/**
  * test parsing POST data into the object.
  *
  * @return void
@@ -530,6 +541,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertFalse(isset($request['plugin']));
 		$this->assertNull($request['plugin']);
 		$this->assertNull($request->plugin);
+
+		$request = new CakeRequest('some/path?one=something&two=else');
+		$this->assertTrue(isset($request['url']['one']));
 	}
 
 /**
@@ -577,49 +591,6 @@ class CakeRequestTestCase extends CakeTestCase {
  */
 	function _detectCallback($request) {
 		return $request->return == true;
-	}
-
-/**
- * testGetUrl method
- *
- * @return void
- */
-	public function XXtestGetUrl() {
-		$request = new CakeRequest();
-		$request->base = '/app/webroot/index.php';
-		$uri = '/app/webroot/index.php/posts/add';
-		unset($_GET['url']);
-
-		$result = $request->getUrl($uri);
-		$expected = 'posts/add';
-		$this->assertEqual($expected, $result);
-
-		Configure::write('App.baseUrl', '/app/webroot/index.php');
-
-		$uri = '/posts/add';
-		$result = $request->getUrl($uri);
-		$expected = 'posts/add';
-		$this->assertEqual($expected, $result);
-
-		$_GET['url'] = array();
-		Configure::write('App.base', '/control');
-		$request = new CakeRequest();
-		unset($_GET['url']);
-
-		$request->baseUrl();
-		$uri = '/control/students/browse';
-		$result = $request->getUrl($uri);
-		$expected = 'students/browse';
-		$this->assertEqual($expected, $result);
-
-		$request = new CakeRequest();
-		$_GET['url'] = array();
-
-		$request->base = '';
-		$uri = '/?/home';
-		$result = $request->getUrl($uri);
-		$expected = '?/home';
-		$this->assertEqual($expected, $result);
 	}
 
 /**

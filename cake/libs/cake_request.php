@@ -109,12 +109,9 @@ class CakeRequest implements ArrayAccess {
 			$url = $this->_url();
 		}
 		$this->url = $url;
-		if (isset($_POST)) {
-			$this->_processPost();
-		}
-		if (isset($_GET)) {
-			$this->_processGet();
-		}
+
+		$this->_processPost();
+		$this->_processGet();
 		$this->_processFiles();
 
 		if (!empty($additionalParams)) {
@@ -157,14 +154,19 @@ class CakeRequest implements ArrayAccess {
  */
 	protected function _processGet() {
 		if (ini_get('magic_quotes_gpc') === '1') {
-			$url = stripslashes_deep($_GET);
+			$query = stripslashes_deep($_GET);
 		} else {
-			$url = $_GET;
+			$query = $_GET;
+		}
+		if (strpos($this->url, '?') !== false) {
+			list(, $querystr) = explode('?', $this->url);
+			parse_str($querystr, $queryArgs);
+			$query += $queryArgs;	
 		}
 		if (isset($this->params['url'])) {
-			$url = array_merge($this->params['url'], $url);
+			$query = array_merge($this->params['url'], $query);
 		}
-		$this->query = $url;
+		$this->query = $query;
 	}
 
 /**
@@ -173,7 +175,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @return string URI
  */
-	public function uri() {
+	protected function _uri() {
 		foreach (array('HTTP_X_REWRITE_URL', 'REQUEST_URI', 'argv') as $var) {
 			if ($uri = env($var)) {
 				if ($var == 'argv') {
@@ -220,7 +222,7 @@ class CakeRequest implements ArrayAccess {
  */
 	protected function _url() {
 		if (empty($_GET['url'])) {
-			$uri = $this->uri();
+			$uri = $this->_uri();
 			$base = $this->base;
 
 			$url = null;
@@ -497,6 +499,16 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Add parameters to the request's parsed parameter set.
+ *
+ * @param array $params Array of parameters to merge in
+ * @return void
+ */
+	public function addParams($params) {
+		$this->params = array_merge($this->params, $params);
+	}
+
+/**
  * Array access read implementation
  *
  * @param string $name Name of the key being accessed.
@@ -505,6 +517,9 @@ class CakeRequest implements ArrayAccess {
 	public function offsetGet($name) {
 		if (isset($this->params[$name])) {
 			return $this->params[$name];
+		}
+		if ($name == 'url') {
+			return $this->query;
 		}
 		return null;
 	}
