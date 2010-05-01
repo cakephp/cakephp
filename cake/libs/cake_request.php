@@ -352,7 +352,7 @@ class CakeRequest implements ArrayAccess {
  *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
  * @return void
  */
-	public function getClientIp($safe = true) {
+	public function clientIp($safe = true) {
 		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
 			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
 		} else {

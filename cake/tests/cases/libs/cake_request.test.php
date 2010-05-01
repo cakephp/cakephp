@@ -376,26 +376,26 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
- * test the getClientIp method.
+ * test the clientIp method.
  *
  * @return void
  */
-	function testGetClientIp() {
+	function testclientIp() {
 		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
 		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
 		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
 		$request = new CakeRequest('some/path');
-		$this->assertEqual($request->getClientIP(false), '192.168.1.5');
-		$this->assertEqual($request->getClientIP(), '192.168.1.2');
+		$this->assertEqual($request->clientIp(false), '192.168.1.5');
+		$this->assertEqual($request->clientIp(), '192.168.1.2');
 
 		unset($_SERVER['HTTP_X_FORWARDED_FOR']);
-		$this->assertEqual($request->getClientIP(), '192.168.1.2');
+		$this->assertEqual($request->clientIp(), '192.168.1.2');
 
 		unset($_SERVER['HTTP_CLIENT_IP']);
-		$this->assertEqual($request->getClientIP(), '192.168.1.3');
+		$this->assertEqual($request->clientIp(), '192.168.1.3');
 
 		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
-		$this->assertEqual($request->getClientIP(), '10.0.1.2');
+		$this->assertEqual($request->clientIp(), '10.0.1.2');
 	}
 
 /**
