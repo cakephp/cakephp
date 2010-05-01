@@ -486,8 +486,7 @@ class Router {
 			$out['url']['ext'] = $ext;
 		}
 
-		$request->params = array_merge($request->params, $out);
-
+		$request->addParams($out);
 		return $request;
 	}
 
