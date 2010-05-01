@@ -66,6 +66,13 @@ class CakeRequest implements ArrayAccess {
 	public $webroot = '/';
 
 /**
+ * The full address to the current request
+ *
+ * @var string
+ */
+	public $here = null;
+
+/**
  * The built in detectors used with `is()` can be modified with `addDetector()`.
  *
  * There are several ways to specify a detector, see CakeRequest::addDetector() for the 
@@ -113,6 +120,7 @@ class CakeRequest implements ArrayAccess {
 		if (!empty($additionalParams)) {
 			$this->params = array_merge($this->params, $additionalParams);
 		}
+		$this->here = $this->base . '/' . $this->url;
 	}
 
 /**

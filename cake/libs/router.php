@@ -420,32 +420,33 @@ class Router {
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
  */
-	public static function parse($url) {
+	public static function parse($request) {
+
 		$self =& Router::getInstance();
 		if (!$self->__defaultsMapped && $self->__connectDefaults) {
 			$self->__connectDefaultRoutes();
 		}
 		$out = array(
 			'pass' => array(),
-			'named' => array(),
+			'named' => array()
 		);
+
 		$r = $ext = null;
 
-		if (ini_get('magic_quotes_gpc') === '1') {
-			$url = stripslashes_deep($url);
+		if ($request->url && strpos($request->url, '/') !== 0) {
+			$request->url = '/' . $request->url;
 		}
 
-		if ($url && strpos($url, '/') !== 0) {
-			$url = '/' . $url;
+		if (strpos($request->url, '?') !== false) {
+			$request->url = substr($request->url, 0, strpos($request->url, '?'));
 		}
-		if (strpos($url, '?') !== false) {
-			$url = substr($url, 0, strpos($url, '?'));
-		}
-		extract($self->__parseExtension($url));
+
+		extract($self->__parseExtension($request->url));
 
 		for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
 			$route =& $self->routes[$i];
-			if (($r = $route->parse($url)) !== false) {
+
+			if (($r = $route->parse($request->url)) !== false) {
 				$self->__currentRoute[] =& $route;
 
 				$params = $route->options;
@@ -484,7 +485,10 @@ class Router {
 		if (!empty($ext) && !isset($out['url']['ext'])) {
 			$out['url']['ext'] = $ext;
 		}
-		return $out;
+
+		$request->params = $out;
+
+		return $request;
 	}
 
 /**
