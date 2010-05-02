@@ -242,10 +242,11 @@ class Dispatcher extends Object {
 		extract($namedExpressions);
 		include CONFIGS . 'routes.php';
 
-		$request = Router::parse($request);
+		$params = Router::parse($request->url);
+		$request->addParams($params);
 
 		if (!empty($additionalParams)) {
-			$request->params = array_merge($request->params, $additionalParams);
+			$request->addParams($additionalParams);
 		}
 		return $request;
 	}

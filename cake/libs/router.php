@@ -414,13 +414,12 @@ class Router {
 	}
 
 /**
- * Parses given URL and returns an array of controller, action and parameters
- * taken from that URL.
+ * Parses given URL string.  Returns 'routing' parametets for that url.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
  */
-	public static function parse($request) {
+	public static function parse($url) {
 
 		$self =& Router::getInstance();
 		if (!$self->__defaultsMapped && $self->__connectDefaults) {
@@ -433,9 +432,6 @@ class Router {
 
 		$r = $ext = null;
 
-		// add a leading / and split out the query string.
-		// seems like this could be done in CakeRequest
-		$url = $request->url;
 		if ($url && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
@@ -487,9 +483,7 @@ class Router {
 		if (!empty($ext) && !isset($out['url']['ext'])) {
 			$out['url']['ext'] = $ext;
 		}
-
-		$request->addParams($out);
-		return $request;
+		return $out;
 	}
 
 /**
