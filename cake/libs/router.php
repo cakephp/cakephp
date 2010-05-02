@@ -594,20 +594,23 @@ class Router {
  * @param array $params Parameters and path information
  * @return void
  */
-	public static function setRequestInfo($params) {
-		$self =& Router::getInstance();
-		$defaults = array('plugin' => null, 'controller' => null, 'action' => null);
-		$params[0] = array_merge($defaults, (array)$params[0]);
-		$params[1] = array_merge($defaults, (array)$params[1]);
-		list($self->__params[], $self->__paths[]) = $params;
+	public static function setRequestInfo(CakeRequest $request) {
+		$self = Router::getInstance();
+		$self->__params[] = $request;
+	}
 
-		if (count($self->__paths)) {
-			if (isset($self->__paths[0]['namedArgs'])) {
-				foreach ($self->__paths[0]['namedArgs'] as $arg => $value) {
-					$self->named['rules'][$arg] = true;
-				}
-			}
+/**
+ * Get the either the current request object, or the first one.
+ *
+ * @param boolean $current Whether you want the request from the top of the stack or the first one.
+ * @return CakeRequest or null.
+ */
+	public static function getRequest($current = false) {
+		$self = Router::getInstance();
+		if ($current) {
+			return $self->__params[count($self->__params) - 1];
 		}
+		return isset($self->__params[0]) ? $self->__params[0] : null;
 	}
 
 /**
@@ -617,7 +620,7 @@ class Router {
  * @return array Parameter information
  */
 	public static function getParams($current = false) {
-		$self =& Router::getInstance();
+		$self = Router::getInstance();
 		if ($current) {
 			return $self->__params[count($self->__params) - 1];
 		}
@@ -649,14 +652,14 @@ class Router {
  * @return array
  */
 	public static function getPaths($current = false) {
-		$self =& Router::getInstance();
+		$self = Router::getInstance();
 		if ($current) {
-			return $self->__paths[count($self->__paths) - 1];
+			return $self->__params[count($self->__params) - 1];
 		}
-		if (!isset($self->__paths[0])) {
+		if (!isset($self->__params[0])) {
 			return array('base' => null);
 		}
-		return $self->__paths[0];
+		return array('base' => $self->__params[0]->base);
 	}
 
 /**
@@ -666,7 +669,7 @@ class Router {
  * @return void
  */
 	public static function reload() {
-		$self =& Router::getInstance();
+		$self = Router::getInstance();
 		foreach (get_class_vars('Router') as $key => $val) {
 			$self->{$key} = $val;
 		}
@@ -681,7 +684,7 @@ class Router {
  * @return boolean Retuns false if no route exists at the position specified by $which.
  */
 	public static function promote($which = null) {
-		$self =& Router::getInstance();
+		$self = Router::getInstance();
 		if ($which === null) {
 			$which = count($self->routes) - 1;
 		}
@@ -724,7 +727,7 @@ class Router {
  * @return string Full translated URL with base path.
  */
 	public static function url($url = null, $full = false) {
-		$self =& Router::getInstance();
+		$self = Router::getInstance();
 		$defaults = $params = array('plugin' => null, 'controller' => null, 'action' => 'index');
 
 		if (is_bool($full)) {
@@ -733,22 +736,18 @@ class Router {
 			extract($full + array('escape' => false, 'full' => false));
 		}
 
-		if (!empty($self->__params)) {
-			if (isset($this) && !isset($this->params['requested'])) {
-				$params = $self->__params[0];
-			} else {
-				$params = end($self->__params);
-			}
-		}
 		$path = array('base' => null);
-
-		if (!empty($self->__paths)) {
+		if (!empty($self->__params)) {
+			// bad hack for detecting if doing a request action.
 			if (isset($this) && !isset($this->params['requested'])) {
-				$path = $self->__paths[0];
+				$request = $self->__params[0];
 			} else {
-				$path = end($self->__paths);
+				$request = end($self->__params);
 			}
+			$params = $request->params;
+			$path = array('base' => $request->base, 'here' => $request->here);
 		}
+
 		$base = $path['base'];
 		$extension = $output = $mapped = $q = $frag = null;
 
@@ -1038,10 +1037,10 @@ class Router {
 		} elseif (preg_match('/^[a-z\-]+:\/\//', $url)) {
 			return $url;
 		}
-		$paths = Router::getPaths();
+		$request = Router::getRequest();
 
-		if (!empty($paths['base']) && stristr($url, $paths['base'])) {
-			$url = preg_replace('/^' . preg_quote($paths['base'], '/') . '/', '', $url, 1);
+		if (!empty($request->base) && stristr($url, $request->base)) {
+			$url = preg_replace('/^' . preg_quote($request->base, '/') . '/', '', $url, 1);
 		}
 		$url = '/' . $url;
 

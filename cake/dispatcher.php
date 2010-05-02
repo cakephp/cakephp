@@ -138,9 +138,7 @@ class Dispatcher extends Object {
 			}
 		}
 
-		Router::setRequestInfo(array(
-			$request->params, array('base' => $request->base, 'here' => $request->here, 'webroot' => $request->webroot)
-		));
+		Router::setRequestInfo($request);
 
 		if ($privateAction) {
 			return $this->cakeError('privateAction', array(array(

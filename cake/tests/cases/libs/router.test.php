@@ -212,13 +212,17 @@ class RouterTest extends CakeTestCase {
 		$result = Router::normalize('/recipe/recipes/add');
 		$this->assertEqual($result, '/recipe/recipes/add');
 
-		Router::setRequestInfo(array(array(), array('base' => '/us')));
+		$request = new CakeRequest();
+		$request->base = '/us';
+		Router::setRequestInfo($request);
 		$result = Router::normalize('/us/users/logout/');
 		$this->assertEqual($result, '/users/logout');
 
 		Router::reload();
 
-		Router::setRequestInfo(array(array(), array('base' => '/cake_12')));
+		$request = new CakeRequest();
+		$request->base = '/cake_12';
+		Router::setRequestInfo($request);
 		$result = Router::normalize('/cake_12/users/logout/');
 		$this->assertEqual($result, '/users/logout');
 
@@ -226,13 +230,17 @@ class RouterTest extends CakeTestCase {
 		$_back = Configure::read('App.baseUrl');
 		Configure::write('App.baseUrl', '/');
 
-		Router::setRequestInfo(array(array(), array('base' => '/')));
+		$request = new CakeRequest();
+		$request->base = '/';
+		Router::setRequestInfo($request);
 		$result = Router::normalize('users/login');
 		$this->assertEqual($result, '/users/login');
 		Configure::write('App.baseUrl', $_back);
 
 		Router::reload();
-		Router::setRequestInfo(array(array(), array('base' => 'beer')));
+		$request = new CakeRequest();
+		$request->base = 'beer';
+		Router::setRequestInfo($request);
 		$result = Router::normalize('beer/admin/beers_tags/add');
 		$this->assertEqual($result, '/admin/beers_tags/add');
 
@@ -249,16 +257,15 @@ class RouterTest extends CakeTestCase {
 	function testUrlGenerationBasic() {
 		extract(Router::getNamedExpressions());
 
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'subscribe',
-				'admin' => true, 'url' => array('url' => '')
-			),
-			array(
-				'base' => '/magazine', 'here' => '/magazine',
-				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'action' => 'index', 'plugin' => null, 'controller' => 'subscribe', 'admin' => true
 		));
+		$request->base = '/magazine';
+		$request->here = '/magazine';
+		$request->webroot = '/magazine/';
+		Router::setRequestInfo($request);
+
 		$result = Router::url();
 		$this->assertEqual('/magazine', $result);
 
@@ -312,13 +319,15 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array('pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'real_controller_name', 'url' => array('url' => '')),
-			array(
-				'base' => '/', 'here' => '/',
-				'webroot' => '/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'action' => 'index', 'plugin' => null, 'controller' => 'real_controller_name'
 		));
+		$request->base = '/';
+		$request->here = '/';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
+
 		Router::connect('short_controller_name/:action/*', array('controller' => 'real_controller_name'));
 		Router::parse('/');
 
@@ -332,13 +341,14 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array('pass' => array(), 'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')),
-			array(
-				'base' => '/', 'here' => '/',
-				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')
 		));
+		$request->base = '/';
+		$request->here = '/';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
 
 		$result = Router::url(array('action' => 'login'));
 		$expected = '/users/login';
@@ -362,16 +372,14 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller',
-				'admin' => false, 'url' => array('url' => array())
-			),
-			array(
-				'base' => '/', 'here' => '/',
-				'webroot' => '/', 'passedArgs' => array(), 'namedArgs' => array(),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'action' => 'index', 'plugin' => 'myplugin', 'controller' => 'mycontroller', 'admin' => false
 		));
+		$request->base = '/';
+		$request->here = '/';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'myothercontroller'));
 		$expected = '/myothercontroller';
@@ -507,26 +515,33 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/tests', array('controller' => 'tests', 'action' => 'index'));
 		Router::parseExtensions('rss');
 
-		Router::setRequestInfo(array(
-			array('pass' => array(), 'named' => array(), 'controller' => 'registrations', 'action' => 'admin_index', 'plugin' => '', 'prefix' => 'admin', 'admin' => true, 'url' => array('ext' => 'html', 'url' => 'admin/registrations/index'), 'form' => array()),
-			array('base' => '', 'here' => '/admin/registrations/index', 'webroot' => '/')
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'registrations', 'action' => 'admin_index', 
+			'plugin' => null, 'prefix' => 'admin', 'admin' => true, 
+			'url' => array('ext' => 'html', 'url' => 'admin/registrations/index')
 		));
+		$request->base = '';
+		$request->here = '/admin/registrations/index';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
 
 		$result = Router::url(array('page' => 2));
 		$expected = '/admin/registrations/index/page:2';
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscriptions',
-				'admin' => true, 'url' => array('url' => 'admin/subscriptions/index/page:2'),
-			),
-			array(
-				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/index/page:2',
-				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'controller' => 'subscriptions', 'action' => 'admin_index', 
+			'plugin' => null, 'admin' => true, 
+			'url' => array('url' => 'admin/subscriptions/index/page:2')
 		));
+		$request->base = '/magazine';
+		$request->here = '/magazine/admin/subscriptions/index/page:2';
+		$request->webroot = '/magazine/';
+		Router::setRequestInfo($request);
+
 		Router::parse('/');
 
 		$result = Router::url(array('page' => 3));
@@ -536,16 +551,16 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
-				'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1')
-			),
-			array(
-				'base' => '/magazine', 'here' => '/magazine/admin/subscriptions/edit/1',
-				'webroot' => '/magazine/', 'passedArgs' => array('page' => 2), 'namedArgs' => array('page' => 2),
-			)
+
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'action' => 'admin_index', 'plugin' => null, 'controller' => 'subscribe',
+			'admin' => true, 'url' => array('url' => 'admin/subscriptions/edit/1')
 		));
+		$request->base = '/magazine';
+		$request->here = '/magazine/admin/subscriptions/edit/1';
+		$request->webroot = '/magazine/';
+		Router::setRequestInfo($request);
 
 		$result = Router::url(array('action' => 'edit', 1));
 		$expected = '/magazine/admin/subscriptions/edit/1';
@@ -557,13 +572,16 @@ class RouterTest extends CakeTestCase {
 
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array('pass' => array(), 'admin' => true, 'action' => 'index', 'plugin' => null, 'controller' => 'users', 'url' => array('url' => 'users')),
-			array(
-				'base' => '/', 'here' => '/',
-				'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array(),
-			)
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'admin' => true, 'action' => 'index', 'plugin' => null, 'controller' => 'users', 
+			'url' => array('url' => 'users')
 		));
+		$request->base = '/';
+		$request->here = '/';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
+
 		Router::connect('/page/*', array('controller' => 'pages', 'action' => 'view', 'admin' => true, 'prefix' => 'admin'));
 		Router::parse('/');
 
@@ -573,10 +591,15 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'prefix' => 'admin', 'admin' => true,
+			'url' => array('url' => 'admin/pages/add')
 		));
+		$request->base = '';
+		$request->here = '/admin/pages/add';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
 		Router::parse('/');
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false));
@@ -586,10 +609,15 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
+		$request = new CakeRequest();
+		$request->addParams(array(
+			'plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'prefix' => 'admin', 'admin' => true,
+			'url' => array('url' => 'admin/pages/add')
 		));
+		$request->base = '';
+		$request->here = '/admin/pages/add';
+		$request->webroot = '/';
+		Router::setRequestInfo($request);
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false));
 		$expected = '/admin/pages/add';
@@ -598,10 +626,16 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/admin/:controller/:action/:id', array('admin' => true), array('id' => '[0-9]+'));
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284')),
-			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 
+				'prefix' => 'admin', 'admin' => true,
+				'url' => array('url' => 'admin/pages/edit/284')
+			))->addPaths(array(
+				'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/'
+			))
+		);
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'edit', 'id' => '284'));
 		$expected = '/admin/pages/edit/284';
@@ -610,10 +644,16 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array ('plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/add')),
-			array ('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/')
-		));
+
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'pages', 'action' => 'admin_add', 'prefix' => 'admin', 
+				'admin' => true, 'url' => array('url' => 'admin/pages/add')
+			))->addPaths(array(
+				'base' => '', 'here' => '/admin/pages/add', 'webroot' => '/'
+			))
+		);
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'add', 'id' => false));
 		$expected = '/admin/pages/add';
@@ -622,10 +662,16 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'pass' => array('284'), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/pages/edit/284')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/')
-		));
+
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'pages', 'action' => 'admin_edit', 'prefix' => 'admin', 
+				'admin' => true, 'pass' => array('284'), 'url' => array('url' => 'admin/pages/edit/284')
+			))->addPaths(array(
+				'base' => '', 'here' => '/admin/pages/edit/284', 'webroot' => '/'
+			))
+		);
 
 		$result = Router::url(array('plugin' => null, 'controller' => 'pages', 'action' => 'edit', 284));
 		$expected = '/admin/pages/edit/284';
@@ -635,10 +681,14 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/admin/posts/*', array('controller' => 'posts', 'action' => 'index', 'admin' => true));
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array('pass' => array(), 'action' => 'admin_index', 'plugin' => null, 'controller' => 'posts', 'prefix' => 'admin', 'admin' => true, 'url' => array('url' => 'admin/posts')),
-			array('base' => '', 'here' => '/admin/posts', 'webroot' => '/')
-		));
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'posts', 'action' => 'admin_index', 'prefix' => 'admin', 
+				'admin' => true, 'pass' => array('284'), 'url' => array('url' => 'admin/posts')
+			))->addPaths(array(
+				'base' => '', 'here' => '/admin/posts', 'webroot' => '/'
+			))
+		);
 
 		$result = Router::url(array('all'));
 		$expected = '/admin/posts/all';
@@ -677,31 +727,30 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testUrlGenerationPlugins() {
-		Router::setRequestInfo(array(
-			array(
-				'controller' => 'controller', 'action' => 'index', 'form' => array(),
-				'url' => array(), 'plugin' => 'test'
-			),
-			array(
-				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/',
-				'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array()
-			)
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => 'test', 'controller' => 'controller', 'action' => 'index'
+			))->addPaths(array(
+				'base' => '/base', 'here' => '/clients/sage/portal/donations', 'webroot' => '/base/'
+			))
+		);
 
 		$this->assertEqual(Router::url('read/1'), '/base/test/controller/read/1');
 
 		Router::reload();
 		Router::connect('/:lang/:plugin/:controller/*', array('action' => 'index'));
 
-		Router::setRequestInfo(array(
-			array(
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
 				'lang' => 'en',
-				'plugin' => 'shows', 'controller' => 'shows', 'action' => 'index', 'pass' =>
-					array(), 'form' => array(), 'url' =>
-					array('url' => 'en/shows/')),
-			array('plugin' => NULL, 'controller' => NULL, 'action' => NULL, 'base' => '',
-			'here' => '/en/shows/', 'webroot' => '/')
-		));
+				'plugin' => 'shows', 'controller' => 'shows', 'action' => 'index',
+				'url' => array('url' => 'en/shows/'),
+			))->addPaths(array(
+				'base' => '', 'here' => '/en/shows', 'webroot' => '/'
+			))
+		);
 
 		Router::parse('/en/shows/');
 
@@ -728,8 +777,9 @@ class RouterTest extends CakeTestCase {
 				'prefix' => 'admin'
 			)
 		);
-		Router::setRequestInfo(array(
-			array(
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
 				'pass' => array(),
 				'admin' => true,
 				'prefix' => 'admin',
@@ -737,14 +787,12 @@ class RouterTest extends CakeTestCase {
 				'action' => 'admin_index',
 				'controller' => 'interesting',
 				'url' => array('url' => 'admin/this/interesting/index'),
-			),
-			array(
+			))->addPaths(array(
 				'base' => '',
 				'here' => '/admin/this/interesting/index',
 				'webroot' => '/',
-				'passedArgs' => array(),
-			)
-		));
+			))
+		);
 		$result = Router::url(array('plugin' => null, 'controller' => 'posts', 'action' => 'index'));
 		$this->assertEqual($result, '/admin/posts');
 
@@ -894,10 +942,22 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
 		Router::parse('/en/red/posts/view/5');
 
-		Router::setRequestInfo(array(
-			array('controller' => 'posts', 'action' => 'view', 'lang' => 'en', 'color' => 'red', 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/en/red/posts/view/5', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
-		));
+
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'lang' => 'en',
+				'color' => 'red',
+				'prefix' => 'admin',
+				'plugin' => null,
+				'action' => 'view',
+				'controller' => 'posts',
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/en/red/posts/view/5',
+				'webroot' => '/',
+			))
+		);
 		$expected = '/en/red/posts/view/6';
 		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 6));
 		$this->assertEqual($result, $expected);
@@ -1018,12 +1078,17 @@ class RouterTest extends CakeTestCase {
 		App::objects('plugin', null, false);
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'action',
-				'form' => array(), 'url' => array(), 'plugin' => null, 'prefix' => 'admin'),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(),
-				'argSeparator' => ':', 'namedArgs' => array())
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'admin' => true, 'controller' => 'controller', 'action' => 'action',
+				'plugin' => null, 'prefix' => 'admin'
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/',
+				'webroot' => '/base/',
+			))
+		);
 		Router::parse('/');
 
 		$result = Router::url(array('plugin' => 'test_plugin', 'controller' => 'test_plugin', 'action' => 'index'));
@@ -1032,17 +1097,18 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		Router::parse('/');
-		Router::setRequestInfo(array(
-			array(
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
 				'plugin' => 'test_plugin', 'controller' => 'show_tickets', 'action' => 'admin_edit',
 				'pass' => array('6'), 'prefix' => 'admin', 'admin' => true, 'form' => array(),
 				'url' => array('url' => 'admin/shows/show_tickets/edit/6')
-			),
-			array(
-				'plugin' => null, 'controller' => null, 'action' => null, 'base' => '',
-				'here' => '/admin/shows/show_tickets/edit/6', 'webroot' => '/'
-			)
-		));
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/admin/shows/show_tickets/edit/6',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array(
 			'plugin' => 'test_plugin', 'controller' => 'show_tickets', 'action' => 'edit', 6,
@@ -1216,10 +1282,16 @@ class RouterTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'admin' => true, 'controller' => 'controller', 'action' => 'index', 'plugin' => null
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/',
+				'webroot' => '/base/',
+			))
+		);
 		Router::parse('/');
 
 		$result = Router::url(array('page' => 1, 0 => null, 'sort' => 'controller', 'direction' => 'asc', 'order' => null));
@@ -1227,10 +1299,12 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Router::reload();
-		Router::setRequestInfo(array(
-			array('admin' => true, 'controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array('type'=> 'whatever'), 'argSeparator' => ':', 'namedArgs' => array('type'=> 'whatever'))
+		$request = new CakeRequest('admin/controller/index');
+		$request->addParams(array(
+			'admin' => true, 'controller' => 'controller', 'action' => 'index', 'plugin' => null
 		));
+		$request->base = '/';
+		Router::setRequestInfo($request);
 
 		$result = Router::parse('/admin/controller/index/type:whatever');
 		$result = Router::url(array('type'=> 'new'));
@@ -1320,10 +1394,17 @@ class RouterTest extends CakeTestCase {
 		));
 		Router::parse('/');
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'admin' => false, 'form' => array(), 'url' => array('url' => 'images/index')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index', 
+				'prefix' => null, 'admin' => false,'url' => array('url' => 'images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/images/index',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array('protected' => true));
 		$expected = '/protected/images/index';
@@ -1381,10 +1462,17 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => null, 'protected' => false, 'form' => array(), 'url' => array('url' => 'images/index')),
-			array('base' => '', 'here' => '/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index', 
+				'prefix' => null, 'protected' => false, 'url' => array('url' => 'images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/images/index',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array('controller' => 'images', 'action' => 'add'));
 		$expected = '/images/add';
