@@ -1063,7 +1063,7 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/index/29?print=true&refer=menu';
-		$this->Controller->params = Dispatcher::parseParams($url);
+		$this->Controller->params = Dispatcher::parseParams(new CakeRequest($url));
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -1079,7 +1079,7 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/index/29?print=true&refer=menu';
-		$this->Controller->params = Dispatcher::parseParams($url);
+		$this->Controller->params = Dispatcher::parseParams(new CakeRequest($url));
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
