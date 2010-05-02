@@ -1412,8 +1412,7 @@ class DispatcherTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
 		), true);
 
-		$dispatcher =& new TestDispatcher();
-		$dispatcher->base = false;
+		$dispatcher = new TestDispatcher();
 
 		$url = '/';
 
@@ -1434,7 +1433,6 @@ class DispatcherTest extends CakeTestCase {
 		$filename = $this->__cachePath($dispatcher->here);
 		unlink($filename);
 
-		$dispatcher->base = false;
 		$url = 'test_cached_pages/index';
 
 		ob_start();
@@ -1524,6 +1522,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$filename = $this->__cachePath($dispatcher->here);
 		$this->assertTrue(file_exists($filename));
+
 		unlink($filename);
 	}
 
@@ -1580,64 +1579,55 @@ class DispatcherTest extends CakeTestCase {
 		Router::mapResources('Posts');
 
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$dispatcher =& new Dispatcher();
-		$dispatcher->base = false;
+		$dispatcher = new Dispatcher();
 
-		$result = $dispatcher->parseParams('/posts');
-		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST', 'form' => array(), 'url' => array());
-		$this->assertEqual($result, $expected);
+		$result = $dispatcher->parseParams(new CakeRequest('/posts'));
+		$expected = array('pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add', '[method]' => 'POST', 'form' => array());
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
+		}
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
 
-		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
-		$this->assertEqual($result, $expected);
+		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array());
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
+		}
 
 		unset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
 		$_SERVER['REQUEST_METHOD'] = 'GET';
 
-		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array(), 'url' => array());
-		$this->assertEqual($result, $expected);
+		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '[method]' => 'GET', 'form' => array());
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
+		}
 
 		$_POST['_method'] = 'PUT';
 
-		$result = $dispatcher->parseParams('/posts/5');
-		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array(), 'url' => array());
-		$this->assertEqual($result, $expected);
+		$result = $dispatcher->parseParams(new CakeRequest('/posts/5'));
+		$expected = array('pass' => array('5'), 'named' => array(), 'id' => '5', 'plugin' => null, 'controller' => 'posts', 'action' => 'edit', '[method]' => 'PUT', 'form' => array());
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
+		}
 
 		$_POST['_method'] = 'POST';
 		$_POST['data'] = array('Post' => array('title' => 'New Post'));
 		$_POST['extra'] = 'data';
 		$_SERVER = array();
 
-		$result = $dispatcher->parseParams('/posts');
+		$result = $dispatcher->parseParams(new CakeRequest('/posts'));
 		$expected = array(
 			'pass' => array(), 'named' => array(), 'plugin' => null, 'controller' => 'posts', 'action' => 'add',
 			'[method]' => 'POST', 'form' => array('extra' => 'data'), 'data' => array('Post' => array('title' => 'New Post')),
-			'url' => array()
 		);
-		$this->assertEqual($result, $expected);
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch for ' . $key . ' %s');
+		}
 
 		unset($_POST['_method']);
-	}
-
-/**
- * Tests that invalid characters cannot be injected into the application base path.
- *
- * @return void
- */
-	public function testBasePathInjection() {
-		$self = $_SERVER['PHP_SELF'];
-		$_SERVER['PHP_SELF'] = urldecode(
-			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
-		);
-
-		$dispatcher =& new Dispatcher();
-		$result = $dispatcher->baseUrl();
-		$expected = '/index.php/h1 onclick=alert(xss);heya';
-		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -1650,18 +1640,16 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		Router::connect('/myalias/:action/*', array('controller' => 'my_controller', 'action' => null));
 
 		$Dispatcher->base = false;
 		$url = 'myalias/'; //Fails
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$result = $Dispatcher->parseParams($url);
+		$result = $Dispatcher->parseParams(new CakeRequest($url));
 		$this->assertEqual('index', $result['action']);
 
 		$url = 'myalias'; //Passes
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$result = $Dispatcher->parseParams($url);
+		$result = $Dispatcher->parseParams(new CakeRequest($url));
 		$this->assertEqual('index', $result['action']);
 	}
 

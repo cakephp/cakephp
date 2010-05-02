@@ -1090,6 +1090,22 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that XSS can't be performed against the base path.
+ *
+ * @return void
+ */
+	function testBasePathInjection() {
+		$self = $_SERVER['PHP_SELF'];
+		$_SERVER['PHP_SELF'] = urldecode(
+			"/index.php/%22%3E%3Ch1%20onclick=%22alert('xss');%22%3Eheya%3C/h1%3E"
+		);
+
+		$request = new CakeRequest();
+		$expected = '/index.php/h1 onclick=alert(xss);heya';
+		$this->assertEqual($request->base, $expected);
+	}
+
+/**
  * backupEnvironment method
  *
  * @return void
