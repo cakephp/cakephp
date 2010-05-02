@@ -503,10 +503,26 @@ class CakeRequest implements ArrayAccess {
  * Add parameters to the request's parsed parameter set.
  *
  * @param array $params Array of parameters to merge in
- * @return void
+ * @return The current object, you can chain this method.
  */
 	public function addParams($params) {
 		$this->params = array_merge($this->params, $params);
+		return $this;
+	}
+
+/**
+ * Add paths to the requests' paths vars
+ *
+ * @param array $paths Array of paths to merge in
+ * @return the current object, you can chain this method.
+ */
+	public function addPaths($paths) {
+		foreach (array('webroot', 'here', 'base') as $element) {
+			if (isset($paths[$element])) {
+				$this->{$element} = $paths[$element];
+			}
+		}
+		return $this;
 	}
 
 /**

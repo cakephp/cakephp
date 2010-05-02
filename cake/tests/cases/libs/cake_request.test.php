@@ -72,12 +72,35 @@ class CakeRequestTestCase extends CakeTestCase {
 	function testAddParams() {
 		$request = new CakeRequest('some/path');
 		$request->params = array('controller' => 'posts', 'action' => 'view');
-		$request->addParams(array('plugin' => null, 'action' => 'index'));
+		$result = $request->addParams(array('plugin' => null, 'action' => 'index'));
+
+		$this->assertIdentical($result, $request, 'Method did not return itself. %s');
 
 		$this->assertEqual($request->controller, 'posts');
 		$this->assertEqual($request->action, 'index');
 		$this->assertEqual($request->plugin, null);
 	}
+
+/**
+ * test splicing in paths.
+ *
+ * @return void
+ */
+	function testAddPaths() {
+		$request = new CakeRequest('some/path');
+		$request->webroot = '/some/path/going/here/';
+		$result = $request->addPaths(array(
+			'random' => '/something', 'webroot' => '/', 'here' => '/', 'base' => '/base_dir'
+		));
+
+		$this->assertIdentical($result, $request, 'Method did not return itself. %s');
+
+		$this->assertEqual($request->webroot, '/');
+		$this->assertEqual($request->base, '/base_dir');
+		$this->assertEqual($request->here, '/');
+		$this->assertFalse(isset($request->random));
+	}
+
 
 /**
  * test parsing POST data into the object.
