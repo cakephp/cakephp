@@ -2156,6 +2156,17 @@ class RouterTest extends CakeTestCase {
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
+		
+		$request = new CakeRequest('/eng/posts/view/1');
+		$request->addParams(array(
+			'lang' => 'eng',
+			'controller' => 'posts',
+			'action' => 'view',
+			'pass' => array(1),
+			'named' => array(),
+			'url' => array('url' => 'eng/posts/view/1')
+		));
+		$result = Router::reverse($request);
 	}
 
 /**

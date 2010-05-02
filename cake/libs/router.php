@@ -1012,10 +1012,13 @@ class Router {
  * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
  * Those keys need to be specially handled in order to reverse a params array into a string url.
  *
- * @param array $param The params array that needs to be reversed.
+ * @param mixed $param The params array or CakeRequest object that needs to be reversed.
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params) {
+		if ($params instanceof CakeRequest) {
+			$params = $params->params;
+		}
 		$pass = $params['pass'];
 		$named = $params['named'];
 		$url = $params['url'];
