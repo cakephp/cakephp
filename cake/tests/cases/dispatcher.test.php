@@ -1434,6 +1434,9 @@ class DispatcherTest extends CakeTestCase {
 		unlink($filename);
 
 		$url = 'test_cached_pages/index';
+		$_POST = array(
+			'slasher' => "Up in your's grill \ '"
+		);
 
 		ob_start();
 		$dispatcher->dispatch($url);
