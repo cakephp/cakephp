@@ -443,6 +443,26 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadModel method
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadModel() {
+		$Controller =& new Controller();
+
+		$this->assertFalse(isset($Controller->ControllerPost));
+
+		$result = $Controller->loadModel('ControllerPost');
+		$this->assertTrue($result);
+		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
+		$this->assertTrue(in_array('ControllerPost', $Controller->modelNames));
+
+		ClassRegistry::flush();
+		unset($Controller);
+	}
+
+/**
  * testConstructClasses method
  *
  * @access public
