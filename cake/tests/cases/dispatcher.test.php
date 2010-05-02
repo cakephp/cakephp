@@ -69,6 +69,7 @@ class TestDispatcher extends Dispatcher {
  * @return void
  */
 	protected function _stop() {
+		$this->stopped = true;
 		return true;
 	}
 }
@@ -1388,10 +1389,46 @@ class DispatcherTest extends CakeTestCase {
 
 		ob_start();
 		$Dispatcher->asset('ccss/cake.generic.css');
+		$result = ob_get_clean();
+		$this->assertTrue($Dispatcher->stopped);
 
 		header('HTTP/1.1 200 Ok');
 	}
 
+/**
+ * test that asset filters work for theme and plugin assets	
+ *
+ * @return void
+ */
+	function testAssetFilterForThemeAndPlugins() {
+		$Dispatcher =& new TestDispatcher();
+		Configure::write('Asset.filter', array(
+			'js' => '',
+			'css' => ''
+		));
+		$Dispatcher->asset('theme/test_theme/ccss/cake.generic.css');
+		$this->assertTrue($Dispatcher->stopped);
+
+		$Dispatcher->stopped = false;
+		$Dispatcher->asset('theme/test_theme/cjs/debug_kit.js');
+		$this->assertTrue($Dispatcher->stopped);
+
+		$Dispatcher->stopped = false;
+		$Dispatcher->asset('test_plugin/ccss/cake.generic.css');
+		$this->assertTrue($Dispatcher->stopped);
+
+		$Dispatcher->stopped = false;
+		$Dispatcher->asset('test_plugin/cjs/debug_kit.js');
+		$this->assertTrue($Dispatcher->stopped);
+
+		$Dispatcher->stopped = false;
+		$Dispatcher->asset('css/ccss/debug_kit.css');
+		$this->assertFalse($Dispatcher->stopped);
+		
+		$Dispatcher->stopped = false;
+		$Dispatcher->asset('js/cjs/debug_kit.js');
+		$this->assertFalse($Dispatcher->stopped);
+	}
 /**
  * testFullPageCachingDispatch method
  *

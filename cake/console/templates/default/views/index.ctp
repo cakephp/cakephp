@@ -71,22 +71,22 @@
 	</p>
 
 	<div class="paging">
-	<?php echo "\t<?php echo \$this->Paginator->prev('<< '.__('previous'), array(), null, array('class'=>'disabled'));?>\n";?>
+	<?php echo "\t<?php echo \$this->Paginator->prev('<< ' . __('previous'), array(), null, array('class'=>'disabled'));?>\n";?>
 	 | <?php echo "\t<?php echo \$this->Paginator->numbers();?>\n"?> |
-	<?php echo "\t<?php echo \$this->Paginator->next(__('next').' >>', array(), null, array('class' => 'disabled'));?>\n";?>
+	<?php echo "\t<?php echo \$this->Paginator->next(__('next') . ' >>', array(), null, array('class' => 'disabled'));?>\n";?>
 	</div>
 </div>
 <div class="actions">
 	<h3><?php echo "<?php echo __('Actions'); ?>"; ?></h3>
 	<ul>
-		<li><?php echo "<?php echo \$this->Html->link(sprintf(__('New %s'), __('{$singularHumanName}')), array('action' => 'add')); ?>";?></li>
+		<li><?php echo "<?php echo \$this->Html->link(__('New " . $singularHumanName . "'), array('action' => 'add')); ?>";?></li>
 <?php
 	$done = array();
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('List %s'), __('" . Inflector::humanize($details['controller']) . "')), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('New %s'), __('" . Inflector::humanize(Inflector::underscore($alias)) . "')), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}

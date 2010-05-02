@@ -20,6 +20,10 @@
 App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
 App::import('Helper', array('Html', 'Form'));
 
+if (!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', 'http://cakephp.org');
+}
+
 /**
  * TheHtmlTestController class
  *
@@ -155,6 +159,10 @@ class HtmlHelperTest extends CakeTestCase {
 	function testLink() {
 		$result = $this->Html->link('/home');
 		$expected = array('a' => array('href' => '/home'), 'preg:/\/home/', '/a');
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
+		$expected = array('a' => array('href' => FULL_BASE_URL . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
@@ -358,18 +366,18 @@ class HtmlHelperTest extends CakeTestCase {
 		$webroot = $this->Html->webroot;
 		$this->Html->webroot = '/testing/';
 		$result = $this->Html->image('__cake_test_image.gif');
-		
+
 		$this->assertTags($result, array(
 			'img' => array(
 				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
 		$this->Html->webroot = $webroot;
-		
+
 		$dir =& new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$dir->delete();
 	}
-	
+
 /**
  * test theme assets in main webroot path
  *
@@ -383,7 +391,7 @@ class HtmlHelperTest extends CakeTestCase {
 		));
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
-		
+
 		$webroot = $this->Html->webroot;
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
@@ -399,7 +407,7 @@ class HtmlHelperTest extends CakeTestCase {
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		Configure::write('App.www_root', $webRoot);
 	}
 

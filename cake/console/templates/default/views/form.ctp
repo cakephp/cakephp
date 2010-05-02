@@ -20,7 +20,7 @@
 <div class="<?php echo $pluralVar;?> form">
 <?php echo "<?php echo \$this->Form->create('{$modelClass}');?>\n";?>
 	<fieldset>
- 		<legend><?php echo "<?php printf(__('" . Inflector::humanize($action) . " %s'), __('{$singularHumanName}')); ?>";?></legend>
+ 		<legend><?php printf("<?php __('%s %s', true); ?>", Inflector::humanize($action), $singularHumanName); ?></legend>
 <?php
 		echo "\t<?php\n";
 		foreach ($fields as $field) {
@@ -49,14 +49,14 @@
 <?php if (strpos($action, 'add') === false): ?>
 		<li><?php echo "<?php echo \$this->Html->link(__('Delete'), array('action' => 'delete', \$this->Form->value('{$modelClass}.{$primaryKey}')), null, sprintf(__('Are you sure you want to delete # %s?'), \$this->Form->value('{$modelClass}.{$primaryKey}'))); ?>";?></li>
 <?php endif;?>
-		<li><?php echo "<?php echo \$this->Html->link(sprintf(__('List %s'), __('{$pluralHumanName}')), array('action' => 'index'));?>";?></li>
+		<li><?php echo "<?php echo \$this->Html->link(__('List " . $pluralHumanName . "'), array('action' => 'index'));?>";?></li>
 <?php
 		$done = array();
 		foreach ($associations as $type => $data) {
 			foreach ($data as $alias => $details) {
 				if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-					echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('List %s'), __('" . Inflector::humanize($details['controller']) . "')), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-					echo "\t\t<li><?php echo \$this->Html->link(sprintf(__('New %s'), __('" . Inflector::humanize(Inflector::underscore($alias)) . "')), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+					echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
+					echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
 					$done[] = $details['controller'];
 				}
 			}
