@@ -1526,10 +1526,17 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'protected', 'protected' => true, 'form' => array(), 'url' => array('url' => 'protected/images/index')),
-			array('base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index', 'prefix' => 'protected',
+				'protected' => true, 'url' => array('url' => 'protected/images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/protected/images/index',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array('controller' => 'images', 'action' => 'add'));
 		$expected = '/protected/images/add';
@@ -1550,19 +1557,33 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'protected', 'protected' => true, 'form' => array(), 'url' => array('url' => 'protected/images/index')),
-			array('base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index', 'prefix' => 'protected',
+				'protected' => true, 'url' => array('url' => 'protected/images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/protected/images/index',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'admin' => true));
 		$expected = '/admin/images/add';
 		$this->assertEqual($result, $expected);
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'prefix' => 'admin', 'admin' => true, 'form' => array(), 'url' => array('url' => 'admin/images/index')),
-			array('base' => '', 'here' => '/admin/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index', 'prefix' => 'admin',
+				'admin' => true, 'url' => array('url' => 'admin/images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/admin/images/index',
+				'webroot' => '/',
+			))
+		);
 		$result = Router::url(array('controller' => 'images', 'action' => 'add', 'protected' => true));
 		$expected = '/protected/images/add';
 		$this->assertEqual($result, $expected);
@@ -1575,10 +1596,17 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testRemoveBase() {
-		Router::setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'bare' => 0, 'plugin' => null),
-			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'controller', 'action' => 'index',
+				'bare' => 0, 'url' => array('url' => 'protected/images/index')
+			))->addPaths(array(
+				'base' => '/base',
+				'here' => '/',
+				'webroot' => '/base/',
+			))
+		);
 
 		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action'));
 		$expected = '/base/my_controller/my_action';
@@ -1688,10 +1716,16 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/admin/:controller/:action', $adminParams);
 		Router::connect('/admin/:controller/:action/*', $adminParams);
 
-		Router::setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/base', 'here' => '/', 'webroot' => '/base/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'controller', 'action' => 'index'
+			))->addPaths(array(
+				'base' => '/base',
+				'here' => '/',
+				'webroot' => '/base/',
+			))
+		);
 
 		$result = Router::parse('/admin/posts/');
 		$expected = array('pass' => array(), 'named' => array(), 'prefix' => 'admin', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'admin' => true);
@@ -1715,10 +1749,17 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/members/:controller/:action', $prefixParams);
 		Router::connect('/members/:controller/:action/*', $prefixParams);
 
-		Router::setRequestInfo(array(
-			array('controller' => 'controller', 'action' => 'index', 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/base', 'here' => '/', 'webroot' => '/', 'passedArgs' => array(), 'argSeparator' => ':', 'namedArgs' => array())
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'controller', 'action' => 'index',
+				'bare' => 0
+			))->addPaths(array(
+				'base' => '/base',
+				'here' => '/',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::parse('/members/posts/index');
 		$expected = array('pass' => array(), 'named' => array(), 'prefix' => 'members', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'members' => true);
@@ -1751,10 +1792,17 @@ class RouterTest extends CakeTestCase {
 		$expected = '/company/users/login';
 		$this->assertEqual($result, $expected);
 
-		Router::setRequestInfo(array(
-			array('controller' => 'users', 'action' => 'login', 'company' => true, 'form' => array(), 'url' => array(), 'plugin' => null),
-			array('base' => '/', 'here' => '/', 'webroot' => '/base/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'users', 'action' => 'login',
+				'company' => true
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/',
+				'webroot' => '/base/',
+			))
+		);
 
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'company' => false));
 		$expected = '/login';
@@ -1771,12 +1819,17 @@ class RouterTest extends CakeTestCase {
 			'/admin/login', 
 			array('controller' => 'users', 'action' => 'login', 'prefix' => 'admin', 'admin' => true)
 		);
-		Router::setRequestInfo(array(
-			array('controller' => 'posts', 'action' => 'index', 'admin' => true, 'prefix' => 'admin',
-				'form' => array(), 'url' => array(), 'plugin' => null
-			),
-			array('base' => '/', 'here' => '/', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'posts', 'action' => 'index',
+				'admin' => true, 'prefix' => 'admin'
+			))->addPaths(array(
+				'base' => '/',
+				'here' => '/',
+				'webroot' => '/',
+			))
+		);
 		$result = Router::url(array('controller' => 'users', 'action' => 'login', 'admin' => true));
 		$this->assertEqual($result, '/admin/login');
 
@@ -1814,10 +1867,17 @@ class RouterTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'images', 'action' => 'index', 'pass' => array(), 'named' => array(), 'prefix' => 'protected', 'protected' => true,  'form' => array(), 'url' => array ('url' => 'protected/images/index')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/protected/images/index', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index',
+				'url' => array('url' => 'protected/images/index')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/protected/images/index',
+				'webroot' => '/',
+			))
+		);
 
 		Router::connect('/protected/:controller/:action/*', array(
 			'controller' => 'users',
@@ -1859,10 +1919,17 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/:locale/:controller/:action/*', array(), array('locale' => 'dan|eng'));
 
-		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'test', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array ('url' => 'test/test_action')),
-			array('plugin' => null, 'controller' => null, 'action' => null, 'base' => '', 'here' => '/test/test_action', 'webroot' => '/')
-		));
+		$request = new CakeRequest();
+		Router::setRequestInfo(
+			$request->addParams(array(
+				'plugin' => null, 'controller' => 'test', 'action' => 'index',
+				'url' => array('url' => 'test/test_action')
+			))->addPaths(array(
+				'base' => '',
+				'here' => '/test/test_action',
+				'webroot' => '/',
+			))
+		);
 
 		$result = Router::url(array('action' => 'test_another_action'));
 		$expected = '/test/test_another_action';
@@ -1902,7 +1969,7 @@ class RouterTest extends CakeTestCase {
 		$url = array('controller' => 'pages', 'action' => 'display', 'government');
 		Router::connect('/government', $url);
 		Router::parse('/government');
-		$route =& Router::currentRoute();
+		$route = Router::currentRoute();
 		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
 /**
@@ -1914,21 +1981,21 @@ class RouterTest extends CakeTestCase {
 		$url = array('controller' => 'products', 'action' => 'display', 5);
 		Router::connect('/government', $url);
 		Router::parse('/government');
-		$route =& Router::requestRoute();
+		$route = Router::requestRoute();
 		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that the first route is matched
 		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/government', $url);
 		Router::parse('/government');
-		$route =& Router::requestRoute();
+		$route = Router::requestRoute();
 		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that an unmatched route does not change the current route
 		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/actor', $url);
 		Router::parse('/government');
-		$route =& Router::requestRoute();
+		$route = Router::requestRoute();
 		$this->assertEqual(array_merge($url, array('plugin' => null)), $route->defaults);
 	}
 /**
@@ -2090,6 +2157,31 @@ class RouterTest extends CakeTestCase {
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
 	}
+
+/**
+ * test that setRequestInfo can accept arrays and turn that into a CakeRequest object.
+ *
+ * @return void
+ */
+	function testSetRequestInfoLegacy() {
+		Router::setRequestInfo(array(
+			array(
+				'plugin' => null, 'controller' => 'images', 'action' => 'index',
+				'url' => array('url' => 'protected/images/index')
+			),
+			array(
+				'base' => '',
+				'here' => '/protected/images/index',
+				'webroot' => '/',
+			)
+		));
+		$result = Router::getRequest();
+		$this->assertEqual($result->controller, 'images');
+		$this->assertEqual($result->action, 'index');
+		$this->assertEqual($result->base, '');
+		$this->assertEqual($result->here, '/protected/images/index');
+		$this->assertEqual($result->webroot, '/');
+	}
 }
 
 /**
@@ -2125,7 +2217,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testConstruction() {
-		$route =& new CakeRoute('/:controller/:action/:id', array(), array('id' => '[0-9]+'));
+		$route = new CakeRoute('/:controller/:action/:id', array(), array('id' => '[0-9]+'));
 
 		$this->assertEqual($route->template, '/:controller/:action/:id');
 		$this->assertEqual($route->defaults, array());
@@ -2139,13 +2231,13 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testBasicRouteCompiling() {
-		$route =& new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->compile();
 		$expected = '#^/*$#';
 		$this->assertEqual($result, $expected);
 		$this->assertEqual($route->keys, array());
 
-		$route =& new CakeRoute('/:controller/:action', array('controller' => 'posts'));
+		$route = new CakeRoute('/:controller/:action', array('controller' => 'posts'));
 		$result = $route->compile();
 
 		$this->assertPattern($result, '/posts/edit');
@@ -2153,7 +2245,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertNoPattern($result, '/posts');
 		$this->assertNoPattern($result, '/posts/super_delete/1');
 
-		$route =& new CakeRoute('/posts/foo:id', array('controller' => 'posts', 'action' => 'view'));
+		$route = new CakeRoute('/posts/foo:id', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->compile();
 
 		$this->assertPattern($result, '/posts/foo:1');
@@ -2163,7 +2255,7 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$this->assertEqual($route->keys, array('id'));
 
-		$route =& new CakeRoute('/:plugin/:controller/:action/*', array('plugin' => 'test_plugin', 'action' => 'index'));
+		$route = new CakeRoute('/:plugin/:controller/:action/*', array('plugin' => 'test_plugin', 'action' => 'index'));
 		$result = $route->compile();
 		$this->assertPattern($result, '/test_plugin/posts/index');
 		$this->assertPattern($result, '/test_plugin/posts/edit/5');
@@ -2176,11 +2268,11 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testRouteParameterOverlap() {
-		$route =& new CakeRoute('/invoices/add/:idd/:id', array('controller' => 'invoices', 'action' => 'add'));
+		$route = new CakeRoute('/invoices/add/:idd/:id', array('controller' => 'invoices', 'action' => 'add'));
 		$result = $route->compile();
 		$this->assertPattern($result, '/invoices/add/1/3');
 
-		$route =& new CakeRoute('/invoices/add/:id/:idd', array('controller' => 'invoices', 'action' => 'add'));
+		$route = new CakeRoute('/invoices/add/:id/:idd', array('controller' => 'invoices', 'action' => 'add'));
 		$result = $route->compile();
 		$this->assertPattern($result, '/invoices/add/1/3');
 	}
@@ -2205,7 +2297,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertNoPattern($result, '/posts/edit/4/other:param');
 		$this->assertEqual($route->keys, array('controller', 'action', 'id'));
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/:lang/:controller/:action/:id',
 			array('controller' => 'testing4'),
 			array('id' => $ID, 'lang' => '[a-z]{3}')
@@ -2218,7 +2310,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($route->keys, array('lang', 'controller', 'action', 'id'));
 
 		foreach (array(':', '@', ';', '$', '-') as $delim) {
-			$route =& new CakeRoute('/posts/:id' . $delim . ':title');
+			$route = new CakeRoute('/posts/:id' . $delim . ':title');
 			$result = $route->compile();
 
 			$this->assertPattern($result, '/posts/1' . $delim . 'name-of-article');
@@ -2229,7 +2321,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			$this->assertEqual($route->keys, array('id', 'title'));
 		}
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/posts/:id::title/:year',
 			array('controller' => 'posts', 'action' => 'view'),
 			array('id' => $ID, 'year' => $Year, 'title' => '[a-z-_]+')
@@ -2242,7 +2334,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertNoPattern($result, '/posts/:nameofarticle/01');
 		$this->assertEqual($route->keys, array('id', 'title', 'year'));
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/posts/:url_title-(uuid::id)',
 			array('controller' => 'posts', 'action' => 'view'),
 			array('pass' => array('id', 'url_title'), 'id' => $ID)
@@ -2265,7 +2357,7 @@ class CakeRouteTestCase extends CakeTestCase {
 	function testComplexRouteCompilingAndParsing() {
 		extract(Router::getNamedExpressions());
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/posts/:month/:day/:year/*',
 			array('controller' => 'posts', 'action' => 'view'),
 			array('year' => $Year, 'month' => $Month, 'day' => $Day)
@@ -2281,7 +2373,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['month'], '08');
 		$this->assertEqual($result['day'], '01');
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			"/:extra/page/:slug/*",
 			array('controller' => 'pages', 'action' => 'view', 'extra' => null),
 			array("extra" => '[a-z1-9_]*', "slug" => '[a-z1-9_]+', "action" => 'view')
@@ -2299,7 +2391,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		);
 		$this->assertEqual($route->defaults, $expected);
 
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/:controller/:action/*',
 			array('project' => false),
 			array(
@@ -2333,7 +2425,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 1));
 		$this->assertEqual($result, '/posts/view/1');
 
-		$route =& new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
+		$route = new CakeRoute('/', array('controller' => 'pages', 'action' => 'display', 'home'));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'home'));
 		$this->assertEqual($result, '/');
 
@@ -2341,7 +2433,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 
 
-		$route =& new CakeRoute('/pages/*', array('controller' => 'pages', 'action' => 'display'));
+		$route = new CakeRoute('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'home'));
 		$this->assertEqual($result, '/pages/home');
 
@@ -2349,7 +2441,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result, '/pages/about');
 
 
-		$route =& new CakeRoute('/blog/:action', array('controller' => 'posts'));
+		$route = new CakeRoute('/blog/:action', array('controller' => 'posts'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEqual($result, '/blog/view');
 
@@ -2363,12 +2455,12 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 
 
-		$route =& new CakeRoute('/foo/:controller/:action', array('action' => 'index'));
+		$route = new CakeRoute('/foo/:controller/:action', array('action' => 'index'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view'));
 		$this->assertEqual($result, '/foo/posts/view');
 
 
-		$route =& new CakeRoute('/:plugin/:id/*', array('controller' => 'posts', 'action' => 'view'));
+		$route = new CakeRoute('/:plugin/:id/*', array('controller' => 'posts', 'action' => 'view'));
 		$result = $route->match(array('plugin' => 'test', 'controller' => 'posts', 'action' => 'view', 'id' => '1'));
 		$this->assertEqual($result, '/test/1/');
 
@@ -2382,7 +2474,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 
 
-		$route =& new CakeRoute('/admin/subscriptions/:action/*', array(
+		$route = new CakeRoute('/admin/subscriptions/:action/*', array(
 			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
 		));
 
@@ -2411,7 +2503,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
 
 
-		$route =& new CakeRoute('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
+		$route = new CakeRoute('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 1));
 		$this->assertFalse($result);
 
@@ -2428,7 +2520,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testMatchWithPatterns() {
-		$route =& new CakeRoute('/:controller/:action/:id', array('plugin' => null), array('id' => '[0-9]+'));
+		$route = new CakeRoute('/:controller/:action/:id', array('plugin' => null), array('id' => '[0-9]+'));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'id' => 'foo'));
 		$this->assertFalse($result);
 
@@ -2448,7 +2540,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testPersistParams() {
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/:lang/:color/blog/:action',
 			array('controller' => 'posts'),
 			array('persist' => array('lang', 'color'))
@@ -2473,14 +2565,14 @@ class CakeRouteTestCase extends CakeTestCase {
  */
 	function testParse() {
 		extract(Router::getNamedExpressions());
-		$route =& new CakeRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$route = new CakeRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
 		$route->compile();
 		$result = $route->parse('/posts/view/1');
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'view');
 		$this->assertEqual($result['id'], '1');
 
-		$route =& new Cakeroute(
+		$route = new Cakeroute(
 			'/admin/:controller',
 			array('prefix' => 'admin', 'admin' => 1, 'action' => 'index')
 		);
@@ -2527,7 +2619,7 @@ class PluginShortRouteTestCase extends  CakeTestCase {
  * @return void
  */
 	function testParsing() {
-		$route =& new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
+		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->parse('/foo');
 		$this->assertEqual($result['plugin'], 'foo');
@@ -2544,7 +2636,7 @@ class PluginShortRouteTestCase extends  CakeTestCase {
  * @return void
  */
 	function testMatch() {
-		$route =& new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
+		$route = new PluginShortRoute('/:plugin', array('action' => 'index'), array('plugin' => 'foo|bar'));
 
 		$result = $route->match(array('plugin' => 'foo', 'controller' => 'posts', 'action' => 'index'));
 		$this->assertFalse($result, 'plugin controller mismatch was converted. %s');

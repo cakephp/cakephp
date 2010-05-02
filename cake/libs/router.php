@@ -126,20 +126,13 @@ class Router {
 	private $__resourceMapped = array();
 
 /**
- * Maintains the parameter stack for the current request
+ * Maintains the request object stack for the current request.
+ * This will contain more than one request object when requestAction is used.
  *
  * @var array
  * @access private
  */
-	private $__params = array();
-
-/**
- * Maintains the path stack for the current request
- *
- * @var array
- * @access private
- */
-	private $__paths = array();
+	private $__requests = array();
 
 /**
  * Keeps Router state to determine if default routes have already been connected
@@ -591,19 +584,22 @@ class Router {
  * parameters as the current request parameters that are merged with url arrays 
  * created later in the request.
  *
- * @param array $params Parameters and path information
+ * Will accept either a CakeRequest object or an array of arrays. Support for
+ * accepting arrays may be removed in the future.
+ *
+ * @param mixed $params Parameters and path information or a CakeRequest object.
  * @return void
  */
 	public static function setRequestInfo($request) {
 		$self = Router::getInstance();
 		if ($request instanceof CakeRequest) {
-			$self->__params[] = $request;
+			$self->__requests[] = $request;
 		} else {
 			$requestObj = new CakeRequest();
 			$request += array(array(), array());
 			$request[0] += array('controller' => false, 'action' => false, 'plugin' => null);
 			$requestObj->addParams($request[0])->addPaths($request[1]);
-			$self->__params[] = $requestObj;
+			$self->__requests[] = $requestObj;
 		}
 	}
 
@@ -616,9 +612,9 @@ class Router {
 	public static function getRequest($current = false) {
 		$self = Router::getInstance();
 		if ($current) {
-			return $self->__params[count($self->__params) - 1];
+			return $self->__requests[count($self->__requests) - 1];
 		}
-		return isset($self->__params[0]) ? $self->__params[0] : null;
+		return isset($self->__requests[0]) ? $self->__requests[0] : null;
 	}
 
 /**
@@ -630,10 +626,10 @@ class Router {
 	public static function getParams($current = false) {
 		$self = Router::getInstance();
 		if ($current) {
-			return $self->__params[count($self->__params) - 1]->params;
+			return $self->__requests[count($self->__requests) - 1]->params;
 		}
-		if (isset($self->__params[0])) {
-			return $self->__params[0]->params;
+		if (isset($self->__requests[0])) {
+			return $self->__requests[0]->params;
 		}
 		return array();
 	}
@@ -662,12 +658,12 @@ class Router {
 	public static function getPaths($current = false) {
 		$self = Router::getInstance();
 		if ($current) {
-			return $self->__params[count($self->__params) - 1];
+			return $self->__requests[count($self->__requests) - 1];
 		}
-		if (!isset($self->__params[0])) {
+		if (!isset($self->__requests[0])) {
 			return array('base' => null);
 		}
-		return array('base' => $self->__params[0]->base);
+		return array('base' => $self->__requests[0]->base);
 	}
 
 /**
@@ -745,12 +741,12 @@ class Router {
 		}
 
 		$path = array('base' => null);
-		if (!empty($self->__params)) {
+		if (!empty($self->__requests)) {
 			// bad hack for detecting if doing a request action.
 			if (isset($this) && !isset($this->params['requested'])) {
-				$request = $self->__params[0];
+				$request = $self->__requests[0];
 			} else {
-				$request = end($self->__params);
+				$request = end($self->__requests);
 			}
 			$params = $request->params;
 			$path = array('base' => $request->base, 'here' => $request->here);
