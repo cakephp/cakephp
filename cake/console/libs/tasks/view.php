@@ -197,6 +197,7 @@ class ViewTask extends BakeTask {
 					$actions = $this->_methodsToBake();
 				}
 				$this->bakeActions($actions, $vars);
+				$actions = null;
 			}
 		}
 	}
