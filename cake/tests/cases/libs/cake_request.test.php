@@ -40,12 +40,12 @@ class CakeRequestTestCase extends CakeTestCase {
 			'two' => 'banana'
 		);
 		$request = new CakeRequest('some/path');
-		$this->assertEqual($request->query, $_GET);
+		$this->assertEqual($request->query, $_GET + array('url' => 'some/path'));
 		
 		$_GET = array(
 			'one' => 'param',
 			'two' => 'banana',
-			'url' => '/some/path/here'
+			'url' => 'some/path'
 		);
 		$request = new CakeRequest('some/path');
 		$this->assertEqual($request->query, $_GET);
@@ -60,7 +60,8 @@ class CakeRequestTestCase extends CakeTestCase {
 	function testQueryStringParsingFromInputUrl() {
 		$_GET = array();
 		$request = new CakeRequest('some/path?one=something&two=else');
-		$this->assertEqual($request->query, array('one' => 'something', 'two' => 'else'));
+		$expected = array('one' => 'something', 'two' => 'else', 'url' => 'some/path?one=something&two=else');
+		$this->assertEqual($request->query, $expected);
 	}
 
 /**

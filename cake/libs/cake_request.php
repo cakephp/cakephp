@@ -108,6 +108,9 @@ class CakeRequest implements ArrayAccess {
 		if (empty($url)) {
 			$url = $this->_url();
 		}
+		if ($url{0} == '/') {
+			$url = substr($url, 1);
+		}
 		$this->url = $url;
 
 		$this->_processPost();
@@ -166,6 +169,7 @@ class CakeRequest implements ArrayAccess {
 		if (isset($this->params['url'])) {
 			$query = array_merge($this->params['url'], $query);
 		}
+		$query['url'] = $this->url;
 		$this->query = $query;
 	}
 
@@ -247,9 +251,6 @@ class CakeRequest implements ArrayAccess {
 			}
 		} else {
 			$url = $_GET['url'];
-		}
-		if ($url{0} == '/') {
-			$url = substr($url, 1);
 		}
 		return $url;
 	}
