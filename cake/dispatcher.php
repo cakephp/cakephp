@@ -546,8 +546,14 @@ class Dispatcher extends Object {
 			return false;
 		}
 		$filters = Configure::read('Asset.filter');
-		$isCss = strpos($url, 'ccss/') === 0;
-		$isJs = strpos($url, 'cjs/') === 0;
+		$isCss = (
+			strpos($url, 'ccss/') === 0 || 
+			preg_match('#^(theme/([^/]+)/ccss/)|(([^/]+)(?<!css)/ccss)/#i', $url)
+		);
+		$isJs = (
+			strpos($url, 'cjs/') === 0 ||
+			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
+		);
 
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
 			header('HTTP/1.1 404 Not Found');
@@ -609,6 +615,7 @@ class Dispatcher extends Object {
 		}
 
 		App::import('View', 'Media', false);
+		$controller = null;
 		$Media = new MediaView($controller);
 		if (isset($Media->mimeType[$ext])) {
 			$contentType = $Media->mimeType[$ext];

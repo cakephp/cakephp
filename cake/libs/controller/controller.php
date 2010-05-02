@@ -604,7 +604,8 @@ class Controller extends Object {
  *
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
- * @return mixed true when single model found and instance created error returned if models not found.
+ * @return mixed true when single model found and instance created, error returned if model not found.
+ * @access public
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -653,6 +654,8 @@ class Controller extends Object {
 			$this->_persist($modelClass, true, $object);
 			$this->modelNames[] = $modelClass;
 		}
+
+		return true;
 	}
 
 /**
@@ -729,7 +732,7 @@ class Controller extends Object {
 	}
 
 /**
- * Convenience and object wrapper method for header().  Useful when doing tests and 
+ * Convenience and object wrapper method for header().  Useful when doing tests and
  * asserting that particular headers have been set.
  *
  * @param string $status The header message that is being set.

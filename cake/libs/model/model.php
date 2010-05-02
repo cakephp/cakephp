@@ -500,14 +500,16 @@ class Model extends Object {
 /**
  * Bind model associations on the fly.
  *
- * If $reset is false, association will not be reset
+ * If `$reset` is false, association will not be reset
  * to the originals defined in the model
  *
  * Example: Add a new hasOne binding to the Profile model not
  * defined in the model source code:
- * <code>
- * $this->User->bindModel( array('hasOne' => array('Profile')) );
- * </code>
+ *
+ * `$this->User->bindModel( array('hasOne' => array('Profile')) );`
+ *
+ * Bindings that are not made permanent will be reset by the next Model::find() call on this
+ * model.
  *
  * @param array $params Set of bindings (indexed by binding type)
  * @param boolean $reset Set to false to make the binding permanent
@@ -544,9 +546,10 @@ class Model extends Object {
  *
  * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
- * <code>
- * $this->User->unbindModel( array('hasMany' => array('Supportrequest')) );
- * </code>
+ * 
+ * `$this->User->unbindModel( array('hasMany' => array('Supportrequest')) );`
+ * 
+ * unbound models that are not made permanent will reset with the next call to Model::find()
  *
  * @param array $params Set of bindings to unbind (indexed by binding type)
  * @param boolean $reset  Set to false to make the unbinding permanent
@@ -1885,14 +1888,15 @@ class Model extends Object {
 		if (!$cascade && !$callbacks) {
 			return $db->delete($this, $conditions);
 		} else {
-			$ids = Set::extract(
-				$this->find('all', array_merge(array(
-					'fields' => "{$this->alias}.{$this->primaryKey}",
-					'recursive' => 0), compact('conditions'))
-				),
-				"{n}.{$this->alias}.{$this->primaryKey}"
+			$ids = $this->find('all', array_merge(array(
+				'fields' => "{$this->alias}.{$this->primaryKey}",
+				'recursive' => 0), compact('conditions'))
 			);
+			if ($ids === false) {
+				return false;
+			}
 
+			$ids = Set::extract($ids, "{n}.{$this->alias}.{$this->primaryKey}");
 			if (empty($ids)) {
 				return true;
 			}

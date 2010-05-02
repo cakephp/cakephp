@@ -27,10 +27,10 @@
 	public function <?php echo $admin ?>view($id = null) {
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(sprintf(__('Invalid %s'), '<?php echo strtolower($singularHumanName) ?>'));
+			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName) ?>'));
 			$this->redirect(array('action' => 'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('Invalid %s'), '<?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
+			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
 <?php endif; ?>
 		}
 		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->read(null, $id));
@@ -42,14 +42,14 @@
 			$this-><?php echo $currentModelName; ?>->create();
 			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
 <?php if ($wannaUseSession): ?>
-				$this->Session->setFlash(sprintf(__('The %s has been saved'), '<?php echo strtolower($singularHumanName); ?>'));
+				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
 <?php else: ?>
-				$this->flash(sprintf(__('%s saved.'), '<?php echo ucfirst(strtolower($currentModelName)); ?>'), array('action' => 'index'));
+				$this->flash(__('<?php echo ucfirst(strtolower($currentModelName)); ?> saved.'), array('action' => 'index'));
 <?php endif; ?>
 			} else {
 <?php if ($wannaUseSession): ?>
-				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.'), '<?php echo strtolower($singularHumanName); ?>'));
+				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php endif; ?>
 			}
 		}
@@ -74,23 +74,23 @@
 	public function <?php echo $admin; ?>edit($id = null) {
 		if (!$id && empty($this->data)) {
 <?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(sprintf(__('Invalid %s'), '<?php echo strtolower($singularHumanName); ?>'));
+			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 			$this->redirect(array('action' => 'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('Invalid %s'), '<?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
+			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if (!empty($this->data)) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
 <?php if ($wannaUseSession): ?>
-				$this->Session->setFlash(sprintf(__('The %s has been saved'), '<?php echo strtolower($singularHumanName); ?>'));
+				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
 <?php else: ?>
-				$this->flash(sprintf(__('The %s has been saved.'), '<?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
+				$this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'), array('action' => 'index'));
 <?php endif; ?>
 			} else {
 <?php if ($wannaUseSession): ?>
-				$this->Session->setFlash(sprintf(__('The %s could not be saved. Please, try again.'), '<?php echo strtolower($singularHumanName); ?>'));
+				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php endif; ?>
 			}
 		}
@@ -117,24 +117,24 @@
 	public function <?php echo $admin; ?>delete($id = null) {
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(sprintf(__('Invalid id for %s'), '<?php echo strtolower($singularHumanName); ?>'));
+			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('Invalid %s'), '<?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
+			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
 <?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(sprintf(__('%s deleted'), '<?php echo ucfirst(strtolower($singularHumanName)); ?>'));
+			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('%s deleted'), '<?php echo ucfirst(strtolower($singularHumanName)); ?>'), array('action' => 'index'));
+			$this->flash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'), array('action' => 'index'));
 <?php endif; ?>
 		}
 <?php if ($wannaUseSession): ?>
-		$this->Session->setFlash(sprintf(__('%s was not deleted'), '<?php echo ucfirst(strtolower($singularHumanName)); ?>'));
+		$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> was not deleted'));
 <?php else: ?>
-		$this->flash(sprintf(__('%s was not deleted'), '<?php echo ucfirst(strtolower($singularHumanName)); ?>'), array('action' => 'index'));
+		$this->flash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> was not deleted'), array('action' => 'index'));
 <?php endif; ?>
 		$this->redirect(array('action' => 'index'));
 	}
