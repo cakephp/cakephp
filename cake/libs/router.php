@@ -433,20 +433,22 @@ class Router {
 
 		$r = $ext = null;
 
-		if ($request->url && strpos($request->url, '/') !== 0) {
-			$request->url = '/' . $request->url;
+		// add a leading / and split out the query string.
+		// seems like this could be done in CakeRequest
+		$url = $request->url;
+		if ($url && strpos($url, '/') !== 0) {
+			$url = '/' . $url;
+		}
+		if (strpos($url, '?') !== false) {
+			$url = substr($url, 0, strpos($url, '?'));
 		}
 
-		if (strpos($request->url, '?') !== false) {
-			$request->url = substr($request->url, 0, strpos($request->url, '?'));
-		}
-
-		extract($self->__parseExtension($request->url));
+		extract($self->__parseExtension($url));
 
 		for ($i = 0, $len = count($self->routes); $i < $len; $i++) {
 			$route =& $self->routes[$i];
 
-			if (($r = $route->parse($request->url)) !== false) {
+			if (($r = $route->parse($url)) !== false) {
 				$self->__currentRoute[] =& $route;
 
 				$params = $route->options;

@@ -104,12 +104,15 @@ class Dispatcher extends Object {
 		} else {
 			$request = new CakeRequest($url);
 		}
+		$this->here = $request->here;
+
+		if ($this->asset($request->url) || $this->cached($request->url)) {
+			return $this->_stop();
+		}
+
 		$request = $this->parseParams($request, $additionalParams);
 		$this->params = $request;
 
-		if ($this->asset($request->url) || $this->cached($request->url)) {
-			$this->_stop();
-		}
 		$controller = $this->_getController();
 
 		if (!is_object($controller)) {

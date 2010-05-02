@@ -762,7 +762,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testDispatch() {
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'pages/home/param:value/param2:value2';
 
@@ -791,8 +791,8 @@ class DispatcherTest extends CakeTestCase {
 
 		unset($Dispatcher);
 
-		$Dispatcher =& new TestDispatcher();
-		Configure::write('App.baseUrl','/timesheets/index.php');
+		$Dispatcher = new TestDispatcher();
+		Configure::write('App.baseUrl', '/timesheets/index.php');
 
 		$url = 'timesheets';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -804,7 +804,7 @@ class DispatcherTest extends CakeTestCase {
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$this->assertEqual('Timesheets', $controller->name);
-		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
+		$this->assertEqual('/timesheets/index.php', $Dispatcher->params->base);
 
 
 		$url = 'test_dispatch_pages/camelCased';
@@ -814,7 +814,6 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'test_dispatch_pages/camelCased/something. .';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual($controller->params['pass'][0], 'something. .', 'Period was chopped off. %s');
-		
 	}
 
 /**
@@ -823,12 +822,16 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testDispatchWithArray() {
-		$Dispatcher =& new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
-		$url = 'pages/home/param:value/param2:value2';
+		Router::reload();
+		Configure::write('App.baseUrl', '/index.php');
+		$Dispatcher = new TestDispatcher();
 
 		$url = array('controller' => 'pages', 'action' => 'display');
-		$controller = $Dispatcher->dispatch($url, array('pass' => array('home'), 'named' => array('param' => 'value', 'param2' => 'value2'), 'return' => 1));
+		$controller = $Dispatcher->dispatch($url, array(
+			'pass' => array('home'),
+			'named' => array('param' => 'value', 'param2' => 'value2'),
+			'return' => 1
+		));
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
@@ -874,27 +877,25 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 
 		Router::reload();
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		Router::connect(
 			'/my_plugin/:controller/*', 
 			array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'display')
 		);
 
-		$Dispatcher->base = false;
 		$url = 'my_plugin/some_pages/home/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
-		$result = $Dispatcher->parseParams($url);
+		$result = $Dispatcher->parseParams(new CakeRequest($url));
 		$expected = array(
 			'pass' => array('home'),
 			'named' => array('param'=> 'value', 'param2'=> 'value2'), 'plugin'=> 'my_plugin',
 			'controller'=> 'some_pages', 'action'=> 'display', 'form'=> null,
 			'url'=> array('url'=> 'my_plugin/some_pages/home/param:value/param2:value2'),
 		);
-		ksort($expected);
-		ksort($result);
-
-		$this->assertEqual($expected, $result);
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($result[$key], $value, 'Value mismatch ' . $key . ' %');
+		}
 
 		$this->assertIdentical($controller->plugin, 'my_plugin');
 		$this->assertIdentical($controller->name, 'SomePages');
@@ -957,7 +958,7 @@ class DispatcherTest extends CakeTestCase {
 		App::setObjects('plugin', $plugins);
 
 		Router::reload();
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/my_plugin/add/param:value/param2:value2';
@@ -971,7 +972,7 @@ class DispatcherTest extends CakeTestCase {
 
 
 		Router::reload();
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
 
 		// Simulates the Route for a real plugin, installed in APP/plugins
@@ -993,8 +994,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 
 		Router::reload();
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
+		$Dispatcher = new TestDispatcher();
 
 		$url = 'admin/my_plugin/my_plugin/add/5/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1014,8 +1014,7 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
+		$Dispatcher = new TestDispatcher();
 
 		$controller = $Dispatcher->dispatch('admin/articles_test', array('return' => 1));
 		$this->assertIdentical($controller->plugin, 'articles_test');
@@ -1034,7 +1033,9 @@ class DispatcherTest extends CakeTestCase {
 			'url' => array('url' => 'admin/articles_test'),
 			'return' => 1
 		);
-		$this->assertEqual($controller->params, $expected);
+		foreach ($expected as $key => $value) {
+			$this->assertEqual($controller->params[$key], $expected[$key], 'Value mismatch ' . $key . ' %s');
+		}
 	}
 
 /**
@@ -1161,8 +1162,7 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix'=>'admin'), array('controller', 'action'));
 
-		$Dispatcher =& new TestDispatcher();
-		$Dispatcher->base = false;
+		$Dispatcher = new TestDispatcher();
 
 		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1183,13 +1183,13 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testTestPluginDispatch() {
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 		App::objects('plugin', null, false);
 		Router::reload();
-		Router::parse('/');
+		Router::parse(new CakeRequest('/'));
 
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1245,7 +1245,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testAssets() {
 		Router::reload();
-		$Configure =& Configure::getInstance();
+		$Configure = Configure::getInstance();
 		$Configure->__objects = null;
 
 		App::build(array(
@@ -1254,9 +1254,9 @@ class DispatcherTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
+		//Configure::write('debug', 0);
 
 		ob_start();
 		$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
@@ -1271,6 +1271,7 @@ class DispatcherTest extends CakeTestCase {
 		ob_start();
 		$Dispatcher->dispatch('theme/test_theme/flash/theme_test.swf');
 		$result = ob_get_clean();
+
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'flash' . DS . 'theme_test.swf');
 		$this->assertEqual($file, $result);
 		$this->assertEqual('this is just a test to load swf file from the theme.', $result);
@@ -1288,19 +1289,16 @@ class DispatcherTest extends CakeTestCase {
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'webroot' . DS . 'img' . DS . 'test.jpg');
 		$this->assertEqual($file, $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/css/test_asset.css');
 		ob_start();
 		$Dispatcher->asset('theme/test_theme/css/test_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test asset css file', $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/theme.js');
 		ob_start();
 		$Dispatcher->asset('theme/test_theme/js/theme.js');
 		$result = ob_get_clean();
 		$this->assertEqual('root theme js file', $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('theme/test_theme/js/one/theme_one.js');
 		ob_start();
 		$Dispatcher->asset('theme/test_theme/js/one/theme_one.js');
 		$result = ob_get_clean();
@@ -1331,33 +1329,28 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual('alert("Test App");', $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/js/test_plugin/test.js');
 		ob_start();
 		$Dispatcher->asset('test_plugin/js/test_plugin/test.js');
 		$result = ob_get_clean();
 		$this->assertEqual('alert("Test App");', $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/test_plugin_asset.css');
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/test_plugin_asset.css');
 		$result = ob_get_clean();
 		$this->assertEqual('this is the test plugin asset css file', $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/img/cake.icon.gif');
 		ob_start();
 		$Dispatcher->asset('test_plugin/img/cake.icon.gif');
 		$result = ob_get_clean();
 		$file = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' .DS . 'webroot' . DS . 'img' . DS . 'cake.icon.gif');
 		$this->assertEqual($file, $result);
 
-		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/plugin_js.js');
 		ob_start();
 		$Dispatcher->asset('plugin_js/js/plugin_js.js');
 		$result = ob_get_clean();
 		$expected = "alert('win sauce');";
 		$this->assertEqual($result, $expected);
 
-		$Dispatcher->params = $Dispatcher->parseParams('plugin_js/js/one/plugin_one.js');
 		ob_start();
 		$Dispatcher->asset('plugin_js/js/one/plugin_one.js');
 		$result = ob_get_clean();
@@ -1367,14 +1360,12 @@ class DispatcherTest extends CakeTestCase {
 		//reset the header content-type without page can render as plain text.
 		header('Content-type: text/html');
 
-		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/theme_one.htc');
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/unknown.extension');
 		$result = ob_get_clean();
 		$this->assertEqual('Testing a file with unknown extension to mime mapping.', $result);
 		header('Content-type: text/html');
 
-		$Dispatcher->params = $Dispatcher->parseParams('test_plugin/css/theme_one.htc');
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/theme_one.htc');
 		$result = ob_get_clean();
@@ -1395,7 +1386,6 @@ class DispatcherTest extends CakeTestCase {
 		));
 		$this->assertNoErrors();
 
-		$Dispatcher->params = $Dispatcher->parseParams('ccss/cake.generic.css');
 		ob_start();
 		$Dispatcher->asset('ccss/cake.generic.css');
 
