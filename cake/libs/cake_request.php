@@ -103,7 +103,7 @@ class CakeRequest implements ArrayAccess {
  * @param array $additionalParams Additional parameters that are melded with other request parameters
  * @return void
  */
-	public function __construct($url = null, $additionalParams = array()) {
+	public function __construct($url = null) {
 		$this->base = $this->_base();
 		if (empty($url)) {
 			$url = $this->_url();
@@ -117,9 +117,6 @@ class CakeRequest implements ArrayAccess {
 		$this->_processGet();
 		$this->_processFiles();
 
-		if (!empty($additionalParams)) {
-			$this->params = array_merge($this->params, $additionalParams);
-		}
 		$this->here = $this->base . '/' . $this->url;
 	}
 
