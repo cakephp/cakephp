@@ -1940,22 +1940,23 @@ class RouterTest extends CakeTestCase {
 		$paths = array('base' => '/', 'here' => '/products/display/5', 'webroot' => '/webroot');
 		$params = array('param1' => '1', 'param2' => '2');
 		Router::setRequestInfo(array($params, $paths));
+
 		$expected = array(
 			'plugin' => null, 'controller' => false, 'action' => false,
-			'param1' => '1', 'param2' => '2'
+			'param1' => '1', 'param2' => '2', 'form' => array()
 		);
-		$this->assertEqual(Router::getparams(), $expected);
-		$this->assertEqual(Router::getparam('controller'), false);
-		$this->assertEqual(Router::getparam('param1'), '1');
-		$this->assertEqual(Router::getparam('param2'), '2');
+		$this->assertEqual(Router::getParams(), $expected);
+		$this->assertEqual(Router::getParam('controller'), false);
+		$this->assertEqual(Router::getParam('param1'), '1');
+		$this->assertEqual(Router::getParam('param2'), '2');
 
 		Router::reload();
 
 		$params = array('controller' => 'pages', 'action' => 'display');
 		Router::setRequestInfo(array($params, $paths));
-		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display');
-		$this->assertEqual(Router::getparams(), $expected);
-		$this->assertEqual(Router::getparams(true), $expected);
+		$expected = array('plugin' => null, 'controller' => 'pages', 'action' => 'display', 'form' => array());
+		$this->assertEqual(Router::getParams(), $expected);
+		$this->assertEqual(Router::getParams(true), $expected);
 	}
 
 /**

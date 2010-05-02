@@ -1189,7 +1189,7 @@ class DispatcherTest extends CakeTestCase {
 		));
 		App::objects('plugin', null, false);
 		Router::reload();
-		Router::parse(new CakeRequest('/'));
+		Router::parse('/');
 
 		$url = '/test_plugin/tests/index';
 		$result = $Dispatcher->dispatch($url, array('return' => 1));

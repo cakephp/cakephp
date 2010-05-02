@@ -234,7 +234,7 @@ class CacheHelper extends AppHelper {
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(\'' . str_replace("'", "\\'", serialize($this->data)) . '\');
 				$controller->theme = $this->theme = \'' . $this->theme . '\';
-				Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));';
+				Router::setRequestInfo($this->params);';
 
 		if ($useCallbacks == true) {
 			$file .= '

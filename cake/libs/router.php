@@ -594,9 +594,17 @@ class Router {
  * @param array $params Parameters and path information
  * @return void
  */
-	public static function setRequestInfo(CakeRequest $request) {
+	public static function setRequestInfo($request) {
 		$self = Router::getInstance();
-		$self->__params[] = $request;
+		if ($request instanceof CakeRequest) {
+			$self->__params[] = $request;
+		} else {
+			$requestObj = new CakeRequest();
+			$request += array(array(), array());
+			$request[0] += array('controller' => false, 'action' => false, 'plugin' => null);
+			$requestObj->addParams($request[0])->addPaths($request[1]);
+			$self->__params[] = $requestObj;
+		}
 	}
 
 /**
@@ -622,10 +630,10 @@ class Router {
 	public static function getParams($current = false) {
 		$self = Router::getInstance();
 		if ($current) {
-			return $self->__params[count($self->__params) - 1];
+			return $self->__params[count($self->__params) - 1]->params;
 		}
 		if (isset($self->__params[0])) {
-			return $self->__params[0];
+			return $self->__params[0]->params;
 		}
 		return array();
 	}

@@ -116,9 +116,7 @@ class Dispatcher extends Object {
 		$controller = $this->_getController();
 
 		if (!is_object($controller)) {
-			Router::setRequestInfo(array(
-				$this->params, array('base' => $request->base, 'webroot' => $request->webroot)
-			));
+			Router::setRequestInfo($request);
 			return $this->cakeError('missingController', array(array(
 				'className' => Inflector::camelize($request->params['controller']) . 'Controller',
 				'webroot' => $request->webroot,
