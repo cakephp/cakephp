@@ -34,9 +34,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param string $params 
  * @return void
  */
-	function CakeHtmlReporter($charset = 'utf-8', $params = array()) {
+	function __construct($charset = 'utf-8', $params = array()) {
 		$params = array_map(array($this, '_htmlEntities'), $params);
-		$this->CakeBaseReporter($charset, $params);
+		parent::__construct($charset, $params);
 	}
 /**
  * Paints the top of the web page setting the
