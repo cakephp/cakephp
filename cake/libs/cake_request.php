@@ -92,7 +92,7 @@ class CakeRequest implements ArrayAccess {
 		'mobile' => array('env' => 'HTTP_USER_AGENT', 'options' => array(
 			'Android', 'AvantGo', 'BlackBerry', 'DoCoMo', 'iPod', 'iPhone',
 			'J2ME', 'MIDP', 'NetFront', 'Nokia', 'Opera Mini', 'PalmOS', 'PalmSource',
-			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\.Browser',
+			'portalmmm', 'Plucker', 'ReqwirelessWeb', 'SonyEricsson', 'Symbian', 'UP\\.Browser',
 			'webOS', 'Windows CE', 'Xiino'
 		))
 	);
@@ -521,6 +521,9 @@ class CakeRequest implements ArrayAccess {
 		}
 		if ($name == 'url') {
 			return $this->query;
+		}
+		if ($name == 'data') {
+			return $this->data;
 		}
 		return null;
 	}

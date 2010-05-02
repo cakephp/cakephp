@@ -560,6 +560,9 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$request = new CakeRequest('some/path?one=something&two=else');
 		$this->assertTrue(isset($request['url']['one']));
+
+		$request->data = array('Post' => array('title' => 'something'));
+		$this->assertEqual($request['data']['Post']['title'], 'something');
 	}
 
 /**
