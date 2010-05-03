@@ -594,15 +594,9 @@ class Controller extends Object {
 		if (($cached === false)) {
 			$this->modelNames[] = $modelClass;
 
-			if (!PHP5) {
-				$this->{$modelClass} =& ClassRegistry::init(array(
-					'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-				));
-			} else {
-				$this->{$modelClass} = ClassRegistry::init(array(
-					'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-				));
-			}
+			$this->{$modelClass} = ClassRegistry::init(array(
+				'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
+			));
 
 			if (!$this->{$modelClass}) {
 				return $this->cakeError('missingModel', array(array(
