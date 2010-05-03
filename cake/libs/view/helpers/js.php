@@ -309,17 +309,22 @@ class JsHelper extends AppHelper {
 		list($options, $htmlOptions) = $this->_getHtmlOptions($options);
 		$out = $this->Html->link($title, $url, $htmlOptions);
 		$this->get('#' . $htmlOptions['id']);
-		$requestString = '';
+		$requestString = $event = '';
 		if (isset($options['confirm'])) {
 			$requestString = $this->confirmReturn($options['confirm']);
 			unset($options['confirm']);
 		}
+		$buffer = isset($options['buffer']) ? $options['buffer'] : null;
+		$safe = isset($options['safe']) ? $options['safe'] : true;
+		unset($options['buffer'], $options['safe']);
+
 		$requestString .= $this->request($url, $options);
+
 		if (!empty($requestString)) {
-			$event = $this->event('click', $requestString, $options);
+			$event = $this->event('click', $requestString, $options + array('buffer' => $buffer));
 		}
-		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$opts = array_intersect_key(array('safe' => null), $options);
+		if (isset($buffer) && !$buffer) {
+			$opts = array('safe' => $safe);
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
@@ -389,12 +394,17 @@ class JsHelper extends AppHelper {
 			$options['method'] = 'post';
 		}
 		$options['dataExpression'] = true;
+
+		$buffer = isset($options['buffer']) ? $options['buffer'] : null;
+		$safe = isset($options['safe']) ? $options['safe'] : true;
+		unset($options['buffer'], $options['safe']);
+
 		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
-			$event = $this->event('click', $requestString, $options);
+			$event = $this->event('click', $requestString, $options + array('buffer' => $buffer));
 		}
-		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$opts = array_intersect_key(array('safe' => null), $options);
+		if (isset($buffer) && !$buffer) {
+			$opts = array('safe' => $safe);
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
