@@ -146,7 +146,7 @@ class FormHelper extends AppHelper {
 		if (is_array($validateProperties)) {
 
 			$dims = Set::countDim($validateProperties);
-			if ($dims == 1) {
+			if ($dims == 1 || ($dims == 2 && isset($validateProperties['rule']))) {
 				$validateProperties = array($validateProperties);
 			}
 
