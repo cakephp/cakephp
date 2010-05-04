@@ -66,6 +66,10 @@ class CakeBaseReporter {
 	protected $_characterSet;
 
 /**
+* The number of assertions done for a test suite
+*/
+	protected $numAssertions = 0;
+/**
  * Does nothing yet. The first output will
  * be sent on the first test start.
  *
