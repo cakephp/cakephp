@@ -92,7 +92,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function dispatch() {
-		$this->_checkSimpleTest();
+		$this->_checkPHPUnit();
 		$this->_parseParams();
 
 		if ($this->params['group']) {
@@ -110,20 +110,27 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Checks that simpleTest is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed.  Will exit if it doesn't
  *
  * @return void
  */
-	function _checkSimpleTest() {
+	function _checkPHPUnit() {
 		$found = $path = null;
-		foreach (App::path('vendors') as $vendor) {
-			if (is_dir($vendor . 'PHPUnit')) {
-				$path = $vendor;
-			}
+
+		if (@include 'PHPUnit' . DS . 'Framework.php') {
+			$found = true;
 		}
 
-		if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
-			$found = include 'PHPUnit' . DS . 'Framework.php';
+		if (!$found) {
+			foreach (App::path('vendors') as $vendor) {
+				if (is_dir($vendor . 'PHPUnit')) {
+					$path = $vendor;
+				}
+			}
+
+			if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
+				$found = include 'PHPUnit' . DS . 'Framework.php';
+			}
 		}
 
 		if (!$found) {

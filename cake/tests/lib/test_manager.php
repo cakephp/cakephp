@@ -128,7 +128,7 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 
 		$result = new PHPUnit_Framework_TestResult;
 		$result->addListener($reporter);
-		$reporter->paintHeader($testSuite->getName());
+		$reporter->paintHeader();
 		$run = $testSuite->run($result);
 		$reporter->paintResult($result);
 		return $run;
