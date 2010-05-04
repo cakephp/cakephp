@@ -1334,7 +1334,7 @@ class RouterTest extends CakeTestCase {
 
 		Router::reload();
 		$result = Router::connectNamed(true);
-		$this->assertEqual(array_keys($result['rules']), Router::getInstance()->named['default']);
+		$this->assertEqual(array_keys($result['rules']), Router::$named['default']);
 		$this->assertTrue($result['greedy']);
 		Router::reload();
 		Router::connectNamed(array('param1' => 'not-matching'));
