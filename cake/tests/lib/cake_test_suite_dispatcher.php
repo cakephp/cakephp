@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE_TESTS_LIB . 'test_manager.php';
 
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
@@ -116,7 +115,18 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _checkSimpleTest() {
-		if (!App::import('Vendor', 'simpletest/reporter')) {
+		$found = $path = null;
+		foreach (App::path('vendors') as $vendor) {
+			if (is_dir($vendor . 'PHPUnit')) {
+				$path = $vendor;
+			}
+		}
+
+		if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
+			$found = include 'PHPUnit' . DS . 'Framework.php';
+		}
+
+		if (!$found) {
 			$baseDir = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates/simpletest.php';
 			exit();
@@ -171,6 +181,7 @@ class CakeTestSuiteDispatcher {
  */
 	function &getManager() {
 		if (empty($this->Manager)) {
+			require_once CAKE_TESTS_LIB . 'test_manager.php';
 			$this->Manager = new $this->_managerClass();
 		}
 		return $this->Manager;
