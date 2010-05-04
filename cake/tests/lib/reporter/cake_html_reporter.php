@@ -26,7 +26,7 @@ include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeHtmlReporter extends CakeBaseReporter {
+class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_TestListener{
 
 /**
  * Paints the top of the web page setting the
@@ -39,7 +39,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$this->sendNoCacheHeaders();
 		$this->paintDocumentStart();
 		$this->paintTestMenu();
-		echo "<h2>$testName</h2>\n";
 		echo "<ul class='tests'>\n";
 	}
 
@@ -155,20 +154,20 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param string $test_name Name class of test.
  * @return void
  */
-	public function paintFooter($test_name) {
-		$colour = ($this->getFailCount() + $this->getExceptionCount() > 0 ? "red" : "green");
+	public function paintFooter($result) {
+		$colour = ($result->failureCount()  + $result->errorCount() > 0 ? "red" : "green");
 		echo "</ul>\n";
 		echo "<div style=\"";
 		echo "padding: 8px; margin: 1em 0; background-color: $colour; color: white;";
 		echo "\">";
-		echo $this->getTestCaseProgress() . "/" . $this->getTestCaseCount();
+		echo $result->count() . "/" . $result->count() - $result->skippedCount();
 		echo " test cases complete:\n";
-		echo "<strong>" . $this->getPassCount() . "</strong> passes, ";
-		echo "<strong>" . $this->getFailCount() . "</strong> fails and ";
-		echo "<strong>" . $this->getExceptionCount() . "</strong> exceptions.";
+		echo "<strong>" . count($result->passed()) . "</strong> passes, ";
+		echo "<strong>" . $result->failureCount() . "</strong> fails and ";
+		echo "<strong>" . $result->errorCount() . "</strong> exceptions.";
 		echo "</div>\n";
 		echo '<div style="padding:0 0 5px;">';
-		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $this->_timeDuration . '</p>';
+		echo '<p><strong>Time taken by tests (in seconds):</strong> ' . $result->time() . '</p>';
 		if (function_exists('memory_get_peak_usage')) {
 			echo '<p><strong>Peak memory use: (in bytes):</strong> ' . number_format(memory_get_peak_usage()) . '</p>';
 		}
@@ -247,18 +246,24 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * trail of the nesting test suites below the
  * top level test.
  *
- * @param string $message Failure message displayed in
+ * @param PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
  *   the context of the other tests.
  * @return void
  */
 	public function paintFail($message) {
-		parent::paintFail($message);
+		$context = $message->getTrace();
+		$realContext = $context[3];
+		$context = $context[2];
+
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
-		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
+		echo "<div class='msg'>" . $this->_htmlEntities($message->getDescription()) . "</div>\n";
+		echo "<div class='msg'>" . sprintf(__('File: %s'), $context['file']) . "</div>\n";
+		echo "<div class='msg'>" . sprintf(__('Method: %s'), $realContext['function']) . "</div>\n";
+		echo "<div class='msg'>" . sprintf(__('Line: %s'), $context['line']) . "</div>\n";
+		//$breadcrumb = $this->getTestList();
+		//array_shift($breadcrumb);
+		//echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -291,7 +296,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintError($message) {
-		parent::paintError($message);
 		echo "<li class='error'>\n";
 		echo "<span>Error</span>";
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
@@ -354,6 +358,108 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	protected function _htmlEntities($message) {
 		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
+	}
+
+	public function paintResult(PHPUnit_Framework_TestResult $result) {
+
+		/*if ($result->errorCount() > 0) {
+			$this->printErrors($result);
+		}
+
+		if ($result->failureCount() > 0) {
+			$this->printFailures($result);
+		}
+		
+		if ($result->skippedCount() > 0) {
+			 $this->printIncompletes($result);
+		}
+
+		if ($result->skippedCount() > 0) {
+			$this->printSkipped($result);
+		}*/
+
+		$this->paintFooter($result);
+	}
+
+/**
+* An error occurred.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception              $e
+* @param  float                  $time
+*/
+	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		
+	}
+
+/**
+* A failure occurred.
+*
+* @param  PHPUnit_Framework_Test                 $test
+* @param  PHPUnit_Framework_AssertionFailedError $e
+* @param  float                                  $time
+*/
+	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
+		$this->paintFail($e);
+	}
+
+/**
+* Incomplete test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception              $e
+* @param  float                  $time
+*/
+	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+
+	}
+
+/**
+* Skipped test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception              $e
+* @param  float                  $time
+* @since  Method available since Release 3.0.0
+*/
+	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		
+	}
+
+/**
+ * A test suite started.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ * @since  Method available since Release 2.2.0
+ */
+	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		echo '<h2>' . sprintf(__('Running  %s'), $suite->getName()) . '</h2>';
+	}
+
+/**
+ * A test suite ended.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ * @since  Method available since Release 2.2.0
+ */
+	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+	}
+
+/**
+ * A test started.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ */
+	public function startTest(PHPUnit_Framework_Test $test) {
+	}
+
+/**
+ * A test ended.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  float                  $time
+ */
+	public function endTest(PHPUnit_Framework_Test $test, $time) {
 	}
 }
 ?>
