@@ -82,7 +82,7 @@ class CakeTestDispatcher extends Dispatcher {
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class CakeTestCase extends UnitTestCase {
+class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
  * Methods used internally.
@@ -191,8 +191,10 @@ class CakeTestCase extends UnitTestCase {
  * @param string $message
  * @return boolean
  */
-	public function skipIf($shouldSkip, $message = '%s') {
-		parent::skipIf($shouldSkip, $message);
+	public function skipIf($shouldSkip, $message = '') {
+		if ($shouldSkip) {
+			$this->markTestSkipped($message);
+		}
 		return $shouldSkip;
 	}
 
@@ -298,7 +300,7 @@ class CakeTestCase extends UnitTestCase {
  * @param mixed $params Parameters (see above), or simply a string of what to return
  * @return mixed Whatever is returned depending of requested result
  */
-	public function testAction($url, $params = array()) {
+	public function runTestAction($url, $params = array()) {
 		$default = array(
 			'return' => 'result',
 			'fixturize' => false,
@@ -685,7 +687,7 @@ class CakeTestCase extends UnitTestCase {
 				return false;
 			}
 		}
-		return $this->assert(new TrueExpectation(), true, '%s');
+		return $this->assertTrue(true, '%s');
 	}
 
 /**
@@ -816,6 +818,29 @@ class CakeTestCase extends UnitTestCase {
 			}
 			return $permuted;
 		}
+	}
+
+	protected function assertEqual($a, $b) {
+		return $this->assertEquals($a, $b);
+	}
+
+	protected function assertPattern($pattern, $string, $message = '') {
+		return $this->assertRegExp($pattern, $string, $message);
+	}
+
+	protected function assertIdentical($expected, $actual, $message = '') {
+		return $this->assertSame($expected, $actual, $message);
+	}
+
+	protected function assertNoPattern($pattern, $string, $message = '') {
+		return $this->assertNotRegExp($pattern, $string, $message);
+	}
+
+	protected function assertNoErrors() {
+	}
+
+	protected function expectException($name = null) {
+		$this->setExpectedException($name);
 	}
 }
 ?>
