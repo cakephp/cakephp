@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('ClassRegistry', 'Controller', 'View', 'Model', 'Security'));
+App::import('Core', array('ClassRegistry', 'Controller', 'View', 'Model', 'Security', 'CakeRequest'));
 App::import('Helper', 'Html');
 App::import('Helper', 'Form');
 
@@ -671,10 +671,11 @@ class FormHelperTest extends CakeTestCase {
 		parent::setUp();
 		Router::reload();
 
-		$this->Form =& new FormHelper();
-		$this->Form->Html =& new HtmlHelper();
-		$this->Controller =& new ContactTestController();
-		$this->View =& new View($this->Controller);
+		$this->Form = new FormHelper();
+		$this->Form->Html = new HtmlHelper();
+		$this->Controller = new ContactTestController();
+		$this->View = new View($this->Controller);
+		$this->Form->params = new CakeRequest(null, false);
 		$this->Form->params['action'] = 'add';
 
 		ClassRegistry::addObject('view', $view);
@@ -816,7 +817,8 @@ class FormHelperTest extends CakeTestCase {
 	function testFormSecurityFields() {
 		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
-		$this->Form->params['_Token']['key'] = $key;
+	
+		$this->Form->params['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
 		$expected = Security::hash(serialize($fields) . Configure::read('Security.salt'));
@@ -879,7 +881,7 @@ class FormHelperTest extends CakeTestCase {
 			'Model.0.valid' => '0', 'Model.1.password', 'Model.1.username',
 			'Model.1.hidden' => 'value', 'Model.1.valid' => '0'
 		);
-		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->params['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields);
 
 		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3An%3A4%3A%7Bv%3A0%3Bf%3A14%3A%22Zbqry.';
@@ -906,7 +908,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormSecurityMultipleSubmitButtons() {
 		$key = 'testKey';
-		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->params['_Token'] = array('key' => $key);
 
 		$this->Form->create('Addresses');
 		$this->Form->input('Address.title');
@@ -950,7 +952,7 @@ class FormHelperTest extends CakeTestCase {
 	function testFormSecurityMultipleInputFields() {
 		$key = 'testKey';
 
-		$this->Form->params['_Token']['key'] = $key;
+		$this->Form->params['_Token'] = array('key' => $key);
 		$this->Form->create('Addresses');
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
@@ -997,8 +999,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormSecurityMultipleInputDisabledFields() {
 		$key = 'testKey';
-		$this->Form->params['_Token']['key'] = $key;
-		$this->Form->params['_Token']['disabledFields'] = array('first_name', 'address');
+		$this->Form->params['_Token'] = array(
+			'key' => $key,
+			'disabledFields' => array('first_name', 'address')
+		);
 		$this->Form->create();
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
@@ -1041,8 +1045,10 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testFormSecurityInputDisabledFields() {
 		$key = 'testKey';
-		$this->Form->params['_Token']['key'] = $key;
-		$this->Form->params['_Token']['disabledFields'] = array('first_name', 'address');
+		$this->Form->params['_Token'] = array(
+			'key' => $key,
+			'disabledFields' => array('first_name', 'address')
+		);
 		$this->Form->create();
 
 		$this->Form->hidden('Addresses.id', array('value' => '123456'));
@@ -1084,7 +1090,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormSecuredInput() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token'] = array('key' => 'testKey');
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
@@ -1189,7 +1195,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormSecuredFileInput() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token'] = array('key' => 'testKey');
 		$this->assertEqual($this->Form->fields, array());
 
 		$result = $this->Form->file('Attachment.file');
@@ -1207,7 +1213,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormSecuredMultipleSelect() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token'] = array('key' => 'testKey');
 		$this->assertEqual($this->Form->fields, array());
 		$options = array('1' => 'one', '2' => 'two');
 
@@ -1227,7 +1233,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormSecuredRadio() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token'] = array('key' => 'testKey');
 		$this->assertEqual($this->Form->fields, array());
 		$options = array('1' => 'option1', '2' => 'option2');
 
@@ -1243,8 +1249,10 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDisableSecurityUsingForm() {
-		$this->Form->params['_Token']['key'] = 'testKey';
-		$this->Form->params['_Token']['disabledFields'] = array();
+		$this->Form->params['_Token'] = array(
+			'key' => 'testKey',
+			'disabledFields' => array()
+		);
 		$this->Form->create();
 
 		$this->Form->hidden('Addresses.id', array('value' => '123456'));
@@ -3340,7 +3348,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectMultipleCheckboxSecurity() {
-		$this->Form->params['_Token']['key'] = 'testKey';
+		$this->Form->params['_Token'] = array('key' => 'testKey');
 		$this->assertEqual($this->Form->fields, array());
 
 		$result = $this->Form->select(
