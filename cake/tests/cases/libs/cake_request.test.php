@@ -30,6 +30,19 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that the autoparse = false constructor works.
+ *
+ * @return void
+ */
+	function testNoAutoParseConstruction() {
+		$_GET = array(
+			'one' => 'param'
+		);
+		$request = new CakeRequest(null, false);
+		$this->assertFalse(isset($request->query['one']));
+	}
+
+/**
  * test construction
  *
  * @return void

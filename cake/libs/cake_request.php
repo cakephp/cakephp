@@ -100,10 +100,10 @@ class CakeRequest implements ArrayAccess {
  * Constructor 
  *
  * @param string $url Url string to use
- * @param array $additionalParams Additional parameters that are melded with other request parameters
+ * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  * @return void
  */
-	public function __construct($url = null) {
+	public function __construct($url = null, $parseEnvironment = true) {
 		$this->base = $this->_base();
 		if (empty($url)) {
 			$url = $this->_url();
@@ -113,10 +113,11 @@ class CakeRequest implements ArrayAccess {
 		}
 		$this->url = $url;
 
-		$this->_processPost();
-		$this->_processGet();
-		$this->_processFiles();
-
+		if ($parseEnvironment) {
+			$this->_processPost();
+			$this->_processGet();
+			$this->_processFiles();
+		}
 		$this->here = $this->base . '/' . $this->url;
 	}
 
