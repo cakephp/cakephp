@@ -59,6 +59,13 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 	public $pluginTest = false;
 
 /**
+ * TestSuite container for single or grouped test files
+ *
+ * @var PHPUnit_Framework_TestSuiteboolean
+ */
+	protected $_testSuit = null;
+
+/**
  * Constructor for the TestManager class
  *
  * @return void
@@ -77,29 +84,30 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 /**
  * Runs all tests in the Application depending on the current appTest setting
  *
- * @param Object $reporter Reporter object for the tests being run.
- * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
  * @return mixed
  */
-	public function runAllTests(&$reporter, $testing = false) {
+	public function runAllTests(&$reporter) {
 		$testCases = $this->_getTestFileList($this->_getTestsPath());
-		if ($this->appTest) {
-			$test = new TestSuite(__('All App Tests', true));
-		} else if ($this->pluginTest) {
-			$test = new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
-		} else {
-			$test = new TestSuite(__('All Core Tests', true));
-		}
 
-		if ($testing) {
-			return $testCases;
+		if ($this->appTest) {
+			$test = $this->getTestSuite(__('All App Tests', true));
+		} else if ($this->pluginTest) {
+			$test =  $this->getTestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
+		} else {
+			$test =  $this->getTestSuite(__('All Core Tests', true));
 		}
 
 		foreach ($testCases as $testCase) {
 			$test->addTestFile($testCase);
 		}
 
-		return $test->run($reporter);
+		$result = new PHPUnit_Framework_TestResult;
+		$result->addListener($reporter);
+		$reporter->paintHeader();
+		$run = $test->run($result);
+		$reporter->paintResult($result);
+		return $result;
 	}
 
 /**
@@ -107,31 +115,24 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  *
  * @param string $testCaseFile Filename of the test to be run.
  * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
- * @param boolean $testing Set to true if testing, otherwise test case will be run.
+ * @throws InvalidArgumentException if the supplied $testCaseFile does not exists
  * @return mixed Result of test case being run.
  */
-	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener &$reporter, $testing = false) {
+	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener &$reporter) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
-			trigger_error(sprintf(__('Test case %s cannot be found', true), $testCaseFile), E_USER_ERROR);
-			return false;
+			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), $testCaseFile));
 		}
 
-		if ($testing) {
-			return true;
-		}
-
-		$testSuite = new PHPUnit_Framework_TestSuite;
-		$testSuite->setName(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$testSuite->addTestFile($testCaseFileWithPath);
-
 		$result = new PHPUnit_Framework_TestResult;
 		$result->addListener($reporter);
 		$reporter->paintHeader();
 		$run = $testSuite->run($result);
 		$reporter->paintResult($result);
-		return $run;
+		return $result;
 	}
 
 /**
@@ -300,13 +301,14 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 			return $fileList;
 		}
 
-		$files = glob($directory . DS . '*');
-		$files = $files ? $files : array();
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 
 		foreach ($files as $file) {
-			if (is_dir($file)) {
-				$fileList = array_merge($fileList, $this->_getRecursiveFileList($file, $fileTestFunction));
-			} elseif ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
+			if (!$file->isFile()) {
+				continue;
+			}
+			$file = $file->getRealPath();
+			if ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
 				$fileList[] = $file;
 			}
 		}
@@ -385,6 +387,19 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 			return $this->_testExtension;
 		}
 		return $this->_groupExtension;
+	}
+
+/**
+ * Get the container testSuite instance for this runner or creates a new one
+ *
+ * @param string $name The name for the container test suite
+ * @return PHPUnit_Framework_TestSuite container test suite
+ */
+	protected function getTestSuite($name = '') {
+		if (!empty($this->_testSuite)) {
+			return $this->_testSuite;
+		}
+		return $this->_testSuite = new PHPUnit_Framework_TestSuite($name);
 	}
 
 	protected function runFailed($message) {

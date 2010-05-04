@@ -20,6 +20,13 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+class TestTestManager extends TestManager {
+
+	public function setTestSuite($testSuite) {
+		$this->_testSuite = $testSuite;
+	}
+}
+
 /**
  * TestManagerTest class
  *
@@ -29,13 +36,36 @@
 class TestManagerTest extends CakeTestCase {
 
 /**
+ * Number of times the funcion PHPUnit_Framework_TestSuite::addTestFile() has been called
+ *
+ * @var integer
+ */
+	protected $_countFiles = 0;
+
+/**
  * setUp method
  *
  * @return void
  */
 	public function setUp() {
-		$this->TestManager = new TestManager();
-		$this->Reporter = new CakeHtmlReporter();
+		$this->_countFiles = 0;
+		$this->TestManager = new TestTestManager();
+		$testSuiteStub = $this->getMock('PHPUnit_Framework_TestSuite');
+		$testSuiteStub
+			->expects($this->any())
+			->method('addTestFile')
+			->will($this->returnCallback(array(&$this, '_countIncludedTestFiles')));
+		$this->TestManager->setTestSuite($testSuiteStub);
+		$this->Reporter = $this->getMock('CakeHtmlReporter');
+	}
+
+/**
+ * Helper method to count the number of times the
+ * function PHPUnit_Framework_TestSuite::addTestFile() has been called
+ * @return void
+ */
+	public function _countIncludedTestFiles() {
+		$this->_countFiles++;
 	}
 
 /**
@@ -44,14 +74,28 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunAllTests() {
-		$folder = new Folder(CORE_TEST_CASES);
+		$folder = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(CORE_TEST_CASES));
 		$extension = str_replace('.', '\.', $this->TestManager->getExtension('test'));
-		$out = $folder->findRecursive('.*' . $extension);
+		$out = new RegexIterator($folder, '#^.+'.$extension.'$#i', RecursiveRegexIterator::GET_MATCH);
 
-		$reporter = new CakeHtmlReporter();
-		$list = $this->TestManager->runAllTests($reporter, true);
+		$files = array();
+		foreach ($out as $testFile) {
+			$files[] = $testFile[0];
+		}
 
-		$this->assertEqual(count($out), count($list));
+		$result = $this->TestManager->runAllTests($this->Reporter, true);
+
+		$this->assertEqual(count($files), $this->_countFiles);
+		$this->assertType('PHPUnit_Framework_TestResult', $result);
+	}
+
+/**
+* Tests that trying to run an unexistent file throws an exception
+* @expectedException InvalidArgumentException
+*/
+	public function testRunUnexistentCase() {
+		$file = md5(time());
+		$result = $this->TestManager->runTestCase($file, $this->Reporter);
 	}
 
 /**
@@ -60,14 +104,10 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunTestCase() {
-		$file = md5(time());
-		$result = $this->TestManager->runTestCase($file, $this->Reporter);
-		$this->assertError('Test case ' . $file . ' cannot be found');
-		$this->assertFalse($result);
-
 		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
 		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
-		$this->assertTrue($result);
+		$this->assertEqual(1, $this->_countFiles);
+		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}
 
 /**
