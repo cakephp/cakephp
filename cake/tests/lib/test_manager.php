@@ -29,7 +29,7 @@ define('APP_TEST_GROUPS', TESTS . 'groups');
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class TestManager {
+class TestManager extends PHPUnit_Runner_BaseTestRunner {
 /**
  * Extension suffix for test case files.
  *
@@ -64,28 +64,14 @@ class TestManager {
  * @return void
  */
 	public function __construct() {
-		$this->_installSimpleTest();
+		//require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
+		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
 		if (isset($_GET['app'])) {
 			$this->appTest = true;
 		}
 		if (isset($_GET['plugin'])) {
 			$this->pluginTest = $_GET['plugin'];
 		}
-	}
-
-/**
- * Includes the required simpletest files in order for the testsuite to run
- *
- * @return void
- */
-	public function _installSimpleTest() {
-		App::import('Vendor', array(
-			'simpletest' . DS . 'unit_tester',
-			'simpletest' . DS . 'mock_objects',
-			'simpletest' . DS . 'web_tester'
-		));
-		require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
-		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
 	}
 
 /**
@@ -120,11 +106,11 @@ class TestManager {
  * Runs a specific test case file
  *
  * @param string $testCaseFile Filename of the test to be run.
- * @param Object $reporter Reporter instance to attach to the test case.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
  * @param boolean $testing Set to true if testing, otherwise test case will be run.
  * @return mixed Result of test case being run.
  */
-	public function runTestCase($testCaseFile, &$reporter, $testing = false) {
+	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener &$reporter, $testing = false) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
@@ -136,9 +122,16 @@ class TestManager {
 			return true;
 		}
 
-		$test = new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$test->addTestFile($testCaseFileWithPath);
-		return $test->run($reporter);
+		$testSuite = new PHPUnit_Framework_TestSuite;
+		$testSuite->setName(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		$testSuite->addTestFile($testCaseFileWithPath);
+
+		$result = new PHPUnit_Framework_TestResult;
+		$result->addListener($reporter);
+		$reporter->paintHeader($testSuite->getName());
+		$run = $testSuite->run($result);
+		$reporter->paintResult($result);
+		return $run;
 	}
 
 /**
@@ -193,16 +186,16 @@ class TestManager {
  * @access public
  * @static
  */
-	public static function addTestFile(&$groupTest, $file) {
-		$manager = new TestManager();
-
-		if (file_exists($file . $manager->_testExtension)) {
-			$file .= $manager->_testExtension;
-		} elseif (file_exists($file . $manager->_groupExtension)) {
-			$file .= $manager->_groupExtension;
-		}
-		$groupTest->addTestFile($file);
-	}
+	// public static function addTestFile(&$groupTest, $file) {
+	// 	$manager = new TestManager();
+	// 
+	// 	if (file_exists($file . $manager->_testExtension)) {
+	// 		$file .= $manager->_testExtension;
+	// 	} elseif (file_exists($file . $manager->_groupExtension)) {
+	// 		$file .= $manager->_groupExtension;
+	// 	}
+	// 	$groupTest->addTestFile($file);
+	// }
 
 /**
  * Returns a list of test cases found in the current valid test case path
@@ -392,6 +385,10 @@ class TestManager {
 			return $this->_testExtension;
 		}
 		return $this->_groupExtension;
+	}
+
+	protected function runFailed($message) {
+		
 	}
 }
 
