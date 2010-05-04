@@ -520,6 +520,9 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_SERVER['HTTP_USER_AGENT'] = 'Android 2.0';
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
+
+		$this->expectException();
+		$request->IamABanana();
 	}
 
 /**
