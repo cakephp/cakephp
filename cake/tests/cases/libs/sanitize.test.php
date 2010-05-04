@@ -346,6 +346,32 @@ class SanitizeTest extends CakeTestCase {
 		$expected = '';
 		$result = Sanitize::stripScripts($string);
 		$this->assertEqual($result, $expected);
+
+		$string = <<<HTML
+text
+<style type="text/css">
+<!-- 
+#content { display:none; } 
+-->
+</style>
+text
+HTML;
+		$expected = "text\n\ntext";
+		$result = Sanitize::stripScripts($string);
+		$this->assertEqual($result, $expected);
+
+		$string = <<<HTML
+text
+<script type="text/javascript">
+<!-- 
+alert('wooo');
+-->
+</script>
+text
+HTML;
+		$expected = "text\n\ntext";
+		$result = Sanitize::stripScripts($string);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
