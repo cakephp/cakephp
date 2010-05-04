@@ -24,7 +24,7 @@
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeBaseReporter extends SimpleReporter {
+class CakeBaseReporter {
 
 /**
  * Time the test runs started.
@@ -81,7 +81,6 @@ class CakeBaseReporter extends SimpleReporter {
  * @param array $params Array of request parameters the reporter should use. See above.
  */
 	function __construct($charset = 'utf-8', $params = array()) {
-		parent::__construct();
 		if (!$charset) {
 			$charset = 'utf-8';
 		}
