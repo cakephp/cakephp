@@ -102,7 +102,7 @@ class TestManager {
 			$test->addTestFile($testCase);
 		}
 
-		return $test->run($reporter);
+		return $this->run($reporter);
 	}
 
 /**

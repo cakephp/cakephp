@@ -51,10 +51,17 @@ class TestManagerTest extends CakeTestCase {
 		$this->_countFiles = 0;
 		$this->TestManager = new TestTestManager();
 		$this->testSuiteStub = $this->getMock('PHPUnit_Framework_TestSuite');
+
 		$this->testSuiteStub
 			->expects($this->any())
 			->method('addTestFile')
 			->will($this->returnCallback(array(&$this, '_countIncludedTestFiles')));
+
+		$this->testSuiteStub
+			->expects($this->any())
+			->method('addTestSuite')
+			->will($this->returnCallback(array(&$this, '_countIncludedTestFiles')));
+
 		$this->TestManager->setTestSuite($this->testSuiteStub);
 		$this->Reporter = $this->getMock('CakeHtmlReporter');
 	}
@@ -68,9 +75,9 @@ class TestManagerTest extends CakeTestCase {
 		$this->_countFiles++;
 	}
 
-	protected function _getAllTestFiles() {
-		$folder = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(CORE_TEST_CASES));
-		$extension = str_replace('.', '\.', $this->TestManager->getExtension('test'));
+	protected function _getAllTestFiles($directory = CORE_TEST_CASES, $type = 'test') {
+		$folder = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+		$extension = str_replace('.', '\.', $this->TestManager->getExtension($type));
 		$out = new RegexIterator($folder, '#^.+'.$extension.'$#i', RecursiveRegexIterator::GET_MATCH);
 
 		$files = array();
@@ -120,6 +127,15 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunGroupTest() {
+		$groups = $this->_getAllTestFiles(CORE_TEST_GROUPS, 'group');
+		if (empty($groups)) {
+			$this->markTestSkipped('No test group files');
+			return;
+		}
+		list($groupFile,) = explode('.', array_pop($groups), 2);
+		$result = $this->TestManager->runGroupTest(basename($groupFile), $this->Reporter);
+		$this->assertGreaterThan(0, $this->_countFiles);
+		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}
 
 /**
