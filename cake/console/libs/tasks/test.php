@@ -95,7 +95,7 @@ class TestTask extends BakeTask {
 		$this->out(sprintf(__("Path: %s", true), $this->path));
 		$this->hr();
 
-		$selection = null;
+		$type = null;
 		if ($type) {
 			$type = Inflector::camelize($type);
 			if (!in_array($type, $this->classTypes)) {
