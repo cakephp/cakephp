@@ -59,7 +59,7 @@ class ControllerTask extends BakeTask {
  */
 	function execute() {
 		if (empty($this->args)) {
-			$this->__interactive();
+			return $this->__interactive();
 		}
 
 		if (isset($this->args[0])) {
@@ -178,7 +178,7 @@ class ControllerTask extends BakeTask {
 				);
 			}
 		} else {
-			list($wannaBakeCrud, $wannaBakeCrud) = $this->_askAboutMethods();
+			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
 		}
 
 		if (strtolower($wannaBakeCrud) == 'y') {
@@ -189,6 +189,7 @@ class ControllerTask extends BakeTask {
 			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) == 'y');
 		}
 
+		$baked = false;
 		if ($this->interactive === true) {
 			$this->confirmController($controllerName, $useDynamicScaffold, $helpers, $components);
 			$looksGood = $this->in(__('Look okay?', true), array('y','n'), 'y');
@@ -205,6 +206,7 @@ class ControllerTask extends BakeTask {
 				$this->bakeTest($controllerName);
 			}
 		}
+		return $baked;
 	}
 
 /**
