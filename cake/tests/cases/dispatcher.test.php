@@ -847,13 +847,12 @@ class DispatcherTest extends CakeTestCase {
  */
 	public function testAdminDispatch() {
 		$_POST = array();
-		$Dispatcher =& new TestDispatcher();
+		$Dispatcher = new TestDispatcher();
 		Configure::write('Routing.prefixes', array('admin'));
 		Configure::write('App.baseUrl','/cake/repo/branches/1.2.x.x/index.php');
 		$url = 'admin/test_dispatch_pages/index/param:value/param2:value2';
 
 		Router::reload();
-		$Router =& Router::getInstance();
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$this->assertEqual($controller->name, 'TestDispatchPages');
