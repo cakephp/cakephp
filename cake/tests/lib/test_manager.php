@@ -250,7 +250,7 @@ class TestManager {
  * @static
  */
 	protected static function &_getTestGroupFileList($directory = '.') {
-		$return = self::_getRecursiveFileList($directory, array(self, '_isTestGroupFile'));
+		$return = self::_getRecursiveFileList($directory, 'self::_isTestGroupFile');
 		return $return;
 	}
 
@@ -356,17 +356,18 @@ class TestManager {
  *
  * @param string $type either 'cases' or 'groups'
  * @return string The path tests are located on
+ * @static
  */
-	protected function _getTestsPath($type = 'cases') {
-		if (!empty($this->appTest)) {
+	protected static function _getTestsPath($type = 'cases') {
+		if (!empty(self::$appTest)) {
 			if ($type == 'cases') {
 				$result = APP_TEST_CASES;
 			} else if ($type == 'groups') {
 				$result = APP_TEST_GROUPS;
 			}
-		} else if (!empty($this->pluginTest)) {
-			$_pluginBasePath = APP . 'plugins/' . $this->pluginTest . '/tests';
-			$pluginPath = App::pluginPath($this->pluginTest);
+		} else if (!empty(self::$pluginTest)) {
+			$_pluginBasePath = APP . 'plugins/' . self::$pluginTest . '/tests';
+			$pluginPath = App::pluginPath(self::$pluginTest);
 			if (file_exists($pluginPath . DS . 'tests')) {
 				$_pluginBasePath = $pluginPath . DS . 'tests';
 			}
