@@ -102,12 +102,10 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testRouteCompilingWithParamPatterns() {
-		extract(Router::getNamedExpressions());
-
 		$route = new CakeRoute(
 			'/:controller/:action/:id',
 			array(),
-			array('id' => $ID)
+			array('id' => Router::ID)
 		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/edit/1');
@@ -119,7 +117,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$route = new CakeRoute(
 			'/:lang/:controller/:action/:id',
 			array('controller' => 'testing4'),
-			array('id' => $ID, 'lang' => '[a-z]{3}')
+			array('id' => Router::ID, 'lang' => '[a-z]{3}')
 		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/eng/posts/edit/1');
@@ -143,7 +141,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$route = new CakeRoute(
 			'/posts/:id::title/:year',
 			array('controller' => 'posts', 'action' => 'view'),
-			array('id' => $ID, 'year' => $Year, 'title' => '[a-z-_]+')
+			array('id' => Router::ID, 'year' => Router::YEAR, 'title' => '[a-z-_]+')
 		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/1:name-of-article/2009/');
@@ -156,7 +154,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$route = new CakeRoute(
 			'/posts/:url_title-(uuid::id)',
 			array('controller' => 'posts', 'action' => 'view'),
-			array('pass' => array('id', 'url_title'), 'id' => $ID)
+			array('pass' => array('id', 'url_title'), 'id' => Router::ID)
 		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/some_title_for_article-(uuid:12534)/');
@@ -174,12 +172,10 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testComplexRouteCompilingAndParsing() {
-		extract(Router::getNamedExpressions());
-
 		$route = new CakeRoute(
 			'/posts/:month/:day/:year/*',
 			array('controller' => 'posts', 'action' => 'view'),
-			array('year' => $Year, 'month' => $Month, 'day' => $Day)
+			array('year' => Router::YEAR, 'month' => Router::MONTH, 'day' => Router::DAY)
 		);
 		$result = $route->compile();
 		$this->assertPattern($result, '/posts/08/01/2007/title-of-post');
@@ -383,8 +379,11 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testParse() {
-		extract(Router::getNamedExpressions());
-		$route = new CakeRoute('/:controller/:action/:id', array('controller' => 'testing4', 'id' => null), array('id' => $ID));
+		$route = new CakeRoute(
+			'/:controller/:action/:id',
+			array('controller' => 'testing4', 'id' => null),
+			array('id' => Router::ID)
+		);
 		$route->compile();
 		$result = $route->parse('/posts/view/1');
 		$this->assertEqual($result['controller'], 'posts');
