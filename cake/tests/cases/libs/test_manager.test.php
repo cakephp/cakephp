@@ -50,12 +50,12 @@ class TestManagerTest extends CakeTestCase {
 	public function setUp() {
 		$this->_countFiles = 0;
 		$this->TestManager = new TestTestManager();
-		$testSuiteStub = $this->getMock('PHPUnit_Framework_TestSuite');
-		$testSuiteStub
+		$this->testSuiteStub = $this->getMock('PHPUnit_Framework_TestSuite');
+		$this->testSuiteStub
 			->expects($this->any())
 			->method('addTestFile')
 			->will($this->returnCallback(array(&$this, '_countIncludedTestFiles')));
-		$this->TestManager->setTestSuite($testSuiteStub);
+		$this->TestManager->setTestSuite($this->testSuiteStub);
 		$this->Reporter = $this->getMock('CakeHtmlReporter');
 	}
 
@@ -68,12 +68,7 @@ class TestManagerTest extends CakeTestCase {
 		$this->_countFiles++;
 	}
 
-/**
- * testRunAllTests method
- *
- * @return void
- */
-	public function testRunAllTests() {
+	protected function _getAllTestFiles() {
 		$folder = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(CORE_TEST_CASES));
 		$extension = str_replace('.', '\.', $this->TestManager->getExtension('test'));
 		$out = new RegexIterator($folder, '#^.+'.$extension.'$#i', RecursiveRegexIterator::GET_MATCH);
@@ -82,10 +77,19 @@ class TestManagerTest extends CakeTestCase {
 		foreach ($out as $testFile) {
 			$files[] = $testFile[0];
 		}
+		return $files;
+	}
 
+/**
+ * testRunAllTests method
+ *
+ * @return void
+ */
+	public function testRunAllTests() {
+		$files = $this->_getAllTestFiles();
 		$result = $this->TestManager->runAllTests($this->Reporter, true);
 
-		$this->assertEqual(count($files), $this->_countFiles);
+		$this->assertEquals(count($files), $this->_countFiles);
 		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}
 
@@ -106,7 +110,7 @@ class TestManagerTest extends CakeTestCase {
 	public function testRunTestCase() {
 		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
 		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
-		$this->assertEqual(1, $this->_countFiles);
+		$this->assertEquals(1, $this->_countFiles);
 		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}
 
@@ -124,6 +128,8 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testAddTestCasesFromDirectory() {
+		$this->TestManager->addTestCasesFromDirectory($this->testSuiteStub, CORE_TEST_CASES);
+		$this->assertEquals(count($this->_getAllTestFiles()), $this->_countFiles);
 	}
 
 /**
@@ -132,6 +138,9 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testAddTestFile() {
+		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
+		$this->TestManager->addTestFile($this->testSuiteStub, $file);
+		$this->assertEquals(1, $this->_countFiles);
 	}
 
 /**

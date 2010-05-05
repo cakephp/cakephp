@@ -29,20 +29,20 @@ define('APP_TEST_GROUPS', TESTS . 'groups');
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class TestManager extends PHPUnit_Runner_BaseTestRunner {
+class TestManager {
 /**
  * Extension suffix for test case files.
  *
  * @var string
  */
-	protected $_testExtension = '.test.php';
+	protected static $_testExtension = '.test.php';
 
 /**
  * Extension suffix for group test case files.
  *
  * @var string
  */
-	protected $_groupExtension = '.group.php';
+	protected static $_groupExtension = '.group.php';
 
 /**
  * Is this test an AppTest?
@@ -171,8 +171,7 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @static
  */
 	public static function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
-		$manager = new TestManager();
-		$testCases = $manager->_getTestFileList($directory);
+		$testCases = self::_getTestFileList($directory);
 		foreach ($testCases as $testCase) {
 			$groupTest->addTestFile($testCase);
 		}
@@ -187,16 +186,14 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @access public
  * @static
  */
-	// public static function addTestFile(&$groupTest, $file) {
-	// 	$manager = new TestManager();
-	// 
-	// 	if (file_exists($file . $manager->_testExtension)) {
-	// 		$file .= $manager->_testExtension;
-	// 	} elseif (file_exists($file . $manager->_groupExtension)) {
-	// 		$file .= $manager->_groupExtension;
-	// 	}
-	// 	$groupTest->addTestFile($file);
-	// }
+	public static function addTestFile(&$groupTest, $file) {
+		if (file_exists($file . self::$_testExtension)) {
+			$file .= self::$_testExtension;
+		} elseif (file_exists($file . self::$_groupExtension)) {
+			$file .= self::$_groupExtension;
+		}
+		$groupTest->addTestFile($file);
+	}
 
 /**
  * Returns a list of test cases found in the current valid test case path
@@ -204,9 +201,8 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @access public
  * @static
  */
-	function &getTestCaseList() {
-		$manager = new TestManager();
-		$return = $manager->_getTestCaseList($manager->_getTestsPath());
+	public static function &getTestCaseList() {
+		$return = self::_getTestCaseList(self::_getTestsPath());
 		return $return;
 	}
 
@@ -214,9 +210,10 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * Builds the list of test cases from a given directory
  *
  * @param string $directory Directory to get test case list from.
+ * @static
  */
-	protected function &_getTestCaseList($directory = '.') {
-		$fileList = $this->_getTestFileList($directory);
+	protected static function &_getTestCaseList($directory = '.') {
+		$fileList = self::_getTestFileList($directory);
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {
 			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
@@ -228,9 +225,10 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * Returns a list of test files from a given directory
  *
  * @param string $directory Directory to get test case files from.
+ * @static
  */
-	protected function &_getTestFileList($directory = '.') {
-		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestCaseFile'));
+	protected static function &_getTestFileList($directory = '.') {
+		$return = self::_getRecursiveFileList($directory, 'self::_isTestCaseFile');
 		return $return;
 	}
 
@@ -240,9 +238,8 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @access public
  * @static
  */
-	function &getGroupTestList() {
-		$manager = new TestManager();
-		$return = $manager->_getTestGroupList($manager->_getTestsPath('groups'));
+	static function &getGroupTestList() {
+		$return = self::_getTestGroupList(self::_getTestsPath('groups'));
 		return $return;
 	}
 
@@ -250,9 +247,10 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * Returns a list of group test files from a given directory
  *
  * @param string $directory The directory to get group test files from.
+ * @static
  */
-	protected function &_getTestGroupFileList($directory = '.') {
-		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestGroupFile'));
+	protected static function &_getTestGroupFileList($directory = '.') {
+		$return = self::_getRecursiveFileList($directory, array(self, '_isTestGroupFile'));
 		return $return;
 	}
 
@@ -260,13 +258,14 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * Returns a list of group test files from a given directory
  *
  * @param string $directory The directory to get group tests from.
+ * @static
  */
-	protected function &_getTestGroupList($directory = '.') {
-		$fileList = $this->_getTestGroupFileList($directory);
+	protected static function &_getTestGroupList($directory = '.') {
+		$fileList = self::_getTestGroupFileList($directory);
 		$groupTests = array();
 
 		foreach ($fileList as $groupTestFile) {
-			$groupTests[$groupTestFile] = str_replace($this->_groupExtension, '', basename($groupTestFile));
+			$groupTests[$groupTestFile] = str_replace(self::$_groupExtension, '', basename($groupTestFile));
 		}
 		sort($groupTests);
 		return $groupTests;
@@ -276,8 +275,9 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * Returns a list of class names from a group test file
  *
  * @param string $groupTestFile The groupTest file to scan for TestSuite classnames.
+ * @static
  */
-	protected function &_getGroupTestClassNames($groupTestFile) {
+	protected static function &_getGroupTestClassNames($groupTestFile) {
 		$file = implode("\n", file($groupTestFile));
 		preg_match("~lass\s+?(.*)\s+?extends TestSuite~", $file, $matches);
 		if (!empty($matches)) {
@@ -294,8 +294,9 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  *
  * @param string $directory The directory to scan for files.
  * @param mixed $fileTestFunction
+ * @static
  */
-	protected function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
+	protected static function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
 		$fileList = array();
 		if (!is_dir($directory)) {
 			return $fileList;
@@ -308,7 +309,8 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 				continue;
 			}
 			$file = $file->getRealPath();
-			if ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
+
+			if (call_user_func_array($fileTestFunction, array($file))) {
 				$fileList[] = $file;
 			}
 		}
@@ -320,9 +322,10 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  *
  * @param string $file
  * @return boolean Whether $file is a test case.
+ * @static
  */
-	protected function _isTestCaseFile($file) {
-		return $this->_hasExpectedExtension($file, $this->_testExtension);
+	protected static function _isTestCaseFile($file) {
+		return self::_hasExpectedExtension($file, self::$_testExtension);
 	}
 
 /**
@@ -330,9 +333,10 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  *
  * @param string $file
  * @return boolean Whether $file is a group
+ * @static
  */
-	protected function _isTestGroupFile($file) {
-		return $this->_hasExpectedExtension($file, $this->_groupExtension);
+	protected static function _isTestGroupFile($file) {
+		return static::_hasExpectedExtension($file, static::$_groupExtension);
 	}
 
 /**
@@ -341,8 +345,9 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @param string $file
  * @param string $extension
  * @return void
+ * @static
  */
-	protected function _hasExpectedExtension($file, $extension) {
+	protected static function _hasExpectedExtension($file, $extension) {
 		return $extension == strtolower(substr($file, (0 - strlen($extension))));
 	}
 
@@ -382,11 +387,11 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
  * @param string $type Type of test to get, either 'test' or 'group'
  * @return string Extension suffix for test.
  */
-	public function getExtension($type = 'test') {
+	public static function getExtension($type = 'test') {
 		if ($type == 'test' || $type == 'case') {
-			return $this->_testExtension;
+			return self::$_testExtension;
 		}
-		return $this->_groupExtension;
+		return self::$_groupExtension;
 	}
 
 /**
@@ -402,9 +407,6 @@ class TestManager extends PHPUnit_Runner_BaseTestRunner {
 		return $this->_testSuite = new PHPUnit_Framework_TestSuite($name);
 	}
 
-	protected function runFailed($message) {
-		
-	}
 }
 
 ?>
