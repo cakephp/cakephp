@@ -260,6 +260,7 @@ class RequestHandlerComponent extends Object {
  *
  * @param object $controller A reference to the controller
  * @param mixed $url A string or array containing the redirect location
+ * @param mixed HTTP Status for redirect
  * @access public
  */
 	function beforeRedirect(&$controller, $url, $status = null) {
