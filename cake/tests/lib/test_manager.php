@@ -102,12 +102,7 @@ class TestManager {
 			$test->addTestFile($testCase);
 		}
 
-		$result = new PHPUnit_Framework_TestResult;
-		$result->addListener($reporter);
-		$reporter->paintHeader();
-		$run = $test->run($result);
-		$reporter->paintResult($result);
-		return $result;
+		return $test->run($reporter);
 	}
 
 /**
@@ -118,7 +113,7 @@ class TestManager {
  * @throws InvalidArgumentException if the supplied $testCaseFile does not exists
  * @return mixed Result of test case being run.
  */
-	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener &$reporter) {
+	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
@@ -127,38 +122,49 @@ class TestManager {
 
 		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$testSuite->addTestFile($testCaseFileWithPath);
-		$result = new PHPUnit_Framework_TestResult;
-		$result->addListener($reporter);
-		$reporter->paintHeader();
-		$run = $testSuite->run($result);
-		$reporter->paintResult($result);
-		return $result;
+		return $this->run($reporter);
 	}
 
 /**
  * Runs a specific group test file
  *
  * @param string $groupTestName GroupTest that you want to run.
- * @param Object $reporter Reporter instance to use with the group test being run.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
+ * @throws InvalidArgumentException if it was not possible to locate the filename for $groupTestName
  * @return mixed Results of group test being run.
  */
-	public function runGroupTest($groupTestName, &$reporter) {
-		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
+	public function runGroupTest($groupTestName, $reporter) {
+		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->getExtension('group');
 
 		if (!file_exists($filePath)) {
-			trigger_error(sprintf(__('Group test %s cannot be found at %s', true), $groupTestName, $filePath), E_USER_ERROR);
+			throw new InvalidArgumentException(sprintf(__('Group test %s cannot be found at %s', true), $groupTestName, $filePath));
 		}
 
 		require_once $filePath;
-		$test = new TestSuite(sprintf(__('%s group test', true), $groupTestName));
-		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
-			$testCase = new $groupTest();
-			$test->addTestCase($testCase);
-			if (isset($testCase->label)) {
-				$test->_label = $testCase->label;
-			}
+		$suite = $this->getTestSuite(sprintf(__('%s group test', true), $groupTestName));
+		$groupClassName = Inflector::classify($groupTestName) . 'GroupTest';
+		$group = new $groupClassName();
+		$suite->addTestSuite($group);
+		if (isset($group->label)) {
+			$suite->setName($group->label);
 		}
-		return $test->run($reporter);
+
+		return $this->run($reporter);
+	}
+
+/**
+ * Runs the main testSuite and attaches to it a reporter
+ *
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
+ * @return mixed Results of group test being run.
+ */
+	protected function run($reporter) {
+		$result = new PHPUnit_Framework_TestResult;
+		$result->addListener($reporter);
+		$reporter->paintHeader();
+		$this->getTestSuite()->run($result);
+		$reporter->paintResult($result);
+		return $result;
 	}
 
 /**
@@ -238,7 +244,7 @@ class TestManager {
  * @access public
  * @static
  */
-	static function &getGroupTestList() {
+	public static function &getGroupTestList() {
 		$return = self::_getTestGroupList(self::_getTestsPath('groups'));
 		return $return;
 	}
@@ -271,22 +277,6 @@ class TestManager {
 		return $groupTests;
 	}
 
-/**
- * Returns a list of class names from a group test file
- *
- * @param string $groupTestFile The groupTest file to scan for TestSuite classnames.
- * @static
- */
-	protected static function &_getGroupTestClassNames($groupTestFile) {
-		$file = implode("\n", file($groupTestFile));
-		preg_match("~lass\s+?(.*)\s+?extends TestSuite~", $file, $matches);
-		if (!empty($matches)) {
-			unset($matches[0]);
-			return $matches;
-		}
-		$matches = array();
-		return $matches;
-	}
 
 /**
  * Gets a recursive list of files from a given directory and matches then against
