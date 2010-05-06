@@ -95,14 +95,12 @@ class TestTask extends BakeTask {
 		$this->out(sprintf(__("Path: %s", true), $this->path));
 		$this->hr();
 
-		$type = null;
 		if ($type) {
 			$type = Inflector::camelize($type);
 			if (!in_array($type, $this->classTypes)) {
-				unset($type);
+				$this->error(sprintf('Incorrect type provided.  Please choose one of %s', implode(', ', $this->classTypes)));
 			}
-		}
-		if (!$type) {
+		} else {
 			$type = $this->getObjectType();
 		}
 		$className = $this->getClassName($type);
