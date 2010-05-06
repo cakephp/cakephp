@@ -318,9 +318,9 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 			'] in ['. $exception->getFile() .
 			' line ' . $exception->getLine() . ']';
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
+		//$breadcrumb = $this->getTestList();
+		//array_shift($breadcrumb);
+		//echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -386,7 +386,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 * @param  float                  $time
 */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
-
+		$this->paintException($e);
 	}
 
 /**
