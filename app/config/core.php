@@ -115,6 +115,12 @@
 	//Configure::write('Session.database', 'default');
 /**
  * The name of CakePHP's session cookie.
+ *
+ * Note the guidelines for Session names states: "The session name references
+ * the session id in cookies and URLs. It should contain only alphanumeric
+ * characters; it should be short and descriptive (i.e. for users with enabled
+ * cookie warnings). "
+ * @link http://au.php.net/session_name
  */
 	Configure::write('Session.cookie', 'CAKEPHP');
 /**
