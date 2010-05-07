@@ -1080,7 +1080,7 @@ class Controller extends Object {
 			), E_USER_WARNING);
 			return array();
 		}
-		$options = array_merge($this->params->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->request->params, $this->params['url'], $this->passedArgs);
 
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
@@ -1211,11 +1211,11 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-		if (!isset($this->params['paging'])) {
-			$this->params['paging'] = array();
+		if (!isset($this->request['paging'])) {
+			$this->request['paging'] = array();
 		}
-		$this->params['paging'] = array_merge(
-			(array)$this->params['paging'],
+		$this->request['paging'] = array_merge(
+			(array)$this->request['paging'],
 			array($object->alias => $paging)
 		);
 
