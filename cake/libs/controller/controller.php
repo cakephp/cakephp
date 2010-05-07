@@ -23,6 +23,7 @@
  */
 App::import('Controller', 'Component', false);
 App::import('View', 'View', false);
+
 /**
  * Controller
  *
@@ -40,7 +41,6 @@ class Controller extends Object {
  * The name of this controller. Controller names are plural, named after the model they manipulate.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
 	public $name = null;
@@ -49,7 +49,6 @@ class Controller extends Object {
  * Stores the current URL, relative to the webroot of the application.
  *
  * @var string
- * @access public
  */
 	public $here = null;
 
@@ -57,7 +56,6 @@ class Controller extends Object {
  * The webroot of the application.
  *
  * @var string
- * @access public
  */
 	public $webroot = null;
 
@@ -65,7 +63,6 @@ class Controller extends Object {
  * The name of the currently requested controller action.
  *
  * @var string
- * @access public
  */
 	public $action = null;
 
@@ -78,7 +75,6 @@ class Controller extends Object {
  * use no models and prevent the merging of $uses with AppController
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $uses = false;
@@ -90,7 +86,6 @@ class Controller extends Object {
  * Example: `public $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
  *
  * @var mixed A single name as a string or a list of names as an array.
- * @access protected
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $helpers = array('Session', 'Html', 'Form');
@@ -100,7 +95,6 @@ class Controller extends Object {
  * about the request, etc.
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
  */
 	public $params = array();
@@ -110,7 +104,6 @@ class Controller extends Object {
  * using the `$this->data['ModelName']['fieldName']` pattern.
  *
  * @var array
- * @access public
  */
 	public $data = array();
 
@@ -130,7 +123,6 @@ class Controller extends Object {
  * }}}
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/1231/Pagination
  */
 	public $paginate = array('limit' => 20, 'page' => 1);
@@ -139,7 +131,6 @@ class Controller extends Object {
  * The name of the views subfolder containing views for this controller.
  *
  * @var string
- * @access public
  */
 	public $viewPath = null;
 
@@ -147,7 +138,6 @@ class Controller extends Object {
  * The name of the layouts subfolder containing layouts for this controller.
  *
  * @var string
- * @access public
  */
 	public $layoutPath = null;
 
@@ -155,7 +145,6 @@ class Controller extends Object {
  * Contains variables to be handed to the view.
  *
  * @var array
- * @access public
  */
 	public $viewVars = array();
 
@@ -163,7 +152,6 @@ class Controller extends Object {
  * An array containing the class names of the models this controller uses.
  *
  * @var array Array of model objects.
- * @access public
  */
 	public $modelNames = array();
 
@@ -171,7 +159,6 @@ class Controller extends Object {
  * Base URL path.
  *
  * @var string
- * @access public
  */
 	public $base = null;
 
@@ -181,7 +168,6 @@ class Controller extends Object {
  * extension.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/962/Page-related-Attributes-layout-and-pageTitle
  */
 	public $layout = 'default';
@@ -191,7 +177,6 @@ class Controller extends Object {
  * after action logic.
  *
  * @var boolean
- * @access public
  */
 	public $autoRender = true;
 
@@ -199,7 +184,6 @@ class Controller extends Object {
  * Set to true to automatically render the layout around views.
  *
  * @var boolean
- * @access public
  */
 	public $autoLayout = true;
 
@@ -207,7 +191,6 @@ class Controller extends Object {
  * Instance of Component used to handle callbacks.
  *
  * @var string
- * @access public
  */
 	public $Component = null;
 
@@ -218,7 +201,6 @@ class Controller extends Object {
  * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/961/components-helpers-and-uses
  */
 	public $components = array('Session');
@@ -227,7 +209,6 @@ class Controller extends Object {
  * The name of the View class this controller sends output to.
  *
  * @var string
- * @access public
  */
 	public $view = 'View';
 
@@ -235,7 +216,6 @@ class Controller extends Object {
  * File extension for view templates. Defaults to Cake's conventional ".ctp".
  *
  * @var string
- * @access public
  */
 	public $ext = '.ctp';
 
@@ -245,7 +225,6 @@ class Controller extends Object {
  * You can use this var in child controllers' afterFilter() callbacks to alter output.
  *
  * @var string
- * @access public
  */
 	public $output = null;
 
@@ -253,7 +232,6 @@ class Controller extends Object {
  * Automatically set to the name of a plugin.
  *
  * @var string
- * @access public
  */
 	public $plugin = null;
 
@@ -275,7 +253,6 @@ class Controller extends Object {
  * marks all the actions in the controller for view caching.
  *
  * @var mixed
- * @access public
  * @link http://book.cakephp.org/view/1380/Caching-in-the-Controller
  */
 	public $cacheAction = false;
@@ -286,7 +263,6 @@ class Controller extends Object {
  * This can increase performance in many cases.
  *
  * @var boolean
- * @access public
  */
 	public $persistModel = false;
 
@@ -294,7 +270,6 @@ class Controller extends Object {
  * Holds all params passed and named.
  *
  * @var mixed
- * @access public
  */
 	public $passedArgs = array();
 
@@ -302,7 +277,6 @@ class Controller extends Object {
  * Triggers Scaffolding
  *
  * @var mixed
- * @access public
  * @link http://book.cakephp.org/view/1103/Scaffolding
  */
 	public $scaffold = false;
@@ -311,8 +285,6 @@ class Controller extends Object {
  * Holds current methods of the controller
  *
  * @var array
- * @access public
- * @link
  */
 	public $methods = array();
 
@@ -323,7 +295,6 @@ class Controller extends Object {
  * Example: For a controller named 'Comments', the modelClass would be 'Comment'
  *
  * @var string
- * @access public
  */
 	public $modelClass = null;
 
@@ -333,7 +304,6 @@ class Controller extends Object {
  * Example: For a controller named 'ArticleComments', the modelKey would be 'article_comment'
  *
  * @var string
- * @access public
  */
 	public $modelKey = null;
 
@@ -341,7 +311,6 @@ class Controller extends Object {
  * Holds any validation errors produced by the last call of the validateErrors() method/
  *
  * @var array Validation errors, or false if none
- * @access public
  */
 	public $validationErrors = null;
 
@@ -351,7 +320,6 @@ class Controller extends Object {
  * tasked with their lazy-loading.
  *
  * @var array Associative array of HTTP codes and their associated messages.
- * @access private
  */
 	private $__httpCodes = null;
 
@@ -359,7 +327,7 @@ class Controller extends Object {
  * Constructor.
  *
  */
-	function __construct() {
+	public function __construct() {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -477,11 +445,10 @@ class Controller extends Object {
  * Loads Components and prepares them for initialization.
  *
  * @return mixed true if models found and instance created, or cakeError if models not found.
- * @access public
  * @see Controller::loadModel()
  * @link http://book.cakephp.org/view/977/Controller-Methods#constructClasses-986
  */
-	function constructClasses() {
+	public function constructClasses() {
 		$this->__mergeVars();
 		$this->Component->init($this);
 
@@ -557,7 +524,7 @@ class Controller extends Object {
  * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
  */
-	function httpCodes($code = null) {
+	public function httpCodes($code = null) {
 		if (empty($this->__httpCodes)) {
 			$this->__httpCodes = array(
 				100 => 'Continue', 101 => 'Switching Protocols',
@@ -605,7 +572,6 @@ class Controller extends Object {
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
- * @access public
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -628,15 +594,9 @@ class Controller extends Object {
 		if (($cached === false)) {
 			$this->modelNames[] = $modelClass;
 
-			if (!PHP5) {
-				$this->{$modelClass} =& ClassRegistry::init(array(
-					'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-				));
-			} else {
-				$this->{$modelClass} = ClassRegistry::init(array(
-					'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-				));
-			}
+			$this->{$modelClass} = ClassRegistry::init(array(
+				'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
+			));
 
 			if (!$this->{$modelClass}) {
 				return $this->cakeError('missingModel', array(array(
@@ -667,10 +627,9 @@ class Controller extends Object {
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
  * @return mixed void if $exit = false. Terminates script if $exit = true
- * @access public
  * @link http://book.cakephp.org/view/982/redirect
  */
-	function redirect($url, $status = null, $exit = true) {
+	public function redirect($url, $status = null, $exit = true) {
 		$this->autoRender = false;
 
 		if (is_array($status)) {
@@ -749,10 +708,9 @@ class Controller extends Object {
  * @param mixed $two Value in case $one is a string (which then works as the key).
  *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
  * @return void
- * @access public
  * @link http://book.cakephp.org/view/979/set
  */
-	function set($one, $two = null) {
+	public function set($one, $two = null) {
 		$data = array();
 
 		if (is_array($one)) {
@@ -794,10 +752,9 @@ class Controller extends Object {
  * Only called when AuthComponent::$authorize is set to 'controller'.
  *
  * @return bool true if authorized, false otherwise
- * @access public
  * @link http://book.cakephp.org/view/1275/authorize
  */
-	function isAuthorized() {
+	public function isAuthorized() {
 		trigger_error(sprintf(
 			__('%s::isAuthorized() is not defined.'), $this->name
 		), E_USER_WARNING);
@@ -850,10 +807,9 @@ class Controller extends Object {
  * @param string $layout Layout to use
  * @param string $file File to use for rendering
  * @return string Full output string of view contents
- * @access public
  * @link http://book.cakephp.org/view/980/render
  */
-	function render($action = null, $layout = null, $file = null) {
+	public function render($action = null, $layout = null, $file = null) {
 		$this->beforeRender();
 
 		$viewClass = $this->view;
@@ -912,10 +868,9 @@ class Controller extends Object {
  * @param string $default Default URL to use if HTTP_REFERER cannot be read from headers
  * @param boolean $local If true, restrict referring URLs to local server
  * @return string Referring URL
- * @access public
  * @link http://book.cakephp.org/view/987/referer
  */
-	function referer($default = null, $local = false) {
+	public function referer($default = null, $local = false) {
 		$ref = env('HTTP_REFERER');
 		if (!empty($ref) && defined('FULL_BASE_URL')) {
 			$base = FULL_BASE_URL . $this->webroot;
@@ -941,10 +896,9 @@ class Controller extends Object {
  * Forces the user's browser not to cache the results of the current request.
  *
  * @return void
- * @access public
  * @link http://book.cakephp.org/view/988/disableCache
  */
-	function disableCache() {
+	public function disableCache() {
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 		header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -962,10 +916,9 @@ class Controller extends Object {
  * @param integer $pause Time to show the message
  * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void Renders flash layout
- * @access public
  * @link http://book.cakephp.org/view/983/flash
  */
-	function flash($message, $url, $pause = 1, $layout = 'flash') {
+	public function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
 		$this->set('url', Router::url($url));
 		$this->set('message', $message);
@@ -984,10 +937,9 @@ class Controller extends Object {
  * @param boolean $exclusive If true, and $op is an array, fields not included in $op will not be
  *        included in the returned conditions
  * @return array An array of model conditions
- * @access public
  * @link http://book.cakephp.org/view/989/postConditions
  */
-	function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
+	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
 			if (!empty($this->data)) {
 				$data = $this->data;
@@ -1041,10 +993,9 @@ class Controller extends Object {
  * @param mixed $scope Conditions to use while paginating
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
- * @access public
  * @link http://book.cakephp.org/view/1232/Controller-Setup
  */
-	function paginate($object = null, $scope = array(), $whitelist = array()) {
+	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
 			$whitelist = $scope;
 			$scope = $object;
@@ -1237,28 +1188,25 @@ class Controller extends Object {
 /**
  * Called before the controller action.
  *
- * @access public
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function beforeFilter() {
+	public function beforeFilter() {
 	}
 
 /**
  * Called after the controller action is run, but before the view is rendered.
  *
- * @access public
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function beforeRender() {
+	public function beforeRender() {
 	}
 
 /**
  * Called after the controller action is run and rendered.
  *
- * @access public
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function afterFilter() {
+	public function afterFilter() {
 	}
 
 /**
@@ -1266,10 +1214,9 @@ class Controller extends Object {
  *
  * @param string $method name of method called example index, edit, etc.
  * @return boolean Success
- * @access protected
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function _beforeScaffold($method) {
+	public function _beforeScaffold($method) {
 		return true;
 	}
 
@@ -1278,10 +1225,9 @@ class Controller extends Object {
  *
  * @param string $method name of method called either edit or update.
  * @return boolean Success
- * @access protected
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function _afterScaffoldSave($method) {
+	public function _afterScaffoldSave($method) {
 		return true;
 	}
 
@@ -1290,10 +1236,9 @@ class Controller extends Object {
  *
  * @param string $method name of method called either edit or update.
  * @return boolean Success
- * @access protected
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function _afterScaffoldSaveError($method) {
+	public function _afterScaffoldSaveError($method) {
 		return true;
 	}
 
@@ -1304,10 +1249,9 @@ class Controller extends Object {
  *
  * @param string $method name of method called example index, edit, etc.
  * @return boolean Success
- * @access protected
  * @link http://book.cakephp.org/view/984/Callbacks
  */
-	function _scaffoldError($method) {
+	public function _scaffoldError($method) {
 		return false;
 	}
 }
