@@ -351,7 +351,6 @@ class SessionComponentTest extends CakeTestCase {
 	function testSessionTimeout() {
 
 		session_destroy();
-		unset($Session);
 		Configure::write('Security.level', 'low');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
