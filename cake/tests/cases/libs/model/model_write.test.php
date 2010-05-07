@@ -900,6 +900,19 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test that a null Id doesn't cause errors
+ *
+ * @return void
+ */
+	function testSaveWithNullId() {
+		$User =& new User();
+		$User->read(null, 1);
+		$User->data['User']['id'] = null;
+		$this->assertTrue($User->save(array('password' => 'test')));
+		$this->assertTrue($User->id > 0);
+	}
+
+/**
  * testSaveWithSet method
  *
  * @access public
