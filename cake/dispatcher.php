@@ -111,7 +111,7 @@ class Dispatcher extends Object {
 		}
 
 		$request = $this->parseParams($request, $additionalParams);
-		$this->params = $request;
+		$this->request = $request;
 
 		$controller = $this->_getController();
 
@@ -146,25 +146,6 @@ class Dispatcher extends Object {
 				'url' => $request->url,
 				'base' => $request->base
 			)));
-		}
-		$controller->base = $request->base;
-		$controller->here = $request->here;
-		$controller->webroot = $request->webroot;
-		$controller->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
-		$controller->params = $request;
-		$controller->request = $request;
-		$controller->action =& $request->params['action'];
-		$controller->passedArgs = array_merge($request->params['pass'], $request->params['named']);
-
-		$controller->data = null;
-		if (!empty($request->params['data'])) {
-			$controller->data =& $request->params['data'];
-		}
-		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
-			$controller->autoRender = false;
-		}
-		if (!empty($request->params['bare'])) {
-			$controller->autoLayout = false;
 		}
 		return $this->_invoke($controller, $request);
 	}
@@ -255,13 +236,13 @@ class Dispatcher extends Object {
  */
 	protected function &_getController() {
 		$controller = false;
-		$ctrlClass = $this->__loadController($this->params);
+		$ctrlClass = $this->__loadController($this->request);
 		if (!$ctrlClass) {
 			return $controller;
 		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass();
+			$controller = new $ctrlClass($this->request);
 		}
 		return $controller;
 	}
@@ -273,14 +254,14 @@ class Dispatcher extends Object {
  * @return string|bool Name of controller class name
  * @access private
  */
-	function __loadController($params) {
+	function __loadController($request) {
 		$pluginName = $pluginPath = $controller = null;
-		if (!empty($params['plugin'])) {
-			$pluginName = $controller = Inflector::camelize($params['plugin']);
+		if (!empty($request->params['plugin'])) {
+			$pluginName = $controller = Inflector::camelize($request->params['plugin']);
 			$pluginPath = $pluginName . '.';
 		}
-		if (!empty($params['controller'])) {
-			$controller = Inflector::camelize($params['controller']);
+		if (!empty($request->params['controller'])) {
+			$controller = Inflector::camelize($request->params['controller']);
 		}
 		if ($pluginPath . $controller) {
 			if (App::import('Controller', $pluginPath . $controller)) {

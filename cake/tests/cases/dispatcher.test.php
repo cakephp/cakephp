@@ -805,7 +805,7 @@ class DispatcherTest extends CakeTestCase {
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 
 		$this->assertEqual('Timesheets', $controller->name);
-		$this->assertEqual('/timesheets/index.php', $Dispatcher->params->base);
+		$this->assertEqual('/timesheets/index.php', $Dispatcher->request->base);
 
 
 		$url = 'test_dispatch_pages/camelCased';

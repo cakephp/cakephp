@@ -326,8 +326,10 @@ class Controller extends Object {
 /**
  * Constructor.
  *
+ * @param CakeRequest $request Request object for this controller can be null for testing.
+ *  But expect that features that use the params will not work.
  */
-	public function __construct() {
+	public function __construct($request = null) {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -355,7 +357,39 @@ class Controller extends Object {
 			$parentMethods[$key] = strtolower($value);
 		}
 		$this->methods = array_diff($childMethods, $parentMethods);
+
+		if ($request instanceof CakeRequest) {
+			$this->_setRequest($request);
+		}
 		parent::__construct();
+	}
+
+/**
+ * Sets the request objects and configures a number of controller properties
+ * based on the contents of the request.
+ *
+ * @param CakeRequest $request
+ * @return void
+ */
+	protected function _setRequest(CakeRequest $request) {
+		$this->base = $request->base;
+		$this->here = $request->here;
+		$this->webroot = $request->webroot;
+		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
+		$this->params = $this->request = $request;
+		$this->action =& $request->params['action'];
+		$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+
+		$this->data = null;
+		if (!empty($request->params['data'])) {
+			$this->data =& $request->params['data'];
+		}
+		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
+			$this->autoRender = false;
+		}
+		if (!empty($request->params['bare'])) {
+			$this->autoLayout = false;
+		}
 	}
 
 /**
@@ -1010,22 +1044,22 @@ class Controller extends Object {
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object =& $this->{$object}->{$assoc};
+				$object = $this->{$object}->{$assoc};
 			} elseif (
 				$assoc && isset($this->{$this->modelClass}) &&
 				isset($this->{$this->modelClass}->{$assoc}
 			)) {
-				$object =& $this->{$this->modelClass}->{$assoc};
+				$object = $this->{$this->modelClass}->{$assoc};
 			} elseif (isset($this->{$object})) {
-				$object =& $this->{$object};
+				$object = $this->{$object};
 			} elseif (
 				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
 			)) {
-				$object =& $this->{$this->modelClass}->{$object};
+				$object = $this->{$this->modelClass}->{$object};
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
-				$object =& $this->{$this->modelClass};
+				$object = $this->{$this->modelClass};
 			} else {
 				$className = null;
 				$name = $this->uses[0];
@@ -1033,9 +1067,9 @@ class Controller extends Object {
 					list($name, $className) = explode('.', $this->uses[0]);
 				}
 				if ($className) {
-					$object =& $this->{$className};
+					$object = $this->{$className};
 				} else {
-					$object =& $this->{$name};
+					$object = $this->{$name};
 				}
 			}
 		}
@@ -1046,7 +1080,7 @@ class Controller extends Object {
 			), E_USER_WARNING);
 			return array();
 		}
-		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->params->params, $this->params['url'], $this->passedArgs);
 
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
@@ -1177,7 +1211,13 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-		$this->params['paging'][$object->alias] = $paging;
+		if (!isset($this->params['paging'])) {
+			$this->params['paging'] = array();
+		}
+		$this->params['paging'] = array_merge(
+			(array)$this->params['paging'],
+			array($object->alias => $paging)
+		);
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';
