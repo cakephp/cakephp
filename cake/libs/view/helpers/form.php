@@ -213,7 +213,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$object =& $this->_introspectModel($model);
+		$object = $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
 
 		$modelEntity = $this->model();
