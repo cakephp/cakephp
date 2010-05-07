@@ -342,7 +342,7 @@ class Controller extends Object {
 		}
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->Component =& new Component();
+		$this->Component = new Component();
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Controller');
@@ -827,7 +827,7 @@ class Controller extends Object {
 			$this->set('cakeDebug', $this);
 		}
 
-		$View =& new $viewClass($this);
+		$View = new $viewClass($this);
 
 		if (!empty($this->modelNames)) {
 			$models = array();
@@ -847,7 +847,7 @@ class Controller extends Object {
 			$models = array_diff(ClassRegistry::keys(), $models);
 			foreach ($models as $currentModel) {
 				if (ClassRegistry::isKeySet($currentModel)) {
-					$currentObject =& ClassRegistry::getObject($currentModel);
+					$currentObject = ClassRegistry::getObject($currentModel);
 					if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
 						$View->validationErrors[Inflector::camelize($currentModel)] =&
 							$currentObject->validationErrors;
