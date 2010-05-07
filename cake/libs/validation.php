@@ -501,11 +501,11 @@ class Validation extends Object {
 		}
 
 		if ($return === true && preg_match('/@(' . $_this->__pattern['hostname'] . ')$/i', $_this->check, $regs)) {
-			if (function_exists('getmxrr')) {
-				return getmxrr($regs[1], $mxhosts);
+			if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
+				return true;
 			}
-			if (function_exists('checkdnsrr')) {
-				return checkdnsrr($regs[1], 'MX');
+			if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
+				return true;
 			}
 			return is_array(gethostbynamel($regs[1]));
 		}
