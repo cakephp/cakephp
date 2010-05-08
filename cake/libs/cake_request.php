@@ -380,6 +380,11 @@ class CakeRequest implements ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = env('HTTP_REFERER');
+		$forwarded = env('HTTP_X_FORWARDED_HOST');
+		if ($forwarded) {
+			$ref = $forwarded;
+		}
+
 		$base = '';
 		if (defined('FULL_BASE_URL')) {
 			$base = FULL_BASE_URL;

@@ -466,6 +466,10 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL . 'recipes/add';
 		$result = $request->referer(true);
 		$this->assertIdentical($result, '/recipes/add');
+
+		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
+		$result = $request->referer();
+		$this->assertIdentical($result, 'cakephp.org');
 	}
 
 /**
