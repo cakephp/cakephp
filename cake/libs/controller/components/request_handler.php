@@ -226,7 +226,7 @@ class RequestHandlerComponent extends Object {
  * @param mixed $url A string or array containing the redirect location
  */
 	public function beforeRedirect(&$controller, $url) {
-		if (!$this->isAjax()) {
+		if (!$this->request->is('ajax')) {
 			return;
 		}
 		foreach ($_POST as $key => $val) {
@@ -460,7 +460,7 @@ class RequestHandlerComponent extends Object {
  * @return mixed
  */
 	public function requestedWith($type = null) {
-		if (!$this->isPost() && !$this->isPut()) {
+		if (!$this->request->is('post') && !$this->request->is('put')) {
 			return null;
 		}
 
