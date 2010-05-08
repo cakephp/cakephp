@@ -390,7 +390,9 @@ class Controller extends Object {
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 		$this->params = $this->request = $request;
 		$this->action =& $request->params['action'];
-		$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+		if (isset($request->params['pass']) && isset($request->params['named'])) {
+			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+		}
 
 		$this->data = null;
 		if (!empty($request->params['data'])) {
