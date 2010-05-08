@@ -414,6 +414,11 @@ class TestManager {
 		return $this->_testSuite = new CakeTestSuite($name);
 	}
 
+/**
+ * Get an instance of a Fixture manager to be used by the test cases
+ *
+ * @return CakeFixtureManager fixture manager
+ */
 	protected function getFixtureManager() {
 		if (!empty($this->_fixtureManager)) {
 			return $this->_fixtureManager;

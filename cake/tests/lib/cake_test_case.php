@@ -389,29 +389,70 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 	}
 
+/**
+* Compatibility wrapper function for assertEquals
+* @param mixed $a
+* @param mixed $b
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function assertEqual($a, $b, $message = '') {
 		return $this->assertEquals($a, $b, $message);
 	}
-	
+
+/**
+* Compatibility wrapper function for assertNotEquals
+* @param mixed $a
+* @param mixed $b
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function assertNotEqual($a, $b, $message = '') {
 		return $this->assertNotEquals($a, $b, $message);
 	}
 
+/**
+* Compatibility wrapper function for assertRegexp
+* @param mixed $pattern a regular expression
+* @param string $string the text to be matched
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function assertPattern($pattern, $string, $message = '') {
 		return $this->assertRegExp($pattern, $string, $message);
 	}
 
+/**
+* Compatibility wrapper function for assertSame
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function assertIdentical($expected, $actual, $message = '') {
 		return $this->assertSame($expected, $actual, $message);
 	}
 
+/**
+* Compatibility wrapper function for assertNotRegExp
+* @param mixed $pattern a regular expression
+* @param string $string the text to be matched
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function assertNoPattern($pattern, $string, $message = '') {
 		return $this->assertNotRegExp($pattern, $string, $message);
 	}
 
 	protected function assertNoErrors() {
 	}
-	
+
+/**
+* Compatibility wrapper function for setExpectedException
+* @param mixed $expected the name of the Exception or error
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
 	protected function expectError($expected = false, $message = '') {
 		if (!$expected) {
 			$expected = 'Exception';
@@ -419,8 +460,14 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 		$this->setExpectedException($expected, $message);
 	}
 
-	protected function expectException($name = null) {
-		$this->setExpectedException($name);
+/**
+* Compatibility wrapper function for setExpectedException
+* @param mixed $expected the name of the Exception
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function expectException($name = null, $message = '') {
+		$this->setExpectedException($name, $message);
 	}
 }
 ?>
