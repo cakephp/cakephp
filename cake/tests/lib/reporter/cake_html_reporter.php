@@ -19,6 +19,8 @@
  */
 include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
@@ -178,7 +180,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 			$this->params['codeCoverage'] &&
 			class_exists('CodeCoverageManager')
 		) {
-			CodeCoverageManager::report();
+			//CodeCoverageManager::report();
 		}
 		$this->paintDocumentEnd();
 	}
@@ -257,7 +259,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
-		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->getDescription()) . "</pre></div>\n";
+		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
 		echo "<div class='msg'>" . sprintf(__('File: %s'), $context['file']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Method: %s'), $realContext['function']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Line: %s'), $context['line']) . "</div>\n";

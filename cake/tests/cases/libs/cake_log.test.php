@@ -69,20 +69,20 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test all the errors from failed logger imports
  *
+ * @expectedException Exception
  * @return void
  */
 	function testImportingLoggerFailure() {
-		$this->expectException();
 		CakeLog::config('fail', array());
 	}
 
 /**
  * test that loggers have to implement the correct interface.
  *
+ * @expectedException Exception
  * @return void
  */
 	function testNotImplementingInterface() {
-		$this->expectException();
 		CakeLog::config('fail', array('engine' => 'stdClass'));
 	}
 
