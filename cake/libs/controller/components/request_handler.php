@@ -57,12 +57,12 @@ class RequestHandlerComponent extends Object {
 	private $__responseTypeSet = null;
 
 /**
- * Holds the copy of Controller::$params
+ * Holds the copy of Controller::$request
  *
- * @var array
+ * @var CakeRequest
  * @access public
  */
-	public $params = array();
+	public $request;
 
 /**
  * Friendly content-type mappings used to set response types and determine
@@ -100,37 +100,6 @@ class RequestHandlerComponent extends Object {
 		'pdf'			=> 'application/pdf',
 		'zip'			=> 'application/x-zip',
 		'tar'			=> 'application/x-tar'
-	);
-
-/**
- * List of regular expressions for matching mobile device's user agent string
- *
- * @var array
- * @access public
- */
-	public $mobileUA = array(
-		'Android',
-		'AvantGo',
-		'BlackBerry',
-		'DoCoMo',
-		'iPod',
-		'iPhone',
-		'J2ME',
-		'MIDP',
-		'NetFront',
-		'Nokia',
-		'Opera Mini',
-		'PalmOS',
-		'PalmSource',
-		'portalmmm',
-		'Plucker',
-		'ReqwirelessWeb',
-		'SonyEricsson',
-		'Symbian',
-		'UP\.Browser',
-		'webOS',
-		'Windows CE',
-		'Xiino'
 	);
 
 /**
@@ -201,6 +170,7 @@ class RequestHandlerComponent extends Object {
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
+		$this->request = $controller->request;
 		$this->_set($settings);
 	}
 
@@ -222,12 +192,8 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	public function startup(&$controller) {
-		if (!$this->enabled) {
-			return;
-		}
-
 		$this->__initializeTypes();
-		$controller->params['isAjax'] = $this->isAjax();
+		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
 			in_array($this->ext, array_keys($this->__requestContent))
@@ -235,7 +201,7 @@ class RequestHandlerComponent extends Object {
 
 		if (!empty($this->ext) && $isRecognized) {
 			$this->renderAs($controller, $this->ext);
-		} elseif ($this->isAjax()) {
+		} elseif ($this->request->is('ajax')) {
 			$this->renderAs($controller, 'ajax');
 		}
 
@@ -279,7 +245,7 @@ class RequestHandlerComponent extends Object {
  * @return boolean True if call is Ajax
  */
 	public function isAjax() {
-		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
+		return $this->request->is('ajax');
 	}
 
 /**
@@ -288,7 +254,7 @@ class RequestHandlerComponent extends Object {
  * @return boolean True if call is from Flash
  */
 	public function isFlash() {
-		return (preg_match('/^(Shockwave|Adobe) Flash/', env('HTTP_USER_AGENT')) == 1);
+		return $this->request->is('flash');
 	}
 
 /**
@@ -297,7 +263,7 @@ class RequestHandlerComponent extends Object {
  * @return bool True if call is over HTTPS
  */
 	public function isSSL() {
-		return env('HTTPS');
+		return $this->request->is('ssl');
 	}
 
 /**
@@ -332,20 +298,9 @@ class RequestHandlerComponent extends Object {
  * client accepts WAP content.
  *
  * @return boolean True if user agent is a mobile web browser
- * @access public
- * @deprecated Use of constant REQUEST_MOBILE_UA is deprecated and will be removed in future versions
  */
 	function isMobile() {
-		if (defined('REQUEST_MOBILE_UA')) {
-			$regex = '/' . REQUEST_MOBILE_UA . '/i';
-		} else {
-			$regex = '/' . implode('|', $this->mobileUA) . '/i';
-		}
-
-		if (preg_match($regex, env('HTTP_USER_AGENT')) || $this->accepts('wap')) {
-			return true;
-		}
-		return false;
+		return $this->request->is('mobile') || $this->accepts('wap');
 	}
 
 /**
@@ -361,36 +316,40 @@ class RequestHandlerComponent extends Object {
  * Returns true if the current call a POST request
  *
  * @return boolean True if call is a POST
+ * @deprecated Use $this->request->is('post'); from your controller.
  */
 	public function isPost() {
-		return (strtolower(env('REQUEST_METHOD')) == 'post');
+		return $this->request->is('post');
 	}
 
 /**
  * Returns true if the current call a PUT request
  *
  * @return boolean True if call is a PUT
+ * @deprecated Use $this->request->is('put'); from your controller.
  */
 	public function isPut() {
-		return (strtolower(env('REQUEST_METHOD')) == 'put');
+		return $this->request->is('put');
 	}
 
 /**
  * Returns true if the current call a GET request
  *
  * @return boolean True if call is a GET
+ * @deprecated Use $this->request->is('get'); from your controller.
  */
 	public function isGet() {
-		return (strtolower(env('REQUEST_METHOD')) == 'get');
+		return $this->request->is('get');
 	}
 
 /**
  * Returns true if the current call a DELETE request
  *
  * @return boolean True if call is a DELETE
+ * @deprecated Use $this->request->is('delete'); from your controller.
  */
 	public function isDelete() {
-		return (strtolower(env('REQUEST_METHOD')) == 'delete');
+		return $this->request->is('delete');
 	}
 
 /**
@@ -429,42 +388,20 @@ class RequestHandlerComponent extends Object {
  * Gets the server name from which this request was referred
  *
  * @return string Server address
+ * @deprecated use $this->request->referer() from your controller instead
  */
 	public function getReferer() {
-		if (env('HTTP_HOST') != null) {
-			$sessHost = env('HTTP_HOST');
-		}
-
-		if (env('HTTP_X_FORWARDED_HOST') != null) {
-			$sessHost = env('HTTP_X_FORWARDED_HOST');
-		}
-		return trim(preg_replace('/(?:\:.*)/', '', $sessHost));
+		return $this->request->referer(false);
 	}
 
 /**
  * Gets remote client IP
  *
  * @return string Client IP address
+ * @deprecated use $this->request->clientIp() from your controller instead.
  */
 	public function getClientIP($safe = true) {
-		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
-			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
-		} else {
-			if (env('HTTP_CLIENT_IP') != null) {
-				$ipaddr = env('HTTP_CLIENT_IP');
-			} else {
-				$ipaddr = env('REMOTE_ADDR');
-			}
-		}
-
-		if (env('HTTP_CLIENTADDRESS') != null) {
-			$tmpipaddr = env('HTTP_CLIENTADDRESS');
-
-			if (!empty($tmpipaddr)) {
-				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
-			}
-		}
-		return trim($ipaddr);
+		return $this->request->clientIp($safe);
 	}
 
 /**
