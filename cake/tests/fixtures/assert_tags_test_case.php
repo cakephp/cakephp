@@ -1,4 +1,7 @@
 <?php
+
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * This class helpes in indirectly testing the functionaliteies of CakeTestCase::assertTags
  *

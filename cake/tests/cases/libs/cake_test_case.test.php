@@ -4,7 +4,7 @@
  *
  * Test Case for CakeTestCase class
  *
- * PHP versions 4 and 5
+ * PHP version 5
  *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright 2006-2010, Cake Software Foundation, Inc.
@@ -153,9 +153,13 @@ class CakeTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function testSkipIf() {
-		//$this->Case = new SubjectCakeTestCase;
-		//$this->assertTrue($this->Case->skipIf(true));
-		//$this->assertFalse($this->Case->skipIf(false));
+		$test = new FixturizedTestCase('testSkipIfTrue');
+		$result = $test->run();
+		$this->assertEquals(1, $result->skippedCount());
+
+		$test = new FixturizedTestCase('testSkipIfFalse');
+		$result = $test->run();
+		$this->assertEquals(0, $result->skippedCount());
 	}
 }
 ?>
