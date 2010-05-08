@@ -63,12 +63,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	private $__savedGetData = array();
 
-	public function __construct($name = null, array $data = array(), $dataName = '') {
-		parent::__construct($name, $data, $dataName);
-		if (!empty($this->fixtures)) {
-			CakeFixtureManager::fixturize($this);
-		}
-	}
 /**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
@@ -127,7 +121,9 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPreConditions() {
 		parent::assertPreConditions();
-		CakeFixtureManager::load($this);
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->load($this); 
+		}
 		if (!in_array(strtolower($this->getName()), $this->methods)) {
 			$this->startTest($this->getName());
 		}
@@ -162,7 +158,9 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPostConditions() {
 		parent::assertPostConditions();
-		CakeFixtureManager::unload($this);
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->unload($this);
+		}
 		if (!in_array(strtolower($this->getName()), $this->methods)) {
 			$this->endTest($this->getName());
 		}
@@ -192,9 +190,14 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @see CakeTestCase::$autoFixtures
  */
 	function loadFixtures() {
+		if (empty($this->sharedFixture)) {
+			throw new Exception(__('No fixture manager to load the test fixture'));
+		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			CakeFixtureManager::loadSingle($class);
+			if (!empty($this->sharedFixture)) {
+				$this->sharedFixture->unload($this); 
+			}
 		}
 	}
 

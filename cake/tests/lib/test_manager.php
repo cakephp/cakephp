@@ -22,6 +22,7 @@ define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups'
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
+require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
 /**
  * TestManager is the base class that handles loading and initiating the running
  * of TestCase and TestSuite classes that the user has selected.
@@ -61,9 +62,16 @@ class TestManager {
 /**
  * TestSuite container for single or grouped test files
  *
- * @var PHPUnit_Framework_TestSuiteboolean
+ * @var PHPUnit_Framework_TestSuite
  */
 	protected $_testSuit = null;
+
+/**
+ * Object instance responsible for managing the test fixtures
+ *
+ * @var CakeFixtureManager
+ */
+	protected $_fixtureManager = null;
 
 /**
  * Constructor for the TestManager class
@@ -162,7 +170,9 @@ class TestManager {
 		$result = new PHPUnit_Framework_TestResult;
 		$result->addListener($reporter);
 		$reporter->paintHeader();
-		$this->getTestSuite()->run($result);
+		$testSuite = $this->getTestSuite();
+		$testSuite->setFixtureManager($this->getFixtureManager());
+		$testSuite->run($result);
 		$reporter->paintResult($result);
 		return $result;
 	}
@@ -395,9 +405,15 @@ class TestManager {
 		if (!empty($this->_testSuite)) {
 			return $this->_testSuite;
 		}
-		return $this->_testSuite = new PHPUnit_Framework_TestSuite($name);
+		return $this->_testSuite = new CakeTestSuite($name);
 	}
 
+	protected function getFixtureManager() {
+		if (!empty($this->_fixtureManager)) {
+			return $this->_fixtureManager;
+		}
+		return $this->_fixtureManager = new CakeFixtureManager;
+	}
 }
 
 ?>
