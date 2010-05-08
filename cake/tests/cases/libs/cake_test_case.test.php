@@ -119,13 +119,15 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	function testLoadFixtures() {
 		$test = new FixturizedTestCase('testFixturePresent');
+		$manager = $this->getMock('CakeFixtureManager');
+		$manager->fixturize($test);
+		$test->sharedFixture = $manager;
+		$manager->expects($this->once())->method('load');
+		$manager->expects($this->once())->method('unload');
 		$result = $test->run();
-		//$this->Case->fixtures = array('core.post');
-		//$this->Case->autoFixtures = false;
-		//$this->Case->before('start');
-		//$this->expectError();
-		//$this->Case->loadFixtures('Wrong!');
-		//$this->Case->end();
+		$this->assertEquals(0, $result->errorCount());
+		$this->assertTrue($result->wasSuccessful());
+		$this->assertEquals(0, $result->failureCount());
 	}
 
 /**
