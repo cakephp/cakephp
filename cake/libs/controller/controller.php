@@ -49,6 +49,7 @@ class Controller extends Object {
  * Stores the current URL, relative to the webroot of the application.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->here instead
  */
 	public $here = null;
 
@@ -56,6 +57,7 @@ class Controller extends Object {
  * The webroot of the application.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->webroot instead
  */
 	public $webroot = null;
 
@@ -96,6 +98,7 @@ class Controller extends Object {
  *
  * @var array
  * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
+ * @deprecated Will be removed in future versions.  Use $this->request instead
  */
 	public $params = array();
 
@@ -104,8 +107,16 @@ class Controller extends Object {
  * using the `$this->data['ModelName']['fieldName']` pattern.
  *
  * @var array
+ * @deprecated Will be removed in future versions.  Use $this->request->data instead
  */
 	public $data = array();
+
+/**
+ * An instance of a CakeRequest object that contains information about the current request.
+ *
+ * @var CakeRequest
+ */
+	public $request;
 
 /**
  * Holds pagination defaults for controller actions. The keys that can be included
@@ -159,6 +170,7 @@ class Controller extends Object {
  * Base URL path.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->base instead
  */
 	public $base = null;
 
