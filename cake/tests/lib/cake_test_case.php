@@ -18,6 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+require_once CAKE_TESTS_LIB . 'cake_fixture_manager.php';
 require_once CAKE_TESTS_LIB . 'cake_test_model.php';
 require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
 
@@ -78,6 +79,12 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	private $__savedGetData = array();
 
+	public function __construct($name = null, array $data = array(), $dataName = '') {
+		parent::__construct($name, $data, $dataName);
+		if (!empty($this->fixtures)) {
+			CakeFixtureManager::fixturize($this);
+		}
+	}
 /**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
@@ -149,56 +156,11 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $method Test method just started.
  * @return void
  */
-	public function before($method) {
-		parent::before($method);
-
-		if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
-			unset($this->fixtures);
-		}
-
-		// Set up DB connection
-		if (isset($this->fixtures) && strtolower($method) == 'start') {
-			$this->_initDb();
-			$this->_loadFixtures();
-		}
-
-		// Create records
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
-			foreach ($this->_fixtures as $fixture) {
-				$inserts = $fixture->insert($this->db);
-			}
-		}
-
-		if (!in_array(strtolower($method), $this->methods)) {
-			$this->startTest($method);
-		}
-	}
-
-/**
- * Runs as first test to create tables.
- *
- * @return void
- */
-	public function start() {
-		if (isset($this->_fixtures) && isset($this->db)) {
-			Configure::write('Cache.disable', true);
-			$cacheSources = $this->db->cacheSources;
-			$this->db->cacheSources = false;
-			$sources = $this->db->listSources();
-			$this->db->cacheSources = $cacheSources;
-
-			if (!$this->dropTables) {
-				return;
-			}
-			foreach ($this->_fixtures as $fixture) {
-				$table = $this->db->config['prefix'] . $fixture->table;
-				if (in_array($table, $sources)) {
-					$fixture->drop($this->db);
-					$fixture->create($this->db);
-				} elseif (!in_array($table, $sources)) {
-					$fixture->create($this->db);
-				}
-			}
+	protected function assertPreConditions() {
+		parent::assertPreConditions();
+		CakeFixtureManager::load($this);
+		if (!in_array(strtolower($this->getName()), $this->methods)) {
+			$this->startTest($this->getName());
 		}
 	}
 
@@ -229,24 +191,12 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $method Test method just finished.
  * @return void
  */
-	public function after($method) {
-		$isTestMethod = !in_array(strtolower($method), array('start', 'end'));
-
-		if (isset($this->_fixtures) && isset($this->db) && $isTestMethod) {
-			foreach ($this->_fixtures as $fixture) {
-				$fixture->truncate($this->db);
-			}
-			$this->__truncated = true;
-		} else {
-			$this->__truncated = false;
+	protected function assertPostConditions() {
+		parent::assertPostConditions();
+		CakeFixtureManager::unload($this);
+		if (!in_array(strtolower($this->getName()), $this->methods)) {
+			$this->endTest($this->getName());
 		}
-
-		if (!in_array(strtolower($method), $this->methods)) {
-			$this->endTest($method);
-		}
-		$this->_should_skip = false;
-
-		parent::after($method);
 	}
 
 /**
@@ -264,14 +214,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 /**
- * Accessor for checking whether or not fixtures were truncated 
- *
- * @return void
- */
-	public function getTruncated() {
-		return $this->__truncated;
-	}
-/**
  * Chooses which fixtures to load for a given test
  *
  * @param string $fixture Each parameter is a model name that corresponds to a
@@ -283,14 +225,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	function loadFixtures() {
 		$args = func_get_args();
 		foreach ($args as $class) {
-			if (isset($this->_fixtureClassMap[$class])) {
-				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
-
-				$fixture->truncate($this->db);
-				$fixture->insert($this->db);
-			} else {
-				trigger_error(sprintf(__('Referenced fixture class %s not found', true), $class), E_USER_WARNING);
-			}
+			CakeFixtureManager::loadSingle($class);
 		}
 	}
 
@@ -450,108 +385,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 			}
 		}
 		return $this->assertTrue(true, '%s');
-	}
-
-/**
- * Initialize DB connection.
- *
- * @return void
- */
-	protected function _initDb() {
-		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
-
-		$_prefix = null;
-
-		if ($testDbAvailable) {
-			// Try for test DB
-			restore_error_handler();
-			@$db = ConnectionManager::getDataSource('test');
-			set_error_handler('simpleTestErrorHandler');
-			$testDbAvailable = $db->isConnected();
-		}
-
-		// Try for default DB
-		if (!$testDbAvailable) {
-			$db = ConnectionManager::getDataSource('default');
-			$_prefix = $db->config['prefix'];
-			$db->config['prefix'] = 'test_suite_';
-		}
-
-		ConnectionManager::create('test_suite', $db->config);
-		$db->config['prefix'] = $_prefix;
-
-		// Get db connection
-		$this->db = ConnectionManager::getDataSource('test_suite');
-		$this->db->cacheSources  = false;
-
-		ClassRegistry::config(array('ds' => 'test_suite'));
-	}
-
-/**
- * Load fixtures specified in public $fixtures.
- *
- * @return void
- */
-	protected function _loadFixtures() {
-		if (!isset($this->fixtures) || empty($this->fixtures)) {
-			return;
-		}
-
-		if (!is_array($this->fixtures)) {
-			$this->fixtures = array_map('trim', explode(',', $this->fixtures));
-		}
-
-		$this->_fixtures = array();
-
-		foreach ($this->fixtures as $index => $fixture) {
-			$fixtureFile = null;
-
-			if (strpos($fixture, 'core.') === 0) {
-				$fixture = substr($fixture, strlen('core.'));
-				foreach (App::core('cake') as $key => $path) {
-					$fixturePaths[] = $path . 'tests' . DS . 'fixtures';
-				}
-			} elseif (strpos($fixture, 'app.') === 0) {
-				$fixture = substr($fixture, strlen('app.'));
-				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
-				);
-			} elseif (strpos($fixture, 'plugin.') === 0) {
-				$parts = explode('.', $fixture, 3);
-				$pluginName = $parts[1];
-				$fixture = $parts[2];
-				$fixturePaths = array(
-					App::pluginPath($pluginName) . 'tests' . DS . 'fixtures',
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
-				);
-			} else {
-				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures',
-					TEST_CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
-				);
-			}
-
-			foreach ($fixturePaths as $path) {
-				if (is_readable($path . DS . $fixture . '_fixture.php')) {
-					$fixtureFile = $path . DS . $fixture . '_fixture.php';
-					break;
-				}
-			}
-
-			if (isset($fixtureFile)) {
-				require_once($fixtureFile);
-				$fixtureClass = Inflector::camelize($fixture) . 'Fixture';
-				$this->_fixtures[$this->fixtures[$index]] =& new $fixtureClass($this->db);
-				$this->_fixtureClassMap[Inflector::camelize($fixture)] = $this->fixtures[$index];
-			}
-		}
-
-		if (empty($this->_fixtures)) {
-			unset($this->_fixtures);
-		}
 	}
 
 /**
