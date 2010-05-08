@@ -36,6 +36,69 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	}
 
 /**
+ * test filtering coverage data.
+ *
+ * @return void
+ */
+	function testFilterCoverageDataByPathRemovingElements() {
+		$data = array(
+			array(
+				'files' => array(
+					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+						10 => -1,
+						12 => 1
+					),
+					APP . 'app_model.php' => array(
+						50 => 1,
+						52 => -1
+					)
+				)
+			)
+		);
+		$this->Coverage->setCoverage($data);
+		$result = $this->Coverage->filterCoverageDataByPath(TEST_CAKE_CORE_INCLUDE_PATH);
+		$this->assertTrue(isset($result[TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php']));
+		$this->assertFalse(isset($result[APP . 'app_model.php']));
+	}
+
+/**
+ * test that filterCoverageDataByPath correctly merges data sets in each test run.
+ *
+ * @return void
+ */
+	function testFilterCoverageDataCorrectlyMergingValues() {
+		$data = array(
+			array(
+				'files' => array(
+					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+						10 => -1,
+						12 => 1
+					),
+				)
+			),
+			array(
+				'files' => array(
+					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+						10 => 1,
+						12 => -1,
+						50 => 1,
+						51 => -1
+					),
+				)
+			),
+		);
+		$this->Coverage->setCoverage($data);
+		$result = $this->Coverage->filterCoverageDataByPath(TEST_CAKE_CORE_INCLUDE_PATH);
+
+		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php';
+		$this->assertTrue(isset($result[$path]));
+		$this->assertEquals(1, $result[$path][10]);
+		$this->assertEquals(1, $result[$path][12]);
+		$this->assertEquals(1, $result[$path][50]);
+		$this->assertEquals(-1, $result[$path][51]);
+	}
+
+/**
  * teardown
  *
  * @return void
