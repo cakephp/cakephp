@@ -131,6 +131,23 @@ class CakeTestCaseTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadFixturesOnDemand
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadFixturesOnDemand() {
+		$test = new FixturizedTestCase('testFixtureLoadOnDemand');
+		$test->autoFixtures = false;
+		$manager = $this->getMock('CakeFixtureManager');
+		$manager->fixturize($test);
+		$test->sharedFixture = $manager;
+		$manager->expects($this->once())->method('loadSingle');
+		$result = $test->run();
+		$this->assertEquals(0, $result->errorCount());
+	}
+
+/**
  * testSkipIf
  *
  * @return void

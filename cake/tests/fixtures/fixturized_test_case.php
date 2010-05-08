@@ -6,13 +6,14 @@
  * @subpackage    cake.tests.fixtures
  */
 class FixturizedTestCase extends CakeTestCase {
-	
-	public $name = 'FixturizedTestCase';
+
 	public $fixtures = array('core.category');
 
 	public function testFixturePresent() {
 		$this->assertType('CakeFixtureManager', $this->sharedFixture);
-		//debug($this->sharedFixture);
 	}
-	
+
+	public function testFixtureLoadOnDemand() {
+		$this->loadFixtures('Category');
+	}
 }
