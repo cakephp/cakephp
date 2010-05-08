@@ -56,22 +56,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public $dropTables = true;
 
 /**
- * Maps fixture class names to fixture identifiers as included in CakeTestCase::$fixtures
- *
- * @var array
- * @access protected
- */
-	protected $_fixtureClassMap = array();
-
-/**
- * truncated property
- *
- * @var boolean
- * @access private
- */
-	private $__truncated = true;
-
-/**
  * savedGetData property
  *
  * @var array
@@ -119,21 +103,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return void
  */
 	public function endTest($method) {
-	}
-
-/**
- * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
- *
- * @param Expectation $expectation
- * @param mixed $compare
- * @param string $message
- * @return boolean|null
- */
-	public function assert(&$expectation, $compare, $message = '%s') {
-		if ($this->_should_skip) {
-			return;
-		}
-		return parent::assert($expectation, $compare, $message);
 	}
 
 /**
@@ -376,7 +345,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 				}
 			}
 			if (!$matches) {
-				$this->assert(new TrueExpectation(), false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+				$this->assertTrue(false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
 				if ($fullDebug) {
 					debug($string, true);
 					debug($regex, true);
@@ -384,7 +353,9 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 				return false;
 			}
 		}
-		return $this->assertTrue(true, '%s');
+
+		$this->assertTrue(true, '%s');
+		return true;
 	}
 
 /**
