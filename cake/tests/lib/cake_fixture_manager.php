@@ -1,13 +1,60 @@
 <?php
-
+/**
+ * A factory class to manage the life cycle of test fixtures
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.cake.tests.libs
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 
 class CakeFixtureManager {
+
+/**
+ * Was this class already initialized?
+ *
+ * @var boolean
+ */
 	protected $_initialized = false;
+
+/**
+ * Default datasource to use
+ *
+ * @var DataSource
+ */
 	protected $_db = null;
+
+/**
+ * Holds the fixture classes that where instantiated
+ *
+ * @var array
+ */
 	protected $_loaded = array();
+
+/**
+ * Holds the fixture classes that where instantiated indexed by class name
+ *
+ * @var array
+ */
 	protected $_fixtureMap = array();
 
+/**
+ * Inspects the test to look for unloaded fixtures and loads them
+ *
+ * @param CakeTestCase $test the test case to inspect
+ * @return void
+ */
 	public function fixturize(CakeTestCase $test) {
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
 			$test->db = $this->_db;
@@ -25,6 +72,11 @@ class CakeFixtureManager {
 		$this->_processed[get_class($test)] = true;
 	}
 
+/**
+ * Initializes this class with a DataSource object to use as default for all fixtures
+ *
+ * @return void
+ */
 	protected function _initDb() {
 		if ($this->_initialized) {
 			return;
@@ -57,6 +109,12 @@ class CakeFixtureManager {
 		$this->_initialized = true;
 	}
 
+/**
+ * Looks for fixture files and instantiates the classes accordingly
+ *
+ * @param array $fixtures the fixture names to load using the notation {type}.{name}
+ * @return void
+ */
 	protected function _loadFixtures($fixtures) {
 		foreach ($fixtures as $index => $fixture) {
 			$fixtureFile = null;
@@ -108,6 +166,14 @@ class CakeFixtureManager {
 		}
 	}
 
+/**
+ * Runs the drop and create commands on the fixtures if necessary
+ *
+ * @param CakeTestFixture $fixture the fixture object to create
+ * @param DataSource $db the datasource instance to use
+ * @param boolean $drop whether drop the fixture if it is already created or not
+ * @return void
+ */
 	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!empty($fixture->created)) {
 			return;
@@ -132,6 +198,12 @@ class CakeFixtureManager {
 		}
 	}
 
+/**
+ * Crates the fixtures tables and inserts data on them
+ *
+ * @param CakeTestCase $test the test to inspect for fixture loading
+ * @return void
+ */
 	public function load(CakeTestCase $test) {
 		if (empty($test->fixtures)) {
 			return;
@@ -150,6 +222,12 @@ class CakeFixtureManager {
 		}
 	}
 
+/**
+ * Trucantes the fixtures tables
+ *
+ * @param CakeTestCase $test the test to inspect for fixture unloading
+ * @return void
+ */
 	public function unload(CakeTestCase $test) {
 		if (empty($test->fixtures)) {
 			return;
@@ -168,6 +246,13 @@ class CakeFixtureManager {
 		}
 	}
 
+/**
+ * Trucantes the fixtures tables
+ *
+ * @param CakeTestCase $test the test to inspect for fixture unloading
+ * @return void
+ * @throws UnexpectedValueException if $name is not a previously loaded class
+ */
 	public function loadSingle($name, $db = null) {
 		$name .= 'Fixture';
 		if (isset($this->_fixtureMap[$name])) {
@@ -182,6 +267,11 @@ class CakeFixtureManager {
 		}
 	}
 
+/**
+ * Drop all fixture tables loaded by this class
+ *
+ * @return void
+ */
 	public function shutDown() {
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
