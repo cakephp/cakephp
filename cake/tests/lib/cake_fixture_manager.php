@@ -1,30 +1,32 @@
 <?php
 
 class CakeFixtureManager {
-	protected static $_initialized = false;
-	protected static $_db;
-	protected static $_loaded = array();
-	protected static $_fixtureMap = array();
+	protected $_initialized = false;
+	protected $_db = null;
+	protected $_loaded = array();
+	protected $_fixtureMap = array();
 
-	public static function fixturize(CakeTestCase $test) {
-		if (empty($test->fixtures)) {
+	public function fixturize(CakeTestCase $test) {
+		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
+			$test->db = $this->_db;
 			return;
 		}
-		if (!self::$_initialized) {
-			self::_initDb();
-			if (!empty(self::$_db)) {
-				$test->db = self::$_db;
-			}
-		}
+		$this->_initDb();
+		$test->db = $this->_db;
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
 		if (isset($test->fixtures)) {
-			self::_loadFixtures($test->fixtures);
+			$this->_loadFixtures($test->fixtures);
 		}
+
+		$this->_processed[get_class($test)] = true;
 	}
 
-	protected static function _initDb() {
+	protected function _initDb() {
+		if ($this->_initialized) {
+			return;
+		}
 		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
 
 		$_prefix = null;
@@ -46,17 +48,18 @@ class CakeFixtureManager {
 		$db->config['prefix'] = $_prefix;
 
 		// Get db connection
-		self::$_db = ConnectionManager::getDataSource('test_suite');
-		self::$_db->cacheSources  = false;
+		$this->_db = ConnectionManager::getDataSource('test_suite');
+		$this->_db->cacheSources  = false;
 
 		ClassRegistry::config(array('ds' => 'test_suite'));
+		$this->_initialized = true;
 	}
 
-	protected static function _loadFixtures($fixtures) {
+	protected function _loadFixtures($fixtures) {
 		foreach ($fixtures as $index => $fixture) {
 			$fixtureFile = null;
 			$fixtureIndex = $fixture;
-			if (isset(self::$_loaded[$fixture])) {
+			if (isset($this->_loaded[$fixture])) {
 				continue;
 			}
 			if (strpos($fixture, 'core.') === 0) {
@@ -97,18 +100,18 @@ class CakeFixtureManager {
 			if (isset($fixtureFile)) {
 				require_once($fixtureFile);
 				$fixtureClass = Inflector::camelize($fixture) . 'Fixture';
-				self::$_loaded[$fixtureIndex] = new $fixtureClass(self::$_db);
-				self::$_fixtureMap[$fixtureClass] = self::$_loaded[$fixtureIndex];
+				$this->_loaded[$fixtureIndex] = new $fixtureClass($this->_db);
+				$this->_fixtureMap[$fixtureClass] = $this->_loaded[$fixtureIndex];
 			}
 		}
 	}
 
-	protected static function setupTable($fixture, $db = null, $drop = true) {
+	protected function _setupTable($fixture, $db = null, $drop = true) {
 		if (!empty($fixture->created)) {
 			return;
 		}
 		if (!$db) {
-			$db = self::$_db;
+			$db = $this->_db;
 		}
 
 		$cacheSources = $db->cacheSources;
@@ -127,7 +130,7 @@ class CakeFixtureManager {
 		}
 	}
 
-	public static function load(CakeTestCase $test) {
+	public function load(CakeTestCase $test) {
 		if (empty($test->fixtures)) {
 			return;
 		}
@@ -137,15 +140,15 @@ class CakeFixtureManager {
 		}
 
 		foreach ($fixtures as $f) {
-			if (!empty(self::$_loaded[$f])) {
-				$fixture = self::$_loaded[$f];
-				self::setupTable($fixture, $test->db, $test->dropTables);
+			if (!empty($this->_loaded[$f])) {
+				$fixture = $this->_loaded[$f];
+				$this->_setupTable($fixture, $test->db, $test->dropTables);
 				$fixture->insert($test->db);
 			}
 		}
 	}
 
-	public static function unload(CakeTestCase $test) {
+	public function unload(CakeTestCase $test) {
 		if (empty($test->fixtures)) {
 			return;
 		}
@@ -154,8 +157,8 @@ class CakeFixtureManager {
 			return;
 		}
 		foreach ($fixtures as $f) {
-			if (isset(self::$_loaded[$f])) {
-				$fixture = self::$_loaded[$f];
+			if (isset($this->_loaded[$f])) {
+				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
 					$fixture->truncate($test->db);
 				}
@@ -163,17 +166,25 @@ class CakeFixtureManager {
 		}
 	}
 
-	public static function loadSingle($name, $db = null) {
+	public function loadSingle($name, $db = null) {
 		$name .= 'Fixture';
-		if (isset(self::$_fixtureMap[$name])) {
+		if (isset($this->_fixtureMap[$name])) {
 			if (!$db) {
-				$db = self::$_db;
+				$db = $this->_db;
 			}
-			$fixture = self::$_fixtureMap[$name];
+			$fixture = $this->_fixtureMap[$name];
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
 			throw new UnexpectedValueException(sprintf(__('Referenced fixture class %s not found'), $name));
+		}
+	}
+
+	public function shutDown() {
+		foreach ($this->_loaded as $fixture) {
+			if (!empty($fixture->created)) {
+				$fixture->drop($this->_db);
+			}
 		}
 	}
 }
