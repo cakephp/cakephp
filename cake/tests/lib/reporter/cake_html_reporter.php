@@ -190,7 +190,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 	public function paintCoverage($coverage) {
 		$file = dirname(dirname(__FILE__)) . '/coverage/html_coverage_report.php';
 		include $file;
-		$reporter = new HtmlCoverageReport($coverage);
+		$reporter = new HtmlCoverageReport($coverage, $this);
 		echo $reporter->report();
 	}
 
