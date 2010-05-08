@@ -386,8 +386,12 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 	}
 
-	protected function assertEqual($a, $b) {
-		return $this->assertEquals($a, $b);
+	protected function assertEqual($a, $b, $message = '') {
+		return $this->assertEquals($a, $b, $message);
+	}
+	
+	protected function assertNotEqual($a, $b, $message = '') {
+		return $this->assertNotEquals($a, $b, $message);
 	}
 
 	protected function assertPattern($pattern, $string, $message = '') {
@@ -403,6 +407,13 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	protected function assertNoErrors() {
+	}
+	
+	protected function expectError($expected = false, $message = '') {
+		if (!$expected) {
+			$expected = 'Exception';
+		}
+		$this->setExpectedException($expected, $message);
 	}
 
 	protected function expectException($name = null) {

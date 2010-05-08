@@ -257,7 +257,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
-		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->getDescription()) . "</pre></div>\n";
+		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
 		echo "<div class='msg'>" . sprintf(__('File: %s'), $context['file']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Method: %s'), $realContext['function']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Line: %s'), $context['line']) . "</div>\n";
