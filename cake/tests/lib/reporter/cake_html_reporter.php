@@ -19,6 +19,8 @@
  */
 include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * CakeHtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
@@ -178,7 +180,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 			$this->params['codeCoverage'] &&
 			class_exists('CodeCoverageManager')
 		) {
-			CodeCoverageManager::report();
+			//CodeCoverageManager::report();
 		}
 		$this->paintDocumentEnd();
 	}

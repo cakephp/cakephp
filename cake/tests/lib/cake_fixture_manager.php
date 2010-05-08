@@ -1,5 +1,7 @@
 <?php
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 class CakeFixtureManager {
 	protected static $_initialized = false;
 	protected static $_db;

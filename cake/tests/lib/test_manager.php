@@ -22,6 +22,8 @@ define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups'
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * TestManager is the base class that handles loading and initiating the running
  * of TestCase and TestSuite classes that the user has selected.
@@ -113,7 +115,7 @@ class TestManager {
  * @throws InvalidArgumentException if the supplied $testCaseFile does not exists
  * @return mixed Result of test case being run.
  */
-	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter) {
+	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter, $codeCoverage = false) {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath)) {
@@ -122,7 +124,7 @@ class TestManager {
 
 		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
 		$testSuite->addTestFile($testCaseFileWithPath);
-		return $this->run($reporter);
+		return $this->run($reporter, $codeCoverage);
 	}
 
 /**
@@ -133,7 +135,7 @@ class TestManager {
  * @throws InvalidArgumentException if it was not possible to locate the filename for $groupTestName
  * @return mixed Results of group test being run.
  */
-	public function runGroupTest($groupTestName, $reporter) {
+	public function runGroupTest($groupTestName, $reporter, $codeCoverage = false) {
 		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->getExtension('group');
 
 		if (!file_exists($filePath)) {
@@ -149,7 +151,7 @@ class TestManager {
 			$suite->setName($group->label);
 		}
 
-		return $this->run($reporter);
+		return $this->run($reporter, $codeCoverage);
 	}
 
 /**
@@ -158,12 +160,16 @@ class TestManager {
  * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
  * @return mixed Results of group test being run.
  */
-	protected function run($reporter) {
+	protected function run($reporter, $codeCoverage = false) {
 		$result = new PHPUnit_Framework_TestResult;
+		$result->collectCodeCoverageInformation($codeCoverage);
 		$result->addListener($reporter);
 		$reporter->paintHeader();
 		$this->getTestSuite()->run($result);
 		$reporter->paintResult($result);
+		// echo '<pre>';
+		// var_dump($result->getCodeCoverageInformation());
+		// echo '</pre>';
 		return $result;
 	}
 

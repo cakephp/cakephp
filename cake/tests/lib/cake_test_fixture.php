@@ -18,6 +18,8 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * Short description for class.
  *

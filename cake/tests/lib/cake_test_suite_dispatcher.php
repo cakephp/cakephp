@@ -138,6 +138,8 @@ class CakeTestSuiteDispatcher {
 			include CAKE_TESTS_LIB . 'templates/simpletest.php';
 			exit();
 		}
+
+		PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 	}
 
 /**
@@ -233,8 +235,8 @@ class CakeTestSuiteDispatcher {
 		}
 		if (isset($_GET['code_coverage'])) {
 			$this->params['codeCoverage'] = true;
-			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 			$this->_checkXdebug();
+			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
@@ -254,7 +256,7 @@ class CakeTestSuiteDispatcher {
 		if ('all' == $this->params['group']) {
 			$this->Manager->runAllTests($Reporter);
 		} else {
-			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
+			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter, $this->params['codeCoverage']);
 		}
 	}
 
@@ -268,7 +270,7 @@ class CakeTestSuiteDispatcher {
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::init($this->params['case'], $Reporter);
 		}
-		$this->Manager->runTestCase($this->params['case'], $Reporter);
+		$this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
 	}
 }
 ?>
