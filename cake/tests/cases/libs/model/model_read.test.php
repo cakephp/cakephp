@@ -7294,6 +7294,21 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * test that virtual fields work when they don't contain functions.
+ *
+ * @return void
+ */
+	function testVirtualFieldAsAString() {
+		$this->loadFixtures('Post', 'Author');
+		$Post =& new Post();
+		$Post->virtualFields = array(
+		    'writer' => 'Author.user'
+		);
+		$result = $Post->find('first');
+		$this->assertTrue(isset($result['Post']['writer']), 'virtual field not fetched %s');
+	}
+
+/**
  * test that isVirtualField will accept both aliased and non aliased fieldnames
  *
  * @return void
