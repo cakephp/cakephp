@@ -167,9 +167,6 @@ class TestManager {
 		$reporter->paintHeader();
 		$this->getTestSuite()->run($result);
 		$reporter->paintResult($result);
-		// echo '<pre>';
-		// var_dump($result->getCodeCoverageInformation());
-		// echo '</pre>';
 		return $result;
 	}
 

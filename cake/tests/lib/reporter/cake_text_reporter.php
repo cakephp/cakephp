@@ -61,12 +61,9 @@ class CakeTextReporter extends CakeBaseReporter {
 		if (function_exists('memory_get_peak_usage')) {
 			echo 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
 		}
-		if (
-			isset($this->params['codeCoverage']) && 
-			$this->params['codeCoverage'] && 
-			class_exists('CodeCoverageManager')
-		) {
-			CodeCoverageManager::report();
+		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
+			$coverage = $result->getCodeCoverageInformation();
+			echo $this->paintCoverage($coverage);
 		}
 	}
 

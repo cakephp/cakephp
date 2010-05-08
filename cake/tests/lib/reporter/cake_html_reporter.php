@@ -175,14 +175,23 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		}
 		echo $this->_paintLinks();
 		echo '</div>';
-		if (
-			isset($this->params['codeCoverage']) &&
-			$this->params['codeCoverage'] &&
-			class_exists('CodeCoverageManager')
-		) {
-			//CodeCoverageManager::report();
+		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
+			$coverage = $result->getCodeCoverageInformation();
+			echo $this->paintCoverage($coverage);
 		}
 		$this->paintDocumentEnd();
+	}
+
+/**
+ * Paints a code coverage report.
+ *
+ * @return void
+ */
+	public function paintCoverage($coverage) {
+		$file = dirname(dirname(__FILE__)) . '/coverage/html_coverage_report.php';
+		include $file;
+		$reporter = new HtmlCoverageReport($coverage);
+		echo $reporter->report();
 	}
 
 /**

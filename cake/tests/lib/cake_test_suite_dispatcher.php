@@ -236,7 +236,6 @@ class CakeTestSuiteDispatcher {
 		if (isset($_GET['code_coverage'])) {
 			$this->params['codeCoverage'] = true;
 			$this->_checkXdebug();
-			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
@@ -250,9 +249,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _runGroupTest() {
 		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::init($this->params['group'], $Reporter);
-		}
 		if ('all' == $this->params['group']) {
 			$this->Manager->runAllTests($Reporter);
 		} else {
@@ -267,9 +263,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _runTestCase() {
 		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::init($this->params['case'], $Reporter);
-		}
 		$this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
 	}
 }
