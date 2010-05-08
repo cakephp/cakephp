@@ -22,6 +22,8 @@ App::import('Core', 'CakeRequest');
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
 
+Mock::generate('CakeRequest', 'ControllerMockCakeRequest');
+
 /**
  * AppController class
  *
@@ -1172,56 +1174,20 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testReferer() {
-		$request = new CakeRequest('controller_posts/index');
+		$request = new ControllerMockCakeRequest();
+		$request->setReturnValue('referer', 'http://localhost/posts/index', array(null, false));
+		$request->setReturnValue('referer', '/posts/index', array(null, true));
 
 		$Controller = new Controller($request);
-		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
-		$result = $Controller->referer(null, false);
-		$expected = 'http://cakephp.org';
-		$this->assertIdentical($result, $expected);
+		$result = $Controller->referer(null, true);
+		$this->assertEqual($result, '/posts/index');
 
-		$_SERVER['HTTP_REFERER'] = '';
-		$result = $Controller->referer('http://cakephp.org', false);
-		$expected = 'http://cakephp.org';
-		$this->assertIdentical($result, $expected);
-
-		$_SERVER['HTTP_REFERER'] = '';
-		$referer = array(
-			'controller' => 'pages',
-			'action' => 'display',
-			'home'
-		);
-		$result = $Controller->referer($referer, false);
-		$expected = 'http://' . env('HTTP_HOST') . '/pages/display/home';
-		$this->assertIdentical($result, $expected);
-
-		$_SERVER['HTTP_REFERER'] = '';
-		$result = $Controller->referer(null, false);
-		$expected = '/';
-		$this->assertIdentical($result, $expected);
-
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'/some/path';
-		$result = $Controller->referer(null, false);
-		$expected = '/some/path';
-		$this->assertIdentical($result, $expected);
-
-		$Controller->webroot .= '/';
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'/some/path';
-		$result = $Controller->referer(null, false);
-		$expected = '/some/path';
-		$this->assertIdentical($result, $expected);
-
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'some/path';
-		$result = $Controller->referer(null, false);
-		$expected = '/some/path';
-		$this->assertIdentical($result, $expected);
-
-		$Controller->webroot = '/recipe/';
-
-		$_SERVER['HTTP_REFERER'] = FULL_BASE_URL.$Controller->webroot.'recipes/add';
 		$result = $Controller->referer();
-		$expected = '/recipes/add';
-		$this->assertIdentical($result, $expected);
+		$this->assertEqual($result, 'http://localhost/posts/index');
+
+		$Controller = new Controller(null);
+		$result = $Controller->referer();
+		$this->assertEqual($result, '/');
 	}
 
 /**
