@@ -294,7 +294,6 @@ class ThemeViewTest extends CakeTestCase {
 
 /**
  * testMissingLayout method
- *
  * @access public
  * @return void
  */
@@ -305,12 +304,10 @@ class ThemeViewTest extends CakeTestCase {
 		$this->Controller->layout = 'whatever';
 		$this->Controller->theme = 'my_theme';
 
-		restore_error_handler();
 		$View =& new TestThemeView($this->Controller);
 		ob_start();
 		$result = $View->getLayoutFileName();
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/views(\/|\\\)themed(\/|\\\)my_theme(\/|\\\)layouts(\/|\\\)whatever.ctp/", $expected);
 	}
@@ -338,7 +335,7 @@ class ThemeViewTest extends CakeTestCase {
 			$View->element('test_element');
 		}
 		$end = memory_get_usage();
-		$this->assertWithinMargin($start, $end, 3500);
+		$this->assertLessThanOrEqual($start + 3500, $end);
 	}
 }
 ?>
