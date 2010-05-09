@@ -61,7 +61,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
 			array(
-				'files' => array(
+				'data' => array(
 					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
 						10 => -1,
 						12 => 1
@@ -87,7 +87,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	function testFilterCoverageDataCorrectlyMergingValues() {
 		$data = array(
 			array(
-				'files' => array(
+				'data' => array(
 					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
 						10 => -1,
 						12 => 1
@@ -95,7 +95,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
 				)
 			),
 			array(
-				'files' => array(
+				'data' => array(
 					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
 						10 => 1,
 						12 => -1,
