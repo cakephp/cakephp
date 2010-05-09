@@ -150,13 +150,26 @@ class HtmlCoverageReport {
 
 		$phpTagPattern = '/^[ |\t]*[<\?php|\?>]+[ |\t]*/';
 		$basicallyEmptyPattern = '/^[ |\t]*[{|}|\(|\)]+[ |\t]*/';
+		$commentStart = '/\/\*\*/';
+		$commentEnd = '/\*\//';
 		$ignoreStart = '/@codeCoverageIgnoreStart/';
 		$ignoreStop = '/@codeCoverageIgnoreEnd/';
+		$inComment = false;
 
 		foreach ($lines as $lineno => $line) {
 			$runnable = true;
 			if (preg_match($phpTagPattern, $line) || preg_match($basicallyEmptyPattern, $line)) {
 				$runnable = false;
+			}
+			if ($runnable && preg_match($commentStart, $line)) {
+				$runnable = false;
+				$inComment = true;
+			}
+			if ($inComment == true) {
+				$runnable = false;
+			}
+			if (!$runnable && preg_match($commentEnd, $line)) {
+				$inComment = false;
 			}
 			$output[$lineno] = $runnable;
 		}
@@ -183,22 +196,22 @@ class HtmlCoverageReport {
 		$executableLines = $this->getExecutableLines($fileLines);
 
 		foreach ($fileLines as $lineno => $line) {
-			$isExecutable = (isset($executableLines[$lineno]) && $executableLines[$lineno] == true);
+			$manualFind = (
+				isset($executableLines[$lineno]) && 
+				$executableLines[$lineno] == true &&
+				trim($line) != ''
+			);
 
-			$class = 'uncovered';
-			if (!$isExecutable) {
-				$class = 'ignored';
-			} elseif (isset($coverageData[$lineno]) && $coverageData[$lineno] > 0) {
-				$class = 'covered';
+			$class = 'ignored';
+			if ($manualFind) {
+				$class = 'uncovered';
+				$total++;
+				if (isset($coverageData[$lineno]) && $coverageData[$lineno] > 0) {
+					$class = 'covered';
+					$covered++;
+				}
 			}
 			$diff[] = $this->_paintLine($line, $lineno, $class);
-
-			if ($class == 'covered') {
-				$covered++;
-			}
-			if ($class == 'uncovered' || $class == 'covered') {
-				$total++;
-			}
 		}
 
 		$percentCovered = round($covered / $total, 2);

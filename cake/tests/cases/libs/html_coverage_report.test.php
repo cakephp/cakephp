@@ -143,9 +143,9 @@ PHP;
 		$result = $this->Coverage->getExecutableLines(explode("\n", $contents));
 		$expected = array(
 			0 => false,
-			1 => true,
-			2 => true,
-			3 => true,
+			1 => false,
+			2 => false,
+			3 => false,
 			4 => true,
 			5 => true,
 			6 => false,
@@ -186,14 +186,14 @@ PHP;
 			3 => 1,
 			4 => 1,
 			5 => -1,
-			6 => -1,
-			7 => -1,
+			6 => 1,
+			7 => 1,
 			8 => 1,
 			9 => -1,
 			10 => 1,
 		);
 		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
-		$this->assertRegExp('/<h2>myfile\.php Code coverage\: \d+\.\d+\%<\/h2>/', $result);
+		$this->assertRegExp('/<h2>myfile\.php Code coverage\: \d+\.?\d*\%<\/h2>/', $result);
 		$this->assertRegExp('/<div class="code-coverage-results">/', $result);
 		$this->assertRegExp('/<pre>/', $result);
 		foreach ($file as $i => $line) {
