@@ -61,7 +61,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
 			array(
-				'data' => array(
+				'files' => array(
 					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
 						10 => -1,
 						12 => 1
@@ -87,28 +87,37 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	function testFilterCoverageDataCorrectlyMergingValues() {
 		$data = array(
 			array(
-				'data' => array(
-					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
-						10 => -1,
+				'files' => array(
+					'/something/dispatcher.php' => array(
+						10 => 1,
 						12 => 1
 					),
+				), 
+				'executable' => array(
+					'/something/dispatcher.php' => array(
+						10 => -1
+					)
 				)
 			),
 			array(
-				'data' => array(
-					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+				'files' => array(
+					'/something/dispatcher.php' => array(
 						10 => 1,
-						12 => -1,
 						50 => 1,
-						51 => -1
 					),
+				),
+				'executable' => array(
+					'/something/dispatcher.php' => array(
+						12 => -1,
+						51 => -1
+					)
 				)
 			),
 		);
 		$this->Coverage->setCoverage($data);
-		$result = $this->Coverage->filterCoverageDataByPath(TEST_CAKE_CORE_INCLUDE_PATH);
+		$result = $this->Coverage->filterCoverageDataByPath('/something/');
 
-		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php';
+		$path = '/something/dispatcher.php';
 		$this->assertTrue(isset($result[$path]));
 		$this->assertEquals(1, $result[$path][10]);
 		$this->assertEquals(1, $result[$path][12]);

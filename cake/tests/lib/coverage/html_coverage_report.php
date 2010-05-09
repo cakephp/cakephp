@@ -120,20 +120,17 @@ class HtmlCoverageReport {
 	public function filterCoverageDataByPath($path) {
 		$files = array();
 		foreach ($this->_rawCoverage as $testRun) {
-			foreach ($testRun['data'] as $filename => $fileCoverage) {
+			foreach ($testRun['files'] as $filename => $fileCoverage) {
 				if (strpos($filename, $path) !== 0) {
 					continue;
 				}
+				$dead = isset($testRun['dead'][$filename]) ? $testRun['dead'][$filename] : array();
+				$executable = isset($testRun['executable'][$filename]) ? $testRun['executable'][$filename] : array();
+		
 				if (!isset($files[$filename])) {
 					$files[$filename] = array();
 				}
-				foreach ($fileCoverage as $line => $value) {
-					if (!isset($files[$filename][$line])) {
-						$files[$filename][$line] = $value;
-					} elseif ($files[$filename][$line] < $value) {
-						$files[$filename][$line] = $value;
-					}
-				}
+				$files[$filename] = $files[$filename] + $fileCoverage + $executable + $dead;
 			}
 		}
 		ksort($files);

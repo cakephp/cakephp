@@ -176,7 +176,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
-			$coverage = $result->getRawCodeCoverageInformation();
+			$coverage = $result->getCodeCoverageInformation();
 			echo $this->paintCoverage($coverage);
 		}
 		$this->paintDocumentEnd();
