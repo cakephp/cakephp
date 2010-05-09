@@ -162,7 +162,7 @@ class TestManager {
  */
 	protected function run($reporter, $codeCoverage = false) {
 		$result = new PHPUnit_Framework_TestResult;
-		$result->collectCodeCoverageInformation($codeCoverage);
+		$result->collectRawCodeCoverageInformation($codeCoverage);
 		$result->addListener($reporter);
 		$reporter->paintHeader();
 		$this->getTestSuite()->run($result);

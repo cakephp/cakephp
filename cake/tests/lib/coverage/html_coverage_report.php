@@ -120,7 +120,7 @@ class HtmlCoverageReport {
 	public function filterCoverageDataByPath($path) {
 		$files = array();
 		foreach ($this->_rawCoverage as $testRun) {
-			foreach ($testRun['files'] as $filename => $fileCoverage) {
+			foreach ($testRun['data'] as $filename => $fileCoverage) {
 				if (strpos($filename, $path) !== 0) {
 					continue;
 				}
@@ -136,6 +136,7 @@ class HtmlCoverageReport {
 				}
 			}
 		}
+		ksort($files);
 		return $files;
 	}
 
@@ -214,7 +215,7 @@ class HtmlCoverageReport {
 			$diff[] = $this->_paintLine($line, $lineno, $class);
 		}
 
-		$percentCovered = round($covered / $total, 2);
+		$percentCovered = round(100 * $covered / $total, 2);
 
 		$output .= $this->coverageHeader($filename, $percentCovered);
 		$output .= implode("", $diff);
@@ -243,6 +244,7 @@ class HtmlCoverageReport {
  * @return void
  */
 	public function coverageHeader($filename, $percent) {
+		$filename = basename($filename);
 		return <<<HTML
 	<h2>$filename Code coverage: $percent%</h2>
 	<div class="code-coverage-results">
