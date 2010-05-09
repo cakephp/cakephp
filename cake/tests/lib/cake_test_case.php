@@ -469,5 +469,16 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected function expectException($name = null, $message = '') {
 		$this->setExpectedException($name, $message);
 	}
+
+/**
+* Compatibility wrapper function for assertSame
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertReference(&$first,  &$second, $message = '') {
+		return $this->assertSame($first, $second, $message);
+	}
 }
 ?>
