@@ -1340,7 +1340,6 @@ class XmlTest extends CakeTestCase {
 		$parentNode->append($string);
 		$last =& $parentNode->last();
 		$this->assertEqual($last->name, 'ourChildNode');
-
 		$this->expectError();
 		$parentNode->append($parentNode);
 	}
