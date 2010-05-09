@@ -292,7 +292,9 @@ class ShellTest extends CakeTestCase {
  * @access public
  */
 	function testCreateFile() {
-		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
+		if ($this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows')) {
+			return;
+		}
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -342,7 +344,9 @@ class ShellTest extends CakeTestCase {
  * @access public
  */
 	function testCreateFileWindows() {
-		$this->skipUnless(DIRECTORY_SEPARATOR === '\\', '%s Supported on Windows only');
+		if ($this->skipUnless(DIRECTORY_SEPARATOR === '\\', '%s Supported on Windows only')) {
+			return;
+		}
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
@@ -351,13 +355,13 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = false;
 
-		$contents = "<?php\necho 'test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$contents = "<?php\necho 'another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'another test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
@@ -368,7 +372,7 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->Dispatch->setReturnValueAt(0, 'getInput', 'n');
 		$this->Shell->Dispatch->expectAt(1, 'stdout', array('File exists, overwrite?'));
 
-		$contents = "<?php\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
+		$contents = "<?php\r\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertFalse($result);
 		$this->assertTrue(file_exists($file));
