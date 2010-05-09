@@ -30,6 +30,13 @@ class HtmlCoverageReport {
 	public $groupTest = false;
 
 /**
+ * Number of lines to provide around an uncovered code block
+ *
+ * @var integer
+ */
+	public $numDiffContextLines = 7;
+
+/**
  * Constructor
  *
  * @param array $coverage Array of coverage data from PHPUnit_Test_Result
@@ -74,6 +81,15 @@ class HtmlCoverageReport {
 	public function report() {
 		$pathFilter = $this->getPathFilter();
 		$coverageData = $this->filterCoverageDataByPath($pathFilter);
+		if (empty($coverageData)) {
+			return '<h3>No files to generate coverage for</h3>';
+		}
+		$output = '';
+		foreach ($coverageData as $file => $coverageData) {
+			$fileData = file($file);
+			$output .= $this->generateDiff($file, $fileData, $coverageData);
+		}
+		return $output;
 	}
 
 /**
@@ -121,5 +137,112 @@ class HtmlCoverageReport {
 			}
 		}
 		return $files;
+	}
+
+/**
+ * Removes non executable lines of code from a file contents string.
+ *
+ * @param array $lines in the file.
+ * @return array Array for the file with lines marked as not runnable.
+ */
+	public function getExecutableLines($lines) {
+		$output = array();
+
+		$phpTagPattern = '/^[ |\t]*[<\?php|\?>]+[ |\t]*/';
+		$basicallyEmptyPattern = '/^[ |\t]*[{|}|\(|\)]+[ |\t]*/';
+		$ignoreStart = '/@codeCoverageIgnoreStart/';
+		$ignoreStop = '/@codeCoverageIgnoreEnd/';
+
+		foreach ($lines as $lineno => $line) {
+			$runnable = true;
+			if (preg_match($phpTagPattern, $line) || preg_match($basicallyEmptyPattern, $line)) {
+				$runnable = false;
+			}
+			$output[$lineno] = $runnable;
+		}
+		return $output;
+	}
+
+/**
+ * Generates an HTML diff for $file based on $coverageData.
+ *
+ * @param array $fileData File data as an array. See file() for how to get one of these.
+ * @param array $coverageData Array of coverage data to use to generate HTML diffs with
+ * @return string HTML diff.
+ */
+	function generateDiff($filename, $fileLines, $coverageData) {
+		$output = ''; 
+		$diff = array();
+		$covered = 0;
+		$total = 0;
+
+		//shift line numbers forward one;
+		array_unshift($fileLines, ' ');
+		unset($fileLines[0]);
+
+		$executableLines = $this->getExecutableLines($fileLines);
+
+		foreach ($fileLines as $lineno => $line) {
+			$isExecutable = (isset($executableLines[$lineno]) && $executableLines[$lineno] == true);
+
+			$class = 'uncovered';
+			if (!$isExecutable) {
+				$class = 'ignored';
+			} elseif (isset($coverageData[$lineno]) && $coverageData[$lineno] > 0) {
+				$class = 'covered';
+			}
+			$diff[] = $this->_paintLine($line, $lineno, $class);
+
+			if ($class == 'covered') {
+				$covered++;
+			}
+			if ($class == 'uncovered' || $class == 'covered') {
+				$total++;
+			}
+		}
+
+		$percentCovered = round($covered / $total, 2);
+
+		$output .= $this->coverageHeader($filename, $percentCovered);
+		$output .= implode("", $diff);
+		$output .= $this->coverageFooter();
+		return $output;
+	}
+
+/**
+ * Renders the html for a single line in the html diff.
+ *
+ * @return void
+ */
+	protected function _paintLine($line, $linenumber, $class) {
+		return sprintf(
+			'<div class="code-line %s"><span class="line-num">%s</span><span class="content">%s</span></div>',
+			$class,
+			$linenumber,
+			htmlspecialchars($line)
+		);
+	}
+
+
+/**
+ * Generate an HTML snippet for coverage headers
+ *
+ * @return void
+ */
+	public function coverageHeader($filename, $percent) {
+		return <<<HTML
+	<h2>$filename Code coverage: $percent%</h2>
+	<div class="code-coverage-results">
+	<pre>
+HTML;
+	}
+
+/**
+ * Generate an HTML snippet for coverage footers
+ *
+ * @return void
+ */
+	public function coverageFooter() {
+		return "</pre></div>";
 	}
 }

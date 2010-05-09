@@ -117,6 +117,96 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	}
 
 /**
+ * test the features of getExecutableLines
+ *
+ * @return void
+ */
+	function testGetExecutableLines() {
+		$contents = <<<PHP
+<?php
+/**
+ * A comment line.
+ */
+function thing() {
+	echo 'thinger';
+}
+
+function other_thing() {
+	if (
+		\$something == true
+	) {
+		doSomethingElse();
+	}
+}
+?>
+PHP;
+		$result = $this->Coverage->getExecutableLines(explode("\n", $contents));
+		$expected = array(
+			0 => false,
+			1 => true,
+			2 => true,
+			3 => true,
+			4 => true,
+			5 => true,
+			6 => false,
+			7 => true,
+			8 => true,
+			9 => true,
+			10 => true,
+			11 => false,
+			12 => true,
+			13 => false,
+			14 => false,
+			15 => false
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test generating HTML reports from file arrays.
+ *
+ * @return void
+ */
+	function testGenerateDiff() {
+		$file = array(
+			'line 1',
+			'line 2',
+			'line 3',
+			'line 4',
+			'line 5',
+			'line 6',
+			'line 7',
+			'line 8',
+			'line 9',
+			'line 10',
+		);
+		$coverage = array(
+			1 => 1,
+			2 => -2,
+			3 => 1,
+			4 => 1,
+			5 => -1,
+			6 => -1,
+			7 => -1,
+			8 => 1,
+			9 => -1,
+			10 => 1,
+		);
+		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
+		$this->assertRegExp('/<h2>myfile\.php Code coverage\: \d+\.\d+\%<\/h2>/', $result);
+		$this->assertRegExp('/<div class="code-coverage-results">/', $result);
+		$this->assertRegExp('/<pre>/', $result);
+		foreach ($file as $i => $line) {
+			$this->assertTrue(strpos($line, $result) !== 0, 'Content is missing ' . $i);
+			$class = 'uncovered';
+			if ($coverage[$i + 1] > 0) {
+				$class = 'covered';
+			}
+			$this->assertTrue(strpos($class, $result) !== 0, 'Class name is wrong ' . $i);
+		}
+	}
+
+/**
  * teardown
  *
  * @return void
