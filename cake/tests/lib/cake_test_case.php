@@ -480,5 +480,19 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected function assertReference(&$first,  &$second, $message = '') {
 		return $this->assertSame($first, $second, $message);
 	}
+
+/**
+* Compatibility function to test if value is between an acceptable range
+* @param mixed $value
+* @param mixed $expected
+* @param mixed $margin the rage of acceptation
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertWithinMargin($value, $expected, $margin, $message = '') {
+		$upper = $value + $margin;
+		$lower = $value - $margin;
+		$this->assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+	}
 }
 ?>
