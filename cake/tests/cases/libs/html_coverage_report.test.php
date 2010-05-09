@@ -95,7 +95,13 @@ class HtmlCoverageReportTest extends CakeTestCase {
 				), 
 				'executable' => array(
 					'/something/dispatcher.php' => array(
-						10 => -1
+						9 => -1
+					)
+				),
+				'dead' => array(
+					'/something/dispatcher.php' => array(
+						22 => -2,
+						23 => -2
 					)
 				)
 			),
@@ -111,6 +117,12 @@ class HtmlCoverageReportTest extends CakeTestCase {
 						12 => -1,
 						51 => -1
 					)
+				),
+				'dead' => array(
+					'/something/dispatcher.php' => array(
+						13 => -2,
+						42 => -2
+					)
 				)
 			),
 		);
@@ -119,56 +131,9 @@ class HtmlCoverageReportTest extends CakeTestCase {
 
 		$path = '/something/dispatcher.php';
 		$this->assertTrue(isset($result[$path]));
-		$this->assertEquals(1, $result[$path][10]);
-		$this->assertEquals(1, $result[$path][12]);
-		$this->assertEquals(1, $result[$path][50]);
-		$this->assertEquals(-1, $result[$path][51]);
-	}
-
-/**
- * test the features of getExecutableLines
- *
- * @return void
- */
-	function testGetExecutableLines() {
-		$contents = <<<PHP
-<?php
-/**
- * A comment line.
- */
-function thing() {
-	echo 'thinger';
-}
-
-function other_thing() {
-	if (
-		\$something == true
-	) {
-		doSomethingElse();
-	}
-}
-?>
-PHP;
-		$result = $this->Coverage->getExecutableLines(explode("\n", $contents));
-		$expected = array(
-			0 => false,
-			1 => false,
-			2 => false,
-			3 => false,
-			4 => true,
-			5 => true,
-			6 => false,
-			7 => true,
-			8 => true,
-			9 => true,
-			10 => true,
-			11 => false,
-			12 => true,
-			13 => false,
-			14 => false,
-			15 => false
-		);
-		$this->assertEquals($expected, $result);
+		$this->assertEquals(array(10, 12, 50), array_keys($result[$path]['covered']));
+		$this->assertEquals(array(9, 12, 51), array_keys($result[$path]['executable']));
+		$this->assertEquals(array(22, 23, 13, 42), array_keys($result[$path]['dead']));
 	}
 
 /**
@@ -190,16 +155,22 @@ PHP;
 			'line 10',
 		);
 		$coverage = array(
-			1 => 1,
-			2 => -2,
-			3 => 1,
-			4 => 1,
-			5 => -1,
-			6 => 1,
-			7 => 1,
-			8 => 1,
-			9 => -1,
-			10 => 1,
+			'covered' => array(
+				1 => 1,
+				3 => 1,
+				4 => 1,
+				6 => 1,
+				7 => 1,
+				8 => 1,
+				10 => 1
+			),
+			'executable' => array(
+				5 => -1,
+				9 => -1
+			),
+			'dead' => array(
+				2 => -2
+			)
 		);
 		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
 		$this->assertRegExp('/<h2>myfile\.php Code coverage\: \d+\.?\d*\%<\/h2>/', $result);
@@ -207,9 +178,12 @@ PHP;
 		$this->assertRegExp('/<pre>/', $result);
 		foreach ($file as $i => $line) {
 			$this->assertTrue(strpos($line, $result) !== 0, 'Content is missing ' . $i);
-			$class = 'uncovered';
-			if ($coverage[$i + 1] > 0) {
-				$class = 'covered';
+			$class = 'covered';
+			if (in_array($i + 1, array(5, 9, 2))) {
+				$class = 'uncovered';
+			}
+			if ($i + 1 == 2) {
+				$class .= ' dead';
 			}
 			$this->assertTrue(strpos($class, $result) !== 0, 'Class name is wrong ' . $i);
 		}

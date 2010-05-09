@@ -128,50 +128,19 @@ class HtmlCoverageReport {
 				$executable = isset($testRun['executable'][$filename]) ? $testRun['executable'][$filename] : array();
 		
 				if (!isset($files[$filename])) {
-					$files[$filename] = array();
+					$files[$filename] = array(
+						'covered' => array(),
+						'dead' => array(),
+						'executable' => array()
+					);
 				}
-				$files[$filename] = $files[$filename] + $fileCoverage + $executable + $dead;
+				$files[$filename]['covered'] += $fileCoverage;
+				$files[$filename]['executable'] += $executable;
+				$files[$filename]['dead'] += $dead;
 			}
 		}
 		ksort($files);
 		return $files;
-	}
-
-/**
- * Removes non executable lines of code from a file contents string.
- *
- * @param array $lines in the file.
- * @return array Array for the file with lines marked as not runnable.
- */
-	public function getExecutableLines($lines) {
-		$output = array();
-
-		$phpTagPattern = '/^[ |\t]*[<\?php|\?>]+[ |\t]*/';
-		$basicallyEmptyPattern = '/^[ |\t]*[{|}|\(|\)]+[ |\t]*/';
-		$commentStart = '/\/\*\*/';
-		$commentEnd = '/\*\//';
-		$ignoreStart = '/@codeCoverageIgnoreStart/';
-		$ignoreStop = '/@codeCoverageIgnoreEnd/';
-		$inComment = false;
-
-		foreach ($lines as $lineno => $line) {
-			$runnable = true;
-			if (preg_match($phpTagPattern, $line) || preg_match($basicallyEmptyPattern, $line)) {
-				$runnable = false;
-			}
-			if ($runnable && preg_match($commentStart, $line)) {
-				$runnable = false;
-				$inComment = true;
-			}
-			if ($inComment == true) {
-				$runnable = false;
-			}
-			if (!$runnable && preg_match($commentEnd, $line)) {
-				$inComment = false;
-			}
-			$output[$lineno] = $runnable;
-		}
-		return $output;
 	}
 
 /**
@@ -191,23 +160,17 @@ class HtmlCoverageReport {
 		array_unshift($fileLines, ' ');
 		unset($fileLines[0]);
 
-		$executableLines = $this->getExecutableLines($fileLines);
-
 		foreach ($fileLines as $lineno => $line) {
-			$manualFind = (
-				isset($executableLines[$lineno]) && 
-				$executableLines[$lineno] == true &&
-				trim($line) != ''
-			);
-
 			$class = 'ignored';
-			if ($manualFind) {
+			if (isset($coverageData['covered'][$lineno])) {
+				$class = 'covered';
+				$covered++;
+				$total++;
+			} elseif (isset($coverageData['executable'][$lineno])) {
 				$class = 'uncovered';
 				$total++;
-				if (isset($coverageData[$lineno]) && $coverageData[$lineno] > 0) {
-					$class = 'covered';
-					$covered++;
-				}
+			} elseif (isset($coverageData['dead'][$lineno])) {
+				$class .= ' dead';
 			}
 			$diff[] = $this->_paintLine($line, $lineno, $class);
 		}
