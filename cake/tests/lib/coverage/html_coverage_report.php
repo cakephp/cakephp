@@ -84,7 +84,7 @@ class HtmlCoverageReport {
 		if (empty($coverageData)) {
 			return '<h3>No files to generate coverage for</h3>';
 		}
-		$output = '';
+		$output = $this->coverageScript();
 		foreach ($coverageData as $file => $coverageData) {
 			$fileData = file($file);
 			$output .= $this->generateDiff($file, $fileData, $coverageData);
@@ -197,6 +197,21 @@ class HtmlCoverageReport {
 		);
 	}
 
+/**
+ * generate some javascript for the coverage report.
+ *
+ * @return void
+ */
+	public function coverageScript() {
+		return <<<HTML
+		<script type="text/javascript">
+		function coverage_show_hide(selector) {
+			var element = document.getElementById(selector);
+			element.style.display = (element.style.display == 'none') ? '' : 'none';
+		}
+		</script>
+HTML;
+	}
 
 /**
  * Generate an HTML snippet for coverage headers
@@ -206,8 +221,12 @@ class HtmlCoverageReport {
 	public function coverageHeader($filename, $percent) {
 		$filename = basename($filename);
 		return <<<HTML
-	<h2>$filename Code coverage: $percent%</h2>
-	<div class="code-coverage-results">
+	<h4>
+		<a href="#coverage-$filename" onclick="coverage_show_hide('coverage-$filename');">
+			$filename Code coverage: $percent%
+		</a>
+	</h4>
+	<div class="code-coverage-results" id="coverage-$filename" style="display:none;">
 	<pre>
 HTML;
 	}
