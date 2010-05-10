@@ -55,5 +55,3 @@ class DatatypeFixture extends CakeTestFixture {
 		array('id' => 1, 'float_field' => 42.23),
 	);
 }
-
-?>

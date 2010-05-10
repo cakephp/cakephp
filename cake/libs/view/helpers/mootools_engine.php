@@ -372,4 +372,3 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
 		return $selection . $method;
 	}
 }
-?>

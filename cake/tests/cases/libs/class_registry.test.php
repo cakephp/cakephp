@@ -323,4 +323,3 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertIdentical($PluginUser, $PluginUserCopy);
 	}
 }
-?>

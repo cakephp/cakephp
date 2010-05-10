@@ -890,4 +890,3 @@ class Helper extends Overloadable {
 		$this->__cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->__cleaned);
 	}
 }
-?>

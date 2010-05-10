@@ -454,4 +454,3 @@ class TestTask extends BakeTask {
 		$this->_stop();
 	}
 }
-?>

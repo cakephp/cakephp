@@ -277,4 +277,3 @@ class ConnectionManagerTest extends CakeTestCase {
 		$this->assertEqual($source, null);
 	}
 }
-?>

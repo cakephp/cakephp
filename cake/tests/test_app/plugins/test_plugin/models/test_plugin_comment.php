@@ -27,4 +27,3 @@ class TestPluginComment extends TestPluginAppModel {
 	var $useTable = 'test_plugin_comments';
 	var $name = 'TestPluginComment';
 }
-?>

@@ -263,4 +263,3 @@ class ErrorHandler extends Object {
 		fwrite($this->stderr, "Error: ". $string . "\n");
 	}
 }
-?>

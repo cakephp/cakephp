@@ -190,4 +190,3 @@ class CakeSocketTest extends CakeTestCase {
 		$this->assertEqual(array(), $anotherSocket->config);
 	}
 }
-?>

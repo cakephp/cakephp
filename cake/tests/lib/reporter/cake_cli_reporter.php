@@ -176,4 +176,3 @@ class CakeCliReporter extends CakeBaseReporter {
 		return $out;
 	}
 }
-?>

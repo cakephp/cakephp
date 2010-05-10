@@ -909,4 +909,3 @@ class JavascriptTest extends CakeTestCase {
 		$this->Javascript->enabled = $old;
 	}
 }
-?>

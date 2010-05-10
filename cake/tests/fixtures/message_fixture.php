@@ -58,4 +58,3 @@ class MessageFixture extends CakeTestFixture {
 		array('thread_id' => 3, 'name' => 'Thread 3, Message 1')
 	);
 }
-?>

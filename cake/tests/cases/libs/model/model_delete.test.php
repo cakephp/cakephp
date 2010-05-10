@@ -709,5 +709,3 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEqual(count($before[0]["Tag"]), count($after[0]["Tag"]));
 	}
 }
-
-?>

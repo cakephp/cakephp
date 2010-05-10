@@ -60,5 +60,3 @@ class UnderscoreFieldFixture extends CakeTestFixture {
 	);
 
 }
-
-?>

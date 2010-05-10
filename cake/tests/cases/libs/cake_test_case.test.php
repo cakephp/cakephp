@@ -500,4 +500,3 @@ class CakeTestCaseTest extends CakeTestCase {
 		$return = $Dispatcher->dispatch('/tests_apps/index', array('autoRender' => 0, 'return' => 1, 'requested' => 1));
 	}
 }
-?>

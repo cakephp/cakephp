@@ -56,4 +56,3 @@ class UuidTagFixture extends CakeTestFixture {
 		array('id' => '481fc6d0-b920-43e0-e50f-6d1740cf8569', 'name' => 'MyTag', 'created' => '2009-12-09 12:30:00')
 	);
 }
-?>

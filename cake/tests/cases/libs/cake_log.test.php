@@ -181,4 +181,3 @@ class CakeLogTest extends CakeTestCase {
 		@unlink(LOGS . 'debug.log');
 	}
 }
-?>

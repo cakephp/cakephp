@@ -255,4 +255,3 @@ class NumberHelper extends AppHelper {
 	}
 
 }
-?>

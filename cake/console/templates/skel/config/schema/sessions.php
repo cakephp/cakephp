@@ -47,4 +47,3 @@ class SessionsSchema extends CakeSchema {
 		);
 
 }
-?>

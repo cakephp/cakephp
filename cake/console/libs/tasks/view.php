@@ -486,4 +486,3 @@ class ViewTask extends BakeTask {
 		return $associations;
 	}
 }
-?>

@@ -62,4 +62,3 @@ class PostFixture extends CakeTestFixture {
 		array('author_id' => 1, 'title' => 'Third Post', 'body' => 'Third Post Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
 	);
 }
-?>

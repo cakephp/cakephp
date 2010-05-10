@@ -330,4 +330,3 @@ class Permission extends AppModel {
 		parent::__construct();
 	}
 }
-?>

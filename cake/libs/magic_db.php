@@ -300,5 +300,3 @@ class MagicFileResource extends Object{
 		}
 	}
 }
-
-?>

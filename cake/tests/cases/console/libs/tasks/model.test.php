@@ -908,4 +908,3 @@ STRINGEND;
 		$this->Task->execute();
 	}
 }
-?>

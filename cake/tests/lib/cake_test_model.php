@@ -29,4 +29,3 @@ class CakeTestModel extends Model {
 	var $useDbConfig = 'test_suite';
 	var $cacheSources = false;
 }
-?>

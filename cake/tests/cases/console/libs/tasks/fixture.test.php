@@ -351,4 +351,3 @@ class FixtureTaskTest extends CakeTestCase {
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 }
-?>

@@ -101,4 +101,3 @@ class BaseModelTest extends CakeTestCase {
 		ClassRegistry::flush();
 	}
 }
-?>

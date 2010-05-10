@@ -344,4 +344,3 @@ class AclShellTest extends CakeTestCase {
 		$this->assertEqual($this->Task->Dispatch->args, array('schema', 'create', 'DbAcl'));
 	}
 }
-?>

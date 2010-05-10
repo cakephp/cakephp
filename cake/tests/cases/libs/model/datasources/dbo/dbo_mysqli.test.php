@@ -337,4 +337,3 @@ class DboMysqliTest extends CakeTestCase {
 		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
 	}
 }
-?>

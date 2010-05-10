@@ -192,4 +192,3 @@ class CakeTestFixture extends Object {
 		return $return;
 	}
 }
-?>

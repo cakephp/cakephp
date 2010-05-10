@@ -659,4 +659,3 @@ class ShellDispatcher {
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	$dispatcher = new ShellDispatcher($argv);
 }
-?>

@@ -56,4 +56,3 @@ class StoryFixture extends CakeTestFixture {
 		array('title' => 'Second Story')
 	);
 }
-?>

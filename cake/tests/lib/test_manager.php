@@ -419,5 +419,3 @@ class TestManager {
 		return $this->_groupExtension;
 	}
 }
-
-?>

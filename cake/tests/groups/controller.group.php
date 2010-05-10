@@ -47,4 +47,3 @@ class ControllerGroupTest extends TestSuite {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'controller_merge_vars');
 	}
 }
-?>

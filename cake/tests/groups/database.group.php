@@ -50,4 +50,3 @@ class DatabaseGroupTest extends TestSuite {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'datasources' . DS . 'dbo_source');
 	}
 }
-?>

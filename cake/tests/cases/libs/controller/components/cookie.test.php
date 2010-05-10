@@ -466,4 +466,3 @@ class CookieComponentTest extends CakeTestCase {
 		return substr($string, 1);
 	}
 }
-?>

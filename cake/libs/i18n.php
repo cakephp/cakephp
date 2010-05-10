@@ -573,4 +573,3 @@ class I18n extends Object {
 		}
 	}
 }
-?>

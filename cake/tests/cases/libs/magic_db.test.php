@@ -201,4 +201,3 @@ class MagicDbTestData extends Object {
 		return $data[$key];
 	}
 }
-?>

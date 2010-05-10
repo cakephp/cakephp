@@ -2205,4 +2205,3 @@ class ValidationTest extends CakeTestCase {
 	}
 
 }
-?>

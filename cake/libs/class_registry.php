@@ -362,4 +362,3 @@ class ClassRegistry {
 		$_this->__map = array();
 	}
 }
-?>

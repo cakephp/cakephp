@@ -369,4 +369,3 @@ class ProjectTask extends Shell {
 	}
 
 }
-?>

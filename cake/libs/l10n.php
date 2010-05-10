@@ -484,4 +484,3 @@ class L10n extends Object {
 		return $this->__l10nCatalog;
 	}
 }
-?>

@@ -968,5 +968,3 @@ class View extends Object {
 		return $this->__paths;
 	}
 }
-
-?>

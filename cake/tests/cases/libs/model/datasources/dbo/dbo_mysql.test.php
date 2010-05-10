@@ -760,4 +760,3 @@ class DboMysqlTest extends CakeTestCase {
 	}
 
 }
-?>

@@ -972,4 +972,3 @@ class TreeBehavior extends ModelBehavior {
 		$Model->recursive = $ModelRecursive;
 	}
 }
-?>

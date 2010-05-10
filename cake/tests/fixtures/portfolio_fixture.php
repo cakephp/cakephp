@@ -58,4 +58,3 @@ class PortfolioFixture extends CakeTestFixture {
 		array('seller_id' => 2, 'name' => 'Portfolio 1')
 	);
 }
-?>

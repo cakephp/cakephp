@@ -59,5 +59,3 @@ class AccountFixture extends CakeTestFixture {
 		array('cDescription' => 'dude')
 	);
 }
-
-?>

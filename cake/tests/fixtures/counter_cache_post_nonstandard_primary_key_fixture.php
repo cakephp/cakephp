@@ -40,5 +40,3 @@ class CounterCachePostNonstandardPrimaryKeyFixture extends CakeTestFixture {
 		array('pid' => 3, 'title' => 'Food',   'uid' => 301),
     );
 }
-
-?>

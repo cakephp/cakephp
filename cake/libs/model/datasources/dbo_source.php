@@ -2902,4 +2902,3 @@ class DboSource extends DataSource {
 		return 'string';
 	}
 }
-?>

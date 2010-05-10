@@ -57,5 +57,3 @@ class DataTestFixture extends CakeTestFixture {
  */
 	var $records = array();
 }
-
-?>

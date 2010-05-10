@@ -876,4 +876,3 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertNoPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
 	}
 }
-?>

@@ -58,4 +58,3 @@ class FruitsUuidTagFixture extends CakeTestFixture {
 		array('fruit_id' => '481fc6d0-b920-43e0-a40d-6d1740cf8569', 'uuid_tag_id' => '481fc6d0-b920-43e0-e50f-6d1740cf8569')
 	);
 }
-?>

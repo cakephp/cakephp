@@ -64,5 +64,3 @@ class ProductFixture extends CakeTestFixture {
 		array('name' => 'Watermelon', 'type' => 'Food', 'price' => 9)
 	);
 }
-
-?>

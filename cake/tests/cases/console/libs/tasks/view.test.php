@@ -662,4 +662,3 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 }
-?>

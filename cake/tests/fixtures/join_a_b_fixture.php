@@ -61,5 +61,3 @@ class JoinABFixture extends CakeTestFixture {
 		array('join_a_id' => 3, 'join_b_id' => 1, 'other' => 'Data for Join A 3 Join B 1', 'created' => '2008-01-03 10:56:35', 'updated' => '2008-01-03 10:56:35')
 	);
 }
-
-?>

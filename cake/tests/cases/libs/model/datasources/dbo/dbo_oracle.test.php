@@ -129,4 +129,3 @@ class DboOracleTest extends CakeTestCase {
 
 	}
 }
-?>

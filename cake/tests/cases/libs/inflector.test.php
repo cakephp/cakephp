@@ -463,4 +463,3 @@ class InflectorTest extends CakeTestCase {
 		unset($this->Inflector);
 	}
 }
-?>

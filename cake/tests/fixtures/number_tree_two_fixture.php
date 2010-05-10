@@ -53,4 +53,3 @@ class NumberTreeTwoFixture extends CakeTestFixture {
 		'rght'	=> array('type' => 'integer','null' => false)
 	);
 }
-?>

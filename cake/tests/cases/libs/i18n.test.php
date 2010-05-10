@@ -2732,4 +2732,3 @@ class I18nTest extends CakeTestCase {
 		return $plurals;
 	}
 }
-?>

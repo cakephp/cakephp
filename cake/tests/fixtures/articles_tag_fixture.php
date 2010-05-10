@@ -59,5 +59,3 @@ class ArticlesTagFixture extends CakeTestFixture {
 		array('article_id' => 2, 'tag_id' => 3)
 	);
 }
-
-?>

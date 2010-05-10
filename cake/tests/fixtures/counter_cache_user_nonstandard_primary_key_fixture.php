@@ -39,5 +39,3 @@ class CounterCacheUserNonstandardPrimaryKeyFixture extends CakeTestFixture {
 		array('uid' => 301, 'name' => 'Steven','post_count' => 1),
 	);
 }
-
-?>

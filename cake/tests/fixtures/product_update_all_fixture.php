@@ -59,4 +59,3 @@ class ProductUpdateAllFixture extends CakeTestFixture {
             'group_id'  => 4)
         );
 }
-?>

@@ -2564,5 +2564,3 @@ class PluginShortRouteTestCase extends  CakeTestCase {
 		$this->assertEqual($result, '/foo');
 	}
 }
-
-?>

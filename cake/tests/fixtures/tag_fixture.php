@@ -59,5 +59,3 @@ class TagFixture extends CakeTestFixture {
 		array('tag' => 'tag3', 'created' => '2007-03-18 12:26:23', 'updated' => '2007-03-18 12:28:31')
 	);
 }
-
-?>

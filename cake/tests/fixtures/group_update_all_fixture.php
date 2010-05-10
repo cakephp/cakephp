@@ -53,4 +53,3 @@ class GroupUpdateAllFixture extends CakeTestFixture {
             'code'  => 135)
         );
 }
-?>

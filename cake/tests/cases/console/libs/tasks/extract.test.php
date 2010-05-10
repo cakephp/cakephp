@@ -156,4 +156,3 @@ class ExtractTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 }
-?>

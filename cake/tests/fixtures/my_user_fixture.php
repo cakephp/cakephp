@@ -56,5 +56,3 @@ class MyUserFixture extends CakeTestFixture {
 		array('id' => 2, 'firstname' => 'userB')
 	);
 }
-
-?>

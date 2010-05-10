@@ -67,4 +67,3 @@ class PersonFixture extends CakeTestFixture {
 		array('name' => 'father - grand father', 'mother_id' => 0, 'father_id' => 0)
 	);
 }
-?>

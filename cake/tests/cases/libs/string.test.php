@@ -288,5 +288,3 @@ class StringTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 }
-
-?>

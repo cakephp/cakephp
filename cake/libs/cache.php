@@ -673,4 +673,3 @@ class CacheEngine {
 		return $key;
 	}
 }
-?>

@@ -28,7 +28,4 @@
  * @subpackage    cake.cake.console.libs
  */
 class PersisterOneBehaviorBehavior extends ModelBehavior {
-
-
 }
-?>

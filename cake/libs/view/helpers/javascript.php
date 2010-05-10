@@ -719,5 +719,3 @@ class JavascriptHelper extends AppHelper {
 		echo $this->writeEvents(true);
 	}
 }
-
-?>

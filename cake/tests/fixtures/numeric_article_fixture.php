@@ -58,5 +58,3 @@ class NumericArticleFixture extends CakeTestFixture {
 		array('title' => '12345abcde', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
 	);
 }
-
-?>

@@ -63,5 +63,3 @@ class AuthUserCustomFieldFixture extends CakeTestFixture {
 
 	);
 }
-
-?>

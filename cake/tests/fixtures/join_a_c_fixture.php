@@ -61,5 +61,3 @@ class JoinACFixture extends CakeTestFixture {
 		array('join_a_id' => 3, 'join_c_id' => 1, 'other' => 'Data for Join A 3 Join C 1', 'created' => '2008-01-03 10:57:24', 'updated' => '2008-01-03 10:57:24')
 	);
 }
-
-?>

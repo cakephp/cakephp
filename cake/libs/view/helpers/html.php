@@ -833,4 +833,3 @@ class HtmlHelper extends AppHelper {
 		return $out;
 	}
 }
-?>

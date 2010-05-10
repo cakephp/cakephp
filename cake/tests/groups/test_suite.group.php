@@ -50,4 +50,3 @@ class TestSuiteGroupTest extends TestSuite {
 
 	}
 }
-?>

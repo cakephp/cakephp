@@ -27,4 +27,3 @@ class TestPluginAuthors extends TestPluginAppModel {
 	var $useTable = 'authors';
 	var $name = 'TestPluginAuthors';
 }
-?>

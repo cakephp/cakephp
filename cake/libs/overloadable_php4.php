@@ -163,5 +163,3 @@ class Overloadable2 extends Object {
 	}
 }
 Overloadable::overload('Overloadable2');
-
-?>

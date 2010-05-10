@@ -644,4 +644,3 @@ class AclComponentTest extends CakeTestCase {
 		return str_pad($string, $len);
 	}
 }
-?>

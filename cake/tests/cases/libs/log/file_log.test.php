@@ -77,4 +77,3 @@ class FileLogTest extends CakeTestCase {
 	}
 
 }
-?>

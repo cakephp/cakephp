@@ -531,4 +531,3 @@ class BehaviorCollection extends Object {
 		return $this->_attached;
 	}
 }
-?>

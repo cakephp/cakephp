@@ -461,4 +461,3 @@ class CacheHelperTest extends CakeTestCase {
 	}
 */
 }
-?>

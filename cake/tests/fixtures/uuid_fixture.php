@@ -61,5 +61,3 @@ class UuidFixture extends CakeTestFixture {
 		array('id' => '47c36f9c-2578-4c2e-aeab-4e183ca6822b', 'title' => 'Unique record 4', 'count' => 3, 'created' => '2008-03-13 01:22:26', 'updated' => '2008-03-13 01:24:34'),
 	);
 }
-
-?>

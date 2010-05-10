@@ -63,5 +63,3 @@ class AuthUserFixture extends CakeTestFixture {
 
 	);
 }
-
-?>

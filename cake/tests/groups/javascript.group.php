@@ -49,4 +49,3 @@ class AllCoreJavascriptHelpersGroupTest extends TestSuite {
 		TestManager::addTestFile($this, $helperTestPath . 'prototype_engine.test.php');
 	}
 }
-?>

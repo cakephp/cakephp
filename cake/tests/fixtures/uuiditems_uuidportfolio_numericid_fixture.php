@@ -59,4 +59,3 @@ class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
 		array('uuiditem_id' => '482cfd4b-0e7c-4ea3-9582-4cec40cf8569', 'uuidportfolio_id' => '4806e091-6940-4d2b-b227-303740cf8569')
 	);
 }
-?>

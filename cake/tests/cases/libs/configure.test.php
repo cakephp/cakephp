@@ -798,4 +798,3 @@ class AppImportTest extends CakeTestCase {
 		$this->assertEqual($text, 'This is the welcome.php file in test_plugin/vendors directory');
 	}
 }
-?>

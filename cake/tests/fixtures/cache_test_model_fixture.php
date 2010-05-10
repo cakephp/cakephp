@@ -46,5 +46,3 @@ class CacheTestModelFixture extends CakeTestFixture {
 		'expires'	=> array('type' => 'integer', 'length' => 10, 'default' => '0'),
 	);
 }
-
-?>

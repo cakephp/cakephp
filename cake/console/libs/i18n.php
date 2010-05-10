@@ -126,4 +126,3 @@ class I18nShell extends Shell {
 		$this->Extract->help();
 	}
 }
-?>

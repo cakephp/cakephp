@@ -59,5 +59,3 @@ class ContentFixture extends CakeTestFixture {
 		array('cDescription' => 'Test Content 4')
 	);
 }
-
-?>

@@ -498,4 +498,3 @@ HTML;
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

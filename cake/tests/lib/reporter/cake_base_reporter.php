@@ -223,4 +223,3 @@ class CakeBaseReporter extends SimpleReporter {
 	}
 
 }
-?>

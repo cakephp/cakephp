@@ -89,4 +89,3 @@ $config['2c80_2cff'][] = array('upper' => 11484, 'status' => 'C', 'lower' => arr
 $config['2c80_2cff'][] = array('upper' => 11486, 'status' => 'C', 'lower' => array(11487)); /* COPTIC CAPITAL LETTER OLD NUBIAN NGI */
 $config['2c80_2cff'][] = array('upper' => 11488, 'status' => 'C', 'lower' => array(11489)); /* COPTIC CAPITAL LETTER OLD NUBIAN NYI */
 $config['2c80_2cff'][] = array('upper' => 11490, 'status' => 'C', 'lower' => array(11491)); /* COPTIC CAPITAL LETTER OLD NUBIAN WAU */
-?>

@@ -65,4 +65,3 @@ class AfterTreeFixture extends CakeTestFixture {
 		array('parent_id' => null, 'lft' => 13, 'rght' => 14, 'name' => 'Seven')
 	);
 }
-?>

@@ -1464,4 +1464,3 @@ class XmlManager {
 		return $instance[0];
 	}
 }
-?>

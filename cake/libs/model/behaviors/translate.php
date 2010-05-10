@@ -523,4 +523,3 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 		var $displayField = 'field';
 	}
 }
-?>

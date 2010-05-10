@@ -58,5 +58,3 @@ class ArosAcoFixture extends CakeTestFixture {
  */
 	var $records = array();
 }
-
-?>

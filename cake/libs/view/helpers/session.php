@@ -199,4 +199,3 @@ class SessionHelper extends CakeSession {
 		return true;
 	}
 }
-?>

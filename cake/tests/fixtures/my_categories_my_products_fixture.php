@@ -58,5 +58,3 @@ class MyCategoriesMyProductsFixture extends CakeTestFixture {
 		array('my_category_id' => 3, 'my_product_id' => 2),
 	);
 }
-
-?>

@@ -196,4 +196,3 @@ class CakeTextReporter extends CakeBaseReporter {
 		echo $buffer;
 	}
 }
-?>

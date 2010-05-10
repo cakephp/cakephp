@@ -342,4 +342,3 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Test'));
 	}
 }
-?>

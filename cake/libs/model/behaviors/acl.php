@@ -120,5 +120,3 @@ class AclBehavior extends ModelBehavior {
 		}
 	}
 }
-
-?>

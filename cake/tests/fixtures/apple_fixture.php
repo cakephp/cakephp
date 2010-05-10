@@ -67,5 +67,3 @@ class AppleFixture extends CakeTestFixture {
 		array('apple_id' => 6, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21', 'mytime' => '22:57:17')
 	);
 }
-
-?>

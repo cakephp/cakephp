@@ -220,4 +220,3 @@ class XcacheEngineTest extends UnitTestCase {
 		$this->assertEqual(8, $result);
 	}
 }
-?>

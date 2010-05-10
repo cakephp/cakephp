@@ -69,5 +69,3 @@ class AcoTwoFixture extends CakeTestFixture {
 		array('parent_id' => 6,		'model' => null, 'foreign_key' => null, 'alias' => 'smash',		'lft' => 17, 'rght' => 18),
 	);
 }
-
-?>

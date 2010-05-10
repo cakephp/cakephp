@@ -972,4 +972,3 @@ class DboPostgres extends DboSource {
 		}
 	}
 }
-?>

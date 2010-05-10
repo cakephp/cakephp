@@ -229,4 +229,3 @@ if (!defined('CSS_URL')) {
 if (!defined('JS_URL')) {
 	define('JS_URL', 'js/');
 }
-?>

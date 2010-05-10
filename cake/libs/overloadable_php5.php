@@ -106,4 +106,3 @@ class Overloadable2 extends Object {
 		return $this->set__($name, $value);
 	}
 }
-?>

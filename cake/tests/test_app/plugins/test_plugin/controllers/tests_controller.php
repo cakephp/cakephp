@@ -30,4 +30,3 @@ class TestsController extends TestPluginAppController {
 		return 25;
 	}
 }
-?>

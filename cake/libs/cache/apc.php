@@ -121,4 +121,3 @@ class ApcEngine extends CacheEngine {
 		return apc_clear_cache('user');
 	}
 }
-?>

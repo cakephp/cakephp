@@ -171,4 +171,3 @@ class SecurityTest extends CakeTestCase {
 		$this->assertEqual(Security::cipher($result, $key), $txt);
 	}
 }
-?>

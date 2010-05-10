@@ -906,4 +906,3 @@ class AjaxHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 }
-?>

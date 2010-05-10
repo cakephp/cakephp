@@ -37,4 +37,3 @@ require LIBS . 'set.php';
 require LIBS . 'cache.php';
 Configure::getInstance();
 require CAKE . 'dispatcher.php';
-?>

@@ -288,4 +288,3 @@ class RssHelper extends XmlHelper {
 		return $this->Time->toRSS($time);
 	}
 }
-?>

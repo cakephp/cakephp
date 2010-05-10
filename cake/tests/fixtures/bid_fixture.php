@@ -60,4 +60,3 @@ class BidFixture extends CakeTestFixture {
 		array('message_id' => 2, 'name' => 'Bid 2.2')
 	);
 }
-?>

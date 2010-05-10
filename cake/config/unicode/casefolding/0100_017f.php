@@ -105,4 +105,3 @@ $config['0100_017f'][] = array('upper' => 377, 'status' => 'C', 'lower' => array
 $config['0100_017f'][] = array('upper' => 379, 'status' => 'C', 'lower' => array(380)); /* LATIN CAPITAL LETTER Z WITH DOT ABOVE */
 $config['0100_017f'][] = array('upper' => 381, 'status' => 'C', 'lower' => array(382)); /* LATIN CAPITAL LETTER Z WITH CARON */
 $config['0100_017f'][] = array('upper' => 383, 'status' => 'C', 'lower' => array(115)); /* LATIN SMALL LETTER LONG S */
-?>

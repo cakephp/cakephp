@@ -2928,4 +2928,3 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

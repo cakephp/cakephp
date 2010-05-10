@@ -27,4 +27,3 @@ class PersisterOne extends AppModel {
 
 	var $hasMany = array('Comment', 'TestPlugin.TestPluginComment');
 }
-?>

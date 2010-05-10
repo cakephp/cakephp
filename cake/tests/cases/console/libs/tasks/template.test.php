@@ -181,4 +181,3 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertPattern('/ArticleFixture extends CakeTestFixture/', $result);
 	}
 }
-?>

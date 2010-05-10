@@ -53,5 +53,3 @@ class ThePaperMonkiesFixture extends CakeTestFixture {
  */
 	var $records = array();
 }
-
-?>

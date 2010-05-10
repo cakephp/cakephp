@@ -594,4 +594,3 @@ class DataSource extends Object {
 		}
 	}
 }
-?>

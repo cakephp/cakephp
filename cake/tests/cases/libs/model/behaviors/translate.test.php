@@ -896,4 +896,3 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 }
-?>

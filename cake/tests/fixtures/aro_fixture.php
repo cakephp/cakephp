@@ -63,5 +63,3 @@ class AroFixture extends CakeTestFixture {
 		array('parent_id' => '2', 'model' => 'AuthUser', 'foreign_key' => '2', 'alias' => 'Elrond', 'lft' => 5, 'rght' => 6)
 	);
 }
-
-?>

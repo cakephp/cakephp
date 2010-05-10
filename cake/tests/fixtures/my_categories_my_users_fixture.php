@@ -58,5 +58,3 @@ class MyCategoriesMyUsersFixture extends CakeTestFixture {
 		array('my_category_id' => 2, 'my_user_id' => 2),
 	);
 }
-
-?>

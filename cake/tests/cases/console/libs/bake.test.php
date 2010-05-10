@@ -128,4 +128,3 @@ class BakeShellTestCase extends CakeTestCase {
 		$this->Shell->all();
 	}
 }
-?>

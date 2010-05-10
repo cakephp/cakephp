@@ -500,4 +500,3 @@ class SchemaShellTest extends CakeTestCase {
 		App::build();
 	}
 }
-?>

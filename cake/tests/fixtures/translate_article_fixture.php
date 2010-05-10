@@ -84,5 +84,3 @@ class TranslateArticleFixture extends CakeTestFixture {
 		array('id' => 18, 'locale' => 'cze', 'model' => 'TranslatedArticle', 'foreign_key' => 3, 'field' => 'body', 'content' => 'Body (cze) #3')
 	);
 }
-
-?>

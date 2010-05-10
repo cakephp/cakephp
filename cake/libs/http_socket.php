@@ -1059,4 +1059,3 @@ class HttpSocket extends CakeSocket {
 		return true;
 	}
 }
-?>

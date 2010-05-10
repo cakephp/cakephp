@@ -599,4 +599,3 @@ class AclShell extends Shell {
 		return $vars;
 	}
 }
-?>

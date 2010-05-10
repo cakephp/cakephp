@@ -636,4 +636,3 @@ class IniAcl extends AclBase {
 		return $array;
 	}
 }
-?>

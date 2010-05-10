@@ -20,4 +20,3 @@
 class PluggedHelperHelper extends AppHelper {
 	var $helpers = array('TestPlugin.OtherHelper');
 }
-?>

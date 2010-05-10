@@ -1150,4 +1150,3 @@ class Set {
 		return  $result;
 	}
 }
-?>

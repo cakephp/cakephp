@@ -299,4 +299,3 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
 	}
 }
-?>

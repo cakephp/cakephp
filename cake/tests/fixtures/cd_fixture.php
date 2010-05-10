@@ -57,4 +57,3 @@ class CdFixture extends CakeTestFixture {
 		array('id' => 1, 'title' => 'Grace', 'artist' => 'Jeff Buckley', 'genre' => 'awesome')
 	);
 }
-?>

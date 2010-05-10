@@ -621,4 +621,3 @@ class DboSqlite extends DboSource {
 		}
 	}
 }
-?>

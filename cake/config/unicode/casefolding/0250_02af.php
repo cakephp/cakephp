@@ -40,4 +40,3 @@
  *     See the discussions of case mapping in the Unicode Standard for more information.
  */
 $config['0250_02af'][] = array('upper' => 422, 'status' => 'C', 'lower' => array(640));
-?>

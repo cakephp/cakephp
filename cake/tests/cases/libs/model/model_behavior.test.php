@@ -1114,4 +1114,3 @@ class BehaviorTest extends CakeTestCase {
 		$Sample->Behaviors->trigger($Sample, 'beforeTest');
 	}
 }
-?>

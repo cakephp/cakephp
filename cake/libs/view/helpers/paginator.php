@@ -814,4 +814,3 @@ class PaginatorHelper extends AppHelper {
 		return $out;
 	}
 }
-?>

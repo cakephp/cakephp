@@ -1872,4 +1872,3 @@ class UuidTreeTest extends NumberTreeTest {
 		$this->assertIdentical(array_values($result), $expected);
 	}
 }
-?>

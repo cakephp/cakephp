@@ -937,4 +937,3 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertPattern($expected, $Dispatcher->stdout);
 	}
 }
-?>

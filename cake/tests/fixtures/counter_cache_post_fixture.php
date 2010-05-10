@@ -40,5 +40,3 @@ class CounterCachePostFixture extends CakeTestFixture {
 		array('id' => 3, 'title' => 'Food',   'user_id' => 301),
     );
 }
-
-?>

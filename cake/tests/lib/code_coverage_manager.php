@@ -802,4 +802,3 @@ class CodeCoverageManager {
 		return false;
 	}
 }
-?>

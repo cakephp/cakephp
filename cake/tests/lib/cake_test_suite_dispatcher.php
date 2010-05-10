@@ -247,4 +247,3 @@ class CakeTestSuiteDispatcher {
 		$this->Manager->runTestCase($this->params['case'], $Reporter);
 	}
 }
-?>

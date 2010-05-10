@@ -43,4 +43,3 @@ $config['2100_214f'][] = array('upper' => 8486, 'status' => 'C', 'lower' => arra
 $config['2100_214f'][] = array('upper' => 8490, 'status' => 'C', 'lower' => array(107)); /* KELVIN SIGN */
 $config['2100_214f'][] = array('upper' => 8491, 'status' => 'C', 'lower' => array(229)); /* ANGSTROM SIGN */
 $config['2100_214f'][] = array('upper' => 8498, 'status' => 'C', 'lower' => array(8526)); /* TURNED CAPITAL F */
-?>

@@ -543,4 +543,3 @@ class File extends Object {
 		return copy($this->path, $dest);
 	}
 }
-?>

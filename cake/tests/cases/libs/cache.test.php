@@ -369,4 +369,3 @@ class CacheTest extends CakeTestCase {
 	}
 
 }
-?>

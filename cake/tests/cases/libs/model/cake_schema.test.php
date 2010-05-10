@@ -895,4 +895,3 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertPattern('/' . preg_quote($column, '/') . '/', $sql);
 	}
 }
-?>

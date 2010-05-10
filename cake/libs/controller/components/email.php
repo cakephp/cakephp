@@ -927,6 +927,4 @@ class EmailComponent extends Object{
 		}
 		return $fm;
 	}
-
 }
-?>

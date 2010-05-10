@@ -1630,5 +1630,3 @@ class PluginShortRoute extends CakeRoute {
 		return $result;
 	}
 }
-
-?>

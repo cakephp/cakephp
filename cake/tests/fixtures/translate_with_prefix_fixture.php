@@ -85,4 +85,3 @@ class TranslateWithPrefixFixture extends CakeTestFixture {
 		array('id' => 18, 'locale' => 'cze', 'model' => 'TranslatedItem', 'foreign_key' => 3, 'field' => 'content', 'content' => 'Obsah #3')
 	);
 }
-?>

@@ -61,5 +61,3 @@ class JoinThingFixture extends CakeTestFixture {
 		array('something_id' => 3, 'something_else_id' => 1, 'doomed' => '1', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
 	);
 }
-
-?>

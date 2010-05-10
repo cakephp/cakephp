@@ -1235,4 +1235,3 @@ DIGEST;
 		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
 	}
 }
-?>

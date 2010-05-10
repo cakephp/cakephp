@@ -3563,5 +3563,3 @@ class GroupUpdateAll extends CakeTestModel {
 	var $useTable = 'group_update_all';
 
 }
-
-?>

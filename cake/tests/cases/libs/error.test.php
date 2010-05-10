@@ -610,4 +610,3 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/(\/|\\\)article.php/', $result);
 	}
 }
-?>

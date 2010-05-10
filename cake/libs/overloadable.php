@@ -34,4 +34,3 @@ if (!PHP5) {
 } else {
 	require(LIBS . 'overloadable_php5.php');
 }
-?>
