@@ -440,7 +440,7 @@ class JsHelper extends AppHelper {
  *
  * @package cake.view.helpers
  */
-class JsBaseEngineHelper extends AppHelper {
+abstract class JsBaseEngineHelper extends AppHelper {
 /**
  * Determines whether native JSON extension is used for encoding.  Set by object constructor.
  *
@@ -766,10 +766,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $selector The selector that is targeted
  * @return object instance of $this. Allows chained methods.
  */
-	public function get($selector) {
-		trigger_error(sprintf(__('%s does not have get() implemented'), get_class($this)), E_USER_WARNING);
-		return $this;
-	}
+	abstract public function get($selector);
 
 /**
  * Add an event to the script cache. Operates on the currently selected elements.
@@ -784,9 +781,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Options for the event.
  * @return string completed event handler
  */
-	public function event($type, $callback, $options = array()) {
-		trigger_error(sprintf(__('%s does not have event() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function event($type, $callback, $options = array());
 
 /**
  * Create a domReady event. This is a special event in many libraries
@@ -794,9 +789,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $functionBody The code to run on domReady
  * @return string completed domReady method
  */
-	public function domReady($functionBody) {
-		trigger_error(sprintf(__('%s does not have domReady() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function domReady($functionBody);
 
 /**
  * Create an iteration over the current selection result.
@@ -804,9 +797,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param string $callback The function body you wish to apply during the iteration.
  * @return string completed iteration
  */
-	function each($callback) {
-		trigger_error(sprintf(__('%s does not have each() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function each($callback);
 
 /**
  * Trigger an Effect.
@@ -831,9 +822,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
  */
-	public function effect($name, $options) {
-		trigger_error(sprintf(__('%s does not have effect() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function effect($name, $options);
 
 /**
  * Make an XHR request
@@ -860,9 +849,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options. See above for cross library supported options
  * @return string XHR request.
  */
-	public function request($url, $options = array()) {
-		trigger_error(sprintf(__('%s does not have request() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function request($url, $options = array());
 
 /**
  * Create a draggable element.  Works on the currently selected element.
@@ -883,9 +870,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Options array see above.
  * @return string Completed drag script
  */
-	public function drag($options = array()) {
-		trigger_error(sprintf(__('%s does not have drag() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function drag($options = array());
 
 /**
  * Create a droppable element. Allows for draggable elements to be dropped on it.
@@ -904,9 +889,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @return string Completed drop script
  */
-	public function drop($options = array()) {
-		trigger_error(sprintf(__('%s does not have drop() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function drop($options = array());
 
 /**
  * Create a sortable element.
@@ -929,9 +912,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options for the sortable. See above.
  * @return string Completed sortable script.
  */
-	public function sortable() {
-		trigger_error(sprintf(__('%s does not have sortable() implemented'), get_class($this)), E_USER_WARNING);
-	}
+	abstract public function sortable();
 
 /**
  * Create a slider UI widget.  Comprised of a track and knob.
@@ -953,10 +934,7 @@ class JsBaseEngineHelper extends AppHelper {
  *
  * @return string Completed slider script
  */
-	public function slider() {
-		trigger_error(sprintf(__('%s does not have slider() implemented'), get_class($this)), E_USER_WARNING);
-	}
-
+	abstract public function slider();
 /**
  * Serialize the form attached to $selector.
  * Pass `true` for $isForm if the current selection is a form element.
@@ -971,11 +949,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @param array $options options for serialization generation.
  * @return string completed form serialization script
  */
-	public function serializeForm() {
-		trigger_error(
-			sprintf(__('%s does not have serializeForm() implemented'), get_class($this)), E_USER_WARNING
-		);
-	}
+	abstract public function serializeForm();
 
 /**
  * Parse an options assoc array into an Javascript object literal.
