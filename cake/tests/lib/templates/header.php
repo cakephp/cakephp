@@ -79,6 +79,14 @@
 				display:block;
 				margin-left:10px;
 			}
+			.coverage-toggle {
+				float:right;
+				margin-top:10px;
+				font-size:12px;
+			}
+			.coverage-container {
+				margin-top:1em;
+			}
 			div.code-coverage-results div.uncovered span.content { background:#ecc; }
 			div.code-coverage-results div.covered span.content { background:#cec; }
 			div.code-coverage-results div.ignored span.content { color:#aaa; }

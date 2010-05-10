@@ -25,16 +25,34 @@ class HtmlCoverageReport {
  */
 	protected $_rawCoverage;
 
+/**
+ * is the test an app test
+ *
+ * @var string
+ */
 	public $appTest = false;
+
+/**
+ * is the test a plugin test
+ *
+ * @var string
+ */
 	public $pluginTest = false;
+
+/**
+ * is the test a group test?
+ *
+ * @var string
+ */
 	public $groupTest = false;
 
 /**
- * Number of lines to provide around an uncovered code block
+ * Array of test case file names.  Used to do basename() matching with
+ * files that have coverage to decide which results to show on page load. 
  *
- * @var integer
+ * @var array
  */
-	public $numDiffContextLines = 7;
+	protected $_testNames = array();
 
 /**
  * Constructor
@@ -85,6 +103,11 @@ class HtmlCoverageReport {
 			return '<h3>No files to generate coverage for</h3>';
 		}
 		$output = $this->coverageScript();
+		$output .= <<<HTML
+		<h3>Code coverage results
+		<a href="#" onclick="coverage_toggle_all()" class="coverage-toggle">Toggle all files</a>
+		</h3>
+HTML;
 		foreach ($coverageData as $file => $coverageData) {
 			$fileData = file($file);
 			$output .= $this->generateDiff($file, $fileData, $coverageData);
@@ -137,6 +160,11 @@ class HtmlCoverageReport {
 				$files[$filename]['covered'] += $fileCoverage;
 				$files[$filename]['executable'] += $executable;
 				$files[$filename]['dead'] += $dead;
+			}
+			if (isset($testRun['test'])) {
+				$testReflection = new ReflectionClass(get_class($testRun['test']));
+				list($fileBasename, $x) = explode('.', basename($testReflection->getFileName()), 2);
+				$this->_testNames[] = $fileBasename;
 			}
 		}
 		ksort($files);
@@ -209,6 +237,15 @@ class HtmlCoverageReport {
 			var element = document.getElementById(selector);
 			element.style.display = (element.style.display == 'none') ? '' : 'none';
 		}
+		function coverage_toggle_all () {
+			var divs = document.querySelectorAll('div.coverage-container');
+			var i = divs.length;
+			while (i--) {
+				if (divs[i] && divs[i].className.indexOf('primary') == -1) {
+					divs[i].style.display = (divs[i].style.display == 'none') ? '' : 'none';
+				}
+			}
+		}
 		</script>
 HTML;
 	}
@@ -220,7 +257,11 @@ HTML;
  */
 	public function coverageHeader($filename, $percent) {
 		$filename = basename($filename);
+		list($file, $ext) = explode('.', $filename);
+		$display = in_array($file, $this->_testNames) ? 'block' : 'none';
+		$primary = $display == 'block' ? 'primary' : '';
 		return <<<HTML
+	<div class="coverage-container $primary" style="display:$display;">
 	<h4>
 		<a href="#coverage-$filename" onclick="coverage_show_hide('coverage-$filename');">
 			$filename Code coverage: $percent%
@@ -237,6 +278,6 @@ HTML;
  * @return void
  */
 	public function coverageFooter() {
-		return "</pre></div>";
+		return "</pre></div></div>";
 	}
 }
