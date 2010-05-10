@@ -5,5 +5,3 @@ class DboDummy extends DboSource {
 		return true;
 	}
 }
-
-?>

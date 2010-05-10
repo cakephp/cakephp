@@ -72,4 +72,3 @@ $config['0080_00ff'][] = array('upper' => 220, 'status' => 'C', 'lower' => array
 $config['0080_00ff'][] = array('upper' => 221, 'status' => 'C', 'lower' => array(253)); /* LATIN CAPITAL LETTER Y WITH ACUTE */
 $config['0080_00ff'][] = array('upper' => 222, 'status' => 'C', 'lower' => array(254)); /* LATIN CAPITAL LETTER THORN */
 $config['0080_00ff'][] = array('upper' => 223, 'status' => 'F', 'lower' => array(115, 115)); /* LATIN SMALL LETTER SHARP S */
-?>

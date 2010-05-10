@@ -18,4 +18,3 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 return $config['Cake.version'] = '1.3.0';
-?>

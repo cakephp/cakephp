@@ -582,4 +582,3 @@ class ComponentTest extends CakeTestCase {
 	}
 
 }
-?>

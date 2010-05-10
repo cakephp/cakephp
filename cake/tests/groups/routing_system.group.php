@@ -47,4 +47,3 @@ class RoutingSystemGroupTest extends TestSuite {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'router');
 	}
 }
-?>

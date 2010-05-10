@@ -171,4 +171,3 @@ class Security {
 		return $out;
 	}
 }
-?>

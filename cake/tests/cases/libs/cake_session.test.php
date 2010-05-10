@@ -471,4 +471,3 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 }
-?>

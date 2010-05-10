@@ -781,4 +781,3 @@ class DboMysql extends DboMysqlBase {
 		return false;
 	}
 }
-?>

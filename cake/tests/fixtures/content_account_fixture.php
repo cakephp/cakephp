@@ -62,5 +62,3 @@ class ContentAccountFixture extends CakeTestFixture {
 		array('iContentId' => 2, 'iAccountId' => 3),
 	);
 }
-
-?>

@@ -58,5 +58,3 @@ class AcoActionFixture extends CakeTestFixture {
  */
 	public $records = array();
 }
-
-?>

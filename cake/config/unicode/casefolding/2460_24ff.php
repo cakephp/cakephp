@@ -65,4 +65,3 @@ $config['2460_24ff'][] = array('upper' => 9420, 'status' => 'C', 'lower' => arra
 $config['2460_24ff'][] = array('upper' => 9421, 'status' => 'C', 'lower' => array(9447)); /* CIRCLED LATIN CAPITAL LETTER X */
 $config['2460_24ff'][] = array('upper' => 9422, 'status' => 'C', 'lower' => array(9448)); /* CIRCLED LATIN CAPITAL LETTER Y */
 $config['2460_24ff'][] = array('upper' => 9423, 'status' => 'C', 'lower' => array(9449)); /* CIRCLED LATIN CAPITAL LETTER Z */
-?>

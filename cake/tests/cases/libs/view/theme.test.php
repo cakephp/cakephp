@@ -341,4 +341,3 @@ class ThemeViewTest extends CakeTestCase {
 		$this->assertWithinMargin($start, $end, 3500);
 	}
 }
-?>

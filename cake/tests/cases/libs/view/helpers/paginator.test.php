@@ -1883,4 +1883,3 @@ class PaginatorHelperTest extends CakeTestCase {
 		$Paginator = new PaginatorHelper(array('ajax' => 'Form'));
 	}
 }
-?>

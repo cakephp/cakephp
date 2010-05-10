@@ -468,4 +468,3 @@ class ControllerTask extends BakeTask {
 		$this->_stop();
 	}
 }
-?>

@@ -58,4 +58,3 @@ class ThreadFixture extends CakeTestFixture {
 		array('project_id' => 2, 'name' => 'Project 2, Thread 1')
 	);
 }
-?>

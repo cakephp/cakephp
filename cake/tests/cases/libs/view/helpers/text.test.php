@@ -405,4 +405,3 @@ class TextHelperTest extends CakeTestCase {
         $this->assertEqual($result, 'Dusty and Lucky');
 	}
 }
-?>

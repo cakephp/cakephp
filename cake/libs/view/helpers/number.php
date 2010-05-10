@@ -254,4 +254,3 @@ class NumberHelper extends AppHelper {
 	}
 
 }
-?>

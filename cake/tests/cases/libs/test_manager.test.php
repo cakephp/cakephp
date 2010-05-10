@@ -110,4 +110,3 @@ class TestManagerTest extends CakeTestCase {
 	public function testGetGroupTestList() {
 	}
 }
-?>

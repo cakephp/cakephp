@@ -378,4 +378,3 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

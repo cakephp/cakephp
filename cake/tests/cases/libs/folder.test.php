@@ -788,4 +788,3 @@ class FolderTest extends CakeTestCase {
 		$Folder->delete();
 	}
 }
-?>

@@ -23,4 +23,3 @@ class Comment extends AppModel {
 	public $useTable = 'comments';
 	public $name = 'Comment';
 }
-?>

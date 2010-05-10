@@ -58,5 +58,3 @@ class AdvertisementFixture extends CakeTestFixture {
 		array('title' => 'Second Ad', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
 	);
 }
-
-?>

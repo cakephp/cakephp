@@ -111,4 +111,3 @@ class ApiShellTest extends CakeTestCase {
 		$this->Shell->main();
 	}
 }
-?>

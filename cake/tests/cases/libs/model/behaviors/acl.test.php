@@ -400,4 +400,3 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual(count($result), 1);
 	}
 }
-?>

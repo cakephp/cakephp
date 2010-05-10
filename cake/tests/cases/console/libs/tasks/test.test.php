@@ -602,4 +602,3 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->execute();
 	}
 }
-?>

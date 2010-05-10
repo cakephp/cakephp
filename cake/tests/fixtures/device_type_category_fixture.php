@@ -55,4 +55,3 @@ class DeviceTypeCategoryFixture extends CakeTestFixture {
 		array('name' => 'DeviceTypeCategory 1')
 	);
 }
-?>

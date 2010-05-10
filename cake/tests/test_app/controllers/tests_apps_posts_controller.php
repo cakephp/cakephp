@@ -64,4 +64,3 @@ class TestsAppsPostsController extends AppController {
 	}
 
 }
-?>

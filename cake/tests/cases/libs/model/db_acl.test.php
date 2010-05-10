@@ -394,4 +394,3 @@ class AclNodeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

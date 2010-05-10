@@ -163,4 +163,3 @@ $config['0400_04ff'][] = array('upper' => 1272, 'status' => 'C', 'lower' => arra
 $config['0400_04ff'][] = array('upper' => 1274, 'status' => 'C', 'lower' => array(1275)); /* CYRILLIC CAPITAL LETTER GHE WITH STROKE AND HOOK */
 $config['0400_04ff'][] = array('upper' => 1276, 'status' => 'C', 'lower' => array(1277)); /* CYRILLIC CAPITAL LETTER HA WITH HOOK */
 $config['0400_04ff'][] = array('upper' => 1278, 'status' => 'C', 'lower' => array(1279)); /* CYRILLIC CAPITAL LETTER HA WITH STROKE */
-?>

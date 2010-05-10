@@ -7322,4 +7322,3 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual($Post->getVirtualField('Post.other_field'), $Post->virtualFields['other_field']);
 	}
 }
-?>

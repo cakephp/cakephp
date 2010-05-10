@@ -18,4 +18,3 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 $config['plugin_load'] = '/test_app/plugins/test_plugin/config/load.php';
-?>

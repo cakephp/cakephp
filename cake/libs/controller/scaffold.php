@@ -602,4 +602,3 @@ class ScaffoldView extends ThemeView {
 		return $this->_missingView($paths[0] . $name . $this->ext, 'missingView');
 	}
 }
-?>

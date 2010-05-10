@@ -178,4 +178,3 @@ class MediaViewTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 }
-?>

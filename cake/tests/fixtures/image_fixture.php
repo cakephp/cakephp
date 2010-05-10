@@ -59,4 +59,3 @@ class ImageFixture extends CakeTestFixture {
 		array('name' => 'Image 5')
 	);
 }
-?>

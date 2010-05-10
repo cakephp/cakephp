@@ -2996,5 +2996,3 @@ class Model extends Object {
 	function __wakeup() {
 	}
 }
-
-?>

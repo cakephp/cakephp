@@ -602,4 +602,3 @@ abstract class CacheEngine {
 		return $key;
 	}
 }
-?>

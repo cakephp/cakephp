@@ -58,5 +58,3 @@ class CampaignFixture extends CakeTestFixture {
 		array('name' => 'Queen of Scandinavia')
 	);
 }
-
-?>

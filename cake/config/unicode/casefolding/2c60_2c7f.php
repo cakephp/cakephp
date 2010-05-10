@@ -47,4 +47,3 @@ $config['2c60_2c7f'][] = array('upper' => 11367, 'status' => 'C', 'lower' => arr
 $config['2c60_2c7f'][] = array('upper' => 11369, 'status' => 'C', 'lower' => array(11370)); /* LATIN CAPITAL LETTER K WITH DESCENDER */
 $config['2c60_2c7f'][] = array('upper' => 11371, 'status' => 'C', 'lower' => array(11372)); /* LATIN CAPITAL LETTER Z WITH DESCENDER */
 $config['2c60_2c7f'][] = array('upper' => 11381, 'status' => 'C', 'lower' => array(11382)); /* LATIN CAPITAL LETTER HALF H */
-?>

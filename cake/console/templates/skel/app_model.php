@@ -32,4 +32,3 @@
  */
 class AppModel extends Model {
 }
-?>

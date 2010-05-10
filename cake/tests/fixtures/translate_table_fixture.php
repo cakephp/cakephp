@@ -67,5 +67,3 @@ class TranslateTableFixture extends CakeTestFixture {
 		array('locale' => 'eng', 'model' => 'TranslatedItemWithTable', 'foreign_key' => 1, 'field' => 'content', 'content' => 'Another Content #1')
 	);
 }
-
-?>

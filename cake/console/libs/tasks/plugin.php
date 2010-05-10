@@ -244,4 +244,3 @@ class PluginTask extends Shell {
 		$this->_stop();
 	}
 }
-?>

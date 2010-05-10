@@ -33,4 +33,3 @@ class TestsAppsController extends AppController {
 		$this->render('index');
 	}
 }
-?>

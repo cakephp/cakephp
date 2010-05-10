@@ -61,4 +61,3 @@ class ItemsPortfolioFixture extends CakeTestFixture {
 		array('item_id' => 6, 'portfolio_id' => 2)
 	);
 }
-?>

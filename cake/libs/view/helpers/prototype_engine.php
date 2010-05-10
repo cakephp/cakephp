@@ -360,4 +360,3 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		return $selection . $method;
 	}
 }
-?>

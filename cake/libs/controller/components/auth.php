@@ -941,4 +941,3 @@ class AuthComponent extends Object {
 		}
 	}
 }
-?>

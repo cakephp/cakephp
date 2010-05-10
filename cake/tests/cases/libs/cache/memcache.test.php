@@ -307,4 +307,3 @@ class MemcacheEngineTest extends CakeTestCase {
 	}
 
 }
-?>

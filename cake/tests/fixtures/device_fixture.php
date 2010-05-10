@@ -59,4 +59,3 @@ class DeviceFixture extends CakeTestFixture {
 		array('device_type_id' => 1, 'name' => 'Device 3', 'typ' => 2)
 	);
 }
-?>

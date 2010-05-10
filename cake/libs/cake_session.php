@@ -790,4 +790,3 @@ class CakeSession extends Object {
 		return $return;
 	 }
 }
-?>

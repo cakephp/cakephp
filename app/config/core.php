@@ -294,4 +294,3 @@
  *
  */
 	Cache::config('default', array('engine' => 'File'));
-?>

@@ -57,5 +57,3 @@ class MyCategoryFixture extends CakeTestFixture {
 		array('id' => 3, 'name' => 'C'),
 	);
 }
-
-?>

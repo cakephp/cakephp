@@ -55,5 +55,3 @@ class PrimaryModelFixture extends CakeTestFixture {
 		array('primary_name' => 'Primary Name Existing')
 	);
 }
-
-?>

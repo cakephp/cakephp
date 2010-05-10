@@ -253,4 +253,3 @@ class PluginTaskTest extends CakeTestCase {
 		$Folder->delete();
 	}
 }
-?>

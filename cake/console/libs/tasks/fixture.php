@@ -410,4 +410,3 @@ class FixtureTask extends BakeTask {
 		$this->_stop();
 	}
 }
-?>

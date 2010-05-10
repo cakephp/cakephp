@@ -57,4 +57,3 @@ class BakeGroupTest extends TestSuite {
 		TestManager::addTestFile($this, $path . 'project');
 	}
 }
-?>

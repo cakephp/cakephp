@@ -480,4 +480,3 @@ class L10n {
 		return $this->__l10nCatalog;
 	}
 }
-?>

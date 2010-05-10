@@ -71,5 +71,3 @@ class AcoFixture extends CakeTestFixture {
 		array('parent_id' => 10, 'model' => null, 'foreign_key' => null, 'alias' => 'view', 'lft' => 20, 'rght' => 21),
 	);
 }
-
-?>

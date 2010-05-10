@@ -62,5 +62,3 @@ class SyfileFixture extends CakeTestFixture {
 		array('image_id' => null, 'name' => 'Syfile 6')
 	);
 }
-
-?>

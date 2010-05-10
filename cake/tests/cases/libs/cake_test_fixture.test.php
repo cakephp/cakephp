@@ -336,4 +336,3 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertTrue($this->criticDb->fullDebug);
 	}
 }
-?>

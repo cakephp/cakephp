@@ -257,5 +257,3 @@ class Component extends Object {
 		}
 	}
 }
-
-?>

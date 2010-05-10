@@ -665,4 +665,3 @@ class DboMssqlTest extends CakeTestCase {
 		Configure::write('debug', $debug);
 	}
 }
-?>

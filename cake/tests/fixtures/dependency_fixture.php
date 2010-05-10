@@ -56,5 +56,3 @@ class DependencyFixture extends CakeTestFixture {
 		array('child_id' => 1, 'parent_id' => 2),
 	);
 }
-
-?>

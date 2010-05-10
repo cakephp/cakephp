@@ -147,4 +147,3 @@ $config['0180_024F'][] = array('upper' => 584, 'status' => 'C', 'lower' => array
 $config['0180_024F'][] = array('upper' => 586, 'status' => 'C', 'lower' => array(587)); /* LATIN CAPITAL LETTER SMALL Q WITH HOOK TAIL */
 $config['0180_024F'][] = array('upper' => 588, 'status' => 'C', 'lower' => array(589)); /* LATIN CAPITAL LETTER R WITH STROKE */
 $config['0180_024F'][] = array('upper' => 590, 'status' => 'C', 'lower' => array(591)); /* LATIN CAPITAL LETTER Y WITH STROKE */
-?>

@@ -374,4 +374,3 @@ class FileEngineTest extends CakeTestCase {
 		Cache::drop('failure');
 	}
 }
-?>

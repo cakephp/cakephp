@@ -34,4 +34,3 @@
  */
 class AppController extends Controller {
 }
-?>

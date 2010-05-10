@@ -784,4 +784,3 @@ class DboMssql extends DboSource {
 		return null;
 	}
 }
-?>

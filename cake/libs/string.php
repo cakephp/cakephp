@@ -326,4 +326,3 @@ class String {
 		return $str;
 	}
 }
-?>

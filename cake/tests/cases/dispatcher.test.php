@@ -2422,4 +2422,3 @@ class DispatcherTest extends CakeTestCase {
 		return $filename;
 	}
 }
-?>

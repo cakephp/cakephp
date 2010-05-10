@@ -353,4 +353,3 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		return $selector . $method;
 	}
 }
-?>

@@ -364,4 +364,3 @@ class TestSuiteShell extends Shell {
 		}
 	}
 }
-?>

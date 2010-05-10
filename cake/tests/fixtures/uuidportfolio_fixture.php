@@ -56,4 +56,3 @@ class UuidportfolioFixture extends CakeTestFixture {
 		array('id' => '480af662-eb8c-47d3-886b-230540cf8569', 'name' => 'Portfolio 2'),
 	);
 }
-?>

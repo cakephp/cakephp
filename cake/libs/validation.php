@@ -834,4 +834,3 @@ class Validation {
 		self::$errors = array();
 	}
 }
-?>

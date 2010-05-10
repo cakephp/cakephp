@@ -52,5 +52,3 @@ class NumberTreeFixture extends CakeTestFixture {
 		'rght'	=> array('type' => 'integer','null' => false)
 	);
 }
-
-?>

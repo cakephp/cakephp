@@ -3710,4 +3710,3 @@ class ContainableBehaviorTest extends CakeTestCase {
 		return $debug;
 	}
 }
-?>

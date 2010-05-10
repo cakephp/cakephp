@@ -194,4 +194,3 @@ class MemcacheEngine extends CacheEngine {
 		return true;
 	}
 }
-?>

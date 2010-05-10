@@ -1255,4 +1255,3 @@ class Controller extends Object {
 		return false;
 	}
 }
-?>

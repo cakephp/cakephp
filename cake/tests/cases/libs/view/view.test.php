@@ -945,4 +945,3 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 	}
 }
-?>

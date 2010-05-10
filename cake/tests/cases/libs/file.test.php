@@ -467,4 +467,3 @@ class FileTest extends CakeTestCase {
 		return false;
 	}
 }
-?>

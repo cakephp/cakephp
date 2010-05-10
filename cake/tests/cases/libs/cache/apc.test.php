@@ -194,4 +194,3 @@ class ApcEngineTest extends CakeTestCase {
 		$this->assertEqual(8, $result);
 	}
 }
-?>

@@ -915,4 +915,3 @@ class ModelTask extends BakeTask {
 		$this->Fixture->bake($className, $useTable);
 	}
 }
-?>

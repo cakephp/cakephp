@@ -33,6 +33,4 @@ class TestPluginAppSchema extends CakeSchema {
 		'rght' => array('type'=>'integer', 'null' => true, 'default' => NULL, 'length' => 10),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1))
 	);
-
 }
-?>

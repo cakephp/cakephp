@@ -53,5 +53,3 @@ class BinaryTestFixture extends CakeTestFixture {
  */
 	public $records = array();
 }
-
-?>

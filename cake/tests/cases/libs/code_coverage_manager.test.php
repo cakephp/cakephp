@@ -510,4 +510,3 @@ HTML;
 		$this->assertError();
 	}
 }
-?>

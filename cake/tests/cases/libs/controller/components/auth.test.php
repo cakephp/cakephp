@@ -1602,4 +1602,3 @@ class AuthTest extends CakeTestCase {
 		$this->assertNull($this->Controller->Session->read('Auth.redirect'));
 	}
 }
-?>

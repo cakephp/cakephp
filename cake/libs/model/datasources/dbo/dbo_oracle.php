@@ -1139,4 +1139,3 @@ class DboOracle extends DboSource {
 			return $out;
 		}
 }
-?>
