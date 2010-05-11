@@ -316,7 +316,7 @@ class PaginatorHelper extends AppHelper {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
 			$class = $dir === 'asc' ? 'desc' : 'asc';
 			if (!empty($options['class'])) {
-				$options['class'] .= $class;
+				$options['class'] .= ' ' . $class;
 			} else {
 				$options['class'] = $class;
 			}
