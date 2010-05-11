@@ -570,14 +570,14 @@ class Shell extends Object {
 	}
 
 /**
- * Creates the proper singular model key for associations
+ * Creates the proper underscored model key for associations
  *
- * @param string $name Controller class name
+ * @param string $name Model class name
  * @return string Singular model key
  * @access protected
  */
 	function _modelKey($name) {
-		return Inflector::underscore(Inflector::singularize($name)) . '_id';
+		return Inflector::underscore($name) . '_id';
 	}
 
 /**
