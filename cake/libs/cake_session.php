@@ -614,8 +614,8 @@ class CakeSession extends Object {
 				$this->write('Config.time', $this->sessionTime);
 				if (Configure::read('Security.level') === 'high') {
 					$check = $this->read('Config.timeout');
-					$check = $check - 1;
-					$this->write('Config.timeout', Security::inactiveMins());
+					$check -= 1;
+					$this->write('Config.timeout', $check);
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
