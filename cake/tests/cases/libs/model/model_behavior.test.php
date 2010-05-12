@@ -505,6 +505,28 @@ class BehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test that attach()/detach() works with plugin.banana
+ *
+ * @return void
+ */
+	function testDetachWithPluginNames() {
+		$Apple = new Apple();
+		$Apple->Behaviors->attach('Plugin.Test');
+		$this->assertTrue(isset($Apple->Behaviors->Test), 'Missing behavior');
+		$this->assertEqual($Apple->Behaviors->attached(), array('Test'));
+
+		$Apple->Behaviors->detach('Plugin.Test');
+		$this->assertEqual($Apple->Behaviors->attached(), array());
+
+		$Apple->Behaviors->attach('Plugin.Test');
+		$this->assertTrue(isset($Apple->Behaviors->Test), 'Missing behavior');
+		$this->assertEqual($Apple->Behaviors->attached(), array('Test'));
+
+		$Apple->Behaviors->detach('Test');
+		$this->assertEqual($Apple->Behaviors->attached(), array());
+	}
+
+/**
  * test that attaching a non existant Behavior triggers a cake error.
  *
  * @return void
