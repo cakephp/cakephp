@@ -905,13 +905,14 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveWithNullId() {
+		$this->loadFixtures('User');
 		$User =& new User();
 		$User->read(null, 1);
 		$User->data['User']['id'] = null;
 		$this->assertTrue($User->save(array('password' => 'test')));
 		$this->assertTrue($User->id > 0);
 
-		$User->read(null, 2);
+		$result = $User->read(null, 2);
 		$User->data['User']['id'] = null;
 		$this->assertTrue($User->save(array('password' => 'test')));
 		$this->assertTrue($User->id > 0);

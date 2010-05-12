@@ -1281,7 +1281,7 @@ class Model extends Overloadable {
 			}
 		}
 
-		if (isset($this->data[$this->alias][$this->primaryKey]) && empty($this->data[$this->alias][$this->primaryKey])) {
+		if (empty($this->data[$this->alias][$this->primaryKey])) {
 			unset($this->data[$this->alias][$this->primaryKey]);
 		}
 		$fields = $values = array();
