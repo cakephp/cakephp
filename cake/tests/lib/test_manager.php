@@ -344,7 +344,7 @@ class TestManager {
  * @static
  */
 	protected static function _isTestGroupFile($file) {
-		return static::_hasExpectedExtension($file, static::$_groupExtension);
+		return self::_hasExpectedExtension($file, self::$_groupExtension);
 	}
 
 /**
