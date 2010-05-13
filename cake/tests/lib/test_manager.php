@@ -127,7 +127,7 @@ class TestManager {
 		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
-			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile));
+			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
 		}
 
 		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
@@ -182,9 +182,6 @@ class TestManager {
 		$testSuite->setFixtureManager($this->getFixtureManager());
 		$testSuite->run($result);
 		$reporter->paintResult($result);
-		// echo '<pre>';
-		// var_dump($result->getCodeCoverageInformation());
-		// echo '</pre>';
 		return $result;
 	}
 

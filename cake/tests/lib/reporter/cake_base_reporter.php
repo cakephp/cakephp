@@ -26,7 +26,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeBaseReporter {
+class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 
 /**
  * Time the test runs started.
@@ -212,6 +212,89 @@ class CakeBaseReporter {
 			return $_SERVER['PHP_SELF'];
 		}
 		return '';
+	}
+
+	public function paintResult(PHPUnit_Framework_TestResult $result) {
+		$this->paintFooter($result);
+	}
+
+/**
+* An error occurred.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception              $e
+* @param  float                  $time
+*/
+	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		$this->paintException($e);
+	}
+
+/**
+* A failure occurred.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  PHPUnit_Framework_AssertionFailedError $e
+* @param  float $time
+*/
+	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
+		$this->paintFail($e);
+	}
+
+/**
+* Incomplete test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception $e
+* @param  float $time
+*/
+	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+
+	}
+
+/**
+* Skipped test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception $e
+* @param  float $time
+*/
+	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+	}
+
+/**
+ * A test suite started.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ */
+	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		echo sprintf(__('Running  %s'), $suite->getName()) . "\n";
+	}
+
+/**
+ * A test suite ended.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ */
+	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+	}
+
+/**
+ * A test started.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ */
+	public function startTest(PHPUnit_Framework_Test $test) {
+	}
+
+/**
+ * A test ended.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  float $time
+ */
+	public function endTest(PHPUnit_Framework_Test $test, $time) {
+		$this->numAssertions += $test->getNumAssertions();
+		$this->paintPass($test, $time);
 	}
 
 }

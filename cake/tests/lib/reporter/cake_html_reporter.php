@@ -28,8 +28,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
  * @package cake
  * @subpackage cake.tests.lib
  */
-
-class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_TestListener {
+class CakeHtmlReporter extends CakeBaseReporter {
 
 /**
  * Paints the top of the web page setting the
@@ -153,7 +152,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
  * Paints the end of the test with a summary of
  * the passes and failures.
  *
- * @param string $test_name Name class of test.
+ * @param PHPUnit_Framework_TestResult $result Result object
  * @return void
  */
 	public function paintFooter($result) {
@@ -162,7 +161,7 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		echo "<div style=\"";
 		echo "padding: 8px; margin: 1em 0; background-color: $colour; color: white;";
 		echo "\">";
-		echo $result->count() . "/" . $result->count() - $result->skippedCount();
+		echo $result->count() . "/" . ($result->count() - $result->skippedCount());
 		echo " test methods complete:\n";
 		echo "<strong>" . count($result->passed()) . "</strong> passes, ";
 		echo "<strong>" . $result->failureCount() . "</strong> fails, ";
@@ -176,14 +175,23 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		}
 		echo $this->_paintLinks();
 		echo '</div>';
-		if (
-			isset($this->params['codeCoverage']) &&
-			$this->params['codeCoverage'] &&
-			class_exists('CodeCoverageManager')
-		) {
-			//CodeCoverageManager::report();
+		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
+			$coverage = $result->getCodeCoverageInformation();
+			echo $this->paintCoverage($coverage);
 		}
 		$this->paintDocumentEnd();
+	}
+
+/**
+ * Paints a code coverage report.
+ *
+ * @return void
+ */
+	public function paintCoverage($coverage) {
+		$file = dirname(dirname(__FILE__)) . '/coverage/html_coverage_report.php';
+		include $file;
+		$reporter = new HtmlCoverageReport($coverage, $this);
+		echo $reporter->report();
 	}
 
 /**
@@ -264,9 +272,6 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		echo "<div class='msg'>" . sprintf(__('File: %s'), $context['file']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Method: %s'), $realContext['function']) . "</div>\n";
 		echo "<div class='msg'>" . sprintf(__('Line: %s'), $context['line']) . "</div>\n";
-		//$breadcrumb = $this->getTestList();
-		//array_shift($breadcrumb);
-		//echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -360,103 +365,12 @@ class CakeHtmlReporter extends CakeBaseReporter implements PHPUnit_Framework_Tes
 		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
 	}
 
-	public function paintResult(PHPUnit_Framework_TestResult $result) {
-
-		/*if ($result->errorCount() > 0) {
-			$this->printErrors($result);
-		}
-
-		if ($result->failureCount() > 0) {
-			$this->printFailures($result);
-		}
-
-		if ($result->skippedCount() > 0) {
-			 $this->printIncompletes($result);
-		}
-
-		if ($result->skippedCount() > 0) {
-			$this->printSkipped($result);
-		}*/
-
-		$this->paintFooter($result);
-	}
-
-/**
-* An error occurred.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception              $e
-* @param  float                  $time
-*/
-	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
-		$this->paintException($e);
-	}
-
-/**
-* A failure occurred.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  PHPUnit_Framework_AssertionFailedError $e
-* @param  float $time
-*/
-	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
-		$this->paintFail($e);
-	}
-
-/**
-* Incomplete test.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception $e
-* @param  float $time
-*/
-	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
-
-	}
-
-/**
-* Skipped test.
-*
-* @param  PHPUnit_Framework_Test $test
-* @param  Exception $e
-* @param  float $time
-*/
-	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
-	}
-
 /**
  * A test suite started.
  *
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		echo '<h2>' . sprintf(__('Running  %s'), $suite->getName()) . '</h2>';
-	}
-
-/**
- * A test suite ended.
- *
- * @param  PHPUnit_Framework_TestSuite $suite
- */
-	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
-	}
-
-/**
- * A test started.
- *
- * @param  PHPUnit_Framework_Test $test
- */
-	public function startTest(PHPUnit_Framework_Test $test) {
-	}
-
-/**
- * A test ended.
- *
- * @param  PHPUnit_Framework_Test $test
- * @param  float $time
- */
-	public function endTest(PHPUnit_Framework_Test $test, $time) {
-		$this->numAssertions += $test->getNumAssertions();
-		$this->paintPass($test, $time);
+		echo '<h2>' . sprintf(__('Running  %s'), $suite->getName())  . '</h2>';
 	}
 }
