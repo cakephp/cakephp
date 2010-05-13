@@ -264,7 +264,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 	public function paintFail($message) {
 		$context = $message->getTrace();
 		$realContext = $context[3];
-		$context = $context[2];
+		$class = new ReflectionClass($realContext['class']);
+		if ($class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase') {
+			$realContext = $context[4];
+			$context = $context[3];
+		} else {
+			$context = $context[2];
+		}
 
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
