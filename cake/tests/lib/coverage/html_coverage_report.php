@@ -190,7 +190,11 @@ HTML;
 
 		foreach ($fileLines as $lineno => $line) {
 			$class = 'ignored';
+			$coveringTests = array();
 			if (isset($coverageData['covered'][$lineno])) {
+				$coveringTests = PHPUnit_Util_CodeCoverage::getCoveringTests(
+					$this->_rawCoverage, $filename, $lineno
+				);
 				$class = 'covered';
 				$covered++;
 				$total++;
@@ -200,7 +204,7 @@ HTML;
 			} elseif (isset($coverageData['dead'][$lineno])) {
 				$class .= ' dead';
 			}
-			$diff[] = $this->_paintLine($line, $lineno, $class);
+			$diff[] = $this->_paintLine($line, $lineno, $class, $coveringTests);
 		}
 
 		$percentCovered = round(100 * $covered / $total, 2);
@@ -216,10 +220,19 @@ HTML;
  *
  * @return void
  */
-	protected function _paintLine($line, $linenumber, $class) {
+	protected function _paintLine($line, $linenumber, $class, $coveringTests) {
+		$coveredBy = '';
+		if (!empty($coveringTests)) {
+			$coveredBy = "Covered by:\n";
+			foreach ($coveringTests as &$test) {
+				$coveredBy .= $test->getName() . "\n";
+			}
+		}
+
 		return sprintf(
-			'<div class="code-line %s"><span class="line-num">%s</span><span class="content">%s</span></div>',
+			'<div class="code-line %s" title="%s"><span class="line-num">%s</span><span class="content">%s</span></div>',
 			$class,
+			$coveredBy,
 			$linenumber,
 			htmlspecialchars($line)
 		);
