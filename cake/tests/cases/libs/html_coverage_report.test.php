@@ -190,6 +190,74 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	}
 
 /**
+ * test that covering methods show up as title attributes for lines.
+ *
+ * @return void
+ */
+	function testCoveredLinesTitleAttributes() {
+		$file = array(
+			'line 1',
+			'line 2',
+			'line 3',
+			'line 4',
+			'line 5',
+		);
+		$mock = $this->getMock('PHPUnit_Framework_TestCase');
+		$mock->expects($this->any())->method('getName')->will($this->returnValue('testAwesomeness'));
+
+		$rawdata = array(
+			array(
+				'test' => $mock,
+				'files' => array(
+					'myfile.php' => array(
+						1 => 1,
+						3 => 1,
+						4 => 1,
+					)
+				),
+				'executable' => array(
+					'myfile.php' => array(
+						5 => -1
+					)
+				)
+			)
+		);
+
+		$coverage = array(
+			'covered' => array(
+				1 => 1,
+				3 => 1,
+				4 => 1,
+			),
+			'executable' => array(
+				5 => -1,
+			),
+			'dead' => array(
+				2 => -2
+			)
+		);
+		$this->Coverage->setCoverage($rawdata);
+		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
+
+		$this->assertTrue(
+			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">1") !== false,
+			'Missing method coverage for line 1'
+		);
+		$this->assertTrue(
+			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">3") !== false,
+			'Missing method coverage for line 3'
+		);
+		$this->assertTrue(
+			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">4") !== false,
+			'Missing method coverage for line 4'
+		);
+		$this->assertTrue(
+			strpos($result, "title=\"\"><span class=\"line-num\">5") !== false,
+			'Coverage report is wrong for line 5'
+		);
+	}
+
+/**
  * teardown
  *
  * @return void

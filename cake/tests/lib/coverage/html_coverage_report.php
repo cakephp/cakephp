@@ -178,7 +178,7 @@ HTML;
  * @param array $coverageData Array of coverage data to use to generate HTML diffs with
  * @return string HTML diff.
  */
-	function generateDiff($filename, $fileLines, $coverageData) {
+	public function generateDiff($filename, $fileLines, $coverageData) {
 		$output = ''; 
 		$diff = array();
 		$covered = 0;
