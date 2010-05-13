@@ -648,14 +648,14 @@ class AppImportTest extends CakeTestCase {
  */
 	function testFileLoadingReturnValue () {
 		$file = App::import('File', 'Name', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php', true);
-		$this->assertTrue($file);
+		$this->assertTrue(!empty($file));
 
 		$this->assertTrue(isset($file['Cake.version']));
 
 		$type = array('type' => 'File', 'name' => 'OtherName', 'parent' => false,
 				'file' => TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'config.php', 'return' => true);
 		$file = App::import($type);
-		$this->assertTrue($file);
+		$this->assertTrue(!empty($file));
 
 		$this->assertTrue(isset($file['Cake.version']));
 	}
