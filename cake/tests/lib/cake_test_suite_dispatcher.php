@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE_TESTS_LIB . 'test_manager.php';
 
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
@@ -93,7 +92,7 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function dispatch() {
-		$this->_checkSimpleTest();
+		$this->_checkPHPUnit();
 		$this->_parseParams();
 
 		if ($this->params['group']) {
@@ -111,16 +110,36 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Checks that simpleTest is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed.  Will exit if it doesn't
  *
  * @return void
  */
-	function _checkSimpleTest() {
-		if (!App::import('Vendor', 'simpletest/reporter')) {
+	function _checkPHPUnit() {
+		$found = $path = null;
+
+		if (@include 'PHPUnit' . DS . 'Framework.php') {
+			$found = true;
+		}
+
+		if (!$found) {
+			foreach (App::path('vendors') as $vendor) {
+				if (is_dir($vendor . 'PHPUnit')) {
+					$path = $vendor;
+				}
+			}
+
+			if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
+				$found = include 'PHPUnit' . DS . 'Framework.php';
+			}
+		}
+
+		if (!$found) {
 			$baseDir = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates/simpletest.php';
 			exit();
 		}
+
+		PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 	}
 
 /**
@@ -171,6 +190,7 @@ class CakeTestSuiteDispatcher {
  */
 	function &getManager() {
 		if (empty($this->Manager)) {
+			require_once CAKE_TESTS_LIB . 'test_manager.php';
 			$this->Manager = new $this->_managerClass();
 		}
 		return $this->Manager;
@@ -215,8 +235,8 @@ class CakeTestSuiteDispatcher {
 		}
 		if (isset($_GET['code_coverage'])) {
 			$this->params['codeCoverage'] = true;
-			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 			$this->_checkXdebug();
+			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
@@ -236,7 +256,7 @@ class CakeTestSuiteDispatcher {
 		if ('all' == $this->params['group']) {
 			$this->Manager->runAllTests($Reporter);
 		} else {
-			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
+			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter, $this->params['codeCoverage']);
 		}
 	}
 
@@ -250,6 +270,6 @@ class CakeTestSuiteDispatcher {
 		if ($this->params['codeCoverage']) {
 			CodeCoverageManager::init($this->params['case'], $Reporter);
 		}
-		$this->Manager->runTestCase($this->params['case'], $Reporter);
+		$this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
 	}
 }

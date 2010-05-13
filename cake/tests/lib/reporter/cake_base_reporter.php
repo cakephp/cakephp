@@ -18,13 +18,15 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * CakeBaseReporter contains common reporting features used in the CakePHP Test suite
  *
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeBaseReporter extends SimpleReporter {
+class CakeBaseReporter {
 
 /**
  * Time the test runs started.
@@ -66,6 +68,10 @@ class CakeBaseReporter extends SimpleReporter {
 	protected $_characterSet;
 
 /**
+* The number of assertions done for a test suite
+*/
+	protected $numAssertions = 0;
+/**
  * Does nothing yet. The first output will
  * be sent on the first test start.
  *
@@ -81,7 +87,6 @@ class CakeBaseReporter extends SimpleReporter {
  * @param array $params Array of request parameters the reporter should use. See above.
  */
 	function __construct($charset = 'utf-8', $params = array()) {
-		parent::__construct();
 		if (!$charset) {
 			$charset = 'utf-8';
 		}

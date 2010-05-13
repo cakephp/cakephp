@@ -26,7 +26,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class XmlGroupTest extends TestSuite {
+class XmlGroupTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * label property
@@ -37,12 +37,12 @@ class XmlGroupTest extends TestSuite {
 	public $label = 'Xml based classes (Xml, XmlHelper and RssHelper)';
 
 /**
- * XmlGroupTest method
+ * __construct method
  *
  * @access public
  * @return void
  */
-	function XmlGroupTest() {
+	function __construct() {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'xml');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS .'rss');
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS .'xml');
