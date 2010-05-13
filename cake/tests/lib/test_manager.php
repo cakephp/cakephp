@@ -252,7 +252,7 @@ class TestManager {
  * @static
  */
 	protected static function &_getTestFileList($directory = '.') {
-		$return = self::_getRecursiveFileList($directory, 'self::_isTestCaseFile');
+		$return = self::_getRecursiveFileList($directory, array('self', '_isTestCaseFile'));
 		return $return;
 	}
 
@@ -274,7 +274,7 @@ class TestManager {
  * @static
  */
 	protected static function &_getTestGroupFileList($directory = '.') {
-		$return = self::_getRecursiveFileList($directory, 'self::_isTestGroupFile');
+		$return = self::_getRecursiveFileList($directory, array('self', '_isTestGroupFile'));
 		return $return;
 	}
 
