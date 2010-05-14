@@ -205,8 +205,10 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return string
  */
 	public function paintCoverage($coverage) {
-		return '';
+		$file = dirname(dirname(__FILE__)) . '/coverage/text_coverage_report.php';
+		include $file;
+		$reporter = new TextCoverageReport($coverage, $this);
+		echo $reporter->report();
 	}
 
 }
-?>
