@@ -58,8 +58,8 @@ HTML;
 	public function generateDiff($filename, $fileLines, $coverageData) {
 		$output = ''; 
 		$diff = array();
-		$covered = 0;
-		$total = 0;
+
+		list($covered, $total) = $this->_calculateCoveredLines($fileLines, $coverageData);
 
 		//shift line numbers forward one;
 		array_unshift($fileLines, ' ');
@@ -73,11 +73,8 @@ HTML;
 					$this->_rawCoverage, $filename, $lineno
 				);
 				$class = 'covered';
-				$covered++;
-				$total++;
 			} elseif (isset($coverageData['executable'][$lineno])) {
 				$class = 'uncovered';
-				$total++;
 			} elseif (isset($coverageData['dead'][$lineno])) {
 				$class .= ' dead';
 			}

@@ -156,6 +156,31 @@ abstract class BaseCoverageReport {
 	}
 
 /**
+ * Calculates how many lines are covered and what the total number of executable lines is
+ *
+ * @param array $fileLines
+ * @param array $coverageData
+ * @return array. Array of covered, total lines.
+ */
+	protected function _calculateCoveredLines($fileLines, $coverageData) {
+		$covered = $total = 0;
+
+		//shift line numbers forward one;
+		array_unshift($fileLines, ' ');
+		unset($fileLines[0]);
+
+		foreach ($fileLines as $lineno => $line) {
+			if (isset($coverageData['covered'][$lineno])) {
+				$covered++;
+				$total++;
+			} elseif (isset($coverageData['executable'][$lineno])) {
+				$total++;
+			}
+		}
+		return array($covered, $total);
+	}
+
+/**
  * Generates report to display.
  *
  * @return string compiled html report.

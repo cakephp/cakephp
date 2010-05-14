@@ -52,21 +52,7 @@ class TextCoverageReport extends BaseCoverageReport {
  * @return string
  */
 	public function generateDiff($filename, $fileLines, $coverageData) {
-		$covered = 0;
-		$total = 0;
-
-		//shift line numbers forward one;
-		array_unshift($fileLines, ' ');
-		unset($fileLines[0]);
-
-		foreach ($fileLines as $lineno => $line) {
-			if (isset($coverageData['covered'][$lineno])) {
-				$covered++;
-				$total++;
-			} elseif (isset($coverageData['executable'][$lineno])) {
-				$total++;
-			}
-		}
+		list($covered, $total) = $this->_calculateCoveredLines($fileLines, $coverageData);
 		$percentCovered = round(100 * $covered / $total, 2);
 		return "$filename : $percentCovered%\n";
 	}
