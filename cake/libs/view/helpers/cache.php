@@ -72,13 +72,13 @@ class CacheHelper extends AppHelper {
 			$index = null;
 
 			foreach ($keys as $action) {
-				if ($action == $this->params['action']) {
+				if ($action == $this->request->params['action']) {
 					$index = $action;
 					break;
 				}
 			}
 
-			if (!isset($index) && $this->action == 'index') {
+			if (!isset($index) && $this->request->params['action'] == 'index') {
 				$index = 'index';
 			}
 
@@ -201,7 +201,7 @@ class CacheHelper extends AppHelper {
 		} else {
 			$cacheTime = strtotime($timestamp, $now);
 		}
-		$path = $this->here;
+		$path = $this->request->here;
 		if ($this->here == '/') {
 			$path = 'home';
 		}
@@ -231,6 +231,7 @@ class CacheHelper extends AppHelper {
 				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
 				$controller->here = $this->here = \'' . $this->here . '\';
 				$controller->params = $this->params = unserialize(\'' . str_replace("'", "\\'", serialize($this->params)) . '\');
+				$controller->request = $this->request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(\'' . str_replace("'", "\\'", serialize($this->data)) . '\');
 				$controller->theme = $this->theme = \'' . $this->theme . '\';
