@@ -107,7 +107,7 @@ class PaginatorHelper extends AppHelper {
  * @return void
  */
 	public function beforeRender() {
-		$this->options['url'] = array_merge($this->params['pass'], $this->params['named']);
+		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
 
 		parent::beforeRender();
 	}
@@ -122,10 +122,10 @@ class PaginatorHelper extends AppHelper {
 		if (empty($model)) {
 			$model = $this->defaultModel();
 		}
-		if (!isset($this->params['paging']) || empty($this->params['paging'][$model])) {
+		if (!isset($this->request->params['paging']) || empty($this->request->params['paging'][$model])) {
 			return null;
 		}
-		return $this->params['paging'][$model];
+		return $this->request->params['paging'][$model];
 	}
 
 /**
@@ -141,20 +141,20 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		if (!empty($options['paging'])) {
-			if (!isset($this->params['paging'])) {
-				$this->params['paging'] = array();
+			if (!isset($this->request->params['paging'])) {
+				$this->request->params['paging'] = array();
 			}
-			$this->params['paging'] = array_merge($this->params['paging'], $options['paging']);
+			$this->request->params['paging'] = array_merge($this->request->params['paging'], $options['paging']);
 			unset($options['paging']);
 		}
 		$model = $this->defaultModel();
 
 		if (!empty($options[$model])) {
-			if (!isset($this->params['paging'][$model])) {
-				$this->params['paging'][$model] = array();
+			if (!isset($this->request->params['paging'][$model])) {
+				$this->request->params['paging'][$model] = array();
 			}
-			$this->params['paging'][$model] = array_merge(
-				$this->params['paging'][$model], $options[$model]
+			$this->request->params['paging'][$model] = array_merge(
+				$this->request->params['paging'][$model], $options[$model]
 			);
 			unset($options[$model]);
 		}
@@ -486,10 +486,10 @@ class PaginatorHelper extends AppHelper {
 		if ($this->__defaultModel != null) {
 			return $this->__defaultModel;
 		}
-		if (empty($this->params['paging'])) {
+		if (empty($this->request->params['paging'])) {
 			return null;
 		}
-		list($this->__defaultModel) = array_keys($this->params['paging']);
+		list($this->__defaultModel) = array_keys($this->request->params['paging']);
 		return $this->__defaultModel;
 	}
 
