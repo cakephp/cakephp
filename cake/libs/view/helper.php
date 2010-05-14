@@ -39,6 +39,7 @@ class Helper extends Object {
 /**
  * Base URL
  *
+ * @deprecated use $request->base instead
  * @var string
  */
 	public $base = null;
@@ -46,6 +47,7 @@ class Helper extends Object {
 /**
  * Webroot path
  *
+ * @deprecated use $request->webroot instead
  * @var string
  */
 	public $webroot = null;
@@ -60,6 +62,7 @@ class Helper extends Object {
 /**
  * URL to current action.
  *
+ * @deprecated use $request->here instead
  * @var string
  */
 	public $here = null;
@@ -67,13 +70,22 @@ class Helper extends Object {
 /**
  * Parameter array.
  *
+ * @deprecated use $request instead
  * @var array
  */
 	public $params = array();
 
 /**
+ * Request object 
+ *
+ * @var CakeRequest
+ */
+	public $request = null;
+
+/**
  * Current action.
  *
+ * @deprecated use $request->action instead
  * @var string
  */
 	public $action = null;
@@ -88,23 +100,10 @@ class Helper extends Object {
 /**
  * POST data for models
  *
+ * @deprecated use $request->data instead
  * @var array
  */
 	public $data = null;
-
-/**
- * List of named arguments
- *
- * @var array
- */
-	public $namedArgs = null;
-
-/**
- * URL argument separator character
- *
- * @var string
- */
-	public $argSeparator = null;
 
 /**
  * Contains model validation errors of form post-backs
@@ -195,7 +194,7 @@ class Helper extends Object {
 	public function webroot($file) {
 		$asset = explode('?', $file);
 		$asset[1] = isset($asset[1]) ? '?' . $asset[1] : null;
-		$webPath = "{$this->webroot}" . $asset[0];
+		$webPath = "{$this->request->webroot}" . $asset[0];
 		$file = $asset[0];
 
 		if (!empty($this->theme)) {
@@ -207,7 +206,7 @@ class Helper extends Object {
 			}
 
 			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS  . $file)) {
-				$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
 				$viewPaths = App::path('views');
 
@@ -215,7 +214,7 @@ class Helper extends Object {
 					$path = $viewPath . 'themed'. DS . $this->theme . DS  . 'webroot' . DS  . $file;
 
 					if (file_exists($path)) {
-						$webPath = "{$this->webroot}theme/" . $theme . $asset[0];
+						$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 						break;
 					}
 				}
@@ -241,7 +240,7 @@ class Helper extends Object {
 			Configure::read('Asset.timestamp') === 'force'
 		);
 		if (strpos($path, '?') === false && $timestampEnabled) {
-			$filepath = preg_replace('/^' . preg_quote($this->webroot, '/') . '/', '', $path);
+			$filepath = preg_replace('/^' . preg_quote($this->request->webroot, '/') . '/', '', $path);
 			$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $filepath));
 		}
 		return $path;
@@ -671,19 +670,20 @@ class Helper extends Object {
 
 		$view =& ClassRegistry::getObject('view');
 		$result = null;
+		$data = $this->request->data;
 
 		$entity = $view->entity();
-		if (!empty($this->data) && !empty($entity)) {
-			$result = Set::extract($this->data, join('.', $entity));
+		if (!empty($data) && !empty($entity)) {
+			$result = Set::extract($data, join('.', $entity));
 		}
 
 		$habtmKey = $this->field();
-		if (empty($result) && isset($this->data[$habtmKey][$habtmKey])) {
+		if (empty($result) && isset($data[$habtmKey][$habtmKey])) {
 			$result = $this->data[$habtmKey][$habtmKey];
-		} elseif (empty($result) && isset($this->data[$habtmKey]) && is_array($this->data[$habtmKey])) {
+		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model =& ClassRegistry::getObject($habtmKey);
-				$result = $this->__selectedArray($this->data[$habtmKey], $model->primaryKey);
+				$result = $this->__selectedArray($data[$habtmKey], $model->primaryKey);
 			}
 		}
 
@@ -814,11 +814,11 @@ class Helper extends Object {
 	function __selectedArray($data, $key = 'id') {
 		if (!is_array($data)) {
 			$model = $data;
-			if (!empty($this->data[$model][$model])) {
-				return $this->data[$model][$model];
+			if (!empty($this->request->data[$model][$model])) {
+				return $this->request->data[$model][$model];
 			}
-			if (!empty($this->data[$model])) {
-				$data = $this->data[$model];
+			if (!empty($this->request->data[$model])) {
+				$data = $this->request->data[$model];
 			}
 		}
 		$array = array();
