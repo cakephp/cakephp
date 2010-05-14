@@ -884,7 +884,8 @@ class L10nTest extends CakeTestCase {
 
 		$result = $l10n->catalog(array('cy'));
 		$expected = array(
-			'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8')
+			'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8',
+'direction' => 'ltr')
 		);
 		$this->assertEqual($result, $expected);
 
