@@ -428,6 +428,10 @@ class L10nTest extends CakeTestCase {
 		$result = $l10n->map(array('xho', 'xh'));
 		$expected = array('xho' => 'xh', 'xh' => 'xho');
 		$this->assertEqual($result, $expected);
+	
+		$result = $l10n->map(array('cy', 'cym'));
+		$expected = array('cym' => 'cy', 'cy' => 'cym');
+		$this->assertEqual($result, $expected);
 
 		$result = $l10n->map(array('yid', 'yi'));
 		$expected = array('yid' => 'yi', 'yi' => 'yid');
@@ -882,6 +886,12 @@ class L10nTest extends CakeTestCase {
 		$result = $l10n->catalog(array('vi'));
 		$expected = array(
 			'vi' => array('language' => 'Vietnamese', 'locale' => 'vie', 'localeFallback' => 'vie', 'charset' => 'utf-8')
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->catalog(array('cy'));
+		$expected = array(
+			'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8')
 		);
 		$this->assertEqual($result, $expected);
 
