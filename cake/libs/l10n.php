@@ -172,6 +172,7 @@ class L10n extends Object {
 								/* Urdu */ 'urd' => 'ur',
 								/* Venda */ 'ven' => 've',
 								/* Vietnamese */ 'vie' => 'vi',
+								/* Welsh */ 'cym' => 'cy',
 								/* Xhosa */ 'xho' => 'xh',
 								/* Yiddish */ 'yid' => 'yi',
 								/* Zulu */ 'zul' => 'zu');
@@ -315,6 +316,7 @@ class L10n extends Object {
 										'ur' => array('language' => 'Urdu', 'locale' => 'urd', 'localeFallback' => 'urd', 'charset' => 'utf-8', 'direction' => 'rtl'),
 										've' => array('language' => 'Venda', 'locale' => 'ven', 'localeFallback' => 'ven', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'vi' => array('language' => 'Vietnamese', 'locale' => 'vie', 'localeFallback' => 'vie', 'charset' => 'utf-8', 'direction' => 'ltr'),
+										'cy' => array('language' => 'Welsh', 'locale' => 'cym', 'localeFallback' => 'cym', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'xh' => array('language' => 'Xhosa', 'locale' => 'xho', 'localeFallback' => 'xho', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'yi' => array('language' => 'Yiddish', 'locale' => 'yid', 'localeFallback' => 'yid', 'charset' => 'utf-8', 'direction' => 'ltr'),
 										'zh' => array('language' => 'Chinese', 'locale' => 'chi', 'localeFallback' => 'chi', 'charset' => 'utf-8', 'direction' => 'ltr'),
