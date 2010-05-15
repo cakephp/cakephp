@@ -278,7 +278,7 @@ class View extends Object {
 	private $__passedVars = array(
 		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
 		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
-		'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
+		'params', 'request', 'data', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
 /**
@@ -784,7 +784,7 @@ class View extends Object {
 					}
 				}
 				$loaded[$helper] =& new $helperCn($options);
-				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
+				$vars = array('base', 'webroot', 'here', 'request', 'params', 'action', 'data', 'theme', 'plugin');
 				$c = count($vars);
 
 				for ($j = 0; $j < $c; $j++) {
