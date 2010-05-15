@@ -28,14 +28,6 @@ App::import('Helper', 'Text');
 class TextHelperTest extends CakeTestCase {
 
 /**
- * helper property
- *
- * @var mixed null
- * @access public
- */
-	public $helper = null;
-
-/**
  * setUp method
  *
  * @access public
