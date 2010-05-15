@@ -235,7 +235,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$view =& ClassRegistry::getObject('view');
+			$view = ClassRegistry::getObject('view');
 			$view->addScript($out);
 		}
 	}
