@@ -83,10 +83,15 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
+		$request = new CakeRequest(null, false);
+
 		$this->Js = new JsHelper('JsBase');
+		$this->Js->request = $request;
 		$this->Js->Html = new HtmlHelper();
+		$this->Js->Html->request = $request;
 		$this->Js->Form = new FormHelper();
-		$this->Js->Form->Html = new HtmlHelper();
+		$this->Js->Form->request = $request;
+		$this->Js->Form->Html = $this->Js->Html;
 		$this->Js->JsBaseEngine = new JsBaseEngineHelper();
 
 		$view = new JsHelperMockView();
@@ -111,10 +116,15 @@ class JsHelperTestCase extends CakeTestCase {
  * @return void
  */
 	function _useMock() {
+		$request = new CakeRequest(null, false);
+
 		$this->Js = new JsHelper(array('TestJs'));
+		$this->Js->request = $request;
 		$this->Js->TestJsEngine = new TestJsEngineHelper($this);
 		$this->Js->Html = new HtmlHelper();
+		$this->Js->Html->request = $request;
 		$this->Js->Form = new FormHelper();
+		$this->Js->Form->request = $request;
 		$this->Js->Form->Html = new HtmlHelper();
 	}
 
@@ -278,6 +288,7 @@ class JsHelperTestCase extends CakeTestCase {
 		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped')) {
 			return;
 		}
+		$this->Js->request->webroot = '/';
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
 		$this->Js->buffer('one = 1;');
 		$this->Js->buffer('two = 2;');
