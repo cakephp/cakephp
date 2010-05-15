@@ -920,7 +920,11 @@ class Controller extends Object {
  */
 	public function referer($default = null, $local = false) {
 		if ($this->request) {
-			return $this->request->referer($default, $local);
+			$referer = $this->request->referer($local);
+			if ($referer == '/' && $default != null) {
+				return Router::url($default, true);
+			}
+			return $referer;
 		}
 		return '/';
 	}

@@ -387,16 +387,18 @@ class CakeRequest implements ArrayAccess {
 
 		$base = '';
 		if (defined('FULL_BASE_URL')) {
-			$base = FULL_BASE_URL;
+			$base = FULL_BASE_URL . $this->webroot;
 		}
-		if (!empty($ref)) {
+		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));
 				if ($ref[0] != '/') {
 					$ref = '/' . $ref;
 				}
+				return $ref;
+			} elseif (!$local) {
+				return $ref;
 			}
-			return $ref;
 		}
 		return '/';
 	}

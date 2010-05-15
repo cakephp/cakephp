@@ -1175,8 +1175,8 @@ class ControllerTest extends CakeTestCase {
  */
 	function testReferer() {
 		$request = new ControllerMockCakeRequest();
-		$request->setReturnValue('referer', 'http://localhost/posts/index', array(null, false));
-		$request->setReturnValue('referer', '/posts/index', array(null, true));
+		$request->setReturnValue('referer', 'http://localhost/posts/index', array(false));
+		$request->setReturnValue('referer', '/posts/index', array(true));
 
 		$Controller = new Controller($request);
 		$result = $Controller->referer(null, true);
@@ -1184,6 +1184,11 @@ class ControllerTest extends CakeTestCase {
 
 		$result = $Controller->referer();
 		$this->assertEqual($result, 'http://localhost/posts/index');
+
+		$Controller = new Controller($request);
+		$request->setReturnValue('referer', '/', array(true));
+		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
+		$this->assertEqual($result, '/posts/index');
 
 		$Controller = new Controller(null);
 		$result = $Controller->referer();
