@@ -210,6 +210,26 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that alternate jQuery object values work for request()
+ *
+ * @return void
+ */
+	function testRequestWithAlternateJqueryObject() {
+		$this->Jquery->jQueryObject = '$j';
+
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'update' => '#updated',
+			'success' => 'doFoo',
+			'method' => 'post',
+			'dataExpression' => true,
+			'data' => '$j("#someId").serialize()',
+			'wrapCallbacks' => false
+		));
+		$expected = '$j.ajax({data:$j("#someId").serialize(), dataType:"html", success:function (data, textStatus) {$j("#updated").html(data);}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test sortable list generation
  *
  * @return void

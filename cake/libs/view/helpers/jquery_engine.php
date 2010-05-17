@@ -257,9 +257,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		if (isset($options['update'])) {
 			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
 			if ($wrapCallbacks) {
-				$success = '$("' . $options['update'] . '").html(data);';
+				$success = $this->jQueryObject . '("' . $options['update'] . '").html(data);';
 			} else {
-				$success = 'function (data, textStatus) {$("' . $options['update'] . '").html(data);}';
+				$success = sprintf(
+					'function (data, textStatus) {%s("%s").html(data);}',
+					$this->jQueryObject,
+					$options['update']
+				);
 			}
 			$options['dataType'] = 'html';
 			$options['success'] = $success;
@@ -272,7 +276,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		}
 		$options = $this->_prepareCallbacks('request', $options);
 		$options = $this->_parseOptions($options, $callbacks);
-		return '$.ajax({' . $options .'});';
+		return $this->jQueryObject . '.ajax({' . $options .'});';
 	}
 
 /**
