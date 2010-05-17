@@ -220,6 +220,52 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that sort() works with virtual field order options.
+ *
+ * @return void
+ */
+	function testSortLinkWithVirtualField() {
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
+			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
+		));
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('full_name' => 'asc');
+
+		$result = $this->Paginator->sort('Article.full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:desc', 'class' => 'asc'),
+			'Article.full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:full_name/direction:desc', 'class' => 'asc'),
+			'Full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('full_name' => 'desc');
+		$result = $this->Paginator->sort('Article.full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:asc', 'class' => 'desc'),
+			'Article.full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:full_name/direction:asc', 'class' => 'desc'),
+			'Full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testSortLinksUsingDirectionOption method
  *
  * @access public
