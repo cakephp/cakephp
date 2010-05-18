@@ -80,28 +80,9 @@ class CacheHelperTest extends CakeTestCase {
 		$this->_cacheSettings = Configure::read('Cache');
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
-	}
-
-/**
- * Start Case - switch view paths
- *
- * @access public
- * @return void
- */
-	function startCase() {
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
-	}
-
-/**
- * End Case - restore view Paths
- *
- * @access public
- * @return void
- */
-	function endCase() {
-		App::build();
 	}
 
 /**
@@ -114,6 +95,7 @@ class CacheHelperTest extends CakeTestCase {
 		clearCache();
 		unset($this->Cache);
 		Configure::write('Cache', $this->_cacheSettings);
+		App::build();
 	}
 
 /**
