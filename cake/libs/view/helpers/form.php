@@ -615,8 +615,8 @@ class FormHelper extends AppHelper {
 		if ($legend === true) {
 			$actionName = __('New %s');
 			$isEdit = (
-				strpos($this->action, 'update') !== false ||
-				strpos($this->action, 'edit') !== false
+				strpos($this->request->params['action'], 'update') !== false ||
+				strpos($this->request->params['action'], 'edit') !== false
 			);
 			if ($isEdit) {
 				$actionName = __('Edit %s');

@@ -2206,7 +2206,7 @@ class FormHelperTest extends CakeTestCase {
 		$View = ClassRegistry::getObject('view');
 		$this->Form->create('Contact');
 		$this->Form->request['prefix'] = 'admin';
-		$this->Form->action = 'admin_edit';
+		$this->Form->request['action'] = 'admin_edit';
 		$result = $this->Form->inputs();
 		$expected = array(
 			'<fieldset',
