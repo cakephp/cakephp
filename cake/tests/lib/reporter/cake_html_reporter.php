@@ -161,7 +161,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<div style=\"";
 		echo "padding: 8px; margin: 1em 0; background-color: $colour; color: white;";
 		echo "\">";
-		echo $result->count() . "/" . ($result->count() - $result->skippedCount());
+		echo ($result->count() - $result->skippedCount()) . "/" . $result->count();
 		echo " test methods complete:\n";
 		echo "<strong>" . count($result->passed()) . "</strong> passes, ";
 		echo "<strong>" . $result->failureCount() . "</strong> fails, ";
