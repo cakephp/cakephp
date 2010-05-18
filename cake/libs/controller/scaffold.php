@@ -37,7 +37,6 @@ class Scaffold extends Object {
  * Controller object
  *
  * @var Controller
- * @access public
  */
 	public $controller = null;
 
@@ -45,23 +44,13 @@ class Scaffold extends Object {
  * Name of the controller to scaffold
  *
  * @var string
- * @access public
  */
 	public $name = null;
-
-/**
- * Action to be performed.
- *
- * @var string
- * @access public
- */
-	public $action = null;
 
 /**
  * Name of current model this view context is attached to
  *
  * @var string
- * @access public
  */
 	public $model = null;
 
@@ -69,39 +58,27 @@ class Scaffold extends Object {
  * Path to View.
  *
  * @var string
- * @access public
  */
 	public $viewPath;
-
-/**
- * Path parts for creating links in views.
- *
- * @var string Base URL
- * @access public
- */
-	public $base = null;
 
 /**
  * Name of layout to use with this View.
  *
  * @var string
- * @access public
  */
 	public $layout = 'default';
 
 /**
- * Array of parameter data
+ * Request object
  *
- * @var array
- * @access public
+ * @var CakeRequest
  */
-	public $params;
+	public $request;
 
 /**
  * File extension. Defaults to Cake's template ".ctp".
  *
  * @var array
- * @access public
  */
 	public $ext = '.ctp';
 
@@ -109,17 +86,8 @@ class Scaffold extends Object {
  * Sub-directory for this view file.
  *
  * @var string
- * @access public
  */
 	public $subDir = null;
-
-/**
- * Plugin name.
- *
- * @var string
- * @access public
- */
-	public $plugin = null;
 
 /**
  * valid session.
@@ -137,7 +105,8 @@ class Scaffold extends Object {
  */
 	private $__passedVars = array(
 		'action', 'base', 'webroot', 'layout', 'name',
-		'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction'
+		'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction',
+		'request'
 	);
 
 /**
@@ -151,11 +120,11 @@ class Scaffold extends Object {
 /**
  * Construct and set up given controller with given parameters.
  *
- * @param string $controller_class Name of controller
- * @param array $params Parameters for scaffolding
+ * @param Controller $controller Controller to scaffold
+ * @param CakeRequest $request Request parameters.
  */
-	function __construct(&$controller, $params) {
-		$this->controller =& $controller;
+	function __construct(Controller $controller, CakeRequest $request) {
+		$this->controller = $controller;
 
 		$count = count($this->__passedVars);
 		for ($j = 0; $j < $count; $j++) {
@@ -170,14 +139,16 @@ class Scaffold extends Object {
 
 		if (!is_object($this->controller->{$this->modelClass})) {
 			return $this->cakeError('missingModel', array(array(
-				'className' => $this->modelClass, 'webroot' => '', 'base' => $controller->base
+				'className' => $this->modelClass,
+				'webroot' => $request->webroot, 
+				'base' => $request->base
 			)));
 		}
 
-		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
+		$this->ScaffoldModel = $this->controller->{$this->modelClass};
 		$this->scaffoldTitle = Inflector::humanize($this->viewPath);
 		$this->scaffoldActions = $controller->scaffold;
-		$title_for_layout = __('Scaffold :: ') . Inflector::humanize($this->action) . ' :: ' . $this->scaffoldTitle;
+		$title_for_layout = __('Scaffold :: ') . Inflector::humanize($request->action) . ' :: ' . $this->scaffoldTitle;
 		$modelClass = $this->controller->modelClass;
 		$primaryKey = $this->ScaffoldModel->primaryKey;
 		$displayField = $this->ScaffoldModel->displayField;
@@ -199,7 +170,7 @@ class Scaffold extends Object {
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
-		$this->__scaffold($params);
+		$this->__scaffold($request);
 	}
 
 /**
@@ -215,17 +186,16 @@ class Scaffold extends Object {
 /**
  * Renders a view action of scaffolded model.
  *
- * @param array $params Parameters for scaffolding
+ * @param CakeRequest $request Request Object for scaffolding
  * @return mixed A rendered view of a row from Models database table
  * @access private
  */
-	function __scaffoldView($params) {
+	function __scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
 
 			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)));
-
-			if (isset($params['pass'][0])) {
-				$this->ScaffoldModel->id = $params['pass'][0];
+			if (isset($request->params['pass'][0])) {
+				$this->ScaffoldModel->id = $request->params['pass'][0];
 			} elseif ($this->_validSession) {
 				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
@@ -233,11 +203,11 @@ class Scaffold extends Object {
 				return $this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
 			}
 			$this->ScaffoldModel->recursive = 1;
-			$this->controller->data = $this->ScaffoldModel->read();
+			$this->controller->request->data = $this->controller->data = $this->ScaffoldModel->read();
 			$this->controller->set(
-				Inflector::variable($this->controller->modelClass), $this->controller->data
+				Inflector::variable($this->controller->modelClass), $this->request->data
 			);
-			$this->controller->render($this->action, $this->layout);
+			$this->controller->render($this->request['action'], $this->layout);
 			$this->_output();
 		} elseif ($this->controller->_scaffoldError('view') === false) {
 			return $this->__scaffoldError();
@@ -257,7 +227,7 @@ class Scaffold extends Object {
 			$this->controller->set(
 				Inflector::variable($this->controller->name), $this->controller->paginate()
 			);
-			$this->controller->render($this->action, $this->layout);
+			$this->controller->render($this->request['action'], $this->layout);
 			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
 			return $this->__scaffoldError();
@@ -283,12 +253,12 @@ class Scaffold extends Object {
 /**
  * Saves or updates the scaffolded model.
  *
- * @param array $params Parameters for scaffolding
+ * @param CakeRequest $request Request Object for scaffolding
  * @param string $action add or edt
  * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
  * @access private
  */
-	function __scaffoldSave($params = array(), $action = 'edit') {
+	function __scaffoldSave(CakeRequest $request, $action = 'edit') {
 		$formAction = 'edit';
 		$success = __('updated');
 		if ($action === 'add') {
@@ -298,8 +268,8 @@ class Scaffold extends Object {
 
 		if ($this->controller->_beforeScaffold($action)) {
 			if ($action == 'edit') {
-				if (isset($params['pass'][0])) {
-					$this->ScaffoldModel->id = $params['pass'][0];
+				if (isset($request->params['pass'][0])) {
+					$this->ScaffoldModel->id = $request['pass'][0];
 				}
 
 				if (!$this->ScaffoldModel->exists()) {
@@ -314,12 +284,12 @@ class Scaffold extends Object {
 				}
 			}
 
-			if (!empty($this->controller->data)) {
+			if (!empty($request->data)) {
 				if ($action == 'create') {
 					$this->ScaffoldModel->create();
 				}
 
-				if ($this->ScaffoldModel->save($this->controller->data)) {
+				if ($this->ScaffoldModel->save($request->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
 						$message = __(
 							sprintf('The %1$s has been %2$s', Inflector::humanize($this->modelKey), $success)
@@ -341,11 +311,11 @@ class Scaffold extends Object {
 				}
 			}
 
-			if (empty($this->controller->data)) {
+			if (empty($request->data)) {
 				if ($this->ScaffoldModel->id) {
-					$this->controller->data = $this->ScaffoldModel->read();
+					$this->controller->data = $request->data = $this->ScaffoldModel->read();
 				} else {
-					$this->controller->data = $this->ScaffoldModel->create();
+					$this->controller->data = $request->data = $this->ScaffoldModel->create();
 				}
 			}
 
@@ -373,13 +343,13 @@ class Scaffold extends Object {
  * @return mixed Success on delete, error if delete fails
  * @access private
  */
-	function __scaffoldDelete($params = array()) {
+	function __scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
 			$message = __(
 				sprintf("No id set for %s::delete()", Inflector::humanize($this->modelKey))
 			);
-			if (isset($params['pass'][0])) {
-				$id = $params['pass'][0];
+			if (isset($request->params['pass'][0])) {
+				$id = $request->params['pass'][0];
 			} elseif ($this->_validSession) {
 				$this->controller->Session->setFlash($message);
 				$this->controller->redirect($this->redirect);
@@ -433,11 +403,11 @@ class Scaffold extends Object {
  * scaffoldView is used to call default Scaffold methods if:
  * `public $scaffold;` is placed in the controller's class definition.
  *
- * @param array $params Parameters for scaffolding
+ * @param CakeRequest $request Request object for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error
  * @access private
  */
-	function __scaffold($params) {
+	function __scaffold(CakeRequest $request) {
 		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 		$prefixes = Configure::read('Routing.prefixes');
 		$scaffoldPrefix = $this->scaffoldActions;
@@ -460,41 +430,41 @@ class Scaffold extends Object {
 				);
 			}
 
-			if (in_array($params['action'], $this->scaffoldActions)) {
+			if (in_array($request->params['action'], $this->scaffoldActions)) {
 				if (!empty($prefixes)) {
-					$params['action'] = str_replace($scaffoldPrefix . '_', '', $params['action']);
+					$request->params['action'] = str_replace($scaffoldPrefix . '_', '', $request->params['action']);
 				}
-				switch ($params['action']) {
+				switch ($request->params['action']) {
 					case 'index':
 					case 'list':
-						$this->__scaffoldIndex($params);
+						$this->__scaffoldIndex($request);
 					break;
 					case 'view':
-						$this->__scaffoldView($params);
+						$this->__scaffoldView($request);
 					break;
 					case 'add':
 					case 'create':
-						$this->__scaffoldSave($params, 'add');
+						$this->__scaffoldSave($request, 'add');
 					break;
 					case 'edit':
 					case 'update':
-						$this->__scaffoldSave($params, 'edit');
+						$this->__scaffoldSave($request, 'edit');
 					break;
 					case 'delete':
-						$this->__scaffoldDelete($params);
+						$this->__scaffoldDelete($request);
 					break;
 				}
 			} else {
 				return $this->cakeError('missingAction', array(array(
 					'className' => $this->controller->name . "Controller",
-					'base' => $this->controller->base,
-					'action' => $this->action,
-					'webroot' => $this->controller->webroot
+					'base' => $request->base,
+					'action' => $request->action,
+					'webroot' => $request->webroot
 				)));
 			}
 		} else {
 			return $this->cakeError('missingDatabase', array(array(
-				'webroot' => $this->controller->webroot
+				'webroot' => $request->webroot
 			)));
 		}
 	}
