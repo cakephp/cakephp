@@ -179,11 +179,8 @@ class Scaffold {
 			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)));
 			if (isset($request->params['pass'][0])) {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
-			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash($message);
-				$this->controller->redirect($this->redirect);
 			} else {
-				return $this->controller->flash($message, '/' . Inflector::underscore($this->controller->viewPath));
+				return $this->_sendMessage($message);
 			}
 			$this->ScaffoldModel->recursive = 1;
 			$this->controller->request->data = $this->controller->data = $this->ScaffoldModel->read();
@@ -254,13 +251,7 @@ class Scaffold {
 
 				if (!$this->ScaffoldModel->exists()) {
 					$message = __(sprintf("Invalid id for %s::edit()", Inflector::humanize($this->modelKey)));
-					if ($this->_validSession) {
-						$this->controller->Session->setFlash($message);
-						$this->controller->redirect($this->redirect);
-					} else {
-						$this->controller->flash($message, $this->redirect);
-						$this->_output();
-					}
+					return $this->_sendMessage($message);
 				}
 			}
 
@@ -274,13 +265,7 @@ class Scaffold {
 						$message = __(
 							sprintf('The %1$s has been %2$s', Inflector::humanize($this->modelKey), $success)
 						);
-						if ($this->_validSession) {
-							$this->controller->Session->setFlash($message);
-							$this->controller->redirect($this->redirect);
-						} else {
-							$this->controller->flash($message, $this->redirect);
-							return $this->_output();
-						}
+						return $this->_sendMessage($message);
 					} else {
 						return $this->controller->_afterScaffoldSaveError($action);
 					}
@@ -329,40 +314,41 @@ class Scaffold {
 			);
 			if (isset($request->params['pass'][0])) {
 				$id = $request->params['pass'][0];
-			} elseif ($this->_validSession) {
-				$this->controller->Session->setFlash($message);
-				$this->controller->redirect($this->redirect);
 			} else {
-				$this->controller->flash($message, $this->redirect);
-				return $this->_output();
+				return $this->_sendMessage($message);
 			}
 
 			if ($this->ScaffoldModel->delete($id)) {
 				$message = __(
 					sprintf('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id)
 				);
-				if ($this->_validSession) {
-					$this->controller->Session->setFlash($message);
-					$this->controller->redirect($this->redirect);
-				} else {
-					$this->controller->flash($message, $this->redirect);
-					return $this->_output();
-				}
+				return $this->_sendMessage($message);
 			} else {
 				$message = __(sprintf(
 					'There was an error deleting the %1$s with id: %2$d',
 					Inflector::humanize($this->modelClass), $id
 				));
-				if ($this->_validSession) {
-					$this->controller->Session->setFlash($message);
-					$this->controller->redirect($this->redirect);
-				} else {
-					$this->controller->flash($message, $this->redirect);
-					return $this->_output();
-				}
+				return $this->_sendMessage($message);
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
 			return $this->_scaffoldError();
+		}
+	}
+
+/**
+ * Sends a message to the user.  Either uses Sessions or flash messages depending 
+ * on the availability of a session
+ *
+ * @param string $message Message to display
+ * @return void
+ */
+	protected function _sendMessage($message) {
+		if ($this->_validSession) {
+			$this->controller->Session->setFlash($message);
+			$this->controller->redirect($this->redirect);
+		} else {
+			$this->controller->flash($message, $this->redirect);
+			$this->_output();
 		}
 	}
 
