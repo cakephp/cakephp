@@ -59,4 +59,3 @@ class JoinCFixture extends CakeTestFixture {
 		array('name' => 'Join C 3', 'created' => '2008-01-03 10:56:13', 'updated' => '2008-01-03 10:56:13')
 	);
 }
-?>

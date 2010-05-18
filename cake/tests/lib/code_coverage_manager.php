@@ -799,4 +799,3 @@ class CodeCoverageManager {
 		return false;
 	}
 }
-?>

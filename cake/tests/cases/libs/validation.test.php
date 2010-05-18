@@ -2115,4 +2115,3 @@ class ValidationTest extends CakeTestCase {
 	// 	$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
 	// }
 }
-?>

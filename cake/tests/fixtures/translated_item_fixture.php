@@ -57,5 +57,3 @@ class TranslatedItemFixture extends CakeTestFixture {
 		array('slug' => 'third_translated')
 	);
 }
-
-?>

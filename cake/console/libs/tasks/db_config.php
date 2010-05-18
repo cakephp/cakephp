@@ -362,4 +362,3 @@ class DbConfigTask extends Shell {
 		return $useDbConfig;
 	}
 }
-?>

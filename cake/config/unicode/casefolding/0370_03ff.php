@@ -101,4 +101,3 @@ $config['0370_03ff'][] = array('upper' => 1018, 'status' => 'C', 'lower' => arra
 $config['0370_03ff'][] = array('upper' => 1021, 'status' => 'C', 'lower' => array(891)); /* GREEK CAPITAL REVERSED LUNATE SIGMA SYMBOL */
 $config['0370_03ff'][] = array('upper' => 1022, 'status' => 'C', 'lower' => array(892)); /* GREEK CAPITAL DOTTED LUNATE SIGMA SYMBOL */
 $config['0370_03ff'][] = array('upper' => 1023, 'status' => 'C', 'lower' => array(893)); /* GREEK CAPITAL REVERSED DOTTED LUNATE SIGMA SYMBOL */
-?>

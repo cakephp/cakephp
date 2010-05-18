@@ -62,5 +62,3 @@ class ArticleFixture extends CakeTestFixture {
 		array('user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
 	);
 }
-
-?>

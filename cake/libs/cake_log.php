@@ -281,4 +281,3 @@ class CakeLog {
 if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
 	set_error_handler(array('CakeLog', 'handleError'));
 }
-?>

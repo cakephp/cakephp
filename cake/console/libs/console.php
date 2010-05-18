@@ -354,4 +354,3 @@ class ConsoleShell extends Shell {
 		return true;
 	}
 }
-?>

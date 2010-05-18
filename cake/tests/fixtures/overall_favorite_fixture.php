@@ -58,4 +58,3 @@ class OverallFavoriteFixture extends CakeTestFixture {
 		array('id' => 2, 'model_type' => 'Book', 'model_id' => '1', 'priority' => '2')
 	);
 }
-?>

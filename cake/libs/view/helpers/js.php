@@ -1074,4 +1074,3 @@ class JsBaseEngineHelper extends AppHelper {
 		return $out;
 	}
 }
-?>

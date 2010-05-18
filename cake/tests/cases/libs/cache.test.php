@@ -383,4 +383,3 @@ class CacheTest extends CakeTestCase {
 	}
 
 }
-?>

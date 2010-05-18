@@ -680,4 +680,3 @@ class BasicsTest extends CakeTestCase {
 		$this->assertEqual($result, array('Blog', 'Post'));
 	}
 }
-?>

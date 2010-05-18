@@ -51,4 +51,3 @@ class UnconventionalTreeFixture extends CakeTestFixture {
 		'right'	=> array('type' => 'integer','null' => false),
 	);
 }
-?>

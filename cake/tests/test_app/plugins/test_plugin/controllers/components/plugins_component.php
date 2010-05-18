@@ -20,4 +20,3 @@
 class PluginsComponentComponent extends Object {
 	public $components = array('TestPlugin.OtherComponent');
 }
-?>

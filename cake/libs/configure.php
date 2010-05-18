@@ -1261,4 +1261,3 @@ class App extends Object {
 		}
 	}
 }
-?>

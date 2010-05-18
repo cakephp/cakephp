@@ -56,5 +56,3 @@ class MyProductFixture extends CakeTestFixture {
 		array('id' => 2, 'name' => 'computer'),
 	);
 }
-
-?>

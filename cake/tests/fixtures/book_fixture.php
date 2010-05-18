@@ -59,4 +59,3 @@ class BookFixture extends CakeTestFixture {
 		array('id' => 1, 'isbn' => '1234567890', 'title' => 'Faust', 'author' => 'Johann Wolfgang von Goethe')
 	);
 }
-?>

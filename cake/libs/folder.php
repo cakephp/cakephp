@@ -759,4 +759,3 @@ class Folder {
 		return $lastChar === '/' || $lastChar === '\\';
 	}
 }
-?>

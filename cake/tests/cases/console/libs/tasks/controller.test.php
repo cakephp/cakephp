@@ -581,4 +581,3 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->execute();
 	}
 }
-?>

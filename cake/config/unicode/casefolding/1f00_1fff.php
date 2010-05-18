@@ -215,4 +215,3 @@ $config['1f00_1fff'][] = array('upper' => 8186, 'status' => 'C', 'lower' => arra
 $config['1f00_1fff'][] = array('upper' => 8187, 'status' => 'C', 'lower' => array(8061)); /* GREEK CAPITAL LETTER OMEGA WITH OXIA */
 $config['1f00_1fff'][] = array('upper' => 8188, 'status' => 'F', 'lower' => array(969, 953)); /* GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI */
 $config['1f00_1fff'][] = array('upper' => 8188, 'status' => 'S', 'lower' => array(8179)); /* GREEK CAPITAL LETTER OMEGA WITH PROSGEGRAMMENI */
-?>

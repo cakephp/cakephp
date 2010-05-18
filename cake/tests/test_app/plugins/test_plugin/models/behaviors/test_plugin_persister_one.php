@@ -31,7 +31,4 @@
  * @subpackage    cake.cake.console.libs
  */
 class TestPluginPersisterOneBehavior extends ModelBehavior {
-	
-	
 }
-?>

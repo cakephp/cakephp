@@ -61,5 +61,3 @@ class FeaturedFixture extends CakeTestFixture {
 		array('article_featured_id' => 2, 'category_id' => 1, 'published_date' => '2007-03-31 10:39:23', 'end_date' => '2007-05-15 10:39:23', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
 	);
 }
-
-?>

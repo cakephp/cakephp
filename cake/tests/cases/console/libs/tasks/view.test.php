@@ -635,4 +635,3 @@ class ViewTaskTest extends CakeTestCase {
 		$this->assertEqual($result, 'form');
 	}
 }
-?>

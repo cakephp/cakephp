@@ -56,4 +56,3 @@ class StoriesTagFixture extends CakeTestFixture {
 		array('story' => 1, 'tag_id' => 1)
 	);
 }
-?>

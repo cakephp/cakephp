@@ -65,5 +65,3 @@ class TestPluginCommentFixture extends CakeTestFixture {
 		array('id' => 6, 'article_id' => 2, 'user_id' => 2, 'comment' => 'Second Comment for Second Plugin Article', 'published' => 'Y', 'created' => '2008-09-24 10:55:23', 'updated' => '2008-09-24 10:57:31')
 	);
 }
-
-?>

@@ -929,4 +929,3 @@ class L10nTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

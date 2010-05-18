@@ -209,4 +209,3 @@ class TemplateTask extends Shell {
 		return false;
 	}
 }
-?>

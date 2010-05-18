@@ -414,6 +414,4 @@ class Dispatcher extends Object {
 			ob_end_flush();
 		}
 	}
-
 }
-?>

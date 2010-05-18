@@ -659,5 +659,3 @@ if (!function_exists('sortByKey')) {
 		$string = str_replace('/', '_', $string);
 		return $string;
 	}
-
-?>

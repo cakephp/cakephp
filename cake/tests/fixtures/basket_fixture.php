@@ -59,5 +59,3 @@ class BasketFixture extends CakeTestFixture {
 		array('id' => 2, 'type' => 'file', 'name' => 'basket2', 'object_id' => 2, 'user_id' => 1),
 	);
 }
-
-?>

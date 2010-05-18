@@ -63,4 +63,3 @@ class ConsoleGroupTest extends TestSuite {
 		TestManager::addTestFile($this, $path . 'view');
 	}
 }
-?>

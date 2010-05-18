@@ -61,4 +61,3 @@ class SessionFixture extends CakeTestFixture {
  */
 	public $records = array();
 }
-?>

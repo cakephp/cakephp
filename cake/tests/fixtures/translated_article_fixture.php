@@ -60,5 +60,3 @@ class TranslatedArticleFixture extends CakeTestFixture {
 		array('id' => 3, 'user_id' => 1, 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
 	);
 }
-
-?>

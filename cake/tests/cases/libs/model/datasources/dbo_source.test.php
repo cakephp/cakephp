@@ -4408,4 +4408,3 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 }
-?>

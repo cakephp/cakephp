@@ -779,4 +779,3 @@ class TimeHelperTest extends CakeTestCase {
 		$this->assertEqual($this->Time->format($time, '%c'), $this->Time->i18nFormat($time, '%c'));
 	}
 }
-?>

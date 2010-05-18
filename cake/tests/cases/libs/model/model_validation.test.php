@@ -647,4 +647,3 @@ class ModelValidationTest extends BaseModelTest {
 	}
 
 }
-?>

@@ -56,5 +56,3 @@ class FilmFileFixture extends CakeTestFixture {
 		array('id' => 2, 'name' => 'two')
 	);
 }
-
-?>

@@ -285,4 +285,3 @@ class XmlHelperTest extends CakeTestCase {
 		$this->assertIdentical($result, $expected);
 	}
 }
-?>

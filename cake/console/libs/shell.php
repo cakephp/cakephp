@@ -620,4 +620,3 @@ class Shell extends Object {
 		return App::pluginPath($pluginName);
 	}
 }
-?>

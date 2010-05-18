@@ -52,4 +52,3 @@ class ModelGroupTest extends TestSuite {
 		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_validation');
 	}
 }
-?>

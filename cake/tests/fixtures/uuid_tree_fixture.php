@@ -49,4 +49,3 @@ class UuidTreeFixture extends CakeTestFixture {
 		'rght'	=> array('type' => 'integer','null' => false)
 	);
 }
-?>

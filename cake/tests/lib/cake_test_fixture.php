@@ -182,4 +182,3 @@ class CakeTestFixture {
 		return $return;
 	}
 }
-?>

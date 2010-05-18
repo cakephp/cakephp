@@ -722,6 +722,4 @@ class HelperTest extends CakeTestCase {
 
 		Configure::write('App.www_root', $webRoot);
 	}
-
 }
-?>

@@ -46,5 +46,3 @@ class ArticleFeaturedsTagsFixture extends CakeTestFixture {
 		'indexes' => array('UNIQUE_FEATURED' => array('column'=> array('article_featured_id', 'tag_id'), 'unique'=> 1))
 	);
 }
-
-?>

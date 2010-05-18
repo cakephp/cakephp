@@ -334,4 +334,3 @@ class TextHelper extends AppHelper {
 		}
 	}
 }
-?>

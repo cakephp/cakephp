@@ -484,4 +484,3 @@ class ShellTest extends CakeTestCase {
 		$Folder->delete();
 	}
 }
-?>

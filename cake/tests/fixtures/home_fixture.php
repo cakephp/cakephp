@@ -60,5 +60,3 @@ class HomeFixture extends CakeTestFixture {
 		array('another_article_id' => 3, 'advertisement_id' => 1, 'title' => 'Second Home', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31')
 	);
 }
-
-?>

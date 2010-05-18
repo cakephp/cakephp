@@ -1412,4 +1412,3 @@ class ControllerTest extends CakeTestCase {
 		$MockedController->shutdownProcess();
 	}
 }
-?>

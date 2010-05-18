@@ -874,4 +874,3 @@ class Helper extends Object {
 		$this->__cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->__cleaned);
 	}
 }
-?>

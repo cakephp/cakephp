@@ -17,5 +17,4 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class BananaHelper extends Helper {
-	
 }

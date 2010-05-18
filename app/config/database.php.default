@@ -93,4 +93,3 @@ class DATABASE_CONFIG {
 		'prefix' => '',
 	);
 }
-?>

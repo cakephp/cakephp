@@ -24,6 +24,4 @@ class TestSource extends DataSource {
 	function delete($model, $id) {
 		return compact('model', 'id');
 	}
-
 }
-?>

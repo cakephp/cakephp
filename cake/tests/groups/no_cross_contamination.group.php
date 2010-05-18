@@ -65,4 +65,3 @@ class NoCrossContaminationGroupTest extends TestSuite {
 		}
 	}
 }
-?>

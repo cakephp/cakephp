@@ -366,4 +366,3 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
 	}
 }
-?>

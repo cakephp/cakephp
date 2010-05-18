@@ -569,4 +569,3 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 }
-?>

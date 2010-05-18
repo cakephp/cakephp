@@ -62,4 +62,3 @@ class DeviceTypeFixture extends CakeTestFixture {
 		array('device_type_category_id' => 1, 'feature_set_id' => 1, 'exterior_type_category_id' => 1, 'image_id' => 1, 'extra1_id' => 1, 'extra2_id' => 1, 'name' => 'DeviceType 1', 'order' => 0)
 	);
 }
-?>

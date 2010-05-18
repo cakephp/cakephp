@@ -472,4 +472,3 @@ class SanitizeTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

@@ -491,4 +491,3 @@ class ExtractTask extends Shell {
 		}
 	}
 }
-?>

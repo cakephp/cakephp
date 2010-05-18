@@ -345,4 +345,3 @@ class JqueryEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

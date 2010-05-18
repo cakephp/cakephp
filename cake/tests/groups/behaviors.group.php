@@ -46,4 +46,3 @@ class BehaviorsGroupTest extends TestSuite {
 		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors');
 	}
 }
-?>

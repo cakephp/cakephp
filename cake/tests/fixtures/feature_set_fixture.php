@@ -55,4 +55,3 @@ class FeatureSetFixture extends CakeTestFixture {
 		array('name' => 'FeatureSet 1')
 	);
 }
-?>

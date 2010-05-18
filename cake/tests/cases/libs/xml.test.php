@@ -1435,4 +1435,3 @@ class XmlTest extends CakeTestCase {
 		$this->assertWithinMargin($start, $end, 3600, 'Memory leaked %s');
 	}
 }
-?>

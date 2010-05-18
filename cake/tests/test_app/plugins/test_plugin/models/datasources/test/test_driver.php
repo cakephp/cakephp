@@ -2,5 +2,3 @@
 
 class TestDriver extends TestSource {
 }
-
-?>

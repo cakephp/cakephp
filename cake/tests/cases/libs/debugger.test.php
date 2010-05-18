@@ -331,4 +331,3 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertIsA($result, 'Debugger');
 	}
 }
-?>

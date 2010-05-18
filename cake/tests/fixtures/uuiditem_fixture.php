@@ -61,4 +61,3 @@ class UuiditemFixture extends CakeTestFixture {
 		array('id' => '483798c8-c7cc-430e-8cf9-4fcc40cf8569', 'published' => 0, 'name' => 'Item 6')
 	);
 }
-?>

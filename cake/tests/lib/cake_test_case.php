@@ -818,4 +818,3 @@ class CakeTestCase extends UnitTestCase {
 		}
 	}
 }
-?>

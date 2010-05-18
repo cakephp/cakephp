@@ -57,4 +57,3 @@ class ProjectFixture extends CakeTestFixture {
 		array('name' => 'Project 3')
 	);
 }
-?>

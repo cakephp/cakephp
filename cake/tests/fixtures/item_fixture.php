@@ -62,4 +62,3 @@ class ItemFixture extends CakeTestFixture {
 		array('syfile_id' => 6, 'published' => 0, 'name' => 'Item 6')
 	);
 }
-?>

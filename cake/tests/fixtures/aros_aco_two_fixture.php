@@ -79,5 +79,3 @@ class ArosAcoTwoFixture extends CakeTestFixture {
 		array('id' => 20, 'aro_id' => '10', 'aco_id' => '10', '_create' => '-1',  '_read' => '-1', '_update' => '-1', '_delete' => '-1'),
 	);
 }
-
-?>

@@ -55,5 +55,3 @@ class SecondaryModelFixture extends CakeTestFixture {
 		array('secondary_name' => 'Secondary Name Existing')
 	);
 }
-
-?>

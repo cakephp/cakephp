@@ -56,4 +56,3 @@ $config['2150_218f'][] = array('upper' => 8557, 'status' => 'C', 'lower' => arra
 $config['2150_218f'][] = array('upper' => 8558, 'status' => 'C', 'lower' => array(8574)); /* ROMAN NUMERAL FIVE HUNDRED */
 $config['2150_218f'][] = array('upper' => 8559, 'status' => 'C', 'lower' => array(8575)); /* ROMAN NUMERAL ONE THOUSAND */
 $config['2150_218f'][] = array('upper' => 8579, 'status' => 'C', 'lower' => array(8580)); /* ROMAN NUMERAL REVERSED ONE HUNDRED */
-?>

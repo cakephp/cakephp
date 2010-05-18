@@ -66,5 +66,3 @@ class AdFixture extends CakeTestFixture {
 		array('parent_id' => null, 'lft' => 13, 'rght' => 14, 'campaign_id' => 3, 'name' => 'New York')
 	);
 }
-
-?>

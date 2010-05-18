@@ -65,4 +65,3 @@ $config['ff00_ffef'][] = array('upper' => 65335, 'status' => 'C', 'lower' => arr
 $config['ff00_ffef'][] = array('upper' => 65336, 'status' => 'C', 'lower' => array(65368)); /* FULLWIDTH LATIN CAPITAL LETTER X */
 $config['ff00_ffef'][] = array('upper' => 65337, 'status' => 'C', 'lower' => array(65369)); /* FULLWIDTH LATIN CAPITAL LETTER Y */
 $config['ff00_ffef'][] = array('upper' => 65338, 'status' => 'C', 'lower' => array(65370)); /* FULLWIDTH LATIN CAPITAL LETTER Z */
-?>

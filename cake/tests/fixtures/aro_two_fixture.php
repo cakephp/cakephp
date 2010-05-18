@@ -69,5 +69,3 @@ class AroTwoFixture extends CakeTestFixture {
 		array('id' => 10, 'parent_id' => 4, 'model' => 'User',  'foreign_key' => '6', 'alias' => 'Milton',   'lft' => '17',  'rght' => '18'),
 	);
 }
-
-?>

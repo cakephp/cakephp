@@ -58,5 +58,3 @@ class NodeFixture extends CakeTestFixture {
 		array('id' => 2, 'name' => 'Second', 'state' => 60),
 	);
 }
-
-?>

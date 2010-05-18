@@ -223,4 +223,3 @@ class BakeShell extends Shell {
 		$this->out();
 	}
 }
-?>

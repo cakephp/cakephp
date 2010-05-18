@@ -1928,4 +1928,3 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

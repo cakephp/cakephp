@@ -426,4 +426,3 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

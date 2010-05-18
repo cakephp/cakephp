@@ -234,4 +234,3 @@ class SessionHelperTest extends CakeTestCase {
 		//$this->assertFalse($this->Session->valid());
 	}
 }
-?>

@@ -9341,4 +9341,3 @@ mb_strtoupper does not work for these strings.
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

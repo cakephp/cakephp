@@ -727,4 +727,3 @@ class TimeHelper extends AppHelper {
 		return strftime($format, $date);
 	}
 }
-?>

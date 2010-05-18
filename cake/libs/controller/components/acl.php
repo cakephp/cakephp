@@ -691,4 +691,3 @@ class IniAcl extends Object implements AclInterface {
 		return $array;
 	}
 }
-?>

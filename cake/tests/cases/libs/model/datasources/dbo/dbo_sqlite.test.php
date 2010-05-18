@@ -347,4 +347,3 @@ class DboSqliteTest extends CakeTestCase {
 		$this->db->query('DROP TABLE ' . $tableName);
 	}
 }
-?>

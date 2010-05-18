@@ -281,5 +281,3 @@ class SessionComponent extends CakeSession {
 		return $this->started();
 	}
 }
-
-?>

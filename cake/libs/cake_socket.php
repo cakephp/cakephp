@@ -289,4 +289,3 @@ class CakeSocket {
 		return true;
 	}
 }
-?>

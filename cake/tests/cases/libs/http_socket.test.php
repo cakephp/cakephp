@@ -1525,4 +1525,3 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertIdentical($return, true);
 	}
 }
-?>

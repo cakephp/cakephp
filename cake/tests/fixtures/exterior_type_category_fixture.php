@@ -56,4 +56,3 @@ class ExteriorTypeCategoryFixture extends CakeTestFixture {
 		array('image_id' => 1, 'name' => 'ExteriorTypeCategory 1')
 	);
 }
-?>

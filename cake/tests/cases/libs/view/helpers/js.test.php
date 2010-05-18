@@ -838,4 +838,3 @@ class JsBaseEngineTestCase extends CakeTestCase {
 	}
 
 }
-?>

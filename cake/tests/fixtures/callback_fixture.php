@@ -60,5 +60,3 @@ class CallbackFixture extends CakeTestFixture {
 		array('user' => 'user3', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
 	);
 }
-
-?>

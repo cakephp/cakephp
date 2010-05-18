@@ -55,4 +55,3 @@ class DocumentDirectoryFixture extends CakeTestFixture {
 		array('name' => 'DocumentDirectory 1')
 	);
 }
-?>

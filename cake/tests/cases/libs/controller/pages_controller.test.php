@@ -70,4 +70,3 @@ class PagesControllerTest extends CakeTestCase {
 		$this->assertEqual($Pages->viewVars['subpage'], 'posts');
 	}
 }
-?>

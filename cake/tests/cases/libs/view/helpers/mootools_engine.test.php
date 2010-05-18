@@ -352,4 +352,3 @@ class MooEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

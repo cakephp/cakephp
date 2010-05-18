@@ -512,4 +512,3 @@ class File {
 		return copy($this->path, $dest);
 	}
 }
-?>

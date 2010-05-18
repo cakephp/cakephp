@@ -802,4 +802,3 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 	}
 }
-?>

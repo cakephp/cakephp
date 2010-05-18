@@ -115,4 +115,3 @@ class ApcEngine extends CacheEngine {
 	}
 
 }
-?>
