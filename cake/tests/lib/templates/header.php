@@ -90,7 +90,10 @@
 			div.code-coverage-results div.uncovered span.content { background:#ecc; }
 			div.code-coverage-results div.covered span.content { background:#cec; }
 			div.code-coverage-results div.ignored span.content { color:#aaa; }
-			div.code-coverage-results div:hover { background:#e8e8e8;}
+			div.code-coverage-results div:hover {
+				background:#e8e8e8;
+				cursor: pointer;
+			}
 			div.code-coverage-results div.covered:hover span.content { background:#b4edb4;}
 			div.code-coverage-results div.uncovered:hover span.content { background:#edb4b4;}
 			div.code-coverage-results span.line-num {
