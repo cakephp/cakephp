@@ -265,7 +265,9 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$context = $message->getTrace();
 		$realContext = $context[3];
 		$class = new ReflectionClass($realContext['class']);
-		if ($class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase') {
+		$deeper = $class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase';
+		$deeper = $deeper || !$class->isSubclassOf('PHPUnit_Framework_TestCase');
+		if ($deeper) {
 			$realContext = $context[4];
 			$context = $context[3];
 		} else {
@@ -342,12 +344,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * Prints the message for skipping tests.
  *
  * @param string $message Text of skip condition.
+ * @param PHPUnit_Framework_TestCase $test the test method skipped
  * @return void
  */
-	public function paintSkip($message) {
+	public function paintSkip($message, $test) {
 		echo "<li class='skipped'>\n";
 		echo "<span>Skipped</span> ";
-		echo $this->_htmlEntities($message);
+		echo $test->getName() . ': ' . $this->_htmlEntities($message->getMessage());
 		echo "</li>\n";
 	}
 

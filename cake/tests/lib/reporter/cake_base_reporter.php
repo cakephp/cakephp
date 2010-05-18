@@ -259,6 +259,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 * @param  float $time
 */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		$this->paintSkip($e, $test);
 	}
 
 /**
