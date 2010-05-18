@@ -140,7 +140,7 @@ class Scaffold extends Object {
 		if (!is_object($this->controller->{$this->modelClass})) {
 			return $this->cakeError('missingModel', array(array(
 				'className' => $this->modelClass,
-				'webroot' => $request->webroot, 
+				'webroot' => $request->webroot,
 				'base' => $request->base
 			)));
 		}
@@ -157,7 +157,7 @@ class Scaffold extends Object {
 		$singularHumanName = Inflector::humanize(Inflector::underscore($modelClass));
 		$pluralHumanName = Inflector::humanize(Inflector::underscore($this->controller->name));
 		$scaffoldFields = array_keys($this->ScaffoldModel->schema());
-		$associations = $this->__associations();
+		$associations = $this->_associations();
 
 		$this->controller->set(compact(
 			'title_for_layout', 'modelClass', 'primaryKey', 'displayField', 'singularVar', 'pluralVar',
@@ -170,7 +170,7 @@ class Scaffold extends Object {
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
 		);
-		$this->__scaffold($request);
+		$this->_scaffold($request);
 	}
 
 /**
@@ -188,9 +188,8 @@ class Scaffold extends Object {
  *
  * @param CakeRequest $request Request Object for scaffolding
  * @return mixed A rendered view of a row from Models database table
- * @access private
  */
-	function __scaffoldView(CakeRequest $request) {
+	protected function _scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
 
 			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)));
@@ -210,7 +209,7 @@ class Scaffold extends Object {
 			$this->controller->render($this->request['action'], $this->layout);
 			$this->_output();
 		} elseif ($this->controller->_scaffoldError('view') === false) {
-			return $this->__scaffoldError();
+			return $this->_scaffoldError();
 		}
 	}
 
@@ -219,9 +218,8 @@ class Scaffold extends Object {
  *
  * @param array $params Parameters for scaffolding
  * @return mixed A rendered view listing rows from Models database table
- * @access private
  */
-	function __scaffoldIndex($params) {
+	protected function _scaffoldIndex($params) {
 		if ($this->controller->_beforeScaffold('index')) {
 			$this->ScaffoldModel->recursive = 0;
 			$this->controller->set(
@@ -230,7 +228,7 @@ class Scaffold extends Object {
 			$this->controller->render($this->request['action'], $this->layout);
 			$this->_output();
 		} elseif ($this->controller->_scaffoldError('index') === false) {
-			return $this->__scaffoldError();
+			return $this->_scaffoldError();
 		}
 	}
 
@@ -239,9 +237,8 @@ class Scaffold extends Object {
  *
  * @param string $action Action (add or edit)
  * @return mixed A rendered view with a form to edit or add a record in the Models database table
- * @access private
  */
-	function __scaffoldForm($action = 'edit') {
+	protected function _scaffoldForm($action = 'edit') {
 		$this->controller->viewVars['scaffoldFields'] = array_merge(
 			$this->controller->viewVars['scaffoldFields'],
 			array_keys($this->ScaffoldModel->hasAndBelongsToMany)
@@ -256,9 +253,8 @@ class Scaffold extends Object {
  * @param CakeRequest $request Request Object for scaffolding
  * @param string $action add or edt
  * @return mixed Success on save/update, add/edit form if data is empty or error if save or update fails
- * @access private
  */
-	function __scaffoldSave(CakeRequest $request, $action = 'edit') {
+	protected function _scaffoldSave(CakeRequest $request, $action = 'edit') {
 		$formAction = 'edit';
 		$success = __('updated');
 		if ($action === 'add') {
@@ -330,9 +326,9 @@ class Scaffold extends Object {
 				$this->controller->set($varName, $this->ScaffoldModel->{$assocName}->find('list'));
 			}
 
-			return $this->__scaffoldForm($formAction);
+			return $this->_scaffoldForm($formAction);
 		} elseif ($this->controller->_scaffoldError($action) === false) {
-			return $this->__scaffoldError();
+			return $this->_scaffoldError();
 		}
 	}
 
@@ -341,9 +337,8 @@ class Scaffold extends Object {
  *
  * @param array $params Parameters for scaffolding
  * @return mixed Success on delete, error if delete fails
- * @access private
  */
-	function __scaffoldDelete(CakeRequest $request) {
+	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
 			$message = __(
 				sprintf("No id set for %s::delete()", Inflector::humanize($this->modelKey))
@@ -383,7 +378,7 @@ class Scaffold extends Object {
 				}
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
-			return $this->__scaffoldError();
+			return $this->_scaffoldError();
 		}
 	}
 
@@ -391,9 +386,8 @@ class Scaffold extends Object {
  * Show a scaffold error
  *
  * @return mixed A rendered view showing the error
- * @access private
  */
-	function __scaffoldError() {
+	protected function _scaffoldError() {
 		return $this->controller->render('error', $this->layout);
 		$this->_output();
 	}
@@ -405,10 +399,9 @@ class Scaffold extends Object {
  *
  * @param CakeRequest $request Request object for scaffolding
  * @return mixed A rendered view of scaffold action, or showing the error
- * @access private
  */
-	function __scaffold(CakeRequest $request) {
-		$db = &ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
+	protected function _scaffold(CakeRequest $request) {
+		$db = ConnectionManager::getDataSource($this->ScaffoldModel->useDbConfig);
 		$prefixes = Configure::read('Routing.prefixes');
 		$scaffoldPrefix = $this->scaffoldActions;
 
@@ -437,21 +430,21 @@ class Scaffold extends Object {
 				switch ($request->params['action']) {
 					case 'index':
 					case 'list':
-						$this->__scaffoldIndex($request);
+						$this->_scaffoldIndex($request);
 					break;
 					case 'view':
-						$this->__scaffoldView($request);
+						$this->_scaffoldView($request);
 					break;
 					case 'add':
 					case 'create':
-						$this->__scaffoldSave($request, 'add');
+						$this->_scaffoldSave($request, 'add');
 					break;
 					case 'edit':
 					case 'update':
-						$this->__scaffoldSave($request, 'edit');
+						$this->_scaffoldSave($request, 'edit');
 					break;
 					case 'delete':
-						$this->__scaffoldDelete($request);
+						$this->_scaffoldDelete($request);
 					break;
 				}
 			} else {
@@ -473,9 +466,8 @@ class Scaffold extends Object {
  * Returns associations for controllers models.
  *
  * @return array Associations for model
- * @access private
  */
-	function __associations() {
+	protected function _associations() {
 		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
 		$associations = array();
 

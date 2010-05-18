@@ -92,7 +92,7 @@ class TestScaffoldMock extends Scaffold {
  *
  * @param unknown_type $params
  */
-    function __scaffold($params) {
+    function _scaffold($params) {
         $this->_params = $params;
     }
 
