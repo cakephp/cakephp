@@ -31,7 +31,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  */
-class Scaffold extends Object {
+class Scaffold {
 
 /**
  * Controller object
@@ -76,20 +76,6 @@ class Scaffold extends Object {
 	public $request;
 
 /**
- * File extension. Defaults to Cake's template ".ctp".
- *
- * @var array
- */
-	public $ext = '.ctp';
-
-/**
- * Sub-directory for this view file.
- *
- * @var string
- */
-	public $subDir = null;
-
-/**
  * valid session.
  *
  * @var boolean
@@ -104,9 +90,7 @@ class Scaffold extends Object {
  * @access private
  */
 	private $__passedVars = array(
-		'action', 'base', 'webroot', 'layout', 'name',
-		'viewPath', 'ext', 'params', 'data', 'plugin', 'cacheAction',
-		'request'
+		'layout', 'name', 'viewPath', 'request'
 	);
 
 /**
