@@ -2966,6 +2966,19 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that order() will accept objects made from DboSource::expression
+ *
+ * @return void
+ */
+	function testOrderWithExpression() {
+		$expression = $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
+		$result = $this->testDb->order($expression);
+		$expected = " ORDER BY CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col";
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * testMergeAssociations method
  *
