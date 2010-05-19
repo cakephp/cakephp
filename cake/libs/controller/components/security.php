@@ -106,7 +106,6 @@ class SecurityComponent extends Object {
 	var $loginOptions = array('type' => '', 'prompt' => null);
 /**
  * An associative array of usernames/passwords used for HTTP-authenticated logins.
- * If using digest authentication, passwords should be MD5-hashed.
  *
  * @var array
  * @access public
