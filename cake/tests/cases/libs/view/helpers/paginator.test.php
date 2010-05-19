@@ -19,8 +19,6 @@
  */
 App::import('Helper', array('Html', 'Paginator', 'Form', 'Js'));
 
-Mock::generate('JsHelper', 'PaginatorMockJsHelper');
-
 /**
  * PaginatorHelperTest class
  *
@@ -58,7 +56,7 @@ class PaginatorHelperTest extends CakeTestCase {
 			)
 		);
 		$this->Paginator->Html = new HtmlHelper();
-		$this->Paginator->Js = new PaginatorMockJsHelper();
+		$this->Paginator->Js = $this->getMock('PaginatorHelper');
 
 		Configure::write('Routing.prefixes', array());
 		Router::reload();
@@ -1851,8 +1849,10 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxLinkGenerationLink() {
-		$this->Paginator->Js->expectCallCount('link', 1);
-		$this->Paginator->Js->setReturnValue('link', 'I am a link');
+		$this->Paginator->Js->expects($this->once())
+			->method('link')
+			->will($this->returnValue('I am a link'));
+
 		$result = $this->Paginator->link('test', array('controller' => 'posts'), array('update' => '#content'));
 		$this->assertEqual($result, 'I am a link');
 	}
@@ -1863,6 +1863,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testMockAjaxProviderClassInjection() {
+		$mock = $this->getMock('PaginatorHelper', array(), array(), 'PaginatorMockJsHelper');
 		$Paginator = new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(
 			'Article' => array(
@@ -1875,8 +1876,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array()
 			)
 		);
-		$Paginator->PaginatorMockJs = new PaginatorMockJsHelper();
-		$Paginator->PaginatorMockJs->expectOnce('link');
+		$Paginator->PaginatorMockJs = $mock;
+		$Paginator->PaginatorMockJs->expects($this->once())->method('link');
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
 		$this->expectException();
