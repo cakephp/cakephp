@@ -35,7 +35,7 @@ class CustomValidator {
  * @access public
  */
 	function customValidate($check) {
-		return preg_match('/^[0-9]{3}$/', $check);
+		return (bool)preg_match('/^[0-9]{3}$/', $check);
 	}
 }
 
