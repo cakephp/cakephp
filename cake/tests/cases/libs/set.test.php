@@ -1539,7 +1539,7 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertTrue(Set::check($set, 'My Index 1.First'));
 		$this->assertTrue(Set::check($set, 'My Index 1'));
-		$this->assertTrue(Set::check($set, array()));
+		$this->assertEquals(Set::check($set, array()), $set);
 
 		$set = array(
 			'My Index 1' => array('First' => array('Second' => array('Third' => array('Fourth' => 'Heavy. Nesting.'))))
@@ -1563,8 +1563,9 @@ class SetTest extends CakeTestCase {
 		$set = Set::remove($set, 'Session Test');
 		$this->assertFalse(Set::check($set, 'Session Test'));
 
-		$this->assertTrue($set = Set::insert(array(), 'Session Test.Test Case', "test"));
-		$this->assertTrue(Set::check($set, 'Session Test.Test Case'));
+		$expected = array('Session Test' => array('Test Case' => 'test'));
+		$this->assertEquals(Set::insert(array(), 'Session Test.Test Case', "test"), $expected);
+		$this->assertTrue(Set::check($expected, 'Session Test.Test Case'));
 	}
 
 /**
@@ -1682,9 +1683,9 @@ class SetTest extends CakeTestCase {
  */
 	function testCombine() {
 		$result = Set::combine(array(), '{n}.User.id', '{n}.User.Data');
-		$this->assertFalse($result);
+		$this->assertTrue(empty($result));
 		$result = Set::combine('', '{n}.User.id', '{n}.User.Data');
-		$this->assertFalse($result);
+		$this->assertTrue(empty($result));
 
 		$a = array(
 			array('User' => array('id' => 2, 'group_id' => 1,
@@ -2266,7 +2267,7 @@ class SetTest extends CakeTestCase {
 		$expected->redirect = '';
 		$expected->created = "1195055503";
 		$expected->updated = "1195055503";
-		$this->assertIdentical($mapped[1], $expected);
+		$this->assertEquals($mapped[1], $expected);
 
 		$ids = array();
 
@@ -2340,7 +2341,7 @@ class SetTest extends CakeTestCase {
 		$test[0] = $expected;
 		$test[1] = $expected2;
 
-		$this->assertIdentical($test, $result);
+		$this->assertEquals($test, $result);
 
 		$result = Set::map(
 				array(
