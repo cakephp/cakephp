@@ -106,7 +106,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			sprintf('<strong>%s</strong>%s', __('new', true ), __('CakePHP 1.3 Docs', true )),
+			sprintf('<strong>%s</strong>%s', __('new', true), __('CakePHP 1.3 Docs', true)),
 			'http://book.cakephp.org/view/875/x1-3-Collection',
 			array('target' => '_blank', 'escape' => false)
 		);
