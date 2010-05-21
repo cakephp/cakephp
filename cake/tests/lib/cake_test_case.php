@@ -197,7 +197,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			$this->sharedFixture->loadSingle($class); 
+			$this->sharedFixture->loadSingle($class);
 		}
 	}
 
