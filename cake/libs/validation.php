@@ -191,6 +191,7 @@ class Validation {
 				return self::luhn($check, $deep);
 			}
 		}
+		return false;
 	}
 
 /**

@@ -2058,18 +2058,32 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * test pass through failure on postal
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	function testPassThroughMethodFailure() {
+		Validation::phone('text', null, 'testNl');
+	}
+
+/**
  * test the pass through calling of an alternate locale with postal()
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  **/
+	function testPassThroughClassFailure() {
+		Validation::postal('text', null, 'AUTOFAIL');
+	}
+
+/**
+ * test pass through method
+ *
+ * @return void
+ */
 	function testPassThroughMethod() {
 		$this->assertTrue(Validation::postal('text', null, 'testNl'));
-
-		$this->expectError('Could not find AUTOFAILValidation class, unable to complete validation.');
-		Validation::postal('text', null, 'AUTOFAIL');
-
-		$this->expectError('Method phone does not exist on TestNlValidation unable to complete validation.');
-		Validation::phone('text', null, 'testNl');
 	}
 
 /**
