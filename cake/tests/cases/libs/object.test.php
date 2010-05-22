@@ -297,6 +297,14 @@ class TestObject extends Object {
 	function testPersist($name, $return = null, &$object, $type = null) {
 		return $this->_persist($name, $return, $object, $type);
 	}
+/**
+ * undocumented function
+ *
+ * @return void
+ */
+	public function set($properties = array()) {
+		return parent::_set($properties);
+	}
 }
 
 /**
@@ -392,16 +400,16 @@ class ObjectTest extends CakeTestCase {
  * @return void
  */
 	function testSet() {
-		$this->object->_set('a string');
+		$this->object->set('a string');
 		$this->assertEqual($this->object->firstName, 'Joel');
 
-		$this->object->_set(array('firstName'));
+		$this->object->set(array('firstName'));
 		$this->assertEqual($this->object->firstName, 'Joel');
 
-		$this->object->_set(array('firstName' => 'Ashley'));
+		$this->object->set(array('firstName' => 'Ashley'));
 		$this->assertEqual($this->object->firstName, 'Ashley');
 
-		$this->object->_set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
+		$this->object->set(array('firstName' => 'Joel', 'lastName' => 'Moose'));
 		$this->assertEqual($this->object->firstName, 'Joel');
 		$this->assertEqual($this->object->lastName, 'Moose');
 	}
