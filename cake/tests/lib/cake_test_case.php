@@ -477,8 +477,20 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 * @param string $message the text to display if the assertion is not correct
 * @return void
 */
-	protected function assertReference(&$first,  &$second, $message = '') {
+	protected function assertReference(&$first, &$second, $message = '') {
 		return $this->assertSame($first, $second, $message);
+	}
+
+/**
+ * Compatibility wrapper for assertIsA
+ *
+ * @param string $object 
+ * @param string $type 
+ * @param string $message 
+ * @return void
+ */
+	protected function assertIsA($object, $type, $message = '') {
+		return $this->assertType($type, $object, $message);
 	}
 
 /**
