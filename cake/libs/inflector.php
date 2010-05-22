@@ -121,7 +121,7 @@ class Inflector {
 			'/(shoe|slave)s$/i' => '\1',
 			'/(o)es$/i' => '\1',
 			'/ouses$/' => 'ouse',
-			'/uses$/' => 'us',
+			'/([^a])uses$/' => '\1us',
 			'/([m|l])ice$/i' => '\1ouse',
 			'/(x|ch|ss|sh)es$/i' => '\1',
 			'/(m)ovies$/i' => '\1\2ovie',
