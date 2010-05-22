@@ -91,7 +91,7 @@ class CakeLog {
  *
  * For an explaination of these parameters, see CakeLog::write()
  *
- * @param string $key The keyname for this logger, used to revmoe the logger later.
+ * @param string $key The keyname for this logger, used to remove the logger later.
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
  * @static
