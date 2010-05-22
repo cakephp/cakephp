@@ -98,6 +98,13 @@ class DboSource extends DataSource {
 	);
 
 /**
+ * Separator string for virtualField composition
+ *
+ * @var string
+ */
+	var $virtualFieldSeparator = '__';
+
+/**
  * List of table engine specific parameters used on table creating
  *
  * @var array
@@ -432,10 +439,10 @@ class DboSource extends DataSource {
 	function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
-				if (strpos($field, '__') === false) {
+				if (strpos($field, $this->virtualFieldSeparator) === false) {
 					continue;
 				}
-				list($alias, $virtual) = explode('__', $field);
+				list($alias, $virtual) = explode($this->virtualFieldSeparator, $field);
 
 				if (!ClassRegistry::isKeySet($alias)) {
 					return;
@@ -1902,7 +1909,7 @@ class DboSource extends DataSource {
 	function _constructVirtualFields(&$model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
-			$virtualField = $this->name("{$alias}__{$field}");
+			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
 			$expression = $this->__quoteFields($model->getVirtualField($field));
 			$virtual[] = '(' .$expression . ") {$this->alias} {$virtualField}";
 		}

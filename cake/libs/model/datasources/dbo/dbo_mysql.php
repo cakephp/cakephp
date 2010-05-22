@@ -728,7 +728,7 @@ class DboMysql extends DboMysqlBase {
 
 		while ($j < $numFields) {
 			$column = mysql_fetch_field($results, $j);
-			if (!empty($column->table) && strpos($column->name, '__') === false) {
+			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column->table, $column->name);
 			} else {
 				$this->map[$index++] = array(0, $column->name);
