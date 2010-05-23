@@ -34,9 +34,6 @@ if (!class_exists('ShellDispatcher')) {
 	ob_end_clean();
 }
 
-Mock::generatePartial('ShellDispatcher', 'TestShellMockShellDispatcher', array(
-	'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
-));
 
 /**
  * TestShell class
@@ -115,7 +112,12 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->Dispatcher =& new TestShellMockShellDispatcher();
+		parent::setUp();
+
+		$this->Dispatcher = $this->getMock(
+			'ShellDispatcher',
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+		);
 		$this->Shell =& new TestShell($this->Dispatcher);
 	}
 
@@ -125,6 +127,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		ClassRegistry::flush();
 	}
 
@@ -134,7 +137,7 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$this->assertIsA($this->Shell->Dispatch, 'TestShellMockShellDispatcher');
+		$this->assertEquals($this->Dispatcher, $this->Shell->Dispatch);
 		$this->assertEqual($this->Shell->name, 'TestShell');
 		$this->assertEqual($this->Shell->alias, 'TestShell');
 	}
@@ -177,28 +180,43 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testIn() {
-		$this->Shell->Dispatch->setReturnValueAt(0, 'getInput', 'n');
-		$this->Shell->Dispatch->expectAt(0, 'getInput', array('Just a test?', array('y', 'n'), 'n'));
+		$this->Dispatcher->expects($this->at(0))
+			->method('getInput')
+			->with('Just a test?', array('y', 'n'), 'n')
+			->will($this->returnValue('n'));
+
+		$this->Dispatcher->expects($this->at(1))
+			->method('getInput')
+			->with('Just a test?', array('y', 'n'), 'n')
+			->will($this->returnValue('Y'));
+
+		$this->Dispatcher->expects($this->at(2))
+			->method('getInput')
+			->with('Just a test?', 'y,n', 'n')
+			->will($this->returnValue('y'));
+
+		$this->Dispatcher->expects($this->at(3))
+			->method('getInput')
+			->with('Just a test?', 'y/n', 'n')
+			->will($this->returnValue('y'));
+
+		$this->Dispatcher->expects($this->at(4))
+			->method('getInput')
+			->with('Just a test?', 'y', 'y')
+			->will($this->returnValue('y'));
+
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
 		$this->assertEqual($result, 'n');
 
-		$this->Shell->Dispatch->setReturnValueAt(1, 'getInput', 'Y');
-		$this->Shell->Dispatch->expectAt(1, 'getInput', array('Just a test?', array('y', 'n'), 'n'));
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
 		$this->assertEqual($result, 'Y');
 
-		$this->Shell->Dispatch->setReturnValueAt(2, 'getInput', 'y');
-		$this->Shell->Dispatch->expectAt(2, 'getInput', array('Just a test?', 'y,n', 'n'));
 		$result = $this->Shell->in('Just a test?', 'y,n', 'n');
 		$this->assertEqual($result, 'y');
 
-		$this->Shell->Dispatch->setReturnValueAt(3, 'getInput', 'y');
-		$this->Shell->Dispatch->expectAt(3, 'getInput', array('Just a test?', 'y/n', 'n'));
 		$result = $this->Shell->in('Just a test?', 'y/n', 'n');
 		$this->assertEqual($result, 'y');
 
-		$this->Shell->Dispatch->setReturnValueAt(4, 'getInput', 'y');
-		$this->Shell->Dispatch->expectAt(4, 'getInput', array('Just a test?', 'y', 'y'));
 		$result = $this->Shell->in('Just a test?', 'y', 'y');
 		$this->assertEqual($result, 'y');
 
@@ -214,16 +232,28 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testOut() {
-		$this->Shell->Dispatch->expectAt(0, 'stdout', array("Just a test\n", false));
+		$this->Shell->Dispatch->expects($this->at(0))
+			->method('stdout')
+			->with("Just a test\n", false);
+
+		$this->Shell->Dispatch->expects($this->at(1))
+			->method('stdout')
+			->with("Just\na\ntest\n", false);
+
+		$this->Shell->Dispatch->expects($this->at(2))
+			->method('stdout')
+			->with("Just\na\ntest\n\n", false);
+
+		$this->Shell->Dispatch->expects($this->at(3))
+			->method('stdout')
+			->with("\n", false);
+
 		$this->Shell->out('Just a test');
 
-		$this->Shell->Dispatch->expectAt(1, 'stdout', array("Just\na\ntest\n", false));
 		$this->Shell->out(array('Just', 'a', 'test'));
 
-		$this->Shell->Dispatch->expectAt(2, 'stdout', array("Just\na\ntest\n\n", false));
 		$this->Shell->out(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expectAt(3, 'stdout', array("\n", false));
 		$this->Shell->out();
 	}
 
@@ -233,16 +263,28 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testErr() {
-		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Just a test\n"));
+		$this->Shell->Dispatch->expects($this->at(0))
+			->method('stderr')
+			->with("Just a test\n");
+
+		$this->Shell->Dispatch->expects($this->at(1))
+			->method('stderr')
+			->with("Just\na\ntest\n");
+
+		$this->Shell->Dispatch->expects($this->at(2))
+			->method('stderr')
+			->with("Just\na\ntest\n\n");
+
+		$this->Shell->Dispatch->expects($this->at(3))
+			->method('stderr')
+			->with("\n");
+
 		$this->Shell->err('Just a test');
 
-		$this->Shell->Dispatch->expectAt(1, 'stderr', array("Just\na\ntest\n"));
 		$this->Shell->err(array('Just', 'a', 'test'));
 
-		$this->Shell->Dispatch->expectAt(2, 'stderr', array("Just\na\ntest\n\n"));
 		$this->Shell->err(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expectAt(3, 'stderr', array("\n"));
 		$this->Shell->err();
 	}
 
@@ -267,19 +309,22 @@ class ShellTest extends CakeTestCase {
 	public function testHr() {
 		$bar = '---------------------------------------------------------------';
 
-		$this->Shell->Dispatch->expectAt(0, 'stdout', array('', false));
-		$this->Shell->Dispatch->expectAt(1, 'stdout', array($bar . "\n", false));
-		$this->Shell->Dispatch->expectAt(2, 'stdout', array('', false));
+		$this->Shell->Dispatch->expects($this->at(0))->method('stdout')->with('', false);
+		$this->Shell->Dispatch->expects($this->at(1))->method('stdout')->with($bar . "\n", false);
+		$this->Shell->Dispatch->expects($this->at(2))->method('stdout')->with('', false);
+
+		$this->Shell->Dispatch->expects($this->at(3))->method('stdout')->with("\n", false);
+		$this->Shell->Dispatch->expects($this->at(4))->method('stdout')->with($bar . "\n", false);
+		$this->Shell->Dispatch->expects($this->at(5))->method('stdout')->with("\n", false);
+
+		$this->Shell->Dispatch->expects($this->at(6))->method('stdout')->with("\n\n", false);
+		$this->Shell->Dispatch->expects($this->at(7))->method('stdout')->with($bar . "\n", false);
+		$this->Shell->Dispatch->expects($this->at(8))->method('stdout')->with("\n\n", false);
+
 		$this->Shell->hr();
 
-		$this->Shell->Dispatch->expectAt(3, 'stdout', array("\n", false));
-		$this->Shell->Dispatch->expectAt(4, 'stdout', array($bar . "\n", false));
-		$this->Shell->Dispatch->expectAt(5, 'stdout', array("\n", false));
 		$this->Shell->hr(true);
 
-		$this->Shell->Dispatch->expectAt(3, 'stdout', array("\n\n", false));
-		$this->Shell->Dispatch->expectAt(4, 'stdout', array($bar . "\n", false));
-		$this->Shell->Dispatch->expectAt(5, 'stdout', array("\n\n", false));
 		$this->Shell->hr(2);
 	}
 
@@ -289,14 +334,23 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testError() {
-		$this->Shell->Dispatch->expectAt(0, 'stderr', array("Error: Foo Not Found\n"));
+		$this->Shell->Dispatch->expects($this->at(0))
+			->method('stderr')
+			->with("Error: Foo Not Found\n");
+
+		$this->Shell->Dispatch->expects($this->at(1))
+			->method('stderr')
+			->with("Error: Foo Not Found\n");
+
+		$this->Shell->Dispatch->expects($this->at(2))
+			->method('stderr')
+			->with("Searched all...\n");
+
 		$this->Shell->error('Foo Not Found');
 		$this->assertIdentical($this->Shell->stopped, 1);
 
 		$this->Shell->stopped = null;
 
-		$this->Shell->Dispatch->expectAt(1, 'stderr', array("Error: Foo Not Found\n"));
-		$this->Shell->Dispatch->expectAt(2, 'stderr', array("Searched all...\n"));
 		$this->Shell->error('Foo Not Found', 'Searched all...');
 		$this->assertIdentical($this->Shell->stopped, 1);
 	}
@@ -389,13 +443,13 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testCreateFile() {
+	public function testCreateFileNonInteractive() {
 		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		new Folder($path, true);
+		$Folder = new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -411,26 +465,54 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
+		$Folder->delete();
+	}
+
+/**
+ * test createFile when the shell is interactive.
+ *
+ * @return void
+ */
+	function testCreateFileInteractive() {
+		$this->skipIf(DIRECTORY_SEPARATOR === '\\', '%s Not supported on Windows');
+
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'file1.php';
+		$Folder = new Folder($path, true);
+
 		$this->Shell->interactive = true;
 
-		$this->Shell->Dispatch->setReturnValueAt(0, 'getInput', 'n');
-		$this->Shell->Dispatch->expectAt(1, 'stdout', array('File exists, overwrite?', '*'));
+		$this->Shell->Dispatch->expects($this->at(5))
+			->method('getInput')
+			->withAnyParameters()
+			->will($this->returnValue('n'));
+	
+		$this->Shell->Dispatch->expects($this->at(9))
+			->method('getInput')
+			->withAnyParameters()
+			->will($this->returnValue('y'));
+
 
 		$contents = "<?php\necho 'yet another test';\n\$te = 'st';\n?>";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertFalse($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertNotEqual(file_get_contents($file), $contents);
-
-		$this->Shell->Dispatch->setReturnValueAt(1, 'getInput', 'y');
-		$this->Shell->Dispatch->expectAt(3, 'stdout', array('File exists, overwrite?', '*'));
-
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$Folder = new Folder($path);
+		// no overwrite
+		$contents = 'new contents';
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertFalse($result);
+		$this->assertTrue(file_exists($file));
+		$this->assertNotEqual($contents, file_get_contents($file));
+
+		// overwrite
+		$contents = 'more new contents';
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists($file));
+		$this->assertEquals($contents, file_get_contents($file));
+
 		$Folder->delete();
 	}
 
@@ -439,13 +521,13 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testCreateFileWindows() {
-		$this->skipUnless(DIRECTORY_SEPARATOR === '\\', 'testCreateFileWindows supported on Windows only');
+	public function testCreateFileWindowsNonInteractive() {
+		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindows supported on Windows only');
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		new Folder($path, true);
+		$Folder = new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -461,10 +543,32 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
+		$Folder = new Folder($path);
+		$Folder->delete();
+	}
+
+/**
+ * test createFile on windows with interactive on.
+ *
+ * @return void
+ */
+	function testCreateFileWindowsInteractive() {
+		$this->skipIf(DIRECTORY_SEPARATOR === '/', 'testCreateFileWindowsInteractive supported on Windows only');
+
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'file1.php';
+
+		$Folder = new Folder($path, true);
+
 		$this->Shell->interactive = true;
 
-		$this->Shell->Dispatch->setReturnValueAt(0, 'getInput', 'n');
-		$this->Shell->Dispatch->expectAt(1, 'stdout', array('File exists, overwrite?'));
+		$this->Shell->Dispatch->expects($this->at(5))
+			->method('getInput')
+			->will($this->returnValue('y'));
+
+		$this->Shell->Dispatch->expects($this->at(9))
+			->method('getInput')
+			->will($this->returnValue('n'));
 
 		$contents = "<?php\necho 'yet another test';\r\n\$te = 'st';\r\n?>";
 		$result = $this->Shell->createFile($file, $contents);
@@ -472,15 +576,11 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(file_exists($file));
 		$this->assertNotEqual(file_get_contents($file), $contents);
 
-		$this->Shell->Dispatch->setReturnValueAt(1, 'getInput', 'y');
-		$this->Shell->Dispatch->expectAt(3, 'stdout', array('File exists, overwrite?'));
-
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEqual(file_get_contents($file), $contents);
 
-		$Folder = new Folder($path);
 		$Folder->delete();
 	}
 }
