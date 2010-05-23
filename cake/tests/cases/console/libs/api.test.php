@@ -49,7 +49,7 @@ class ApiShellTest extends CakeTestCase {
  */
 	public function startTest() {
 		$this->Dispatcher = $this->getMock(
-			'ShellDispather', 
+			'ShellDispatcher', 
 			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch')
 		);
 		$this->Shell = $this->getMock(
