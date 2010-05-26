@@ -89,8 +89,14 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
 		$this->Task->Template->params['theme'] = 'default';
 
-		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
-		$this->Task->Project = $this->getMock('ProjectTask', array(), array(&$this->Dispatcher));
+		$this->Task->Model = $this->getMock('ModelTask', 
+			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'), 
+			array(&$this->Dispatcher)
+		);
+		$this->Task->Project = $this->getMock('ProjectTask', 
+			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'), 
+			array(&$this->Dispatcher)
+		);
 		$this->Task->Test = $this->getMock('TestTask', array(), array(&$this->Dispatcher));
 	}
 
@@ -116,11 +122,6 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(2))->method('out')->with('2. ArticlesTags');
 		$this->Task->expects($this->at(3))->method('out')->with('3. Comments');
 		$this->Task->expects($this->at(4))->method('out')->with('4. Tags');
-
-		$this->Task->expects($this->at(6))->method('out')->with('1. Articles');
-		$this->Task->expects($this->at(7))->method('out')->with('2. ArticlesTags');
-		$this->Task->expects($this->at(8))->method('out')->with('4. Comments');
-		$this->Task->expects($this->at(9))->method('out')->with('5. Tags');
 
 		$expected = array('Articles', 'ArticlesTags', 'Comments', 'Tags');
 		$result = $this->Task->listAll('test_suite');
