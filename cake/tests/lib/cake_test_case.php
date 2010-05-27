@@ -423,14 +423,14 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 /**
-* Compatibility wrapper function for assertSame
+* Compatibility wrapper function for assertEquals
 * @param mixed $expected
 * @param mixed $actual
 * @param string $message the text to display if the assertion is not correct
 * @return void
 */
 	protected function assertIdentical($expected, $actual, $message = '') {
-		return $this->assertSame($expected, $actual, $message);
+		return $this->assertEquals($expected, $actual, $message);
 	}
 
 /**
