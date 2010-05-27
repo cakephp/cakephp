@@ -172,19 +172,33 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestDoHelpers() {
+	public function testDoHelpersNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doHelpers();
 		$this->assertEqual($result, array());
+	}
 
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
+/**
+ * test getting helper values
+ *
+ * @return void
+ */
+	function testDoHelpersTrailingSpace() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne  '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
 		$this->assertEqual($result, $expected);
+	}
 
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(4))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
+/**
+ * test doHelpers with extra commas
+ *
+ * @return void
+ */
+	function testDoHelpersTrailingCommas() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Javascript, Ajax, CustomOne, , '));
 		$result = $this->Task->doHelpers();
 		$expected = array('Javascript', 'Ajax', 'CustomOne');
 		$this->assertEqual($result, $expected);
@@ -195,21 +209,34 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestDoComponents() {
+	public function testDoComponentsNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
-
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
-		
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(4))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
-
 		$result = $this->Task->doComponents();
 		$this->assertEqual($result, array());
+	}
+
+/**
+ * test components with spaces
+ *
+ * @return void
+ */
+	function testDoComponentsTrailingSpaces() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test components with commas
+ *
+ * @return void
+ */
+	function testDoComponentsTrailingCommas() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
 
 		$result = $this->Task->doComponents();
 		$expected = array('RequestHandler', 'Security');
