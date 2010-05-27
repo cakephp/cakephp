@@ -139,27 +139,32 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestGetName() {
+	public function testGetNameValidIndex() {
 		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
-
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('q'));
-		$this->Task->expectOnce('_stop');
-		$this->Task->getName('test_suite');
-
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(1));
-		$result = $this->Task->getName('test_suite');
-		$expected = 'Articles';
-		$this->assertEqual($result, $expected);
-
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(3));
+		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(3));
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Comments';
 		$this->assertEqual($result, $expected);
-
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue(10));
+		
+		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(1));
 		$result = $this->Task->getName('test_suite');
-		$this->Task->expectOnce('err');
+		$expected = 'Articles';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test getting invalid indexes.
+ *
+ * @return void
+ */
+	function testGetNameInvalidIndex() {
+		$this->Task->interactive = true;
+		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(10));
+		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue('q'));
+		$this->Task->expects($this->once())->method('err');
+		$this->Task->expects($this->once())->method('_stop');
+
+		$this->Task->getName('test_suite');
 	}
 
 /**

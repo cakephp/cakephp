@@ -409,10 +409,9 @@ class ControllerTask extends BakeTask {
 
 		while ($enteredController == '') {
 			$enteredController = $this->in(__("Enter a number from the list above,\ntype in the name of another controller, or 'q' to exit"), null, 'q');
-
 			if ($enteredController === 'q') {
 				$this->out(__('Exit'));
-				$this->_stop();
+				return $this->_stop();
 			}
 
 			if ($enteredController == '' || intval($enteredController) > count($controllers)) {
