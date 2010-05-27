@@ -37,7 +37,8 @@ class CakeTestSuiteDispatcher {
 		'plugin' => null,
 		'output' => 'html',
 		'show' => 'groups',
-		'show_passes' => false
+		'show_passes' => false,
+		'filter' => false
 	);
 
 /**
@@ -191,7 +192,7 @@ class CakeTestSuiteDispatcher {
 	function &getManager() {
 		if (empty($this->Manager)) {
 			require_once CAKE_TESTS_LIB . 'test_manager.php';
-			$this->Manager = new $this->_managerClass();
+			$this->Manager = new $this->_managerClass($this->params);
 		}
 		return $this->Manager;
 	}

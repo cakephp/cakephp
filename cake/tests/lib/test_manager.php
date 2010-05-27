@@ -62,6 +62,13 @@ class TestManager {
 	public $pluginTest = false;
 
 /**
+ * String to filter test case method names by.
+ *
+ * @var string
+ */
+	public $filter = false;
+
+/**
  * TestSuite container for single or grouped test files
  *
  * @var PHPUnit_Framework_TestSuite
@@ -80,14 +87,20 @@ class TestManager {
  *
  * @return void
  */
-	public function __construct() {
-		//require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
+	public function __construct($params) {
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
-		if (isset($_GET['app'])) {
+		if (isset($params['app'])) {
 			$this->appTest = true;
 		}
-		if (isset($_GET['plugin'])) {
-			$this->pluginTest = htmlentities($_GET['plugin']);
+		if (isset($params['plugin'])) {
+			$this->pluginTest = htmlentities($params['plugin']);
+		}
+		if (
+			isset($params['filter']) && 
+			$params['filter'] !== false &&
+			preg_match('/^[a-zA-Z0-9_]/', $params['filter'])
+		) {
+			$this->filter = '/' . $params['filter'] . '/';
 		}
 	}
 
@@ -180,7 +193,7 @@ class TestManager {
 		$reporter->paintHeader();
 		$testSuite = $this->getTestSuite();
 		$testSuite->setFixtureManager($this->getFixtureManager());
-		$testSuite->run($result);
+		$testSuite->run($result, $this->filter);
 		$reporter->paintResult($result);
 		return $result;
 	}
