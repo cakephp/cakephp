@@ -176,7 +176,7 @@ class ModelBehavior extends Object {
 			case 5:
 				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
-				array_unshift($params, $model);
+				$params = array_merge(array(&$model), $params);
 				return call_user_func_array(array(&$this, $method), $params);
 			break;
 		}
