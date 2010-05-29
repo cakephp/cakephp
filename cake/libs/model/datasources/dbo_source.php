@@ -2411,6 +2411,9 @@ class DboSource extends DataSource {
 					}
 				}
 				continue;
+			} elseif (is_object($key) && isset($key->type) && $key->type === 'expression') {
+				$result[] = $key->value;
+				continue;
 			}
 
 			if (preg_match('/\\x20(ASC|DESC).*/i', $key, $_dir)) {

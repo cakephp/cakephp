@@ -880,7 +880,15 @@ class EmailComponent extends Object{
 			$this->__smtpConnection->write($data . "\r\n");
 		}
 		while ($checkCode !== false) {
-			$response = $this->__smtpConnection->read();
+			$response = '';
+			$startTime = time();
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
+				$response .= $this->__smtpConnection->read();
+			}
+			if (substr($response, -2) === "\r\n") {
+				$this->smtpError = 'timeout';
+				return false;
+			}
 			$response = end(explode("\r\n", rtrim($response, "\r\n")));
 
 			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
