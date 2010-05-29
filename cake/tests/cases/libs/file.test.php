@@ -104,6 +104,9 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	function testRead() {
+		$file = __FILE__;
+		$this->File =& new File($file);
+
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
 		$this->assertEqual($result, $expecting);
@@ -445,7 +448,7 @@ class FileTest extends CakeTestCase {
  * @return void
  */
 	function _getTmpFile($paintSkip = true) {
-		$tmpFile = TMP.'tests'.DS.'cakephp.file.test.tmp';
+		$tmpFile = TMP . 'tests' . DS . 'cakephp.file.test.tmp';
 		if (is_writable(dirname($tmpFile)) && (!file_exists($tmpFile) || is_writable($tmpFile))) {
 			return $tmpFile;
 		};
@@ -454,14 +457,14 @@ class FileTest extends CakeTestCase {
 			$caller = 'test';
 			if (function_exists('debug_backtrace')) {
 				$trace = debug_backtrace();
-				$caller = $trace[1]['function'].'()';
+				$caller = $trace[1]['function'] . '()';
 			}
 			$assertLine = new SimpleStackTrace(array(__FUNCTION__));
 			$assertLine = $assertLine->traceMethod();
 			$shortPath = substr($tmpFile, strlen(ROOT));
 
 			$message = '[FileTest] Skipping %s because "%s" not writeable!';
-			$message = sprintf(__($message, true), $caller, $shortPath).$assertLine;
+			$message = sprintf(__($message, true), $caller, $shortPath) . $assertLine;
 			$this->_reporter->paintSkip($message);
 		}
 		return false;
