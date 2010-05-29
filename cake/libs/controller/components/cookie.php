@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Cookie Component
  *
  * PHP versions 4 and 5
  *

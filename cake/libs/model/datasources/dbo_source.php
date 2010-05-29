@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Dbo Source
  *
  * PHP versions 4 and 5
  *
@@ -2410,6 +2410,9 @@ class DboSource extends DataSource {
 						$keys = array($k => $v) + $keys;
 					}
 				}
+				continue;
+			} elseif (is_object($key) && isset($key->type) && $key->type === 'expression') {
+				$result[] = $key->value;
 				continue;
 			}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Email Component
  *
  * PHP versions 4 and 5
  *
@@ -808,7 +808,7 @@ class EmailComponent extends Object{
 			$host = 'localhost';
 		}
 
-		if (!$this->_smtpSend("HELO {$host}", '250')) {
+		if (!$this->_smtpSend("EHLO {$host}", '250') || !$this->_smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 
@@ -868,22 +868,34 @@ class EmailComponent extends Object{
 	}
 
 /**
- * Private method for sending data to SMTP connection
+ * Protected method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
  * @param mixed $checkCode code to check for in server response, false to skip
  * @return bool Success
- * @access private
+ * @access protected
  */
 	function _smtpSend($data, $checkCode = '250') {
 		if (!is_null($data)) {
 			$this->__smtpConnection->write($data . "\r\n");
 		}
-		if ($checkCode !== false) {
-			$response = $this->__smtpConnection->read();
+		while ($checkCode !== false) {
+			$response = '';
+			$startTime = time();
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
+				$response .= $this->__smtpConnection->read();
+			}
+			if (substr($response, -2) === "\r\n") {
+				$this->smtpError = 'timeout';
+				return false;
+			}
+			$response = end(explode("\r\n", rtrim($response, "\r\n")));
 
-			if (preg_match('/^(' . $checkCode . ')/', $response, $code)) {
-				return $code[0];
+			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
+				if ($code[2] === '-') {
+					continue;
+				}
+				return $code[1];
 			}
 			$this->smtpError = $response;
 			return false;

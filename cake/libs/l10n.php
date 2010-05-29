@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Localization
  *
  * PHP versions 4 and 5
  *
@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for file.
+ * Localization
  *
  * @package       cake
  * @subpackage    cake.cake.libs

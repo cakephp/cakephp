@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * CSS Functions
  *
  * PHP versions 4 and 5
  *
@@ -23,14 +23,14 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 }
 
 /**
- * Enter description here...
+ * Ensure required files are included
  */
 if (!class_exists('File')) {
 	require LIBS . 'file.php';
 }
 
 /**
- * Enter description here...
+ * Make clean CSS
  *
  * @param unknown_type $path
  * @param unknown_type $name
@@ -47,7 +47,7 @@ if (!class_exists('File')) {
 	}
 
 /**
- * Enter description here...
+ * Write CSS cache
  *
  * @param unknown_type $path
  * @param unknown_type $content

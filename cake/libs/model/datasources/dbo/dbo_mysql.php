@@ -507,9 +507,9 @@ class DboMysqlBase extends DboSource {
 class DboMysql extends DboMysqlBase {
 
 /**
- * Enter description here...
+ * Datasource description
  *
- * @var unknown_type
+ * @var string
  */
 	var $description = "MySQL DBO Driver";
 

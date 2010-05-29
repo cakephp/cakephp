@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for class.
+ * Oracle layer for DBO.
  *
  * Long description for class
  *
@@ -29,17 +29,17 @@
 class DboOracle extends DboSource {
 
 /**
- * Enter description here...
+ * Configuration options
  *
- * @var unknown_type
+ * @var array
  * @access public
  */
 	var $config = array();
 
 /**
- * Enter description here...
+ * Alias
  *
- * @var unknown_type
+ * @var string
  */
 	var $alias = '';
 
@@ -56,9 +56,9 @@ class DboOracle extends DboSource {
 	var $__transactionStarted = false;
 
 /**
- * Enter description here...
+ * Column definitions
  *
- * @var unknown_type
+ * @var array
  * @access public
  */
 	var $columns = array(
@@ -77,25 +77,25 @@ class DboOracle extends DboSource {
 		'inet' => array('name' => 'inet'));
 
 /**
- * Enter description here...
+ * Connection object
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	var $connection;
 
 /**
- * Enter description here...
+ * Query limit
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	var $_limit = -1;
 
 /**
- * Enter description here...
+ * Query offset
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	var $_offset = 0;
@@ -109,25 +109,25 @@ class DboOracle extends DboSource {
 	var $_map;
 
 /**
- * Enter description here...
+ * Current Row
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	var $_currentRow;
 
 /**
- * Enter description here...
+ * Number of rows
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	var $_numRows;
 
 /**
- * Enter description here...
+ * Query results
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	var $_results;
@@ -378,9 +378,9 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Fetch result row
  *
- * @return unknown
+ * @return array
  * @access public
  */
 	function fetchRow() {
@@ -444,10 +444,10 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Create trigger
  *
- * @param unknown_type $table
- * @return unknown
+ * @param string $table
+ * @return mixed
  * @access public
  */
 	function createTrigger($table) {

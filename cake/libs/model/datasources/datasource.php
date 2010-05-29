@@ -91,7 +91,7 @@ class DataSource extends Object {
 	var $endQuote = null;
 
 /**
- * Enter description here...
+ * Result
  *
  * @var array
  * @access protected

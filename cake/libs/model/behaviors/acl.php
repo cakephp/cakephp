@@ -21,7 +21,7 @@
  */
 
 /**
- * Short description for file
+ * ACL behavior
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors

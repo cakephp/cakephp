@@ -1,7 +1,7 @@
 ;<?php exit() ?>
 ; SVN FILE: $Id$
 ;/**
-; * Short description for file.
+; * ACL Configuration
 ; *
 ; *
 ; * PHP versions 4 and 5
