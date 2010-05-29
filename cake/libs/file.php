@@ -185,7 +185,6 @@ class File extends Object {
 		while (!feof($this->handle)) {
 			$data .= fgets($this->handle, 4096);
 		}
-		$data = trim($data);
 
 		if ($this->lock !== null) {
 			flock($this->handle, LOCK_UN);
