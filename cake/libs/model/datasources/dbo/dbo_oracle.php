@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for class.
+ * Oracle layer for DBO.
  *
  * Long description for class
  *

@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Application level Controller
  *
  * This file is application-wide controller file. You can put all
  * application-wide controller-related methods here.
@@ -22,7 +22,7 @@
  */
 
 /**
- * Short description for class.
+ * Application Controller
  *
  * Add your application-wide methods in the class below, your controllers
  * will inherit them.

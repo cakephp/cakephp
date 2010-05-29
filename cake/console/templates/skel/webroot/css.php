@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * CSS Functions
  *
  * PHP versions 4 and 5
  *

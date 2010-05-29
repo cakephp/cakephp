@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Routes Configuration
  *
  * In this file, you set up routes to your controllers and their actions.
  * Routes are very important mechanism that allows you to freely connect

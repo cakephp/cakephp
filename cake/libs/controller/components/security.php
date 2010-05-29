@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Security Component
  *
  * PHP versions 4 and 5
  *
@@ -18,8 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('String', 'Security'));
+
 /**
- * Short description for file.
+ * SecurityComponent
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components

@@ -26,7 +26,7 @@
 App::import('Model', 'App');
 
 /**
- * Short description for file.
+ * ACL Node
  *
  *
  * @package       cake

@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Email Component
  *
  * PHP versions 4 and 5
  *

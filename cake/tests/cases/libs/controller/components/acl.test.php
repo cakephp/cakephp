@@ -194,7 +194,7 @@ class IniAclTest extends IniAcl {
 }
 
 /**
- * Short description for class.
+ * ACL Component Text case
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
