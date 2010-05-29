@@ -30,9 +30,9 @@ App::import('Datasource', 'DboMysql');
 class DboMysqli extends DboMysqlBase {
 
 /**
- * Enter description here...
+ * Datasource Description
  *
- * @var unknown_type
+ * @var string
  */
 	var $description = "Mysqli DBO Driver";
 

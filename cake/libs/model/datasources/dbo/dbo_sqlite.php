@@ -29,9 +29,9 @@
 class DboSqlite extends DboSource {
 
 /**
- * Enter description here...
+ * Datasource Description
  *
- * @var unknown_type
+ * @var string
  */
 	var $description = "SQLite DBO Driver";
 
