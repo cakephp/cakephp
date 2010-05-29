@@ -270,6 +270,17 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * setup create a request object to get out of router later.
+ *
+ * @return void
+ */
+	function setUp() {
+		$request = new CakeRequest(null, false);
+		$request->base = '';
+		Router::setRequestInfo($request);
+	}
+
+/**
  * test that methods declared in an ErrorHandler subclass are not converted
  * into error404 when debug == 0
  *
@@ -279,19 +290,19 @@ class ErrorHandlerTest extends CakeTestCase {
 		$back = Configure::read('debug');
 		Configure::write('debug', 2);
 		ob_start();
-		$ErrorHandler =& new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'widget thing is missing');
 
 		Configure::write('debug', 0);
 		ob_start();
-		$ErrorHandler =& new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
 
 		Configure::write('debug', 0);
 		ob_start();
-		$ErrorHandler =& new MyCustomErrorHandler('missingController', array(
+		$ErrorHandler = new MyCustomErrorHandler('missingController', array(
 			'className' => 'Missing', 'message' => 'Page not found'
 		));
 		$result = ob_get_clean();

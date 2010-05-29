@@ -48,7 +48,7 @@ class CakeErrorController extends AppController {
 	function __construct() {
 		parent::__construct();
 		$this->_set(Router::getPaths());
-		$this->params = Router::getParams();
+		$this->request = $this->params = Router::getRequest();
 		$this->constructClasses();
 		$this->Component->initialize($this);
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
@@ -87,9 +87,9 @@ class ErrorHandler extends Object {
 
 		if ($__previousError != array($method, $messages)) {
 			$__previousError = array($method, $messages);
-			$this->controller =& new CakeErrorController();
+			$this->controller = new CakeErrorController();
 		} else {
-			$this->controller =& new Controller();
+			$this->controller = new Controller();
 			$this->controller->viewPath = 'errors';
 		}
 		$options = array('escape' => false);
@@ -158,7 +158,7 @@ class ErrorHandler extends Object {
 			'code' => '404',
 			'name' => __('Not Found'),
 			'message' => h($url),
-			'base' => $this->controller->base
+			'base' => $this->controller->request->base
 		));
 		$this->_outputMessage('error404');
 	}
@@ -172,7 +172,7 @@ class ErrorHandler extends Object {
 		extract($params, EXTR_OVERWRITE);
 
 		if (!isset($url)) {
-			$url = $this->controller->here;
+			$url = $this->controller->request->here;
 		}
 		$url = Router::normalize($url);
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
@@ -180,7 +180,7 @@ class ErrorHandler extends Object {
 			'code' => '500',
 			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
-			'base' => $this->controller->base
+			'base' => $this->controller->request->base
 		));
 		$this->_outputMessage('error500');
 	}
