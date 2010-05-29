@@ -143,9 +143,9 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Controller =& new SecurityTestController();
+		$this->Controller = new SecurityTestController(new CakeRequest(null, false));
 		$this->Controller->Component->init($this->Controller);
-		$this->Controller->Security =& $this->Controller->TestSecurity;
+		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
 		$this->oldSalt = Configure::read('Security.salt');
 		Configure::write('Security.salt', 'foo!');
@@ -211,7 +211,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequirePostFail() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -225,7 +225,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequirePostSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -240,7 +240,7 @@ class SecurityComponentTest extends CakeTestCase {
 	function testRequireSecureFail() {
 		$_SERVER['HTTPS'] = 'off';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireSecure(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -254,7 +254,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequireSecureSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'Secure';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$_SERVER['HTTPS'] = 'on';
 		$this->Controller->Security->requireSecure('posted');
 		$this->Controller->Security->startup($this->Controller);
@@ -269,15 +269,15 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequireAuthFail() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
-		$this->Controller->action = 'posted';
-		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
+		$this->Controller->request['action'] = 'posted';
+		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->Security->requireAuth(array('posted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
 		$this->Controller->Session->write('_Token', serialize(array('allowedControllers' => array())));
-		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
-		$this->Controller->action = 'posted';
+		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -285,8 +285,8 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Session->write('_Token', serialize(array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
 		)));
-		$this->Controller->data = array('username' => 'willy', 'password' => 'somePass');
-		$this->Controller->action = 'posted';
+		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -300,7 +300,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequireAuthSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'AUTH';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -308,10 +308,10 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->Session->write('_Token', serialize(array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted')
 		)));
-		$this->Controller->params['controller'] = 'SecurityTest';
-		$this->Controller->params['action'] = 'posted';
+		$this->Controller->request['controller'] = 'SecurityTest';
+		$this->Controller->request['action'] = 'posted';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'username' => 'willy', 'password' => 'somePass', '_Token' => ''
 		);
 		$this->Controller->action = 'posted';
@@ -328,7 +328,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequirePostSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$this->Controller->action = 'getted';
+		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requirePost('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -342,7 +342,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequireGetFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'getted';
+		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet(array('getted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -356,7 +356,7 @@ class SecurityComponentTest extends CakeTestCase {
  */
 	function testRequireGetSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$this->Controller->action = 'getted';
+		$this->Controller->request['action'] = 'getted';
 		$this->Controller->Security->requireGet('getted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -369,7 +369,7 @@ class SecurityComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRequireLogin() {
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireLogin(
 			'posted',
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
@@ -380,7 +380,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->assertFalse($this->Controller->failed);
 
 
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireLogin(
 			array('posted'),
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
@@ -390,7 +390,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireLogin(
 			'posted',
 			array('type' => 'basic', 'users' => array('admin' => 'password'))
@@ -416,7 +416,7 @@ class SecurityComponentTest extends CakeTestCase {
 			return;
 		}
 
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$_SERVER['PHP_AUTH_DIGEST'] = $digest = <<<DIGEST
 		Digest username="Mufasa",
 		realm="testrealm@host.com",
@@ -444,7 +444,7 @@ DIGEST;
  */
 	function testRequireGetSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireGet('getted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -458,7 +458,7 @@ DIGEST;
  */
 	function testRequirePutFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'putted';
+		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut(array('putted'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -472,7 +472,7 @@ DIGEST;
  */
 	function testRequirePutSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$this->Controller->action = 'putted';
+		$this->Controller->request['action'] = 'putted';
 		$this->Controller->Security->requirePut('putted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -486,7 +486,7 @@ DIGEST;
  */
 	function testRequirePutSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePut('putted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -500,7 +500,7 @@ DIGEST;
  */
 	function testRequireDeleteFail() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'deleted';
+		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete(array('deleted', 'other_method'));
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
@@ -514,7 +514,7 @@ DIGEST;
  */
 	function testRequireDeleteSucceed() {
 		$_SERVER['REQUEST_METHOD'] = 'DELETE';
-		$this->Controller->action = 'deleted';
+		$this->Controller->request['action'] = 'deleted';
 		$this->Controller->Security->requireDelete('deleted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -528,7 +528,7 @@ DIGEST;
  */
 	function testRequireDeleteSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$this->Controller->action = 'posted';
+		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireDelete('deleted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
@@ -571,11 +571,11 @@ DIGEST;
  */
 	function testValidatePost() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%3B';
 		$fields .= 'f%3A11%3A%22Zbqry.inyvq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -593,14 +593,14 @@ DIGEST;
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%3B';
 		$fields .= 'f%3A11%3A%22Zbqry.inyvq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
 			'_Token' => compact('key')
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertFalse($result, 'validatePost passed when fields were missing. %s');
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
 			'_Token' => compact('fields')
 		);
@@ -615,10 +615,10 @@ DIGEST;
  */
 	function testValidatePostArray() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('multi_field' => array('1', '3')),
 			'_Token' => compact('key', 'fields')
 		);
@@ -633,10 +633,10 @@ DIGEST;
  */
 	function testValidatePostNoModel() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '540ac9c60d323c22bafe997b72c0790f39a8bdef%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'anything' => 'some_data',
 			'_Token' => compact('key', 'fields')
 		);
@@ -653,10 +653,10 @@ DIGEST;
  */
 	function testValidatePostSimple() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = $data = array(
+		$this->Controller->request->data = $data = array(
 			'Model' => array('username' => '', 'password' => ''),
 			'_Token' => compact('key', 'fields')
 		);
@@ -673,11 +673,11 @@ DIGEST;
  */
 	function testValidatePostComplex() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'c9118120e680a7201b543f562e5301006ccfcbe2%3An%3A2%3A%7Bv%3A0%3Bf%3A14%3A%';
 		$fields .= '22Nqqerffrf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Addresses' => array(
 				'0' => array(
 					'id' => '123456', 'title' => '', 'first_name' => '', 'last_name' => '',
@@ -701,24 +701,24 @@ DIGEST;
  */
 	function testValidatePostMultipleSelect() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '422cde416475abc171568be690a98cad20e66079%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Tag' => array('Tag' => array(1, 2)),
 			'_Token' => compact('key', 'fields'),
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Tag' => array('Tag' => array(1, 2, 3)),
 			'_Token' => compact('key', 'fields'),
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Tag' => array('Tag' => array(1, 2, 3, 4)),
 			'_Token' => compact('key', 'fields'),
 		);
@@ -726,7 +726,7 @@ DIGEST;
 		$this->assertTrue($result);
 
 		$fields = '19464422eafe977ee729c59222af07f983010c5f%3An%3A0%3A%7B%7D';
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
 			'Tag' => array('Tag' => array(1)), '_Token' => compact('key', 'fields'),
 		);
@@ -745,11 +745,11 @@ DIGEST;
  */
 	function testValidatePostCheckbox() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%';
 		$fields .= '3Bf%3A11%3A%22Zbqry.inyvq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -759,7 +759,7 @@ DIGEST;
 
 		$fields = '874439ca69f89b4c4a5f50fb9c36ff56a28f5d42%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -768,11 +768,11 @@ DIGEST;
 		$this->assertTrue($result);
 
 
-		$this->Controller->data = array();
+		$this->Controller->request->data = array();
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 
-		$this->Controller->data = $data = array(
+		$this->Controller->request->data = $data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -789,11 +789,11 @@ DIGEST;
  */
 	function testValidatePostHidden() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '51ccd8cb0997c7b3d4523ecde5a109318405ef8c%3An%3A2%3A%7Bv%3A0%3Bf%3A12%3A';
 		$fields .= '%22Zbqry.uvqqra%22%3Bv%3A1%3Bf%3A18%3A%22Zbqry.bgure_uvqqra%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array(
 				'username' => '', 'password' => '', 'hidden' => '0',
 				'other_hidden' => 'some hidden value'
@@ -813,11 +813,11 @@ DIGEST;
 	function testValidatePostWithDisabledFields() {
 		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'ef1082968c449397bcd849f963636864383278b1%3An%3A1%3A%7Bv%';
 		$fields .= '3A0%3Bf%3A12%3A%22Zbqry.uvqqra%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array(
 				'username' => '', 'password' => '', 'hidden' => '0'
 			),
@@ -836,12 +836,12 @@ DIGEST;
  */
 	function testValidateHiddenMultipleModel() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = 'a2d01072dc4660eea9d15007025f35a7a5b58e18%3An%3A3%3A%7Bv%3A0%3Bf%3A11';
 		$fields .= '%3A%22Zbqry.inyvq%22%3Bv%3A1%3Bf%3A12%3A%22Zbqry2.inyvq%22%3Bv%3A2%';
 		$fields .= '3Bf%3A12%3A%22Zbqry3.inyvq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
 			'Model2' => array('valid' => '0'),
 			'Model3' => array('valid' => '0'),
@@ -869,12 +869,12 @@ DIGEST;
  */
 	function testValidateHasManyModel() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3An%3A4%3A%7Bv%3A0%3Bf%3A14%3A%2';
 		$fields .= '2Zbqry.0.uvqqra%22%3Bv%3A1%3Bf%3A13%3A%22Zbqry.0.inyvq%22%3Bv%3A2%3Bf%3';
 		$fields .= 'A14%3A%22Zbqry.1.uvqqra%22%3Bv%3A3%3Bf%3A13%3A%22Zbqry.1.inyvq%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Model' => array(
 				array(
 					'username' => 'username', 'password' => 'password',
@@ -900,12 +900,12 @@ DIGEST;
  */
 	function testValidateHasManyRecordsPass() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3An%3A4%3A%7Bv%3A0%3Bf%3A12%3A%2';
 		$fields .= '2Nqqerff.0.vq%22%3Bv%3A1%3Bf%3A17%3A%22Nqqerff.0.cevznel%22%3Bv%3A2%3Bf%';
 		$fields .= '3A12%3A%22Nqqerff.1.vq%22%3Bv%3A3%3Bf%3A17%3A%22Nqqerff.1.cevznel%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Address' => array(
 				0 => array(
 					'id' => '123',
@@ -945,12 +945,12 @@ DIGEST;
  */
 	function testValidateHasManyRecordsFail() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3An%3A4%3A%7Bv%3A0%3Bf%3A12%3A%2';
 		$fields .= '2Nqqerff.0.vq%22%3Bv%3A1%3Bf%3A17%3A%22Nqqerff.0.cevznel%22%3Bv%3A2%3Bf%';
 		$fields .= '3A12%3A%22Nqqerff.1.vq%22%3Bv%3A3%3Bf%3A17%3A%22Nqqerff.1.cevznel%22%3B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'Address' => array(
 				0 => array(
 					'id' => '123',
@@ -1120,10 +1120,10 @@ DIGEST;
  */
 	function testFormDisabledFields() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '11842060341b9d0fc3808b90ba29fdea7054d6ad%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'MyModel' => array('name' => 'some data'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -1132,9 +1132,9 @@ DIGEST;
 
 		$this->Controller->Security->startup($this->Controller);
 		$this->Controller->Security->disabledFields = array('MyModel.name');
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'MyModel' => array('name' => 'some data'),
 			'_Token' => compact('key', 'fields')
 		);
@@ -1151,30 +1151,30 @@ DIGEST;
  */
 	function testRadio() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 		$fields = '575ef54ca4fc8cab468d6d898e9acd3a9671c17e%3An%3A0%3A%7B%7D';
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'_Token' => compact('key', 'fields')
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertFalse($result);
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'_Token' => compact('key', 'fields'),
 			'Test' => array('test' => '')
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'_Token' => compact('key', 'fields'),
 			'Test' => array('test' => '1')
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$this->Controller->data = array(
+		$this->Controller->request->data = array(
 			'_Token' => compact('key', 'fields'),
 			'Test' => array('test' => '2')
 		);
@@ -1211,13 +1211,13 @@ DIGEST;
  */
 	function testSettingTokenForRequestAction() {
 		$this->Controller->Security->startup($this->Controller);
-		$key = $this->Controller->params['_Token']['key'];
+		$key = $this->Controller->request->params['_Token']['key'];
 
 		$this->Controller->params['requested'] = 1;
-		unset($this->Controller->params['_Token']);
+		unset($this->Controller->request->params['_Token']);
 
 		$this->Controller->Security->startup($this->Controller);
-		$this->assertEqual($this->Controller->params['_Token']['key'], $key);
+		$this->assertEqual($this->Controller->request->params['_Token']['key'], $key);
 	}
 
 /**
