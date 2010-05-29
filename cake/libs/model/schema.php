@@ -392,7 +392,7 @@ class CakeSchema extends Object {
 		$tables = array();
 		foreach ($new as $table => $fields) {
 			if ($table == 'missing') {
-				break;
+				continue;
 			}
 			if (!array_key_exists($table, $old)) {
 				$tables[$table]['add'] = $fields;
