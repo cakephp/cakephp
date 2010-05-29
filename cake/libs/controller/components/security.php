@@ -160,7 +160,7 @@ class SecurityComponent extends Object {
  * @var array
  * @access public
  */
-	public $components = array('RequestHandler', 'Session');
+	public $components = array('Session');
 
 /**
  * Holds the current action of the controller
