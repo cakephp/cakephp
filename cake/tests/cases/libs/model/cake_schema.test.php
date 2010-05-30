@@ -743,6 +743,45 @@ class CakeSchemaTest extends CakeTestCase {
 			),
 		);
 		$this->assertEqual($expected, $compare);
+
+		$tables = array(
+			'missing' => array(
+				'categories' => array(
+					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100),
+					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+				)
+			),
+			'ratings' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+				'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL),
+				'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+				'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+				'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+			)
+		);
+		$compare = $New->compare($this->Schema, $tables);
+		$expected = array(
+			'ratings' => array(
+				'add' => array(
+					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+					'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+					'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL),
+					'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+				)
+			)
+		);
+		$this->assertEqual($expected, $compare);
 	}
 
 /**
