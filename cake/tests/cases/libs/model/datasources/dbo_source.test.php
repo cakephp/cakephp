@@ -4316,7 +4316,7 @@ class DboSourceTest extends CakeTestCase {
 				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
 		);
 		$conditions = array('two' => 2);
-		$result = $this->db->conditions($conditions,true,false,$Article);
+		$result = $this->db->conditions($conditions, true, false, $Article);
 		$expected = '(1 + 1) = 2';
 		$this->assertEqual($expected, $result);
 
