@@ -248,16 +248,16 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestConfirmController() {
+	public function testConfirmController() {
 		$controller = 'Posts';
 		$scaffold = false;
 		$helpers = array('Ajax', 'Time');
 		$components = array('Acl', 'Auth');
 		$uses = array('Comment', 'User');
 
-		$this->Task->expects($this->at(2))->method('out')->with("Controller Name:\n\t$controller");
-		$this->Task->expects($this->at(3))->method('out')->with("Helpers:\n\tAjax, Time");
-		$this->Task->expects($this->at(4))->method('out')->with("Components:\n\tAcl, Auth");
+		$this->Task->expects($this->at(4))->method('out')->with("Controller Name:\n\t$controller");
+		$this->Task->expects($this->at(5))->method('out')->with("Helpers:\n\tAjax, Time");
+		$this->Task->expects($this->at(6))->method('out')->with("Components:\n\tAcl, Auth");
 		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
 	}
 
@@ -266,7 +266,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestBake() {
+	public function testBake() {
 		$helpers = array('Ajax', 'Time');
 		$components = array('Acl', 'Auth');
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
@@ -295,7 +295,7 @@ class ControllerTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xxtestBakeWithPlugin() {
+	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 		$helpers = array('Ajax', 'Time');
 		$components = array('Acl', 'Auth');
@@ -303,9 +303,12 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')->with($path, '*');
+		$this->Task->expects($this->at(0))->method('createFile')->with(
+			$path,
+			new PHPUnit_Framework_Constraint_IsAnything()
+		);
 		$this->Task->expects($this->at(1))->method('createFile')->with(
-			$path, 
+			$path,
 			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
 		);
 		
