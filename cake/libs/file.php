@@ -192,7 +192,7 @@ class File extends Object {
 		if ($bytes === false) {
 			$this->close();
 		}
-		return $data;
+		return trim($data);
 	}
 
 /**
