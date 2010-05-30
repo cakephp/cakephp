@@ -186,7 +186,7 @@ class File {
 		if ($bytes === false) {
 			$this->close();
 		}
-		return $data;
+		return trim($data);
 	}
 
 /**
