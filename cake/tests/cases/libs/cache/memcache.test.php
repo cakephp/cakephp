@@ -205,7 +205,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertEqual($result, $expecting);
 
 		$result = Cache::read('long_expiry_test');
-		$this->assertTrue($result);
+		$this->assertEquals($expecting, $result);
 
 		Cache::config('memcache', array('duration' => 3600));
 	}
