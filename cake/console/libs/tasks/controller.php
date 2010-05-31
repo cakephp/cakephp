@@ -284,7 +284,7 @@ class ControllerTask extends BakeTask {
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
-		$singularHumanName = $this->_singularHumanName($currentModelName);
+		$singularHumanName = $this->_singularHumanName($controllerName);
 		$pluralHumanName = $this->_pluralName($controllerName);
 
 		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',

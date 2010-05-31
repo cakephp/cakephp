@@ -6,14 +6,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.3
@@ -319,6 +319,7 @@ class JsHelperTestCase extends CakeTestCase {
  */
 	function testLinkWithMock() {
 		$this->_useMock();
+
 		$options = array('update' => '#content');
 
 		$this->Js->TestJsEngine->expects($this->any())
@@ -335,7 +336,7 @@ class JsHelperTestCase extends CakeTestCase {
 
 		$this->Js->TestJsEngine->expects($this->at(2))
 			->method('dispatchMethod')
-			->with($this->equalTo('event'), $this->equalTo( array('click', 'ajax code', $options)));
+			->with($this->equalTo('event'), $this->equalTo( array('click', 'ajax code', $options + array('buffer' => null))));
 
 		$result = $this->Js->link('test link', '/posts/view/1', $options);
 		$expected = array(
@@ -344,6 +345,15 @@ class JsHelperTestCase extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test link with a mock and confirmation
+ *
+ * @return void
+ */
+	function testLinkWithMockAndConfirm() {
+		$this->_useMock();
 
 		$options = array(
 			'confirm' => 'Are you sure?',
@@ -369,6 +379,7 @@ CODE;
 		$this->Js->TestJsEngine->expects($this->at(1))
 			->method('event')
 			->with($this->equalTo('click'), $this->equalTo($code));
+
 		$result = $this->Js->link('test link »', '/posts/view/1', $options);
 		$expected = array(
 			'a' => array('id' => $options['id'], 'class' => $options['class'], 'href' => '/posts/view/1'),
@@ -376,6 +387,15 @@ CODE;
 			'/a'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test link passing on htmlAttributes
+ *
+ * @return void
+ */
+	function testLinkWithAribtraryAttributes() {
+		$this->_useMock();
 
 		$options = array('id' => 'something', 'htmlAttributes' => array('arbitrary' => 'value', 'batman' => 'robin'));
 		$result = $this->Js->link('test link', '/posts/view/1', $options);
@@ -395,14 +415,15 @@ CODE;
  */
 	function testLinkWithNoBuffering() {
 		$this->_useMock();
-		$this->Js->TestJsEngine->expects($this->any())
+
+		$this->Js->TestJsEngine->expects($this->at(1))
 			->method('dispatchMethod')
-			->with($this->equalTo('request'))
+			->with('request',  array('/posts/view/1', array('update' => '#content')))
 			->will($this->returnValue('ajax code'));
 
-		$this->Js->TestJsEngine->expects($this->any())
+		$this->Js->TestJsEngine->expects($this->at(2))
 			->method('dispatchMethod')
-			->with($this->equalTo('get'))
+			->with('event')
 			->will($this->returnValue('-event handler-'));
 
 		$options = array('update' => '#content', 'buffer' => false);
@@ -418,9 +439,29 @@ CODE;
 			'/script'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test link with buffering off and safe on.
+ *
+ * @return void
+ */
+	function testLinkWithNoBufferingAndSafe() {
+		$this->_useMock();
+
+		$this->Js->TestJsEngine->expects($this->at(1))
+			->method('dispatchMethod')
+			->with('request',  array('/posts/view/1', array('update' => '#content')))
+			->will($this->returnValue('ajax code'));
+
+		$this->Js->TestJsEngine->expects($this->at(2))
+			->method('dispatchMethod')
+			->with('event')
+			->will($this->returnValue('-event handler-'));
 
 		$options = array('update' => '#content', 'buffer' => false, 'safe' => false);
 		$result = $this->Js->link('test link', '/posts/view/1', $options);
+
 		$expected = array(
 			'a' => array('id' => 'preg:/link-\d+/', 'href' => '/posts/view/1'),
 			'test link',
@@ -441,41 +482,29 @@ CODE;
 		$this->_useMock();
 
 		$options = array('update' => '#content', 'id' => 'test-submit');
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('serializeform'))
-			->will($this->returnValue('serialize-code'));
-
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('serializeForm'))
-			->will($this->returnValue('serialize-code'));
-
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('get'))
-			->will($this->returnValue('ajax-code'));
 
 		$this->Js->TestJsEngine->expects($this->at(0))
 			->method('dispatchMethod')
-			->with($this->equalTo('get'));
+			->with('get');
 
 		$this->Js->TestJsEngine->expects($this->at(1))
 			->method('dispatchMethod')
-			->with($this->matchesRegularExpression('/serializeForm/i'));
+			->with('serializeForm')
+			->will($this->returnValue('serialize-code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
 			->method('dispatchMethod')
-			->with($this->equalTo('request'));
+			->with('request')
+			->will($this->returnValue('ajax-code'));
 
 		$params = array(
 			'update' => $options['update'], 'data' => 'serialize-code',
-			'method' => 'post', 'dataExpression' => true
+			'method' => 'post', 'dataExpression' => true, 'buffer' => null
 		);
 
 		$this->Js->TestJsEngine->expects($this->at(3))
 			->method('dispatchMethod')
-			->with($this->equalTo('event'), $this->equalTo( array('click', "ajax-code", $params)));
+			->with('event', $this->equalTo( array('click', "ajax-code", $params)));
 
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
@@ -487,7 +516,7 @@ CODE;
 
 		$this->Js->TestJsEngine->expects($this->at(4))
 			->method('dispatchMethod')
-			->with($this->equalTo('get'));
+			->with('get');
 
 		$this->Js->TestJsEngine->expects($this->at(5))
 			->method('dispatchMethod')
@@ -508,7 +537,7 @@ CODE;
 
 		$params = array(
 			'update' => '#content', 'data' => 'serialize-code',
-			'method' => 'post', 'dataExpression' => true
+			'method' => 'post', 'dataExpression' => true, 'buffer' => null
 		);
 
 		$this->Js->TestJsEngine->expects($this->at(7))
@@ -534,36 +563,28 @@ CODE;
 		$this->_useMock();
 		$options = array('update' => '#content', 'id' => 'test-submit', 'buffer' => false, 'safe' => false);
 
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('serializeform'))
-			->will($this->returnValue('serialize-code'));
-
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('request'))
-			->will($this->returnValue('ajax-code'));
-
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->with($this->equalTo('event'))
-			->will($this->returnValue('event-handler'));
-
 		$this->Js->TestJsEngine->expects($this->at(0))
 			->method('dispatchMethod')
 			->with($this->equalTo('get'));
 
 		$this->Js->TestJsEngine->expects($this->at(1))
 			->method('dispatchMethod')
-			->with($this->matchesRegularExpression('/serializeForm/i'));
+			->with('serializeForm')
+			->will($this->returnValue('serialize-code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
 			->method('dispatchMethod')
-			->with($this->equalTo('request'));
-
+			->with('request')
+			->will($this->returnValue('ajax-code'));
+		
+		$this->Js->TestJsEngine->expects($this->at(3))
+			->method('dispatchMethod')
+			->with('event')
+			->will($this->returnValue('event-handler'));
+	
 		$params = array(
-			'update' => $options['update'], 'buffer' => false, 'safe' => false, 'data' => 'serialize-code',
-			'method' => 'post', 'dataExpression' => true
+			'update' => $options['update'], 'data' => 'serialize-code',
+			'method' => 'post', 'dataExpression' => true, 'buffer' => false
 		);
 
 		$this->Js->TestJsEngine->expects($this->at(3))

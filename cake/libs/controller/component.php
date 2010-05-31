@@ -22,7 +22,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
- * @link          http://book.cakephp.org/view/62/Components
+ * @link          http://book.cakephp.org/view/993/Components
  */
 class Component extends Object {
 

@@ -361,6 +361,7 @@ class BehaviorCollection extends Object {
  * @return void
  */
 	public function detach($name) {
+		list($plugin, $name) = pluginSplit($name);
 		if (isset($this->{$name})) {
 			$this->{$name}->cleanup(ClassRegistry::getObject($this->modelName));
 			unset($this->{$name});

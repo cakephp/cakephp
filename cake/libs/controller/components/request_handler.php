@@ -258,8 +258,9 @@ class RequestHandlerComponent extends Object {
  *
  * @param object $controller A reference to the controller
  * @param mixed $url A string or array containing the redirect location
+ * @param mixed HTTP Status for redirect
  */
-	public function beforeRedirect(&$controller, $url) {
+	public function beforeRedirect(&$controller, $url, $status = null) {
 		if (!$this->isAjax()) {
 			return;
 		}
@@ -268,6 +269,12 @@ class RequestHandlerComponent extends Object {
 		}
 		if (is_array($url)) {
 			$url = Router::url($url + array('base' => false));
+		}
+		if (!empty($status)) {
+			$statusCode = $controller->httpCodes($status);
+			$code = key($statusCode);
+			$msg = $statusCode[$code];
+			$controller->header("HTTP/1.1 {$code} {$msg}");
 		}
 		echo $this->requestAction($url, array('return'));
 		$this->_stop();

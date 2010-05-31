@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
@@ -21,6 +21,7 @@ App::import('Controller', 'Controller', false);
 App::import('Component', array('RequestHandler'));
 
 Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop'));
+Mock::generatePartial('Controller', 'RequestHandlerMockController', array('header'));
 
 /**
  * RequestHandlerTestController class
@@ -601,9 +602,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function testBeforeRedirectCallbackWithArrayUrl() {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		), true);
+
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
@@ -618,7 +617,22 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		);
 		$result = ob_get_clean();
 		$this->assertEqual($result, 'one: first two: second');
-		App::build();
+	}
+
+/**
+ * assure that beforeRedirect with a status code will correctly set the status header 
+ *
+ * @return void
+ */
+	function testBeforeRedirectCallingHeader() {
+		$controller =& new RequestHandlerMockController();
+		$RequestHandler =& new NoStopRequestHandler();
+
+		$controller->expectOnce('header', array('HTTP/1.1 403 Forbidden'));
+
+		ob_start();
+		$RequestHandler->beforeRedirect($controller, 'request_handler_test/param_method/first/second', 403);
+		$result = ob_get_clean();
 	}
 
 }
