@@ -885,7 +885,7 @@ class EmailComponent extends Object{
 			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
 				$response .= $this->__smtpConnection->read();
 			}
-			if (substr($response, -2) === "\r\n") {
+			if (substr($response, -2) !== "\r\n") {
 				$this->smtpError = 'timeout';
 				return false;
 			}
