@@ -4353,6 +4353,11 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->order($order, 'ASC', $Article);
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
 		$this->assertEqual($expected, $result);
+
+		$order = array('Article.two', 'Article.this_moment');
+		$result = $this->db->order($order, 'ASC', $Article);
+		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
+		$this->assertEqual($expected, $result);
 	}
 
 /**

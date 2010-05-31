@@ -2421,17 +2421,17 @@ class DboSource extends DataSource {
 				$key = preg_replace('/\\x20(ASC|DESC).*/i', '', $key);
 			}
 
+			$key = trim($key);
+
+			if (is_object($model) && $model->isVirtualField($key)) {
+				$key =  '(' . $this->__quoteFields($model->getVirtualField($key)) . ')';
+			}
+
 			if (strpos($key, '.')) {
 				$key = preg_replace_callback('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', array(&$this, '__quoteMatchedField'), $key);
 			}
-
-			$key = trim($key);
-			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
-				if (is_object($model) && $model->isVirtualField($key)) {
-					$key =  '('.$this->__quoteFields($model->getVirtualField($key)).')';
-				} else {
-					$key = $this->name($key);
-				}
+			if (!preg_match('/\s/', $key) && !strpos($key, '.')) {
+				$key = $this->name($key);
 			}
 			$key .= ' ' . trim($dir);
 			$result[] = $key;
