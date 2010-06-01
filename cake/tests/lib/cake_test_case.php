@@ -66,6 +66,26 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	private $__savedGetData = array();
 
 /**
+* Runs the test case and collects the results in a TestResult object.
+* If no TestResult object is passed a new one will be created.
+* This method is run for each test method in this class
+*
+* @param  PHPUnit_Framework_TestResult $result
+* @return PHPUnit_Framework_TestResult
+* @throws InvalidArgumentException
+*/
+	public function run(PHPUnit_Framework_TestResult $result = NULL) {
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->load($this); 
+		}
+		$result = parent::run($result);
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->unload($this);
+		}
+		return $result;
+	}
+
+/**
  * Called when a test case (group of methods) is about to start (to be overriden when needed.)
  *
  * @param string $method Test method about to get executed.
@@ -123,32 +143,8 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPreConditions() {
 		parent::assertPreConditions();
-		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->load($this); 
-		}
 		if (!in_array(strtolower($this->getName()), $this->methods)) {
 			$this->startTest($this->getName());
-		}
-	}
-
-/**
- * Runs as last test to drop tables.
- *
- * @return void
- */
-	public function end() {
-		if (isset($this->_fixtures) && isset($this->db)) {
-			if ($this->dropTables) {
-				foreach (array_reverse($this->_fixtures) as $fixture) {
-					$fixture->drop($this->db);
-				}
-			}
-			$this->db->sources(true);
-			Configure::write('Cache.disable', false);
-		}
-
-		if (class_exists('ClassRegistry')) {
-			ClassRegistry::flush();
 		}
 	}
 
@@ -160,9 +156,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPostConditions() {
 		parent::assertPostConditions();
-		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->unload($this);
-		}
 		if (!in_array(strtolower($this->getName()), $this->methods)) {
 			$this->endTest($this->getName());
 		}

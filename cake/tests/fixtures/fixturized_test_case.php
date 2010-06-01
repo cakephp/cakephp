@@ -51,4 +51,13 @@ class FixturizedTestCase extends CakeTestCase {
 	public function testSkipIfFalse() {
 		$this->skipIf(false);
 	}
+
+/**
+ * test that a fixtures are unoaded even if the test throws exceptions
+ *
+ * @return void
+ */
+	public function testThrowException() {
+		throw new Exception();
+	}
 }
