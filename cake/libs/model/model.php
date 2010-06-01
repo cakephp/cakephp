@@ -1722,6 +1722,7 @@ class Model extends Object {
 				break;
 			}
 		}
+		return $return;
 	}
 
 /**

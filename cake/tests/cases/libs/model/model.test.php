@@ -69,35 +69,25 @@ abstract class BaseModelTest extends CakeTestCase {
 	);
 
 /**
- * start method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function start() {
-		parent::start();
+	function setUp() {
+		parent::setUp();
 		$this->debug = Configure::read('debug');
-		Configure::write('debug', 2);
 	}
 
 /**
- * end method
+ * tearDown method
  *
  * @access public
  * @return void
  */
-	function end() {
-		parent::end();
+	function tearDown() {
+		parent::tearDown();
 		Configure::write('debug', $this->debug);
-	}
-
-/**
- * endTest method
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		ClassRegistry::flush();
 	}
 }

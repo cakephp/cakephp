@@ -190,7 +190,7 @@ class ModelValidationTest extends BaseModelTest {
 			'body' => 'body'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -208,7 +208,7 @@ class ModelValidationTest extends BaseModelTest {
 			'body' => 'body'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -218,7 +218,7 @@ class ModelValidationTest extends BaseModelTest {
 			'body' => 'body'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -231,7 +231,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => ''
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -242,7 +242,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => '2007-05-01'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -253,7 +253,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => 'invalid-date-here'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -264,7 +264,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => 0
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -275,7 +275,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => '0'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -283,19 +283,19 @@ class ModelValidationTest extends BaseModelTest {
 
 		$data = array('TestValidate' => array('modified' => null));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
 		$data = array('TestValidate' => array('modified' => false));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
 		$data = array('TestValidate' => array('modified' => ''));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -303,7 +303,7 @@ class ModelValidationTest extends BaseModelTest {
 			'modified' => '2007-05-01'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -316,7 +316,7 @@ class ModelValidationTest extends BaseModelTest {
 			'slug' => ''
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -327,7 +327,7 @@ class ModelValidationTest extends BaseModelTest {
 			'slug' => 'slug-right-here'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -338,7 +338,7 @@ class ModelValidationTest extends BaseModelTest {
 			'slug' => 'abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -358,7 +358,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => '0'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -367,7 +367,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => 0
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -376,7 +376,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => '3'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -385,7 +385,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => 3
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -405,7 +405,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => '3'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -414,7 +414,7 @@ class ModelValidationTest extends BaseModelTest {
 			'number' => 3
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -426,19 +426,19 @@ class ModelValidationTest extends BaseModelTest {
 
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
 		$data = array('TestValidate' => array('title' => 'new title'));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
 		$data = array('TestValidate' => array('title' => 'title-new'));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -448,7 +448,7 @@ class ModelValidationTest extends BaseModelTest {
 		));
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -460,7 +460,7 @@ class ModelValidationTest extends BaseModelTest {
 		)));
 		$data = array('TestValidate' => array('title' => ''));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -470,7 +470,7 @@ class ModelValidationTest extends BaseModelTest {
 		));
 		$data = array('TestValidate' => array('title' => 'My Article Title'));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertFalse($result);
 
@@ -478,7 +478,7 @@ class ModelValidationTest extends BaseModelTest {
 			'title' => 'My Article With a Different Title'
 		));
 		$result = $TestModel->create($data);
-		$this->assertTrue($result);
+		$this->assertEquals($result, $data);
 		$result = $TestModel->validates();
 		$this->assertTrue($result);
 
@@ -529,6 +529,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testValidatesWithAssociations() {
+		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
 		$data = array(
 			'Something' => array(
 				'id' => 5,
@@ -607,7 +608,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'first'));
-		$this->assertFalse($result);
+		$this->assertEquals($result, array());
 		$this->assertEqual($JoinThing->validationErrors, $expectedError);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
@@ -626,7 +627,6 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	function testMissingValidationErrorTriggering() {
-		$restore = Configure::read('debug');
 		Configure::write('debug', 2);
 
 		$TestModel =& new ValidationTest1();
@@ -637,13 +637,27 @@ class ModelValidationTest extends BaseModelTest {
 				'required' => true
 			)
 		);
-		$this->expectError(new PatternExpectation('/thisOneBringsThePain for title/i'));
+		$this->expectError();
 		$TestModel->invalidFields(array('fieldList' => array('title')));
+	}
 
+/**
+ * Test that missing validation methods does not trigger errors in production mode.
+ *
+ * @return void
+ */
+	function testMissingValidationErrorNoTriggering() {
 		Configure::write('debug', 0);
-		$this->assertNoErrors();
+		$TestModel =& new ValidationTest1();
+		$TestModel->create(array('title' => 'foo'));
+		$TestModel->validate = array(
+			'title' => array(
+				'rule' => array('thisOneBringsThePain'),
+				'required' => true
+			)
+		);
 		$TestModel->invalidFields(array('fieldList' => array('title')));
-		Configure::write('debug', $restore);
+		$this->assertEquals($TestModel->validationErrors, array());
 	}
 
 }
