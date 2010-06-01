@@ -20,7 +20,7 @@
 App::import('Core', array('AppModel', 'Model'));
 require_once dirname(__FILE__) . DS . 'models.php';
 
-SimpleTest::ignore('BaseModelTest');
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 
 /**
  * ModelBaseTest
@@ -28,7 +28,7 @@ SimpleTest::ignore('BaseModelTest');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class BaseModelTest extends CakeTestCase {
+abstract class BaseModelTest extends CakeTestCase {
 
 /**
  * autoFixtures property
