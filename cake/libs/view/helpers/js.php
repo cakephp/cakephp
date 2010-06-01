@@ -301,17 +301,22 @@ class JsHelper extends AppHelper {
 		list($options, $htmlOptions) = $this->_getHtmlOptions($options);
 		$out = $this->Html->link($title, $url, $htmlOptions);
 		$this->get('#' . $htmlOptions['id']);
-		$requestString = '';
+		$requestString = $event = '';
 		if (isset($options['confirm'])) {
 			$requestString = $this->confirmReturn($options['confirm']);
 			unset($options['confirm']);
 		}
+		$buffer = isset($options['buffer']) ? $options['buffer'] : null;
+		$safe = isset($options['safe']) ? $options['safe'] : true;
+		unset($options['buffer'], $options['safe']);
+
 		$requestString .= $this->request($url, $options);
+
 		if (!empty($requestString)) {
-			$event = $this->event('click', $requestString, $options);
+			$event = $this->event('click', $requestString, $options + array('buffer' => $buffer));
 		}
-		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$opts = array_intersect_key(array('safe' => null), $options);
+		if (isset($buffer) && !$buffer) {
+			$opts = array('safe' => $safe);
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;
@@ -351,8 +356,16 @@ class JsHelper extends AppHelper {
  * Forms submitting with this method, cannot send files. Files do not transfer over XmlHttpRequest
  * and require an iframe or flash.
  *
+ * ### Options
+ * 
+ * - `url` The url you wish the XHR request to submit to.
+ * - `confirm` A string to use for a confirm() message prior to submitting the request.
+ * - `method` The method you wish the form to send by, defaults to POST
+ * - `buffer` Whether or not you wish the script code to be buffered, defaults to true.
+ * - Also see options for JsHelper::request() and JsHelper::event()
+ *
  * @param string $title The display text of the submit button.
- * @param array $options Array of options to use.
+ * @param array $options Array of options to use. See the options for the above mentioned methods.
  * @return string Completed submit button.
  */
 	public function submit($caption = null, $options = array()) {
@@ -379,12 +392,17 @@ class JsHelper extends AppHelper {
 			$options['method'] = 'post';
 		}
 		$options['dataExpression'] = true;
+
+		$buffer = isset($options['buffer']) ? $options['buffer'] : null;
+		$safe = isset($options['safe']) ? $options['safe'] : true;
+		unset($options['buffer'], $options['safe']);
+
 		$requestString .= $this->request($url, $options);
 		if (!empty($requestString)) {
-			$event = $this->event('click', $requestString, $options);
+			$event = $this->event('click', $requestString, $options + array('buffer' => $buffer));
 		}
-		if (isset($options['buffer']) && $options['buffer'] == false) {
-			$opts = array_intersect_key(array('safe' => null), $options);
+		if (isset($buffer) && !$buffer) {
+			$opts = array('safe' => $safe);
 			$out .= $this->Html->scriptBlock($event, $opts);
 		}
 		return $out;

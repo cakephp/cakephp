@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5436
@@ -338,5 +338,42 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEqual($Session->read('Test'), 'some value');
 		$Session->destroy('Test');
 		$this->assertNull($Session->read('Test'));
+	}
+	
+/**
+ * testSessionTimeout method
+ *
+ * @access public
+ * @return void
+ */
+	function testSessionTimeout() {
+
+		session_destroy();
+		Configure::write('Security.level', 'low');
+		$Session =& new SessionComponent();
+		$Session->write('Test', 'some value');
+		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
+		$this->assertEqual($Session->time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
+
+		session_destroy();
+		Configure::write('Security.level', 'medium');
+		$Session =& new SessionComponent();
+		$Session->write('Test', 'some value');
+		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
+		$this->assertEqual($Session->time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
+		
+		session_destroy();
+		Configure::write('Security.level', 'high');
+		$Session =& new SessionComponent();
+		$Session->write('Test', 'some value');
+		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
+		$this->assertEqual($Session->time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
+
 	}
 }

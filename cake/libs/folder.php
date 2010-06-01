@@ -66,7 +66,7 @@ class Folder {
  * @var array
  * @access private
  */
-	private $__errors = false;
+	private $__errors = array();
 
 /**
  * Holds array of complete directory paths.
@@ -678,11 +678,14 @@ class Folder {
 			$to = $options;
 			$options = (array)$options;
 		}
-		$options = array_merge(array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), $options);
+		$options = array_merge(
+			array('to' => $to, 'from' => $this->path, 'mode' => $this->mode, 'skip' => array()), 
+			$options
+		);
 
 		if ($this->copy($options)) {
 			if ($this->delete($options['from'])) {
-				return $this->cd($options['to']);
+				return (bool)$this->cd($options['to']);
 			}
 		}
 		return false;
