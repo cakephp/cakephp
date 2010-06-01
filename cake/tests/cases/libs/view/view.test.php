@@ -245,6 +245,13 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+			)
+		), true);
 	}
 
 /**
@@ -257,31 +264,6 @@ class ViewTest extends CakeTestCase {
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function startTest() {
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
-			)
-		), true);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		App::build();
 	}
 
