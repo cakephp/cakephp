@@ -925,12 +925,10 @@ class ViewTest extends CakeTestCase {
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
-		restore_error_handler();
 		ob_start();
 		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
 		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
 
 		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
 		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);
