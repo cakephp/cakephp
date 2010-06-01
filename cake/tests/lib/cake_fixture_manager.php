@@ -43,7 +43,7 @@ class CakeFixtureManager {
 	protected $_loaded = array();
 
 /**
- * Holds the fixture classes that where instantiated indexed by class name
+ * Holds the fixture classes that where ins	tantiated indexed by class name
  *
  * @var array
  */
@@ -260,6 +260,7 @@ class CakeFixtureManager {
 				$db = $this->_db;
 			}
 			$fixture = $this->_fixtureMap[$name];
+			$this->_setupTable($fixture, $db);
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
