@@ -39,6 +39,13 @@ abstract class BaseModelTest extends CakeTestCase {
 	public $autoFixtures = false;
 
 /**
+ * Whether backup global state for each test method or not
+ *
+ * @var bool false
+ * @access public
+ */
+	public $backupGlobals = false;
+/**
  * fixtures property
  *
  * @var array
