@@ -369,7 +369,10 @@ class Inflector {
 						} else {
 							$_this->{$var}[$rule] = array_merge($pattern, $_this->{$var}[$rule]);
 						}
-						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)], $_this->{$var}['merged'][$rule]);
+						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)]);
+						if (isset($_this->{$var}['merged'][$rule])) {
+							unset($_this->{$var}['merged'][$rule]);
+						}
 						if ($type === 'plural') {
 							$_this->_pluralized = $_this->_tableize = array();
 						} elseif ($type === 'singular') {

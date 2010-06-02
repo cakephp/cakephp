@@ -43,23 +43,14 @@ class InflectorTest extends CakeTestCase {
 	var $Inflector = null;
 
 /**
- * setUp method
- *
- * @access public
- * @return void
- */
-	function setUp() {
-		$this->Inflector = Inflector::getInstance();
-	}
-
-/**
  * testInstantiation method
  *
  * @access public
  * @return void
  */
 	function testInstantiation() {
-		$this->assertEqual(Inflector::getInstance(), $this->Inflector);
+		$Inflector =& Inflector::getInstance();
+		$this->assertEqual(Inflector::getInstance(), $Inflector);
 	}
 
 /**
@@ -340,6 +331,19 @@ class InflectorTest extends CakeTestCase {
 	}
 
 /**
+ * This test if run in isolation should not cause errors in PHP4.
+ *
+ * @return void
+ */
+	function testRulesNoErrorPHP4() {
+		Inflector::rules('plural', array(
+			'rules' => array(),
+			'irregular' => array(),
+			'uninflected' => array('pays')
+		));
+	}
+
+/**
  * testCustomPluralRule method
  *
  * @access public
@@ -455,13 +459,4 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEqual(Inflector::singularize('Atlas'), 'Atlas');
 	}
 
-/**
- * tearDown method
- *
- * @access public
- * @return void
- */
-	function tearDown() {
-		unset($this->Inflector);
-	}
 }
