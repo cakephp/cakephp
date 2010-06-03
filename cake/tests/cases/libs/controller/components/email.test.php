@@ -235,6 +235,30 @@ class EmailComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testSmtpConfig method
+ *
+ * @access public
+ * @return void
+ */
+	function testSmtpConfig() {
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->Controller->EmailTest->smtpOptions = array();
+		$this->Controller->EmailTest->send('anything');
+		$config = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'protocol' => 'smtp',
+			'timeout' => 30
+		);
+		$this->assertEqual($config, $this->Controller->EmailTest->smtpOptions);
+
+		$this->Controller->EmailTest->smtpOptions = array('port' => 80);
+		$this->Controller->EmailTest->send('anything');
+		$config['port'] = 80;
+		$this->assertEqual($config, $this->Controller->EmailTest->smtpOptions);
+	}
+
+/**
  * testBadSmtpSend method
  *
  * @access public
@@ -308,6 +332,7 @@ TEMPDOC;
 
 		$connection =& new CakeSocket(array('protocol'=>'smtp', 'host' => 'localhost', 'port' => 25));
 		$this->Controller->EmailTest->setConnectionSocket($connection);
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
 		$this->assertTrue($connection->connect());
 		$this->assertTrue($this->Controller->EmailTest->smtpSend(null, '220') !== false);
 		$this->skipIf($this->Controller->EmailTest->smtpSend('EHLO locahost', '250') === false, '%s do not support EHLO.');
@@ -600,6 +625,7 @@ TEXTBLOC;
 	function testSmtpSendSocket() {
 		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
 		$socket =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
 		$this->Controller->EmailTest->setConnectionSocket($socket);
 
