@@ -575,6 +575,13 @@ class CakeSchemaTest extends CakeTestCase {
 			'models' => array('SchemaPost')
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
+
+		$read = $this->Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => array('SchemaComment', 'SchemaTag', 'SchemaPost')
+		));
+		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing %s');
 	}
 
 /**
