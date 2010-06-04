@@ -2119,6 +2119,29 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that input() and a non standard primary key makes a hidden input by default.
+ *
+ * @return void
+ */
+	function testInputWithNonStandardPrimaryKeyMakesHidden() {
+		$this->Form->create('User');
+		$this->Form->fieldset = array(
+			'User' => array(
+				'fields' => array(
+					'model_id' => array('type' => 'integer')
+				),
+				'validates' => array(),
+				'key' => 'model_id'
+			)
+		);
+		$result = $this->Form->input('model_id');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[User][model_id]', 'id' => 'UserModelId'),
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that overriding the magic select type widget is possible
  *
  * @return void

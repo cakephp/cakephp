@@ -740,7 +740,7 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 			}
-			if (preg_match('/_id$/', $fieldKey)) {
+			if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
 				$options['type'] = 'select';
 			}
 
