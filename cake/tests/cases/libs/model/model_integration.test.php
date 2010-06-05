@@ -57,7 +57,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testPkInHabtmLinkModelArticleB() {
-		$this->loadFixtures('Article', 'Tag');
+		$this->loadFixtures('Article', 'Tag', 'ArticlesTag');
 		$TestModel2 =& new ArticleB();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 	}
@@ -69,6 +69,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testCacheSourcesDisabling() {
+		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB', 'JoinC', 'JoinAC');
 		$this->db->cacheSources = true;
 		$TestModel = new JoinA();
 		$TestModel->cacheSources = false;
@@ -90,17 +91,16 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
-		$this->loadFixtures('Content', 'ContentAccount', 'Account');
+		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC');
 		$TestModel =& new Content();
 		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
 
 		//test conformant models with no PK in the join table
-		$this->loadFixtures('Article', 'Tag');
+		$this->loadFixtures('Article', 'Tag', 'User', 'Comment', 'Attachment', 'Syfile', 'Image', 'Item', 'Portfolio', 'ItemsPortfolio');
 		$TestModel2 =& new Article();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 
 		//test conformant models with PK in join table
-		$this->loadFixtures('Item', 'Portfolio', 'ItemsPortfolio');
 		$TestModel3 =& new Portfolio();
 		$this->assertEqual($TestModel3->ItemsPortfolio->primaryKey, 'id');
 
@@ -118,7 +118,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testDynamicBehaviorAttachment() {
-		$this->loadFixtures('Apple');
+		$this->loadFixtures('Apple', 'Sample', 'Author');
 		$TestModel =& new Apple();
 		$this->assertEqual($TestModel->Behaviors->attached(), array());
 
@@ -518,7 +518,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testDisplayField() {
-		$this->loadFixtures('Post', 'Comment', 'Person');
+		$this->loadFixtures('Post', 'Comment', 'Person', 'User');
 		$Post = new Post();
 		$Comment = new Comment();
 		$Person = new Person();
@@ -886,6 +886,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testLoadModelSecondIteration() {
+		$this->loadFixtures('Message', 'Thread', 'Bid');
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -1074,7 +1075,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testGetAssociated() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'Category');
 		$Article = ClassRegistry::init('Article');
 
 		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
@@ -1086,7 +1087,9 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($Article->getAssociated('hasMany'), array('Comment', 'Category'));
 
 		$results = $Article->getAssociated();
-		$this->assertEqual(sort(array_keys($results)), array('Category', 'Comment', 'Tag'));
+		$results = array_keys($results);
+		sort($results);
+		$this->assertEqual($results, array('Category', 'Comment', 'Tag', 'User'));
 
 		$Article->unbindModel(array('hasAndBelongsToMany' => array('Tag')));
 		$this->assertEqual($Article->getAssociated('hasAndBelongsToMany'), array());
@@ -1116,7 +1119,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testAutoConstructAssociations() {
-		$this->loadFixtures('User', 'ArticleFeatured');
+		$this->loadFixtures('User', 'ArticleFeatured', 'Featured', 'ArticleFeaturedsTags');
 		$TestModel =& new AssociationTest1();
 
 		$result = $TestModel->hasAndBelongsToMany;
@@ -1785,7 +1788,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testCreation() {
-		$this->loadFixtures('Article');
+		$this->loadFixtures('Article', 'ArticleFeaturedsTags');
 		$TestModel =& new Test();
 		$result = $TestModel->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
