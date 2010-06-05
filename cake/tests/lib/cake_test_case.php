@@ -427,6 +427,16 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 /**
+* Compatibility wrapper function for assertNotEquals
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertNotIdentical($expected, $actual, $message = '') {
+		return $this->assertNotEquals($expected, $actual, $message);
+	}
+/**
 * Compatibility wrapper function for assertNotRegExp
 * @param mixed $pattern a regular expression
 * @param string $string the text to be matched
