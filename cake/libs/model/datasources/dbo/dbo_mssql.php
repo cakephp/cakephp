@@ -701,7 +701,7 @@ class DboMssql extends DboSource {
  * @param string $fields
  * @param array $values
  */
-	protected function insertMulti($table, $fields, $values) {
+	public function insertMulti($table, $fields, $values) {
 		$primaryKey = $this->_getPrimaryKey($table);
 		$hasPrimaryKey = $primaryKey != null && (
 			(is_array($fields) && in_array($primaryKey, $fields)

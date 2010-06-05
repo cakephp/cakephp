@@ -34,7 +34,7 @@ class ConnectionManagerTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->ConnectionManager =& ConnectionManager::getInstance();
+		$this->ConnectionManager = ConnectionManager::getInstance();
 	}
 
 /**
@@ -79,12 +79,12 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetDataSource() {
 		$connections = ConnectionManager::enumConnectionObjects();
-		$this->assertTrue(count(array_keys($connections) >= 1));
+		$this->assertTrue((bool)(count(array_keys($connections) >= 1)));
 
 		$source = ConnectionManager::getDataSource(key($connections));
 		$this->assertTrue(is_object($source));
 
-		$this->expectError(new PatternExpectation('/Non-existent data source/i'));
+		$this->expectError();
 
 		$source = ConnectionManager::getDataSource('non_existent_source');
 		$this->assertEqual($source, null);
@@ -212,7 +212,7 @@ class ConnectionManagerTest extends CakeTestCase {
 
 		$this->assertEqual($result, $name);
 
-		$source =& new StdClass();
+		$source = new StdClass();
 		$result = ConnectionManager::getSourceName($source);
 		$this->assertEqual($result, null);
 	}
@@ -238,7 +238,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		}
 
 		$connection = array('classname' => 'NonExistentDataSource', 'filename' => 'non_existent');
-		$this->expectError(new PatternExpectation('/Unable to import DataSource class/i'));
+		$this->expectError();
 
 		$loaded = ConnectionManager::loadDataSource($connection);
 		$this->assertEqual($loaded, null);
@@ -254,7 +254,7 @@ class ConnectionManagerTest extends CakeTestCase {
 		$name = 'test_created_connection';
 
 		$connections = ConnectionManager::enumConnectionObjects();
-		$this->assertTrue(count(array_keys($connections) >= 1));
+		$this->assertTrue((bool)(count(array_keys($connections) >= 1)));
 
 		$source = ConnectionManager::getDataSource(key($connections));
 		$this->assertTrue(is_object($source));
