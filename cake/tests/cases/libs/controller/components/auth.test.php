@@ -1456,7 +1456,7 @@ class AuthTest extends CakeTestCase {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
 		$result = ob_get_clean();
-		$this->assertEqual("Ajax!\nthis is the test element", $result);
+		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 
