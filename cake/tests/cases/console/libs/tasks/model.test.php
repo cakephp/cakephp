@@ -647,8 +647,9 @@ array(
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 STRINGEND;
-
-		$this->assertPattern('/' . preg_quote($expected, '/') . '/', $result);
+debug($expected);
+debug($result);
+		$this->assertPattern('/' . preg_quote(str_replace("\r\n", "\n", $expected), '/') . '/', $result);
 	}
 
 /**
