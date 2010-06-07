@@ -119,7 +119,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertEqual($result[0]['error'], 'Notice');
 		$this->assertPattern('/Undefined variable\:\s+out/', $result[0]['description']);
 		$this->assertPattern('/DebuggerTest::testOutput/i', $result[0]['trace']);
-		$this->assertPattern('/SimpleInvoker::invoke/i', $result[0]['trace']);
 
 		ob_start();
 		Debugger::output('txt');
@@ -129,7 +128,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+other/', $result);
 		$this->assertPattern('/Context:/', $result);
 		$this->assertPattern('/DebuggerTest::testOutput/i', $result);
-		$this->assertPattern('/SimpleInvoker::invoke/i', $result);
 
 		ob_start();
 		Debugger::output('html');
@@ -157,7 +155,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
-		set_error_handler('simpleTestErrorHandler');
 	}
 
 /**
@@ -185,13 +182,12 @@ class DebuggerTest extends CakeTestCase {
 		ob_start();
 		$foo .= '';
 		$result = ob_get_clean();
-		set_error_handler('SimpleTestErrorHandler');
 
 		$data = array(
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
-			'line' => array(), '' . (intval(__LINE__) + -8), '/line',
+			'line' => array(), '' . (intval(__LINE__) - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
