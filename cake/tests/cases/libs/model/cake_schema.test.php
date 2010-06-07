@@ -730,7 +730,7 @@ class CakeSchemaTest extends CakeTestCase {
 			),
 			'posts' => array(
 				'add' => array(
-					'summary' => array('type' => 'text', 'null' => 1),
+					'summary' => array('type' => 'text', 'null' => true),
 				),
 				'drop' => array(
 					'tableParameters' => array(),
@@ -738,7 +738,7 @@ class CakeSchemaTest extends CakeTestCase {
 				'change' => array(
 					'author_id' => array('type' => 'integer', 'null' => true, 'default' => ''),
 					'title' => array('type' => 'string', 'null' => false, 'default' => 'Title'),
-					'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => '1')
+					'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => 1)
 				)
 			),
 		);
