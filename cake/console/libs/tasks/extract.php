@@ -488,7 +488,7 @@ class ExtractTask extends Shell {
 		foreach ($this->__paths as $path) {
 			$Folder = new Folder($path);
 			$files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
-			$this->__files += $files;
+			$this->__files = array_merge($this->__files, $files);
 		}
 	}
 }

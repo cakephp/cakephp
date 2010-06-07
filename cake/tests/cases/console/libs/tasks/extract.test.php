@@ -155,4 +155,33 @@ class ExtractTaskTest extends CakeTestCase {
 		$Folder = new Folder($path);
 		$Folder->delete();
 	}
+	function getTests() {
+		return array('start', 'startCase', 'testExtractMultiplePaths', 'endCase', 'end');
+	}
+
+/**
+ * test extract can read more than one path.
+ *
+ * @return void
+ */
+	function testExtractMultiplePaths() {
+		$path = TMP . 'tests' . DS . 'extract_task_test';
+		new Folder($path . DS . 'locale', true);
+
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = 
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages,' .
+			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'posts';
+	
+		$this->Task->params['output'] = $path . DS;
+		$this->Task->Dispatch->expectNever('stderr');
+		$this->Task->Dispatch->expectNever('_stop');
+		$this->Task->execute();
+
+		$result = file_get_contents($path . DS . 'default.pot');
+
+		$pattern = '/msgid "Add User"/';
+		$this->assertPattern($pattern, $result);
+	}
 }
