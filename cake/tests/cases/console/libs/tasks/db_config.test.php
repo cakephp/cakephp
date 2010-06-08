@@ -31,17 +31,7 @@ if (!class_exists('ShellDispatcher')) {
 }
 
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'db_config.php';
-//require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestDbConfigTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-
-Mock::generatePartial(
-	'DbConfigTask', 'MockDbConfigTask',
-	array('in', 'hr', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
-);
 
 class TEST_DATABASE_CONFIG {
 	public $default = array(
@@ -79,9 +69,13 @@ class DbConfigTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestDbConfigTaskMockShellDispatcher();
-		$this->Task =& new MockDbConfigTask($this->Dispatcher);
-		$this->Task->Dispatch =& $this->Dispatcher;
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('DbConfigTask', 
+			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
+			array(&$this->Dispatcher)
+		);
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 
 		$this->Task->params['working'] = rtrim(APP, DS);
@@ -104,7 +98,7 @@ class DbConfigTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetConfig() {
-		$this->Task->setReturnValueAt(0, 'in', 'otherOne');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('otherOne'));
 		$result = $this->Task->getConfig();
 		$this->assertEqual($result, 'otherOne');
 	}
@@ -130,20 +124,19 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
 
-		$this->Task->expectOnce('_stop');
-		$this->Task->setReturnValue('in', 'y');
-		$this->Task->setReturnValueAt(0, 'in', 'default');
-		$this->Task->setReturnValueAt(1, 'in', 'n');
-		$this->Task->setReturnValueAt(2, 'in', 'localhost');
-		$this->Task->setReturnValueAt(3, 'in', 'n');
-		$this->Task->setReturnValueAt(4, 'in', 'root');
-		$this->Task->setReturnValueAt(5, 'in', 'password');
-		$this->Task->setReturnValueAt(6, 'in', 'cake_test');
-		$this->Task->setReturnValueAt(7, 'in', 'n');
-		$this->Task->setReturnValueAt(8, 'in', 'y');
-		$this->Task->setReturnValueAt(9, 'in', 'y');
-		$this->Task->setReturnValueAt(10, 'in', 'y');
-		$this->Task->setReturnValueAt(11, 'in', 'n');
+		$this->Task->expects($this->once())->method('_stop');
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('default'));
+		$this->Task->expects($this->at(4))->method('in')->will($this->returnValue('mysql'));
+		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(6))->method('in')->will($this->returnValue('localhost'));
+		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(8))->method('in')->will($this->returnValue('root'));
+		$this->Task->expects($this->at(9))->method('in')->will($this->returnValue('password'));
+		$this->Task->expects($this->at(10))->method('in')->will($this->returnValue('cake_test'));
+		$this->Task->expects($this->at(11))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(13))->method('_verify')->will($this->returnValue(true));
+		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('y'));
 
 		$result = $this->Task->execute();
 	}
