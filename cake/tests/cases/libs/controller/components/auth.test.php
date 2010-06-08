@@ -1431,6 +1431,16 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($user, $expected);
 		$sessionKey = $this->Controller->Auth->sessionKey;
 		$this->assertEqual('Auth.TestPluginAuthUser', $sessionKey);
+		
+		$this->Controller->Auth->loginAction = null;
+		$this->Controller->Auth->__setDefaults();
+		$loginAction = $this->Controller->Auth->loginAction;
+		$expected = array(
+		    'controller'	=> 'test_plugin_auth_users',
+		    'action'		=> 'login',
+		    'plugin'		=> 'test_plugin'
+		);
+		$this->assertEqual($loginAction, $expected);
 
 		// Reverting changes
 		Cache::delete('object_map', '_cake_core_');
