@@ -79,6 +79,18 @@ class RequestHandlerTestController extends Controller {
 		echo "one: $one two: $two";
 		$this->autoRender = false;
 	}
+
+/**
+ * test method for testing layout rendering when isAjax()
+ *
+ * @return void
+ */
+	function ajax2_layout() {
+		if ($this->autoLayout) {
+			$this->layout = 'ajax2';
+		}
+		$this->destination();
+	}
 }
 
 /**
@@ -594,6 +606,34 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that ajax requests involving redirects don't force no layout
+ * this would cause the ajax layout to not be rendered.
+ *
+ * @return void
+ */
+	function testAjaxRedirectAsRequestActionStillRenderingLayout() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->_init();
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		), true);
+
+		$this->Controller->RequestHandler = new NoStopRequestHandler($this);
+		$this->Controller->RequestHandler->expectOnce('_stop');
+
+		ob_start();
+		$this->Controller->RequestHandler->beforeRedirect(
+			$this->Controller, array('controller' => 'request_handler_test', 'action' => 'ajax2_layout')
+		);
+		$result = ob_get_clean();
+		$this->assertPattern('/posts index/', $result, 'RequestAction redirect failed.');
+		$this->assertPattern('/Ajax!/', $result, 'Layout was not rendered.');
+
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+		App::build();
+	}
+
+/**
  * test that the beforeRedirect callback properly converts
  * array urls into their correct string ones, and adds base => false so
  * the correct urls are generated.
@@ -605,7 +645,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/'), 'bare' => 0),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'named' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 

@@ -279,7 +279,7 @@ class RequestHandlerComponent extends Object {
 			$msg = $statusCode[$code];
 			$controller->header("HTTP/1.1 {$code} {$msg}");
 		}
-		echo $this->requestAction($url, array('return'));
+		echo $this->requestAction($url, array('return', 'bare' => false));
 		$this->_stop();
 	}
 
