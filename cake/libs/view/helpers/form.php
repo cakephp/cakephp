@@ -990,14 +990,21 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1414/checkbox
  */
 	public function checkbox($fieldName, $options = array()) {
+		$valueOptions = array();
+		if(isset($options['default'])){
+			$valueOptions['default'] = $options['default'];
+			unset($options['default']);
+		}
+
 		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
-		$value = current($this->value());
+		$value = current($this->value($valueOptions));
 		$output = "";
 
 		if (empty($options['value'])) {
 			$options['value'] = 1;
-		} elseif (
-			(!isset($options['checked']) && !empty($value) && $value === $options['value']) ||
+		}
+		if (
+			(!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
 			!empty($options['checked'])
 		) {
 			$options['checked'] = 'checked';
