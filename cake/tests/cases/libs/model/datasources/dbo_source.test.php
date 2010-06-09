@@ -4426,4 +4426,19 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " GROUP BY (YEAR(`Article`.`created`))";
 		$this->assertEqual($expected, $result);
 	}
+
+/**
+ * test the permutations of fullTableName()
+ *
+ * @return void
+ */
+	function testFullTablePermutations() {
+		$Article =& ClassRegistry::init('Article');
+		$result = $this->testDb->fullTableName($Article, false);
+		$this->assertEqual($result, 'articles');
+
+		$Article->tablePrefix = 'tbl_';
+		$result = $this->testDb->fullTableName($Article, false);
+		$this->assertEqual($result, 'tbl_articles');
+	}
 }
