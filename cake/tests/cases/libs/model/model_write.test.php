@@ -3035,6 +3035,34 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test saveAll with transactions and ensure there is no missing rollback.
+ *
+ * @return void
+ */
+	function testSaveAllTransactionNoRollback() {
+		$this->loadFixtures('Post');
+
+		Mock::generate('DboSource', 'MockTransactionDboSource');
+		$db = ConnectionManager::create('mock_transaction', array(
+			'datasource' => 'MockTransactionDbo',
+		));
+		$db->expectOnce('rollback');
+
+		$Post =& new Post();
+		$Post->useDbConfig = 'mock_transaction';
+
+		$Post->validate = array(
+			'title' => array('rule' => array('notEmpty'))
+		);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => '')
+		);
+		$Post->saveAll($data, array('atomic' => true));
+	}
+
+/**
  * testSaveAllTransaction method
  *
  * @access public
