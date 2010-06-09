@@ -521,6 +521,7 @@ class RequestHandlerComponent extends Object {
 				}
 			}
 		}
+		return false;
 	}
 
 /**
