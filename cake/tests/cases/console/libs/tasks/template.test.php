@@ -35,16 +35,6 @@ if (!class_exists('ShellDispatcher')) {
 
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestTemplateTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-
-Mock::generatePartial(
-	'TemplateTask', 'MockTemplateTask',
-	array('in', 'out', 'err', 'createFile', '_stop')
-);
-
 /**
  * TemplateTaskTest class
  *
@@ -59,9 +49,13 @@ class TemplateTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestTemplateTaskMockShellDispatcher();
-		$this->Task =& new MockTemplateTask($this->Dispatcher);
-		$this->Task->Dispatch =& $this->Dispatcher;
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('TemplateTask', 
+			array('in', 'err', 'createFile', '_stop'),
+			array(&$this->Dispatcher)
+		);
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
 
@@ -113,7 +107,8 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGetThemePath() {
 		$defaultTheme = CAKE_CORE_INCLUDE_PATH . DS . dirname(CONSOLE_LIBS) . 'templates' . DS . 'default' .DS;
 		$this->Task->templatePaths = array('default' => $defaultTheme);
-		$this->Task->expectCallCount('in', 1);
+
+		$this->Task->expects($this->exactly(1))->method('in')->will($this->returnValue('1'));
 
 		$result = $this->Task->getThemePath();
 		$this->assertEqual($result, $defaultTheme);
@@ -124,7 +119,6 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertEqual($result, '/some/path');
 
 		$this->Task->params = array();
-		$this->Task->setReturnValueAt(0, 'in', '1');
 		$result = $this->Task->getThemePath();
 		$this->assertEqual($result, $defaultTheme);
 		$this->assertEqual($this->Dispatcher->params['theme'], 'default');
@@ -142,7 +136,8 @@ class TemplateTaskTest extends CakeTestCase {
 			)
 		));
 		$this->Task->initialize();
-		$this->Task->setReturnValue('in', 1);
+		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
+
 		$result = $this->Task->generate('classes', 'test_object', array('test' => 'foo'));
 		$expected = "I got rendered\nfoo";
 		$this->assertEqual($result, $expected);
