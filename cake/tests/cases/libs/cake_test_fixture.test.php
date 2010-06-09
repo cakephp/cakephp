@@ -114,6 +114,14 @@ class FixtureImportTestModel extends Model {
 	var $useTable = 'fixture_tests';
 	var $useDbConfig = 'test_suite';
 }
+
+class FixturePrefixTest extends Model {
+	var $name = 'FixturePrefix';
+	var $useTable = '_tests';
+	var $tablePrefix = 'fixture';
+	var $useDbConfig = 'test_suite';
+}
+
 Mock::generate('DboSource', 'FixtureMockDboSource');
 
 /**
@@ -162,7 +170,14 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->primaryKey = 'my_random_key';
 		$Fixture->init();
 		$this->assertEqual($Fixture->primaryKey, 'my_random_key');
+	}
 
+/**
+ * test that init() correctly sets the fixture table when the connection or model have prefixes defined.
+ *
+ * @return void
+ */
+	function testInitDbPrefix() {
 		$this->_initDb();
 		$Source =& new CakeTestFixtureTestFixture();
 		$Source->create($this->db);
@@ -187,6 +202,30 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+
+		$keys = array_flip(ClassRegistry::keys());
+		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
+
+		$Source->drop($this->db);
+	}
+
+/**
+ * test init with a model that has a tablePrefix declared.
+ *
+ * @return void
+ */
+	function testInitModelTablePrefix() {
+		$this->_initDb();
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
+
+		$Fixture =& new CakeTestFixtureImportFixture();
+		unset($Fixture->table);
+		$Fixture->fields = $Fixture->records = null;
+		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test_suite', 'records' => false);
+		$Fixture->init();
+		$this->assertEqual($Fixture->table, 'fixture_tests');
 
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
