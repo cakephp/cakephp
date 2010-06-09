@@ -47,13 +47,6 @@ class DebuggerTest extends CakeTestCase {
  */
 	function setUp() {
 		Configure::write('log', false);
-		if (!defined('SIMPLETESTVENDORPATH')) {
-			if (file_exists(APP . DS . 'vendors' . DS . 'simpletest' . DS . 'reporter.php')) {
-				define('SIMPLETESTVENDORPATH', 'APP' . DS . 'vendors');
-			} else {
-				define('SIMPLETESTVENDORPATH', 'CORE' . DS . 'vendors');
-			}
-		}
 	}
 
 /**
