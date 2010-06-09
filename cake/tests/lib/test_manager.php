@@ -73,7 +73,7 @@ class TestManager {
  *
  * @var PHPUnit_Framework_TestSuite
  */
-	protected $_testSuit = null;
+	protected $_testSuite = null;
 
 /**
  * Object instance responsible for managing the test fixtures
@@ -137,7 +137,7 @@ class TestManager {
  * @return mixed Result of test case being run.
  */
 	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter, $codeCoverage = false) {
-		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
+		$testCaseFileWithPath = $this->_getTestsPath($reporter->params) . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
 			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
@@ -157,7 +157,7 @@ class TestManager {
  * @return mixed Results of group test being run.
  */
 	public function runGroupTest($groupTestName, $reporter, $codeCoverage = false) {
-		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->getExtension('group');
+		$filePath = $this->_getTestsPath($reporter->params) . DS . strtolower($groupTestName) . $this->getExtension('group');
 
 		if (!file_exists($filePath) || strpos($filePath, '..')) {
 			throw new InvalidArgumentException(sprintf(
@@ -238,19 +238,10 @@ class TestManager {
  * @access public
  * @static
  */
-	public static function &getTestCaseList() {
-		$return = self::_getTestCaseList(self::_getTestsPath());
-		return $return;
-	}
-
-/**
- * Builds the list of test cases from a given directory
- *
- * @param string $directory Directory to get test case list from.
- * @static
- */
-	protected static function &_getTestCaseList($directory = '.') {
+	public static function getTestCaseList($params) {
+		$directory = self::_getTestsPath($params);
 		$fileList = self::_getTestFileList($directory);
+
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {
 			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
@@ -275,9 +266,16 @@ class TestManager {
  * @access public
  * @static
  */
-	public static function &getGroupTestList() {
-		$return = self::_getTestGroupList(self::_getTestsPath('groups'));
-		return $return;
+	public static function getGroupTestList($params) {
+		$directory = self::_getTestsPath($params);
+		$fileList = self::_getTestGroupFileList($directory);
+
+		$groupTests = array();
+		foreach ($fileList as $groupTestFile) {
+			$groupTests[$groupTestFile] = str_replace(self::$_groupExtension, '', basename($groupTestFile));
+		}
+		sort($groupTests);
+		return $groupTests;
 	}
 
 /**
@@ -290,24 +288,6 @@ class TestManager {
 		$return = self::_getRecursiveFileList($directory, array('self', '_isTestGroupFile'));
 		return $return;
 	}
-
-/**
- * Returns a list of group test files from a given directory
- *
- * @param string $directory The directory to get group tests from.
- * @static
- */
-	protected static function &_getTestGroupList($directory = '.') {
-		$fileList = self::_getTestGroupFileList($directory);
-		$groupTests = array();
-
-		foreach ($fileList as $groupTestFile) {
-			$groupTests[$groupTestFile] = str_replace(self::$_groupExtension, '', basename($groupTestFile));
-		}
-		sort($groupTests);
-		return $groupTests;
-	}
-
 
 /**
  * Gets a recursive list of files from a given directory and matches then against
@@ -375,28 +355,29 @@ class TestManager {
 /**
  * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
  *
- * @param string $type either 'cases' or 'groups'
+ * @param array $params Array of parameters for getting test paths.
+ *   Can contain app, type, and plugin params.
  * @return string The path tests are located on
  * @static
  */
-	protected static function _getTestsPath($type = 'cases') {
-		if (!empty(self::$appTest)) {
-			if ($type == 'cases') {
+	protected static function _getTestsPath($params) {
+		if (!empty($params['app'])) {
+			if ($params['show'] == 'cases' || !empty($params['case'])) {
 				$result = APP_TEST_CASES;
-			} else if ($type == 'groups') {
+			} else if ($params['show'] == 'groups') {
 				$result = APP_TEST_GROUPS;
 			}
-		} else if (!empty(self::$pluginTest)) {
-			$_pluginBasePath = APP . 'plugins/' . self::$pluginTest . '/tests';
-			$pluginPath = App::pluginPath(self::$pluginTest);
+		} else if (!empty($params['plugin'])) {
+			$_pluginBasePath = APP . 'plugins/' . $params['plugin'] . '/tests';
+			$pluginPath = App::pluginPath($params['plugin']);
 			if (file_exists($pluginPath . DS . 'tests')) {
 				$_pluginBasePath = $pluginPath . DS . 'tests';
 			}
 			$result = $_pluginBasePath . DS . $type;
 		} else {
-			if ($type == 'cases') {
+			if ($params['show'] == 'cases' || !empty($params['case'])) {
 				$result = CORE_TEST_CASES;
-			} else if ($type == 'groups') {
+			} else if ($params['show'] == 'groups') {
 				$result = CORE_TEST_GROUPS;
 			}
 		}
