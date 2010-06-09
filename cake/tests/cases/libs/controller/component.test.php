@@ -288,7 +288,6 @@ class SomethingWithEmailComponent extends Object {
 	public $components = array('Email');
 }
 
-Mock::generate('Object', 'ComponentMockComponent', array('startup', 'beforeFilter', 'beforeRender', 'other'));
 
 /**
  * ComponentTest class
@@ -422,15 +421,22 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testTriggerCallback() {
+		$mock = $this->getMock(
+			'Object',
+			array('startup', 'beforeFilter', 'beforeRender', 'other'),
+			array(),
+			'ComponentMockComponent'
+		);
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ComponentMock');
 		$Controller->uses = null;
 		$Controller->constructClasses();
 
-		$Controller->ComponentMock->expectOnce('beforeRender');
+		$Controller->ComponentMock->expects($this->once())->method('beforeRender');
+		$Controller->ComponentMock->expects($this->never())->method('beforeFilter');
+
 		$Controller->Component->triggerCallback('beforeRender', $Controller);
 
-		$Controller->ComponentMock->expectNever('beforeFilter');
 		$Controller->ComponentMock->enabled = false;
 		$Controller->Component->triggerCallback('beforeFilter', $Controller);
 	}
