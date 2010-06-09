@@ -123,20 +123,21 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
+		$this->Task = $this->getMock('DbConfigTask', array('in', '_stop', 'createFile'), array(&$this->Dispatcher));
 
 		$this->Task->expects($this->once())->method('_stop');
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('default'));
-		$this->Task->expects($this->at(4))->method('in')->will($this->returnValue('mysql'));
-		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(6))->method('in')->will($this->returnValue('localhost'));
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(8))->method('in')->will($this->returnValue('root'));
-		$this->Task->expects($this->at(9))->method('in')->will($this->returnValue('password'));
-		$this->Task->expects($this->at(10))->method('in')->will($this->returnValue('cake_test'));
-		$this->Task->expects($this->at(11))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(13))->method('_verify')->will($this->returnValue(true));
-		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('default')); //name
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('mysql')); //db type
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('n')); //persistant
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('localhost')); //server
+		$this->Task->expects($this->at(4))->method('in')->will($this->returnValue('n')); //port
+		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue('root')); //user
+		$this->Task->expects($this->at(6))->method('in')->will($this->returnValue('password')); //password
+		$this->Task->expects($this->at(10))->method('in')->will($this->returnValue('cake_test')); //db
+		$this->Task->expects($this->at(11))->method('in')->will($this->returnValue('n')); //prefix
+		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('n')); //encoding
+		$this->Task->expects($this->at(13))->method('in')->will($this->returnValue('y')); //looks good
+		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('n')); //another
 
 		$result = $this->Task->execute();
 	}
