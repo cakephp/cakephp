@@ -813,7 +813,7 @@ class EmailComponent extends Object{
 			$host = 'localhost';
 		}
 
-		if (!$this->_smtpSend("EHLO {$host}", '250') || !$this->_smtpSend("HELO {$host}", '250')) {
+		if (!$this->_smtpSend("EHLO {$host}", '250') && !$this->_smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 
