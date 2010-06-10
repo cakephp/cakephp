@@ -140,22 +140,17 @@ class DboMysqliTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	public $Db = null;
-
-/**
- * Skip if cannot connect to mysqli
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->db->config['driver'] == 'mysqli', '%s MySQLi connection not available');
-	}
+	public $Dbo = null;
 
 /**
  * Sets up a Dbo class instance for testing
  *
  */
 	public function setUp() {
+		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		if ($this->Dbo->config['driver'] !== 'mysqli') {
+			$this->markTestSkipped('The MySQLi extension is not available.');
+		}
 		$this->model = new MysqliTestModel();
 	}
 
@@ -174,50 +169,50 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	public function testIndexDetection() {
-		$this->db->cacheSources = false;
+		$this->Dbo->cacheSources = false;
 
-		$name = $this->db->fullTableName('simple');
-		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$name = $this->Dbo->fullTableName('simple');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
-		$result = $this->db->index($name, false);
+		$result = $this->Dbo->index($name, false);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 
-		$name = $this->db->fullTableName('with_a_key');
-		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
+		$name = $this->Dbo->fullTableName('with_a_key');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->Dbo->index($name, false);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 
-		$name = $this->db->fullTableName('with_two_keys');
-		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ));');
+		$name = $this->Dbo->fullTableName('with_two_keys');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->Dbo->index($name, false);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 
-		$name = $this->db->fullTableName('with_compound_keys');
-		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ));');
+		$name = $this->Dbo->fullTableName('with_compound_keys');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->Dbo->index($name, false);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 
-		$name = $this->db->fullTableName('with_multiple_compound_keys');
-		$this->db->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ), KEY `other_way` ( `small_int`, `bool` ));');
+		$name = $this->Dbo->fullTableName('with_multiple_compound_keys');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ), KEY `other_way` ( `small_int`, `bool` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
@@ -225,9 +220,9 @@ class DboMysqliTest extends CakeTestCase {
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 			'other_way' => array('column' => array('small_int', 'bool'), 'unique' => 0),
 		);
-		$result = $this->db->index($name, false);
+		$result = $this->Dbo->index($name, false);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 	}
 
 /**
@@ -236,43 +231,43 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	public function testColumn() {
-		$result = $this->db->column('varchar(50)');
+		$result = $this->Dbo->column('varchar(50)');
 		$expected = 'string';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('text');
+		$result = $this->Dbo->column('text');
 		$expected = 'text';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('int(11)');
+		$result = $this->Dbo->column('int(11)');
 		$expected = 'integer';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('int(11) unsigned');
+		$result = $this->Dbo->column('int(11) unsigned');
 		$expected = 'integer';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('tinyint(1)');
+		$result = $this->Dbo->column('tinyint(1)');
 		$expected = 'boolean';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('boolean');
+		$result = $this->Dbo->column('boolean');
 		$expected = 'boolean';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('float');
+		$result = $this->Dbo->column('float');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('float unsigned');
+		$result = $this->Dbo->column('float unsigned');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('double unsigned');
+		$result = $this->Dbo->column('double unsigned');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->column('decimal(14,7) unsigned');
+		$result = $this->Dbo->column('decimal(14,7) unsigned');
 		$expected = 'float';
 		$this->assertEqual($result, $expected);
 	}
@@ -283,14 +278,15 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	public function testTransactions() {
-		$this->db->testing = false;
-		$result = $this->db->begin($this->model);
+		$this->Dbo->testing = false;
+		$result = $this->Dbo->begin($this->model);
 		$this->assertTrue($result);
 
-		$beginSqlCalls = Set::extract('/.[query=START TRANSACTION]', $this->db->_queriesLog);
+		$log = $this->Dbo->getLog();
+		$beginSqlCalls = Set::extract('/.[query=START TRANSACTION]', $log['log']);
 		$this->assertEqual(1, count($beginSqlCalls));
 
-		$result = $this->db->commit($this->model);
+		$result = $this->Dbo->commit($this->model);
 		$this->assertTrue($result);
 	}
 /**
@@ -300,7 +296,7 @@ class DboMysqliTest extends CakeTestCase {
  */
 	function testFloatParsing() {
 		$model =& new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
-		$result = $this->db->describe($model);
+		$result = $this->Dbo->describe($model);
 		$this->assertEqual((string)$result['float_field']['length'], '5,2');
 	}
 
@@ -311,23 +307,24 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	function testReadTableParameters() {
-		$this->db->cacheSources = $this->db->testing = false;
-		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
-		$result = $this->db->readTableParameters('tinyint');
+		$table = 'tinyint' . uniqid();
+		$this->Dbo->cacheSources = $this->Dbo->testing = false;
+		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($table) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$result = $this->Dbo->readTableParameters($table);
 		$expected = array(
 			'charset' => 'utf8',
 			'collate' => 'utf8_unicode_ci',
 			'engine' => 'InnoDB');
 		$this->assertEqual($result, $expected);
 
-		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
-		$this->db->query('CREATE TABLE ' . $this->db->fullTableName('tinyint') . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
-		$result = $this->db->readTableParameters('tinyint');
+		$this->Dbo->query('DROP TABLE ' . $this->Dbo->fullTableName($table));
+		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($table) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$result = $this->Dbo->readTableParameters($table);
 		$expected = array(
 			'charset' => 'cp1250',
 			'collate' => 'cp1250_general_ci',
 			'engine' => 'MyISAM');
 		$this->assertEqual($result, $expected);
-		$this->db->query('DROP TABLE ' . $this->db->fullTableName('tinyint'));
+		$this->Dbo->query('DROP TABLE ' . $this->Dbo->fullTableName($table));
 	}
 }

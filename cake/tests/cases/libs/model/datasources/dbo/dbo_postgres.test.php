@@ -227,7 +227,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	public $db = null;
+	public $Dbo = null;
 
 /**
  * Simulated DB connection used in testing
@@ -235,24 +235,7 @@ class DboPostgresTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	public $db2 = null;
-
-/**
- * Skip if cannot connect to postgres
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->db->config['driver'] == 'postgres', '%s PostgreSQL connection not available');
-	}
-
-/**
- * Set up test suite database connection
- *
- */
-	public function startTest() {
-		$this->_initDb();
-	}
+	public $Dbo2 = null;
 
 /**
  * Sets up a Dbo class instance for testing
@@ -260,9 +243,9 @@ class DboPostgresTest extends CakeTestCase {
  */
 	public function setUp() {
 		Configure::write('Cache.disable', true);
-		$this->startTest();
-		$this->db =& ConnectionManager::getDataSource('test_suite');
-		$this->db2 = new DboPostgresTestDb($this->db->config, false);
+		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		$this->Dbo2 = new DboPostgresTestDb($this->Dbo->config, false);
+		$this->skipUnless($this->Dbo->config['driver'] == 'postgres', 'PostgreSQL connection not available');
 		$this->model = new PostgresTestModel();
 	}
 
@@ -272,7 +255,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	public function tearDown() {
 		Configure::write('Cache.disable', false);
-		unset($this->db2);
+		unset($this->Dbo2);
 	}
 
 /**
@@ -301,21 +284,21 @@ class DboPostgresTest extends CakeTestCase {
 			'"PostgresTestModel"."updated" AS "PostgresTestModel__updated"'
 		);
 
-		$result = $this->db->fields($this->model);
+		$result = $this->Dbo->fields($this->model);
 		$expected = $fields;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fields($this->model, null, 'PostgresTestModel.*');
+		$result = $this->Dbo->fields($this->model, null, 'PostgresTestModel.*');
 		$expected = $fields;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
+		$result = $this->Dbo->fields($this->model, null, array('*', 'AnotherModel.id', 'AnotherModel.name'));
 		$expected = array_merge($fields, array(
 			'"AnotherModel"."id" AS "AnotherModel__id"',
 			'"AnotherModel"."name" AS "AnotherModel__name"'));
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fields($this->model, null, array('*', 'PostgresClientTestModel.*'));
+		$result = $this->Dbo->fields($this->model, null, array('*', 'PostgresClientTestModel.*'));
 		$expected = array_merge($fields, array(
 			'"PostgresClientTestModel"."id" AS "PostgresClientTestModel__id"',
     		'"PostgresClientTestModel"."name" AS "PostgresClientTestModel__name"',
@@ -332,12 +315,12 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testColumnParsing() {
-		$this->assertEqual($this->db2->column('text'), 'text');
-		$this->assertEqual($this->db2->column('date'), 'date');
-		$this->assertEqual($this->db2->column('boolean'), 'boolean');
-		$this->assertEqual($this->db2->column('character varying'), 'string');
-		$this->assertEqual($this->db2->column('time without time zone'), 'time');
-		$this->assertEqual($this->db2->column('timestamp without time zone'), 'datetime');
+		$this->assertEqual($this->Dbo2->column('text'), 'text');
+		$this->assertEqual($this->Dbo2->column('date'), 'date');
+		$this->assertEqual($this->Dbo2->column('boolean'), 'boolean');
+		$this->assertEqual($this->Dbo2->column('character varying'), 'string');
+		$this->assertEqual($this->Dbo2->column('time without time zone'), 'time');
+		$this->assertEqual($this->Dbo2->column('timestamp without time zone'), 'datetime');
 	}
 
 /**
@@ -347,30 +330,30 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testValueQuoting() {
-		$this->assertIdentical($this->db2->value(1.2, 'float'), "'1.2'");
-		$this->assertEqual($this->db2->value('1,2', 'float'), "'1,2'");
+		$this->assertIdentical($this->Dbo2->value(1.2, 'float'), "'1.2'");
+		$this->assertEqual($this->Dbo2->value('1,2', 'float'), "'1,2'");
 
-		$this->assertEqual($this->db2->value('0', 'integer'), "'0'");
-		$this->assertEqual($this->db2->value('', 'integer'), 'NULL');
-		$this->assertEqual($this->db2->value('', 'float'), 'NULL');
-		$this->assertEqual($this->db2->value('', 'integer', false), "DEFAULT");
-		$this->assertEqual($this->db2->value('', 'float', false), "DEFAULT");
-		$this->assertEqual($this->db2->value('0.0', 'float'), "'0.0'");
+		$this->assertEqual($this->Dbo2->value('0', 'integer'), "'0'");
+		$this->assertEqual($this->Dbo2->value('', 'integer'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'float'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'integer', false), "DEFAULT");
+		$this->assertEqual($this->Dbo2->value('', 'float', false), "DEFAULT");
+		$this->assertEqual($this->Dbo2->value('0.0', 'float'), "'0.0'");
 
-		$this->assertEqual($this->db2->value('t', 'boolean'), "TRUE");
-		$this->assertEqual($this->db2->value('f', 'boolean'), "FALSE");
-		$this->assertEqual($this->db2->value(true), "TRUE");
-		$this->assertEqual($this->db2->value(false), "FALSE");
-		$this->assertEqual($this->db2->value('t'), "'t'");
-		$this->assertEqual($this->db2->value('f'), "'f'");
-		$this->assertEqual($this->db2->value('true', 'boolean'), 'TRUE');
-		$this->assertEqual($this->db2->value('false', 'boolean'), 'FALSE');
-		$this->assertEqual($this->db2->value('', 'boolean'), 'FALSE');
-		$this->assertEqual($this->db2->value(0, 'boolean'), 'FALSE');
-		$this->assertEqual($this->db2->value(1, 'boolean'), 'TRUE');
-		$this->assertEqual($this->db2->value('1', 'boolean'), 'TRUE');
-		$this->assertEqual($this->db2->value(null, 'boolean'), "NULL");
-		$this->assertEqual($this->db2->value(array()), "NULL");
+		$this->assertEqual($this->Dbo2->value('t', 'boolean'), "TRUE");
+		$this->assertEqual($this->Dbo2->value('f', 'boolean'), "FALSE");
+		$this->assertEqual($this->Dbo2->value(true), "TRUE");
+		$this->assertEqual($this->Dbo2->value(false), "FALSE");
+		$this->assertEqual($this->Dbo2->value('t'), "'t'");
+		$this->assertEqual($this->Dbo2->value('f'), "'f'");
+		$this->assertEqual($this->Dbo2->value('true', 'boolean'), 'TRUE');
+		$this->assertEqual($this->Dbo2->value('false', 'boolean'), 'FALSE');
+		$this->assertEqual($this->Dbo2->value('', 'boolean'), 'FALSE');
+		$this->assertEqual($this->Dbo2->value(0, 'boolean'), 'FALSE');
+		$this->assertEqual($this->Dbo2->value(1, 'boolean'), 'TRUE');
+		$this->assertEqual($this->Dbo2->value('1', 'boolean'), 'TRUE');
+		$this->assertEqual($this->Dbo2->value(null, 'boolean'), "NULL");
+		$this->assertEqual($this->Dbo2->value(array()), "NULL");
 	}
 
 /**
@@ -379,17 +362,17 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testDateAndTimeAsNull() {
-		$this->assertEqual($this->db2->value(null, 'date'), 'NULL');
-		$this->assertEqual($this->db2->value('', 'date'), 'NULL');
+		$this->assertEqual($this->Dbo2->value(null, 'date'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'date'), 'NULL');
 
-		$this->assertEqual($this->db2->value('', 'datetime'), 'NULL');
-		$this->assertEqual($this->db2->value(null, 'datetime'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'datetime'), 'NULL');
+		$this->assertEqual($this->Dbo2->value(null, 'datetime'), 'NULL');
 
-		$this->assertEqual($this->db2->value('', 'timestamp'), 'NULL');
-		$this->assertEqual($this->db2->value(null, 'timestamp'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'timestamp'), 'NULL');
+		$this->assertEqual($this->Dbo2->value(null, 'timestamp'), 'NULL');
 
-		$this->assertEqual($this->db2->value('', 'time'), 'NULL');
-		$this->assertEqual($this->db2->value(null, 'time'), 'NULL');
+		$this->assertEqual($this->Dbo2->value('', 'time'), 'NULL');
+		$this->assertEqual($this->Dbo2->value(null, 'time'), 'NULL');
 	}
 
 /**
@@ -399,19 +382,19 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testBooleanNormalization() {
-		$this->assertTrue($this->db2->boolean('t'));
-		$this->assertTrue($this->db2->boolean('true'));
-		$this->assertTrue($this->db2->boolean('TRUE'));
-		$this->assertTrue($this->db2->boolean(true));
-		$this->assertTrue($this->db2->boolean(1));
-		$this->assertTrue($this->db2->boolean(" "));
+		$this->assertTrue($this->Dbo2->boolean('t'));
+		$this->assertTrue($this->Dbo2->boolean('true'));
+		$this->assertTrue($this->Dbo2->boolean('TRUE'));
+		$this->assertTrue($this->Dbo2->boolean(true));
+		$this->assertTrue($this->Dbo2->boolean(1));
+		$this->assertTrue($this->Dbo2->boolean(" "));
 
-		$this->assertFalse($this->db2->boolean('f'));
-		$this->assertFalse($this->db2->boolean('false'));
-		$this->assertFalse($this->db2->boolean('FALSE'));
-		$this->assertFalse($this->db2->boolean(false));
-		$this->assertFalse($this->db2->boolean(0));
-		$this->assertFalse($this->db2->boolean(''));
+		$this->assertFalse($this->Dbo2->boolean('f'));
+		$this->assertFalse($this->Dbo2->boolean('false'));
+		$this->assertFalse($this->Dbo2->boolean('FALSE'));
+		$this->assertFalse($this->Dbo2->boolean(false));
+		$this->assertFalse($this->Dbo2->boolean(0));
+		$this->assertFalse($this->Dbo2->boolean(''));
 	}
 
 /**
@@ -421,14 +404,10 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testLastInsertIdMultipleInsert() {
+		$this->loadFixtures('User');
 		$db1 = ConnectionManager::getDataSource('test_suite');
 
-		if (PHP5) {
-			$db2 = clone $db1;
-		} else {
-			$db2 = $db1;
-		}
-
+		$db2 = clone $db1;
 		$db2->connect();
 		$this->assertNotEqual($db1->connection, $db2->connection);
 
@@ -438,8 +417,8 @@ class DboPostgresTest extends CakeTestCase {
 			"INSERT INTO {$table} (\"user\", password) VALUES ('mariano', '{$password}')"
 		);
 		$db2->execute("INSERT INTO {$table} (\"user\", password) VALUES ('hoge', '{$password}')");
-		$this->assertEqual($db1->lastInsertId($table), 1);
-		$this->assertEqual($db2->lastInsertId($table), 2);
+		$this->assertEqual($db1->lastInsertId($table), 5);
+		$this->assertEqual($db2->lastInsertId($table), 6);
 	}
 
 /**
@@ -449,12 +428,12 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaScoping() {
-		$db1 =& ConnectionManager::getDataSource('test_suite');
+		$db1 = ConnectionManager::getDataSource('test_suite');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));
 		$db1->query('CREATE SCHEMA _scope_test');
 
-		$db2 =& ConnectionManager::create(
+		$db2 = ConnectionManager::create(
 			'test_suite_2',
 			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
 		);
@@ -473,11 +452,11 @@ class DboPostgresTest extends CakeTestCase {
 	function testColumnUseLength() {
 		$result = array('name' => 'foo', 'type' => 'string', 'length' => 100, 'default' => 'FOO');
 		$expected = '"foo" varchar(100) DEFAULT \'FOO\'';
-		$this->assertEqual($this->db->buildColumn($result), $expected);
+		$this->assertEqual($this->Dbo->buildColumn($result), $expected);
 
 		$result = array('name' => 'foo', 'type' => 'text', 'length' => 100, 'default' => 'FOO');
 		$expected = '"foo" text DEFAULT \'FOO\'';
-		$this->assertEqual($this->db->buildColumn($result), $expected);
+		$this->assertEqual($this->Dbo->buildColumn($result), $expected);
 	}
 
 /**
@@ -487,6 +466,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testBinaryDataIntegrity() {
+		$this->loadFixtures('BinaryTest');
 		$data = '%PDF-1.3
 		%ƒÂÚÂÎßÛ†–ƒ∆
 		4 0 obj
@@ -506,7 +486,7 @@ class DboPostgresTest extends CakeTestCase {
 		ªºnh˚ºO^∏…®[Ó“‚ÅfıÌ≥∫F!Eœ(π∑T6`¬tΩÆ0ì»rTÎ`»Ñ«
 		]≈åp˝)=¿Ô0∆öVÂmˇˆ„ø~¯ÁÔ∏b*fc»‡Îı„Ú}∆tœs∂Y∫ÜaÆ˙X∏~<ÿ·Ùvé1‹p¿TD∆ÔîÄ“úhˆ*Ú€îe)K–p¨ÚJ3Ÿ∞ã>ÊuNê°“√Ü ‹Ê9iÙ0˙AAEÍ ˙`∂£\'ûce•åƒX›ŸÁ´1SK{qdá"tÏ[wQ#SµBe∞∑µó…ÌV`B"Ñ≥„!è_ÓÏ†-º*ºú¿Ë0ˆeê∂´ë+HFj…‡zvHÓN|ÔL÷ûñ3õÜ$z%sá…pÎóV38âs	Çoµ•ß3†<9B·¨û~¢3)ÂxóÿÁCÕòÆ∫Í=»ÿSπS;∆~±êÆTEp∑óÈ÷ÀuìDHÈ$ÉõæÜjÃ»§"≤ÃONM®RËíRr{õS	∏Ê™op±W;ÂUÔ P∫kÔˇﬂTæ∑óﬂË”ÆC©Ô[≥◊HÁ˚¨hê"ÆbF?ú%h˙ˇ4xèÕ(ó2ÙáíM])Ñd|=fë-cI0ñL¢kÖêk‰Rƒ«ıÄWñ8mO3∏&√æËX¯Hó—ì]yF2»–˜ádàà‡‹ÇÎ¿„≥7mªHAS∑¶.;Œx(1} _kd©.ﬁdç48M\'àáªCp^Krí<É‰XÓıïl!Ì$N<ı∞B»G]…∂Ó¯>˛ÔbõÒπÀ•:ôO<j∂™œ%âÏ—>@È$pÖu‹Ê´-QqV ?V≥JÆÍqÛX8(lπï@zgÖ}Fe<ˇ‡Sñ“ÿ˜ê?6‡L∫Oß~µ –?ËeäÚ®YîÕ=Ü=¢DÁu*GvBk;)L¬N«î:flö∂≠ÇΩq„Ñmí•˜Ë∂‚"û≥§:±≤i^ΩÑ!)WıyÅ§ô á„RÄ÷Òôc’≠—s™rı‚Pdêãh˘ßHVç5ﬁﬁÈF€çÌÛuçÖ/M=gëµ±ÿGû1coÔuñæ‘z®. õ∑7ÉÏÜÆ,°’H†ÍÉÌ∂7e	º® íˆ⁄◊øNWK”ÂYµ‚ñé;µ¶gV-ﬂ>µtË¥áßN2 ¯¶BaP-)eW.àôt^∏1›C∑Ö?L„&”5’4jvã–ªZ	÷+4% ´0l…»ú^°´© ûiπ∑é®óÜ±Òÿ‰ïˆÌ–dˆ◊Æ19rQ=Í|ı•rMæ¬;ò‰Y‰é9.”‹˝V«ã¯∏,+ë®j*¡·/';
 
-		$model =& new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
@@ -542,7 +522,7 @@ class DboPostgresTest extends CakeTestCase {
 			)
 		));
 
-		$result = $this->db->createSchema($schema);
+		$result = $this->Dbo->createSchema($schema);
 		$this->assertNoPattern('/^CREATE INDEX(.+);,$/', $result);
 	}
 
@@ -555,7 +535,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testCakeSchema() {
-		$db1 =& ConnectionManager::getDataSource('test_suite');
+		$db1 = ConnectionManager::getDataSource('test_suite');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));
 		$db1->query('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
@@ -566,7 +546,7 @@ class DboPostgresTest extends CakeTestCase {
 			date date,
 			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
 		)');
-		$model =& ClassRegistry::init('datatypes');
+		$model = ClassRegistry::init('datatypes');
 		$schema = new CakeSchema(array('connection' => 'test_suite'));
 		$result = $schema->read(array(
 			'connection' => 'test_suite',
@@ -599,30 +579,30 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testIndexGeneration() {
-		$name = $this->db->fullTableName('index_test', false);
-		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
-		$this->db->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
-		$this->db->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
+		$name = $this->Dbo->fullTableName('index_test', false);
+		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
+		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
+		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
-			'char_index' => array('column' => 'small_char', 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => true),
+			'pointless_bool' => array('column' => 'bool', 'unique' => false),
+			'char_index' => array('column' => 'small_char', 'unique' => true),
 
 		);
-		$result = $this->db->index($name);
+		$result = $this->Dbo->index($name);
 		$this->assertEqual($expected, $result);
 
-		$this->db->query('DROP TABLE ' . $name);
-		$name = $this->db->fullTableName('index_test_2', false);
-		$this->db->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
-		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
+		$this->Dbo->query('DROP TABLE ' . $name);
+		$name = $this->Dbo->fullTableName('index_test_2', false);
+		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
+		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
+			'PRIMARY' => array('column' => 'id', 'unique' => true),
+			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => true),
 		);
-		$result = $this->db->index($name);
+		$result = $this->Dbo->index($name);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 	}
 
 /**
@@ -632,7 +612,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchema() {
-		$Old =& new CakeSchema(array(
+		$Old = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
@@ -645,9 +625,9 @@ class DboPostgresTest extends CakeTestCase {
 				'updated' => array('type' => 'datetime'),
 			)
 		));
-		$this->db->query($this->db->createSchema($Old));
+		$this->Dbo->query($this->Dbo->createSchema($Old));
 
-		$New =& new CakeSchema(array(
+		$New = new CakeSchema(array(
 			'connection' => 'test_suite',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
@@ -660,7 +640,7 @@ class DboPostgresTest extends CakeTestCase {
 				'updated' => array('type' => 'datetime'),
 			)
 		));
-		$this->db->query($this->db->alterSchema($New->compare($Old), 'alter_posts'));
+		$this->Dbo->query($this->Dbo->alterSchema($New->compare($Old), 'alter_posts'));
 
 		$model = new CakeTestModel(array('table' => 'alter_posts', 'ds' => 'test_suite'));
 		$result = $model->schema();
@@ -671,7 +651,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($result['author_id']['null'], true);
 		$this->assertEqual($result['title']['null'], false);
 
-		$this->db->query($this->db->dropSchema($New));
+		$this->Dbo->query($this->Dbo->dropSchema($New));
 	}
 
 /**
@@ -681,9 +661,9 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testAlterIndexes() {
-		$this->db->cacheSources = false;
+		$this->Dbo->cacheSources = false;
 
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -693,9 +673,9 @@ class DboPostgresTest extends CakeTestCase {
 				'group2' => array('type' => 'integer', 'null' => true)
 			)
 		));
-		$this->db->query($this->db->createSchema($schema1));
+		$this->Dbo->query($this->Dbo->createSchema($schema1));
 
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -704,20 +684,20 @@ class DboPostgresTest extends CakeTestCase {
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => 0),
-					'group_idx' => array('column' => 'group1', 'unique' => 0),
-					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
-					'PRIMARY' => array('column' => 'id', 'unique' => 1)
+					'name_idx' => array('column' => 'name', 'unique' => false),
+					'group_idx' => array('column' => 'group1', 'unique' => false),
+					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => false),
+					'PRIMARY' => array('column' => 'id', 'unique' => true)
 				)
 			)
 		));
-		$this->db->query($this->db->alterSchema($schema2->compare($schema1)));
+		$this->Dbo->query($this->Dbo->alterSchema($schema2->compare($schema1)));
 
-		$indexes = $this->db->index('altertest');
+		$indexes = $this->Dbo->index('altertest');
 		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
 
 		// Change three indexes, delete one and add another one
-		$schema3 =& new CakeSchema(array(
+		$schema3 = new CakeSchema(array(
 			'name' => 'AlterTest3',
 			'connection' => 'test_suite',
 			'altertest' => array(
@@ -726,27 +706,27 @@ class DboPostgresTest extends CakeTestCase {
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => 1),
-					'group_idx' => array('column' => 'group2', 'unique' => 0),
-					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
-					'another_idx' => array('column' => array('group1', 'name'), 'unique' => 0))
+					'name_idx' => array('column' => 'name', 'unique' => true),
+					'group_idx' => array('column' => 'group2', 'unique' => false),
+					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => false),
+					'another_idx' => array('column' => array('group1', 'name'), 'unique' => false))
 		)));
 
-		$this->db->query($this->db->alterSchema($schema3->compare($schema2)));
+		$this->Dbo->query($this->Dbo->alterSchema($schema3->compare($schema2)));
 
-		$indexes = $this->db->index('altertest');
+		$indexes = $this->Dbo->index('altertest');
 		$this->assertEqual($schema3->tables['altertest']['indexes'], $indexes);
 
 		// Compare us to ourself.
 		$this->assertEqual($schema3->compare($schema3), array());
 
 		// Drop the indexes
-		$this->db->query($this->db->alterSchema($schema1->compare($schema3)));
+		$this->Dbo->query($this->Dbo->alterSchema($schema1->compare($schema3)));
 
-		$indexes = $this->db->index('altertest');
+		$indexes = $this->Dbo->index('altertest');
 		$this->assertEqual(array(), $indexes);
 
-		$this->db->query($this->db->dropSchema($schema1));
+		$this->Dbo->query($this->Dbo->dropSchema($schema1));
 	}
 
 /*
@@ -756,7 +736,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFields() {
-		$this->loadFixtures('Article', 'Comment');
+		$this->loadFixtures('Article', 'Comment', 'User', 'Attachment', 'Tag', 'ArticlesTag');
 		$Article = new Article;
 		$Article->virtualFields = array(
 			'next_id' => 'Article.id + 1',
@@ -767,7 +747,7 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $Article->find('first');
 		$this->assertEqual($result['Article']['next_id'], 2);
 		$this->assertEqual($result['Article']['complex'], $result['Article']['title'] . $result['Article']['body']);
-		$this->assertEqual($result['Article']['functional'], $result['Article']['title']);
+		$this->assertEqual($result['Article']['functional'], $result['User']['user']);
 		$this->assertEqual($result['Article']['subquery'], 6);
 	}
 
@@ -778,7 +758,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testOrderAdditionalParams() {
-		$result = $this->db->order(array('title' => 'DESC NULLS FIRST', 'body' => 'DESC'));
+		$result = $this->Dbo->order(array('title' => 'DESC NULLS FIRST', 'body' => 'DESC'));
 		$expected = ' ORDER BY "title" DESC NULLS FIRST, "body" DESC';
 		$this->assertEqual($result, $expected);
 	}
@@ -789,15 +769,15 @@ class DboPostgresTest extends CakeTestCase {
 	function testQuoteDistinctInFunction() {
 		$this->loadFixtures('Article');
 		$Article = new Article;
-		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT Article.id)'));
+		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT Article.id)'));
 		$expected = array('COUNT(DISTINCT "Article"."id")');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT id)'));
+		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT id)'));
 		$expected = array('COUNT(DISTINCT "id")');
 		$this->assertEqual($result, $expected);
 
-		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
+		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
 		$expected = array('COUNT(DISTINCT FUNC("id"))');
 		$this->assertEqual($result, $expected);
 	}
