@@ -33,21 +33,6 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestFixtureTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-
-Mock::generatePartial(
-	'FixtureTask', 'MockFixtureTask',
-	array('in', 'out', 'err', 'createFile', '_stop')
-);
-
-Mock::generatePartial(
-	'Shell', 'MockFixtureModelTask',
-	array('in', 'out', 'err', 'createFile', '_stop', 'getName', 'getTable', 'listAll')
-);
-
 /**
  * FixtureTaskTest class
  *
@@ -70,11 +55,18 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestFixtureTaskMockShellDispatcher();
-		$this->Task =& new MockFixtureTask();
-		$this->Task->Model =& new MockFixtureModelTask();
-		$this->Task->Dispatch =& $this->Dispatcher;
-		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('FixtureTask', 
+			array('in', 'err', 'createFile', '_stop'),
+			array(&$this->Dispatcher)
+		);
+		$this->Task->Model = $this->getMock('Shell',
+			array('in', 'out', 'erro', 'createFile', 'getName', 'getTable', 'listAll'),
+			array(&$this->Dispatcher)
+		);
+		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template->initialize();
 	}
@@ -96,7 +88,7 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function testConstruct() {
 		$this->Dispatch->params['working'] = DS . 'my' . DS . 'path';
-		$Task =& new FixtureTask($this->Dispatch);
+		$Task = new FixtureTask($this->Dispatch);
 
 		$expected = DS . 'my' . DS . 'path' . DS . 'tests' . DS . 'fixtures' . DS;
 		$this->assertEqual($Task->path, $expected);
@@ -107,25 +99,39 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testImportOptions() {
-		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$this->Task->setReturnValueAt(1, 'in', 'y');
+	public function testImportOptionsSchemaRecords() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array('schema' => 'Article', 'records' => true);
 		$this->assertEqual($result, $expected);
+	}
 
-		$this->Task->setReturnValueAt(2, 'in', 'n');
-		$this->Task->setReturnValueAt(3, 'in', 'n');
-		$this->Task->setReturnValueAt(4, 'in', 'n');
+/**
+ * test importOptions choosing nothing.
+ *
+ * @return void
+ */
+	public function testImportOptionsNothing() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('n'));
 
 		$result = $this->Task->importOptions('Article');
 		$expected = array();
 		$this->assertEqual($result, $expected);
-
-		$this->Task->setReturnValueAt(5, 'in', 'n');
-		$this->Task->setReturnValueAt(6, 'in', 'n');
-		$this->Task->setReturnValueAt(7, 'in', 'y');
+	}
+	
+/**
+ * test importOptions choosing from Table.
+ *
+ * @return void
+ */
+	public function testImportOptionsTable() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
 		$result = $this->Task->importOptions('Article');
 		$expected = array('fromTable' => true);
 		$this->assertEqual($result, $expected);
@@ -138,10 +144,15 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function testImportRecordsFromDatabaseWithConditions() {
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', 'WHERE 1=1 LIMIT 10');
+		$this->Task->expects($this->at(0))->method('in')
+			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$result = $this->Task->bake('Article', false, array('fromTable' => true, 'schema' => 'Article', 'records' => false));
+
+		$result = $this->Task->bake('Article', false, array(
+			'fromTable' => true, 'schema' => 'Article', 'records' => false
+		));
 
 		$this->assertPattern('/class ArticleFixture extends CakeTestFixture/', $result);
 		$this->assertPattern('/public \$records/', $result);
@@ -161,37 +172,39 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
+			
 		$this->Task->execute();
+	}
+
+/**
+ * data provider for model name variations.
+ *
+ * @return array
+ */
+	public static function modelNameProvider() {
+		return array(
+			array('article'), array('articles'), array('Articles'), array('Article')
+		);
 	}
 
 /**
  * test that execute passes runs bake depending with named model.
  *
+ * @dataProvider modelNameProvider
  * @return void
  */
-	public function testExecuteWithNamedModelVariations() {
+	public function testExecuteWithNamedModelVariations($modelName) {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 
-		$this->Task->args = array('article');
+		$this->Task->args = array($modelName);
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
-		$this->Task->execute();
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
 
-		$this->Task->args = array('articles');
-		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
-		$this->Task->execute();
-
-		$this->Task->args = array('Articles');
-		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
-		$this->Task->execute();
-
-		$this->Task->args = array('Article');
-		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
 		$this->Task->execute();
 	}
 
@@ -204,14 +217,17 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
-		$this->Task->Model->setReturnValue('listAll', array('articles', 'comments'));
+		$this->Task->Model->expects($this->any())->method('listAll')
+			->will($this->returnValue(array('articles', 'comments')));
 
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
-		$this->Task->execute();
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
 
 		$filename = '/my/path/comment_fixture.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class CommentFixture/')));
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CommentFixture/'));
+
 		$this->Task->execute();
 	}
 
@@ -225,14 +241,19 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->params = array('count' => 10, 'records' => true);
-		$this->Task->Model->setReturnValue('listAll', array('articles', 'comments'));
+
+		$this->Task->Model->expects($this->any())->method('listAll')
+			->will($this->returnValue(array('articles', 'comments')));
 
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/title\' => \'Third Article\'/')));
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/title\' => \'Third Article\'/'));
 
 		$filename = '/my/path/comment_fixture.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/comment\' => \'First Comment for First Article/')));
-		$this->Task->expectCallCount('createFile', 2);
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/comment\' => \'First Comment for First Article/'));
+		$this->Task->expects($this->exactly(2))->method('createFile');
+
 		$this->Task->all();
 	}
 
@@ -245,12 +266,16 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 
-		$this->Task->setReturnValue('in', 'y');
-		$this->Task->Model->setReturnValue('getName', 'Article');
-		$this->Task->Model->setReturnValue('getTable', 'articles', array('Article'));
+		$this->Task->expects($this->any())->method('in')->will($this->returnValue('y'));
+		$this->Task->Model->expects($this->any())->method('getName')->will($this->returnValue('Article'));
+		$this->Task->Model->expects($this->any())->method('getTable')
+			->with('Article')
+			->will($this->returnValue('articles'));
 
 		$filename = '/my/path/article_fixture.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class ArticleFixture/')));
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticleFixture/'));
+
 		$this->Task->execute();
 	}
 
@@ -315,10 +340,14 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$filename = '/my/path/article_fixture.php';
 
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/Article/'));
+
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/\<\?php(.*)\?\>/ms'));
+
 		$result = $this->Task->generateFixtureFile('Article', array());
 
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/\<\?php(.*)\?\>/ms')));
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 
@@ -333,7 +362,9 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'TestFixture';
 		$filename = APP . 'plugins' . DS . 'test_fixture' . DS . 'tests' . DS . 'fixtures' . DS . 'article_fixture.php';
 
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/Article/')));
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/Article/'));
+
 		$result = $this->Task->generateFixtureFile('Article', array());
 	}
 }
