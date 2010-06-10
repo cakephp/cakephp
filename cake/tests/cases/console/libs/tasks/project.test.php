@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Core', 'File');
+
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -33,15 +35,6 @@ if (!class_exists('ShellDispatcher')) {
 }
 
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
-
-Mock::generatePartial(
-	'ShellDispatcher', 'TestProjectTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'ProjectTask', 'MockProjectTask',
-	array('in', '_stop', 'err', 'out', 'createFile')
-);
 
 /**
  * ProjectTask Test class
@@ -57,10 +50,14 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestProjectTaskMockShellDispatcher();
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('ProjectTask', 
+			array('in', 'err', 'createFile', '_stop'),
+			array(&$this->Dispatcher)
+		);
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockProjectTask($this->Dispatcher);
-		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->path = TMP . 'tests' . DS;
 	}
 
@@ -72,8 +69,9 @@ class ProjectTaskTest extends CakeTestCase {
 	public function endTest() {
 		ClassRegistry::flush();
 
-		$Folder =& new Folder($this->Task->path . 'bake_test_app');
+		$Folder = new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
+		unset($this->Dispatcher, $this->Task);
 	}
 
 /**
@@ -83,8 +81,8 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	protected function _setupTestProject() {
 		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
-		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
 
@@ -162,27 +160,27 @@ class ProjectTaskTest extends CakeTestCase {
 		$result = $this->Task->securitySalt($path);
 		$this->assertTrue($result);
 
-		$file =& new File($path . 'config' . DS . 'core.php');
+		$file = new File($path . 'config' . DS . 'core.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi/', $contents, 'Default Salt left behind. %s');
 	}
 
-	/**
-	 * test generation of Security.cipherSeed
-	 *
-	 * @return void
-		 */
-		public function testSecurityCipherSeedGeneration() {
-			$this->_setupTestProject();
+/**
+ * test generation of Security.cipherSeed
+ *
+ * @return void
+ */
+	public function testSecurityCipherSeedGeneration() {
+		$this->_setupTestProject();
 
-			$path = $this->Task->path . 'bake_test_app' . DS;
-			$result = $this->Task->securityCipherSeed($path);
-			$this->assertTrue($result);
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->securityCipherSeed($path);
+		$this->assertTrue($result);
 
-			$file =& new File($path . 'config' . DS . 'core.php');
-			$contents = $file->read();
-			$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
-		}
+		$file = new File($path . 'config' . DS . 'core.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
+	}
 
 /**
  * Test that index.php is generated correctly.
@@ -195,11 +193,11 @@ class ProjectTaskTest extends CakeTestCase {
 		$path = $this->Task->path . 'bake_test_app' . DS;
 		$this->Task->corePath($path);
 
-		$file =& new File($path . 'webroot' . DS . 'index.php');
+		$file = new File($path . 'webroot' . DS . 'index.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
 
-		$file =& new File($path . 'webroot' . DS . 'test.php');
+		$file = new File($path . 'webroot' . DS . 'test.php');
 		$contents = $file->read();
 		$this->assertNoPattern('/define\(\'CAKE_CORE_INCLUDE_PATH\', \'ROOT/', $contents);
 	}
@@ -217,12 +215,12 @@ class ProjectTaskTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
 		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
-		$this->Task->setReturnValue('in', 'super_duper_admin');
+		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'super_duper_admin_');
 
-		$file =& new File($this->Task->configPath . 'core.php');
+		$file = new File($this->Task->configPath . 'core.php');
 		$file->delete();
 	}
 
@@ -232,9 +230,9 @@ class ProjectTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testCakeAdmin() {
-		$file =& new File(CONFIGS . 'core.php');
+		$file = new File(CONFIGS . 'core.php');
 		$contents = $file->read();;
-		$file =& new File(TMP . 'tests' . DS . 'core.php');
+		$file = new File(TMP . 'tests' . DS . 'core.php');
 		$file->write($contents);
 
 		Configure::write('Routing.prefixes', null);
@@ -255,7 +253,7 @@ class ProjectTaskTest extends CakeTestCase {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
 		$this->_setupTestProject();
 		$this->Task->configPath = $this->Task->path . 'bake_test_app' . DS . 'config' . DS;
-		$this->Task->setReturnValue('in', 2);
+		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
 		$this->assertEqual($result, 'ninja_');
@@ -271,8 +269,8 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->params['working'] = TMP . 'tests' . DS;
 
 		$path = $this->Task->path . 'bake_test_app';
-		$this->Task->setReturnValue('in', 'y');
-		$this->Task->setReturnValueAt(0, 'in', $path);
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($path));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir %s');
