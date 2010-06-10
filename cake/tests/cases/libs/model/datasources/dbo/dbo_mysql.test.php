@@ -168,20 +168,16 @@ class DboMysqlTest extends CakeTestCase {
 	public $Dbo = null;
 
 /**
- * Skip if cannot connect to mysql
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->Dbo->config['driver'] == 'mysql', '%s MySQL connection not available');
-	}
-
-/**
  * Sets up a Dbo class instance for testing
  *
  */
-	public function startTest() {
+	public function setUp() {
 		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		if ($this->Dbo->config['driver'] !== 'mysql') {
+			$this->markTestSkipped('The MySQL extension is not available.');
+		}
+		$this->_debug = Configure::read('debug');
+		Configure::write('debug', 1);
 		$this->model = new MysqlTestModel();
 	}
 
@@ -192,24 +188,6 @@ class DboMysqlTest extends CakeTestCase {
 	public function tearDown() {
 		unset($this->model);
 		ClassRegistry::flush();
-	}
-
-/**
- * startCase
- *
- * @return void
- */
-	function startCase() {
-		$this->_debug = Configure::read('debug');
-		Configure::write('debug', 1);
-	}
-
-/**
- * endCase
- *
- * @return void
- */
-	function endCase() {
 		Configure::write('debug', $this->_debug);
 	}
 
