@@ -89,6 +89,28 @@ class SessionComponent extends CakeSession {
 	}
 
 /**
+ * Check if the session is active.  Returns the private __active flag.
+ *
+ * @return boolean
+ */
+	public function active() {
+		return $this->__active;
+	}
+
+/**
+ * Get / Set the userAgent 
+ *
+ * @param string $userAgent Set the userAgent
+ * @return void
+ */
+	public function userAgent($userAgent = null) {
+		if ($userAgent) {
+			$this->_userAgent = $userAgent;
+		}
+		return $this->_userAgent;
+	}
+
+/**
  * Used to write a value to a session key.
  *
  * In your controller: $this->Session->write('Controller.sessKey', 'session value');

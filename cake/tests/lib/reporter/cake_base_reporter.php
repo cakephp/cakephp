@@ -157,7 +157,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  * @return mixed
  */
 	public function testCaseList() {
-		$testList = TestManager::getTestCaseList();
+		$testList = TestManager::getTestCaseList($this->params);
 		return $testList;
 	}
 
@@ -168,7 +168,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  * @return void
  */
 	public function groupTestList() {
-		$testList = TestManager::getGroupTestList();
+		$testList = TestManager::getGroupTestList($this->params);
 		return $testList;
 	}
 

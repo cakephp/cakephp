@@ -109,13 +109,13 @@ class SessionComponentTest extends CakeTestCase {
 	function testSessionAutoStart() {
 		Configure::write('Session.start', false);
 		$Session = new SessionComponent();
-		$this->assertFalse($Session->isActive());
+		$this->assertFalse($Session->active());
 		$this->assertFalse($Session->started());
 		$Session->startup(new SessionTestController());
 
 		Configure::write('Session.start', true);
 		$Session = new SessionComponent();
-		$this->assertTrue($Session->isActive());
+		$this->assertTrue($Session->active());
 		$this->assertFalse($Session->started());
 		$Session->startup(new SessionTestController());
 		$this->assertTrue(isset($_SESSION));
@@ -141,15 +141,15 @@ class SessionComponentTest extends CakeTestCase {
 	function testSessionActivate() {
 		$Session = new SessionComponent();
 
-		$this->assertTrue($Session->isActive());
+		$this->assertTrue($Session->active());
 		$this->assertNull($Session->activate());
-		$this->assertTrue($Session->isActive());
+		$this->assertTrue($Session->active());
 
 		Configure::write('Session.start', false);
 		$Session = new SessionComponent();
-		$this->assertFalse($Session->isActive());
+		$this->assertFalse($Session->active());
 		$this->assertNull($Session->activate());
-		$this->assertTrue($Session->isActive());
+		$this->assertTrue($Session->active());
 		Configure::write('Session.start', true);
 		$Session->destroy();
 	}
@@ -162,11 +162,15 @@ class SessionComponentTest extends CakeTestCase {
  */
 	function testSessionValid() {
 		$Session = new SessionComponent();
+
 		$this->assertTrue($Session->valid());
+
+		$Session->userAgent('rweerw');
+		$this->assertFalse($Session->valid());
 
 		Configure::write('Session.start', false);
 		$Session = new SessionComponent();
-		$this->assertFalse($Session->isActive());
+		$this->assertFalse($Session->active());
 		$this->assertFalse($Session->valid());
 		Configure::write('Session.start', true);
 
@@ -194,7 +198,7 @@ class SessionComponentTest extends CakeTestCase {
 
 		Configure::write('Session.start', false);
 		$Session = new SessionComponent();
-		$this->assertFalse($Session->isActive());
+		$this->assertFalse($Session->active());
 		$this->assertFalse($Session->error());
 		Configure::write('Session.start', true);
 	}

@@ -37,16 +37,6 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-
-Mock::generatePartial(
-	'ShellDispatcher', 'TestTestTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'TestTask', 'MockTestTask',
-	array('in', '_stop', 'err', 'out', 'createFile', 'isLoadableClass')
-);
-
 /**
  * Test Article model
  *
@@ -258,11 +248,15 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestTestTaskMockShellDispatcher();
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('TestTask', 
+			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
+			array(&$this->Dispatcher)
+		);
 		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockTestTask($this->Dispatcher);
 		$this->Task->name = 'TestTask';
-		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Template =& new TemplateTask($this->Dispatcher);
 	}
 
@@ -280,21 +274,24 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFilePathGeneration() {
+	public function testFilePathGenerationModelRepeated() {
+		$this->Task->Dispatch->expects($this->never())->method('stderr');
+		$this->Task->Dispatch->expects($this->never())->method('_stop');
+
 		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
 
-		$this->Task->Dispatch->expectNever('stderr');
-		$this->Task->Dispatch->expectNever('_stop');
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
-		$this->Task->setReturnValue('in', 'y');
-		$this->Task->expectAt(0, 'createFile', array($file, '*'));
-		$this->Task->bake('Model', 'MyClass');
-
-		$this->Task->expectAt(1, 'createFile', array($file, '*'));
-		$this->Task->bake('Model', 'MyClass');
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = TESTS . 'cases' . DS . 'controllers' . DS . 'comments_controller.test.php';
-		$this->Task->expectAt(2, 'createFile', array($file, '*'));
+		$this->Task->expects($this->at(5))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+
+		$this->Task->bake('Model', 'MyClass');
+		$this->Task->bake('Model', 'MyClass');
 		$this->Task->bake('Controller', 'Comments');
 	}
 
@@ -344,11 +341,12 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetObjectType() {
-		$this->Task->expectOnce('_stop');
-		$this->Task->setReturnValueAt(0, 'in', 'q');
+		$this->Task->expects($this->once())->method('_stop');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('q'));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(2));
+
 		$this->Task->getObjectType();
 
-		$this->Task->setReturnValueAt(1, 'in', 2);
 		$result = $this->Task->getObjectType();
 		$this->assertEqual($result, $this->Task->classTypes[1]);
 	}
@@ -388,11 +386,12 @@ class TestTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->setReturnValueAt(0, 'in', 'MyCustomClass');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('MyCustomClass'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(1));
+
 		$result = $this->Task->getClassName('Model');
 		$this->assertEqual($result, 'MyCustomClass');
 
-		$this->Task->setReturnValueAt(1, 'in', 1);
 		$result = $this->Task->getClassName('Model');
 		$options = App::objects('model');
 		$this->assertEqual($result, $options[0]);
@@ -404,8 +403,10 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetUserFixtures() {
-		$this->Task->setReturnValueAt(0, 'in', 'y');
-		$this->Task->setReturnValueAt(1, 'in', 'app.pizza, app.topping, app.side_dish');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')
+			->will($this->returnValue('app.pizza, app.topping, app.side_dish'));
+
 		$result = $this->Task->getUserFixtures();
 		$expected = array('app.pizza', 'app.topping', 'app.side_dish');
 		$this->assertEqual($result, $expected);
@@ -440,8 +441,8 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeModelTest() {
-		$this->Task->setReturnValue('createFile', true);
-		$this->Task->setReturnValue('isLoadableClass', true);
+		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Model', 'TestTaskArticle');
 
@@ -458,9 +459,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern('/function testDoSomethingElse\(\)/i', $result);
 
 		$this->assertPattern("/'app\.test_task_article'/", $result);
-		if (PHP5) {
-			$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		}
+		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
 		$this->assertPattern("/'app\.test_task_tag'/", $result);
 		$this->assertPattern("/'app\.articles_tag'/", $result);
 	}
@@ -473,8 +472,8 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeControllerTest() {
-		$this->Task->setReturnValue('createFile', true);
-		$this->Task->setReturnValue('isLoadableClass', true);
+		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Controller', 'TestTaskComments');
 
@@ -493,9 +492,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertPattern('/unset\(\$this->TestTaskComments\)/', $result);
 
 		$this->assertPattern("/'app\.test_task_article'/", $result);
-		if (PHP5) {
-			$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		}
+		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
 		$this->assertPattern("/'app\.test_task_tag'/", $result);
 		$this->assertPattern("/'app\.articles_tag'/", $result);
 	}
@@ -538,7 +535,9 @@ class TestTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'TestTest';
 
 		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'form.test.php';
-		$this->Task->expectAt(0, 'createFile', array($path, '*'));
+		$this->Task->expects($this->once())->method('createFile')
+			->with($path, new PHPUnit_Framework_Constraint_IsAnything());
+
 		$this->Task->bake('Helper', 'Form');
 	}
 
@@ -583,9 +582,13 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testExecuteWithOneArg() {
 		$this->Task->args[0] = 'Model';
-		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
-		$this->Task->setReturnValue('isLoadableClass', true);
-		$this->Task->expectAt(0, 'createFile', array('*', new PatternExpectation('/class TestTaskTagTestCase extends CakeTestCase/')));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
+		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
+		$this->Task->expects($this->once())->method('createFile')
+			->with(
+				new PHPUnit_Framework_Constraint_IsAnything(),
+				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+			);
 		$this->Task->execute();
 	}
 
@@ -596,9 +599,13 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function testExecuteWithTwoArgs() {
 		$this->Task->args = array('Model', 'TestTaskTag');
-		$this->Task->setReturnValueAt(0, 'in', 'TestTaskTag');
-		$this->Task->setReturnValue('isLoadableClass', true);
-		$this->Task->expectAt(0, 'createFile', array('*', new PatternExpectation('/class TestTaskTagTestCase extends CakeTestCase/')));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
+		$this->Task->expects($this->once())->method('createFile')
+			->with(
+				new PHPUnit_Framework_Constraint_IsAnything(),
+				new PHPUnit_Framework_Constraint_PCREMatch('/class TestTaskTagTestCase extends CakeTestCase/')
+			);
+		$this->Task->expects($this->any())->method('isLoadableClass')->will($this->returnValue(true));
 		$this->Task->execute();
 	}
 }

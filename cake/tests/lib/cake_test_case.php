@@ -509,4 +509,18 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 		$lower = $value - $margin;
 		$this->assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
+
+/**
+ * Compatibility function for skipping.
+ *
+ * @param boolean $condition Condition to trigger skipping
+ * @param string $message Message for skip
+ * @return boolean
+ */
+	protected function skipUnless($condition, $message = '') {
+		if (!$condition) {
+			$this->markTestSkipped($message);
+		}
+		return $condition;
+	}
 }
