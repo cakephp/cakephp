@@ -50,7 +50,7 @@ class TestManagerTest extends CakeTestCase {
 	public function setUp() {
 		$this->_countFiles = 0;
 		$this->TestManager = new TestTestManager();
-		$this->testSuiteStub = $this->getMock('PHPUnit_Framework_TestSuite');
+		$this->testSuiteStub = $this->getMock('CakeTestSuite');
 
 		$this->testSuiteStub
 			->expects($this->any())
@@ -93,6 +93,7 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunAllTests() {
+		$this->Reporter->params = array('show' => 'cases');
 		$files = $this->_getAllTestFiles();
 		$result = $this->TestManager->runAllTests($this->Reporter, true);
 
@@ -115,7 +116,7 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunTestCase() {
-		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
+		$file = __FILE__;
 		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
 		$this->assertEquals(1, $this->_countFiles);
 		$this->assertType('PHPUnit_Framework_TestResult', $result);
@@ -133,7 +134,7 @@ class TestManagerTest extends CakeTestCase {
 			return;
 		}
 		list($groupFile,) = explode('.', array_pop($groups), 2);
-		$result = $this->TestManager->runGroupTest(basename($groupFile), $this->Reporter);
+		$result = $this->TestManager->runGroupTest($groupFile, $this->Reporter);
 		$this->assertGreaterThan(0, $this->_countFiles);
 		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}

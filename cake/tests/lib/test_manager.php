@@ -87,7 +87,7 @@ class TestManager {
  *
  * @return void
  */
-	public function __construct($params) {
+	public function __construct($params = array()) {
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
 		if (isset($params['app'])) {
 			$this->appTest = true;
@@ -111,7 +111,7 @@ class TestManager {
  * @return mixed
  */
 	public function runAllTests(&$reporter) {
-		$testCases = $this->_getTestFileList($this->_getTestsPath());
+		$testCases = $this->_getTestFileList($this->_getTestsPath($reporter->params));
 
 		if ($this->appTest) {
 			$test = $this->getTestSuite(__('All App Tests', true));
@@ -157,7 +157,7 @@ class TestManager {
  * @return mixed Results of group test being run.
  */
 	public function runGroupTest($groupTestName, $reporter, $codeCoverage = false) {
-		$filePath = $this->_getTestsPath($reporter->params) . DS . strtolower($groupTestName) . $this->getExtension('group');
+		$filePath = $this->_getTestsPath($reporter->params) . strtolower($groupTestName) . $this->getExtension('group');
 
 		if (!file_exists($filePath) || strpos($filePath, '..')) {
 			throw new InvalidArgumentException(sprintf(
@@ -169,8 +169,9 @@ class TestManager {
 		}
 
 		require_once $filePath;
-		$suite = $this->getTestSuite(sprintf(__('%s group test', true), $groupTestName));
-		$groupClassName = Inflector::classify($groupTestName) . 'GroupTest';
+		$class = basename($groupTestName);
+		$suite = $this->getTestSuite(sprintf(__('%s group test', true), $class));
+		$groupClassName = Inflector::classify($class) . 'GroupTest';
 		$group = new $groupClassName();
 		$suite->addTestSuite($group);
 		if (isset($group->label)) {
@@ -361,6 +362,7 @@ class TestManager {
  * @static
  */
 	protected static function _getTestsPath($params) {
+		$result = null;
 		if (!empty($params['app'])) {
 			if ($params['show'] == 'cases' || !empty($params['case'])) {
 				$result = APP_TEST_CASES;
@@ -374,7 +376,7 @@ class TestManager {
 				$_pluginBasePath = $pluginPath . DS . 'tests';
 			}
 			$result = $_pluginBasePath . DS . $type;
-		} else {
+		} elseif (!empty($params['show'])) {
 			if ($params['show'] == 'cases' || !empty($params['case'])) {
 				$result = CORE_TEST_CASES;
 			} else if ($params['show'] == 'groups') {
