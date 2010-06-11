@@ -181,8 +181,6 @@ class DbAclTwoTest extends DbAcl {
 	}
 }
 
-Mock::generate('AclInterface', 'MockAclImplementation');
-
 /**
  * Short description for class.
  *
@@ -196,7 +194,10 @@ class AclComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		if (!class_exists('MockAclImplementation', false)) {
+			$this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
+		}
 		Configure::write('Acl.classname', 'MockAclImplementation');
 		$this->Acl = new AclComponent();
 	}
@@ -230,7 +231,7 @@ class AclComponentTest extends CakeTestCase {
  */
 	function testAdapter() {
 		$implementation = new MockAclImplementation();
-		$implementation->expectOnce('initialize', array($this->Acl));
+		$implementation->expects($this->once())->method('initialize')->with($this->Acl);
 		$this->assertNull($this->Acl->adapter($implementation));
 
 		$this->assertEqual($this->Acl->adapter(), $implementation, 'Returned object is different %s');
@@ -386,24 +387,24 @@ class DbAclTestCase extends CakeTestCase {
  */
 	function testCreate() {
 		$this->Acl->Aro->create(array('alias' => 'Chotchkey'));
-		$this->assertTrue($this->Acl->Aro->save());
+		$this->assertTrue((bool)$this->Acl->Aro->save());
 
 		$parent = $this->Acl->Aro->id;
 
 		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Joanna'));
-		$this->assertTrue($this->Acl->Aro->save());
+		$this->assertTrue((bool)$this->Acl->Aro->save());
 
 		$this->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Stapler'));
-		$this->assertTrue($this->Acl->Aro->save());
+		$this->assertTrue((bool)$this->Acl->Aro->save());
 
 		$root = $this->Acl->Aco->node('ROOT');
 		$parent = $root[0]['AcoTwoTest']['id'];
 
 		$this->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'Drinks'));
-		$this->assertTrue($this->Acl->Aco->save());
+		$this->assertTrue((bool)$this->Acl->Aco->save());
 
 		$this->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'PiecesOfFlair'));
-		$this->assertTrue($this->Acl->Aco->save());
+		$this->assertTrue((bool)$this->Acl->Aco->save());
 	}
 
 /**
@@ -460,11 +461,19 @@ class DbAclTestCase extends CakeTestCase {
 		// Samir should still have his tpsReports/view permissions, but does not
 		$this->assertTrue($this->Acl->check('root/users/Samir', 'ROOT/tpsReports/view', 'update'));
 
-		$this->expectError('DbAcl::allow() - Invalid node');
+		$this->expectError();
 		$this->assertFalse($this->Acl->allow('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
+	}
 
-		$this->expectError('DbAcl::allow() - Invalid node');
-		$this->assertFalse($this->Acl->allow('Homer', 'tpsReports', 'create'));
+/**
+ * testAllowInvalidNode method
+ *
+ * @access public
+ * @return void
+ */
+	public function testAllowInvalidNode() {
+		$this->expectError();
+		$this->Acl->allow('Homer', 'tpsReports', 'create');
 	}
 
 /**
@@ -479,15 +488,6 @@ class DbAclTestCase extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Milton', 'smash', 'read'));
 		$this->assertFalse($this->Acl->check('Milton', 'current', 'update'));
 
-		$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: WRONG\nAco: tpsReports");
-		$this->assertFalse($this->Acl->check('WRONG', 'tpsReports', 'read'));
-
-		$this->expectError("ACO permissions key foobar does not exist in DbAcl::check()");
-		$this->assertFalse($this->Acl->check('Lumbergh', 'smash', 'foobar'));
-
-		$this->expectError("DbAcl::check() - Failed ARO/ACO node lookup in permissions check.  Node references:\nAro: users\nAco: NonExistant");
-		$this->assertFalse($this->Acl->check('users', 'NonExistant', 'read'));
-
 		$this->assertFalse($this->Acl->check(null, 'printers', 'create'));
 		$this->assertFalse($this->Acl->check('managers', null, 'read'));
 
@@ -495,6 +495,39 @@ class DbAclTestCase extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Samir', 'ROOT/tpsReports/update', 'read'));
 
 		$this->assertFalse($this->Acl->check('root/users/Milton', 'smash', 'delete'));
+	}
+
+/**
+ * testCheckInvalidNode method
+ *
+ * @access public
+ * @return void
+ */
+	public function testCheckInvalidNode() {
+		$this->expectError();
+		$this->assertFalse($this->Acl->check('WRONG', 'tpsReports', 'read'));
+	}
+
+/**
+ * testCheckInvalidPermission method
+ *
+ * @access public
+ * @return void
+ */
+	public function testCheckInvalidPermission() {
+		$this->expectError();
+		$this->assertFalse($this->Acl->check('Lumbergh', 'smash', 'foobar'));
+	}
+
+/**
+ * testCheckMissingPermission method
+ *
+ * @access public
+ * @return void
+ */
+	public function testCheckMissingPermission() {
+		$this->expectError();
+		$this->assertFalse($this->Acl->check('users', 'NonExistant', 'read'));
 	}
 
 /**
@@ -541,7 +574,7 @@ class DbAclTestCase extends CakeTestCase {
 		$expected = '-1';
 		$this->assertEqual($result[0]['PermissionTwoTest']['_delete'], $expected);
 
-		$this->expectError('DbAcl::allow() - Invalid node');
+		$this->expectError();
 		$this->assertFalse($this->Acl->deny('Lumbergh', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
@@ -606,7 +639,7 @@ class DbAclTestCase extends CakeTestCase {
 		$this->assertTrue($this->Acl->check('Micheal', 'view', 'update'));
 		$this->assertFalse($this->Acl->check('Micheal', 'view', 'delete'));
 
-		$this->expectError('DbAcl::allow() - Invalid node');
+		$this->expectError();
 		$this->assertFalse($this->Acl->allow('Peter', 'ROOT/tpsReports/DoesNotExist', 'create'));
 	}
 
@@ -627,7 +660,7 @@ class DbAclTestCase extends CakeTestCase {
 		$this->assertFalse($this->Acl->check('Samir', 'printers', 'read'));
 		$this->assertFalse($this->Acl->check('Peter', 'printers', 'read'));
 
-		$this->expectError('DbAcl::allow() - Invalid node');
+		$this->expectError();
 		$this->assertFalse($this->Acl->deny('Bobs', 'ROOT/printers/DoesNotExist', 'create'));
 	}
 /**
