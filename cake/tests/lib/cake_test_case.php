@@ -33,14 +33,6 @@ require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
 class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
- * Methods used internally.
- *
- * @var array
- * @access public
- */
-	public $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
-
-/**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
  * Set this to false to handle manually
  *
@@ -58,12 +50,15 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public $dropTables = true;
 
 /**
- * savedGetData property
+ * The fixtures to be loaded in this test case. Fixtures are referenced using a dot notation:
+ * 	- fixture_name : A fixtures that can be found in the main app folder and is named FixtureNameFixture
+ *	- core.fixture_name : A fixtures that can be found in the cake core folder and is named FixtureNameFixture
+ *	- plugin.plugin_name.fixture_name : A fixtures that can be found in the plugin "plugin_name" folder and is named FixtureNameFixture
  *
  * @var array
- * @access private
+ * @access public
  */
-	private $__savedGetData = array();
+	private $fixtures = array();
 
 /**
 * Runs the test case and collects the results in a TestResult object.
@@ -83,24 +78,6 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$this->sharedFixture->unload($this);
 		}
 		return $result;
-	}
-
-/**
- * Called when a test case (group of methods) is about to start (to be overriden when needed.)
- *
- * @param string $method Test method about to get executed.
- * @return void
- */
-	public function startCase() {
-	}
-
-/**
- * Called when a test case (group of methods) has been executed (to be overriden when needed.)
- *
- * @param string $method Test method about that was executed.
- * @return void
- */
-	public function endCase() {
 	}
 
 /**
@@ -143,9 +120,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPreConditions() {
 		parent::assertPreConditions();
-		if (!in_array(strtolower($this->getName()), $this->methods)) {
-			$this->startTest($this->getName());
-		}
+		$this->startTest($this->getName());
 	}
 
 /**
@@ -156,23 +131,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  */
 	protected function assertPostConditions() {
 		parent::assertPostConditions();
-		if (!in_array(strtolower($this->getName()), $this->methods)) {
-			$this->endTest($this->getName());
-		}
-	}
-
-/**
- * Gets a list of test names. Normally that will be all internal methods that start with the
- * name "test". This method should be overridden if you want a different rule.
- *
- * @return array List of test names.
- */
-	public function getTests() {
-		return array_merge(
-			array('start', 'startCase'),
-			array_diff(parent::getTests(), array('testAction')),
-			array('endCase', 'end')
-		);
+		$this->endTest($this->getName());
 	}
 
 /**
