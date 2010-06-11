@@ -81,7 +81,7 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return mixed False if the operation should abort. Any other result will continue.
+ * @return mixed False if the operation should abort. An array will replace the value of $query.
  * @access public
  */
 	function beforeFind(&$model, $query) { }
@@ -92,7 +92,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
- * @return mixed Result of the find operation
+ * @return mixed An array value will replace the value of $results - any other value will be ignored.
  * @access public
  */
 	function afterFind(&$model, $results, $primary) { }
