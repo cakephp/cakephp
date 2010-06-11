@@ -223,7 +223,7 @@ class Scaffold extends Object {
 	function __scaffoldView($params) {
 		if ($this->controller->_beforeScaffold('view')) {
 
-			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey), true));
+			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)), true);
 			if (isset($params['pass'][0])) {
 				$this->ScaffoldModel->id = $params['pass'][0];
 			} elseif ($this->_validSession) {
