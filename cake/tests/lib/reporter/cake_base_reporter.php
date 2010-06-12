@@ -123,34 +123,6 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 	}
 
 /**
- * Paints the beginning of a test method being run.  This is used
- * to start/resume the code coverage tool.
- *
- * @param string $method The method name being run.
- * @return void
- */
-	public function paintMethodStart($method) {
-		parent::paintMethodStart($method);
-		if (!empty($this->params['codeCoverage'])) {
-			CodeCoverageManager::start();
-		}
-	}
-
-/**
- * Paints the end of a test method being run.  This is used
- * to pause the collection of code coverage if its being used.
- *
- * @param string $method The name of the method being run.
- * @return void
- */
-	public function paintMethodEnd($method) {
-		parent::paintMethodEnd($method);
-		if (!empty($this->params['codeCoverage'])) {
-			CodeCoverageManager::stop();
-		}
-	}
-
-/**
  * Retrieves a list of test cases from the active Manager class,
  * displaying it in the correct format for the reporter subclass
  *
@@ -248,7 +220,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 * @param  float $time
 */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
-
+		$this->paintSkip($e, $test);
 	}
 
 /**

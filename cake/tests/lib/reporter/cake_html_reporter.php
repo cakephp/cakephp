@@ -296,28 +296,10 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		if (isset($this->params['show_passes']) && $this->params['show_passes']) {
 			echo "<li class='pass'>\n";
 			echo "<span>Passed</span> ";
-			//$breadcrumb = $this->getTestList();
-			//array_shift($breadcrumb);
-			//echo implode(" -&gt; ", $breadcrumb);
+
 			echo "<br />" . $this->_htmlEntities($test->getName()) . " ($time seconds)\n";
 			echo "</li>\n";
 		}
-	}
-
-/**
- * Paints a PHP error.
- *
- * @param string $message Message is ignored.
- * @return void
- */
-	public function paintError($message) {
-		echo "<li class='error'>\n";
-		echo "<span>Error</span>";
-		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
-		echo "</li>\n";
 	}
 
 /**
@@ -334,9 +316,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 			'] in ['. $exception->getFile() .
 			' line ' . $exception->getLine() . ']';
 		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
-		//$breadcrumb = $this->getTestList();
-		//array_shift($breadcrumb);
-		//echo "<div>" . implode(" -&gt; ", $breadcrumb) . "</div>\n";
 		echo "</li>\n";
 	}
 
