@@ -36,23 +36,6 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestModelTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'ModelTask', 'MockModelTask',
-	array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest')
-);
-
-Mock::generate(
-	'Model', 'MockModelTaskModel'
-);
-
-Mock::generate(
-	'FixtureTask', 'MockModelTaskFixtureTask'
-);
-
 /**
  * ModelTaskTest class
  *
@@ -75,15 +58,42 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestModelTaskMockShellDispatcher();
-		$this->Task =& new MockModelTask($this->Dispatcher);
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
+			array(&$this->Dispatcher)
+		);
+		$this->_setupOtherMocks();
+	}
+
+/**
+ * Setup a mock that has out mocked.  Normally this is not used as it makes $this->at() really tricky.
+ *
+ * @return void
+ */
+	protected function _useMockedOut() {
+		$this->Task = $this->getMock('ModelTask',
+			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
+			array(&$this->Dispatcher)
+		);
+		$this->_setupOtherMocks();
+	}
+
+/**
+ * sets up the rest of the dependencies for Model Task
+ *
+ * @return void
+ */
+	protected function _setupOtherMocks() {
+		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher));
+		$this->Task->Test = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher));
+		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+
 		$this->Task->name = 'ModelTask';
 		$this->Task->interactive = true;
-		$this->Task->Dispatch =& $this->Dispatcher;
 		$this->Task->Dispatch->shellPaths = App::path('shells');
-		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
-		$this->Task->Fixture =& new MockModelTaskFixtureTask();
-		$this->Task->Test =& new MockModelTaskFixtureTask();
 	}
 
 /**
@@ -102,20 +112,23 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testListAll() {
-		$this->Task->expectAt(1, 'out', array('1. Article'));
-		$this->Task->expectAt(2, 'out', array('2. ArticlesTag'));
-		$this->Task->expectAt(3, 'out', array('3. CategoryThread'));
-		$this->Task->expectAt(4, 'out', array('4. Comment'));
-		$this->Task->expectAt(5, 'out', array('5. Tag'));
+		$this->_useMockedOut();
+
+		$this->Task->expects($this->at(1))->method('out')->with('1. Article');
+		$this->Task->expects($this->at(2))->method('out')->with('2. ArticlesTag');
+		$this->Task->expects($this->at(3))->method('out')->with('3. CategoryThread');
+		$this->Task->expects($this->at(4))->method('out')->with('4. Comment');
+		$this->Task->expects($this->at(5))->method('out')->with('5. Tag');
+
+		$this->Task->expects($this->at(7))->method('out')->with('1. Article');
+		$this->Task->expects($this->at(8))->method('out')->with('2. ArticlesTag');
+		$this->Task->expects($this->at(9))->method('out')->with('3. CategoryThread');
+		$this->Task->expects($this->at(10))->method('out')->with('4. Comment');
+		$this->Task->expects($this->at(11))->method('out')->with('5. Tag');
+
 		$result = $this->Task->listAll('test_suite');
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
-
-		$this->Task->expectAt(7, 'out', array('1. Article'));
-		$this->Task->expectAt(8, 'out', array('2. ArticlesTag'));
-		$this->Task->expectAt(9, 'out', array('3. CategoryThread'));
-		$this->Task->expectAt(10, 'out', array('4. Comment'));
-		$this->Task->expectAt(11, 'out', array('5. Tag'));
 
 		$this->Task->connection = 'test_suite';
 		$result = $this->Task->listAll();
@@ -128,26 +141,41 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGetName() {
-		$this->Task->setReturnValue('in', 1);
-
-		$this->Task->setReturnValueAt(0, 'in', 'q');
-		$this->Task->expectOnce('_stop');
+	public function testGetNameQuit() {
+		$this->Task->expects($this->once())->method('in')->will($this->returnValue('q'));
+		$this->Task->expects($this->once())->method('_stop');
 		$this->Task->getName('test_suite');
+	}
 
-		$this->Task->setReturnValueAt(1, 'in', 1);
+/**
+ * test getName with a valid option.
+ *
+ * @return void
+ */
+	function testGetNameValidOption() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(1));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(4));
+
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Article';
 		$this->assertEqual($result, $expected);
 
-		$this->Task->setReturnValueAt(2, 'in', 4);
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Comment';
 		$this->assertEqual($result, $expected);
+	}
 
-		$this->Task->setReturnValueAt(3, 'in', 10);
+/**
+ * test that an out of bounds option causes an error.
+ *
+ * @return void
+ */
+	function testGetNameWithOutOfBoundsOption() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(10));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(1));
+		$this->Task->expects($this->once())->method('err');
+
 		$result = $this->Task->getName('test_suite');
-		$this->Task->expectOnce('err');
 	}
 
 /**
@@ -156,13 +184,20 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetTableName() {
-		$this->Task->setReturnValueAt(0, 'in', 'y');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$result = $this->Task->getTable('Article', 'test_suite');
 		$expected = 'articles';
 		$this->assertEqual($result, $expected);
+	}
 
-		$this->Task->setReturnValueAt(1, 'in', 'n');
-		$this->Task->setReturnValueAt(2, 'in', 'my_table');
+/**
+ * test gettting a custom table name.
+ *
+ * @return void
+ */
+	function testGetTableNameCustom() {
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('my_table'));
 		$result = $this->Task->getTable('Article', 'test_suite');
 		$expected = 'my_table';
 		$this->assertEqual($result, $expected);
@@ -215,10 +250,8 @@ class ModelTaskTest extends CakeTestCase {
 	public function testInteractiveFieldValidation() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', '20');
-		$this->Task->setReturnValueAt(1, 'in', 'y');
-		$this->Task->setReturnValueAt(2, 'in', '16');
-		$this->Task->setReturnValueAt(3, 'in', 'n');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('20', 'y', '16', 'n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
@@ -231,12 +264,15 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testInteractiveFieldValidationWithBogusResponse() {
+		$this->_useMockedOut();
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', '999999');
-		$this->Task->setReturnValueAt(1, 'in', '20');
-		$this->Task->setReturnValueAt(2, 'in', 'n');
-		$this->Task->expectAt(4, 'out', array(new PatternExpectation('/make a valid/')));
+
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('999999', '20', 'n'));
+
+		$this->Task->expects($this->at(7))->method('out')
+			->with(new PHPUnit_Framework_Constraint_PCREMatch('/make a valid/'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('notempty' => 'notempty');
@@ -251,8 +287,8 @@ class ModelTaskTest extends CakeTestCase {
 	function testInteractiveFieldValidationWithRegexp() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->setReturnValueAt(0, 'in', '/^[a-z]{0,9}$/');
-		$this->Task->setReturnValueAt(1, 'in', 'n');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('/^[a-z]{0,9}$/'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('a_z_0_9' => '/^[a-z]{0,9}$/');
@@ -265,9 +301,9 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testNonInteractiveDoValidation() {
-		$Model =& new MockModelTaskModel();
+		$Model = $this->getMock('Model');
 		$Model->primaryKey = 'id';
-		$Model->setReturnValue('schema', array(
+		$Model->expects($this->any())->method('schema')->will($this->returnValue(array(
 			'id' => array(
 				'type' => 'integer',
 				'length' => 11,
@@ -299,7 +335,7 @@ class ModelTaskTest extends CakeTestCase {
 				'length' => '',
 				'null' => false,
 			)
-		));
+		)));
 		$this->Task->interactive = false;
 
 		$result = $this->Task->doValidation($Model);
@@ -331,8 +367,11 @@ class ModelTaskTest extends CakeTestCase {
 			'two' => array(),
 			'key' => array('key' => 'primary')
 		);
-		$this->Task->expectAt(0, 'in', array('*', null, 'key'));
-		$this->Task->setReturnValue('in', 'my_field');
+		$anything = new PHPUnit_Framework_Constraint_IsAnything();
+		$this->Task->expects($this->once())->method('in')
+			->with($anything, null, 'key')
+			->will($this->returnValue('my_field'));
+	
 		$result = $this->Task->findPrimaryKey($fields);
 		$expected = 'my_field';
 		$this->assertEqual($result, $expected);
@@ -343,17 +382,28 @@ class ModelTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testFindDisplayField() {
-		$fields = array('id' => array(), 'tagname' => array(), 'body' => array(),
-			'created' => array(), 'modified' => array());
-
-		$this->Task->setReturnValue('in', 'n');
-		$this->Task->setReturnValueAt(0, 'in', 'n');
+	public function testFindDisplayFieldNone() {
+		$fields = array(
+			'id' => array(), 'tagname' => array(), 'body' => array(),
+			'created' => array(), 'modified' => array()
+		);
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertFalse($result);
+	}
 
-		$this->Task->setReturnValueAt(1, 'in', 'y');
-		$this->Task->setReturnValueAt(2, 'in', 2);
+/**
+ * Test finding a displayname from user input
+ *
+ * @return void
+ */
+	public function testFindDisplayName() {
+		$fields = array(
+			'id' => array(), 'tagname' => array(), 'body' => array(),
+			'created' => array(), 'modified' => array()
+		);
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(2));
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertEqual($result, 'tagname');
 	}
@@ -507,7 +557,7 @@ class ModelTaskTest extends CakeTestCase {
 	public function testBakeFixture() {
 		$this->Task->plugin = 'test_plugin';
 		$this->Task->interactive = true;
-		$this->Task->Fixture->expectAt(0, 'bake', array('Article', 'articles'));
+		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('Article', 'articles');
 		$this->Task->bakeFixture('Article', 'articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
@@ -523,7 +573,7 @@ class ModelTaskTest extends CakeTestCase {
 	public function testBakeTest() {
 		$this->Task->plugin = 'test_plugin';
 		$this->Task->interactive = true;
-		$this->Task->Test->expectAt(0, 'bake', array('Model', 'Article'));
+		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'Article');
 		$this->Task->bakeTest('Article');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
@@ -562,11 +612,13 @@ class ModelTaskTest extends CakeTestCase {
 			)
 		);
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
-		$this->Task->setReturnValueAt(0, 'in', 'y');
+
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('n', 'y', 'n', 'n', 'n'));
+
 		$result = $this->Task->confirmAssociations($model, $associations);
 		$this->assertTrue(empty($result['hasOne']));
 
-		$this->Task->setReturnValue('in', 'n');
 		$result = $this->Task->confirmAssociations($model, $associations);
 		$this->assertTrue(empty($result['hasMany']));
 		$this->assertTrue(empty($result['hasOne']));
@@ -578,16 +630,18 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testInOptions() {
-		$options = array('one', 'two', 'three');
-		$this->Task->expectAt(0, 'out', array('1. one'));
-		$this->Task->expectAt(1, 'out', array('2. two'));
-		$this->Task->expectAt(2, 'out', array('3. three'));
-		$this->Task->setReturnValueAt(0, 'in', 10);
+		$this->_useMockedOut();
 
-		$this->Task->expectAt(3, 'out', array('1. one'));
-		$this->Task->expectAt(4, 'out', array('2. two'));
-		$this->Task->expectAt(5, 'out', array('3. three'));
-		$this->Task->setReturnValueAt(1, 'in', 2);
+		$options = array('one', 'two', 'three');
+		$this->Task->expects($this->at(0))->method('out')->with('1. one');
+		$this->Task->expects($this->at(1))->method('out')->with('2. two');
+		$this->Task->expects($this->at(2))->method('out')->with('3. three');
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue(10));
+
+		$this->Task->expects($this->at(4))->method('out')->with('1. one');
+		$this->Task->expects($this->at(5))->method('out')->with('2. two');
+		$this->Task->expects($this->at(6))->method('out')->with('3. three');
+		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(2));
 		$result = $this->Task->inOptions($options, 'Pick a number');
 		$this->assertEqual($result, 1);
 	}
@@ -691,17 +745,12 @@ STRINGEND;
  * @return void
  */
 	public function testBakeWithPlugin() {
-		$this->Task->plugin = 'ControllerTest';
-
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
-		$this->Task->expectAt(0, 'createFile', array($path, '*'));
-		$this->Task->bake('Article', array(), array());
-
 		$this->Task->plugin = 'controllerTest';
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
-		$this->Task->expectAt(1, 'createFile', array(
-		$path, new PatternExpectation('/Article extends ControllerTestAppModel/')));
+		$this->Task->expects($this->once())->method('createFile')
+			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/Article extends ControllerTestAppModel/'));
+	
 		$this->Task->bake('Article', array(), array());
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
@@ -718,8 +767,11 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article.php';
-		$this->Task->setReturnValue('_checkUnitTest', 1);
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article extends AppModel/'));
+
 		$this->Task->execute();
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
@@ -727,27 +779,32 @@ STRINGEND;
 	}
 
 /**
- * test that execute passes with different inflections of the same name.
+ * data provider for testExecuteWithNamedModelVariations
  *
  * @return void
  */
-	public function testExecuteWithNamedModelVariations() {
+	static function nameVariations() {
+		return array(
+			array('Articles'), array('Article'), array('article'), array('articles')
+		);
+	}
+
+/**
+ * test that execute passes with different inflections of the same name.
+ *
+ * @dataProvider nameVariations
+ * @return void
+ */
+	public function testExecuteWithNamedModelVariations($name) {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->setReturnValue('_checkUnitTest', 1);
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 
-		$this->Task->args = array('article');
+		$this->Task->args = array($name);
 		$filename = '/my/path/article.php';
 
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
-		$this->Task->execute();
-
-		$this->Task->args = array('Articles');
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
-		$this->Task->execute();
-
-		$this->Task->args = array('articles');
-		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class Article extends AppModel/')));
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article extends AppModel/'));
 		$this->Task->execute();
 	}
 
@@ -761,8 +818,11 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article.php';
-		$this->Task->setReturnValue('_checkUnitTest', 1);
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation("/'Comment' \=\> array\(/")));
+	
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
+		$this->Task->expects($this->at(0))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch("/'Comment' \=\> array\(/"));
+
 		$this->Task->execute();
 	}
 
@@ -775,25 +835,30 @@ STRINGEND;
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
-		$this->Task->setReturnValue('_checkUnitTest', true);
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
 
-		$this->Task->Fixture->expectCallCount('bake', 5);
-		$this->Task->Test->expectCallCount('bake', 5);
+		$this->Task->Fixture->expects($this->exactly(5))->method('bake');
+		$this->Task->Test->expects($this->exactly(5))->method('bake');
 
 		$filename = '/my/path/article.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
 
 		$filename = '/my/path/articles_tag.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTag/')));
+		$this->Task->expects($this->at(2))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesTag/'));
 
 		$filename = '/my/path/category_thread.php';
-		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CategoryThread/')));
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
 
 		$filename = '/my/path/comment.php';
-		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class Comment/')));
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Comment/'));
 
 		$filename = '/my/path/tag.php';
-		$this->Task->expectAt(4, 'createFile', array($filename, new PatternExpectation('/class Tag/')));
+		$this->Task->expects($this->at(5))
+			->method('createFile')->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Tag/'));
 
 		$this->Task->execute();
 
@@ -810,23 +875,27 @@ STRINGEND;
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
-		$this->Task->setReturnValue('_checkUnitTest', true);
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
 		$this->Task->skipTables = array('tags');
 
-		$this->Task->Fixture->expectCallCount('bake', 4);
-		$this->Task->Test->expectCallCount('bake', 4);
+		$this->Task->Fixture->expects($this->exactly(4))->method('bake');
+		$this->Task->Test->expects($this->exactly(4))->method('bake');
 
 		$filename = '/my/path/article.php';
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+		$this->Task->expects($this->at(1))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
 
 		$filename = '/my/path/articles_tag.php';
-		$this->Task->expectAt(1, 'createFile', array($filename, new PatternExpectation('/class ArticlesTag/')));
+		$this->Task->expects($this->at(2))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesTag/'));
 
 		$filename = '/my/path/category_thread.php';
-		$this->Task->expectAt(2, 'createFile', array($filename, new PatternExpectation('/class CategoryThread/')));
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
 
 		$filename = '/my/path/comment.php';
-		$this->Task->expectAt(3, 'createFile', array($filename, new PatternExpectation('/class Comment/')));
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Comment/'));
 
 		$this->Task->execute();
 	}
@@ -841,22 +910,27 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->interactive = true;
 
-		$this->Task->setReturnValueAt(0, 'in', '1'); //choose article
-		$this->Task->setReturnValueAt(1, 'in', 'n'); //no validation
-		$this->Task->setReturnValueAt(2, 'in', 'y'); //yes to associations
-		$this->Task->setReturnValueAt(3, 'in', 'y'); //yes to comment relation
-		$this->Task->setReturnValueAt(4, 'in', 'y'); //yes to user relation
-		$this->Task->setReturnValueAt(5, 'in', 'y'); //yes to tag relation
-		$this->Task->setReturnValueAt(6, 'in', 'n'); //no to additional assocs
-		$this->Task->setReturnValueAt(7, 'in', 'y'); //yes to looksGood?
-		$this->Task->setReturnValue('_checkUnitTest', true);
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(
+				'1', // article
+				'n', // no validation
+				'y', // associations
+				'y', // comment relation
+				'y', // user relation
+				'y', // tag relation
+				'n', // additional assocs
+				'y' // looks good?
+			));
+		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
 
-		$this->Task->Test->expectOnce('bake');
-		$this->Task->Fixture->expectOnce('bake');
+		$this->Task->Test->expects($this->once())->method('bake');
+		$this->Task->Fixture->expects($this->once())->method('bake');
 
 		$filename = '/my/path/article.php';
-		$this->Task->expectOnce('createFile');
-		$this->Task->expectAt(0, 'createFile', array($filename, new PatternExpectation('/class Article/')));
+
+		$this->Task->expects($this->once())->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
+
 		$this->Task->execute();
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
@@ -872,11 +946,11 @@ STRINGEND;
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 
-		$this->Task->expectOnce('_stop');
-		$this->Task->expectOnce('err');
+		$this->Task->expects($this->once())->method('_stop');
+		$this->Task->expects($this->once())->method('err');
 
-		$this->Task->setReturnValueAt(0, 'in', 'Foobar');
-		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('Foobar'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 		$this->Task->execute();
 	}
 }
