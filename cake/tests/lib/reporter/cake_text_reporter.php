@@ -108,21 +108,6 @@ class CakeTextReporter extends CakeBaseReporter {
 	}
 
 /**
- * Paints a PHP error.
- *
- * @param string $message Message to be shown.
- * @return void
- */
-	public function paintError($message) {
-		parent::paintError($message);
-		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		echo "\n";
-	}
-
-/**
  * Paints a PHP exception.
  *
  * @param Exception $exception Exception to describe.
