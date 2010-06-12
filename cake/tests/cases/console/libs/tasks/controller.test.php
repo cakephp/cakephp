@@ -424,15 +424,18 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		
-		$this->Task->expects($this->at(8))->method('in')->will($this->returnValue('1'));
-		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('y')); // build interactive
-		$this->Task->expects($this->at(13))->method('in')->will($this->returnValue('n')); // build no scaffolds
-		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('y')); // build normal methods
-		$this->Task->expects($this->at(15))->method('in')->will($this->returnValue('n')); // build admin methods
-		$this->Task->expects($this->at(16))->method('in')->will($this->returnValue('n')); // helpers?
-		$this->Task->expects($this->at(17))->method('in')->will($this->returnValue('n')); // components?
-		$this->Task->expects($this->at(18))->method('in')->will($this->returnValue('y')); // use sessions
-		$this->Task->expects($this->at(25))->method('in')->will($this->returnValue('y')); // looks good
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(
+				'1',
+				'y', // build interactive
+				'n', // build no scaffolds
+				'y', // build normal methods
+				'n', // build admin methods
+				'n', // helpers?
+				'n', // components?
+				'y', // sessions ?
+				'y' // looks good?
+			));
 
 		$filename = '/my/path/articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
@@ -453,15 +456,19 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->interactive = true;
 		$this->Task->path = '/my/path/';
 
-		$this->Task->expects($this->at(8))->method('in')->will($this->returnValue('1'));
-		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('y')); // build interactive
-		$this->Task->expects($this->at(13))->method('in')->will($this->returnValue('n')); // build no scaffolds
-		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('y')); // build normal methods
-		$this->Task->expects($this->at(15))->method('in')->will($this->returnValue('y')); // build admin methods
-		$this->Task->expects($this->at(16))->method('in')->will($this->returnValue('n')); // helpers?
-		$this->Task->expects($this->at(17))->method('in')->will($this->returnValue('n')); // components?
-		$this->Task->expects($this->at(18))->method('in')->will($this->returnValue('y')); // use sessions
-		$this->Task->expects($this->at(25))->method('in')->will($this->returnValue('y')); // looks good
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(
+				'1',
+				'y', // build interactive
+				'n', // build no scaffolds
+				'y', // build normal methods
+				'y', // build admin methods
+				'n', // helpers?
+				'n', // components?
+				'y', // sessions ?
+				'y' // looks good?
+			));
+
 		$this->Task->Project->expects($this->any())
 			->method('getPrefix')
 			->will($this->returnValue('admin_'));
