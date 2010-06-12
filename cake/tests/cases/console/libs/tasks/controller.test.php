@@ -544,6 +544,7 @@ class ControllerTaskTest extends CakeTestCase {
 			array('Articles'), array('Article'), array('article'), array('articles')
 		);
 	}
+
 /**
  * test that both plural and singular forms work for controller baking.
  *
