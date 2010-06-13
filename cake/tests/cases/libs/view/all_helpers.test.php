@@ -29,7 +29,7 @@
 class AllHelpersTest extends PHPUnit_Framework_TestSuite {
 
 /**
- * HelpersGroupTest method
+ * suite declares tests to run
  *
  * @access public
  * @return void
