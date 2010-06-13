@@ -27,14 +27,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class JavascriptGroupTest extends CakeTestSuite {
-/**
- * label property
- *
- * @var string 'All core helpers'
- * @access public
- */
-	public $label = 'Js Helper and all Engine Helpers';
+class AllJavascriptHelpersTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * Suite define the tests for this suite
@@ -42,7 +35,7 @@ class JavascriptGroupTest extends CakeTestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Javascript helper tests');
+		$suite = new PHPUnit_Framework_TestSuite('Js Helper and all Engine Helpers');
 
 		$helperTestPath = CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
 		$suite->addTestFile($helperTestPath . 'js.test.php');

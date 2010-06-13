@@ -26,15 +26,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class HelperGroupTest extends CakeTestSuite {
-
-/**
- * label property
- *
- * @var string 'All core helpers'
- * @access public
- */
-	public $label = 'All Helpers';
+class AllHelpersTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * HelpersGroupTest method
