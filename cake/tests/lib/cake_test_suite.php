@@ -62,7 +62,9 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  */
 	protected function tearDown() {
 		parent::tearDown();
-		$this->_fixtureManager->shutDown();
+		if ($this->_fixtureManager) {
+			$this->_fixtureManager->shutDown();
+		}
 		$this->_fixtureManager = null;
 		$this->sharedFixture = null;
 	}
