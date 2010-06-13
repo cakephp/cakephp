@@ -752,6 +752,17 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that create() clears the fields property so it starts fresh
+ *
+ * @return void
+ */
+	function testCreateClearingFields() {
+		$this->Form->fields = array('model_id');
+		$this->Form->create('Contact');
+		$this->assertEqual($this->Form->fields, array());
+	}
+
+/**
  * Tests form hash generation with model-less data
  *
  * @access public
