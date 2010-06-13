@@ -26,7 +26,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class HelpersGroupTest extends TestSuite {
+class HelperGroupTest extends CakeTestSuite {
 
 /**
  * label property
@@ -42,8 +42,20 @@ class HelpersGroupTest extends TestSuite {
  * @access public
  * @return void
  */
-	function HelpersGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper');
-		TestManager::addTestCasesFromDirectory($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers');
+	function __construct($theClass = '', $name = '') {
+		parent::__construct($theClass, $name);
+
+		$this->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper.test.php');
+
+		$helperIterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS);
+
+		// The following test cases cause segfaults for me.
+		$segfaulty = array('form.test.php', 'html.test.php', 'cache.test.php', 'session.test.php');
+
+		foreach ($helperIterator as $i => $file) {
+			if (!$file->isDot() && !in_array($file->getFilename(), $segfaulty)) {
+				$this->addTestfile($file->getPathname());
+			}
+		}
 	}
 }
