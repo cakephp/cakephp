@@ -35,18 +35,20 @@ class JavascriptGroupTest extends CakeTestSuite {
  * @access public
  */
 	public $label = 'Js Helper and all Engine Helpers';
+
 /**
- * AllCoreHelpersGroupTest method
+ * Suite define the tests for this suite
  *
- * @access public
  * @return void
  */
-	function __construct($theClass = '', $name = '') {
-		parent::__construct($theClass, $name);
+	public static function suite() {
+		$suite = new PHPUnit_Framework_TestSuite('All Javascript helper tests');
+
 		$helperTestPath = CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
-		$this->addTestFile($helperTestPath . 'js.test.php');
-		$this->addTestFile($helperTestPath . 'jquery_engine.test.php');
-		$this->addTestFile($helperTestPath . 'mootools_engine.test.php');
-		$this->addTestFile($helperTestPath . 'prototype_engine.test.php');
+		$suite->addTestFile($helperTestPath . 'js.test.php');
+		$suite->addTestFile($helperTestPath . 'jquery_engine.test.php');
+		$suite->addTestFile($helperTestPath . 'mootools_engine.test.php');
+		$suite->addTestFile($helperTestPath . 'prototype_engine.test.php');
+		return $suite;
 	}
 }

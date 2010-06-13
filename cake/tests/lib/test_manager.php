@@ -171,13 +171,9 @@ class TestManager {
 		require_once $filePath;
 		$class = basename($groupTestName);
 		$suite = $this->getTestSuite(sprintf(__('%s group test', true), $class));
-		$groupClassName = Inflector::classify($class) . 'GroupTest';
-		$group = new $groupClassName();
-		$suite->addTestSuite($group);
-		if (isset($group->label)) {
-			$suite->setName($group->label);
-		}
 
+		$groupClassName = Inflector::classify($class) . 'GroupTest';
+		$suite->addTestSuite($groupClassName);
 		return $this->run($reporter, $codeCoverage);
 	}
 
