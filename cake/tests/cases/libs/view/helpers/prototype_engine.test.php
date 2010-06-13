@@ -20,7 +20,7 @@
  */
 App::import('Helper', array('Html', 'Js', 'PrototypeEngine'));
 
-class PrototypeEngineHelperTestCase extends CakeTestCase {
+class PrototypeEngineHelperTest extends CakeTestCase {
 /**
  * startTest
  *

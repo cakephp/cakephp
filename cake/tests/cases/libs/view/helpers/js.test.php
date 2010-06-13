@@ -55,7 +55,7 @@ class OptionEngineHelper extends JsBaseEngineHelper {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  */
-class JsHelperTestCase extends CakeTestCase {
+class JsHelperTest extends CakeTestCase {
 /**
  * Regexp for CDATA start block
  *
@@ -676,7 +676,7 @@ CODE;
  *
  * @package cake.tests.view.helpers
  */
-class JsBaseEngineTestCase extends CakeTestCase {
+class JsBaseEngineTest extends CakeTestCase {
 /**
  * startTest method
  *

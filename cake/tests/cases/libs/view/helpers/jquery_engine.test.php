@@ -20,7 +20,7 @@
  */
 App::import('Helper', array('Html', 'Js', 'JqueryEngine'));
 
-class JqueryEngineHelperTestCase extends CakeTestCase {
+class JqueryEngineHelperTest extends CakeTestCase {
 /**
  * startTest
  *
