@@ -157,7 +157,7 @@ class TestManager {
  * @return mixed Results of group test being run.
  */
 	public function runGroupTest($groupTestName, $reporter, $codeCoverage = false) {
-		$filePath = $this->_getTestsPath($reporter->params) . strtolower($groupTestName) . $this->getExtension('group');
+		$filePath = $this->_getTestsPath($reporter->params) . DS . strtolower($groupTestName) . $this->getExtension('group');
 
 		if (!file_exists($filePath) || strpos($filePath, '..')) {
 			throw new InvalidArgumentException(sprintf(
