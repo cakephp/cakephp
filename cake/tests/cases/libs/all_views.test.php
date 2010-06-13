@@ -26,24 +26,18 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class ViewsGroupTest extends TestSuite {
+class AllViewsTest extends PHPUnit_Framework_TestSuite {
 
 /**
- * label property
+ * suite method, defines tests for this suite.
  *
- * @var string 'All core views'
- * @access public
- */
-	public $label = 'View and ThemeView';
-
-/**
- * ViewsGroupTest method
- *
- * @access public
  * @return void
  */
-	function ViewsGroupTest() {
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view');
-		TestManager::addTestFile($this, CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme');
+	public static function suite() {
+		$suite = new PHPUnit_Framework_TestSuite('All View class tests');
+
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'view.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'theme.test.php');
+		return $suite;
 	}
 }
