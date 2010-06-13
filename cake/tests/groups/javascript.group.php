@@ -27,7 +27,7 @@
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCoreJavascriptHelpersGroupTest extends TestSuite {
+class JavascriptGroupTest extends CakeTestSuite {
 /**
  * label property
  *
@@ -41,11 +41,12 @@ class AllCoreJavascriptHelpersGroupTest extends TestSuite {
  * @access public
  * @return void
  */
-	function AllCoreJavascriptHelpersGroupTest() {
+	function __construct($theClass = '', $name = '') {
+		parent::__construct($theClass, $name);
 		$helperTestPath = CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS;
-		TestManager::addTestFile($this, $helperTestPath . 'js.test.php');
-		TestManager::addTestFile($this, $helperTestPath . 'jquery_engine.test.php');
-		TestManager::addTestFile($this, $helperTestPath . 'mootools_engine.test.php');
-		TestManager::addTestFile($this, $helperTestPath . 'prototype_engine.test.php');
+		$this->addTestFile($helperTestPath . 'js.test.php');
+		$this->addTestFile($helperTestPath . 'jquery_engine.test.php');
+		$this->addTestFile($helperTestPath . 'mootools_engine.test.php');
+		$this->addTestFile($helperTestPath . 'prototype_engine.test.php');
 	}
 }
