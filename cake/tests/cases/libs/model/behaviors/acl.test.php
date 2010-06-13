@@ -189,7 +189,7 @@ class AclPost extends CakeTestModel {
 * @package       cake
 * @subpackage    cake.tests.cases.libs.controller.components
 */
-class AclBehaviorTestCase extends CakeTestCase {
+class AclBehaviorTest extends CakeTestCase {
 
 /**
  * Aco property

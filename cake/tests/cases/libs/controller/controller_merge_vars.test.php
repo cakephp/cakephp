@@ -127,7 +127,7 @@ class MergePostsController extends MergeVarPluginAppController {
  *
  * @package cake.tests.cases.libs.controller
  */
-class ControllerMergeVarsTestCase extends CakeTestCase {
+class ControllerMergeVarsTest extends CakeTestCase {
 /**
  * Skips the case if APP_CONTROLLER_EXISTS is defined
  *

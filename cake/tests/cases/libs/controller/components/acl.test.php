@@ -265,7 +265,7 @@ class AclComponentTest extends CakeTestCase {
  *
  * @package cake.tests.cases.libs.controller.components
  */
-class IniAclTestCase extends CakeTestCase {
+class IniAclTest extends CakeTestCase {
 
 /**
  * testIniReadConfigFile
@@ -345,7 +345,7 @@ class IniAclTestCase extends CakeTestCase {
  *
  * @package cake.tests.cases.libs.controller.components
  */
-class DbAclTestCase extends CakeTestCase {
+class DbAclTest extends CakeTestCase {
 /**
  * fixtures property
  *

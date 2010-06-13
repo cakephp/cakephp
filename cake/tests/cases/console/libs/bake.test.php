@@ -42,7 +42,7 @@ if (!class_exists('UsersController')) {
 	}
 }
 
-class BakeShellTestCase extends CakeTestCase {
+class BakeShellTest extends CakeTestCase {
 
 /**
  * fixtures

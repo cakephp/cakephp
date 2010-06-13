@@ -2010,7 +2010,7 @@ class RouterTest extends CakeTestCase {
  *
  * @package cake.tests.cases.libs.
  **/
-class CakeRouteTestCase extends CakeTestCase {
+class CakeRouteTest extends CakeTestCase {
 /**
  * startTest method
  *
@@ -2412,7 +2412,7 @@ class CakeRouteTestCase extends CakeTestCase {
  *
  * @package cake.tests.libs
  */
-class PluginShortRouteTestCase extends  CakeTestCase {
+class PluginShortRouteTest extends  CakeTestCase {
 /**
  * startTest method
  *
