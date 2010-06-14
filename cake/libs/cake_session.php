@@ -210,9 +210,7 @@ class CakeSession extends Object {
 		if ($this->started()) {
 			return true;
 		}
-		if (function_exists('session_write_close')) {
-			session_write_close();
-		}
+		session_write_close();
 		$this->__initSession();
 		$this->__startSession();
 		return $this->started();
