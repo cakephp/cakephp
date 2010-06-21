@@ -380,7 +380,7 @@ class Validation {
 			return $return;
 		}
 
-		if ($return === true && preg_match('/@(' . self::__pattern['hostname'] . ')$/i', $check, $regs)) {
+		if ($return === true && preg_match('/@(' . self::$__pattern['hostname'] . ')$/i', $check, $regs)) {
 			if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
 				return true;
 			}
