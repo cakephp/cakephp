@@ -35,12 +35,6 @@ if (!class_exists('ShellDispatcher')) {
 
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
 
-
-Mock::generatePartial(
-	'ShellDispatcher', 'TestExtractTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-
 /**
  * ExtractTaskTest class
  *
@@ -55,7 +49,9 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->Dispatcher =& new TestExtractTaskMockShellDispatcher();
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
 		$this->Task =& new ExtractTask($this->Dispatcher);
 	}
 
@@ -81,8 +77,9 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
 		$this->Task->params['output'] = $path . DS;
-		$this->Task->Dispatch->expectNever('stderr');
-		$this->Task->Dispatch->expectNever('_stop');
+		$this->Dispatcher->expects($this->never())->method('stderr');
+		$this->Dispatcher->expects($this->never())->method('_stop');
+
 		$this->Task->execute();
 		$this->assertTrue(file_exists($path . DS . 'default.pot'));
 		$result = file_get_contents($path . DS . 'default.pot');
@@ -132,7 +129,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:74\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:66\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertPattern($pattern, $result);
 
