@@ -50,6 +50,18 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 	function testParseOptions($options, $safe = array()) {
 		return $this->_parseOptions($options, $safe);
 	}
+
+	function get($selector) {}
+	function event($type, $callback, $options = array()) {}
+	function domReady($functionBody) {}
+	function each($callback) {}
+	function effect($name, $options) {}
+	function request($url, $options = array()) {}
+	function drag($options = array()) {}
+	function drop($options = array()) {}
+	function sortable() {}
+	function slider() {}
+	function serializeForm() {}
 }
 
 /**
@@ -83,11 +95,11 @@ class JsHelperTestCase extends CakeTestCase {
 		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
-		$this->Js = new JsHelper('JsBase');
+		$this->Js = new JsHelper('Option');
 		$this->Js->Html = new HtmlHelper();
 		$this->Js->Form = new FormHelper();
 		$this->Js->Form->Html = new HtmlHelper();
-		$this->Js->JsBaseEngine = new JsBaseEngineHelper();
+		$this->Js->OptionEngine = new OptionEngineHelper();
 
 		$view = new JsHelperMockView();
 		ClassRegistry::addObject('view', $view);
@@ -578,7 +590,7 @@ class JsBaseEngineTestCase extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->JsEngine = new JsBaseEngineHelper();
+		$this->JsEngine = new OptionEngineHelper();
 	}
 /**
  * endTest method
