@@ -110,6 +110,16 @@ class EmailTestComponent extends EmailComponent {
 	}
 
 /**
+ * Convenience getter for testing.
+ *
+ * @access protected
+ * @return string
+ */
+	function _getMessage() {
+		return $this->__message;
+	}
+
+/**
  * Convenience method for testing.
  *
  * @access public
@@ -1078,4 +1088,35 @@ HTMLBLOC;
 		$this->assertNoPattern('/Message-ID:/', $result);
 	}
 
+/**
+ * testSendMessage method
+ *
+ * @access public
+ * @return void
+ */
+	function testSendMessage() {
+		$this->Controller->EmailTest->delivery = 'getMessage';
+		$this->Controller->EmailTest->lineLength = 70;
+
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+		$this->Controller->EmailTest->sendAs = 'text';
+		$result = $this->Controller->EmailTest->send($text);
+		$expected = array(
+			'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do',
+			'eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+			'',
+			''
+		);
+		$this->assertEqual($expected, $result);
+
+		$text = 'Lorem ipsum dolor sit amet, <b>consectetur</b> adipisicing elit, sed do <span>eiusmod tempor</span> incididunt ut labore et dolore magna aliqua.';
+		$this->Controller->EmailTest->sendAs = 'html';
+		$result = $this->Controller->EmailTest->send($text);
+		$expected = array(
+			$text,
+			'',
+			''
+		);
+		$this->assertEqual($expected, $result);
+	}
 }
