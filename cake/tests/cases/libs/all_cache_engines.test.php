@@ -1,6 +1,6 @@
 <?php
 /**
- * AllCacheEngines file
+ * AllCacheEnginesTest file
  *
  * PHP 5
  *
@@ -14,19 +14,19 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.tests.cases
- * @since         CakePHP(tm) v 1.2.0.4206
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
- * AllCacheEngines class
+ * AllCacheEnginesTest class
  *
  * This test group will run view class tests (view, theme)
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllCacheEngines extends PHPUnit_Framework_TestSuite {
+class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.

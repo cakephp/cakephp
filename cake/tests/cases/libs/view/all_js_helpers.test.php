@@ -14,7 +14,7 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.tests.cases
- * @since         CakePHP(tm) v 1.3
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
