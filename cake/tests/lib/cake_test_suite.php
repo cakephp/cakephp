@@ -43,8 +43,6 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
  */
 	protected function setUp() {
 		parent::setUp();
-		restore_error_handler();
-		restore_error_handler();
 		if (!$this->_fixtureManager) {
 			return;
 		}

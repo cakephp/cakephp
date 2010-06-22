@@ -184,6 +184,9 @@ class TestManager {
  * @return mixed Results of group test being run.
  */
 	protected function run($reporter, $codeCoverage = false) {
+		restore_error_handler();
+		restore_error_handler();
+
 		$result = new PHPUnit_Framework_TestResult;
 		$result->collectCodeCoverageInformation($codeCoverage);
 		$result->addListener($reporter);
