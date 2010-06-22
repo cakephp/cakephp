@@ -46,6 +46,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setup();
 		Configure::write('log', false);
 	}
 
@@ -56,6 +57,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::teardown();
 		Configure::write('log', true);
 	}
 
@@ -148,6 +150,8 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
+
+		restore_error_handler();
 	}
 
 /**
