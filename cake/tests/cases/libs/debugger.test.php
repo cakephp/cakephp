@@ -189,6 +189,8 @@ class DebuggerTest extends CakeTestCase {
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
+		
+		restore_error_handler();
 	}
 
 /**
