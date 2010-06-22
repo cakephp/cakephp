@@ -265,7 +265,11 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$context = $message->getTrace();
 		$realContext = $context[3];
 		$class = new ReflectionClass($realContext['class']);
-		$deeper = $class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase';
+
+		$deeper = false;
+		if ($class->getParentClass()) {
+			$deeper = $class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase';
+		}
 		$deeper = $deeper || !$class->isSubclassOf('PHPUnit_Framework_TestCase');
 		if ($deeper) {
 			$realContext = $context[4];
