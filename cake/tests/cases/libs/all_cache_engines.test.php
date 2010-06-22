@@ -21,7 +21,7 @@
 /**
  * AllCacheEnginesTest class
  *
- * This test group will run view class tests (view, theme)
+ * This test group will run cache engine tests.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
