@@ -100,6 +100,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setup();
 		$this->_appEncoding = Configure::read('App.encoding');
 	}
 
@@ -110,6 +111,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		Configure::write('App.encoding', $this->_appEncoding);
 	}
 
@@ -2121,11 +2123,4 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
 	}
 
-	// function testFile() {
-	// 	$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
-	// 	$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
-	// }
 }
