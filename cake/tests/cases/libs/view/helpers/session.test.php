@@ -212,7 +212,6 @@ class SessionHelperTest extends CakeTestCase {
  * @return void
  */
 	function testValid() {
-		//wierd it always ends up false in the test suite
-		//$this->assertFalse($this->Session->valid());
+		$this->assertFalse($this->Session->valid());
 	}
 }
