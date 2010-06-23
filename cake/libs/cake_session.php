@@ -219,7 +219,6 @@ class CakeSession extends Object {
 /**
  * Determine if Session has been started.
  *
- * @access public
  * @return boolean True if session has been started.
  */
 	function started() {
@@ -593,7 +592,7 @@ class CakeSession extends Object {
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
-						$this->write('Config.timeout', 10);
+						$this->write('Config.timeout', Security::inactiveMins());
 					}
 				}
 				$this->valid = true;
@@ -605,7 +604,7 @@ class CakeSession extends Object {
 		} else {
 			$this->write('Config.userAgent', $this->_userAgent);
 			$this->write('Config.time', $this->sessionTime);
-			$this->write('Config.timeout', 10);
+			$this->write('Config.timeout', Security::inactiveMins());
 			$this->valid = true;
 			$this->__setError(1, 'Session is valid');
 		}
