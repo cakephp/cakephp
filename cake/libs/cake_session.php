@@ -38,7 +38,6 @@ class CakeSession extends Object {
  * True if the Session is still valid
  *
  * @var boolean
- * @access public
  */
 	public $valid = false;
 
@@ -46,7 +45,6 @@ class CakeSession extends Object {
  * Error messages for this session
  *
  * @var array
- * @access public
  */
 	public $error = false;
 
@@ -54,7 +52,6 @@ class CakeSession extends Object {
  * User agent string
  *
  * @var string
- * @access protected
  */
 	protected $_userAgent = '';
 
@@ -62,7 +59,6 @@ class CakeSession extends Object {
  * Path to where the session is active.
  *
  * @var string
- * @access public
  */
 	public $path = '/';
 
@@ -70,7 +66,6 @@ class CakeSession extends Object {
  * Error number of last occurred error
  *
  * @var integer
- * @access public
  */
 	public $lastError = null;
 
@@ -78,7 +73,6 @@ class CakeSession extends Object {
  * 'Security.level' setting, "high", "medium", or "low".
  *
  * @var string
- * @access public
  */
 	public $security = null;
 
@@ -86,7 +80,6 @@ class CakeSession extends Object {
  * Start time for this session.
  *
  * @var integer
- * @access public
  */
 	public $time = false;
 
@@ -94,7 +87,6 @@ class CakeSession extends Object {
  * Time when this session becomes invalid.
  *
  * @var integer
- * @access public
  */
 	public $sessionTime = false;
 
@@ -110,7 +102,6 @@ class CakeSession extends Object {
  * Keeps track of keys to watch for writes on
  *
  * @var array
- * @access public
  */
 	public $watchKeys = array();
 
@@ -118,7 +109,6 @@ class CakeSession extends Object {
  * Current Session id
  *
  * @var string
- * @access public
  */
 	public $id = null;
 
@@ -126,7 +116,6 @@ class CakeSession extends Object {
  * Hostname
  *
  * @var string
- * @access public
  */
 	public $host = null;
 
@@ -134,7 +123,6 @@ class CakeSession extends Object {
  * Session timeout multiplier factor
  *
  * @var integer
- * @access public
  */
 	public $timeout = null;
 
