@@ -1375,7 +1375,7 @@ class HttpSocketTest extends CakeTestCase {
 				'path' => '/accounts'
 			)
 		);
-		$expect = "Cookie: foo=bar\r\nCookie: people=jim,jack,johnny\";\"\r\n";
+		$expect = "Cookie: foo=bar; people=jim,jack,johnny\";\"\r\n";
 		$result = $this->Socket->buildCookies($cookies);
 		$this->assertEqual($result, $expect);
 	}
