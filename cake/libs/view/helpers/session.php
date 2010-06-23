@@ -116,19 +116,4 @@ class SessionHelper extends AppHelper {
 	public function valid() {
 		return CakeSession::valid();
 	}
-
-/**
- * Determine if Session has been started
- * and attempt to start it if not
- *
- * @return boolean true if Session is already started, false if
- * Session could not be started
- * @access private
- */
-	protected function __start() {
-		if (!$this->started()) {
-			return $this->start();
-		}
-		return true;
-	}
 }
