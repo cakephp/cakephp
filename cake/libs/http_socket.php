@@ -890,7 +890,7 @@ class HttpSocket extends CakeSocket {
 		foreach ($cookies as $name => $cookie) {
 			$header[] = $name.'='.$this->escapeToken($cookie['value'], array(';'));
 		}
-		$header = $this->buildHeader(array('Cookie' => $header), 'pragmatic');
+		$header = $this->buildHeader(array('Cookie' => implode('; ', $header)), 'pragmatic');
 		return $header;
 	}
 /**
