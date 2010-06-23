@@ -84,6 +84,13 @@ class CakeSession extends Object {
 	public static $time = false;
 
 /**
+ * Cookie lifetime
+ *
+ * @var integer
+ */
+	public static $cookieLifeTime;
+
+/**
  * Time when this session becomes invalid.
  *
  * @var integer

@@ -191,6 +191,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function testDisabling() {
 		Configure::write('Session.start', false);
+		CakeSession::destroy();
 		$this->Session = new SessionHelper();
 		$this->assertFalse($this->Session->check('test'));
 		$this->assertFalse($this->Session->read('test'));
