@@ -163,7 +163,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function testID() {
 		$id = session_id();
-		$result = $this->Session->id();
+		$result = CakeSession::id();
 		$this->assertEqual($id, $result);
 	}
 

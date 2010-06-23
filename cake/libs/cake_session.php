@@ -307,7 +307,7 @@ class CakeSession extends Object {
  */
 	public static function error() {
 		if (self::$lastError) {
-			return self::$__error(self::$lastError);
+			return self::__error(self::$lastError);
 		}
 		return false;
 	}
