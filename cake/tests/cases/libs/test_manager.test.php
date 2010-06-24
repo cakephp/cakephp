@@ -123,23 +123,6 @@ class TestManagerTest extends CakeTestCase {
 	}
 
 /**
- * testRunGroupTest method
- *
- * @return void
- */
-	public function testRunGroupTest() {
-		$groups = $this->_getAllTestFiles(CORE_TEST_GROUPS, 'group');
-		if (empty($groups)) {
-			$this->markTestSkipped('No test group files');
-			return;
-		}
-		list($groupFile,) = explode('.', array_pop($groups), 2);
-		$result = $this->TestManager->runGroupTest($groupFile, $this->Reporter);
-		$this->assertGreaterThan(0, $this->_countFiles);
-		$this->assertType('PHPUnit_Framework_TestResult', $result);
-	}
-
-/**
  * testAddTestCasesFromDirectory method
  *
  * @return void
