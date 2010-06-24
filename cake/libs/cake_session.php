@@ -460,29 +460,13 @@ class CakeSession extends Object {
  */
 	function __initSession() {
 		$iniSet = function_exists('ini_set');
-
 		if ($iniSet && env('HTTPS')) {
 			ini_set('session.cookie_secure', 1);
 		}
-
-		switch ($this->security) {
-			case 'high':
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'medium':
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'low':
-			default:
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-			break;
+		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
+			ini_set('session.referer_check', $this->host);
 		}
+		$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
