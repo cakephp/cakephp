@@ -8,7 +8,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
-class FixturizedTest extends CakeTestCase {
+class FixturizedTestCase extends CakeTestCase {
 
 /**
  * Fixtures to use in this thes

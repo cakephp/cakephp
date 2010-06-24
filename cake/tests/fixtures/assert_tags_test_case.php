@@ -8,7 +8,7 @@ PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
  * @package       cake
  * @subpackage    cake.tests.fixtures
  */
-class AssertTagsTest extends CakeTestCase {
+class AssertTagsTestCase extends CakeTestCase {
 
 /**
  * test that assertTags knows how to handle correct quoting.
