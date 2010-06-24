@@ -1,6 +1,6 @@
 <?php
 /**
- * AllModelTest file
+ * AllConfigureTest file
  *
  * PHP 5
  *
@@ -19,14 +19,14 @@
  */
 
 /**
- * AllModelTest class
+ * AllConfigureTest class
  *
- * This test group will run model class tests
+ * This test group will run cache engine tests.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllModelTest extends PHPUnit_Framework_TestSuite {
+class AllConfigureTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -34,13 +34,10 @@ class AllModelTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Model related class tests');
+		$suite = new PHPUnit_Framework_TestSuite('All Configure, App and ClassRegistry related tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_behavior.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_read.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_write.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_validation.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_integration.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'configure.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry.test.php');
 		return $suite;
 	}
 }

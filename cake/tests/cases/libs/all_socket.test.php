@@ -1,6 +1,6 @@
 <?php
 /**
- * AllXmlTest file
+ * AllSocketTest file
  *
  * PHP 5
  *
