@@ -129,14 +129,6 @@ class MergePostsController extends MergeVarPluginAppController {
  */
 class ControllerMergeVarsTest extends CakeTestCase {
 /**
- * Skips the case if APP_CONTROLLER_EXISTS is defined
- *
- * @return void
- */
-	function skip() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), 'APP_CONTROLLER_EXISTS cannot run. %s');
-	}
-/**
  * end test
  *
  * @return void
@@ -151,6 +143,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testComponentParamMergingNoDuplication() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+		
 		$Controller =& new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -164,6 +158,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testComponentMergingWithRedeclarations() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
 		$Controller =& new MergeVariablesController();
 		$Controller->components['MergeVar'] = array('remote', 'redirect' => true);
 		$Controller->constructClasses();
@@ -178,6 +174,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testHelperSettingMergingNoDuplication() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
 		$Controller =& new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -191,6 +189,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVarsWithPlugin() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
 		$Controller =& new MergePostsController();
 		$Controller->components = array('Email' => array('ports' => 'open'));
 		$Controller->plugin = 'MergeVarPlugin';
@@ -228,6 +228,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVarsNotGreedy() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
 		$Controller =& new Controller();
 		$Controller->components = array();
 		$Controller->uses = array();
