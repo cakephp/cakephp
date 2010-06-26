@@ -75,21 +75,16 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (isset($this->args[1])) {
-			$type = $this->args[1];
+			$params['case'] = Inflector::underscore($this->args[1]) . '.test.php';
 		}
-
-		if (isset($this->args[2])) {
-			if ($this->args[2] == 'cov') {
-				$params['codeCoverage'] = true;
-			} else {
-				$params['case'] = Inflector::underscore($this->args[2]) . '.test.php';
-			}
-		}
-		if (isset($this->args[3]) && $this->args[3] == 'cov') {
+		if (isset($this->args[2]) && $this->args[2] == 'cov') {
 			$params['codeCoverage'] = true;
 		}
 		if (isset($this->params['filter'])) {
 			$params['filter'] = $this->params['filter'];
+		}
+		if (isset($this->params['coverage'])) {
+			$params['codeCoverage'] = true;
 		}
 		return $params;
 	}
@@ -121,28 +116,36 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function help() {
-		$this->out('Usage: ');
-		$this->out("\tcake testsuite category test_type file");
-		$this->out("\t\t- category - \"app\", \"core\" or name of a plugin");
-		$this->out("\t\t- test_type - \"case\", \"group\" or \"all\"");
-		$this->out("\t\t- test_file - file name with folder prefix and without the (test|group).php suffix");
-		$this->out();
-		$this->out('Examples: ');
-		$this->out("\t\tcake testsuite app all");
-		$this->out("\t\tcake testsuite core all");
-		$this->out();
-		$this->out("\t\tcake testsuite app case behaviors/debuggable");
-		$this->out("\t\tcake testsuite app case models/my_model");
-		$this->out("\t\tcake testsuite app case controllers/my_controller");
-		$this->out();
-		$this->out("\t\tcake testsuite core case libs/file");
-		$this->out("\t\tcake testsuite core case libs/router");
-		$this->out("\t\tcake testsuite core case libs/set");
-		$this->out();
-		$this->out("\t\tcake testsuite bugs case models/bug");
-		$this->out("\t\t  // for the plugin 'bugs' and its test case 'models/bug'");
-		$this->out();
-		$this->out('Code Coverage Analysis: ');
-		$this->out("\n\nAppend 'cov' to any of the above in order to enable code coverage analysis");
+		$help = <<<TEXT
+Usage:
+-----
+cake testsuite <category> <file> [params]
+	- category - "app", "core" or name of a plugin
+	- file - file name with folder prefix and without the test.php suffix.
+	
+Params:
+-------
+  -filter
+	The -filter option allows you supply a pattern that is used to match
+	test method names. This can be a regular expression.
+
+  -coverage
+	Enable code coverage for this run.
+
+Examples:
+---------
+	cake testsuite app behaviors/debuggable;
+	cake testsuite app models/my_model;
+	cake testsuite app controllers/my_controller
+	
+	cake testsuite core libs/file
+	cake testsuite core libs/router
+	cake testsuite core libs/set
+
+	cake testsuite bugs models/bug
+	// for the plugin 'bugs' and its test case 'models/bug'
+
+TEXT;
+		$this->out($help);
 	}
 }
