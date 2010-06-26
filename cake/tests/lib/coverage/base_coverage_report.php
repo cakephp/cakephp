@@ -45,13 +45,6 @@ abstract class BaseCoverageReport {
 	public $pluginTest = false;
 
 /**
- * is the test a group test?
- *
- * @var string
- */
-	public $groupTest = false;
-
-/**
  * Array of test case file names.  Used to do basename() matching with
  * files that have coverage to decide which results to show on page load. 
  *
@@ -80,9 +73,6 @@ abstract class BaseCoverageReport {
 	protected function setParams(CakeBaseReporter $reporter) {
 		if ($reporter->params['app']) {
 			$this->appTest = true;
-		}
-		if ($reporter->params['group']) {
-			$this->groupTest = true;
 		}
 		if ($reporter->params['plugin']) {
 			$this->pluginTest = Inflector::underscore($reporter->params['plugin']);

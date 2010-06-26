@@ -23,8 +23,7 @@
 	<li>
 		<span style="font-size: 18px">App</span>
 		<ul>
-			<li><a href='<?php echo $groups;?>&amp;app=true'>Test Groups</a></li>
-			<li><a href='<?php echo $cases;?>&amp;app=true'>Test Cases</a></li>
+			<li><a href='<?php echo $cases;?>&amp;app=true'>Tests</a></li>
 		</ul>
 	</li>
 <?php
@@ -39,8 +38,7 @@ if (!empty($plugins)):
 				<li style="padding-top: 10px">
 					<span  style="font-size: 18px"><?php echo $plugin;?></span>
 					<ul>
-						<li><a href='<?php echo $groups;?>&amp;plugin=<?php echo $pluginPath; ?>'>Test Groups</a></li>
-						<li><a href='<?php echo $cases;?>&amp;plugin=<?php echo $pluginPath; ?>'>Test Cases</a></li>
+						<li><a href='<?php echo $cases;?>&amp;plugin=<?php echo $pluginPath; ?>'>Tests</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -49,8 +47,7 @@ if (!empty($plugins)):
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Core</span>
 		<ul>
-			<li><a href='<?php echo $groups;?>'>Test Groups</a></li>
-			<li><a href='<?php echo $cases;?>'>Test Cases</a></li>
+			<li><a href='<?php echo $cases;?>'>Tests</a></li>
 		</ul>
 	</li>
 </ul>

@@ -95,34 +95,6 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 	}
 
 /**
- * Signals / Paints the beginning of a TestSuite executing.
- * Starts the timer for the TestSuite execution time.
- *
- * @param string $test_name Name of the test that is being run.
- * @param integer $size 
- * @return void
- */
-	public function paintGroupStart($test_name, $size) {
-		if (empty($this->_timeStart)) {
-			$this->_timeStart = microtime(true);
-		}
-		parent::paintGroupStart($test_name, $size);
-	}
-
-/**
- * Signals/Paints the end of a TestSuite. All test cases have run
- * and timers are stopped.
- *
- * @param string $test_name Name of the test that is being run.
- * @return void
- */
-	public function paintGroupEnd($test_name) {
-		$this->_timeEnd = microtime(true);
-		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
-		parent::paintGroupEnd($test_name);
-	}
-
-/**
  * Retrieves a list of test cases from the active Manager class,
  * displaying it in the correct format for the reporter subclass
  *
@@ -130,17 +102,6 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  */
 	public function testCaseList() {
 		$testList = TestManager::getTestCaseList($this->params);
-		return $testList;
-	}
-
-/**
- * Retrieves a list of group test cases from the active Manager class
- * displaying it in the correct format for the reporter subclass.
- *
- * @return void
- */
-	public function groupTestList() {
-		$testList = TestManager::getGroupTestList($this->params);
 		return $testList;
 	}
 

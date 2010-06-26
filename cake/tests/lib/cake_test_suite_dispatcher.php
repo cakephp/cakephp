@@ -31,7 +31,6 @@ class CakeTestSuiteDispatcher {
  */
 	public $params = array(
 		'codeCoverage' => false,
-		'group' => null,
 		'case' => null,
 		'app' => false,
 		'plugin' => null,
@@ -96,14 +95,10 @@ class CakeTestSuiteDispatcher {
 		$this->_checkPHPUnit();
 		$this->_parseParams();
 
-		if ($this->params['group']) {
-			$this->_runGroupTest();
-		} elseif ($this->params['case']) {
+		if ($this->params['case']) {
 			$this->_runTestCase();
-		} elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
-			$this->_testCaseList();
 		} else {
-			$this->_groupTestList();
+			$this->_testCaseList();
 		}
 
 		$output = ob_get_clean();
@@ -171,19 +166,6 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Generates a page containing a list of group tests that could be run.
- *
- * @return void
- */
-	function _groupTestList() {
-		$Reporter =& $this->getReporter();
-		$Reporter->paintDocumentStart();
-		$Reporter->paintTestMenu();
-		$Reporter->groupTestList();
-		$Reporter->paintDocumentEnd();
-	}
-
-/**
  * Sets the Manager to use for the request.
  *
  * @return string The manager class name
@@ -241,20 +223,6 @@ class CakeTestSuiteDispatcher {
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
 		$this->getManager();
-	}
-
-/**
- * Runs the group test case.
- *
- * @return void
- */
-	function _runGroupTest() {
-		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		if ('all' == $this->params['group']) {
-			$this->Manager->runAllTests($Reporter);
-		} else {
-			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter, $this->params['codeCoverage']);
-		}
 	}
 
 /**

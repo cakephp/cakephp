@@ -61,7 +61,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintTestMenu() {
-		$groups = $this->baseUrl() . '?show=groups';
 		$cases = $this->baseUrl() . '?show=cases';
 		$plugins = App::objects('plugin');
 		sort($plugins);
@@ -93,39 +92,10 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 
 		foreach ($testCases as $testCaseFile => $testCase) {
-			$title = explode(strpos($testCase, '\\') ? '\\' : '/', str_replace('.test.php', '', $testCase));
+			$title = explode(DS, str_replace('.test.php', '', $testCase));
 			$title[count($title) - 1] = Inflector::camelize($title[count($title) - 1]);
 			$title = implode(' / ', $title);
 				$buffer .= "<li><a href='" . $this->baseUrl() . "?case=" . urlencode($testCase) . $urlExtra ."'>" . $title . "</a></li>\n";
-		}
-		$buffer .= "</ul>\n";
-		echo $buffer;
-	}
-
-/**
- * Retrieves and paints the list of group tests in an HTML format.
- *
- * @return void
- */
-	public function groupTestList() {
-		$groupTests = parent::groupTestList();
-		$app = $this->params['app'];
-		$plugin = $this->params['plugin'];
-
-		$buffer = "<h3>Core Test Groups:</h3>\n<ul>";
-		$urlExtra = null;
-		if ($app) {
-			$buffer = "<h3>App Test Groups:</h3>\n<ul>";
-			$urlExtra = '&app=true';
-		} else if ($plugin) {
-			$buffer = "<h3>" . Inflector::humanize($plugin) . " Test Groups:</h3>\n<ul>";
-			$urlExtra = '&plugin=' . $plugin;
-		}
-
-		$buffer .= "<li><a href='" . $this->baseURL() . "?group=all$urlExtra'>All tests</a></li>\n";
-
-		foreach ($groupTests as $groupTest) {
-			$buffer .= "<li><a href='" . $this->baseURL() . "?group={$groupTest}" . "{$urlExtra}'>" . $groupTest . "</a></li>\n";
 		}
 		$buffer .= "</ul>\n";
 		echo $buffer;
@@ -201,9 +171,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	protected function _paintLinks() {
 		$show = $query = array();
-		if (!empty($this->params['group'])) {
-			$show['show'] = 'groups';
-		} elseif (!empty($this->params['case'])) {
+		if (!empty($this->params['case'])) {
 			$show['show'] = 'cases';
 		}
 
@@ -215,9 +183,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		}
 		if (!empty($this->params['case'])) {
 			$query['case'] = $this->params['case'];
- 		} elseif (!empty($this->params['group'])) {
-			$query['group'] = $this->params['group'];
-		}
+ 		}
 		$show = $this->_queryString($show);
 		$query = $this->_queryString($query);
 

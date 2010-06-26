@@ -41,13 +41,6 @@ class TestManager {
 	protected static $_testExtension = '.test.php';
 
 /**
- * Extension suffix for group test case files.
- *
- * @var string
- */
-	protected static $_groupExtension = '.group.php';
-
-/**
  * Is this test an AppTest?
  *
  * @var boolean
@@ -149,35 +142,6 @@ class TestManager {
 	}
 
 /**
- * Runs a specific group test file
- *
- * @param string $groupTestName GroupTest that you want to run.
- * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
- * @throws InvalidArgumentException if it was not possible to locate the filename for $groupTestName
- * @return mixed Results of group test being run.
- */
-	public function runGroupTest($groupTestName, $reporter, $codeCoverage = false) {
-		$filePath = $this->_getTestsPath($reporter->params) . DS . strtolower($groupTestName) . $this->getExtension('group');
-
-		if (!file_exists($filePath) || strpos($filePath, '..')) {
-			throw new InvalidArgumentException(sprintf(
-					__('Group test %s cannot be found at %s', true),
-					htmlentities($groupTestName),
-					htmlentities($filePath)
-				)
-			);
-		}
-
-		require_once $filePath;
-		$class = basename($groupTestName);
-		$suite = $this->getTestSuite(sprintf(__('%s group test', true), $class));
-
-		$groupClassName = Inflector::classify($class) . 'GroupTest';
-		$suite->addTestSuite($groupClassName);
-		return $this->run($reporter, $codeCoverage);
-	}
-
-/**
  * Runs the main testSuite and attaches to it a reporter
  *
  * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
@@ -261,35 +225,6 @@ class TestManager {
 	}
 
 /**
- * Returns a list of group tests found in the current valid test case path
- *
- * @access public
- * @static
- */
-	public static function getGroupTestList($params) {
-		$directory = self::_getTestsPath($params);
-		$fileList = self::_getTestGroupFileList($directory);
-
-		$groupTests = array();
-		foreach ($fileList as $groupTestFile) {
-			$groupTests[$groupTestFile] = str_replace(self::$_groupExtension, '', basename($groupTestFile));
-		}
-		sort($groupTests);
-		return $groupTests;
-	}
-
-/**
- * Returns a list of group test files from a given directory
- *
- * @param string $directory The directory to get group test files from.
- * @static
- */
-	protected static function &_getTestGroupFileList($directory = '.') {
-		$return = self::_getRecursiveFileList($directory, array('self', '_isTestGroupFile'));
-		return $return;
-	}
-
-/**
  * Gets a recursive list of files from a given directory and matches then against
  * a given fileTestFunction, like isTestCaseFile()
  *
@@ -330,17 +265,6 @@ class TestManager {
 	}
 
 /**
- * Tests if a file has the correct group test extension
- *
- * @param string $file
- * @return boolean Whether $file is a group
- * @static
- */
-	protected static function _isTestGroupFile($file) {
-		return self::_hasExpectedExtension($file, self::$_groupExtension);
-	}
-
-/**
  * Check if a file has a specific extension
  *
  * @param string $file
@@ -353,7 +277,7 @@ class TestManager {
 	}
 
 /**
- * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
+ * Returns the given path to the test files depending on a given type of tests (core, app, plugin)
  *
  * @param array $params Array of parameters for getting test paths.
  *   Can contain app, type, and plugin params.
@@ -363,24 +287,12 @@ class TestManager {
 	protected static function _getTestsPath($params) {
 		$result = null;
 		if (!empty($params['app'])) {
-			if ($params['show'] == 'cases' || !empty($params['case'])) {
-				$result = APP_TEST_CASES;
-			} else if ($params['show'] == 'groups') {
-				$result = APP_TEST_GROUPS;
-			}
+			$result = APP_TEST_CASES;
 		} else if (!empty($params['plugin'])) {
-			$_pluginBasePath = APP . 'plugins/' . $params['plugin'] . '/tests';
 			$pluginPath = App::pluginPath($params['plugin']);
-			if (file_exists($pluginPath . DS . 'tests')) {
-				$_pluginBasePath = $pluginPath . DS . 'tests';
-			}
-			$result = $_pluginBasePath . DS . $type;
-		} elseif (!empty($params['show'])) {
-			if ($params['show'] == 'cases' || !empty($params['case'])) {
-				$result = CORE_TEST_CASES;
-			} else if ($params['show'] == 'groups') {
-				$result = CORE_TEST_GROUPS;
-			}
+			$result = $pluginPath . 'tests' . DS . 'cases';
+		} else {
+			$result = CORE_TEST_CASES;
 		}
 		return $result;
 	}
