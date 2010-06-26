@@ -69,6 +69,13 @@ class CakeTestSuiteDispatcher {
 	protected $_baseDir;
 
 /**
+ * boolean to set auto parsing of params.
+ *
+ * @var boolean
+ */
+	protected $_paramsParsed = false;
+
+/**
  * reporter instance used for the request
  *
  * @var CakeBaseReporter
@@ -96,13 +103,14 @@ class CakeTestSuiteDispatcher {
 		$this->_parseParams();
 
 		if ($this->params['case']) {
-			$this->_runTestCase();
+			$value = $this->_runTestCase();
 		} else {
-			$this->_testCaseList();
+			$value = $this->_testCaseList();
 		}
 
 		$output = ob_get_clean();
 		echo $output;
+		return $value;
 	}
 
 /**
@@ -203,22 +211,35 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
+ * Sets the params, calling this will bypass the auto parameter parsing.
+ *
+ * @param array $params Array of parameters for the dispatcher
+ * @return void
+ */
+	public function setParams($params) {
+		$this->params = $params;
+		$this->_paramsParsed = true;
+	}
+
+/**
  * Parse url params into a 'request'
  *
  * @return void
  */
 	function _parseParams() {
-		if (!isset($_SERVER['SERVER_NAME'])) {
-			$_SERVER['SERVER_NAME'] = '';
-		}
-		foreach ($this->params as $key => $value) {
-			if (isset($_GET[$key])) {
-				$this->params[$key] = $_GET[$key];
+		if (!$this->_paramsParsed) {
+			if (!isset($_SERVER['SERVER_NAME'])) {
+				$_SERVER['SERVER_NAME'] = '';
 			}
-		}
-		if (isset($_GET['code_coverage'])) {
-			$this->params['codeCoverage'] = true;
-			$this->_checkXdebug();
+			foreach ($this->params as $key => $value) {
+				if (isset($_GET[$key])) {
+					$this->params[$key] = $_GET[$key];
+				}
+			}
+			if (isset($_GET['code_coverage'])) {
+				$this->params['codeCoverage'] = true;
+				$this->_checkXdebug();
+			}
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
@@ -232,6 +253,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _runTestCase() {
 		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		$this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
+		return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
 	}
 }
