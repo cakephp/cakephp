@@ -88,6 +88,9 @@ class TestSuiteShell extends Shell {
 		if (isset($this->args[3]) && $this->args[3] == 'cov') {
 			$params['codeCoverage'] = true;
 		}
+		if (isset($this->params['filter'])) {
+			$params['filter'] = $this->params['filter'];
+		}
 		return $params;
 	}
 
@@ -109,7 +112,7 @@ class TestSuiteShell extends Shell {
 		if ($result instanceof PHPUnit_Framework_TestResult) {
 			$exit = ($result->errorCount() + $result->failureCount()) > 0;
 		}
-		$this->_stop($exitCode);
+		$this->_stop($exit);
 	}
 
 /**
