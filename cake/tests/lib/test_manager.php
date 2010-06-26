@@ -145,7 +145,7 @@ class TestManager {
  * Runs the main testSuite and attaches to it a reporter
  *
  * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
- * @return mixed Results of group test being run.
+ * @return PHPUnit_Framework_TestResult Result object of the test run.
  */
 	protected function run($reporter, $codeCoverage = false) {
 		restore_error_handler();

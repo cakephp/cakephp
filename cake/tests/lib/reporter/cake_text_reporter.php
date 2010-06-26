@@ -36,16 +36,18 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintDocumentStart() {
-		header('Content-type: text/plain');
+		if (!headers_sent()) {
+			header('Content-type: text/plain');
+		}
 	}
 
 /**
- * undocumented function
+ * Paints a pass
  *
  * @return void
  */
 	public function paintPass() {
-		
+		echo '.';
 	}
 
 /**
@@ -75,7 +77,7 @@ class CakeTextReporter extends CakeBaseReporter {
  */
 	public function paintFooter($result) {
 		if ($result->failureCount() + $result->errorCount() == 0) {
-			echo "OK\n";
+			echo "\nOK\n";
 		} else {
 			echo "FAILURES!!!\n";
 		}
