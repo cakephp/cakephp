@@ -70,18 +70,31 @@ class TestSuiteShell extends Shell {
 	public $doCoverage = false;
 
 /**
+ * Dispatcher object for the run.
+ *
+ * @var CakeTestDispatcher
+ */
+	protected $_dispatcher = null;
+
+/**
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
  */
 	public function initialize() {
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_dispatcher.php';
+
 		$corePath = App::core('cake');
 		if (isset($corePath[0])) {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
 		} else {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 		}
+		$params = $this->parseArgs();
 
+		$this->_dispatcher = new CakeTestSuiteDispatcher();
+		$this->_dispatcher->setParams($params);
+/*		
 		$this->__installSimpleTest();
 
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
@@ -91,53 +104,51 @@ class TestSuiteShell extends Shell {
 		foreach ($plugins as $p) {
 			$this->plugins[] = Inflector::underscore($p);
 		}
-		$this->parseArgs();
 		$this->getManager();
+		*/
 	}
 
 /**
- * Parse the arguments given into the Shell object properties.
+ * Parse the CLI options into an array CakeTestDispatcher can use.
  *
- * @return void
+ * @return array Array of params for CakeTestDispatcher
  */
 	public function parseArgs() {
 		if (empty($this->args)) {
 			return;
 		}
-		$this->category = $this->args[0];
+		$params = array(
+			'app' => false,
+			'plugin' => null,
+			'output' => 'text',
+			'codeCoverage' => false,
+			'filter' => false,
+			'case' => null
+		);
 
-		if (!in_array($this->category, array('app', 'core'))) {
-			$this->isPluginTest = true;
+		$category = $this->args[0];
+
+		if ($category == 'app') {
+			$params['app'] = true;
+		} elseif ($category != 'core') {
+			$params['plugin'] = $category;
 		}
 
 		if (isset($this->args[1])) {
-			$this->type = $this->args[1];
+			$type = $this->args[1];
 		}
 
 		if (isset($this->args[2])) {
 			if ($this->args[2] == 'cov') {
-				$this->doCoverage = true;
+				$params['codeCoverage'] = true;
 			} else {
-				$this->file = Inflector::underscore($this->args[2]);
+				$params['case'] = Inflector::underscore($this->args[2]) . '.test.php';
 			}
 		}
-
 		if (isset($this->args[3]) && $this->args[3] == 'cov') {
-			$this->doCoverage = true;
+			$params['codeCoverage'] = true;
 		}
-	}
-
-/**
- * Gets a manager instance, and set the app/plugin properties.
- *
- * @return void
- */
-	function getManager() {
-		$this->Manager = new TestManager();
-		$this->Manager->appTest = ($this->category === 'app');
-		if ($this->isPluginTest) {
-			$this->Manager->pluginTest = $this->category;
-		}
+		return $params;
 	}
 
 /**
@@ -153,6 +164,9 @@ class TestSuiteShell extends Shell {
 			$this->error(__('Sorry, you did not pass any arguments!'));
 		}
 
+		$result = $this->_dispatcher->dispatch();
+
+/*
 		if ($this->__canRun()) {
 			$message = sprintf(__('Running %s %s %s'), $this->category, $this->type, $this->file);
 			$this->out($message);
@@ -165,6 +179,7 @@ class TestSuiteShell extends Shell {
 		} else {
 			$this->error(__('Sorry, the tests could not be found.'));
 		}
+		*/
 	}
 
 /**
@@ -187,18 +202,12 @@ class TestSuiteShell extends Shell {
 		$this->out("\t\tcake testsuite app case models/my_model");
 		$this->out("\t\tcake testsuite app case controllers/my_controller");
 		$this->out();
-		$this->out("\t\tcake testsuite core case file");
-		$this->out("\t\tcake testsuite core case router");
-		$this->out("\t\tcake testsuite core case set");
-		$this->out();
-		$this->out("\t\tcake testsuite app group mygroup");
-		$this->out("\t\tcake testsuite core group acl");
-		$this->out("\t\tcake testsuite core group socket");
+		$this->out("\t\tcake testsuite core case libs/file");
+		$this->out("\t\tcake testsuite core case libs/router");
+		$this->out("\t\tcake testsuite core case libs/set");
 		$this->out();
 		$this->out("\t\tcake testsuite bugs case models/bug");
 		$this->out("\t\t  // for the plugin 'bugs' and its test case 'models/bug'");
-		$this->out("\t\tcake testsuite bugs group bug");
-		$this->out("\t\t  // for the plugin bugs and its test group 'bug'");
 		$this->out();
 		$this->out('Code Coverage Analysis: ');
 		$this->out("\n\nAppend 'cov' to any of the above in order to enable code coverage analysis");
