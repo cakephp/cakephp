@@ -115,14 +115,6 @@ class CakeSession extends Object {
 	public $id = null;
 
 /**
- * Session Started
- *
- * @var boolean
- * @access protected
- */
-	protected $_started = false;
-
-/**
  * Hostname
  *
  * @var string
@@ -136,7 +128,7 @@ class CakeSession extends Object {
  * @var ineteger
  * @access public
  */
-	var $timeout = null;
+	public $timeout = null;
 
 /**
  * Constructor.
@@ -214,7 +206,7 @@ class CakeSession extends Object {
 			session_write_close();
 		}
 		$this->__initSession();
-		$this->_started = $this->__startSession();
+		$this->__startSession();
 		return $this->started();
 	}
 
@@ -225,7 +217,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (isset($_SESSION) && $this->_started) {
+		if (isset($_SESSION) && session_id()) {
 			return true;
 		}
 		return false;
@@ -456,29 +448,13 @@ class CakeSession extends Object {
  */
 	function __initSession() {
 		$iniSet = function_exists('ini_set');
-
 		if ($iniSet && env('HTTPS')) {
 			ini_set('session.cookie_secure', 1);
 		}
-
-		switch ($this->security) {
-			case 'high':
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'medium':
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'low':
-			default:
-				$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
-			break;
+		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
+			ini_set('session.referer_check', $this->host);
 		}
+		$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
@@ -781,5 +757,5 @@ class CakeSession extends Object {
 
 		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
 		return $return;
-	 }
+	}
 }

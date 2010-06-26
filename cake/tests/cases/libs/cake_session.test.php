@@ -175,6 +175,10 @@ class CakeSessionTest extends CakeTestCase {
 		$_SESSION = null;
 		$this->assertFalse($this->Session->started());
 		$this->assertTrue($this->Session->start());
+
+		$session = new CakeSession(null, false);
+		$this->assertTrue($session->started());
+		unset($session);
 	}
 
 /**

@@ -2966,6 +2966,19 @@ class DboSourceTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test that order() will accept objects made from DboSource::expression
+ *
+ * @return void
+ */
+	function testOrderWithExpression() {
+		$expression = $this->testDb->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
+		$result = $this->testDb->order($expression);
+		$expected = " ORDER BY CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col";
+		$this->assertEqual($result, $expected);
+	}
+
 /**
  * testMergeAssociations method
  *
@@ -4302,7 +4315,7 @@ class DboSourceTest extends CakeTestCase {
 				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
 		);
 		$conditions = array('two' => 2);
-		$result = $this->db->conditions($conditions,true,false,$Article);
+		$result = $this->db->conditions($conditions, true, false, $Article);
 		$expected = '(1 + 1) = 2';
 		$this->assertEqual($expected, $result);
 
@@ -4336,6 +4349,11 @@ class DboSourceTest extends CakeTestCase {
 			'two' => '1 + 1',
 		);
 		$order = array('two', 'this_moment');
+		$result = $this->db->order($order, 'ASC', $Article);
+		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
+		$this->assertEqual($expected, $result);
+
+		$order = array('Article.two', 'Article.this_moment');
 		$result = $this->db->order($order, 'ASC', $Article);
 		$expected = ' ORDER BY (1 + 1) ASC, (NOW()) ASC';
 		$this->assertEqual($expected, $result);
@@ -4406,5 +4424,20 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->db->group('this_year',$Article);
 		$expected = " GROUP BY (YEAR(`Article`.`created`))";
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test the permutations of fullTableName()
+ *
+ * @return void
+ */
+	function testFullTablePermutations() {
+		$Article =& ClassRegistry::init('Article');
+		$result = $this->testDb->fullTableName($Article, false);
+		$this->assertEqual($result, 'articles');
+
+		$Article->tablePrefix = 'tbl_';
+		$result = $this->testDb->fullTableName($Article, false);
+		$this->assertEqual($result, 'tbl_articles');
 	}
 }

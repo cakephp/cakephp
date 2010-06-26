@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Translate behavior
  *
  * PHP versions 4 and 5
  *
@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for file.
+ * Translate behavior
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.behaviors
@@ -29,6 +29,8 @@ class TranslateBehavior extends ModelBehavior {
 
 /**
  * Used for runtime configuration of model
+ * 
+ * @var array
  */
 	public $runtime = array();
 
@@ -45,7 +47,8 @@ class TranslateBehavior extends ModelBehavior {
  * $config could be empty - and translations configured dynamically by
  * bindTranslation() method
  *
- * @param array $config
+ * @param Model $model Model the behavior is being attached to.
+ * @param array $config Array of configuration information.
  * @return mixed
  */
 	public function setup(&$model, $config = array()) {
@@ -65,8 +68,9 @@ class TranslateBehavior extends ModelBehavior {
 	}
 
 /**
- * Callback
+ * Cleanup Callback unbinds bound translations and deletes setting information.
  *
+ * @param Model $model Model being detached.
  * @return void
  */
 	public function cleanup(&$model) {
@@ -78,7 +82,8 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * beforeFind Callback
  *
- * @param array $query
+ * @param Model $model Model find is being run on.
+ * @param array $query Array of Query parameters.
  * @return array Modified query
  */
 	public function beforeFind(&$model, $query) {
@@ -202,8 +207,9 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * afterFind Callback
  *
- * @param array $results
- * @param boolean $primary
+ * @param Model $model Model find was run on
+ * @param array $results Array of model results.
+ * @param boolean $primary Did the find originate on $model.
  * @return array Modified results
  */
 	public function afterFind(&$model, $results, $primary) {
@@ -246,6 +252,7 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * beforeValidate Callback
  *
+ * @param Model $model Model invalidFields was called on.
  * @return boolean
  */
 	public function beforeValidate(&$model) {
@@ -278,7 +285,8 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * afterSave Callback
  *
- * @param boolean $created
+ * @param Model $model Model the callback is called on
+ * @param boolean $created Whether or not the save created a record.
  * @return void
  */
 	public function afterSave(&$model, $created) {
@@ -321,6 +329,7 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * afterDelete Callback
  *
+ * @param Model $model Model the callback was run on.
  * @return void
  */
 	public function afterDelete(&$model) {
@@ -332,6 +341,7 @@ class TranslateBehavior extends ModelBehavior {
 /**
  * Get selected locale for model
  *
+ * @param Model $model Model the locale needs to be set/get on.
  * @return mixed string or false
  */
 	protected function _getLocale(&$model) {
@@ -348,8 +358,12 @@ class TranslateBehavior extends ModelBehavior {
 	}
 
 /**
- * Get instance of model for translations
+ * Get instance of model for translations.
  *
+ * If the model has a translateModel property set, this will be used as the class
+ * name to find/use.  If no translateModel property is found 'I18nModel' will be used.
+ *
+ * @param Model $model Model to get a translatemodel for.
  * @return object
  */
 	public function &translateModel(&$model) {
@@ -452,8 +466,9 @@ class TranslateBehavior extends ModelBehavior {
  * Unbind translation for fields, optionally unbinds hasMany association for
  * fake field
  *
- * @param object instance of model
- * @param mixed string with field, or array(field1, field2=>AssocName, field3), or null for unbind all original translations
+ * @param object $model instance of model
+ * @param mixed $fields string with field, or array(field1, field2=>AssocName, field3), or null for 
+ *    unbind all original translations
  * @return bool
  */
 	function unbindTranslation(&$model, $fields = null) {

@@ -274,6 +274,34 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
+ * test that clear() doesn't wipe files not in the current engine's prefix.
+ *
+ * @return void
+ */
+	function testClearWithPrefixes() {
+		$FileOne =& new FileEngine();
+		$FileOne->init(array(
+			'prefix' => 'prefix_one_',
+			'duration' => DAY
+		));
+		$FileTwo =& new FileEngine();
+		$FileTwo->init(array(
+			'prefix' => 'prefix_two_',
+			'duration' => DAY
+		));
+
+		$data1 = $data2 = $expected = 'content to cache';
+		$FileOne->write('key_one', $data1, DAY);
+		$FileTwo->write('key_two', $data2, DAY);
+
+		$this->assertEqual($FileOne->read('key_one'), $expected);
+		$this->assertEqual($FileTwo->read('key_two'), $expected);
+
+		$FileOne->clear(false);
+		$this->assertEqual($FileTwo->read('key_two'), $expected, 'secondary config was cleared by accident.');
+	}
+
+/**
  * testKeyPath method
  *
  * @access public

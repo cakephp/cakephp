@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Email Component
  *
  * PHP versions 4 and 5
  *
@@ -228,9 +228,7 @@ class EmailComponent extends Object{
  * @access public
  * @link http://book.cakephp.org/view/1290/Sending-A-Message-Using-SMTP
  */
-	public $smtpOptions = array(
-		'port'=> 25, 'host' => 'localhost', 'timeout' => 30
-	);
+	public $smtpOptions = array();
 
 /**
  * Placeholder for any errors that might happen with the
@@ -355,7 +353,11 @@ class EmailComponent extends Object{
 			}
 		}
 
-		$message = $this->_wrap($content);
+		if ($this->sendAs === 'text') {
+			$message = $this->_wrap($content);
+		} else {
+			$message = $this->_wrap($content, 998);
+		}
 
 		if ($this->template === null) {
 			$message = $this->_formatMessage($message);
@@ -674,10 +676,11 @@ class EmailComponent extends Object{
  * Wrap the message using EmailComponent::$lineLength
  *
  * @param string $message Message to wrap
+ * @param integer $lineLength Max length of line
  * @return array Wrapped message
- * @access private
+ * @access protected
  */
-	function _wrap($message) {
+	function _wrap($message, $lineLength = null) {
 		$message = $this->_strip($message, true);
 		$message = str_replace(array("\r\n","\r"), "\n", $message);
 		$lines = explode("\n", $message);
@@ -688,11 +691,15 @@ class EmailComponent extends Object{
 			$this->lineLength = $this->_lineLength;
 		}
 
+		if (!$lineLength) {
+			$lineLength = $this->lineLength;
+		}
+
 		foreach ($lines as $line) {
 			if (substr($line, 0, 1) == '.') {
 				$line = '.' . $line;
 			}
-			$formatted = array_merge($formatted, explode("\n", wordwrap($line, $this->lineLength, "\n", true)));
+			$formatted = array_merge($formatted, explode("\n", wordwrap($line, $lineLength, "\n", true)));
 		}
 		$formatted[] = '';
 		return $formatted;
@@ -785,7 +792,14 @@ class EmailComponent extends Object{
 	function _smtp() {
 		App::import('Core', array('CakeSocket'));
 
-		$this->__smtpConnection =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->smtpOptions));
+		$defaults = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'protocol' => 'smtp',
+			'timeout' => 30
+		);
+		$this->smtpOptions = array_merge($defaults, $this->smtpOptions);
+		$this->__smtpConnection =& new CakeSocket($this->smtpOptions);
 
 		if (!$this->__smtpConnection->connect()) {
 			$this->smtpError = $this->__smtpConnection->lastError();
@@ -804,7 +818,7 @@ class EmailComponent extends Object{
 			$host = 'localhost';
 		}
 
-		if (!$this->_smtpSend("HELO {$host}", '250')) {
+		if (!$this->_smtpSend("EHLO {$host}", '250') && !$this->_smtpSend("HELO {$host}", '250')) {
 			return false;
 		}
 
@@ -864,22 +878,34 @@ class EmailComponent extends Object{
 	}
 
 /**
- * Private method for sending data to SMTP connection
+ * Protected method for sending data to SMTP connection
  *
  * @param string $data data to be sent to SMTP server
  * @param mixed $checkCode code to check for in server response, false to skip
  * @return bool Success
- * @access private
+ * @access protected
  */
 	function _smtpSend($data, $checkCode = '250') {
 		if (!is_null($data)) {
 			$this->__smtpConnection->write($data . "\r\n");
 		}
-		if ($checkCode !== false) {
-			$response = $this->__smtpConnection->read();
+		while ($checkCode !== false) {
+			$response = '';
+			$startTime = time();
+			while (substr($response, -2) !== "\r\n" && ((time() - $startTime) < $this->smtpOptions['timeout'])) {
+				$response .= $this->__smtpConnection->read();
+			}
+			if (substr($response, -2) !== "\r\n") {
+				$this->smtpError = 'timeout';
+				return false;
+			}
+			$response = end(explode("\r\n", rtrim($response, "\r\n")));
 
-			if (preg_match('/^(' . $checkCode . ')/', $response, $code)) {
-				return $code[0];
+			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
+				if ($code[2] === '-') {
+					continue;
+				}
+				return $code[1];
 			}
 			$this->smtpError = $response;
 			return false;

@@ -1602,7 +1602,6 @@ class Model extends Object {
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
 						$return = array();
-						continue;
 					break;
 					default:
 						if ($options['atomic']) {
@@ -1615,6 +1614,10 @@ class Model extends Object {
 						return $return;
 					break;
 				}
+			}
+			if ($options['atomic'] && !$validates) {
+				$db->rollback($this);
+				return false;
 			}
 			return $return;
 		}

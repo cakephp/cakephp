@@ -460,19 +460,19 @@ class SchemaPrefixAuthUser extends CakeTestModel {
  *
  * @var string
  */
-	var $name = 'SchemaPrefixAuthUser';
+	public $name = 'SchemaPrefixAuthUser';
 /**
  * table prefix
  *
  * @var string
  */
-	var $tablePrefix = 'auth_';
+	public $tablePrefix = 'auth_';
 /**
  * useTable
  *
  * @var string
  */
-	var $useTable = 'users';
+	public $useTable = 'users';
 }
 
 /**
@@ -575,6 +575,13 @@ class CakeSchemaTest extends CakeTestCase {
 			'models' => array('SchemaPost')
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
+
+		$read = $this->Schema->read(array(
+			'connection' => 'test_suite',
+			'name' => 'TestApp',
+			'models' => array('SchemaComment', 'SchemaTag', 'SchemaPost')
+		));
+		$this->assertFalse(isset($read['tables']['missing']['posts_tags']), 'Join table marked as missing %s');
 	}
 
 /**
@@ -741,6 +748,45 @@ class CakeSchemaTest extends CakeTestCase {
 					'published' => array('type' => 'string', 'null' => true, 'default' => 'Y', 'length' => '1')
 				)
 			),
+		);
+		$this->assertEqual($expected, $compare);
+
+		$tables = array(
+			'missing' => array(
+				'categories' => array(
+					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'name' => array('type' => 'string', 'null' => false, 'default' => NULL, 'length' => 100),
+					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+				)
+			),
+			'ratings' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+				'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL),
+				'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL),
+				'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+				'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+				'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+				'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+			)
+		);
+		$compare = $New->compare($this->Schema, $tables);
+		$expected = array(
+			'ratings' => array(
+				'add' => array(
+					'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+					'foreign_key' => array('type' => 'integer', 'null' => false, 'default' => NULL),
+					'model' => array('type' => 'varchar', 'null' => false, 'default' => NULL),
+					'value' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => NULL),
+					'created' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
+					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
+					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+				)
+			)
 		);
 		$this->assertEqual($expected, $compare);
 	}

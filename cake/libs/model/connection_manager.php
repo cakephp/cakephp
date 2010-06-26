@@ -272,9 +272,12 @@ class ConnectionManager extends Object {
 			if ($plugin) {
 				$filename = Inflector::underscore($classname);
 			} else {
-				$filename = $config['datasource'] . '_source';
-				$classname = Inflector::camelize(strtolower($filename));
+				$filename = Inflector::underscore($config['datasource']);
 			}
+			if (substr($filename, -7) != '_source') {
+				$filename .= '_source';
+			}
+			$classname = Inflector::camelize(strtolower($filename));
 		}
 		return compact('filename', 'classname', 'parent', 'plugin');
 	}

@@ -21,7 +21,7 @@ if (Configure::read() == 0):
 endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-3-0"><?php echo __('Read the changelog'); ?> </a>
+<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-3-2"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
@@ -106,7 +106,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			sprintf('<strong>%s</strong>%s', __('new'), __('CakePHP 1.3 Docs')),
+			sprintf('<strong>%s</strong>%s', __('new', true), __('CakePHP 1.3 Docs', true)),
 			'http://book.cakephp.org/view/875/x1-3-Collection',
 			array('target' => '_blank', 'escape' => false)
 		);

@@ -194,6 +194,10 @@ class L10nTest extends CakeTestCase {
 		$result = $l10n->map(array('nld', 'nl'));
 		$expected = array('nld' => 'nl', 'nl' => 'dut');
 		$this->assertEqual($result, $expected);
+		
+		$result = $l10n->map(array('nld'));
+		$expected = array('nld' => 'nl');
+		$this->assertEqual($result, $expected);
 
 		$result = $l10n->map(array('eng', 'en'));
 		$expected = array('eng' => 'en', 'en' => 'eng');
@@ -743,6 +747,18 @@ class L10nTest extends CakeTestCase {
 			'nl' => array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr'),
 			'nl-be' => array('language' => 'Dutch (Belgium)', 'locale' => 'nl_be', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr')
 		);
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->catalog('nl');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->catalog('nld');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
+		$this->assertEqual($result, $expected);
+
+		$result = $l10n->catalog('dut');
+		$expected = array('language' => 'Dutch (Standard)', 'locale' => 'dut', 'localeFallback' => 'dut', 'charset' => 'utf-8', 'direction' => 'ltr');
 		$this->assertEqual($result, $expected);
 
 		$result = $l10n->catalog(array('nb'));

@@ -82,6 +82,3 @@
 		$Dispatcher = new Dispatcher();
 		$Dispatcher->dispatch();
 	}
-	if (Configure::read() > 0) {
-		echo "<!-- " . round(microtime(true) - $TIME_START, 4) . "s -->";
-	}

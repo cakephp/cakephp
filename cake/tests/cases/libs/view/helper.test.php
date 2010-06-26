@@ -162,6 +162,21 @@ class HelperTestPostsTag extends Model {
 	}
 }
 
+class TestHelper extends Helper {
+/**
+ * expose a method as public
+ *
+ * @param string $options 
+ * @param string $exclude 
+ * @param string $insertBefore 
+ * @param string $insertAfter 
+ * @return void
+ */
+	function parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
+		return $this->_parseAttributes($options, $exclude, $insertBefore, $insertAfter);
+	}
+}
+
 /**
  * HelperTest class
  *
@@ -719,5 +734,24 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		Configure::write('App.www_root', $webRoot);
+	}
+
+/**
+ * test parsing attributes.
+ *
+ * @return void
+ */
+	function testParseAttributeCompact() {
+		$helper =& new TestHelper();
+		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
+			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		
+		foreach ($compact as $attribute) {
+			foreach (array('true', true, 1, '1', $attribute) as $value) {
+				$attrs = array($attribute => $value);
+				$expected = ' ' . $attribute . '="' . $attribute . '"';
+				$this->assertEqual($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
+			}
+		}
 	}
 }

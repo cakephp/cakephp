@@ -40,7 +40,7 @@ class MediaController extends Controller {
  * @var string 'Media'
  * @access public
  */
-	var $name = 'Media';
+	public $name = 'Media';
 
 /**
  * index download
@@ -70,7 +70,7 @@ class TestMediaView extends MediaView {
  * @var array
  * @access public
  */
-	var $headers = array();
+	public $headers = array();
 
 /**
  * active property to mock the status of a remote connection
@@ -78,7 +78,7 @@ class TestMediaView extends MediaView {
  * @var boolean true
  * @access public
  */
-	var $active = true;
+	public $active = true;
 
 	function _output() {
 		$this->headers = $this->_headers;

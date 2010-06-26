@@ -74,6 +74,7 @@ class CakeTestFixture {
 				$db->cacheSources = false;
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
+				$this->table = $db->fullTableName($model, false);
 				ClassRegistry::config(array('ds' => 'test_suite'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
@@ -91,7 +92,7 @@ class CakeTestFixture {
 				$this->records = array();
 				$query = array(
 					'fields' => $db->fields($model, null, array_keys($this->fields)),
-					'table' => $db->fullTableName($model->table),
+					'table' => $db->fullTableName($model),
 					'alias' => $model->alias,
 					'conditions' => array(),
 					'order' => null,

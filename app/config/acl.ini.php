@@ -1,7 +1,7 @@
 ;<?php die() ?>
 ; SVN FILE: $Id$
 ;/**
-; * Short description for file.
+; * ACL configuration
 ; *
 ; *
 ; * PHP versions 4 and 5

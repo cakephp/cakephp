@@ -291,9 +291,10 @@ class Helper extends Object {
  *
  * And its value is one of:
  *
- * - 1
- * - true
- * - 'true'
+ * - '1' (string)
+ * - 1 (integer)
+ * - true (boolean)
+ * - 'true' (string)
  *
  * Then the value will be reset to be identical with key's name.
  * If the value is not one of these 3, the parameter is not output.
@@ -352,7 +353,7 @@ class Helper extends Object {
 		}
 
 		if (in_array($key, $minimizedAttributes)) {
-			if ($value === 1 || $value === true || $value === 'true' || $value == $key) {
+			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
 				$attribute = sprintf($attributeFormat, $key, $key);
 			}
 		} else {

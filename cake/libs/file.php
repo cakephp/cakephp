@@ -178,7 +178,6 @@ class File {
 		while (!feof($this->handle)) {
 			$data .= fgets($this->handle, 4096);
 		}
-		$data = trim($data);
 
 		if ($this->lock !== null) {
 			flock($this->handle, LOCK_UN);
@@ -186,7 +185,7 @@ class File {
 		if ($bytes === false) {
 			$this->close();
 		}
-		return $data;
+		return trim($data);
 	}
 
 /**

@@ -7221,15 +7221,15 @@ class ModelReadTest extends BaseModelTest {
 
 		$dbo =& $Post->getDataSource();
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('other_field' => 3),
 			'limit' => 1
 		));
 		$this->assertEqual($result['Post']['id'], 2);
 
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
-		$result = $Post->find('all',array(
-			'fields' => array($dbo->calculate($Post, 'max',array('other_field')))
+		$result = $Post->find('all', array(
+			'fields' => array($dbo->calculate($Post, 'max', array('other_field')))
 		));
 		$this->assertEqual($result[0][0]['other_field'], 4);
 
