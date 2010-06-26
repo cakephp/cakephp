@@ -3274,7 +3274,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testStatements() {
-		$this->loadFixtures('Article', 'User', 'Comment', 'Tag');
+		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
 		$Article = new Article();
 
 		$result = $this->testDb->update($Article, array('field1'), array('value1'));
