@@ -114,16 +114,11 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintException($exception) {
-		parent::paintException($exception);
 		$message = 'Unexpected exception of type [' . get_class($exception) .
-				'] with message ['. $exception->getMessage() .
-				'] in ['. $exception->getFile() .
-				' line ' . $exception->getLine() . ']';
-		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		echo "\n";
+			'] with message ['. $exception->getMessage() .
+			'] in ['. $exception->getFile() .
+			' line ' . $exception->getLine() . ']';
+		echo $message . "\n\n";
 	}
 
 /**
