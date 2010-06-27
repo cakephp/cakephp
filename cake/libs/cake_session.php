@@ -125,7 +125,7 @@ class CakeSession extends Object {
 /**
  * Session timeout multiplier factor
  *
- * @var ineteger
+ * @var integer
  * @access public
  */
 	var $timeout = null;
@@ -188,7 +188,7 @@ class CakeSession extends Object {
 			if (!class_exists('Security')) {
 				App::import('Core', 'Security');
 			}
-			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
+			$this->sessionTime = $this->time + (Security::inactiveMins() * 60 * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
 		}
 		parent::__construct();
@@ -466,7 +466,7 @@ class CakeSession extends Object {
 		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
 			ini_set('session.referer_check', $this->host);
 		}
-		$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
+		$this->cookieLifeTime = Configure::read('Session.timeout') * (Security::inactiveMins() * 60);
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
@@ -593,7 +593,7 @@ class CakeSession extends Object {
 					$check -= 1;
 					$this->write('Config.timeout', $check);
 
-					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
+					if (time() > ($time - (Security::inactiveMins() * 60 * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
 						$this->write('Config.timeout', Security::inactiveMins());
 					}
@@ -735,7 +735,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __write($id, $data) {
-		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
+		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins() * 60;
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
 		return $return;
