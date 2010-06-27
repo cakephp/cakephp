@@ -1273,4 +1273,40 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->para('class-name', '<text>', array('escape' => true));
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
 	}
+	
+/**
+ * testCrumbList method
+ * 
+ * @access public
+ * 
+ * @return void
+ */
+	function testCrumbList() {
+        $this->Html->addCrumb('Home', '/', array('class' => 'home'));
+        $this->Html->addCrumb('Some page', '/some_page');
+        $this->Html->addCrumb('Another page');
+        $result = $this->Html->getCrumbList(
+           array('class' => 'breadcrumbs')
+        );
+        $this->assertTags(
+           $result,
+           array(
+               array('ul' => array('class' => 'breadcrumbs')),
+               array('li' => array('class' => 'first')),
+               array('a' => array('class' => 'home', 'href' => '/')),
+               'Home',
+               '/a',
+               '/li',
+               '<li',
+               array('a' => array('href' => '/some_page')),
+               'Some page',
+               '/a',
+               '/li',
+               array('li' => array('class' => 'last')),
+               'Another page',
+               '/li',
+               '/ul'
+           )
+       );
+	}
 }
