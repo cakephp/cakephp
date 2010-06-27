@@ -355,32 +355,32 @@ class SessionComponentTest extends CakeTestCase {
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
 
-		$this->assertEqual($Session->sessionTime, mktime() + (300 * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($Session->sessionTime, mktime() + (300 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
 		$this->assertEqual($Session->time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
 		session_destroy();
 		Configure::write('Security.level', 'medium');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->sessionTime, mktime() + (100 * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($Session->sessionTime, mktime() + (100 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
 		$this->assertEqual($Session->time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
 
 		session_destroy();
 		Configure::write('Security.level', 'high');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->sessionTime, mktime() + (10 * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($Session->sessionTime, mktime() + (10 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], Security::inactiveMins());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
 		$this->assertEqual($Session->time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * 60 * Configure::read('Session.timeout')));
+		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
 
 	}
 }
