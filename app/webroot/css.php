@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * CSS helping functions
  *
  * PHP versions 4 and 5
  *
@@ -21,14 +21,16 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	header('HTTP/1.1 404 Not Found');
 	exit('File Not Found');
 }
+
 /**
- * Enter description here...
+ * Ensure required classes are available.
  */
 if (!class_exists('File')) {
 	uses('file');
 }
+
 /**
- * Enter description here...
+ * Make clean CSS
  *
  * @param unknown_type $path
  * @param unknown_type $name
@@ -44,7 +46,7 @@ if (!class_exists('File')) {
 		return $output;
 	}
 /**
- * Enter description here...
+ * Write CSS cache
  *
  * @param unknown_type $path
  * @param unknown_type $content

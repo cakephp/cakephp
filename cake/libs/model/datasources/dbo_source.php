@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Dbo Source
  *
  * PHP versions 4 and 5
  *
@@ -96,6 +96,13 @@ class DboSource extends DataSource {
 		'commit' => 'COMMIT',
 		'rollback' => 'ROLLBACK'
 	);
+
+/**
+ * Separator string for virtualField composition
+ *
+ * @var string
+ */
+	public $virtualFieldSeparator = '__';
 
 /**
  * List of table engine specific parameters used on table creating
@@ -422,10 +429,10 @@ class DboSource extends DataSource {
 	public function fetchVirtualField(&$result) {
 		if (isset($result[0]) && is_array($result[0])) {
 			foreach ($result[0] as $field => $value) {
-				if (strpos($field, '__') === false) {
+				if (strpos($field, $this->virtualFieldSeparator) === false) {
 					continue;
 				}
-				list($alias, $virtual) = explode('__', $field);
+				list($alias, $virtual) = explode($this->virtualFieldSeparator, $field);
 
 				if (!ClassRegistry::isKeySet($alias)) {
 					return;
@@ -898,6 +905,7 @@ class DboSource extends DataSource {
 				}
 
 				if (!empty($ins)) {
+					$ins = array_unique($ins);
 					$fetch = $this->fetchAssociated($model, $query, $ins);
 				}
 
@@ -929,9 +937,9 @@ class DboSource extends DataSource {
 					}
 				}
 				if (!empty($ins)) {
+					$ins = array_unique($ins);
 					if (count($ins) > 1) {
 						$query = str_replace('{$__cakeID__$}', '(' .implode(', ', $ins) .')', $query);
-						$query = str_replace('= (', 'IN (', $query);
 						$query = str_replace('= (', 'IN (', $query);
 					} else {
 						$query = str_replace('{$__cakeID__$}',$ins[0], $query);
@@ -1032,7 +1040,6 @@ class DboSource extends DataSource {
 	public function fetchAssociated($model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
-			$query = str_replace('= (', 'IN (', $query);
 			$query = str_replace('= (', 'IN (', $query);
 		}
 		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
@@ -1865,7 +1872,7 @@ class DboSource extends DataSource {
 	protected function _constructVirtualFields(&$model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
-			$virtualField = $this->name("{$alias}__{$field}");
+			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
 			$expression = $this->__quoteFields($model->getVirtualField($field));
 			$virtual[] = '(' .$expression . ") {$this->alias} {$virtualField}";
 		}
@@ -2132,7 +2139,7 @@ class DboSource extends DataSource {
 					}
 				} elseif (is_array($value) && !empty($value) && !$valueInsert) {
 					$keys = array_keys($value);
-					if (array_keys($value) === array_values(array_keys($value))) {
+					if ($keys === array_values($keys)) {
 						$count = count($value);
 						if ($count === 1) {
 							$data = $this->__quoteFields($key) . ' = (';
@@ -2362,6 +2369,9 @@ class DboSource extends DataSource {
 					}
 				}
 				continue;
+			} elseif (is_object($key) && isset($key->type) && $key->type === 'expression') {
+				$result[] = $key->value;
+				continue;
 			}
 
 			if (preg_match('/\\x20(ASC|DESC).*/i', $key, $_dir)) {
@@ -2369,17 +2379,17 @@ class DboSource extends DataSource {
 				$key = preg_replace('/\\x20(ASC|DESC).*/i', '', $key);
 			}
 
+			$key = trim($key);
+
+			if (is_object($model) && $model->isVirtualField($key)) {
+				$key =  '(' . $this->__quoteFields($model->getVirtualField($key)) . ')';
+			}
+
 			if (strpos($key, '.')) {
 				$key = preg_replace_callback('/([a-zA-Z0-9_]{1,})\\.([a-zA-Z0-9_]{1,})/', array(&$this, '__quoteMatchedField'), $key);
 			}
-
-			$key = trim($key);
-			if (!preg_match('/\s/', $key) && !strpos($key,'.')) {
-				if (is_object($model) && $model->isVirtualField($key)) {
-					$key =  '('.$this->__quoteFields($model->getVirtualField($key)).')';
-				} else {
-					$key = $this->name($key);
-				}
+			if (!preg_match('/\s/', $key) && !strpos($key, '.')) {
+				$key = $this->name($key);
 			}
 			$key .= ' ' . trim($dir);
 			$result[] = $key;

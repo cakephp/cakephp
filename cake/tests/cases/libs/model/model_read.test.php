@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -7221,15 +7221,15 @@ class ModelReadTest extends BaseModelTest {
 
 		$dbo =& $Post->getDataSource();
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('other_field' => 3),
 			'limit' => 1
 		));
 		$this->assertEqual($result['Post']['id'], 2);
 
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
-		$result = $Post->find('all',array(
-			'fields' => array($dbo->calculate($Post, 'max',array('other_field')))
+		$result = $Post->find('all', array(
+			'fields' => array($dbo->calculate($Post, 'max', array('other_field')))
 		));
 		$this->assertEqual($result[0][0]['other_field'], 4);
 
@@ -7289,6 +7289,21 @@ class ModelReadTest extends BaseModelTest {
 			'recursive' => -1
 		));
 		$this->assertTrue(isset($result['Author']['full_name']));
+	}
+
+/**
+ * test that virtual fields work when they don't contain functions.
+ *
+ * @return void
+ */
+	function testVirtualFieldAsAString() {
+		$this->loadFixtures('Post', 'Author');
+		$Post =& new Post();
+		$Post->virtualFields = array(
+		    'writer' => 'Author.user'
+		);
+		$result = $Post->find('first');
+		$this->assertTrue(isset($result['Post']['writer']), 'virtual field not fetched %s');
 	}
 
 /**

@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.libs
  * @since         CakePHP(tm) v 1.2.0.4667
@@ -114,6 +114,14 @@ class FixtureImportTestModel extends Model {
 	public $useTable = 'fixture_tests';
 	public $useDbConfig = 'test_suite';
 }
+
+class FixturePrefixTest extends Model {
+	public $name = 'FixturePrefix';
+	public $useTable = '_tests';
+	public $tablePrefix = 'fixture';
+	public $useDbConfig = 'test_suite';
+}
+
 Mock::generate('DboSource', 'FixtureMockDboSource');
 
 /**
@@ -162,7 +170,14 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->primaryKey = 'my_random_key';
 		$Fixture->init();
 		$this->assertEqual($Fixture->primaryKey, 'my_random_key');
+	}
 
+/**
+ * test that init() correctly sets the fixture table when the connection or model have prefixes defined.
+ *
+ * @return void
+ */
+	function testInitDbPrefix() {
 		$this->_initDb();
 		$Source =& new CakeTestFixtureTestFixture();
 		$Source->create($this->db);
@@ -187,6 +202,30 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+
+		$keys = array_flip(ClassRegistry::keys());
+		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
+
+		$Source->drop($this->db);
+	}
+
+/**
+ * test init with a model that has a tablePrefix declared.
+ *
+ * @return void
+ */
+	function testInitModelTablePrefix() {
+		$this->_initDb();
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
+
+		$Fixture =& new CakeTestFixtureImportFixture();
+		unset($Fixture->table);
+		$Fixture->fields = $Fixture->records = null;
+		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test_suite', 'records' => false);
+		$Fixture->init();
+		$this->assertEqual($Fixture->table, 'fixture_tests');
 
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));

@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for class.
+ * Oracle layer for DBO.
  *
  * Long description for class
  *
@@ -29,17 +29,17 @@
 class DboOracle extends DboSource {
 
 /**
- * Enter description here...
+ * Configuration options
  *
- * @var unknown_type
+ * @var array
  * @access public
  */
 	public $config = array();
 
 /**
- * Enter description here...
+ * Alias
  *
- * @var unknown_type
+ * @var string
  */
 	public $alias = '';
 
@@ -56,9 +56,9 @@ class DboOracle extends DboSource {
 	private $__transactionStarted = false;
 
 /**
- * Enter description here...
+ * Column definitions
  *
- * @var unknown_type
+ * @var array
  * @access public
  */
 	public $columns = array(
@@ -77,25 +77,25 @@ class DboOracle extends DboSource {
 		'inet' => array('name' => 'inet'));
 
 /**
- * Enter description here...
+ * Connection object
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	public $connection;
 
 /**
- * Enter description here...
+ * Query limit
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	protected $_limit = -1;
 
 /**
- * Enter description here...
+ * Query offset
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	protected $_offset = 0;
@@ -109,25 +109,25 @@ class DboOracle extends DboSource {
 	protected $_map;
 
 /**
- * Enter description here...
+ * Current Row
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	protected $_currentRow;
 
 /**
- * Enter description here...
+ * Number of rows
  *
- * @var unknown_type
+ * @var int
  * @access protected
  */
 	protected $_numRows;
 
 /**
- * Enter description here...
+ * Query results
  *
- * @var unknown_type
+ * @var mixed
  * @access protected
  */
 	protected $_results;
@@ -372,9 +372,10 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Fetch result row
  *
- * @return unknown
+ * @return array
+ * @access public
  */
 	public function fetchRow() {
 		if ($this->_currentRow >= $this->_numRows) {
@@ -435,10 +436,11 @@ class DboOracle extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Create trigger
  *
- * @param unknown_type $table
- * @return unknown
+ * @param string $table
+ * @return mixed
+ * @access public
  */
 	public function createTrigger($table) {
 		$sql = "CREATE OR REPLACE TRIGGER pk_$table" . "_trigger BEFORE INSERT ON $table FOR EACH ROW BEGIN SELECT pk_$table.NEXTVAL INTO :NEW.ID FROM DUAL; END;";

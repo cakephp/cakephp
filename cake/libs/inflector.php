@@ -121,7 +121,7 @@ class Inflector {
 			'/(shoe|slave)s$/i' => '\1',
 			'/(o)es$/i' => '\1',
 			'/ouses$/' => 'ouse',
-			'/uses$/' => 'us',
+			'/([^a])uses$/' => '\1us',
 			'/([m|l])ice$/i' => '\1ouse',
 			'/(x|ch|ss|sh)es$/i' => '\1',
 			'/(m)ovies$/i' => '\1\2ovie',
@@ -367,7 +367,10 @@ class Inflector {
 						} else {
 							$_this->{$var}[$rule] = array_merge($pattern, $_this->{$var}[$rule]);
 						}
-						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)], $_this->{$var}['merged'][$rule]);
+						unset($rules[$rule], $_this->{$var}['cache' . ucfirst($rule)]);
+						if (isset($_this->{$var}['merged'][$rule])) {
+							unset($_this->{$var}['merged'][$rule]);
+						}
 						if ($type === 'plural') {
 							$_this->_pluralized = $_this->_tableize = array();
 						} elseif ($type === 'singular') {

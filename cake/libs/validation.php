@@ -381,13 +381,13 @@ class Validation {
 		}
 
 		if ($return === true && preg_match('/@(' . self::$__pattern['hostname'] . ')$/i', $check, $regs)) {
-			$host = gethostbynamel($regs[1]);
-			$return = is_array($host);
-			$isWindows = (DIRECTORY_SEPARATOR === '\\');
-			if (!$isWindows || (version_compare(PHP_VERSION, '5.3.0', '>=') && $isWindows)) {
-				$return = $return && getmxrr($regs[1], $mxhosts);
+			if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
+				return true;
 			}
-			return $return;
+			if (function_exists('checkdnsrr') && checkdnsrr($regs[1], 'MX')) {
+				return true;
+			}
+			return is_array(gethostbynamel($regs[1]));
 		}
 		return false;
 	}

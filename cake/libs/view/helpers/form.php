@@ -211,7 +211,7 @@ class FormHelper extends AppHelper {
 			}
 		}
 
-		$object =& $this->_introspectModel($model);
+		$object = $this->_introspectModel($model);
 		$this->setEntity($model . '.', true);
 
 		$modelEntity = $this->model();
@@ -304,6 +304,7 @@ class FormHelper extends AppHelper {
 		unset($options['default']);
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
+		$this->fields = array();
 		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
 				'value' => $this->request['_Token']['key'], 'id' => 'Token' . mt_rand())
@@ -680,9 +681,10 @@ class FormHelper extends AppHelper {
  * - `after` - Content to place after the label + input.
  * - `between` - Content to place between the label + input.
  * - `format` - format template for element order. Any element that is not in the array, will not be in the output.
- *     Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
- *     Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
- *     Hidden input will not be formatted
+ *    - Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
+ *    - Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
+ *    - Hidden input will not be formatted
+ *    - Radio buttons cannot have the order of input and label elements controlled with these settings.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
@@ -735,7 +737,7 @@ class FormHelper extends AppHelper {
 					$options['type'] = 'hidden';
 				}
 			}
-			if (preg_match('/_id$/', $fieldKey)) {
+			if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
 				$options['type'] = 'select';
 			}
 

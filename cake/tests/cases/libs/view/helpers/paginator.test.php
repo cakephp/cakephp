@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -184,7 +184,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('title');
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
 
-
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('title');
@@ -195,7 +194,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
 
-
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'asc'));
@@ -212,6 +210,57 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
+
+		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc', 'class' => 'foo'));
+		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="foo asc">Title<\/a>$/', $result);
+	}
+
+/**
+ * test that sort() works with virtual field order options.
+ *
+ * @return void
+ */
+	function testSortLinkWithVirtualField() {
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
+			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
+		));
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('full_name' => 'asc');
+
+		$result = $this->Paginator->sort('Article.full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:desc', 'class' => 'asc'),
+			'Article.full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:full_name/direction:desc', 'class' => 'asc'),
+			'Full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('full_name' => 'desc');
+		$result = $this->Paginator->sort('Article.full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:Article.full_name/direction:asc', 'class' => 'desc'),
+			'Article.full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('full_name');
+		$expected = array(
+			'a' => array('href' => '/accounts/index/page:1/sort:full_name/direction:asc', 'class' => 'desc'),
+			'Full Name',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

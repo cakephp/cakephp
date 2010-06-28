@@ -6,14 +6,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
@@ -895,6 +895,30 @@ class ModelWriteTest extends BaseModelTest {
 		)));
 
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that a null Id doesn't cause errors
+ *
+ * @return void
+ */
+	function testSaveWithNullId() {
+		$this->loadFixtures('User');
+		$User =& new User();
+		$User->read(null, 1);
+		$User->data['User']['id'] = null;
+		$this->assertTrue($User->save(array('password' => 'test')));
+		$this->assertTrue($User->id > 0);
+
+		$result = $User->read(null, 2);
+		$User->data['User']['id'] = null;
+		$this->assertTrue($User->save(array('password' => 'test')));
+		$this->assertTrue($User->id > 0);
+
+		$User->data['User'] = array('password' => 'something');
+		$this->assertTrue($User->save());
+		$result = $User->read();
+		$this->assertEqual($User->data['User']['password'], 'something');
 	}
 
 /**
@@ -3006,6 +3030,34 @@ class ModelWriteTest extends BaseModelTest {
 					'user_id' => 1
 			))
 		), array('validate' => 'only'));
+	}
+
+/**
+ * test saveAll with transactions and ensure there is no missing rollback.
+ *
+ * @return void
+ */
+	function testSaveAllTransactionNoRollback() {
+		$this->loadFixtures('Post');
+
+		Mock::generate('DboSource', 'MockTransactionDboSource');
+		$db = ConnectionManager::create('mock_transaction', array(
+			'datasource' => 'MockTransactionDbo',
+		));
+		$db->expectOnce('rollback');
+
+		$Post =& new Post();
+		$Post->useDbConfig = 'mock_transaction';
+
+		$Post->validate = array(
+			'title' => array('rule' => array('notEmpty'))
+		);
+
+		$data = array(
+			array('author_id' => 1, 'title' => 'New Fourth Post'),
+			array('author_id' => 1, 'title' => '')
+		);
+		$Post->saveAll($data, array('atomic' => true));
 	}
 
 /**

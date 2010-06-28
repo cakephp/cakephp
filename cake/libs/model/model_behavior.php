@@ -80,7 +80,8 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return boolean True if the operation should continue, false if it should abort
+ * @return mixed False if the operation should abort. An array will replace the value of $query.
+ * @access public
  */
 	public function beforeFind(&$model, $query) { }
 
@@ -90,7 +91,8 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param mixed $results The results of the find operation
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
- * @return mixed Result of the find operation
+ * @return mixed An array value will replace the value of $results - any other value will be ignored.
+ * @access public
  */
 	public function afterFind(&$model, $results, $primary) { }
 
@@ -98,7 +100,8 @@ class ModelBehavior extends Object {
  * Before validate callback
  *
  * @param object $model Model using this behavior
- * @return boolean True if validate operation should continue, false to abort
+ * @return mixed False if the operation should abort. Any other result will continue.
+ * @access public
  */
 	public function beforeValidate(&$model) { }
 
@@ -106,7 +109,8 @@ class ModelBehavior extends Object {
  * Before save callback
  *
  * @param object $model Model using this behavior
- * @return boolean True if the operation should continue, false if it should abort
+ * @return mixed False if the operation should abort. Any other result will continue.
+ * @access public
  */
 	public function beforeSave(&$model) { }
 
@@ -123,7 +127,8 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param boolean $cascade If true records that depend on this record will also be deleted
- * @return boolean True if the operation should continue, false if it should abort
+ * @return mixed False if the operation should abort. Any other result will continue.
+ * @access public
  */
 	public function beforeDelete(&$model, $cascade = true) { }
 
@@ -167,7 +172,7 @@ class ModelBehavior extends Object {
 			case 5:
 				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
-				array_unshift($params, $model);
+				$params = array_merge(array(&$model), $params);
 				return call_user_func_array(array(&$this, $method), $params);
 			break;
 		}
@@ -361,6 +366,7 @@ class BehaviorCollection extends Object {
  * @return void
  */
 	public function detach($name) {
+		list($plugin, $name) = pluginSplit($name);
 		if (isset($this->{$name})) {
 			$this->{$name}->cleanup(ClassRegistry::getObject($this->modelName));
 			unset($this->{$name});
@@ -466,7 +472,6 @@ class BehaviorCollection extends Object {
 		if (empty($this->_attached)) {
 			return true;
 		}
-		$_params = $params;
 		$options = array_merge(array('break' => false, 'breakOn' => array(null, false), 'modParams' => false), $options);
 		$count = count($this->_attached);
 

@@ -6,14 +6,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
@@ -106,6 +106,16 @@ class EmailTestComponent extends EmailComponent {
  * @return string
  */
 	function getMessage() {
+		return $this->__message;
+	}
+
+/**
+ * Convenience getter for testing.
+ *
+ * @access protected
+ * @return string
+ */
+	function _getMessage() {
 		return $this->__message;
 	}
 
@@ -235,6 +245,30 @@ class EmailComponentTest extends CakeTestCase {
 	}
 
 /**
+ * testSmtpConfig method
+ *
+ * @access public
+ * @return void
+ */
+	function testSmtpConfig() {
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->Controller->EmailTest->smtpOptions = array();
+		$this->Controller->EmailTest->send('anything');
+		$config = array(
+			'host' => 'localhost',
+			'port' => 25,
+			'protocol' => 'smtp',
+			'timeout' => 30
+		);
+		$this->assertEqual($config, $this->Controller->EmailTest->smtpOptions);
+
+		$this->Controller->EmailTest->smtpOptions = array('port' => 80);
+		$this->Controller->EmailTest->send('anything');
+		$config['port'] = 80;
+		$this->assertEqual($config, $this->Controller->EmailTest->smtpOptions);
+	}
+
+/**
  * testBadSmtpSend method
  *
  * @access public
@@ -295,6 +329,62 @@ TEMPDOC;
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
 	}
 
+/**
+ * testSmtpEhlo method
+ *
+ * @access public
+ * @return void
+ */
+	function testSmtpEhlo() {
+		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
+
+		$connection =& new CakeSocket(array('protocol'=>'smtp', 'host' => 'localhost', 'port' => 25));
+		$this->Controller->EmailTest->setConnectionSocket($connection);
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
+		$this->assertTrue($connection->connect());
+		$this->assertTrue($this->Controller->EmailTest->smtpSend(null, '220') !== false);
+		$this->skipIf($this->Controller->EmailTest->smtpSend('EHLO locahost', '250') === false, '%s do not support EHLO.');
+		$connection->disconnect();
+
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+
+		$this->Controller->EmailTest->delivery = 'smtp';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+
+		$this->Controller->EmailTest->_debug = true;
+		$this->Controller->EmailTest->sendAs = 'text';
+		$expect = <<<TEMPDOC
+<pre>Host: localhost
+Port: 25
+Timeout: 30
+To: postmaster@localhost
+From: noreply@example.com
+Subject: Cake SMTP test
+Header:
+
+To: postmaster@localhost
+From: noreply@example.com
+Reply-To: noreply@example.com
+Subject: Cake SMTP test
+X-Mailer: CakePHP Email Component
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bitParameters:
+
+Message:
+
+This is the body of the message
+
+</pre>
+TEMPDOC;
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+	}
 
 /**
  * testSmtpSendMultipleTo method
@@ -545,6 +635,7 @@ TEXTBLOC;
 	function testSmtpSendSocket() {
 		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
 		$socket =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
 		$this->Controller->EmailTest->setConnectionSocket($socket);
 
@@ -994,4 +1085,35 @@ HTMLBLOC;
 		$this->assertNoPattern('/Message-ID:/', $result);
 	}
 
+/**
+ * testSendMessage method
+ *
+ * @access public
+ * @return void
+ */
+	function testSendMessage() {
+		$this->Controller->EmailTest->delivery = 'getMessage';
+		$this->Controller->EmailTest->lineLength = 70;
+
+		$text = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+		$this->Controller->EmailTest->sendAs = 'text';
+		$result = $this->Controller->EmailTest->send($text);
+		$expected = array(
+			'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do',
+			'eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+			'',
+			''
+		);
+		$this->assertEqual($expected, $result);
+
+		$text = 'Lorem ipsum dolor sit amet, <b>consectetur</b> adipisicing elit, sed do <span>eiusmod tempor</span> incididunt ut labore et dolore magna aliqua.';
+		$this->Controller->EmailTest->sendAs = 'html';
+		$result = $this->Controller->EmailTest->send($text);
+		$expected = array(
+			$text,
+			'',
+			''
+		);
+		$this->assertEqual($expected, $result);
+	}
 }

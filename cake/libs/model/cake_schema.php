@@ -241,7 +241,6 @@ class CakeSchema extends Object {
 				if (is_object($Object) && $Object->useTable !== false) {
 					$Object->setDataSource($connection);
 					$table = $db->fullTableName($Object, false);
-
 					if (in_array($table, $currentTables)) {
 						$key = array_search($table, $currentTables);
 						if (empty($tables[$table])) {
@@ -258,7 +257,7 @@ class CakeSchema extends Object {
 								if (is_object($Object->$class)) {
 									$withTable = $db->fullTableName($Object->$class, false);
 									if (in_array($withTable, $currentTables)) {
-										$key = array_search($table, $currentTables);
+										$key = array_search($withTable, $currentTables);
 										$tables[$withTable] = $this->__columns($Object->$class);
 										$tables[$withTable]['indexes'] = $db->index($Object->$class);
 										$tables[$withTable]['tableParameters'] = $db->readTableParameters($withTable);
@@ -444,7 +443,7 @@ class CakeSchema extends Object {
 		$tables = array();
 		foreach ($new as $table => $fields) {
 			if ($table == 'missing') {
-				break;
+				continue;
 			}
 			if (!array_key_exists($table, $old)) {
 				$tables[$table]['add'] = $fields;

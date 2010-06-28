@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * CakePHP Console Shell
  *
  * PHP versions 4 and 5
  *

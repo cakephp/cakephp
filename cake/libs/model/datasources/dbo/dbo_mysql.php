@@ -507,9 +507,9 @@ class DboMysqlBase extends DboSource {
 class DboMysql extends DboMysqlBase {
 
 /**
- * Enter description here...
+ * Datasource description
  *
- * @var unknown_type
+ * @var string
  */
 	public $description = "MySQL DBO Driver";
 
@@ -726,8 +726,8 @@ class DboMysql extends DboMysqlBase {
 		$j = 0;
 
 		while ($j < $numFields) {
-			$column = mysql_fetch_field($results,$j);
-			if (!empty($column->table)) {
+			$column = mysql_fetch_field($results, $j);
+			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column->table, $column->name);
 			} else {
 				$this->map[$index++] = array(0, $column->name);

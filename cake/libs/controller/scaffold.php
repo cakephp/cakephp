@@ -474,11 +474,17 @@ if (!class_exists('ThemeView')) {
 	App::import('View', 'Theme');
 }
 
+/**
+ * ScaffoldView provides specific view file loading features for scaffolded views.
+ *
+ * @package cake.libs.view
+ */
 class ScaffoldView extends ThemeView {
 
 /**
- * Override _getViewFileName
+ * Override _getViewFileName Appends special scaffolding views in.
  *
+ * @param string $name name of the view file to get.
  * @return string action
  */
 	protected function _getViewFileName($name = null) {

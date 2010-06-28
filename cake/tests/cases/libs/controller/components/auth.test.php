@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5347
@@ -1426,6 +1426,16 @@ class AuthTest extends CakeTestCase {
 		$this->assertEqual($user, $expected);
 		$sessionKey = $this->Controller->Auth->sessionKey;
 		$this->assertEqual('Auth.TestPluginAuthUser', $sessionKey);
+		
+		$this->Controller->Auth->loginAction = null;
+		$this->Controller->Auth->__setDefaults();
+		$loginAction = $this->Controller->Auth->loginAction;
+		$expected = array(
+		    'controller'	=> 'test_plugin_auth_users',
+		    'action'		=> 'login',
+		    'plugin'		=> 'test_plugin'
+		);
+		$this->assertEqual($loginAction, $expected);
 
 		// Reverting changes
 		Cache::delete('object_map', '_cake_core_');
@@ -1451,7 +1461,7 @@ class AuthTest extends CakeTestCase {
 		$Dispatcher =& new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
 		$result = ob_get_clean();
-		$this->assertEqual("Ajax!\nthis is the test element", $result);
+		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
 

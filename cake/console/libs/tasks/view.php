@@ -195,6 +195,7 @@ class ViewTask extends BakeTask {
 					$actions = $this->_methodsToBake();
 				}
 				$this->bakeActions($actions, $vars);
+				$actions = null;
 			}
 		}
 	}
@@ -290,7 +291,7 @@ class ViewTask extends BakeTask {
 			$primaryKey = $modelObj->primaryKey;
 			$displayField = $modelObj->displayField;
 			$singularVar = Inflector::variable($modelClass);
-			$singularHumanName = $this->_singularHumanName($modelClass);
+			$singularHumanName = $this->_singularHumanName($this->controllerName);
 			$schema = $modelObj->schema(true);
 			$fields = array_keys($schema);
 			$associations = $this->__associations($modelObj);

@@ -115,20 +115,20 @@ class CakeSession extends Object {
 	public $id = null;
 
 /**
- * Session Started
- *
- * @var boolean
- * @access protected
- */
-	protected $_started = false;
-
-/**
  * Hostname
  *
  * @var string
  * @access public
  */
 	public $host = null;
+
+/**
+ * Session timeout multiplier factor
+ *
+ * @var ineteger
+ * @access public
+ */
+	public $timeout = null;
 
 /**
  * Constructor.
@@ -206,7 +206,7 @@ class CakeSession extends Object {
 			session_write_close();
 		}
 		$this->__initSession();
-		$this->_started = $this->__startSession();
+		$this->__startSession();
 		return $this->started();
 	}
 
@@ -217,7 +217,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (isset($_SESSION) && $this->_started) {
+		if (isset($_SESSION) && session_id()) {
 			return true;
 		}
 		return false;
@@ -448,29 +448,13 @@ class CakeSession extends Object {
  */
 	function __initSession() {
 		$iniSet = function_exists('ini_set');
-
 		if ($iniSet && env('HTTPS')) {
 			ini_set('session.cookie_secure', 1);
 		}
-
-		switch ($this->security) {
-			case 'high':
-				$this->cookieLifeTime = 0;
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'medium':
-				$this->cookieLifeTime = 7 * 86400;
-				if ($iniSet) {
-					ini_set('session.referer_check', $this->host);
-				}
-			break;
-			case 'low':
-			default:
-				$this->cookieLifeTime = 788940000;
-			break;
+		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
+			ini_set('session.referer_check', $this->host);
 		}
+		$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
@@ -591,15 +575,14 @@ class CakeSession extends Object {
 			if ((Configure::read('Session.checkAgent') === false || $this->_userAgent == $this->read('Config.userAgent')) && $this->time <= $this->read('Config.time')) {
 				$time = $this->read('Config.time');
 				$this->write('Config.time', $this->sessionTime);
-
 				if (Configure::read('Security.level') === 'high') {
 					$check = $this->read('Config.timeout');
-					$check = $check - 1;
+					$check -= 1;
 					$this->write('Config.timeout', $check);
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
-						$this->write('Config.timeout', 10);
+						$this->write('Config.timeout', Security::inactiveMins());
 					}
 				}
 				$this->valid = true;
@@ -611,7 +594,7 @@ class CakeSession extends Object {
 		} else {
 			$this->write('Config.userAgent', $this->_userAgent);
 			$this->write('Config.time', $this->sessionTime);
-			$this->write('Config.timeout', 10);
+			$this->write('Config.timeout', Security::inactiveMins());
 			$this->valid = true;
 			$this->__setError(1, 'Session is valid');
 		}
@@ -738,21 +721,7 @@ class CakeSession extends Object {
  * @access private
  */
 	function __write($id, $data) {
-		switch (Configure::read('Security.level')) {
-			case 'medium':
-				$factor = 100;
-			break;
-			case 'low':
-				$factor = 300;
-			break;
-			case 'high':
-			default:
-				$factor = 10;
-			break;
-		}
-
-		$expires = time() + Configure::read('Session.timeout') * $factor;
-
+		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
 		return $return;
@@ -788,5 +757,5 @@ class CakeSession extends Object {
 
 		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
 		return $return;
-	 }
+	}
 }

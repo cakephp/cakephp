@@ -4,14 +4,14 @@
  *
  * PHP versions 4 and 5
  *
- * CakePHP(tm) Tests <https://trac.cakephp.org/wiki/Developement/TestSuite>
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          https://trac.cakephp.org/wiki/Developement/TestSuite CakePHP(tm) Tests
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
@@ -271,6 +271,34 @@ class FileEngineTest extends CakeTestCase {
 		clearCache('controller_view');
 
 		Cache::config('default', array('engine' => 'File', 'path' => CACHE));
+	}
+
+/**
+ * test that clear() doesn't wipe files not in the current engine's prefix.
+ *
+ * @return void
+ */
+	function testClearWithPrefixes() {
+		$FileOne =& new FileEngine();
+		$FileOne->init(array(
+			'prefix' => 'prefix_one_',
+			'duration' => DAY
+		));
+		$FileTwo =& new FileEngine();
+		$FileTwo->init(array(
+			'prefix' => 'prefix_two_',
+			'duration' => DAY
+		));
+
+		$data1 = $data2 = $expected = 'content to cache';
+		$FileOne->write('key_one', $data1, DAY);
+		$FileTwo->write('key_two', $data2, DAY);
+
+		$this->assertEqual($FileOne->read('key_one'), $expected);
+		$this->assertEqual($FileTwo->read('key_two'), $expected);
+
+		$FileOne->clear(false);
+		$this->assertEqual($FileTwo->read('key_two'), $expected, 'secondary config was cleared by accident.');
 	}
 
 /**

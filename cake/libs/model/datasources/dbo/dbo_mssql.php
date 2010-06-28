@@ -19,7 +19,7 @@
  */
 
 /**
- * Short description for class.
+ * MS SQL layer for DBO
  *
  * Long description for class
  *

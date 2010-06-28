@@ -1,6 +1,6 @@
 <?php
 /**
- * Short description for file.
+ * Path configuration
  *
  * In this file you set paths to different directories used by Cake.
  *

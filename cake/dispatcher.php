@@ -147,6 +147,7 @@ class Dispatcher extends Object {
 				'base' => $request->base
 			)));
 		}
+
 		return $this->_invoke($controller, $request);
 	}
 
