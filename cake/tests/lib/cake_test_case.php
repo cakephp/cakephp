@@ -382,7 +382,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 * @return void
 */
 	protected function assertIdentical($expected, $actual, $message = '') {
-		return $this->assertEquals($expected, $actual, $message);
+		return $this->assertSame($expected, $actual, $message);
 	}
 
 /**
@@ -393,7 +393,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 * @return void
 */
 	protected function assertNotIdentical($expected, $actual, $message = '') {
-		return $this->assertNotEquals($expected, $actual, $message);
+		return $this->assertNotSame($expected, $actual, $message);
 	}
 /**
 * Compatibility wrapper function for assertNotRegExp
