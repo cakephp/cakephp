@@ -1805,7 +1805,7 @@ class FormHelperTest extends CakeTestCase {
 	function testInputWithLeadingInteger() {
 		$result = $this->Form->text('0.Node.title');
 		$expected = array(
-			'input' => array('name' => 'data[0][Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
+			'input' => array('name' => 'data[0][Node][title]', 'id' => '0NodeTitle', 'value' => '', 'type' => 'text')
 		);
 		$this->assertTags($result, $expected);
 	}
