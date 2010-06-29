@@ -593,6 +593,7 @@ class HtmlHelper extends AppHelper {
 		if (!empty($this->_crumbs)) {
 			$result = '';
 			$crumbCount = count($this->_crumbs);
+			$ulOptions = $options;
 			foreach ($this->_crumbs as $which => $crumb) {
 				$options = array();
 				if (empty($crumb[1])) {
@@ -607,7 +608,7 @@ class HtmlHelper extends AppHelper {
 				}
 				$result .= $this->tag('li', $elementContent, $options);
 			}
-			return $this->tag('ul', $result, $options);
+			return $this->tag('ul', $result, $ulOptions);
 		} else {
 			return null;
 		}
