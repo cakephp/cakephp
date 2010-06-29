@@ -304,10 +304,7 @@ class TestManager {
  * @return string Extension suffix for test.
  */
 	public static function getExtension($type = 'test') {
-		if ($type == 'test' || $type == 'case') {
-			return self::$_testExtension;
-		}
-		return self::$_groupExtension;
+		return self::$_testExtension;
 	}
 
 /**
