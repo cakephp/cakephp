@@ -139,7 +139,7 @@ class CakeTestSuiteDispatcher {
 
 		if (!$found) {
 			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates/simpletest.php';
+			include CAKE_TESTS_LIB . 'templates/phpunit.php';
 			exit();
 		}
 
