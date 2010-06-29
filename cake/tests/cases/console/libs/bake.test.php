@@ -36,26 +36,13 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'db_config.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'BakeShellMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'BakeShell', 'MockBakeShell',
-	array('in', 'hr', 'out', 'err', 'createFile', '_stop', '_checkUnitTest')
-);
-
-Mock::generate('DbConfigTask', 'BakeShellMockDbConfigTask');
-Mock::generate('ModelTask', 'BakeShellMockModelTask');
-Mock::generate('ControllerTask', 'BakeShellMockControllerTask');
-
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {
 		public $name = 'Users';
 	}
 }
 
-class BakeShellTestCase extends CakeTestCase {
+class BakeShellTest extends CakeTestCase {
 
 /**
  * fixtures
@@ -71,9 +58,15 @@ class BakeShellTestCase extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatch =& new BakeShellMockShellDispatcher();
-		$this->Shell =& new MockBakeShell();
-		$this->Shell->Dispatch =& $this->Dispatch;
+		$this->Dispatcher = $this->getMock(
+			'ShellDispatcher', 
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+		);
+		$this->Shell = $this->getMock(
+			'BakeShell',
+			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
+			array(&$this->Dispatcher)
+		);
 		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}
 
@@ -97,28 +90,24 @@ class BakeShellTestCase extends CakeTestCase {
 		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {
 			return;
 		}
-		$this->Shell->Model =& new BakeShellMockModelTask();
-		$this->Shell->Controller =& new BakeShellMockControllerTask();
-		$this->Shell->View =& new BakeShellMockModelTask();
-		$this->Shell->DbConfig =& new BakeShellMockDbConfigTask();
+		$this->Shell->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatch));
+		$this->Shell->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatch));
+		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatch));
+		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatch));
 
-		$this->Shell->DbConfig->expectOnce('getConfig');
-		$this->Shell->DbConfig->setReturnValue('getConfig', 'test_suite');
+		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test_suite'));
+	
+		$this->Shell->Model->expects($this->never())->method('getName');
+		$this->Shell->Model->expects($this->once())->method('bake')->will($this->returnValue(true));
+	
+		$this->Shell->Controller->expects($this->once())->method('bake')->will($this->returnValue(true));
+		$this->Shell->View->expects($this->once())->method('execute');
 
-		$this->Shell->Model->setReturnValue('bake', true);
-		$this->Shell->Model->expectNever('getName');
-		$this->Shell->Model->expectOnce('bake');
-
-		$this->Shell->Controller->expectOnce('bake');
-		$this->Shell->Controller->setReturnValue('bake', true);
-
-		$this->Shell->View->expectOnce('execute');
-
-		$this->Shell->expectAt(0, 'out', array('Bake All'));
-		$this->Shell->expectAt(1, 'out', array('User Model was baked.'));
-		$this->Shell->expectAt(2, 'out', array('User Controller was baked.'));
-		$this->Shell->expectAt(3, 'out', array('User Views were baked.'));
-		$this->Shell->expectAt(4, 'out', array('Bake All complete'));
+		$this->Shell->expects($this->at(1))->method('out')->with('Bake All');
+		$this->Shell->expects($this->at(3))->method('out')->with('User Model was baked.');
+		$this->Shell->expects($this->at(5))->method('out')->with('User Controller was baked.');
+		$this->Shell->expects($this->at(7))->method('out')->with('User Views were baked.');
+		$this->Shell->expects($this->at(8))->method('out')->with('Bake All complete');
 
 		$this->Shell->params = array();
 		$this->Shell->args = array('User');

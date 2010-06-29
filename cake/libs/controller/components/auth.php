@@ -925,4 +925,18 @@ class AuthComponent extends Object {
 			$this->Session->delete('Auth.redirect');
 		}
 	}
+
+/**
+ * Sets or gets whether the user is logged in
+ *
+ * @param boolean $logged sets the status of the user, true to logged in, false to logged out
+ * @return boolean true if the user is logged in, false otherwise
+ * @access public
+ */
+	public function loggedIn($logged = null) {
+		if (!is_null($logged)) {
+			$this->_loggedIn = $logged;
+		}
+		return $this->_loggedIn;
+	}
 }

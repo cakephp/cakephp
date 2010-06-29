@@ -408,6 +408,8 @@ class Dispatcher extends Object {
 		if ($ext === 'css' || $ext === 'js') {
 			include($assetFile);
 		} else {
+			ob_clean();
+			flush();
 			readfile($assetFile);
 		}
 

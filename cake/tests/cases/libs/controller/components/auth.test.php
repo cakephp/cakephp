@@ -21,8 +21,6 @@ App::import('Component', array('Auth', 'Acl'));
 App::import('Model', 'DbAcl');
 App::import('Core', 'Xml');
 
-Mock::generate('AclComponent', 'AuthTestMockAclComponent');
-
 /**
 * TestAuthComponent class
 *
@@ -479,12 +477,14 @@ class AuthTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
 		$this->_server = $_SERVER;
 		$this->_env = $_ENV;
 
 		$this->_securitySalt = Configure::read('Security.salt');
-		Configure::write('Security.salt', 'JfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+		$this->_securityCipher = Configure::read('Security.cipherSeed');
+		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
+		Configure::write('Security.cipherSeed', 770011223369876);
 
 		$this->_acl = Configure::read('Acl');
 		Configure::write('Acl.database', 'test_suite');
@@ -513,11 +513,12 @@ class AuthTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
 		$_SERVER = $this->_server;
 		$_ENV = $this->_env;
 		Configure::write('Acl', $this->_acl);
 		Configure::write('Security.salt', $this->_securitySalt);
+		Configure::write('Security.cipherSeed', $this->_securityCipher);
 
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
@@ -598,7 +599,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 
 		$user = $this->Controller->Auth->user();
-		$this->assertFalse($user);
+		$this->assertNull($user);
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->request->data['AuthUser'] = array(
@@ -608,7 +609,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 
 		$user = $this->Controller->Auth->user();
-		$this->assertFalse($user);
+		$this->assertNull($user);
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->request->data['AuthUser'] = array(
@@ -618,7 +619,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->startup($this->Controller);
 
 		$user = $this->Controller->Auth->user();
-		$this->assertFalse($user);
+		$this->assertNull($user);
 		$this->Controller->Session->delete('Auth');
 
 		$this->Controller->Auth->userModel = 'UuidUser';
@@ -664,7 +665,7 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAuthorizeFalse() {
-		$this->AuthUser =& new AuthUser();
+		$this->AuthUser = new AuthUser();
 		$user = $this->AuthUser->find();
 		$this->Controller->Session->write('Auth', $user);
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -752,13 +753,13 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Acl->Aro->id = null;
 		$this->Controller->Acl->Aro->create(array('alias' => 'Roles'));
 		$result = $this->Controller->Acl->Aro->save();
-		$this->assertTrue($result);
+		$this->assertFalse(empty($result));
 
 		$parent = $this->Controller->Acl->Aro->id;
 
 		$this->Controller->Acl->Aro->create(array('parent_id' => $parent, 'alias' => 'Admin'));
 		$result = $this->Controller->Acl->Aro->save();
-		$this->assertTrue($result);
+		$this->assertFalse(empty($result));
 
 		$parent = $this->Controller->Acl->Aro->id;
 
@@ -766,17 +767,17 @@ class AuthTest extends CakeTestCase {
 			'model' => 'AuthUser', 'parent_id' => $parent, 'foreign_key' => 1, 'alias'=> 'mariano'
 		));
 		$result = $this->Controller->Acl->Aro->save();
-		$this->assertTrue($result);
+		$this->assertFalse(empty($result));
 
 		$this->Controller->Acl->Aco->create(array('alias' => 'Root'));
 		$result = $this->Controller->Acl->Aco->save();
-		$this->assertTrue($result);
+		$this->assertFalse(empty($result));
 
 		$parent = $this->Controller->Acl->Aco->id;
 
 		$this->Controller->Acl->Aco->create(array('parent_id' => $parent, 'alias' => 'AuthTest'));
 		$result = $this->Controller->Acl->Aco->save();
-		$this->assertTrue($result);
+		$this->assertFalse(empty($result));
 
 		$this->Controller->Acl->allow('Roles/Admin', 'Root');
 		$this->Controller->Acl->allow('Roles/Admin', 'Root/AuthTest');
@@ -807,8 +808,8 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->request['controller'] = 'auth_test';
 		$this->Controller->request['action'] = 'add';
 
-		$this->Controller->Acl = new AuthTestMockAclComponent();
-		$this->Controller->Acl->setReturnValue('check', true);
+		$this->Controller->Acl = $this->getMock('AclComponent');
+		$this->Controller->Acl->expects($this->atLeastOnce())->method('check')->will($this->returnValue(true));
 
 		$this->Controller->Auth->initialize($this->Controller);
 
@@ -816,9 +817,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->authorize = 'actions';
 		$this->Controller->Auth->actionPath = 'Root/';
 
-		$this->Controller->Acl->expectAt(0, 'check', array(
-			$user, 'Root/AuthTest/add'
-		));
+		$this->Controller->Acl->expects($this->at(0))->method('check')->with($user, 'Root/AuthTest/add');
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue($this->Controller->Auth->isAuthorized());
@@ -1398,7 +1397,7 @@ class AuthTest extends CakeTestCase {
 		), true);
 		App::objects('plugin', null, false);
 
-		$PluginModel =& ClassRegistry::init('TestPlugin.TestPluginAuthUser');
+		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
 		$user['id'] = 1;
 		$user['username'] = 'gwoo';
 		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
@@ -1458,7 +1457,7 @@ class AuthTest extends CakeTestCase {
 		}
 
 		ob_start();
-		$Dispatcher =& new Dispatcher();
+		$Dispatcher = new Dispatcher();
 		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
 		$result = ob_get_clean();
 		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
@@ -1511,8 +1510,10 @@ class AuthTest extends CakeTestCase {
 	function testShutDown() {
 		$this->Controller->Auth->initialize($this->Controller, array('_loggedIn' => true));
 		$this->Controller->Session->write('Auth.redirect', 'foo');
+		$this->Controller->Auth->loggedIn(true);
+
 		$this->Controller->Auth->shutdown($this->Controller);
-		$this->assertFalse($this->Controller->Session->read('Auth.redirect'));
+		$this->assertNull($this->Controller->Session->read('Auth.redirect'));
 	}
 
 /**
@@ -1542,8 +1543,10 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testComponentSettings() {
+
 		$request = new CakeRequest(null, false);
 		$this->Controller = new AuthTestController($request);
+
 		$this->Controller->components = array(
 			'Auth' => array(
 				'fields' => array('username' => 'email', 'password' => 'password'),
@@ -1557,7 +1560,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Component->initialize($this->Controller);
 		Router::reload();
 
-		$this->AuthUserCustomField =& new AuthUserCustomField();
+		$this->AuthUserCustomField = new AuthUserCustomField();
 		$user = array(
 			'id' => 1, 'email' => 'harking@example.com',
 			'password' => Security::hash(Configure::read('Security.salt') . 'cake'

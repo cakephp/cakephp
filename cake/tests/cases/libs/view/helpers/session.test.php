@@ -37,7 +37,7 @@ class SessionHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
 		$this->Session = new SessionHelper();
 
 		$_SESSION = array(
@@ -77,27 +77,9 @@ class SessionHelperTest extends CakeTestCase {
 	function tearDown() {
 		$_SESSION = array();
 		unset($this->Session);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		App::build();
 	}
 
-/**
- * test construction and initial property settings
- *
- * @return void
- */
-	function testConstruct() {
-		$this->assertFalse(empty($this->Session->sessionTime));
-		$this->assertFalse(empty($this->Session->security));
-	}
 /**
  * testRead method
  *
@@ -220,7 +202,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertFalse($this->Session->flash('bare'));
 		$result = ob_get_contents();
 		ob_clean();
-		$this->assertFalse($result);
+		$this->assertEquals($result, '');
 	}
 
 /**

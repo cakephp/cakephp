@@ -1133,7 +1133,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testExtensionParsingSetting() {
-		$this->assertFalse(Router::extensions());
+		$this->assertEquals(array(), Router::extensions());
 
 		Router::parseExtensions('rss');
 		$this->assertEqual(Router::extensions(), array('rss'));
@@ -2083,7 +2083,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testUsingCustomRouteClass() {
-		Mock::generate('CakeRoute', 'MockConnectedRoute');
+		$mock = $this->getMock('CakeRoute', array(), array(), 'MockConnectedRoute', false);
 		$routes = Router::connect(
 			'/:slug',
 			array('controller' => 'posts', 'action' => 'view'),
@@ -2091,7 +2091,9 @@ class RouterTest extends CakeTestCase {
 		);
 		$this->assertTrue(is_a($routes[0], 'MockConnectedRoute'), 'Incorrect class used. %s');
 		$expected = array('controller' => 'posts', 'action' => 'view', 'slug' => 'test');
-		$routes[0]->setReturnValue('parse', $expected);
+		$routes[0]->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($expected));
 		$result = Router::parse('/test');
 		$this->assertEqual($result, $expected);
 	}
@@ -2156,7 +2158,7 @@ class RouterTest extends CakeTestCase {
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/eng/posts/view/1?foo=bar&baz=quu');
-		
+
 		$request = new CakeRequest('/eng/posts/view/1');
 		$request->addParams(array(
 			'lang' => 'eng',
@@ -2194,6 +2196,3 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result->webroot, '/');
 	}
 }
-
-
-?>

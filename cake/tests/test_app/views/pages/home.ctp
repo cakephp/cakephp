@@ -1,10 +1,4 @@
 <h2>Sweet, "Test App" got Baked by CakePHP!</h2>
-
-<?php
-if (Configure::read() > 0):
-	Debugger::checkSecurityKeys();
-endif;
-?>
 <p>
 <?php
 	if (is_writable(TMP)):
@@ -20,7 +14,7 @@ endif;
 </p>
 <p>
 <?php
-	$settings = Cache::settings();
+	$settings = array();
 	if (!empty($settings)):
 		echo '<span class="notice success">';
 			printf(__('The %s is being used for caching. To change the config edit APP/config/core.php '), '<em>'. $settings['engine'] . 'Engine</em>');
@@ -54,12 +48,10 @@ if (!empty($filePresent)):
 	if (!class_exists('ConnectionManager')) {
 		require LIBS . 'model' . DS . 'connection_manager.php';
 	}
-	$db = ConnectionManager::getInstance();
- 	$connected = $db->getDataSource('default');
 ?>
 <p>
 <?php
-	if ($connected->isConnected()):
+	if (true):
 		echo '<span class="notice success">';
  			echo __('Cake is able to connect to the database.');
 		echo '</span>';

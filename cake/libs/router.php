@@ -60,7 +60,7 @@ class Router {
  * @var array
  * @access private
  */
-	protected static $_validExtensions = null;
+	protected static $_validExtensions = array();
 
 /**
  * 'Constant' regular expression definitions for named route elements

@@ -40,7 +40,7 @@ class DbConfigTask extends Shell {
  * @var array
  * @access private
  */
-	private $__defaultConfig = array(
+	protected $_defaultConfig = array(
 		'name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
 		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
 		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null
@@ -174,9 +174,10 @@ class DbConfigTask extends Shell {
 
 			$config = compact('name', 'driver', 'persistent', 'host', 'login', 'password', 'database', 'prefix', 'encoding', 'port', 'schema');
 
-			while ($this->__verify($config) == false) {
+			while ($this->_verify($config) == false) {
 				$this->_interactive();
 			}
+
 			$dbConfigs[] = $config;
 			$doneYet = $this->in('Do you wish to add another database configuration?', null, 'n');
 
@@ -195,8 +196,8 @@ class DbConfigTask extends Shell {
  *
  * @return boolean True if user says it looks good, false otherwise
  */
-	private function __verify($config) {
-		$config = array_merge($this->__defaultConfig, $config);
+	protected function _verify($config) {
+		$config = array_merge($this->_defaultConfig, $config);
 		extract($config);
 		$this->out();
 		$this->hr();
@@ -257,7 +258,7 @@ class DbConfigTask extends Shell {
 			$temp = get_class_vars(get_class($db));
 
 			foreach ($temp as $configName => $info) {
-				$info = array_merge($this->__defaultConfig, $info);
+				$info = array_merge($this->_defaultConfig, $info);
 
 				if (!isset($info['schema'])) {
 					$info['schema'] = null;

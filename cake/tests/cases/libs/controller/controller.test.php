@@ -22,8 +22,6 @@ App::import('Core', 'CakeRequest');
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
 
-Mock::generate('CakeRequest', 'ControllerMockCakeRequest');
-
 /**
  * AppController class
  *
@@ -474,6 +472,7 @@ class ControllerTest extends CakeTestCase {
 	function testConstructClasses() {
 		$request = new CakeRequest('controller_posts/index');
 		$Controller = new Controller($request);
+
 		$Controller->modelClass = 'ControllerPost';
 		$Controller->passedArgs[] = '1';
 		$Controller->constructClasses();
@@ -530,9 +529,8 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testPersistent() {
-		if ($this->skipIf(true, 'Skipping, private access related issues in Controller cause this to puke.')) {
-			return false;
-		}
+		$this->markTestIncomplete('persistModel is totally broken right now.');
+
 		Configure::write('Cache.disable', false);
 		$Controller = new Controller();
 		$Controller->modelClass = 'ControllerPost';
@@ -647,6 +645,7 @@ class ControllerTest extends CakeTestCase {
 		$request->params['pass'] = $request->params['named'] = array();
 
 		$Controller = new Controller($request);
+
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
@@ -817,6 +816,7 @@ class ControllerTest extends CakeTestCase {
  */
 	function testFlash() {
 		$request = new CakeRequest('controller_posts/index');
+
 		$Controller = new Controller($request);
 		$Controller->flash('this should work', '/flash');
 		$result = $Controller->output;
@@ -857,6 +857,7 @@ class ControllerTest extends CakeTestCase {
 	function testControllerSet() {
 		$request = new CakeRequest('controller_posts/index');
 		$Controller = new Controller($request);
+
 		$Controller->set('variable_with_underscores', null);
 		$this->assertTrue(array_key_exists('variable_with_underscores', $Controller->viewVars));
 
@@ -896,6 +897,7 @@ class ControllerTest extends CakeTestCase {
 		), true);
 		$request = new CakeRequest('controller_posts/index');
 
+
 		$Controller = new Controller($request);
 		$Controller->viewPath = 'posts';
 
@@ -919,6 +921,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
+
 		App::build();
 	}
 
@@ -939,134 +942,141 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * Generates status codes for redirect test.
+ *
+ * @return void
+ */
+	public static function statusCodeProvider() {
+		return array(
+			array(100, "Continue"),
+			array(101, "Switching Protocols"),
+			array(200, "OK"),
+			array(201, "Created"),
+			array(202, "Accepted"),
+			array(203, "Non-Authoritative Information"),
+			array(204, "No Content"),
+			array(205, "Reset Content"),
+			array(206, "Partial Content"),
+			array(300, "Multiple Choices"),
+			array(301, "Moved Permanently"),
+			array(302, "Found"),
+			array(303, "See Other"),
+			array(304, "Not Modified"),
+			array(305, "Use Proxy"),
+			array(307, "Temporary Redirect"),
+			array(400, "Bad Request"),
+			array(401, "Unauthorized"),
+			array(402, "Payment Required"),
+			array(403, "Forbidden"),
+			array(404, "Not Found"),
+			array(405, "Method Not Allowed"),
+			array(406, "Not Acceptable"),
+			array(407, "Proxy Authentication Required"),
+			array(408, "Request Time-out"),
+			array(409, "Conflict"),
+			array(410, "Gone"),
+			array(411, "Length Required"),
+			array(412, "Precondition Failed"),
+			array(413, "Request Entity Too Large"),
+			array(414, "Request-URI Too Large"),
+			array(415, "Unsupported Media Type"),
+			array(416, "Requested range not satisfiable"),
+			array(417, "Expectation Failed"),
+			array(500, "Internal Server Error"),
+			array(501, "Not Implemented"),
+			array(502, "Bad Gateway"),
+			array(503, "Service Unavailable"),
+			array(504, "Gateway Time-out"),
+		);
+	}
+
+/**
  * testRedirect method
  *
+ * @dataProvider statusCodeProvider
  * @access public
  * @return void
  */
-	function testRedirect() {
-		$codes = array(
-			100 => "Continue",
-			101 => "Switching Protocols",
-			200 => "OK",
-			201 => "Created",
-			202 => "Accepted",
-			203 => "Non-Authoritative Information",
-			204 => "No Content",
-			205 => "Reset Content",
-			206 => "Partial Content",
-			300 => "Multiple Choices",
-			301 => "Moved Permanently",
-			302 => "Found",
-			303 => "See Other",
-			304 => "Not Modified",
-			305 => "Use Proxy",
-			307 => "Temporary Redirect",
-			400 => "Bad Request",
-			401 => "Unauthorized",
-			402 => "Payment Required",
-			403 => "Forbidden",
-			404 => "Not Found",
-			405 => "Method Not Allowed",
-			406 => "Not Acceptable",
-			407 => "Proxy Authentication Required",
-			408 => "Request Time-out",
-			409 => "Conflict",
-			410 => "Gone",
-			411 => "Length Required",
-			412 => "Precondition Failed",
-			413 => "Request Entity Too Large",
-			414 => "Request-URI Too Large",
-			415 => "Unsupported Media Type",
-			416 => "Requested range not satisfiable",
-			417 => "Expectation Failed",
-			500 => "Internal Server Error",
-			501 => "Not Implemented",
-			502 => "Bad Gateway",
-			503 => "Service Unavailable",
-			504 => "Gateway Time-out"
-		);
+	function testRedirectByCode($code, $msg) {
+		$Controller = $this->getMock('Controller', array('header'));
 
-		Mock::generatePartial('Controller', 'MockController', array('header'));
-		Mock::generate('TestComponent', 'MockTestComponent');
-		Mock::generate('TestComponent', 'MockTestBComponent');
 
-		App::import('Helper', 'Cache');
+		$Controller->Component = new Component();
+		$Controller->Component->init($Controller);
+		$Controller->expects($this->at(0))->method('header')
+			->with("HTTP/1.1 {$code} {$msg}");
 
-		foreach ($codes as $code => $msg) {
-			$MockController = new MockController();
-			$MockController->Component = new Component();
-			$MockController->Component->init($MockController);
-			$MockController->expectAt(0, 'header', array("HTTP/1.1 {$code} {$msg}"));
-			$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
-			$MockController->expectCallCount('header', 2);
-			$MockController->redirect('http://cakephp.org', (int)$code, false);
-			$this->assertFalse($MockController->autoRender);
-		}
-		foreach ($codes as $code => $msg) {
-			$MockController = new MockController();
-			$MockController->Component = new Component();
-			$MockController->Component->init($MockController);
-			$MockController->expectAt(0, 'header', array("HTTP/1.1 {$code} {$msg}"));
-			$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
-			$MockController->expectCallCount('header', 2);
-			$MockController->redirect('http://cakephp.org', $msg, false);
-			$this->assertFalse($MockController->autoRender);
-		}
+		$Controller->expects($this->at(1))->method('header')
+			->with('Location: http://cakephp.org');
 
-		$MockController = new MockController();
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->expectAt(0, 'header', array('Location: http://www.example.org/users/login'));
-		$MockController->expectCallCount('header', 1);
-		$MockController->redirect('http://www.example.org/users/login', null, false);
+		$Controller->expects($this->exactly(2))->method('header');
 
-		$MockController = new MockController();
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://www.example.org/users/login'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://www.example.org/users/login', 301, false);
+		$Controller->redirect('http://cakephp.org', (int)$code, false);
+		$this->assertFalse($Controller->autoRender);
+	}
 
-		$MockController = new MockController();
-		$MockController->components = array('MockTest');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', null);
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://cakephp.org'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://cakephp.org', 301, false);
+/**
+ * test redirecting by message
+ *
+ * @dataProvider statusCodeProvider
+ * @return void
+ */
+	function testRedirectByMessage($code, $msg) {
+		$Controller = $this->getMock('Controller', array('header'));
 
-		$MockController = new MockController();
-		$MockController->components = array('MockTest');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://book.cakephp.org'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://cakephp.org', 301, false);
+		$Controller->Component = new Component();
+		$Controller->Component->init($Controller);
 
-		$MockController = new MockController();
-		$MockController->components = array('MockTest');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', false);
-		$MockController->expectNever('header');
-		$MockController->redirect('http://cakephp.org', 301, false);
+		$Controller->expects($this->at(0))->method('header')
+			->with("HTTP/1.1 {$code} {$msg}");
 
-		$MockController = new MockController();
-		$MockController->components = array('MockTest', 'MockTestB');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
-		$MockController->MockTestB->setReturnValue('beforeRedirect', 'http://bakery.cakephp.org');
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://bakery.cakephp.org'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://cakephp.org', 301, false);
+		$Controller->expects($this->at(1))->method('header')
+			->with('Location: http://cakephp.org');
+
+		$Controller->expects($this->exactly(2))->method('header');
+		$Controller->redirect('http://cakephp.org', $msg, false);
+		$this->assertFalse($Controller->autoRender);
+	}
+
+/**
+ * test that redirect triggers methods on the components.
+ *
+ * @return void
+ */
+	function testRedirectTriggeringComponentsReturnNull() {
+		$Controller = $this->getMock('Controller', array('header'));
+		$Controller->Component = $this->getMock('Component');
+
+		$Controller->Component->expects($this->once())->method('beforeRedirect')->will($this->returnValue(null));
+
+		$Controller->expects($this->at(0))->method('header')
+			->with('HTTP/1.1 301 Moved Permanently');
+
+		$Controller->expects($this->at(1))->method('header')
+			->with('Location: http://cakephp.org');
+
+		$Controller->redirect('http://cakephp.org', 301, false);
+	}
+
+/**
+ * test that beforeRedirect callback returnning null doesn't affect things.
+ *
+ * @return void
+ */
+	function testRedirectBeforeRedirectModifyingParams() {
+		$Controller = $this->getMock('Controller', array('header'));
+		$Controller->Component = $this->getMock('Component');
+
+		$Controller->Component->expects($this->once())->method('beforeRedirect')
+			->will($this->returnValue(array('http://book.cakephp.org')));
+
+		$Controller->expects($this->at(0))->method('header')
+			->with('HTTP/1.1 301 Moved Permanently');
+
+		$Controller->expects($this->at(1))->method('header')
+			->with('Location: http://book.cakephp.org');
+
+		$Controller->redirect('http://cakephp.org', 301, false);
 	}
 
 /**
@@ -1080,6 +1090,7 @@ class ControllerTest extends CakeTestCase {
 			return;
 		}
 		$request = new CakeRequest('controller_posts/index');
+
 
 		$TestController = new TestController($request);
 		$TestController->constructClasses();
@@ -1103,6 +1114,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
+
 
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
@@ -1144,6 +1156,7 @@ class ControllerTest extends CakeTestCase {
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);
+
 		$expected = array('foo');
 		$TestController->components = array('Cookie' => $expected);
 		$TestController->constructClasses();
@@ -1174,21 +1187,30 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testReferer() {
-		$request = new ControllerMockCakeRequest();
-		$request->setReturnValue('referer', 'http://localhost/posts/index', array(false));
-		$request->setReturnValue('referer', '/posts/index', array(true));
+		$request = $this->getMock('CakeRequest');
+
+		$request->expects($this->any())->method('referer')
+			->with(true)
+			->will($this->returnValue('/posts/index'));
 
 		$Controller = new Controller($request);
 		$result = $Controller->referer(null, true);
 		$this->assertEqual($result, '/posts/index');
 
-		$result = $Controller->referer();
-		$this->assertEqual($result, 'http://localhost/posts/index');
-
 		$Controller = new Controller($request);
 		$request->setReturnValue('referer', '/', array(true));
 		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
 		$this->assertEqual($result, '/posts/index');
+
+		$request = $this->getMock('CakeRequest');
+	
+		$request->expects($this->any())->method('referer')
+			->with(false)
+			->will($this->returnValue('http://localhost/posts/index'));
+
+		$Controller = new Controller($request);
+		$result = $Controller->referer();
+		$this->assertEqual($result, 'http://localhost/posts/index');
 
 		$Controller = new Controller(null);
 		$result = $Controller->referer();
@@ -1213,6 +1235,7 @@ class ControllerTest extends CakeTestCase {
 /**
  * testUnimplementedIsAuthorized method
  *
+ * @expectedException PHPUnit_Framework_Error
  * @access public
  * @return void
  */
@@ -1221,7 +1244,6 @@ class ControllerTest extends CakeTestCase {
 
 		$TestController = new TestController($request);
 		$TestController->isAuthorized();
-		$this->assertError();
 	}
 
 /**
@@ -1340,9 +1362,11 @@ class ControllerTest extends CakeTestCase {
  */
 	function testRequestHandlerPrefers(){
 		Configure::write('debug', 2);
+
 		$request = new CakeRequest('controller_posts/index');
 
 		$Controller = new Controller($request);
+
 		$Controller->components = array("RequestHandler");
 		$Controller->modelClass='ControllerPost';
 		$Controller->params['url'] = array('ext' => 'rss');
@@ -1402,16 +1426,18 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testStartupProcess() {
-		Mock::generatePartial('AnotherTestController','MockedController', array('beforeFilter', 'afterFilter'));
-		Mock::generate('TestComponent', 'MockTestComponent', array('startup', 'initialize'));
-		$MockedController = new MockedController();
-		$MockedController->components = array('MockTest');
-		$MockedController->Component = new Component();
-		$MockedController->Component->init($MockedController);
-		$MockedController->expectCallCount('beforeFilter', 1);
-		$MockedController->MockTest->expectCallCount('initialize', 1);
-		$MockedController->MockTest->expectCallCount('startup', 1);
-		$MockedController->startupProcess();
+		$this->getMock('TestComponent', array('startup', 'initialize'), array(), 'MockStartupComponent');
+		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+
+		$Controller->components = array('MockStartup');
+		$Controller->Component = new Component();
+		$Controller->Component->init($Controller);
+
+		$Controller->expects($this->once())->method('beforeFilter');
+		$Controller->MockStartup->expects($this->at(0))->method('initialize');
+		$Controller->MockStartup->expects($this->at(1))->method('startup');
+
+		$Controller->startupProcess();
 	}
 /**
  * Tests that the shutdown process calls the correct functions
@@ -1420,13 +1446,16 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testShutdownProcess() {
-		Mock::generate('TestComponent', 'MockTestComponent', array('shutdown'));
-		$MockedController = new MockedController();
-		$MockedController->components = array('MockTest');
-		$MockedController->Component = new Component();
-		$MockedController->Component->init($MockedController);
-		$MockedController->expectCallCount('afterFilter', 1);
-		$MockedController->MockTest->expectCallCount('shutdown', 1);
-		$MockedController->shutdownProcess();
+		$this->getMock('TestComponent', array('shutdown'), array(), 'MockShutdownComponent');
+		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
+
+		$Controller->components = array('MockShutdown');
+		$Controller->Component = new Component();
+		$Controller->Component->init($Controller);
+
+		$Controller->expects($this->once())->method('afterFilter');
+		$Controller->MockShutdown->expects($this->once())->method('shutdown');
+
+		$Controller->shutdownProcess();
 	}
 }

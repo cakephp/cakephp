@@ -193,15 +193,7 @@ class BlueberryController extends AppController {
  * @access public
  * @return void
  */
-	public $uses = array('AuthBlueberryUser');
-
-/**
- * components property
- *
- * @access public
- * @return void
- */
-	public $components = array('Auth');
+	public $uses = array();
 }
 
 /**
@@ -350,7 +342,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	 	$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $result);
 
 		ob_start();
-		$TestErrorHandler =& new TestErrorHandler('error404', array('message' => 'Page not found'));
+		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found'));
 		ob_get_clean();
 		ob_start();
 		$TestErrorHandler->error404(array(
@@ -477,11 +469,9 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingView() {
-		restore_error_handler();
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingView', array('className' => 'Pages', 'action' => 'display', 'file' => 'pages/about.ctp', 'base' => ''));
 		$expected = ob_get_clean();
-		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/PagesController::/", $expected);
 		$this->assertPattern("/pages\/about.ctp/", $expected);
 	}
@@ -493,11 +483,9 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingLayout() {
-		restore_error_handler();
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingLayout', array( 'layout' => 'my_layout', 'file' => 'layouts/my_layout.ctp', 'base' => ''));
 		$expected = ob_get_clean();
-		set_error_handler('simpleTestErrorHandler');
 		$this->assertPattern("/Missing Layout/", $expected);
 		$this->assertPattern("/layouts\/my_layout.ctp/", $expected);
 	}
@@ -571,7 +559,6 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_start();
 		$TestErrorHandler = new TestErrorHandler('missingBehaviorClass', array('behavior' => 'MyCustom', 'file' => 'my_custom.php'));
 		$result = ob_get_clean();
-		$this->assertPattern('/<h2>Missing Behavior Class<\/h2>/', $result);
 		$this->assertPattern('/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
 	}

@@ -88,7 +88,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	public $db = null;
+	public $Dbo = null;
 
 /**
  * Simulated DB connection used in testing
@@ -96,24 +96,7 @@ class DboSqliteTest extends CakeTestCase {
  * @var DboSource
  * @access public
  */
-	public $db2 = null;
-
-/**
- * Skip if cannot connect to SQLite
- *
- */
-	public function skip() {
-		$this->_initDb();
-		$this->skipUnless($this->db->config['driver'] == 'sqlite', '%s SQLite connection not available');
-	}
-
-/**
- * Set up test suite database connection
- *
- */
-	public function startTest() {
-		$this->_initDb();
-	}
+	public $Dbo2 = null;
 
 /**
  * Sets up a Dbo class instance for testing
@@ -121,9 +104,11 @@ class DboSqliteTest extends CakeTestCase {
  */
 	public function setUp() {
 		Configure::write('Cache.disable', true);
-		$this->startTest();
-		$this->db =& ConnectionManager::getDataSource('test_suite');
-		$this->db2 = new DboSqliteTestDb($this->db->config, false);
+		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		if ($this->Dbo->config['driver'] !== 'sqlite') {
+			$this->markTestSkipped('The Sqlite extension is not available.');
+		}
+		$this->Dbo2 = new DboSqliteTestDb($this->Dbo->config, false);
 	}
 
 /**
@@ -132,7 +117,7 @@ class DboSqliteTest extends CakeTestCase {
  */
 	public function tearDown() {
 		Configure::write('Cache.disable', false);
-		unset($this->db2);
+		unset($this->Dbo2);
 	}
 
 /**
@@ -140,13 +125,13 @@ class DboSqliteTest extends CakeTestCase {
  *
  */
 	public function testTableListCacheDisabling() {
-		$this->assertFalse(in_array('foo_test', $this->db->listSources()));
+		$this->assertFalse(in_array('foo_test', $this->Dbo->listSources()));
 
-		$this->db->query('CREATE TABLE foo_test (test VARCHAR(255));');
-		$this->assertTrue(in_array('foo_test', $this->db->listSources()));
+		$this->Dbo->query('CREATE TABLE foo_test (test VARCHAR(255));');
+		$this->assertTrue(in_array('foo_test', $this->Dbo->listSources()));
 
-		$this->db->query('DROP TABLE foo_test;');
-		$this->assertFalse(in_array('foo_test', $this->db->listSources()));
+		$this->Dbo->query('DROP TABLE foo_test;');
+		$this->assertFalse(in_array('foo_test', $this->Dbo->listSources()));
 	}
 
 /**
@@ -156,29 +141,29 @@ class DboSqliteTest extends CakeTestCase {
  * @return void
  */
 	function testIndex() {
-		$name = $this->db->fullTableName('with_a_key');
-		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
-		$this->db->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
-		$this->db->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
+		$name = $this->Dbo->fullTableName('with_a_key');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
+		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
+		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'char_index' => array('column' => 'small_char', 'unique' => 1),
 
 		);
-		$result = $this->db->index($name);
+		$result = $this->Dbo->index($name);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 
-		$this->db->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
-		$this->db->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
+		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" int(11) PRIMARY KEY, "bool" int(1), "small_char" varchar(50), "description" varchar(40) );');
+		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
 		);
-		$result = $this->db->index($name);
+		$result = $this->Dbo->index($name);
 		$this->assertEqual($expected, $result);
-		$this->db->query('DROP TABLE ' . $name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 	}
 
 /**
@@ -191,8 +176,8 @@ class DboSqliteTest extends CakeTestCase {
 		$dbName = 'db' . rand() . '$(*%&).db';
 		$this->assertFalse(file_exists(TMP . $dbName));
 
-		$config = $this->db->config;
-		$db = new DboSqlite(array_merge($this->db->config, array('database' => TMP . $dbName)));
+		$config = $this->Dbo->config;
+		$db = new DboSqlite(array_merge($this->Dbo->config, array('database' => TMP . $dbName)));
 		$this->assertTrue(file_exists(TMP . $dbName));
 
 		$db->execute("CREATE TABLE test_list (id VARCHAR(255));");
@@ -221,7 +206,7 @@ class DboSqliteTest extends CakeTestCase {
 			'type' => 'integer',
 			'null' => false,
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"int_field" integer(11) NOT NULL';
 		$this->assertEqual($result, $expected);
 
@@ -231,7 +216,7 @@ class DboSqliteTest extends CakeTestCase {
 			'length' => 20,
 			'null' => false,
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"name" varchar(20) NOT NULL';
 		$this->assertEqual($result, $expected);
 
@@ -243,7 +228,7 @@ class DboSqliteTest extends CakeTestCase {
 			'null' => true,
 			'collate' => 'NOCASE'
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT NULL COLLATE NOCASE';
 		$this->assertEqual($result, $expected);
 
@@ -254,7 +239,7 @@ class DboSqliteTest extends CakeTestCase {
 			'default' => 'test-value',
 			'null' => false,
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" varchar(20) DEFAULT \'test-value\' NOT NULL';
 		$this->assertEqual($result, $expected);
 
@@ -265,7 +250,7 @@ class DboSqliteTest extends CakeTestCase {
 			'default' => 10,
 			'null' => false,
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
 		$this->assertEqual($result, $expected);
 		
@@ -277,7 +262,7 @@ class DboSqliteTest extends CakeTestCase {
 			'null' => false,
 			'collate' => 'BADVALUE'
 		);
-		$result = $this->db->buildColumn($data);
+		$result = $this->Dbo->buildColumn($data);
 		$expected = '"testName" integer(10) DEFAULT \'10\' NOT NULL';
 		$this->assertEqual($result, $expected);
 	}
@@ -288,8 +273,9 @@ class DboSqliteTest extends CakeTestCase {
  * @return void
  */
 	function testDescribe() {
-		$Model =& new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
-		$result = $this->db->describe($Model);
+		$this->loadFixtures('User');
+		$Model = new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
+		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'id' => array(
 				'type' => 'integer',
@@ -333,9 +319,9 @@ class DboSqliteTest extends CakeTestCase {
  */
 	function testDescribeWithUuidPrimaryKey() {
 		$tableName = 'uuid_tests';
-		$this->db->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
-		$Model =& new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
-		$result = $this->db->describe($Model);
+		$this->Dbo->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
+		$Model = new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
+		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'type' => 'string',
 			'length' => 36,
@@ -344,6 +330,6 @@ class DboSqliteTest extends CakeTestCase {
 			'key' => 'primary',
 		);
 		$this->assertEqual($result['id'], $expected);
-		$this->db->query('DROP TABLE ' . $tableName);
+		$this->Dbo->query('DROP TABLE ' . $tableName);
 	}
 }

@@ -152,7 +152,7 @@ class BasicsTest extends CakeTestCase {
 
 		$_SERVER = $_ENV = array();
 
-		$this->assertFalse(env('TEST_ME'));
+		$this->assertNull(env('TEST_ME'));
 
 		$_ENV['TEST_ME'] = 'a';
 		$this->assertEqual(env('TEST_ME'), 'a');
@@ -237,7 +237,7 @@ class BasicsTest extends CakeTestCase {
 
 		Configure::write('Cache.disable', false);
 		$result = cache('basics_test', 'simple cache write');
-		$this->assertTrue($result);
+		$this->assertTrue((boolean)$result);
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
 
 		$result = cache('basics_test');

@@ -20,10 +20,6 @@
 App::import('Controller', 'Controller', false);
 App::import('Component', array('RequestHandler'));
 
-Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop'));
-Mock::generate('CakeRequest', 'RequestHandlerMockCakeRequest');
-Mock::generatePartial('Controller', 'RequestHandlerMockController', array('header'));
-
 /**
  * RequestHandlerTestController class
  *
@@ -535,9 +531,9 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		), true);
 
 		$this->Controller->request = new CakeRequest('posts/index');
-		$this->Controller->RequestHandler = new NoStopRequestHandler($this);
+		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
-		$this->Controller->RequestHandler->expectOnce('_stop');
+		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
 
 		ob_start();
 		$this->Controller->RequestHandler->beforeRedirect(
@@ -595,7 +591,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 
-		$RequestHandler =& new NoStopRequestHandler();
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
 		$RequestHandler->request = new CakeRequest('posts/index');
 
 		ob_start();
@@ -613,12 +609,16 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testBeforeRedirectCallingHeader() {
-		$controller =& new RequestHandlerMockController();
-		$RequestHandler =& new NoStopRequestHandler();
-		$RequestHandler->request = new RequestHandlerMockCakeRequest();
-		$RequestHandler->request->setReturnValue('is', true, array('ajax'));
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
-		$controller->expectOnce('header', array('HTTP/1.1 403 Forbidden'));
+		$controller = $this->getMock('Controller', array('header'));
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
+		$RequestHandler->request = $this->getMock('CakeRequest');
+		$RequestHandler->request->expects($this->once())->method('is')
+			->with('ajax')
+			->will($this->returnValue(true));
+
+		$controller->expects($this->once())->method('header')->with('HTTP/1.1 403 Forbidden');
 
 		ob_start();
 		$RequestHandler->beforeRedirect($controller, 'request_handler_test/param_method/first/second', 403);

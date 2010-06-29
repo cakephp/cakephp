@@ -579,6 +579,41 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
+ * Returns breadcrumbs as a (x)html list
+ *
+ * This method uses HtmlHelper::tag() to generate list and its elements. Works
+ * similiary to HtmlHelper::getCrumbs(), so it uses options which every
+ * crumb was added with.
+ *
+ * @param array $options Array of html attributes to apply to the generated list elements.
+ * @return string breadcrumbs html list
+ * @access public
+ */
+	function getCrumbList($options = array()) {
+		if (!empty($this->_crumbs)) {
+			$result = '';
+			$crumbCount = count($this->_crumbs);
+			foreach ($this->_crumbs as $which => $crumb) {
+				$options = array();
+				if (empty($crumb[1])) {
+					$elementContent = $crumb[0];
+				} else {
+					$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
+				}
+				if ($which == 0) {
+					$options['class'] = 'first';
+				} elseif ($which == $crumbCount - 1) {
+					$options['class'] = 'last';
+				}
+				$result .= $this->tag('li', $elementContent, $options);
+			}
+			return $this->tag('ul', $result, $options);
+		} else {
+			return null;
+		}
+	}
+	
+/**
  * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
  * generated with the link pointed at `$options['url']`.  This method will set an empty
  * alt attribute if one is not supplied.

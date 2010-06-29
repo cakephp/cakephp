@@ -49,8 +49,6 @@ class TheHtmlTestController extends Controller {
 	public $uses = null;
 }
 
-Mock::generate('View', 'HtmlHelperMockView');
-
 /**
  * HtmlHelperTest class
  *
@@ -474,14 +472,21 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertEqual(count($result), 2);
 
 		ClassRegistry::removeObject('view');
-		$view = new HtmlHelperMockView();
+
+		$view = $this->getMock('View', array(), array(), '', false);
+
 		ClassRegistry::addObject('view', $view);
-		$view->expectAt(0, 'addScript', array(new PatternExpectation('/css_in_head.css/')));
+		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/css_in_head.css/'));
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 
-		$view = ClassRegistry::getObject('view');
-		$view->expectAt(1, 'addScript', array(new NoPatternExpectation('/inline=""/')));
+		ClassRegistry::removeObject('view');
+		$view =  $this->getMock('View', array(), array(), '', false);
+		ClassRegistry::addObject('view', $view);
+		$view->expects($this->any())
+			->method('addScript')
+			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
+
 		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 	}
@@ -603,9 +608,11 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$view = ClassRegistry::getObject('view');
-		$view = new HtmlHelperMockView();
-		$view->expectAt(0, 'addScript', array(new PatternExpectation('/script_in_head.js/')));
+		ClassRegistry::removeObject('view');
+		$view = $this->getMock('View', array(), array(), '', false);
+		ClassRegistry::addObject('view', $view);
+		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/script_in_head.js/'));
+
 		$result = $this->Html->script('script_in_head', array('inline' => false));
 		$this->assertNull($result);
 	}
@@ -644,9 +651,12 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$view = ClassRegistry::getObject('view');
-		$view = new HtmlHelperMockView();
-		$view->expectAt(0, 'addScript', array(new PatternExpectation('/window\.foo\s\=\s2;/')));
+
+		ClassRegistry::removeObject('view');
+		$view = $this->getMock('View', array(), array(), '', false);
+		ClassRegistry::addObject('view', $view);
+		$view->expects($this->any())->method('addScript')
+			->with($this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
 		$this->assertNull($result);
@@ -694,10 +704,11 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		ClassRegistry::removeObject('view');
-		$View = new HtmlHelperMockView();
 
-		$View->expectOnce('addScript');
-		ClassRegistry::addObject('view', $View);
+		$view = $this->getMock('View', array(), array(), '', false);
+		ClassRegistry::addObject('view', $view);
+
+		$view->expects($this->once())->method('addScript');
 
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
 		$this->assertNull($result);
@@ -1117,10 +1128,10 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
-		$viewMock = new HtmlHelperMockView();
-		$viewMock->expectOnce('addScript', array(new PatternExpectation('/^<meta/')));
 		ClassRegistry::removeObject('view');
-		ClassRegistry::addObject('view', $viewMock);
+		$view = $this->getMock('View', array(), array(), '', false);
+		ClassRegistry::addObject('view', $view);
+		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/^<meta/'));
 
 		$this->assertNull($this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false)));
 	}
@@ -1263,5 +1274,38 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->para('class-name', '<text>', array('escape' => true));
 		$this->assertTags($result, array('p' => array('class' => 'class-name'), '&lt;text&gt;', '/p'));
+	}
+	
+/**
+ * testCrumbList method
+ * 
+ * @access public
+ * 
+ * @return void
+ */
+	function testCrumbList() {
+		$this->Html->addCrumb('Home', '/', array('class' => 'home'));
+		$this->Html->addCrumb('Some page', '/some_page');
+		$this->Html->addCrumb('Another page');
+		$result = $this->Html->getCrumbList(
+			array('class' => 'breadcrumbs')
+		);
+		debug($result, true);
+		$this->assertTags(
+			$result,
+			array(
+				array('ul' => array('class' => 'breadcrumbs')),
+				array('li' => array('class' => 'first')),
+				array('a' => array('class' => 'home', 'href' => '/')), 'Home', '/a',
+				'/li',
+				'<li',
+				array('a' => array('href' => '/some_page')), 'Some page', '/a',
+				'/li',
+				array('li' => array('class' => 'last')),
+				'Another page',
+				'/li',
+				'/ul'
+			)
+		);
 	}
 }

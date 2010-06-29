@@ -125,7 +125,6 @@ class DboSqlite extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-
 		if (!$config['persistent']) {
 			$this->connection = sqlite_open($config['database']);
 		} else {

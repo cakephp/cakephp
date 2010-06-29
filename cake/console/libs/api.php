@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'File');
 
 /**
  * API shell to show method signatures of CakePHP core classes.
@@ -91,7 +92,7 @@ class ApiShell extends Shell {
 			$this->_stop();
 		}
 
-		$parsed = $this->__parseClass($path . $file .'.php');
+		$parsed = $this->__parseClass($path . $file .'.php', $class);
 
 		if (!empty($parsed)) {
 			if (isset($this->params['m'])) {
@@ -116,7 +117,7 @@ class ApiShell extends Shell {
 				while ($number = strtolower($this->in(__('Select a number to see the more information about a specific method. q to quit. l to list.'), null, 'q'))) {
 					if ($number === 'q') {
 						$this->out(__('Done'));
-						$this->_stop();
+						return $this->_stop();
 					}
 
 					if ($number === 'l') {
@@ -180,29 +181,34 @@ class ApiShell extends Shell {
  * @return array Methods and signatures indexed by method name
  * @access private
  */
-	function __parseClass($path) {
+	function __parseClass($path, $class) {
 		$parsed = array();
 
-		$File = new File($path);
-		if (!$File->exists()) {
-			$this->err(sprintf(__('%s could not be found'), $File->name));
-			$this->_stop();
+		if (!include_once($path)) {
+			$this->err(sprintf(__('%s could not be found'), $path));
 		}
+		$reflection = new ReflectionClass($class);
 
-		$contents = $File->read();
-
-		if (preg_match_all('%(/\\*\\*[\\s\\S]*?\\*/)(\\s+function\\s+\\w+)(\\(.*\\))%', $contents, $result, PREG_PATTERN_ORDER)) {
-			foreach ($result[2] as $key => $method) {
-				$method = str_replace('function ', '', trim($method));
-
-				if (strpos($method, '__') === false && $method[0] != '_') {
-					$parsed[$method] = array(
-						'comment' => str_replace(array('/*', '*/', '*'), '', trim($result[1][$key])),
-						'method' => $method,
-						'parameters' => trim($result[3][$key])
-					);
-				}
+		foreach ($reflection->getMethods() as $method) {
+			if (!$method->isPublic() || strpos($method->getName(), '_') === 0) {
+				continue;
 			}
+			if ($method->getDeclaringClass()->getName() != $class) {
+				continue;
+			}
+			$args = array();
+			foreach ($method->getParameters() as $param) {
+				$paramString = '$' . $param->getName();
+				if ($param->isDefaultValueAvailable()) {
+					$paramString .= ' = ' . str_replace("\n", '', var_export($param->getDefaultValue(), true));
+				}
+				$args[] = $paramString;
+			}
+			$parsed[$method->getName()] = array(
+				'comment' => str_replace(array('/*', '*/', '*'), '', $method->getDocComment()),
+				'method' => $method->getName(),
+				'parameters' => '(' . implode(', ', $args) . ')'
+			);
 		}
 		ksort($parsed);
 		return $parsed;

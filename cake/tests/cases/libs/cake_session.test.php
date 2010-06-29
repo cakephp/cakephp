@@ -226,7 +226,7 @@ class CakeSessionTest extends CakeTestCase {
 
 		$this->Session->write('Watching', "I'm watching you");
 		$this->Session->watch('Watching');
-		$this->expectError('Writing session key {Watching}: "They found us!"');
+		$this->expectError();
 		$this->Session->write('Watching', 'They found us!');
 
 		$this->expectError('Deleting session key {Watching}');
@@ -390,7 +390,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This was updated');
 
 		$this->Session->destroy();
-		$this->assertFalse($this->Session->read('SessionTestCase'));
+		$this->assertNull($this->Session->read('SessionTestCase'));
 	}
 
 /**
@@ -427,7 +427,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEqual($this->Session->read('SessionTestCase'), 'This was updated');
 
 		$this->Session->destroy();
-		$this->assertFalse($this->Session->read('SessionTestCase'));
+		$this->assertNull($this->Session->read('SessionTestCase'));
 	}
 
 /**
@@ -465,7 +465,7 @@ class CakeSessionTest extends CakeTestCase {
         $this->assertEqual($this->Session->read('SessionTestCase'), 'Some additional data');
 
 		$this->Session->destroy();
-		$this->assertFalse($this->Session->read('SessionTestCase'));
+		$this->assertNull($this->Session->read('SessionTestCase'));
 		session_write_close();
 
 		unset($_SESSION);

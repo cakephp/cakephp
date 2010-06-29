@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Core', array('File'));
 
 if (!defined('DISABLE_AUTO_DISPATCH')) {
 	define('DISABLE_AUTO_DISPATCH', true);
@@ -35,17 +36,6 @@ if (!class_exists('ShellDispatcher')) {
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'plugin.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestPluginTaskMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'PluginTask', 'MockPluginTask',
-	array('in', '_stop', 'err', 'out', 'createFile')
-);
-
-Mock::generate('ModelTask', 'PluginTestMockModelTask');
-
 /**
  * PluginTaskPlugin class
  *
@@ -54,16 +44,23 @@ Mock::generate('ModelTask', 'PluginTestMockModelTask');
  */
 class PluginTaskTest extends CakeTestCase {
 
+	public static $_paths = array();
+
+	public static $_testPath = array();
+
 /**
  * startTest method
  *
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestPluginTaskMockShellDispatcher();
-		$this->Dispatcher->shellPaths = App::path('shells');
-		$this->Task =& new MockPluginTask($this->Dispatcher);
-		$this->Task->Dispatch =& $this->Dispatcher;
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+		));
+		$this->Task = $this->getMock('PluginTask', 
+			array('in', 'err', 'createFile', '_stop'),
+			array(&$this->Dispatcher)
+		);
 		$this->Task->path = TMP . 'tests' . DS;
 	}
 
@@ -72,9 +69,9 @@ class PluginTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function startCase() {
-		$this->_paths = $paths = App::path('plugins');
-		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
+	public static function setUpBeforeClass() {
+		self::$_paths = $paths = App::path('plugins');
+		self::$_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
 	}
 
@@ -83,8 +80,8 @@ class PluginTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function endCase() {
-		App::build(array('plugins' => $this->_paths));
+	public static function tearDownAfterClass() {
+		App::build(array('plugins' => self::$_paths));
 	}
 
 /**
@@ -102,8 +99,19 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeFoldersAndFiles() {
-		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
-		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(self::$_testPath));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+
+		$path = $this->Task->path . 'bake_test_plugin';
+
+		$file = $path . DS . 'bake_test_plugin_app_controller.php';
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+
+		$file = $path . DS . 'bake_test_plugin_app_model.php';
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+
 		$this->Task->bake('BakeTestPlugin');
 
 		$path = $this->Task->path . 'bake_test_plugin';
@@ -173,13 +181,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->assertTrue(is_dir($path . DS . 'libs'), 'No libs dir %s');
 		$this->assertTrue(is_dir($path . DS . 'webroot'), 'No webroot dir %s');
 
-		$file = $path . DS . 'bake_test_plugin_app_controller.php';
-		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
-
-		$file = $path . DS . 'bake_test_plugin_app_model.php';
-		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
-
-		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder = new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
 
@@ -189,22 +191,24 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithNoArgs() {
-		$this->Task->setReturnValueAt(0, 'in', 'TestPlugin');
-		$this->Task->setReturnValueAt(1, 'in', '3');
-		$this->Task->setReturnValueAt(2, 'in', 'y');
-		$this->Task->setReturnValueAt(3, 'in', 'n');
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestPlugin'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('3'));
+		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue('n'));
 
 		$path = $this->Task->path . 'test_plugin';
 		$file = $path . DS . 'test_plugin_app_controller.php';
-		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = $path . DS . 'test_plugin_app_model.php';
-		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
+		$this->Task->expects($this->at(5))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->args = array();
 		$this->Task->execute();
 
-		$Folder =& new Folder($path);
+		$Folder = new Folder($path);
 		$Folder->delete();
 	}
 
@@ -214,21 +218,27 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithOneArg() {
-		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
-		$this->Task->setReturnValueAt(1, 'in', 'y');
-		$this->Task->Dispatch->args = array('BakeTestPlugin');
-		$this->Task->args =& $this->Task->Dispatch->args;
+		$this->Task->expects($this->at(0))->method('in')
+			->will($this->returnValue(self::$_testPath));
+		$this->Task->expects($this->at(1))->method('in')
+			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'bake_test_plugin';
 		$file = $path . DS . 'bake_test_plugin_app_controller.php';
-		$this->Task->expectAt(0, 'createFile', array($file, '*'), 'No AppController %s');
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 
+		$path = $this->Task->path . 'bake_test_plugin';
 		$file = $path . DS . 'bake_test_plugin_app_model.php';
-		$this->Task->expectAt(1, 'createFile', array($file, '*'), 'No AppModel %s');
+		$this->Task->expects($this->at(4))->method('createFile')
+			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
+		
+		$this->Task->Dispatch->args = array('BakeTestPlugin');
+		$this->Task->args =& $this->Task->Dispatch->args;
 
 		$this->Task->execute();
 
-		$Folder =& new Folder($this->Task->path . 'bake_test_plugin');
+		$Folder = new Folder($this->Task->path . 'bake_test_plugin');
 		$Folder->delete();
 	}
 
@@ -238,17 +248,18 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithTwoArgs() {
-		$this->Task->Model =& new PluginTestMockModelTask();
-		$this->Task->setReturnValueAt(0, 'in', $this->_testPath);
-		$this->Task->setReturnValueAt(1, 'in', 'y');
+		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
 
-		$Folder =& new Folder($this->Task->path . 'bake_test_plugin', true);
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(self::$_testPath));
+
+		$this->Task->Model->expects($this->once())->method('loadTasks');
+		$this->Task->Model->expects($this->once())->method('execute');
+
+		$Folder = new Folder($this->Task->path . 'bake_test_plugin', true);
 
 		$this->Task->Dispatch->args = array('BakeTestPlugin', 'model');
-		$this->Task->args =& $this->Task->Dispatch->args;
+		$this->Task->args = $this->Task->Dispatch->args;
 
-		$this->Task->Model->expectOnce('loadTasks');
-		$this->Task->Model->expectOnce('execute');
 		$this->Task->execute();
 		$Folder->delete();
 	}
