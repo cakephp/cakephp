@@ -36,7 +36,7 @@ App::import('Controller', 'Controller', false);
  * @package       cake
  * @subpackage    cake.cake
  */
-class Dispatcher extends Object {
+class Dispatcher {
 
 /**
  * Base URL
@@ -409,7 +409,6 @@ class Dispatcher extends Object {
 			include($assetFile);
 		} else {
 			ob_clean();
-			flush();
 			readfile($assetFile);
 		}
 
