@@ -35,17 +35,6 @@ if (!class_exists('SchemaShell')) {
 	require CAKE . 'console' .  DS . 'libs' . DS . 'schema.php';
 }
 
-Mock::generatePartial(
-	'ShellDispatcher', 'TestSchemaShellMockShellDispatcher',
-	array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
-);
-Mock::generatePartial(
-	'SchemaShell', 'MockSchemaShell',
-	array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop')
-);
-
-Mock::generate('CakeSchema', 'MockSchemaCakeSchema');
-
 /**
  * Test for Schema database management
  *
@@ -131,9 +120,15 @@ class SchemaShellTest extends CakeTestCase {
  * @return void
  */
 	public function startTest() {
-		$this->Dispatcher =& new TestSchemaShellMockShellDispatcher();
-		$this->Shell =& new MockSchemaShell($this->Dispatcher);
-		$this->Shell->Dispatch =& $this->Dispatcher;
+		$this->Dispatcher = $this->getMock(
+			'ShellDispatcher', 
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+		);
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop'),
+			array(&$this->Dispatcher)
+		);
 	}
 
 /**
@@ -189,8 +184,8 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->Schema->path = APP . 'config' . DS . 'schema';
 		$this->Shell->params['file'] = 'i18n.php';
-		$this->Shell->expectOnce('_stop');
-		$this->Shell->expectOnce('out');
+		$this->Shell->expects($this->once())->method('_stop');
+		$this->Shell->expects($this->once())->method('out');
 		$this->Shell->view();
 	}
 
@@ -205,8 +200,8 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->args = array('TestPlugin.schema');
 		$this->Shell->startup();
-		$this->Shell->expectCallCount('_stop', 2);
-		$this->Shell->expectCallCount('out', 2);
+		$this->Shell->expects($this->exactly(2))->method('_stop');
+		$this->Shell->expects($this->exactly(2))->method('out');
 		$this->Shell->view();
 
 		$this->Shell->args = array();
@@ -227,7 +222,7 @@ class SchemaShellTest extends CakeTestCase {
 			'name' => 'i18n',
 			'write' => TMP . 'tests' . DS . 'i18n.sql'
 		);
-		$this->Shell->expectOnce('_stop');
+		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->startup();
 		$this->Shell->dump();
 
@@ -260,7 +255,7 @@ class SchemaShellTest extends CakeTestCase {
 			'write' => TMP . 'tests' . DS . 'dump_test.sql'
 		);
 		$this->Shell->startup();
-		$this->Shell->expectOnce('_stop');
+		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->dump();
 
 		$file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
@@ -279,16 +274,16 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testGenerateSnaphot() {
+	public function testGenerateSnapshot() {
 		$this->Shell->path = TMP;
 		$this->Shell->params['file'] = 'schema.php';
 		$this->Shell->args = array('snapshot');
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
-		$this->Shell->Schema->setReturnValue('read', array('schema data'));
-		$this->Shell->Schema->setReturnValue('write', true);
+		$this->Shell->Schema = $this->getMock('CakeSchema');
+		$this->Shell->Schema->expects($this->at(0))->method('read')->will($this->returnValue(array('schema data')));
+		$this->Shell->Schema->expects($this->at(0))->method('write')->will($this->returnValue(true));
 
-		$this->Shell->Schema->expectOnce('read');
-		$this->Shell->Schema->expectOnce('write', array(array('schema data', 'file' => 'schema_1.php')));
+		$this->Shell->Schema->expects($this->at(1))->method('read');
+		$this->Shell->Schema->expects($this->at(1))->method('write')->with(array('schema data', 'file' => 'schema_1.php'));
 
 		$this->Shell->generate();
 	}
@@ -303,10 +298,10 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params['file'] = 'schema.php';
 		$this->Shell->args = array();
 
-		$this->Shell->setReturnValue('in', 'q');
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
+		$this->Shell->expects($this->once())->method('in')->will($this->returnValue('q'));
+		$this->Shell->Schema = $this->getMock('CakeSchema');
 		$this->Shell->Schema->path = TMP;
-		$this->Shell->Schema->expectNever('read');
+		$this->Shell->Schema->expects($this->never())->method('read');
 
 		$result = $this->Shell->generate();
 		unlink(TMP . 'schema.php');
@@ -322,15 +317,19 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->params['file'] = 'schema.php';
 		$this->Shell->args = array();
 
-		$this->Shell->setReturnValue('in', 'o');
-		$this->Shell->expectAt(1, 'out', array(new PatternExpectation('/Schema file:\s[a-z\.]+\sgenerated/')));
-		$this->Shell->Schema =& new MockSchemaCakeSchema();
-		$this->Shell->Schema->path = TMP;
-		$this->Shell->Schema->setReturnValue('read', array('schema data'));
-		$this->Shell->Schema->setReturnValue('write', true);
+		$this->Shell->expects($this->once())->method('in')->will($this->returnValue('o'));
 
-		$this->Shell->Schema->expectOnce('read');
-		$this->Shell->Schema->expectOnce('write', array(array('schema data', 'file' => 'schema.php')));
+		$this->Shell->expects($this->at(2))->method('out')
+			->with(new PHPUnit_Framework_Constraint_PCREMatch('/Schema file:\s[a-z\.]+\sgenerated/'));
+	
+		$this->Shell->Schema = $this->getMock('CakeSchema');
+		$this->Shell->Schema->path = TMP;
+		$this->Shell->Schema->expects($this->once())->method('read')->will($this->returnValue(array('schema data')));
+		$this->Shell->Schema->expects($this->once())->method('write')->will($this->returnValue(true));
+
+		$this->Shell->Schema->expects($this->once())->method('read');
+		$this->Shell->Schema->expects($this->once())->method('write')
+			->with(array('schema data', 'file' => 'schema.php'));
 
 		$this->Shell->generate();
 		unlink(TMP . 'schema.php');
@@ -354,7 +353,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
 
 		$this->Shell->generate();
-		$file =& new File(TMP . 'tests' . DS . 'schema.php');
+		$file = new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $file->read();
 
 		$this->assertPattern('/var \$posts/', $contents);
@@ -380,14 +379,14 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('i18n');
 		$this->Shell->startup();
-		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test_suite');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
 
-		$schema =& new i18nSchema();
+		$schema = new i18nSchema();
 		$db->execute($db->dropSchema($schema));
 	}
 
@@ -404,7 +403,7 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('DbAcl', 'acos');
 		$this->Shell->startup();
-		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
 		$db =& ConnectionManager::getDataSource('test_suite');
@@ -428,15 +427,13 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
-		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->update();
 
 		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
 		$fields = $article->schema();
 		$this->assertTrue(isset($fields['summary']));
 
-		$this->_fixtures['core.article']->drop($this->db);
-		$this->_fixtures['core.article']->create($this->db);
 	}
 
 /**
@@ -473,7 +470,7 @@ class SchemaShellTest extends CakeTestCase {
 		);
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->startup();
-		$this->Shell->setReturnValue('in', 'y');
+		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
 		$db =& ConnectionManager::getDataSource('test_suite');

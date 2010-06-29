@@ -4532,7 +4532,7 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'državni';
 		$find = 'dž';
 		$result = mb_strripos($string, $find);
-		$expected = false;
+		$expected = 0;
 		$this->assertEqual($result, $expected);
 	}
 
@@ -4786,7 +4786,7 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'državni';
 		$find = 'dž';
 		$result = Multibyte::strripos($string, $find);
-		$expected = false;
+		$expected = 0;
 		$this->assertEqual($result, $expected);
 	}
 
@@ -8559,7 +8559,7 @@ mb_strtoupper does not work for these strings.
 		$string = 'Ĥēĺļŏ, Ŵőřļď!';
 		$find = 'H';
 		$result = mb_substr_count($string, $find);
-		$expected = false;
+		$expected = 0;
 		$this->assertEqual($result, $expected);
 	}
 
@@ -8813,7 +8813,7 @@ mb_strtoupper does not work for these strings.
 		$string = 'Ĥēĺļŏ, Ŵőřļď!';
 		$find = 'H';
 		$result = Multibyte::substrCount($string, $find);
-		$expected = false;
+		$expected = 0;
 		$this->assertEqual($result, $expected);
 	}
 

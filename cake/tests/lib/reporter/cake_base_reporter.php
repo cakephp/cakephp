@@ -18,13 +18,15 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
 /**
  * CakeBaseReporter contains common reporting features used in the CakePHP Test suite
  *
  * @package cake
  * @subpackage cake.tests.lib
  */
-class CakeBaseReporter extends SimpleReporter {
+class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 
 /**
  * Time the test runs started.
@@ -66,6 +68,10 @@ class CakeBaseReporter extends SimpleReporter {
 	protected $_characterSet;
 
 /**
+* The number of assertions done for a test suite
+*/
+	protected $numAssertions = 0;
+/**
  * Does nothing yet. The first output will
  * be sent on the first test start.
  *
@@ -81,68 +87,11 @@ class CakeBaseReporter extends SimpleReporter {
  * @param array $params Array of request parameters the reporter should use. See above.
  */
 	function __construct($charset = 'utf-8', $params = array()) {
-		parent::__construct();
 		if (!$charset) {
 			$charset = 'utf-8';
 		}
 		$this->_characterSet = $charset;
 		$this->params = $params;
-	}
-
-/**
- * Signals / Paints the beginning of a TestSuite executing.
- * Starts the timer for the TestSuite execution time.
- *
- * @param string $test_name Name of the test that is being run.
- * @param integer $size 
- * @return void
- */
-	public function paintGroupStart($test_name, $size) {
-		if (empty($this->_timeStart)) {
-			$this->_timeStart = microtime(true);
-		}
-		parent::paintGroupStart($test_name, $size);
-	}
-
-/**
- * Signals/Paints the end of a TestSuite. All test cases have run
- * and timers are stopped.
- *
- * @param string $test_name Name of the test that is being run.
- * @return void
- */
-	public function paintGroupEnd($test_name) {
-		$this->_timeEnd = microtime(true);
-		$this->_timeDuration = $this->_timeEnd - $this->_timeStart;
-		parent::paintGroupEnd($test_name);
-	}
-
-/**
- * Paints the beginning of a test method being run.  This is used
- * to start/resume the code coverage tool.
- *
- * @param string $method The method name being run.
- * @return void
- */
-	public function paintMethodStart($method) {
-		parent::paintMethodStart($method);
-		if (!empty($this->params['codeCoverage'])) {
-			CodeCoverageManager::start();
-		}
-	}
-
-/**
- * Paints the end of a test method being run.  This is used
- * to pause the collection of code coverage if its being used.
- *
- * @param string $method The name of the method being run.
- * @return void
- */
-	public function paintMethodEnd($method) {
-		parent::paintMethodEnd($method);
-		if (!empty($this->params['codeCoverage'])) {
-			CodeCoverageManager::stop();
-		}
 	}
 
 /**
@@ -152,18 +101,7 @@ class CakeBaseReporter extends SimpleReporter {
  * @return mixed
  */
 	public function testCaseList() {
-		$testList = TestManager::getTestCaseList();
-		return $testList;
-	}
-
-/**
- * Retrieves a list of group test cases from the active Manager class
- * displaying it in the correct format for the reporter subclass.
- *
- * @return void
- */
-	public function groupTestList() {
-		$testList = TestManager::getGroupTestList();
+		$testList = TestManager::getTestCaseList($this->params);
 		return $testList;
 	}
 
@@ -207,6 +145,90 @@ class CakeBaseReporter extends SimpleReporter {
 			return $_SERVER['PHP_SELF'];
 		}
 		return '';
+	}
+
+	public function paintResult(PHPUnit_Framework_TestResult $result) {
+		$this->paintFooter($result);
+	}
+
+/**
+* An error occurred.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception              $e
+* @param  float                  $time
+*/
+	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		$this->paintException($e);
+	}
+
+/**
+* A failure occurred.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  PHPUnit_Framework_AssertionFailedError $e
+* @param  float $time
+*/
+	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
+		$this->paintFail($e);
+	}
+
+/**
+* Incomplete test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception $e
+* @param  float $time
+*/
+	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		$this->paintSkip($e, $test);
+	}
+
+/**
+* Skipped test.
+*
+* @param  PHPUnit_Framework_Test $test
+* @param  Exception $e
+* @param  float $time
+*/
+	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+		$this->paintSkip($e, $test);
+	}
+
+/**
+ * A test suite started.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ */
+	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
+		echo sprintf(__('Running  %s'), $suite->getName()) . "\n";
+	}
+
+/**
+ * A test suite ended.
+ *
+ * @param  PHPUnit_Framework_TestSuite $suite
+ */
+	public function endTestSuite(PHPUnit_Framework_TestSuite $suite) {
+	}
+
+/**
+ * A test started.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ */
+	public function startTest(PHPUnit_Framework_Test $test) {
+	}
+
+/**
+ * A test ended.
+ *
+ * @param  PHPUnit_Framework_Test $test
+ * @param  float $time
+ */
+	public function endTest(PHPUnit_Framework_Test $test, $time) {
+		$this->numAssertions += $test->getNumAssertions();
+		$this->paintPass($test, $time);
 	}
 
 }

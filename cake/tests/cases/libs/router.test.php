@@ -1067,7 +1067,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testExtensionParsingSetting() {
-		$this->assertFalse(Router::extensions());
+		$this->assertEquals(array(), Router::extensions());
 
 		Router::parseExtensions('rss');
 		$this->assertEqual(Router::extensions(), array('rss'));
@@ -1927,7 +1927,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testUsingCustomRouteClass() {
-		Mock::generate('CakeRoute', 'MockConnectedRoute');
+		$mock = $this->getMock('CakeRoute', array(), array(), 'MockConnectedRoute', false);
 		$routes = Router::connect(
 			'/:slug',
 			array('controller' => 'posts', 'action' => 'view'),
@@ -1935,7 +1935,9 @@ class RouterTest extends CakeTestCase {
 		);
 		$this->assertTrue(is_a($routes[0], 'MockConnectedRoute'), 'Incorrect class used. %s');
 		$expected = array('controller' => 'posts', 'action' => 'view', 'slug' => 'test');
-		$routes[0]->setReturnValue('parse', $expected);
+		$routes[0]->expects($this->any())
+			->method('parse')
+			->will($this->returnValue($expected));
 		$result = Router::parse('/test');
 		$this->assertEqual($result, $expected);
 	}
@@ -2008,7 +2010,7 @@ class RouterTest extends CakeTestCase {
  *
  * @package cake.tests.cases.libs.
  **/
-class CakeRouteTestCase extends CakeTestCase {
+class CakeRouteTest extends CakeTestCase {
 /**
  * startTest method
  *
@@ -2410,7 +2412,7 @@ class CakeRouteTestCase extends CakeTestCase {
  *
  * @package cake.tests.libs
  */
-class PluginShortRouteTestCase extends  CakeTestCase {
+class PluginShortRouteTest extends  CakeTestCase {
 /**
  * startTest method
  *

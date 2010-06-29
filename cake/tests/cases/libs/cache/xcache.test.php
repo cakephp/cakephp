@@ -27,21 +27,7 @@ if (!class_exists('Cache')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  */
-class XcacheEngineTest extends UnitTestCase {
-
-/**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$skip = true;
-		if (function_exists('xcache_set')) {
-			$skip = false;
-		}
-		$this->skipIf($skip, '%s Xcache is not installed or configured properly');
-	}
+class XcacheEngineTest extends CakeTestCase {
 
 /**
  * setUp method
@@ -50,6 +36,7 @@ class XcacheEngineTest extends UnitTestCase {
  * @return void
  */
 	function setUp() {
+		$this->skipUnless(function_exists('xcache_set'), 'Xcache is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('xcache', array('engine' => 'Xcache', 'prefix' => 'cake_'));

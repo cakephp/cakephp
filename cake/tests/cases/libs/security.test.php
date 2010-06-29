@@ -142,13 +142,7 @@ class SecurityTest extends CakeTestCase {
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
 		$this->assertEqual(Security::cipher($result, $key), $txt);
-
-		$txt = 'some_text';
-		$key = '';
-		$result = Security::cipher($txt, $key);
-		$this->assertError();
-		$this->assertIdentical($result, '');
-
+		
 		$txt = 123456;
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
@@ -158,5 +152,10 @@ class SecurityTest extends CakeTestCase {
 		$key = 'my_key';
 		$result = Security::cipher($txt, $key);
 		$this->assertEqual(Security::cipher($result, $key), $txt);
+
+		$txt = 'some_text';
+		$key = '';
+		$this->expectError();
+		$result = Security::cipher($txt, $key);
 	}
 }

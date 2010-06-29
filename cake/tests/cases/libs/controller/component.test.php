@@ -288,7 +288,6 @@ class SomethingWithEmailComponent extends Object {
 	public $components = array('Email');
 }
 
-Mock::generate('Object', 'ComponentMockComponent', array('startup', 'beforeFilter', 'beforeRender', 'other'));
 
 /**
  * ComponentTest class
@@ -422,15 +421,22 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testTriggerCallback() {
+		$mock = $this->getMock(
+			'Object',
+			array('startup', 'beforeFilter', 'beforeRender', 'other'),
+			array(),
+			'ComponentMockComponent'
+		);
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ComponentMock');
 		$Controller->uses = null;
 		$Controller->constructClasses();
 
-		$Controller->ComponentMock->expectOnce('beforeRender');
+		$Controller->ComponentMock->expects($this->once())->method('beforeRender');
+		$Controller->ComponentMock->expects($this->never())->method('beforeFilter');
+
 		$Controller->Component->triggerCallback('beforeRender', $Controller);
 
-		$Controller->ComponentMock->expectNever('beforeFilter');
 		$Controller->ComponentMock->enabled = false;
 		$Controller->Component->triggerCallback('beforeFilter', $Controller);
 	}
@@ -561,6 +567,54 @@ class ComponentTest extends CakeTestCase {
 			$Controller->SomethingWithEmail->Email->Controller,
 			'ComponentTestController'
 		));
+	}
+
+/**
+ * test that components can modify values from beforeRedirect
+ *
+ * @return void
+ */
+	function testBeforeRedirectModification() {
+		$this->markTestIncomplete('This test needs to be implemented');
+		/*
+		*$MockController = new MockController();
+		$MockController->components = array('MockTest');
+		$MockController->Component = new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://book.cakephp.org'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://cakephp.org', 301, false);
+
+		$MockController = new MockController();
+		$MockController->components = array('MockTest');
+		$MockController->Component = new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', false);
+		$MockController->expectNever('header');
+		$MockController->redirect('http://cakephp.org', 301, false);
+
+		$MockController = new MockController();
+		$MockController->components = array('MockTest', 'MockTestB');
+		$MockController->Component = new Component();
+		$MockController->Component->init($MockController);
+		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
+		$MockController->MockTestB->setReturnValue('beforeRedirect', 'http://bakery.cakephp.org');
+		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
+		$MockController->expectAt(1, 'header', array('Location: http://bakery.cakephp.org'));
+		$MockController->expectCallCount('header', 2);
+		$MockController->redirect('http://cakephp.org', 301, false);
+		*/
+	}
+
+/**
+ * test that components can pass modifying values from beforeRedirect
+ *
+ * @return void
+ */
+	function testBeforeRedirectPass() {
+		$this->markTestIncomplete('This test needs to be implemented');
 	}
 
 /**

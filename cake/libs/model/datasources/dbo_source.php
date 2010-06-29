@@ -388,10 +388,8 @@ class DboSource extends DataSource {
  * @return array Array of resultset rows, or false if no rows matched
  */
 	public function fetchAll($sql, $cache = true, $modelName = null) {
-		if ($cache && isset($this->_queryCache[$sql])) {
-			if (preg_match('/^\s*select/i', $sql)) {
-				return $this->_queryCache[$sql];
-			}
+		if ($cache && ($cached = $this->getQueryCache($sql)) !== false) {
+			return $cached;
 		}
 
 		if ($this->execute($sql)) {
@@ -407,9 +405,7 @@ class DboSource extends DataSource {
 			}
 
 			if ($cache) {
-				if (strpos(trim(strtolower($sql)), 'select') !== false) {
-					$this->_queryCache[$sql] = $out;
-				}
+				$this->_writeQueryCache($sql, $out);
 			}
 			if (empty($out) && is_bool($this->_result)) {
 				return $this->_result;
@@ -2854,4 +2850,31 @@ class DboSource extends DataSource {
 		}
 		return 'string';
 	}
+
+/**
+ * Writes a new key for the in memory sql query cache
+ *
+ * @param string $sql SQL query
+ * @param mixed $data result of $sql query
+ * @return void
+ */
+	protected function _writeQueryCache($sql, $data) {
+		if (strpos(trim(strtolower($sql)), 'select') !== false) {
+			$this->_queryCache[$sql] = $data;
+		}
+	}
+
+/**
+ * Returns the result for a sql query if it is already cached
+ *
+ * @param string $sql SQL query
+ * @return mixed results for query if it is cached, false otherwise
+ */
+	public function getQueryCache($sql = null) {
+		if (isset($this->_queryCache[$sql]) && preg_match('/^\s*select/i', $sql)) {
+			return $this->_queryCache[$sql];
+		}
+		return false;
+	}
+
 }

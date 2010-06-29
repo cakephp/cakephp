@@ -22,6 +22,9 @@ define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups'
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
+
 /**
  * TestManager is the base class that handles loading and initiating the running
  * of TestCase and TestSuite classes that the user has selected.
@@ -35,14 +38,7 @@ class TestManager {
  *
  * @var string
  */
-	protected $_testExtension = '.test.php';
-
-/**
- * Extension suffix for group test case files.
- *
- * @var string
- */
-	protected $_groupExtension = '.group.php';
+	protected static $_testExtension = '.test.php';
 
 /**
  * Is this test an AppTest?
@@ -59,121 +55,111 @@ class TestManager {
 	public $pluginTest = false;
 
 /**
+ * String to filter test case method names by.
+ *
+ * @var string
+ */
+	public $filter = false;
+
+/**
+ * TestSuite container for single or grouped test files
+ *
+ * @var PHPUnit_Framework_TestSuite
+ */
+	protected $_testSuite = null;
+
+/**
+ * Object instance responsible for managing the test fixtures
+ *
+ * @var CakeFixtureManager
+ */
+	protected $_fixtureManager = null;
+
+/**
  * Constructor for the TestManager class
  *
  * @return void
  */
-	public function __construct() {
-		$this->_installSimpleTest();
-		if (isset($_GET['app'])) {
+	public function __construct($params = array()) {
+		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+		if (isset($params['app'])) {
 			$this->appTest = true;
 		}
-		if (isset($_GET['plugin'])) {
-			$this->pluginTest = htmlentities($_GET['plugin']);
+		if (isset($params['plugin'])) {
+			$this->pluginTest = htmlentities($params['plugin']);
 		}
-	}
-
-/**
- * Includes the required simpletest files in order for the testsuite to run
- *
- * @return void
- */
-	public function _installSimpleTest() {
-		App::import('Vendor', array(
-			'simpletest' . DS . 'unit_tester',
-			'simpletest' . DS . 'mock_objects',
-			'simpletest' . DS . 'web_tester'
-		));
-		require_once(CAKE_TESTS_LIB . 'cake_web_test_case.php');
-		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+		if (
+			isset($params['filter']) && 
+			$params['filter'] !== false &&
+			preg_match('/^[a-zA-Z0-9_]/', $params['filter'])
+		) {
+			$this->filter = '/' . $params['filter'] . '/';
+		}
 	}
 
 /**
  * Runs all tests in the Application depending on the current appTest setting
  *
- * @param Object $reporter Reporter object for the tests being run.
- * @param boolean $testing Are tests supposed to be auto run.  Set to true to return testcase list.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
  * @return mixed
  */
-	public function runAllTests(&$reporter, $testing = false) {
-		$testCases = $this->_getTestFileList($this->_getTestsPath());
-		if ($this->appTest) {
-			$test = new TestSuite(__('All App Tests', true));
-		} else if ($this->pluginTest) {
-			$test = new TestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
-		} else {
-			$test = new TestSuite(__('All Core Tests', true));
-		}
+	public function runAllTests(&$reporter) {
+		$testCases = $this->_getTestFileList($this->_getTestsPath($reporter->params));
 
-		if ($testing) {
-			return $testCases;
+		if ($this->appTest) {
+			$test = $this->getTestSuite(__('All App Tests', true));
+		} else if ($this->pluginTest) {
+			$test =  $this->getTestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
+		} else {
+			$test =  $this->getTestSuite(__('All Core Tests', true));
 		}
 
 		foreach ($testCases as $testCase) {
 			$test->addTestFile($testCase);
 		}
 
-		return $test->run($reporter);
+		return $this->run($reporter);
 	}
 
 /**
  * Runs a specific test case file
  *
  * @param string $testCaseFile Filename of the test to be run.
- * @param Object $reporter Reporter instance to attach to the test case.
- * @param boolean $testing Set to true if testing, otherwise test case will be run.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
+ * @throws InvalidArgumentException if the supplied $testCaseFile does not exists
  * @return mixed Result of test case being run.
  */
-	public function runTestCase($testCaseFile, &$reporter, $testing = false) {
-		$testCaseFileWithPath = $this->_getTestsPath() . DS . $testCaseFile;
+	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter, $codeCoverage = false) {
+		$testCaseFileWithPath = $this->_getTestsPath($reporter->params) . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
-			trigger_error(
-				sprintf(__("Test case %s cannot be found", true), htmlentities($testCaseFile)),
-				E_USER_ERROR
-			);
-			return false;
+			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
 		}
 
-		if ($testing) {
-			return true;
-		}
-
-		$test = new TestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$test->addTestFile($testCaseFileWithPath);
-		return $test->run($reporter);
+		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		$testSuite->addTestFile($testCaseFileWithPath);
+		return $this->run($reporter, $codeCoverage);
 	}
 
 /**
- * Runs a specific group test file
+ * Runs the main testSuite and attaches to it a reporter
  *
- * @param string $groupTestName GroupTest that you want to run.
- * @param Object $reporter Reporter instance to use with the group test being run.
- * @return mixed Results of group test being run.
+ * @param PHPUnit_Framework_TestListener $reporter Reporter instance to use with the group test being run.
+ * @return PHPUnit_Framework_TestResult Result object of the test run.
  */
-	public function runGroupTest($groupTestName, &$reporter) {
-		$filePath = $this->_getTestsPath('groups') . DS . strtolower($groupTestName) . $this->_groupExtension;
+	protected function run($reporter, $codeCoverage = false) {
+		restore_error_handler();
+		restore_error_handler();
 
-		if (!file_exists($filePath) || strpos($filePath, '..')) {
-			trigger_error(sprintf(
-					__("Group test %s cannot be found at %s", true), 
-					htmlentities($groupTestName), 
-					htmlentities($filePath)
-				),
-				E_USER_ERROR
-			);
-		}
-
-		require_once $filePath;
-		$test = new TestSuite(sprintf(__('%s group test', true), $groupTestName));
-		foreach ($this->_getGroupTestClassNames($filePath) as $groupTest) {
-			$testCase = new $groupTest();
-			$test->addTestCase($testCase);
-			if (isset($testCase->label)) {
-				$test->_label = $testCase->label;
-			}
-		}
-		return $test->run($reporter);
+		$result = new PHPUnit_Framework_TestResult;
+		$result->collectCodeCoverageInformation($codeCoverage);
+		$result->addListener($reporter);
+		$reporter->paintHeader();
+		$testSuite = $this->getTestSuite();
+		$testSuite->setFixtureManager($this->getFixtureManager());
+		$testSuite->run($result, $this->filter);
+		$reporter->paintResult($result);
+		return $result;
 	}
 
 /**
@@ -186,8 +172,7 @@ class TestManager {
  * @static
  */
 	public static function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
-		$manager = new TestManager();
-		$testCases = $manager->_getTestFileList($directory);
+		$testCases = self::_getTestFileList($directory);
 		foreach ($testCases as $testCase) {
 			$groupTest->addTestFile($testCase);
 		}
@@ -203,12 +188,10 @@ class TestManager {
  * @static
  */
 	public static function addTestFile(&$groupTest, $file) {
-		$manager = new TestManager();
-
-		if (file_exists($file . $manager->_testExtension)) {
-			$file .= $manager->_testExtension;
-		} elseif (file_exists($file . $manager->_groupExtension)) {
-			$file .= $manager->_groupExtension;
+		if (file_exists($file . self::$_testExtension)) {
+			$file .= self::$_testExtension;
+		} elseif (file_exists($file . self::$_groupExtension)) {
+			$file .= self::$_groupExtension;
 		}
 		$groupTest->addTestFile($file);
 	}
@@ -219,19 +202,10 @@ class TestManager {
  * @access public
  * @static
  */
-	function &getTestCaseList() {
-		$manager = new TestManager();
-		$return = $manager->_getTestCaseList($manager->_getTestsPath());
-		return $return;
-	}
+	public static function getTestCaseList($params) {
+		$directory = self::_getTestsPath($params);
+		$fileList = self::_getTestFileList($directory);
 
-/**
- * Builds the list of test cases from a given directory
- *
- * @param string $directory Directory to get test case list from.
- */
-	protected function &_getTestCaseList($directory = '.') {
-		$fileList = $this->_getTestFileList($directory);
 		$testCases = array();
 		foreach ($fileList as $testCaseFile) {
 			$testCases[$testCaseFile] = str_replace($directory . DS, '', $testCaseFile);
@@ -243,64 +217,11 @@ class TestManager {
  * Returns a list of test files from a given directory
  *
  * @param string $directory Directory to get test case files from.
- */
-	protected function &_getTestFileList($directory = '.') {
-		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestCaseFile'));
-		return $return;
-	}
-
-/**
- * Returns a list of group tests found in the current valid test case path
- *
- * @access public
  * @static
  */
-	function &getGroupTestList() {
-		$manager = new TestManager();
-		$return = $manager->_getTestGroupList($manager->_getTestsPath('groups'));
+	protected static function &_getTestFileList($directory = '.') {
+		$return = self::_getRecursiveFileList($directory, array('self', '_isTestCaseFile'));
 		return $return;
-	}
-
-/**
- * Returns a list of group test files from a given directory
- *
- * @param string $directory The directory to get group test files from.
- */
-	protected function &_getTestGroupFileList($directory = '.') {
-		$return = $this->_getRecursiveFileList($directory, array(&$this, '_isTestGroupFile'));
-		return $return;
-	}
-
-/**
- * Returns a list of group test files from a given directory
- *
- * @param string $directory The directory to get group tests from.
- */
-	protected function &_getTestGroupList($directory = '.') {
-		$fileList = $this->_getTestGroupFileList($directory);
-		$groupTests = array();
-
-		foreach ($fileList as $groupTestFile) {
-			$groupTests[$groupTestFile] = str_replace($this->_groupExtension, '', basename($groupTestFile));
-		}
-		sort($groupTests);
-		return $groupTests;
-	}
-
-/**
- * Returns a list of class names from a group test file
- *
- * @param string $groupTestFile The groupTest file to scan for TestSuite classnames.
- */
-	protected function &_getGroupTestClassNames($groupTestFile) {
-		$file = implode("\n", file($groupTestFile));
-		preg_match("~lass\s+?(.*)\s+?extends TestSuite~", $file, $matches);
-		if (!empty($matches)) {
-			unset($matches[0]);
-			return $matches;
-		}
-		$matches = array();
-		return $matches;
 	}
 
 /**
@@ -309,20 +230,23 @@ class TestManager {
  *
  * @param string $directory The directory to scan for files.
  * @param mixed $fileTestFunction
+ * @static
  */
-	protected function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
+	protected static function &_getRecursiveFileList($directory = '.', $fileTestFunction) {
 		$fileList = array();
 		if (!is_dir($directory)) {
 			return $fileList;
 		}
 
-		$files = glob($directory . DS . '*');
-		$files = $files ? $files : array();
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
 
 		foreach ($files as $file) {
-			if (is_dir($file)) {
-				$fileList = array_merge($fileList, $this->_getRecursiveFileList($file, $fileTestFunction));
-			} elseif ($fileTestFunction[0]->$fileTestFunction[1]($file)) {
+			if (!$file->isFile()) {
+				continue;
+			}
+			$file = $file->getRealPath();
+
+			if (call_user_func_array($fileTestFunction, array($file))) {
 				$fileList[] = $file;
 			}
 		}
@@ -334,19 +258,10 @@ class TestManager {
  *
  * @param string $file
  * @return boolean Whether $file is a test case.
+ * @static
  */
-	protected function _isTestCaseFile($file) {
-		return $this->_hasExpectedExtension($file, $this->_testExtension);
-	}
-
-/**
- * Tests if a file has the correct group test extension
- *
- * @param string $file
- * @return boolean Whether $file is a group
- */
-	protected function _isTestGroupFile($file) {
-		return $this->_hasExpectedExtension($file, $this->_groupExtension);
+	protected static function _isTestCaseFile($file) {
+		return self::_hasExpectedExtension($file, self::$_testExtension);
 	}
 
 /**
@@ -355,37 +270,29 @@ class TestManager {
  * @param string $file
  * @param string $extension
  * @return void
+ * @static
  */
-	protected function _hasExpectedExtension($file, $extension) {
+	protected static function _hasExpectedExtension($file, $extension) {
 		return $extension == strtolower(substr($file, (0 - strlen($extension))));
 	}
 
 /**
- * Returns the given path to the test files depending on a given type of tests (cases, group, ..)
+ * Returns the given path to the test files depending on a given type of tests (core, app, plugin)
  *
- * @param string $type either 'cases' or 'groups'
+ * @param array $params Array of parameters for getting test paths.
+ *   Can contain app, type, and plugin params.
  * @return string The path tests are located on
+ * @static
  */
-	protected function _getTestsPath($type = 'cases') {
-		if (!empty($this->appTest)) {
-			if ($type == 'cases') {
-				$result = APP_TEST_CASES;
-			} else if ($type == 'groups') {
-				$result = APP_TEST_GROUPS;
-			}
-		} else if (!empty($this->pluginTest)) {
-			$_pluginBasePath = APP . 'plugins/' . $this->pluginTest . '/tests';
-			$pluginPath = App::pluginPath($this->pluginTest);
-			if (file_exists($pluginPath . DS . 'tests')) {
-				$_pluginBasePath = $pluginPath . DS . 'tests';
-			}
-			$result = $_pluginBasePath . DS . $type;
+	protected static function _getTestsPath($params) {
+		$result = null;
+		if (!empty($params['app'])) {
+			$result = APP_TEST_CASES;
+		} else if (!empty($params['plugin'])) {
+			$pluginPath = App::pluginPath($params['plugin']);
+			$result = $pluginPath . 'tests' . DS . 'cases';
 		} else {
-			if ($type == 'cases') {
-				$result = CORE_TEST_CASES;
-			} else if ($type == 'groups') {
-				$result = CORE_TEST_GROUPS;
-			}
+			$result = CORE_TEST_CASES;
 		}
 		return $result;
 	}
@@ -396,10 +303,35 @@ class TestManager {
  * @param string $type Type of test to get, either 'test' or 'group'
  * @return string Extension suffix for test.
  */
-	public function getExtension($type = 'test') {
+	public static function getExtension($type = 'test') {
 		if ($type == 'test' || $type == 'case') {
-			return $this->_testExtension;
+			return self::$_testExtension;
 		}
-		return $this->_groupExtension;
+		return self::$_groupExtension;
+	}
+
+/**
+ * Get the container testSuite instance for this runner or creates a new one
+ *
+ * @param string $name The name for the container test suite
+ * @return PHPUnit_Framework_TestSuite container test suite
+ */
+	protected function getTestSuite($name = '') {
+		if (!empty($this->_testSuite)) {
+			return $this->_testSuite;
+		}
+		return $this->_testSuite = new CakeTestSuite($name);
+	}
+
+/**
+ * Get an instance of a Fixture manager to be used by the test cases
+ *
+ * @return CakeFixtureManager fixture manager
+ */
+	protected function getFixtureManager() {
+		if (!empty($this->_fixtureManager)) {
+			return $this->_fixtureManager;
+		}
+		return $this->_fixtureManager = new CakeFixtureManager;
 	}
 }

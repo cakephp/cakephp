@@ -64,7 +64,7 @@ class Router {
  * @var array
  * @access private
  */
-	private $__validExtensions = null;
+	private $__validExtensions = array();
 
 /**
  * 'Constant' regular expression definitions for named route elements

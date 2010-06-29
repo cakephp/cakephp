@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-require_once CAKE_TESTS_LIB . 'test_manager.php';
 
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
@@ -32,13 +31,13 @@ class CakeTestSuiteDispatcher {
  */
 	public $params = array(
 		'codeCoverage' => false,
-		'group' => null,
 		'case' => null,
 		'app' => false,
 		'plugin' => null,
 		'output' => 'html',
 		'show' => 'groups',
-		'show_passes' => false
+		'show_passes' => false,
+		'filter' => false
 	);
 
 /**
@@ -70,6 +69,13 @@ class CakeTestSuiteDispatcher {
 	protected $_baseDir;
 
 /**
+ * boolean to set auto parsing of params.
+ *
+ * @var boolean
+ */
+	protected $_paramsParsed = false;
+
+/**
  * reporter instance used for the request
  *
  * @var CakeBaseReporter
@@ -93,34 +99,51 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function dispatch() {
-		$this->_checkSimpleTest();
+		$this->_checkPHPUnit();
 		$this->_parseParams();
 
-		if ($this->params['group']) {
-			$this->_runGroupTest();
-		} elseif ($this->params['case']) {
-			$this->_runTestCase();
-		} elseif (isset($_GET['show']) && $_GET['show'] == 'cases') {
-			$this->_testCaseList();
+		if ($this->params['case']) {
+			$value = $this->_runTestCase();
 		} else {
-			$this->_groupTestList();
+			$value = $this->_testCaseList();
 		}
 
 		$output = ob_get_clean();
 		echo $output;
+		return $value;
 	}
 
 /**
- * Checks that simpleTest is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed.  Will exit if it doesn't
  *
  * @return void
  */
-	function _checkSimpleTest() {
-		if (!App::import('Vendor', 'simpletest/reporter')) {
+	function _checkPHPUnit() {
+		$found = $path = null;
+
+		if (@include 'PHPUnit' . DS . 'Framework.php') {
+			$found = true;
+		}
+
+		if (!$found) {
+			foreach (App::path('vendors') as $vendor) {
+				if (is_dir($vendor . 'PHPUnit')) {
+					$path = $vendor;
+				}
+			}
+
+			if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
+				$found = include 'PHPUnit' . DS . 'Framework.php';
+			}
+		}
+
+		if (!$found) {
 			$baseDir = $this->_baseDir;
 			include CAKE_TESTS_LIB . 'templates/simpletest.php';
 			exit();
 		}
+
+		PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 	}
 
 /**
@@ -151,19 +174,6 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Generates a page containing a list of group tests that could be run.
- *
- * @return void
- */
-	function _groupTestList() {
-		$Reporter =& $this->getReporter();
-		$Reporter->paintDocumentStart();
-		$Reporter->paintTestMenu();
-		$Reporter->groupTestList();
-		$Reporter->paintDocumentEnd();
-	}
-
-/**
  * Sets the Manager to use for the request.
  *
  * @return string The manager class name
@@ -171,7 +181,8 @@ class CakeTestSuiteDispatcher {
  */
 	function &getManager() {
 		if (empty($this->Manager)) {
-			$this->Manager = new $this->_managerClass();
+			require_once CAKE_TESTS_LIB . 'test_manager.php';
+			$this->Manager = new $this->_managerClass($this->params);
 		}
 		return $this->Manager;
 	}
@@ -200,44 +211,39 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
+ * Sets the params, calling this will bypass the auto parameter parsing.
+ *
+ * @param array $params Array of parameters for the dispatcher
+ * @return void
+ */
+	public function setParams($params) {
+		$this->params = $params;
+		$this->_paramsParsed = true;
+	}
+
+/**
  * Parse url params into a 'request'
  *
  * @return void
  */
 	function _parseParams() {
-		if (!isset($_SERVER['SERVER_NAME'])) {
-			$_SERVER['SERVER_NAME'] = '';
-		}
-		foreach ($this->params as $key => $value) {
-			if (isset($_GET[$key])) {
-				$this->params[$key] = $_GET[$key];
+		if (!$this->_paramsParsed) {
+			if (!isset($_SERVER['SERVER_NAME'])) {
+				$_SERVER['SERVER_NAME'] = '';
 			}
-		}
-		if (isset($_GET['code_coverage'])) {
-			$this->params['codeCoverage'] = true;
-			require_once CAKE_TESTS_LIB . 'code_coverage_manager.php';
-			$this->_checkXdebug();
+			foreach ($this->params as $key => $value) {
+				if (isset($_GET[$key])) {
+					$this->params[$key] = $_GET[$key];
+				}
+			}
+			if (isset($_GET['code_coverage'])) {
+				$this->params['codeCoverage'] = true;
+				$this->_checkXdebug();
+			}
 		}
 		$this->params['baseUrl'] = $this->_baseUrl;
 		$this->params['baseDir'] = $this->_baseDir;
 		$this->getManager();
-	}
-
-/**
- * Runs the group test case.
- *
- * @return void
- */
-	function _runGroupTest() {
-		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::init($this->params['group'], $Reporter);
-		}
-		if ('all' == $this->params['group']) {
-			$this->Manager->runAllTests($Reporter);
-		} else {
-			$this->Manager->runGroupTest(ucfirst($this->params['group']), $Reporter);
-		}
 	}
 
 /**
@@ -247,9 +253,6 @@ class CakeTestSuiteDispatcher {
  */
 	function _runTestCase() {
 		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		if ($this->params['codeCoverage']) {
-			CodeCoverageManager::init($this->params['case'], $Reporter);
-		}
-		$this->Manager->runTestCase($this->params['case'], $Reporter);
+		return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
 	}
 }

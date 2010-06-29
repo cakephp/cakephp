@@ -390,7 +390,7 @@ class Scaffold extends Object {
 
 			if ($this->ScaffoldModel->delete($id)) {
 				$message = __(
-					sprintf('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id),
+					sprintf('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id)
 				);
 				if ($this->_validSession) {
 					$this->controller->Session->setFlash($message);

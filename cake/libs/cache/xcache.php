@@ -49,8 +49,10 @@ class XcacheEngine extends CacheEngine {
  */
 	public function init($settings) {
 		parent::init(array_merge(array(
-			'engine' => 'Xcache', 'prefix' => Inflector::slug(APP_DIR) . '_
-			PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'
+			'engine' => 'Xcache',
+			'prefix' => Inflector::slug(APP_DIR) . '_',
+			'PHP_AUTH_USER' => 'user',
+			'PHP_AUTH_PW' => 'password'
 			), $settings)
 		);
 		return function_exists('xcache_info');
@@ -128,7 +130,7 @@ class XcacheEngine extends CacheEngine {
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
-	public function clear() {
+	public function clear($check) {
 		$this->__auth();
 		$max = xcache_count(XC_TYPE_VAR);
 		for ($i = 0; $i < $max; $i++) {

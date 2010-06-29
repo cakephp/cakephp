@@ -1318,7 +1318,8 @@ class FormHelperTest extends CakeTestCase {
 			'OpenidUrl' => array('url' => 'http://www.cakephp.org')
 		);
 
-		$this->assertTrue($this->UserForm->OpenidUrl->create($data));
+		$result = $this->UserForm->OpenidUrl->create($data);
+		$this->assertFalse(empty($result));
 		$this->assertFalse($this->UserForm->OpenidUrl->validates());
 
 		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
@@ -1334,7 +1335,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$expected = array('OpenidUrl' => array('openid_not_registered' => 1));
+		$expected = array('OpenidUrl' => array('openid_not_registered' => true));
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
 		$result = $this->Form->error(
@@ -1362,7 +1363,8 @@ class FormHelperTest extends CakeTestCase {
 			'ValidateProfile' => array('full_name' => 'Mariano Iglesias')
 		);
 
-		$this->assertTrue($this->ValidateUser->create($data));
+		$result = $this->ValidateUser->create($data);
+		$this->assertFalse(empty($result));
 		$this->assertFalse($this->ValidateUser->validates());
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 
@@ -1377,8 +1379,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$expected = array(
-			'ValidateUser' => array('email' => 1),
-			'ValidateProfile' => array('full_name' => 1, 'city' => 1)
+			'ValidateUser' => array('email' => true),
+			'ValidateProfile' => array('full_name' => true, 'city' => true)
 		);
 		$this->assertEqual($this->Form->validationErrors, $expected);
 
@@ -1405,7 +1407,8 @@ class FormHelperTest extends CakeTestCase {
 			'ValidateItem' => array('name' => 'Item')
 		);
 
-		$this->assertTrue($this->ValidateUser->create($data));
+		$result = $this->ValidateUser->create($data);
+		$this->assertFalse(empty($result));
 		$this->assertFalse($this->ValidateUser->validates());
 		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
 		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
@@ -1421,9 +1424,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$expected = array(
-			'ValidateUser' => array('email' => 1),
-			'ValidateProfile' => array('full_name' => 1, 'city' => 1),
-			'ValidateItem' => array('description' => 1)
+			'ValidateUser' => array('email' => true),
+			'ValidateProfile' => array('full_name' => true, 'city' => true),
+			'ValidateItem' => array('description' => true)
 		);
 		$this->assertEqual($this->Form->validationErrors, $expected);
 

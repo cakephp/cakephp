@@ -18,4 +18,17 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 class TestPluginCacheEngine extends CacheEngine {
+
+	public function write($key, $value, $duration) { }
+
+	public function read($key) { }
+
+	public function increment($key, $offset = 1) { }
+
+	public function decrement($key, $offset = 1) { }
+
+	public function delete($key) { }
+
+	public function clear($check) { }
+	
 }

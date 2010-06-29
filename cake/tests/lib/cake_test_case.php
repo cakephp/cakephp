@@ -17,64 +17,12 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!class_exists('dispatcher')) {
-	require CAKE . 'dispatcher.php';
-}
+
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+
+require_once CAKE_TESTS_LIB . 'cake_fixture_manager.php';
 require_once CAKE_TESTS_LIB . 'cake_test_model.php';
 require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
-App::import('Vendor', 'simpletest' . DS . 'unit_tester');
-
-/**
- * CakeTestDispatcher
- *
- * @package       cake
- * @subpackage    cake.cake.tests.lib
- */
-class CakeTestDispatcher extends Dispatcher {
-
-/**
- * controller property
- *
- * @var Controller
- * @access public
- */
-	public $controller;
-	public $testCase;
-
-/**
- * testCase method
- *
- * @param CakeTestCase $testCase
- * @return void
- */
-	public function testCase(&$testCase) {
-		$this->testCase =& $testCase;
-	}
-
-/**
- * invoke method
- *
- * @param Controller $controller
- * @param array $params
- * @param boolean $missingAction
- * @return Controller
- */
-	protected function _invoke(&$controller, $params, $missingAction = false) {
-		$this->controller =& $controller;
-
-		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
-			$this->testCase->startController($this->controller, $params);
-		}
-
-		$result = parent::_invoke($this->controller, $params, $missingAction);
-
-		if (isset($this->testCase) && method_exists($this->testCase, 'endController')) {
-			$this->testCase->endController($this->controller, $params);
-		}
-
-		return $result;
-	}
-}
 
 /**
  * CakeTestCase class
@@ -82,15 +30,7 @@ class CakeTestDispatcher extends Dispatcher {
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class CakeTestCase extends UnitTestCase {
-
-/**
- * Methods used internally.
- *
- * @var array
- * @access public
- */
-	public $methods = array('start', 'end', 'startcase', 'endcase', 'starttest', 'endtest');
+class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
@@ -110,45 +50,34 @@ class CakeTestCase extends UnitTestCase {
 	public $dropTables = true;
 
 /**
- * Maps fixture class names to fixture identifiers as included in CakeTestCase::$fixtures
+ * The fixtures to be loaded in this test case. Fixtures are referenced using a dot notation:
+ * 	- fixture_name : A fixtures that can be found in the main app folder and is named FixtureNameFixture
+ *	- core.fixture_name : A fixtures that can be found in the cake core folder and is named FixtureNameFixture
+ *	- plugin.plugin_name.fixture_name : A fixtures that can be found in the plugin "plugin_name" folder and is named FixtureNameFixture
  *
  * @var array
- * @access protected
+ * @access public
  */
-	protected $_fixtureClassMap = array();
+	private $fixtures = array();
 
 /**
- * truncated property
- *
- * @var boolean
- * @access private
- */
-	private $__truncated = true;
-
-/**
- * savedGetData property
- *
- * @var array
- * @access private
- */
-	private $__savedGetData = array();
-
-/**
- * Called when a test case (group of methods) is about to start (to be overriden when needed.)
- *
- * @param string $method Test method about to get executed.
- * @return void
- */
-	public function startCase() {
-	}
-
-/**
- * Called when a test case (group of methods) has been executed (to be overriden when needed.)
- *
- * @param string $method Test method about that was executed.
- * @return void
- */
-	public function endCase() {
+* Runs the test case and collects the results in a TestResult object.
+* If no TestResult object is passed a new one will be created.
+* This method is run for each test method in this class
+*
+* @param  PHPUnit_Framework_TestResult $result
+* @return PHPUnit_Framework_TestResult
+* @throws InvalidArgumentException
+*/
+	public function run(PHPUnit_Framework_TestResult $result = NULL) {
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->load($this); 
+		}
+		$result = parent::run($result);
+		if (!empty($this->sharedFixture)) {
+			$this->sharedFixture->unload($this);
+		}
+		return $result;
 	}
 
 /**
@@ -170,213 +99,17 @@ class CakeTestCase extends UnitTestCase {
 	}
 
 /**
- * Overrides SimpleTestCase::assert to enable calling of skipIf() from within tests
- *
- * @param Expectation $expectation
- * @param mixed $compare
- * @param string $message
- * @return boolean|null
- */
-	public function assert(&$expectation, $compare, $message = '%s') {
-		if ($this->_should_skip) {
-			return;
-		}
-		return parent::assert($expectation, $compare, $message);
-	}
-
-/**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  *
  * @param boolean $shouldSkip
  * @param string $message
  * @return boolean
  */
-	public function skipIf($shouldSkip, $message = '%s') {
-		parent::skipIf($shouldSkip, $message);
+	public function skipIf($shouldSkip, $message = '') {
+		if ($shouldSkip) {
+			$this->markTestSkipped($message);
+		}
 		return $shouldSkip;
-	}
-
-/**
- * Callback issued when a controller's action is about to be invoked through testAction().
- *
- * @param Controller $controller	Controller that's about to be invoked.
- * @param array $params	Additional parameters as sent by testAction().
- * @return void
- */
-	public function startController(&$controller, $params = array()) {
-		if (isset($params['fixturize']) && ((is_array($params['fixturize']) && !empty($params['fixturize'])) || $params['fixturize'] === true)) {
-			if (!isset($this->db)) {
-				$this->_initDb();
-			}
-
-			if ($controller->uses === false) {
-				$list = array($controller->modelClass);
-			} else {
-				$list = is_array($controller->uses) ? $controller->uses : array($controller->uses);
-			}
-
-			$models = array();
-			ClassRegistry::config(array('ds' => $params['connection']));
-
-			foreach ($list as $name) {
-				if ((is_array($params['fixturize']) && in_array($name, $params['fixturize'])) || $params['fixturize'] === true) {
-					if (class_exists($name) || App::import('Model', $name)) {
-						$object =& ClassRegistry::init($name);
-						//switch back to specified datasource.
-						$object->setDataSource($params['connection']);
-						$db =& ConnectionManager::getDataSource($object->useDbConfig);
-						$db->cacheSources = false;
-
-						$models[$object->alias] = array(
-							'table' => $object->table,
-							'model' => $object->alias,
-							'key' => strtolower($name),
-						);
-					}
-				}
-			}
-			ClassRegistry::config(array('ds' => 'test_suite'));
-
-			if (!empty($models) && isset($this->db)) {
-				$this->_actionFixtures = array();
-
-				foreach ($models as $model) {
-					$fixture =& new CakeTestFixture($this->db);
-
-					$fixture->name = $model['model'] . 'Test';
-					$fixture->table = $model['table'];
-					$fixture->import = array('model' => $model['model'], 'records' => true);
-					$fixture->init();
-
-					$fixture->create($this->db);
-					$fixture->insert($this->db);
-					$this->_actionFixtures[] =& $fixture;
-				}
-
-				foreach ($models as $model) {
-					$object =& ClassRegistry::getObject($model['key']);
-					if ($object !== false) {
-						$object->setDataSource('test_suite');
-						$object->cacheSources = false;
-					}
-				}
-			}
-		}
-	}
-
-/**
- * Callback issued when a controller's action has been invoked through testAction().
- *
- * @param Controller $controller Controller that has been invoked.
- * @param array $params	Additional parameters as sent by testAction().
- * @return void
- */
-	public function endController(&$controller, $params = array()) {
-		if (isset($this->db) && isset($this->_actionFixtures) && !empty($this->_actionFixtures) && $this->dropTables) {
-			foreach ($this->_actionFixtures as $fixture) {
-				$fixture->drop($this->db);
-			}
-		}
-	}
-
-/**
- * Executes a Cake URL, and can get (depending on the $params['return'] value):
- *
- * Params:
- * - 'return' has several possible values:
- *   1. 'result': Whatever the action returns (and also specifies $this->params['requested'] for controller)
- *   2. 'view': The rendered view, without the layout
- *   3. 'contents': The rendered view, within the layout.
- *   4. 'vars': the view vars
- *
- * - 'fixturize' - Set to true if you want to copy model data from 'connection' to the test_suite connection
- * - 'data' - The data you want to insert into $this->data in the controller.
- * - 'connection' - Which connection to use in conjunction with fixturize (defaults to 'default')
- * - 'method' - What type of HTTP method to simulate (defaults to post)
- *
- * @param string $url Cake URL to execute (e.g: /articles/view/455)
- * @param mixed $params Parameters (see above), or simply a string of what to return
- * @return mixed Whatever is returned depending of requested result
- */
-	public function testAction($url, $params = array()) {
-		$default = array(
-			'return' => 'result',
-			'fixturize' => false,
-			'data' => array(),
-			'method' => 'post',
-			'connection' => 'default'
-		);
-
-		if (is_string($params)) {
-			$params = array('return' => $params);
-		}
-		$params = array_merge($default, $params);
-
-		$toSave = array(
-			'case' => null,
-			'group' => null,
-			'app' => null,
-			'output' => null,
-			'show' => null,
-			'plugin' => null
-		);
-		$this->__savedGetData = (empty($this->__savedGetData))
-				? array_intersect_key($_GET, $toSave)
-				: $this->__savedGetData;
-
-		$data = (!empty($params['data'])) ? $params['data'] : array();
-
-		if (strtolower($params['method']) == 'get') {
-			$_GET = array_merge($this->__savedGetData, $data);
-			$_POST = array();
-		} else {
-			$_POST = array('data' => $data);
-			$_GET = $this->__savedGetData;
-		}
-
-		$return = $params['return'];
-		$params = array_diff_key($params, array('data' => null, 'method' => null, 'return' => null));
-
-		$dispatcher =& new CakeTestDispatcher();
-		$dispatcher->testCase($this);
-
-		if ($return != 'result') {
-			if ($return != 'contents') {
-				$params['layout'] = false;
-			}
-
-			ob_start();
-			@$dispatcher->dispatch($url, $params);
-			$result = ob_get_clean();
-
-			if ($return == 'vars') {
-				$view =& ClassRegistry::getObject('view');
-				$viewVars = $view->getVars();
-
-				$result = array();
-
-				foreach ($viewVars as $var) {
-					$result[$var] = $view->getVar($var);
-				}
-
-				if (!empty($view->pageTitle)) {
-					$result = array_merge($result, array('title' => $view->pageTitle));
-				}
-			}
-		} else {
-			$params['return'] = 1;
-			$params['bare'] = 1;
-			$params['requested'] = 1;
-
-			$result = @$dispatcher->dispatch($url, $params);
-		}
-
-		if (isset($this->_actionFixtures)) {
-			unset($this->_actionFixtures);
-		}
-		ClassRegistry::flush();
-
-		return $result;
 	}
 
 /**
@@ -385,78 +118,9 @@ class CakeTestCase extends UnitTestCase {
  * @param string $method Test method just started.
  * @return void
  */
-	public function before($method) {
-		parent::before($method);
-
-		if (isset($this->fixtures) && (!is_array($this->fixtures) || empty($this->fixtures))) {
-			unset($this->fixtures);
-		}
-
-		// Set up DB connection
-		if (isset($this->fixtures) && strtolower($method) == 'start') {
-			$this->_initDb();
-			$this->_loadFixtures();
-		}
-
-		// Create records
-		if (isset($this->_fixtures) && isset($this->db) && !in_array(strtolower($method), array('start', 'end')) && $this->__truncated && $this->autoFixtures == true) {
-			foreach ($this->_fixtures as $fixture) {
-				$inserts = $fixture->insert($this->db);
-			}
-		}
-
-		if (!in_array(strtolower($method), $this->methods)) {
-			$this->startTest($method);
-		}
-	}
-
-/**
- * Runs as first test to create tables.
- *
- * @return void
- */
-	public function start() {
-		if (isset($this->_fixtures) && isset($this->db)) {
-			Configure::write('Cache.disable', true);
-			$cacheSources = $this->db->cacheSources;
-			$this->db->cacheSources = false;
-			$sources = $this->db->listSources();
-			$this->db->cacheSources = $cacheSources;
-
-			if (!$this->dropTables) {
-				return;
-			}
-			foreach ($this->_fixtures as $fixture) {
-				$table = $this->db->config['prefix'] . $fixture->table;
-				if (in_array($table, $sources)) {
-					$fixture->drop($this->db);
-					$fixture->create($this->db);
-				} elseif (!in_array($table, $sources)) {
-					$fixture->create($this->db);
-				}
-			}
-		}
-	}
-
-/**
- * Runs as last test to drop tables.
- *
- * @return void
- */
-	public function end() {
-		if (isset($this->_fixtures) && isset($this->db)) {
-			if ($this->dropTables) {
-				foreach (array_reverse($this->_fixtures) as $fixture) {
-					$fixture->drop($this->db);
-				}
-			}
-			$this->db->sources(true);
-			Configure::write('Cache.disable', false);
-		}
-
-		if (class_exists('ClassRegistry')) {
-			ClassRegistry::flush();
-		}
+	protected function assertPreConditions() {
+		parent::assertPreConditions();
+		$this->startTest($this->getName());
 	}
 
 /**
@@ -465,48 +129,11 @@ class CakeTestCase extends UnitTestCase {
  * @param string $method Test method just finished.
  * @return void
  */
-	public function after($method) {
-		$isTestMethod = !in_array(strtolower($method), array('start', 'end'));
-
-		if (isset($this->_fixtures) && isset($this->db) && $isTestMethod) {
-			foreach ($this->_fixtures as $fixture) {
-				$fixture->truncate($this->db);
-			}
-			$this->__truncated = true;
-		} else {
-			$this->__truncated = false;
-		}
-
-		if (!in_array(strtolower($method), $this->methods)) {
-			$this->endTest($method);
-		}
-		$this->_should_skip = false;
-
-		parent::after($method);
+	protected function assertPostConditions() {
+		parent::assertPostConditions();
+		$this->endTest($this->getName());
 	}
 
-/**
- * Gets a list of test names. Normally that will be all internal methods that start with the
- * name "test". This method should be overridden if you want a different rule.
- *
- * @return array List of test names.
- */
-	public function getTests() {
-		return array_merge(
-			array('start', 'startCase'),
-			array_diff(parent::getTests(), array('testAction')),
-			array('endCase', 'end')
-		);
-	}
-
-/**
- * Accessor for checking whether or not fixtures were truncated 
- *
- * @return void
- */
-	public function getTruncated() {
-		return $this->__truncated;
-	}
 /**
  * Chooses which fixtures to load for a given test
  *
@@ -517,16 +144,12 @@ class CakeTestCase extends UnitTestCase {
  * @see CakeTestCase::$autoFixtures
  */
 	function loadFixtures() {
+		if (empty($this->sharedFixture)) {
+			throw new Exception(__('No fixture manager to load the test fixture'));
+		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			if (isset($this->_fixtureClassMap[$class])) {
-				$fixture = $this->_fixtures[$this->_fixtureClassMap[$class]];
-
-				$fixture->truncate($this->db);
-				$fixture->insert($this->db);
-			} else {
-				trigger_error(sprintf(__('Referenced fixture class %s not found', true), $class), E_USER_WARNING);
-			}
+			$this->sharedFixture->loadSingle($class);
 		}
 	}
 
@@ -677,7 +300,7 @@ class CakeTestCase extends UnitTestCase {
 				}
 			}
 			if (!$matches) {
-				$this->assert(new TrueExpectation(), false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+				$this->assertTrue(false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
 				if ($fullDebug) {
 					debug($string, true);
 					debug($regex, true);
@@ -685,109 +308,9 @@ class CakeTestCase extends UnitTestCase {
 				return false;
 			}
 		}
-		return $this->assert(new TrueExpectation(), true, '%s');
-	}
 
-/**
- * Initialize DB connection.
- *
- * @return void
- */
-	protected function _initDb() {
-		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
-
-		$_prefix = null;
-
-		if ($testDbAvailable) {
-			// Try for test DB
-			restore_error_handler();
-			@$db = ConnectionManager::getDataSource('test');
-			set_error_handler('simpleTestErrorHandler');
-			$testDbAvailable = $db->isConnected();
-		}
-
-		// Try for default DB
-		if (!$testDbAvailable) {
-			$db = ConnectionManager::getDataSource('default');
-			$_prefix = $db->config['prefix'];
-			$db->config['prefix'] = 'test_suite_';
-		}
-
-		ConnectionManager::create('test_suite', $db->config);
-		$db->config['prefix'] = $_prefix;
-
-		// Get db connection
-		$this->db = ConnectionManager::getDataSource('test_suite');
-		$this->db->cacheSources  = false;
-
-		ClassRegistry::config(array('ds' => 'test_suite'));
-	}
-
-/**
- * Load fixtures specified in public $fixtures.
- *
- * @return void
- */
-	protected function _loadFixtures() {
-		if (!isset($this->fixtures) || empty($this->fixtures)) {
-			return;
-		}
-
-		if (!is_array($this->fixtures)) {
-			$this->fixtures = array_map('trim', explode(',', $this->fixtures));
-		}
-
-		$this->_fixtures = array();
-
-		foreach ($this->fixtures as $index => $fixture) {
-			$fixtureFile = null;
-
-			if (strpos($fixture, 'core.') === 0) {
-				$fixture = substr($fixture, strlen('core.'));
-				foreach (App::core('cake') as $key => $path) {
-					$fixturePaths[] = $path . 'tests' . DS . 'fixtures';
-				}
-			} elseif (strpos($fixture, 'app.') === 0) {
-				$fixture = substr($fixture, strlen('app.'));
-				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
-				);
-			} elseif (strpos($fixture, 'plugin.') === 0) {
-				$parts = explode('.', $fixture, 3);
-				$pluginName = $parts[1];
-				$fixture = $parts[2];
-				$fixturePaths = array(
-					App::pluginPath($pluginName) . 'tests' . DS . 'fixtures',
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures'
-				);
-			} else {
-				$fixturePaths = array(
-					TESTS . 'fixtures',
-					VENDORS . 'tests' . DS . 'fixtures',
-					TEST_CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
-				);
-			}
-
-			foreach ($fixturePaths as $path) {
-				if (is_readable($path . DS . $fixture . '_fixture.php')) {
-					$fixtureFile = $path . DS . $fixture . '_fixture.php';
-					break;
-				}
-			}
-
-			if (isset($fixtureFile)) {
-				require_once($fixtureFile);
-				$fixtureClass = Inflector::camelize($fixture) . 'Fixture';
-				$this->_fixtures[$this->fixtures[$index]] =& new $fixtureClass($this->db);
-				$this->_fixtureClassMap[Inflector::camelize($fixture)] = $this->fixtures[$index];
-			}
-		}
-
-		if (empty($this->_fixtures)) {
-			unset($this->_fixtures);
-		}
+		$this->assertTrue(true, '%s');
+		return true;
 	}
 
 /**
@@ -816,5 +339,147 @@ class CakeTestCase extends UnitTestCase {
 			}
 			return $permuted;
 		}
+	}
+
+/**
+* Compatibility wrapper function for assertEquals
+* @param mixed $a
+* @param mixed $b
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertEqual($a, $b, $message = '') {
+		return $this->assertEquals($a, $b, $message);
+	}
+
+/**
+* Compatibility wrapper function for assertNotEquals
+* @param mixed $a
+* @param mixed $b
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertNotEqual($a, $b, $message = '') {
+		return $this->assertNotEquals($a, $b, $message);
+	}
+
+/**
+* Compatibility wrapper function for assertRegexp
+* @param mixed $pattern a regular expression
+* @param string $string the text to be matched
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertPattern($pattern, $string, $message = '') {
+		return $this->assertRegExp($pattern, $string, $message);
+	}
+
+/**
+* Compatibility wrapper function for assertEquals
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertIdentical($expected, $actual, $message = '') {
+		return $this->assertSame($expected, $actual, $message);
+	}
+
+/**
+* Compatibility wrapper function for assertNotEquals
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertNotIdentical($expected, $actual, $message = '') {
+		return $this->assertNotSame($expected, $actual, $message);
+	}
+/**
+* Compatibility wrapper function for assertNotRegExp
+* @param mixed $pattern a regular expression
+* @param string $string the text to be matched
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertNoPattern($pattern, $string, $message = '') {
+		return $this->assertNotRegExp($pattern, $string, $message);
+	}
+
+	protected function assertNoErrors() {
+	}
+
+/**
+* Compatibility wrapper function for setExpectedException
+* @param mixed $expected the name of the Exception or error
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function expectError($expected = false, $message = '') {
+		if (!$expected) {
+			$expected = 'Exception';
+		}
+		$this->setExpectedException($expected, $message);
+	}
+
+/**
+* Compatibility wrapper function for setExpectedException
+* @param mixed $expected the name of the Exception
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function expectException($name = 'Exception', $message = '') {
+		$this->setExpectedException($name, $message);
+	}
+
+/**
+* Compatibility wrapper function for assertSame
+* @param mixed $expected
+* @param mixed $actual
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertReference(&$first, &$second, $message = '') {
+		return $this->assertSame($first, $second, $message);
+	}
+
+/**
+ * Compatibility wrapper for assertIsA
+ *
+ * @param string $object 
+ * @param string $type 
+ * @param string $message 
+ * @return void
+ */
+	protected function assertIsA($object, $type, $message = '') {
+		return $this->assertType($type, $object, $message);
+	}
+
+/**
+* Compatibility function to test if value is between an acceptable range
+* @param mixed $value
+* @param mixed $expected
+* @param mixed $margin the rage of acceptation
+* @param string $message the text to display if the assertion is not correct
+* @return void
+*/
+	protected function assertWithinMargin($value, $expected, $margin, $message = '') {
+		$upper = $value + $margin;
+		$lower = $value - $margin;
+		$this->assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+	}
+
+/**
+ * Compatibility function for skipping.
+ *
+ * @param boolean $condition Condition to trigger skipping
+ * @param string $message Message for skip
+ * @return boolean
+ */
+	protected function skipUnless($condition, $message = '') {
+		if (!$condition) {
+			$this->markTestSkipped($message);
+		}
+		return $condition;
 	}
 }

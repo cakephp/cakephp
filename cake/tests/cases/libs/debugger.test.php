@@ -46,14 +46,8 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setup();
 		Configure::write('log', false);
-		if (!defined('SIMPLETESTVENDORPATH')) {
-			if (file_exists(APP . DS . 'vendors' . DS . 'simpletest' . DS . 'reporter.php')) {
-				define('SIMPLETESTVENDORPATH', 'APP' . DS . 'vendors');
-			} else {
-				define('SIMPLETESTVENDORPATH', 'CORE' . DS . 'vendors');
-			}
-		}
 	}
 
 /**
@@ -63,6 +57,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::teardown();
 		Configure::write('log', true);
 	}
 
@@ -119,7 +114,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertEqual($result[0]['error'], 'Notice');
 		$this->assertPattern('/Undefined variable\:\s+out/', $result[0]['description']);
 		$this->assertPattern('/DebuggerTest::testOutput/i', $result[0]['trace']);
-		$this->assertPattern('/SimpleInvoker::invoke/i', $result[0]['trace']);
 
 		ob_start();
 		Debugger::output('txt');
@@ -129,7 +123,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+other/', $result);
 		$this->assertPattern('/Context:/', $result);
 		$this->assertPattern('/DebuggerTest::testOutput/i', $result);
-		$this->assertPattern('/SimpleInvoker::invoke/i', $result);
 
 		ob_start();
 		Debugger::output('html');
@@ -157,7 +150,8 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
-		set_error_handler('simpleTestErrorHandler');
+
+		restore_error_handler();
 	}
 
 /**
@@ -185,17 +179,18 @@ class DebuggerTest extends CakeTestCase {
 		ob_start();
 		$foo .= '';
 		$result = ob_get_clean();
-		set_error_handler('SimpleTestErrorHandler');
 
 		$data = array(
 			'error' => array(),
 			'code' => array(), '8', '/code',
 			'file' => array(), 'preg:/[^<]+/', '/file',
-			'line' => array(), '' . (intval(__LINE__) + -8), '/line',
+			'line' => array(), '' . (intval(__LINE__) - 7), '/line',
 			'preg:/Undefined variable:\s+foo/',
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
+		
+		restore_error_handler();
 	}
 
 /**
@@ -318,16 +313,16 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function testGetInstance() {
-		$result =& Debugger::getInstance();
+		$result = Debugger::getInstance();
 		$this->assertIsA($result, 'Debugger');
 
-		$result =& Debugger::getInstance('DebuggerTestCaseDebugger');
+		$result = Debugger::getInstance('DebuggerTestCaseDebugger');
 		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
 
-		$result =& Debugger::getInstance();
+		$result = Debugger::getInstance();
 		$this->assertIsA($result, 'DebuggerTestCaseDebugger');
 
-		$result =& Debugger::getInstance('Debugger');
+		$result = Debugger::getInstance('Debugger');
 		$this->assertIsA($result, 'Debugger');
 	}
 }

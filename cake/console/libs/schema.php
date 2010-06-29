@@ -157,7 +157,7 @@ class SchemaShell extends Shell {
 				$numToUse = $this->params['s'];
 			}
 
-			$count = 1;
+			$count = 0;
 			if (!empty($result[1])) {
 				foreach ($result[1] as $file) {
 					if (preg_match('/schema(?:[_\d]*)?\.php$/', $file)) {

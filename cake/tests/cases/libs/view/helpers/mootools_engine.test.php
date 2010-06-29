@@ -22,7 +22,7 @@
  */
 App::import('Helper', array('Html', 'Js', 'MootoolsEngine'));
 
-class MooEngineHelperTestCase extends CakeTestCase {
+class MooEngineHelperTest extends CakeTestCase {
 /**
  * startTest
  *

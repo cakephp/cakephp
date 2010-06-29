@@ -94,18 +94,6 @@ class SanitizeTest extends CakeTestCase {
 	public $fixtures = array('core.data_test', 'core.article');
 
 /**
- * startTest method
- *
- * @param mixed $method
- * @access public
- * @return void
- */
-	function startTest($method) {
-		parent::startTest($method);
-		$this->_initDb();
-	}
-
-/**
  * testEscapeAlphaNumeric method
  *
  * @access public
@@ -456,6 +444,8 @@ HTML;
  * @return void
  */
 	function testFormatColumns() {
+		$this->autoFixtures = true;
+		$this->sharedFixture->load($this);
 		$this->loadFixtures('DataTest', 'Article');
 
 		$this->DataTest =& new SanitizeDataTest(array('alias' => 'DataTest'));

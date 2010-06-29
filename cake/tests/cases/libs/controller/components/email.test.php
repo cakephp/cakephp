@@ -20,6 +20,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 App::import('Component', 'Email');
+App::import('Core', 'CakeSocket');
 
 /**
  * EmailTestComponent class
@@ -45,8 +46,8 @@ class EmailTestComponent extends EmailComponent {
  * @access public
  * @return void
  */
-	function setConnectionSocket(&$socket) {
-		$this->__smtpConnection = $socket;
+	function setConnectionSocket($socket) {
+		$this->_smtpConnection = $socket;
 	}
 
 /**
@@ -56,7 +57,7 @@ class EmailTestComponent extends EmailComponent {
  * @return mixed
  */
 	function getConnectionSocket() {
-		return $this->__smtpConnection;
+		return $this->_smtpConnection;
 	}
 
 /**
@@ -66,7 +67,7 @@ class EmailTestComponent extends EmailComponent {
  * @return void
  */
 	function setHeaders($headers) {
-		$this->__header += $headers;
+		$this->_header += $headers;
 	}
 
 /**
@@ -76,7 +77,10 @@ class EmailTestComponent extends EmailComponent {
  * @return array
  */
 	function getHeaders() {
-		return $this->__header;
+		if (empty($this->_header)) {
+			return array();
+		}
+		return $this->_header;
 	}
 
 /**
@@ -86,7 +90,7 @@ class EmailTestComponent extends EmailComponent {
  * @return void
  */
 	function setBoundary() {
-		$this->__createBoundary();
+		$this->_createBoundary();
 	}
 
 /**
@@ -96,7 +100,10 @@ class EmailTestComponent extends EmailComponent {
  * @return string
  */
 	function getBoundary() {
-		return $this->__boundary;
+		if (empty($this->_boundary)) {
+			return null;
+		}
+		return $this->_boundary;
 	}
 
 /**
@@ -106,7 +113,10 @@ class EmailTestComponent extends EmailComponent {
  * @return string
  */
 	function getMessage() {
-		return $this->__message;
+		if (empty($this->_message)) {
+			return array();
+		}
+		return $this->_message;
 	}
 
 /**
@@ -116,7 +126,7 @@ class EmailTestComponent extends EmailComponent {
  * @return string
  */
 	function _getMessage() {
-		return $this->__message;
+		return $this->_message;
 	}
 
 /**
@@ -205,11 +215,9 @@ class EmailComponentTest extends CakeTestCase {
 		$this->_appEncoding = Configure::read('App.encoding');
 		Configure::write('App.encoding', 'UTF-8');
 
-		$this->Controller =& new EmailTestController();
+		$this->Controller = new EmailTestController();
 
-		restore_error_handler();
-		@$this->Controller->Component->init($this->Controller);
-		set_error_handler('simpleTestErrorHandler');
+		$this->Controller->Component->init($this->Controller);
 
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
@@ -229,7 +237,6 @@ class EmailComponentTest extends CakeTestCase {
 		Configure::write('App.encoding', $this->_appEncoding);
 		App::build();
 		$this->Controller->Session->delete('Message');
-		restore_error_handler();
 		ClassRegistry::flush();
 	}
 
@@ -635,18 +642,18 @@ TEXTBLOC;
 	function testSmtpSendSocket() {
 		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
 
-		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
-		$socket =& new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
+		$socket = new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
 		$this->Controller->EmailTest->setConnectionSocket($socket);
 
-		$this->assertTrue($this->Controller->EmailTest->getConnectionSocket());
+		$this->assertSame($this->Controller->EmailTest->getConnectionSocket(), $socket);
 
 		$response = $this->Controller->EmailTest->smtpSend('HELO', '250');
 		$this->assertPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
 
 		$this->Controller->EmailTest->reset();
 		$response = $this->Controller->EmailTest->smtpSend('HELO somehostname', '250');
-		$this->assertNoPattern('/501 Syntax: HELO hostname/', $this->Controller->EmailTest->smtpError);
+
+		$this->assertNoPattern('/501 Syntax: HELO hostname/', (string)$this->Controller->EmailTest->smtpError);
 	}
 
 /**
@@ -682,7 +689,7 @@ TEXTBLOC;
  * @return void
  */
 	function testSendDebugWithNoSessions() {
-		$session =& $this->Controller->Session;
+		$session = $this->Controller->Session;
 		unset($this->Controller->Session);
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';

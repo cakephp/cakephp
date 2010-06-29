@@ -36,7 +36,7 @@ class StringTest extends CakeTestCase {
 	function testUuidGeneration() {
 		$result = String::uuid();
 		$pattern = "/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/";
-		$match = preg_match($pattern, $result);
+		$match = (bool) preg_match($pattern, $result);
 		$this->assertTrue($match);
 	}
 
@@ -53,7 +53,7 @@ class StringTest extends CakeTestCase {
 
 		for($i = 0; $i < $count; $i++) {
 			$result = String::uuid();
-			$match = preg_match($pattern, $result);
+			$match = (bool) preg_match($pattern, $result);
 			$this->assertTrue($match);
 			$this->assertFalse(in_array($result, $check));
 			$check[] = $result;

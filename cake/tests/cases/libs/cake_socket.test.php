@@ -131,7 +131,7 @@ class CakeSocketTest extends CakeTestCase {
  */
 	function testSocketWriting() {
 		$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
-		$this->assertTrue($this->Socket->write($request));
+		$this->assertTrue((bool)$this->Socket->write($request));
 	}
 
 /**

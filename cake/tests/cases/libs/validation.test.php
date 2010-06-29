@@ -35,7 +35,7 @@ class CustomValidator {
  * @access public
  */
 	function customValidate($check) {
-		return preg_match('/^[0-9]{3}$/', $check);
+		return (bool)preg_match('/^[0-9]{3}$/', $check);
 	}
 }
 
@@ -100,6 +100,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setup();
 		$this->_appEncoding = Configure::read('App.encoding');
 	}
 
@@ -110,6 +111,7 @@ class ValidationTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		Configure::write('App.encoding', $this->_appEncoding);
 	}
 
@@ -2058,18 +2060,32 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * test pass through failure on postal
+ *
+ * @expectedException PHPUnit_Framework_Error
+ * @return void
+ */
+	function testPassThroughMethodFailure() {
+		Validation::phone('text', null, 'testNl');
+	}
+
+/**
  * test the pass through calling of an alternate locale with postal()
  *
+ * @expectedException PHPUnit_Framework_Error
  * @return void
  **/
+	function testPassThroughClassFailure() {
+		Validation::postal('text', null, 'AUTOFAIL');
+	}
+
+/**
+ * test pass through method
+ *
+ * @return void
+ */
 	function testPassThroughMethod() {
 		$this->assertTrue(Validation::postal('text', null, 'testNl'));
-
-		$this->expectError('Could not find AUTOFAILValidation class, unable to complete validation.');
-		Validation::postal('text', null, 'AUTOFAIL');
-
-		$this->expectError('Method phone does not exist on TestNlValidation unable to complete validation.');
-		Validation::phone('text', null, 'testNl');
 	}
 
 /**
@@ -2107,11 +2123,4 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::userDefined('333', $validator, 'customValidate'));
 	}
 
-	// function testFile() {
-	// 	$this->assertTrue(Validation::file(WWW_ROOT . 'img' . DS . 'cake.icon.gif'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'favicon.ico'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'index.php'));
-	// 	$this->assertTrue(Validation::file(WWW_ROOT. 'css' . DS . 'cake.generic.css'));
-	// 	$this->assertTrue(Validation::file(TEST_CAKE_CORE_INCLUDE_PATH. 'VERSION.txt'));
-	// }
 }

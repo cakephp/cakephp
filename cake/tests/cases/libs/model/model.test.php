@@ -20,7 +20,7 @@
 App::import('Core', array('AppModel', 'Model'));
 require_once dirname(__FILE__) . DS . 'models.php';
 
-SimpleTest::ignore('BaseModelTest');
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 
 /**
  * ModelBaseTest
@@ -28,7 +28,7 @@ SimpleTest::ignore('BaseModelTest');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class BaseModelTest extends CakeTestCase {
+abstract class BaseModelTest extends CakeTestCase {
 
 /**
  * autoFixtures property
@@ -38,6 +38,13 @@ class BaseModelTest extends CakeTestCase {
  */
 	public $autoFixtures = false;
 
+/**
+ * Whether backup global state for each test method or not
+ *
+ * @var bool false
+ * @access public
+ */
+	public $backupGlobals = false;
 /**
  * fixtures property
  *
@@ -69,35 +76,25 @@ class BaseModelTest extends CakeTestCase {
 	);
 
 /**
- * start method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function start() {
-		parent::start();
+	function setUp() {
+		parent::setUp();
 		$this->debug = Configure::read('debug');
-		Configure::write('debug', 2);
 	}
 
 /**
- * end method
+ * tearDown method
  *
  * @access public
  * @return void
  */
-	function end() {
-		parent::end();
+	function tearDown() {
+		parent::tearDown();
 		Configure::write('debug', $this->debug);
-	}
-
-/**
- * endTest method
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		ClassRegistry::flush();
 	}
 }

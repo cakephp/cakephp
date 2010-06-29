@@ -20,9 +20,6 @@
 App::import('Core', array('View', 'Controller'));
 App::import('Helper', 'Cache');
 
-Mock::generate('Helper', 'CallbackMockHelper');
-Mock::generate('CacheHelper', 'ViewTestMockCacheHelper');
-
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
 }
@@ -248,6 +245,13 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+			)
+		), true);
 	}
 
 /**
@@ -260,31 +264,6 @@ class ViewTest extends CakeTestCase {
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function startTest() {
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
-			)
-		), true);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		App::build();
 	}
 
@@ -608,14 +587,15 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testHelperCallbackTriggering() {
+		$mockHelper = $this->getMock('Helper', array(), array(), 'CallbackMockHelper');
 		$this->PostsController->helpers = array('Session', 'Html', 'CallbackMock');
 		$View = new TestView($this->PostsController);
 		$loaded = array();
 		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
-		$View->loaded['CallbackMock']->expectOnce('beforeRender');
-		$View->loaded['CallbackMock']->expectOnce('afterRender');
-		$View->loaded['CallbackMock']->expectOnce('beforeLayout');
-		$View->loaded['CallbackMock']->expectOnce('afterLayout');
+		$View->loaded['CallbackMock']->expects($this->once())->method('beforeRender');
+		$View->loaded['CallbackMock']->expects($this->once())->method('afterRender');
+		$View->loaded['CallbackMock']->expects($this->once())->method('beforeLayout');
+		$View->loaded['CallbackMock']->expects($this->once())->method('afterLayout');
 		$View->render('index');
 	}
 
@@ -745,8 +725,8 @@ class ViewTest extends CakeTestCase {
 		$Controller = new ViewPostsController();
 		$Controller->cacheAction = '1 day';
 		$View = new View($Controller);
-		$View->loaded['cache'] = new ViewTestMockCacheHelper();
-		$View->loaded['cache']->expectCallCount('cache', 2);
+		$View->loaded['cache'] = $this->getMock('CacheHelper');
+		$View->loaded['cache']->expects($this->exactly(2))->method('cache');
 
 		$result = $View->render('index');
 		$this->assertPattern('/posts index/', $result);
@@ -927,12 +907,10 @@ class ViewTest extends CakeTestCase {
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
-		restore_error_handler();
 		ob_start();
 		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
 		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-		set_error_handler('simpleTestErrorHandler');
 
 		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
 		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);

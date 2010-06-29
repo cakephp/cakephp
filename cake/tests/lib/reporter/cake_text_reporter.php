@@ -17,7 +17,10 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+
 include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
+
+PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 
 /**
  * CakeTextReporter contains reporting features used for plain text based output
@@ -33,40 +36,65 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintDocumentStart() {
-		if (!SimpleReporter::inCli()) {
+		if (!headers_sent()) {
 			header('Content-type: text/plain');
 		}
+	}
+
+/**
+ * Paints a pass
+ *
+ * @return void
+ */
+	public function paintPass() {
+		echo '.';
+	}
+
+/**
+ * Paints a failing test.
+ *
+ * @param $message PHPUnit_Framework_AssertionFailedError $message Failure object displayed in
+ *   the context of the other tests.
+ * @return void
+ */
+	public function paintFail($message) {
+		$context = $message->getTrace();
+		$realContext = $context[3];
+		$context = $context[2];
+
+		printf(
+			"FAIL on line %s\n%s in\n%s %s()\n\n", 
+			$context['line'], $message->toString(), $context['file'], $realContext['function']
+		);
 	}
 
 /**
  * Paints the end of the test with a summary of
  * the passes and failures.
  *
- * @param string $test_name Name class of test.
+ * @param PHPUnit_Framework_TestResult $result Result object
  * @return void
  */
-	public function paintFooter($test_name) {
-		if ($this->getFailCount() + $this->getExceptionCount() == 0) {
-			echo "OK\n";
+	public function paintFooter($result) {
+		if ($result->failureCount() + $result->errorCount() == 0) {
+			echo "\nOK\n";
 		} else {
 			echo "FAILURES!!!\n";
 		}
-		echo "Test cases run: " . $this->getTestCaseProgress() .
-				"/" . $this->getTestCaseCount() .
-				", Passes: " . $this->getPassCount() .
-				", Failures: " . $this->getFailCount() .
-				", Exceptions: " . $this->getExceptionCount() . "\n";
 
-		echo 'Time taken by tests (in seconds): ' . $this->_timeDuration . "\n";
+		echo "Test cases run: " . $result->count() . 
+			"/" . ($result->count() - $result->skippedCount()) .
+			', Passes: ' . $this->numAssertions .
+			', Failures: ' . $result->failureCount() .
+			', Exceptions: ' . $result->errorCount() . "\n";
+
+		echo 'Time taken by tests (in seconds): ' . $result->time() . "\n";
 		if (function_exists('memory_get_peak_usage')) {
 			echo 'Peak memory use: (in bytes): ' . number_format(memory_get_peak_usage()) . "\n";
 		}
-		if (
-			isset($this->params['codeCoverage']) && 
-			$this->params['codeCoverage'] && 
-			class_exists('CodeCoverageManager')
-		) {
-			CodeCoverageManager::report();
+		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
+			$coverage = $result->getCodeCoverageInformation();
+			echo $this->paintCoverage($coverage);
 		}
 	}
 
@@ -76,41 +104,9 @@ class CakeTextReporter extends CakeBaseReporter {
  * @param string $test_name Name class of test.
  * @return void
  */
-	public function paintHeader($test_name) {
+	public function paintHeader() {
 		$this->paintDocumentStart();
-		echo "$test_name\n";
 		flush();
-	}
-
-/**
- * Paints the test failure as a stack trace.
- *
- * @param string $message Failure message displayed in
- *    the context of the other tests.
- * @return void
- */
-	public function paintFail($message) {
-		parent::paintFail($message);
-		echo $this->getFailCount() . ") $message\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		echo "\n";
-	}
-
-/**
- * Paints a PHP error.
- *
- * @param string $message Message to be shown.
- * @return void
- */
-	public function paintError($message) {
-		parent::paintError($message);
-		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		echo "\n";
 	}
 
 /**
@@ -120,16 +116,11 @@ class CakeTextReporter extends CakeBaseReporter {
  * @return void
  */
 	public function paintException($exception) {
-		parent::paintException($exception);
 		$message = 'Unexpected exception of type [' . get_class($exception) .
-				'] with message ['. $exception->getMessage() .
-				'] in ['. $exception->getFile() .
-				' line ' . $exception->getLine() . ']';
-		echo "Exception " . $this->getExceptionCount() . "!\n$message\n";
-		$breadcrumb = $this->getTestList();
-		array_shift($breadcrumb);
-		echo "\tin " . implode("\n\tin ", array_reverse($breadcrumb));
-		echo "\n";
+			'] with message ['. $exception->getMessage() .
+			'] in ['. $exception->getFile() .
+			' line ' . $exception->getLine() . ']';
+		echo $message . "\n\n";
 	}
 
 /**
@@ -188,4 +179,18 @@ class CakeTextReporter extends CakeBaseReporter {
 		$buffer .= "\n";
 		echo $buffer;
 	}
+
+/**
+ * Generates a Text summary of the coverage data.
+ *
+ * @param array $coverage Array of coverage data.
+ * @return string
+ */
+	public function paintCoverage($coverage) {
+		$file = dirname(dirname(__FILE__)) . '/coverage/text_coverage_report.php';
+		include $file;
+		$reporter = new TextCoverageReport($coverage, $this);
+		echo $reporter->report();
+	}
+
 }
