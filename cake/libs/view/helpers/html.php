@@ -580,52 +580,38 @@ class HtmlHelper extends AppHelper {
 
 /**
  * Returns breadcrumbs as a (x)html list
- * 
+ *
  * This method uses HtmlHelper::tag() to generate list and its elements. Works
  * similiary to HtmlHelper::getCrumbs(), so it uses options which every
  * crumb was added with.
- * 
- * @param array $list_options options to render list
- * 
+ *
+ * @param array $options Array of html attributes to apply to the generated list elements.
  * @return string breadcrumbs html list
- * 
  * @access public
  */
-    function getCrumbList($list_options = array()) {
-        if (!empty($this->_crumbs)) {
-            $result = '';
-            $crumb_count = count($this->_crumbs);
-            foreach ($this->_crumbs as $which => $crumb) {
-                $options = array();
-                if (empty($crumb[1])) {
-                    $element_content = $crumb[0];
-                } else {
-                    $element_content = $this->link(
-                       $crumb[0],
-                       $crumb[1],
-                       $crumb[2]
-                    );
-                }
-                if ($which == 0) {
-                    $options['class'] = 'first';
-                } elseif ($which == $crumb_count - 1) {
-                    $options['class'] = 'last';
-                }
-                $result .= $this->tag(
-                   'li', 
-                   $element_content,
-                   $options
-                );
-            } 
-            return $this->tag(
-               'ul',
-               $result,
-               $list_options
-            );
-        } else {
-            return null;
-        }
-    }
+	function getCrumbList($options = array()) {
+		if (!empty($this->_crumbs)) {
+			$result = '';
+			$crumbCount = count($this->_crumbs);
+			foreach ($this->_crumbs as $which => $crumb) {
+				$options = array();
+				if (empty($crumb[1])) {
+					$elementContent = $crumb[0];
+				} else {
+					$elementContent = $this->link($crumb[0], $crumb[1], $crumb[2]);
+				}
+				if ($which == 0) {
+					$options['class'] = 'first';
+				} elseif ($which == $crumbCount - 1) {
+					$options['class'] = 'last';
+				}
+				$result .= $this->tag('li', $elementContent, $options);
+			}
+			return $this->tag('ul', $result, $options);
+		} else {
+			return null;
+		}
+	}
 	
 /**
  * Creates a formatted IMG element. If `$options['url']` is provided, an image link will be
