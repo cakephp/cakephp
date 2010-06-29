@@ -1290,7 +1290,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->getCrumbList(
 			array('class' => 'breadcrumbs')
 		);
-		debug($result, true);
 		$this->assertTags(
 			$result,
 			array(
