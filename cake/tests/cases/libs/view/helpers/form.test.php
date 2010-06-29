@@ -2022,6 +2022,19 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test input name with leading integer, ensure attributes are generated correctly.
+ *
+ * @return void
+ */
+	function testInputWithLeadingInteger() {
+		$result = $this->Form->text('0.Node.title');
+		$expected = array(
+			'input' => array('name' => 'data[0][Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test form->input() with select type inputs.
  *
  * @return void
