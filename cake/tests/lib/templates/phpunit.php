@@ -1,6 +1,7 @@
 <?php
 /**
- * Missing PHPUnit error page.
+ * Missing PHPUnit
+ * error page.
  *
  * PHP versions 4 and 5
  *
