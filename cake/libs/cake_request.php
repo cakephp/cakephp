@@ -86,6 +86,7 @@ class CakeRequest implements ArrayAccess {
 		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
 		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
 		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
+		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),
 		'ssl' => array('env' => 'HTTPS', 'value' => 1),
 		'ajax' => array('env' => 'HTTP_X_REQUESTED_WITH', 'value' => 'XMLHttpRequest'),
 		'flash' => array('env' => 'HTTP_USER_AGENT', 'pattern' => '/^(Shockwave|Adobe) Flash/'),
@@ -531,6 +532,19 @@ class CakeRequest implements ArrayAccess {
 		return $this;
 	}
 
+/**
+ * Read a header from the Request information.
+ *
+ * @param string $name Name of the header you want.
+ * @return mixed Either false on no header being set or the value of the header.
+ */
+	public function header($name) {
+		$name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+		if (!empty($_SERVER[$name])) {
+			return $_SERVER[$name];
+		}
+		return false;
+	}
 /**
  * Array access read implementation
  *

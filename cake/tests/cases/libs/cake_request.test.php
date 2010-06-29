@@ -657,6 +657,18 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test getting headers
+ *
+ * @return void
+ */
+	function testHeader() {
+		$request = new CakeRequest('/', false);
+
+		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));
+		$this->assertEquals($_SERVER['HTTP_USER_AGENT'], $request->header('User-Agent'));
+	}
+
+/**
  * testBaseUrlAndWebrootWithModRewrite method
  *
  * @return void
@@ -727,7 +739,6 @@ class CakeRequestTestCase extends CakeTestCase {
 /**
  * testBaseUrlwithModRewriteAlias method
  *
- * 
  * @return void
  */
 	public function testBaseUrlwithModRewriteAlias() {
