@@ -891,6 +891,14 @@ class ViewTest extends CakeTestCase {
 		$View->association = 'Comment';
 		$View->field = 'user_id';
 		$this->assertEqual($View->entity(), array('Comment', 'user_id'));
+		
+		$View->model = 0;
+		$View->association = null;
+		$View->field = 'Node';
+		$View->fieldSuffix = 'title';
+		$View->entityPath = '0.Node.title';
+		$expected = array(0, 'Node', 'title');
+		$this->assertEqual($View->entity(), $expected);
 	}
 
 /**

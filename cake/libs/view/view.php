@@ -629,9 +629,9 @@ class View extends Object {
 				($count == 1 && !empty($this->association)) ||
 				($count == 1 && $this->model != $this->entityPath) ||
 				($count  == 2 && !empty($this->fieldSuffix)) ||
-				is_numeric($path[0])
+				is_numeric($path[0]) && !empty($assoc)
 			) {
-				array_unshift($path,$assoc);
+				array_unshift($path, $assoc);
 			}
 			return Set::filter($path);
 		}
