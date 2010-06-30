@@ -53,7 +53,10 @@ class DboSource extends DataSource {
 	var $alias = 'AS ';
 
 /**
- * Caches result from query parsing operations
+ * Caches result from query parsing operations.  Cached results for both DboSource::name() and
+ * DboSource::conditions() will be stored here.  Method caching uses `crc32()` which is 
+ * fast but can collisions more easily than other hashing algorithms.  If you have problems
+ * with collisions, set DboSource::$cacheMethods to false.
  *
  * @var array
  * @access public
@@ -512,7 +515,12 @@ class DboSource extends DataSource {
  * Returns a quoted name of $data for use in an SQL statement.
  * Strips fields out of SQL functions before quoting.
  *
- * @param string $data
+ * Results of this method are stored in a memory cache.  This improves performance, but
+ * because the method uses a simple hashing algorithm it can infrequently have collisions.
+ * Setting DboSource::$cacheMethods to false will disable the memory cache.
+ *
+ * @param mixed $data Either a string with a column to quote. An array of columns to quote or an 
+ *   object from DboSource::expression() or DboSource::identifier()
  * @return string SQL field
  * @access public
  */
@@ -2049,6 +2057,10 @@ class DboSource extends DataSource {
  * Creates a WHERE clause by parsing given conditions data.  If an array or string
  * conditions are provided those conditions will be parsed and quoted.  If a boolean
  * is given it will be integer cast as condition.  Null will return 1 = 1.
+ *
+ * Results of this method are stored in a memory cache.  This improves performance, but
+ * because the method uses a simple hashing algorithm it can infrequently have collisions.
+ * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
  * @param mixed $conditions Array or string of conditions, or any value.
  * @param boolean $quoteValues If true, values should be quoted
