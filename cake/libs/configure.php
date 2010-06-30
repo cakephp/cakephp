@@ -758,7 +758,11 @@ class App extends Object {
 	}
 
 /**
- * Returns an index of objects of the given type, with the physical path to each object.
+ * Returns an array of objects of the given type.
+ *
+ * Example usage:
+ *
+ * `App::objects('plugin');` returns `array('DebugKit', 'Blog', 'User');`
  *
  * @param string $type Type of object, i.e. 'model', 'controller', 'helper', or 'plugin'
  * @param mixed $path Optional Scan only the path given. If null, paths for the chosen
