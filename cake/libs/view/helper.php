@@ -242,7 +242,22 @@ class Helper extends Object {
 		);
 		if (strpos($path, '?') === false && $timestampEnabled) {
 			$filepath = preg_replace('/^' . preg_quote($this->webroot, '/') . '/', '', $path);
-			$path .= '?' . @filemtime(WWW_ROOT . str_replace('/', DS, $filepath));
+			$webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
+			if (file_exists($webrootPath)) {
+				return $path . '?' . @filemtime($webrootPath);
+			}
+			$segments = explode('/', ltrim($filepath, '/'));
+			if ($segments[0] === 'theme') {
+				$theme = $segments[1];
+				unset($segments[0], $segments[1]);
+				$themePath = App::themePath($theme) . 'webroot' . DS . implode(DS, $segments);
+				return $path . '?' . @filemtime($themePath);
+			} else {
+				$plugin = $segments[0];
+				unset($segments[0]);
+				$pluginPath = App::pluginPath($plugin) . 'webroot' . DS . implode(DS, $segments);
+				return $path . '?' . @filemtime($pluginPath);
+			}
 		}
 		return $path;
 	}

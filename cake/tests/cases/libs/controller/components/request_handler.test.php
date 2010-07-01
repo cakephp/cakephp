@@ -305,6 +305,51 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that respondAs works as expected.
+ *
+ * @return void
+ */
+	function testRespondAs() {
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'));
+		$RequestHandler->expects($this->at(0))->method('_header')
+			->with('Content-type: application/json');
+		$RequestHandler->expects($this->at(1))->method('_header')
+			->with('Content-type: text/xml');
+
+		$result = $RequestHandler->respondAs('json');
+		$this->assertTrue($result);
+
+		$result = $RequestHandler->respondAs('text/xml');
+		$this->assertTrue($result);
+
+		Configure::write('debug', $debug);
+	}
+
+/**
+ * test that attachment headers work with respondAs
+ *
+ * @return void
+ */
+	function testRespondAsWithAttachment() {
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
+		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'));
+		$RequestHandler->expects($this->at(0))->method('_header')
+			->with('Content-Disposition: attachment; filename="myfile.xml"');
+		$RequestHandler->expects($this->at(1))->method('_header')
+			->with('Content-type: application/xml');
+
+		$result = $RequestHandler->respondAs('xml', array('attachment' => 'myfile.xml'));
+		$this->assertTrue($result);
+
+		Configure::write('debug', $debug);
+	}
+
+/**
  * test that calling renderAs() more than once continues to work.
  *
  * @link #6466
@@ -614,8 +659,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
 
-		$this->Controller->RequestHandler = new NoStopRequestHandler($this);
-		$this->Controller->RequestHandler->expectOnce('_stop');
+		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
+		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
 
 		ob_start();
 		$this->Controller->RequestHandler->beforeRedirect(
@@ -657,7 +702,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
- * assure that beforeRedirect with a status code will correctly set the status header 
+ * assure that beforeRedirect with a status code will correctly set the status header
  *
  * @return void
  */

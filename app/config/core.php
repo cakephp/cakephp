@@ -166,7 +166,7 @@
 	Configure::write('Session.cookie', 'CAKEPHP');
 
 /**
- * Session time out time (in seconds).
+ * Session time out time (in minutes).
  * Actual value depends on 'Security.level' setting.
  */
 	Configure::write('Session.timeout', '120');
@@ -187,9 +187,9 @@
  * in 'Session.timeout' is multiplied according to the settings here.
  * Valid values:
  *
- * 'high'	Session timeout in 'Session.timeout' x 10
- * 'medium'	Session timeout in 'Session.timeout' x 5040
- * 'low'		Session timeout in 'Session.timeout' x 2628000
+ * 'high'   Session timeout in 'Session.timeout' x 10
+ * 'medium' Session timeout in 'Session.timeout' x 100
+ * 'low'    Session timeout in 'Session.timeout' x 300
  *
  * CakePHP session IDs are also regenerated between requests if
  * 'Security.level' is set to 'high'.

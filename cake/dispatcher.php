@@ -573,20 +573,15 @@ class Dispatcher extends Object {
 		if ($parts[0] === 'theme') {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
-			$fileFragment = implode('/', $parts);
-
-			$viewPaths = App::path('views');
-			foreach ($viewPaths as $viewPath) {
-				$path = $viewPath . 'themed' . DS . $themeName . DS . 'webroot' . DS;
-				if (file_exists($path . $fileFragment)) {
-					$assetFile = $path . $fileFragment;
-					break;
-				}
+			$fileFragment = implode(DS, $parts);
+			$path = App::themePath($themeName) . 'webroot' . DS;
+			if (file_exists($path . $fileFragment)) {
+				$assetFile = $path . $fileFragment;
 			}
 		} else {
 			$plugin = $parts[0];
 			unset($parts[0]);
-			$fileFragment = implode('/', $parts);
+			$fileFragment = implode(DS, $parts);
 			$pluginWebroot = App::pluginPath($plugin) . 'webroot' . DS;
 			if (file_exists($pluginWebroot . $fileFragment)) {
 				$assetFile = $pluginWebroot . $fileFragment;
@@ -637,7 +632,6 @@ class Dispatcher extends Object {
 			include($assetFile);
 		} else {
 			ob_clean();
-			flush();
 			readfile($assetFile);
 		}
 

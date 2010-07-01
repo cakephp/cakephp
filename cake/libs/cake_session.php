@@ -99,6 +99,14 @@ class CakeSession extends Object {
 	public $sessionTime = false;
 
 /**
+ * The number of seconds to set for session.cookie_lifetime.  0 means
+ * at browser close.
+ *
+ * @var integer
+ */
+	var $cookieLifeTime = false;
+
+/**
  * Keeps track of keys to watch for writes on
  *
  * @var array
@@ -125,7 +133,7 @@ class CakeSession extends Object {
 /**
  * Session timeout multiplier factor
  *
- * @var ineteger
+ * @var integer
  * @access public
  */
 	public $timeout = null;
@@ -453,8 +461,13 @@ class CakeSession extends Object {
 		}
 		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
 			ini_set('session.referer_check', $this->host);
+		} 
+
+		if ($this->security == 'high') {
+			$this->cookieLifeTime = 0;
+		} else {
+			$this->cookieLifeTime = Configure::read('Session.timeout') * (Security::inactiveMins() * 60);
 		}
-		$this->cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
@@ -582,7 +595,7 @@ class CakeSession extends Object {
 
 					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
 						$this->renew();
-						$this->write('Config.timeout', Security::inactiveMins());
+						$this->write('Config.timeout', 10);
 					}
 				}
 				$this->valid = true;
@@ -594,7 +607,7 @@ class CakeSession extends Object {
 		} else {
 			$this->write('Config.userAgent', $this->_userAgent);
 			$this->write('Config.time', $this->sessionTime);
-			$this->write('Config.timeout', Security::inactiveMins());
+			$this->write('Config.timeout', 10);
 			$this->valid = true;
 			$this->__setError(1, 'Session is valid');
 		}
