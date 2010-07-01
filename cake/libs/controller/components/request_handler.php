@@ -414,7 +414,17 @@ class RequestHandlerComponent extends Object {
 /**
  * Determines which content types the client accepts.  Acceptance is based on
  * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
- * header.
+ * header. Unlike CakeRequest::accepts() this method deals entirely with mapped content types.
+ *
+ * Usage:
+ *
+ * `$this->RequestHandler->accepts(array('xml', 'html', 'json'));`
+ *
+ * Returns true if the client accepts any of the supplied types.
+ *
+ * `$this->RequestHandler->accepts('xml');`
+ *
+ * Returns true if the client accepts xml.
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an
  *   array of types
@@ -428,35 +438,24 @@ class RequestHandlerComponent extends Object {
 	function accepts($type = null) {
 		$this->__initializeTypes();
 
-		if ($type == null) {
-			return $this->mapType($this->__acceptTypes);
+		$accepted = $this->request->accepts();
 
+		if ($type == null) {
+			return $this->mapType($accepted);
 		} elseif (is_array($type)) {
 			foreach ($type as $t) {
-				if ($this->accepts($t) == true) {
+				$t = $this->mapAlias($t);
+				if (in_array($t, $accepted)) {
 					return true;
 				}
 			}
 			return false;
 		} elseif (is_string($type)) {
-
-			if (!isset($this->__requestContent[$type])) {
-				return false;
+			$type = $this->mapAlias($type);
+			if (in_array($type, $accepted)) {
+				return true;
 			}
-
-			$content = $this->__requestContent[$type];
-
-			if (is_array($content)) {
-				foreach ($content as $c) {
-					if (in_array($c, $this->__acceptTypes)) {
-						return true;
-					}
-				}
-			} else {
-				if (in_array($content, $this->__acceptTypes)) {
-					return true;
-				}
-			}
+			return false;
 		}
 		return false;
 	}
@@ -695,11 +694,7 @@ class RequestHandlerComponent extends Object {
  */
 	public function mapType($ctype) {
 		if (is_array($ctype)) {
-			$out = array();
-			foreach ($ctype as $t) {
-				$out[] = $this->mapType($t);
-			}
-			return $out;
+			return array_map(array($this, 'mapType'), $ctype);
 		} else {
 			$keys = array_keys($this->__requestContent);
 			$count = count($keys);
@@ -716,6 +711,27 @@ class RequestHandlerComponent extends Object {
 			}
 			return $ctype;
 		}
+	}
+
+/**
+ * Maps a content type alias back to its mime-type(s)
+ *
+ * @param mixed $alias String alias to convert back into a content type. Or an array of aliases to map.
+ * @return mixed Null on an undefined alias.  String value of the mapped alias type.  If an
+ *   alias maps to more than one content type, the first one will be returned.
+ */
+	public function mapAlias($alias) {
+		if (is_array($alias)) {
+			return array_map(array($this, 'mapAlias'), $alias);
+		}
+		if (isset($this->__requestContent[$alias])) {
+			$types = $this->__requestContent[$alias];
+			if (is_array($types)) {
+				return $types[0];
+			}
+			return $types;
+		}
+		return null;
 	}
 
 /**

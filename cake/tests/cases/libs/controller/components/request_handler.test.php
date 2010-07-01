@@ -513,12 +513,48 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that map alias converts aliases to content types.
+ *
+ * @return void
+ */
+	function testMapAlias() {
+		$result = $this->RequestHandler->mapAlias('xml');
+		$this->assertEquals('application/xml', $result);
+
+		$result = $this->RequestHandler->mapAlias('text/html');
+		$this->assertNull($result);
+
+		$result = $this->RequestHandler->mapAlias('wap');
+		$this->assertEquals('text/vnd.wap.wml', $result);
+		
+		$result = $this->RequestHandler->mapAlias(array('xml', 'js', 'json'));
+		$expected = array('application/xml', 'text/javascript', 'application/json');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test accepts() on the component
+ *
+ * @return void
+ */
+	function testAccepts() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
+		$this->_init();
+		$this->assertEqual($this->RequestHandler->accepts(array('js', 'xml', 'html')), 'xml');
+		$this->assertFalse($this->RequestHandler->accepts(array('gif', 'jpeg', 'foo')));
+
+		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
+		$this->_init();
+		$this->assertFalse($this->RequestHandler->accepts('rss'));
+	}
+
+/**
  * test accepts and prefers methods.
  *
  * @access public
  * @return void
  */
-	function testAcceptsAndPrefers() {
+	function testPrefers() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 		$this->_init();
 		$this->assertNotEqual($this->RequestHandler->prefers(), 'rss');
@@ -526,19 +562,15 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
 		$this->assertFalse($this->RequestHandler->prefers('xml'));
 		$this->assertEqual($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
-		$this->assertTrue($this->RequestHandler->accepts('xml'));
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'xml');
-		$this->assertEqual($this->RequestHandler->accepts(array('js', 'xml', 'html')), 'xml');
-		$this->assertFalse($this->RequestHandler->accepts(array('gif', 'jpeg', 'foo')));
 
 		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
 		$this->_init();
 		$this->assertEqual($this->RequestHandler->prefers(), 'html');
 		$this->assertFalse($this->RequestHandler->prefers('rss'));
-		$this->assertFalse($this->RequestHandler->accepts('rss'));
 	}
 
 /**
