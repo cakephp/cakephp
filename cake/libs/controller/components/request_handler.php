@@ -72,7 +72,7 @@ class RequestHandlerComponent extends Object {
  * @access private
  * @see RequestHandlerComponent::setContent
  */
-	private $__requestContent = array(
+	protected $_contentTypeMap = array(
 		'javascript'	=> 'text/javascript',
 		'js'			=> 'text/javascript',
 		'json'			=> 'application/json',
@@ -103,17 +103,6 @@ class RequestHandlerComponent extends Object {
 	);
 
 /**
- * Content-types accepted by the client.  If extension parsing is enabled in the
- * Router, and an extension is detected, the corresponding content-type will be
- * used as the overriding primary content-type accepted.
- *
- * @var array
- * @access private
- * @see Router::parseExtensions()
- */
-	private $__acceptTypes = array();
-
-/**
  * The template to use when rendering the given content type.
  *
  * @var string
@@ -129,31 +118,6 @@ class RequestHandlerComponent extends Object {
  * @see Router::parseExtensions()
  */
 	public $ext = null;
-
-/**
- * Flag set when MIME types have been initialized
- *
- * @var boolean
- * @access private
- * @see RequestHandler::__initializeTypes()
- */
-	private $__typesInitialized = false;
-
-/**
- * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
- *
- */
-	function __construct() {
-		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
-
-		foreach ($this->__acceptTypes as $i => $type) {
-			if (strpos($type, ';')) {
-				$type = explode(';', $type);
-				$this->__acceptTypes[$i] = $type[0];
-			}
-		}
-		parent::__construct();
-	}
 
 /**
  * Initializes the component, gets a reference to Controller::$parameters, and
@@ -192,11 +156,10 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	public function startup(&$controller) {
-		$this->__initializeTypes();
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
-			in_array($this->ext, array_keys($this->__requestContent))
+			in_array($this->ext, array_keys($this->_contentTypeMap))
 		);
 
 		if (!empty($this->ext) && $isRecognized) {
@@ -384,7 +347,7 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	public function setContent($name, $type = null) {
-		$this->__requestContent[$name] = $type;
+		$this->_contentTypeMap[$name] = $type;
 	}
 
 /**
@@ -432,8 +395,6 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function accepts($type = null) {
-		$this->__initializeTypes();
-
 		$accepted = $this->request->accepts();
 
 		if ($type == null) {
@@ -497,7 +458,6 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function prefers($type = null) {
-		$this->__initializeTypes();
 		$accepts = $this->accepts();
 
 		if ($type == null) {
@@ -538,7 +498,6 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
-		$this->__initializeTypes();
 		$options = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
@@ -560,7 +519,7 @@ class RequestHandlerComponent extends Object {
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;
 
-		if (isset($this->__requestContent[$type])) {
+		if (isset($this->_contentTypeMap[$type])) {
 			$this->respondAs($type, $options);
 		}
 
@@ -592,21 +551,20 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function respondAs($type, $options = array()) {
-		$this->__initializeTypes();
-		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
+		if (!array_key_exists($type, $this->_contentTypeMap) && strpos($type, '/') === false) {
 			return false;
 		}
 		$defaults = array('index' => 0, 'charset' => null, 'attachment' => false);
 		$options = array_merge($defaults, $options);
 
-		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
+		if (strpos($type, '/') === false && isset($this->_contentTypeMap[$type])) {
 			$cType = null;
-			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$options['index']])) {
-				$cType = $this->__requestContent[$type][$options['index']];
-			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0])) {
-				$cType = $this->__requestContent[$type][0];
-			} elseif (isset($this->__requestContent[$type])) {
-				$cType = $this->__requestContent[$type];
+			if (is_array($this->_contentTypeMap[$type]) && isset($this->_contentTypeMap[$type][$options['index']])) {
+				$cType = $this->_contentTypeMap[$type][$options['index']];
+			} elseif (is_array($this->_contentTypeMap[$type]) && isset($this->_contentTypeMap[$type][0])) {
+				$cType = $this->_contentTypeMap[$type][0];
+			} elseif (isset($this->_contentTypeMap[$type])) {
+				$cType = $this->_contentTypeMap[$type];
 			} else {
 				return false;
 			}
@@ -673,10 +631,10 @@ class RequestHandlerComponent extends Object {
 		if (is_array($ctype)) {
 			return array_map(array($this, 'mapType'), $ctype);
 		}
-		$keys = array_keys($this->__requestContent);
+		$keys = array_keys($this->_contentTypeMap);
 		$count = count($keys);
 
-		foreach ($this->__requestContent as $alias => $types) {
+		foreach ($this->_contentTypeMap as $alias => $types) {
 			if (is_array($types) && in_array($ctype, $types)) {
 				return $alias;
 			} elseif (is_string($types) && $types == $ctype) {
@@ -697,8 +655,8 @@ class RequestHandlerComponent extends Object {
 		if (is_array($alias)) {
 			return array_map(array($this, 'mapAlias'), $alias);
 		}
-		if (isset($this->__requestContent[$alias])) {
-			$types = $this->__requestContent[$alias];
+		if (isset($this->_contentTypeMap[$alias])) {
+			$types = $this->_contentTypeMap[$alias];
 			if (is_array($types)) {
 				return $types[0];
 			}
@@ -707,23 +665,4 @@ class RequestHandlerComponent extends Object {
 		return null;
 	}
 
-/**
- * Initializes MIME types
- *
- * @return void
- * @access private
- */
-	function __initializeTypes() {
-		if ($this->__typesInitialized) {
-			return;
-		}
-		if (isset($this->__requestContent[$this->ext])) {
-			$content = $this->__requestContent[$this->ext];
-			if (is_array($content)) {
-				$content = $content[0];
-			}
-			array_unshift($this->__acceptTypes, $content);
-		}
-		$this->__typesInitialized = true;
-	}
 }
