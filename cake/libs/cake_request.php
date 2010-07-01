@@ -422,7 +422,7 @@ class CakeRequest implements ArrayAccess {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new BadMethodCallException('Method does not exist');
+		throw new BadMethodCallException(sprintf('Method %s does not exist', $name));
 	}
 
 /**
@@ -539,7 +539,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Read a header from the Request information.
+ * Read an HTTP header from the Request information.
  *
  * @param string $name Name of the header you want.
  * @return mixed Either false on no header being set or the value of the header.
