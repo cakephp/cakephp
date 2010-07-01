@@ -1,6 +1,11 @@
 <?php
 /**
  * A class that helps wrap Request information and particulars about a single request.
+ * Provides methods commonly used to introspect on the request headers and request body.
+ * 
+ * Has both an Array and Object interface. You can access framework parameters using indexes
+ *
+ * `$request['controller']` or `$request->controller`.
  *
  * PHP 5
  *
