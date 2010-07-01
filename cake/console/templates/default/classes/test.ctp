@@ -54,4 +54,3 @@ class <?php echo $fullClassName; ?>TestCase extends CakeTestCase {
 
 <?php endforeach;?>
 }
-<?php echo '?>'; ?>

@@ -58,4 +58,3 @@ echo $actions;
 endif; ?>
 
 }
-<?php echo "?>"; ?>
