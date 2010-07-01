@@ -139,4 +139,3 @@ if (!empty($associations['hasAndBelongsToMany'])):
 endif;
 ?>
 }
-<?php echo '?>'; ?>
