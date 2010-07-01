@@ -384,10 +384,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testFlashDetection() {
-		$request = new RequestHandlerMockCakeRequest();
-		$request->setReturnValue('is', array(true), array('flash'));
-		$request->expectOnce('is', array('flash'));
-	
+		$request = $this->getMock('CakeRequest');
+		$request->expects($this->once())->method('is')
+			->with('flash')
+			->will($this->returnValue(true));
+
 		$this->RequestHandler->request = $request;
 		$this->assertTrue($this->RequestHandler->isFlash());
 	}
@@ -455,9 +456,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testMobileDeviceDetection() {
-		$request = new RequestHandlerMockCakeRequest();
-		$request->setReturnValue('is', array(true), array('mobile'));
-		$request->expectOnce('is', array('mobile'));
+		$request = $this->getMock('CakeRequest');
+		$request->expects($this->once())->method('is')
+			->with('mobile')
+			->will($this->returnValue(true));
 	
 		$this->RequestHandler->request = $request;
 		$this->assertTrue($this->RequestHandler->isMobile());
@@ -470,9 +472,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRequestProperties() {
-		$request = new RequestHandlerMockCakeRequest();
-		$request->setReturnValue('is', array(true), array('ssl'));
-		$request->expectOnce('is', array('ssl'));
+		$request = $this->getMock('CakeRequest');
+		$request->expects($this->once())->method('is')
+			->with('ssl')
+			->will($this->returnValue(true));
 	
 		$this->RequestHandler->request = $request;
 		$this->assertTrue($this->RequestHandler->isSsl());
@@ -485,27 +488,37 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRequestMethod() {
-		$request = new RequestHandlerMockCakeRequest();
-		$request->setReturnValue('is', array(true), array('get'));
-		$request->setReturnValue('is', array(false), array('post'));
-		$request->setReturnValue('is', array(true), array('delete'));
-		$request->setReturnValue('is', array(false), array('put'));
-		$request->expectCallCount('is', 4);
+		$request = $this->getMock('CakeRequest');
+		$request->expects($this->at(0))->method('is')
+			->with('get')
+			->will($this->returnValue(true));
+
+		$request->expects($this->at(1))->method('is')
+			->with('post')
+			->will($this->returnValue(false));
+		
+		$request->expects($this->at(2))->method('is')
+			->with('delete')
+			->will($this->returnValue(true));
+			
+		$request->expects($this->at(3))->method('is')
+			->with('put')
+			->will($this->returnValue(false));
 		
 		$this->RequestHandler->request = $request;
 		$this->assertTrue($this->RequestHandler->isGet());
-		$this->assertTrue($this->RequestHandler->isPost());
-		$this->assertTrue($this->RequestHandler->isPut());
+		$this->assertFalse($this->RequestHandler->isPost());
 		$this->assertTrue($this->RequestHandler->isDelete());
+		$this->assertFalse($this->RequestHandler->isPut());
 	}
 
 /**
- * testClientContentPreference method
+ * test accepts and prefers methods.
  *
  * @access public
  * @return void
  */
-	function testClientContentPreference() {
+	function testAcceptsAndPrefers() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 		$this->_init();
 		$this->assertNotEqual($this->RequestHandler->prefers(), 'rss');
@@ -554,9 +567,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testClientProperties() {
-		$request = new RequestHandlerMockCakeRequest();
-		$request->expectOnce('referer');
-		$request->expectOnce('clientIp', array(false));
+		$request = $this->getMock('CakeRequest');
+		$request->expects($this->once())->method('referer');
+		$request->expects($this->once())->method('clientIp')->will($this->returnValue(false));
+
 		$this->RequestHandler->request = $request;
 
 		$this->RequestHandler->getReferer();
@@ -569,15 +583,16 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxRedirectAsRequestAction() {
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->_init();
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
 
-		$this->Controller->request = new CakeRequest('posts/index');
+		$this->Controller->request = $this->getMock('CakeRequest');
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
+		
+		$this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
 
 		ob_start();
@@ -587,7 +602,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertPattern('/posts index/', $result, 'RequestAction redirect failed.');
 
-		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		App::build();
 	}
 
@@ -598,13 +612,16 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxRedirectAsRequestActionStillRenderingLayout() {
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 		$this->_init();
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
 
+		$this->Controller->request = $this->getMock('CakeRequest');
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
+		$this->Controller->RequestHandler->request = $this->Controller->request;
+
+		$this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
 
 		ob_start();
@@ -615,7 +632,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertPattern('/posts index/', $result, 'RequestAction redirect failed.');
 		$this->assertPattern('/Ajax!/', $result, 'Layout was not rendered.');
 
-		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 		App::build();
 	}
 
