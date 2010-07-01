@@ -452,10 +452,7 @@ class RequestHandlerComponent extends Object {
 			return false;
 		} elseif (is_string($type)) {
 			$type = $this->mapAlias($type);
-			if (in_array($type, $accepted)) {
-				return true;
-			}
-			return false;
+			return in_array($type, $accepted);
 		}
 		return false;
 	}
@@ -477,7 +474,7 @@ class RequestHandlerComponent extends Object {
 		} elseif (is_array($type)) {
 			foreach ($type as $t) {
 				if ($this->requestedWith($t)) {
-					return $this->mapType($t);
+					return $t;
 				}
 			}
 			return false;
@@ -689,28 +686,24 @@ class RequestHandlerComponent extends Object {
 /**
  * Maps a content-type back to an alias
  *
- * @param mixed $type Content type
- * @return mixed Alias
+ * @param mixed $type Either a string content type to map, or an array of types.
+ * @return mixed Aliases for the types provided.
  */
 	public function mapType($ctype) {
 		if (is_array($ctype)) {
 			return array_map(array($this, 'mapType'), $ctype);
-		} else {
-			$keys = array_keys($this->__requestContent);
-			$count = count($keys);
-
-			for ($i = 0; $i < $count; $i++) {
-				$name = $keys[$i];
-				$type = $this->__requestContent[$name];
-
-				if (is_array($type) && in_array($ctype, $type)) {
-					return $name;
-				} elseif (!is_array($type) && $type == $ctype) {
-					return $name;
-				}
-			}
-			return $ctype;
 		}
+		$keys = array_keys($this->__requestContent);
+		$count = count($keys);
+
+		foreach ($this->__requestContent as $alias => $types) {
+			if (is_array($types) && in_array($ctype, $types)) {
+				return $alias;
+			} elseif (is_string($types) && $types == $ctype) {
+				return $alias;
+			}
+		}
+		return null;
 	}
 
 /**
