@@ -702,7 +702,7 @@ class App extends Object {
 /**
  * Get the path that a plugin is on.  Searches through the defined plugin paths.
  *
- * @param string $plugin CamelCased plugin name to find the path of.
+ * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
  */
 	function pluginPath($plugin) {
@@ -714,6 +714,23 @@ class App extends Object {
 			}
 		}
 		return $_this->plugins[0] . $pluginDir . DS;
+	}
+
+/**
+ * Find the path that a theme is on.  Search through the defined theme paths.
+ *
+ * @param string $theme lower_cased theme name to find the path of.
+ * @return string full path to the theme.
+ */
+	function themePath($theme) {
+		$_this =& App::getInstance();
+		$themeDir = 'themed' . DS . Inflector::underscore($theme);
+		for ($i = 0, $length = count($_this->views); $i < $length; $i++) {
+			if (is_dir($_this->views[$i] . $themeDir)) {
+				return $_this->views[$i] . $themeDir . DS ;
+			}
+		}
+		return $_this->views[0] . $themeDir . DS;
 	}
 
 /**
