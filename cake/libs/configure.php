@@ -688,8 +688,8 @@ class App extends Object {
  * @param string $theme lower_cased theme name to find the path of.
  * @return string full path to the theme.
  */
-	function themePath($theme) {
-		$_this =& App::getInstance();
+	public static function themePath($theme) {
+		$_this = App::getInstance();
 		$themeDir = 'themed' . DS . Inflector::underscore($theme);
 		for ($i = 0, $length = count($_this->views); $i < $length; $i++) {
 			if (is_dir($_this->views[$i] . $themeDir)) {
