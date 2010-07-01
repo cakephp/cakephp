@@ -20,7 +20,7 @@
 App::import('Controller', 'Controller', false);
 App::import('Component', array('RequestHandler'));
 
-Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop'));
+Mock::generatePartial('RequestHandlerComponent', 'NoStopRequestHandler', array('_stop', '_header'));
 Mock::generatePartial('Controller', 'RequestHandlerMockController', array('header'));
 
 /**
@@ -306,6 +306,37 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->Controller->viewPath = 'request_handler_test\\xml';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
 		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'js');
+	}
+
+/**
+ * test that respondAs works as expected.
+ *
+ * @return void
+ */
+	function testRespondAs() {
+		$RequestHandler = new NoStopRequestHandler();
+		$RequestHandler->expectAt(0, '_header', array('Content-Type: application/json'));
+		$RequestHandler->expectAt(1, '_header', array('Content-Type: text/xml'));
+
+		$result = $RequestHandler->respondAs('json');
+		$this->assertTrue($result);
+
+		$result = $RequestHandler->respondAs('text/xml');
+		$this->assertTrue($result);
+	}
+
+/**
+ * test that attachment headers work with respondAs
+ *
+ * @return void
+ */
+	function testRespondAsWithAttachment() {
+		$RequestHandler = new NoStopRequestHandler();
+		$RequestHandler->expectAt(0, '_header', array('Content-Disposition: attachment; filename="myfile.xml"'));
+		$RequestHandler->expectAt(1, '_header', array('Content-Type: text/xml'));
+
+		$result = $RequestHandler->respondAs('xml', array('attachment' => 'myfile.xml'));
+		$this->assertTrue($result);
 	}
 
 /**
