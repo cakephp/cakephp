@@ -669,6 +669,28 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test accepts() with and without parameters
+ *
+ * @return void
+ */
+	function testAccepts() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png';
+		$request = new CakeRequest('/', false);
+		
+		$result = $request->accepts();
+		$expected = array(
+			'text/xml', 'application/xml', 'application/xhtml+xml', 'text/html', 'text/plain', 'image/png'
+		);
+		$this->assertEquals($expected, $result, 'Content types differ.');
+		
+		$result = $request->accepts('text/html');
+		$this->assertTrue($result);
+		
+		$result = $request->accepts('image/gif');
+		$this->assertFalse($result);
+	}
+
+/**
  * testBaseUrlAndWebrootWithModRewrite method
  *
  * @return void

@@ -410,6 +410,7 @@ class CakeRequest implements ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
+ * @throws BadMethodCallException when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
@@ -545,6 +546,29 @@ class CakeRequest implements ArrayAccess {
 		}
 		return false;
 	}
+
+/**
+ * Find out which content types the client accepts or check if they accept a 
+ * particular type of content.
+ *
+ * @param string $type The content type to check for.  Leave null to get all types a client accepts.
+ * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
+ *   provided type.
+ */
+	public function accepts($type = null) {
+		$acceptTypes = explode(',', $this->header('accept'));
+		foreach ($acceptTypes as $i => $accepted) {
+			if (strpos($accepted, ';') !== false) {
+				list($accepted, $prefValue) = explode(';', $accepted);
+				$acceptTypes[$i] = $accepted;
+			}
+		}
+		if ($type === null) {
+			return $acceptTypes;
+		}
+		return in_array($type, $acceptTypes);
+	}
+
 /**
  * Array access read implementation
  *
