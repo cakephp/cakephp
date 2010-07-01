@@ -562,6 +562,8 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($this->RequestHandler->prefers(), 'rss');
 		$this->assertFalse($this->RequestHandler->prefers('xml'));
 		$this->assertEqual($this->RequestHandler->prefers(array('js', 'xml', 'xhtml')), 'xml');
+		$this->assertFalse($this->RequestHandler->prefers(array('red', 'blue')));
+		$this->assertEqual($this->RequestHandler->prefers(array('js', 'json', 'xhtml')), 'xhtml');
 
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();
@@ -583,11 +585,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'text/x-mobile,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5';
 		$this->_init();
 		$this->RequestHandler->setContent('mobile', 'text/x-mobile');
-		$this->RequestHandler->startup($this->Controller);
-		$this->assertEqual($this->RequestHandler->prefers(), 'mobile');
-
-		$this->_init();
-		$this->RequestHandler->setContent(array('mobile' => 'text/x-mobile'));
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertEqual($this->RequestHandler->prefers(), 'mobile');
 	}

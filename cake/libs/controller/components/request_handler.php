@@ -384,10 +384,6 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	public function setContent($name, $type = null) {
-		if (is_array($name)) {
-			$this->__requestContent = array_merge($this->__requestContent, $name);
-			return;
-		}
 		$this->__requestContent[$name] = $type;
 	}
 
@@ -461,13 +457,15 @@ class RequestHandlerComponent extends Object {
  * Determines the content type of the data the client has sent (i.e. in a POST request)
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an array of types
- * @return mixed
+ * @return mixed If a single type is supplied a boolean will be returned.  If no type is provided
+ *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
+ *   in the request content type will be returned.
  */
 	public function requestedWith($type = null) {
 		if (!$this->request->is('post') && !$this->request->is('put')) {
 			return null;
 		}
-
+	
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($type == null) {
 			return $this->mapType($contentType);
@@ -500,51 +498,33 @@ class RequestHandlerComponent extends Object {
  */
 	function prefers($type = null) {
 		$this->__initializeTypes();
-		$accept = $this->accepts();
+		$accepts = $this->accepts();
 
 		if ($type == null) {
 			if (empty($this->ext)) {
-				if (is_array($accept)) {
-					return $accept[0];
+				if (is_array($accepts)) {
+					return $accepts[0];
 				}
-				return $accept;
+				return $accepts;
 			}
 			return $this->ext;
 		}
 
-		$types = $type;
-		if (is_string($type)) {
-			$types = array($type);
-		}
+		$types = (array)$type;
 
 		if (count($types) === 1) {
 			if (!empty($this->ext)) {
 				return ($types[0] == $this->ext);
 			}
-			return ($types[0] == $accept[0]);
-		}
-		$accepts = array();
-
-		foreach ($types as $type) {
-			if (in_array($type, $accept)) {
-				$accepts[] = $type;
-			}
+			return ($types[0] == $accepts[0]);
 		}
 
-		if (count($accepts) === 0) {
+	
+		$intersect = array_values(array_intersect($accepts, $types));
+		if (empty($intersect)) {
 			return false;
-		} elseif (count($types) === 1) {
-			return ($types[0] === $accepts[0]);
-		} elseif (count($accepts) === 1) {
-			return $accepts[0];
 		}
-
-		$acceptedTypes = array();
-		foreach ($this->__acceptTypes as $type) {
-			$acceptedTypes[] = $this->mapType($type);
-		}
-		$accepts = array_intersect($acceptedTypes, $accepts);
-		return $accepts[0];
+		return $intersect[0];
 	}
 
 /**
