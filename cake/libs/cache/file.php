@@ -76,8 +76,11 @@ class FileEngine extends CacheEngine {
 			$settings
 		));
 
-		if (DIRECTORY_SEPARATOR === '\\') {
+		if (DS === '\\') {
 			$this->settings['isWindows'] = true;
+		}
+		if (substr($this->settings['path'], -1) !== DS) {
+			$this->settings['path'] .= DS;
 		}
 		return $this->_active();
 	}
@@ -266,15 +269,16 @@ class FileEngine extends CacheEngine {
  * @access protected
  */
 	protected function _setKey($key, $createKey = false) {
-		$path = new SplFileInfo($this->settings['path'] . DS . $key);
+		$path = new SplFileInfo($this->settings['path'] . $key);
 
 		if (!$createKey && !$path->isFile()) {
 			return false;
 		}
-
+		$old = umask(0);
 		if (empty($this->_File) || $this->_File->getBaseName() !== $key) {
 			$this->_File = $path->openFile('a+');
 		}
+		umask($old);
 
 		return true;
 	}
