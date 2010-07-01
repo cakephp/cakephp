@@ -584,7 +584,6 @@ class Dispatcher extends Object {
 			$themeName = $parts[1];
 			unset($parts[0], $parts[1]);
 			$fileFragment = implode(DS, $parts);
-			
 			$path = App::themePath($themeName) . 'webroot' . DS;
 			if (file_exists($path . $fileFragment)) {
 				$assetFile = $path . $fileFragment;
