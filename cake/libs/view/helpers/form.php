@@ -584,6 +584,13 @@ class FormHelper extends AppHelper {
  *	));
  * }}}
  *
+ * In addition to fields control, inputs() allows you to use a few additional options.
+ *
+ * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as 
+ *    the classname for the fieldset element.
+ * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
+ *    to customize the legend text.
+ *
  * @param mixed $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
  * @return string Completed form inputs.

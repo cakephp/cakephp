@@ -493,6 +493,35 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * test assetTimestamp with plugins and themes
+ *
+ * @return void
+ */
+	function testAssetTimestampPluginsAndThemes() {
+		$_timestamp = Configure::read('Asset.timestamp');
+		Configure::write('Asset.timestamp', 'force');
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+		));
+
+		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
+		$this->assertPattern('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');
+
+		$result = $this->Helper->assetTimestamp('/test_plugin/css/i_dont_exist.css');
+		$this->assertPattern('#/test_plugin/css/i_dont_exist.css\?$#', $result, 'No error on missing file');
+
+		$result = $this->Helper->assetTimestamp('/theme/test_theme/js/theme.js');
+		$this->assertPattern('#/theme/test_theme/js/theme.js\?[0-9]+$#', $result, 'Missing timestamp theme');
+
+		$result = $this->Helper->assetTimestamp('/theme/test_theme/js/non_existant.js');
+		$this->assertPattern('#/theme/test_theme/js/non_existant.js\?$#', $result, 'No error on missing file');
+
+		App::build();
+		Configure::write('Asset.timestamp', $_timestamp);
+	}
+
+/**
  * testFieldsWithSameName method
  *
  * @access public

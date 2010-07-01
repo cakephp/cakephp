@@ -461,6 +461,26 @@ class AppImportTest extends CakeTestCase {
 	}
 
 /**
+ * test that pluginPath can find paths for plugins.
+ *
+ * @return void
+ */
+	function testThemePath() {
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS)
+		));
+		$path = App::themePath('test_theme');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS;
+		$this->assertEqual($path, $expected);
+
+		$path = App::themePath('TestTheme');
+		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS;
+		$this->assertEqual($path, $expected);
+
+		App::build();
+	}
+
+/**
  * testClassLoading method
  *
  * @access public
