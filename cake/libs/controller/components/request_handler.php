@@ -121,9 +121,9 @@ class RequestHandlerComponent extends Object {
 
 /**
  * Initializes the component, gets a reference to Controller::$parameters, and
- * checks to see if a file extension has been parsed by the Router.  If yes, the
- * corresponding content-type is pushed onto the list of accepted content-types
- * as the first item.
+ * checks to see if a file extension has been parsed by the Router.  Or if the 
+ * HTTP_ACCEPT_TYPE is set to a single value that is a supported extension and mapped type.
+ * If yes, RequestHandler::$ext is set to that value
  *
  * @param object $controller A reference to the controller
  * @param array $settings Array of settings to _set().
@@ -131,10 +131,20 @@ class RequestHandlerComponent extends Object {
  * @see Router::parseExtensions()
  */
 	public function initialize(&$controller, $settings = array()) {
+		$this->request = $controller->request;
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
-		$this->request = $controller->request;
+		if (empty($this->ext)) {
+			$accepts = $this->request->accepts();
+			$extensions = Router::extensions();
+			if (count($accepts) == 1) {
+				$mapped = $this->mapType($accepts[0]);
+				if (in_array($mapped, $extensions)) {
+					$this->ext = $mapped;
+				}
+			}
+		}
 		$this->_set($settings);
 	}
 
@@ -144,8 +154,10 @@ class RequestHandlerComponent extends Object {
  *
  * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
  * - If Router::parseExtensions() is enabled, the layout and template type are
- *   switched based on the parsed extension.  For example, if controller/action.xml
- *   is requested, the view path becomes <i>app/views/controller/xml/action.ctp</i>.
+ *   switched based on the parsed extension or Accept-Type header.  For example, if `controller/action.xml`
+ *   is requested, the view path becomes `app/views/controller/xml/action.ctp`. Also if
+ *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
+ *   the view path will become `app/views/controller/xml/action.ctp`.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
  *   Content-type in the response header.
