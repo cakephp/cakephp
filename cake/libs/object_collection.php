@@ -57,19 +57,24 @@ abstract class ObjectCollection {
  * Used to trigger methods on objects in the collection.  Will fire the methods in the 
  * order they were attached.
  *
+ * ### Options
+ *
+ * - `breakOn` Set to the value or values you want the callback propagation to stop on.
+ *    Defaults to `false`
+ * - `break` Set to true to enabled breaking.
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
- * @return mixed Either true or $params[0] if $options['modParams'] is true.
+ * @return Returns true.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_attached)) {
 			return true;
 		}
 		$options = array_merge(
-			array('break' => false, 'breakOn' => array(false), 'modParams' => false),
+			array('break' => false, 'breakOn' => false),
 			$options
 		);
 		$count = count($this->_attached);
@@ -85,12 +90,7 @@ abstract class ObjectCollection {
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
 				return $result;
-			} elseif ($options['modParams'] && is_array($result)) {
-				$params[0] = $result;
 			}
-		}
-		if ($options['modParams'] && isset($params[0])) {
-			return $params[0];
 		}
 		return true;
 	}
