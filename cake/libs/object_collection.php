@@ -36,6 +36,66 @@ abstract class ObjectCollection {
 	protected $_disabled = array();
 
 /**
+ * Loads a new object onto the collection. Can throw a variety of exceptions
+ *
+ * @param string $name Name of object to load.
+ * @param array $options Array of configuration options for the object to be constructed.
+ * @return object the constructed object
+ */
+	abstract public function load($name, $options = array());
+
+/**
+ * Unloads/deletes an object from the collection.
+ *
+ * @param string $name Name of the object to delete.
+ * @return void
+ */
+	abstract public function unload($name);
+
+/**
+ * Trigger a callback method on every object in the collection.
+ * Used to trigger methods on objects in the collection.  Will fire the methods in the 
+ * order they were attached.
+ *
+ * 
+ * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
+ *   the method you are calling.
+ * @param array $params Array of parameters for the triggered callback.
+ * @param array $options Array of options.
+ * @return mixed Either true or $params[0] if $options['modParams'] is true.
+ */
+	public function trigger($callback, $params = array(), $options = array()) {
+		if (empty($this->_attached)) {
+			return true;
+		}
+		$options = array_merge(
+			array('break' => false, 'breakOn' => array(false), 'modParams' => false),
+			$options
+		);
+		$count = count($this->_attached);
+		for ($i = 0; $i < $count; $i++) {
+			$name = $this->_attached[$i];
+			if (in_array($name, $this->_disabled)) {
+				continue;
+			}
+			$result = call_user_func_array(array($this->{$name}, $callback), $params);
+
+			if (
+				$options['break'] && ($result === $options['breakOn'] || 
+				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
+			) {
+				return $result;
+			} elseif ($options['modParams'] && is_array($result)) {
+				$params[0] = $result;
+			}
+		}
+		if ($options['modParams'] && isset($params[0])) {
+			return $params[0];
+		}
+		return true;
+	}
+
+/**
  * Enables callbacks on a behavior or array of behaviors
  *
  * @param mixed $name CamelCased name of the behavior(s) to enable (string or array)

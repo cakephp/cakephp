@@ -35,6 +35,7 @@ class HelperCollection extends ObjectCollection {
 	public function __construct(View $view) {
 		$this->_View = $view;
 	}
+
 /**
  * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
  * 
@@ -65,6 +66,17 @@ class HelperCollection extends ObjectCollection {
 		return $this->{$name};
 	}
 
+/**
+ * Name of the helper to remove from the collection
+ *
+ * @param string $name Name of helper to delete.
+ * @return void
+ */
+	public function unload($name) {
+		list($plugin, $name) = pluginSplit($name);
+		unset($this->{$name});
+		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
+	}
 
 }
 /**

@@ -53,7 +53,7 @@ class HelperCollectionTest extends CakeTestCase {
 
 		$result = $this->Helpers->attached();
 		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
-		
+
 		$this->assertTrue($this->Helpers->enabled('Html'));
 	}
 
@@ -81,5 +81,66 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->assertType('OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
 
 		App::build();
+	}
+
+/**
+ * test unload()
+ *
+ * @return void
+ */
+	function testUnload() {
+		$this->Helpers->load('Form');
+		$this->Helpers->load('Html');
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Form', 'Html'), $result, 'loaded helpers is wrong');
+
+		$this->Helpers->unload('Html');
+		$this->assertFalse(isset($this->Helpers->Html));
+		$this->assertTrue(isset($this->Helpers->Form));
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Form'), $result, 'loaded helpers is wrong');
+	}
+
+/**
+ * test triggering callbacks.
+ *
+ * @return void
+ */
+	function testTrigger() {
+		$this->Helpers->load('Form');
+		$this->Helpers->load('Html');
+
+		$this->Helpers->Html = $this->getMock('HtmlHelper');
+		$this->Helpers->Form = $this->getMock('FormHelper');
+
+		$this->Helpers->Html->expects($this->once())->method('beforeRender')
+			->with('one', 'two');
+		$this->Helpers->Form->expects($this->once())->method('beforeRender')
+			->with('one', 'two');
+
+		$this->Helpers->trigger('beforeRender', array('one', 'two'));
+	}
+
+/**
+ * test trigger and disabled helpers.
+ *
+ * @return void
+ */
+	function testTriggerWithDisabledHelpers() {
+		$this->Helpers->load('Form');
+		$this->Helpers->load('Html');
+
+		$this->Helpers->Html = $this->getMock('HtmlHelper');
+		$this->Helpers->Form = $this->getMock('FormHelper');
+
+		$this->Helpers->Html->expects($this->once())->method('beforeRender')
+			->with('one', 'two');
+		$this->Helpers->Form->expects($this->never())->method('beforeRender');
+
+		$this->Helpers->disable('Form');
+
+		$this->Helpers->trigger('beforeRender', array('one', 'two'));
 	}
 }

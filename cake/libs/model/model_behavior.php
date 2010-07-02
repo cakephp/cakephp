@@ -239,6 +239,7 @@ class BehaviorCollection extends ObjectCollection {
 /**
  * Attaches a model object and loads a list of behaviors
  *
+ * @todo Make this method a constructor instead..
  * @access public
  * @return void
  */
@@ -253,13 +254,23 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 /**
- * Attaches a behavior to a model
+ * Backwards compatible alias for load()
+ *
+ * @return void
+ * @deprecated Replaced with load()
+ */
+	public function attach($behavior, $config = array()) {
+		return $this->load($behavior, $config);
+	}
+
+/**
+ * Loads a behavior into the collection.
  *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
  * @return boolean True on success, false on failure
  */
-	public function attach($behavior, $config = array()) {
+	public function load($behavior, $config = array()) {
 		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 
@@ -343,7 +354,7 @@ class BehaviorCollection extends ObjectCollection {
  * @param string $name CamelCased name of the behavior to unload
  * @return void
  */
-	public function detach($name) {
+	public function unload($name) {
 		list($plugin, $name) = pluginSplit($name);
 		if (isset($this->{$name})) {
 			$this->{$name}->cleanup(ClassRegistry::getObject($this->modelName));
@@ -355,6 +366,17 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
+	}
+
+/**
+ * Backwards compatible alias for unload()
+ *
+ * @param string $name Name of behavior
+ * @return void
+ * @deprecated Use unload instead.
+ */
+	public function detach($name) {
+		return $this->unload($name);
 	}
 
 /**
