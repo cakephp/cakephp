@@ -57,7 +57,10 @@ class HelperCollection extends ObjectCollection {
 			if (!class_exists($helperClass)) {
 				throw new MissingHelperClassException($helperClass);
 			}
-			$this->{$name} = new $helperClass($this->_View, $settings);
+		}
+		$this->{$name} = new $helperClass($this->_View, $settings);
+		if (!in_array($name, $this->_attached)) {
+			$this->_attached[] = $name;
 		}
 		return $this->{$name};
 	}

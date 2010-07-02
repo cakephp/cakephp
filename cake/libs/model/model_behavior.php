@@ -358,46 +358,6 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 /**
- * Enables callbacks on a behavior or array of behaviors
- *
- * @param mixed $name CamelCased name of the behavior(s) to enable (string or array)
- * @return void
- */
-	public function enable($name) {
-		$this->_disabled = array_diff($this->_disabled, (array)$name);
-	}
-
-/**
- * Disables callbacks on a behavior or array of behaviors.  Public behavior methods are still
- * callable as normal.
- *
- * @param mixed $name CamelCased name of the behavior(s) to disable (string or array)
- * @return void
- */
-	public function disable($name) {
-		foreach ((array)$name as $behavior) {
-			if (in_array($behavior, $this->_attached) && !in_array($behavior, $this->_disabled)) {
-				$this->_disabled[] = $behavior;
-			}
-		}
-	}
-
-/**
- * Gets the list of currently-enabled behaviors, or, the current status of a single behavior
- *
- * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *   returns an array of currently-enabled behaviors
- * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *   Otherwise, returns an array of all enabled behaviors.
- */
-	public function enabled($name = null) {
-		if (!empty($name)) {
-			return (in_array($name, $this->_attached) && !in_array($name, $this->_disabled));
-		}
-		return array_diff($this->_attached, $this->_disabled);
-	}
-
-/**
  * Dispatches a behavior method
  *
  * @return array All methods for all behaviors attached to this object
@@ -477,18 +437,4 @@ class BehaviorCollection extends ObjectCollection {
 		return $this->__methods;
 	}
 
-/**
- * Gets the list of attached behaviors, or, whether the given behavior is attached
- *
- * @param string $name Optional.  The name of the behavior to check the status of.  If omitted,
- *   returns an array of currently-attached behaviors
- * @return mixed If $name is specified, returns the boolean status of the corresponding behavior.
- *    Otherwise, returns an array of all attached behaviors.
- */
-	public function attached($name = null) {
-		if (!empty($name)) {
-			return (in_array($name, $this->_attached));
-		}
-		return $this->_attached;
-	}
 }

@@ -50,6 +50,11 @@ class HelperCollectionTest extends CakeTestCase {
 		$result = $this->Helpers->load('Html');
 		$this->assertType('HtmlHelper', $result);
 		$this->assertType('HtmlHelper', $this->Helpers->Html);
+
+		$result = $this->Helpers->attached();
+		$this->assertEquals(array('Html'), $result, 'attached() results are wrong.');
+		
+		$this->assertTrue($this->Helpers->enabled('Html'));
 	}
 
 /**
