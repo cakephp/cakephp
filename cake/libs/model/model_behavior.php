@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Core', 'ObjectCollection');
+
 /**
  * Model behavior base class.
  *
@@ -210,7 +212,7 @@ class ModelBehavior extends Object {
  * @package       cake
  * @subpackage    cake.cake.libs.model
  */
-class BehaviorCollection extends Object {
+class BehaviorCollection extends ObjectCollection {
 
 /**
  * Stores a reference to the attached name
@@ -219,22 +221,6 @@ class BehaviorCollection extends Object {
  * @access public
  */
 	public $modelName = null;
-
-/**
- * Lists the currently-attached behavior objects
- *
- * @var array
- * @access private
- */
-	protected $_attached = array();
-
-/**
- * Lists the currently-attached behavior objects which are disabled
- *
- * @var array
- * @access private
- */
-	protected $_disabled = array();
 
 /**
  * Keeps a list of all methods of attached behaviors

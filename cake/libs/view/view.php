@@ -2,7 +2,7 @@
 /**
  * Methods for displaying presentation data in the view.
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -737,6 +737,17 @@ class View extends Object {
 			}
 		}
 		return $out;
+	}
+
+/**
+ * Loads a helper.  Delegates to the HelperCollection to load the helper
+ *
+ * @param string $helperName Name of the helper to load.
+ * @param array $settings Settings for the helper
+ * @return Helper a constructed helper object.
+ */
+	public function loadHelper($helperName, $settings = array()) {
+		return $this->Helpers->load($helperName, $settings);
 	}
 
 /**
