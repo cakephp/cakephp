@@ -171,8 +171,10 @@ class Helper extends Object {
 	}
 
 /**
- * Default overload methods
+ * Provide non fatal errors on missing method calls.
  *
+ * @param string $method Method to invoke
+ * @param array $params Array of params for the method.
  */
 	public function __call($method, $params) {
 		trigger_error(sprintf(__('Method %1$s::%2$s does not exist'), get_class($this), $method), E_USER_WARNING);
@@ -181,7 +183,8 @@ class Helper extends Object {
 /**
  * Lazy loads helpers
  *
- * @return void
+ * @param string $name Name of the property being accessed.
+ * @return mixed Helper or property found at $name
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {

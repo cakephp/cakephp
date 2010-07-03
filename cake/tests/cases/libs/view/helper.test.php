@@ -805,4 +805,18 @@ class HelperTest extends CakeTestCase {
 		$this->assertType('HtmlHelper', $Helper->Html);
 		App::build();
 	}
+
+/**
+ * test that the lazy loader doesn't duplicate objects on each access.
+ *
+ * @return void
+ */
+	function testLazyLoadingUsesReferences() {
+		$Helper = new TestHelper($this->View);
+		$result1 = $Helper->Html;
+		$result2 = $Helper->Html;
+
+		$result1->testprop = 1;
+		$this->assertEquals($result1->testprop, $result2->testprop);
+	}
 }
