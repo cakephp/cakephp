@@ -466,8 +466,9 @@ class View extends Object {
 		if (!isset($dataForLayout['title_for_layout'])) {
 			$dataForLayout['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
-
-		if (empty($this->loaded) && !empty($this->helpers)) {
+		
+		$attached = $this->Helpers->attached();
+		if (empty($attached) && !empty($this->helpers)) {
 			$loadHelpers = true;
 		} else {
 			$loadHelpers = false;
@@ -486,18 +487,6 @@ class View extends Object {
 		$this->Helpers->trigger('afterLayout', array(&$this));
 
 		return $this->output;
-	}
-
-/**
- * Fire a callback on all loaded Helpers. All helpers must implement this method, 
- * it is not checked before being called.  You can add additional helper callbacks in AppHelper.
- *
- * @param string $callback name of callback fire.
- * @access protected
- * @return void
- */
-	function _triggerHelpers($callback) {
-		$this->Helpers->trigger($callback, array(&$this));
 	}
 
 /**
@@ -698,10 +687,8 @@ class View extends Object {
  * @return string Rendered output
  */
 	protected function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
-		$loadedHelpers = array();
-
 		$attached = $this->Helpers->attached();
-		if (count($attached) == 0 && $loadHelpers === true) {
+		if (count($attached) === 0 && $loadHelpers === true) {
 			$this->loadHelpers();
 			$this->Helpers->trigger('beforeRender', array(&$this));
 			unset($attached);
@@ -722,7 +709,7 @@ class View extends Object {
 
 		$out = ob_get_clean();
 		$caching = (
-			isset($this->loaded['cache']) &&
+			isset($this->Helpers->Cache) &&
 			(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
 		);
 

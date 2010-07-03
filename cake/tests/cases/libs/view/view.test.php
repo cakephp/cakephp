@@ -579,16 +579,20 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testHelperCallbackTriggering() {
-		$mockHelper = $this->getMock('Helper', array(), array(), 'CallbackMockHelper');
-		$this->PostsController->helpers = array('Session', 'Html', 'CallbackMock');
-
 		$View = new View($this->PostsController);
-		$View->loadHelpers();
-		
-		$View->Helpers->CallbackMock->expects($this->once())->method('beforeRender');
-		$View->Helpers->CallbackMock->expects($this->once())->method('afterRender');
-		$View->Helpers->CallbackMock->expects($this->once())->method('beforeLayout');
-		$View->Helpers->CallbackMock->expects($this->once())->method('afterLayout');
+		$View->helpers = array('Html', 'Session');
+		$View->Helpers = $this->getMock('HelperCollection', array('trigger'), array($View));
+
+		$View->Helpers->expects($this->at(0))->method('trigger')
+			->with('beforeRender', new PHPUnit_Framework_Constraint_IsAnything());
+		$View->Helpers->expects($this->at(1))->method('trigger')
+			->with('afterRender', new PHPUnit_Framework_Constraint_IsAnything());
+
+		$View->Helpers->expects($this->at(2))->method('trigger')
+			->with('beforeLayout', new PHPUnit_Framework_Constraint_IsAnything());
+		$View->Helpers->expects($this->at(3))->method('trigger')
+			->with('afterLayout', new PHPUnit_Framework_Constraint_IsAnything());
+
 		$View->render('index');
 	}
 
@@ -601,8 +605,8 @@ class ViewTest extends CakeTestCase {
 	function testBeforeLayout() {
 		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
 		$View = new View($this->PostsController);
-		$out = $View->render('index');
-		$this->assertEqual($View->loaded['testAfter']->property, 'Valuation');
+		$View->render('index');
+		$this->assertEqual($View->Helpers->TestAfter->property, 'Valuation');
 	}
 
 /**
@@ -637,11 +641,8 @@ class ViewTest extends CakeTestCase {
 		$result = $View->render_($View->getViewFileName('index'), array());
 		$this->assertEqual($result, 'posts index');
 
-		$helpers = $View->loaded;
-		$this->assertTrue($helpers['html'] instanceof HtmlHelper);
-		$this->assertTrue($helpers['form'] instanceof FormHelper);
-		$this->assertTrue($helpers['form']->Html instanceof HtmlHelper);
-		$this->assertTrue($helpers['number'] instanceof NumberHelper);
+		$attached = $View->Helpers->attached();
+		$this->assertEquals($attached, array('Session', 'Html', 'Form', 'Number'));
 
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = new TestView($this->PostsController);
@@ -649,20 +650,9 @@ class ViewTest extends CakeTestCase {
 		$result = $View->render_($View->getViewFileName('index'), array());
 		$this->assertEqual($result, 'posts index');
 
-		$helpers = $View->loaded;
-		$this->assertTrue($helpers['html'] instanceof HtmlHelper);
-		$this->assertTrue($helpers['form'] instanceof FormHelper);
-		$this->assertTrue($helpers['form']->Html instanceof HtmlHelper);
-		$this->assertTrue($helpers['number'] instanceof NumberHelper);
-		$this->assertTrue($helpers['pluggedHelper']->OtherHelper instanceof OtherHelperHelper);
-
-		$this->assertTrue($View->Html instanceof HtmlHelper);
-		$this->assertTrue($View->Form instanceof FormHelper);
-		$this->assertTrue($View->Form->Html instanceof HtmlHelper);
-		$this->assertTrue($View->PluggedHelper->OtherHelper instanceof OtherHelperHelper);
-		$this->assertReference($View->Form, $View->loaded['form']);
-		$this->assertReference($View->Html, $View->loaded['html']);
-		$this->assertReference($View->PluggedHelper->OtherHelper, $View->loaded['otherHelper']);
+		$attached = $View->Helpers->attached();
+		$expected = array('Html', 'Form', 'Number', 'PluggedHelper');
+		$this->assertEquals($expected, $attached, 'Attached helpers are wrong.');
 	}
 
 /**
@@ -718,6 +708,9 @@ class ViewTest extends CakeTestCase {
 		$Controller = new ViewPostsController();
 		$Controller->cacheAction = '1 day';
 		$View = new View($Controller);
+		$View->helpers = array('Cache', 'Html', 'Session');
+		$View->loadHelpers();
+
 		$View->Helpers->Cache = $this->getMock('CacheHelper');
 		$View->Helpers->Cache->expects($this->exactly(2))->method('cache');
 
