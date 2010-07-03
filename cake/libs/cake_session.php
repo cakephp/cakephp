@@ -227,7 +227,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (isset($_SESSION) && session_id()) {
+		if (!empty($_SESSION) && session_id()) {
 			return true;
 		}
 		return false;

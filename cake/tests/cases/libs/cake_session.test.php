@@ -255,6 +255,10 @@ class CakeSessionTest extends CakeTestCase {
 		$this->Session->destroy();
 		$this->assertFalse($this->Session->check('bulletProof'));
 		$this->assertNotEqual($id, $this->Session->id());
+		
+		$this->Session->cookieLifeTime = 'test';
+		$this->Session->destroy();
+		$this->assertNotEqual('test', $this->Session->cookieLifeTime);
 	}
 
 /**
