@@ -145,8 +145,10 @@ class Helper extends Object {
 /**
  * Default Constructor
  *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
  */
-	public function __construct() {
+	public function __construct(View $View, $settings = array()) {
 		// Nothing to see here.
 	}
 

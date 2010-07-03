@@ -85,10 +85,12 @@ class PaginatorHelper extends AppHelper {
  *
  * The chosen custom helper must implement a `link()` method.
  *
+ * @param View $View the view object the helper is attached to.
+ * @param array $settings Array of settings.
  * @return void
  */
-	function __construct($config = array()) {
-		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
+	function __construct(View $View, $settings = array()) {
+		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
 		if (!class_exists($ajaxProvider . 'Helper')) {
