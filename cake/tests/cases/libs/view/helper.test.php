@@ -771,7 +771,7 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	function testParseAttributeCompact() {
-		$helper =& new TestHelper($this->View);
+		$helper = new TestHelper($this->View);
 		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
 			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
 		
@@ -782,5 +782,16 @@ class HelperTest extends CakeTestCase {
 				$this->assertEqual($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
 			}
 		}
+	}
+
+/**
+ * test lazy loading helpers is seamless
+ *
+ * @return void
+ */
+	function testLazyLoadingHelpers() {
+		$this->Helper->helpers = array('Test', 'Html');
+		$result = $this->Helper->Test;
+		$this->assertType('TestHelper', $result);
 	}
 }

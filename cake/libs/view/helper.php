@@ -143,6 +143,13 @@ class Helper extends Object {
 	private $__cleaned = null;
 
 /**
+ * undocumented class variable
+ *
+ * @var string
+ */
+	public $View;
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -159,6 +166,18 @@ class Helper extends Object {
  */
 	public function __call($method, $params) {
 		trigger_error(sprintf(__('Method %1$s::%2$s does not exist'), get_class($this), $method), E_USER_WARNING);
+	}
+
+/**
+ * Lazy loads helpers
+ *
+ * @return void
+ */
+	public function __get($name) {
+		if (!empty($this->helpers) && in_array($name, $this->helpers)) {
+			$this->{$name} = $this->View->Helpers->load($name, array(), false);
+			return $this->{$name};
+		}
 	}
 
 /**
