@@ -93,14 +93,11 @@ class JsHelperTest extends CakeTestCase {
 		$this->_asset = Configure::read('Asset.timestamp');
 		Configure::write('Asset.timestamp', false);
 
-		$this->Js = new JsHelper('Option');
-		$this->Js->Html = new HtmlHelper();
-		$this->Js->Form = new FormHelper();
-		$this->Js->Form->Html = new HtmlHelper();
-		$this->Js->OptionEngine = new OptionEngineHelper();
+		$controller = null;
+		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
+		$this->Js = new JsHelper($this->View, 'Option');
 
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
+		ClassRegistry::addObject('view', $this->View);
 	}
 
 /**
@@ -124,11 +121,9 @@ class JsHelperTest extends CakeTestCase {
 		if (!class_exists('TestJsEngineHelper', false)) {
 			$this->getMock('JsBaseEngineHelper', array(), array(), 'TestJsEngineHelper');
 		}
-		$this->Js = new JsHelper(array('TestJs'));
-		$this->Js->TestJsEngine = new TestJsEngineHelper($this);
-		$this->Js->Html = new HtmlHelper();
-		$this->Js->Form = new FormHelper();
-		$this->Js->Form->Html = new HtmlHelper();
+		$this->Js = new JsHelper($this->View, array('TestJs'));
+		$this->Js->TestJsEngine = new TestJsEngineHelper($this->View);
+		$this->mockObjects[] = $this->Js->TestJsEngine;
 	}
 
 /**
@@ -137,16 +132,16 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	function testConstruction() {
-		$js = new JsHelper();
+		$js = new JsHelper($this->View);
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'JqueryEngine'));
 
-		$js = new JsHelper(array('mootools'));
+		$js = new JsHelper($this->View, array('mootools'));
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'mootoolsEngine'));
 
-		$js = new JsHelper('prototype');
+		$js = new JsHelper($this->View, 'prototype');
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'prototypeEngine'));
 
-		$js = new JsHelper('MyPlugin.Dojo');
+		$js = new JsHelper($this->View, 'MyPlugin.Dojo');
 		$this->assertEqual($js->helpers, array('Html', 'Form', 'MyPlugin.DojoEngine'));
 	}
 
@@ -160,9 +155,10 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->TestJsEngine
 			->expects($this->once())
-			->method('dispatchMethod')
-			->with($this->matchesRegularExpression('/event/i'));
-		$this->Js->event();
+			->method('event')
+			->with('click', 'callback');
+
+		$this->Js->event('click', 'callback');
 
 		$this->Js->TestJsEngine = new StdClass();
 		$this->expectError();
@@ -179,8 +175,7 @@ class JsHelperTest extends CakeTestCase {
 
 		$this->Js->TestJsEngine->bufferedMethods = array('event', 'sortables');
 		$this->Js->TestJsEngine->expects($this->exactly(3))
-			->method('dispatchMethod')
-			->with($this->equalTo('event'))
+			->method('event')
 			->will($this->returnValue('This is an event call'));
 
 		$this->Js->event('click', 'foo');
@@ -207,8 +202,7 @@ class JsHelperTest extends CakeTestCase {
 	function testEffectDispatchWithBuffering() {
 		$this->_useMock();
 		$this->Js->TestJsEngine->expects($this->exactly(4))
-			->method('dispatchMethod')
-			->with($this->equalTo('effect'))
+			->method('effect')
 			->will($this->returnValue('I am not buffered.'));
 
 		$result = $this->Js->effect('slideIn');
@@ -261,7 +255,7 @@ class JsHelperTest extends CakeTestCase {
 		$view = $this->getMock('View', array(), array(), '', false);
 		ClassRegistry::addObject('view', $view);
 
-		$this->Js->TestJsEngine->expects($this->once())
+		$view->expects($this->once())
 			->method('addScript')
 			->with($this->matchesRegularExpression('/one\s\=\s1;\ntwo\s\=\s2;/'));
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
@@ -295,7 +289,7 @@ class JsHelperTest extends CakeTestCase {
 		$this->_useMock();
 		$this->Js->params['isAjax'] = true;
 		$this->Js->buffer('alert("test");');
-		$this->Js->TestJsEngine->expects($this->never())->method('dispatchMethod');
+		$this->Js->TestJsEngine->expects($this->never())->method('domReady');
 		$result = $this->Js->writeBuffer();
 	}
 
@@ -334,21 +328,17 @@ class JsHelperTest extends CakeTestCase {
 
 		$options = array('update' => '#content');
 
-		$this->Js->TestJsEngine->expects($this->any())
-			->method('dispatchMethod')
-			->will($this->returnValue('ajax code'));
-
 		$this->Js->TestJsEngine->expects($this->at(0))
-			->method('dispatchMethod')
-			->with($this->equalTo('get'));
+			->method('get');
 
 		$this->Js->TestJsEngine->expects($this->at(1))
-			->method('dispatchMethod')
-			->with($this->equalTo('request'), $this->equalTo(array('/posts/view/1', $options)));
+			->method('request')
+			->with('/posts/view/1', $options)
+			->will($this->returnValue('--ajax code--'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
-			->method('dispatchMethod')
-			->with($this->equalTo('event'), $this->equalTo( array('click', 'ajax code', $options + array('buffer' => null))));
+			->method('event')
+			->with('click', '--ajax code--', $options + array('buffer' => null));
 
 		$result = $this->Js->link('test link', '/posts/view/1', $options);
 		$expected = array(
@@ -374,23 +364,18 @@ class JsHelperTest extends CakeTestCase {
 			'id' => 'custom-id',
 			'escape' => false
 		);
-		$this->Js->TestJsEngine->expects($this->at(0))
-			->method('confirm')
-			->with($this->equalTo($options['confirm']));
+		$this->Js->TestJsEngine->expects($this->once())
+			->method('confirmReturn')
+			->with($options['confirm'])
+			->will($this->returnValue('--confirm script--'));
 
-		$this->Js->TestJsEngine->expects($this->at(1))
+		$this->Js->TestJsEngine->expects($this->once())
 			->method('request')
-			->with($this->equalTo('/posts/view/1'));
+			->with('/posts/view/1');
 
-$code = <<<CODE
-var _confirm = confirm("Are you sure?");
-if (!_confirm) {
-	return false;
-}
-CODE;
-		$this->Js->TestJsEngine->expects($this->at(1))
+		$this->Js->TestJsEngine->expects($this->once())
 			->method('event')
-			->with($this->equalTo('click'), $this->equalTo($code));
+			->with('click', '--confirm script--');
 
 		$result = $this->Js->link('test link »', '/posts/view/1', $options);
 		$expected = array(
@@ -429,13 +414,12 @@ CODE;
 		$this->_useMock();
 
 		$this->Js->TestJsEngine->expects($this->at(1))
-			->method('dispatchMethod')
-			->with('request',  array('/posts/view/1', array('update' => '#content')))
+			->method('request')
+			->with('/posts/view/1', array('update' => '#content'))
 			->will($this->returnValue('ajax code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
-			->method('dispatchMethod')
-			->with('event')
+			->method('event')
 			->will($this->returnValue('-event handler-'));
 
 		$options = array('update' => '#content', 'buffer' => false);
@@ -462,13 +446,12 @@ CODE;
 		$this->_useMock();
 
 		$this->Js->TestJsEngine->expects($this->at(1))
-			->method('dispatchMethod')
-			->with('request',  array('/posts/view/1', array('update' => '#content')))
+			->method('request')
+			->with('/posts/view/1', array('update' => '#content'))
 			->will($this->returnValue('ajax code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
-			->method('dispatchMethod')
-			->with('event')
+			->method('event')
 			->will($this->returnValue('-event handler-'));
 
 		$options = array('update' => '#content', 'buffer' => false, 'safe' => false);
@@ -496,17 +479,14 @@ CODE;
 		$options = array('update' => '#content', 'id' => 'test-submit');
 
 		$this->Js->TestJsEngine->expects($this->at(0))
-			->method('dispatchMethod')
-			->with('get');
+			->method('get');
 
 		$this->Js->TestJsEngine->expects($this->at(1))
-			->method('dispatchMethod')
-			->with('serializeForm')
+			->method('serializeForm')
 			->will($this->returnValue('serialize-code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
-			->method('dispatchMethod')
-			->with('request')
+			->method('request')
 			->will($this->returnValue('ajax-code'));
 
 		$params = array(
@@ -515,8 +495,8 @@ CODE;
 		);
 
 		$this->Js->TestJsEngine->expects($this->at(3))
-			->method('dispatchMethod')
-			->with('event', $this->equalTo( array('click', "ajax-code", $params)));
+			->method('event')
+			->with('click', "ajax-code", $params);
 
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
@@ -525,36 +505,43 @@ CODE;
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$this->Js->TestJsEngine->expects($this->at(4))
-			->method('dispatchMethod')
-			->with('get');
+/**
+ * test submit() with a mock
+ *
+ * @return void
+ */
+	function testSubmitWithMockRequestParams() {
+		$this->_useMock();
 
-		$this->Js->TestJsEngine->expects($this->at(5))
-			->method('dispatchMethod')
-			->with($this->matchesRegularExpression('/serializeForm/i'));
+		$this->Js->TestJsEngine->expects($this->at(0))
+			->method('get');
+
+		$this->Js->TestJsEngine->expects($this->at(1))
+			->method('serializeForm')
+			->will($this->returnValue('serialize-code'));
 
 		$requestParams = array(
-			'/custom/url', array(
-				'update' => '#content',
-				'data' => 'serialize-code',
-				'method' => 'post',
-				'dataExpression' => true
-			)
+			'update' => '#content',
+			'data' => 'serialize-code',
+			'method' => 'post',
+			'dataExpression' => true
 		);
 
-		$this->Js->TestJsEngine->expects($this->at(6))
-			->method('dispatchMethod')
-			->with($this->equalTo('request'), $this->equalTo($requestParams));
+		$this->Js->TestJsEngine->expects($this->at(2))
+			->method('request')
+			->with('/custom/url', $requestParams)
+			->will($this->returnValue('ajax-code'));
 
 		$params = array(
 			'update' => '#content', 'data' => 'serialize-code',
 			'method' => 'post', 'dataExpression' => true, 'buffer' => null
 		);
 
-		$this->Js->TestJsEngine->expects($this->at(7))
-			->method('dispatchMethod')
-			->with($this->equalTo('event'), $this->equalTo(array('click', "ajax-code", $params)));
+		$this->Js->TestJsEngine->expects($this->at(3))
+			->method('event')
+			->with('click', "ajax-code", $params);
 
 		$options = array('update' => '#content', 'id' => 'test-submit', 'url' => '/custom/url');
 		$result = $this->Js->submit('Save', $options);
@@ -576,22 +563,18 @@ CODE;
 		$options = array('update' => '#content', 'id' => 'test-submit', 'buffer' => false, 'safe' => false);
 
 		$this->Js->TestJsEngine->expects($this->at(0))
-			->method('dispatchMethod')
-			->with($this->equalTo('get'));
+			->method('get');
 
 		$this->Js->TestJsEngine->expects($this->at(1))
-			->method('dispatchMethod')
-			->with('serializeForm')
+			->method('serializeForm')
 			->will($this->returnValue('serialize-code'));
 
 		$this->Js->TestJsEngine->expects($this->at(2))
-			->method('dispatchMethod')
-			->with('request')
+			->method('request')
 			->will($this->returnValue('ajax-code'));
 		
 		$this->Js->TestJsEngine->expects($this->at(3))
-			->method('dispatchMethod')
-			->with('event')
+			->method('event')
 			->will($this->returnValue('event-handler'));
 	
 		$params = array(
@@ -600,8 +583,8 @@ CODE;
 		);
 
 		$this->Js->TestJsEngine->expects($this->at(3))
-			->method('dispatchMethod')
-			->with($this->equalTo('event'), $this->equalTo(array('click', "ajax-code", $params)));
+			->method('event')
+			->with('click', "ajax-code", $params);
 
 		$result = $this->Js->submit('Save', $options);
 		$expected = array(
@@ -696,7 +679,9 @@ class JsBaseEngineTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->JsEngine = new OptionEngineHelper();
+		$controller = null;
+		$this->View = new View($controller);
+		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
 /**
  * endTest method

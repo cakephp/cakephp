@@ -121,9 +121,10 @@ class JsHelper extends AppHelper {
  * @return mixed Depends on the return of the dispatched method, or it could be an instance of the EngineHelper
  */
 	public function __call($method, $params) {
-		if (isset($this->{$this->__engineName}) && method_exists($this->{$this->__engineName}, $method)) {
+		if ($this->{$this->__engineName} && method_exists($this->{$this->__engineName}, $method)) {
 			$buffer = false;
-			if (in_array(strtolower($method), $this->{$this->__engineName}->bufferedMethods)) {
+			$engineHelper = $this->{$this->__engineName};
+			if (in_array(strtolower($method), $engineHelper->bufferedMethods)) {
 				$buffer = true;
 			}
 			if (count($params) > 0) {
@@ -137,7 +138,8 @@ class JsHelper extends AppHelper {
 					unset($params['buffer']);
 				}
 			}
-			$out = $this->{$this->__engineName}->dispatchMethod($method, $params);
+
+			$out = call_user_func_array(array(&$engineHelper, $method), $params);
 			if ($this->bufferScripts && $buffer && is_string($out)) {
 				$this->buffer($out);
 				return null;
@@ -148,7 +150,7 @@ class JsHelper extends AppHelper {
 			return $out;
 		}
 		if (method_exists($this, $method . '_')) {
-			return $this->dispatchMethod($method . '_', $params);
+			return call_user_func(array(&$this, $method . '_'), $params);
 		}
 		trigger_error(sprintf(__('JsHelper:: Missing Method %s is undefined'), $method), E_USER_WARNING);
 	}
