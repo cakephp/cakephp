@@ -234,7 +234,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
-
 		echo "<div class='msg'>" . sprintf(__('Test case: %s'), $testName) . "</div>\n";
 		echo "<div class='msg'>" . __('Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
