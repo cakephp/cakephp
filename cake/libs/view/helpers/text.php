@@ -43,6 +43,13 @@ if (!class_exists('Multibyte')) {
 class TextHelper extends AppHelper {
 
 /**
+ * helpers
+ *
+ * @var array
+ */
+	public $helpers = array('Html');
+
+/**
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
  * may include the \1 expression to include the $phrase found.
  *
@@ -118,12 +125,50 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1469/Text#autoLinkUrls-1619
  */
 	public function autoLinkUrls($text, $htmlOptions = array()) {
-		$options = var_export($htmlOptions, true);
-		$text = preg_replace_callback('#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', create_function('$matches',
-			'$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], $matches[0],' . $options . ');'), $text);
+		$this->_linkOptions = $htmlOptions;
+		$text = preg_replace_callback(
+			'#(?<!href="|">)((?:https?|ftp|nntp)://[^\s<>()]+)#i', 
+			array(&$this, '_linkBareUrl'),
+			$text
+		);
+		return preg_replace_callback(
+			'#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
+			array(&$this, '_linkUrls'),
+			$text
+		);
+	}
 
-		return preg_replace_callback('#(?<!href="|">)(?<!http://|https://|ftp://|nntp://)(www\.[^\n\%\ <]+[^<\n\%\,\.\ <])(?<!\))#i',
-			create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "http://" . $matches[0],' . $options . ');'), $text);
+/**
+ * Links urls that include http://
+ *
+ * @param array $matches
+ * @return string
+ * @see TextHelper::autoLinkUrls()
+ */
+	private function _linkBareUrl($matches) {
+		return $this->Html->link($matches[0], $matches[0], $this->_linkOptions);
+	}
+
+/**
+ * Links urls missing http://
+ *
+ * @param array $matches
+ * @return string
+ * @see TextHelper::autoLinkUrls()
+ */
+	private function _linkUrls($matches) {
+		return $this->Html->link($matches[0], 'http://' . $matches[0], $this->_linkOptions);
+	}
+
+/**
+ * Links email addresses
+ *
+ * @param array $matches
+ * @return string
+ * @see TextHelper::autoLinkUrls()
+ */
+	private function _linkEmails($matches) {
+		return $this->Html->link($matches[0], 'mailto:' . $matches[0], $this->_linkOptions);
 	}
 
 /**
@@ -136,15 +181,12 @@ class TextHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1469/Text#autoLinkEmails-1618
  */
 	public function autoLinkEmails($text, $options = array()) {
-		$linkOptions = 'array(';
-		foreach ($options as $option => $value) {
-			$value = var_export($value, true);
-			$linkOptions .= "'$option' => $value, ";
-		}
-		$linkOptions .= ')';
-
-		return preg_replace_callback('#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
-						create_function('$matches', '$Html = new HtmlHelper(); $Html->tags = $Html->loadConfig(); return $Html->link($matches[0], "mailto:" . $matches[0],' . $linkOptions . ');'), $text);
+		$this->_linkOptions = $options;
+		return preg_replace_callback(
+			'#([_A-Za-z0-9+-]+(?:\.[_A-Za-z0-9+-]+)*@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*)#',
+			array(&$this, '_linkEmails'),
+			$text
+		);
 	}
 
 /**
