@@ -42,7 +42,9 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Text = new TextHelper();
+		$controller = null;
+		$this->View = new View($controller);
+		$this->Text = new TextHelper($this->View);
 	}
 
 /**
@@ -52,7 +54,7 @@ class TextHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		unset($this->Text);
+		unset($this->View, $this->Text);
 	}
 
 /**
