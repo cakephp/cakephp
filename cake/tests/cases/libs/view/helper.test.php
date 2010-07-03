@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('View', 'Helper'));
+App::import('Core', array('View', 'Helper', 'Router'));
 
 /**
  * HelperTestPost class
@@ -813,10 +813,10 @@ class HelperTest extends CakeTestCase {
  */
 	function testThatHelperHelpersAreNotAttached() {
 		$Helper = new TestHelper($this->View);
-		$Helper->Html;
-		
-		$result = $this->View->Helpers->attached();
-		$expected = array('Test');
+		$Helper->OtherHelper;
+
+		$result = $this->View->Helpers->enabled();
+		$expected = array();
 		$this->assertEquals($expected, $result, 'Helper helpers were attached to the collection.');
 	}
 
