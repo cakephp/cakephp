@@ -196,7 +196,7 @@ class HelperTest extends CakeTestCase {
 		Router::reload();
 		$null = null;
 		$this->View = new View($null);
-		$this->Helper = new Helper();
+		$this->Helper = new Helper($this->View);
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
@@ -771,7 +771,7 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	function testParseAttributeCompact() {
-		$helper =& new TestHelper();
+		$helper =& new TestHelper($this->View);
 		$compact = array('compact', 'checked', 'declare', 'readonly', 'disabled',
 			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
 		

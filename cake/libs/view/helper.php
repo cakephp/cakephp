@@ -149,6 +149,7 @@ class Helper extends Object {
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
+		$this->View = $View;
 		// Nothing to see here.
 	}
 
