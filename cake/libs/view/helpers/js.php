@@ -98,7 +98,7 @@ class JsHelper extends AppHelper {
 		$this->__engineName = $className . 'Engine';
 		$engineClass = $engineName . 'Engine';
 		$this->helpers[] = $engineClass;
-		parent::__construct();
+		parent::__construct($View, $settings);
 	}
 
 /**

@@ -151,4 +151,23 @@ abstract class ObjectCollection {
 		return $this->_attached;
 	}
 
+/**
+ * Normalizes an object array, creates an array that makes lazy loading
+ * easier
+ *
+ * @param array $objects Array of child objects to normalize.
+ * @return array Array of normalized objects.
+ */
+	public static function normalizeObjectArray($objects) {
+		$normal = array();
+		foreach ($objects as $i => $objectName) {
+			$options = array();
+			if (!is_int($i)) {
+				list($options, $objectName) = array($objectName, $i);
+			}
+			list($plugin, $name) = pluginSplit($objectName);
+			$normal[$name] = array('class' => $objectName, 'settings' => $options);
+		}
+		return $normal;
+	}
 }

@@ -164,6 +164,13 @@ class HelperTestPostsTag extends Model {
 
 class TestHelper extends Helper {
 /**
+ * helpers for this helper.
+ *
+ * @var string
+ */
+	var $helpers = array('Html', 'TestPlugin.OtherHelper');
+
+/**
  * expose a method as public
  *
  * @param string $options 
@@ -790,8 +797,12 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	function testLazyLoadingHelpers() {
-		$this->Helper->helpers = array('Test', 'Html');
-		$result = $this->Helper->Test;
-		$this->assertType('TestHelper', $result);
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),	
+		));
+		$Helper = new TestHelper($this->View);
+		$this->assertType('OtherHelperHelper', $Helper->OtherHelper);
+		$this->assertType('HtmlHelper', $Helper->Html);
+		App::build();
 	}
 }

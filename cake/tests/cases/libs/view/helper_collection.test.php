@@ -28,8 +28,8 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	function setup() {
-		$View = $this->getMock('View', array(), array(null));
-		$this->Helpers = new HelperCollection($View);
+		$this->View = $this->getMock('View', array(), array(null));
+		$this->Helpers = new HelperCollection($this->View);
 	}
 
 /**
@@ -38,7 +38,7 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	function teardown() {
-		unset($this->Helpers);
+		unset($this->Helpers, $this->View);
 	}
 
 /**
@@ -124,8 +124,8 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->load('Form');
 		$this->Helpers->load('Html');
 
-		$this->Helpers->Html = $this->getMock('HtmlHelper');
-		$this->Helpers->Form = $this->getMock('FormHelper');
+		$this->Helpers->Html = $this->getMock('HtmlHelper', array(), array($this->View));
+		$this->Helpers->Form = $this->getMock('FormHelper', array(), array($this->View));
 
 		$this->Helpers->Html->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
@@ -144,8 +144,8 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->load('Form');
 		$this->Helpers->load('Html');
 
-		$this->Helpers->Html = $this->getMock('HtmlHelper');
-		$this->Helpers->Form = $this->getMock('FormHelper');
+		$this->Helpers->Html = $this->getMock('HtmlHelper', array(), array($this->View));
+		$this->Helpers->Form = $this->getMock('FormHelper', array(), array($this->View));
 
 		$this->Helpers->Html->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
@@ -154,5 +154,27 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->disable('Form');
 
 		$this->Helpers->trigger('beforeRender', array('one', 'two'));
+	}
+
+/**
+ * test normalizeObjectArray
+ *
+ * @return void
+ */
+	function testnormalizeObjectArray() {
+		$helpers = array(
+			'Html', 
+			'Foo.Bar' => array('one', 'two'),
+			'Something',
+			'Banana.Apple' => array('foo' => 'bar')
+		);
+		$result = ObjectCollection::normalizeObjectArray($helpers);
+		$expected = array(
+			'Html' => array('class' => 'Html', 'settings' => array()),
+			'Bar' => array('class' => 'Foo.Bar', 'settings' => array('one', 'two')),
+			'Something' => array('class' => 'Something', 'settings' => array()),
+			'Apple' => array('class' => 'Banana.Apple', 'settings' => array('foo' => 'bar')),
+		);
+		$this->assertEquals($expected, $result);
 	}
 }

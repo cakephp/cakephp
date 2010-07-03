@@ -44,7 +44,7 @@ class XmlHelper extends AppHelper {
  * @return void
  */
 	function __construct(View $View, $settings = array()) {
-		parent::__construct();
+		parent::__construct($View, $settings);
 		$this->Xml =& new Xml();
 		$this->Xml->options(array('verifyNs' => false));
 	}

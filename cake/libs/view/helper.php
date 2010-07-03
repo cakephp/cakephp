@@ -38,7 +38,14 @@ class Helper extends Object {
  *
  * @var array
  */
-	public $helpers = null;
+	public $helpers = array();
+
+/**
+ * A helper lookup table used to lazy load helper objects.
+ *
+ * @var array
+ */
+	protected $_helperMap = array();
 
 /**
  * Base URL
@@ -143,11 +150,11 @@ class Helper extends Object {
 	private $__cleaned = null;
 
 /**
- * undocumented class variable
+ * The View instance this helper is attached to
  *
- * @var string
+ * @var View
  */
-	public $View;
+	protected $_View;
 
 /**
  * Default Constructor
@@ -156,8 +163,11 @@ class Helper extends Object {
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
-		$this->View = $View;
-		// Nothing to see here.
+		$this->_View = $View;
+		$this->params = $View->params;
+		if (!empty($this->helpers)) {
+			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
+		}
 	}
 
 /**
@@ -174,8 +184,12 @@ class Helper extends Object {
  * @return void
  */
 	public function __get($name) {
-		if (!empty($this->helpers) && in_array($name, $this->helpers)) {
-			$this->{$name} = $this->View->Helpers->load($name, array(), false);
+		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
+			$this->{$name} = $this->_View->loadHelper(
+				$this->_helperMap[$name]['class'], $this->_helperMap[$name]['settings'], false
+			);
+		}
+		if (isset($this->{$name})) {
 			return $this->{$name};
 		}
 	}

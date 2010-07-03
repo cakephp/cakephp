@@ -736,8 +736,8 @@ class View extends Object {
  * @param array $settings Settings for the helper
  * @return Helper a constructed helper object.
  */
-	public function loadHelper($helperName, $settings = array()) {
-		return $this->Helpers->load($helperName, $settings, true);
+	public function loadHelper($helperName, $settings = array(), $attach = true) {
+		return $this->Helpers->load($helperName, $settings, $attach);
 	}
 
 /**
