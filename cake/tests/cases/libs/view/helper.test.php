@@ -807,6 +807,20 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that a helpers Helper is not 'attached' to the collection
+ *
+ * @return void
+ */
+	function testThatHelperHelpersAreNotAttached() {
+		$Helper = new TestHelper($this->View);
+		$Helper->Html;
+		
+		$result = $this->View->Helpers->attached();
+		$expected = array('Test');
+		$this->assertEquals($expected, $result, 'Helper helpers were attached to the collection.');
+	}
+
+/**
  * test that the lazy loader doesn't duplicate objects on each access.
  *
  * @return void
