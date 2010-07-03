@@ -747,6 +747,7 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
+ * @throws MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -798,7 +799,7 @@ class View extends Object {
 				}
 			}
 		}
-		return $this->_missingView($defaultPath . $name . $this->ext, 'missingView');
+		throw new MissingViewException($defaultPath . $name . $this->ext);
 	}
 
 /**
@@ -806,6 +807,7 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
+ * @throws MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {
@@ -830,32 +832,7 @@ class View extends Object {
 				}
 			}
 		}
-		return $this->_missingView($paths[0] . $file . $this->ext, 'missingLayout');
-	}
-
-/**
- * Return a misssing view error message
- *
- * @param string $viewFileName the filename that should exist
- * @return false
- */
-	protected function _missingView($file, $error = 'missingView') {
-		if ($error === 'missingView') {
-			$this->cakeError('missingView', array(
-				'className' => $this->name,
-				'action' => $this->action,
-				'file' => $file,
-				'base' => $this->base
-			));
-			return false;
-		} elseif ($error === 'missingLayout') {
-			$this->cakeError('missingLayout', array(
-				'layout' => $this->layout,
-				'file' => $file,
-				'base' => $this->base
-			));
-			return false;
-		}
+		throw new MissingLayoutException($paths[0] . $file . $this->ext);
 	}
 
 /**
@@ -886,3 +863,6 @@ class View extends Object {
 		return $this->__paths;
 	}
 }
+
+class MissingViewException extends RuntimeException { }
+class MissingLayoutException extends RuntimeException { }

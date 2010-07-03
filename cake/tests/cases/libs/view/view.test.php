@@ -375,6 +375,7 @@ class ViewTest extends CakeTestCase {
 /**
  * testMissingView method
  *
+ * @expectedException MissingViewException
  * @access public
  * @return void
  */
@@ -388,15 +389,12 @@ class ViewTest extends CakeTestCase {
 		$View = new TestView($this->Controller);
 		ob_start();
 		$result = $View->getViewFileName('does_not_exist');
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-
-		$this->assertPattern("/PagesController::/", $expected);
-		$this->assertPattern("/pages(\/|\\\)does_not_exist.ctp/", $expected);
 	}
 
 /**
  * testMissingLayout method
  *
+ * @expectedException MissingLayoutException
  * @access public
  * @return void
  */
@@ -410,9 +408,6 @@ class ViewTest extends CakeTestCase {
 		ob_start();
 		$result = $View->getLayoutFileName();
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-
-		$this->assertPattern("/Missing Layout/", $expected);
-		$this->assertPattern("/layouts(\/|\\\)whatever.ctp/", $expected);
 	}
 
 /**
@@ -895,25 +890,16 @@ class ViewTest extends CakeTestCase {
 /**
  * testBadExt method
  *
+ * @expectedException MissingViewException
  * @access public
  * @return void
  */
 	function testBadExt() {
 		$this->PostsController->action = 'something';
 		$this->PostsController->ext = '.whatever';
-		ob_start();
+
 		$View = new TestView($this->PostsController);
 		$View->render('this_is_missing');
 		$result = str_replace(array("\t", "\r\n", "\n"), "", ob_get_clean());
-
-		$this->assertPattern("/<em>PostsController::<\/em><em>something\(\)<\/em>/", $result);
-		$this->assertPattern("/posts(\/|\\\)this_is_missing.whatever/", $result);
-
-		$this->PostsController->ext = ".bad";
-		$View = new TestView($this->PostsController);
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $View->render('index'));
-
-		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
-		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 	}
 }
