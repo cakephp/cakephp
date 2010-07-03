@@ -268,9 +268,10 @@ class BehaviorCollection extends ObjectCollection {
  *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
+ * @param boolean $enable Whether or not this helper should be enabled by default
  * @return boolean True on success, false on failure
  */
-	public function load($behavior, $config = array()) {
+	public function load($behavior, $config = array(), $enable = true) {
 		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 

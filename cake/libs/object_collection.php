@@ -40,9 +40,10 @@ abstract class ObjectCollection {
  *
  * @param string $name Name of object to load.
  * @param array $options Array of configuration options for the object to be constructed.
+ * @param boolean $enable Whether or not this helper should be enabled by default
  * @return object the constructed object
  */
-	abstract public function load($name, $options = array());
+	abstract public function load($name, $options = array(), $enable = true);
 
 /**
  * Unloads/deletes an object from the collection.

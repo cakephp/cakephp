@@ -41,10 +41,11 @@ class HelperCollection extends ObjectCollection {
  * 
  * @param string $helper Helper name to load
  * @param array $settings Settings for the helper.
+ * @param boolean $enable Whether or not this helper should be enabled by default
  * @return Helper A helper object, Either the existing loaded helper or a new one.
  * @throws MissingHelperFileException, MissingHelperClassException when the helper could not be found
  */
-	public function load($helper, $settings = array()) {
+	public function load($helper, $settings = array(), $enable = true) {
 		list($plugin, $name) = pluginSplit($helper, true);
 
 		if (isset($this->{$name})) {
@@ -62,6 +63,9 @@ class HelperCollection extends ObjectCollection {
 		$this->{$name} = new $helperClass($this->_View, $settings);
 		if (!in_array($name, $this->_attached)) {
 			$this->_attached[] = $name;
+		}
+		if ($enable === false) {
+			$this->_disabled[] = $name;
 		}
 		return $this->{$name};
 	}
