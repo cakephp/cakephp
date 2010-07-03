@@ -22,6 +22,7 @@
  * Included libraries.
  */
 App::import('Core', 'ClassRegistry');
+App::import('View', 'HelperCollection', false);
 App::import('View', 'Helper', false);
 
 /**
@@ -34,6 +35,12 @@ App::import('View', 'Helper', false);
  */
 class View extends Object {
 
+/**
+ * Helpers collection
+ *
+ * @var HelperCollection
+ */
+	public $Helpers;
 /**
  * Path parts for creating links in views.
  *
@@ -198,14 +205,6 @@ class View extends Object {
 	public $hasRendered = false;
 
 /**
- * Array of loaded view helpers.
- *
- * @var array
- * @access public
- */
-	public $loaded = array();
-
-/**
  * True if in scope of model-specific region
  *
  * @var boolean
@@ -312,6 +311,7 @@ class View extends Object {
 				$this->{$var} = $controller->{$var};
 			}
 		}
+		$this->Helpers = new HelperCollection($this);
 		parent::__construct();
 
 		if ($register) {
@@ -380,7 +380,6 @@ class View extends Object {
 		}
 
 		if (is_file($file)) {
-			$params = array_merge_recursive($params, $this->loaded);
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
@@ -472,10 +471,10 @@ class View extends Object {
 			$loadHelpers = true;
 		} else {
 			$loadHelpers = false;
-			$dataForLayout = array_merge($dataForLayout, $this->loaded);
+			$dataForLayout = array_merge($dataForLayout);
 		}
 
-		$this->_triggerHelpers('beforeLayout');
+		$this->Helpers->trigger('beforeLayout', array(&$this));
 		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
 
 		if ($this->output === false) {
@@ -483,8 +482,8 @@ class View extends Object {
 			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
-
-		$this->_triggerHelpers('afterLayout');
+		
+		$this->Helpers->trigger('afterLayout', array(&$this));
 
 		return $this->output;
 	}
@@ -498,18 +497,7 @@ class View extends Object {
  * @return void
  */
 	function _triggerHelpers($callback) {
-		if (empty($this->loaded)) {
-			return false;
-		}
-		$helpers = array_keys($this->loaded);
-		foreach ($helpers as $helperName) {
-			$helper =& $this->loaded[$helperName];
-			if (is_object($helper)) {
-				if (is_subclass_of($helper, 'Helper')) {
-					$helper->{$callback}();
-				}
-			}
-		}
+		$this->Helpers->trigger($callback, array(&$this));
 	}
 
 /**
@@ -673,6 +661,33 @@ class View extends Object {
 	}
 
 /**
+ * Magic accessor for helpers.
+ *
+ * @return void
+ */
+	public function __get($name) {
+		if (isset($this->Helpers->{$name})) {
+			return $this->Helpers->{$name};
+		}
+		return null;
+	}
+
+/**
+ * Interact with the HelperCollection to load all the helpers.
+ *
+ * @return void
+ */
+	public function loadHelpers() {
+		foreach ($this->helpers as $i => $helper) {
+			$options = array();
+			if (!is_int($i)) {
+				list($options, $helper) = array($helper, $i);
+			}
+			$this->Helpers->load($helper, $options, true);
+		}
+	}
+
+/**
  * Renders and returns output for given view filename with its
  * array of data.
  *
@@ -685,23 +700,11 @@ class View extends Object {
 	protected function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
 		$loadedHelpers = array();
 
-		if ($this->helpers != false && $loadHelpers === true) {
-			$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
-			$helpers = array_keys($loadedHelpers);
-			$helperNames = array_map(array('Inflector', 'variable'), $helpers);
-
-			for ($i = count($helpers) - 1; $i >= 0; $i--) {
-				$name = $helperNames[$i];
-				$helper =& $loadedHelpers[$helpers[$i]];
-
-				if (!isset($___dataForView[$name])) {
-					${$name} =& $helper;
-				}
-				$this->loaded[$helperNames[$i]] =& $helper;
-				$this->{$helpers[$i]} =& $helper;
-			}
-			$this->_triggerHelpers('beforeRender');
-			unset($name, $loadedHelpers, $helpers, $i, $helperNames, $helper);
+		$attached = $this->Helpers->attached();
+		if (count($attached) == 0 && $loadHelpers === true) {
+			$this->loadHelpers();
+			$this->Helpers->trigger('beforeRender', array(&$this));
+			unset($attached);
 		}
 
 		extract($___dataForView, EXTR_SKIP);
@@ -714,7 +717,7 @@ class View extends Object {
 		}
 
 		if ($loadHelpers === true) {
-			$this->_triggerHelpers('afterRender');
+			$this->Helpers->trigger('afterRender', array(&$this));
 		}
 
 		$out = ob_get_clean();
@@ -724,8 +727,8 @@ class View extends Object {
 		);
 
 		if ($caching) {
-			if (is_a($this->loaded['cache'], 'CacheHelper')) {
-				$cache =& $this->loaded['cache'];
+			if (isset($this->Helpers->Cache)) {
+				$cache =& $this->Helpers->Cache;
 				$cache->base = $this->base;
 				$cache->here = $this->here;
 				$cache->helpers = $this->helpers;
@@ -747,73 +750,7 @@ class View extends Object {
  * @return Helper a constructed helper object.
  */
 	public function loadHelper($helperName, $settings = array()) {
-		return $this->Helpers->load($helperName, $settings);
-	}
-
-/**
- * Loads helpers, with their dependencies.
- *
- * @param array $loaded List of helpers that are already loaded.
- * @param array $helpers List of helpers to load.
- * @param string $parent holds name of helper, if loaded helper has helpers
- * @return array Array containing the loaded helpers.
- */
-	protected function &_loadHelpers(&$loaded, $helpers, $parent = null) {
-		foreach ($helpers as $i => $helper) {
-			$options = array();
-
-			if (!is_int($i)) {
-				$options = $helper;
-				$helper = $i;
-			}
-			list($plugin, $helper) = pluginSplit($helper, true, $this->plugin);
-			$helperCn = $helper . 'Helper';
-
-			if (!isset($loaded[$helper])) {
-				if (!class_exists($helperCn)) {
-					$isLoaded = false;
-					if (!is_null($plugin)) {
-						$isLoaded = App::import('Helper', $plugin . $helper);
-					}
-					if (!$isLoaded) {
-						if (!App::import('Helper', $helper)) {
-							$this->cakeError('missingHelperFile', array(array(
-								'helper' => $helper,
-								'file' => Inflector::underscore($helper) . '.php',
-								'base' => $this->base
-							)));
-							return false;
-						}
-					}
-					if (!class_exists($helperCn)) {
-						$this->cakeError('missingHelperClass', array(array(
-							'helper' => $helper,
-							'file' => Inflector::underscore($helper) . '.php',
-							'base' => $this->base
-						)));
-						return false;
-					}
-				}
-				$loaded[$helper] =& new $helperCn($options);
-				$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
-				$c = count($vars);
-
-				for ($j = 0; $j < $c; $j++) {
-					$loaded[$helper]->{$vars[$j]} = $this->{$vars[$j]};
-				}
-
-				if (!empty($this->validationErrors)) {
-					$loaded[$helper]->validationErrors = $this->validationErrors;
-				}
-				if (is_array($loaded[$helper]->helpers) && !empty($loaded[$helper]->helpers)) {
-					$loaded =& $this->_loadHelpers($loaded, $loaded[$helper]->helpers, $helper);
-				}
-			}
-			if (isset($loaded[$parent])) {
-				$loaded[$parent]->{$helper} =& $loaded[$helper];
-			}
-		}
-		return $loaded;
+		return $this->Helpers->load($helperName, $settings, true);
 	}
 
 /**

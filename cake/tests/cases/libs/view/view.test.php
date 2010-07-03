@@ -123,19 +123,6 @@ class TestView extends View {
 	}
 
 /**
- * loadHelpers method
- *
- * @param mixed $loaded
- * @param mixed $helpers
- * @param mixed $parent
- * @access public
- * @return void
- */
-	function loadHelpers(&$loaded, $helpers, $parent = null) {
-		return $this->_loadHelpers($loaded, $helpers, $parent);
-	}
-
-/**
  * paths method
  *
  * @param string $plugin
@@ -560,25 +547,30 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test __get allowing access to helpers.
+ *
+ * @return void
+ */
+	function test__get() {
+		$View = new View($this->PostsController);
+		$View->loadHelper('Html');
+		$this->assertType('HtmlHelper', $View->Html);
+	}
+
+/**
  * testLoadHelpers method
  *
  * @access public
  * @return void
  */
 	function testLoadHelpers() {
-		$View = new TestView($this->PostsController);
+		$View = new View($this->PostsController);
 
-		$loaded = array();
-		$result = $View->loadHelpers($loaded, array('Html', 'Form', 'Paginator'));
-		$this->assertTrue(is_object($result['Html']));
-		$this->assertTrue(is_object($result['Form']));
-		$this->assertTrue(is_object($result['Form']->Html));
-		$this->assertTrue(is_object($result['Paginator']->Html));
+		$View->helpers = array('Html', 'Form');
+		$View->loadHelpers();
 
-		$View->plugin = 'test_plugin';
-		$result = $View->loadHelpers($loaded, array('TestPlugin.PluggedHelper'));
-		$this->assertTrue(is_object($result['PluggedHelper']));
-		$this->assertTrue(is_object($result['PluggedHelper']->OtherHelper));
+		$this->assertType('HtmlHelper', $View->Html, 'Object type is wrong.');
+		$this->assertType('FormHelper', $View->Form, 'Object type is wrong.');
 	}
 
 /**
@@ -589,13 +581,14 @@ class ViewTest extends CakeTestCase {
 	function testHelperCallbackTriggering() {
 		$mockHelper = $this->getMock('Helper', array(), array(), 'CallbackMockHelper');
 		$this->PostsController->helpers = array('Session', 'Html', 'CallbackMock');
-		$View = new TestView($this->PostsController);
-		$loaded = array();
-		$View->loaded = $View->loadHelpers($loaded, $this->PostsController->helpers);
-		$View->loaded['CallbackMock']->expects($this->once())->method('beforeRender');
-		$View->loaded['CallbackMock']->expects($this->once())->method('afterRender');
-		$View->loaded['CallbackMock']->expects($this->once())->method('beforeLayout');
-		$View->loaded['CallbackMock']->expects($this->once())->method('afterLayout');
+
+		$View = new View($this->PostsController);
+		$View->loadHelpers();
+		
+		$View->Helpers->CallbackMock->expects($this->once())->method('beforeRender');
+		$View->Helpers->CallbackMock->expects($this->once())->method('afterRender');
+		$View->Helpers->CallbackMock->expects($this->once())->method('beforeLayout');
+		$View->Helpers->CallbackMock->expects($this->once())->method('afterLayout');
 		$View->render('index');
 	}
 
@@ -725,8 +718,8 @@ class ViewTest extends CakeTestCase {
 		$Controller = new ViewPostsController();
 		$Controller->cacheAction = '1 day';
 		$View = new View($Controller);
-		$View->loaded['cache'] = $this->getMock('CacheHelper');
-		$View->loaded['cache']->expects($this->exactly(2))->method('cache');
+		$View->Helpers->Cache = $this->getMock('CacheHelper');
+		$View->Helpers->Cache->expects($this->exactly(2))->method('cache');
 
 		$result = $View->render('index');
 		$this->assertPattern('/posts index/', $result);
