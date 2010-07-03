@@ -116,4 +116,32 @@ class SessionHelper extends AppHelper {
 	public function valid() {
 		return CakeSession::valid();
 	}
+
+/**
+ * stub method to make helper less complainey
+ *
+ * @return void
+ */
+	public function beforeRender() { }
+
+/**
+ * stub method to make helper less complainey
+ *
+ * @return void
+ */
+	public function beforeLayout() { }
+
+/**
+ * stub method to make helper less complainey
+ *
+ * @return void
+ */
+	public function afterRender() { }
+
+/**
+ * stub method to make helper less complainey
+ *
+ * @return void
+ */
+	public function afterLayout() { }
 }
