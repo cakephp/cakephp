@@ -108,8 +108,9 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Html =& new HtmlHelper();
-		$view =& new View(new TheHtmlTestController());
+		$view = new View(new TheHtmlTestController());
+		$this->Html = new HtmlHelper($view);
+
 		ClassRegistry::addObject('view', $view);
 		$this->_appEncoding = Configure::read('App.encoding');
 		$this->_asset = Configure::read('Asset');

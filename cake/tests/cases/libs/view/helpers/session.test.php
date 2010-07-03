@@ -38,7 +38,9 @@ class SessionHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Session = new SessionHelper();
+		$controller = null;
+		$this->View = new View($controller);
+		$this->Session = new SessionHelper($this->View);
 
 		$_SESSION = array(
 			'test' => 'info',
@@ -76,7 +78,7 @@ class SessionHelperTest extends CakeTestCase {
  */
 	function tearDown() {
 		$_SESSION = array();
-		unset($this->Session);
+		unset($this->View, $this->Session);
 		App::build();
 	}
 

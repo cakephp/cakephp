@@ -672,10 +672,10 @@ class FormHelperTest extends CakeTestCase {
 		parent::setUp();
 		Router::reload();
 
-		$this->Form =& new FormHelper();
-		$this->Form->Html =& new HtmlHelper();
-		$this->Controller =& new ContactTestController();
-		$this->View =& new View($this->Controller);
+		$this->Controller = new ContactTestController();
+		$this->View = new View($this->Controller);
+
+		$this->Form = new FormHelper($this->View);
 		$this->Form->params['action'] = 'add';
 
 		ClassRegistry::addObject('view', $view);

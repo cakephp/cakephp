@@ -42,7 +42,8 @@ class NumberHelperTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$this->Number =& new NumberHelper();
+		$view = $this->getMock('View', array(), array(), '', false);
+		$this->Number = new NumberHelper($view);
 	}
 
 /**

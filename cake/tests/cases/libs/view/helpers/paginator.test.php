@@ -34,7 +34,9 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Paginator = new PaginatorHelper();
+		$controller = null;
+		$this->View = new View($controller);
+		$this->Paginator = new PaginatorHelper($this->View);
 		$this->Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
@@ -55,8 +57,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->Paginator->Html = new HtmlHelper();
-		$this->Paginator->Js = $this->getMock('PaginatorHelper');
+		$this->Paginator->Js = $this->getMock('PaginatorHelper', array(), array($this->View));
 
 		Configure::write('Routing.prefixes', array());
 		Router::reload();
@@ -69,7 +70,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		unset($this->Paginator);
+		unset($this->View, $this->Paginator);
 	}
 
 /**
@@ -1910,8 +1911,8 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	function testMockAjaxProviderClassInjection() {
-		$mock = $this->getMock('PaginatorHelper', array(), array(), 'PaginatorMockJsHelper');
-		$Paginator = new PaginatorHelper(array('ajax' => 'PaginatorMockJs'));
+		$mock = $this->getMock('PaginatorHelper', array(), array($this->View), 'PaginatorMockJsHelper');
+		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'PaginatorMockJs'));
 		$Paginator->params['paging'] = array(
 			'Article' => array(
 				'current' => 9,
@@ -1928,6 +1929,6 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $Paginator->link('Page 2', array('page' => 2), array('update' => '#content'));
 
 		$this->expectException();
-		$Paginator = new PaginatorHelper(array('ajax' => 'Form'));
+		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'Form'));
 	}
 }

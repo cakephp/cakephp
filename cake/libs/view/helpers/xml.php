@@ -39,6 +39,13 @@ class XmlHelper extends AppHelper {
 	public $encoding = 'UTF-8';
 
 /**
+ * Xml instance
+ *
+ * @var Xml
+ */
+	public $Xml;
+
+/**
  * Constructor
  *
  * @return void

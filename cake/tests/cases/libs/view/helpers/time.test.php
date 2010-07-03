@@ -37,7 +37,9 @@ class TimeHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Time = new TimeHelper();
+		$controller = null;
+		$View = new View($controller);
+		$this->Time = new TimeHelper($View);
 	}
 
 /**

@@ -76,7 +76,8 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->Controller = new CacheTestController();
-		$this->Cache = new CacheHelper();
+		$View = new View($this->Controller);
+		$this->Cache = new CacheHelper($View);
 		$this->_cacheSettings = Configure::read('Cache');
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
