@@ -429,7 +429,7 @@ class CakeSession {
  */
 	public function destroy() {
 		$_SESSION = array();
-		self::__construct(self::$path);
+		self::init(self::$path);
 		self::start();
 		self::renew();
 		self::_checkValid();
