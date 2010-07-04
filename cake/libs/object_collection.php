@@ -68,26 +68,30 @@ abstract class ObjectCollection {
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
- * @return Returns true.
+ * @return mixed true.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {
 			return true;
 		}
 		$options = array_merge(
-			array('break' => false, 'breakOn' => false),
+			array('break' => false, 'breakOn' => false, 'collectReturn' => false),
 			$options
 		);
+		$collected = array();
 		foreach ($this->_enabled as $name) {
 			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
+			if ($options['collectReturn'] === true) {
+				$collected[] = $result;
+			}
 			if (
 				$options['break'] && ($result === $options['breakOn'] || 
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
-				return $result;
+				return ($options['collectReturn'] === true) ? $collected : $result;
 			}
 		}
-		return true;
+		return $options['collectReturn'] ? $collected : true;
 	}
 
 /**

@@ -119,16 +119,25 @@ class ComponentCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * creates mock classes for testing
+ *
+ * @return void
+ */
+	protected function _makeMockClasses() {
+		if (!class_exists('TriggerMockCookieComponent')) {
+			$this->getMock('CookieComponent', array(), array(), 'TriggerMockCookieComponent', false);
+			$this->getMock('SecurityComponent', array(), array(), 'TriggerMockSecurityComponent', false);
+		}
+	}
+
+/**
  * test triggering callbacks.
  *
  * @return void
  */
 	function testTrigger() {
 		$controller = null;
-		if (!class_exists('TriggerMockCookieComponent')) {
-			$this->getMock('CookieComponent', array(), array(), 'TriggerMockCookieComponent');
-			$this->getMock('SecurityComponent', array(), array(), 'TriggerMockSecurityComponent');
-		}
+		$this->_makeMockClasses();
 		$this->Components->load('TriggerMockCookie');
 		$this->Components->load('TriggerMockSecurity');
 
@@ -137,7 +146,7 @@ class ComponentCollectionTest extends CakeTestCase {
 		$this->Components->TriggerMockSecurity->expects($this->once())->method('startup')
 			->with(null);
 
-		$this->Components->trigger('startup', array(&$controller));
+		$this->assertTrue($this->Components->trigger('startup', array(&$controller)));
 	}
 
 /**
@@ -147,10 +156,7 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	function testTriggerWithDisabledComponents() {
 		$controller = null;
-		if (!class_exists('TriggerMockCookieComponent')) {
-			$this->getMock('CookieComponent', array(), array(), 'TriggerMockCookieComponent');
-			$this->getMock('SecurityComponent', array(), array(), 'TriggerMockSecurityComponent');
-		}
+		$this->_makeMockClasses();
 		$this->Components->load('TriggerMockCookie');
 		$this->Components->load('TriggerMockSecurity');
 
@@ -161,7 +167,54 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$this->Components->disable('TriggerMockSecurity');
 
-		$this->Components->trigger('startup', array(&$controller));
+		$this->assertTrue($this->Components->trigger('startup', array(&$controller)));
+	}
+
+/**
+ * test that the collectReturn option works.
+ *
+ * @return void
+ */
+	function testTriggerWithCollectReturn() {
+		$controller = null;
+		$this->_makeMockClasses();
+		$this->Components->load('TriggerMockCookie');
+		$this->Components->load('TriggerMockSecurity');
+
+		$this->Components->TriggerMockCookie->expects($this->once())->method('startup')
+			->will($this->returnValue(array('one', 'two')));
+		$this->Components->TriggerMockSecurity->expects($this->once())->method('startup')
+			->will($this->returnValue(array('three', 'four')));
+
+		$result = $this->Components->trigger('startup', array(&$controller), array('collectReturn' => true));
+		$expected = array(
+			array('one', 'two'),
+			array('three', 'four')
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that trigger with break & breakOn works.
+ *
+ * @return void
+ */
+	function testTriggerWithBreak() {
+		$controller = null;
+		$this->_makeMockClasses();
+		$this->Components->load('TriggerMockCookie');
+		$this->Components->load('TriggerMockSecurity');
+
+		$this->Components->TriggerMockCookie->expects($this->once())->method('startup')
+			->will($this->returnValue(false));
+		$this->Components->TriggerMockSecurity->expects($this->never())->method('startup');
+
+		$result = $this->Components->trigger(
+			'startup', 
+			array(&$controller), 
+			array('break' => true, 'breakOn' => false)
+		);
+		$this->assertFalse($result);
 	}
 
 /**
