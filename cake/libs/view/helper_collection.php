@@ -48,8 +48,8 @@ class HelperCollection extends ObjectCollection {
 	public function load($helper, $settings = array(), $enable = true) {
 		list($plugin, $name) = pluginSplit($helper, true);
 
-		if (isset($this->{$name})) {
-			return $this->{$name};
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
 		}
 		$helperClass = $name . 'Helper';
 		if (!class_exists($helperClass)) {
@@ -60,11 +60,11 @@ class HelperCollection extends ObjectCollection {
 				throw new MissingHelperClassException($helperClass);
 			}
 		}
-		$this->{$name} = new $helperClass($this->_View, $settings);
+		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
 
 		$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
 		foreach ($vars as $var) {
-			$this->{$name}->{$var} = $this->_View->{$var};
+			$this->_loaded[$name]->{$var} = $this->_View->{$var};
 		}
 
 		if (!in_array($name, $this->_attached)) {
@@ -73,7 +73,7 @@ class HelperCollection extends ObjectCollection {
 		if ($enable === false) {
 			$this->_disabled[] = $name;
 		}
-		return $this->{$name};
+		return $this->_loaded[$name];
 	}
 
 /**
@@ -84,7 +84,7 @@ class HelperCollection extends ObjectCollection {
  */
 	public function unload($name) {
 		list($plugin, $name) = pluginSplit($name);
-		unset($this->{$name});
+		unset($this->_loaded[$name]);
 		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
 	}
 

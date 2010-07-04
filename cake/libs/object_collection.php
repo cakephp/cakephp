@@ -36,6 +36,13 @@ abstract class ObjectCollection {
 	protected $_disabled = array();
 
 /**
+ * A hash of loaded helpers, indexed by the classname
+ *
+ * @var array
+ */
+	protected $_loaded = array();
+
+/**
  * Loads a new object onto the collection. Can throw a variety of exceptions
  *
  * @param string $name Name of object to load.
@@ -94,6 +101,29 @@ abstract class ObjectCollection {
 			}
 		}
 		return true;
+	}
+
+/**
+ * Provide public read access to the loaded objects
+ *
+ * @param string $name Name of property to read
+ * @return mixed
+ */
+	public function __get($name) {
+		if (isset($this->_loaded[$name])) {
+			return $this->_loaded[$name];
+		}
+		return null;
+	}
+
+/**
+ * Provide isset access to _loaded
+ *
+ * @param sting $name Name of object being checked.
+ * @return boolean
+ */
+	public function __isset($name) {
+		return isset($this->_loaded[$name]);
 	}
 
 /**
