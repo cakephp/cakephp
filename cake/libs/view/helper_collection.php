@@ -67,11 +67,8 @@ class HelperCollection extends ObjectCollection {
 			$this->_loaded[$name]->{$var} = $this->_View->{$var};
 		}
 
-		if (!in_array($name, $this->_attached)) {
-			$this->_attached[] = $name;
-		}
-		if ($enable === false) {
-			$this->_disabled[] = $name;
+		if ($enable === true) {
+			$this->_enabled[] = $name;
 		}
 		return $this->_loaded[$name];
 	}
@@ -85,7 +82,7 @@ class HelperCollection extends ObjectCollection {
 	public function unload($name) {
 		list($plugin, $name) = pluginSplit($name);
 		unset($this->_loaded[$name]);
-		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
+		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
 	}
 
 }

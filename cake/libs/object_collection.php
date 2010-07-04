@@ -19,21 +19,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 abstract class ObjectCollection {
-/**
- * Lists the currently-attached objects
- *
- * @var array
- * @access private
- */
-	protected $_attached = array();
 
 /**
- * Lists the currently-attached objects which are disabled
+ * List of the currently-enabled objects
  *
  * @var array
- * @access private
+ * @access protected
  */
-	protected $_disabled = array();
+	protected $_enabled = array();
 
 /**
  * A hash of loaded helpers, indexed by the classname
@@ -78,19 +71,14 @@ abstract class ObjectCollection {
  * @return Returns true.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
-		if (empty($this->_attached)) {
+		if (empty($this->_enabled)) {
 			return true;
 		}
 		$options = array_merge(
 			array('break' => false, 'breakOn' => false),
 			$options
 		);
-		$count = count($this->_attached);
-		for ($i = 0; $i < $count; $i++) {
-			$name = $this->_attached[$i];
-			if (in_array($name, $this->_disabled)) {
-				continue;
-			}
+		foreach ($this->_enabled as $name) {
 			$result = call_user_func_array(array($this->{$name}, $callback), $params);
 
 			if (
@@ -127,13 +115,17 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Enables callbacks on a behavior or array of behaviors
+ * Enables callbacks on an object or array of objects
  *
- * @param mixed $name CamelCased name of the behavior(s) to enable (string or array)
+ * @param mixed $name CamelCased name of the object(s) to enable (string or array)
  * @return void
  */
 	public function enable($name) {
-		$this->_disabled = array_diff($this->_disabled, (array)$name);
+		foreach ((array)$name as $object) {
+			if (isset($this->_loaded[$object]) && array_search($object, $this->_enabled) === false) {
+				$this->_enabled[] = $object;
+			}
+		}
 	}
 
 /**
@@ -145,10 +137,10 @@ abstract class ObjectCollection {
  */
 	public function disable($name) {
 		foreach ((array)$name as $object) {
-			if (in_array($object, $this->_attached) && !in_array($object, $this->_disabled)) {
-				$this->_disabled[] = $object;
-			}
+			$index = array_search($object, $this->_enabled);
+			unset($this->_enabled[$index]);
 		}
+		$this->_enabled = array_values($this->_enabled);
 	}
 
 /**
@@ -161,9 +153,9 @@ abstract class ObjectCollection {
  */
 	public function enabled($name = null) {
 		if (!empty($name)) {
-			return (in_array($name, $this->_attached) && !in_array($name, $this->_disabled));
+			return in_array($name, $this->_enabled);
 		}
-		return array_diff($this->_attached, $this->_disabled);
+		return $this->_enabled;
 	}
 
 /**
@@ -176,9 +168,9 @@ abstract class ObjectCollection {
  */
 	public function attached($name = null) {
 		if (!empty($name)) {
-			return (in_array($name, $this->_attached));
+			return isset($this->_loaded[$name]);
 		}
-		return $this->_attached;
+		return array_keys($this->_loaded);
 	}
 
 /**

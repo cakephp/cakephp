@@ -144,12 +144,10 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 
-		if (!in_array($name, $this->_attached)) {
-			$this->_attached[] = $name;
-		}
-		if (in_array($name, $this->_disabled) && !(isset($config['enabled']) && $config['enabled'] === false)) {
+		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
+		if (!in_array($name, $this->_enabled) && !$configDisabled) {
 			$this->enable($name);
-		} elseif (isset($config['enabled']) && $config['enabled'] === false) {
+		} elseif ($configDisabled) {
 			$this->disable($name);
 		}
 		return true;
@@ -172,7 +170,7 @@ class BehaviorCollection extends ObjectCollection {
 				unset($this->__methods[$m]);
 			}
 		}
-		$this->_attached = array_values(array_diff($this->_attached, (array)$name));
+		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
 	}
 
 /**
@@ -236,20 +234,20 @@ class BehaviorCollection extends ObjectCollection {
  * @return mixed
  */
 	public function trigger(&$model, $callback, $params = array(), $options = array()) {
-		if (empty($this->_attached)) {
+		if (empty($this->_enabled)) {
 			return true;
 		}
-		$options = array_merge(array('break' => false, 'breakOn' => array(null, false), 'modParams' => false), $options);
-		$count = count($this->_attached);
-
-		for ($i = 0; $i < $count; $i++) {
-			$name = $this->_attached[$i];
-			if (in_array($name, $this->_disabled)) {
-				continue;
-			}
+		$options = array_merge(
+			array('break' => false, 'breakOn' => array(null, false), 'modParams' => false), 
+			$options
+		);
+		foreach ($this->_enabled as $name) {
 			$result = $this->_loaded[$name]->dispatchMethod($model, $callback, $params);
 
-			if ($options['break'] && ($result === $options['breakOn'] || (is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))) {
+			if (
+				$options['break'] && ($result === $options['breakOn'] || 
+				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
+			) {
 				return $result;
 			} elseif ($options['modParams'] && is_array($result)) {
 				$params[0] = $result;
