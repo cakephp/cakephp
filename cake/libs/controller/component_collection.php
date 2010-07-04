@@ -21,6 +21,23 @@ App::import('Core', 'ObjectCollection');
 class ComponentCollection extends ObjectCollection {
 
 /**
+ * Initializes all the Components for a controller.
+ * Attaches a reference of each component to the Controller.
+ *
+ * @param Controller $controller Controller to initialize components for.
+ * @return void
+ */
+	public function init(Controller $Controller) {
+		if (empty($Controller->components)) {
+			return;
+		}
+		$components = ComponentCollection::normalizeObjectArray($Controller->components);
+		foreach ($components as $name => $properties) {
+			$Controller->{$name} = $this->load($properites['class'], $properties['settings']);
+		}
+	}
+
+/**
  * Loads/constructs a component.  Will return the instance in the registry if it already exists.
  * 
  * @param string $component Component name to load

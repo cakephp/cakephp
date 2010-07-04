@@ -192,7 +192,7 @@ class Controller extends Object {
  *
  * @var string
  */
-	public $Component = null;
+	public $Components = null;
 
 /**
  * Array containing the names of components this controller uses. Component names
@@ -342,7 +342,7 @@ class Controller extends Object {
 		}
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->Component = new Component();
+		$this->Components = new ComponentCollection();
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Controller');
@@ -443,7 +443,7 @@ class Controller extends Object {
  */
 	public function constructClasses() {
 		$this->__mergeVars();
-		$this->Component->init($this);
+		$this->Components->init($this);
 
 		if ($this->uses !== null || ($this->uses !== array())) {
 			if (empty($this->passedArgs) || !isset($this->passedArgs['0'])) {
@@ -471,7 +471,7 @@ class Controller extends Object {
 
 /**
  * Perform the startup process for this controller.
- * Fire the Component and Controller callbacks in the correct order.
+ * Fire the Components and Controller callbacks in the correct order.
  *
  * - Initializes components, which fires their `initialize` callback
  * - Calls the controller `beforeFilter`.
@@ -480,14 +480,14 @@ class Controller extends Object {
  * @return void
  */
 	public function startupProcess() {
-		$this->Component->initialize($this);
+		$this->Components->trigger('initialize', array(&$this));
 		$this->beforeFilter();
-		$this->Component->triggerCallback('startup', $this);
+		$this->Components->trigger('startup', array(&$this));
 	}
 
 /**
  * Perform the various shutdown processes for this controller.
- * Fire the Component and Controller callbacks in the correct order.
+ * Fire the Components and Controller callbacks in the correct order.
  *
  * - triggers the component `shutdown` callback.
  * - calls the Controller's `afterFilter` method.
@@ -495,7 +495,7 @@ class Controller extends Object {
  * @return void
  */
 	public function shutdownProcess() {
-		$this->Component->triggerCallback('shutdown', $this);
+		$this->Components->trigger('shutdown', array(&$this));
 		$this->afterFilter();
 	}
 
@@ -622,7 +622,11 @@ class Controller extends Object {
 		if (is_array($status)) {
 			extract($status, EXTR_OVERWRITE);
 		}
-		$response = $this->Component->beforeRedirect($this, $url, $status, $exit);
+		$response = $this->Components->trigger(
+			'beforeRedirect', 
+			array(&$this, $url, $status, $exit),
+			array('break' => true, 'breakOn' => false)
+		);
 
 		if ($response === false) {
 			return;
