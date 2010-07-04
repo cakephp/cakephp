@@ -530,15 +530,12 @@ class BehaviorTest extends CakeTestCase {
 /**
  * test that attaching a non existant Behavior triggers a cake error.
  *
+ * @expectedException MissingBehaviorFileException
  * @return void
  */
 	function testInvalidBehaviorCausingCakeError() {
 		$Apple = new Apple();
-		$Apple->Behaviors = $this->getMock('BehaviorCollection', array('cakeError'));
-		$Apple->Behaviors->expects($this->once())
-			->method('cakeError')
-			->with('missingBehaviorFile');
-		$this->assertFalse($Apple->Behaviors->attach('NoSuchBehavior'));
+		$Apple->Behaviors->attach('NoSuchBehavior');
 	}
 
 /**

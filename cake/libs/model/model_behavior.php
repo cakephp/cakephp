@@ -270,35 +270,25 @@ class BehaviorCollection extends ObjectCollection {
  * @param array $config Behavior configuration parameters
  * @param boolean $enable Whether or not this helper should be enabled by default
  * @return boolean True on success, false on failure
+ * @throws MissingBehaviorFileException or MissingBehaviorClassException when a behavior could not be found.
  */
 	public function load($behavior, $config = array(), $enable = true) {
 		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
-			$this->cakeError('missingBehaviorFile', array(array(
-				'behavior' => $behavior,
-				'file' => Inflector::underscore($behavior) . '.php',
-				'code' => 500,
-				'base' => '/'
-			)));
-			return false;
+			throw new MissingBehaviorFileException(Inflector::underscore($behavior) . '.php');
 		}
 		if (!class_exists($class)) {
-			$this->cakeError('missingBehaviorClass', array(array(
-				'behavior' => $class,
-				'file' => Inflector::underscore($class) . '.php',
-				'code' => 500,
-				'base' => '/'
-			)));
-			return false;
+			throw new MissingBehaviorClassException(Inflector::underscore($class));
 		}
 
 		if (!isset($this->{$name})) {
 			if (ClassRegistry::isKeySet($class)) {
 				$this->{$name} = ClassRegistry::getObject($class);
 			} else {
-				$this->{$name} = new $class;
+				$this->{$name} = new $class();
+
 				ClassRegistry::addObject($class, $this->{$name});
 				if (!empty($plugin)) {
 					ClassRegistry::addObject($plugin.'.'.$class, $this->{$name});
@@ -461,3 +451,9 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 }
+
+/**
+ * Runtime Exceptions for behaviors
+ */
+class MissingBehaviorFileException extends RuntimeException { }
+class MissingBehaviorClassException extends RuntimeException { }
