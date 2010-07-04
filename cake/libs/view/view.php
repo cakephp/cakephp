@@ -667,12 +667,9 @@ class View extends Object {
  * @return void
  */
 	public function loadHelpers() {
-		foreach ($this->helpers as $i => $helper) {
-			$options = array();
-			if (!is_int($i)) {
-				list($options, $helper) = array($helper, $i);
-			}
-			$this->Helpers->load($helper, $options, true);
+		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
+		foreach ($helpers as $name => $properties) {
+			$this->Helpers->load($properties['class'], $properties['settings'], true);
 		}
 	}
 
