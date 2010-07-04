@@ -72,7 +72,7 @@ if (!class_exists('AppController')) {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class ParamTestComponent extends Object {
+class ParamTestComponent extends Component {
 
 /**
  * name property
@@ -140,7 +140,7 @@ class ComponentTestController extends AppController {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class AppleComponent extends Object {
+class AppleComponent extends Component {
 
 /**
  * components property
@@ -176,7 +176,7 @@ class AppleComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class OrangeComponent extends Object {
+class OrangeComponent extends Component {
 
 /**
  * components property
@@ -216,7 +216,7 @@ class OrangeComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class BananaComponent extends Object {
+class BananaComponent extends Component {
 
 /**
  * testField property
@@ -243,7 +243,7 @@ class BananaComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class MutuallyReferencingOneComponent extends Object {
+class MutuallyReferencingOneComponent extends Component {
 
 /**
  * components property
@@ -260,7 +260,7 @@ class MutuallyReferencingOneComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class MutuallyReferencingTwoComponent extends Object {
+class MutuallyReferencingTwoComponent extends Component {
 
 /**
  * components property
@@ -277,7 +277,7 @@ class MutuallyReferencingTwoComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class SomethingWithEmailComponent extends Object {
+class SomethingWithEmailComponent extends Component {
 
 /**
  * components property
@@ -322,12 +322,26 @@ class ComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test accessing inner components.
+ *
+ * @return void
+ */
+	function testInnerComponentConstruction() {
+		$Collection = new ComponentCollection();
+		$Component = new AppleComponent($Collection);
+
+		$this->assertType('OrangeComponent', $Component->Orange, 'class is wrong');
+	}
+
+/**
  * testLoadComponents method
  *
  * @access public
  * @return void
  */
 	function testLoadComponents() {
+		$this->markTestSkipped('init() will be removed from Component');
+
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('RequestHandler');
 
@@ -378,67 +392,27 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testNestedComponentLoading() {
-		$Controller =& new ComponentTestController();
-		$Controller->components = array('Apple');
-		$Controller->uses = false;
-		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
+		$Collection = new ComponentCollection();
+		$Apple = new AppleComponent($Collection);
 
-		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
-		$this->assertTrue(is_a($Controller->Apple->Orange, 'OrangeComponent'));
-		$this->assertTrue(is_a($Controller->Apple->Orange->Banana, 'BananaComponent'));
-		$this->assertTrue(is_a($Controller->Apple->Orange->Controller, 'ComponentTestController'));
-		$this->assertTrue(empty($Controller->Apple->Session));
-		$this->assertTrue(empty($Controller->Apple->Orange->Session));
+		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$this->assertType('BananaComponent', $Apple->Orange->Banana, 'class is wrong');
+		$this->assertTrue(empty($Apple->Session));
+		$this->assertTrue(empty($Apple->Orange->Session));
 	}
 
 /**
- * Tests Component::startup() and only running callbacks for components directly attached to
- * the controller.
+ * test that component components are not enabled in the collection.
  *
  * @return void
  */
-	function testComponentStartup() {
-		$Controller =& new ComponentTestController();
-		$Controller->components = array('Apple');
-		$Controller->uses = false;
-		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
-		$Controller->beforeFilter();
-		$Controller->Component->startup($Controller);
+	function testInnerComponentsAreNotEnabled() {
+		$Collection = new ComponentCollection();
+		$Apple = $Collection->load('Apple');
 
-		$this->assertTrue(is_a($Controller->Apple, 'AppleComponent'));
-		$this->assertEqual($Controller->Apple->testName, 'ComponentTest');
-
-		$expected = !(defined('APP_CONTROLLER_EXISTS') && APP_CONTROLLER_EXISTS);
-		$this->assertEqual(isset($Controller->foo), $expected);
-		$this->assertFalse(isset($Controller->bar));
-	}
-
-/**
- * test that triggerCallbacks fires methods on all the components, and can trigger any method.
- *
- * @return void
- */
-	function testTriggerCallback() {
-		$mock = $this->getMock(
-			'Object',
-			array('startup', 'beforeFilter', 'beforeRender', 'other'),
-			array(),
-			'ComponentMockComponent'
-		);
-		$Controller =& new ComponentTestController();
-		$Controller->components = array('ComponentMock');
-		$Controller->uses = null;
-		$Controller->constructClasses();
-
-		$Controller->ComponentMock->expects($this->once())->method('beforeRender');
-		$Controller->ComponentMock->expects($this->never())->method('beforeFilter');
-
-		$Controller->Component->triggerCallback('beforeRender', $Controller);
-
-		$Controller->ComponentMock->enabled = false;
-		$Controller->Component->triggerCallback('beforeFilter', $Controller);
+		$this->assertType('OrangeComponent', $Apple->Orange, 'class is wrong');
+		$result = $Collection->enabled();
+		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
 
 /**
@@ -447,14 +421,14 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleComponentInitialize() {
-		$Controller =& new ComponentTestController();
-		$Controller->uses = false;
-		$Controller->components = array('Orange', 'Banana');
-		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
-
-		$this->assertEqual($Controller->Banana->testField, 'OrangeField');
-		$this->assertEqual($Controller->Orange->Banana->testField, 'OrangeField');
+		$Collection = new ComponentCollection();
+		$Banana = $Collection->load('Banana');
+		$Orange = $Collection->load('Orange');
+		
+		$this->assertSame($Banana, $Orange->Banana, 'Should be references');
+		$Banana->testField = 'OrangeField';
+		
+		$this->assertSame($Banana->testField, $Orange->Banana->testField, 'References are broken');
 	}
 
 /**
@@ -467,6 +441,7 @@ class ComponentTest extends CakeTestCase {
 		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
 			return;
 		}
+		$this->markTestSkipped('MergeVars test covers this.');
 
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('ParamTest' => array('test' => 'value', 'flag'), 'Apple');
@@ -505,6 +480,8 @@ class ComponentTest extends CakeTestCase {
 		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
 			return;
 		}
+		$this->markTestSkipped('MergeVars test covers this.');
+
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('Orange' => array('setting' => array('itemx')));
 		$Controller->uses = false;
@@ -521,6 +498,8 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testMutuallyReferencingComponents() {
+		$this->markTestSkipped('ComponentCollection handles this');
+
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('MutuallyReferencingOne');
 		$Controller->uses = false;
@@ -547,6 +526,8 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSomethingReferencingEmailComponent() {
+		$this->markTestIncomplete('Will need to be updated');
+
 		$Controller =& new ComponentTestController();
 		$Controller->components = array('SomethingWithEmail');
 		$Controller->uses = false;
