@@ -147,7 +147,6 @@ class CakeSession {
 		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
-		unset($checkAgent);
 
 		if (Configure::read('Session.save') === 'database') {
 			$modelName = Configure::read('Session.model');
