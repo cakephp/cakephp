@@ -32,7 +32,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class CakeSession extends Object {
+class CakeSession {
 
 /**
  * True if the Session is still valid
@@ -139,15 +139,16 @@ class CakeSession extends Object {
  * @param string $base The base path for the Session
  * @param boolean $start Should session be started right now
  */
-	public function __construct($base = null, $start = true) {
+	public static function init($base = null, $start = true) {
 		App::import('Core', array('Set', 'Security'));
 		self::$time = time();
 
-		if (Configure::read('Session.checkAgent') === true || Configure::read('Session.checkAgent') === null) {
-			if (env('HTTP_USER_AGENT') != null) {
-				self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
-			}
+		$checkAgent = Configure::read('Session.checkAgent');
+		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
+			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
+		unset($checkAgent);
+
 		if (Configure::read('Session.save') === 'database') {
 			$modelName = Configure::read('Session.model');
 			$database = Configure::read('Session.database');
@@ -187,13 +188,9 @@ class CakeSession extends Object {
 			}
 		}
 		if (isset($_SESSION) || $start === true) {
-			if (!class_exists('Security')) {
-				App::import('Core', 'Security');
-			}
 			self::$sessionTime = self::$time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			self::$security = Configure::read('Security.level');
 		}
-		parent::__construct();
 	}
 
 /**
@@ -757,3 +754,6 @@ class CakeSession extends Object {
 		return $return;
 	}
 }
+
+// Initialize the session
+CakeSession::init();
