@@ -173,8 +173,10 @@ class RequestHandlerComponent extends Component {
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
+ * @param ComponentCollection $collection ComponentCollection object.
+ * @param array $settings Array of settings.
  */
-	function __construct() {
+	function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->__acceptTypes = explode(',', env('HTTP_ACCEPT'));
 
 		foreach ($this->__acceptTypes as $i => $type) {
@@ -183,7 +185,7 @@ class RequestHandlerComponent extends Component {
 				$this->__acceptTypes[$i] = $type[0];
 			}
 		}
-		parent::__construct();
+		parent::__construct($collection, $settings);
 	}
 
 /**
@@ -197,11 +199,10 @@ class RequestHandlerComponent extends Component {
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(&$controller, $settings = array()) {
+	public function initialize(&$controller) {
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
-		$this->_set($settings);
 	}
 
 /**

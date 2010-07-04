@@ -170,17 +170,6 @@ class SecurityComponent extends Component {
 	protected $_action = null;
 
 /**
- * Initialize the SecurityComponent
- *
- * @param object $controller Controller instance for the request
- * @param array $settings Settings to set to the component
- * @return void
- */
-	public function initialize(&$controller, $settings = array()) {
-		$this->_set($settings);
-	}
-
-/**
  * Component startup. All security checking happens here.
  *
  * @param object $controller Instantiating controller

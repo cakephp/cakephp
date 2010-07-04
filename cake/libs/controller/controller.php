@@ -625,7 +625,7 @@ class Controller extends Object {
 		$response = $this->Components->trigger(
 			'beforeRedirect', 
 			array(&$this, $url, $status, $exit),
-			array('break' => true, 'breakOn' => false)
+			array('break' => true, 'breakOn' => false, 'collectReturn' => true)
 		);
 
 		if ($response === false) {

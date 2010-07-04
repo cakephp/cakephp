@@ -162,9 +162,8 @@ class CookieComponent extends Component {
  *
  * @param object $controller A reference to the instantiating controller object
  */
-	public function initialize(&$controller, $settings) {
+	public function initialize(&$controller) {
 		$this->key = Configure::read('Security.salt');
-		$this->_set($settings);
 	}
 
 /**

@@ -303,12 +303,11 @@ class EmailComponent extends Component {
  *
  * @param object $controller Instantiating controller
  */
-	public function initialize(&$controller, $settings = array()) {
+	public function initialize(&$controller) {
 		$this->Controller = $controller;
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
-		$this->_set($settings);
 	}
 
 /**

@@ -46,7 +46,8 @@ class AclComponent extends Component {
  *
  * @throws Exception when Acl.classname could not be loaded.
  */
-	public function __construct() {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		parent::__construct($collection, $settings);
 		$name = Inflector::camelize(strtolower(Configure::read('Acl.classname')));
 		if (!class_exists($name)) {
 			if (App::import('Component', $name)) {
@@ -84,16 +85,6 @@ class AclComponent extends Component {
 			return;
 		}
 		return $this->_Instance;
-	}
-
-/**
- * Startup is not used
- *
- * @param object $controller Controller using this component
- * @return boolean Proceed with component usage (true), or fail (false)
- */
-	public function startup(&$controller) {
-		return true;
 	}
 
 /**

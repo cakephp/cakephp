@@ -67,7 +67,7 @@ class Component extends Object {
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->_Collection = $collection;
 		$this->settings = $settings;
-
+		$this->_set($settings);
 		if (!empty($this->components)) {
 			$this->_componentMap = ComponentCollection::normalizeObjectArray($this->components);
 		}

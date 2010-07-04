@@ -268,7 +268,7 @@ class AuthComponent extends Component {
  * @param object $controller A reference to the instantiating controller object
  * @return void
  */
-	public function initialize(&$controller, $settings = array()) {
+	public function initialize(&$controller) {
 		$this->params = $controller->params;
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
@@ -290,8 +290,7 @@ class AuthComponent extends Component {
 				));
 			}
 		}
-		$this->_set($settings);
-		if (Configure::read('debug') > 0) {
+		if (Configure::read() > 0) {
 			App::import('Debugger');
 			Debugger::checkSecurityKeys();
 		}
