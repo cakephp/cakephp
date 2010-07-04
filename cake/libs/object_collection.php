@@ -79,8 +79,7 @@ abstract class ObjectCollection {
 			$options
 		);
 		foreach ($this->_enabled as $name) {
-			$result = call_user_func_array(array($this->{$name}, $callback), $params);
-
+			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
 			if (
 				$options['break'] && ($result === $options['breakOn'] || 
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))

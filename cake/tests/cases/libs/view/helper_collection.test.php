@@ -121,15 +121,17 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testTrigger() {
-		$this->Helpers->load('Form');
-		$this->Helpers->load('Html');
+		if (!class_exists('TriggerMockHtmlHelper')) {
+			$this->getMock('HtmlHelper', array(), array($this->View), 'TriggerMockHtmlHelper');
+			$this->getMock('FormHelper', array(), array($this->View), 'TriggerMockFormHelper');
+		}
+		
+		$this->Helpers->load('TriggerMockHtml');
+		$this->Helpers->load('TriggerMockForm');
 
-		$this->Helpers->Html = $this->getMock('HtmlHelper', array(), array($this->View));
-		$this->Helpers->Form = $this->getMock('FormHelper', array(), array($this->View));
-
-		$this->Helpers->Html->expects($this->once())->method('beforeRender')
+		$this->Helpers->TriggerMockForm->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
-		$this->Helpers->Form->expects($this->once())->method('beforeRender')
+		$this->Helpers->TriggerMockForm->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
 
 		$this->Helpers->trigger('beforeRender', array('one', 'two'));
@@ -141,17 +143,19 @@ class HelperCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testTriggerWithDisabledHelpers() {
-		$this->Helpers->load('Form');
-		$this->Helpers->load('Html');
+		if (!class_exists('TriggerMockHtmlHelper')) {
+			$this->getMock('HtmlHelper', array(), array($this->View), 'TriggerMockHtmlHelper');
+			$this->getMock('FormHelper', array(), array($this->View), 'TriggerMockFormHelper');
+		}
 
-		$this->Helpers->Html = $this->getMock('HtmlHelper', array(), array($this->View));
-		$this->Helpers->Form = $this->getMock('FormHelper', array(), array($this->View));
-
-		$this->Helpers->Html->expects($this->once())->method('beforeRender')
+		$this->Helpers->load('TriggerMockHtml');
+		$this->Helpers->load('TriggerMockForm');
+	
+		$this->Helpers->TriggerMockHtml->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
-		$this->Helpers->Form->expects($this->never())->method('beforeRender');
+		$this->Helpers->TriggerMockForm->expects($this->never())->method('beforeRender');
 
-		$this->Helpers->disable('Form');
+		$this->Helpers->disable('TriggerMockForm');
 
 		$this->Helpers->trigger('beforeRender', array('one', 'two'));
 	}
