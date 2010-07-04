@@ -61,6 +61,12 @@ class HelperCollection extends ObjectCollection {
 			}
 		}
 		$this->{$name} = new $helperClass($this->_View, $settings);
+
+		$vars = array('base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
+		foreach ($vars as $var) {
+			$this->{$name}->{$var} = $this->_View->{$var};
+		}
+
 		if (!in_array($name, $this->_attached)) {
 			$this->_attached[] = $name;
 		}
