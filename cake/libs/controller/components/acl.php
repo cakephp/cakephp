@@ -31,7 +31,7 @@
  * @subpackage    cake.cake.libs.controller.components
  * @link http://book.cakephp.org/view/1242/Access-Control-Lists
  */
-class AclComponent extends Object {
+class AclComponent extends Component {
 
 /**
  * Instance of an ACL class

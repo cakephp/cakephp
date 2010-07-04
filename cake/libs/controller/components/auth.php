@@ -31,7 +31,7 @@ App::import('Core', array('Router', 'Security'), false);
  * @subpackage    cake.cake.libs.controller.components
  * @link http://book.cakephp.org/view/1250/Authentication
  */
-class AuthComponent extends Object {
+class AuthComponent extends Component {
 
 /**
  * Maintains current user login state.

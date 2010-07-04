@@ -30,7 +30,7 @@ App::import('Core', 'Multibyte');
  * @link http://book.cakephp.org/view/1283/Email
  *
  */
-class EmailComponent extends Object{
+class EmailComponent extends Component {
 
 /**
  * Recipient of the email
