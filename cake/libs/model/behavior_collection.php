@@ -219,7 +219,10 @@ class BehaviorCollection extends ObjectCollection {
 		}
 
 		if (!empty($call)) {
-			return $this->_loaded[$call[1]]->dispatchMethod($model, $call[0], $params);
+			return call_user_func_array(
+				array(&$this->_loaded[$call[1]], $call[0]),
+				array_merge(array(&$model), $params)
+			);
 		}
 		return array('unhandled');
 	}
@@ -242,8 +245,10 @@ class BehaviorCollection extends ObjectCollection {
 			$options
 		);
 		foreach ($this->_enabled as $name) {
-			$result = $this->_loaded[$name]->dispatchMethod($model, $callback, $params);
-
+			$result = call_user_func_array(
+				array(&$this->_loaded[$name], $callback),
+				array_merge(array(&$model), $params)
+			);
 			if (
 				$options['break'] && ($result === $options['breakOn'] || 
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))

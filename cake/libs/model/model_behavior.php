@@ -148,37 +148,6 @@ class ModelBehavior extends Object {
 	public function onError(&$model, $error) { }
 
 /**
- * Overrides Object::dispatchMethod to account for PHP4's broken reference support
- *
- * @see Object::dispatchMethod
- * @access public
- * @return mixed
- */
-	function dispatchMethod(&$model, $method, $params = array()) {
-		if (empty($params)) {
-			return $this->{$method}($model);
-		}
-		$params = array_values($params);
-
-		switch (count($params)) {
-			case 1:
-				return $this->{$method}($model, $params[0]);
-			case 2:
-				return $this->{$method}($model, $params[0], $params[1]);
-			case 3:
-				return $this->{$method}($model, $params[0], $params[1], $params[2]);
-			case 4:
-				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3]);
-			case 5:
-				return $this->{$method}($model, $params[0], $params[1], $params[2], $params[3], $params[4]);
-			default:
-				$params = array_merge(array(&$model), $params);
-				return call_user_func_array(array(&$this, $method), $params);
-			break;
-		}
-	}
-
-/**
  * If $model's whitelist property is non-empty, $field will be added to it.
  * Note: this method should *only* be used in beforeValidate or beforeSave to ensure
  * that it only modifies the whitelist for the current save operation.  Also make sure
