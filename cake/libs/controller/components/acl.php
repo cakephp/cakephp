@@ -42,6 +42,20 @@ class AclComponent extends Component {
 	protected $_Instance = null;
 
 /**
+ * Aro object.
+ *
+ * @var string
+ */
+	public $Aro;
+
+/**
+ * Aco object
+ *
+ * @var string
+ */
+	public $Aco;
+
+/**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
  * @throws Exception when Acl.classname could not be loaded.

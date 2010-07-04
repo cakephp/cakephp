@@ -199,7 +199,8 @@ class AclComponentTest extends CakeTestCase {
 			$this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
 		}
 		Configure::write('Acl.classname', 'MockAclImplementation');
-		$this->Acl = new AclComponent();
+		$Collection = new ComponentCollection();
+		$this->Acl = new AclComponent($Collection);
 	}
 
 /**
@@ -216,12 +217,13 @@ class AclComponentTest extends CakeTestCase {
  * test that construtor throws an exception when Acl.classname is a 
  * non-existant class
  *
+ * @expectedException Exception
  * @return void
  */
 	function testConstrutorException() {
-		$this->expectException();
 		Configure::write('Acl.classname', 'AclClassNameThatDoesNotExist');
-		$acl = new AclComponent();
+		$Collection = new ComponentCollection();
+		$acl = new AclComponent($Collection);
 	}
 
 /**
@@ -240,24 +242,14 @@ class AclComponentTest extends CakeTestCase {
 /**
  * test that adapter() whines when the class is not an AclBase
  *
+ * @expectedException Exception
  * @return void
  */
 	function testAdapterException() {
-		$this->expectException();
 		$thing = new StdClass();
 		$this->Acl->adapter($thing);
 	}
 
-/**
- * testStartup method
- *
- * @access public
- * @return void
- */
-	function testStartup() {
-		$controller = new Controller();
-		$this->assertTrue($this->Acl->startup($controller));
-	}
 }
 
 /**
@@ -365,7 +357,8 @@ class DbAclTest extends CakeTestCase {
 
 		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test_suite');
-		$this->Acl = new AclComponent();
+		$Collection = new ComponentCollection();
+		$this->Acl = new AclComponent($Collection);
 	}
 
 /**
