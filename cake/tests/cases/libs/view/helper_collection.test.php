@@ -134,7 +134,7 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->TriggerMockForm->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
 
-		$this->Helpers->trigger('beforeRender', array('one', 'two'));
+		$this->asserTrue($this->Helpers->trigger('beforeRender', array('one', 'two')));
 	}
 
 /**
@@ -144,8 +144,8 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	function testTriggerWithDisabledHelpers() {
 		if (!class_exists('TriggerMockHtmlHelper')) {
-			$this->getMock('HtmlHelper', array(), array($this->View), 'TriggerMockHtmlHelper');
-			$this->getMock('FormHelper', array(), array($this->View), 'TriggerMockFormHelper');
+			$this->getMock('HtmlHelper', array(), array(), 'TriggerMockHtmlHelper', false);
+			$this->getMock('FormHelper', array(), array(), 'TriggerMockFormHelper', false);
 		}
 
 		$this->Helpers->load('TriggerMockHtml');
@@ -157,7 +157,7 @@ class HelperCollectionTest extends CakeTestCase {
 
 		$this->Helpers->disable('TriggerMockForm');
 
-		$this->Helpers->trigger('beforeRender', array('one', 'two'));
+		$this->asserTrue($this->Helpers->trigger('beforeRender', array('one', 'two')));
 	}
 
 /**
