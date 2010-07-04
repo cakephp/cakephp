@@ -171,7 +171,9 @@ class CakeSession {
 			ClassRegistry::init($settings);
 		}
 		if ($start === true) {
-			if (!empty($base)) {
+			if (empty($base)) {
+				self::$path = '/';
+			} else {
 				self::$path = $base;
 				if (strpos($base, 'index.php') !== false) {
 				   self::$path = str_replace('index.php', '', $base);
