@@ -33,7 +33,7 @@ class ComponentCollection extends ObjectCollection {
 		}
 		$components = ComponentCollection::normalizeObjectArray($Controller->components);
 		foreach ($components as $name => $properties) {
-			$Controller->{$name} = $this->load($properites['class'], $properties['settings']);
+			$Controller->{$name} = $this->load($properties['class'], $properties['settings']);
 		}
 	}
 
