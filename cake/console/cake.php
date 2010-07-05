@@ -265,7 +265,7 @@ class ShellDispatcher {
 			}
 		}
 
-		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
+		Configure::bootstrap(file_exists(CONFIGS . 'bootstrap.php'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';

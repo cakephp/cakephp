@@ -48,11 +48,11 @@ class Configure extends Object {
  *
  * @return void
  */
-	public static function bootstrap() {
+	public static function bootstrap($boot = true) {
 		if (!class_exists('Set')) {
 			require LIBS . 'set.php';
 		}
-		self::__loadBootstrap(true);
+		self::__loadBootstrap($boot);
 	}
 
 /**
