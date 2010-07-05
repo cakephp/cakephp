@@ -37,20 +37,22 @@ class Configure extends Object {
 	public $debug = 0;
 
 /**
- * Returns a singleton instance of the Configure class.
+ * Array of values currently stored in Configure.
  *
- * @return Configure instance
+ * @var array
  */
-	public static function &getInstance($boot = true) {
-		static $instance = array();
-		if (!$instance) {
-			if (!class_exists('Set')) {
-				require LIBS . 'set.php';
-			}
-			$instance[0] = new Configure();
-			$instance[0]->__loadBootstrap($boot);
+	protected static $_values = array();
+
+/**
+ * Initializes configure and runs the bootstrap process.
+ *
+ * @return void
+ */
+	public static function bootstrap() {
+		if (!class_exists('Set')) {
+			require LIBS . 'set.php';
 		}
-		return $instance[0];
+		self::__loadBootstrap(true);
 	}
 
 /**
@@ -77,29 +79,27 @@ class Configure extends Object {
  * @return boolean True if write was successful
  */
 	public static function write($config, $value = null) {
-		$_this = Configure::getInstance();
-
 		if (!is_array($config)) {
 			$config = array($config => $value);
 		}
 
 		foreach ($config as $name => $value) {
 			if (strpos($name, '.') === false) {
-				$_this->{$name} = $value;
+				self::$_values[$name] = $value;
 			} else {
 				$names = explode('.', $name, 4);
 				switch (count($names)) {
 					case 2:
-						$_this->{$names[0]}[$names[1]] = $value;
+						self::$_values[$names[0]][$names[1]] = $value;
 					break;
 					case 3:
-						$_this->{$names[0]}[$names[1]][$names[2]] = $value;
+						self::$_values[$names[0]][$names[1]][$names[2]] = $value;
 					case 4:
 						$names = explode('.', $name, 2);
-						if (!isset($_this->{$names[0]})) {
-							$_this->{$names[0]} = array();
+						if (!isset(self::$_values[$names[0]])) {
+							self::$_values[$names[0]] = array();
 						}
-						$_this->{$names[0]} = Set::insert($_this->{$names[0]}, $names[1], $value);
+						self::$_values[$names[0]] = Set::insert(self::$_values[$names[0]], $names[1], $value);
 					break;
 				}
 			}
@@ -107,7 +107,7 @@ class Configure extends Object {
 
 		if (isset($config['debug']) || isset($config['log'])) {
 			$reporting = 0;
-			if ($_this->debug) {
+			if (self::$_values['debug']) {
 				if (!class_exists('Debugger')) {
 					require LIBS . 'debugger.php';
 				}
@@ -119,12 +119,12 @@ class Configure extends Object {
 				ini_set('display_errors', 0);
 			}
 
-			if (isset($_this->log) && $_this->log) {
+			if (isset(self::$_values['log']) && self::$_values['log']) {
 				if (!class_exists('CakeLog')) {
 					require LIBS . 'cake_log.php';
 				}
-				if (is_integer($_this->log) && !$_this->debug) {
-					$reporting = $_this->log;
+				if (is_integer(self::$_values['log']) && !self::$_values['debug']) {
+					$reporting = self::$_values['log'];
 				} else {
 					$reporting = E_ALL & ~E_DEPRECATED;
 				}
@@ -148,36 +148,34 @@ class Configure extends Object {
  * @return string value of Configure::$var
  */
 	public static function read($var = 'debug') {
-		$_this = Configure::getInstance();
-
 		if ($var === 'debug') {
-			return $_this->debug;
+			return self::$_values['debug'];
 		}
 
 		if (strpos($var, '.') !== false) {
 			$names = explode('.', $var, 3);
 			$var = $names[0];
 		}
-		if (!isset($_this->{$var})) {
+		if (!isset(self::$_values[$var])) {
 			return null;
 		}
 		if (!isset($names[1])) {
-			return $_this->{$var};
+			return self::$_values[$var];
 		}
 		switch (count($names)) {
 			case 2:
-				if (isset($_this->{$var}[$names[1]])) {
-					return $_this->{$var}[$names[1]];
+				if (isset(self::$_values[$var][$names[1]])) {
+					return self::$_values[$var][$names[1]];
 				}
 			break;
 			case 3:
-				if (isset($_this->{$var}[$names[1]][$names[2]])) {
-					return $_this->{$var}[$names[1]][$names[2]];
+				if (isset(self::$_values[$var][$names[1]][$names[2]])) {
+					return self::$_values[$var][$names[1]][$names[2]];
 				}
-				if (!isset($_this->{$var}[$names[1]])) {
+				if (!isset(self::$_values[$var][$names[1]])) {
 					return null;
 				}
-				return Set::classicExtract($_this->{$var}[$names[1]], $names[2]);
+				return Set::classicExtract(self::$_values[$var][$names[1]], $names[2]);
 			break;
 		}
 		return null;
@@ -197,15 +195,13 @@ class Configure extends Object {
  * @return void
  */
 	public static function delete($var = null) {
-		$_this = Configure::getInstance();
-
 		if (strpos($var, '.') === false) {
-			unset($_this->{$var});
+			unset(self::$_values[$var]);
 			return;
 		}
 
 		$names = explode('.', $var, 2);
-		$_this->{$names[0]} = Set::remove($_this->{$names[0]}, $names[1]);
+		self::$_values[$names[0]] = Set::remove(self::$_values[$names[0]], $names[1]);
 	}
 
 /**
@@ -272,13 +268,11 @@ class Configure extends Object {
  * @return string Current version of CakePHP
  */
 	public static function version() {
-		$_this = Configure::getInstance();
-
-		if (!isset($_this->Cake['version'])) {
+		if (!isset(self::$_values['Cake']['version'])) {
 			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
-			$_this->write($config);
+			Configure::write($config);
 		}
-		return $_this->Cake['version'];
+		return self::$_values['Cake']['version'];
 	}
 
 /**
@@ -305,7 +299,7 @@ class Configure extends Object {
 		if (is_null($type)) {
 			$write = false;
 		}
-		Configure::getInstance()->__writeConfig($content, $name, $write);
+		Configure::__writeConfig($content, $name, $write);
 	}
 
 /**
@@ -318,7 +312,7 @@ class Configure extends Object {
  * @return void
  * @access private
  */
-	private function __writeConfig($content, $name, $write = true) {
+	private static function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 
 		if (Configure::read() > 0) {
@@ -352,7 +346,7 @@ class Configure extends Object {
  * @param boolean $boot Load application bootstrap (if true)
  * @return void
  */
-	private function __loadBootstrap($boot) {
+	private static function __loadBootstrap($boot) {
 		if ($boot) {
 			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
 
