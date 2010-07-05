@@ -395,6 +395,7 @@ class CakeSession {
  */
 	public static function ignore($var) {
 		if (!in_array($var, self::$watchKeys)) {
+			debug("NOT");
 			return;
 		}
 		foreach (self::$watchKeys as $i => $key) {
@@ -454,18 +455,16 @@ class CakeSession {
 
 		switch (Configure::read('Session.save')) {
 			case 'cake':
-				if (empty($_SESSION)) {
-					if ($iniSet) {
-						ini_set('session.use_trans_sid', 0);
-						ini_set('url_rewriter.tags', '');
-						ini_set('session.serialize_handler', 'php');
-						ini_set('session.use_cookies', 1);
-						ini_set('session.name', Configure::read('Session.cookie'));
-						ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-						ini_set('session.cookie_path', self::$path);
-						ini_set('session.auto_start', 0);
-						ini_set('session.save_path', TMP . 'sessions');
-					}
+				if (empty($_SESSION) && $iniSet) {
+					ini_set('session.use_trans_sid', 0);
+					ini_set('url_rewriter.tags', '');
+					ini_set('session.serialize_handler', 'php');
+					ini_set('session.use_cookies', 1);
+					ini_set('session.name', Configure::read('Session.cookie'));
+					ini_set('session.cookie_lifetime', self::$cookieLifeTime);
+					ini_set('session.cookie_path', self::$path);
+					ini_set('session.auto_start', 0);
+					ini_set('session.save_path', TMP . 'sessions');
 				}
 			break;
 			case 'database':
@@ -496,13 +495,11 @@ class CakeSession {
 				);
 			break;
 			case 'php':
-				if (empty($_SESSION)) {
-					if ($iniSet) {
-						ini_set('session.use_trans_sid', 0);
-						ini_set('session.name', Configure::read('Session.cookie'));
-						ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-						ini_set('session.cookie_path', self::$path);
-					}
+				if (empty($_SESSION) && $iniSet) {
+					ini_set('session.use_trans_sid', 0);
+					ini_set('session.name', Configure::read('Session.cookie'));
+					ini_set('session.cookie_lifetime', self::$cookieLifeTime);
+					ini_set('session.cookie_path', self::$path);
 				}
 			break;
 			case 'cache':
