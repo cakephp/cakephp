@@ -1032,8 +1032,7 @@ class ControllerTest extends CakeTestCase {
 	function testRedirectByCode($code, $msg) {
 		$Controller = $this->getMock('Controller', array('header'));
 
-		$Controller->Component = new Component();
-		$Controller->Component->init($Controller);
+		$Controller->Components = $this->getMock('ComponentCollection');
 		$Controller->expects($this->at(0))->method('header')
 			->with("HTTP/1.1 {$code} {$msg}");
 
@@ -1055,8 +1054,7 @@ class ControllerTest extends CakeTestCase {
 	function testRedirectByMessage($code, $msg) {
 		$Controller = $this->getMock('Controller', array('header'));
 
-		$Controller->Component = new Component();
-		$Controller->Component->init($Controller);
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->expects($this->at(0))->method('header')
 			->with("HTTP/1.1 {$code} {$msg}");
@@ -1076,9 +1074,10 @@ class ControllerTest extends CakeTestCase {
  */
 	function testRedirectTriggeringComponentsReturnNull() {
 		$Controller = $this->getMock('Controller', array('header'));
-		$Controller->Component = $this->getMock('Component');
+		$Controller->Components = $this->getMock('ComponentCollection');
 
-		$Controller->Component->expects($this->once())->method('beforeRedirect')->will($this->returnValue(null));
+		$Controller->Components->expects($this->once())->method('trigger')
+			->will($this->returnValue(null));
 
 		$Controller->expects($this->at(0))->method('header')
 			->with('HTTP/1.1 301 Moved Permanently');
@@ -1096,9 +1095,9 @@ class ControllerTest extends CakeTestCase {
  */
 	function testRedirectBeforeRedirectModifyingParams() {
 		$Controller = $this->getMock('Controller', array('header'));
-		$Controller->Component = $this->getMock('Component');
+		$Controller->Components = $this->getMock('ComponentCollection');
 
-		$Controller->Component->expects($this->once())->method('beforeRedirect')
+		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(array('http://book.cakephp.org')));
 
 		$Controller->expects($this->at(0))->method('header')
@@ -1390,27 +1389,6 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
- * testRequestHandlerPrefers method
- *
- * @access public
- * @return void
- */
-	function testRequestHandlerPrefers(){
-		Configure::write('debug', 2);
-		$Controller = new Controller();
-		$Controller->components = array("RequestHandler");
-		$Controller->modelClass='ControllerPost';
-		$Controller->params['url']['ext'] = 'rss';
-		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
-		$Controller->beforeFilter();
-		$Controller->Component->startup($Controller);
-
-		$this->assertEqual($Controller->RequestHandler->prefers(), 'rss');
-		unset($Controller);
-	}
-
-/**
  * testControllerHttpCodes method
  *
  * @access public
@@ -1455,16 +1433,17 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testStartupProcess() {
-		$this->getMock('TestComponent', array('startup', 'initialize'), array(), 'MockStartupComponent');
 		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
 
 		$Controller->components = array('MockStartup');
-		$Controller->Component = new Component();
-		$Controller->Component->init($Controller);
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->expects($this->once())->method('beforeFilter');
-		$Controller->MockStartup->expects($this->at(0))->method('initialize');
-		$Controller->MockStartup->expects($this->at(1))->method('startup');
+		$Controller->Components->expects($this->at(0))->method('trigger')
+			->with('initialize', array(&$Controller));
+
+		$Controller->Components->expects($this->at(1))->method('trigger')
+			->with('startup', array(&$Controller));
 
 		$Controller->startupProcess();
 	}
@@ -1475,15 +1454,14 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testShutdownProcess() {
-		$this->getMock('TestComponent', array('shutdown'), array(), 'MockShutdownComponent');
 		$Controller = $this->getMock('Controller', array('beforeFilter', 'afterFilter'));
 
 		$Controller->components = array('MockShutdown');
-		$Controller->Component = new Component();
-		$Controller->Component->init($Controller);
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->expects($this->once())->method('afterFilter');
-		$Controller->MockShutdown->expects($this->once())->method('shutdown');
+		$Controller->Components->expects($this->once())->method('trigger')
+			->with('shutdown', array(&$Controller));
 
 		$Controller->shutdownProcess();
 	}
