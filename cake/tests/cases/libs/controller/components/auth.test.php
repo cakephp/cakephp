@@ -489,8 +489,8 @@ class AuthTest extends CakeTestCase {
 		Configure::write('Acl.classname', 'DbAcl');
 
 		$this->Controller = new AuthTestController();
-		$this->Controller->Component->init($this->Controller);
-		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Controller->Components->initialize($this->Controller);
 		$this->Controller->beforeFilter();
 
 		ClassRegistry::addObject('view', new View($this->Controller));
@@ -1551,8 +1551,8 @@ class AuthTest extends CakeTestCase {
 			),
 			'Session'
 		);
-		$this->Controller->Component->init($this->Controller);
-		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Controller->Components->initialize($this->Controller);
 		Router::reload();
 
 		$this->AuthUserCustomField = new AuthUserCustomField();

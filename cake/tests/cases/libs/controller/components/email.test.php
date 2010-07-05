@@ -217,7 +217,7 @@ class EmailComponentTest extends CakeTestCase {
 
 		$this->Controller = new EmailTestController();
 
-		$this->Controller->Component->init($this->Controller);
+		$this->Controller->Components->init($this->Controller);
 
 		$this->Controller->EmailTest->initialize($this->Controller, array());
 		ClassRegistry::addObject('view', new View($this->Controller));
