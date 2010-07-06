@@ -30,7 +30,6 @@ class Security {
  * Default hash method
  *
  * @var string
- * @access public
  */
 	public static $hashType = null;
 
@@ -38,8 +37,6 @@ class Security {
  * Get allowed minutes of inactivity based on security level.
  *
  * @return integer Allowed inactivity in minutes
- * @access public
- * @static
  */
 	public static function inactiveMins() {
 		switch (Configure::read('Security.level')) {
@@ -60,8 +57,6 @@ class Security {
  * Generate authorization hash.
  *
  * @return string Hash
- * @access public
- * @static
  */
 	public static function generateAuthKey() {
 		if (!class_exists('String')) {
@@ -75,8 +70,6 @@ class Security {
  *
  * @param string $authKey Authorization hash
  * @return boolean Success
- * @access public
- * @static
  * @todo Complete implementation
  */
 	function validateAuthKey($authKey) {
@@ -92,8 +85,6 @@ class Security {
  * @param boolean $salt If true, automatically appends the application's salt
  *     value to $string (Security.salt)
  * @return string Hash
- * @access public
- * @static
  */
 	public static function hash($string, $type = null, $salt = false) {
 		if ($salt) {
@@ -132,9 +123,7 @@ class Security {
  * Security::hash().
  *
  * @param string $hash Method to use (sha1/sha256/md5)
- * @access public
  * @return void
- * @static
  * @see Security::hash()
  */
 	public static function setHash($hash) {
@@ -147,8 +136,6 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
- * @access public
- * @static
  */
 	public static function cipher($text, $key) {
 		if (empty($key)) {
