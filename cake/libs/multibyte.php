@@ -259,47 +259,28 @@ if (!function_exists('mb_encode_mimeheader')) {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class Multibyte extends Object {
+class Multibyte {
 
 /**
  *  Holds the case folding values
  *
  * @var array
- * @access private
  */
-	private $__caseFold = array();
+	private static $__caseFold = array();
 
 /**
  * Holds an array of Unicode code point ranges
  *
  * @var array
- * @access private
  */
-	private $__codeRange = array();
+	private static $__codeRange = array();
 
 /**
  * Holds the current code point range
  *
  * @var string
- * @access private
  */
-	private $__table = null;
-
-/**
- * Gets a reference to the Multibyte object instance
- *
- * @return object Multibyte instance
- * @access public
- * @static
- */
-	function &getInstance() {
-		static $instance = array();
-
-		if (!$instance) {
-			$instance[0] =& new Multibyte();
-		}
-		return $instance[0];
-	}
+	private static $__table = null;
 
 /**
  * Converts a multibyte character string
@@ -307,10 +288,8 @@ class Multibyte extends Object {
  *
  * @param multibyte string $string
  * @return array
- * @access public
- * @static
  */
-	function utf8($string) {
+	public static function utf8($string) {
 		$map = array();
 
 		$values = array();
@@ -348,10 +327,8 @@ class Multibyte extends Object {
  *
  * @param array $array
  * @return string
- * @access public
- * @static
  */
-	function ascii($array) {
+	public static function ascii($array) {
 		$ascii = '';
 
 		foreach ($array as $utf8) {
@@ -377,10 +354,8 @@ class Multibyte extends Object {
  * @param integer $offset The position in $haystack to start searching.
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
- * @access public
- * @static
  */
-	function stripos($haystack, $needle, $offset = 0) {
+	public static function stripos($haystack, $needle, $offset = 0) {
 		if (Multibyte::checkMultibyte($haystack)) {
 			$haystack = Multibyte::strtoupper($haystack);
 			$needle = Multibyte::strtoupper($needle);
@@ -399,10 +374,8 @@ class Multibyte extends Object {
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is false.
  * @return int|boolean The portion of $haystack, or false if $needle is not found.
- * @access public
- * @static
  */
-	function stristr($haystack, $needle, $part = false) {
+	public static function stristr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
 
 		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
@@ -457,10 +430,8 @@ class Multibyte extends Object {
  *
  * @param string $string The string being checked for length.
  * @return integer The number of characters in string $string
- * @access public
- * @static
  */
-	function strlen($string) {
+	public static function strlen($string) {
 		if (Multibyte::checkMultibyte($string)) {
 			$string = Multibyte::utf8($string);
 			return count($string);
@@ -476,10 +447,8 @@ class Multibyte extends Object {
  * @param integer $offset The search offset. If it is not specified, 0 is used.
  * @return integer|boolean The numeric position of the first occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
- * @access public
- * @static
  */
-	function strpos($haystack, $needle, $offset = 0) {
+	public static function strpos($haystack, $needle, $offset = 0) {
 		if (Multibyte::checkMultibyte($haystack)) {
 			$found = false;
 
@@ -523,10 +492,8 @@ class Multibyte extends Object {
  *    If set to false, it returns all of $haystack from the last occurrence of $needle to the end,
  *    Default value is false.
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
- * @access public
- * @static
  */
-	function strrchr($haystack, $needle, $part = false) {
+	public static function strrchr($haystack, $needle, $part = false) {
 		$check = Multibyte::utf8($haystack);
 		$found = false;
 
@@ -585,10 +552,8 @@ class Multibyte extends Object {
  *    If set to false, it returns all of $haystack from the last occurrence of $needle to the end,
  *    Default value is false.
  * @return string|boolean The portion of $haystack. or false if $needle is not found.
- * @access public
- * @static
  */
-	function strrichr($haystack, $needle, $part = false) {
+	public static function strrichr($haystack, $needle, $part = false) {
 		$check = Multibyte::strtoupper($haystack);
 		$check = Multibyte::utf8($check);
 		$found = false;
@@ -647,10 +612,8 @@ class Multibyte extends Object {
  * @param integer $offset The position in $haystack to start searching.
  * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string,
  *    or false if $needle is not found.
- * @access public
- * @static
  */
-	function strripos($haystack, $needle, $offset = 0) {
+	public static function strripos($haystack, $needle, $offset = 0) {
 		if (Multibyte::checkMultibyte($haystack)) {
 			$found = false;
 			$haystack = Multibyte::strtoupper($haystack);
@@ -700,10 +663,8 @@ class Multibyte extends Object {
  *    Negative values will stop searching at an arbitrary point prior to the end of the string.
  * @return integer|boolean The numeric position of the last occurrence of $needle in the $haystack string.
  *    If $needle is not found, it returns false.
- * @access public
- * @static
  */
-	function strrpos($haystack, $needle, $offset = 0) {
+	public static function strrpos($haystack, $needle, $offset = 0) {
 		if (Multibyte::checkMultibyte($haystack)) {
 			$found = false;
 
@@ -753,10 +714,8 @@ class Multibyte extends Object {
  *    If set to false, it returns all of $haystack from the first occurrence of $needle to the end,
  *    Default value is FALSE.
  * @return string|boolean The portion of $haystack, or true if $needle is not found.
- * @access public
- * @static
  */
-	function strstr($haystack, $needle, $part = false) {
+	public static function strstr($haystack, $needle, $part = false) {
 		$php = (PHP_VERSION < 5.3);
 
 		if (($php && $part) || Multibyte::checkMultibyte($haystack)) {
@@ -809,11 +768,8 @@ class Multibyte extends Object {
  *
  * @param string $string The string being lowercased.
  * @return string with all alphabetic characters converted to lowercase.
- * @access public
- * @static
  */
-	function strtolower($string) {
-		$_this =& Multibyte::getInstance();
+	public static function strtolower($string) {
 		$utf8Map = Multibyte::utf8($string);
 
 		$length = count($utf8Map);
@@ -833,7 +789,7 @@ class Multibyte extends Object {
 				$matched = true;
 			} else {
 				$matched = false;
-				$keys = $_this->__find($char, 'upper');
+				$keys = self::__find($char, 'upper');
 
 				if (!empty($keys)) {
 					foreach ($keys as $key => $value) {
@@ -861,8 +817,7 @@ class Multibyte extends Object {
  * @access public
  * @static
  */
-	function strtoupper($string) {
-		$_this =& Multibyte::getInstance();
+	public static function strtoupper($string) {
 		$utf8Map = Multibyte::utf8($string);
 
 		$length = count($utf8Map);
@@ -884,7 +839,7 @@ class Multibyte extends Object {
 
 			} else {
 				$matched = false;
-				$keys = $_this->__find($char);
+				$keys = self::__find($char);
 				$keyCount = count($keys);
 
 				if (!empty($keys)) {
@@ -951,10 +906,8 @@ class Multibyte extends Object {
  * @param string $haystack The string being checked.
  * @param string $needle The string being found.
  * @return integer The number of times the $needle substring occurs in the $haystack string.
- * @access public
- * @static
- */
-	function substrCount($haystack, $needle) {
+  */
+	public static function substrCount($haystack, $needle) {
 		$count = 0;
 		$haystack = Multibyte::utf8($haystack);
 		$haystackCount = count($haystack);
@@ -989,10 +942,8 @@ class Multibyte extends Object {
  * @param integer $start The first position used in $string.
  * @param integer $length The maximum length of the returned string.
  * @return string The portion of $string specified by the $string and $length parameters.
- * @access public
- * @static
  */
-	function substr($string, $start, $length = null) {
+	public static function substr($string, $start, $length = null) {
 		if ($start === 0 && $length === null) {
 			return $string;
 		}
@@ -1023,11 +974,9 @@ class Multibyte extends Object {
  * @param string $charset charset to use for encoding. defaults to UTF-8
  * @param string $newline
  * @return string
- * @access public
- * @static
  * @TODO: add support for 'Q'('Quoted Printable') encoding
  */
-	function mimeEncode($string, $charset = null, $newline = "\r\n") {
+	public static function mimeEncode($string, $charset = null, $newline = "\r\n") {
 		if (!Multibyte::checkMultibyte($string) && strlen($string) < 75) {
 			return $string;
 		}
@@ -1070,9 +1019,8 @@ class Multibyte extends Object {
  *
  * @param interger $decimal
  * @return string
- * @access private
  */
-	function __codepoint($decimal) {
+	private static function __codepoint($decimal) {
 		if ($decimal > 128 && $decimal < 256)  {
 			$return = '0080_00ff'; // Latin-1 Supplement
 		} elseif ($decimal < 384) {
@@ -1110,7 +1058,7 @@ class Multibyte extends Object {
 		} else {
 			$return = false;
 		}
-		$this->__codeRange[$decimal] = $return;
+		self::$__codeRange[$decimal] = $return;
 		return $return;
 	}
 
@@ -1120,32 +1068,31 @@ class Multibyte extends Object {
  * @param integer $char decimal value of character
  * @param string $type
  * @return array
- * @access private
  */
-	function __find($char, $type = 'lower') {
+	private static function __find($char, $type = 'lower') {
 		$value = false;
 		$found = array();
-		if (!isset($this->__codeRange[$char])) {
-			$range = $this->__codepoint($char);
+		if (!isset(self::$__codeRange[$char])) {
+			$range = self::__codepoint($char);
 			if ($range === false) {
 				return null;
 			}
 			Configure::load('unicode' . DS . 'casefolding' . DS . $range);
-			$this->__caseFold[$range] = Configure::read($range);
+			self::$__caseFold[$range] = Configure::read($range);
 			Configure::delete($range);
 		}
 
-		if (!$this->__codeRange[$char]) {
+		if (!self::$__codeRange[$char]) {
 			return null;
 		}
-		$this->__table = $this->__codeRange[$char];
-		$count = count($this->__caseFold[$this->__table]);
+		self::$__table = self::$__codeRange[$char];
+		$count = count(self::$__caseFold[self::$__table]);
 
 		for ($i = 0; $i < $count; $i++) {
-			if ($type === 'lower' && $this->__caseFold[$this->__table][$i][$type][0] === $char) {
-				$found[] = $this->__caseFold[$this->__table][$i];
-			} elseif ($type === 'upper' && $this->__caseFold[$this->__table][$i][$type] === $char) {
-				$found[] = $this->__caseFold[$this->__table][$i];
+			if ($type === 'lower' && self::$__caseFold[self::$__table][$i][$type][0] === $char) {
+				$found[] = self::$__caseFold[self::$__table][$i];
+			} elseif ($type === 'upper' && self::$__caseFold[self::$__table][$i][$type] === $char) {
+				$found[] = self::$__caseFold[self::$__table][$i];
 			}
 		}
 		return $found;
@@ -1155,10 +1102,8 @@ class Multibyte extends Object {
  * Check the $string for multibyte characters
  * @param string $string value to test
  * @return boolean
- * @access public
- * @static
  */
-	function checkMultibyte($string) {
+	public static function checkMultibyte($string) {
 		$length = strlen($string);
 
 		for ($i = 0; $i < $length; $i++ ) {
