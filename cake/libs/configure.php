@@ -128,7 +128,8 @@ class Configure {
 	}
 
 /**
- * Used to read information stored in the Configure instance.
+ * Used to read information stored in the Configure instance.  Currently its not
+ * possible to store `null` values in Configure.
  *
  * Usage:
  * {{{
@@ -138,7 +139,7 @@ class Configure {
  *
  * @link http://book.cakephp.org/view/927/read
  * @param string $var Variable to obtain.  Use '.' to access array elements.
- * @return string value of Configure::$var
+ * @return mixed value stored in configure, or null.
  */
 	public static function read($var = null) {
 		if ($var === null) {
