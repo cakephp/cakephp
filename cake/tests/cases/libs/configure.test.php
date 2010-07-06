@@ -99,6 +99,14 @@ class ConfigureTest extends CakeTestCase {
 
 		$result = Configure::read('debug');
 		$this->assertTrue($result >= 0);
+		
+		$result = Configure::read();
+		$this->assertTrue(is_array($result));
+		$this->assertTrue(isset($result['debug']));
+		$this->assertTrue(isset($result['level1']));
+
+		$result = Configure::read('something_I_just_made_up_now');
+		$this->assertEquals(null, $result, 'Missing key should return null.');
 	}
 
 /**

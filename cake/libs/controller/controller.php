@@ -826,7 +826,7 @@ class Controller extends Object {
 
 		$this->params['models'] = $this->modelNames;
 
-		if (Configure::read() > 2) {
+		if (Configure::read('debug') > 2) {
 			$this->set('cakeDebug', $this);
 		}
 

@@ -25,23 +25,16 @@
  * @subpackage    cake.cake.libs
  * @link          http://book.cakephp.org/view/924/The-Configuration-Class
  */
-class Configure extends Object {
-
-/**
- * Current debug level.
- *
- * @link          http://book.cakephp.org/view/931/CakePHP-Core-Configuration-Variables
- * @var integer
- * @access public
- */
-	public $debug = 0;
+class Configure {
 
 /**
  * Array of values currently stored in Configure.
  *
  * @var array
  */
-	protected static $_values = array();
+	protected static $_values = array(
+		'debug' => 0
+	);
 
 /**
  * Initializes configure and runs the bootstrap process.
@@ -147,20 +140,19 @@ class Configure extends Object {
  * @param string $var Variable to obtain.  Use '.' to access array elements.
  * @return string value of Configure::$var
  */
-	public static function read($var = 'debug') {
-		if ($var === 'debug') {
-			return self::$_values['debug'];
+	public static function read($var = null) {
+		if ($var === null) {
+			return self::$_values;
 		}
-
+		if (isset(self::$_values[$var])) {
+			return self::$_values[$var];
+		}
 		if (strpos($var, '.') !== false) {
 			$names = explode('.', $var, 3);
 			$var = $names[0];
 		}
 		if (!isset(self::$_values[$var])) {
 			return null;
-		}
-		if (!isset($names[1])) {
-			return self::$_values[$var];
 		}
 		switch (count($names)) {
 			case 2:
@@ -315,7 +307,7 @@ class Configure extends Object {
 	private static function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			$expires = "+10 seconds";
 		} else {
 			$expires = "+999 days";
@@ -369,7 +361,7 @@ class Configure extends Object {
 					$prefix = $cache['settings']['prefix'];
 				}
 
-				if (Configure::read() >= 1) {
+				if (Configure::read('debug') >= 1) {
 					$duration = '+10 seconds';
 				} else {
 					$duration = '+999 days';

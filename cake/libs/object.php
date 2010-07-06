@@ -229,7 +229,7 @@ class Object {
 		$data = str_replace('\\', '\\\\', serialize($objectArray));
 		$data = '<?php $' . $name . ' = \'' . str_replace('\'', '\\\'', $data) . '\' ?>';
 		$duration = '+999 days';
-		if (Configure::read() >= 1) {
+		if (Configure::read('debug') >= 1) {
 			$duration = '+10 seconds';
 		}
 		cache($file, $data, $duration);

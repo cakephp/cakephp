@@ -718,7 +718,7 @@ class RequestHandlerComponent extends Object {
 			if (!empty($options['attachment'])) {
 				$this->_header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
 			}
-			if (Configure::read() < 2 && !defined('CAKEPHP_SHELL')) {
+			if (Configure::read('debug') < 2 && !defined('CAKEPHP_SHELL')) {
 				$this->_header($header);
 			}
 			$this->__responseTypeSet = $cType;

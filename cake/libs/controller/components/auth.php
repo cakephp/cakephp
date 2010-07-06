@@ -291,7 +291,7 @@ class AuthComponent extends Object {
 			}
 		}
 		$this->_set($settings);
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			App::import('Debugger');
 			Debugger::checkSecurityKeys();
 		}
@@ -307,7 +307,7 @@ class AuthComponent extends Object {
 	public function startup(&$controller) {
 		$isErrorOrTests = (
 			strtolower($controller->name) == 'cakeerror' ||
-			(strtolower($controller->name) == 'tests' && Configure::read() > 0)
+			(strtolower($controller->name) == 'tests' && Configure::read('debug') > 0)
 		);
 		if ($isErrorOrTests) {
 			return true;
