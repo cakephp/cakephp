@@ -381,7 +381,7 @@ class Multibyte extends Object {
  * @static
  */
 	function stripos($haystack, $needle, $offset = 0) {
-		if (!PHP5 || Multibyte::checkMultibyte($haystack)) {
+		if (Multibyte::checkMultibyte($haystack)) {
 			$haystack = Multibyte::strtoupper($haystack);
 			$needle = Multibyte::strtoupper($needle);
 			return Multibyte::strpos($haystack, $needle, $offset);
@@ -651,7 +651,7 @@ class Multibyte extends Object {
  * @static
  */
 	function strripos($haystack, $needle, $offset = 0) {
-		if (!PHP5 || Multibyte::checkMultibyte($haystack)) {
+		if (Multibyte::checkMultibyte($haystack)) {
 			$found = false;
 			$haystack = Multibyte::strtoupper($haystack);
 			$haystack = Multibyte::utf8($haystack);
@@ -704,7 +704,7 @@ class Multibyte extends Object {
  * @static
  */
 	function strrpos($haystack, $needle, $offset = 0) {
-		if (!PHP5 || Multibyte::checkMultibyte($haystack)) {
+		if (Multibyte::checkMultibyte($haystack)) {
 			$found = false;
 
 			$haystack = Multibyte::utf8($haystack);

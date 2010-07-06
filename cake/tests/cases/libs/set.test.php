@@ -2594,11 +2594,10 @@ class SetTest extends CakeTestCase {
 		$expected = 9;
 		$this->assertEqual($result, $expected);
 
-		if (PHP5) {
-			$result = Set::apply('/Movie/rating', $data, 'array_product');
-			$expected = 15;
-			$this->assertEqual($result, $expected);
-		}
+
+		$result = Set::apply('/Movie/rating', $data, 'array_product');
+		$expected = 15;
+		$this->assertEqual($result, $expected);
 
 		$result = Set::apply('/Movie/title', $data, 'ucfirst', array('type' => 'map'));
 		$expected = array('Movie 3', 'Movie 1', 'Movie 2');

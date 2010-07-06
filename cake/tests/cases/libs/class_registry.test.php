@@ -153,11 +153,8 @@ class ClassRegistryTest extends CakeTestCase {
  * @return void
  */
 	function testAddModel() {
-		if (PHP5) {
-			$Tag = ClassRegistry::init('RegisterArticleTag');
-		} else {
-			$Tag =& ClassRegistry::init('RegisterArticleTag');
-		}
+
+		$Tag = ClassRegistry::init('RegisterArticleTag');
 		$this->assertTrue(is_a($Tag, 'RegisterArticleTag'));
 
 		$TagCopy = ClassRegistry::isKeySet('RegisterArticleTag');

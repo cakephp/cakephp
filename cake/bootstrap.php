@@ -19,9 +19,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('PHP5')) {
-	define('PHP5', (PHP_VERSION >= 5));
-}
 if (!defined('E_DEPRECATED')) {
 	define('E_DEPRECATED', 8192);
 }

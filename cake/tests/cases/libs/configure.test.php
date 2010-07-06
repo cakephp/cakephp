@@ -542,13 +542,8 @@ class AppImportTest extends CakeTestCase {
 		if (!class_exists('AppController')) {
 			$classes = array_flip(get_declared_classes());
 
-			if (PHP5) {
-				$this->assertFalse(isset($classes['PagesController']));
-				$this->assertFalse(isset($classes['AppController']));
-			} else {
-				$this->assertFalse(isset($classes['pagescontroller']));
-				$this->assertFalse(isset($classes['appcontroller']));
-			}
+			$this->assertFalse(isset($classes['PagesController']));
+			$this->assertFalse(isset($classes['AppController']));
 
 			$file = App::import('Controller', 'Pages');
 			$this->assertTrue($file);
@@ -556,13 +551,8 @@ class AppImportTest extends CakeTestCase {
 
 			$classes = array_flip(get_declared_classes());
 
-			if (PHP5) {
-				$this->assertTrue(isset($classes['PagesController']));
-				$this->assertTrue(isset($classes['AppController']));
-			} else {
-				$this->assertTrue(isset($classes['pagescontroller']));
-				$this->assertTrue(isset($classes['appcontroller']));
-			}
+			$this->assertTrue(isset($classes['PagesController']));
+			$this->assertTrue(isset($classes['AppController']));
 
 			$file = App::import('Behavior', 'Containable');
 			$this->assertTrue($file);
@@ -736,11 +726,8 @@ class AppImportTest extends CakeTestCase {
 
 		$classes = array_flip(get_declared_classes());
 
-		if (PHP5) {
-			$this->assertTrue(isset($classes['I18n']));
-		} else {
-			$this->assertTrue(isset($classes['i18n']));
-		}
+
+		$this->assertTrue(isset($classes['I18n']));
 
 		$load = App::import(array('I18n', 'SomeNotFoundClass', 'CakeSocket'));
 		$this->assertFalse($load);

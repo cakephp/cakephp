@@ -641,11 +641,7 @@ class Model extends Object {
 
 		if (!isset($this->{$assoc}) || $this->{$assoc}->name !== $className) {
 			$model = array('class' => $className, 'alias' => $assoc);
-			if (PHP5) {
-				$this->{$assoc} = ClassRegistry::init($model);
-			} else {
-				$this->{$assoc} =& ClassRegistry::init($model);
-			}
+			$this->{$assoc} = ClassRegistry::init($model);
 			if (strpos($className, '.') !== false) {
 				ClassRegistry::addObject($className, $this->{$assoc});
 			}

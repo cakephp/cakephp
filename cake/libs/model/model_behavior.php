@@ -298,17 +298,9 @@ class BehaviorCollection extends Object {
 
 		if (!isset($this->{$name})) {
 			if (ClassRegistry::isKeySet($class)) {
-				if (PHP5) {
-					$this->{$name} = ClassRegistry::getObject($class);
-				} else {
-					$this->{$name} =& ClassRegistry::getObject($class);
-				}
+				$this->{$name} = ClassRegistry::getObject($class);
 			} else {
-				if (PHP5) {
-					$this->{$name} = new $class;
-				} else {
-					$this->{$name} =& new $class;
-				}
+				$this->{$name} = new $class;
 				ClassRegistry::addObject($class, $this->{$name});
 				if (!empty($plugin)) {
 					ClassRegistry::addObject($plugin.'.'.$class, $this->{$name});

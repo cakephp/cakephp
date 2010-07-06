@@ -804,11 +804,7 @@ class AuthComponent extends Object {
 			$name = $this->userModel;
 		}
 
-		if (PHP5) {
-			$model = ClassRegistry::init($name);
-		} else {
-			$model =& ClassRegistry::init($name);
-		}
+		$model = ClassRegistry::init($name);
 
 		if (empty($model)) {
 			trigger_error(__('Auth::getModel() - Model is not set or could not be found'), E_USER_WARNING);
