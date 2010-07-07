@@ -73,18 +73,6 @@ class HelperCollection extends ObjectCollection {
 		return $this->_loaded[$name];
 	}
 
-/**
- * Name of the helper to remove from the collection
- *
- * @param string $name Name of helper to delete.
- * @return void
- */
-	public function unload($name) {
-		list($plugin, $name) = pluginSplit($name);
-		unset($this->_loaded[$name]);
-		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
-	}
-
 }
 /**
  * Exceptions used by the HelperCollection.

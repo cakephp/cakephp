@@ -46,14 +46,6 @@ abstract class ObjectCollection {
 	abstract public function load($name, $options = array(), $enable = true);
 
 /**
- * Unloads/deletes an object from the collection.
- *
- * @param string $name Name of the object to delete.
- * @return void
- */
-	abstract public function unload($name);
-
-/**
  * Trigger a callback method on every object in the collection.
  * Used to trigger methods on objects in the collection.  Will fire the methods in the 
  * order they were attached.
@@ -174,6 +166,18 @@ abstract class ObjectCollection {
 			return isset($this->_loaded[$name]);
 		}
 		return array_keys($this->_loaded);
+	}
+
+/**
+ * Name of the object to remove from the collection
+ *
+ * @param string $name Name of the object to delete.
+ * @return void
+ */
+	public function unload($name) {
+		list($plugin, $name) = pluginSplit($name);
+		unset($this->_loaded[$name]);
+		$this->_enabled = array_values(array_diff($this->_enabled, (array)$name));
 	}
 
 /**
