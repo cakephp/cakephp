@@ -503,6 +503,31 @@ class HttpSocketTest extends CakeTestCase {
 		$this->RequestSocket->get('http://www.google.com/', null, array('auth' => array('user' => 'foo', 'pass' => 'bar')));
 	}
 /**
+ * test that two consecutive get() calls reset the authentication credentials.
+ *
+ * @return void
+ */
+	function testConsecutiveGetResetsAuthCredentials() {
+		$socket = new TestHttpSocket();
+		$socket->config['request']['auth'] = array(
+			'method' => 'Basic',
+			'user' => 'mark',
+			'pass' => 'secret'
+		);
+		$socket->get('http://mark:secret@example.com/test');
+		$this->assertEqual($socket->request['uri']['user'], 'mark');
+		$this->assertEqual($socket->request['uri']['pass'], 'secret');
+
+		$socket->get('/test2');
+		$this->assertEqual($socket->request['auth']['user'], 'mark');
+		$this->assertEqual($socket->request['auth']['pass'], 'secret');
+
+		$socket->get('/test3');
+		$this->assertEqual($socket->request['auth']['user'], 'mark');
+		$this->assertEqual($socket->request['auth']['pass'], 'secret');
+	}
+
+/**
  * testPostPutDelete method
  *
  * @access public

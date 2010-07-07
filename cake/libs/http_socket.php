@@ -171,7 +171,12 @@ class HttpSocket extends CakeSocket {
 		if (!isset($request['uri'])) {
 			$request['uri'] = null;
 		}
+
 		$uri = $this->parseUri($request['uri']);
+		$hadAuth = false;
+		if (is_array($uri) && array_key_exists('user', $uri)) {
+			$hadAuth = true;
+		}
 
 		if (!isset($uri['host'])) {
 			$host = $this->config['host'];
@@ -180,11 +185,14 @@ class HttpSocket extends CakeSocket {
 			$host = $request['host'];
 			unset($request['host']);
 		}
-
 		$request['uri'] = $this->url($request['uri']);
 		$request['uri'] = $this->parseUri($request['uri'], true);
 		$this->request = Set::merge($this->request, $this->config['request'], $request);
 
+		if (!$hadAuth && !empty($this->config['request']['auth']['user'])) {
+			$this->request['uri']['user'] = $this->config['request']['auth']['user'];
+			$this->request['uri']['pass'] = $this->config['request']['auth']['pass'];
+		}
 		$this->configUri($this->request['uri']);
 
 		if (isset($host)) {
@@ -529,7 +537,6 @@ class HttpSocket extends CakeSocket {
 		if (!isset($uri['host'])) {
 			return false;
 		}
-
 		$config = array(
 			'request' => array(
 				'uri' => array_intersect_key($uri, $this->config['request']['uri']),
@@ -978,7 +985,6 @@ class HttpSocket extends CakeSocket {
 		if (empty($initalState)) {
 			$initalState = get_class_vars(__CLASS__);
 		}
-
 		if ($full == false) {
 			$this->request = $initalState['request'];
 			$this->response = $initalState['response'];
