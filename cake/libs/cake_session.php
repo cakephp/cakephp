@@ -148,28 +148,7 @@ class CakeSession {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 
-		if (Configure::read('Session.save') === 'database') {
-			$modelName = Configure::read('Session.model');
-			$database = Configure::read('Session.database');
-			$table = Configure::read('Session.table');
-
-			if (empty($database)) {
-				$database = 'default';
-			}
-			$settings = array(
-				'class' => 'Session',
-				'alias' => 'Session',
-				'table' => 'cake_sessions',
-				'ds' => $database
-			);
-			if (!empty($modelName)) {
-				$settings['class'] = $modelName;
-			}
-			if (!empty($table)) {
-				$settings['table'] = $table;
-			}
-			ClassRegistry::init($settings);
-		}
+		self::_setupDatabase();
 		if ($start === true) {
 			if (empty($base)) {
 				self::$path = '/';
@@ -192,6 +171,37 @@ class CakeSession {
 			self::$sessionTime = self::$time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			self::$security = Configure::read('Security.level');
 		}
+	}
+
+/**
+ * Setup database configuration for Session, if enabled.
+ *
+ * @return void
+ */
+	protected function _setupDatabase() {
+		if (Configure::read('Session.save') !== 'database') {
+			return;
+		}
+		$modelName = Configure::read('Session.model');
+		$database = Configure::read('Session.database');
+		$table = Configure::read('Session.table');
+
+		if (empty($database)) {
+			$database = 'default';
+		}
+		$settings = array(
+			'class' => 'Session',
+			'alias' => 'Session',
+			'table' => 'cake_sessions',
+			'ds' => $database
+		);
+		if (!empty($modelName)) {
+			$settings['class'] = $modelName;
+		}
+		if (!empty($table)) {
+			$settings['table'] = $table;
+		}
+		ClassRegistry::init($settings);
 	}
 
 /**
