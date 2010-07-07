@@ -215,7 +215,7 @@ class CakeSession {
 		}
 		session_write_close();
 		self::__initSession();
-		self::$_started = self::__startSession();
+		self::$_started = self::_startSession();
 		return self::started();
 	}
 
