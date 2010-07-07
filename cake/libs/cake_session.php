@@ -539,23 +539,21 @@ class CakeSession {
 /**
  * Helper method to start a session
  *
- * @access private
+ * @return boolean Success
  */
-	function __startSession() {
+	protected function _startSession() {
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
 			}
-			return true;
 		} elseif (!isset($_SESSION)) {
 			session_cache_limiter ("must-revalidate");
 			session_start();
 			header ('P3P: CP="NOI ADM DEV PSAi COM NAV OUR OTRo STP IND DEM"');
-			return true;
 		} else {
 			session_start();
-			return true;
 		}
+		return true;
 	}
 
 /**
