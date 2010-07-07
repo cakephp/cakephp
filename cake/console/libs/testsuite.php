@@ -42,10 +42,8 @@ class TestSuiteShell extends Shell {
 		} else {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 		}
-		$params = $this->parseArgs();
-
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$this->_dispatcher->setParams($params);
+		$this->_dispatcher->loadTestFramework();
 	}
 
 /**
@@ -53,7 +51,7 @@ class TestSuiteShell extends Shell {
  *
  * @return array Array of params for CakeTestDispatcher
  */
-	public function parseArgs() {
+	protected function parseArgs() {
 		if (empty($this->args)) {
 			return;
 		}
