@@ -59,9 +59,6 @@ class TestSuiteShell extends Shell {
 			'app' => false,
 			'plugin' => null,
 			'output' => 'text',
-			'codeCoverage' => false,
-			'filter' => false,
-			'case' => null
 		);
 
 		$category = $this->args[0];
@@ -73,18 +70,33 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (isset($this->args[1])) {
-			$params['case'] = Inflector::underscore($this->args[1]) . '.test.php';
+			$params['case'] = Inflector::underscore($this->args[1]);
 		}
 		if (isset($this->args[2]) && $this->args[2] == 'cov') {
 			$params['codeCoverage'] = true;
-		}
-		if (isset($this->params['filter'])) {
-			$params['filter'] = $this->params['filter'];
 		}
 		if (isset($this->params['coverage'])) {
 			$params['codeCoverage'] = true;
 		}
 		return $params;
+	}
+
+/**
+ * Converts the options passed to the shell as options for the PHPUnit cli runner
+ *
+ * @return array Array of params for CakeTestDispatcher
+ */
+	protected function runnerOptions() {
+		$options = array();
+		foreach ($this->params as $param => $value) {
+			if ($param[0] === '-') {
+				$options[] = '-' . $param;
+				if (is_string($value)) {
+					$options[] = $value;
+				}
+			}
+		}
+		return $options;
 	}
 
 /**
@@ -96,16 +108,9 @@ class TestSuiteShell extends Shell {
 		$this->out(__('CakePHP Test Shell'));
 		$this->hr();
 
-		if (count($this->args) == 0) {
-			$this->error(__('Sorry, you did not pass any arguments!'));
-		}
-
-		$result = $this->_dispatcher->dispatch();
-		$exit = 0;
-		if ($result instanceof PHPUnit_Framework_TestResult) {
-			$exit = ($result->errorCount() + $result->failureCount()) > 0;
-		}
-		$this->_stop($exit);
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
+		$testCli = new TestRunner($this->parseArgs());
+		$testCli->run($this->runnerOptions());
 	}
 
 /**
