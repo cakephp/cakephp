@@ -76,12 +76,21 @@ class TestManager {
 	protected $_fixtureManager = null;
 
 /**
+ * Params to configure test runner
+ *
+ * @var CakeFixtureManager
+ */
+	public $params = array();
+
+/**
  * Constructor for the TestManager class
  *
  * @return void
  */
 	public function __construct($params = array()) {
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+
+		$this->params = $params;
 		if (isset($params['app'])) {
 			$this->appTest = true;
 		}
@@ -130,14 +139,7 @@ class TestManager {
  * @return mixed Result of test case being run.
  */
 	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter, $codeCoverage = false) {
-		$testCaseFileWithPath = $this->_getTestsPath($reporter->params) . DS . $testCaseFile;
-
-		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
-			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
-		}
-
-		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$testSuite->addTestFile($testCaseFileWithPath);
+		$this->loadCase($testCaseFile);
 		return $this->run($reporter, $codeCoverage);
 	}
 
