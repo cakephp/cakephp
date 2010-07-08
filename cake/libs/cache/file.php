@@ -134,8 +134,9 @@ class FileEngine extends CacheEngine {
 		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents);
 
 		if ($this->settings['lock']) {
-			$this->_File->flock(LOCK_EX);
+			$this->_File->flock(LOCK_UN);
 		}
+		$this->_File = null;
 
 		return $success;
 	}
@@ -171,7 +172,7 @@ class FileEngine extends CacheEngine {
 		}
 
 		if ($this->settings['lock']) {
-			$this->_File->flock(LOCK_SH);
+			$this->_File->flock(LOCK_UN);
 		}
 
 		$data = trim($data);
@@ -195,7 +196,9 @@ class FileEngine extends CacheEngine {
 		if ($this->_setKey($key) === false || !$this->_init) {
 			return false;
 		}
-		return unlink($this->_File->getRealPath());
+		$path = $this->_File->getRealPath();
+		$this->_File = null;
+		return unlink($path);
 	}
 
 /**
@@ -234,7 +237,9 @@ class FileEngine extends CacheEngine {
 					continue;
 				}
 			}
-			unlink($this->_File->getRealPath());
+			$path = $this->_File->getRealPath();
+			$this->_File = null;
+			unlink($path);
 		}
 		$dir->close();
 		return true;
