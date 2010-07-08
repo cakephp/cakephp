@@ -72,7 +72,7 @@ class TaskCollection extends ObjectCollection {
  *
  * @param string $file Underscored name of the file to find missing .php
  * @return string Filename to the task
- * @throw MissingTaskFileException
+ * @throws MissingTaskFileException
  */
 	protected function _getPath($file) {
 		foreach ($this->_Dispatch->shellPaths as $path) {

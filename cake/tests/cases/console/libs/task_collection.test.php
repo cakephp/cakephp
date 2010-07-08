@@ -94,15 +94,14 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPluginTask() {
-		$this->markTestIncomplete('Not done');
-		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-		));
+		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
+		$dispatcher->shellPaths = App::path('shells');
+		$dispatcher->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
+		$this->Tasks = new TaskCollection($dispatcher);
+
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertType('OtherTaskTask', $result, 'Task class is wrong.');
 		$this->assertType('OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
-
-		App::build();
 	}
 
 /**
@@ -111,37 +110,18 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testUnload() {
-		$this->markTestIncomplete('Not done');
 		$this->Tasks->load('Extract');
-		$this->Tasks->load('Fixture');
+		$this->Tasks->load('DbConfig');
 
 		$result = $this->Tasks->attached();
-		$this->assertEquals(array('Extract', 'Fixture'), $result, 'loaded tasks is wrong');
+		$this->assertEquals(array('Extract', 'DbConfig'), $result, 'loaded tasks is wrong');
 
-		$this->Tasks->unload('Fixture');
-		$this->assertFalse(isset($this->Tasks->Fixture));
+		$this->Tasks->unload('DbConfig');
+		$this->assertFalse(isset($this->Tasks->DbConfig));
 		$this->assertTrue(isset($this->Tasks->Extract));
 
 		$result = $this->Tasks->attached();
 		$this->assertEquals(array('Extract'), $result, 'loaded tasks is wrong');
-	}
-
-/**
- * test triggering callbacks.
- *
- * @return void
- */
-	function testTrigger() {
-		$this->markTestIncomplete('Not done');
-	}
-
-/**
- * test trigger and disabled tasks.
- *
- * @return void
- */
-	function testTriggerWithDisabledTasks() {
-		$this->markTestIncomplete('Not done');
 	}
 
 /**
