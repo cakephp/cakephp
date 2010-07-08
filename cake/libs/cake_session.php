@@ -334,7 +334,11 @@ class CakeSession {
  */
 	public static function valid() {
 		if (self::read('Config')) {
-			if ((Configure::read('Session.checkAgent') === false || self::$_userAgent == self::read('Config.userAgent')) && self::$time <= self::read('Config.time')) {
+			$validAgent = (
+				Configure::read('Session.checkAgent') === false || 
+				self::$_userAgent == self::read('Config.userAgent')
+			);
+			if ($validAgent && self::$time <= self::read('Config.time')) {
 				if (self::$error === false) {
 					self::$valid = true;
 				}
@@ -442,6 +446,7 @@ class CakeSession {
  */
 	public function destroy() {
 		$_SESSION = array();
+		self::$id = null;
 		self::init(self::$path);
 		self::start();
 		self::renew();

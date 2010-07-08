@@ -256,6 +256,7 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::write('bulletProof', 'invicible');
 		$id = TestCakeSession::id();
 		TestCakeSession::destroy();
+
 		$this->assertFalse(TestCakeSession::check('bulletProof'));
 		$this->assertNotEqual($id, TestCakeSession::id());
 	}
@@ -350,7 +351,11 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testCheckUserAgentTrue() {
 		Configure::write('Session.checkAgent', true);
-		TestCakeSession::setUserAgent(md5('http://randomdomainname.com' . Configure::read('Security.salt')));
+		TestCakeSession::$error = false;
+		$agent = md5('http://randomdomainname.com' . Configure::read('Security.salt'));
+
+		TestCakeSession::write('Config.userAgent', md5('Hacking you!'));
+		TestCakeSession::setUserAgent($agent);
 		$this->assertFalse(TestCakeSession::valid());
 	}
 
