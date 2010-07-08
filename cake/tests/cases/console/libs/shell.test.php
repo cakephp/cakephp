@@ -360,7 +360,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testLoadTasks() {
+	public function testLoadTasks() {	
 		$this->assertTrue($this->Shell->loadTasks());
 
 		$this->Shell->tasks = null;
@@ -375,12 +375,7 @@ class ShellTest extends CakeTestCase {
 		$this->Shell->tasks = array();
 		$this->assertTrue($this->Shell->loadTasks());
 
-		// Fatal Error
-		// $this->Shell->tasks = 'TestIDontExist';
-		// $this->assertFalse($this->Shell->loadTasks());
-		// $this->assertFalse(isset($this->Shell->TestIDontExist));
-
-		$this->Shell->tasks = 'TestApple';
+		$this->Shell->tasks = array('TestApple');
 		$this->assertTrue($this->Shell->loadTasks());
 		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
 

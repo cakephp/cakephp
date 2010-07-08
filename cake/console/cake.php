@@ -120,6 +120,13 @@ class ShellDispatcher {
 	public $shellName = null;
 
 /**
+ * TaskCollection object for the command
+ *
+ * @var TaskCollection
+ */
+	protected $_Tasks;
+
+/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -420,6 +427,18 @@ class ShellDispatcher {
 		}
 		$Shell = new $this->shellClass($this);
 		return $Shell;
+	}
+
+/**
+ * Returns a TaskCollection object for Shells to use when loading their tasks.
+ *
+ * @return TaskCollection object.
+ */
+	public function getTaskCollection() {
+		if (empty($this->_Tasks)) {
+			$this->_Tasks = new TaskCollection($this);
+		}
+		return $this->_Tasks;
 	}
 
 /**

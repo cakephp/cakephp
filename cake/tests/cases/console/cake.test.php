@@ -562,7 +562,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEqual($Dispatcher->args, array('dispatch'));
 
-		$Shell = new MockWithMainShell($Dispather);
+		$Shell = new MockWithMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Shell->expects($this->once())->method('startup');
@@ -573,7 +573,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEqual($Dispatcher->args, array('idontexist'));
 
-		$Shell = new MockWithMainShell($Dispather);
+		$Shell = new MockWithMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->never())->method('main');
 		$Shell->expects($this->never())->method('startup');
@@ -606,8 +606,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertFalse($result);
 		$this->assertEqual($Dispatcher->args, array());
 
-
-		$Shell = new MockWithoutMainShell($Dispather);
+		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->once())->method('initDb')->will($this->returnValue(true));
 		$Shell->expects($this->once())->method('initialize');
@@ -620,7 +619,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertEqual($Dispatcher->args, array());
 
-		$Shell = new MockWithoutMainShell($Dispather);
+		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->never())->method('hr');
 		$Shell->expects($this->never())->method('startup');
@@ -631,7 +630,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertFalse($result);
 		$this->assertEqual($Dispatcher->args, array('hr'));
 
-		$Shell = new MockWithoutMainShell($Dispather);
+		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->never())->method('startup');
 		$Dispatcher->TestShell = $Shell;
@@ -640,7 +639,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
-		$Shell = new MockWithoutMainShell($Dispather);
+		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->never())->method('startup');
 		$Dispatcher->TestShell = $Shell;
@@ -649,7 +648,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch();
 		$this->assertFalse($result);
 
-		$Shell = new MockWithoutMainShell($Dispather);
+		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->never())->method('startup');
 		$Shell->expects($this->never())->method('_secret');
@@ -831,7 +830,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Week = $this->getMock('Shell', $mainMethods, array(&$Dispatcher), 'MockWeekShell');
 		$Sunday = $this->getMock('Shell', $executeMethods, array(&$Dispatcher), 'MockOnSundayTask');
 
-		$Shell = new MockWeekShell($Dispather);
+		$Shell = new MockWeekShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
 		$Shell->expects($this->once())->method('initialize');
 		$Shell->expects($this->once())->method('loadTasks');

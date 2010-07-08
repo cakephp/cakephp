@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Shell', 'TaskCollection');
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -132,6 +133,13 @@ class Shell extends Object {
 	public $uses = array();
 
 /**
+ * Task Collection for the command, used to create Tasks.
+ *
+ * @var TaskCollection
+ */
+	public $Tasks;
+
+/**
  *  Constructs this Shell instance.
  *
  */
@@ -153,11 +161,8 @@ class Shell extends Object {
 		if ($this->alias == null) {
 			$this->alias = $this->name;
 		}
-
-		ClassRegistry::addObject($this->name, $this);
-		ClassRegistry::map($this->name, $this->alias);
-
 		$this->Dispatch =& $dispatch;
+		$this->Tasks = $dispatch->getTaskCollection();
 	}
 
 /**
@@ -252,43 +257,14 @@ class Shell extends Object {
  * @return bool
  */
 	public function loadTasks() {
-		if ($this->tasks === null || $this->tasks === false || $this->tasks === true || empty($this->tasks)) {
+		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
 			return true;
 		}
-
-		$tasks = $this->tasks;
-		if (!is_array($tasks)) {
-			$tasks = array($tasks);
+		$tasks = TaskCollection::normalizeObjectArray((array)$this->tasks);
+		foreach ($tasks as $task => $properties) {
+			$this->{$task} = $this->Tasks->load($properties['class'], $properties['settings']);
+			$this->taskNames[] = $task;
 		}
-
-		foreach ($tasks as $taskName) {
-			$task = Inflector::underscore($taskName);
-			$taskClass = Inflector::camelize($taskName . 'Task');
-
-			if (!class_exists($taskClass)) {
-				foreach ($this->Dispatch->shellPaths as $path) {
-					$taskPath = $path . 'tasks' . DS . $task . '.php';
-					if (file_exists($taskPath)) {
-						require_once $taskPath;
-						break;
-					}
-				}
-			}
-			$taskClassCheck = $taskClass;
-			if (ClassRegistry::isKeySet($taskClassCheck)) {
-				$this->taskNames[] = $taskName;
-				$this->{$taskName} = ClassRegistry::getObject($taskClassCheck);
-			} else {
-				$this->taskNames[] = $taskName;
-				$this->{$taskName} = new $taskClass($this->Dispatch);
-			}
-
-			if (!isset($this->{$taskName})) {
-				$this->err("Task `{$taskName}` could not be loaded");
-				$this->_stop();
-			}
-		}
-
 		return true;
 	}
 
