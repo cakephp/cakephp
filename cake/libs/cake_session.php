@@ -445,7 +445,7 @@ class CakeSession {
  * @return void
  */
 	public function destroy() {
-		$_SESSION = array();
+		$_SESSION = null;
 		self::$id = null;
 		self::init(self::$path);
 		self::start();

@@ -366,6 +366,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testReadAndWriteWithCakeStorage() {
+		session_write_close();
 		ini_set('session.save_handler', 'files');
 		Configure::write('Session.save', 'cake');
 		$this->setUp();
@@ -401,6 +402,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testReadAndWriteWithCacheStorage() {
+		session_write_close();
 		ini_set('session.save_handler', 'files');
 		Configure::write('Session.save', 'cache');
 		$this->setUp();
