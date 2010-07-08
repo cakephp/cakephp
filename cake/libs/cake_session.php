@@ -619,26 +619,6 @@ class CakeSession {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 			}
 			session_regenerate_id(true);
-			if (PHP_VERSION < 5.1) {
-				$sessionPath = session_save_path();
-				if (empty($sessionPath)) {
-					$sessionPath = '/tmp';
-				}
-				$newSessid = session_id();
-
-				if (function_exists('session_write_close')) {
-					session_write_close();
-				}
-				self::__initSession();
-				session_id($oldSessionId);
-				session_start();
-				session_destroy();
-				$file = $sessionPath . DS . 'sess_' . $oldSessionId;
-				@unlink($file);
-				self::__initSession();
-				session_id($newSessid);
-				session_start();
-			}
 		}
 	}
 
