@@ -113,6 +113,7 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test ListAll
  *
+ * @fixme this one has problems with test suites
  * @return void
  */
 	public function testListAll() {
@@ -137,6 +138,7 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * Test that getName interacts with the user and returns the controller name.
  *
+ * @fixme this one has problems with test suites
  * @return void
  */
 	public function testGetNameValidIndex() {
@@ -155,6 +157,7 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test getting invalid indexes.
  *
+ * @fixme this one has problems with test suites
  * @return void
  */
 	function testGetNameInvalidIndex() {
@@ -418,6 +421,7 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test Interactive mode.
  *
+ * @fixme this one has problems with test suites
  * @return void
  */
 	public function testInteractive() {
@@ -448,8 +452,8 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test Interactive mode.
  *
+ * @fixme this one has problems with test suites
  * @return void
- * @access public
  */
 	function testInteractiveAdminMethodsNotInteractive() {
 		$this->Task->connection = 'test_suite';
