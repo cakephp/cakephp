@@ -272,22 +272,22 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components);
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
-		$this->assertPattern('/\$helpers \= array\(\'Ajax\', \'Time\'\)/', $result);
-		$this->assertPattern('/\-\-actions\-\-/', $result);
+		$this->assertContains('class ArticlesController extends AppController', $result);
+		$this->assertContains("\$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("\$helpers = array('Ajax', 'Time')", $result);
+		$this->assertContains("--actions--", $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertPattern('/public \$scaffold/', $result);
-		$this->assertNoPattern('/helpers/', $result);
-		$this->assertNoPattern('/components/', $result);
+		$this->assertContains("class ArticlesController extends AppController", $result);
+		$this->assertContains("public \$scaffold", $result);
+		$this->assertNotContains('helpers', $result);
+		$this->assertNotContains('components', $result);
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertNoPattern('/components/', $result);
-		$this->assertNoPattern('/helpers/', $result);
-		$this->assertPattern('/\-\-actions\-\-/', $result);
+		$this->assertContains('class ArticlesController extends AppController', $result);
+		$this->assertNotContains('components', $result);
+		$this->assertNotContains('helpers', $result);
+		$this->assertContains('--actions--', $result);
 	}
 
 /**
@@ -332,33 +332,33 @@ class ControllerTaskTest extends CakeTestCase {
 		}
 		$result = $this->Task->bakeActions('BakeArticles', null, true);
 
-		$this->assertTrue(strpos($result, 'function index() {') !== false);
-		$this->assertTrue(strpos($result, '$this->BakeArticle->recursive = 0;') !== false);
-		$this->assertTrue(strpos($result, "\$this->set('bakeArticles', \$this->paginate());") !== false);
+		$this->assertContains('function index() {', $result);
+		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
-		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Invalid bake article'));") !== false);
-		$this->assertTrue(strpos($result, "\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)") !== false);
+		$this->assertContains('function view($id = null)', $result);
+		$this->assertContains("\$this->Session->setFlash(__('Invalid bake article'));", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
-		$this->assertTrue(strpos($result, 'function add()') !== false);
-		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->BakeArticle->save($this->data))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The bake article has been saved'));") !== false);
+		$this->assertContains('function add()', $result);
+		$this->assertContains('if (!empty($this->data))', $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
 
-		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));") !== false);
+		$this->assertContains('function edit($id = null)', $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));", $result);
 
-		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->BakeArticle->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Bake article deleted'));") !== false);
+		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains("\$this->Session->setFlash(__('Bake article deleted'));", $result);
 
 		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
 
-		$this->assertTrue(strpos($result, 'function admin_index() {') !== false);
-		$this->assertTrue(strpos($result, 'function admin_add()') !== false);
-		$this->assertTrue(strpos($result, 'function admin_view($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'function admin_edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'function admin_delete($id = null)') !== false);
+		$this->assertContains('function admin_index() {', $result);
+		$this->assertContains('function admin_add()', $result);
+		$this->assertContains('function admin_view($id = null)', $result);
+		$this->assertContains('function admin_edit($id = null)', $result);
+		$this->assertContains('function admin_delete($id = null)', $result);
 	}
 
 /**
@@ -374,27 +374,27 @@ class ControllerTaskTest extends CakeTestCase {
 		}
 		$result = $this->Task->bakeActions('BakeArticles', null, false);
 
-		$this->assertTrue(strpos($result, 'function index() {') !== false);
-		$this->assertTrue(strpos($result, '$this->BakeArticle->recursive = 0;') !== false);
-		$this->assertTrue(strpos($result, "\$this->set('bakeArticles', \$this->paginate());") !== false);
+		$this->assertContains('function index() {', $result);
+		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
-		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Invalid bake article'), array('action' => 'index'))") !== false);
-		$this->assertTrue(strpos($result, "\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)") !== false);
+		$this->assertContains('function view($id = null)', $result);
+		$this->assertContains("\$this->flash(__('Invalid bake article'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
-		$this->assertTrue(strpos($result, 'function add()') !== false);
-		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->BakeArticle->save($this->data))') !== false);
+		$this->assertContains('function add()', $result);
+		$this->assertContains('if (!empty($this->data))', $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
 
-		$this->assertTrue(strpos($result, "\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))") !== false);
+		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
 
-		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->BakeArticle->BakeTag->find('list')") !== false);
-		$this->assertTrue(strpos($result, "\$this->set(compact('bakeTags'))") !== false);
+		$this->assertContains('function edit($id = null)', $result);
+		$this->assertContains("\$this->BakeArticle->BakeTag->find('list')", $result);
+		$this->assertContains("\$this->set(compact('bakeTags'))", $result);
 
-		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->BakeArticle->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Bake article deleted'), array('action' => 'index'))") !== false);
+		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}
 
 /**
