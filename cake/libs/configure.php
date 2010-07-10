@@ -963,7 +963,7 @@ class App {
 				if (!class_exists('Folder')) {
 					require LIBS . 'folder.php';
 				}
-				$Folder =& new Folder();
+				$Folder = new Folder();
 				$directories = $Folder->tree($path, array('.svn', '.git', 'CVS', 'tests', 'templates'), 'dir');
 				sort($directories);
 				self::$__paths[$path] = $directories;
@@ -1197,7 +1197,7 @@ class App {
 			require LIBS . 'folder.php';
 		}
 		$items = array();
-		$Folder =& new Folder($path);
+		$Folder = new Folder($path);
 		$contents = $Folder->read(false, true);
 
 		if (is_array($contents)) {
