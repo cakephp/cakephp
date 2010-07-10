@@ -112,6 +112,10 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testListAll() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
 		$this->_useMockedOut();
 
 		$this->Task->expects($this->at(1))->method('out')->with('1. Article');
@@ -153,8 +157,12 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testGetNameValidOption() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(1));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(4));
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+	
+		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
 
 		$result = $this->Task->getName('test_suite');
 		$expected = 'Article';
@@ -171,8 +179,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testGetNameWithOutOfBoundsOption() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(10));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(1));
+		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(10, 1));
 		$this->Task->expects($this->once())->method('err');
 
 		$result = $this->Task->getName('test_suite');
@@ -196,8 +203,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testGetTableNameCustom() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('my_table'));
+		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
 		$result = $this->Task->getTable('Article', 'test_suite');
 		$expected = 'my_table';
 		$this->assertEqual($result, $expected);
@@ -287,8 +293,8 @@ class ModelTaskTest extends CakeTestCase {
 	function testInteractiveFieldValidationWithRegexp() {
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('/^[a-z]{0,9}$/'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('/^[a-z]{0,9}$/', 'n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
 		$expected = array('a_z_0_9' => '/^[a-z]{0,9}$/');
@@ -402,8 +408,9 @@ class ModelTaskTest extends CakeTestCase {
 			'id' => array(), 'tagname' => array(), 'body' => array(),
 			'created' => array(), 'modified' => array()
 		);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(2));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('y', 2));
+
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertEqual($result, 'tagname');
 	}
@@ -501,6 +508,11 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testHasAndBelongsToManyGeneration() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
 		$this->Task->connection = 'test_suite';
 		$this->Task->listAll();
@@ -831,6 +843,11 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteIntoAll() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
@@ -871,6 +888,11 @@ STRINGEND;
  * @return void
  */
 	function testSkipTablesAndAll() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
@@ -905,6 +927,11 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteIntoInteractive() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		$this->Task->interactive = true;
@@ -948,8 +975,9 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_stop');
 		$this->Task->expects($this->once())->method('err');
 
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('Foobar'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls('Foobar', 'y'));
+
 		$this->Task->execute();
 	}
 }
