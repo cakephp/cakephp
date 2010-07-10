@@ -113,10 +113,14 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test ListAll
  *
- * @fixme this one has problems with test suites
  * @return void
  */
 	public function testListAll() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(1))->method('out')->with('1. BakeArticles');
@@ -138,17 +142,21 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * Test that getName interacts with the user and returns the controller name.
  *
- * @fixme this one has problems with test suites
  * @return void
  */
 	public function testGetNameValidIndex() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(3));
+		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(1));
+		
 		$result = $this->Task->getName('test_suite');
 		$expected = 'BakeComments';
 		$this->assertEqual($result, $expected);
-		
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(1));
+	
 		$result = $this->Task->getName('test_suite');
 		$expected = 'BakeArticles';
 		$this->assertEqual($result, $expected);
@@ -157,13 +165,13 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test getting invalid indexes.
  *
- * @fixme this one has problems with test suites
  * @return void
  */
 	function testGetNameInvalidIndex() {
 		$this->Task->interactive = true;
-		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(10));
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue('q'));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(50, 'q'));
+
 		$this->Task->expects($this->once())->method('err');
 		$this->Task->expects($this->once())->method('_stop');
 
@@ -421,10 +429,14 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test Interactive mode.
  *
- * @fixme this one has problems with test suites
  * @return void
  */
 	public function testInteractive() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		
@@ -452,10 +464,14 @@ class ControllerTaskTest extends CakeTestCase {
 /**
  * test Interactive mode.
  *
- * @fixme this one has problems with test suites
  * @return void
  */
 	function testInteractiveAdminMethodsNotInteractive() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = true;
 		$this->Task->path = '/my/path/';
