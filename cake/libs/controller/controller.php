@@ -347,13 +347,6 @@ class Controller extends Object {
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Controller');
 
-		foreach ($childMethods as $key => $value) {
-			$childMethods[$key] = strtolower($value);
-		}
-
-		foreach ($parentMethods as $key => $value) {
-			$parentMethods[$key] = strtolower($value);
-		}
 		$this->methods = array_diff($childMethods, $parentMethods);
 		parent::__construct();
 	}
