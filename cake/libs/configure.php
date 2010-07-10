@@ -615,7 +615,7 @@ class App {
 				$merge = array_merge($merge, (array)$core[$type]);
 			}
 
-			if (empty($_this->{$type}) || empty($paths)) {
+			if (empty(self::${$type}) || empty($paths)) {
 				self::${$type} = $default;
 			}
 

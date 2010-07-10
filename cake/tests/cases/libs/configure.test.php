@@ -638,7 +638,6 @@ class AppImportTest extends CakeTestCase {
 		$file = App::import('File', 'NoFile', false, array(), TEST_CAKE_CORE_INCLUDE_PATH  . 'config' . DS . 'cake' . DS . 'config.php');
 		$this->assertFalse($file);
 	}
-	// import($type = null, $name = null, $parent = true, $file = null, $search = array(), $return = false) {
 
 /**
  * testFileLoadingWithArray method
