@@ -383,6 +383,7 @@ class Configure {
 				}
 				Cache::config('default');
 			}
+			App::init();
 			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {
 				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
