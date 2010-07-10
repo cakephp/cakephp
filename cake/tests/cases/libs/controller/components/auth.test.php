@@ -833,7 +833,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->allow('*');
-		$this->Controller->Auth->deny('add', 'camelcase');
+		$this->Controller->Auth->deny('add', 'camelCase');
 
 		$this->Controller->request['action'] = 'delete';
 		$this->assertTrue($this->Controller->Auth->startup($this->Controller));
@@ -841,14 +841,11 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->request['action'] = 'add';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
-		$this->Controller->request['action'] = 'Add';
-		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
-
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
 
 		$this->Controller->Auth->allow('*');
-		$this->Controller->Auth->deny(array('add', 'camelcase'));
+		$this->Controller->Auth->deny(array('add', 'camelCase'));
 
 		$this->Controller->request['action'] = 'camelCase';
 		$this->assertFalse($this->Controller->Auth->startup($this->Controller));
@@ -948,7 +945,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->allow('action_name', 'anotherAction');
-		$this->assertEqual($this->Controller->Auth->allowedActions, array('action_name', 'anotheraction'));
+		$this->assertEqual($this->Controller->Auth->allowedActions, array('action_name', 'anotherAction'));
 	}
 
 /**
