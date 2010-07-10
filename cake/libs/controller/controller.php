@@ -342,7 +342,7 @@ class Controller extends Object {
 		}
 		$this->modelClass = Inflector::classify($this->name);
 		$this->modelKey = Inflector::underscore($this->modelClass);
-		$this->Component =& new Component();
+		$this->Component = new Component();
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Controller');
@@ -787,7 +787,7 @@ class Controller extends Object {
 		$errors = array();
 		foreach ($objects as $object) {
 			if (isset($this->{$object->alias})) {
-				$object =& $this->{$object->alias};
+				$object = $this->{$object->alias};
 			}
 			$object->set($object->data);
 			$errors = array_merge($errors, $object->invalidFields());
@@ -819,11 +819,7 @@ class Controller extends Object {
 
 		$this->params['models'] = $this->modelNames;
 
-		if (Configure::read('debug') > 2) {
-			$this->set('cakeDebug', $this);
-		}
-
-		$View =& new $viewClass($this);
+		$View = new $viewClass($this);
 
 		if (!empty($this->modelNames)) {
 			$models = array();
@@ -843,7 +839,7 @@ class Controller extends Object {
 			$models = array_diff(ClassRegistry::keys(), $models);
 			foreach ($models as $currentModel) {
 				if (ClassRegistry::isKeySet($currentModel)) {
-					$currentObject =& ClassRegistry::getObject($currentModel);
+					$currentObject = ClassRegistry::getObject($currentModel);
 					if (is_a($currentObject, 'Model') && !empty($currentObject->validationErrors)) {
 						$View->validationErrors[Inflector::camelize($currentModel)] =&
 							$currentObject->validationErrors;
@@ -1006,22 +1002,22 @@ class Controller extends Object {
 			}
 
 			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object =& $this->{$object}->{$assoc};
+				$object = $this->{$object}->{$assoc};
 			} elseif (
 				$assoc && isset($this->{$this->modelClass}) &&
 				isset($this->{$this->modelClass}->{$assoc}
 			)) {
-				$object =& $this->{$this->modelClass}->{$assoc};
+				$object = $this->{$this->modelClass}->{$assoc};
 			} elseif (isset($this->{$object})) {
-				$object =& $this->{$object};
+				$object = $this->{$object};
 			} elseif (
 				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
 			)) {
-				$object =& $this->{$this->modelClass}->{$object};
+				$object = $this->{$this->modelClass}->{$object};
 			}
 		} elseif (empty($object) || $object === null) {
 			if (isset($this->{$this->modelClass})) {
-				$object =& $this->{$this->modelClass};
+				$object = $this->{$this->modelClass};
 			} else {
 				$className = null;
 				$name = $this->uses[0];
@@ -1029,9 +1025,9 @@ class Controller extends Object {
 					list($name, $className) = explode('.', $this->uses[0]);
 				}
 				if ($className) {
-					$object =& $this->{$className};
+					$object = $this->{$className};
 				} else {
-					$object =& $this->{$name};
+					$object = $this->{$name};
 				}
 			}
 		}
