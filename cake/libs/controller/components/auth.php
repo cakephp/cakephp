@@ -314,7 +314,7 @@ class AuthComponent extends Object {
 		}
 
 		$methods = array_flip($controller->methods);
-		$action = strtolower($controller->params['action']);
+		$action = $controller->params['action'];
 		$isMissingAction = (
 			$controller->scaffold === false &&
 			!isset($methods[$action])
@@ -337,7 +337,7 @@ class AuthComponent extends Object {
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
-		$allowedActions = array_map('strtolower', $this->allowedActions);
+		$allowedActions = $this->allowedActions;
 		$isAllowed = (
 			$this->allowedActions == array('*') ||
 			in_array($action, $allowedActions)
@@ -612,7 +612,7 @@ class AuthComponent extends Object {
 			if (isset($args[0]) && is_array($args[0])) {
 				$args = $args[0];
 			}
-			$this->allowedActions = array_merge($this->allowedActions, array_map('strtolower', $args));
+			$this->allowedActions = array_merge($this->allowedActions, $args);
 		}
 	}
 
@@ -632,7 +632,7 @@ class AuthComponent extends Object {
 			$args = $args[0];
 		}
 		foreach ($args as $arg) {
-			$i = array_search(strtolower($arg), $this->allowedActions);
+			$i = array_search($arg, $this->allowedActions);
 			if (is_int($i)) {
 				unset($this->allowedActions[$i]);
 			}
