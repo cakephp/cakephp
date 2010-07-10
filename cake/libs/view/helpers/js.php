@@ -822,7 +822,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options for the effect.
  * @return string completed string with effect.
  */
-	abstract public function effect($name, $options);
+	abstract public function effect($name, $options = array());
 
 /**
  * Make an XHR request
