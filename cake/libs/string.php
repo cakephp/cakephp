@@ -32,7 +32,6 @@ class String {
  *
  * @see http://www.ietf.org/rfc/rfc4122.txt
  * @return RFC 4122 UUID
- * @static
  */
 	public static function uuid() {
 		$node = env('SERVER_ADDR');
@@ -111,8 +110,6 @@ class String {
  * @param string $leftBound The left boundary to ignore separators in.
  * @param string $rightBound The right boundary to ignore separators in.
  * @return array Array of tokens in $data.
- * @access public
- * @static
  */
 	public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')') {
 		if (empty($data) || is_array($data)) {
@@ -202,8 +199,6 @@ class String {
  *     to be replaced with val
  * @param string $options An array of options, see description above
  * @return string
- * @access public
- * @static
  */
 	public static function insert($str, $data, $options = array()) {
 		$defaults = array(
@@ -268,8 +263,6 @@ class String {
  * @param string $str
  * @param string $options
  * @return string
- * @access public
- * @static
  * @see String::insert()
  */
 	public static function cleanInsert($str, $options) {

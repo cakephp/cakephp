@@ -236,7 +236,7 @@ class Helper extends Object {
  */
 	public function assetTimestamp($path) {
 		$timestampEnabled = (
-			(Configure::read('Asset.timestamp') === true && Configure::read() > 0) ||
+			(Configure::read('Asset.timestamp') === true && Configure::read('debug') > 0) ||
 			Configure::read('Asset.timestamp') === 'force'
 		);
 		if (strpos($path, '?') === false && $timestampEnabled) {

@@ -389,7 +389,7 @@ class View extends Object {
 		}
 		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
 
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			return "Not Found: " . $file;
 		}
 	}
@@ -524,7 +524,7 @@ class View extends Object {
 		ob_start();
 		include ($filename);
 
-		if (Configure::read() > 0 && $this->layout != 'xml') {
+		if (Configure::read('debug') > 0 && $this->layout != 'xml') {
 			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
 		}
 		$out = ob_get_clean();
@@ -707,7 +707,7 @@ class View extends Object {
 		extract($___dataForView, EXTR_SKIP);
 		ob_start();
 
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			include ($___viewFn);
 		} else {
 			@include ($___viewFn);

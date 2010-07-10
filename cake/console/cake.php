@@ -153,7 +153,6 @@ class ShellDispatcher {
 		}
 
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-			define('PHP5', (PHP_VERSION >= 5));
 			define('DS', DIRECTORY_SEPARATOR);
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 			define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
@@ -265,7 +264,7 @@ class ShellDispatcher {
 			}
 		}
 
-		Configure::getInstance(file_exists(CONFIGS . 'bootstrap.php'));
+		Configure::bootstrap(file_exists(CONFIGS . 'bootstrap.php'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';

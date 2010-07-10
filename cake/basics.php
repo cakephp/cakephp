@@ -91,7 +91,7 @@
  * @link http://book.cakephp.org/view/1128/debug
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			if ($showFrom) {
 				$calledFrom = debug_backtrace();
 				echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
@@ -197,7 +197,7 @@ if (!function_exists('sortByKey')) {
  * @link http://book.cakephp.org/view/1136/pr
  */
 	function pr($var) {
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			echo '<pre>';
 			print_r($var);
 			echo '</pre>';

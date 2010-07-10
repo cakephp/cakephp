@@ -37,8 +37,6 @@ class Sanitize {
  * @param string $string String to sanitize
  * @param array $allowed An array of additional characters that are not to be removed.
  * @return string Sanitized string
- * @access public
- * @static
  */
 	public static function paranoid($string, $allowed = array()) {
 		$allow = null;
@@ -65,8 +63,6 @@ class Sanitize {
  * @param string $string String to sanitize
  * @param string $connection Database connection being used
  * @return string SQL safe string
- * @access public
- * @static
  */
 	public static function escape($string, $connection = 'default') {
 		$db =& ConnectionManager::getDataSource($connection);
@@ -93,8 +89,6 @@ class Sanitize {
  * @param string $string String from where to strip tags
  * @param array $options Array of options to use.
  * @return string Sanitized string
- * @access public
- * @static
  */
 	public static function html($string, $options = array()) {
 		static $defaultCharset = false;
@@ -124,8 +118,6 @@ class Sanitize {
  *
  * @param string $str String to sanitize
  * @return string whitespace sanitized string
- * @access public
- * @static
  */
 	public static function stripWhitespace($str) {
 		$r = preg_replace('/[\n\r\t]+/', '', $str);
@@ -137,8 +129,6 @@ class Sanitize {
  *
  * @param string $str String to sanitize
  * @return string Sting with images stripped.
- * @access public
- * @static
  */
 	public static function stripImages($str) {
 		$str = preg_replace('/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i', '$1$3$5<br />', $str);
@@ -152,8 +142,6 @@ class Sanitize {
  *
  * @param string $str String to sanitize
  * @return string String with <script>, <style>, <link> elements removed.
- * @access public
- * @static
  */
 	public static function stripScripts($str) {
 		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/is', '', $str);
@@ -183,8 +171,6 @@ class Sanitize {
  * @param string $str String to sanitize
  * @param string $tag Tag to remove (add more parameters as needed)
  * @return string sanitized String
- * @access public
- * @static
  */
 	public static function stripTags() {
 		$params = func_get_args();
@@ -214,8 +200,6 @@ class Sanitize {
  * @param mixed $data Data to sanitize
  * @param mixed $options If string, DB connection being used, otherwise set of options
  * @return mixed Sanitized data
- * @access public
- * @static
  */
 	public static function clean($data, $options = array()) {
 		if (empty($data)) {
@@ -278,8 +262,6 @@ class Sanitize {
  * Formats column data from definition in DBO's $columns array
  *
  * @param Model $model The model containing the data to be formatted
- * @access public
- * @static
  */
 	public static function formatColumns(&$model) {
 		foreach ($model->data as $name => $values) {

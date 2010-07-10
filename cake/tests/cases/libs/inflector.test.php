@@ -43,17 +43,6 @@ class InflectorTest extends CakeTestCase {
 	public $Inflector = null;
 
 /**
- * testInstantiation method
- *
- * @access public
- * @return void
- */
-	function testInstantiation() {
-		$Inflector =& Inflector::getInstance();
-		$this->assertEqual(Inflector::getInstance(), $Inflector);
-	}
-
-/**
  * testInflectingSingulars method
  *
  * @access public
@@ -330,19 +319,6 @@ class InflectorTest extends CakeTestCase {
 	}
 
 /**
- * This test if run in isolation should not cause errors in PHP4.
- *
- * @return void
- */
-	function testRulesNoErrorPHP4() {
-		Inflector::rules('plural', array(
-			'rules' => array(),
-			'irregular' => array(),
-			'uninflected' => array('pays')
-		));
-	}
-
-/**
  * testCustomPluralRule method
  *
  * @access public
@@ -422,12 +398,12 @@ class InflectorTest extends CakeTestCase {
 		Inflector::rules('singular', array(
 			'rules' => array('/(.*)nas$/i' => '\1zzz')
 		));
-		$this->assertEqual(Inflector::singularize('Bananas'), 'Banazzz', 'Was inflected with old rules. %s');
+		$this->assertEquals('Banazzz', Inflector::singularize('Bananas'), 'Was inflected with old rules.');
 
 		Inflector::rules('plural', array(
 			'rules' => array('/(.*)na$/i' => '\1zzz')
 		));
-		$this->assertEqual(Inflector::pluralize('Banana'), 'Banazzz', 'Was inflected with old rules. %s');
+		$this->assertEqual('Banazzz', Inflector::pluralize('Banana'), 'Was inflected with old rules.');
 	}
 
 /**

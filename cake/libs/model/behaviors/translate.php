@@ -374,11 +374,7 @@ class TranslateBehavior extends ModelBehavior {
 				$className = $model->translateModel;
 			}
 
-			if (PHP5) {
-				$this->runtime[$model->alias]['model'] = ClassRegistry::init($className, 'Model');
-			} else {
-				$this->runtime[$model->alias]['model'] =& ClassRegistry::init($className, 'Model');
-			}
+			$this->runtime[$model->alias]['model'] = ClassRegistry::init($className, 'Model');
 		}
 		if (!empty($model->translateTable) && $model->translateTable !== $this->runtime[$model->alias]['model']->useTable) {
 			$this->runtime[$model->alias]['model']->setSource($model->translateTable);

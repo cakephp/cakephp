@@ -70,7 +70,6 @@ class CakeLog {
  * Each stream represents a callable that will be called when write() is called.
  *
  * @var array
- * @access protected
  */
 	protected static $_streams = array();
 
@@ -99,9 +98,8 @@ class CakeLog {
  * @param array $config Array of configuration information for the logger
  * @return boolean success of configuration.
  * @throws Exception
- * @static
  */
-	function config($key, $config) {
+	static function config($key, $config) {
 		if (empty($config['engine'])) {
 			throw new Exception(__('Missing logger classname'));
 		}
@@ -145,8 +143,6 @@ class CakeLog {
  * Returns the keynames of the currently active streams
  *
  * @return array Array of configured log streams.
- * @access public
- * @static
  */
 	public static function configured() {
 		return array_keys(self::$_streams);
@@ -158,8 +154,6 @@ class CakeLog {
  *
  * @param string $keyname Key name of a configured stream to remove.
  * @return void
- * @access public
- * @static
  */
 	public static function drop($streamName) {
 		unset(self::$_streams[$streamName]);
@@ -200,8 +194,6 @@ class CakeLog {
  * @param string $type Type of message being written
  * @param string $message Message content to log
  * @return boolean Success
- * @access public
- * @static
  */
 	public static function write($type, $message) {
 		if (!defined('LOG_ERROR')) {

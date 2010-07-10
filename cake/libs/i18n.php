@@ -35,7 +35,6 @@ class I18n {
  * Instance of the I10n class for localization
  *
  * @var I10n
- * @access public
  */
 	public $l10n = null;
 
@@ -43,7 +42,6 @@ class I18n {
  * Current domain of translation
  *
  * @var string
- * @access public
  */
 	public $domain = null;
 
@@ -51,7 +49,6 @@ class I18n {
  * Current category of translation
  *
  * @var string
- * @access public
  */
 	public $category = 'LC_MESSAGES';
 
@@ -59,7 +56,6 @@ class I18n {
  * Current language used for translations
  *
  * @var string
- * @access private
  */
 	private $__lang = null;
 
@@ -67,7 +63,6 @@ class I18n {
  * Translation strings for a specific domain read from the .mo or .po files
  *
  * @var array
- * @access private
  */
 	private $__domains = array();
 
@@ -76,7 +71,6 @@ class I18n {
  * If a translation file is found it is set to false again
  *
  * @var boolean
- * @access private
  */
 	private $__noLocale = false;
 
@@ -84,7 +78,6 @@ class I18n {
  * Determine if $__domains cache should be wrote
  *
  * @var boolean
- * @access private
  */
 	private $__cache = false;
 
@@ -93,7 +86,6 @@ class I18n {
  * If a translation file is found it is set to false again
  *
  * @var array
- * @access private
  */
 	private $__categories = array(
 		 'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
@@ -104,7 +96,7 @@ class I18n {
  *
  * @return object I18n
  */
-	public function &getInstance() {
+	public static function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] =& new I18n();
@@ -124,7 +116,7 @@ class I18n {
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @return string translated string.
  */
-	public function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
+	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
 		$_this =& I18n::getInstance();
 
 		if (strpos($singular, "\r\n") !== false) {
@@ -204,9 +196,8 @@ class I18n {
  * @param string $header Type
  * @param integrer $n Number
  * @return integer plural match
- * @access private
  */
-	function __pluralGuess($header, $n) {
+	private function __pluralGuess($header, $n) {
 		if (!is_string($header) || $header === "nplurals=1;plural=0;" || !isset($header[0])) {
 			return 0;
 		}
@@ -253,9 +244,8 @@ class I18n {
  *
  * @param string $domain Domain to bind
  * @return string Domain binded
- * @access private
  */
-	function __bindTextDomain($domain) {
+	private function __bindTextDomain($domain) {
 		$this->__noLocale = true;
 		$core = true;
 		$merge = array();
@@ -343,9 +333,8 @@ class I18n {
  *
  * @param resource $file Binary .mo file to load
  * @param string $domain Domain where to load file in
- * @access private
  */
-	function __loadMo($file, $domain) {
+	private function __loadMo($file, $domain) {
 		$data = file_get_contents($file);
 
 		if ($data) {
@@ -384,9 +373,8 @@ class I18n {
  * @param resource $file Text .po file to load
  * @param string $domain Domain to load file in
  * @return array Binded domain elements
- * @access private
  */
-	function __loadPo($file, $domain) {
+	private function __loadPo($file, $domain) {
 		$type = 0;
 		$translations = array();
 		$translationKey = "";
@@ -455,9 +443,8 @@ class I18n {
  * @param resource $file file handler
  * @param string $domain Domain where locale definitions will be stored
  * @return void
- * @access private
  */
-	function __loadLocaleDefinition($file, $domain = null) {
+	private function __loadLocaleDefinition($file, $domain = null) {
 		$comment = '#';
 		$escape = '\\';
 		$currentToken = false;
@@ -516,9 +503,8 @@ class I18n {
  *
  * @param string $string Symbol to be parsed
  * @return string parsed symbol
- * @access private
  */
-	function __parseLiteralValue($string) {
+	private function __parseLiteralValue($string) {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->__escape . 'x') {
 			$delimiter = $this->__escape . 'x';
@@ -548,9 +534,8 @@ class I18n {
  * @param string $format Format to be translated
  * @param string $domain Domain where format is stored
  * @return mixed translated format string if only value or array of translated strings for corresponding format.
- * @access private
  */
-	function __translateTime($format, $domain) {
+	private function __translateTime($format, $domain) {
 		if (!empty($this->__domains['LC_TIME'][$this->__lang][$domain][$format])) {
 			if (($trans = $this->__domains[$this->category][$this->__lang][$domain][$format])) {
 				return $trans;
@@ -563,7 +548,6 @@ class I18n {
  * Object destructor
  *
  * Write cache file if changes have been made to the $__map or $__paths
- * @access private
  */
 	function __destruct() {
 		if ($this->__cache) {

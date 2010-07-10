@@ -134,7 +134,7 @@ class DboSource extends DataSource {
 			$config['prefix'] = '';
 		}
 		parent::__construct($config);
-		$this->fullDebug = Configure::read() > 1;
+		$this->fullDebug = Configure::read('debug') > 1;
 		if (!$this->enabled()) {
 			return false;
 		}
@@ -651,10 +651,10 @@ class DboSource extends DataSource {
  */
 	public function showQuery($sql) {
 		$error = $this->error;
-		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read() > 1) {
+		if (strlen($sql) > 200 && !$this->fullDebug && Configure::read('debug') > 1) {
 			$sql = substr($sql, 0, 200) . '[...]';
 		}
-		if (Configure::read() > 0) {
+		if (Configure::read('debug') > 0) {
 			$out = null;
 			if ($error) {
 				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
@@ -889,7 +889,7 @@ class DboSource extends DataSource {
 	public function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
-				if (Configure::read() > 0) {
+				if (Configure::read('debug') > 0) {
 					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:'), $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;

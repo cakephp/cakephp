@@ -157,15 +157,6 @@ class Shell extends Object {
 		ClassRegistry::addObject($this->name, $this);
 		ClassRegistry::map($this->name, $this->alias);
 
-		if (!PHP5 && isset($this->args[0])) {
-			if (strpos($this->name, strtolower(Inflector::camelize($this->args[0]))) !== false) {
-				$dispatch->shiftArgs();
-			}
-			if (strtolower($this->command) == strtolower(Inflector::variable($this->args[0])) && method_exists($this, $this->command)) {
-				$dispatch->shiftArgs();
-			}
-		}
-
 		$this->Dispatch =& $dispatch;
 	}
 
@@ -248,11 +239,7 @@ class Shell extends Object {
 
 			foreach ($uses as $modelClass) {
 				list($plugin, $modelClass) = pluginSplit($modelClass, true);
-				if (PHP5) {
-					$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
-				} else {
-					$this->{$modelClass} =& ClassRegistry::init($plugin . $modelClass);
-				}
+				$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
 			}
 			return true;
 		}
@@ -288,23 +275,12 @@ class Shell extends Object {
 				}
 			}
 			$taskClassCheck = $taskClass;
-			if (!PHP5) {
-				$taskClassCheck = strtolower($taskClass);
-			}
 			if (ClassRegistry::isKeySet($taskClassCheck)) {
 				$this->taskNames[] = $taskName;
-				if (!PHP5) {
-					$this->{$taskName} =& ClassRegistry::getObject($taskClassCheck);
-				} else {
-					$this->{$taskName} = ClassRegistry::getObject($taskClassCheck);
-				}
+				$this->{$taskName} = ClassRegistry::getObject($taskClassCheck);
 			} else {
 				$this->taskNames[] = $taskName;
-				if (!PHP5) {
-					$this->{$taskName} =& new $taskClass($this->Dispatch);
-				} else {
-					$this->{$taskName} = new $taskClass($this->Dispatch);
-				}
+				$this->{$taskName} = new $taskClass($this->Dispatch);
 			}
 
 			if (!isset($this->{$taskName})) {

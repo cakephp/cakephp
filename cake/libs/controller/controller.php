@@ -361,13 +361,6 @@ class Controller extends Object {
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Controller');
 
-		foreach ($childMethods as $key => $value) {
-			$childMethods[$key] = strtolower($value);
-		}
-
-		foreach ($parentMethods as $key => $value) {
-			$parentMethods[$key] = strtolower($value);
-		}
 		$this->methods = array_diff($childMethods, $parentMethods);
 
 		if ($request instanceof CakeRequest) {
@@ -842,7 +835,7 @@ class Controller extends Object {
 		$errors = array();
 		foreach ($objects as $object) {
 			if (isset($this->{$object->alias})) {
-				$object =& $this->{$object->alias};
+				$object = $this->{$object->alias};
 			}
 			$object->set($object->data);
 			$errors = array_merge($errors, $object->invalidFields());
@@ -873,10 +866,6 @@ class Controller extends Object {
 		$this->Component->triggerCallback('beforeRender', $this);
 
 		$this->params['models'] = $this->modelNames;
-
-		if (Configure::read() > 2) {
-			$this->set('cakeDebug', $this);
-		}
 
 		$View = new $viewClass($this);
 
