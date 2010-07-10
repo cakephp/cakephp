@@ -167,7 +167,7 @@ class Dispatcher {
 
 		$methods = array_flip($controller->methods);
 
-		if (!isset($methods[strtolower($request['action'])])) {
+		if (!isset($methods[$request->params['action']])) {
 			if ($controller->scaffold !== false) {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $request);
