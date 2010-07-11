@@ -618,7 +618,7 @@ class CakeSession {
  * Restarts this session.
  *
  */
-	public function renew() {
+	public static function renew() {
 		self::__regenerateId();
 	}
 
