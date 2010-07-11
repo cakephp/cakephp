@@ -98,14 +98,6 @@ class CakeSession {
 	public static $sessionTime = false;
 
 /**
- * The number of seconds to set for session.cookie_lifetime.  0 means
- * at browser close.
- *
- * @var integer
- */
-	var $cookieLifeTime = false;
-
-/**
  * Keeps track of keys to watch for writes on
  *
  * @var array
@@ -444,7 +436,7 @@ class CakeSession {
  *
  * @return void
  */
-	public function destroy() {
+	public static function destroy() {
 		$_SESSION = null;
 		self::$id = null;
 		self::init(self::$path);
