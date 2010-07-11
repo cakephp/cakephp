@@ -207,7 +207,7 @@ class AjaxHelper extends AppHelper {
 			$options['url'] = $href;
 		}
 
-		if (isset($confirm)) {
+		if (!empty($confirm)) {
 			$options['confirm'] = $confirm;
 			unset($confirm);
 		}
