@@ -6408,6 +6408,18 @@ class ModelReadTest extends BaseModelTest {
 			4 => 'garrett (CakePHP)'
 		);
 		$this->assertEqual($result, $expected);
+
+		$TestModel =& new Article();
+		$TestModel->displayField = 'title';
+		$result = $TestModel->find('list', array(
+			'conditions' => array('User.user' => 'mariano'),
+			'recursive' => 0
+		));
+		$expected = array(
+			1 => 'First Article',
+			3 => 'Third Article'
+		);
+		$this->assertEqual($result, $expected);
 	}
 
 /**
