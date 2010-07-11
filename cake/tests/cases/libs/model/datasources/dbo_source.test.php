@@ -1339,6 +1339,7 @@ class DboSourceTest extends CakeTestCase {
 	function endTest() {
 		unset($this->Model);
 		Configure::write('debug', $this->debug);
+		ClassRegistry::flush();
 		unset($this->debug);
 	}
 
@@ -4440,5 +4441,20 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'tbl_articles');
+	}
+
+/**
+ * test that read() only calls queryAssociation on db objects when the method is defined.
+ *
+ * @return void
+ */
+	function testReadOnlyCallingQueryAssociationWhenDefined() {
+		ConnectionManager::create('test_no_queryAssociation', array(
+			'datasource' => 'data'
+		));
+		$Article =& ClassRegistry::init('Article');
+		$Article->Comment->useDbConfig = 'test_no_queryAssociation';
+		$result = $Article->find('all');
+		$this->assertTrue(is_array($result));
 	}
 }
