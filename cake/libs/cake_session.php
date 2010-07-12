@@ -207,7 +207,7 @@ class CakeSession {
 		}
 		session_write_close();
 		self::__initSession();
-		self::$_started = self::_startSession();
+		self::_startSession();
 		return self::started();
 	}
 
@@ -217,10 +217,7 @@ class CakeSession {
  * @return boolean True if session has been started.
  */
 	public static function started() {
-		if (isset($_SESSION) && self::$_started) {
-			return true;
-		}
-		return false;
+		return isset($_SESSION) && !empty(session_id());
 	}
 
 /**
