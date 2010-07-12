@@ -215,7 +215,7 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
 
-		Cache::config('default', array('engine' => 'File', 'path' => CACHE . 'views'));
+		Cache::config('default', array('engine' => 'File', 'path' => CACHE . 'views' . DS));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('controller_view_1', $data);
