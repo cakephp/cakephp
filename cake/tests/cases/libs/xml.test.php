@@ -114,6 +114,24 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testSerializeCapsWithoutSlug method
+ *
+ * @access public
+ * @return void
+ */
+	function testSerializeCapsWithoutSlug() {
+		$data = array(
+			'USERS' => array(
+				array('USER' => array('ID' => 1)),
+				array('USER' => array('ID' => 2))
+			)
+		);
+		$result =& new Xml($data, array('format' => 'tags', 'slug' => false));
+		$expected = '<USERS><USER><ID>1</ID></USER><USER><ID>2</ID></USER></USERS>';
+		$this->assertIdentical($result->toString(), $expected);
+	}
+
+/**
  * test serialization of boolean and null values.  false = 0, true = 1, null = ''
  *
  * @return void
