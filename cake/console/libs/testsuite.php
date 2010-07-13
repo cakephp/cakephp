@@ -42,8 +42,10 @@ class TestSuiteShell extends Shell {
 		} else {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 		}
+
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 	}
 
 /**
@@ -111,6 +113,65 @@ class TestSuiteShell extends Shell {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
 		$testCli = new TestRunner($this->parseArgs());
 		$testCli->run($this->runnerOptions());
+	}
+
+/**
+ * Shows a list of available test cases and gives the option to run one of them
+ *
+ * @return void
+ */
+	public function available() {
+		$params = $this->parseArgs();
+		$testCases = TestManager::getTestCaseList($params);
+		$app = $params['app'];
+		$plugin = $params['plugin'];
+
+		$title = "Core Test Cases:";
+		$category = 'core';
+		if ($app) {
+			$title = "App Test Cases:";
+			$category = 'app';
+		} elseif ($plugin) {
+			$title = Inflector::humanize($plugin) . " Test Cases:";
+			$category = $plugin;
+		}
+		
+		if (empty($testCases)) {
+			$this->out(__('No test cases available'));
+			return;
+		}
+
+		$this->out($title);
+		$i = 1;
+		$cases = array();
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$case = explode(DS, str_replace('.test.php', '', $testCase));
+			$case[count($case) - 1] = Inflector::camelize($case[count($case) - 1]);
+			$case = implode('/', $case);
+			$this->out("[$i] $case");
+			$cases[$i] = $case;
+			$i++;
+		}
+
+		while ($choice = $this->in(__('What test case would you like to run?'), null, 'q')) {
+			if (is_numeric($choice)  && isset($cases[$choice])) {
+				$this->args[0] = $category;
+				$this->args[1] = $cases[$choice];
+				$this->main();
+				break;
+			}
+
+			if (is_string($choice) && in_array($choice, $cases)) {
+				$this->args[0] = $category;
+				$this->args[1] = $choice;
+				$this->main();
+				break;
+			}
+
+			if ($choice == 'q') {
+				break;
+			}
+		}
 	}
 
 /**

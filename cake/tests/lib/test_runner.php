@@ -20,7 +20,7 @@
 
 
 require 'PHPUnit/TextUI/Command.php';
-require 'test_manager.php';
+require_once 'test_manager.php';
 
 PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 
