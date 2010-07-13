@@ -52,13 +52,13 @@ class OptionEngineHelper extends JsBaseEngineHelper {
 	function event($type, $callback, $options = array()) {}
 	function domReady($functionBody) {}
 	function each($callback) {}
-	function effect($name, $options) {}
+	function effect($name, $options = array()) {}
 	function request($url, $options = array()) {}
 	function drag($options = array()) {}
 	function drop($options = array()) {}
-	function sortable() {}
-	function slider() {}
-	function serializeForm() {}
+	function sortable($options = array()) {}
+	function slider($options = array()) {}
+	function serializeForm($options = array()) {}
 }
 
 /**

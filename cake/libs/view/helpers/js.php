@@ -912,7 +912,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @param array $options Array of options for the sortable. See above.
  * @return string Completed sortable script.
  */
-	abstract public function sortable();
+	abstract public function sortable($options = array());
 
 /**
  * Create a slider UI widget.  Comprised of a track and knob.
@@ -934,7 +934,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  *
  * @return string Completed slider script
  */
-	abstract public function slider();
+	abstract public function slider($options = array());
 /**
  * Serialize the form attached to $selector.
  * Pass `true` for $isForm if the current selection is a form element.
@@ -949,7 +949,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @param array $options options for serialization generation.
  * @return string completed form serialization script
  */
-	abstract public function serializeForm();
+	abstract public function serializeForm($options = array());
 
 /**
  * Parse an options assoc array into an Javascript object literal.
