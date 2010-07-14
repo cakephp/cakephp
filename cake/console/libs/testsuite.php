@@ -113,9 +113,20 @@ class TestSuiteShell extends Shell {
 			$this->available();
 		}
 
+		$this->run($args, $this->runnerOptions());
+	}
+
+/**
+ * Runs the test case from $runnerArgs
+ *
+ * @param array $runnerArgs list of arguments as obtained from parseArgs()
+ * @param array $options list of options as constructed by runnerOptions()
+ * @return void
+ */
+	protected function run($runnerArgs, $options = array()) {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
-		$testCli = new TestRunner($args);
-		$testCli->run($this->runnerOptions());
+		$testCli = new TestRunner($runnerArgs);
+		$testCli->run($options);
 	}
 
 /**
@@ -140,8 +151,9 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (empty($testCases)) {
-			$this->out(__('No test cases available'));
-			return;
+			$this->out(__("No test cases available \n\n"));
+			$this->help();
+			$this->_stop();
 		}
 
 		$this->out($title);
@@ -160,14 +172,14 @@ class TestSuiteShell extends Shell {
 			if (is_numeric($choice)  && isset($cases[$choice])) {
 				$this->args[0] = $category;
 				$this->args[1] = $cases[$choice];
-				$this->main();
+				$this->run($this->parseArgs(), $this->runnerOptions());
 				break;
 			}
 
 			if (is_string($choice) && in_array($choice, $cases)) {
 				$this->args[0] = $category;
 				$this->args[1] = $choice;
-				$this->main();
+				$this->run($this->parseArgs(), $this->runnerOptions());
 				break;
 			}
 
