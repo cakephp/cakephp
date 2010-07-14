@@ -462,6 +462,35 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadModel method from a plugin controller
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadModelInPlugins() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		));
+		App::import('Controller', 'TestPlugin.TestPlugin');
+
+		$Controller = new TestPluginController();
+		$Controller->plugin = 'TestPlugin';
+		$Controller->uses = false;
+
+		$this->assertFalse(isset($Controller->Comment));
+
+		$result = $Controller->loadModel('Comment');
+		$this->assertTrue($result);
+		$this->assertType('Comment', $Controller->Comment);
+		$this->assertTrue(in_array('Comment', $Controller->modelNames));
+
+		ClassRegistry::flush();
+		unset($Controller);
+	}
+
+/**
  * testConstructClasses method
  *
  * @access public
