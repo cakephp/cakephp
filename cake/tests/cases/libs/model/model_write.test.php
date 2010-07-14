@@ -1483,7 +1483,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
-		$TestModel->hasBelongsToMany['JoinC']['unique'] = true;
+		$TestModel->hasBelongsToMany = array('JoinC' => array('unique' => true));
 		$data = array(
 			'JoinA' => array(
 				'id' => 1,

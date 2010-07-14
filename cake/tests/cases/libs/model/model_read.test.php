@@ -4571,7 +4571,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testBindMultipleTimes() {
-		$this->loadFixtures('User', 'Comment', 'Article');
+		$this->loadFixtures('User', 'Comment', 'Article', 'Tag', 'ArticlesTag');
 		$TestModel = new User();
 
 		$result = $TestModel->hasMany;
@@ -4587,6 +4587,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', array(
 			'fields' => 'User.id, User.user'
 		));
+
 		$expected = array(
 			array(
 				'User' => array(
@@ -4654,7 +4655,9 @@ class ModelReadTest extends BaseModelTest {
 			),
 			array(
 				'User' => array(
-					'id' => '4', 'user' => 'garrett'),
+					'id' => '4',
+					'user' => 'garrett'
+				),
 					'Items' => array(
 						array(
 							'id' => '2',
@@ -4730,6 +4733,7 @@ class ModelReadTest extends BaseModelTest {
 				),
 				'Items' => array()
 		));
+
 		$this->assertEqual($result, $expected);
 	}
 
