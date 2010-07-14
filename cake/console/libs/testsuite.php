@@ -74,11 +74,8 @@ class TestSuiteShell extends Shell {
 		if (isset($this->args[1])) {
 			$params['case'] = Inflector::underscore($this->args[1]);
 		}
-		if (isset($this->args[2]) && $this->args[2] == 'cov') {
-			$params['codeCoverage'] = true;
-		}
-		if (isset($this->params['coverage'])) {
-			$params['codeCoverage'] = true;
+		if (isset($this->params['filter'])) {
+			$this->params['-filter'] = $this->params['filter'];
 		}
 		return $params;
 	}
@@ -183,7 +180,7 @@ class TestSuiteShell extends Shell {
 		$this->out('CakePHP Testsuite:');
 		$this->hr();
 
-		$this->out('The CakPHP Testsuite allows you to run test cases from the comman line');
+		$this->out('The CakPHP Testsuite allows you to run test cases from the command line');
 		$this->out('If run with no command line arguments, a list of available core test cases will be shown');
 		$this->hr();
 
