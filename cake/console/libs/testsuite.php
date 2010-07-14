@@ -107,8 +107,14 @@ class TestSuiteShell extends Shell {
 		$this->out(__('CakePHP Test Shell'));
 		$this->hr();
 
+		$args = $this->parseArgs();
+
+		if (empty($args['case'])) {
+			$this->available();
+		}
+
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
-		$testCli = new TestRunner($this->parseArgs());
+		$testCli = new TestRunner($args);
 		$testCli->run($this->runnerOptions());
 	}
 
@@ -132,7 +138,7 @@ class TestSuiteShell extends Shell {
 			$title = Inflector::humanize($plugin) . " Test Cases:";
 			$category = $plugin;
 		}
-		
+
 		if (empty($testCases)) {
 			$this->out(__('No test cases available'));
 			return;
