@@ -74,11 +74,8 @@ class TestSuiteShell extends Shell {
 		if (isset($this->args[1])) {
 			$params['case'] = Inflector::underscore($this->args[1]);
 		}
-		if (isset($this->args[2]) && $this->args[2] == 'cov') {
-			$params['codeCoverage'] = true;
-		}
-		if (isset($this->params['coverage'])) {
-			$params['codeCoverage'] = true;
+		if (isset($this->params['filter'])) {
+			$this->params['-filter'] = $this->params['filter'];
 		}
 		return $params;
 	}
@@ -192,9 +189,6 @@ Params:
   -filter
 	The -filter option allows you supply a pattern that is used to match
 	test method names. This can be a regular expression.
-
-  -coverage
-	Enable code coverage for this run.
 
 Examples:
 ---------
