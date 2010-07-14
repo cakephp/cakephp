@@ -697,8 +697,8 @@ class Model extends Object {
 		if (!isset($this->{$assoc}) || $this->{$assoc}->name !== $className) {
 			$model = array('class' => $plugin . '.' . $className, 'alias' => $assoc);
 			$this->{$assoc} = ClassRegistry::init($model);
-			if (strpos($className, '.') !== false) {
-				ClassRegistry::addObject($className, $this->{$assoc});
+			if ($plugin) {
+				ClassRegistry::addObject($plugin . '.' . $className, $this->{$assoc});
 			}
 			if ($assoc) {
 				$this->tableToModel[$this->{$assoc}->table] = $assoc;

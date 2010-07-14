@@ -51,6 +51,37 @@ class DboMock extends DboSource {
 class ModelIntegrationTest extends BaseModelTest {
 
 /**
+ * testAssociationLazyLoading
+ *
+ * @group lazyloading
+ * @return void
+ */
+	public function testAssociationLazyLoading() {
+		$this->loadFixtures('ArticleFeatured', 'User', 'Category', 'Comment');
+		$Article = new ArticleFeatured();
+		$this->assertTrue(isset($Article->belongsTo['User']));
+		$this->assertFalse(property_exists($Article, 'User'));
+		$this->assertType('User', $Article->User);
+
+		$this->assertTrue(isset($Article->belongsTo['Category']));
+		$this->assertFalse(property_exists($Article, 'Category'));
+		$this->assertTrue(isset($Article->Category));
+		$this->assertType('Category', $Article->Category);
+
+		$this->assertTrue(isset($Article->hasMany['Comment']));
+		$this->assertFalse(property_exists($Article, 'Comment'));
+		$this->assertTrue(isset($Article->Comment));
+		$this->assertType('Comment', $Article->Comment);
+
+		$this->assertTrue(isset($Article->hasAndBelongsToMany['Tag']));
+		//There was not enough information to setup the association (joinTable and associationForeignKey)
+		//so the model was not lazy loaded
+		$this->assertTrue(property_exists($Article, 'Tag'));
+		$this->assertTrue(isset($Article->Tag));
+		$this->assertType('Tag', $Article->Tag);
+	}
+
+/**
  * testPkInHAbtmLinkModelArticleB
  *
  * @access public
