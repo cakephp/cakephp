@@ -601,19 +601,16 @@ class Model extends Object {
 						$this->{$type}[$assoc] = $value;
 
 						if (strpos($assoc, '.') !== false) {
-							$value = $this->{$type}[$assoc];
-							unset($this->{$type}[$assoc]);
-							list($plugin, $assoc) = pluginSplit($assoc, true);
-							$this->{$type}[$assoc] = $value;
+							list($plugin, $assoc) = pluginSplit($assoc);
+							$this->{$type}[$assoc] = array('className' => $plugin. '.' . $assoc);
 						}
 					}
 					$className =  $assoc;
 
 					if (!empty($value['className'])) {
-						list($plugin, $className) = pluginSplit($value['className'], true);
-						$this->{$type}[$assoc]['className'] = $className;
+						list($plugin, $className) = pluginSplit($value['className']);
 					}
-					$this->__constructLinkedModel($assoc, $plugin . $className);
+					$this->__constructLinkedModel($assoc, $className, $plugin);
 				}
 				$this->__generateAssociation($type);
 			}
@@ -625,7 +622,7 @@ class Model extends Object {
  *
  * @param string $assoc Association name
  * @param string $className Class name
- * @deprecated $this->$className use $this->$assoc instead. $assoc is the 'key' in the associations array;
+ * @param string $plugin name of the plugin where $className is located
  * 	examples: public $hasMany = array('Assoc' => array('className' => 'ModelName'));
  * 					usage: $this->Assoc->modelMethods();
  *
@@ -634,13 +631,13 @@ class Model extends Object {
  * @return void
  * @access private
  */
-	function __constructLinkedModel($assoc, $className = null) {
+	function __constructLinkedModel($assoc, $className = null, $plugin = null) {
 		if (empty($className)) {
 			$className = $assoc;
 		}
 
 		if (!isset($this->{$assoc}) || $this->{$assoc}->name !== $className) {
-			$model = array('class' => $className, 'alias' => $assoc);
+			$model = array('class' => $plugin . '.' . $className, 'alias' => $assoc);
 			$this->{$assoc} = ClassRegistry::init($model);
 			if (strpos($className, '.') !== false) {
 				ClassRegistry::addObject($className, $this->{$assoc});
