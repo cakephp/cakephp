@@ -2957,13 +2957,13 @@ class ModelWriteTest extends BaseModelTest {
 	function testSaveAllTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		Mock::generate('DboSource', 'MockTransactionDboSource');
+		$this->getMock('DboSource', array(), array(), 'MockTransactionDboSource');
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDbo',
 		));
-		$db->expectOnce('rollback');
+		$db->expects($this->once())->method('rollback');
 
-		$Post =& new Post();
+		$Post = new Post();
 		$Post->useDbConfig = 'mock_transaction';
 
 		$Post->validate = array(
@@ -2994,7 +2994,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => '')
 		);
 		$ts = date('Y-m-d H:i:s');
-		$this->assertEquals($TestModel->saveAll($data), array());
+		$this->assertFalse($TestModel->saveAll($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
@@ -3063,7 +3063,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => 'New Sixth Post')
 		);
 		$ts = date('Y-m-d H:i:s');
-		$this->assertEquals($TestModel->saveAll($data), array());
+		$this->assertFalse($TestModel->saveAll($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
@@ -3261,7 +3261,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Trying to get away with an empty title'
 		));
 		$result = $TestModel->saveAll($data);
-		$this->assertEqual($result, array());
+		$this->assertFalse($result);
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
@@ -3347,7 +3347,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 		));
-		$this->assertEquals($TestModel->saveAll($data, array('validate' => 'first')), array());
+		$this->assertFalse($TestModel->saveAll($data, array('validate' => 'first')));
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$this->assertEqual($result, $expected);

@@ -283,7 +283,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->Schema->expects($this->at(0))->method('write')->will($this->returnValue(true));
 
 		$this->Shell->Schema->expects($this->at(1))->method('read');
-		$this->Shell->Schema->expects($this->at(1))->method('write')->with(array('schema data', 'file' => 'schema_1.php'));
+		$this->Shell->Schema->expects($this->at(1))->method('write')->with(array('schema data', 'file' => 'schema_0.php'));
 
 		$this->Shell->generate();
 	}
@@ -406,7 +406,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
 		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources));
