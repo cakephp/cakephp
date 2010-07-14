@@ -512,11 +512,19 @@ class Model extends Object {
 				break;
 			} else if ($type == 'hasAndBelongsToMany') {
 				foreach ($this->{$type} as $k => $relation) {
-					if (!empty($relation['with']) && $relation['with'] === $name) {
+					if (empty($relation['with'])) {
+						continue;
+					}
+					if (is_array($relation['with']) && key($relation['with']) === $name){
 						$className = $name;
-						break(2);
-					} else if (is_array($relation['with']) && key($relation['with']) === $name) {
-						$className = $name;
+					} else {
+						list($plugin, $class) = pluginSplit($relation['with']);
+						if ($class === $name) {
+							$className = $relation['with'];
+						}
+					}
+					if ($className) {
+						$assocKey = $k;
 						break(2);
 					}
 				}
@@ -529,7 +537,12 @@ class Model extends Object {
 
 		list($plugin, $className) = pluginSplit($className);
 		$this->__constructLinkedModel($name, $className, $plugin);
-
+		if (!empty($assocKey)) {
+			$this->hasAndBelongsToMany[$assocKey]['joinTable'] = $this->{$name}->table;
+			if (count($this->{$name}->schema()) <= 2 && $this->{$name}->primaryKey !== false) {
+				$this->{$name}->primaryKey = $this->hasAndBelongsToMany[$assocKey]['foreignKey'];
+			}
+		}
 		return $this->{$name};
 	}
 
@@ -759,12 +772,6 @@ class Model extends Object {
 					'table' => $this->{$type}[$assocKey]['joinTable'],
 					'ds' => $this->useDbConfig
 				));
-			} else {
-				$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
-			}
-
-			if (count($this->{$joinClass}->schema()) <= 2 && $this->{$joinClass}->primaryKey !== false) {
-				$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
 			}
 		}
 	}
@@ -2875,6 +2882,7 @@ class Model extends Object {
  */
 	public function joinModel($assoc, $keys = array()) {
 		if (is_string($assoc)) {
+			list(, $assoc) = pluginSplit($assoc);
 			return array($assoc, array_keys($this->{$assoc}->schema()));
 		} elseif (is_array($assoc)) {
 			$with = key($assoc);
