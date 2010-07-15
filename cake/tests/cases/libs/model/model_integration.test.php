@@ -57,7 +57,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testAssociationLazyLoading() {
-		$this->loadFixtures('ArticleFeatured', 'User', 'Category', 'Comment', 'ArticleFeaturedsTags');
+		$this->loadFixtures('ArticleFeatured', 'User', 'Category', 'Comment', 'ArticleFeaturedsTags', 'Tag');
 		$Article = new ArticleFeatured();
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
@@ -79,7 +79,8 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertTrue(property_exists($Article, 'Tag'));
 		$this->assertTrue(isset($Article->Tag));
 		$this->assertType('Tag', $Article->Tag);
-		$this->assertTrue(property_exists($Article, 'ArticleFeaturedsTag'));
+
+		$this->assertFalse(property_exists($Article, 'ArticleFeaturedsTag'));
 		$this->assertType('AppModel', $Article->ArticleFeaturedsTag);
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['joinTable'], 'article_featureds_tags');
 		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['associationForeignKey'], 'tag_id');
@@ -92,14 +93,13 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testAssociationLazyLoadWithHABTM() {
-		$this->loadFixtures('Article', 'UuidTag', 'Fruit', 'FruitsUuidTag');
+		$this->loadFixtures('Article', 'UuidTag', 'Fruit', 'FruitsUuidTag', 'ArticlesTag');
 		$Article = new ArticleB();
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
 		$this->assertFalse(property_exists($Article, 'TagB'));
 		$this->assertType('TagB', $Article->TagB);
 
-		//Dynamic "with" models are not lazy loaded
-		$this->assertTrue(property_exists($Article, 'ArticlesTag'));
+		$this->assertFalse(property_exists($Article, 'ArticlesTag'));
 		$this->assertType('AppModel', $Article->ArticlesTag);
 
 		$UuidTag = new UuidTag();
@@ -107,7 +107,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertFalse(property_exists($UuidTag, 'Fruit'));
 		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
 		$this->assertTrue(isset($UuidTag->Fruit));
-		//But non-dynamic with models are lazy loaded
+
 		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
 		$this->assertTrue(isset($UuidTag->FruitsUuidTag));
 		$this->assertType('FruitsUuidTag', $UuidTag->FruitsUuidTag);
@@ -1199,6 +1199,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'foreignKey' => false,
 				'className' => 'AssociationTest2',
 				'with' => 'JoinAsJoinB',
+				'dynamicWith' => true,
 				'associationForeignKey' => 'join_b_id',
 				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
 				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
@@ -1269,6 +1270,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'className' => 'Tag',
 				'joinTable' => 'article_featureds_tags',
 				'with' => 'ArticleFeaturedsTag',
+				'dynamicWith' => true,
 				'foreignKey' => 'article_featured_id',
 				'associationForeignKey' => 'tag_id',
 				'conditions' => '',

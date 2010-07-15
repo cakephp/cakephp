@@ -492,8 +492,7 @@ class Model extends Object {
 		if ($result !== array('unhandled')) {
 			return $result;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$return = $db->query($method, $params, $this);
+		$return = $this->getDataSource()->query($method, $params, $this);
 		return $return;
 	}
 
@@ -515,8 +514,10 @@ class Model extends Object {
 					if (empty($relation['with'])) {
 						continue;
 					}
-					if (is_array($relation['with']) && key($relation['with']) === $name){
-						$className = $name;
+					if (is_array($relation['with'])) {
+						if (key($relation['with']) === $name) {
+							$className = $name;
+						}
 					} else {
 						list($plugin, $class) = pluginSplit($relation['with']);
 						if ($class === $name) {
@@ -525,6 +526,7 @@ class Model extends Object {
 					}
 					if ($className) {
 						$assocKey = $k;
+						$dynamic = !empty($relation['dynamicWith']);
 						break(2);
 					}
 				}
@@ -536,7 +538,17 @@ class Model extends Object {
 		}
 
 		list($plugin, $className) = pluginSplit($className);
-		$this->__constructLinkedModel($name, $className, $plugin);
+
+		if (!ClassRegistry::isKeySet($className) && !empty($dynamic)) {
+			$this->{$className} = new AppModel(array(
+				'name' => $className,
+				'table' => $this->hasAndBelongsToMany[$assocKey]['joinTable'],
+				'ds' => $this->useDbConfig
+			));
+		} else {
+			$this->__constructLinkedModel($name, $className, $plugin);
+		}
+
 		if (!empty($assocKey)) {
 			$this->hasAndBelongsToMany[$assocKey]['joinTable'] = $this->{$name}->table;
 			if (count($this->{$name}->schema()) <= 2 && $this->{$name}->primaryKey !== false) {
@@ -757,22 +769,11 @@ class Model extends Object {
 				}
 				$this->{$type}[$assocKey][$key] = $data;
 			}
-		}
 
-		if (!empty($this->{$type}[$assocKey]['with'])) {
-			$joinClass = $this->{$type}[$assocKey]['with'];
-			if (is_array($joinClass)) {
-				$joinClass = key($joinClass);
+			if ($dynamicWith) {
+				$this->{$type}[$assocKey]['dynamicWith'] = true;
 			}
 
-			list($plugin, $joinClass) = pluginSplit($joinClass);
-			if (!ClassRegistry::isKeySet($joinClass) && $dynamicWith === true) {
-				$this->{$joinClass} = new AppModel(array(
-					'name' => $joinClass,
-					'table' => $this->{$type}[$assocKey]['joinTable'],
-					'ds' => $this->useDbConfig
-				));
-			}
 		}
 	}
 
@@ -784,7 +785,7 @@ class Model extends Object {
  */
 	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
 		if ($db->isInterfaceSupported('listSources')) {
@@ -882,7 +883,7 @@ class Model extends Object {
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
 
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$format = $db->columns[$type]['format'];
 			$date = array();
 
@@ -943,7 +944,7 @@ class Model extends Object {
  */
 	public function schema($field = false) {
 		if (!is_array($this->_schema) || $field === true) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
 				$this->_schema = $db->describe($this, $field);
@@ -985,7 +986,7 @@ class Model extends Object {
  * @return string Column type
  */
 	public function getColumnType($column) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		$cols = $this->schema();
 		$model = null;
 
@@ -1272,7 +1273,7 @@ class Model extends Object {
 			return false;
 		}
 
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
@@ -1589,7 +1590,7 @@ class Model extends Object {
 		if (empty($data)) {
 			$data = $this->data;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
@@ -1794,8 +1795,7 @@ class Model extends Object {
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
 	function updateAll($fields, $conditions = true) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->update($this, $fields, null, $conditions);
+		return $this->getDataSource()->update($this, $fields, null, $conditions);
 	}
 
 /**
@@ -1814,7 +1814,7 @@ class Model extends Object {
 		$id = $this->id;
 
 		if ($this->exists() && $this->beforeDelete($cascade)) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
 				'break' => true, 'breakOn' => false
 			));
@@ -1924,7 +1924,7 @@ class Model extends Object {
 		if (empty($conditions)) {
 			return false;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		if (!$cascade && !$callbacks) {
 			return $db->delete($this, $conditions);
@@ -2097,7 +2097,7 @@ class Model extends Object {
 			}
 		}
 
-		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
+		if (!$db = $this->getDataSource()) {
 			return false;
 		}
 
@@ -2153,7 +2153,7 @@ class Model extends Object {
  */
 	function _findCount($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
 			} elseif (is_string($query['fields'])  && !preg_match('/count/i', $query['fields'])) {
@@ -2432,7 +2432,7 @@ class Model extends Object {
  */
 	function query() {
 		$params = func_get_args();
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
 
@@ -2694,7 +2694,7 @@ class Model extends Object {
 		if (empty($field)) {
 			$field = $this->primaryKey;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		if (strpos($field, $db->name($alias) . '.') === 0) {
 			return $field;
 		}
@@ -2766,8 +2766,7 @@ class Model extends Object {
  * @return int Number of rows
  */
 	public function getNumRows() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->lastNumRows();
+		return $this->getDataSource()->lastNumRows();
 	}
 
 /**
@@ -2776,8 +2775,7 @@ class Model extends Object {
  * @return int Number of rows
  */
 	public function getAffectedRows() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->lastAffected();
+		return $this->getDataSource()->lastAffected();
 	}
 
 /**
@@ -2792,7 +2790,7 @@ class Model extends Object {
 		if ($dataSource != null) {
 			$this->useDbConfig = $dataSource;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		if (!empty($oldConfig) && isset($db->config['prefix'])) {
 			$oldDb =& ConnectionManager::getDataSource($oldConfig);
 
@@ -2815,8 +2813,7 @@ class Model extends Object {
  * @return object A DataSource object
  */
 	public function &getDataSource() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db;
+		return ConnectionManager::getDataSource($this->useDbConfig);
 	}
 
 /**
