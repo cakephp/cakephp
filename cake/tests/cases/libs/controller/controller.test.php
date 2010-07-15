@@ -710,7 +710,7 @@ class ControllerTest extends CakeTestCase {
                 $Controller->paginate = array(
                         'fields' => array(
                             'ControllerPost.id',
-                            '1.2 as floatvalue'
+                            'radians(180.0) as floatvalue'
                             ),
                         'order' => array('ControllerPost.created'=>'DESC'),
                         'limit' => 1,
@@ -725,7 +725,7 @@ class ControllerTest extends CakeTestCase {
                             'id'=>3,
                             ),
                         0=>array(
-                            'floatvalue'=>1.2,
+                            'floatvalue'=>3.1415926545898,
                             ),
                         ),
                     );
