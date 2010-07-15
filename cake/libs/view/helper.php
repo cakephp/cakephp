@@ -428,8 +428,7 @@ class Helper extends Object {
  * @return void
  */
 	public function setEntity($entity, $setScope = false) {
-		$view =& ClassRegistry::getObject('view');
-
+		$view =& $this->_View;
 		if ($setScope) {
 			$view->modelScope = false;
 		} elseif (!empty($view->entityPath) && $view->entityPath == $entity) {
@@ -573,11 +572,10 @@ class Helper extends Object {
  * @return string
  */
 	public function model() {
-		$view =& ClassRegistry::getObject('view');
-		if (!empty($view->association)) {
-			return $view->association;
+		if (!empty($this->_View->association)) {
+			return $this->_View->association;
 		} else {
-			return $view->model;
+			return $this->_View->model;
 		}
 	}
 
@@ -587,8 +585,7 @@ class Helper extends Object {
  * @return mixed
  */
 	public function modelID() {
-		$view =& ClassRegistry::getObject('view');
-		return $view->modelId;
+		return $this->_View->modelId;
 	}
 
 /**
@@ -597,8 +594,7 @@ class Helper extends Object {
  * @return string
  */
 	public function field() {
-		$view =& ClassRegistry::getObject('view');
-		return $view->field;
+		return $this->_View->field;
 	}
 
 /**
@@ -611,9 +607,8 @@ class Helper extends Object {
  * @return boolean True on errors.
  */
 	public function tagIsInvalid($model = null, $field = null, $modelID = null) {
-		$view =& ClassRegistry::getObject('view');
 		$errors = $this->validationErrors;
-		$entity = $view->entity();
+		$entity = $this->_View->entity();
 		if (!empty($entity)) {
 			return Set::extract($errors, join('.', $entity));
 		}
@@ -631,8 +626,6 @@ class Helper extends Object {
  * @todo Refactor this method to not have as many input/output options.
  */
 	public function domId($options = null, $id = 'id') {
-		$view =& ClassRegistry::getObject('view');
-
 		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
 			unset($options[$id]);
 			return $options;
@@ -641,7 +634,7 @@ class Helper extends Object {
 			return $this->domId();
 		}
 
-		$entity = $view->entity();
+		$entity = $this->_View->entity();
 		$model = array_shift($entity);
 		$dom = $model . join('', array_map(array('Inflector', 'camelize'), $entity));
 
@@ -667,7 +660,6 @@ class Helper extends Object {
  * @todo Refactor this method to not have as many input/output options.
  */
 	protected function _name($options = array(), $field = null, $key = 'name') {
-		$view =& ClassRegistry::getObject('view');
 		if ($options === null) {
 			$options = array();
 		} elseif (is_string($options)) {
@@ -688,7 +680,7 @@ class Helper extends Object {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . implode('][', $view->entity()) . ']';
+				$name = 'data[' . implode('][', $this->_View->entity()) . ']';
 			break;
 		}
 
@@ -727,11 +719,9 @@ class Helper extends Object {
 		if (!empty($field)) {
 			$this->setEntity($field);
 		}
-
-		$view =& ClassRegistry::getObject('view');
 		$result = null;
 
-		$entity = $view->entity();
+		$entity = $this->_View->entity();
 		if (!empty($this->data) && !empty($entity)) {
 			$result = Set::extract($this->data, join('.', $entity));
 		}
@@ -747,8 +737,8 @@ class Helper extends Object {
 		}
 
 		if (is_array($result)) {
-			if (array_key_exists($view->fieldSuffix, $result)) {
-				$result = $result[$view->fieldSuffix];
+			if (array_key_exists($this->_View->fieldSuffix, $result)) {
+				$result = $result[$this->_View->fieldSuffix];
 			}
 		}
 
