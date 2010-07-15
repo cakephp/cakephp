@@ -865,6 +865,7 @@ class Controller extends Object {
  */
 	function render($action = null, $layout = null, $file = null) {
 		$this->beforeRender();
+		$this->Component->triggerCallback('beforeRender', $this);
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
@@ -872,8 +873,6 @@ class Controller extends Object {
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->view);
 		}
-
-		$this->Component->triggerCallback('beforeRender', $this);
 
 		$this->params['models'] = $this->modelNames;
 
