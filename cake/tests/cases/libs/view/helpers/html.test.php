@@ -647,10 +647,8 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		ClassRegistry::removeObject('view');
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->any())->method('addScript')
+		
+		$this->View->expects($this->any())->method('addScript')
 			->with($this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
 
 		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
@@ -698,11 +696,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		ClassRegistry::removeObject('view');
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-
-		$view->expects($this->once())->method('addScript');
+		$this->View->expects($this->once())->method('addScript');
 
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
 		$this->assertNull($result);
@@ -1122,12 +1116,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
 
-		ClassRegistry::removeObject('view');
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/^<meta/'));
 
-		$this->assertNull($this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false)));
+		$this->View->expects($this->any())->method('addScript')
+			->with($this->matchesRegularExpression('/^<meta/'));
+
+		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
+		$this->assertNull($result);
 	}
 
 /**

@@ -235,8 +235,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return $out;
 		} else {
-			$view =& ClassRegistry::getObject('view');
-			$view->addScript($out);
+			$this->_View->addScript($out);
 		}
 	}
 
@@ -473,8 +472,7 @@ class HtmlHelper extends AppHelper {
 		if ($inline) {
 			return sprintf($this->tags['javascriptblock'], $attributes, $script);
 		} else {
-			$view =& ClassRegistry::getObject('view');
-			$view->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
+			$this->_View->addScript(sprintf($this->tags['javascriptblock'], $attributes, $script));
 			return null;
 		}
 	}
