@@ -213,6 +213,13 @@ class Controller extends Object {
 	public $view = 'View';
 
 /**
+ * Instance of the View created during rendering. Won't be set until after Controller::render() is called.
+ *
+ * @var View
+ */
+	public $View;
+
+/**
  * File extension for view templates. Defaults to Cake's conventional ".ctp".
  *
  * @var string
@@ -847,6 +854,7 @@ class Controller extends Object {
 
 		$this->autoRender = false;
 		$this->output .= $View->render($action, $layout, $file);
+		$this->View = $View;
 
 		return $this->output;
 	}

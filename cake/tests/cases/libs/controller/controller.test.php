@@ -924,7 +924,7 @@ class ControllerTest extends CakeTestCase {
 		ClassRegistry::flush();
 		$Controller->viewPath = 'posts';
 		$result = $Controller->render('index');
-		$View = ClassRegistry::getObject('view');
+		$View = $Controller->View;
 		$this->assertTrue(isset($View->validationErrors['ControllerComment']));
 		$this->assertEqual($expected, $View->validationErrors['ControllerComment']);
 
