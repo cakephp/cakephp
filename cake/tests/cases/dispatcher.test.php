@@ -2100,7 +2100,7 @@ class DispatcherTest extends CakeTestCase {
 
 /**
  * test that cached() registers a view and un-registers it.  Tests
- * that helpers using ClassRegistry::getObject('view'); don't fail
+ * that helpers using don't fail
  *
  * @return void
  */
