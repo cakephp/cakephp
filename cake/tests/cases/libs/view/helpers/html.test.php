@@ -108,10 +108,9 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
-		$view = new View(new TheHtmlTestController());
-		$this->Html = new HtmlHelper($view);
+		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
+		$this->Html = new HtmlHelper($this->View);
 
-		ClassRegistry::addObject('view', $view);
 		$this->_appEncoding = Configure::read('App.encoding');
 		$this->_asset = Configure::read('Asset');
 		$this->_debug = Configure::read('debug');
@@ -128,7 +127,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('Asset', $this->_asset);
 		Configure::write('debug', $this->_debug);
 		ClassRegistry::flush();
-		unset($this->Html);
+		unset($this->Html, $this->View);
 	}
 
 /**
@@ -472,19 +471,16 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result[1], $expected);
 		$this->assertEqual(count($result), 2);
 
-		ClassRegistry::removeObject('view');
-		$view =  $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/css_in_head.css/'));
+		$this->View->expects($this->at(0))->method('addScript')
+			->with($this->matchesRegularExpression('/css_in_head.css/'));
+
+		$this->View->expects($this->at(1))
+			->method('addScript')
+			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
+
 		$result = $this->Html->css('css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 
-		ClassRegistry::removeObject('view');
-		$view =  $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->any())
-			->method('addScript')
-			->with($this->matchesRegularExpression('/more_css_in_head.css/'));
 		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
 		$this->assertNull($result);
 	}
@@ -610,10 +606,9 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		ClassRegistry::removeObject('view');
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->any())->method('addScript')->with($this->matchesRegularExpression('/script_in_head.js/'));
+		
+		$this->View->expects($this->any())->method('addScript')
+			->with($this->matchesRegularExpression('/script_in_head.js/'));
 		$result = $this->Html->script('script_in_head', array('inline' => false));
 		$this->assertNull($result);
 	}
