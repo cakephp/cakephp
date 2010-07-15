@@ -242,6 +242,7 @@ class ThemeViewTest extends CakeTestCase {
 /**
  * testMissingView method
  *
+ * @expectedException MissingViewException
  * @access public
  * @return void
  */
@@ -264,6 +265,8 @@ class ThemeViewTest extends CakeTestCase {
 
 /**
  * testMissingLayout method
+ *
+ * @expectedException MissingLayoutException
  * @access public
  * @return void
  */
