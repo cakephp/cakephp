@@ -678,7 +678,6 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form = new FormHelper($this->View);
 		$this->Form->params['action'] = 'add';
 
-		ClassRegistry::addObject('view', $view);
 		ClassRegistry::addObject('Contact', new Contact());
 		ClassRegistry::addObject('ContactNonStandardPk', new ContactNonStandardPk());
 		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
@@ -708,7 +707,6 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		ClassRegistry::removeObject('view');
 		ClassRegistry::removeObject('Contact');
 		ClassRegistry::removeObject('ContactNonStandardPk');
 		ClassRegistry::removeObject('ContactTag');
@@ -2088,8 +2086,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('Model' => array('user_id' => 'value'));
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input select'),
@@ -2111,8 +2109,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('Model' => array('user_id' => null));
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
@@ -2135,8 +2133,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('Model' => array('user_id' => 'value'));
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
@@ -2159,8 +2157,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->data = array('User' => array('User' => array('value')));
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('User.User', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input select'),
@@ -2212,8 +2210,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testInputOverridingMagicSelectType() {
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
@@ -2224,8 +2221,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		//Check that magic types still work for plural/singular vars
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['types'] = array('value' => 'good', 'other' => 'bad');
+		$this->View->viewVars['types'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.type');
 		$expected = array(
 			'div' => array('class' => 'input select'),
@@ -2245,8 +2241,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testInputMagicSelectChangeToRadio() {
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
 		$this->assertPattern('/input type="radio"/', $result);
 	}
@@ -2281,7 +2276,6 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$View = ClassRegistry::getObject('view');
 		$this->Form->create('Contact');
 		$this->Form->params['prefix'] = 'admin';
 		$this->Form->action = 'admin_edit';
@@ -3242,8 +3236,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testHabtmSelectBox() {
-		$view =& ClassRegistry::getObject('view');
-		$view->viewVars['contactTags'] = array(
+		$this->View->viewVars['contactTags'] = array(
 			1 => 'blue',
 			2 => 'red',
 			3 => 'green'
@@ -4974,13 +4967,6 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFileUploadOnOtherModel() {
-		ClassRegistry::removeObject('view');
-		$controller =& new Controller();
-		$controller->name = 'ValidateUsers';
-		$controller->uses = array('ValidateUser');
-		$controller->constructClasses();
-		$view =& new View($controller, true);
-
 		$this->Form->create('ValidateUser', array('type' => 'file'));
 		$result = $this->Form->file('ValidateProfile.city');
 		$expected = array(

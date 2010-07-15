@@ -188,7 +188,6 @@ class FormHelper extends AppHelper {
 	function create($model = null, $options = array()) {
 		$created = $id = false;
 		$append = '';
-		$view =& ClassRegistry::getObject('view');
 
 		if (is_array($model) && empty($options)) {
 			$options = $model;
@@ -253,7 +252,7 @@ class FormHelper extends AppHelper {
 
 			$actionDefaults = array(
 				'plugin' => $this->plugin,
-				'controller' => $view->viewPath,
+				'controller' => $this->_View->viewPath,
 				'action' => $options['action'],
 				0 => $id
 			);
@@ -372,8 +371,7 @@ class FormHelper extends AppHelper {
 		$this->setEntity(null);
 		$out .= $this->Html->tags['formend'];
 
-		$view =& ClassRegistry::getObject('view');
-		$view->modelScope = false;
+		$this->_View->modelScope = false;
 		return $out;
 	}
 
@@ -421,8 +419,7 @@ class FormHelper extends AppHelper {
  */
 	function __secure($field = null, $value = null) {
 		if (!$field) {
-			$view =& ClassRegistry::getObject('view');
-			$field = $view->entity();
+			$field = $this->_View->entity();
 		} elseif (is_string($field)) {
 			$field = Set::filter(explode('.', $field), true);
 		}
@@ -535,8 +532,7 @@ class FormHelper extends AppHelper {
  */
 	function label($fieldName = null, $text = null, $options = array()) {
 		if (empty($fieldName)) {
-			$view = ClassRegistry::getObject('view');
-			$fieldName = implode('.', $view->entity());
+			$fieldName = implode('.', $this->_View->entity());
 		}
 
 		if ($text === null) {
@@ -761,11 +757,10 @@ class FormHelper extends AppHelper {
 			(!isset($options['options']) && in_array($options['type'], $types)) ||
 			(isset($magicType) && $options['type'] == 'text')
 		) {
-			$view =& ClassRegistry::getObject('view');
 			$varName = Inflector::variable(
 				Inflector::pluralize(preg_replace('/_id$/', '', $fieldKey))
 			);
-			$varOptions = $view->getVar($varName);
+			$varOptions = $this->_View->getVar($varName);
 			if (is_array($varOptions)) {
 				if ($options['type'] !== 'radio') {
 					$options['type'] = 'select';
@@ -1229,8 +1224,7 @@ class FormHelper extends AppHelper {
 	public function file($fieldName, $options = array()) {
 		$options = array_merge($options, array('secure' => false));
 		$options = $this->_initInputField($fieldName, $options);
-		$view =& ClassRegistry::getObject('view');
-		$field = $view->entity();
+		$field = $this->_View->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
 			$this->__secure(array_merge($field, array($suffix)));
@@ -1942,10 +1936,9 @@ class FormHelper extends AppHelper {
 				return $options;
 			}
 
-			$view = ClassRegistry::getObject('view');
-			$name = $view->field;
-			if (!empty($view->fieldSuffix)) {
-				$name .= '[' . $view->fieldSuffix . ']';
+			$name = $this->_View->field;
+			if (!empty($this->_View->fieldSuffix)) {
+				$name .= '[' . $this->_View->fieldSuffix . ']';
 			}
 
 			if (is_array($options)) {
