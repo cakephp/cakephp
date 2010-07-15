@@ -260,7 +260,7 @@ class FormHelper extends AppHelper {
 				0 => $id
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
-				$options['id'] = $this->domId(Inflector::camelize($options['action']) . 'Form');
+				$options['id'] = $this->domId($options['action'] . 'Form');
 			}
 			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
 		} elseif (is_string($options['url'])) {
