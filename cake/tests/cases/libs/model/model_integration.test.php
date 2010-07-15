@@ -178,7 +178,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
 
 		//test conformant models with no PK in the join table
-		$this->loadFixtures('Article', 'Tag', 'User', 'Comment', 'Attachment', 'Syfile', 'Image', 'Item', 'Portfolio', 'ItemsPortfolio');
+		$this->loadFixtures('Article', 'Tag');
 		$TestModel2 = new Article();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 
@@ -956,7 +956,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testLoadModelSecondIteration() {
-		$this->loadFixtures('Message', 'Thread', 'Bid');
+		$this->loadFixtures('Apple', 'Message', 'Thread', 'Bid');
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -1145,7 +1145,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testGetAssociated() {
-		$this->loadFixtures('Article', 'Category');
+		$this->loadFixtures('Article', 'Tag');
 		$Article = ClassRegistry::init('Article');
 
 		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
@@ -1299,7 +1299,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testConstruct() {
-		$this->loadFixtures('Post', 'Comment');
+		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
 		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));
