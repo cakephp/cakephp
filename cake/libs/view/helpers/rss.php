@@ -129,10 +129,8 @@ class RssHelper extends XmlHelper {
  * @return string An RSS `<channel />`
  */
 	public function channel($attrib = array(), $elements = array(), $content = null) {
-		$view =& ClassRegistry::getObject('view');
-
-		if (!isset($elements['title']) && !empty($view->pageTitle)) {
-			$elements['title'] = $view->pageTitle;
+		if (!isset($elements['title']) && !empty($this->_View->pageTitle)) {
+			$elements['title'] = $this->_View->pageTitle;
 		}
 		if (!isset($elements['link'])) {
 			$elements['link'] = '/';
