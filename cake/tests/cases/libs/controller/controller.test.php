@@ -696,6 +696,44 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * testPaginateFieldsDouble method
+ *
+ * @return void
+ * @access public
+ */
+        function testPaginateFieldsDouble(){
+                $Controller =& new Controller();
+                $Controller->uses = array('ControllerPost');
+                $Controller->params['url'] = array();
+                $Controller->constructClasses();
+
+                $Controller->paginate = array(
+                        'fields' => array(
+                            'ControllerPost.id',
+                            '1.2 as floatvalue'
+                            ),
+                        'order' => array('ControllerPost.created'=>'DESC'),
+                        'limit' => 1,
+                        'page' => 1,
+                        'recursive' => -1
+                );
+                $conditions = array();
+                $result = $Controller->paginate('ControllerPost',$conditions);
+                $expected = array(
+                    0=>array(
+                        'ControllerPost'=>array(
+                            'id'=>3,
+                            ),
+                        0=>array(
+                            'floatvalue'=>1.2,
+                            ),
+                        ),
+                    );
+                $this->assertEqual($result, $expected);
+        }
+
+
+/**
  * testPaginatePassedArgs method
  *
  * @return void
