@@ -36,10 +36,9 @@ class ThemeView extends View {
  * Constructor for ThemeView sets $this->theme.
  *
  * @param Controller $controller Controller object to be rendered.
- * @param boolean $register Should the view be registered in the registry.
  */
-	function __construct(&$controller, $register = true) {
-		parent::__construct($controller, $register);
+	function __construct(&$controller) {
+		parent::__construct($controller);
 		$this->theme =& $controller->theme;
 	}
 

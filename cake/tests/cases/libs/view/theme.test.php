@@ -173,18 +173,6 @@ class ThemeViewTest extends CakeTestCase {
 		ClassRegistry::flush();
 		App::build();
 	}
-/**
- * test that the theme view can be constructed without going into the registry
- *
- * @return void
- */
-	function testConstructionNoRegister() {
-		ClassRegistry::flush();
-		$controller = null;
-		$Theme = new ThemeView($controller, false);
-		$ThemeTwo = ClassRegistry::getObject('view');
-		$this->assertFalse($ThemeTwo);
-	}
 
 /**
  * testPluginGetTemplate method

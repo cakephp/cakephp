@@ -41,6 +41,7 @@ class View extends Object {
  * @var HelperCollection
  */
 	public $Helpers;
+
 /**
  * Path parts for creating links in views.
  *
@@ -300,10 +301,8 @@ class View extends Object {
  * Constructor
  *
  * @param Controller $controller A controller object to pull View::__passedArgs from.
- * @param boolean $register Should the View instance be registered in the ClassRegistry
- * @return View
  */
-	function __construct(&$controller, $register = true) {
+	function __construct(&$controller) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -313,10 +312,6 @@ class View extends Object {
 		}
 		$this->Helpers = new HelperCollection($this);
 		parent::__construct();
-
-		if ($register) {
-			ClassRegistry::addObject('view', $this);
-		}
 	}
 
 /**
