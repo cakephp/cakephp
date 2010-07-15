@@ -92,7 +92,9 @@ class SessionHelper extends AppHelper {
 				if (!empty($flash['params']['class'])) {
 					$class = $flash['params']['class'];
 				} else {
-					$class = 'message';
+					$tmpVars = $flash['params'];
+					$tmpVars['message'] = $flash['message'];
+					$out = $this->_View->element($flash['element'], $tmpVars);
 				}
 				$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
 			} elseif ($flash['element'] == '' || $flash['element'] == null) {
