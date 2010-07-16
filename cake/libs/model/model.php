@@ -555,7 +555,8 @@ class Model extends Object {
 				$this->{$name}->primaryKey = $this->hasAndBelongsToMany[$assocKey]['foreignKey'];
 			}
 		}
-		return $this->{$name};
+
+		return true;
 	}
 
 /**
@@ -2813,7 +2814,7 @@ class Model extends Object {
  *
  * @return object A DataSource object
  */
-	public function &getDataSource() {
+	public function getDataSource() {
 		static $configured = false;
 		if (!$configured && $this->useTable !== false) {
 			$configured = true;
