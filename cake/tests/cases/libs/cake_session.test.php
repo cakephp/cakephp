@@ -149,6 +149,24 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * test writing a hash of values/
+ *
+ * @return void
+ */
+	function testWriteArray() {
+		$result = TestCakeSession::write(array(
+			'one' => 1,
+			'two' => 2,
+			'three' => array('something'),
+			'null' => null
+		));
+		$this->assertTrue($result);
+		$this->assertEquals(1, TestCakeSession::read('one'));
+		$this->assertEquals(array('something'), TestCakeSession::read('three'));
+		$this->assertEquals(null, TestCakeSession::read('null'));
+	}
+
+/**
  * testId method
  *
  * @access public

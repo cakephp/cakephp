@@ -417,15 +417,24 @@ class CakeSession {
  * @param string $value Value to write
  * @return boolean True if the write was successful, false if the write failed
  */
-	public static function write($name, $value) {
+	public static function write($name, $value = null) {
 		if (empty($name)) {
 			return false;
 		}
-		if (in_array($name, self::$watchKeys)) {
-			trigger_error(sprintf(__('Writing session key {%s}: %s'), $name, Debugger::exportVar($value)), E_USER_NOTICE);
+		$write = $name;
+		if (!is_array($name)) {
+			$write = array($name => $value);
 		}
-		self::__overwrite($_SESSION, Set::insert($_SESSION, $name, $value));
-		return (Set::classicExtract($_SESSION, $name) === $value);
+		foreach ($write as $key => $val) {
+			if (in_array($key, self::$watchKeys)) {
+				trigger_error(sprintf(__('Writing session key {%s}: %s'), $key, Debugger::exportVar($val)), E_USER_NOTICE);
+			}
+			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
+			if (Set::classicExtract($_SESSION, $key) !== $val) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 /**
