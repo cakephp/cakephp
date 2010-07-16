@@ -784,6 +784,7 @@ class Model extends Object {
  * Sets a custom table for your controller class. Used by your controller to select a database table.
  *
  * @param string $tableName Name of the custom table
+ * @throws MissingTableException when database table $tableName is not found on data source
  * @return void
  */
 	public function setSource($tableName) {
@@ -794,10 +795,7 @@ class Model extends Object {
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
-				return $this->cakeError('missingTable', array(array(
-					'className' => $this->alias,
-					'table' => $this->tablePrefix . $tableName
-				)));
+				throw new MissingTableException($this->alias, $this->tablePrefix . $tableName);
 			}
 			$this->_schema = null;
 		}
@@ -3041,5 +3039,56 @@ class Model extends Object {
  * @todo
  */
 	function __wakeup() {
+	}
+}
+
+/**
+* Exception class to be thrown when a database table is not found in the datasource
+*
+*/
+class MissingTableException extends RuntimeException {
+/**
+ * The name of the model wanting to load the database table
+ *
+ * @var string
+ */
+	protected $model;
+/**
+ * The name of the missing table
+ *
+ * @var string
+ */
+	protected $table;
+
+/**
+ * Exception costructor
+ *
+ * @param string $model The name of the model wanting to load the database table
+ * @param string $table The name of the missing table
+ * @return void
+ */
+	public function __construct($model, $table) {
+		$this->model = $model;
+		$this->$table = $table;
+		$message = sprintf(__('Database table %s for model %s was not found.'), $table, $model);
+		parent::__construct($message);
+	}
+
+/**
+ * Returns the name of the model wanting to load the database table
+ *
+ * @return string
+ */
+	public function getModel() {
+		return $this->model;
+	}
+
+/**
+ * Returns the name of the missing table
+ *
+ * @return string
+ */
+	public function getTable() {
+		return $this->table;
 	}
 }
