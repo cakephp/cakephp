@@ -2045,6 +2045,28 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test generateAssociationQuery with a hasMany and an aggregate function.
+ *
+ * @return void
+ */
+	function testGenerateAssociationQueryHasManyAndAggregateFunction() {
+		$this->Model =& new TestModel5();
+		$this->Model->schema();
+		$this->_buildRelatedModels($this->Model);
+
+		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
+		$queryData = array('fields' => array('MIN(TestModel5.test_model4_id)'));
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$this->Model->recursive = 0;
+
+		$result = $this->testDb->generateAssociationQuery($this->Model, $null, $params['type'], $params['assoc'], $params['assocData'], $queryData, false, $resultSet);
+		$this->assertPattern('/^SELECT\s+MIN\(`TestModel5`\.`test_model4_id`\)\s+FROM/', $result);
+	}
+
+/**
  * testGenerateAssociationQueryHasAndBelongsToMany method
  *
  * @access public
