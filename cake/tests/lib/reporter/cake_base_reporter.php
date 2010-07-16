@@ -159,7 +159,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 * @param  float                  $time
 */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
-		$this->paintException($e);
+		$this->paintException($e, $test);
 	}
 
 /**
@@ -170,7 +170,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
 * @param  float $time
 */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
-		$this->paintFail($e);
+		$this->paintFail($e, $test);
 	}
 
 /**
