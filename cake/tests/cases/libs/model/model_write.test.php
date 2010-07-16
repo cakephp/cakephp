@@ -2961,10 +2961,17 @@ class ModelWriteTest extends BaseModelTest {
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDbo',
 		));
+		$db->expects($this->at(2))
+			->method('isInterfaceSupported')
+			->with('describe')
+			->will($this->returnValue(true));
+
+		$db->expects($this->once())
+			->method('describe')
+			->will($this->returnValue(array()));
 		$db->expects($this->once())->method('rollback');
 
-		$Post = new Post();
-		$Post->useDbConfig = 'mock_transaction';
+		$Post = new Post('mock_transaction');
 
 		$Post->validate = array(
 			'title' => array('rule' => array('notEmpty'))

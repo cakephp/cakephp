@@ -462,16 +462,16 @@ class Model extends Object {
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
-			$this->setDataSource($ds);
 
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
 				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
 			}
+			$this->table = $this->useTable;
+			$this->tableToModel[$this->table] = $this->alias;
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
@@ -785,7 +785,7 @@ class Model extends Object {
  */
 	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
-		$db = $this->getDataSource();
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
 		if ($db->isInterfaceSupported('listSources')) {
@@ -800,7 +800,6 @@ class Model extends Object {
 		}
 		$this->table = $this->useTable = $tableName;
 		$this->tableToModel[$this->table] = $this->alias;
-		$this->schema();
 	}
 
 /**
@@ -2790,7 +2789,7 @@ class Model extends Object {
 		if ($dataSource != null) {
 			$this->useDbConfig = $dataSource;
 		}
-		$db = $this->getDataSource();
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		if (!empty($oldConfig) && isset($db->config['prefix'])) {
 			$oldDb =& ConnectionManager::getDataSource($oldConfig);
 
@@ -2813,6 +2812,11 @@ class Model extends Object {
  * @return object A DataSource object
  */
 	public function &getDataSource() {
+		static $configured = false;
+		if (!$configured && $this->useTable !== false) {
+			$configured = true;
+			$this->setSource($this->useTable);
+		}
 		return ConnectionManager::getDataSource($this->useDbConfig);
 	}
 
