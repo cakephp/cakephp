@@ -57,7 +57,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testAssociationLazyLoading() {
-		$this->loadFixtures('ArticleFeatured', 'User', 'Category', 'Comment', 'ArticleFeaturedsTags', 'Tag');
+		$this->loadFixtures('ArticleFeaturedsTags');
 		$Article = new ArticleFeatured();
 		$this->assertTrue(isset($Article->belongsTo['User']));
 		$this->assertFalse(property_exists($Article, 'User'));
@@ -93,7 +93,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testAssociationLazyLoadWithHABTM() {
-		$this->loadFixtures('Article', 'UuidTag', 'Fruit', 'FruitsUuidTag', 'ArticlesTag');
+		$this->loadFixtures('FruitsUuidTag', 'ArticlesTag');
 		$Article = new ArticleB();
 		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
 		$this->assertFalse(property_exists($Article, 'TagB'));
