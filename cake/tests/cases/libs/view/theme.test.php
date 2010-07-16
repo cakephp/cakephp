@@ -17,7 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Theme', 'Controller'));
+App::import('View', 'View');
+App::import('View', 'Theme');
+App::import('Core', 'Controller');
 
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
@@ -298,9 +300,6 @@ class ThemeViewTest extends CakeTestCase {
  * @return void
  */
 	function testMemoryLeakInPaths() {
-		if ($this->skipIf(!function_exists('memory_get_usage'), 'No memory measurement function, cannot test for possible memory leak. %s')) {
-			return;
-		}
 		$this->Controller->plugin = null;
 		$this->Controller->name = 'Posts';
 		$this->Controller->viewPath = 'posts';

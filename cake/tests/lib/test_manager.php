@@ -76,12 +76,21 @@ class TestManager {
 	protected $_fixtureManager = null;
 
 /**
+ * Params to configure test runner
+ *
+ * @var CakeFixtureManager
+ */
+	public $params = array();
+
+/**
  * Constructor for the TestManager class
  *
  * @return void
  */
 	public function __construct($params = array()) {
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+
+		$this->params = $params;
 		if (isset($params['app'])) {
 			$this->appTest = true;
 		}
@@ -130,14 +139,7 @@ class TestManager {
  * @return mixed Result of test case being run.
  */
 	public function runTestCase($testCaseFile, PHPUnit_Framework_TestListener $reporter, $codeCoverage = false) {
-		$testCaseFileWithPath = $this->_getTestsPath($reporter->params) . DS . $testCaseFile;
-
-		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
-			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
-		}
-
-		$testSuite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
-		$testSuite->addTestFile($testCaseFileWithPath);
+		$this->loadCase($testCaseFile);
 		return $this->run($reporter, $codeCoverage);
 	}
 
@@ -160,6 +162,28 @@ class TestManager {
 		$testSuite->run($result, $this->filter);
 		$reporter->paintResult($result);
 		return $result;
+	}
+
+/**
+ * Loads a test case in a test suite, if the test suite is null it will create it
+ *
+ * @param string Test file path
+ * @param PHPUnit_Framework_TestSuite $suite the test suite to load the case in
+ * @throws InvalidArgumentException if test case file is not found
+ * @return PHPUnit_Framework_TestSuite the suite with the test case loaded
+ */
+	public function loadCase($testCaseFile, PHPUnit_Framework_TestSuite $suite = null) {
+		$testCaseFileWithPath = $this->_getTestsPath($this->params) . DS . $testCaseFile;
+
+		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
+			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
+		}
+		if (!$suite) {
+			$suite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
+		}
+		$suite->addTestFile($testCaseFileWithPath);
+
+		return $suite;
 	}
 
 /**
@@ -313,7 +337,7 @@ class TestManager {
  * @param string $name The name for the container test suite
  * @return PHPUnit_Framework_TestSuite container test suite
  */
-	protected function getTestSuite($name = '') {
+	public function getTestSuite($name = '') {
 		if (!empty($this->_testSuite)) {
 			return $this->_testSuite;
 		}
@@ -325,7 +349,7 @@ class TestManager {
  *
  * @return CakeFixtureManager fixture manager
  */
-	protected function getFixtureManager() {
+	public function getFixtureManager() {
 		if (!empty($this->_fixtureManager)) {
 			return $this->_fixtureManager;
 		}

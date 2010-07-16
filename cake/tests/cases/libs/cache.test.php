@@ -206,7 +206,7 @@ class CacheTest extends CakeTestCase {
 		Cache::write('test_somthing', 'this is the test data', 'tests');
 
 		$expected = array(
-			'path' => TMP . 'sessions',
+			'path' => TMP . 'sessions' . DS,
 			'prefix' => 'cake_',
 			'lock' => false,
 			'serialize' => true,

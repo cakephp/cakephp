@@ -462,16 +462,16 @@ class Model extends Object {
 		$this->Behaviors = new BehaviorCollection();
 
 		if ($this->useTable !== false) {
-			$this->setDataSource($ds);
 
 			if ($this->useTable === null) {
 				$this->useTable = Inflector::tableize($this->name);
 			}
-			$this->setSource($this->useTable);
 
 			if ($this->displayField == null) {
-				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+				unset($this->displayField);
 			}
+			$this->table = $this->useTable;
+			$this->tableToModel[$this->table] = $this->alias;
 		} elseif ($this->table === false) {
 			$this->table = Inflector::tableize($this->name);
 		}
@@ -492,9 +492,85 @@ class Model extends Object {
 		if ($result !== array('unhandled')) {
 			return $result;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		$return = $db->query($method, $params, $this);
+		$return = $this->getDataSource()->query($method, $params, $this);
 		return $return;
+	}
+
+/**
+ * Handles the lazy loading of model associations by lookin in the association arrays for the requested variable
+ *
+ * @param string $name variable tested for existance in class
+ * @return boolean true if the variable exists (if is a not loaded model association it will be created), false otherwise
+ */
+	public function __isset($name) {
+		$className = false;
+
+		foreach ($this->__associations as $type) {
+			if (isset($name, $this->{$type}[$name])) {
+				$className = empty($this->{$type}[$name]['className']) ? $name : $this->{$type}[$name]['className'];
+				break;
+			} else if ($type == 'hasAndBelongsToMany') {
+				foreach ($this->{$type} as $k => $relation) {
+					if (empty($relation['with'])) {
+						continue;
+					}
+					if (is_array($relation['with'])) {
+						if (key($relation['with']) === $name) {
+							$className = $name;
+						}
+					} else {
+						list($plugin, $class) = pluginSplit($relation['with']);
+						if ($class === $name) {
+							$className = $relation['with'];
+						}
+					}
+					if ($className) {
+						$assocKey = $k;
+						$dynamic = !empty($relation['dynamicWith']);
+						break(2);
+					}
+				}
+			}
+	    }
+
+		if (!$className) {
+			return false;
+		}
+
+		list($plugin, $className) = pluginSplit($className);
+
+		if (!ClassRegistry::isKeySet($className) && !empty($dynamic)) {
+			$this->{$className} = new AppModel(array(
+				'name' => $className,
+				'table' => $this->hasAndBelongsToMany[$assocKey]['joinTable'],
+				'ds' => $this->useDbConfig
+			));
+		} else {
+			$this->__constructLinkedModel($name, $className, $plugin);
+		}
+
+		if (!empty($assocKey)) {
+			$this->hasAndBelongsToMany[$assocKey]['joinTable'] = $this->{$name}->table;
+			if (count($this->{$name}->schema()) <= 2 && $this->{$name}->primaryKey !== false) {
+				$this->{$name}->primaryKey = $this->hasAndBelongsToMany[$assocKey]['foreignKey'];
+			}
+		}
+		return $this->{$name};
+	}
+
+/**
+ * Returns the value of the requested variable if it can be set by __isset()
+ *
+ * @param string $name variable requested for it's value or reference
+ * @return mixed value of requested variable if it is set
+ */
+	function __get($name) {
+		if ($name === 'displayField') {
+			return $this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+		}
+		if (isset($this->{$name})) {
+			return $this->{$name};
+		}
 	}
 
 /**
@@ -532,6 +608,9 @@ class Model extends Object {
 				}
 				$modelName = $assocName;
 				$this->{$assoc}[$assocName] = $value;
+				if (property_exists($this, $assocName)) {
+					unset($this->{$assocName});
+				}
 			}
 		}
 		$this->__createLinks();
@@ -601,21 +680,12 @@ class Model extends Object {
 						$this->{$type}[$assoc] = $value;
 
 						if (strpos($assoc, '.') !== false) {
-							$value = $this->{$type}[$assoc];
-							unset($this->{$type}[$assoc]);
-							list($plugin, $assoc) = pluginSplit($assoc, true);
-							$this->{$type}[$assoc] = $value;
+							list($plugin, $assoc) = pluginSplit($assoc);
+							$this->{$type}[$assoc] = array('className' => $plugin. '.' . $assoc);
 						}
 					}
-					$className =  $assoc;
-
-					if (!empty($value['className'])) {
-						list($plugin, $className) = pluginSplit($value['className'], true);
-						$this->{$type}[$assoc]['className'] = $className;
-					}
-					$this->__constructLinkedModel($assoc, $plugin . $className);
+					$this->__generateAssociation($type, $assoc);
 				}
-				$this->__generateAssociation($type);
 			}
 		}
 	}
@@ -625,7 +695,7 @@ class Model extends Object {
  *
  * @param string $assoc Association name
  * @param string $className Class name
- * @deprecated $this->$className use $this->$assoc instead. $assoc is the 'key' in the associations array;
+ * @param string $plugin name of the plugin where $className is located
  * 	examples: public $hasMany = array('Assoc' => array('className' => 'ModelName'));
  * 					usage: $this->Assoc->modelMethods();
  *
@@ -634,16 +704,16 @@ class Model extends Object {
  * @return void
  * @access private
  */
-	function __constructLinkedModel($assoc, $className = null) {
+	function __constructLinkedModel($assoc, $className = null, $plugin = null) {
 		if (empty($className)) {
 			$className = $assoc;
 		}
 
 		if (!isset($this->{$assoc}) || $this->{$assoc}->name !== $className) {
-			$model = array('class' => $className, 'alias' => $assoc);
+			$model = array('class' => $plugin . '.' . $className, 'alias' => $assoc);
 			$this->{$assoc} = ClassRegistry::init($model);
-			if (strpos($className, '.') !== false) {
-				ClassRegistry::addObject($className, $this->{$assoc});
+			if ($plugin) {
+				ClassRegistry::addObject($plugin . '.' . $className, $this->{$assoc});
 			}
 			if ($assoc) {
 				$this->tableToModel[$this->{$assoc}->table] = $assoc;
@@ -655,83 +725,58 @@ class Model extends Object {
  * Build an array-based association from string.
  *
  * @param string $type 'belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'
+ * @param string $assocKey
  * @return void
  * @access private
  */
-	function __generateAssociation($type) {
-		foreach ($this->{$type} as $assocKey => $assocData) {
-			$class = $assocKey;
-			$dynamicWith = false;
+	function __generateAssociation($type, $assocKey) {
+		$class = $assocKey;
+		$dynamicWith = false;
 
-			foreach ($this->__associationKeys[$type] as $key) {
+		foreach ($this->__associationKeys[$type] as $key) {
 
-				if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
-					$data = '';
+			if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
+				$data = '';
 
-					switch ($key) {
-						case 'fields':
-							$data = '';
-						break;
+				switch ($key) {
+					case 'fields':
+						$data = '';
+					break;
 
-						case 'foreignKey':
-							$data = (($type == 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
-						break;
+					case 'foreignKey':
+						$data = (($type == 'belongsTo') ? Inflector::underscore($assocKey) : Inflector::singularize($this->table)) . '_id';
+					break;
 
-						case 'associationForeignKey':
-							$data = Inflector::singularize($this->{$class}->table) . '_id';
-						break;
+					case 'associationForeignKey':
+						$data = Inflector::singularize($this->{$class}->table) . '_id';
+					break;
 
-						case 'with':
-							$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
-							$dynamicWith = true;
-						break;
+					case 'with':
+						$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
+						$dynamicWith = true;
+					break;
 
-						case 'joinTable':
-							$tables = array($this->table, $this->{$class}->table);
-							sort ($tables);
-							$data = $tables[0] . '_' . $tables[1];
-						break;
+					case 'joinTable':
+						$tables = array($this->table, $this->{$class}->table);
+						sort ($tables);
+						$data = $tables[0] . '_' . $tables[1];
+					break;
 
-						case 'className':
-							$data = $class;
-						break;
+					case 'className':
+						$data = $class;
+					break;
 
-						case 'unique':
-							$data = true;
-						break;
-					}
-					$this->{$type}[$assocKey][$key] = $data;
+					case 'unique':
+						$data = true;
+					break;
 				}
+				$this->{$type}[$assocKey][$key] = $data;
 			}
 
-			if (!empty($this->{$type}[$assocKey]['with'])) {
-				$joinClass = $this->{$type}[$assocKey]['with'];
-				if (is_array($joinClass)) {
-					$joinClass = key($joinClass);
-				}
-
-				$plugin = null;
-				if (strpos($joinClass, '.') !== false) {
-					list($plugin, $joinClass) = explode('.', $joinClass);
-					$plugin .= '.';
-					$this->{$type}[$assocKey]['with'] = $joinClass;
-				}
-
-				if (!ClassRegistry::isKeySet($joinClass) && $dynamicWith === true) {
-					$this->{$joinClass} = new AppModel(array(
-						'name' => $joinClass,
-						'table' => $this->{$type}[$assocKey]['joinTable'],
-						'ds' => $this->useDbConfig
-					));
-				} else {
-					$this->__constructLinkedModel($joinClass, $plugin . $joinClass);
-					$this->{$type}[$assocKey]['joinTable'] = $this->{$joinClass}->table;
-				}
-
-				if (count($this->{$joinClass}->schema()) <= 2 && $this->{$joinClass}->primaryKey !== false) {
-					$this->{$joinClass}->primaryKey = $this->{$type}[$assocKey]['foreignKey'];
-				}
+			if ($dynamicWith) {
+				$this->{$type}[$assocKey]['dynamicWith'] = true;
 			}
+
 		}
 	}
 
@@ -743,7 +788,7 @@ class Model extends Object {
  */
 	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
 		if ($db->isInterfaceSupported('listSources')) {
@@ -758,7 +803,6 @@ class Model extends Object {
 		}
 		$this->table = $this->useTable = $tableName;
 		$this->tableToModel[$this->table] = $this->alias;
-		$this->schema();
 	}
 
 /**
@@ -841,7 +885,7 @@ class Model extends Object {
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
 
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$format = $db->columns[$type]['format'];
 			$date = array();
 
@@ -902,7 +946,7 @@ class Model extends Object {
  */
 	public function schema($field = false) {
 		if (!is_array($this->_schema) || $field === true) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 			if ($db->isInterfaceSupported('describe') && $this->useTable !== false) {
 				$this->_schema = $db->describe($this, $field);
@@ -944,7 +988,7 @@ class Model extends Object {
  * @return string Column type
  */
 	public function getColumnType($column) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		$cols = $this->schema();
 		$model = null;
 
@@ -1231,7 +1275,7 @@ class Model extends Object {
 			return false;
 		}
 
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		foreach ($dateFields as $updateCol) {
 			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
@@ -1300,7 +1344,7 @@ class Model extends Object {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				$fInfo = $this->_schema[$this->primaryKey];
+				$fInfo = $this->schema($this->primaryKey);
 				$isUUID = ($fInfo['length'] == 36 &&
 					($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 				);
@@ -1361,10 +1405,11 @@ class Model extends Object {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
+				$keyInfo = $this->{$join}->schema($this->{$join}->primaryKey);
 				$isUUID = !empty($this->{$join}->primaryKey) && (
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary'
+						$keyInfo['length'] == 36 && (
+						$keyInfo['type'] === 'string' ||
+						$keyInfo['type'] === 'binary'
 					)
 				);
 
@@ -1548,7 +1593,7 @@ class Model extends Object {
 		if (empty($data)) {
 			$data = $this->data;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		$options = array_merge(array('validate' => 'first', 'atomic' => true), $options);
 		$this->validationErrors = $validationErrors = array();
@@ -1753,8 +1798,7 @@ class Model extends Object {
  * @link http://book.cakephp.org/view/1031/Saving-Your-Data
  */
 	function updateAll($fields, $conditions = true) {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->update($this, $fields, null, $conditions);
+		return $this->getDataSource()->update($this, $fields, null, $conditions);
 	}
 
 /**
@@ -1773,7 +1817,7 @@ class Model extends Object {
 		$id = $this->id;
 
 		if ($this->exists() && $this->beforeDelete($cascade)) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
 				'break' => true, 'breakOn' => false
 			));
@@ -1820,7 +1864,7 @@ class Model extends Object {
 		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 
-				$model =& $this->{$assoc};
+				$model = $this->{$assoc};
 				$conditions = array($model->escapeField($data['foreignKey']) => $id);
 				if ($data['conditions']) {
 					$conditions = array_merge((array)$data['conditions'], $conditions);
@@ -1883,7 +1927,7 @@ class Model extends Object {
 		if (empty($conditions)) {
 			return false;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 
 		if (!$cascade && !$callbacks) {
 			return $db->delete($this, $conditions);
@@ -2056,7 +2100,7 @@ class Model extends Object {
 			}
 		}
 
-		if (!$db =& ConnectionManager::getDataSource($this->useDbConfig)) {
+		if (!$db = $this->getDataSource()) {
 			return false;
 		}
 
@@ -2112,7 +2156,7 @@ class Model extends Object {
  */
 	function _findCount($state, $query, $results = array()) {
 		if ($state == 'before') {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = $this->getDataSource();
 			if (empty($query['fields'])) {
 				$query['fields'] = $db->calculate($this, 'count');
 			} elseif (is_string($query['fields'])  && !preg_match('/count/i', $query['fields'])) {
@@ -2330,7 +2374,7 @@ class Model extends Object {
 
 		foreach ($this->__associations as $type) {
 			foreach ($this->{$type} as $key => $name) {
-				if (!empty($this->{$key}->__backAssociation)) {
+				if (property_exists($this, $key) && !empty($this->{$key}->__backAssociation)) {
 					$this->{$key}->resetAssociations();
 				}
 			}
@@ -2391,7 +2435,7 @@ class Model extends Object {
  */
 	function query() {
 		$params = func_get_args();
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		return call_user_func_array(array(&$db, 'query'), $params);
 	}
 
@@ -2653,7 +2697,7 @@ class Model extends Object {
 		if (empty($field)) {
 			$field = $this->primaryKey;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = $this->getDataSource();
 		if (strpos($field, $db->name($alias) . '.') === 0) {
 			return $field;
 		}
@@ -2725,8 +2769,7 @@ class Model extends Object {
  * @return int Number of rows
  */
 	public function getNumRows() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->lastNumRows();
+		return $this->getDataSource()->lastNumRows();
 	}
 
 /**
@@ -2735,8 +2778,7 @@ class Model extends Object {
  * @return int Number of rows
  */
 	public function getAffectedRows() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db->lastAffected();
+		return $this->getDataSource()->lastAffected();
 	}
 
 /**
@@ -2751,9 +2793,9 @@ class Model extends Object {
 		if ($dataSource != null) {
 			$this->useDbConfig = $dataSource;
 		}
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		if (!empty($oldConfig) && isset($db->config['prefix'])) {
-			$oldDb =& ConnectionManager::getDataSource($oldConfig);
+			$oldDb = ConnectionManager::getDataSource($oldConfig);
 
 			if (!isset($this->tablePrefix) || (!isset($oldDb->config['prefix']) || $this->tablePrefix == $oldDb->config['prefix'])) {
 				$this->tablePrefix = $db->config['prefix'];
@@ -2774,8 +2816,12 @@ class Model extends Object {
  * @return object A DataSource object
  */
 	public function &getDataSource() {
-		$db =& ConnectionManager::getDataSource($this->useDbConfig);
-		return $db;
+		static $configured = false;
+		if (!$configured && $this->useTable !== false) {
+			$configured = true;
+			$this->setSource($this->useTable);
+		}
+		return ConnectionManager::getDataSource($this->useDbConfig);
 	}
 
 /**
@@ -2841,6 +2887,7 @@ class Model extends Object {
  */
 	public function joinModel($assoc, $keys = array()) {
 		if (is_string($assoc)) {
+			list(, $assoc) = pluginSplit($assoc);
 			return array($assoc, array_keys($this->{$assoc}->schema()));
 		} elseif (is_array($assoc)) {
 			$with = key($assoc);

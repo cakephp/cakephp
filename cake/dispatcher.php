@@ -328,7 +328,7 @@ class Dispatcher {
 		);
 
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
-			header('HTTP/1.1 404 Not Found');
+			$this->header('HTTP/1.1 404 Not Found');
 			return $this->_stop();
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
@@ -394,11 +394,11 @@ class Dispatcher {
 			}
 		}
 
-		header("Date: " . date("D, j M Y G:i:s ", filemtime($assetFile)) . 'GMT');
-		header('Content-type: ' . $contentType);
-		header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
-		header("Cache-Control: cache");
-		header("Pragma: cache");
+		$this->header("Date: " . date("D, j M Y G:i:s ", filemtime($assetFile)) . 'GMT');
+		$this->header('Content-type: ' . $contentType);
+		$this->header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
+		$this->header("Cache-Control: cache");
+		$this->header("Pragma: cache");
 
 		if ($ext === 'css' || $ext === 'js') {
 			include($assetFile);
@@ -410,5 +410,16 @@ class Dispatcher {
 		if (Configure::read('Asset.compress')) {
 			ob_end_flush();
 		}
+	}
+
+/**
+ * Sends the specified headers to the client
+ *
+ * @param string $header header to send
+ * @todo Refactor this to use a response object or similar
+ * @return void
+ */
+	public function header($header) {
+		header($header);
 	}
 }

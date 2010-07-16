@@ -272,6 +272,9 @@ class TestBehavior extends ModelBehavior {
  * @return void
  */
 	function beforeTest(&$model) {
+		if (!isset($model->beforeTestResult)) {
+			$model->beforeTestResult = array();
+		}
 		$model->beforeTestResult[] = strtolower(get_class($this));
 		return strtolower(get_class($this));
 	}

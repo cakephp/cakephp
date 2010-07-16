@@ -51,6 +51,88 @@ class DboMock extends DboSource {
 class ModelIntegrationTest extends BaseModelTest {
 
 /**
+ * testAssociationLazyLoading
+ *
+ * @group lazyloading
+ * @return void
+ */
+	public function testAssociationLazyLoading() {
+		$this->loadFixtures('ArticleFeaturedsTags');
+		$Article = new ArticleFeatured();
+		$this->assertTrue(isset($Article->belongsTo['User']));
+		$this->assertFalse(property_exists($Article, 'User'));
+		$this->assertType('User', $Article->User);
+
+		$this->assertTrue(isset($Article->belongsTo['Category']));
+		$this->assertFalse(property_exists($Article, 'Category'));
+		$this->assertTrue(isset($Article->Category));
+		$this->assertType('Category', $Article->Category);
+
+		$this->assertTrue(isset($Article->hasMany['Comment']));
+		$this->assertFalse(property_exists($Article, 'Comment'));
+		$this->assertTrue(isset($Article->Comment));
+		$this->assertType('Comment', $Article->Comment);
+
+		$this->assertTrue(isset($Article->hasAndBelongsToMany['Tag']));
+		//There was not enough information to setup the association (joinTable and associationForeignKey)
+		//so the model was not lazy loaded
+		$this->assertTrue(property_exists($Article, 'Tag'));
+		$this->assertTrue(isset($Article->Tag));
+		$this->assertType('Tag', $Article->Tag);
+
+		$this->assertFalse(property_exists($Article, 'ArticleFeaturedsTag'));
+		$this->assertType('AppModel', $Article->ArticleFeaturedsTag);
+		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['joinTable'], 'article_featureds_tags');
+		$this->assertEquals($Article->hasAndBelongsToMany['Tag']['associationForeignKey'], 'tag_id');
+	}
+
+/**
+ * testAssociationLazyLoadWithHABTM
+ *
+ * @group lazyloading
+ * @return void
+ */
+	public function testAssociationLazyLoadWithHABTM() {
+		$this->loadFixtures('FruitsUuidTag', 'ArticlesTag');
+		$Article = new ArticleB();
+		$this->assertTrue(isset($Article->hasAndBelongsToMany['TagB']));
+		$this->assertFalse(property_exists($Article, 'TagB'));
+		$this->assertType('TagB', $Article->TagB);
+
+		$this->assertFalse(property_exists($Article, 'ArticlesTag'));
+		$this->assertType('AppModel', $Article->ArticlesTag);
+
+		$UuidTag = new UuidTag();
+		$this->assertTrue(isset($UuidTag->hasAndBelongsToMany['Fruit']));
+		$this->assertFalse(property_exists($UuidTag, 'Fruit'));
+		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
+		$this->assertTrue(isset($UuidTag->Fruit));
+
+		$this->assertFalse(property_exists($UuidTag, 'FruitsUuidTag'));
+		$this->assertTrue(isset($UuidTag->FruitsUuidTag));
+		$this->assertType('FruitsUuidTag', $UuidTag->FruitsUuidTag);
+	}
+
+/**
+ * testAssociationLazyLoadWithBindModel
+ *
+ * @group lazyloading
+ * @return void
+ */
+	public function testAssociationLazyLoadWithBindModel() {
+		$this->loadFixtures('Article', 'User');
+		$Article = new ArticleB();
+
+		$this->assertFalse(isset($Article->belongsTo['User']));
+		$this->assertFalse(property_exists($Article, 'User'));
+
+		$Article->bindModel(array('belongsTo' => array('User')));
+		$this->assertTrue(isset($Article->belongsTo['User']));
+		$this->assertFalse(property_exists($Article, 'User'));
+		$this->assertType('User', $Article->User);
+	}
+
+/**
  * testPkInHAbtmLinkModelArticleB
  *
  * @access public
@@ -96,7 +178,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
 
 		//test conformant models with no PK in the join table
-		$this->loadFixtures('Article', 'Tag', 'User', 'Comment', 'Attachment', 'Syfile', 'Image', 'Item', 'Portfolio', 'ItemsPortfolio');
+		$this->loadFixtures('Article', 'Tag');
 		$TestModel2 = new Article();
 		$this->assertEqual($TestModel2->ArticlesTag->primaryKey, 'article_id');
 
@@ -874,7 +956,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testLoadModelSecondIteration() {
-		$this->loadFixtures('Message', 'Thread', 'Bid');
+		$this->loadFixtures('Apple', 'Message', 'Thread', 'Bid');
 		$model = new ModelA();
 		$this->assertIsA($model,'ModelA');
 
@@ -1063,7 +1145,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testGetAssociated() {
-		$this->loadFixtures('Article', 'Category');
+		$this->loadFixtures('Article', 'Tag');
 		$Article = ClassRegistry::init('Article');
 
 		$assocTypes = array('hasMany', 'hasOne', 'belongsTo', 'hasAndBelongsToMany');
@@ -1117,6 +1199,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'foreignKey' => false,
 				'className' => 'AssociationTest2',
 				'with' => 'JoinAsJoinB',
+				'dynamicWith' => true,
 				'associationForeignKey' => 'join_b_id',
 				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
 				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
@@ -1187,6 +1270,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'className' => 'Tag',
 				'joinTable' => 'article_featureds_tags',
 				'with' => 'ArticleFeaturedsTag',
+				'dynamicWith' => true,
 				'foreignKey' => 'article_featured_id',
 				'associationForeignKey' => 'tag_id',
 				'conditions' => '',
@@ -1215,7 +1299,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testConstruct() {
-		$this->loadFixtures('Post', 'Comment');
+		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
 		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));

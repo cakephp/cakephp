@@ -118,7 +118,21 @@ class CakeTestSuiteDispatcher {
  *
  * @return void
  */
-	function _checkPHPUnit() {
+	protected function _checkPHPUnit() {
+		$found = $this->loadTestFramework();
+		if (!$found) {
+			$baseDir = $this->_baseDir;
+			include CAKE_TESTS_LIB . 'templates/phpunit.php';
+			exit();
+		}
+	}
+
+/**
+ * Checks for the existence of the test framework files
+ *
+ * @return boolean true if found, false otherwise
+ */
+	public function loadTestFramework() {
 		$found = $path = null;
 
 		if (@include 'PHPUnit' . DS . 'Framework.php') {
@@ -136,14 +150,10 @@ class CakeTestSuiteDispatcher {
 				$found = include 'PHPUnit' . DS . 'Framework.php';
 			}
 		}
-
-		if (!$found) {
-			$baseDir = $this->_baseDir;
-			include CAKE_TESTS_LIB . 'templates/phpunit.php';
-			exit();
+		if ($found) {
+			PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
 		}
-
-		PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+		return $found;
 	}
 
 /**

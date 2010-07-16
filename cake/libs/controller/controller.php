@@ -620,13 +620,7 @@ class Controller extends Object {
 		}
 		$cached = false;
 		$object = null;
-		$plugin = null;
-		if ($this->uses === false) {
-			if ($this->plugin) {
-				$plugin = $this->plugin . '.';
-			}
-		}
-		list($plugin, $modelClass) = pluginSplit($modelClass, true, $plugin);
+		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
 		if ($this->persistModel === true) {
 			$cached = $this->_persist($modelClass, null, $object);
