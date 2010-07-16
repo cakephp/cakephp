@@ -468,7 +468,7 @@ class Model extends Object {
 			}
 
 			if ($this->displayField == null) {
-				$this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+				unset($this->displayField);
 			}
 			$this->table = $this->useTable;
 			$this->tableToModel[$this->table] = $this->alias;
@@ -565,6 +565,9 @@ class Model extends Object {
  * @return mixed value of requested variable if it is set
  */
 	function __get($name) {
+		if ($name === 'displayField') {
+			return $this->displayField = $this->hasField(array('title', 'name', $this->primaryKey));
+		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
 		}
