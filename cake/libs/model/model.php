@@ -1344,7 +1344,7 @@ class Model extends Object {
 			if (!empty($this->id)) {
 				$success = (bool)$db->update($this, $fields, $values);
 			} else {
-				$fInfo = $this->_schema[$this->primaryKey];
+				$fInfo = $this->schema($this->primaryKey);
 				$isUUID = ($fInfo['length'] == 36 &&
 					($fInfo['type'] === 'string' || $fInfo['type'] === 'binary')
 				);
@@ -1405,10 +1405,11 @@ class Model extends Object {
 			if (isset($this->hasAndBelongsToMany[$assoc])) {
 				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
 
+				$keyInfo = $this->{$join}->schema($this->{$join}->primaryKey);
 				$isUUID = !empty($this->{$join}->primaryKey) && (
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['length'] == 36 && (
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'string' ||
-						$this->{$join}->_schema[$this->{$join}->primaryKey]['type'] === 'binary'
+						$keyInfo['length'] == 36 && (
+						$keyInfo['type'] === 'string' ||
+						$keyInfo['type'] === 'binary'
 					)
 				);
 
