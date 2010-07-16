@@ -139,7 +139,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	public function testMissingTable() {
-		$Article = new ArticleB();
+		$Article = new ArticleB(false, uniqid());
 		$Article->schema();
 	}
 
