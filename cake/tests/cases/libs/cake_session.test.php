@@ -216,18 +216,26 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testWatchVar method
  *
+ * @expectedException Exception
  * @access public
  * @return void
  */
-	function testWatchVar() {
+	function testWatchVarWrite() {
 		$this->assertFalse(TestCakeSession::watch(null));
 
 		TestCakeSession::write('Watching', "I'm watching you");
 		TestCakeSession::watch('Watching');
-		$this->expectError('Writing session key {Watching}: "They found us!"');
 		TestCakeSession::write('Watching', 'They found us!');
+	}
 
-		$this->expectError('Deleting session key {Watching}');
+/**
+ * undocumented function
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function testWatchVarDelete() {
+		TestCakeSession::watch('Watching');
 		TestCakeSession::delete('Watching');
 
 		$this->assertFalse(TestCakeSession::watch('Invalid.key'));
@@ -392,7 +400,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEqual(TestCakeSession::read('SessionTestCase'), 'This was updated');
 
 		TestCakeSession::destroy();
-		$this->assertFalse(TestCakeSession::read('SessionTestCase'));
+		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 	}
 
 /**
@@ -428,7 +436,7 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEqual(TestCakeSession::read('SessionTestCase'), 'This was updated');
 
 		TestCakeSession::destroy();
-		$this->assertFalse(TestCakeSession::read('SessionTestCase'));
+		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 	}
 
 /**
@@ -464,7 +472,7 @@ class CakeSessionTest extends CakeTestCase {
         $this->assertEqual(TestCakeSession::read('SessionTestCase'), 'Some additional data');
 
 		TestCakeSession::destroy();
-		$this->assertFalse(TestCakeSession::read('SessionTestCase'));
+		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 		session_write_close();
 
 		unset($_SESSION);
