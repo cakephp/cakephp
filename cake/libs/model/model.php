@@ -1864,7 +1864,7 @@ class Model extends Object {
 		foreach (array_merge($this->hasMany, $this->hasOne) as $assoc => $data) {
 			if ($data['dependent'] === true && $cascade === true) {
 
-				$model =& $this->{$assoc};
+				$model = $this->{$assoc};
 				$conditions = array($model->escapeField($data['foreignKey']) => $id);
 				if ($data['conditions']) {
 					$conditions = array_merge((array)$data['conditions'], $conditions);
@@ -2795,7 +2795,7 @@ class Model extends Object {
 		}
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
 		if (!empty($oldConfig) && isset($db->config['prefix'])) {
-			$oldDb =& ConnectionManager::getDataSource($oldConfig);
+			$oldDb = ConnectionManager::getDataSource($oldConfig);
 
 			if (!isset($this->tablePrefix) || (!isset($oldDb->config['prefix']) || $this->tablePrefix == $oldDb->config['prefix'])) {
 				$this->tablePrefix = $db->config['prefix'];
