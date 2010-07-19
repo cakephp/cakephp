@@ -1645,7 +1645,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * test that saving habtm records respects conditions set in the the 'conditions' key
+ * test that saving habtm records respects conditions set in the 'conditions' key
  * for the association.
  *
  * @return void
