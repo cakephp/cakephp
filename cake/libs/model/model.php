@@ -387,7 +387,7 @@ class Model extends Overloadable {
  *
  * ### Dynamically creating models
  *
- * You can dynamically create model instances using the the $id array syntax.
+ * You can dynamically create model instances using the $id array syntax.
  *
  * {{{
  * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
