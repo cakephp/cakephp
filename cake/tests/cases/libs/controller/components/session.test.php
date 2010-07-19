@@ -349,8 +349,6 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionTimeout() {
-
-		session_destroy();
 		Configure::write('Security.level', 'low');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
@@ -361,7 +359,6 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEqual($Session->time, mktime());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
-		session_destroy();
 		Configure::write('Security.level', 'medium');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
@@ -371,8 +368,6 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEqual($Session->time, mktime());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
-
-		session_destroy();
 		Configure::write('Security.level', 'high');
 		$Session =& new SessionComponent();
 		$Session->write('Test', 'some value');
@@ -381,6 +376,5 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
 		$this->assertEqual($Session->time, mktime());
 		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
-
 	}
 }
