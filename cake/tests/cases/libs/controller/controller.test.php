@@ -910,8 +910,12 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testComponentBeforeRenderChangingViewClass() {
+		$core = App::core('views');
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				$core[0]
+			)
 		), true);
 		$Controller =& new Controller();
 		$Controller->uses = array();
@@ -921,7 +925,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->viewPath = 'posts';
 		$Controller->theme = 'test_theme';
 		$result = $Controller->render('index');
-		$this->assertPattern('/posts index themed view/', $result);
+		$this->assertPattern('/default test_theme layout/', $result);
 		App::build();
 	}
 
