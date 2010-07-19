@@ -2165,7 +2165,7 @@ class FormHelper extends AppHelper {
  *
  * Options
  *
- *  - `secure` - boolean whether or not the the field should be added to the security fields.
+ *  - `secure` - boolean whether or not the field should be added to the security fields.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
