@@ -181,7 +181,7 @@ class Shell extends Object {
 	}
 
 /**
- * Starts up the the Shell
+ * Starts up the Shell
  * allows for checking and configuring prior to command or main execution
  * can be overriden in subclasses
  *
