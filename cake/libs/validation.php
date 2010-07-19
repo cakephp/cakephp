@@ -30,7 +30,7 @@ if (!class_exists('Multibyte')) {
 class Validation extends Object {
 
 /**
- * Set the the value of methods $check param.
+ * Set the value of methods $check param.
  *
  * @var string
  * @access public
