@@ -212,6 +212,24 @@ class CakeSession {
 	}
 
 /**
+ * Begins the session if it hasn't already been started, and runs _checkValid which sets up some
+ * session tampering settings.
+ *
+ * @return void
+ */
+	public static function begin() {
+		if (self::started() === false) {
+			if (!self::id() && self::start()) {
+				self::_checkValid();
+			} else {
+				self::start();
+			}
+		}
+		self::$error = array();
+		return self::started();
+	}
+
+/**
  * Determine if Session has been started.
  *
  * @return boolean True if session has been started.
@@ -337,6 +355,19 @@ class CakeSession {
 			}
 		}
 		return self::$valid;
+	}
+
+/**
+ * Get / Set the userAgent 
+ *
+ * @param string $userAgent Set the userAgent
+ * @return void
+ */
+	public static function userAgent($userAgent = null) {
+		if ($userAgent) {
+			self::$_userAgent = $userAgent;
+		}
+		return self::$_userAgent;
 	}
 
 /**

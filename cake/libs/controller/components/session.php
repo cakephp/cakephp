@@ -31,7 +31,7 @@ if (!class_exists('cakesession')) {
  * @link http://book.cakephp.org/view/1310/Sessions
  *
  */
-class SessionComponent extends CakeSession {
+class SessionComponent extends Object {
 
 /**
  * Used to determine if methods implementation is used, or bypassed
@@ -54,12 +54,9 @@ class SessionComponent extends CakeSession {
  *
  * @param string $base The base path for the Session
  */
-	public function __construct($base = null) {
-		if (Configure::read('Session.start') === true) {
-			parent::__construct($base);
-		} else {
-			$this->__active = false;
-		}
+
+	public function __construct() {
+		CakeSession::begin();
 	}
 
 /**
@@ -69,9 +66,9 @@ class SessionComponent extends CakeSession {
  * @return void
  */
 	public function startup(&$controller) {
-		if ($this->started() === false && $this->__active === true) {
+		/*if ($this->started() === false && $this->__active === true) {
 			$this->_start();
-		}
+		}*/
 	}
 
 /**
@@ -81,11 +78,11 @@ class SessionComponent extends CakeSession {
  * @return void
  */
 	public function activate($base = null) {
-		if ($this->__active === true) {
+		/*if ($this->__active === true) {
 			return;
 		}
 		parent::__construct($base);
-		$this->__active = true;
+		$this->__active = true;*/
 	}
 
 /**
@@ -104,10 +101,7 @@ class SessionComponent extends CakeSession {
  * @return void
  */
 	public function userAgent($userAgent = null) {
-		if ($userAgent) {
-			$this->_userAgent = $userAgent;
-		}
-		return $this->_userAgent;
+		return CakeSession::userAgent($userAgent);
 	}
 
 /**
@@ -122,22 +116,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1312/write
  */
 	public function write($name, $value = null) {
-		if ($this->__active === true) {
-			$this->_start();
-			if (is_array($name)) {
-				foreach ($name as $key => $value) {
-					if (parent::write($key, $value) === false) {
-						return false;
-					}
-				}
-				return true;
-			}
-			if (parent::write($name, $value) === false) {
-				return false;
-			}
-			return true;
-		}
-		return false;
+		return CakeSession::write($name, $value);
 	}
 
 /**
@@ -151,11 +130,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1314/read
  */
 	public function read($name = null) {
-		if ($this->__active === true) {
-			$this->_start();
-			return parent::read($name);
-		}
-		return false;
+		return CakeSession::read($name);
 	}
 
 /**
@@ -168,11 +143,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1316/delete
  */
 	public function delete($name) {
-		if ($this->__active === true) {
-			$this->_start();
-			return parent::delete($name);
-		}
-		return false;
+		return CakeSession::delete($name);
 	}
 
 /**
@@ -185,11 +156,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1315/check
  */
 	public function check($name) {
-		if ($this->__active === true) {
-			$this->_start();
-			return parent::check($name);
-		}
-		return false;
+		return CakeSession::check($name);
 	}
 
 /**
@@ -201,11 +168,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1318/error
  */
 	public function error() {
-		if ($this->__active === true) {
-			$this->_start();
-			return parent::error();
-		}
-		return false;
+		return CakeSession::error();
 	}
 
 /**
@@ -222,10 +185,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1313/setFlash
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
-		if ($this->__active === true) {
-			$this->_start();
-			$this->write('Message.' . $key, compact('message', 'element', 'params'));
-		}
+		CakeSession::write('Message.' . $key, compact('message', 'element', 'params'));
 	}
 
 /**
@@ -236,10 +196,7 @@ class SessionComponent extends CakeSession {
  * @return void
  */
 	public function renew() {
-		if ($this->__active === true) {
-			$this->_start();
-			parent::renew();
-		}
+		return CakeSession::renew();
 	}
 
 /**
@@ -250,11 +207,7 @@ class SessionComponent extends CakeSession {
  * @return boolean true is session is valid, false is session is invalid
  */
 	public function valid() {
-		if ($this->__active === true) {
-			$this->_start();
-			return parent::valid();
-		}
-		return false;
+		return CakeSession::valid();
 	}
 
 /**
@@ -266,10 +219,7 @@ class SessionComponent extends CakeSession {
  * @link http://book.cakephp.org/view/1317/destroy
  */
 	public function destroy() {
-		if ($this->__active === true) {
-			$this->_start();
-			parent::destroy();
-		}
+		return CakeSession::destroy();
 	}
 
 /**
@@ -282,7 +232,7 @@ class SessionComponent extends CakeSession {
  * @return string
  */
 	public function id($id = null) {
-		return parent::id($id);
+		return CakeSession::id($id);
 	}
 
 /**
@@ -293,6 +243,7 @@ class SessionComponent extends CakeSession {
  * @access protected
  */
 	protected function _start() {
+		/*
 		if ($this->started() === false) {
 			if (!$this->id() && parent::start()) {
 				parent::_checkValid();
@@ -301,6 +252,7 @@ class SessionComponent extends CakeSession {
 			}
 		}
 		return $this->started();
+		*/
 	}
 
 /**

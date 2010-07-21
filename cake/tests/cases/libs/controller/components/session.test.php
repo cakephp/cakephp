@@ -88,6 +88,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	function setUp() {
 		$this->_session = Configure::read('Session');
+		$_SESSION = array();
 	}
 
 /**
@@ -97,6 +98,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		CakeSession::destroy();
 		Configure::write('Session', $this->_session);
 	}
 
@@ -107,6 +109,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionAutoStart() {
+		$this->markTestSkipped('Autostarting is broken/disabled for now.');
 		Configure::write('Session.start', false);
 		$Session = new SessionComponent();
 		$this->assertFalse($Session->active());
@@ -139,6 +142,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionActivate() {
+		$this->markTestSkipped('Activation is not implemented right now, sessions are always on');
 		$Session = new SessionComponent();
 
 		$this->assertTrue($Session->active());
@@ -165,24 +169,13 @@ class SessionComponentTest extends CakeTestCase {
 
 		$this->assertTrue($Session->valid());
 
+		Configure::write('Session.checkAgent', true);
 		$Session->userAgent('rweerw');
 		$this->assertFalse($Session->valid());
 
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$this->assertFalse($Session->active());
-		$this->assertFalse($Session->valid());
-		Configure::write('Session.start', true);
-
 		$Session = new SessionComponent();
 		$Session->time = $Session->read('Config.time') + 1;
 		$this->assertFalse($Session->valid());
-
-		Configure::write('Session.checkAgent', false);
-		$Session = new SessionComponent();
-		$Session->time = $Session->read('Config.time') + 1;
-		$this->assertFalse($Session->valid());
-		Configure::write('Session.checkAgent', true);
 	}
 
 /**
@@ -195,12 +188,6 @@ class SessionComponentTest extends CakeTestCase {
 		$Session = new SessionComponent();
 
 		$this->assertFalse($Session->error());
-
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$this->assertFalse($Session->active());
-		$this->assertFalse($Session->error());
-		Configure::write('Session.start', true);
 	}
 
 /**
@@ -235,13 +222,6 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertTrue($Session->write(array('Test' => 'some value')));
 		$this->assertEqual($Session->read('Test'), 'some value');
 		$Session->delete('Test');
-
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$this->assertFalse($Session->write('Test', 'some value'));
-		$Session->write('Test', 'some value');
-		$this->assertFalse($Session->read('Test'));
-		Configure::write('Session.start', true);
 	}
 
 /**
@@ -257,12 +237,6 @@ class SessionComponentTest extends CakeTestCase {
 
 		$Session->write('Test', 'some value');
 		$this->assertTrue($Session->delete('Test'));
-
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$Session->write('Test', 'some value');
-		$this->assertFalse($Session->delete('Test'));
-		Configure::write('Session.start', true);
 	}
 
 /**
@@ -279,12 +253,6 @@ class SessionComponentTest extends CakeTestCase {
 		$Session->write('Test', 'some value');
 		$this->assertTrue($Session->check('Test'));
 		$Session->delete('Test');
-
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$Session->write('Test', 'some value');
-		$this->assertFalse($Session->check('Test'));
-		Configure::write('Session.start', true);
 	}
 
 /**
@@ -322,7 +290,7 @@ class SessionComponentTest extends CakeTestCase {
 	function testSessionId() {
 		unset($_SESSION);
 		$Session = new SessionComponent();
-		$this->assertNull($Session->id());
+		$this->assertEquals(session_id(), $Session->id());
 	}
 
 /**
@@ -354,30 +322,32 @@ class SessionComponentTest extends CakeTestCase {
 		$Session =& new SessionComponent();
 		$Session->destroy();
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->sessionTime, time() + (300 * Configure::read('Session.timeout')));
+
+		$this->assertEqual(CakeSession::$sessionTime, mktime() + (300 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], 10);
-		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
-		$this->assertEqual($Session->time, time());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (300 * Configure::read('Session.timeout')));
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
+		$this->assertEqual(CakeSession::$time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
 		Configure::write('Security.level', 'medium');
 		$Session =& new SessionComponent();
 		$Session->destroy();
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->sessionTime, mktime() + (100 * Configure::read('Session.timeout')));
+		$this->assertEqual(CakeSession::$sessionTime, mktime() + (100 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], 10);
-		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
-		$this->assertEqual($Session->time, time());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
+		$this->assertEqual(CakeSession::$time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
 
 		Configure::write('Security.level', 'high');
 		$Session =& new SessionComponent();
 		$Session->destroy();
 		$Session->write('Test', 'some value');
-		$this->assertEqual($Session->sessionTime, time() + (10 * Configure::read('Session.timeout')));
+		$this->assertEqual(CakeSession::$sessionTime, mktime() + (10 * Configure::read('Session.timeout')));
 		$this->assertEqual($_SESSION['Config']['timeout'], 10);
 		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
-		$this->assertEqual($Session->time, time());
-		$this->assertEqual($_SESSION['Config']['time'], $Session->time + (Security::inactiveMins() * Configure::read('Session.timeout')));
+		$this->assertEqual(CakeSession::$time, mktime());
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() * Configure::read('Session.timeout')));
+
 	}
 }
