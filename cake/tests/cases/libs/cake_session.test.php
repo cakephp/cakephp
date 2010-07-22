@@ -369,6 +369,16 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * testCheckEmpty
+ *
+ * @access public
+ * @return void
+ */
+	function testCheckEmpty() {
+		$this->assertFalse(TestCakeSession::check());
+	}
+
+/**
  * test key exploitation
  *
  * @return void
