@@ -254,7 +254,7 @@ class CakeSession {
  * @param string $name Variable name to check for
  * @return boolean True if variable is there
  */
-	public static function check($name) {
+	public static function check($name = null) {
 		if (empty($name)) {
 			return false;
 		}

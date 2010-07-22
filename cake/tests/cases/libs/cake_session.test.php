@@ -195,6 +195,16 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * testReadyEmpty
+ *
+ * @author Predominant
+ * @access public
+ */
+	function testReadyEmpty() {
+		$this->assertFalse(TestCakeSession::read(''));
+	}
+
+/**
  * test writing a hash of values/
  *
  * @return void
