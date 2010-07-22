@@ -142,26 +142,46 @@ class CakeSession {
 
 		self::_setupDatabase();
 		if ($start === true) {
-			if (empty($base)) {
-				self::$path = '/';
-			} else {
-				self::$path = $base;
-				if (strpos($base, 'index.php') !== false) {
-				   self::$path = str_replace('index.php', '', $base);
-				}
-				if (strpos($base, '?') !== false) {
-				   self::$path = str_replace('?', '', $base);
-				}
-			}
-			self::$host = env('HTTP_HOST');
-
-			if (strpos(self::$host, ':') !== false) {
-				self::$host = substr(self::$host, 0, strpos(self::$host, ':'));
-			}
+			self::_setPath($base);
+			self::_setHost();
 		}
 		if (isset($_SESSION) || $start === true) {
 			self::$sessionTime = self::$time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			self::$security = Configure::read('Security.level');
+		}
+	}
+
+/**
+ * Setup the Path variable
+ *
+ * @param string $base base path
+ * @return void
+ */
+	protected static function _setPath($base = null) {
+		if (empty($base)) {
+			self::$path = '/';
+			return;
+		}
+
+		self::$path = $base;
+		if (strpos($base, 'index.php') !== false) {
+		   self::$path = str_replace('index.php', '', $base);
+		}
+		if (strpos($base, '?') !== false) {
+		   self::$path = str_replace('?', '', $base);
+		}
+	}
+
+/**
+ * Set the host
+ *
+ * @return void
+ */
+	protected static function _setHost() {
+		self::$host = env('HTTP_HOST');
+
+		if (strpos(self::$host, ':') !== false) {
+			self::$host = substr(self::$host, 0, strpos(self::$host, ':'));
 		}
 	}
 
