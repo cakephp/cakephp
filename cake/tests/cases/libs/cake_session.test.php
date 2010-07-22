@@ -197,7 +197,7 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testReadyEmpty
  *
- * @author Predominant
+ * @return void
  * @access public
  */
 	function testReadyEmpty() {
@@ -208,6 +208,7 @@ class CakeSessionTest extends CakeTestCase {
  * test writing a hash of values/
  *
  * @return void
+ * @access public
  */
 	function testWriteArray() {
 		$result = TestCakeSession::write(array(
@@ -220,6 +221,18 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertEquals(1, TestCakeSession::read('one'));
 		$this->assertEquals(array('something'), TestCakeSession::read('three'));
 		$this->assertEquals(null, TestCakeSession::read('null'));
+	}
+
+/**
+ * testWriteEmptyKey
+ *
+ * @return void
+ * @access public
+ */
+	function testWriteEmptyKey() {
+		$this->assertFalse(TestCakeSession::write('', 'graham'));
+		$this->assertFalse(TestCakeSession::write('', ''));
+		$this->assertFalse(TestCakeSession::write(''));
 	}
 
 /**
