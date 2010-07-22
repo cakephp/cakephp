@@ -222,12 +222,11 @@ class CakeSession {
  * @return boolean True if session was started
  */
 	public static function start() {
-		if (self::started()) {
-			return true;
+		if (!self::started()) {
+			session_write_close();
+			self::__initSession();
+			self::_startSession();
 		}
-		session_write_close();
-		self::__initSession();
-		self::_startSession();
 		return self::started();
 	}
 
@@ -661,10 +660,9 @@ class CakeSession {
  * @return void
  * @access private
  */
-	function __regenerateId() {
-		$oldSessionId = session_id();
-		if ($oldSessionId) {
-			if (session_id() != ''|| isset($_COOKIE[session_name()])) {
+	public function __regenerateId() {
+		if (session_id()) {
+			if (session_id() != '' || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 			}
 			session_regenerate_id(true);
