@@ -655,26 +655,17 @@ class CakeSession {
 	}
 
 /**
- * Helper method to restart a session.
+ * Restarts this session.
  *
  * @return void
- * @access private
  */
-	public function __regenerateId() {
+	public static function renew() {
 		if (session_id()) {
 			if (session_id() != '' || isset($_COOKIE[session_name()])) {
 				setcookie(Configure::read('Session.cookie'), '', time() - 42000, self::$path);
 			}
 			session_regenerate_id(true);
 		}
-	}
-
-/**
- * Restarts this session.
- *
- */
-	public static function renew() {
-		self::__regenerateId();
 	}
 
 /**
