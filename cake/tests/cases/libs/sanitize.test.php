@@ -193,6 +193,29 @@ class SanitizeTest extends CakeTestCase {
 		$expected = '';
 		$result = Sanitize::clean($string);
 		$this->assertEqual($string, $expected);
+
+		$data = array(
+			'Grant' => array(
+				'title' => '2 o clock grant',
+				'grant_peer_review_id' => 3,
+				'institution_id' => 5,
+				'created_by' => 1,
+				'modified_by' => 1,
+				'created' => '2010-07-15 14:11:00',
+				'modified' => '2010-07-19 10:45:41'
+			),
+			'GrantsMember' => array(
+				0 => array(
+					'id' => 68,
+					'grant_id' => 120,
+					'member_id' => 16,
+					'program_id' => 29,
+					'pi_percent_commitment' => 1
+				)
+			)
+		);
+		$result = Sanitize::clean($data);
+		$this->assertEqual($result, $data);
 	}
 
 /**
