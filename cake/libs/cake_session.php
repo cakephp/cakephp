@@ -144,6 +144,7 @@ class CakeSession {
 		if ($start === true) {
 			self::_setPath($base);
 			self::_setHost();
+			self::start();
 		}
 		if (isset($_SESSION) || $start === true) {
 			self::$sessionTime = self::$time + (Security::inactiveMins() * Configure::read('Session.timeout'));
@@ -162,14 +163,13 @@ class CakeSession {
 			self::$path = '/';
 			return;
 		}
-
-		self::$path = $base;
 		if (strpos($base, 'index.php') !== false) {
-		   self::$path = str_replace('index.php', '', $base);
+		   $base = str_replace('index.php', '', $base);
 		}
 		if (strpos($base, '?') !== false) {
-		   self::$path = str_replace('?', '', $base);
+		   $base = str_replace('?', '', $base);
 		}
+		self::$path = $base;
 	}
 
 /**
@@ -222,28 +222,19 @@ class CakeSession {
  * @return boolean True if session was started
  */
 	public static function start() {
-		if (!self::started()) {
-			session_write_close();
-			self::__initSession();
-			self::_startSession();
+		if (self::started()) {
+			return true;
 		}
-		return self::started();
-	}
 
-/**
- * Begins the session if it hasn't already been started, and runs _checkValid which sets up some
- * session tampering settings.
- *
- * @return void
- */
-	public static function begin() {
-		if (self::started() === false) {
-			if (!self::id() && self::start()) {
-				self::_checkValid();
-			} else {
-				self::start();
-			}
+		session_write_close();
+		self::__initSession();
+		self::_startSession();
+		$started = self::started();
+		
+		if (!self::id() && $started) {
+			self::_checkValid();
 		}
+
 		self::$error = array();
 		return self::started();
 	}

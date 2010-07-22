@@ -96,15 +96,33 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testSessionPath() {
-//		$Session = new CakeSession('/index.php');
 		TestCakeSession::init('/index.php');
 		$this->assertEqual('/', TestCakeSession::$path);
 
 		TestCakeSession::init('/sub_dir/index.php');
 		$this->assertEqual('/sub_dir/', TestCakeSession::$path);
+	}
 
+/**
+ * testCakeSessionPathEmpty
+ *
+ * @access public
+ * @return void
+ */	
+	function testCakeSessionPathEmpty() {
 		TestCakeSession::init('');
 		$this->assertEqual('/', TestCakeSession::$path, 'Session path is empty, with "" as $base needs to be / %s');
+	}
+
+/**
+ * testCakeSessionPathContainsParams
+ *
+ * @access public
+ * @return void
+ */
+	function testCakeSessionPathContainsQuestion() {
+		TestCakeSession::init('/index.php?');
+		$this->assertEqual('/', TestCakeSession::$path);
 	}
 
 /**
