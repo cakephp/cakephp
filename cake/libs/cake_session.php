@@ -143,7 +143,7 @@ class CakeSession {
 		self::_setupDatabase();
 		if ($start === true) {
 			self::_setPath($base);
-			self::_setHost();
+			self::_setHost(env('HTTP_HOST'));
 			self::start();
 		}
 		if (isset($_SESSION) || $start === true) {
@@ -173,13 +173,13 @@ class CakeSession {
 	}
 
 /**
- * Set the host
+ * Set the host name
  *
+ * @param string $host Hostname
  * @return void
  */
-	protected static function _setHost() {
-		self::$host = env('HTTP_HOST');
-
+	protected static function _setHost($host) {
+		self::$host = $host;
 		if (strpos(self::$host, ':') !== false) {
 			self::$host = substr(self::$host, 0, strpos(self::$host, ':'));
 		}

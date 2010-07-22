@@ -25,6 +25,10 @@ class TestCakeSession extends CakeSession {
 	public static function setUserAgent($value) {
 		self::$_userAgent = $value;
 	}
+	
+	public static function setHost($host) {
+		self::_setHost($host);
+	}
 }
 
 /**
@@ -123,6 +127,30 @@ class CakeSessionTest extends CakeTestCase {
 	function testCakeSessionPathContainsQuestion() {
 		TestCakeSession::init('/index.php?');
 		$this->assertEqual('/', TestCakeSession::$path);
+	}
+
+/**
+ * testSetHost
+ *
+ * @access public
+ * @return void
+ */
+	function testSetHost() {
+		TestCakeSession::init();
+		TestCakeSession::setHost('cakephp.org');
+		$this->assertEqual('cakephp.org', TestCakeSession::$host);
+	}
+
+/**
+ * testSetHostWithPort
+ *
+ * @access public
+ * @return void
+ */
+	function testSetHostWithPort() {
+		TestCakeSession::init();
+		TestCakeSession::setHost('cakephp.org:443');
+		$this->assertEqual('cakephp.org', TestCakeSession::$host);
 	}
 
 /**
