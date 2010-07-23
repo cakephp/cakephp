@@ -249,7 +249,7 @@ class Configure {
 			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php'), $fileName), E_USER_WARNING);
 			return false;
 		}
-		return Configure::write($config);
+		return self::write($config);
 	}
 
 /**
@@ -263,7 +263,7 @@ class Configure {
 	public static function version() {
 		if (!isset(self::$_values['Cake']['version'])) {
 			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
-			Configure::write($config);
+			self::write($config);
 		}
 		return self::$_values['Cake']['version'];
 	}
@@ -292,7 +292,7 @@ class Configure {
 		if (is_null($type)) {
 			$write = false;
 		}
-		Configure::__writeConfig($content, $name, $write);
+		self::__writeConfig($content, $name, $write);
 	}
 
 /**
@@ -308,7 +308,7 @@ class Configure {
 	private static function __writeConfig($content, $name, $write = true) {
 		$file = CACHE . 'persistent' . DS . $name . '.php';
 
-		if (Configure::read('debug') > 0) {
+		if (self::read('debug') > 0) {
 			$expires = "+10 seconds";
 		} else {
 			$expires = "+999 days";
@@ -320,13 +320,9 @@ class Configure {
 		}
 
 		if ($write === true) {
-			if (!class_exists('File')) {
-				require LIBS . 'file.php';
-			}
-			$fileClass = new File($file);
-
-			if ($fileClass->writable()) {
-				$fileClass->append($content);
+			$fileClass = new SplFileObject($file, 'a');
+			if ($fileClass->isWritable()) {
+				$fileClass->fwrite($content);
 			}
 		}
 	}
