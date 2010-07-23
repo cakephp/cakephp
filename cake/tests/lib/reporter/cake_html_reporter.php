@@ -320,7 +320,13 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		$trace = $e->getTrace();
 		$out = array();
 		foreach ($trace as $frame) {
-			$out[] = $frame['file'] . ' : ' . $frame['line'];
+			if (isset($frame['file']) && isset($frame['line'])) {
+				$out[] = $frame['file'] . ' : ' . $frame['line'];
+			} elseif (isset($frame['class']) && isset($frame['function'])) {
+				$out[] = $frame['class'] . '::' . $frame['function'];
+			} else {
+				$out[] = '[internal]';
+			}
 		}
 		return implode('<br />', $out);
 	}
