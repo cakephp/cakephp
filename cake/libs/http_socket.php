@@ -227,7 +227,23 @@ class HttpSocket extends CakeSocket {
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
-			$this->request['header'] = array_merge(array('Host' => $this->request['uri']['host']), $this->request['header']);
+			$Host = $this->request['uri']['host'];
+			$schema = '';
+			$port = 0;
+			if (isset($this->request['uri']['schema'])) {
+				$schema = $this->request['uri']['schema'];
+			}
+			if (isset($this->request['uri']['port'])) {
+				$port = $this->request['uri']['port'];
+			}
+			if (
+				($schema === 'http' && $port != 80) ||
+				($schema === 'https' && $port != 443) ||
+				($port != 80 && $port != 443)
+			) {
+				$Host .= ':' . $port;
+			}
+			$this->request['header'] = array_merge(compact('Host'), $this->request['header']);
 		}
 
 		if (isset($this->request['auth']['user']) && isset($this->request['auth']['pass'])) {

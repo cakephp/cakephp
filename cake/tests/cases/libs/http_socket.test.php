@@ -455,6 +455,25 @@ class HttpSocketTest extends CakeTestCase {
 				)
 			)
 			, 9 => array(
+				'request' => array('method' => 'POST', 'uri' => 'http://www.cakephp.org:8080/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'))
+				, 'expectation' => array(
+					'config' => array(
+						'port' => 8080
+						, 'request' => array(
+							'uri' => array(
+								'port' => 8080
+							)
+						)
+					)
+					, 'request' => array(
+						'uri' => array(
+							'port' => 8080
+						)
+						, 'header' => "Host: www.cakephp.org:8080\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\n"
+					)
+				)
+			)
+			, 10 => array(
 				'request' => array('method' => 'POST', 'uri' => 'https://www.cakephp.org/posts/add', 'body' => array('name' => 'HttpSocket-is-released', 'date' => 'today'))
 				, 'expectation' => array(
 					'config' => array(
@@ -471,10 +490,11 @@ class HttpSocketTest extends CakeTestCase {
 							'scheme' => 'https'
 							, 'port' => 443
 						)
+						, 'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 38\r\n"
 					)
 				)
 			)
-			, 10 => array(
+			, 11 => array(
 				'request' => array(
 						'method' => 'POST',
 						'uri' => 'https://www.cakephp.org/posts/add',
