@@ -19,7 +19,11 @@
  */
 class TestAppCacheEngine extends CacheEngine {
 
-	public function write($key, $value, $duration) { }
+	public function write($key, $value, $duration) { 
+		if ($key = 'fail') {
+			return false;
+		}
+	}
 
 	public function read($key) { }
 
