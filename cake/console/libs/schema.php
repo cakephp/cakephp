@@ -90,6 +90,9 @@ class SchemaShell extends Shell {
 		}
 		if (!empty($this->params['plugin'])) {
 			$plugin = $this->params['plugin'];
+			if (empty($name)) {
+				$name = $plugin;
+			}
 		}
 		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}

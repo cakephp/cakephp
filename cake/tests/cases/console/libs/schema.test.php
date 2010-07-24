@@ -368,6 +368,7 @@ class SchemaShellTest extends CakeTestCase {
 		$file =& new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $file->read();
 
+		$this->assertPattern('/class TestPluginSchema/', $contents);
 		$this->assertPattern('/var \$posts/', $contents);
 		$this->assertPattern('/var \$auth_users/', $contents);
 		$this->assertPattern('/var \$authors/', $contents);
