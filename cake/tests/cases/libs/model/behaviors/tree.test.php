@@ -29,7 +29,7 @@ require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
  * @subpackage    cake.tests.cases.libs.model.behaviors
  */
 class NumberTreeTest extends CakeTestCase {
-	
+
 /**
  * Whether backup global state for each test method or not
  *
@@ -858,7 +858,7 @@ class NumberTreeTest extends CakeTestCase {
 		$result = $this->Tree->verify();
 		$this->assertIdentical($result, true);
 
-		$this->Tree->moveup();
+		$this->Tree->moveUp();
 
 		$result = $this->Tree->find('all', array('fields' => 'name', 'order' => $modelClass . '.' . $leftField . ' ASC'));
 		$expected = array(array($modelClass => array('name' => '1.1')),
@@ -1132,7 +1132,7 @@ class NumberTreeTest extends CakeTestCase {
 		$data = $this->Tree->find(array($modelClass . '.name' => '1.2.2'));
 		$this->Tree->id= $data[$modelClass]['id'];
 
-		$result = $this->Tree->getparentNode(null, array('name'));
+		$result = $this->Tree->getParentNode(null, array('name'));
 		$expects = array($modelClass => array('name' => '1.2'));
 		$this->assertIdentical($result, $expects);
 	}

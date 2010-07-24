@@ -204,7 +204,7 @@ class TreeBehavior extends ModelBehavior {
  * @return integer number of child nodes
  * @link http://book.cakephp.org/view/1347/Counting-children
  */
-	public function childcount(&$Model, $id = null, $direct = false) {
+	public function childCount(&$Model, $id = null, $direct = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -307,7 +307,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array An associative array of records, where the id is the key, and the display field is the value
  * @link http://book.cakephp.org/view/1348/generatetreelist
  */
-	public function generatetreelist(&$Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
+	public function generateTreeList(&$Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
 		$overrideRecursive = $recursive;
 		extract($this->settings[$Model->alias]);
 		if (!is_null($overrideRecursive)) {
@@ -362,7 +362,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of data for the parent node
  * @link http://book.cakephp.org/view/1349/getparentnode
  */
-	public function getparentnode(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getParentNode(&$Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -395,7 +395,7 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of nodes from top most parent to current node
  * @link http://book.cakephp.org/view/1350/getpath
  */
-	public function getpath(&$Model, $id = null, $fields = null, $recursive = null) {
+	public function getPath(&$Model, $id = null, $fields = null, $recursive = null) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -432,7 +432,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1352/moveDown
  */
-	public function movedown(&$Model, $id = null, $number = 1) {
+	public function moveDown(&$Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -490,7 +490,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1353/moveUp
  */
-	public function moveup(&$Model, $id = null, $number = 1) {
+	public function moveUp(&$Model, $id = null, $number = 1) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
@@ -601,7 +601,7 @@ class TreeBehavior extends ModelBehavior {
 		} else {
 			$db =& ConnectionManager::getDataSource($Model->useDbConfig);
 			foreach ($Model->find('all', array('conditions' => $scope, 'fields' => array($Model->primaryKey, $parent), 'order' => $left)) as $array) {
-				$path = $this->getpath($Model, $array[$Model->alias][$Model->primaryKey]);
+				$path = $this->getPath($Model, $array[$Model->alias][$Model->primaryKey]);
 				if ($path == null || count($path) < 2) {
 					$parentId = null;
 				} else {
@@ -673,7 +673,7 @@ class TreeBehavior extends ModelBehavior {
  * @return boolean true on success, false on failure
  * @link http://book.cakephp.org/view/1354/removeFromTree
  */
-	public function removefromtree(&$Model, $id = null, $delete = false) {
+	public function removeFromTree(&$Model, $id = null, $delete = false) {
 		if (is_array($id)) {
 			extract (array_merge(array('id' => null), $id));
 		}
