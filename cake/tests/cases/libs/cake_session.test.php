@@ -39,6 +39,8 @@ class TestCakeSession extends CakeSession {
  */
 class CakeSessionTest extends CakeTestCase {
 
+	protected static $_gcDivisor;
+
 /**
  * Fixtures used in the SessionTest
  *
@@ -48,26 +50,26 @@ class CakeSessionTest extends CakeTestCase {
 	public $fixtures = array('core.session');
 
 /**
- * startCase method
+ * setup before class.
  *
  * @access public
  * @return void
  */
-	function startCase() {
+	public static function setupBeforeClass() {
 		// Make sure garbage colector will be called
-		$this->__gc_divisor = ini_get('session.gc_divisor');
+		self::$_gcDivisor = ini_get('session.gc_divisor');
 		ini_set('session.gc_divisor', '1');
 	}
 
 /**
- * endCase method
+ * teardown after class
  *
  * @access public
  * @return void
  */
-	function endCase() {
+	public static function teardownAfterClass() {
 		// Revert to the default setting
-		ini_set('session.gc_divisor', $this->__gc_divisor);
+		ini_set('session.gc_divisor', self::$_gcDivisor);
 	}
 
 /**
@@ -77,6 +79,15 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function startTest() {
+		Configure::write('Session', array(
+			'defaults' => 'php',
+			'cookie' => 'cakephp',
+			'timeout' => 120,
+			'cookieTimeout' => 120,
+			'ini' => array(),
+			'handler' => null
+		));
+
 		TestCakeSession::init();
 		TestCakeSession::destroy();
 		TestCakeSession::$watchKeys = array();
@@ -88,10 +99,33 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-    function endTest() {
-        unset($_SESSION);
+	function endTest() {
+		unset($_SESSION);
 		@session_destroy();
-    }
+	}
+
+/**
+ * test setting ini properties with Session configuration.
+ *
+ * @return void
+ */
+	function testSessionConfigIniSetting() {
+		$_SESSION = array();
+		session_destroy();
+
+		Configure::write('Session', array(
+			'cookie' => 'test_suite',
+			'timeout' => 86400,
+			'ini' => array(
+				'session.referer_check' => 'example.com',
+				'session.use_trans_sid' => false
+			)
+		));
+		TestCakeSession::start();
+		$this->assertEquals('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
+		$this->assertEquals('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
+		$this->assertEquals('test_suite', ini_get('session.name'), 'Ini value is incorrect');
+	}
 
 /**
  * testSessionPath

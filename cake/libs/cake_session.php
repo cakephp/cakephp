@@ -495,18 +495,63 @@ class CakeSession {
 /**
  * Helper method to initialize a session, based on Cake core settings.
  *
+ * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
+ * 
+ * ## Options
+ *
+ * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
+ * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
+ * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
+ * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions?
+ * - `Session.defaults` - The default configuration set to use as a basis for your session.
+ *    There are four builtins: php, cake, cache, database.
+ * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
+ *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
+ *    to the ini array.
+ * - `Session.ini` - An associative array of additional ini values to set.
+ *
  * @access private
  */
 	function __initSession() {
+		$sessionConfig = Configure::read('Session');
 		$iniSet = function_exists('ini_set');
-		if ($iniSet && env('HTTPS')) {
-			ini_set('session.cookie_secure', 1);
-		}
-		if ($iniSet && (self::$security === 'high' || self::$security === 'medium')) {
-			ini_set('session.referer_check', self::$host);
-		}
-		self::$cookieLifeTime = Configure::read('Session.timeout') * Security::inactiveMins();
 
+		if (isset($sessionConfig['defaults'])) {
+			$defaults = self::_defaultConfig($sessionConfig['defaults']);
+			if ($defaults) {
+				$sessionConfig = Set::merge($defaults, $sessionConfig);
+			}
+		}
+		if (!isset($sessionConfig['ini']['session.cookie_secure']) && env('HTTPS')) {
+			$sessionConfig['ini']['session.cookie_secure'] = 1;
+		}
+		if (isset($sessionConfig['timeout']) && !isset($sessionConfig['cookieTimeout'])) {
+			$sessionConfig['cookieTimeout'] = $sessionConfig['timeout'];
+		}
+		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
+			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
+		}
+		if (!isset($sessionConfig['ini']['session.name'])) {
+			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
+		}
+		if (!empty($sessionConfig['handler'])) {
+			$sessionConfig['ini']['sesssion.save_handler'] = 'user';
+		}
+
+		if (empty($_SESSION)) {
+			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
+				foreach ($sessionConfig['ini'] as $setting => $value) {
+					if (ini_set($setting, $value) === false) {
+						throw new Exception(__('Unable to configure the session.'));
+					}
+				}
+			}
+		}
+		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
+			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
+		}
+		
+		/*
 		switch (Configure::read('Session.save')) {
 			case 'cake':
 				if (empty($_SESSION) && $iniSet) {
@@ -588,6 +633,86 @@ class CakeSession {
 				}
 			break;
 		}
+		*/
+	}
+
+/**
+ * Get one of the prebaked default session configurations.
+ *
+ * @return void
+ */
+	protected static function _defaultConfig($name) {
+		$defaults = array(
+			'php' => array(
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'cookieTimeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'session.cookie_path' => self::$path
+				)
+			),
+			'cake' => array(
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'cookieTimeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.serialize_handler' => 'php',
+					'session.use_cookies' => 1,
+					'session.cookie_path' => self::$path,
+					'session.auto_start' => 0,
+					'session.save_path' => TMP . 'sessions'
+				)
+			),
+			'cache' => array(
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'cookieTimeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.use_cookies' => 1,
+					'session.cookie_path' => self::$path,
+					'session.save_handler' => 'user',
+				),
+				'handler' => array(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('Cache', 'read'),
+					array('Cache', 'write'),
+					array('Cache', 'delete'),
+					array('Cache', 'gc')	
+				)
+			),
+			'database' => array(
+				'cookie' => 'CAKEPHP',
+				'timeout' => 240,
+				'cookieTimeout' => 240,
+				'ini' => array(
+					'session.use_trans_sid' => 0,
+					'url_rewriter.tags' => '',
+					'session.auto_start' => 0,
+					'session.use_cookies' => 1,
+					'session.cookie_path' => self::$path,
+					'session.save_handler' => 'user',
+					'session.serialize_handler' => 'php',
+				),
+				'handler' => array(
+					array('CakeSession','__open'),
+					array('CakeSession', '__close'),
+					array('CakeSession', '__read'),
+					array('CakeSession', '__write'),
+					array('CakeSession', '__destroy'),
+					array('CakeSession', '__gc')
+				)
+			)
+		);
+		if (isset($defaults[$name])) {
+			return $defaults[$name];
+		}
+		return false;
 	}
 
 /**
