@@ -581,8 +581,8 @@ class CakeSession {
  * @return void
  */
 	protected static function _getHandler($handler) {
-		$class = $handler;
-		$found = App::import('Lib', 'session/' . $class);
+		list($plugin, $class) = pluginSplit($handler, true);
+		$found = App::import('Lib', $plugin . 'session/' . $class);
 		if (!$found) {
 			App::import('Core', 'session/' . $class);
 		}

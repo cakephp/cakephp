@@ -537,6 +537,52 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * test using a handler from app/libs.
+ *
+ * @return void
+ */
+	function testUsingAppLibsHandler() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+		Configure::write('Session', array(
+			'defaults' => 'cake',
+			'handler' => array(
+				'engine' => 'TestAppLibSession'
+			)
+		));
+		TestCakeSession::destroy();
+		$this->assertTrue(TestCakeSession::started());
+
+		App::build();
+	}
+
+/**
+ * test using a handler from a plugin.
+ *
+ * @return void
+ */
+	function testUsingPluginHandler() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+		
+		Configure::write('Session', array(
+			'defaults' => 'cake',
+			'handler' => array(
+				'engine' => 'TestPlugin.TestPluginSession'
+			)
+		));
+		
+		TestCakeSession::destroy();
+		$this->assertTrue(TestCakeSession::started());
+
+		App::build();
+	}
+
+/**
  * testReadAndWriteWithDatabaseStorage method
  *
  * @access public
