@@ -111,7 +111,7 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testSessionConfigIniSetting() {
-		$_SESSION = array();
+		$_SESSION = null;
 		session_destroy();
 
 		Configure::write('Session', array(
@@ -186,6 +186,34 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::init();
 		TestCakeSession::setHost('cakephp.org:443');
 		$this->assertEqual('cakephp.org', TestCakeSession::$host);
+	}
+
+/**
+ * test valid with bogus user agent.
+ *
+ * @return void
+ */
+	function testValidBogusUserAgent() {
+		Configure::write('Session.checkAgent', true);
+		TestCakeSession::start();
+		$this->assertTrue(TestCakeSession::valid(), 'Newly started session should be valid');
+
+		TestCakeSession::userAgent('bogus!');
+		$this->assertFalse(TestCakeSession::valid(), 'user agent mismatch should fail.');
+	}
+
+/**
+ * test valid with bogus user agent.
+ *
+ * @return void
+ */
+	function testValidTimeExpiry() {
+		Configure::write('Session.checkAgent', true);
+		TestCakeSession::start();
+		$this->assertTrue(TestCakeSession::valid(), 'Newly started session should be valid');
+
+		TestCakeSession::$time = strtotime('next year');
+		$this->assertFalse(TestCakeSession::valid(), 'time should cause failure.');
 	}
 
 /**
@@ -299,6 +327,7 @@ class CakeSessionTest extends CakeTestCase {
 		$_SESSION = null;
 		$this->assertFalse(TestCakeSession::started());
 		$this->assertTrue(TestCakeSession::start());
+		$this->assertTrue(TestCakeSession::started());
 	}
 
 /**

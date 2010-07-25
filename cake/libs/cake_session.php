@@ -239,7 +239,7 @@ class CakeSession {
 		self::_startSession();
 		$started = self::started();
 
-		if (!self::id() && $started) {
+		if (self::id() && $started) {
 			self::_checkValid();
 		}
 
@@ -492,12 +492,11 @@ class CakeSession {
  * @return void
  */
 	public static function destroy() {
-		$_SESSION = array();
+		$_SESSION = null;
 		self::$id = null;
 		self::init(self::$path);
 		self::start();
 		self::renew();
-		self::_checkValid();
 	}
 
 /**
