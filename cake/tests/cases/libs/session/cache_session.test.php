@@ -35,8 +35,9 @@ class CacheSessionTest extends CakeTestCase {
 			'engine' => 'File',
 			'prefix' => 'session_test_'
 		));
-		Configure::write('Session.handler.config', 'session_test');
 		self::$_sessionBackup = Configure::read('Session');
+
+		Configure::write('Session.handler.config', 'session_test');
 	}
 
 /**

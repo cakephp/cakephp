@@ -77,7 +77,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function write($id, $data) {
-		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
+		$expires = time() + (Configure::read('Session.timeout') * 60);
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
 		return $return;
