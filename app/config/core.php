@@ -110,89 +110,47 @@
 	define('LOG_ERROR', 2);
 
 /**
- * The preferred session handling method. Valid values:
+ * Session configuration.
  *
- * 'php'	 		Uses settings defined in your php.ini.
- * 'cake'		Saves session files in CakePHP's /tmp directory.
- * 'database'	Uses CakePHP's database sessions.
+ * Contains an array of settings to use for session configuration. The defaults key is 
+ * used to define a default preset to use for sessions, any settings declared here will override
+ * the settings of the default config.
  *
- * To define a custom session handler, save it at /app/config/<name>.php.
- * Set the value of 'Session.save' to <name> to utilize it in CakePHP.
+ * ## Options
+ *
+ * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
+ * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
+ * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
+ * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions?
+ * - `Session.defaults` - The default configuration set to use as a basis for your session.
+ *    There are four builtins: php, cake, cache, database.
+ * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
+ *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
+ *    to the ini array.
+ * - `Session.harden` - Enabling this setting, turns on automatic renewal of sessions, and 
+ *    sessionids that change frequently.
+ * - `Session.ini` - An associative array of additional ini values to set.
+ *
+ * The built in defaults are:
+ *
+ * - 'php' -Uses settings defined in your php.ini.
+ * - 'cake' - Saves session files in CakePHP's /tmp directory.
+ * - 'database' - Uses CakePHP's database sessions.
+ * - 'cache' - Use the Cache class to save sessions.
+ *
+ * To define a custom session handler, save it at /app/libs/session/<name>.php.
+ * Make sure the class implements `CakeSessionHandlerInterface` and set Session.handler to <name>
  *
  * To use database sessions, run the app/config/schema/sessions.php schema using
- * the cake shell command: cake schema run create Sessions
+ * the cake shell command: cake schema create Sessions
  *
  */
-	Configure::write('Session.save', 'php');
+	Configure::write('Session', array(
+		'defaults' => 'php'
+	));
 
 /**
- * The model name to be used for the session model.
- *
- * 'Session.save' must be set to 'database' in order to utilize this constant.
- *
- * The model name set here should *not* be used elsewhere in your application.
- */
-	//Configure::write('Session.model', 'Session');
-
-/**
- * The name of the table used to store CakePHP database sessions.
- *
- * 'Session.save' must be set to 'database' in order to utilize this constant.
- *
- * The table name set here should *not* include any table prefix defined elsewhere.
- *
- * Please note that if you set a value for Session.model (above), any value set for
- * Session.table will be ignored.
- *
- * [Note: Session.table is deprecated as of CakePHP 1.3]
- */
-	//Configure::write('Session.table', 'cake_sessions');
-
-/**
- * The DATABASE_CONFIG::$var to use for database session handling.
- *
- * 'Session.save' must be set to 'database' in order to utilize this constant.
- */
-	//Configure::write('Session.database', 'default');
-
-/**
- * The name of CakePHP's session cookie.
- *
- * Note the guidelines for Session names states: "The session name references
- * the session id in cookies and URLs. It should contain only alphanumeric
- * characters."
- * @link http://php.net/session_name
- */
-	Configure::write('Session.cookie', 'CAKEPHP');
-
-/**
- * Session time out time (in minutes).
- * Actual value depends on 'Security.level' setting.
- */
-	Configure::write('Session.timeout', '120');
-
-/**
- * If set to false, sessions are not automatically started.
- */
-	Configure::write('Session.start', true);
-
-/**
- * When set to false, HTTP_USER_AGENT will not be checked
- * in the session
- */
-	Configure::write('Session.checkAgent', true);
-
-/**
- * The level of CakePHP security. The session timeout time defined
- * in 'Session.timeout' is multiplied according to the settings here.
- * Valid values:
- *
- * 'high'   Session timeout in 'Session.timeout' x 10
- * 'medium' Session timeout in 'Session.timeout' x 100
- * 'low'    Session timeout in 'Session.timeout' x 300
- *
- * CakePHP session IDs are also regenerated between requests if
- * 'Security.level' is set to 'high'.
+ * The level of CakePHP security.
  */
 	Configure::write('Security.level', 'medium');
 
