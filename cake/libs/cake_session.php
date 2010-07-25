@@ -628,7 +628,8 @@ class CakeSession {
 					'session.save_handler' => 'user',
 				),
 				'handler' => array(
-					'engine' => 'CacheSession'
+					'engine' => 'CacheSession',
+					'config' => 'default'
 				)
 			),
 			'database' => array(
@@ -645,7 +646,8 @@ class CakeSession {
 					'session.serialize_handler' => 'php',
 				),
 				'handler' => array(
-					'engine' => 'DatabaseSession'
+					'engine' => 'DatabaseSession',
+					'model' => 'Session'
 				)
 			)
 		);
@@ -838,7 +840,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function read($id) {
-		return Cache::read($id);
+		return Cache::read($id, Configure::read('Session.handler.config'));
 	}
 
 /**
@@ -850,7 +852,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function write($id, $data) {
-		return Cache::write($id, $data);
+		return Cache::write($id, $data, Configure::read('Session.handler.config'));
 	}
 
 /**
@@ -861,7 +863,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function destroy($id) {
-		return Cache::delete($id);
+		return Cache::delete($id, Configure::read('Session.handler.config'));
 	}
 
 /**
@@ -872,7 +874,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function gc($expires = null) {
-		return Cache::gc();
+		return Cache::gc(Configure::read('Session.handler.config'));
 	}
 }
 
