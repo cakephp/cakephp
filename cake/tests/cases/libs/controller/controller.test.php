@@ -390,6 +390,16 @@ class TestComponent extends Object {
  */
 	function shutdown(&$controller) {
 	}
+/**
+ * beforeRender callback
+ *
+ * @return void
+ */
+	function beforeRender(&$controller) {
+		if ($this->viewclass) {
+			$controller->view = $this->viewclass;
+		}
+	}
 }
 
 /**
@@ -921,6 +931,31 @@ class ControllerTest extends CakeTestCase {
 		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
 
+		App::build();
+	}
+
+/**
+ * test that a component beforeRender can change the controller view class.
+ *
+ * @return void
+ */
+	function testComponentBeforeRenderChangingViewClass() {
+		$core = App::core('views');
+		App::build(array(
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				$core[0]
+			)
+		), true);
+		$Controller =& new Controller();
+		$Controller->uses = array();
+		$Controller->components = array('Test');
+		$Controller->constructClasses();
+		$Controller->Test->viewclass = 'Theme';
+		$Controller->viewPath = 'posts';
+		$Controller->theme = 'test_theme';
+		$result = $Controller->render('index');
+		$this->assertPattern('/default test_theme layout/', $result);
 		App::build();
 	}
 
