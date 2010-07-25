@@ -578,10 +578,11 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testReadAndWriteWithDatabaseStorage() {
-		Configure::write('Session.table', 'sessions');
-		Configure::write('Session.model', 'Session');
-		Configure::write('Session.database', 'test_suite');
 		Configure::write('Session.defaults', 'database');
+		Configure::write('Session.handler.table', 'sessions');
+		Configure::write('Session.handler.model', 'Session');
+		Configure::write('Session.handler.database', 'test_suite');
+		
 
 		TestCakeSession::init();
 		TestCakeSession::destroy();

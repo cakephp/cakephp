@@ -194,9 +194,9 @@ class CakeSession {
 		if (Configure::read('Session.defaults') !== 'database') {
 			return;
 		}
-		$modelName = Configure::read('Session.model');
-		$database = Configure::read('Session.database');
-		$table = Configure::read('Session.table');
+		$modelName = Configure::read('Session.handler.model');
+		$database = Configure::read('Session.handler.database');
+		$table = Configure::read('Session.handler.table');
 
 		if (empty($database)) {
 			$database = 'default';
@@ -543,13 +543,31 @@ class CakeSession {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
-						throw new Exception(__('Unable to configure the session.'));
+						throw new Exception(sprintf(
+							__('Unable to configure the session, setting %s failed.'),
+							$setting
+						));
 					}
 				}
 			}
 		}
 		if (!empty($sessionConfig['handler']) && !isset($sessionConfig['handler']['engine'])) {
 			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
+		}
+		if (!empty($sessionConfig['handler']['engine'])) {
+			$class = $sessionConfig['handler']['engine'];
+			$reflect = new ReflectionClass($class);
+			if (!$reflect->implementsInterface('CakeSessionHandlerInterface')) {
+				throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface'));
+			}
+			session_set_save_handler(
+				array($class, 'open'),
+				array($class, 'close'),
+				array($class, 'read'),
+				array($class, 'write'),
+				array($class, 'destroy'),
+				array($class, 'gc')
+			);
 		}
 		
 		/*
@@ -610,12 +628,7 @@ class CakeSession {
 					'session.save_handler' => 'user',
 				),
 				'handler' => array(
-					array('CakeSession','__open'),
-					array('CakeSession', '__close'),
-					array('Cache', 'read'),
-					array('Cache', 'write'),
-					array('Cache', 'delete'),
-					array('Cache', 'gc')	
+					'engine' => 'CacheSession'
 				)
 			),
 			'database' => array(
@@ -632,12 +645,7 @@ class CakeSession {
 					'session.serialize_handler' => 'php',
 				),
 				'handler' => array(
-					array('CakeSession','__open'),
-					array('CakeSession', '__close'),
-					array('CakeSession', '__read'),
-					array('CakeSession', '__write'),
-					array('CakeSession', '__destroy'),
-					array('CakeSession', '__gc')
+					'engine' => 'DatabaseSession'
 				)
 			)
 		);
@@ -731,14 +739,80 @@ class CakeSession {
 		self::$error[$errorNumber] = $errorMessage;
 		self::$lastError = $errorNumber;
 	}
+}
 
+
+/**
+ * Interface for Session handlers.  Custom session handler classes should implement
+ * this interface as it allows CakeSession know how to map methods to session_set_save_handler()
+ *
+ * @package cake.libs
+ */
+interface CakeSessionHandlerInterface {
+/**
+ * Method called on open of a session.
+ *
+ * @return boolean Success
+ */
+	public static function open();
+
+/**
+ * Method called on close of a session.
+ *
+ * @return boolean Success
+ */
+	public static function close();
+
+/**
+ * Method used to read from a session.
+ *
+ * @param mixed $id The key of the value to read
+ * @return mixed The value of the key or false if it does not exist
+ */
+	public static function read($id);
+
+/**
+ * Helper function called on write for sessions.
+ *
+ * @param integer $id ID that uniquely identifies session in database
+ * @param mixed $data The value of the data to be saved.
+ * @return boolean True for successful write, false otherwise.
+ */
+	public static function write($id, $data);
+
+/**
+ * Method called on the destruction of a session.
+ *
+ * @param integer $id ID that uniquely identifies session in database
+ * @return boolean True for successful delete, false otherwise.
+ */
+	public static function destroy($id);
+
+/**
+ * Run the Garbage collection on the session storage.  This method should vacuum all
+ * expired or dead sessions.
+ *
+ * @param integer $expires Timestamp (defaults to current time)
+ * @return boolean Success
+ */
+	public static function gc($expires = null);
+}
+
+
+
+/**
+ * CacheSession provides method for saving sessions into a Cache engine. Used as 
+ *
+ * @package cake.libs
+ */
+class CacheSession implements CakeSessionHandlerInterface {
 /**
  * Method called on open of a database session.
  *
  * @return boolean Success
  * @access private
  */
-	function __open() {
+	public static function open() {
 		return true;
 	}
 
@@ -748,17 +822,10 @@ class CakeSession {
  * @return boolean Success
  * @access private
  */
-	function __close() {
+	public static function close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
-			switch (Configure::read('Session.save')) {
-				case 'cache':
-					Cache::gc();
-				break;
-				default:
-					CakeSession::__gc();
-				break;
-			}
+			Cache::gc();
 		}
 		return true;
 	}
@@ -770,7 +837,83 @@ class CakeSession {
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	function __read($id) {
+	public static function read($id) {
+		return Cache::read($id);
+	}
+
+/**
+ * Helper function called on write for database sessions.
+ *
+ * @param integer $id ID that uniquely identifies session in database
+ * @param mixed $data The value of the data to be saved.
+ * @return boolean True for successful write, false otherwise.
+ * @access private
+ */
+	public static function write($id, $data) {
+		return Cache::write($id, $data);
+	}
+
+/**
+ * Method called on the destruction of a database session.
+ *
+ * @param integer $id ID that uniquely identifies session in database
+ * @return boolean True for successful delete, false otherwise.
+ * @access private
+ */
+	public static function destroy($id) {
+		return Cache::delete($id);
+	}
+
+/**
+ * Helper function called on gc for database sessions.
+ *
+ * @param integer $expires Timestamp (defaults to current time)
+ * @return boolean Success
+ * @access private
+ */
+	public static function gc($expires = null) {
+		return Cache::gc();
+	}
+}
+
+/**
+ * DatabaseSession provides methods to be used with CakeSession.
+ *
+ * @package cake.libs
+ */
+class DatabaseSession implements CakeSessionHandlerInterface {
+/**
+ * Method called on open of a database session.
+ *
+ * @return boolean Success
+ * @access private
+ */
+	public static function open() {
+		return true;
+	}
+
+/**
+ * Method called on close of a database session.
+ *
+ * @return boolean Success
+ * @access private
+ */
+	public static function close() {
+		$probability = mt_rand(1, 150);
+		if ($probability <= 3) {
+			DatabaseSession::gc();
+		}
+		return true;
+	}
+
+/**
+ * Method used to read from a database session.
+ *
+ * @param mixed $id The key of the value to read
+ * @return mixed The value of the key or false if it does not exist
+ * @access private
+ */
+	public static function read($id) {
 		$model =& ClassRegistry::getObject('Session');
 
 		$row = $model->find('first', array(
@@ -792,7 +935,7 @@ class CakeSession {
  * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	function __write($id, $data) {
+	public static function write($id, $data) {
 		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
@@ -806,7 +949,7 @@ class CakeSession {
  * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	function __destroy($id) {
+	public static function destroy($id) {
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->delete($id);
 
@@ -820,7 +963,7 @@ class CakeSession {
  * @return boolean Success
  * @access private
  */
-	function __gc($expires = null) {
+	public static function gc($expires = null) {
 		$model =& ClassRegistry::getObject('Session');
 
 		if (!$expires) {
