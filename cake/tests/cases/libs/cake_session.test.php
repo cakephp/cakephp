@@ -613,7 +613,6 @@ class CakeSessionTest extends CakeTestCase {
 		Configure::write('Session.handler.table', 'sessions');
 		Configure::write('Session.handler.model', 'Session');
 		Configure::write('Session.handler.database', 'test_suite');
-		
 
 		TestCakeSession::init();
 		TestCakeSession::destroy();
