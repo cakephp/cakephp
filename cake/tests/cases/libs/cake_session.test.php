@@ -572,6 +572,37 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
+ * test that changing the config name of the cache config works.
+ *
+ * @return void
+ */
+	function testReadAndWriteWithCustomCacheConfig() {
+		session_write_close();
+		Configure::write('Session.defaults', 'cache');
+		Configure::write('Session.handler.config', 'session_test');
+		
+		Cache::config('session_test', array(
+			'engine' => 'File',
+			'prefix' => 'session_test_',
+		));
+
+		TestCakeSession::init();
+		TestCakeSession::destroy();
+
+		TestCakeSession::write('SessionTestCase', 'Some value');
+		$this->assertEquals('Some value', TestCakeSession::read('SessionTestCase'));
+
+		session_write_close();
+
+		$this->assertContains('Some value', Cache::read(TestCakeSession::id(), 'session_test'));
+		$this->assertFalse(Cache::read(TestCakeSession::id(), 'default'));
+
+		TestCakeSession::destroy();
+		Cache::delete(TestCakeSession::id(), 'session_test');
+		Cache::drop('session_test');
+	}
+
+/**
  * testReadAndWriteWithDatabaseStorage method
  *
  * @access public
