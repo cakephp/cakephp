@@ -34,54 +34,12 @@ if (!class_exists('cakesession')) {
 class SessionComponent extends Object {
 
 /**
- * Used to determine if methods implementation is used, or bypassed
+ * Constructor
  *
- * @var boolean
- * @access private
- */
-	private $__active = true;
-
-/**
- * Used to determine if request are from an Ajax request
- *
- * @var boolean
- * @access private
- */
-	private $__bare = 0;
-
-/**
- * Startup method.
- *
- * @param object $controller Instantiating controller
  * @return void
  */
-	public function startup(&$controller) {
-		/*if ($this->started() === false && $this->__active === true) {
-			$this->_start();
-		}*/
-	}
-
-/**
- * Starts Session on if 'Session.start' is set to false in core.php
- *
- * @param string $base The base path for the Session
- * @return void
- */
-	public function activate($base = null) {
-		/*if ($this->__active === true) {
-			return;
-		}
-		parent::__construct($base);
-		$this->__active = true;*/
-	}
-
-/**
- * Check if the session is active.  Returns the private __active flag.
- *
- * @return boolean
- */
-	public function active() {
-		return $this->__active;
+	public function __construct() {
+		CakeSession::start();
 	}
 
 /**
@@ -226,32 +184,12 @@ class SessionComponent extends Object {
 	}
 
 /**
- * Starts Session if SessionComponent is used in Controller::beforeFilter(),
- * or is called from
+ * Returns a bool, whether or not the session has been started.
  *
  * @return boolean
- * @access protected
  */
-	protected function _start() {
-		/*
-		if ($this->started() === false) {
-			if (!$this->id() && parent::start()) {
-				parent::_checkValid();
-			} else {
-				parent::start();
-			}
-		}
-		return $this->started();
-		*/
+	public function started() {
+		return CakeSession::started();
 	}
 
-/**
- * Returns whether the session is active or not
- *
- * @return boolean
- * @access public
- */
-	public function isActive() {
-		return $this->__active;
-	}
 }

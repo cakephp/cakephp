@@ -80,6 +80,38 @@ class OrangeSessionTestController extends Controller {
  */
 class SessionComponentTest extends CakeTestCase {
 
+	protected static $_sessionBackup;
+
+/**
+ * fixtures
+ *
+ * @var string
+ */
+	public $fixtures = array('core.session');
+
+/**
+ * test case startup
+ *
+ * @return void
+ */
+	public static function setupBeforeClass() {
+		self::$_sessionBackup = Configure::read('Session');
+		Configure::write('Session', array(
+			'defaults' => 'php',
+			'timeout' => 100,
+			'cookie' => 'test_suite'
+		));
+	}
+
+/**
+ * cleanup after test case.
+ *
+ * @return void
+ */
+	public static function teardownAfterClass() {
+		Configure::write('Session', self::$_sessionBackup);
+	}
+
 /**
  * setUp method
  *
@@ -87,8 +119,8 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_session = Configure::read('Session');
-		$_SESSION = array();
+		parent::setUp();
+		$_SESSION = null;
 	}
 
 /**
@@ -98,34 +130,22 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		CakeSession::destroy();
-		Configure::write('Session', $this->_session);
 	}
 
 /**
- * testSessionAutoStart method
+ * ensure that session ids don't change when request action is called.
  *
  * @access public
  * @return void
  */
-	function testSessionAutoStart() {
-		$this->markTestSkipped('Autostarting is broken/disabled for now.');
-		Configure::write('Session.start', false);
+	function testSessionIdConsistentAcrossRequestAction() {
 		$Session = new SessionComponent();
-		$this->assertFalse($Session->active());
-		$this->assertFalse($Session->started());
-		$Session->startup(new SessionTestController());
-
-		Configure::write('Session.start', true);
-		$Session = new SessionComponent();
-		$this->assertTrue($Session->active());
-		$this->assertFalse($Session->started());
-		$Session->startup(new SessionTestController());
 		$this->assertTrue(isset($_SESSION));
 
 		$Object = new Object();
 		$Session = new SessionComponent();
-		$Session->start();
 		$expected = $Session->id();
 
 		$result = $Object->requestAction('/session_test/session_id');
@@ -133,29 +153,6 @@ class SessionComponentTest extends CakeTestCase {
 
 		$result = $Object->requestAction('/orange_session_test/session_id');
 		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testSessionActivate method
- *
- * @access public
- * @return void
- */
-	function testSessionActivate() {
-		$this->markTestSkipped('Activation is not implemented right now, sessions are always on');
-		$Session = new SessionComponent();
-
-		$this->assertTrue($Session->active());
-		$this->assertNull($Session->activate());
-		$this->assertTrue($Session->active());
-
-		Configure::write('Session.start', false);
-		$Session = new SessionComponent();
-		$this->assertFalse($Session->active());
-		$this->assertNull($Session->activate());
-		$this->assertTrue($Session->active());
-		Configure::write('Session.start', true);
-		$Session->destroy();
 	}
 
 /**
@@ -186,7 +183,6 @@ class SessionComponentTest extends CakeTestCase {
  */
 	function testSessionError() {
 		$Session = new SessionComponent();
-
 		$this->assertFalse($Session->error());
 	}
 
