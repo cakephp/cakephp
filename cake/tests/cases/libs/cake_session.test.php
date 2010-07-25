@@ -78,7 +78,8 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function startTest() {
+	function setup() {
+		parent::setup();
 		Configure::write('Session', array(
 			'defaults' => 'php',
 			'cookie' => 'cakephp',
@@ -98,7 +99,8 @@ class CakeSessionTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function teardown() {
+		parent::teardown();
 		unset($_SESSION);
 		@session_destroy();
 	}
@@ -639,6 +641,39 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 		session_write_close();
+	}
+
+/**
+ * testSessionTimeout method
+ *
+ * @access public
+ * @return void
+ */
+	function testSessionTimeout() {
+		Configure::write('debug', 2);
+		Configure::write('Session.harden', false);
+
+		$timeoutSeconds = Configure::read('Session.timeout') * 60;
+
+		session_destroy();
+		TestCakeSession::destroy();
+		TestCakeSession::write('Test', 'some value');
+
+		$this->assertEqual(CakeSession::$sessionTime, time() + $timeoutSeconds);
+		$this->assertEqual($_SESSION['Config']['countdown'], 10);
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
+		$this->assertEqual(CakeSession::$time, time());
+		$this->assertEqual($_SESSION['Config']['time'], time() + $timeoutSeconds);
+
+		Configure::write('Session.harden', true);
+		TestCakeSession::destroy();
+
+		TestCakeSession::write('Test', 'some value');
+		$this->assertEqual(CakeSession::$sessionTime, time() + $timeoutSeconds);
+		$this->assertEqual($_SESSION['Config']['countdown'], 10);
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
+		$this->assertEqual(CakeSession::$time, time());
+		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + $timeoutSeconds);
 	}
 
 }

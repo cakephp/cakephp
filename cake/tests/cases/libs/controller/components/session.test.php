@@ -308,46 +308,4 @@ class SessionComponentTest extends CakeTestCase {
 		$this->assertNull($Session->read('Test'));
 	}
 
-/**
- * testSessionTimeout method
- *
- * @access public
- * @return void
- */
-	function testSessionTimeout() {
-		Configure::write('debug', 2);
-		Configure::write('Security.level', 'low');
-
-		session_destroy();
-		$Session =& new SessionComponent();
-		$Session->destroy();
-		$Session->write('Test', 'some value');
-
-		$this->assertEqual(CakeSession::$sessionTime, mktime() + (300 * Configure::read('Session.timeout')));
-		$this->assertEqual($_SESSION['Config']['timeout'], 10);
-		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
-		$this->assertEqual(CakeSession::$time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
-
-		Configure::write('Security.level', 'medium');
-		$Session =& new SessionComponent();
-		$Session->destroy();
-		$Session->write('Test', 'some value');
-		$this->assertEqual(CakeSession::$sessionTime, mktime() + (100 * Configure::read('Session.timeout')));
-		$this->assertEqual($_SESSION['Config']['timeout'], 10);
-		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$sessionTime);
-		$this->assertEqual(CakeSession::$time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() *  Configure::read('Session.timeout')));
-
-		Configure::write('Security.level', 'high');
-		$Session =& new SessionComponent();
-		$Session->destroy();
-		$Session->write('Test', 'some value');
-		$this->assertEqual(CakeSession::$sessionTime, mktime() + (10 * Configure::read('Session.timeout')));
-		$this->assertEqual($_SESSION['Config']['timeout'], 10);
-		$this->assertEqual($_SESSION['Config']['time'], $Session->sessionTime);
-		$this->assertEqual(CakeSession::$time, mktime());
-		$this->assertEqual($_SESSION['Config']['time'], CakeSession::$time + (Security::inactiveMins() * Configure::read('Session.timeout')));
-
-	}
 }

@@ -126,6 +126,15 @@ class CakeSession {
 	public static $timeout = null;
 
 /**
+ * Number of requests that can occur during a session time without the session being renewed.
+ * This feature is only used when `Session.harden` is set to true.
+ *
+ * @var integer
+ * @see CakeSession::_checkValid()
+ */
+	public static $requestCountdown = 10;
+
+/**
  * Constructor.
  *
  * @param string $base The base path for the Session
@@ -147,8 +156,7 @@ class CakeSession {
 			self::start();
 		}
 		if (isset($_SESSION) || $start === true) {
-			self::$sessionTime = self::$time + (Security::inactiveMins() * Configure::read('Session.timeout'));
-			self::$security = Configure::read('Security.level');
+			self::$sessionTime = self::$time + (Configure::read('Session.timeout') * 60);
 		}
 	}
 
@@ -230,7 +238,7 @@ class CakeSession {
 		self::_configureSession();
 		self::_startSession();
 		$started = self::started();
-		
+
 		if (!self::id() && $started) {
 			self::_checkValid();
 		}
@@ -583,7 +591,7 @@ class CakeSession {
 		}
 		$reflect = new ReflectionClass($class);
 		if (!$reflect->implementsInterface('CakeSessionHandlerInterface')) {
-			throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface'));
+			throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
 		}
 		return $class;
 	}
@@ -689,17 +697,22 @@ class CakeSession {
  */
 	protected static function _checkValid() {
 		if (self::read('Config')) {
-			if ((Configure::read('Session.checkAgent') === false || self::$_userAgent == self::read('Config.userAgent')) && self::$time <= self::read('Config.time')) {
+			$sessionConfig = Configure::read('Session');
+			$checkAgent = isset($sessionConfig['checkAgent']) && $sessionConfig['checkAgent'] === true;
+			if (
+				($checkAgent && self::$_userAgent == self::read('Config.userAgent')) &&
+				self::$time <= self::read('Config.time')
+			) {
 				$time = self::read('Config.time');
 				self::write('Config.time', self::$sessionTime);
-				if (Configure::read('Security.level') === 'high') {
-					$check = self::read('Config.timeout');
+				if (isset($sessionConfig['harden']) && $sessionConfig['harden'] === true) {
+					$check = self::read('Config.countdown');
 					$check -= 1;
-					self::write('Config.timeout', $check);
+					self::write('Config.countdown', $check);
 
-					if (time() > ($time - (Security::inactiveMins() * Configure::read('Session.timeout')) + 2) || $check < 1) {
+					if (time() > ($time - ($sessionConfig['timeout'] * 60) + 2) || $check < 1) {
 						self::renew();
-						self::write('Config.timeout', Security::inactiveMins());
+						self::write('Config.countdown', self::$requestCountdown);
 					}
 				}
 				self::$valid = true;
@@ -711,7 +724,7 @@ class CakeSession {
 		} else {
 			self::write('Config.userAgent', self::$_userAgent);
 			self::write('Config.time', self::$sessionTime);
-			self::write('Config.timeout', Security::inactiveMins());
+			self::write('Config.countdown', self::$requestCountdown);
 			self::$valid = true;
 			self::__setError(1, 'Session is valid');
 		}

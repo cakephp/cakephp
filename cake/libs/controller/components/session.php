@@ -50,16 +50,6 @@ class SessionComponent extends Object {
 	private $__bare = 0;
 
 /**
- * Class constructor
- *
- * @param string $base The base path for the Session
- */
-
-	public function __construct() {
-		CakeSession::begin();
-	}
-
-/**
  * Startup method.
  *
  * @param object $controller Instantiating controller
