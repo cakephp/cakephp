@@ -121,4 +121,18 @@ class DatabaseSessionTest extends CakeTestCase {
 		$this->assertTrue(DatabaseSession::destroy('foo'), 'Destroy failed');
 		$this->assertFalse(DatabaseSession::read('foo'), 'Value still present.');
 	}
+
+/**
+ * test the garbage collector
+ *
+ * @return void
+ */
+	function testGc() {
+		Configure::write('Session.timeout', 0);
+		DatabaseSession::write('foo', 'Some value');
+
+		sleep(1);
+		DatabaseSession::gc();
+		$this->assertFalse(DatabaseSession::read('foo'));
+	}
 }
