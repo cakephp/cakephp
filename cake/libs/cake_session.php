@@ -191,7 +191,7 @@ class CakeSession {
  * @return void
  */
 	protected function _setupDatabase() {
-		if (Configure::read('Session.save') !== 'database') {
+		if (Configure::read('Session.defaults') !== 'database') {
 			return;
 		}
 		$modelName = Configure::read('Session.model');
@@ -227,7 +227,7 @@ class CakeSession {
 		}
 
 		session_write_close();
-		self::__initSession();
+		self::_configureSession();
 		self::_startSession();
 		$started = self::started();
 		
@@ -484,7 +484,7 @@ class CakeSession {
  * @return void
  */
 	public static function destroy() {
-		$_SESSION = null;
+		$_SESSION = array();
 		self::$id = null;
 		self::init(self::$path);
 		self::start();
@@ -510,9 +510,10 @@ class CakeSession {
  *    to the ini array.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
- * @access private
+ * @return void
+ * @throws Exception Throws exceptions when ini_set() fails.
  */
-	function __initSession() {
+	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
 		$iniSet = function_exists('ini_set');
 
@@ -535,7 +536,7 @@ class CakeSession {
 			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
 		}
 		if (!empty($sessionConfig['handler'])) {
-			$sessionConfig['ini']['sesssion.save_handler'] = 'user';
+			$sessionConfig['ini']['session.save_handler'] = 'user';
 		}
 
 		if (empty($_SESSION)) {
@@ -553,78 +554,6 @@ class CakeSession {
 		
 		/*
 		switch (Configure::read('Session.save')) {
-			case 'cake':
-				if (empty($_SESSION) && $iniSet) {
-					ini_set('session.use_trans_sid', 0);
-					ini_set('url_rewriter.tags', '');
-					ini_set('session.serialize_handler', 'php');
-					ini_set('session.use_cookies', 1);
-					ini_set('session.name', Configure::read('Session.cookie'));
-					ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-					ini_set('session.cookie_path', self::$path);
-					ini_set('session.auto_start', 0);
-					ini_set('session.save_path', TMP . 'sessions');
-				}
-			break;
-			case 'database':
-				if (empty($_SESSION)) {
-					if (Configure::read('Session.model') === null) {
-						trigger_error(__("You must set the all Configure::write('Session.*') in core.php to use database storage"), E_USER_WARNING);
-						self::_stop();
-					}
-					if ($iniSet) {
-						ini_set('session.use_trans_sid', 0);
-						ini_set('url_rewriter.tags', '');
-						ini_set('session.save_handler', 'user');
-						ini_set('session.serialize_handler', 'php');
-						ini_set('session.use_cookies', 1);
-						ini_set('session.name', Configure::read('Session.cookie'));
-						ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-						ini_set('session.cookie_path', self::$path);
-						ini_set('session.auto_start', 0);
-					}
-				}
-				session_set_save_handler(
-					array('CakeSession','__open'),
-					array('CakeSession', '__close'),
-					array('CakeSession', '__read'),
-					array('CakeSession', '__write'),
-					array('CakeSession', '__destroy'),
-					array('CakeSession', '__gc')
-				);
-			break;
-			case 'php':
-				if (empty($_SESSION) && $iniSet) {
-					ini_set('session.use_trans_sid', 0);
-					ini_set('session.name', Configure::read('Session.cookie'));
-					ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-					ini_set('session.cookie_path', self::$path);
-				}
-			break;
-			case 'cache':
-				if (empty($_SESSION)) {
-					if (!class_exists('Cache')) {
-						require LIBS . 'cache.php';
-					}
-					if ($iniSet) {
-						ini_set('session.use_trans_sid', 0);
-						ini_set('url_rewriter.tags', '');
-						ini_set('session.save_handler', 'user');
-						ini_set('session.use_cookies', 1);
-						ini_set('session.name', Configure::read('Session.cookie'));
-						ini_set('session.cookie_lifetime', self::$cookieLifeTime);
-						ini_set('session.cookie_path', self::$path);
-					}
-				}
-				session_set_save_handler(
-					array('CakeSession','__open'),
-					array('CakeSession', '__close'),
-					array('Cache', 'read'),
-					array('Cache', 'write'),
-					array('Cache', 'delete'),
-					array('Cache', 'gc')
-				);
-			break;
 			default:
 				$config = CONFIGS . Configure::read('Session.save') . '.php';
 
@@ -649,7 +578,8 @@ class CakeSession {
 				'cookieTimeout' => 240,
 				'ini' => array(
 					'session.use_trans_sid' => 0,
-					'session.cookie_path' => self::$path
+					'session.cookie_path' => self::$path,
+					'session.save_handler' => 'files'
 				)
 			),
 			'cake' => array(
@@ -663,7 +593,8 @@ class CakeSession {
 					'session.use_cookies' => 1,
 					'session.cookie_path' => self::$path,
 					'session.auto_start' => 0,
-					'session.save_path' => TMP . 'sessions'
+					'session.save_path' => TMP . 'sessions',
+					'session.save_handler' => 'files'
 				)
 			),
 			'cache' => array(
@@ -673,6 +604,7 @@ class CakeSession {
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
+					'session.auto_start' => 0,
 					'session.use_cookies' => 1,
 					'session.cookie_path' => self::$path,
 					'session.save_handler' => 'user',

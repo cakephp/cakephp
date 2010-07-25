@@ -85,7 +85,6 @@ class CakeSessionTest extends CakeTestCase {
 			'timeout' => 120,
 			'cookieTimeout' => 120,
 			'ini' => array(),
-			'handler' => null
 		));
 
 		TestCakeSession::init();
@@ -506,9 +505,10 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testReadAndWriteWithCakeStorage() {
 		session_write_close();
-		ini_set('session.save_handler', 'files');
-		Configure::write('Session.save', 'cake');
-		$this->setUp();
+		Configure::write('Session.defaults', 'cake');
+
+		TestCakeSession::init();
+		TestCakeSession::destroy();
 
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEqual(TestCakeSession::read('SessionTestCase'), 0);
@@ -542,9 +542,10 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testReadAndWriteWithCacheStorage() {
 		session_write_close();
-		ini_set('session.save_handler', 'files');
-		Configure::write('Session.save', 'cache');
-		$this->setUp();
+		Configure::write('Session.defaults', 'cache');
+
+		TestCakeSession::init();
+		TestCakeSession::destroy();
 
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEqual(TestCakeSession::read('SessionTestCase'), 0);
@@ -580,8 +581,10 @@ class CakeSessionTest extends CakeTestCase {
 		Configure::write('Session.table', 'sessions');
 		Configure::write('Session.model', 'Session');
 		Configure::write('Session.database', 'test_suite');
-		Configure::write('Session.save', 'database');
-		$this->startTest();
+		Configure::write('Session.defaults', 'database');
+
+		TestCakeSession::init();
+		TestCakeSession::destroy();
 
 		TestCakeSession::write('SessionTestCase', 0);
 		$this->assertEqual(TestCakeSession::read('SessionTestCase'), 0);
@@ -605,11 +608,6 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::destroy();
 		$this->assertNull(TestCakeSession::read('SessionTestCase'));
 		session_write_close();
-
-		unset($_SESSION);
-		ini_set('session.save_handler', 'files');
-		Configure::write('Session.save', 'php');
-		$this->startTest();
 	}
 
 }
