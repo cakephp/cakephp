@@ -237,9 +237,8 @@ class CakeSession {
 		session_write_close();
 		self::_configureSession();
 		self::_startSession();
-		$started = self::started();
 
-		if (self::id() && $started) {
+		if ((!self::id() && self::started()) || empty($_SESSION)) {
 			self::_checkValid();
 		}
 
