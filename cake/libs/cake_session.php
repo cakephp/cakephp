@@ -153,10 +153,9 @@ class CakeSession {
 		if ($start === true) {
 			self::_setPath($base);
 			self::_setHost(env('HTTP_HOST'));
-			self::start();
 		}
 		if (isset($_SESSION) || $start === true) {
-			self::$sessionTime = self::$time + (Configure::read('Session.timeout') * 60);
+			self::start();
 		}
 	}
 
@@ -233,12 +232,12 @@ class CakeSession {
 		if (self::started()) {
 			return true;
 		}
-
+		$id = self::id();
 		session_write_close();
 		self::_configureSession();
 		self::_startSession();
 
-		if ((!self::id() && self::started()) || empty($_SESSION)) {
+		if (!$id && self::started()) {
 			self::_checkValid();
 		}
 
@@ -571,6 +570,8 @@ class CakeSession {
 				array($class, 'gc')
 			);
 		}
+		Configure::write('Session', $sessionConfig);
+		self::$sessionTime = self::$time + ($sessionConfig['timeout'] * 60);
 	}
 
 /**
