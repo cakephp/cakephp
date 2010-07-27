@@ -721,7 +721,6 @@ class CakeSession {
 			self::write('Config.time', self::$sessionTime);
 			self::write('Config.countdown', self::$requestCountdown);
 			self::$valid = true;
-			self::__setError(1, 'Session is valid');
 		}
 	}
 
