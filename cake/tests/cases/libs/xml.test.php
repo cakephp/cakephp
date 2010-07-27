@@ -57,32 +57,33 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
- * testBuildException method
+ * testBuildInvalidData
  *
- * @access public
- * @return void
+ * @expectedException Exception
+ * return void
  */
-	function testBuildException() {
-		try {
-			Xml::build(false);
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
+	function testBuildInvalidData() {
+		Xml::build(false);
+	}
 
-		try {
-			Xml::build('');
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
+/**
+ * testBuildEmptyData
+ *
+ * @expectedException Exception
+ * return void
+ */
+	function testBuildEmptyData() {
+		Xml::build('');
+	}
 
-		try {
-			Xml::build('<tag>');
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
+/**
+ * testBuildInvalidTag
+ *
+ * @expectedException Exception
+ * return void
+ */
+	function testBuildInvalidTag() {
+		Xml::build('<tag>');
 	}
 
 /**
@@ -221,27 +222,33 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testToArrayInvalidObject
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function testToArrayInvalidObject() {
+		$obj = new DateTime();
+		Xml::toArray($obj);
+	}
+
+/**
+ * testToArrayNoObject
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function testToArrayNoObject() {
+		Xml::toArray(array());
+	}
+
+/**
  * testToArray method
  *
  * @access public
  * @return void
  */
 	function testToArray() {
-		$obj = new DateTime();
-		try {
-			Xml::toArray($obj);
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			Xml::toArray(array());
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
 		$xml = '<tag>name</tag>';
 		$obj = Xml::build($xml);
 		$this->assertEqual(Xml::toArray($obj), array('tag' => 'name'));
