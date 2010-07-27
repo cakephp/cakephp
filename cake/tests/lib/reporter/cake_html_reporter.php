@@ -265,14 +265,16 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param Exception $exception Exception to display.
  * @return void
  */
-	public function paintException($exception, $test) {
+	public function paintException($message, $test) {
+		$trace = $this->_getStackTrace($message);
+		$testName = get_class($test) . '(' . $test->getName() . ')';
+
 		echo "<li class='fail'>\n";
 		echo "<span>Exception</span>";
-		$message = 'Unexpected exception of type [' . get_class($exception) .
-			'] with message ['. $exception->getMessage() .
-			'] in ['. $exception->getFile() .
-			' line ' . $exception->getLine() . ']';
-		echo "<div class='msg'>" . $this->_htmlEntities($message) . "</div>\n";
+
+		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
+		echo "<div class='msg'>" . sprintf(__('Test case: %s'), $testName) . "</div>\n";
+		echo "<div class='msg'>" . __('Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
