@@ -127,8 +127,8 @@
  * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
  *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
  *    to the ini array.
- * - `Session.harden` - Enabling this setting, turns on automatic renewal of sessions, and 
- *    sessionids that change frequently.
+ * - `Session.autoRegenerate` - Enabling this setting, turns on automatic regeneration of sessions, and 
+ *    sessionids that change frequently. See CakeSession::$requestCountdown.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
  * The built in defaults are:
