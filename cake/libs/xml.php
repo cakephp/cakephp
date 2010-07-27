@@ -27,8 +27,6 @@ class Xml {
  *
  * @param mixed $input XML string, a path to a file, an URL or an array
  * @return object SimpleXMLElement
- * @static
- * @access public
  */
 	public static function build($input) {
 		if (is_array($input) || is_object($input)) {
@@ -49,8 +47,6 @@ class Xml {
  * @param array $input Array with data
  * @param string $format If create childs ('tags') or attributes ('attribute')
  * @return object SimpleXMLElement
- * @static
- * @access public
  */
 	public static function fromArray($input, $format = 'attribute') {
 		if (!is_array($input) || count($input) !== 1) {
@@ -76,8 +72,6 @@ class Xml {
  * @param array $array
  * @param string $format
  * @return void
- * @static
- * @access protected
  */
 	protected static function _fromArrayRecursive(&$node, &$array, $format = 'attribute') {
 		if (empty($array) || !is_array($array)) {
@@ -118,8 +112,6 @@ class Xml {
  *
  * @param object $simpleXML SimpleXMLElement instance
  * @return array Array representation of the XML structure.
- * @static
- * @access public
  */
 	public static function toArray($simpleXML) {
 		if (!($simpleXML instanceof SimpleXMLElement)) {
@@ -136,8 +128,6 @@ class Xml {
  * @param object $xml SimpleXMLElement object
  * @param array $parentData Parent array with data
  * @return void
- * @static
- * @access public
  */
 	protected static function _toArray($xml, &$parentData) {
 		$data = array();
