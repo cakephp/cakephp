@@ -503,19 +503,6 @@ class CakeSession {
  * Helper method to initialize a session, based on Cake core settings.
  *
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
- * 
- * ## Options
- *
- * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
- * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
- * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
- * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions?
- * - `Session.defaults` - The default configuration set to use as a basis for your session.
- *    There are four builtins: php, cake, cache, database.
- * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
- *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
- *    to the ini array.
- * - `Session.ini` - An associative array of additional ini values to set.
  *
  * @return void
  * @throws Exception Throws exceptions when ini_set() fails.
@@ -707,7 +694,7 @@ class CakeSession {
 			) {
 				$time = self::read('Config.time');
 				self::write('Config.time', self::$sessionTime);
-				if (isset($sessionConfig['harden']) && $sessionConfig['harden'] === true) {
+				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
 					$check = self::read('Config.countdown');
 					$check -= 1;
 					self::write('Config.countdown', $check);

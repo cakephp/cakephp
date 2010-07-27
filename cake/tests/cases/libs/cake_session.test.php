@@ -718,7 +718,7 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function testSessionTimeout() {
 		Configure::write('debug', 2);
-		Configure::write('Session.harden', false);
+		Configure::write('Session.autoRegenerate', false);
 
 		$timeoutSeconds = Configure::read('Session.timeout') * 60;
 
