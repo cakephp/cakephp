@@ -241,7 +241,7 @@ class CakeSession {
 			self::_checkValid();
 		}
 
-		self::$error = array();
+		self::$error = false;
 		return self::started();
 	}
 
@@ -357,7 +357,7 @@ class CakeSession {
  */
 	public static function valid() {
 		if (self::read('Config')) {
-			if (self::_validAgentAndTime() && self::$error == false) {
+			if (self::_validAgentAndTime() && self::$error === false) {
 				self::$valid = true;
 			} else {
 				self::$valid = false;
@@ -384,7 +384,7 @@ class CakeSession {
 	}
 
 /**
- * Get / Set the userAgent 
+ * Get / Set the userAgent
  *
  * @param string $userAgent Set the userAgent
  * @return void
