@@ -43,7 +43,7 @@ class XmlTest extends CakeTestCase {
 		$xml = '<?xml version="1.0"?><tag>value</tag>';
 		$this->assertEqual($obj, Xml::build($xml));
 
-		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS . 'sample.xml';
+		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
@@ -246,7 +246,7 @@ class XmlTest extends CakeTestCase {
 		$obj = Xml::build($xml);
 		$this->assertEqual(Xml::toArray($obj), array('tag' => 'name'));
 
-		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS . 'sample.xml';
+		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
 		$expected = array(
 			'tags' => array(
