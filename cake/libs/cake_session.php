@@ -490,9 +490,11 @@ class CakeSession {
  * @return void
  */
 	public static function destroy() {
+		if (self::started()) {
+			session_destroy();
+		}
 		$_SESSION = null;
 		self::$id = null;
-		self::init(self::$path);
 		self::start();
 		self::renew();
 	}
@@ -698,6 +700,7 @@ class CakeSession {
 		if (self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
 			$checkAgent = isset($sessionConfig['checkAgent']) && $sessionConfig['checkAgent'] === true;
+
 			if (
 				($checkAgent && self::$_userAgent == self::read('Config.userAgent')) &&
 				self::$time <= self::read('Config.time')
