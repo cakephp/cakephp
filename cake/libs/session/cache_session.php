@@ -89,6 +89,6 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function gc($expires = null) {
-		return Cache::gc(Configure::read('Session.handler.config'));
+		return Cache::gc();
 	}
 }
