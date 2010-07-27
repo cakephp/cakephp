@@ -23,10 +23,12 @@
 class Xml {
 
 /**
- * Initialize XML object from a given XML string. Returns false on error.
+ * Initialize SimpleXMLElement from a given XML string, file path, URL or array.
  *
- * @param string $input XML string, a path to a file, or an HTTP resource to load
+ * @param mixed $input XML string, a path to a file, an URL or an array
  * @return object SimpleXMLElement
+ * @static
+ * @access public
  */
 	public static function build($input) {
 		if (is_array($input) || is_object($input)) {
@@ -41,6 +43,15 @@ class Xml {
 		throw new Exception(__('XML cannot be read.'));
 	}
 
+/**
+ * Transform an array in a SimpleXMLElement
+ *
+ * @param array $input Array with data
+ * @param string $format If create childs ('tags') or attributes ('attribute')
+ * @return object SimpleXMLElement
+ * @static
+ * @access public
+ */
 	public static function fromArray($input, $format = 'attribute') {
 		if (!is_array($input) || count($input) !== 1) {
 			throw new Exception(__('Invalid input.'));
@@ -58,6 +69,16 @@ class Xml {
 		return $simpleXml;
 	}
 
+/**
+ * Recursive method to create SimpleXMLElement from array
+ *
+ * @param object $node Handler to SimpleXMLElement
+ * @param array $array
+ * @param string $format
+ * @return void
+ * @static
+ * @access protected
+ */
 	protected static function _fromArrayRecursive(&$node, &$array, $format = 'attribute') {
 		if (empty($array) || !is_array($array)) {
 			return;
@@ -95,7 +116,10 @@ class Xml {
 /**
  * Returns this XML structure as a array.
  *
+ * @param object $simpleXML SimpleXMLElement instance
  * @return array Array representation of the XML structure.
+ * @static
+ * @access public
  */
 	public static function toArray($simpleXML) {
 		if (!($simpleXML instanceof SimpleXMLElement)) {
@@ -106,6 +130,15 @@ class Xml {
 		return $result;
 	}
 
+/**
+ * Recursive method to toArray
+ *
+ * @param object $xml SimpleXMLElement object
+ * @param array $parentData Parent array with data
+ * @return void
+ * @static
+ * @access public
+ */
 	protected static function _toArray($xml, &$parentData) {
 		$data = array();
 
