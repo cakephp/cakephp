@@ -357,20 +357,30 @@ class CakeSession {
  */
 	public static function valid() {
 		if (self::read('Config')) {
-			$validAgent = (
-				Configure::read('Session.checkAgent') === false || 
-				self::$_userAgent == self::read('Config.userAgent')
-			);
-			if ($validAgent && self::$time <= self::read('Config.time')) {
-				if (self::$error === false) {
-					self::$valid = true;
-				}
+			if (self::_validAgentAndTime() && self::$error == false) {
+				self::$valid = true;
 			} else {
 				self::$valid = false;
 				self::__setError(1, 'Session Highjacking Attempted !!!');
 			}
 		}
 		return self::$valid;
+	}
+
+/**
+ * Tests that the user agent is valid and that the session hasn't 'timed out'.
+ * Since timeouts are implemented in CakeSession it checks the current self::$time
+ * against the time the session is set to expire.  The User agent is only checked 
+ * if Session.checkAgent == true.
+ *
+ * @return boolean
+ */
+	protected static function _validAgentAndTime() {
+		$validAgent = (
+			Configure::read('Session.checkAgent') === false ||
+			self::$_userAgent == self::read('Config.userAgent')
+		);
+		return ($validAgent && self::$time <= self::read('Config.time'));
 	}
 
 /**
@@ -686,12 +696,8 @@ class CakeSession {
 	protected static function _checkValid() {
 		if (self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
-			$checkAgent = isset($sessionConfig['checkAgent']) && $sessionConfig['checkAgent'] === true;
 
-			if (
-				($checkAgent && self::$_userAgent == self::read('Config.userAgent')) &&
-				self::$time <= self::read('Config.time')
-			) {
+			if (self::_validAgentAndTime()) {
 				$time = self::read('Config.time');
 				self::write('Config.time', self::$sessionTime);
 				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
