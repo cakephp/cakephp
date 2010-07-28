@@ -341,10 +341,10 @@ class FixtureTaskTest extends CakeTestCase {
 		$filename = '/my/path/article_fixture.php';
 
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/Article/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/ArticleFixture/'));
 
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/\<\?php(.*)\?\>/ms'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/\<\?php/ms'));
 
 		$result = $this->Task->generateFixtureFile('Article', array());
 

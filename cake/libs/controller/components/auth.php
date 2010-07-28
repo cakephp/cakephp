@@ -151,7 +151,7 @@ class AuthComponent extends Object {
 	public $loginRedirect = null;
 
 /**
- * The the default action to redirect to after the user is logged out.  While AuthComponent does
+ * The default action to redirect to after the user is logged out.  While AuthComponent does
  * not handle post-logout redirection, a redirect URL will be returned from AuthComponent::logout().
  * Defaults to AuthComponent::$loginAction.
  *
@@ -303,6 +303,7 @@ class AuthComponent extends Object {
 
 		$methods = array_flip($controller->methods);
 		$action = $controller->request->params['action'];
+
 		$isMissingAction = (
 			$controller->scaffold === false &&
 			!isset($methods[$action])

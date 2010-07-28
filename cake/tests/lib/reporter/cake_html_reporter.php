@@ -227,29 +227,16 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *   the context of the other tests.
  * @return void
  */
-	public function paintFail($message) {
-		$context = $message->getTrace();
-		$realContext = $context[3];
-		$class = new ReflectionClass($realContext['class']);
-
-		$deeper = false;
-		if ($class->getParentClass()) {
-			$deeper = $class->getParentClass()->getName() === 'PHPUnit_Framework_TestCase';
-		}
-		$deeper = $deeper || !$class->isSubclassOf('PHPUnit_Framework_TestCase');
-		if ($deeper) {
-			$realContext = $context[4];
-			$context = $context[3];
-		} else {
-			$context = $context[2];
-		}
+	public function paintFail($message, $test) {
+		$trace = $this->_getStackTrace($message);
+		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
-		echo "<div class='msg'>" . sprintf(__('File: %s'), $context['file']) . "</div>\n";
-		echo "<div class='msg'>" . sprintf(__('Method: %s'), $realContext['function']) . "</div>\n";
-		echo "<div class='msg'>" . sprintf(__('Line: %s'), $context['line']) . "</div>\n";
+
+		echo "<div class='msg'>" . sprintf(__('Test case: %s'), $testName) . "</div>\n";
+		echo "<div class='msg'>" . __('Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -278,7 +265,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param Exception $exception Exception to display.
  * @return void
  */
-	public function paintException($exception) {
+	public function paintException($exception, $test) {
 		echo "<li class='fail'>\n";
 		echo "<span>Exception</span>";
 		$message = 'Unexpected exception of type [' . get_class($exception) .
@@ -321,6 +308,27 @@ class CakeHtmlReporter extends CakeBaseReporter {
  */
 	protected function _htmlEntities($message) {
 		return htmlentities($message, ENT_COMPAT, $this->_characterSet);
+	}
+
+/**
+ * Gets a formatted stack trace.
+ *
+ * @param Exception $e Exception to get a stack trace for.
+ * @return string Generated stack trace.
+ */
+	protected function _getStackTrace(Exception $e) {
+		$trace = $e->getTrace();
+		$out = array();
+		foreach ($trace as $frame) {
+			if (isset($frame['file']) && isset($frame['line'])) {
+				$out[] = $frame['file'] . ' : ' . $frame['line'];
+			} elseif (isset($frame['class']) && isset($frame['function'])) {
+				$out[] = $frame['class'] . '::' . $frame['function'];
+			} else {
+				$out[] = '[internal]';
+			}
+		}
+		return implode('<br />', $out);
 	}
 
 /**

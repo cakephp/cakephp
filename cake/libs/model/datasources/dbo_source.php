@@ -818,7 +818,7 @@ class DboSource extends DataSource {
 						$db =& $this;
 					}
 
-					if (isset($db)) {
+					if (isset($db) && method_exists($db, 'queryAssociation')) {
 						$stack = array($assoc);
 						$db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1, $stack);
 						unset($db);
@@ -1191,10 +1191,10 @@ class DboSource extends DataSource {
 		} elseif (!empty($model->hasMany) && $model->recursive > -1) {
 			$assocFields = $this->fields($model, $model->alias, array("{$model->alias}.{$model->primaryKey}"));
 			$passedFields = $this->fields($model, $model->alias, $queryData['fields']);
-
 			if (count($passedFields) === 1) {
 				$match = strpos($passedFields[0], $assocFields[0]);
-				$match1 = strpos($passedFields[0], 'COUNT(');
+				$match1 = (bool)preg_match('/^[a-z]+\(/i', $passedFields[0]);
+
 				if ($match === false && $match1 === false) {
 					$queryData['fields'] = array_merge($passedFields, $assocFields);
 				} else {

@@ -864,7 +864,38 @@ HTMLBLOC;
 		$result  = $this->Controller->EmailTest->strip($content, true);
 		$expected = $content;
 		$this->assertEqual($result, $expected);
+	}
 
+/**
+ * test that the _encode() will set mb_internal_encoding.
+ *
+ * @return void
+ */
+	function test_encodeSettingInternalCharset() {
+		$skip = !function_exists('mb_internal_encoding');
+		if ($this->skipIf($skip, 'Missing mb_* functions, cannot run test.')) {
+			return;
+		}
+		mb_internal_encoding('ISO-8859-1');
+
+		$this->Controller->charset = 'UTF-8';
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+
+		$this->Controller->EmailTest->sendAs = 'text';
+		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+
+		$subject = '=?UTF-8?B?2YfYsNmHINix2LPYp9mE2Kkg2KjYudmG2YjYp9mGINi32YjZitmEINmF2LE=?=' . "\r\n" . ' =?UTF-8?B?2LPZhCDZhNmE2YXYs9iq2YTZhQ==?=';
+
+		preg_match('/Subject: (.*)Header:/s', $this->Controller->Session->read('Message.email.message'), $matches);
+		$this->assertEqual(trim($matches[1]), $subject);
+
+		$result = mb_internal_encoding();
+		$this->assertEqual($result, 'ISO-8859-1');
 	}
 
 /**
@@ -874,6 +905,7 @@ HTMLBLOC;
  * @return void
  */
 	function testMultibyte() {
+		$this->Controller->charset = 'UTF-8';
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
 		$this->Controller->EmailTest->subject = 'هذه رسالة بعنوان طويل مرسل للمستلم';

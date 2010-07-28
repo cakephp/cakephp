@@ -206,7 +206,7 @@ class CacheTest extends CakeTestCase {
 		Cache::write('test_somthing', 'this is the test data', 'tests');
 
 		$expected = array(
-			'path' => TMP . 'sessions',
+			'path' => TMP . 'sessions' . DS,
 			'prefix' => 'cake_',
 			'lock' => false,
 			'serialize' => true,
@@ -307,6 +307,28 @@ class CacheTest extends CakeTestCase {
 
 		Cache::write('App.zeroTest2', '0');
 		$this->assertIdentical(Cache::read('App.zeroTest2'), '0');
+	}
+
+/**
+ * Test that failed writes cause errors to be triggered.
+ *
+ * @return void
+ */
+	function testWriteTriggerError() {
+		App::build(array(
+			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		), true);
+	
+		Cache::config('test_trigger', array('engine' => 'TestAppCache'));
+		try {
+			Cache::write('fail', 'value', 'test_trigger');
+			$this->fail('No exception thrown');
+		} catch (PHPUnit_Framework_Error $e) {
+			$this->assertTrue(true);
+		}
+		Cache::drop('test_trigger');
+		App::build();
 	}
 
 /**

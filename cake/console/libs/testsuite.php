@@ -42,10 +42,10 @@ class TestSuiteShell extends Shell {
 		} else {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
 		}
-		$params = $this->parseArgs();
 
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$this->_dispatcher->setParams($params);
+		$this->_dispatcher->loadTestFramework();
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 	}
 
 /**
@@ -53,7 +53,7 @@ class TestSuiteShell extends Shell {
  *
  * @return array Array of params for CakeTestDispatcher
  */
-	public function parseArgs() {
+	protected function parseArgs() {
 		if (empty($this->args)) {
 			return;
 		}
@@ -61,9 +61,6 @@ class TestSuiteShell extends Shell {
 			'app' => false,
 			'plugin' => null,
 			'output' => 'text',
-			'codeCoverage' => false,
-			'filter' => false,
-			'case' => null
 		);
 
 		$category = $this->args[0];
@@ -75,18 +72,30 @@ class TestSuiteShell extends Shell {
 		}
 
 		if (isset($this->args[1])) {
-			$params['case'] = Inflector::underscore($this->args[1]) . '.test.php';
-		}
-		if (isset($this->args[2]) && $this->args[2] == 'cov') {
-			$params['codeCoverage'] = true;
+			$params['case'] = Inflector::underscore($this->args[1]);
 		}
 		if (isset($this->params['filter'])) {
-			$params['filter'] = $this->params['filter'];
-		}
-		if (isset($this->params['coverage'])) {
-			$params['codeCoverage'] = true;
+			$this->params['-filter'] = $this->params['filter'];
 		}
 		return $params;
+	}
+
+/**
+ * Converts the options passed to the shell as options for the PHPUnit cli runner
+ *
+ * @return array Array of params for CakeTestDispatcher
+ */
+	protected function runnerOptions() {
+		$options = array();
+		foreach ($this->params as $param => $value) {
+			if ($param[0] === '-') {
+				$options[] = '-' . $param;
+				if (is_string($value)) {
+					$options[] = $value;
+				}
+			}
+		}
+		return $options;
 	}
 
 /**
@@ -98,16 +107,86 @@ class TestSuiteShell extends Shell {
 		$this->out(__('CakePHP Test Shell'));
 		$this->hr();
 
-		if (count($this->args) == 0) {
-			$this->error(__('Sorry, you did not pass any arguments!'));
+		$args = $this->parseArgs();
+
+		if (empty($args['case'])) {
+			$this->available();
 		}
 
-		$result = $this->_dispatcher->dispatch();
-		$exit = 0;
-		if ($result instanceof PHPUnit_Framework_TestResult) {
-			$exit = ($result->errorCount() + $result->failureCount()) > 0;
+		$this->run($args, $this->runnerOptions());
+	}
+
+/**
+ * Runs the test case from $runnerArgs
+ *
+ * @param array $runnerArgs list of arguments as obtained from parseArgs()
+ * @param array $options list of options as constructed by runnerOptions()
+ * @return void
+ */
+	protected function run($runnerArgs, $options = array()) {
+		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
+		$testCli = new TestRunner($runnerArgs);
+		$testCli->run($options);
+	}
+
+/**
+ * Shows a list of available test cases and gives the option to run one of them
+ *
+ * @return void
+ */
+	public function available() {
+		$params = $this->parseArgs();
+		$testCases = TestManager::getTestCaseList($params);
+		$app = $params['app'];
+		$plugin = $params['plugin'];
+
+		$title = "Core Test Cases:";
+		$category = 'core';
+		if ($app) {
+			$title = "App Test Cases:";
+			$category = 'app';
+		} elseif ($plugin) {
+			$title = Inflector::humanize($plugin) . " Test Cases:";
+			$category = $plugin;
 		}
-		$this->_stop($exit);
+
+		if (empty($testCases)) {
+			$this->out(__("No test cases available \n\n"));
+			$this->help();
+			$this->_stop();
+		}
+
+		$this->out($title);
+		$i = 1;
+		$cases = array();
+		foreach ($testCases as $testCaseFile => $testCase) {
+			$case = explode(DS, str_replace('.test.php', '', $testCase));
+			$case[count($case) - 1] = Inflector::camelize($case[count($case) - 1]);
+			$case = implode('/', $case);
+			$this->out("[$i] $case");
+			$cases[$i] = $case;
+			$i++;
+		}
+
+		while ($choice = $this->in(__('What test case would you like to run?'), null, 'q')) {
+			if (is_numeric($choice)  && isset($cases[$choice])) {
+				$this->args[0] = $category;
+				$this->args[1] = $cases[$choice];
+				$this->run($this->parseArgs(), $this->runnerOptions());
+				break;
+			}
+
+			if (is_string($choice) && in_array($choice, $cases)) {
+				$this->args[0] = $category;
+				$this->args[1] = $choice;
+				$this->run($this->parseArgs(), $this->runnerOptions());
+				break;
+			}
+
+			if ($choice == 'q') {
+				break;
+			}
+		}
 	}
 
 /**
@@ -116,36 +195,76 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function help() {
-		$help = <<<TEXT
-Usage:
------
-cake testsuite <category> <file> [params]
-	- category - "app", "core" or name of a plugin
-	- file - file name with folder prefix and without the test.php suffix.
-	
-Params:
--------
-  -filter
-	The -filter option allows you supply a pattern that is used to match
-	test method names. This can be a regular expression.
+		$this->out('CakePHP Testsuite:');
+		$this->hr();
 
-  -coverage
-	Enable code coverage for this run.
+		$this->out('The CakPHP Testsuite allows you to run test cases from the command line');
+		$this->out('If run with no command line arguments, a list of available core test cases will be shown');
+		$this->hr();
 
-Examples:
----------
-	cake testsuite app behaviors/debuggable;
-	cake testsuite app models/my_model;
-	cake testsuite app controllers/my_controller
-	
-	cake testsuite core libs/file
-	cake testsuite core libs/router
-	cake testsuite core libs/set
+		$this->out("Usage: cake testuite <category> <file> [params]");
+		$this->out("\t- category: app, core or name of a plugin");
+		$this->out("\t- file: file name with folder prefix and without the test.php suffix");
+		$this->hr();
 
-	cake testsuite bugs models/bug
-	// for the plugin 'bugs' and its test case 'models/bug'
+		$this->out("Usage: cake testuite available <category> [params]");
+		$this->out("\t Shows a list of available testcases for the specified category");
+		$this->out("\t Params list will be used for running the selected test case");
+		$this->hr();
 
-TEXT;
-		$this->out($help);
+		$this->out('Examples:');
+		$this->out('cake testsuite app models/my_model');
+		$this->out("cake testsuite app controllers/my_controller \n");
+		$this->out('cake testsuite core libs/file');
+		$this->out("cake testsuite core libs/set \n");
+		$this->out('cake testsuite bugs models/bug -- for the plugin bugs and its test case models/bug');
+		$this->hr();
+
+		$this->out('Params:');
+		$this->out("--log-junit <file>       Log test execution in JUnit XML format to file.");
+		$this->out("--log-json <file>        Log test execution in JSON format.");
+
+		$this->out("--coverage-html <dir>    Generate code coverage report in HTML format.");
+		$this->out("--coverage-clover <file> Write code coverage data in Clover XML format.");
+		$this->out("--coverage-source <dir>  Write code coverage / source data in XML format.");
+
+		$this->out("--story-html <file>      Write Story/BDD results in HTML format to file.");
+		$this->out("--story-text <file>      Write Story/BDD results in Text format to file.");
+
+		$this->out("--testdox-html <file>    Write agile documentation in HTML format to file.");
+		$this->out("--testdox-text <file>    Write agile documentation in Text format to file.");
+
+		$this->out("--filter <pattern>       Filter which tests to run.");
+		$this->out("--group ...              Only runs tests from the specified group(s).");
+		$this->out("--exclude-group ...      Exclude tests from the specified group(s).");
+		$this->out("--filter <pattern>       Filter which tests to run.");
+		$this->out("--loader <loader>        TestSuiteLoader implementation to use.");
+		$this->out("--repeat <times>         Runs the test(s) repeatedly.");
+
+		$this->out("--story                  Report test execution progress in Story/BDD format.");
+		$this->out("--tap                    Report test execution progress in TAP format.");
+		$this->out("--testdox                Report test execution progress in TestDox format.");
+
+		$this->out("--colors                 Use colors in output.");
+		$this->out("--stderr                 Write to STDERR instead of STDOUT.");
+		$this->out("--stop-on-failure        Stop execution upon first error or failure.");
+		$this->out("--verbose                Output more verbose information.");
+		$this->out("--wait                   Waits for a keystroke after each test.");
+
+		$this->out("--skeleton-class         Generate Unit class for UnitTest in UnitTest.php.");
+		$this->out("--skeleton-test          Generate UnitTest class for Unit in Unit.php.");
+
+		$this->out("--process-isolation      Run each test in a separate PHP process.");
+		$this->out("--no-globals-backup      Do not backup and restore \$GLOBALS for each test.");
+		$this->out("--static-backup          Backup and restore static attributes for each test.");
+		$this->out("--syntax-check           Try to check source files for syntax errors.");
+
+		$this->out("--bootstrap <file>       A \"bootstrap\" PHP file that is run before the tests.");
+		$this->out("--configuration <file>   Read configuration from XML file.");
+		$this->out("--no-configuration       Ignore default configuration file (phpunit.xml).");
+		$this->out("--include-path <path(s)> Prepend PHP's include_path with given path(s).");
+
+		$this->out("-d key[=value]           Sets a php.ini value. \n");
 	}
+
 }

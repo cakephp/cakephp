@@ -1483,7 +1483,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->loadFixtures('JoinA', 'JoinC', 'JoinAC', 'JoinB', 'JoinAB');
 		$TestModel = new JoinA();
-		$TestModel->hasBelongsToMany['JoinC']['unique'] = true;
+		$TestModel->hasBelongsToMany = array('JoinC' => array('unique' => true));
 		$data = array(
 			'JoinA' => array(
 				'id' => 1,
@@ -1558,7 +1558,7 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
- * test that saving habtm records respects conditions set in the the 'conditions' key
+ * test that saving habtm records respects conditions set in the 'conditions' key
  * for the association.
  *
  * @return void
@@ -2957,14 +2957,21 @@ class ModelWriteTest extends BaseModelTest {
 	function testSaveAllTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
-		Mock::generate('DboSource', 'MockTransactionDboSource');
+		$this->getMock('DboSource', array(), array(), 'MockTransactionDboSource');
 		$db = ConnectionManager::create('mock_transaction', array(
 			'datasource' => 'MockTransactionDbo',
 		));
-		$db->expectOnce('rollback');
+		$db->expects($this->at(2))
+			->method('isInterfaceSupported')
+			->with('describe')
+			->will($this->returnValue(true));
 
-		$Post =& new Post();
-		$Post->useDbConfig = 'mock_transaction';
+		$db->expects($this->once())
+			->method('describe')
+			->will($this->returnValue(array()));
+		$db->expects($this->once())->method('rollback');
+
+		$Post = new Post('mock_transaction');
 
 		$Post->validate = array(
 			'title' => array('rule' => array('notEmpty'))
@@ -2994,7 +3001,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => '')
 		);
 		$ts = date('Y-m-d H:i:s');
-		$this->assertEquals($TestModel->saveAll($data), array());
+		$this->assertFalse($TestModel->saveAll($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
@@ -3063,7 +3070,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => 'New Sixth Post')
 		);
 		$ts = date('Y-m-d H:i:s');
-		$this->assertEquals($TestModel->saveAll($data), array());
+		$this->assertFalse($TestModel->saveAll($data));
 
 		$result = $TestModel->find('all', array('recursive' => -1));
 		$expected = array(
@@ -3261,7 +3268,7 @@ class ModelWriteTest extends BaseModelTest {
 				'body' => 'Trying to get away with an empty title'
 		));
 		$result = $TestModel->saveAll($data);
-		$this->assertEqual($result, array());
+		$this->assertFalse($result);
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => 'This field cannot be left blank'));
@@ -3347,7 +3354,7 @@ class ModelWriteTest extends BaseModelTest {
 				'title' => '',
 				'body' => 'Trying to get away with an empty title'
 		));
-		$this->assertEquals($TestModel->saveAll($data, array('validate' => 'first')), array());
+		$this->assertFalse($TestModel->saveAll($data, array('validate' => 'first')));
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$this->assertEqual($result, $expected);

@@ -391,6 +391,16 @@ class TestComponent extends Object {
  */
 	function shutdown(&$controller) {
 	}
+/**
+ * beforeRender callback
+ *
+ * @return void
+ */
+	function beforeRender(&$controller) {
+		if ($this->viewclass) {
+			$controller->view = $this->viewclass;
+		}
+	}
 }
 
 /**
@@ -458,6 +468,35 @@ class ControllerTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
 		$this->assertTrue(in_array('ControllerPost', $Controller->modelNames));
+
+		ClassRegistry::flush();
+		unset($Controller);
+	}
+
+/**
+ * testLoadModel method from a plugin controller
+ *
+ * @access public
+ * @return void
+ */
+	function testLoadModelInPlugins() {
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
+			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+		));
+		App::import('Controller', 'TestPlugin.TestPlugin');
+
+		$Controller = new TestPluginController();
+		$Controller->plugin = 'TestPlugin';
+		$Controller->uses = false;
+
+		$this->assertFalse(isset($Controller->Comment));
+
+		$result = $Controller->loadModel('Comment');
+		$this->assertTrue($result);
+		$this->assertType('Comment', $Controller->Comment);
+		$this->assertTrue(in_array('Comment', $Controller->modelNames));
 
 		ClassRegistry::flush();
 		unset($Controller);
@@ -922,6 +961,31 @@ class ControllerTest extends CakeTestCase {
 		$Controller->ControllerComment->validationErrors = array();
 		ClassRegistry::flush();
 
+		App::build();
+	}
+
+/**
+ * test that a component beforeRender can change the controller view class.
+ *
+ * @return void
+ */
+	function testComponentBeforeRenderChangingViewClass() {
+		$core = App::core('views');
+		App::build(array(
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				$core[0]
+			)
+		), true);
+		$Controller =& new Controller();
+		$Controller->uses = array();
+		$Controller->components = array('Test');
+		$Controller->constructClasses();
+		$Controller->Test->viewclass = 'Theme';
+		$Controller->viewPath = 'posts';
+		$Controller->theme = 'test_theme';
+		$result = $Controller->render('index');
+		$this->assertPattern('/default test_theme layout/', $result);
 		App::build();
 	}
 

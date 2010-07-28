@@ -69,6 +69,15 @@ class TestDispatcher extends Dispatcher {
 		$this->stopped = true;
 		return true;
 	}
+
+/**
+ * header method
+ *
+ * @return void
+ */
+	public function header() {
+
+	}
 }
 
 /**
@@ -1361,20 +1370,20 @@ class DispatcherTest extends CakeTestCase {
 		$expected = "alert('plugin one nested js file');";
 		$this->assertEqual($result, $expected);
 		Configure::write('debug', $debug);
-		//reset the header content-type without page can render as plain text.
-		header('Content-type: text/html');
+		//reset the 
+		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/unknown.extension');
 		$result = ob_get_clean();
 		$this->assertEqual('Testing a file with unknown extension to mime mapping.', $result);
-		header('Content-type: text/html');
+		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/theme_one.htc');
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
-		header('Content-type: text/html');
+		
 	}
 
 /**
@@ -1395,7 +1404,7 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertTrue($Dispatcher->stopped);
 
-		header('HTTP/1.1 200 Ok');
+		
 	}
 
 /**

@@ -4571,7 +4571,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testBindMultipleTimes() {
-		$this->loadFixtures('User', 'Comment', 'Article');
+		$this->loadFixtures('User', 'Comment', 'Article', 'Tag', 'ArticlesTag');
 		$TestModel = new User();
 
 		$result = $TestModel->hasMany;
@@ -4587,6 +4587,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $TestModel->find('all', array(
 			'fields' => 'User.id, User.user'
 		));
+
 		$expected = array(
 			array(
 				'User' => array(
@@ -4654,7 +4655,9 @@ class ModelReadTest extends BaseModelTest {
 			),
 			array(
 				'User' => array(
-					'id' => '4', 'user' => 'garrett'),
+					'id' => '4',
+					'user' => 'garrett'
+				),
 					'Items' => array(
 						array(
 							'id' => '2',
@@ -4730,6 +4733,58 @@ class ModelReadTest extends BaseModelTest {
 				),
 				'Items' => array()
 		));
+
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that multiple reset = true calls to bindModel() result in the original associations.
+ *
+ * @return void
+ */
+	function testBindModelMultipleTimesResetCorrectly() {
+		$this->loadFixtures('User', 'Comment', 'Article');
+		$TestModel =& new User();
+
+		$TestModel->bindModel(array('hasMany' => array('Comment')));
+		$TestModel->bindModel(array('hasMany' => array('Comment')));
+		$TestModel->resetAssociations();
+
+		$this->assertFalse(isset($TestModel->hasMany['Comment']), 'Association left behind');
+	}
+
+/**
+ * testBindMultipleTimes method with different reset settings
+ *
+ * @access public
+ * @return void
+ */
+	function testBindMultipleTimesWithDifferentResetSettings() {
+		$this->loadFixtures('User', 'Comment', 'Article');
+		$TestModel =& new User();
+
+		$result = $TestModel->hasMany;
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->bindModel(array(
+			'hasMany' => array('Comment')
+		));
+		$this->assertTrue($result);
+		$result = $TestModel->bindModel(
+			array('hasMany' => array('Article')),
+			false
+		);
+		$this->assertTrue($result);
+
+		$result = array_keys($TestModel->hasMany);
+		$expected = array('Comment', 'Article');
+		$this->assertEqual($result, $expected);
+
+		$TestModel->resetAssociations();
+
+		$result = array_keys($TestModel->hasMany);
+		$expected = array('Article');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -4750,6 +4805,58 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $Model->find('all');
 		$this->assertFalse(empty($result));
+	}
+
+/**
+ * test that calling unbindModel() with reset == true multiple times 
+ * leaves associations in the correct state.
+ *
+ * @return void
+ */
+	function testUnbindMultipleTimesResetCorrectly() {
+		$this->loadFixtures('User', 'Comment', 'Article');
+		$TestModel =& new Article10();
+
+		$TestModel->unbindModel(array('hasMany' => array('Comment')));
+		$TestModel->unbindModel(array('hasMany' => array('Comment')));
+		$TestModel->resetAssociations();
+
+		$this->assertTrue(isset($TestModel->hasMany['Comment']), 'Association permanently removed');
+	}
+
+/**
+ * testBindMultipleTimes method with different reset settings
+ *
+ * @access public
+ * @return void
+ */
+	function testUnBindMultipleTimesWithDifferentResetSettings() {
+		$this->loadFixtures('User', 'Comment', 'Article');
+		$TestModel =& new Comment();
+
+		$result = array_keys($TestModel->belongsTo);
+		$expected = array('Article', 'User');
+		$this->assertEqual($result, $expected);
+
+		$result = $TestModel->unbindModel(array(
+			'belongsTo' => array('User')
+		));
+		$this->assertTrue($result);
+		$result = $TestModel->unbindModel(
+			array('belongsTo' => array('Article')),
+			false
+		);
+		$this->assertTrue($result);
+
+		$result = array_keys($TestModel->belongsTo);
+		$expected = array();
+		$this->assertEqual($result, $expected);
+
+		$TestModel->resetAssociations();
+
+		$result = array_keys($TestModel->belongsTo);
+		$expected = array('User');
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -6416,6 +6523,18 @@ class ModelReadTest extends BaseModelTest {
 			2 => 'nate (CakePHP)',
 			3 => 'larry (CakePHP)',
 			4 => 'garrett (CakePHP)'
+		);
+		$this->assertEqual($result, $expected);
+
+		$TestModel =& new Article();
+		$TestModel->displayField = 'title';
+		$result = $TestModel->find('list', array(
+			'conditions' => array('User.user' => 'mariano'),
+			'recursive' => 0
+		));
+		$expected = array(
+			1 => 'First Article',
+			3 => 'Third Article'
 		);
 		$this->assertEqual($result, $expected);
 	}

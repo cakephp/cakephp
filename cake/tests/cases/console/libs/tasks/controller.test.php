@@ -39,18 +39,18 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
 
 
-$imported = App::import('Model', 'Article');
-$imported = $imported || App::import('Model', 'Comment');
-$imported = $imported || App::import('Model', 'Tag');
+$imported = App::import('Model', 'BakeArticle');
+$imported = $imported || App::import('Model', 'BakeComment');
+$imported = $imported || App::import('Model', 'BakeTag');
 
 if (!$imported) {
 	define('ARTICLE_MODEL_CREATED', true);
 	App::import('Core', 'Model');
 
-	class Article extends Model {
-		public $name = 'Article';
-		public $hasMany = array('Comment');
-		public $hasAndBelongsToMany = array('Tag');
+	class BakeArticle extends Model {
+		public $name = 'BakeArticle';
+		public $hasMany = array('BakeComment');
+		public $hasAndBelongsToMany = array('BakeTag');
 	}
 
 }
@@ -69,7 +69,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
+	public $fixtures = array('core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag');
 
 /**
  * startTest method
@@ -116,21 +116,26 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testListAll() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = true;
-		$this->Task->expects($this->at(1))->method('out')->with('1. Articles');
-		$this->Task->expects($this->at(2))->method('out')->with('2. ArticlesTags');
-		$this->Task->expects($this->at(3))->method('out')->with('3. Comments');
-		$this->Task->expects($this->at(4))->method('out')->with('4. Tags');
+		$this->Task->expects($this->at(1))->method('out')->with('1. BakeArticles');
+		$this->Task->expects($this->at(2))->method('out')->with('2. BakeArticlesBakeTags');
+		$this->Task->expects($this->at(3))->method('out')->with('3. BakeComments');
+		$this->Task->expects($this->at(4))->method('out')->with('4. BakeTags');
 
-		$expected = array('Articles', 'ArticlesTags', 'Comments', 'Tags');
+		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
 		$result = $this->Task->listAll('test_suite');
 		$this->assertEqual($result, $expected);
 
 		$this->Task->interactive = false;
 		$result = $this->Task->listAll();
 
-		$expected = array('articles', 'articles_tags', 'comments', 'tags');
+		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -140,15 +145,20 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetNameValidIndex() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(3));
-		$result = $this->Task->getName('test_suite');
-		$expected = 'Comments';
-		$this->assertEqual($result, $expected);
-		
 		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(1));
+		
 		$result = $this->Task->getName('test_suite');
-		$expected = 'Articles';
+		$expected = 'BakeComments';
+		$this->assertEqual($result, $expected);
+	
+		$result = $this->Task->getName('test_suite');
+		$expected = 'BakeArticles';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -159,8 +169,9 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	function testGetNameInvalidIndex() {
 		$this->Task->interactive = true;
-		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(10));
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue('q'));
+		$this->Task->expects($this->any())->method('in')
+			->will($this->onConsecutiveCalls(50, 'q'));
+
 		$this->Task->expects($this->once())->method('err');
 		$this->Task->expects($this->once())->method('_stop');
 
@@ -272,22 +283,22 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Articles', '--actions--', $helpers, $components);
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertPattern('/\$components \= array\(\'Acl\', \'Auth\'\)/', $result);
-		$this->assertPattern('/\$helpers \= array\(\'Ajax\', \'Time\'\)/', $result);
-		$this->assertPattern('/\-\-actions\-\-/', $result);
+		$this->assertContains('class ArticlesController extends AppController', $result);
+		$this->assertContains("\$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("\$helpers = array('Ajax', 'Time')", $result);
+		$this->assertContains("--actions--", $result);
 
 		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertPattern('/public \$scaffold/', $result);
-		$this->assertNoPattern('/helpers/', $result);
-		$this->assertNoPattern('/components/', $result);
+		$this->assertContains("class ArticlesController extends AppController", $result);
+		$this->assertContains("public \$scaffold", $result);
+		$this->assertNotContains('helpers', $result);
+		$this->assertNotContains('components', $result);
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
-		$this->assertPattern('/class ArticlesController extends AppController/', $result);
-		$this->assertNoPattern('/components/', $result);
-		$this->assertNoPattern('/helpers/', $result);
-		$this->assertPattern('/\-\-actions\-\-/', $result);
+		$this->assertContains('class ArticlesController extends AppController', $result);
+		$this->assertNotContains('components', $result);
+		$this->assertNotContains('helpers', $result);
+		$this->assertContains('--actions--', $result);
 	}
 
 /**
@@ -330,35 +341,35 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$result = $this->Task->bakeActions('Articles', null, true);
+		$result = $this->Task->bakeActions('BakeArticles', null, true);
 
-		$this->assertTrue(strpos($result, 'function index() {') !== false);
-		$this->assertTrue(strpos($result, '$this->Article->recursive = 0;') !== false);
-		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
+		$this->assertContains('function index() {', $result);
+		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
-		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Invalid article'));") !== false);
-		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
+		$this->assertContains('function view($id = null)', $result);
+		$this->assertContains("\$this->Session->setFlash(__('Invalid bake article'));", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
-		$this->assertTrue(strpos($result, 'function add()') !== false);
-		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The article has been saved'));") !== false);
+		$this->assertContains('function add()', $result);
+		$this->assertContains('if (!empty($this->data))', $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
 
-		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('The article could not be saved. Please, try again.'));") !== false);
+		$this->assertContains('function edit($id = null)', $result);
+		$this->assertContains("\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));", $result);
 
-		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->Article->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->Session->setFlash(__('Article deleted'));") !== false);
+		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains("\$this->Session->setFlash(__('Bake article deleted'));", $result);
 
-		$result = $this->Task->bakeActions('Articles', 'admin_', true);
+		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
 
-		$this->assertTrue(strpos($result, 'function admin_index() {') !== false);
-		$this->assertTrue(strpos($result, 'function admin_add()') !== false);
-		$this->assertTrue(strpos($result, 'function admin_view($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'function admin_edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'function admin_delete($id = null)') !== false);
+		$this->assertContains('function admin_index() {', $result);
+		$this->assertContains('function admin_add()', $result);
+		$this->assertContains('function admin_view($id = null)', $result);
+		$this->assertContains('function admin_edit($id = null)', $result);
+		$this->assertContains('function admin_delete($id = null)', $result);
 	}
 
 /**
@@ -372,29 +383,29 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$result = $this->Task->bakeActions('Articles', null, false);
+		$result = $this->Task->bakeActions('BakeArticles', null, false);
 
-		$this->assertTrue(strpos($result, 'function index() {') !== false);
-		$this->assertTrue(strpos($result, '$this->Article->recursive = 0;') !== false);
-		$this->assertTrue(strpos($result, "\$this->set('articles', \$this->paginate());") !== false);
+		$this->assertContains('function index() {', $result);
+		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
-		$this->assertTrue(strpos($result, 'function view($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Invalid article'), array('action' => 'index'))") !== false);
-		$this->assertTrue(strpos($result, "\$this->set('article', \$this->Article->read(null, \$id)") !== false);
+		$this->assertContains('function view($id = null)', $result);
+		$this->assertContains("\$this->flash(__('Invalid bake article'), array('action' => 'index'))", $result);
+		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
-		$this->assertTrue(strpos($result, 'function add()') !== false);
-		$this->assertTrue(strpos($result, 'if (!empty($this->data))') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->Article->save($this->data))') !== false);
+		$this->assertContains('function add()', $result);
+		$this->assertContains('if (!empty($this->data))', $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
 
-		$this->assertTrue(strpos($result, "\$this->flash(__('The article has been saved.'), array('action' => 'index'))") !== false);
+		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
 
-		$this->assertTrue(strpos($result, 'function edit($id = null)') !== false);
-		$this->assertTrue(strpos($result, "\$this->Article->Tag->find('list')") !== false);
-		$this->assertTrue(strpos($result, "\$this->set(compact('tags'))") !== false);
+		$this->assertContains('function edit($id = null)', $result);
+		$this->assertContains("\$this->BakeArticle->BakeTag->find('list')", $result);
+		$this->assertContains("\$this->set(compact('bakeTags'))", $result);
 
-		$this->assertTrue(strpos($result, 'function delete($id = null)') !== false);
-		$this->assertTrue(strpos($result, 'if ($this->Article->delete($id))') !== false);
-		$this->assertTrue(strpos($result, "\$this->flash(__('Article deleted'), array('action' => 'index'))") !== false);
+		$this->assertContains('function delete($id = null)', $result);
+		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}
 
 /**
@@ -407,8 +418,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = false;
 
-		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'Articles');
-		$this->Task->bakeTest('Articles');
+		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'BakeArticles');
+		$this->Task->bakeTest('BakeArticles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
@@ -421,6 +432,11 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testInteractive() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
 		
@@ -437,10 +453,10 @@ class ControllerTaskTest extends CakeTestCase {
 				'y' // looks good?
 			));
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
-			new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesController/')
+			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		);
 		$this->Task->execute();
 	}
@@ -449,9 +465,13 @@ class ControllerTaskTest extends CakeTestCase {
  * test Interactive mode.
  *
  * @return void
- * @access public
  */
 	function testInteractiveAdminMethodsNotInteractive() {
+		$count = count($this->Task->listAll('test_suite'));
+		if ($count != count($this->fixtures)) {
+			$this->markTestSkipped('Additional tables detected.');
+		}
+
 		$this->Task->connection = 'test_suite';
 		$this->Task->interactive = true;
 		$this->Task->path = '/my/path/';
@@ -473,10 +493,10 @@ class ControllerTaskTest extends CakeTestCase {
 			->method('getPrefix')
 			->will($this->returnValue('admin_'));
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
-			new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesController/')
+			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		)->will($this->returnValue(true));
 
 		$result = $this->Task->execute();
@@ -501,10 +521,10 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('_checkUnitTest')->will($this->returnValue(true));
 		$this->Task->Test->expects($this->once())->method('bake');
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
-			new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesController/')
+			new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesController/')
 		)->will($this->returnValue(true));
 
 		$this->Task->execute();
@@ -523,9 +543,9 @@ class ControllerTaskTest extends CakeTestCase {
 		}
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles');
+		$this->Task->args = array('BakeArticles');
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, 
 			new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
@@ -541,7 +561,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	static function nameVariations() {
 		return array(
-			array('Articles'), array('Article'), array('article'), array('articles')
+			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
 		);
 	}
 
@@ -561,7 +581,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array($name);
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/')
 		);
@@ -581,9 +601,9 @@ class ControllerTaskTest extends CakeTestCase {
 		}
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'public');
+		$this->Task->args = array('BakeArticles', 'public');
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$expected = new PHPUnit_Framework_Constraint_Not(new PHPUnit_Framework_Constraint_PCREMatch('/\$scaffold/'));
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, $expected
@@ -605,9 +625,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'public', 'admin');
+		$this->Task->args = array('BakeArticles', 'public', 'admin');
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
 		);
@@ -628,9 +648,9 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test_suite';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('Articles', 'admin');
+		$this->Task->args = array('BakeArticles', 'admin');
 
-		$filename = '/my/path/articles_controller.php';
+		$filename = '/my/path/bake_articles_controller.php';
 		$this->Task->expects($this->once())->method('createFile')->with(
 			$filename, new PHPUnit_Framework_Constraint_PCREMatch('/admin_index/')
 		);
