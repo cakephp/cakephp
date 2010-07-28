@@ -140,8 +140,11 @@ class Xml {
 			self::_toArray($child, $data);
 		}
 
+		$asString = trim((string)$xml);
 		if (empty($data)) {
-			$data = (string)$xml;
+			$data = $asString;
+		} elseif (!empty($asString)) {
+			$data['value'] = $asString;
 		}
 
 		$name = $xml->getName();

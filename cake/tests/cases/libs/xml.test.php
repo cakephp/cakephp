@@ -292,6 +292,21 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual(Xml::toArray(Xml::fromArray($expected)), $expected);
 
 		$xml = '<root>';
+		$xml .= '<tag id="1">defect</tag>';
+		$xml .= '</root>';
+		$obj = Xml::build($xml);
+
+		$expected = array(
+			'root' => array(
+				'tag' => array(
+					'id' => 1,
+					'value' => 'defect'
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray($obj), $expected);
+
+		$xml = '<root>';
 		$xml .= '<table xmlns="http://www.w3.org/TR/html4/"><tr><td>Apples</td><td>Bananas</td></tr></table>';
 		$xml .= '<table xmlns="http://www.cakephp.org"><name>CakePHP</name><license>MIT</license></table>';
 		$xml .= '<table>The book is on the table.</table>';
