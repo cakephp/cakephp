@@ -323,6 +323,20 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual(Xml::toArray($obj), $expected);
+
+		$xml = '<root xmlns:cake="http://www.cakephp.org/">';
+		$xml .= '<tag>defect</tag>';
+		$xml .= '<cake:bug>1</cake:bug>';
+		$xml .= '</root>';
+		$obj = Xml::build($xml);
+
+		$expected = array(
+			'root' => array(
+				'tag' => 'defect',
+				'bug' => 1
+			)
+		);
+		$this->assertEqual(Xml::toArray($obj), $expected);
 	}
 
 }

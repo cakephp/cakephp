@@ -118,7 +118,8 @@ class Xml {
 			throw new Exception(__('The input is not instance of SimpleXMLElement.'));
 		}
 		$result = array();
-		self::_toArray($simpleXML, $result);
+		$namespaces = array_merge(array('' => ''), $simpleXML->getNamespaces(true));
+		self::_toArray($simpleXML, $result, array_keys($namespaces));
 		return $result;
 	}
 
@@ -127,17 +128,20 @@ class Xml {
  *
  * @param object $xml SimpleXMLElement object
  * @param array $parentData Parent array with data
+ * @param array $namespaces List of namespaces in XML
  * @return void
  */
-	protected static function _toArray($xml, &$parentData) {
+	protected static function _toArray($xml, &$parentData, $namespaces) {
 		$data = array();
 
-		foreach ($xml->attributes() as $key => $value) {
-			$data[$key] = (string)$value;
-		}
+		foreach ($namespaces as $namespace) {
+			foreach ($xml->attributes($namespace, true) as $key => $value) {
+				$data[$key] = (string)$value;
+			}
 
-		foreach ($xml->children() as $child) {
-			self::_toArray($child, $data);
+			foreach ($xml->children($namespace, true) as $child) {
+				self::_toArray($child, $data, $namespaces);
+			}
 		}
 
 		$asString = trim((string)$xml);
