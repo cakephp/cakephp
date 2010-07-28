@@ -941,9 +941,8 @@ class Set {
  */
 	public static function reverse($object) {
 		$out = array();
-		if (is_a($object, 'XmlNode')) {
-			$out = $object->toArray();
-			return $out;
+		if ($object instanceof SimpleXMLElement) {
+			return Xml::toArray($object);
 		} else if (is_object($object)) {
 			$keys = get_object_vars($object);
 			if (isset($keys['_name_'])) {
