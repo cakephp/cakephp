@@ -89,21 +89,17 @@ class SessionHelper extends AppHelper {
 			$flash = CakeSession::read('Message.' . $key);
 
 			if ($flash['element'] == 'default') {
+				$class = 'message';
 				if (!empty($flash['params']['class'])) {
 					$class = $flash['params']['class'];
-				} else {
-					$tmpVars = $flash['params'];
-					$tmpVars['message'] = $flash['message'];
-					$out = $this->_View->element($flash['element'], $tmpVars);
 				}
 				$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $flash['message'] . '</div>';
 			} elseif ($flash['element'] == '' || $flash['element'] == null) {
 				$out = $flash['message'];
 			} else {
-				$view =& ClassRegistry::getObject('view');
 				$tmpVars = $flash['params'];
 				$tmpVars['message'] = $flash['message'];
-				$out = $view->element($flash['element'], $tmpVars);
+				$out = $this->_View->element($flash['element'], $tmpVars);
 			}
 			CakeSession::delete('Message.' . $key);
 		}
@@ -118,32 +114,4 @@ class SessionHelper extends AppHelper {
 	public function valid() {
 		return CakeSession::valid();
 	}
-
-/**
- * stub method to make helper less complainey
- *
- * @return void
- */
-	public function beforeRender() { }
-
-/**
- * stub method to make helper less complainey
- *
- * @return void
- */
-	public function beforeLayout() { }
-
-/**
- * stub method to make helper less complainey
- *
- * @return void
- */
-	public function afterRender() { }
-
-/**
- * stub method to make helper less complainey
- *
- * @return void
- */
-	public function afterLayout() { }
 }
