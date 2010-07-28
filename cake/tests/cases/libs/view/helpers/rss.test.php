@@ -37,9 +37,6 @@ class RssHelperTest extends CakeTestCase {
 		$this->Rss =& new RssHelper();
 		$this->Rss->Time =& new TimeHelper();
 		$this->Rss->beforeRender();
-
-		$manager =& XmlManager::getInstance();
-		$manager->namespaces = array();
 	}
 
 /**
@@ -53,52 +50,6 @@ class RssHelperTest extends CakeTestCase {
 	}
 
 /**
- * testAddNamespace method
- *
- * @access public
- * @return void
- */
-	function testAddNamespace() {
-		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
-		$manager =& XmlManager::getInstance();
-
-		$expected = array('custom' => 'http://example.com/dtd.xml');
-		$this->assertEqual($manager->namespaces, $expected);
-
-		$this->Rss->removeNs('custom');
-
-		$this->Rss->addNs('dummy', 'http://dummy.com/1.0/');
-		$result = $this->Rss->document();
-		$expected = array(
-			'rss' => array(
-				'xmlns:dummy' => 'http://dummy.com/1.0/',
-				'version' => '2.0'
-			)
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Rss->removeNs('dummy');
-	}
-
-/**
- * testRemoveNamespace method
- *
- * @access public
- * @return void
- */
-	function testRemoveNamespace() {
-		$this->Rss->addNs('custom', 'http://example.com/dtd.xml');
-		$this->Rss->addNs('custom2', 'http://example.com/dtd2.xml');
-		$manager =& XmlManager::getInstance();
-
-		$expected = array('custom' => 'http://example.com/dtd.xml', 'custom2' => 'http://example.com/dtd2.xml');
-		$this->assertEqual($manager->namespaces, $expected);
-
-		$this->Rss->removeNs('custom');
-		$expected = array('custom2' => 'http://example.com/dtd2.xml');
-		$this->assertEqual($manager->namespaces, $expected);
-	}
-	/**
  * testDocument method
  *
  * @access public
@@ -252,6 +203,7 @@ class RssHelperTest extends CakeTestCase {
 					'<link', 'http://example.com', '/link',
 				'/image',
 				'atom:link' => array(
+					'xmlns:atom' => 'http://www.w3.org/2005/Atom',
 					'href' => "http://www.example.com/rss.xml",
 					'rel' => "self",
 					'type' =>"application/rss+xml"
@@ -381,22 +333,6 @@ class RssHelperTest extends CakeTestCase {
 			'<item',
 			'<title',
 			'<![CDATA[My Title &amp; more]]',
-			'/title',
-			'/item'
-		);
-		$this->assertTags($result, $expected);
-
-		$item = array(
-			'title' => array(
-				'value' => 'My Title & more',
-				'convertEntities' => false
-			)
-		);
-		$result = $this->Rss->item(null, $item);
-		$expected = array(
-			'<item',
-			'<title',
-			'My Title & more',
 			'/title',
 			'/item'
 		);
