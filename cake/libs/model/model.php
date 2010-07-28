@@ -383,7 +383,7 @@ class Model extends Object {
  *
  * ### Dynamically creating models
  *
- * You can dynamically create model instances using the the $id array syntax.
+ * You can dynamically create model instances using the $id array syntax.
  *
  * {{{
  * $Post = new Model(array('table' => 'posts', 'name' => 'Post', 'ds' => 'connection2'));
@@ -596,10 +596,9 @@ class Model extends Object {
  */
 	function bindModel($params, $reset = true) {
 		foreach ($params as $assoc => $model) {
-			if ($reset === true) {
+			if ($reset === true && !isset($this->__backAssociation[$assoc])) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
-
 			foreach ($model as $key => $value) {
 				$assocName = $key;
 
@@ -611,6 +610,9 @@ class Model extends Object {
 				$this->{$assoc}[$assocName] = $value;
 				if (property_exists($this, $assocName)) {
 					unset($this->{$assocName});
+				}
+				if ($reset === false && isset($this->__backAssociation[$assoc])) {
+					$this->__backAssociation[$assoc][$assocName] = $value;
 				}
 			}
 		}
@@ -639,14 +641,14 @@ class Model extends Object {
  */
 	function unbindModel($params, $reset = true) {
 		foreach ($params as $assoc => $models) {
-			if ($reset === true) {
+			if ($reset === true && !isset($this->__backAssociation[$assoc])) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
-
 			foreach ($models as $model) {
-				$this->__backAssociation = array_merge($this->__backAssociation, $this->{$assoc});
-				unset ($this->__backAssociation[$model]);
-				unset ($this->{$assoc}[$model]);
+				if ($reset === false && isset($this->__backAssociation[$assoc][$model])) {
+					unset($this->__backAssociation[$assoc][$model]);
+				}
+				unset($this->{$assoc}[$model]);
 			}
 		}
 		return true;
@@ -2355,9 +2357,9 @@ class Model extends Object {
 	}
 
 /**
- * Called only when bindTo<ModelName>() is used.
  * This resets the association arrays for the model back
- * to those originally defined in the model.
+ * to those originally defined in the model. Normally called at the end
+ * of each call to Model::find()
  *
  * @return boolean Success
  */

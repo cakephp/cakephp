@@ -1339,6 +1339,7 @@ class DboSourceTest extends CakeTestCase {
 	function endTest() {
 		unset($this->Model);
 		Configure::write('debug', $this->debug);
+		ClassRegistry::flush();
 		unset($this->debug);
 	}
 
@@ -2041,6 +2042,28 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
 
 		unset($this->Model->hasMany['TestModel6']['fields']);
+	}
+
+/**
+ * test generateAssociationQuery with a hasMany and an aggregate function.
+ *
+ * @return void
+ */
+	function testGenerateAssociationQueryHasManyAndAggregateFunction() {
+		$this->Model =& new TestModel5();
+		$this->Model->schema();
+		$this->_buildRelatedModels($this->Model);
+
+		$binding = array('type' => 'hasMany', 'model' => 'TestModel6');
+		$queryData = array('fields' => array('MIN(TestModel5.test_model4_id)'));
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$this->Model->recursive = 0;
+
+		$result = $this->testDb->generateAssociationQuery($this->Model, $null, $params['type'], $params['assoc'], $params['assocData'], $queryData, false, $resultSet);
+		$this->assertPattern('/^SELECT\s+MIN\(`TestModel5`\.`test_model4_id`\)\s+FROM/', $result);
 	}
 
 /**
@@ -4439,5 +4462,20 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'tbl_articles');
+	}
+
+/**
+ * test that read() only calls queryAssociation on db objects when the method is defined.
+ *
+ * @return void
+ */
+	function testReadOnlyCallingQueryAssociationWhenDefined() {
+		ConnectionManager::create('test_no_queryAssociation', array(
+			'datasource' => 'data'
+		));
+		$Article =& ClassRegistry::init('Article');
+		$Article->Comment->useDbConfig = 'test_no_queryAssociation';
+		$result = $Article->find('all');
+		$this->assertTrue(is_array($result));
 	}
 }
