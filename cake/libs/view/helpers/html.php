@@ -431,7 +431,7 @@ class HtmlHelper extends AppHelper {
 			if ($url[0] !== '/') {
 				$url = JS_URL . $url;
 			}
-			if (strpos($url, '?') === false && strpos($url, '.js') === false) {
+			if (strpos($url, '?') === false && substr($url, -3) !== '.js') {
 				$url .= '.js';
 			}
 			$url = $this->assetTimestamp($this->webroot($url));
@@ -527,7 +527,7 @@ class HtmlHelper extends AppHelper {
  *
  * {{{
  * echo $html->style(array('margin' => '10px', 'padding' => '10px'), true);
- * 
+ *
  * // creates
  * 'margin:10px;padding:10px;'
  * }}}
