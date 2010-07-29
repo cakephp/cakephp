@@ -572,7 +572,7 @@ class DboPostgresTest extends CakeTestCase {
 			date date,
 			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
 		)');
-		$model =& ClassRegistry::init('datatypes');
+		$model = new Model(array('name' => 'Datatype', 'ds' => 'test_suite'));
 		$schema = new CakeSchema(array('connection' => 'test_suite'));
 		$result = $schema->read(array(
 			'connection' => 'test_suite',
@@ -806,5 +806,22 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $this->db->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
 		$expected = array('COUNT(DISTINCT FUNC("id"))');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that saveAll works even with conditions that lack a model name.
+ *
+ * @return void
+ */
+	function testUpdateAllWithNonQualifiedConditions() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$result = $Article->updateAll(array('title' => "'Awesome'"), array('published' => 'Y'));
+		$this->assertTrue($result);
+
+		$result = $Article->find('count', array(
+			'conditions' => array('Article.title' => 'Awesome')
+		));
+		$this->assertEqual($result, 3, 'Article count is wrong or fixture has changed.');
 	}
 }
