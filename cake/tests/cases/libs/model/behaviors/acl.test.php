@@ -174,7 +174,7 @@ class AclPost extends CakeTestModel {
  * @var array
  * @access public
  */
-	var $actsAs = array('Acl' => 'controlled');
+	var $actsAs = array('Acl' => 'Controlled');
 
 /**
  * parentNode
