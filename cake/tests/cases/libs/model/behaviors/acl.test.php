@@ -277,7 +277,9 @@ class AclBehaviorTestCase extends CakeTestCase {
 			),
 		);
 		$Post->save($data);
-		$result = $this->Aco->find('first', array('conditions' => array('Aco.model' => 'Post', 'Aco.foreign_key' => $Post->id)));
+		$result = $this->Aco->find('first', array(
+			'conditions' => array('Aco.model' => 'Post', 'Aco.foreign_key' => $Post->id)
+		));
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result['Aco']['model'], 'Post');
 		$this->assertEqual($result['Aco']['foreign_key'], $Post->id);
@@ -300,7 +302,9 @@ class AclBehaviorTestCase extends CakeTestCase {
 			),
 		);
 		$Person->save($data);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)));
+		$result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)
+		));
 		$this->assertTrue(is_array($result));
 		$this->assertEqual($result['Aro']['parent_id'], 5);
 
@@ -322,7 +326,9 @@ class AclBehaviorTestCase extends CakeTestCase {
 		 $Person->read(null, 8);
 		 $Person->set('mother_id', 1);
 		 $Person->save();
-		 $result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)));
+		 $result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $Person->id)
+		));
 		 $this->assertTrue(is_array($result));
 		 $this->assertEqual($result['Aro']['parent_id'], 7);
  
@@ -363,9 +369,13 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$this->assertEqual($node[1]['Aro']['parent_id'], null);
 
 		$Person->delete($id);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)));
+		$result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)
+		));
 		$this->assertTrue(empty($result));
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)));
+		$result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)
+		));
 		$this->assertFalse(empty($result));
 
 		$data = array(
@@ -378,10 +388,14 @@ class AclBehaviorTestCase extends CakeTestCase {
 		$Person->save($data);
 		$id = $Person->id;
 		$Person->delete(2);
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)));
+		$result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => $id)
+		));
 		$this->assertTrue(empty($result));
 
-		$result = $this->Aro->find('first', array('conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)));
+		$result = $this->Aro->find('first', array(
+			'conditions' => array('Aro.model' => 'AclPerson', 'Aro.foreign_key' => 2)
+		));
 		$this->assertTrue(empty($result));
 
 	}
