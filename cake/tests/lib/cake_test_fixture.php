@@ -92,6 +92,11 @@ class CakeTestFixture extends Object {
 				$model->table = $import['table'];
 				$model->tablePrefix = $db->config['prefix'];
 				$this->fields = $model->schema(true);
+				ClassRegistry::flush();
+			}
+
+			if (!empty($db->config['prefix']) && strpos($this->table, $db->config['prefix']) === 0) {
+				$this->table = str_replace($db->config['prefix'], '', $this->table);
 			}
 
 			if (isset($import['records']) && $import['records'] !== false && isset($model) && isset($db)) {

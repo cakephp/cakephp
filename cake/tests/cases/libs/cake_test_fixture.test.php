@@ -198,15 +198,42 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertEqual(count($Fixture->records), count($Source->records));
 
 		$Fixture =& new CakeTestFixtureImportFixture();
-		$Fixture->fields = $Fixture->records = null;
+		$Fixture->fields = $Fixture->records = $Fixture->table = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
-
+		$this->assertEqual($Fixture->table, 'fixture_tests');
+		
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
 		$Source->drop($this->db);
+	}
+
+/**
+ * test that fixtures don't duplicate the test db prefix.
+ *
+ * @return void
+ */
+	function testInitDbPrefixDuplication() {
+		$this->_initDb();
+		$backPrefix = $this->db->config['prefix'];
+		$this->db->config['prefix'] = 'cake_fixture_test_';
+
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
+
+		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture->fields = $Fixture->records = $Fixture->table = null;
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
+
+		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+		$this->assertEqual($Fixture->table, 'fixture_tests');
+
+		$Source->drop($this->db);
+		$this->db->config['prefix'] = $backPrefix;
 	}
 
 /**
@@ -216,6 +243,10 @@ class CakeTestFixtureTest extends CakeTestCase {
  */
 	function testInitModelTablePrefix() {
 		$this->_initDb();
+		$hasPrefix = !empty($this->db->config['prefix']);
+		if ($this->skipIf($hasPrefix, 'Cannot run this test, you have a database connection prefix.')) {
+			return;
+		}
 		$Source =& new CakeTestFixtureTestFixture();
 		$Source->create($this->db);
 		$Source->insert($this->db);
