@@ -255,6 +255,13 @@ class AuthComponent extends Component {
 	public $params = array();
 
 /**
+ * AclComponent instance if using Acl + Auth
+ *
+ * @var AclComponent
+ */
+	public $Acl;
+
+/**
  * Method list for bound controller
  *
  * @var array

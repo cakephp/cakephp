@@ -490,7 +490,7 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller = new AuthTestController();
 		$this->Controller->Components->init($this->Controller);
-		$this->Controller->Components->initialize($this->Controller);
+		$this->Controller->Components->trigger('initialize', array(&$this->Controller));
 		$this->Controller->beforeFilter();
 
 		ClassRegistry::addObject('view', new View($this->Controller));
@@ -800,7 +800,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->params['controller'] = 'auth_test';
 		$this->Controller->params['action'] = 'add';
 
-		$this->Controller->Acl = $this->getMock('AclComponent');
+		$this->Controller->Acl = $this->getMock('AclComponent', array(), array(), '', false);
 		$this->Controller->Acl->expects($this->atLeastOnce())->method('check')->will($this->returnValue(true));
 
 		$this->Controller->Auth->initialize($this->Controller);
@@ -1552,7 +1552,7 @@ class AuthTest extends CakeTestCase {
 			'Session'
 		);
 		$this->Controller->Components->init($this->Controller);
-		$this->Controller->Components->initialize($this->Controller);
+		$this->Controller->Components->trigger('initialize', array(&$this->Controller));
 		Router::reload();
 
 		$this->AuthUserCustomField = new AuthUserCustomField();
