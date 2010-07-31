@@ -485,7 +485,7 @@ class CakeRequest implements ArrayAccess {
  *
  * Pattern value comparison allows you to compare a value fetched from `env()` to a regular expression.
  * 
- * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));
+ * e.g `addDetector('iphone', array('env' => 'HTTP_USER_AGENT', 'pattern' => '/iPhone/i'));`
  *
  * ### Option based comparison
  *

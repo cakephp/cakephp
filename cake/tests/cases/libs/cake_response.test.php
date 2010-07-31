@@ -84,4 +84,48 @@ class CakeRequestTestCase extends CakeTestCase {
 		$this->assertEquals($response->type('xhtml-mobile'), 'application/vnd.wap.xhtml+xml');
 		$this->assertEquals($response->type('csv'), 'text/csv');
 	}
+
+/**
+* Tests the header method
+*
+*/
+	public function testHeader() {
+		$response = new CakeResponse();
+		$headers = array();
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header('Location', 'http://example.com');
+		$headers += array('Location' => 'http://example.com');
+		$this->assertEquals($response->header(), $headers);
+
+		//Headers with the same name are overwritten
+		$response->header('Location', 'http://example2.com');
+		$headers = array('Location' => 'http://example2.com');
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header(array('WWW-Authenticate' => 'Negotiate'));
+		$headers += array('WWW-Authenticate' => 'Negotiate');
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header(array('WWW-Authenticate' => 'Not-Negotiate'));
+		$headers['WWW-Authenticate'] = 'Not-Negotiate';
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header(array('Age' => 12, 'Allow' => 'GET, HEAD'));
+		$headers += array('Age' => 12, 'Allow' => 'GET, HEAD');
+		$this->assertEquals($response->header(), $headers);
+
+		// String headers are allowed
+		$response->header('Content-Language: da');
+		$headers += array('Content-Language' => 'da');
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header('Content-Language: da');
+		$headers += array('Content-Language' => 'da');
+		$this->assertEquals($response->header(), $headers);
+
+		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
+		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
+		$this->assertEquals($response->header(), $headers);
+	}
 }

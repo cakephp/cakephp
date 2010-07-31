@@ -346,11 +346,54 @@ class CakeResponse {
 
 /**
 * Buffers a header string to be sent
+* Returns the complete list of buffered headers
+*
+* ### Single header
+* e.g `header('Location', 'http://example.com');`
+*
+* ### Multiple headers
+* e.g `header(array('Location' => 'http://example.com', 'X-Extra' => 'My header'));`
+*
+* ### String header
+* e.g `header('WWW-Authenticate: Negotiate');`
+*
+* ### Array of string headers
+* e.g `header(array('WWW-Authenticate: Negotiate'), array('Content-type: application/pdf'));`
+*
+* Multiple calls for setting the same header name will have the same effect as setting the header once
+* with the last value sent for it
+*  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
+* will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
 *
 * @param mixed $header. An array of header strings or a single header string
+*	- an assotiative array of "header name" => "header value" is also accepted
+*	- an array of string headers is also accepted
+* @param mixed $value. The header value.
+* @return array list of headers to be sent
 */
-	public function header($header) {
-		
+	public function header($header = null, $value = null) {
+		if (is_null($header)) {
+			return $this->_headers;
+		}
+		if (is_array($header)) {
+			foreach ($header as $h => $v) {
+				if (is_numeric($h)) {
+					$this->header($v);
+					continue;
+				}
+				$this->_headers[$h] = trim($v);
+			}
+			return $this->_headers;
+		}
+
+		if (!is_null($value)) {
+			$this->_headers[$header] = $value;
+			return $this->_headers;
+		}
+
+		list($header, $value) = explode(':', $header, 2);
+		$this->_headers[$header] = trim($value);
+		return $this->_headers;
 	}
 
 /**
