@@ -407,6 +407,7 @@ class CakeResponse {
 		}
 		if (isset($this->_mimeTypes[$contentType])) {
 			$contentType = $this->_mimeTypes[$contentType];
+			$contentType = is_array($contentType) ? current($contentType) : $contentType;
 		}
 		return $this->_contentType = $contentType;
 	}
