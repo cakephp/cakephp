@@ -35,8 +35,9 @@ class AllComponentsTest extends PHPUnit_Framework_TestSuite {
  */
 	public static function suite() {
 		$suite = new PHPUnit_Framework_TestSuite('All component class tests');
-		
+
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component_collection.test.php');
 
 		$iterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
 		foreach ($iterator as $i => $file) {
