@@ -251,11 +251,7 @@ class JsHelperTest extends CakeTestCase {
 		$this->Js->TestJsEngine->expects($this->atLeastOnce())->method('domReady');
 		$result = $this->Js->writeBuffer(array('onDomReady' => true, 'cache' => false, 'clear' => false));
 
-		ClassRegistry::removeObject('view');
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::addObject('view', $view);
-
-		$view->expects($this->once())
+		$this->View->expects($this->once())
 			->method('addScript')
 			->with($this->matchesRegularExpression('/one\s\=\s1;\ntwo\s\=\s2;/'));
 		$result = $this->Js->writeBuffer(array('onDomReady' => false, 'inline' => false, 'cache' => false));
@@ -269,10 +265,7 @@ class JsHelperTest extends CakeTestCase {
 	function testWriteBufferNotInline() {
 		$this->Js->set('foo', 1);
 
-		$view = $this->getMock('View', array(), array(), '', false);
-		ClassRegistry::removeObject('view');
-		ClassRegistry::addObject('view', $view);
-		$view->expects($this->once())
+		$this->View->expects($this->once())
 			->method('addScript')
 			->with($this->matchesRegularExpression('#<script type="text\/javascript">window.app \= \{"foo"\:1\}\;<\/script>#'));
 
