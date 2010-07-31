@@ -191,6 +191,19 @@ class CakeResponse {
 * @return void
 */
 	public function __construct(array $options = array(), CakeRequest $request = null) {
+		$this->_request = $request;
+		if (isset($options['body'])) {
+			$this->body($options['body']);
+		}
+		if (isset($options['status'])) {
+			$this->statusCode($options['status']);
+		}
+		if (isset($options['type'])) {
+			$this->type($options['type']);
+		}
+		if (isset($options['encoding'])) {
+			$this->encoding($options['encoding']);
+		}
 	}
 
 /**
@@ -225,7 +238,10 @@ class CakeResponse {
 * @return string current message buffer if $content param is passed as null
 */
 	public function body($content = null) {
-		
+		if (is_null($content)) {
+			return $this->_body;
+		}
+		return $this->_body = $content;
 	}
 
 /**
@@ -233,10 +249,48 @@ class CakeResponse {
 * if $code is null the current code is returned
 *
 * @param integer $code
-* @return integer current status code if $code param is passed as null
+* @return integer current status code
 */
 	public function statusCode($code = null) {
-	
+		if (is_null($code)) {
+			return $this->_status;
+		}
+		if (!isset($this->_statusCodes[$code])) {
+			throw new OutOfRangeException(__('Unknown status code'));
+		}
+		return $this->_status = $code;
+	}
+
+/**
+* Sets the response content type. It can be either a file extension
+* which will be mapped internally to a mime-type or a string representing a mime-type
+* if $contentType is null the current content type is returned
+*
+* @param string $contentType
+* @return string current content type
+*/
+	public function type($contentType = null) {
+		if (is_null($contentType)) {
+			return $this->_contentType;
+		}
+		if (isset($this->_mimeTypes[$contentType])) {
+			$contentType = $this->_mimeTypes[$contentType];
+		}
+		return $this->_contentType = $contentType;
+	}
+
+/**
+* Sets the response encoding or charset
+* if $encoding is null the current encoding is returned
+*
+* @param string $encoding
+* @return string current status code
+*/
+	public function encoding($encoding = null) {
+		if (is_null($encoding)) {
+			return $this->_encoding;
+		}
+		return $this->_encoding = $encoding;
 	}
 
 /**
