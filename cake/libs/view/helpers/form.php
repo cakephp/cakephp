@@ -258,7 +258,7 @@ class FormHelper extends AppHelper {
 				0 => $id
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
-				$options['id'] = $model . Inflector::camelize($options['action']) . 'Form';
+				$options['id'] = $this->domId($options['action'] . 'Form');
 			}
 			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
 		} elseif (is_string($options['url'])) {
@@ -2158,7 +2158,7 @@ class FormHelper extends AppHelper {
  *
  * Options
  *
- *  - `secure` - boolean whether or not the the field should be added to the security fields.
+ *  - `secure` - boolean whether or not the field should be added to the security fields.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.

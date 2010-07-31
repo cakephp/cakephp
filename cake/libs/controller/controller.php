@@ -481,7 +481,7 @@ class Controller extends Object {
 	}
 
 /**
- * Loads Model classes based on the the uses property
+ * Loads Model classes based on the uses property
  * see Controller::loadModel(); for more info.
  * Loads Components and prepares them for initialization.
  *
@@ -849,6 +849,7 @@ class Controller extends Object {
  */
 	public function render($action = null, $layout = null, $file = null) {
 		$this->beforeRender();
+		$this->Component->triggerCallback('beforeRender', $this);
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
@@ -856,8 +857,6 @@ class Controller extends Object {
 			$viewClass = $viewClass . 'View';
 			App::import('View', $this->view);
 		}
-
-		$this->Component->triggerCallback('beforeRender', $this);
 
 		$this->params['models'] = $this->modelNames;
 

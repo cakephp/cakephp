@@ -194,7 +194,10 @@ class HttpSocket extends CakeSocket {
 			$request['uri'] = null;
 		}
 		$uri = $this->_parseUri($request['uri']);
-
+		$hadAuth = false;
+		if (is_array($uri) && array_key_exists('user', $uri)) {
+			$hadAuth = true;
+		}
 		if (!isset($uri['host'])) {
 			$host = $this->config['host'];
 		}
@@ -202,11 +205,14 @@ class HttpSocket extends CakeSocket {
 			$host = $request['host'];
 			unset($request['host']);
 		}
-
 		$request['uri'] = $this->url($request['uri']);
 		$request['uri'] = $this->_parseUri($request['uri'], true);
 		$this->request = Set::merge($this->request, $this->config['request'], $request);
 
+		if (!$hadAuth && !empty($this->config['request']['auth']['user'])) {
+			$this->request['uri']['user'] = $this->config['request']['auth']['user'];
+			$this->request['uri']['pass'] = $this->config['request']['auth']['pass'];
+		}
 		$this->_configUri($this->request['uri']);
 
 		if (isset($host)) {
@@ -219,7 +225,23 @@ class HttpSocket extends CakeSocket {
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
-			$this->request['header'] = array_merge(array('Host' => $this->request['uri']['host']), $this->request['header']);
+			$Host = $this->request['uri']['host'];
+			$schema = '';
+			$port = 0;
+			if (isset($this->request['uri']['schema'])) {
+				$schema = $this->request['uri']['schema'];
+			}
+			if (isset($this->request['uri']['port'])) {
+				$port = $this->request['uri']['port'];
+			}
+			if (
+				($schema === 'http' && $port != 80) ||
+				($schema === 'https' && $port != 443) ||
+				($port != 80 && $port != 443)
+			) {
+				$Host .= ':' . $port;
+			}
+			$this->request['header'] = array_merge(compact('Host'), $this->request['header']);
 		}
 
 		if (isset($this->request['auth']['user']) && isset($this->request['auth']['pass'])) {
@@ -594,7 +616,6 @@ class HttpSocket extends CakeSocket {
 		if (!isset($uri['host'])) {
 			return false;
 		}
-
 		$config = array(
 			'request' => array(
 				'uri' => array_intersect_key($uri, $this->config['request']['uri']),
@@ -1030,7 +1051,6 @@ class HttpSocket extends CakeSocket {
 		if (empty($initalState)) {
 			$initalState = get_class_vars(__CLASS__);
 		}
-
 		if ($full == false) {
 			$this->request = $initalState['request'];
 			$this->response = $initalState['response'];

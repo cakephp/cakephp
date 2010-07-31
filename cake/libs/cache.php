@@ -270,6 +270,12 @@ class Cache {
 
 		$success = self::$_engines[$config]->write($settings['prefix'] . $key, $value, $settings['duration']);
 		self::set();
+		if ($success === false) {
+			trigger_error(
+				sprintf(__("%s cache was unable to write '%s' to cache", true), $config, $key),
+				E_USER_WARNING
+			);
+		}
 		return $success;
 	}
 
