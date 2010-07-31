@@ -199,4 +199,20 @@ class CakeRequestTestCase extends CakeTestCase {
 			->method('_sendHeader')->with('Location', 'http://www.example.com');
 		$response->send();
 	}
+
+/**
+* Tests the disableCache method
+*
+*/
+	public function testDisableCache() {
+		$response = new CakeResponse();
+		$expected = array(
+			'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
+			'Last-Modified' => gmdate("D, d M Y H:i:s") . " GMT",
+			'Cache-Control' => 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
+			'Pragma' => 'no-cache'
+		);
+		$response->disableCache();
+		$this->assertEquals($response->header(), $expected);
+	}
 }
