@@ -121,6 +121,7 @@ class SessionComponentTest extends CakeTestCase {
 	function setUp() {
 		parent::setUp();
 		$_SESSION = null;
+		$this->ComponentCollection = new ComponentCollection();
 	}
 
 /**
@@ -141,11 +142,11 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionIdConsistentAcrossRequestAction() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 		$this->assertTrue(isset($_SESSION));
 
 		$Object = new Object();
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 		$expected = $Session->id();
 
 		$result = $Object->requestAction('/session_test/session_id');
@@ -162,7 +163,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionValid() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$this->assertTrue($Session->valid());
 
@@ -170,7 +171,7 @@ class SessionComponentTest extends CakeTestCase {
 		$Session->userAgent('rweerw');
 		$this->assertFalse($Session->valid());
 
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 		$Session->time = $Session->read('Config.time') + 1;
 		$this->assertFalse($Session->valid());
 	}
@@ -182,7 +183,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionError() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 		$this->assertFalse($Session->error());
 	}
 
@@ -193,7 +194,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionReadWrite() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$this->assertNull($Session->read('Test'));
 
@@ -227,7 +228,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionDelete() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$this->assertFalse($Session->delete('Test'));
 
@@ -242,7 +243,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionCheck() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$this->assertFalse($Session->check('Test'));
 
@@ -258,7 +259,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionFlash() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$this->assertNull($Session->read('Message.flash'));
 
@@ -285,7 +286,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	function testSessionId() {
 		unset($_SESSION);
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 		$this->assertEquals(session_id(), $Session->id());
 	}
 
@@ -296,7 +297,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSessionDestroy() {
-		$Session = new SessionComponent();
+		$Session = new SessionComponent($this->ComponentCollection);
 
 		$Session->write('Test', 'some value');
 		$this->assertEqual($Session->read('Test'), 'some value');

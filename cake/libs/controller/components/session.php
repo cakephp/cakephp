@@ -31,14 +31,16 @@ if (!class_exists('cakesession')) {
  * @link http://book.cakephp.org/view/1310/Sessions
  *
  */
-class SessionComponent extends Object {
+class SessionComponent extends Component {
 
 /**
- * Constructor
+ * Constructor automatically starts the session.
  *
- * @return void
+ * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param array $settings Array of configuration settings.
  */
-	public function __construct() {
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		parent::__construct($collection, $settings);
 		CakeSession::start();
 	}
 
