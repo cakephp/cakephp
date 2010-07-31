@@ -812,7 +812,7 @@ class Controller extends Object {
  */
 	public function render($action = null, $layout = null, $file = null) {
 		$this->beforeRender();
-		$this->Components->triggerCallback('beforeRender', $this);
+		$this->Components->trigger('beforeRender', array(&$this));
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
