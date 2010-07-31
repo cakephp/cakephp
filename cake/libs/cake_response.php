@@ -305,13 +305,6 @@ class CakeResponse {
 	protected $_encoding = 'UTF-8';
 
 /**
-* The object for the current request
-*
-* @var CakeRequest
-*/
-	protected $_request = null;
-
-/**
 * Class constructor
 *
 * @param array $options list of parameters to setup the response. Possible values are:
@@ -319,11 +312,9 @@ class CakeResponse {
 *	- status: the HTTP status code to respond with
 *	- type: a complete mime-type string or an extension mapepd in this class
 *	- encoding: the encoding for the response body
-* @param CakeRequest $request the object representing the current request
 * @return void
 */
-	public function __construct(array $options = array(), CakeRequest $request = null) {
-		$this->_request = $request;
+	public function __construct(array $options = array()) {
 		if (isset($options['body'])) {
 			$this->body($options['body']);
 		}
