@@ -227,7 +227,7 @@ class CakeSession extends Object {
  * @return boolean True if session has been started.
  */
 	function started() {
-		if (!empty($_SESSION) && session_id()) {
+		if (isset($_SESSION) && session_id()) {
 			return true;
 		}
 		return false;
@@ -454,7 +454,7 @@ class CakeSession extends Object {
  * @access public
  */
 	function destroy() {
-		$_SESSION = array();
+		$_SESSION = null;
 		$this->__construct($this->path);
 		$this->start();
 		$this->renew();
