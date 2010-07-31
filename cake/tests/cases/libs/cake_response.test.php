@@ -215,4 +215,46 @@ class CakeRequestTestCase extends CakeTestCase {
 		$response->disableCache();
 		$this->assertEquals($response->header(), $expected);
 	}
+
+/**
+* Tests the cache method
+*
+*/
+	public function testCache() {
+		$response = new CakeResponse();
+		$since = time();
+		$time = '+1 day';
+		$expected = array(
+			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
+			'Cache-Control' => 'cache',
+			'Pragma' => 'cache'
+		);
+		$response->cache($since);
+		$this->assertEquals($response->header(), $expected);
+
+		$response = new CakeResponse();
+		$since = time();
+		$time = '+5 day';
+		$expected = array(
+			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
+			'Cache-Control' => 'cache',
+			'Pragma' => 'cache'
+		);
+		$response->cache($since, $time);
+		$this->assertEquals($response->header(), $expected);
+
+		$response = new CakeResponse();
+		$since = time();
+		$time = time();
+		$expected = array(
+			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
+			'Cache-Control' => 'cache',
+			'Pragma' => 'cache'
+		);
+		$response->cache($since, $time);
+		$this->assertEquals($response->header(), $expected);
+	}
 }

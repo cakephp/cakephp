@@ -509,6 +509,15 @@ class CakeResponse {
 * @return void
 */
 	public function cache($since, $time = '+1 day') {
+		if (!is_integer($time)) {
+			$time = strtotime($time);
+		}
+		$this->header(array(
+			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
+			'Cache-Control' => 'cache',
+			'Pragma' => 'cache'
+		));
 	}
 
 /**
