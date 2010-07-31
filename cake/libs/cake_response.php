@@ -298,11 +298,11 @@ class CakeResponse {
 	protected $_body = null;
 
 /**
-* Encoding string to send
+* The charset the response body is encoded with
 *
 * @var string
 */
-	protected $_encoding = 'UTF-8';
+	protected $_charset = 'UTF-8';
 
 /**
 * Class constructor
@@ -311,7 +311,7 @@ class CakeResponse {
 *	- body: the rensonse text that should be sent to the client
 *	- status: the HTTP status code to respond with
 *	- type: a complete mime-type string or an extension mapepd in this class
-*	- encoding: the encoding for the response body
+*	- charset: the charset for the response body
 * @return void
 */
 	public function __construct(array $options = array()) {
@@ -324,8 +324,8 @@ class CakeResponse {
 		if (isset($options['type'])) {
 			$this->type($options['type']);
 		}
-		if (isset($options['encoding'])) {
-			$this->encoding($options['encoding']);
+		if (isset($options['charset'])) {
+			$this->charset($options['charset']);
 		}
 	}
 
@@ -334,6 +334,7 @@ class CakeResponse {
 *
 */
 	public function send() {
+		
 	}
 
 /**
@@ -447,17 +448,17 @@ class CakeResponse {
 	}
 
 /**
-* Sets the response encoding or charset
-* if $encoding is null the current encoding is returned
+* Sets the response charset
+* if $charset is null the current charset is returned
 *
-* @param string $encoding
-* @return string current status code
+* @param string $charset
+* @return string current charset
 */
-	public function encoding($encoding = null) {
-		if (is_null($encoding)) {
-			return $this->_encoding;
+	public function charset($charset = null) {
+		if (is_null($charset)) {
+			return $this->_charset;
 		}
-		return $this->_encoding = $encoding;
+		return $this->_charset = $charset;
 	}
 
 /**

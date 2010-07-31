@@ -12,19 +12,19 @@ class CakeRequestTestCase extends CakeTestCase {
 	public function testConstruct() {
 		$response = new CakeResponse();
 		$this->assertNull($response->body());
-		$this->assertEquals($response->encoding(), 'UTF-8');
+		$this->assertEquals($response->charset(), 'UTF-8');
 		$this->assertEquals($response->type(), 'text/html');
 		$this->assertEquals($response->statusCode(), 200);
 
 		$options = array(
 			'body' => 'This is the body',
-			'encoding' => 'my-custom-encoding',
+			'charset' => 'my-custom-charset',
 			'type' => 'mp3',
 			'status' => '203'
 		);
 		$response = new CakeResponse($options);
 		$this->assertEquals($response->body(), 'This is the body');
-		$this->assertEquals($response->encoding(), 'my-custom-encoding');
+		$this->assertEquals($response->charset(), 'my-custom-charset');
 		$this->assertEquals($response->type(), 'audio/mpeg');
 		$this->assertEquals($response->statusCode(), 203);	
 	}
@@ -42,15 +42,15 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
-* Tests the encoding method
+* Tests the charset method
 *
 */
-	public function testEncoding() {
+	public function testCharset() {
 		$response = new CakeResponse();
-		$this->assertEquals($response->encoding(), 'UTF-8');
-		$response->encoding('iso-8859-1');
-		$this->assertEquals($response->encoding(), 'iso-8859-1');
-		$this->assertEquals($response->encoding('UTF-16'), 'UTF-16');
+		$this->assertEquals($response->charset(), 'UTF-8');
+		$response->charset('iso-8859-1');
+		$this->assertEquals($response->charset(), 'iso-8859-1');
+		$this->assertEquals($response->charset('UTF-16'), 'UTF-16');
 	}
 
 /**
