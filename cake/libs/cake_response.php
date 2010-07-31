@@ -334,15 +334,41 @@ class CakeResponse {
 *
 */
 	public function send() {
-		
+		if (isset($this->_headers['Location']) && $this->_status === 200) {
+			$this->statusCode(302);
+		}
+
+		$codeMesasge = $this->_statusCodes[$this->_status];
+		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMesasge}");
+		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
+
+		foreach ($this->_headers as $header => $value) {
+			$this->_sendHeader($header, $value);
+		}
+		$this->_sendContent($this->_body);
 	}
 
 /**
-* Sends the complete headers list to the client
+* Sends a header to the client
 *
+* @param $name the header name
+* @param $value the header value
 */
-	public function sendHeaders() {
-		
+	protected function _sendHeader($name, $value = null) {
+		if (is_null($value)) {
+			header($name);
+		} else {
+			header("{$name}: {$value}");
+		}
+	}
+
+/**
+* Sends a content string to the client
+*
+* @param $content string to send as response body
+*/
+	protected function _sendContent($content) {
+		echo $content;
 	}
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-App::import('Core', array('CakeResponse', 'CakeRequest'));
+App::import('Core', 'CakeResponse');
 
 class CakeRequestTestCase extends CakeTestCase {
 
@@ -127,5 +127,76 @@ class CakeRequestTestCase extends CakeTestCase {
 		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
 		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
 		$this->assertEquals($response->header(), $headers);
+	}
+
+/**
+* Tests the send method
+*
+*/
+	public function testSend() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->header(array(
+			'Content-Language' => 'es',
+			'WWW-Authenticate' => 'Negotiate'
+		));
+		$response->body('the response body');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Content-Language', 'es');
+		$response->expects($this->at(3))
+			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
+		$response->send();
+	}
+
+/**
+* Tests the send method and changing the content type
+*
+*/
+	public function testSendChangingContentYype() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->type('mp3');
+		$response->body('the response body');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'audio/mpeg; charset=UTF-8');
+		$response->send();
+	}
+
+/**
+* Tests the send method and changing the content type
+*
+*/
+	public function testSendChangingContentType() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->type('mp3');
+		$response->body('the response body');
+		$response->expects($this->once())->method('_sendContent')->with('the response body');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 200 OK');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'audio/mpeg; charset=UTF-8');
+		$response->send();
+	}
+
+/**
+* Tests the send method and changing the content type
+*
+*/
+	public function testSendWithLocation() {
+		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent'));
+		$response->header('Location', 'http://www.example.com');
+		$response->expects($this->at(0))
+			->method('_sendHeader')->with('HTTP/1.1 302 Found');
+		$response->expects($this->at(1))
+			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
+		$response->expects($this->at(2))
+			->method('_sendHeader')->with('Location', 'http://www.example.com');
+		$response->send();
 	}
 }
