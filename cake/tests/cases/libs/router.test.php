@@ -2007,9 +2007,7 @@ class RouterTest extends CakeTestCase {
 		App::objects('plugin', null, false);
 		Router::reload();
 
-		$plugins = App::objects('plugin');
-		$plugin = Inflector::underscore($plugins[0]);
-		$result = Router::url(array('plugin' => $plugin, 'controller' => 'js_file', 'action' => 'index'));
+		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));
 		$this->assertEqual($result, '/plugin_js/js_file');
 
 		$result = Router::parse('/plugin_js/js_file');
