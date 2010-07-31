@@ -1786,7 +1786,7 @@ class RouterTest extends CakeTestCase {
  */
 	function testUrlWritingWithPrefixesAndCustomRoutes() {
 		Router::connect(
-			'/admin/login', 
+			'/admin/login',
 			array('controller' => 'users', 'action' => 'login', 'prefix' => 'admin', 'admin' => true)
 		);
 		Router::setRequestInfo(array(
@@ -2400,6 +2400,19 @@ class CakeRouteTestCase extends CakeTestCase {
 		$url = array('controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$route =& new CakeRoute('/articles/:date-from/:date-to', array(
+			'controller' => 'articles', 'action' => 'index'
+		));
+		$url = array(
+			'controller' => 'articles',
+			'action' => 'index',
+			'date-from' => '2009-07-31',
+			'date-to' => '2010-07-31'
+		);
+		$result = $route->match($url);
+		$expected = '/articles/2009-07-31/2010-07-31';
 		$this->assertEqual($result, $expected);
 	}
 
