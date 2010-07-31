@@ -170,7 +170,7 @@ class SecurityComponentTest extends CakeTestCase {
  *
  * @return void
  */
-	function testInitialize() {
+	function testConstructorSettingProperties() {
 		$settings = array(
 			'requirePost' => array('edit', 'update'),
 			'requireSecure' => array('update_account'),
@@ -181,13 +181,14 @@ class SecurityComponentTest extends CakeTestCase {
 			),
 			'requireLogin' => array('login'),
 		);
+		$Security = new SecurityComponent($this->Controller->Components, $settings);
 		$this->Controller->Security->initialize($this->Controller, $settings);
-		$this->assertEqual($this->Controller->Security->requirePost, $settings['requirePost']);
-		$this->assertEqual($this->Controller->Security->requireSecure, $settings['requireSecure']);
-		$this->assertEqual($this->Controller->Security->requireGet, $settings['requireGet']);
-		$this->assertEqual($this->Controller->Security->validatePost, $settings['validatePost']);
-		$this->assertEqual($this->Controller->Security->loginUsers, $settings['loginUsers']);
-		$this->assertEqual($this->Controller->Security->requireLogin, $settings['requireLogin']);
+		$this->assertEqual($Security->requirePost, $settings['requirePost']);
+		$this->assertEqual($Security->requireSecure, $settings['requireSecure']);
+		$this->assertEqual($Security->requireGet, $settings['requireGet']);
+		$this->assertEqual($Security->validatePost, $settings['validatePost']);
+		$this->assertEqual($Security->loginUsers, $settings['loginUsers']);
+		$this->assertEqual($Security->requireLogin, $settings['requireLogin']);
 	}
 
 /**
