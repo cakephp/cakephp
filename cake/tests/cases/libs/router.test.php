@@ -2180,6 +2180,27 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test route names with - in them.
+ *
+ * @return void
+ */
+	function testHyphenNames() {
+		$route =& new CakeRoute('/articles/:date-from/:date-to', array(
+			'controller' => 'articles', 'action' => 'index'
+		));
+		$expected = array(
+			'controller' => 'articles',
+			'action' => 'index',
+			'date-from' => '2009-07-31',
+			'date-to' => '2010-07-31',
+			'named' => array(),
+			'pass' => array()
+		);
+		$result = $route->parse('/articles/2009-07-31/2010-07-31');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * test that route parameters that overlap don't cause errors.
  *
  * @return void
@@ -2390,7 +2411,6 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->match(array('plugin' => 'fo', 'controller' => 'posts', 'action' => 'edit', 'id' => 1));
 		$this->assertFalse($result);
 
-
 		$route =& new CakeRoute('/admin/subscriptions/:action/*', array(
 			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
 		));
@@ -2409,6 +2429,7 @@ class CakeRouteTestCase extends CakeTestCase {
 			'date-from' => '2009-07-31',
 			'date-to' => '2010-07-31'
 		);
+
 		$result = $route->match($url);
 		$expected = '/articles/2009-07-31/2010-07-31';
 		$this->assertEqual($result, $expected);
