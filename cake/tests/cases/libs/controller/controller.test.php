@@ -1012,45 +1012,13 @@ class ControllerTest extends CakeTestCase {
  */
 	public static function statusCodeProvider() {
 		return array(
-			array(100, "Continue"),
-			array(101, "Switching Protocols"),
-			array(200, "OK"),
-			array(201, "Created"),
-			array(202, "Accepted"),
-			array(203, "Non-Authoritative Information"),
-			array(204, "No Content"),
-			array(205, "Reset Content"),
-			array(206, "Partial Content"),
 			array(300, "Multiple Choices"),
 			array(301, "Moved Permanently"),
 			array(302, "Found"),
 			array(303, "See Other"),
 			array(304, "Not Modified"),
 			array(305, "Use Proxy"),
-			array(307, "Temporary Redirect"),
-			array(400, "Bad Request"),
-			array(401, "Unauthorized"),
-			array(402, "Payment Required"),
-			array(403, "Forbidden"),
-			array(404, "Not Found"),
-			array(405, "Method Not Allowed"),
-			array(406, "Not Acceptable"),
-			array(407, "Proxy Authentication Required"),
-			array(408, "Request Time-out"),
-			array(409, "Conflict"),
-			array(410, "Gone"),
-			array(411, "Length Required"),
-			array(412, "Precondition Failed"),
-			array(413, "Request Entity Too Large"),
-			array(414, "Request-URI Too Large"),
-			array(415, "Unsupported Media Type"),
-			array(416, "Requested range not satisfiable"),
-			array(417, "Expectation Failed"),
-			array(500, "Internal Server Error"),
-			array(501, "Not Implemented"),
-			array(502, "Bad Gateway"),
-			array(503, "Service Unavailable"),
-			array(504, "Gateway Time-out"),
+			array(307, "Temporary Redirect")
 		);
 	}
 
@@ -1062,18 +1030,15 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRedirectByCode($code, $msg) {
-		$Controller = $this->getMock('Controller', array('header'));
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('header', 'statusCode')));
 
 
 		$Controller->Component = new Component();
 		$Controller->Component->init($Controller);
-		$Controller->expects($this->at(0))->method('header')
-			->with("HTTP/1.1 {$code} {$msg}");
-
-		$Controller->expects($this->at(1))->method('header')
-			->with('Location: http://cakephp.org');
-
-		$Controller->expects($this->exactly(2))->method('header');
+		$Controller->response->expects($this->once())->method('statusCode')
+			->with($code);
+		$Controller->response->expects($this->once())->method('header')
+			->with('Location', 'http://cakephp.org');
 
 		$Controller->redirect('http://cakephp.org', (int)$code, false);
 		$this->assertFalse($Controller->autoRender);
@@ -1086,18 +1051,17 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRedirectByMessage($code, $msg) {
-		$Controller = $this->getMock('Controller', array('header'));
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('header', 'statusCode')));
 
 		$Controller->Component = new Component();
 		$Controller->Component->init($Controller);
 
-		$Controller->expects($this->at(0))->method('header')
-			->with("HTTP/1.1 {$code} {$msg}");
+		$Controller->response->expects($this->once())->method('statusCode')
+			->with($code);
 
-		$Controller->expects($this->at(1))->method('header')
-			->with('Location: http://cakephp.org');
+		$Controller->response->expects($this->once())->method('header')
+			->with('Location', 'http://cakephp.org');
 
-		$Controller->expects($this->exactly(2))->method('header');
 		$Controller->redirect('http://cakephp.org', $msg, false);
 		$this->assertFalse($Controller->autoRender);
 	}
@@ -1108,16 +1072,16 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRedirectTriggeringComponentsReturnNull() {
-		$Controller = $this->getMock('Controller', array('header'));
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('header', 'statusCode')));
 		$Controller->Component = $this->getMock('Component');
 
 		$Controller->Component->expects($this->once())->method('beforeRedirect')->will($this->returnValue(null));
 
-		$Controller->expects($this->at(0))->method('header')
-			->with('HTTP/1.1 301 Moved Permanently');
+		$Controller->response->expects($this->once())->method('statusCode')
+			->with(301);
 
-		$Controller->expects($this->at(1))->method('header')
-			->with('Location: http://cakephp.org');
+		$Controller->response->expects($this->once())->method('header')
+			->with('Location', 'http://cakephp.org');
 
 		$Controller->redirect('http://cakephp.org', 301, false);
 	}
@@ -1128,17 +1092,17 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testRedirectBeforeRedirectModifyingParams() {
-		$Controller = $this->getMock('Controller', array('header'));
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('header', 'statusCode')));
 		$Controller->Component = $this->getMock('Component');
 
 		$Controller->Component->expects($this->once())->method('beforeRedirect')
 			->will($this->returnValue(array('http://book.cakephp.org')));
 
-		$Controller->expects($this->at(0))->method('header')
-			->with('HTTP/1.1 301 Moved Permanently');
+		$Controller->response->expects($this->once())->method('statusCode')
+			->with(301);
 
-		$Controller->expects($this->at(1))->method('header')
-			->with('Location: http://book.cakephp.org');
+		$Controller->response->expects($this->once())->method('header')
+			->with('Location', 'http://book.cakephp.org');
 
 		$Controller->redirect('http://cakephp.org', 301, false);
 	}

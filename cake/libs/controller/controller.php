@@ -648,38 +648,23 @@ class Controller extends Object {
 			session_write_close();
 		}
 
-		if (!empty($status)) {
-			$codes = $this->httpCodes();
-
-			if (is_string($status)) {
-				$codes = array_flip($codes);
-			}
-
+		if (!empty($status) && is_string($status)) {
+			$codes = array_flip($this->response->httpCodes());
 			if (isset($codes[$status])) {
-				$code = $msg = $codes[$status];
-				if (is_numeric($status)) {
-					$code = $status;
-				}
-				if (is_string($status)) {
-					$msg = $status;
-				}
-				$status = "HTTP/1.1 {$code} {$msg}";
-
-			} else {
-				$status = null;
+				$status = $codes[$status];
 			}
-			$this->header($status);
 		}
 
 		if ($url !== null) {
-			$this->header('Location: ' . Router::url($url, true));
+			$this->response->header('Location', Router::url($url, true));
 		}
 
 		if (!empty($status) && ($status >= 300 && $status < 400)) {
-			$this->header($status);
+			$this->response->statusCode($status);
 		}
 
 		if ($exit) {
+			$this->response->send();
 			$this->_stop();
 		}
 	}
