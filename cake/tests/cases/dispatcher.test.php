@@ -1464,6 +1464,7 @@ class DispatcherTest extends CakeTestCase {
 		), true);
 
 		$dispatcher = new TestDispatcher();
+		$dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$url = '/';
 
 		ob_start();
@@ -1599,6 +1600,7 @@ class DispatcherTest extends CakeTestCase {
 		));
 
 		$dispatcher = new TestDispatcher();
+		$dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$dispatcher->base = false;
 
 		$url = 'test_cached_pages/cache_form';

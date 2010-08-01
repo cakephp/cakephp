@@ -856,9 +856,9 @@ class ControllerTest extends CakeTestCase {
 	function testFlash() {
 		$request = new CakeRequest('controller_posts/index');
 
-		$Controller = new Controller($request);
+		$Controller = new Controller($request, $this->getMock('CakeResponse', array('_sendHeader')));
 		$Controller->flash('this should work', '/flash');
-		$result = $Controller->output;
+		$result = $Controller->response->body();
 
 		$expected = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -880,9 +880,9 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
-		$Controller = new Controller();
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('_sendHeader')));
 		$Controller->flash('this should work', '/flash', 1, 'ajax2');
-		$result = $Controller->output;
+		$result = $Controller->response->body();
 		$this->assertPattern('/Ajax!/', $result);
 		App::build();
 	}

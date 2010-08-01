@@ -232,15 +232,6 @@ class Controller extends Object {
 	public $ext = '.ctp';
 
 /**
- * The output of the requested action.  Contains either a variable
- * returned from the action, or the data of the rendered view;
- * You can use this var in child controllers' afterFilter() callbacks to alter output.
- *
- * @var string
- */
-	public $output = null;
-
-/**
  * Automatically set to the name of a plugin.
  *
  * @var string
@@ -835,9 +826,7 @@ class Controller extends Object {
 		}
 
 		$this->autoRender = false;
-		$this->output .= $View->render($action, $layout, $file);
-
-		return $this->output;
+		return $View->render($action, $layout, $file);
 	}
 
 /**
@@ -888,7 +877,7 @@ class Controller extends Object {
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->render(false, $layout);
+		$this->response->body($this->render(false, $layout));
 	}
 
 /**
