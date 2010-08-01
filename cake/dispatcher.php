@@ -421,15 +421,4 @@ class Dispatcher {
 			ob_end_flush();
 		}
 	}
-
-/**
- * Sends the specified headers to the client
- *
- * @param string $header header to send
- * @todo Refactor this to use a response object or similar
- * @return void
- */
-	public function header($header) {
-		header($header);
-	}
 }
