@@ -1268,6 +1268,7 @@ class DispatcherTest extends CakeTestCase {
 		));
 
 		$Dispatcher = new TestDispatcher();
+		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$debug = Configure::read('debug');
 		//Configure::write('debug', 0);
 
@@ -1393,6 +1394,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	function testMissingAssetProcessor404() {
 		$Dispatcher = new TestDispatcher();
+		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Configure::write('Asset.filter', array(
 			'js' => '',
 			'css' => null
@@ -1414,6 +1416,7 @@ class DispatcherTest extends CakeTestCase {
  */
 	function testAssetFilterForThemeAndPlugins() {
 		$Dispatcher = new TestDispatcher();
+		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		Configure::write('Asset.filter', array(
 			'js' => '',
 			'css' => ''

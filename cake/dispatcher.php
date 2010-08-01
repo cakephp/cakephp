@@ -24,8 +24,7 @@
 /**
  * List of helpers to include
  */
-App::import('Core', 'Router');
-App::import('Core', 'CakeRequest');
+App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'));
 App::import('Controller', 'Controller', false);
 
 /**
@@ -69,6 +68,22 @@ class Dispatcher {
  * @access public
  */
 	public $params = null;
+
+/**
+ * The request object
+ *
+ * @var CakeRequest
+ * @access public
+ */
+	public $request = null;
+
+/**
+ * The response object
+ *
+ * @var CakeResponse
+ * @access public
+ */
+	public $response = null;
 
 /**
  * Constructor.
@@ -326,9 +341,12 @@ class Dispatcher {
 			strpos($url, 'cjs/') === 0 ||
 			preg_match('#^/((theme/[^/]+)/cjs/)|(([^/]+)(?<!js)/cjs)/#i', $url)
 		);
-
+		if (!$this->response) {
+			$this->response = new CakeResponse();
+		}
 		if (($isCss && empty($filters['css'])) || ($isJs && empty($filters['js']))) {
-			$this->header('HTTP/1.1 404 Not Found');
+			$this->response->statusCode(404);
+			$this->response->send();
 			return $this->_stop();
 		} elseif ($isCss) {
 			include WWW_ROOT . DS . $filters['css'];
@@ -375,38 +393,22 @@ class Dispatcher {
  * @return void
  */
 	protected function _deliverAsset($assetFile, $ext) {
-		$ob = @ini_get("zlib.output_compression") !== '1' && extension_loaded("zlib") && (strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
-		$compressionEnabled = $ob && Configure::read('Asset.compress');
-		if ($compressionEnabled) {
-			ob_start();
-			ob_start('ob_gzhandler');
-		}
-
-		App::import('View', 'Media', false);
-		$controller = null;
-		$Media = new MediaView($controller);
-		if (isset($Media->mimeType[$ext])) {
-			$contentType = $Media->mimeType[$ext];
-		} else {
+		ob_start();
+		$compressionEnabled = Configure::read('Asset.compress') && $this->response->compress();
+		if ($this->response->type($ext) == $ext) {
 			$contentType = 'application/octet-stream';
 			$agent = env('HTTP_USER_AGENT');
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/octetstream';
 			}
+			$this->response->type($contentType);
 		}
-
-		$this->header("Date: " . date("D, j M Y G:i:s ", filemtime($assetFile)) . 'GMT');
-		$this->header('Content-type: ' . $contentType);
-		$this->header("Expires: " . gmdate("D, j M Y H:i:s", time() + DAY) . " GMT");
-		$this->header("Cache-Control: cache");
-		$this->header("Pragma: cache");
-
+		$this->response->cache(filemtime($assetFile));
+		$this->response->send();
+		ob_clean();
 		if ($ext === 'css' || $ext === 'js') {
 			include($assetFile);
 		} else {
-			if ($compressionEnabled) {
-				ob_clean();
-			}
 			readfile($assetFile);
 		}
 
