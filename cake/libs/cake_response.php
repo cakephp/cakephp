@@ -521,10 +521,14 @@ class CakeResponse {
 	}
 
 /**
-* Sets the correct headers and output buffering handler to send a compressed response
+* Sets the correct output buffering handler to send a compressed response
 *
 * @return boolean false if client does not accept compressed responses or no handler is available, true otherwise
 */
 	public function compress() {
+		$compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
+			extension_loaded("zlib") &&
+			(strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
+		return $compressionEnabled && ob_start('ob_gzhandler');
 	}
 }

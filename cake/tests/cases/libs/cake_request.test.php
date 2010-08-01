@@ -1,5 +1,4 @@
 <?php
-
 App::import('Core', 'CakeRequest');
 
 class CakeRequestTestCase extends CakeTestCase {

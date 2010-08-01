@@ -2,7 +2,7 @@
 
 App::import('Core', 'CakeResponse');
 
-class CakeRequestTestCase extends CakeTestCase {
+class CakeResponseTestCase extends CakeTestCase {
 
 
 /**
@@ -256,5 +256,27 @@ class CakeRequestTestCase extends CakeTestCase {
 		);
 		$response->cache($since, $time);
 		$this->assertEquals($response->header(), $expected);
+	}
+
+/**
+* Tests the compress method
+*
+*/
+	public function testCompress() {
+		$response = new CakeResponse();
+		if (ini_get("zlib.output_compression") === '1' || !extension_loaded("zlib")) {
+			$this->assertFalse($response->compress());
+			$this->markTestSkipped('Is not possible to test output compression');
+		}
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = '';
+		$result = $response->compress();
+		$this->assertFalse($result);
+
+		$_SERVER['HTTP_ACCEPT_ENCODING'] = 'gzip';
+		$result = $response->compress();
+		$this->assertTrue($result);
+		$this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
+		ob_end_clean();
 	}
 }
