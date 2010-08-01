@@ -195,19 +195,19 @@ class Dispatcher {
 				'base' => $request->base
 			)));
 		}
-		$output = call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$output =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
 
 		if ($controller->autoRender) {
-			$controller->output = $controller->render();
-		} elseif (empty($controller->output)) {
-			$controller->output = $output;
+			$controller->render();
+		} elseif ($this->response->body() === null) {
+			$this->response->body($output);
 		}
 		$controller->shutdownProcess();
 
 		if (isset($request->params['return'])) {
-			return $controller->output;
+			return $this->response->body();
 		}
-		echo($controller->output);
+		$this->response->send();
 	}
 
 /**
