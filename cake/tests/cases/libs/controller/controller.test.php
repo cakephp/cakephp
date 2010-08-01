@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'Controller', false);
-App::import('Core', 'CakeRequest');
+App::import('Core', array('CakeRequest', 'CakeResponse'));
 App::import('Component', 'Security');
 App::import('Component', 'Cookie');
 
@@ -1450,37 +1450,11 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testControllerHttpCodes() {
-		$request = new CakeRequest('controller_posts/index');
-
-		$Controller = new Controller($request);
-		$result = $Controller->httpCodes();
-		$this->assertEqual(count($result), 39);
-
-		$result = $Controller->httpCodes(100);
-		$expected = array(100 => 'Continue');
-		$this->assertEqual($result, $expected);
-
-		$codes = array(
-			1337 => 'Undefined Unicorn',
-			1729 => 'Hardy-Ramanujan Located'
-		);
-
-		$result = $Controller->httpCodes($codes);
-		$this->assertTrue($result);
-		$this->assertEqual(count($Controller->httpCodes()), 41);
-
-		$result = $Controller->httpCodes(1337);
-		$expected = array(1337 => 'Undefined Unicorn');
-		$this->assertEqual($result, $expected);
-
-		$codes = array(404 => 'Sorry Bro');
-		$result = $Controller->httpCodes($codes);
-		$this->assertTrue($result);
-		$this->assertEqual(count($Controller->httpCodes()), 41);
-
-		$result = $Controller->httpCodes(404);
-		$expected = array(404 => 'Sorry Bro');
-		$this->assertEqual($result, $expected);
+		$Controller = new Controller(null, $this->getMock('CakeResponse', array('httpCodes')));
+		$Controller->response->expects($this->at(0))->method('httpCodes')->with(null);
+		$Controller->response->expects($this->at(1))->method('httpCodes')->with(100);
+		$Controller->httpCodes();
+		$Controller->httpCodes(100);
 	}
 
 /**

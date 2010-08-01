@@ -327,21 +327,13 @@ class Controller extends Object {
 	public $validationErrors = null;
 
 /**
- * Contains a list of the HTTP codes that CakePHP recognizes. These may be
- * queried and/or modified through Controller::httpCodes(), which is also
- * tasked with their lazy-loading.
- *
- * @var array Associative array of HTTP codes and their associated messages.
- */
-	private $__httpCodes = null;
-
-/**
  * Constructor.
  *
  * @param CakeRequest $request Request object for this controller can be null for testing.
  *  But expect that features that use the params will not work.
+ * @param CakeResponse $response Response object for this controller
  */
-	public function __construct($request = null) {
+	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -366,6 +358,7 @@ class Controller extends Object {
 		if ($request instanceof CakeRequest) {
 			$this->_setRequest($request);
 		}
+		$this->response = $response;
 		parent::__construct();
 	}
 
@@ -566,41 +559,7 @@ class Controller extends Object {
  *    strings as values, or null of the given $code does not exist.
  */
 	public function httpCodes($code = null) {
-		if (empty($this->__httpCodes)) {
-			$this->__httpCodes = array(
-				100 => 'Continue', 101 => 'Switching Protocols',
-				200 => 'OK', 201 => 'Created', 202 => 'Accepted',
-				203 => 'Non-Authoritative Information', 204 => 'No Content',
-				205 => 'Reset Content', 206 => 'Partial Content',
-				300 => 'Multiple Choices', 301 => 'Moved Permanently',
-				302 => 'Found', 303 => 'See Other',
-				304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect',
-				400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required',
-				403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed',
-				406 => 'Not Acceptable', 407 => 'Proxy Authentication Required',
-				408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone',
-				411 => 'Length Required', 412 => 'Precondition Failed',
-				413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large',
-				415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable',
-				417 => 'Expectation Failed', 500 => 'Internal Server Error',
-				501 => 'Not Implemented', 502 => 'Bad Gateway',
-				503 => 'Service Unavailable', 504 => 'Gateway Time-out'
-			);
-		}
-
-		if (empty($code)) {
-			return $this->__httpCodes;
-		}
-
-		if (is_array($code)) {
-			$this->__httpCodes = $code + $this->__httpCodes;
-			return true;
-		}
-
-		if (!isset($this->__httpCodes[$code])) {
-			return null;
-		}
-		return array($code => $this->__httpCodes[$code]);
+		return $this->response->httpCodes($code);
 	}
 
 /**

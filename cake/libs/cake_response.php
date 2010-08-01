@@ -455,6 +455,40 @@ class CakeResponse {
 	}
 
 /**
+ * Queries & sets valid HTTP response codes & messages.
+ *
+ * @param mixed $code If $code is an integer, then the corresponding code/message is
+ *        returned if it exists, null if it does not exist. If $code is an array,
+ *        then the 'code' and 'message' keys of each nested array are added to the default
+ *        HTTP codes. Example:
+ *
+ *        httpCodes(404); // returns array(404 => 'Not Found')
+ *
+ *        httpCodes(array(
+ *            701 => 'Unicorn Moved',
+ *            800 => 'Unexpected Minotaur'
+ *        )); // sets these new values, and returns true
+ *
+ * @return mixed associative array of the HTTP codes as keys, and the message
+ *    strings as values, or null of the given $code does not exist.
+ */
+	public function httpCodes($code = null) {
+		if (empty($code)) {
+			return $this->_statusCodes;
+		}
+
+		if (is_array($code)) {
+			$this->_statusCodes = $code + $this->_statusCodes;
+			return true;
+		}
+
+		if (!isset($this->_statusCodes[$code])) {
+			return null;
+		}
+		return array($code => $this->_statusCodes[$code]);
+	}
+
+/**
 * Sets the response content type. It can be either a file extension
 * which will be mapped internally to a mime-type or a string representing a mime-type
 * if $contentType is null the current content type is returned

@@ -1384,7 +1384,6 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->asset('test_plugin/css/theme_one.htc');
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
-		
 	}
 
 /**

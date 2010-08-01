@@ -279,4 +279,40 @@ class CakeResponseTestCase extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
 	}
+
+/**
+* Tests the httpCodes method
+*
+*/
+	function testHttpCodes() {
+		$response = new CakeResponse();
+		$result = $response->httpCodes();
+		$this->assertEqual(count($result), 39);
+
+		$result =  $response->httpCodes(100);
+		$expected = array(100 => 'Continue');
+		$this->assertEqual($result, $expected);
+
+		$codes = array(
+			1337 => 'Undefined Unicorn',
+			1729 => 'Hardy-Ramanujan Located'
+		);
+
+		$result =  $response->httpCodes($codes);
+		$this->assertTrue($result);
+		$this->assertEqual(count($response->httpCodes()), 41);
+
+		$result = $response->httpCodes(1337);
+		$expected = array(1337 => 'Undefined Unicorn');
+		$this->assertEqual($result, $expected);
+
+		$codes = array(404 => 'Sorry Bro');
+		$result = $response->httpCodes($codes);
+		$this->assertTrue($result);
+		$this->assertEqual(count($response->httpCodes()), 41);
+
+		$result = $response->httpCodes(404);
+		$expected = array(404 => 'Sorry Bro');
+		$this->assertEqual($result, $expected);
+	}
 }

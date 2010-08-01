@@ -256,9 +256,14 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return $controller;
 		}
+		if (!$this->response) {
+			$this->response = new CakeResponse(array(
+				'charset' => Configure::read('App.encoding')
+			));
+		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($this->request);
+			$controller = new $ctrlClass($this->request, $this->response);
 		}
 		return $controller;
 	}
