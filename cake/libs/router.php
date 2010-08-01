@@ -1351,10 +1351,11 @@ class CakeRoute {
 		$route = $this->template;
 		$names = $routeParams = array();
 		$parsed = preg_quote($this->template, '#');
+		$parsed = str_replace('\\-', '-', $parsed);
 
-		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $this->template, $namedElements);
+		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $parsed, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
-			$search = '\\' . str_replace('-', '\\-', $namedElements[0][$i]);
+			$search = '\\' . $namedElements[0][$i];
 			if (isset($this->options[$name])) {
 				$option = null;
 				if ($name !== 'plugin' && array_key_exists($name, $this->defaults)) {
