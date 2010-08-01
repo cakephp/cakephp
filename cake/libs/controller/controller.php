@@ -557,6 +557,7 @@ class Controller extends Object {
  *
  * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
+ * @deprecated
  */
 	public function httpCodes($code = null) {
 		return $this->response->httpCodes($code);
@@ -670,14 +671,14 @@ class Controller extends Object {
 	}
 
 /**
- * Convenience and object wrapper method for header().  Useful when doing tests and
- * asserting that particular headers have been set.
+ * Convenience and object wrapper method for CakeResponse::header().
  *
  * @param string $status The header message that is being set.
  * @return void
+ * @deprecated
  */
 	public function header($status) {
-		header($status);
+		$this->response->header($status);
 	}
 
 /**
