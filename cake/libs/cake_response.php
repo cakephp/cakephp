@@ -492,12 +492,31 @@ class CakeResponse {
 * Sets the response content type. It can be either a file extension
 * which will be mapped internally to a mime-type or a string representing a mime-type
 * if $contentType is null the current content type is returned
+* if $contentType is an associative array, it will be stored as a content type definition
+*
+* ### Setting the content type
+* e.g `type('jpg');`
+*
+* ### Returning the current content type
+* e.g `type();`
+*
+* ### Storing a content type definition
+* e.g `type(array('keynote' => 'application/keynote'));`
+*
+* ### Replacing a content type definition
+* e.g `type(array('jpg' => 'text/plain'));`
 *
 * @param string $contentType
 * @return string current content type
 */
 	public function type($contentType = null) {
 		if (is_null($contentType)) {
+			return $this->_contentType;
+		}
+		if (is_array($contentType)) {
+			$type = key($contentType);
+			$defitition = current($contentType);
+			$this->_mimeTypes[$type] = $defitition;
 			return $this->_contentType;
 		}
 		if (isset($this->_mimeTypes[$contentType])) {

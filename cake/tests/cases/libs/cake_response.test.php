@@ -83,6 +83,9 @@ class CakeResponseTestCase extends CakeTestCase {
 		$this->assertEquals($response->type('wap'), 'text/vnd.wap.wml');
 		$this->assertEquals($response->type('xhtml-mobile'), 'application/vnd.wap.xhtml+xml');
 		$this->assertEquals($response->type('csv'), 'text/csv');
+
+		$response->type(array('keynote' => 'application/keynote'));
+		$this->assertEquals($response->type('keynote'), 'application/keynote');
 	}
 
 /**
