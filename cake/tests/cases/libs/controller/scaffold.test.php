@@ -730,6 +730,7 @@ class ScaffoldTest extends CakeTestCase {
 		$result = $Scaffold->getParams();
 		$this->assertEqual($result['action'], 'admin_edit');
 	}
+
 /**
  * test that the proper names and variable values are set by Scaffold
  *
@@ -768,6 +769,24 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['singularVar'], 'scaffoldMock');
 		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
+	}
+	function getTests() {
+		return array('start', 'startCase', 'testScaffoldChangingViewProperty', 'endCase', 'end');
+	}
+
+/**
+ * test that Scaffold overrides the view property even if its set to 'Theme'
+ *
+ * @return void
+ */
+	function testScaffoldChangingViewProperty() {
+		$this->Controller->action = 'edit';
+		$this->Controller->theme = 'test_theme';
+		$this->Controller->view = 'Theme';
+		$this->Controller->constructClasses();
+		$Scaffold =& new TestScaffoldMock($this->Controller, array());
+
+		$this->assertEqual($this->Controller->view, 'Scaffold');
 	}
 
 /**

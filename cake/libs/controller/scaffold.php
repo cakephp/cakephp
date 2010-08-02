@@ -193,8 +193,8 @@ class Scaffold extends Object {
 			'singularHumanName', 'pluralHumanName', 'scaffoldFields', 'associations'
 		));
 
-		if ($this->controller->view && $this->controller->view !== 'Theme') {
-			$this->controller->view = 'scaffold';
+		if ($this->controller->view) {
+			$this->controller->view = 'Scaffold';
 		}
 		$this->_validSession = (
 			isset($this->controller->Session) && $this->controller->Session->valid() != false
