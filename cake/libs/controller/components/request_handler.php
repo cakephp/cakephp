@@ -563,10 +563,10 @@ class RequestHandlerComponent extends Object {
 	}
 
 /**
- * Returns the current response type (Content-type header), or null if none has been set
+ * Returns the current response type (Content-type header), or null if not alias exists
  *
  * @return mixed A string content type alias, or raw content type if no alias map exists,
- *    otherwise null
+ *	otherwise null
  */
 	public function responseType() {
 		return $this->mapType($this->response->type());
