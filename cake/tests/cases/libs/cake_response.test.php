@@ -86,7 +86,7 @@ class CakeResponseTestCase extends CakeTestCase {
 
 		$response->type(array('keynote' => 'application/keynote'));
 		$this->assertEquals($response->type('keynote'), 'application/keynote');
-		
+
 		$this->assertFalse($response->type('wackytype'));
 	}
 
@@ -289,7 +289,7 @@ class CakeResponseTestCase extends CakeTestCase {
 * Tests the httpCodes method
 *
 */
-	function testHttpCodes() {
+	public function testHttpCodes() {
 		$response = new CakeResponse();
 		$result = $response->httpCodes();
 		$this->assertEqual(count($result), 39);
@@ -320,4 +320,18 @@ class CakeResponseTestCase extends CakeTestCase {
 		$expected = array(404 => 'Sorry Bro');
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+* Tests the download method
+*
+*/
+	public function testDownload() {
+		$response = new CakeResponse();
+		$expected = array(
+			'Content-Disposition' => 'attachment; filename="myfile.mp3"'
+		);
+		$response->download('myfile.mp3');
+		$this->assertEquals($response->header(), $expected);
+	}
+
 }
