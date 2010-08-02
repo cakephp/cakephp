@@ -116,6 +116,9 @@ class CakeSchema extends Object {
 		foreach ($data as $key => $val) {
 			if (!empty($val)) {
 				if (!in_array($key, array('plugin', 'name', 'path', 'file', 'connection', 'tables', '_log'))) {
+					if ($key[0] === '_') {
+						continue;
+					}
 					$this->tables[$key] = $val;
 					unset($this->{$key});
 				} elseif ($key !== 'tables') {

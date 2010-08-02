@@ -81,6 +81,14 @@ class MyAppSchema extends CakeSchema {
 	);
 
 /**
+ * _foo property
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_foo = array('bar');
+
+/**
  * setup method
  *
  * @param mixed $version
@@ -98,6 +106,19 @@ class MyAppSchema extends CakeSchema {
  * @return void
  */
 	function teardown($version) {
+	}
+
+/**
+ * getVar method
+ *
+ * @param string $var Name of var
+ * @return mixed
+ */
+	public function getVar($var) {
+		if (!isset($this->$var)) {
+			return null;
+		}
+		return $this->$var;
 	}
 }
 
@@ -750,6 +771,8 @@ class CakeSchemaTest extends CakeTestCase {
 			),
 		);
 		$this->assertEqual($expected, $compare);
+		$this->assertNull($New->getVar('comments'));
+		$this->assertEqual($New->getVar('_foo'), array('bar'));
 
 		$tables = array(
 			'missing' => array(
