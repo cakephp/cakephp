@@ -573,16 +573,6 @@ class RequestHandlerComponent extends Object {
 	}
 
 /**
- * Wrapper for header() so calls can be easily tested.
- *
- * @param string $header The header to be sent.
- * @return void
- */
-	protected function _header($header) {
-		header($header);
-	}
-
-/**
  * Returns the current response type (Content-type header), or null if none has been set
  *
  * @return mixed A string content type alias, or raw content type if no alias map exists,
