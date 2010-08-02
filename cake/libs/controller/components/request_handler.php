@@ -564,10 +564,7 @@ class RequestHandlerComponent extends Object {
 				$this->response->charset($options['charset']);
 			}
 			if (!empty($options['attachment'])) {
-				$this->_header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
-			}
-			if (Configure::read('debug') < 2 && !defined('CAKEPHP_SHELL')) {
-				$this->_header($header);
+				$this->response->download($options['attachment']);
 			}
 			$this->__responseTypeSet = $cType;
 			return true;

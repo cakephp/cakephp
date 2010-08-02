@@ -627,4 +627,14 @@ class CakeResponse {
 			(strpos(env('HTTP_ACCEPT_ENCODING'), 'gzip') !== false);
 		return $compressionEnabled && ob_start('ob_gzhandler');
 	}
+
+/**
+* Sets the correct headers to instruct the browser to dowload the response as a file
+*
+* @param string $filename the name of the file as the browser will download the response
+* @return void
+*/
+	public function download($filename) {
+		$this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
+	}
 }
