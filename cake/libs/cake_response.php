@@ -507,7 +507,7 @@ class CakeResponse {
 * e.g `type(array('jpg' => 'text/plain'));`
 *
 * @param string $contentType
-* @return string current content type
+* @return mixed current content type or false if supplied an invalid content type
 */
 	public function type($contentType = null) {
 		if (is_null($contentType)) {
@@ -523,7 +523,50 @@ class CakeResponse {
 			$contentType = $this->_mimeTypes[$contentType];
 			$contentType = is_array($contentType) ? current($contentType) : $contentType;
 		}
+		if (strpos($contentType, '/') === false) {
+			return false;
+		}
 		return $this->_contentType = $contentType;
+	}
+
+/**
+ * Returns the mime type definition for an alias
+ *
+ * e.g `getMimeType('pdf'); // returns 'application/pdf'`
+ *
+ * @param string $alias the content type alias to map
+ * @return mixed string mapped mime type or false if $alias is not mapped
+ */
+	public function getMimeType($alias) {
+		if (isset($this->_mimeTypes[$alias])) {
+			return $this->_mimeTypes[$alias];
+		}
+		return false;
+	}
+
+/**
+ * Maps a content-type back to an alias
+ *
+ * e.g `mapType('application/pdf'); // returns 'pdf'`
+ *
+ * @param mixed $type Either a string content type to map, or an array of types.
+ * @return mixed Aliases for the types provided.
+ */
+	public function mapType($ctype) {
+		if (is_array($ctype)) {
+			return array_map(array($this, 'mapType'), $ctype);
+		}
+		$keys = array_keys($this->_mimeTypes);
+		$count = count($keys);
+
+		foreach ($this->_mimeTypes as $alias => $types) {
+			if (is_array($types) && in_array($ctype, $types)) {
+				return $alias;
+			} elseif (is_string($types) && $types == $ctype) {
+				return $alias;
+			}
+		}
+		return null;
 	}
 
 /**

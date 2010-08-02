@@ -57,7 +57,7 @@ class RequestHandlerComponent extends Object {
 	private $__responseTypeSet = null;
 
 /**
- * Holds the copy of Controller::$request
+ * Holds the reference to Controller::$request
  *
  * @var CakeRequest
  * @access public
@@ -65,42 +65,12 @@ class RequestHandlerComponent extends Object {
 	public $request;
 
 /**
- * Friendly content-type mappings used to set response types and determine
- * request types.  Can be modified with RequestHandler::setContent()
+ * Holds the reference to Controller::$response
  *
- * @var array
- * @access private
- * @see RequestHandlerComponent::setContent
+ * @var CakeResponse
+ * @access public
  */
-	protected $_contentTypeMap = array(
-		'javascript'	=> 'text/javascript',
-		'js'			=> 'text/javascript',
-		'json'			=> 'application/json',
-		'css'			=> 'text/css',
-		'html'			=> array('text/html', '*/*'),
-		'text'			=> 'text/plain',
-		'txt'			=> 'text/plain',
-		'csv'			=> array('application/vnd.ms-excel', 'text/plain'),
-		'form'			=> 'application/x-www-form-urlencoded',
-		'file'			=> 'multipart/form-data',
-		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
-		'xml'			=> array('application/xml', 'text/xml'),
-		'rss'			=> 'application/rss+xml',
-		'atom'			=> 'application/atom+xml',
-		'amf'			=> 'application/x-amf',
-		'wap'			=> array(
-			'text/vnd.wap.wml',
-			'text/vnd.wap.wmlscript',
-			'image/vnd.wap.wbmp'
-		),
-		'wml'			=> 'text/vnd.wap.wml',
-		'wmlscript'		=> 'text/vnd.wap.wmlscript',
-		'wbmp'			=> 'image/vnd.wap.wbmp',
-		'pdf'			=> 'application/pdf',
-		'zip'			=> 'application/x-zip',
-		'tar'			=> 'application/x-tar'
-	);
+	public $response;
 
 /**
  * The template to use when rendering the given content type.
@@ -132,6 +102,7 @@ class RequestHandlerComponent extends Object {
  */
 	public function initialize(&$controller, $settings = array()) {
 		$this->request = $controller->request;
+		$this->response = $controller->response;
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
@@ -359,7 +330,7 @@ class RequestHandlerComponent extends Object {
  * @return void
  */
 	public function setContent($name, $type = null) {
-		$this->_contentTypeMap[$name] = $type;
+		$this->response->type(array($name => $type));
 	}
 
 /**
@@ -636,24 +607,11 @@ class RequestHandlerComponent extends Object {
 /**
  * Maps a content-type back to an alias
  *
- * @param mixed $type Either a string content type to map, or an array of types.
+ * @param mixed $cType Either a string content type to map, or an array of types.
  * @return mixed Aliases for the types provided.
  */
-	public function mapType($ctype) {
-		if (is_array($ctype)) {
-			return array_map(array($this, 'mapType'), $ctype);
-		}
-		$keys = array_keys($this->_contentTypeMap);
-		$count = count($keys);
-
-		foreach ($this->_contentTypeMap as $alias => $types) {
-			if (is_array($types) && in_array($ctype, $types)) {
-				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
-				return $alias;
-			}
-		}
-		return null;
+	public function mapType($cType) {
+		return $this->response->mapType($cType);
 	}
 
 /**

@@ -19,6 +19,7 @@
  */
 App::import('Controller', 'Controller', false);
 App::import('Component', array('RequestHandler'));
+App::import('Core', array('CakeRequest', 'CakeResponse'));
 
 /**
  * RequestHandlerTestController class
@@ -43,20 +44,6 @@ class RequestHandlerTestController extends Controller {
  * @access public
  */
 	public $uses = null;
-
-/**
- * construct method
- *
- * @param array $params
- * @access private
- * @return void
- */
-	function __construct($request, $params = array()) {
-		foreach ($params as $key => $val) {
-			$this->{$key} = $val;
-		}
-		parent::__construct($request);
-	}
 
 /**
  * test method for ajax redirection
@@ -107,20 +94,6 @@ class RequestHandlerTestDisabledController extends Controller {
 	public $uses = null;
 
 /**
- * construct method
- *
- * @param array $params
- * @access private
- * @return void
- */
-	function __construct($request, $params = array()) {
-		foreach ($params as $key => $val) {
-			$this->{$key} = $val;
-		}
-		parent::__construct($request);
-	}
-
-/**
  * beforeFilter method
  *
  * @return void
@@ -155,12 +128,12 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	public $RequestHandler;
 
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
 		$this->_server = $_SERVER;
 		$this->_init();
 	}
@@ -173,9 +146,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
  */
 	function _init() {
 		$request = new CakeRequest('controller_posts/index');
-		$this->Controller = new RequestHandlerTestController($request);
+		$response = new CakeResponse();
+		$this->Controller = new RequestHandlerTestController($request, $response);
 		$this->RequestHandler = new RequestHandlerComponent();
 		$this->RequestHandler->request = $request;
+		$this->RequestHandler->response = $response;
 	}
 
 /**
@@ -184,7 +159,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
 		unset($this->RequestHandler);
 		unset($this->Controller);
 		if (!headers_sent()) {
