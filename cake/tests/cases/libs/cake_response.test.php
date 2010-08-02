@@ -86,6 +86,8 @@ class CakeResponseTestCase extends CakeTestCase {
 
 		$response->type(array('keynote' => 'application/keynote'));
 		$this->assertEquals($response->type('keynote'), 'application/keynote');
+		
+		$this->assertFalse($response->type('wackytype'));
 	}
 
 /**

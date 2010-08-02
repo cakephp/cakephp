@@ -317,22 +317,17 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRespondAs() {
-		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
+		$this->RequestHandler->response = $this->getMock('CakeResponse', array('type'));
+		$this->RequestHandler->response->expects($this->at(0))->method('type')
+			->with('application/json');
+		$this->RequestHandler->response->expects($this->at(1))->method('type')
+			->with('text/xml');
 
-		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'));
-		$RequestHandler->expects($this->at(0))->method('_header')
-			->with('Content-type: application/json');
-		$RequestHandler->expects($this->at(1))->method('_header')
-			->with('Content-type: text/xml');
-
-		$result = $RequestHandler->respondAs('json');
+		$result = $this->RequestHandler->respondAs('json');
 		$this->assertTrue($result);
 
-		$result = $RequestHandler->respondAs('text/xml');
+		$result = $this->RequestHandler->respondAs('text/xml');
 		$this->assertTrue($result);
-
-		Configure::write('debug', $debug);
 	}
 
 /**
@@ -341,19 +336,14 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRespondAsWithAttachment() {
-		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
+		$this->RequestHandler->response = $this->getMock('CakeResponse', array('type', 'download'));
+		$this->RequestHandler->response->expects($this->once())->method('download')
+			->with('myfile.xml');
+		$this->RequestHandler->response->expects($this->once())->method('type')
+			->with('application/xml');
 
-		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'));
-		$RequestHandler->expects($this->at(0))->method('_header')
-			->with('Content-Disposition: attachment; filename="myfile.xml"');
-		$RequestHandler->expects($this->at(1))->method('_header')
-			->with('Content-type: application/xml');
-
-		$result = $RequestHandler->respondAs('xml', array('attachment' => 'myfile.xml'));
+		$result = $this->RequestHandler->respondAs('xml', array('attachment' => 'myfile.xml'));
 		$this->assertTrue($result);
-
-		Configure::write('debug', $debug);
 	}
 
 /**
@@ -618,10 +608,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
-
 		$this->Controller->request = $this->getMock('CakeRequest');
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
+		$this->Controller->RequestHandler->response = $this->Controller->response;
 		
 		$this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
@@ -648,8 +639,10 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		), true);
 
 		$this->Controller->request = $this->getMock('CakeRequest');
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$this->Controller->RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
+		$this->Controller->RequestHandler->response = $this->Controller->response;
 
 		$this->Controller->request->expects($this->any())->method('is')->will($this->returnValue(true));
 		$this->Controller->RequestHandler->expects($this->once())->method('_stop');
@@ -682,6 +675,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		));
 
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$RequestHandler->request = new CakeRequest('posts/index');
 
 		ob_start();
@@ -703,12 +697,13 @@ class RequestHandlerComponentTest extends CakeTestCase {
 
 		$controller = $this->getMock('Controller', array('header'));
 		$RequestHandler = $this->getMock('RequestHandlerComponent', array('_stop'));
+		$RequestHandler->response = $this->getMock('CakeResponse', array('_sendHeader','statusCode'));
 		$RequestHandler->request = $this->getMock('CakeRequest');
 		$RequestHandler->request->expects($this->once())->method('is')
 			->with('ajax')
 			->will($this->returnValue(true));
 
-		$controller->expects($this->once())->method('header')->with('HTTP/1.1 403 Forbidden');
+		$RequestHandler->response->expects($this->once())->method('statusCode')->with(403);
 
 		ob_start();
 		$RequestHandler->beforeRedirect($controller, 'request_handler_test/param_method/first/second', 403);

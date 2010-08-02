@@ -142,7 +142,7 @@ class RequestHandlerComponent extends Object {
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
-			in_array($this->ext, array_keys($this->_contentTypeMap))
+			$this->response->getMimeType($this->ext)
 		);
 
 		if (!empty($this->ext) && $isRecognized) {
@@ -183,12 +183,12 @@ class RequestHandlerComponent extends Object {
 			$url = Router::url($url + array('base' => false));
 		}
 		if (!empty($status)) {
-			$statusCode = $controller->httpCodes($status);
+			$statusCode = $this->response->httpCodes($status);
 			$code = key($statusCode);
-			$msg = $statusCode[$code];
-			$controller->header("HTTP/1.1 {$code} {$msg}");
+			$this->response->statusCode($code);
 		}
-		echo $this->requestAction($url, array('return', 'bare' => false));
+		$this->response->body($this->requestAction($url, array('return', 'bare' => false)));
+		$this->response->send();
 		$this->_stop();
 	}
 
@@ -502,7 +502,7 @@ class RequestHandlerComponent extends Object {
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;
 
-		if (isset($this->_contentTypeMap[$type])) {
+		if ($this->response->getMimeType($type)) {
 			$this->respondAs($type, $options);
 		}
 
@@ -534,24 +534,18 @@ class RequestHandlerComponent extends Object {
  * @see RequestHandlerComponent::setContent()
  */
 	function respondAs($type, $options = array()) {
-		if (!array_key_exists($type, $this->_contentTypeMap) && strpos($type, '/') === false) {
-			return false;
-		}
-		$defaults = array('index' => 0, 'charset' => null, 'attachment' => false);
-		$options = array_merge($defaults, $options);
+		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
+		$options = $options + $defaults;
 
-		if (strpos($type, '/') === false && isset($this->_contentTypeMap[$type])) {
-			$cType = null;
-			if (is_array($this->_contentTypeMap[$type]) && isset($this->_contentTypeMap[$type][$options['index']])) {
-				$cType = $this->_contentTypeMap[$type][$options['index']];
-			} elseif (is_array($this->_contentTypeMap[$type]) && isset($this->_contentTypeMap[$type][0])) {
-				$cType = $this->_contentTypeMap[$type][0];
-			} elseif (isset($this->_contentTypeMap[$type])) {
-				$cType = $this->_contentTypeMap[$type];
-			} else {
+		$cType = null;
+		if (strpos($type, '/') === false) {
+			$cType = $this->response->getMimeType($type);
+			if ($cType === false) {
 				return false;
 			}
-
+			if (is_array($cType) && isset($cType[$options['index']])) {
+				$cType = $cType[$options['index']];
+			}
 			if (is_array($cType)) {
 				if ($this->prefers($cType)) {
 					$cType = $this->prefers($cType);
@@ -564,10 +558,10 @@ class RequestHandlerComponent extends Object {
 		}
 
 		if ($cType != null) {
-			$header = 'Content-type: ' . $cType;
+			$this->response->type($cType);
 
 			if (!empty($options['charset'])) {
-				$header .= '; charset=' . $options['charset'];
+				$this->response->charset($options['charset']);
 			}
 			if (!empty($options['attachment'])) {
 				$this->_header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
@@ -625,12 +619,12 @@ class RequestHandlerComponent extends Object {
 		if (is_array($alias)) {
 			return array_map(array($this, 'mapAlias'), $alias);
 		}
-		if (isset($this->_contentTypeMap[$alias])) {
-			$types = $this->_contentTypeMap[$alias];
-			if (is_array($types)) {
-				return $types[0];
+		$type = $this->response->getMimeType($alias);
+		if ($type) {
+			if (is_array($type)) {
+				return $type[0];
 			}
-			return $types;
+			return $type;
 		}
 		return null;
 	}
