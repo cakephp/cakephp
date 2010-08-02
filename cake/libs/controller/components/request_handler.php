@@ -48,15 +48,6 @@ class RequestHandlerComponent extends Object {
 	public $enabled = true;
 
 /**
- * Holds the content-type of the response that is set when using
- * RequestHandler::respondAs()
- *
- * @var string
- * @access private
- */
-	private $__responseTypeSet = null;
-
-/**
  * Holds the reference to Controller::$request
  *
  * @var CakeRequest
@@ -566,7 +557,6 @@ class RequestHandlerComponent extends Object {
 			if (!empty($options['attachment'])) {
 				$this->response->download($options['attachment']);
 			}
-			$this->__responseTypeSet = $cType;
 			return true;
 		}
 		return false;
@@ -579,10 +569,7 @@ class RequestHandlerComponent extends Object {
  *    otherwise null
  */
 	public function responseType() {
-		if ($this->__responseTypeSet == null) {
-			return null;
-		}
-		return $this->mapType($this->__responseTypeSet);
+		return $this->mapType($this->response->type());
 	}
 
 /**

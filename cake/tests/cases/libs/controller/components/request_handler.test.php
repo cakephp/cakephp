@@ -442,7 +442,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testResponseContentType() {
-		$this->assertNull($this->RequestHandler->responseType());
+		$this->assertEquals('html', $this->RequestHandler->responseType());
 		$this->assertTrue($this->RequestHandler->respondAs('atom'));
 		$this->assertEqual($this->RequestHandler->responseType(), 'atom');
 	}
