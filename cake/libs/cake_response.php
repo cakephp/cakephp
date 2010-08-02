@@ -338,8 +338,8 @@ class CakeResponse {
 			$this->statusCode(302);
 		}
 
-		$codeMesasge = $this->_statusCodes[$this->_status];
-		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMesasge}");
+		$codeMessage = $this->_statusCodes[$this->_status];
+		$this->_sendHeader("{$this->_protocol} {$this->_status} {$codeMessage}");
 		$this->_sendHeader('Content-Type', "{$this->_contentType}; charset={$this->_charset}");
 
 		foreach ($this->_headers as $header => $value) {
