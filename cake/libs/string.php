@@ -240,6 +240,7 @@ class String extends Object {
 
 			$hashKeys = array_map('md5', array_keys($data));
 			$tempData = array_combine(array_keys($data), array_values($hashKeys));
+			krsort($tempData);
 			foreach ($tempData as $key => $hashVal) {
 				$key = sprintf($format, preg_quote($key, '/'));
 				$str = preg_replace($key, $hashVal, $str);
