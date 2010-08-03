@@ -334,4 +334,19 @@ class CakeResponseTestCase extends CakeTestCase {
 		$this->assertEquals($response->header(), $expected);
 	}
 
+/**
+* Tests the mapType method
+*
+*/
+	public function testMapType() {
+		$response = new CakeResponse();
+		$this->assertEquals('wav', $response->mapType('audio/x-wav'));
+		$this->assertEquals('pdf', $response->mapType('application/pdf'));
+		$this->assertEquals('xml', $response->mapType('text/xml'));
+		$this->assertEquals('html', $response->mapType('*/*'));
+		$this->assertEquals('csv', $response->mapType('application/vnd.ms-excel'));
+		$expected = array('json', 'xhtml', 'css');
+		$result = $response->mapType(array('application/json', 'application/xhtml+xml', 'text/css'));
+		$this->assertEquals($expected, $result);
+	}
 }
