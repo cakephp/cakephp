@@ -4691,7 +4691,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
@@ -4711,7 +4711,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
-		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),

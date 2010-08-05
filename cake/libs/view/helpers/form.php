@@ -1651,14 +1651,13 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @return string Completed minute select input.
  * @access public
  * @link http://book.cakephp.org/view/1421/minute
  */
-	public function minute($fieldName, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => $selected);
+	public function minute($fieldName, $attributes = array()) {
+		$attributes += array('empty' => true, 'value' => null);
 		$attributes = $this->__dateTimeSelected('min', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
@@ -1902,13 +1901,15 @@ class FormHelper extends AppHelper {
 		switch ($timeFormat) {
             case '24':
                 $selectHourAttr['value'] = $hour;
+                $selectMinuteAttr['value'] = $min;
 				$opt .= $this->hour($fieldName, true, $selectHourAttr) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr);
+				$this->minute($fieldName, $selectMinuteAttr);
 			break;
             case '12':
                 $selectHourAttr['value'] = $hour;
+                $selectMinuteAttr['value'] = $min;
 				$opt .= $this->hour($fieldName, false, $selectHourAttr) . ':' .
-				$this->minute($fieldName, $min, $selectMinuteAttr) . ' ' .
+				$this->minute($fieldName, $selectMinuteAttr) . ' ' .
 				$this->meridian($fieldName, $meridian, $selectMeridianAttr);
 			break;
 			default:
