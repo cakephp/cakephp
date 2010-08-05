@@ -697,7 +697,6 @@ class ObjectTest extends CakeTestCase {
 		$expected = 5;
 		$this->assertEqual($result, $expected);
 
-
 		$result = $this->object->requestAction('/request_action/paginate_request_action');
 		$this->assertTrue($result);
 
@@ -728,7 +727,9 @@ class ObjectTest extends CakeTestCase {
 		$expected = 'test plugin index';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return'));
+		$result = $this->object->requestAction(
+			array('controller' => 'tests', 'action' => 'index', 'plugin' => 'test_plugin'), array('return')
+		);
 		$expected = 'test plugin index';
 		$this->assertEqual($result, $expected);
 
@@ -736,7 +737,9 @@ class ObjectTest extends CakeTestCase {
 		$expected = 25;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin'));
+		$result = $this->object->requestAction(
+			array('controller' => 'tests', 'action' => 'some_method', 'plugin' => 'test_plugin')
+		);
 		$expected = 25;
 		$this->assertEqual($result, $expected);
 		
@@ -756,15 +759,22 @@ class ObjectTest extends CakeTestCase {
 			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
 		));
 	
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'test_request_action'));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'test_request_action')
+		);
 		$expected = 'This is a test';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'another_ra_test'), array('pass' => array('5', '7')));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'another_ra_test'), 
+			array('pass' => array('5', '7'))
+		);
 		$expected = 12;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'tests_apps', 'action' => 'index'), array('return'));
+		$result = $this->object->requestAction(
+			array('controller' => 'tests_apps', 'action' => 'index'), array('return')
+		);
 		$expected = 'This is the TestsAppsController index view';
 		$this->assertEqual($result, $expected);
 
@@ -772,14 +782,21 @@ class ObjectTest extends CakeTestCase {
 		$expected = 5;
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'normal_request_action'));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'normal_request_action')
+		);
 		$expected = 'Hello World';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'paginate_request_action'));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'paginate_request_action')
+		);
 		$this->assertTrue($result);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'paginate_request_action'), array('pass' => array(5), 'named' => array('param' => 'value')));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'paginate_request_action'),
+			array('pass' => array(5), 'named' => array('param' => 'value'))
+		);
 		$this->assertTrue($result);
 
 		App::build();
@@ -804,7 +821,10 @@ class ObjectTest extends CakeTestCase {
 		$expected = array('sort' => 'desc', 'limit' => 5,);
 		$this->assertEqual($result['named'], $expected);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'params_pass'), array('named' => array('sort' => 'desc', 'limit' => 5)));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'params_pass'), 
+			array('named' => array('sort' => 'desc', 'limit' => 5))
+		);
 		$this->assertEqual($result['named'], $expected);
 	}
 
