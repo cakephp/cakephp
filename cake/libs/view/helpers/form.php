@@ -12,12 +12,12 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright	 Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link		  http://cakephp.org CakePHP(tm) Project
+ * @package	   cake
+ * @subpackage	cake.cake.libs.view.helpers
+ * @since		 CakePHP(tm) v 0.10.0.1076
+ * @license	   MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**
@@ -25,8 +25,8 @@
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @package       cake
- * @subpackage    cake.cake.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1383/Form
  */
 class FormHelper extends AppHelper {
@@ -175,8 +175,8 @@ class FormHelper extends AppHelper {
  * - `default`  Allows for the creation of Ajax forms.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *    be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
- *    can be overridden when calling input()
+ *	be set when using FormHelper::input() can be set here.  Options set with `inputDefaults`
+ *	can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form.  Defaults to `Configure::read('App.encoding')`
  *
  * @access public
@@ -587,7 +587,7 @@ class FormHelper extends AppHelper {
  * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as
  *    the classname for the fieldset element.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
- *    to customize the legend text.
+ *	to customize the legend text.
  *
  * @param mixed $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist a simple array of fields to not create inputs for.
@@ -678,7 +678,7 @@ class FormHelper extends AppHelper {
  * - `type` - Force the type of widget you want. e.g. `type => 'select'`
  * - `label` - Either a string label, or an array of options for the label. See FormHelper::label()
  * - `div` - Either `false` to disable the div, or an array of options for the div.
- *    See HtmlHelper::div() for more options.
+ *	See HtmlHelper::div() for more options.
  * - `options` - for widgets that take options e.g. radio, select
  * - `error` - control the error message that is produced
  * - `empty` - String or boolean to enable empty select box options.
@@ -686,10 +686,10 @@ class FormHelper extends AppHelper {
  * - `after` - Content to place after the label + input.
  * - `between` - Content to place between the label + input.
  * - `format` - format template for element order. Any element that is not in the array, will not be in the output.
- *    - Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
- *    - Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
- *    - Hidden input will not be formatted
- *    - Radio buttons cannot have the order of input and label elements controlled with these settings.
+ *	- Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
+ *	- Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
+ *	- Hidden input will not be formatted
+ *	- Radio buttons cannot have the order of input and label elements controlled with these settings.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
@@ -718,9 +718,9 @@ class FormHelper extends AppHelper {
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
-                $options['type'] = 'password';
-            } elseif (isset($options['checked'])) {
-                $options['type'] = 'checkbox';
+				$options['type'] = 'password';
+			} elseif (isset($options['checked'])) {
+				$options['type'] = 'checkbox';
 			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
 				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
 				$type = $fieldDef['type'];
@@ -729,10 +729,10 @@ class FormHelper extends AppHelper {
 
 			if (isset($type)) {
 				$map = array(
-					'string'  => 'text',     'datetime'  => 'datetime',
+					'string'  => 'text',	 'datetime'  => 'datetime',
 					'boolean' => 'checkbox', 'timestamp' => 'datetime',
-					'text'    => 'textarea', 'time'      => 'time',
-					'date'    => 'date',     'float'     => 'text'
+					'text'	=> 'textarea', 'time'	  => 'time',
+					'date'	=> 'date',	 'float'	 => 'text'
 				);
 
 				if (isset($this->map[$type])) {
@@ -774,7 +774,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$autoLength = (!array_key_exists('maxlength', $options) && isset($fieldDef['length']));
-        if ($autoLength && $options['type'] == 'text') {
+		if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		if ($autoLength && $fieldDef['type'] == 'float') {
@@ -874,16 +874,16 @@ class FormHelper extends AppHelper {
 				unset($options['options']);
 				$input = $this->select($fieldName, $list, $options);
 			break;
-            case 'time':
-                $options['value'] = $selected;
+			case 'time':
+				$options['value'] = $selected;
 				$input = $this->dateTime($fieldName, null, $timeFormat, $options);
 			break;
 			case 'date':
-                $options['value'] = $selected;
+				$options['value'] = $selected;
 				$input = $this->dateTime($fieldName, $dateFormat, null, $options);
 			break;
 			case 'datetime':
-                $options['value'] = $selected;
+				$options['value'] = $selected;
 				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
 			break;
 			case 'textarea':
@@ -983,7 +983,7 @@ class FormHelper extends AppHelper {
  * - `value` - the value of the checkbox
  * - `checked` - boolean indicate that this checkbox is checked.
  * - `hiddenField` - boolean to indicate if you want the results of checkbox() to include
- *    a hidden input with a value of ''.
+ *	a hidden input with a value of ''.
  * - `disabled` - create a disabled input.
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
@@ -1032,7 +1032,7 @@ class FormHelper extends AppHelper {
  * - `value` - indicate a value that is should be checked
  * - `label` - boolean to indicate whether or not labels for widgets show be displayed
  * - `hiddenField` - boolean to indicate if you want the results of radio() to include
- *    a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
+ *	a hidden input with a value of ''. This is useful for creating radio sets that non-continuous
  *
  * @param string $fieldName Name of a field, like this "Modelname.fieldname"
  * @param array $options Radio button options array.
@@ -1387,11 +1387,11 @@ class FormHelper extends AppHelper {
  * While a nested options array will create optgroups with options inside them.
  * {{{
  * $options = array(
- *    1 => 'bill',
- *    'fred' => array(
- *        2 => 'fred',
- *        3 => 'fred jr.'
- *     )
+ *	1 => 'bill',
+ *	'fred' => array(
+ *		2 => 'fred',
+ *		3 => 'fred jr.'
+ *	 )
  * );
  * $this->Form->select('Model.field', $options);
  * }}}
@@ -1401,7 +1401,7 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
- *    SELECT element
+ *	SELECT element
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @access public
@@ -1506,7 +1506,7 @@ class FormHelper extends AppHelper {
  * @access public
  * @link http://book.cakephp.org/view/1419/day
  */
-    public function day($fieldName = null, $attributes = array()) {
+	public function day($fieldName = null, $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
 		$attributes = $this->__dateTimeSelected('day', $fieldName, $attributes);
 
@@ -1537,7 +1537,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1416/year
  */
 	public function year($fieldName, $minYear = null, $maxYear = null, $attributes = array()) {
-        $attributes += array('empty' => true, 'value' => null);
+		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1565,7 +1565,7 @@ class FormHelper extends AppHelper {
 		if (isset($attributes['orderYear'])) {
 			$yearOptions['order'] = $attributes['orderYear'];
 			unset($attributes['orderYear']);
-        }
+		}
 		return $this->select(
 			$fieldName . '.year', $this->__generateOptions('year', $yearOptions),
 			$attributes
@@ -1721,7 +1721,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1422/meridian
  */
 	public function meridian($fieldName, $attributes = array()) {
-        $attributes += array('empty' => true, 'value' => null);
+		$attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1771,7 +1771,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1418/dateTime
  */
 	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $attributes = array()) {
-        $attributes += array('empty' => true, 'value' => null);
+		$attributes += array('empty' => true, 'value' => null);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($attributes['value'])) {
@@ -1870,19 +1870,19 @@ class FormHelper extends AppHelper {
 		$selects = array();
 		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 			switch ($char) {
-                case 'Y':
-                    $selectYearAttr['value'] = $year;
+				case 'Y':
+					$selectYearAttr['value'] = $year;
 					$selects[] = $this->year(
 						$fieldName, $minYear, $maxYear, $selectYearAttr
 					);
 				break;
 				case 'M':
-                    $selectMonthAttr['value'] = $month;
+					$selectMonthAttr['value'] = $month;
 					$selectMonthAttr['monthNames'] = $monthNames;
 					$selects[] = $this->month($fieldName, $selectMonthAttr);
 				break;
-                case 'D':
-                    $selectDayAttr['value'] = $day;
+				case 'D':
+					$selectDayAttr['value'] = $day;
 					$selects[] = $this->day($fieldName, $selectDayAttr);
 				break;
 			}
@@ -1894,16 +1894,16 @@ class FormHelper extends AppHelper {
 		}
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
-            case '24':
-                $selectHourAttr['value'] = $hour;
-                $selectMinuteAttr['value'] = $min;
+			case '24':
+				$selectHourAttr['value'] = $hour;
+				$selectMinuteAttr['value'] = $min;
 				$opt .= $this->hour($fieldName, true, $selectHourAttr) . ':' .
 				$this->minute($fieldName, $selectMinuteAttr);
 			break;
-            case '12':
-                $selectHourAttr['value'] = $hour;
-                $selectMinuteAttr['value'] = $min;
-                $selectMeridianAttr['value'] = $meridian;
+			case '12':
+				$selectHourAttr['value'] = $hour;
+				$selectMinuteAttr['value'] = $min;
+				$selectMeridianAttr['value'] = $meridian;
 				$opt .= $this->hour($fieldName, false, $selectHourAttr) . ':' .
 				$this->minute($fieldName, $selectMinuteAttr) . ' ' .
 				$this->meridian($fieldName, $selectMeridianAttr);
