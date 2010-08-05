@@ -1499,15 +1499,14 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $selected Option which is selected.
  * @param array $attributes HTML attributes for the select element
  * @return string A generated day select box.
  * @access public
  * @link http://book.cakephp.org/view/1419/day
  */
-	public function day($fieldName, $selected = null, $attributes = array()) {
+    public function day($fieldName = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$attributes['value'] = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
+		$attributes = $this->__dateTimeSelected('day', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('d', strtotime($attributes['value']));
@@ -1591,8 +1590,8 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1417/month
  */
 	public function month($fieldName, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
-		$attributes['value'] = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
+		$attributes += array('empty' => true, 'value' => $selected);
+		$attributes = $this->__dateTimeSelected('month', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('m', strtotime($attributes['value']));
@@ -1628,8 +1627,8 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1420/hour
  */
 	public function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
-		$attributes['value'] = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
+		$attributes += array('empty' => true, 'value' => $selected);
+		$attributes = $this->__dateTimeSelected('hour', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			if ($format24Hours) {
@@ -1663,8 +1662,8 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1421/minute
  */
 	public function minute($fieldName, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
-		$attributes['value'] = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
+		$attributes += array('empty' => true, 'value' => $selected);
+		$attributes = $this->__dateTimeSelected('min', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
 			$attributes['value'] = date('i', strtotime($attributes['value']));
@@ -1688,26 +1687,25 @@ class FormHelper extends AppHelper {
  *
  * @param string $select Name of element field. ex. 'day'
  * @param string $fieldName Name of fieldName being generated ex. Model.created
- * @param mixed $selected The current selected value.
  * @param array $attributes Array of attributes, must contain 'empty' key.
- * @return string Currently selected value.
+ * @return array Attributes array with currently selected value.
  * @access private
  */
-	function __dateTimeSelected($select, $fieldName, $selected, $attributes) {
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
+	function __dateTimeSelected($select, $fieldName, $attributes) {
+		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value) && isset($value[$select])) {
-				$selected = $value[$select];
+				$attributes['value'] = $value[$select];
 			} else {
 				if (empty($value)) {
 					if (!$attributes['empty']) {
-						$selected = 'now';
+						$attributes['value'] = 'now';
 					}
 				} else {
-					$selected = $value;
+					$attributes['value'] = $value;
 				}
 			}
 		}
-		return $selected;
+		return $attributes;
 	}
 
 /**
@@ -1891,8 +1889,9 @@ class FormHelper extends AppHelper {
 					$selectMonthAttr['monthNames'] = $monthNames;
 					$selects[] = $this->month($fieldName, $month, $selectMonthAttr);
 				break;
-				case 'D':
-					$selects[] = $this->day($fieldName, $day, $selectDayAttr);
+                case 'D':
+                    $selectDayAttr['value'] = $day;
+					$selects[] = $this->day($fieldName, $selectDayAttr);
 				break;
 			}
 		}

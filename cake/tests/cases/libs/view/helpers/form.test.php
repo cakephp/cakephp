@@ -4558,7 +4558,7 @@ class FormHelperTest extends CakeTestCase {
 	function testDay() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->day('Model.field', false);
+		$result = $this->Form->day('Model.field', array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
@@ -4596,7 +4596,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->day('Model.field', '10');
+		$result = $this->Form->day('Model.field', array('value' => '10'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
@@ -4617,7 +4617,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
-		$result = $this->Form->day('Model.field', true);
+		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
