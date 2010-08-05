@@ -517,6 +517,40 @@ class RssHelperTest extends CakeTestCase {
 			'/item'
 		);
 		$this->assertTags($result, $expected);
+
+		$item = array(
+			'title' => 'Foo bar',
+			'link' => array(
+				'url' => 'http://example.com/foo?a=1&b=2',
+				'convertEntities' => false
+			),
+			'description' =>  array(
+				'value' => 'descriptive words',
+				'cdata' => true,
+			),
+			'pubDate' => '2008-05-31 12:00:00'
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title',
+			'Foo bar',
+			'/title',
+			'<link',
+			'http://example.com/foo?a=1&amp;b=2',
+			'/link',
+			'<description',
+			'<![CDATA[descriptive words]]',
+			'/description',
+			'<pubDate',
+			date('r', strtotime('2008-05-31 12:00:00')),
+			'/pubDate',
+			'<guid',
+			'http://example.com/foo?a=1&amp;b=2',
+			'/guid',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
