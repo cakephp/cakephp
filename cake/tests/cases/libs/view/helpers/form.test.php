@@ -3901,7 +3901,7 @@ class FormHelperTest extends CakeTestCase {
 			date('a', $now),
 			'/option',
 			'*/select'
-		);
+        );
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12');

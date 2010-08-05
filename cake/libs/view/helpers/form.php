@@ -1711,15 +1711,14 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $selected Option which is selected.
  * @param string $attributes Array of Attributes
  * @param bool $showEmpty Show/Hide an empty option
  * @return string Completed meridian select input
  * @access public
  * @link http://book.cakephp.org/view/1422/meridian
  */
-	public function meridian($fieldName, $selected = null, $attributes = array()) {
-        $attributes += array('empty' => true, 'value' => $selected);
+	public function meridian($fieldName, $attributes = array()) {
+        $attributes += array('empty' => true, 'value' => null);
 		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
@@ -1907,9 +1906,10 @@ class FormHelper extends AppHelper {
             case '12':
                 $selectHourAttr['value'] = $hour;
                 $selectMinuteAttr['value'] = $min;
+                $selectMeridianAttr['value'] = $meridian;
 				$opt .= $this->hour($fieldName, false, $selectHourAttr) . ':' .
 				$this->minute($fieldName, $selectMinuteAttr) . ' ' .
-				$this->meridian($fieldName, $meridian, $selectMeridianAttr);
+				$this->meridian($fieldName, $selectMeridianAttr);
 			break;
 			default:
 				$opt .= '';
