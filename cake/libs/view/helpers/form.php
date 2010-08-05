@@ -1581,14 +1581,13 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $selected Option which is selected.
  * @param array $attributes Attributes for the select element
  * @return string A generated month select dropdown.
  * @access public
  * @link http://book.cakephp.org/view/1417/month
  */
-	public function month($fieldName, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => $selected);
+	public function month($fieldName, $attributes = array()) {
+		$attributes += array('empty' => true, 'value' => null);
 		$attributes = $this->__dateTimeSelected('month', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
@@ -1885,8 +1884,9 @@ class FormHelper extends AppHelper {
 					);
 				break;
 				case 'M':
+                    $selectMonthAttr['value'] = $month;
 					$selectMonthAttr['monthNames'] = $monthNames;
-					$selects[] = $this->month($fieldName, $month, $selectMonthAttr);
+					$selects[] = $this->month($fieldName, $selectMonthAttr);
 				break;
                 case 'D':
                     $selectDayAttr['value'] = $day;

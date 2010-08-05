@@ -4500,7 +4500,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', null, array('empty' => true));
+		$result = $this->Form->month('Model.field', array('empty' => true));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
@@ -4515,7 +4515,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', null, array('monthNames' => false));
+		$result = $this->Form->month('Model.field', array('monthNames' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
@@ -4533,7 +4533,7 @@ class FormHelperTest extends CakeTestCase {
 		$monthNames = array(
 			'01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr', '05' => 'May', '06' => 'Jun',
 			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
-		$result = $this->Form->month('Model.field', null, array('monthNames' => $monthNames));
+		$result = $this->Form->month('Model.field', array('monthNames' => $monthNames));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
