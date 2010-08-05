@@ -1617,14 +1617,13 @@ class FormHelper extends AppHelper {
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param boolean $format24Hours True for 24 hours format
- * @param string $selected Option which is selected.
  * @param array $attributes List of HTML attributes
  * @return string Completed hour select input
  * @access public
  * @link http://book.cakephp.org/view/1420/hour
  */
-	public function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => $selected);
+	public function hour($fieldName, $format24Hours = false, $attributes = array()) {
+		$attributes += array('empty' => true, 'value' => null);
 		$attributes = $this->__dateTimeSelected('hour', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
@@ -1901,12 +1900,14 @@ class FormHelper extends AppHelper {
 		}
 		$selectMinuteAttr['interval'] = $interval;
 		switch ($timeFormat) {
-			case '24':
-				$opt .= $this->hour($fieldName, true, $hour, $selectHourAttr) . ':' .
+            case '24':
+                $selectHourAttr['value'] = $hour;
+				$opt .= $this->hour($fieldName, true, $selectHourAttr) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr);
 			break;
-			case '12':
-				$opt .= $this->hour($fieldName, false, $hour, $selectHourAttr) . ':' .
+            case '12':
+                $selectHourAttr['value'] = $hour;
+				$opt .= $this->hour($fieldName, false, $selectHourAttr) . ':' .
 				$this->minute($fieldName, $min, $selectMinuteAttr) . ' ' .
 				$this->meridian($fieldName, $meridian, $selectMeridianAttr);
 			break;

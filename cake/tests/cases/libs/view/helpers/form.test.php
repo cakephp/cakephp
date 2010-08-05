@@ -4777,7 +4777,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->hour('Model.field', true, '23');
+		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
@@ -4820,7 +4820,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		unset($this->Form->request->data['Model']['field']);
-		$result = $this->Form->hour('Model.field', true, 'now');
+		$result = $this->Form->hour('Model.field', true, array('value' => 'now'));
 		$thisHour = date('H');
 		$optValue = date('G');
 		$this->assertPattern('/<option value="' . $thisHour . '" selected="selected">'. $optValue .'<\/option>/', $result);
