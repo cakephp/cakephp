@@ -111,7 +111,7 @@ class Dispatcher extends Object {
 		$this->here = $this->base . '/' . $url;
 
 		if ($this->asset($url) || $this->cached($url)) {
-			$this->_stop();
+			return;
 		}
 		$controller =& $this->__getController();
 
@@ -227,8 +227,11 @@ class Dispatcher extends Object {
  */
 	function __extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
-		$this->params = array_merge($defaults, $url, $additionalParams);
-		return Router::url($url);
+		$params = array_merge($defaults, $url, $additionalParams);
+		$this->params = $params;
+
+		$params += array('base' => false, 'url' => array());
+		return ltrim(Router::reverse($params), '/');
 	}
 
 /**
