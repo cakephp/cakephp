@@ -1045,6 +1045,9 @@ class Router {
  * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
  * Those keys need to be specially handled in order to reverse a params array into a string url.
  *
+ * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
+ * are used for CakePHP internals and should not normally be part of an output url.
+ *
  * @param array $param The params array that needs to be reversed.
  * @return string The string that is the reversed result of the array
  * @access public
@@ -1054,7 +1057,10 @@ class Router {
 		$pass = $params['pass'];
 		$named = $params['named'];
 		$url = $params['url'];
-		unset($params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url']);
+		unset(
+			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
+			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
+		);
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
 			$params['?'] = $url;
