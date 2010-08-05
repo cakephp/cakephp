@@ -1479,10 +1479,9 @@ class FormHelper extends AppHelper {
 
 		$select = array_merge($select, $this->__selectOptions(
 			array_reverse($options, true),
-			$attributes['value'],
 			array(),
 			$showParents,
-			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'])
+			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'], 'value' => $attributes['value'])
 		));
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
@@ -1963,11 +1962,11 @@ class FormHelper extends AppHelper {
  * @access private
  * @return array
  */
-	function __selectOptions($elements = array(), $selected = null, $parents = array(), $showParents = null, $attributes = array()) {
+	function __selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
 		$select = array();
-		$attributes = array_merge(array('escape' => true, 'style' => null), $attributes);
-		$selectedIsEmpty = ($selected === '' || $selected === null);
-		$selectedIsArray = is_array($selected);
+		$attributes = array_merge(array('escape' => true, 'style' => null, 'value' => null), $attributes);
+		$selectedIsEmpty = ($attributes['value'] === '' || $attributes['value'] === null);
+		$selectedIsArray = is_array($attributes['value']);
 
 		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
@@ -1981,7 +1980,7 @@ class FormHelper extends AppHelper {
 					$parents[] = $name;
 				}
 				$select = array_merge($select, $this->__selectOptions(
-					$title, $selected, $parents, $showParents, $attributes
+					$title, $parents, $showParents, $attributes
 				));
 
 				if (!empty($name)) {
@@ -2002,8 +2001,8 @@ class FormHelper extends AppHelper {
 
 			if ($name !== null) {
 				if (
-					(!$selectedIsArray && !$selectedIsEmpty && (string)$selected == (string)$name) ||
-					($selectedIsArray && in_array($name, $selected))
+					(!$selectedIsArray && !$selectedIsEmpty && (string)$attributes['value'] == (string)$name) ||
+					($selectedIsArray && in_array($name, $attributes['value']))
 				) {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['checked'] = true;
