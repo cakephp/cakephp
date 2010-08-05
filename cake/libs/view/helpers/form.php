@@ -1505,7 +1505,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1419/day
  */
     public function day($fieldName = null, $attributes = array()) {
-		$attributes += array('empty' => true);
+		$attributes += array('empty' => true, 'value' => null);
 		$attributes = $this->__dateTimeSelected('day', $fieldName, $attributes);
 
 		if (strlen($attributes['value']) > 2) {
@@ -1529,43 +1529,41 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
  * @param integer $maxYear Last year in sequence
- * @param string $selected Option which is selected.
  * @param array $attributes Attribute array for the select elements.
  * @return string Completed year select input
  * @access public
  * @link http://book.cakephp.org/view/1416/year
  */
-	public function year($fieldName, $minYear = null, $maxYear = null, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
+	public function year($fieldName, $minYear = null, $maxYear = null, $attributes = array()) {
+        $attributes += array('empty' => true, 'value' => null);
+		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
-				$selected = $year;
+				$attributes['value'] = $year;
 			} else {
 				if (empty($value)) {
 					if (!$attributes['empty'] && !$maxYear) {
-						$selected = 'now';
+						$attributes['value'] = 'now';
 
-					} elseif (!$attributes['empty'] && $maxYear && !$selected) {
-						$selected = $maxYear;
+					} elseif (!$attributes['empty'] && $maxYear && !$attributes['value']) {
+						$attributes['value'] = $maxYear;
 					}
 				} else {
-					$selected = $value;
+					$attributes['value'] = $value;
 				}
 			}
 		}
 
-		if (strlen($selected) > 4 || $selected === 'now') {
-			$selected = date('Y', strtotime($selected));
-		} elseif ($selected === false) {
-			$selected = null;
+		if (strlen($attributes['value']) > 4 || $attributes['value'] === 'now') {
+			$attributes['value'] = date('Y', strtotime($attributes['value']));
+		} elseif ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
 		$yearOptions = array('min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
 		if (isset($attributes['orderYear'])) {
 			$yearOptions['order'] = $attributes['orderYear'];
 			unset($attributes['orderYear']);
         }
-        $attributes['value'] = $selected;
 		return $this->select(
 			$fieldName . '.year', $this->__generateOptions('year', $yearOptions),
 			$attributes
@@ -1776,7 +1774,7 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1418/dateTime
  */
 	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
+        $attributes += array('empty' => true);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($selected)) {
@@ -1880,9 +1878,10 @@ class FormHelper extends AppHelper {
 		$selects = array();
 		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
 			switch ($char) {
-				case 'Y':
+                case 'Y':
+                    $selectYearAttr['value'] = $year;
 					$selects[] = $this->year(
-						$fieldName, $minYear, $maxYear, $year, $selectYearAttr
+						$fieldName, $minYear, $maxYear, $selectYearAttr
 					);
 				break;
 				case 'M':

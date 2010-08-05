@@ -4848,7 +4848,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->year('Model.field', 2006, 2007, null, array('orderYear' => 'asc'));
+		$result = $this->Form->year('Model.field', 2006, 2007, array('orderYear' => 'asc'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
 			array('option' => array('value' => '')),
@@ -4864,7 +4864,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('class' => 'year'));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('class' => 'year'));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
 			array('option' => array('value' => '')),
@@ -4880,7 +4880,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
@@ -4894,7 +4894,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, false);
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
@@ -4910,7 +4910,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, false, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
@@ -4924,7 +4924,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, 2007);
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
@@ -4940,7 +4940,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, 2007, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007', 'selected' => 'selected')),
@@ -4954,7 +4954,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2008, 2007, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false, 'value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
@@ -4971,7 +4971,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2008, null, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
@@ -4989,7 +4989,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array();
 		$this->Form->create('Contact');
-		$result = $this->Form->year('published', 2006, 2008, null, array('empty' => false));
+		$result = $this->Form->year('published', 2006, 2008, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
