@@ -874,14 +874,17 @@ class FormHelper extends AppHelper {
 				unset($options['options']);
 				$input = $this->select($fieldName, $list, $options);
 			break;
-			case 'time':
-				$input = $this->dateTime($fieldName, null, $timeFormat, $selected, $options);
+            case 'time':
+                $options['value'] = $selected;
+				$input = $this->dateTime($fieldName, null, $timeFormat, $options);
 			break;
 			case 'date':
-				$input = $this->dateTime($fieldName, $dateFormat, null, $selected, $options);
+                $options['value'] = $selected;
+				$input = $this->dateTime($fieldName, $dateFormat, null, $options);
 			break;
 			case 'datetime':
-				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $selected, $options);
+                $options['value'] = $selected;
+				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
 			break;
 			case 'textarea':
 				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
@@ -1762,46 +1765,40 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD.
  * @param string $timeFormat 12, 24.
- * @param string $selected Option which is selected.
  * @param string $attributes array of Attributes
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @access public
  * @link http://book.cakephp.org/view/1418/dateTime
  */
-	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $selected = null, $attributes = array()) {
-        $attributes += array('empty' => true);
+	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $attributes = array()) {
+        $attributes += array('empty' => true, 'value' => null);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
-		if (empty($selected)) {
-			$selected = $this->value($attributes, $fieldName);
-			if (isset($selected['value'])) {
-				$selected = $selected['value'];
-			} else {
-				$selected = null;
-			}
+		if (empty($attributes['value'])) {
+			$attributes['value'] = $this->value($fieldName);
 		}
 
-		if ($selected === null && $attributes['empty'] != true) {
-			$selected = time();
+		if ($attributes['value'] === null && $attributes['empty'] != true) {
+			$attributes['value'] = time();
 		}
 
-		if (!empty($selected)) {
-			if (is_array($selected)) {
-				extract($selected);
+		if (!empty($attributes['value'])) {
+			if (is_array($attributes['value'])) {
+				extract($attributes['value']);
 			} else {
-				if (is_numeric($selected)) {
-					$selected = strftime('%Y-%m-%d %H:%M:%S', $selected);
+				if (is_numeric($attributes['value'])) {
+					$attributes['value'] = strftime('%Y-%m-%d %H:%M:%S', $attributes['value']);
 				}
 				$meridian = 'am';
-				$pos = strpos($selected, '-');
+				$pos = strpos($attributes['value'], '-');
 				if ($pos !== false) {
-					$date = explode('-', $selected);
+					$date = explode('-', $attributes['value']);
 					$days = explode(' ', $date[2]);
 					$day = $days[0];
 					$month = $date[1];
 					$year = $date[0];
 				} else {
-					$days[1] = $selected;
+					$days[1] = $attributes['value'];
 				}
 
 				if (!empty($timeFormat)) {

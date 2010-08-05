@@ -3858,7 +3858,7 @@ class FormHelperTest extends CakeTestCase {
 	function testDateTime() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array('empty' => false));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
 		$now = strtotime('now');
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
@@ -3944,7 +3944,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', false);
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -3984,7 +3984,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '');
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4024,7 +4024,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('interval' => 5));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4073,7 +4073,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('minuteInterval' => 5));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('minuteInterval' => 5, 'value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4164,8 +4164,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$this->Form->request->data['Model']['field'] = date('Y') . '-01-01 00:00:00';
-		$now = strtotime($this->Form->request->data['Model']['field']);
-		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array('empty' => false));
+		$now = strtotime($this->Form->data['Model']['field']);
+		$result = $this->Form->dateTime('Model.field', 'DMY', '12', array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			$daysRegex,
@@ -4211,7 +4211,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$selected = strtotime('2008-10-26 10:33:00');
-		$result = $this->Form->dateTime('Model.field', 'DMY', '12', $selected);
+		$result = $this->Form->dateTime('Model.field', 'DMY', '12', array('value' => $selected));
 		$this->assertPattern('/<option[^<>]+value="2008"[^<>]+selected="selected"[^>]*>2008<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="10"[^<>]+selected="selected"[^>]*>10<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="26"[^<>]+selected="selected"[^>]*>26<\/option>/', $result);
@@ -4366,7 +4366,7 @@ class FormHelperTest extends CakeTestCase {
 				'meridian' => ''
 			)
 		);
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array('empty' => false));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
 	}
 
 /**
