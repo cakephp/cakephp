@@ -681,7 +681,7 @@ class FormHelperTest extends CakeTestCase {
 		ClassRegistry::addObject('Contact', new Contact());
 		ClassRegistry::addObject('ContactNonStandardPk', new ContactNonStandardPk());
 		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
-		ClassRegistry::addObject('UserForm', new UserForm());
+		ClassRegistry::addObject('User', new UserForm());
 		ClassRegistry::addObject('ValidateItem', new ValidateItem());
 		ClassRegistry::addObject('ValidateUser', new ValidateUser());
 		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
@@ -707,14 +707,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
-		ClassRegistry::removeObject('Contact');
-		ClassRegistry::removeObject('ContactNonStandardPk');
-		ClassRegistry::removeObject('ContactTag');
-		ClassRegistry::removeObject('OpenidUrl');
-		ClassRegistry::removeObject('UserForm');
-		ClassRegistry::removeObject('ValidateItem');
-		ClassRegistry::removeObject('ValidateUser');
-		ClassRegistry::removeObject('ValidateProfile');
+		ClassRegistry::flush();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
 		Configure::write('Security.salt', $this->oldSalt);
 	}
@@ -1308,8 +1301,8 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormValidationAssociated() {
-		$this->UserForm =& ClassRegistry::getObject('UserForm');
-		$this->UserForm->OpenidUrl =& ClassRegistry::getObject('OpenidUrl');
+		$this->UserForm = ClassRegistry::getObject('UserForm');
+		$this->UserForm->OpenidUrl = ClassRegistry::getObject('OpenidUrl');
 
 		$data = array(
 			'UserForm' => array('name' => 'user'),
@@ -1353,8 +1346,8 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormValidationAssociatedFirstLevel() {
-		$this->ValidateUser =& ClassRegistry::getObject('ValidateUser');
-		$this->ValidateUser->ValidateProfile =& ClassRegistry::getObject('ValidateProfile');
+		$this->ValidateUser = ClassRegistry::getObject('ValidateUser');
+		$this->ValidateUser->ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 
 		$data = array(
 			'ValidateUser' => array('name' => 'mariano'),
@@ -1395,9 +1388,9 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testFormValidationAssociatedSecondLevel() {
-		$this->ValidateUser =& ClassRegistry::getObject('ValidateUser');
-		$this->ValidateUser->ValidateProfile =& ClassRegistry::getObject('ValidateProfile');
-		$this->ValidateUser->ValidateProfile->ValidateItem =& ClassRegistry::getObject('ValidateItem');
+		$this->ValidateUser = ClassRegistry::getObject('ValidateUser');
+		$this->ValidateUser->ValidateProfile = ClassRegistry::getObject('ValidateProfile');
+		$this->ValidateUser->ValidateProfile->ValidateItem = ClassRegistry::getObject('ValidateItem');
 
 		$data = array(
 			'ValidateUser' => array('name' => 'mariano'),

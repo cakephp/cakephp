@@ -105,7 +105,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (ClassRegistry::isKeySet($model)) {
-			$object =& ClassRegistry::getObject($model);
+			$object = ClassRegistry::getObject($model);
 		}
 
 		if (!empty($object)) {
