@@ -5958,18 +5958,18 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('User.stuff');
+		$result = $this->Form->input('UserForm.stuff');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserStuff'),
+			'label' => array('for' => 'UserFormStuff'),
 			'Stuff',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[User][stuff]',
-				'id' => 'UserStuff', 'maxlength' => 10
+				'type' => 'text', 'name' => 'data[UserForm][stuff]',
+				'id' => 'UserFormStuff', 'maxlength' => 10
 			),
 			'/div'
-		);
+        );
 		$this->assertTags($result, $expected, true);
 	}
 

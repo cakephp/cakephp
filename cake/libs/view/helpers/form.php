@@ -718,7 +718,9 @@ class FormHelper extends AppHelper {
 			if (isset($options['options'])) {
 				$options['type'] = 'select';
 			} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
-				$options['type'] = 'password';
+                $options['type'] = 'password';
+            } elseif (isset($options['checked'])) {
+                $options['type'] = 'checkbox';
 			} elseif (isset($this->fieldset[$modelKey]['fields'][$fieldKey])) {
 				$fieldDef = $this->fieldset[$modelKey]['fields'][$fieldKey];
 				$type = $fieldDef['type'];
@@ -772,7 +774,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$autoLength = (!array_key_exists('maxlength', $options) && isset($fieldDef['length']));
-		if ($autoLength && $options['type'] == 'text') {
+        if ($autoLength && $options['type'] == 'text') {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		if ($autoLength && $fieldDef['type'] == 'float') {
