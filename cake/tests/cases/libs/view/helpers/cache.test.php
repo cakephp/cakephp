@@ -382,6 +382,42 @@ class CacheHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test with named and pass args.
+ *
+ * @return void
+ */
+	function testCacheWithNamedAndPassedArgs() {
+		Router::reload();
+
+		$this->Controller->cache_parsing();
+		$this->Controller->params = array(
+			'controller' => 'cache_test',
+			'action' => 'cache_parsing',
+			'url' => array(),
+			'pass' => array(1, 2),
+			'named' => array(
+				'name' => 'mark',
+				'ice' => 'cream'
+			)
+		);
+		$this->Controller->cacheAction = array(
+			'cache_parsing' => 21600
+		);
+		$this->Controller->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
+		$this->Controller->action = 'cache_parsing';
+		
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cache_test_cache_parsing_1_2_name_mark_ice_cream.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
+	}
+
+/**
  * test that custom routes are respected when generating cache files.
  *
  * @return void
