@@ -869,10 +869,10 @@ class FormHelper extends AppHelper {
 				$input = $this->file($fieldName, $options);
 			break;
 			case 'select':
-				$options += array('options' => array());
+				$options += array('options' => array(), 'value' => $selected);
 				$list = $options['options'];
 				unset($options['options']);
-				$input = $this->select($fieldName, $list, $selected, $options);
+				$input = $this->select($fieldName, $list, $options);
 			break;
 			case 'time':
 				$input = $this->dateTime($fieldName, null, $timeFormat, $selected, $options);
@@ -1399,14 +1399,12 @@ class FormHelper extends AppHelper {
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
  *    SELECT element
- * @param mixed $selected The option selected by default.  If null, the default value
- *   from POST data will be used when available.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @access public
  * @link http://book.cakephp.org/view/1430/select
  */
-	public function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
+	public function select($fieldName, $options = array(), $attributes = array()) {
 		$select = array();
 		$showParents = false;
 		$escapeOptions = true;
@@ -1440,10 +1438,6 @@ class FormHelper extends AppHelper {
 		if (in_array('showParents', $attributes)) {
 			$showParents = true;
 			unset($attributes['showParents']);
-		}
-
-		if (!isset($selected)) {
-			$selected = $attributes['value'];
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
@@ -1485,7 +1479,7 @@ class FormHelper extends AppHelper {
 
 		$select = array_merge($select, $this->__selectOptions(
 			array_reverse($options, true),
-			$selected,
+			$attributes['value'],
 			array(),
 			$showParents,
 			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'])
@@ -1513,14 +1507,14 @@ class FormHelper extends AppHelper {
  */
 	public function day($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$selected = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
+		$attributes['value'] = $this->__dateTimeSelected('day', $fieldName, $selected, $attributes);
 
-		if (strlen($selected) > 2) {
-			$selected = date('d', strtotime($selected));
-		} elseif ($selected === false) {
-			$selected = null;
+		if (strlen($attributes['value']) > 2) {
+			$attributes['value'] = date('d', strtotime($attributes['value']));
+		} elseif ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
-		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $selected, $attributes);
+		return $this->select($fieldName . ".day", $this->__generateOptions('day'), $attributes);
 	}
 
 /**
@@ -1571,10 +1565,11 @@ class FormHelper extends AppHelper {
 		if (isset($attributes['orderYear'])) {
 			$yearOptions['order'] = $attributes['orderYear'];
 			unset($attributes['orderYear']);
-		}
+        }
+        $attributes['value'] = $selected;
 		return $this->select(
 			$fieldName . '.year', $this->__generateOptions('year', $yearOptions),
-			$selected, $attributes
+			$attributes
 		);
 	}
 
@@ -1597,12 +1592,12 @@ class FormHelper extends AppHelper {
  */
 	public function month($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$selected = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
+		$attributes['value'] = $this->__dateTimeSelected('month', $fieldName, $selected, $attributes);
 
-		if (strlen($selected) > 2) {
-			$selected = date('m', strtotime($selected));
-		} elseif ($selected === false) {
-			$selected = null;
+		if (strlen($attributes['value']) > 2) {
+			$attributes['value'] = date('m', strtotime($attributes['value']));
+		} elseif ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
 		$defaults = array('monthNames' => true);
 		$attributes = array_merge($defaults, (array) $attributes);
@@ -1612,7 +1607,7 @@ class FormHelper extends AppHelper {
 		return $this->select(
 			$fieldName . ".month",
 			$this->__generateOptions('month', array('monthNames' => $monthNames)),
-			$selected, $attributes
+			$attributes
 		);
 	}
 
@@ -1634,21 +1629,21 @@ class FormHelper extends AppHelper {
  */
 	public function hour($fieldName, $format24Hours = false, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$selected = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
+		$attributes['value'] = $this->__dateTimeSelected('hour', $fieldName, $selected, $attributes);
 
-		if (strlen($selected) > 2) {
+		if (strlen($attributes['value']) > 2) {
 			if ($format24Hours) {
-				$selected = date('H', strtotime($selected));
+				$attributes['value'] = date('H', strtotime($attributes['value']));
 			} else {
-				$selected = date('g', strtotime($selected));
+				$attributes['value'] = date('g', strtotime($attributes['value']));
 			}
-		} elseif ($selected === false) {
-			$selected = null;
+		} elseif ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
 		return $this->select(
 			$fieldName . ".hour",
 			$this->__generateOptions($format24Hours ? 'hour24' : 'hour'),
-			$selected, $attributes
+			$attributes
 		);
 	}
 
@@ -1669,12 +1664,12 @@ class FormHelper extends AppHelper {
  */
 	public function minute($fieldName, $selected = null, $attributes = array()) {
 		$attributes += array('empty' => true);
-		$selected = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
+		$attributes['value'] = $this->__dateTimeSelected('min', $fieldName, $selected, $attributes);
 
-		if (strlen($selected) > 2) {
-			$selected = date('i', strtotime($selected));
-		} elseif ($selected === false) {
-			$selected = null;
+		if (strlen($attributes['value']) > 2) {
+			$attributes['value'] = date('i', strtotime($attributes['value']));
+		} elseif ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
 		$minuteOptions = array();
 
@@ -1684,7 +1679,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->select(
 			$fieldName . ".min", $this->__generateOptions('minute', $minuteOptions),
-			$selected, $attributes
+			$attributes
 		);
 	}
 
@@ -1732,28 +1727,28 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1422/meridian
  */
 	public function meridian($fieldName, $selected = null, $attributes = array()) {
-		$attributes += array('empty' => true);
-		if ((empty($selected) || $selected === true) && $value = $this->value($fieldName)) {
+        $attributes += array('empty' => true, 'value' => $selected);
+		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
 			if (is_array($value)) {
 				extract($value);
-				$selected = $meridian;
+				$attributes['value'] = $meridian;
 			} else {
 				if (empty($value)) {
 					if (!$attribues['empty']) {
-						$selected = date('a');
+						$attributes['value'] = date('a');
 					}
 				} else {
-					$selected = date('a', strtotime($value));
+					$attributes['value'] = date('a', strtotime($value));
 				}
 			}
 		}
 
-		if ($selected === false) {
-			$selected = null;
+		if ($attributes['value'] === false) {
+			$attributes['value'] = null;
 		}
 		return $this->select(
 			$fieldName . ".meridian", $this->__generateOptions('meridian'),
-			$selected, $attributes
+			$attributes
 		);
 	}
 

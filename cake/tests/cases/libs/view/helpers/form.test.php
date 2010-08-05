@@ -2479,7 +2479,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectAsCheckbox() {
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => 'checkbox'));
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array('multiple' => 'checkbox', 'value' => array(0, 1)));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
@@ -2500,7 +2500,7 @@ class FormHelperTest extends CakeTestCase {
 			'third',
 			'/label',
 			'/div',
-		);
+        );
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), null, array('multiple' => 'checkbox'));
@@ -3066,7 +3066,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
-			null, array('empty' => false)
+			array('empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
@@ -3083,7 +3083,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.field',
 			array('first' => 'first "html" <chars>', 'second' => 'value'),
-			null, array('escape' => false, 'empty' => false)
+			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
@@ -3101,7 +3101,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.contact_id',
 			array('228' => '228 value', '228-1' => '228-1 value', '228-2' => '228-2 value'),
-			null, array('escape' => false, 'empty' => 'pick something')
+			array('escape' => false, 'empty' => 'pick something')
 		);
 
 		$expected = array(
@@ -3163,7 +3163,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectWithNullAttributes() {
-		$result = $this->Form->select('Model.field', array('first', 'second'), null, array('empty' => false));
+		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '0')),
@@ -3190,7 +3190,7 @@ class FormHelperTest extends CakeTestCase {
 			'Model.field',
 			array(1 => 'One', 2 => 'Two', 'Three' => array(
 				3 => 'Three', 4 => 'Four', 5 => 'Five'
-			)), null, array('empty' => false)
+			)), array('empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]',
@@ -3215,7 +3215,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.field',
-			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')), null,
+			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')),
 			array('showParents' => true, 'empty' => false)
 		);
 
@@ -3251,7 +3251,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelectMultiple() {
 		$options = array('first', 'second', 'third');
 		$result = $this->Form->select(
-			'Model.multi_field', $options, null, array('multiple' => true)
+			'Model.multi_field', $options, array('multiple' => true)
 		);
 		$expected = array(
 			'input' => array(
@@ -3275,7 +3275,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', $options, null, array('multiple' => 'multiple')
+			'Model.multi_field', $options, array('multiple' => 'multiple')
 		);
 		$expected = array(
 			'input' => array(
@@ -3299,7 +3299,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', $options, array(0, 1), array('multiple' => true)
+			'Model.multi_field', $options, array('multiple' => true, 'value' => array(0, 1))
 		);
 		$expected = array(
 			'input' => array(
@@ -3380,7 +3380,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelectMultipleCheckboxes() {
 		$result = $this->Form->select(
 			'Model.multi_field',
-			array('first', 'second', 'third'), null,
+			array('first', 'second', 'third'),
 			array('multiple' => 'checkbox')
 		);
 
@@ -3420,7 +3420,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.multi_field',
-			array('a' => 'first', 'b' => 'second', 'c' => 'third'), null,
+			array('a' => 'first', 'b' => 'second', 'c' => 'third'),
 			array('multiple' => 'checkbox')
 		);
 		$expected = array(
@@ -3458,7 +3458,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', array('1' => 'first'), null, array('multiple' => 'checkbox')
+			'Model.multi_field', array('1' => 'first'), array('multiple' => 'checkbox')
 		);
 		$expected = array(
 			'input' => array(
@@ -3478,7 +3478,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array('Model' => array('tags' => array(1)));
 		$result = $this->Form->select(
-			'Model.tags', array('1' => 'first', 'Array' => 'Array'), null, array('multiple' => 'checkbox')
+			'Model.tags', array('1' => 'first', 'Array' => 'Array'), array('multiple' => 'checkbox')
 		);
 		$expected = array(
 			'input' => array(
@@ -5675,7 +5675,7 @@ class FormHelperTest extends CakeTestCase {
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
 
 		$this->Form->create();
-		$result = $this->Form->select('People.People', $options, null, array('multiple' => true));
+		$result = $this->Form->select('People.People', $options, array('multiple' => true));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => '', 'id' => 'PeoplePeople_'),
 			'select' => array(
@@ -6313,7 +6313,6 @@ class FormHelperTest extends CakeTestCase {
 				'berts_son_1' => 'Albert',
 				'berts_son_2' => 'Bertie')
 			),
-			null,
 			array('showParents' => true, 'empty' => false)
 		);
 
@@ -6352,7 +6351,7 @@ class FormHelperTest extends CakeTestCase {
 			3 => 'Three', 4 => 'Four', 5 => 'Five'
 		));
 		$result = $this->Form->select(
-			'Model.field', $options, null, array('showParents' => true, 'empty' => false)
+			'Model.field', $options, array('showParents' => true, 'empty' => false)
 		);
 
 		$expected = array(
