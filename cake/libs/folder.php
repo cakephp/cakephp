@@ -489,6 +489,7 @@ class Folder extends Object {
 			$this->__errors[] = sprintf(__('%s is a file', true), $pathname);
 			return false;
 		}
+		$pathname = rtrim($pathname, DS);
 		$nextPathname = substr($pathname, 0, strrpos($pathname, DS));
 
 		if ($this->create($nextPathname, $mode)) {

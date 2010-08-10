@@ -108,7 +108,8 @@ class FolderTest extends CakeTestCase {
 	function testCreateWithTrailingDs() {
 		$folder =& new Folder(TMP);
 		$path = TMP . 'tests' . DS . 'trailing' . DS . 'dir' . DS;
-		$folder->create($path);
+		$result = $folder->create($path);
+		$this->assertTrue($result);
 
 		$this->assertTrue(is_dir($path), 'Folder was not made');
 
