@@ -122,7 +122,7 @@ class DboMysqlBase extends DboSource {
 			return $cache;
 		}
 		$fields = false;
-		$cols = $this->query('DESCRIBE ' . $this->fullTableName($model));
+		$cols = $this->query('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
 
 		foreach ($cols as $column) {
 			$colKey = array_keys($column);
@@ -139,11 +139,23 @@ class DboMysqlBase extends DboSource {
 				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
 					$fields[$column[0]['Field']]['key'] = $this->index[$column[0]['Key']];
 				}
+				foreach ($this->fieldParameters as $name => $value) {
+					if (!empty($column[0][$value['column']])) {
+						$fields[$column[0]['Field']][$name] = $column[0][$value['column']];
+					}
+				}
+				if (isset($fields[$column[0]['Field']]['collate'])) {
+					$charset = $this->getCharsetName($fields[$column[0]['Field']]['collate']);
+					if ($charset) {
+						$fields[$column[0]['Field']]['charset'] = $charset;
+					}
+				}
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
 		return $fields;
 	}
+
 /**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *

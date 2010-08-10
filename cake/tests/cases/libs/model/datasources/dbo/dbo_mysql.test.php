@@ -774,7 +774,41 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->fields($model, null, array('data', 'other__field'));
 		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  BinaryTest_$_other__field');
 		$this->assertEqual($result, $expected);
-		
+	}
+
+/**
+ * test that a describe() gets additional fieldParameters
+ *
+ * @return void
+ */
+	function testDescribeGettingFieldParameters() {
+		$schema =& new CakeSchema(array(
+			'connection' => 'test_suite',
+			'testdescribes' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'stringy' => array(
+					'type' => 'string',
+					'null' => true,
+					'charset' => 'cp1250',
+					'collate' => 'cp1250_general_ci',
+				),
+				'other_col' => array(
+					'type' => 'string',
+					'null' => false,
+					'charset' => 'latin1',
+					'comment' => 'Test Comment'
+				)
+			)
+		));
+		$this->db->execute($this->db->createSchema($schema));
+
+		$model =& new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
+		$result = $this->db->describe($model);
+		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
+		$this->assertEqual($result['stringy']['charset'], 'cp1250');
+		$this->assertEqual($result['other_col']['comment'], 'Test Comment');
+
+		$this->db->execute($this->db->dropSchema($schema));
 	}
 
 }
