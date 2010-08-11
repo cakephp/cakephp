@@ -95,7 +95,6 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to initialize
  * @return void
- * @access public
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
 	public function initialize(&$controller) { }
@@ -105,7 +104,6 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to startup
  * @return void
- * @access public
  * @link http://book.cakephp.org/view/998/MVC-Class-Access-Within-Components
  */
 	public function startup(&$controller) { }
@@ -116,7 +114,6 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to beforeRender
  * @return void
- * @access public
  */
 	public function beforeRender(&$controller) { }
 
@@ -125,32 +122,27 @@ class Component extends Object {
  *
  * @param object $controller Controller with components to shutdown
  * @return void
- * @access public
  */
 	function shutdown(&$controller) { }
 
 /**
- * Called before Controller::redirect().
+ * Called before Controller::redirect().  Allows you to replace the url that will
+ * be redirected to with a new url. The return of this method can either be an array or a string.
+ *
+ * If the return is an array and contains a 'url' key.  You may also supply the following:
+ * 
+ * - `status` The status code for the redirect
+ * - `exit` Whether or not the redirect should exit.
+ *
+ * If your response is a string or an array that does not contain a 'url' key it will 
+ * be used as the new url to redirect to.
  *
  * @param object $controller Controller with components to beforeRedirect
- * @return void
+ * @param mixed $url Either the string or url array that is being redirected to.
+ * @param int $status The status code of the redirect
+ * @param bool $exit Will the script exit.
+ * @return mixed Either an array or null.
  */
-	public function beforeRedirect(&$controller, $url, $status = null, $exit = true) {
-		$response = array();
-
-		foreach ($this->_primary as $name) {
-			$component =& $this->_loaded[$name];
-
-			if ($component->enabled === true && method_exists($component, 'beforeRedirect')) {
-				$resp = $component->beforeRedirect($controller, $url, $status, $exit);
-				if ($resp === false) {
-					return false;
-				}
-				$response[] = $resp;
-			}
-		}
-		return $response;
-	}
-
+	public function beforeRedirect(&$controller, $url, $status = null, $exit = true) {}
 
 }

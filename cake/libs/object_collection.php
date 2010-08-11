@@ -54,7 +54,9 @@ abstract class ObjectCollection {
  *
  * - `breakOn` Set to the value or values you want the callback propagation to stop on.
  *    Defaults to `false`
- * - `break` Set to true to enabled breaking.
+ * - `break` Set to true to enabled breaking. Defaults to `false`.
+ * - `collectReturn` Set to true to collect the return of each object into an array.
+ *    This array of return values will be returned from the trigger() call. Defaults to `false`.
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
