@@ -193,10 +193,9 @@ class OrangeComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize(&$controller, $settings) {
+	function initialize(&$controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
-		$this->settings = $settings;
 	}
 
 /**
@@ -384,28 +383,17 @@ class ComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSomethingReferencingEmailComponent() {
-		$this->markTestIncomplete('Will need to be updated');
-
-		$Controller =& new ComponentTestController();
+		$Controller = new ComponentTestController();
 		$Controller->components = array('SomethingWithEmail');
 		$Controller->uses = false;
 		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
+		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();
-		$Controller->Component->startup($Controller);
+		$Controller->Components->trigger('startup', array(&$Controller));
 
-		$this->assertTrue(is_a(
-			$Controller->SomethingWithEmail,
-			'SomethingWithEmailComponent'
-		));
-		$this->assertTrue(is_a(
-			$Controller->SomethingWithEmail->Email,
-			'EmailComponent'
-		));
-		$this->assertTrue(is_a(
-			$Controller->SomethingWithEmail->Email->Controller,
-			'ComponentTestController'
-		));
+		$this->assertType('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
+		$this->assertType('EmailComponent', $Controller->SomethingWithEmail->Email);
+		$this->assertType('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
 	}
 
 /**
