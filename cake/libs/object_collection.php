@@ -29,7 +29,7 @@ abstract class ObjectCollection {
 	protected $_enabled = array();
 
 /**
- * A hash of loaded helpers, indexed by the classname
+ * A hash of loaded objects, indexed by name
  *
  * @var array
  */
