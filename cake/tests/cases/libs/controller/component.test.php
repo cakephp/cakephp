@@ -409,54 +409,6 @@ class ComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that components can modify values from beforeRedirect
- *
- * @return void
- */
-	function testBeforeRedirectModification() {
-		$this->markTestIncomplete('This test needs to be implemented');
-		/*
-		*$MockController = new MockController();
-		$MockController->components = array('MockTest');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://book.cakephp.org'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://cakephp.org', 301, false);
-
-		$MockController = new MockController();
-		$MockController->components = array('MockTest');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', false);
-		$MockController->expectNever('header');
-		$MockController->redirect('http://cakephp.org', 301, false);
-
-		$MockController = new MockController();
-		$MockController->components = array('MockTest', 'MockTestB');
-		$MockController->Component = new Component();
-		$MockController->Component->init($MockController);
-		$MockController->MockTest->setReturnValue('beforeRedirect', 'http://book.cakephp.org');
-		$MockController->MockTestB->setReturnValue('beforeRedirect', 'http://bakery.cakephp.org');
-		$MockController->expectAt(0, 'header', array('HTTP/1.1 301 Moved Permanently'));
-		$MockController->expectAt(1, 'header', array('Location: http://bakery.cakephp.org'));
-		$MockController->expectCallCount('header', 2);
-		$MockController->redirect('http://cakephp.org', 301, false);
-		*/
-	}
-
-/**
- * test that components can pass modifying values from beforeRedirect
- *
- * @return void
- */
-	function testBeforeRedirectPass() {
-		$this->markTestIncomplete('This test needs to be implemented');
-	}
-
-/**
  * Test that SessionComponent doesn't get added if its already in the components array.
  *
  * @return void

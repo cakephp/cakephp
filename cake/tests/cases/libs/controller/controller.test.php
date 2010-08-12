@@ -1110,6 +1110,38 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * test that beforeRedirect callback returnning null doesn't affect things.
+ *
+ * @return void
+ */
+	function testRedirectBeforeRedirectModifyingParamsArrayReturn() {
+		$Controller = $this->getMock('Controller', array('header', '_stop'));
+		$Controller->Components = $this->getMock('ComponentCollection');
+
+		$return = array(
+			array(
+				'url' => 'http://example.com/test/1',
+				'exit' => false,
+				'status' => 302
+			),
+			array(
+				'url' => 'http://example.com/test/2',
+			),
+		);
+		$Controller->Components->expects($this->once())->method('trigger')
+			->will($this->returnValue($return));
+
+		$Controller->expects($this->at(0))->method('header')
+			->with('HTTP/1.1 302 Found');
+
+		$Controller->expects($this->at(1))->method('header')
+			->with('Location: http://example.com/test/2');
+
+		$Controller->expects($this->never())->method('_stop');
+		$Controller->redirect('http://cakephp.org', 301);
+	}
+
+/**
  * testMergeVars method
  *
  * @access public
