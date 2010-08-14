@@ -34,4 +34,4 @@ php -q "%lib%cake.php" -working "%CD%" %*
 
 echo.
 
-@exit %ERRORLEVEL%
+exit /B %ERRORLEVEL%
