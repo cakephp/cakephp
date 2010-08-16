@@ -106,9 +106,8 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
  * @see http://php.net/manual/en/memcache.set.php
- * @access public
  */
-	function write($key, &$value, $duration) {
+	public function write($key, &$value, $duration) {
 		return $this->__Memcache->set($key, $value, $this->settings['compress'], $duration);
 	}
 
@@ -118,7 +117,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
-	function read($key) {
+	public function read($key) {
 		return $this->__Memcache->get($key);
 	}
 

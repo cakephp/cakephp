@@ -498,7 +498,6 @@ class CakeSession {
  * Helper method to destroy invalid sessions.
  *
  * @return void
-<<<<<<< HEAD
  */
 	public static function destroy() {
 		if (self::started()) {
@@ -508,16 +507,6 @@ class CakeSession {
 		self::$id = null;
 		self::start();
 		self::renew();
-=======
- * @access public
- */
-	function destroy() {
-		$_SESSION = null;
-		$this->__construct($this->path);
-		$this->start();
-		$this->renew();
-		$this->_checkValid();
->>>>>>> 1.3
 	}
 
 /**

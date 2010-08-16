@@ -186,7 +186,7 @@ class Dispatcher extends Object {
 
 		$methods = array_flip($controller->methods);
 
-		if (!isset($methods[strtolower($params['action'])])) {
+		if (!isset($methods[$params['action']])) {
 			if ($controller->scaffold !== false) {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $params);

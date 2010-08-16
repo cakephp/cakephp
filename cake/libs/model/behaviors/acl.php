@@ -67,7 +67,7 @@ class AclBehavior extends ModelBehavior {
  * @return array
  * @link http://book.cakephp.org/view/1322/node
  */
-	function node(&$model, $ref = null) {
+	public function node(&$model, $ref = null) {
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (empty($ref)) {
 			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
@@ -81,7 +81,7 @@ class AclBehavior extends ModelBehavior {
  * @param boolean $created True if this is a new record
  * @return void
  */
-	function afterSave(&$model, $created) {
+	public function afterSave(&$model, $created) {
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		$parent = $model->parentNode();
 		if (!empty($parent)) {
@@ -105,7 +105,7 @@ class AclBehavior extends ModelBehavior {
  *
  * @return void
  */
-	function afterDelete(&$model) {
+	public function afterDelete(&$model) {
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {
