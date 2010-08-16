@@ -203,12 +203,13 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertEqual(count($Fixture->records), count($Source->records));
 		$Fixture->create(ConnectionManager::getDataSource('fixture_test_suite'));
 
-		$Fixture2 = new CakeTestFixtureImportFixture();
-		$Fixture2->fields = $Fixture->records = null;
-		$Fixture2->import = array('model' => 'FixtureImportTestModel', 'connection' => 'fixture_test_suite');
-		$Fixture2->init();
-		$this->assertEqual(array_keys($Fixture2->fields), array('id', 'name', 'created'));
-
+		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture->fields = $Fixture->records = $Fixture->table = null;
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
+		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+		$this->assertEqual($Fixture->table, 'fixture_tests');
+		
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
@@ -217,13 +218,42 @@ class CakeTestFixtureTest extends CakeTestCase {
 	}
 
 /**
+ * test that fixtures don't duplicate the test db prefix.
+ *
+ * @return void
+ */
+	function testInitDbPrefixDuplication() {
+		$this->_initDb();
+		$backPrefix = $this->db->config['prefix'];
+		$this->db->config['prefix'] = 'cake_fixture_test_';
+
+		$Source =& new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
+
+		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture->fields = $Fixture->records = $Fixture->table = null;
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
+
+		$Fixture->init();
+		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
+		$this->assertEqual($Fixture->table, 'fixture_tests');
+
+		$Source->drop($this->db);
+		$this->db->config['prefix'] = $backPrefix;
+	}
+
+/**
  * test init with a model that has a tablePrefix declared.
  *
  * @return void
  */
 	function testInitModelTablePrefix() {
-		$db = ConnectionManager::getDataSource('test_suite');
-
+		$this->_initDb();
+		$hasPrefix = !empty($this->db->config['prefix']);
+		if ($this->skipIf($hasPrefix, 'Cannot run this test, you have a database connection prefix.')) {
+			return;
+		}
 		$Source =& new CakeTestFixtureTestFixture();
 		$Source->create($db);
 		$Source->insert($db);

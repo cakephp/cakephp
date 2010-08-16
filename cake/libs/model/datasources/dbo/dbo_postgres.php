@@ -561,7 +561,7 @@ class DboPostgres extends DboSource {
 		$out = '';
 		$colList = array();
 		foreach ($compare as $curTable => $types) {
-			$indexes = array();
+			$indexes = $colList = array();
 			if (!$table || $table == $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
 				foreach ($types as $type => $column) {
@@ -629,7 +629,7 @@ class DboPostgres extends DboSource {
 				} else {
 					$out = '';
 				}
-				$out .= implode(";\n\t", $this->_alterIndexes($curTable, $indexes)) . ";";
+				$out .= implode(";\n\t", $this->_alterIndexes($curTable, $indexes));
 			}
 		}
 		return $out;

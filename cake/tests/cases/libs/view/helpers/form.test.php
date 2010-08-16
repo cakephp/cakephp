@@ -4240,6 +4240,25 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that datetime() and default values work.
+ *
+ * @return void
+ */
+	function testDatetimeWithDefault() {
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', null, array('value' => '2009-06-01 11:15:30'));
+		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
+
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', null, array(
+			'default' => '2009-06-01 11:15:30'
+		));
+		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
+		$this->assertPattern('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
+	}
+
+/**
  * testFormDateTimeMulti method
  *
  * test multiple datetime element generation

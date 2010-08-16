@@ -200,6 +200,26 @@ class StringTest extends CakeTestCase {
 		$result = String::insert('?-pended result', array('Pre'));
 		$expected = "Pre-pended result";
 		$this->assertEqual($result, $expected);
+
+		$string = 'switching :timeout / :timeout_count';
+		$expected = 'switching 5 / 10';
+		$result = String::insert($string, array('timeout' => 5, 'timeout_count' => 10));
+		$this->assertEqual($result, $expected);
+
+		$string = 'switching :timeout / :timeout_count';
+		$expected = 'switching 5 / 10';
+		$result = String::insert($string, array('timeout_count' => 10, 'timeout' => 5));
+		$this->assertEqual($result, $expected);
+
+		$string = 'switching :timeout_count by :timeout';
+		$expected = 'switching 10 by 5';
+		$result = String::insert($string, array('timeout' => 5, 'timeout_count' => 10));
+		$this->assertEqual($result, $expected);
+
+		$string = 'switching :timeout_count by :timeout';
+		$expected = 'switching 10 by 5';
+		$result = String::insert($string, array('timeout_count' => 10, 'timeout' => 5));
+		$this->assertEqual($result, $expected);
 	}
 
 /**

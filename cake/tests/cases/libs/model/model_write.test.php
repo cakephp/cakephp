@@ -3613,6 +3613,7 @@ class ModelWriteTest extends BaseModelTest {
 		);
 		$this->assertEqual($TestModel->Comment->validationErrors, $expected);
 	}
+
 /**
  * TestFindAllWithoutForeignKey
  *
@@ -3626,57 +3627,58 @@ class ModelWriteTest extends BaseModelTest {
 
 		$conditions = array('Group.name' => 'group one');
 
-        $ProductUpdateAll->bindModel(array(
+		$ProductUpdateAll->bindModel(array(
 			'belongsTo' => array(
 				'Group' => array('className' => 'GroupUpdateAll')
 			)
 		));
 
-        $ProductUpdateAll->belongsTo = array(
+		$ProductUpdateAll->belongsTo = array(
 			'Group' => array('className' => 'GroupUpdateAll', 'foreignKey' => 'group_id')
 		);
 
-        $results = $ProductUpdateAll->find('all', compact('conditions'));
+		$results = $ProductUpdateAll->find('all', compact('conditions'));
 		$this->assertTrue(!empty($results));
 
-        $ProductUpdateAll->bindModel(array('belongsTo'=>array('Group')));
-        $ProductUpdateAll->belongsTo = array(
-            'Group' => array(
+		$ProductUpdateAll->bindModel(array('belongsTo'=>array('Group')));
+		$ProductUpdateAll->belongsTo = array(
+			'Group' => array(
 				'className' => 'GroupUpdateAll',
 				'foreignKey' => false,
 				'conditions' => 'ProductUpdateAll.groupcode = Group.code'
 			));
 
-        $resultsFkFalse = $ProductUpdateAll->find('all', compact('conditions'));
-        $this->assertTrue(!empty($resultsFkFalse));
-        $expected = array(
-            '0' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 1,
-                    'name'  => 'product one',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)
-                ),
-            '1' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 2,
-                    'name'  => 'product two',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)
-                )
+		$resultsFkFalse = $ProductUpdateAll->find('all', compact('conditions'));
+		$this->assertTrue(!empty($resultsFkFalse));
+		$expected = array(
+			'0' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 1,
+					'name'	=> 'product one',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)
+				),
+			'1' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 2,
+					'name'	=> 'product two',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)
+				)
 
-            );
-        $this->assertEqual($results, $expected);
-        $this->assertEqual($resultsFkFalse, $expected);
-    }
+			);
+		$this->assertEqual($results, $expected);
+		$this->assertEqual($resultsFkFalse, $expected);
+	}
+
 /**
  * testProductUpdateAllWithForeignKey
  *
@@ -3684,7 +3686,7 @@ class ModelWriteTest extends BaseModelTest {
  * @access public
  * @return void
  */
-    function testProductUpdateAll() {
+	function testProductUpdateAll() {
 		$this->skipIf(
 			$this->db->config['driver'] == 'postgres',
 			'%s Currently, there is no way of doing joins in an update statement in postgresql'
@@ -3694,39 +3696,39 @@ class ModelWriteTest extends BaseModelTest {
 
 		$conditions = array('Group.name' => 'group one');
 
-        $ProductUpdateAll->bindModel(array('belongsTo' => array(
+		$ProductUpdateAll->bindModel(array('belongsTo' => array(
 			'Group' => array('className' => 'GroupUpdateAll')))
 		);
 
-        $ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
-        $results = $ProductUpdateAll->find('all', array(
+		$ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
+		$results = $ProductUpdateAll->find('all', array(
 			'conditions' => array('ProductUpdateAll.name' => 'new product')
 		));
-        $expected = array(
-            '0' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 1,
-                    'name'  => 'new product',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)
-                ),
-            '1' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 2,
-                    'name'  => 'new product',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)));
+		$expected = array(
+			'0' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 1,
+					'name'	=> 'new product',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)
+				),
+			'1' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 2,
+					'name'	=> 'new product',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)));
 
-        $this->assertEqual($results, $expected);
-    }
+		$this->assertEqual($results, $expected);
+	}
 
 /**
  * testProductUpdateAllWithoutForeignKey
@@ -3757,32 +3759,32 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 
-        $ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
-        $resultsFkFalse = $ProductUpdateAll->find('all', array('conditions' => array('ProductUpdateAll.name'=>'new product')));
-        $expected = array(
-            '0' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 1,
-                    'name'  => 'new product',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)
-                ),
-            '1' => array(
-                'ProductUpdateAll' => array(
-                    'id'  => 2,
-                    'name'  => 'new product',
-                    'groupcode'  => 120,
-                    'group_id'  => 1),
-                'Group' => array(
-                    'id' => 1,
-                    'name' => 'group one',
-                    'code' => 120)));
-        $this->assertEqual($resultsFkFalse, $expected);
-    }
+		$ProductUpdateAll->updateAll(array('name' => "'new product'"), $conditions);
+		$resultsFkFalse = $ProductUpdateAll->find('all', array('conditions' => array('ProductUpdateAll.name'=>'new product')));
+		$expected = array(
+			'0' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 1,
+					'name'	=> 'new product',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)
+				),
+			'1' => array(
+				'ProductUpdateAll' => array(
+					'id'  => 2,
+					'name'	=> 'new product',
+					'groupcode'	 => 120,
+					'group_id'	=> 1),
+				'Group' => array(
+					'id' => 1,
+					'name' => 'group one',
+					'code' => 120)));
+		$this->assertEqual($resultsFkFalse, $expected);
+	}
 
 /**
  * test that saveAll behaves like plain save() when suplied empty data

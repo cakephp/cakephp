@@ -1283,12 +1283,12 @@ class DispatcherTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testDispatch() {
+	public function testDispatchBasic() {
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
+		Configure::write('App.baseUrl', '/index.php');
 		$url = 'pages/home/param:value/param2:value2';
 
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1331,7 +1331,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertEqual('Timesheets', $controller->name);
 		$this->assertEqual('/timesheets/index.php', $Dispatcher->base);
 
-
 		$url = 'test_dispatch_pages/camelCased';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual('TestDispatchPages', $controller->name);
@@ -1353,15 +1352,22 @@ class DispatcherTest extends CakeTestCase {
 		));
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
+
 		$url = 'pages/home/param:value/param2:value2';
 
 		$url = array('controller' => 'pages', 'action' => 'display');
-		$controller = $Dispatcher->dispatch($url, array('pass' => array('home'), 'named' => array('param' => 'value', 'param2' => 'value2'), 'return' => 1));
+		$controller = $Dispatcher->dispatch($url, array(
+			'pass' => array('home'),
+			'named' => array('param' => 'value', 'param2' => 'value2'),
+			'return' => 1
+		));
 		$expected = 'Pages';
 		$this->assertEqual($expected, $controller->name);
 
 		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
+		
+		$this->assertEqual($Dispatcher->base . '/pages/display/home/param:value/param2:value2', $Dispatcher->here);
 	}
 
 /**

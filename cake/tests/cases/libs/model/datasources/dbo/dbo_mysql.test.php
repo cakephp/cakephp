@@ -673,6 +673,40 @@ class DboMysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test alterSchema on two tables.
+ *
+ * @return void
+ */
+	function testAlteringTwoTables() {
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
+	}
+
+/**
  * testReadTableParameters method
  *
  * @access public
@@ -749,7 +783,41 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->db->fields($model, null, array('data', 'other__field'));
 		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  BinaryTest_$_other__field');
 		$this->assertEqual($result, $expected);
-		
+	}
+
+/**
+ * test that a describe() gets additional fieldParameters
+ *
+ * @return void
+ */
+	function testDescribeGettingFieldParameters() {
+		$schema =& new CakeSchema(array(
+			'connection' => 'test_suite',
+			'testdescribes' => array(
+				'id' => array('type' => 'integer', 'key' => 'primary'),
+				'stringy' => array(
+					'type' => 'string',
+					'null' => true,
+					'charset' => 'cp1250',
+					'collate' => 'cp1250_general_ci',
+				),
+				'other_col' => array(
+					'type' => 'string',
+					'null' => false,
+					'charset' => 'latin1',
+					'comment' => 'Test Comment'
+				)
+			)
+		));
+		$this->db->execute($this->db->createSchema($schema));
+
+		$model =& new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
+		$result = $this->db->describe($model);
+		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
+		$this->assertEqual($result['stringy']['charset'], 'cp1250');
+		$this->assertEqual($result['other_col']['comment'], 'Test Comment');
+
+		$this->db->execute($this->db->dropSchema($schema));
 	}
 
 }

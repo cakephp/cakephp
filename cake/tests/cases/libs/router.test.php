@@ -1680,7 +1680,7 @@ class RouterTest extends CakeTestCase {
  */
 	function testUrlWritingWithPrefixesAndCustomRoutes() {
 		Router::connect(
-			'/admin/login', 
+			'/admin/login',
 			array('controller' => 'users', 'action' => 'login', 'prefix' => 'admin', 'admin' => true)
 		);
 		Router::setRequestInfo(array(
@@ -1897,9 +1897,7 @@ class RouterTest extends CakeTestCase {
 		App::objects('plugin', null, false);
 		Router::reload();
 
-		$plugins = App::objects('plugin');
-		$plugin = Inflector::underscore($plugins[0]);
-		$result = Router::url(array('plugin' => $plugin, 'controller' => 'js_file', 'action' => 'index'));
+		$result = Router::url(array('plugin' => 'plugin_js', 'controller' => 'js_file', 'action' => 'index'));
 		$this->assertEqual($result, '/plugin_js/js_file');
 
 		$result = Router::parse('/plugin_js/js_file');
@@ -1963,7 +1961,11 @@ class RouterTest extends CakeTestCase {
 			'action' => 'view',
 			'pass' => array(1),
 			'named' => array(),
-			'url' => array()
+			'url' => array(),
+			'autoRender' => 1,
+			'bare' => 1,
+			'return' => 1,
+			'requested' => 1
 		);
 		$result = Router::reverse($params);
 		$this->assertEqual($result, '/posts/view/1');
@@ -2081,6 +2083,27 @@ class CakeRouteTest extends CakeTestCase {
 		$this->assertPattern($result, '/test_plugin/posts/index');
 		$this->assertPattern($result, '/test_plugin/posts/edit/5');
 		$this->assertPattern($result, '/test_plugin/posts/edit/5/name:value/nick:name');
+	}
+
+/**
+ * test route names with - in them.
+ *
+ * @return void
+ */
+	function testHyphenNames() {
+		$route =& new CakeRoute('/articles/:date-from/:date-to', array(
+			'controller' => 'articles', 'action' => 'index'
+		));
+		$expected = array(
+			'controller' => 'articles',
+			'action' => 'index',
+			'date-from' => '2009-07-31',
+			'date-to' => '2010-07-31',
+			'named' => array(),
+			'pass' => array()
+		);
+		$result = $route->parse('/articles/2009-07-31/2010-07-31');
+		$this->assertEqual($result, $expected);
 	}
 
 /**
@@ -2294,7 +2317,6 @@ class CakeRouteTest extends CakeTestCase {
 		$result = $route->match(array('plugin' => 'fo', 'controller' => 'posts', 'action' => 'edit', 'id' => 1));
 		$this->assertFalse($result);
 
-
 		$route =& new CakeRoute('/admin/subscriptions/:action/*', array(
 			'controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'
 		));
@@ -2302,6 +2324,20 @@ class CakeRouteTest extends CakeTestCase {
 		$url = array('controller' => 'subscribe', 'admin' => true, 'action' => 'edit', 1);
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
+		$this->assertEqual($result, $expected);
+
+		$route =& new CakeRoute('/articles/:date-from/:date-to', array(
+			'controller' => 'articles', 'action' => 'index'
+		));
+		$url = array(
+			'controller' => 'articles',
+			'action' => 'index',
+			'date-from' => '2009-07-31',
+			'date-to' => '2010-07-31'
+		);
+
+		$result = $route->match($url);
+		$expected = '/articles/2009-07-31/2010-07-31';
 		$this->assertEqual($result, $expected);
 	}
 

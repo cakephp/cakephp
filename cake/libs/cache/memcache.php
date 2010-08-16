@@ -20,7 +20,9 @@
  */
 
 /**
- * Memcache storage engine for cache
+ * Memcache storage engine for cache.  Memcache has some limitations in the amount of 
+ * control you have over expire times far in the future.  See MemcacheEngine::write() for
+ * more information.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.cache
@@ -94,17 +96,20 @@ class MemcacheEngine extends CacheEngine {
 	}
 
 /**
- * Write data for key into cache
+ * Write data for key into cache.  When using memcache as your cache engine
+ * remember that the Memcache pecl extension does not support cache expiry times greater 
+ * than 30 days in the future. If you wish to create cache entries that do not expire, set the duration
+ * to `0` in your cache configuration.
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
  * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was succesfully cached, false on failure
+ * @see http://php.net/manual/en/memcache.set.php
+ * @access public
  */
-	public function write($key, $value, $duration) {
-		$expires = time() + $duration;
-		$this->__Memcache->set($key . '_expires', $expires, $this->settings['compress'], $expires);
-		return $this->__Memcache->set($key, $value, $this->settings['compress'], $expires);
+	function write($key, &$value, $duration) {
+		return $this->__Memcache->set($key, $value, $this->settings['compress'], $duration);
 	}
 
 /**
@@ -113,12 +118,7 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
-	public function read($key) {
-		$time = time();
-		$cachetime = intval($this->__Memcache->get($key . '_expires'));
-		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
-			return false;
-		}
+	function read($key) {
 		return $this->__Memcache->get($key);
 	}
 
