@@ -286,7 +286,7 @@ class DboMysqlBase extends DboSource {
 		$out = '';
 		$colList = array();
 		foreach ($compare as $curTable => $types) {
-			$indexes = $tableParameters = array();
+			$indexes = $tableParameters = $colList = array();
 			if (!$table || $table == $curTable) {
 				$out .= 'ALTER TABLE ' . $this->fullTableName($curTable) . " \n";
 				foreach ($types as $type => $column) {

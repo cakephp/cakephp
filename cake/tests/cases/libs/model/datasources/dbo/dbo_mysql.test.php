@@ -699,6 +699,40 @@ class DboMysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test alterSchema on two tables.
+ *
+ * @return void
+ */
+	function testAlteringTwoTables() {
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
+	}
+
+/**
  * testReadTableParameters method
  *
  * @access public
