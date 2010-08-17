@@ -114,6 +114,16 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
+ * Static method to initialize the test runner, keeps global space clean
+ *
+ * @return void
+ */
+	public static function run() {
+		$dispatcher = new CakeTestSuiteDispatcher();
+		$dispatcher->dispatch();
+	}
+
+/**
  * Checks that PHPUnit is installed.  Will exit if it doesn't
  *
  * @return void

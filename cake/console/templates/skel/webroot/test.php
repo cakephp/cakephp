@@ -5,15 +5,15 @@
  * PHP versions 4 and 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  *  Licensed under The Open Group Test Suite License
  *  Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/view/1196/Testing
  * @package       cake
- * @subpackage    cake.cake.tests.libs
+ * @subpackage    cake.app.webroot
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
@@ -85,10 +85,9 @@ if (isset($corePath[0])) {
 }
 
 if (Configure::read('debug') < 1) {
-	die(__('Debug setting does not allow access to this url.'));
+	die(__('Debug setting does not allow access to this url.', true));
 }
 
 require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
 
-$Dispatcher = new CakeTestSuiteDispatcher();
-$Dispatcher->dispatch();
+CakeTestSuiteDispatcher::run();
