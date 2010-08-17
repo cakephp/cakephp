@@ -72,7 +72,8 @@ class CacheHelper extends AppHelper {
 			$check = str_replace('/', '_', $this->here);
 			$basePath = str_replace('/', '_', $this->base);
 
-			$match = str_replace($this->base, '', $this->here);
+			$search = '/' . preg_quote($this->base, '/') . '/';
+			$match = preg_replace($search, '', $this->here, 1);
 			$match = str_replace('//', '/', $match);
 			$match = str_replace('/' . $controller . '/', '', $match);
 			$match = str_replace('/' . $controllerAlternate . '/', '', $match);
