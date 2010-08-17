@@ -110,7 +110,7 @@ class Dispatcher extends Object {
 		$this->here = $this->base . '/' . $url;
 
 		if ($this->asset($url) || $this->cached($url)) {
-			$this->_stop();
+			return;
 		}
 		$controller = $this->_getController();
 
@@ -186,7 +186,7 @@ class Dispatcher extends Object {
 
 		$methods = array_flip($controller->methods);
 
-		if (!isset($methods[strtolower($params['action'])])) {
+		if (!isset($methods[$params['action']])) {
 			if ($controller->scaffold !== false) {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $params);
@@ -224,8 +224,11 @@ class Dispatcher extends Object {
  */
 	protected function _extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
-		$this->params = array_merge($defaults, $url, $additionalParams);
-		return Router::url($url);
+		$params = array_merge($defaults, $url, $additionalParams);
+		$this->params = $params;
+
+		$params += array('base' => false, 'url' => array());
+		return ltrim(Router::reverse($params), '/');
 	}
 
 /**

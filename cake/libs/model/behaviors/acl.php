@@ -48,6 +48,7 @@ class AclBehavior extends ModelBehavior {
 			$config = array('type' => $config);
 		}
 		$this->settings[$model->name] = array_merge(array('type' => 'requester'), (array)$config);
+		$this->settings[$model->name]['type'] = strtolower($this->settings[$model->name]['type']);
 
 		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (!class_exists('AclNode')) {
@@ -67,7 +68,7 @@ class AclBehavior extends ModelBehavior {
  * @link http://book.cakephp.org/view/1322/node
  */
 	public function node(&$model, $ref = null) {
-		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
+		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		if (empty($ref)) {
 			$ref = array('model' => $model->name, 'foreign_key' => $model->id);
 		}
@@ -81,7 +82,7 @@ class AclBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterSave(&$model, $created) {
-		$type = $this->__typeMaps[strtolower($this->settings[$model->alias]['type'])];
+		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		$parent = $model->parentNode();
 		if (!empty($parent)) {
 			$parent = $this->node($model, $parent);
@@ -105,7 +106,7 @@ class AclBehavior extends ModelBehavior {
  * @return void
  */
 	public function afterDelete(&$model) {
-		$type = $this->__typeMaps[strtolower($this->settings[$model->name]['type'])];
+		$type = $this->__typeMaps[$this->settings[$model->name]['type']];
 		$node = Set::extract($this->node($model), "0.{$type}.id");
 		if (!empty($node)) {
 			$model->{$type}->delete($node);

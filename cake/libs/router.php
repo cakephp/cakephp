@@ -1010,6 +1010,9 @@ class Router {
  * Since parsed URL's contain additional 'pass' and 'named' as well as 'url.url' keys.
  * Those keys need to be specially handled in order to reverse a params array into a string url.
  *
+ * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
+ * are used for CakePHP internals and should not normally be part of an output url.
+ *
  * @param array $param The params array that needs to be reversed.
  * @return string The string that is the reversed result of the array
  */
@@ -1017,7 +1020,10 @@ class Router {
 		$pass = $params['pass'];
 		$named = $params['named'];
 		$url = $params['url'];
-		unset($params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url']);
+		unset(
+			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
+			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
+		);
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
 			$params['?'] = $url;
@@ -1309,8 +1315,9 @@ class CakeRoute {
 		$route = $this->template;
 		$names = $routeParams = array();
 		$parsed = preg_quote($this->template, '#');
+		$parsed = str_replace('\\-', '-', $parsed);
 
-		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
+		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $parsed, $namedElements);
 		foreach ($namedElements[1] as $i => $name) {
 			$search = '\\' . $namedElements[0][$i];
 			if (isset($this->options[$name])) {
@@ -1320,12 +1327,12 @@ class CakeRoute {
 				}
 				$slashParam = '/\\' . $namedElements[0][$i];
 				if (strpos($parsed, $slashParam) !== false) {
-					$routeParams[$slashParam] = '(?:/(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+					$routeParams[$slashParam] = '(?:/(' . $this->options[$name] . ')' . $option . ')' . $option;
 				} else {
-					$routeParams[$search] = '(?:(?P<' . $name . '>' . $this->options[$name] . ')' . $option . ')' . $option;
+					$routeParams[$search] = '(?:(' . $this->options[$name] . ')' . $option . ')' . $option;
 				}
 			} else {
-				$routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
+				$routeParams[$search] = '(?:([^/]+))';
 			}
 			$names[] = $name;
 		}
@@ -1351,7 +1358,7 @@ class CakeRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-		if (!preg_match($this->_compiledRoute, $url, $route)) {
+		if (!preg_match($this->_compiledRoute, $url, $parsed)) {
 			return false;
 		} else {
 			foreach ($this->defaults as $key => $val) {
@@ -1375,15 +1382,18 @@ class CakeRoute {
 					}
 				}
 			}
-			array_shift($route);
-			$count = count($this->keys);
-			for ($i = 0; $i <= $count; $i++) {
-				unset($route[$i]);
+			array_shift($parsed);
+			$route = array();
+			foreach ($this->keys as $i => $key) {
+				if (isset($parsed[$i])) {
+					$route[$key] = $parsed[$i];
+				}
 			}
 			$route['pass'] = $route['named'] = array();
 			$route += $this->defaults;
-
-			//move numerically indexed elements from the defaults into pass.
+			if (isset($parsed['_args_'])) {
+				$route['_args_'] = $parsed['_args_'];
+			}
 			foreach ($route as $key => $value) {
 				if (is_integer($key)) {
 					$route['pass'][] = $value;

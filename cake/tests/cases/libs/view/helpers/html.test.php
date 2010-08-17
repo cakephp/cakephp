@@ -585,9 +585,21 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->script('test.json');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js')
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->script('/plugin/js/jquery-1.3.2.js?someparam=foo');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => '/plugin/js/jquery-1.3.2.js?someparam=foo')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('test.json.js?foo=bar');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar')
 		);
 		$this->assertTags($result, $expected);
 

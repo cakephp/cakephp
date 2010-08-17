@@ -546,7 +546,7 @@ class DboPostgresTest extends CakeTestCase {
 			date date,
 			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
 		)');
-		$model = ClassRegistry::init('datatypes');
+		$model = new Model(array('name' => 'Datatype', 'ds' => 'test_suite'));
 		$schema = new CakeSchema(array('connection' => 'test_suite'));
 		$result = $schema->read(array(
 			'connection' => 'test_suite',
@@ -780,5 +780,57 @@ class DboPostgresTest extends CakeTestCase {
 		$result = $this->Dbo->fields($Article, null, array('COUNT(DISTINCT FUNC(id))'));
 		$expected = array('COUNT(DISTINCT FUNC("id"))');
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that saveAll works even with conditions that lack a model name.
+ *
+ * @return void
+ */
+	function testUpdateAllWithNonQualifiedConditions() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$result = $Article->updateAll(array('title' => "'Awesome'"), array('published' => 'Y'));
+		$this->assertTrue($result);
+
+		$result = $Article->find('count', array(
+			'conditions' => array('Article.title' => 'Awesome')
+		));
+		$this->assertEqual($result, 3, 'Article count is wrong or fixture has changed.');
+	}
+
+/**
+ * test alterSchema on two tables.
+ *
+ * @return void
+ */
+	function testAlteringTwoTables() {
+		$schema1 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$schema2 =& new CakeSchema(array(
+			'name' => 'AlterTest1',
+			'connection' => 'test_suite',
+			'altertest' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			),
+			'other_table' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
+				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
+			)
+		));
+		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
+		$this->assertFalse(strpos(';ALTER', $result), 'Too many semi colons');
 	}
 }
