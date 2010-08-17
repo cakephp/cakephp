@@ -6382,10 +6382,16 @@ class FormHelperTest extends CakeTestCase {
 			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery')
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->search('User.query', array('value' => 'test'));
 		$expected = array(
 			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->search('User.query', array('type' => 'text', 'value' => 'test'));
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
 	}

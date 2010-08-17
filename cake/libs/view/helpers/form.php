@@ -861,10 +861,8 @@ class FormHelper extends AppHelper {
 			case 'radio':
 				$input = $this->radio($fieldName, $radioOptions, $options);
 			break;
-			case 'text':
-			case 'password':
 			case 'file':
-				$input = $this->{$type}($fieldName, $options);
+				$input = $this->file($fieldName, $options);
 			break;
 			case 'select':
 				$options += array('options' => array());
@@ -882,9 +880,10 @@ class FormHelper extends AppHelper {
 				$input = $this->dateTime($fieldName, $dateFormat, $timeFormat, $selected, $options);
 			break;
 			case 'textarea':
-			default:
 				$input = $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
 			break;
+			default:
+				$input = $this->{$type}($fieldName, $options);
 		}
 
 		if ($type != 'hidden' && $error !== false) {
@@ -1111,44 +1110,6 @@ class FormHelper extends AppHelper {
 	}
 
 /**
- * Creates a text input widget.
- *
- * @param string $fieldName Name of a field, in the form "Modelname.fieldname"
- * @param array $options Array of HTML attributes.
- * @return string A generated HTML text input element
- * @access public
- * @link http://book.cakephp.org/view/1432/text
- */
-	public function text($fieldName, $options = array()) {
-		$options = $this->_initInputField($fieldName, array_merge(
-			array('type' => 'text'), $options
-		));
-		return sprintf(
-			$this->Html->tags['input'],
-			$options['name'],
-			$this->_parseAttributes($options, array('name'), null, ' ')
-		);
-	}
-
-/**
- * Creates a password input widget.
- *
- * @param string $fieldName Name of a field, like in the form "Modelname.fieldname"
- * @param array $options Array of HTML attributes.
- * @return string A generated password input.
- * @access public
- * @link http://book.cakephp.org/view/1428/password
- */
-	public function password($fieldName, $options = array()) {
-		$options = $this->_initInputField($fieldName, $options);
-		return sprintf(
-			$this->Html->tags['password'],
-			$options['name'],
-			$this->_parseAttributes($options, array('name'), null, ' ')
-		);
-	}
-
-/**
  * Missing method handler - implements various simple input types. Is used to create inputs 
  * of various types.  e.g. `$this->Form->text();` will create `<input type="text" />` while
  * `$this->Form->range();` will create `<input type="range" />`
@@ -1176,7 +1137,9 @@ class FormHelper extends AppHelper {
 		if (isset($params[1])) {
 			$options = $params[1];
 		}
-		$options['type'] = $method;
+		if (!isset($options['type'])) {
+			$options['type'] = $method;
+		}
 		$options = $this->_initInputField($params[0], $options);
 		return sprintf(
 			$this->Html->tags['input'],
