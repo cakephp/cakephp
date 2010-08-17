@@ -1149,6 +1149,32 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Missing method handler - implements various simple input types. Is used to create inputs 
+ * of various types.  e.g. `$this->Form->text();` will create `<input type="text" />` while
+ * `$this->Form->range();` will create `<input type="range" />`
+ *
+ * @param string $method Method name / input type to make. 
+ * @param array $params Parameters for the method call
+ * @return string Formatted input method.
+ */
+	public function __call($method, $params) {
+		$options = array();
+		if (empty($params)) {
+			throw new Exception(sprintf(__('Missing field name for FormHelper::%'), $method));
+		}
+		if (isset($params[1])) {
+			$options = $params[1];
+		}
+		$options['type'] = $method;
+		$options = $this->_initInputField($params[0], $options);
+		return sprintf(
+			$this->Html->tags['input'],
+			$options['name'],
+			$this->_parseAttributes($options, array('name'), null, ' ')
+		);
+	}
+
+/**
  * Creates a textarea widget.
  *
  * ### Options:

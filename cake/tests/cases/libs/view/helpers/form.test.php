@@ -6364,4 +6364,38 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
+/**
+ * test that some html5 inputs + FormHelper::__call() work
+ *
+ * @return void
+ */
+	function testHtml5Inputs() {
+		$result = $this->Form->email('User.email');
+		$expected = array(
+			'input' => array('type' => 'email', 'name' => 'data[User][email]', 'id' => 'UserEmail')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->search('User.query');
+		$expected = array(
+			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery')
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Form->search('User.query', array('value' => 'test'));
+		$expected = array(
+			'input' => array('type' => 'search', 'name' => 'data[User][query]', 'id' => 'UserQuery', 'value' => 'test')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * 
+ * @expectedException Exception
+ * @return void
+ */
+	function testHtml5InputException() {
+		$this->Form->email();
+	}
 }
