@@ -278,6 +278,24 @@ class DboMysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test that localized floats don't cause trouble.
+ *
+ * @return void
+ */
+	function testLocalizedFloats() {
+		$restore = setlocale(LC_ALL, null);
+		setlocale(LC_ALL, 'de_DE');
+
+		$result = $this->db->value(3.141593, 'float');
+		$this->assertEqual((string)$result, '3.141593');
+		
+		$result = $this->db->value(3.141593);
+		$this->assertEqual((string)$result, '3.141593');
+
+		setlocale(LC_ALL, $restore);
+	}
+
+/**
  * testTinyintCasting method
  *
  * @access public

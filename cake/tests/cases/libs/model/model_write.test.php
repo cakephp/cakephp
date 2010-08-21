@@ -3880,4 +3880,22 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertFalse($result);
 	}
 
+/**
+ * test writing floats in german locale.
+ *
+ * @return void
+ */
+	function testWriteFloatAsGerman() {
+		$restore = setlocale(LC_ALL, null);
+		setlocale(LC_ALL, 'de_DE');
+
+		$model = new DataTest();
+		$result = $model->save(array(
+			'count' => 1,
+			'float' => 3.14593
+		));
+		$this->assertTrue($result);
+		setlocale(LC_ALL, $restore);
+	}
+
 }
