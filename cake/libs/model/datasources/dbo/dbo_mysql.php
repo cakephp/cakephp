@@ -658,16 +658,19 @@ class DboMysql extends DboMysqlBase {
 				if ($data === '') {
 					return 'NULL';
 				}
-				if ((is_int($data) || is_float($data) || $data === '0') || (
+				if (is_float($data)) {
+					return sprintf('%F', $data);
+				}
+				if ((is_int($data) || $data === '0') || (
 					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false)) {
-						return $data;
-					}
+					$data[0] != '0' && strpos($data, 'e') === false)
+				) {
+					return $data;
+				}
 			default:
-				$data = "'" . mysql_real_escape_string($data, $this->connection) . "'";
+				return "'" . mysql_real_escape_string($data, $this->connection) . "'";
 			break;
 		}
-		return $data;
 	}
 
 /**
