@@ -96,7 +96,7 @@ class Configure extends Object {
 					break;
 					case 3:
 						$_this->{$names[0]}[$names[1]][$names[2]] = $value;
-                                        break;
+						break;
 					case 4:
 						$names = explode('.', $name, 2);
 						if (!isset($_this->{$names[0]})) {
