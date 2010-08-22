@@ -570,12 +570,12 @@ class CakeResponse {
 	}
 
 /**
-* Sets the response charset
-* if $charset is null the current charset is returned
-*
-* @param string $charset
-* @return string current charset
-*/
+ * Sets the response charset
+ * if $charset is null the current charset is returned
+ *
+ * @param string $charset
+ * @return string current charset
+ */
 	public function charset($charset = null) {
 		if (is_null($charset)) {
 			return $this->_charset;
@@ -584,10 +584,10 @@ class CakeResponse {
 	}
 
 /**
-* Sets the correct headers to instruct the client to not cache te response
-*
-* @return void
-*/
+ * Sets the correct headers to instruct the client to not cache te response
+ *
+ * @return void
+ */
 	public function disableCache() {
 		$this->header(array(
 			'Expires' => 'Mon, 26 Jul 1997 05:00:00 GMT',
@@ -598,12 +598,12 @@ class CakeResponse {
 	}
 
 /**
-* Sets the correct headers to instruct the client to cache the response
-*
-* @param string $since a valid time since the response text has not been modified
-* @param string $time a valid time for cache expiry
-* @return void
-*/
+ * Sets the correct headers to instruct the client to cache the response
+ *
+ * @param string $since a valid time since the response text has not been modified
+ * @param string $time a valid time for cache expiry
+ * @return void
+ */
 	public function cache($since, $time = '+1 day') {
 		if (!is_integer($time)) {
 			$time = strtotime($time);
@@ -617,10 +617,10 @@ class CakeResponse {
 	}
 
 /**
-* Sets the correct output buffering handler to send a compressed response
-*
-* @return boolean false if client does not accept compressed responses or no handler is available, true otherwise
-*/
+ * Sets the correct output buffering handler to send a compressed response
+ *
+ * @return boolean false if client does not accept compressed responses or no handler is available, true otherwise
+ */
 	public function compress() {
 		$compressionEnabled = ini_get("zlib.output_compression") !== '1' &&
 			extension_loaded("zlib") &&
@@ -629,11 +629,11 @@ class CakeResponse {
 	}
 
 /**
-* Sets the correct headers to instruct the browser to dowload the response as a file
-*
-* @param string $filename the name of the file as the browser will download the response
-* @return void
-*/
+ * Sets the correct headers to instruct the browser to dowload the response as a file
+ *
+ * @param string $filename the name of the file as the browser will download the response
+ * @return void
+ */
 	public function download($filename) {
 		$this->header('Content-Disposition', 'attachment; filename="' . $filename . '"');
 	}
