@@ -164,7 +164,7 @@ class Scaffold {
  */
 	protected function _output() {
 		$this->controller->afterFilter();
-		echo($this->controller->output);
+		$this->controller->getResponse()->send();
 	}
 
 /**
