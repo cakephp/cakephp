@@ -513,6 +513,51 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test host retrieval.
+ *
+ * @return void
+ */
+	function testHost() {
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		$request = new CakeRequest('some/path');
+		
+		$this->assertEquals('localhost', $request->host());
+	}
+
+/**
+ * test domain retrieval.
+ *
+ * @return void
+ */
+	function testDomain() {
+		$_SERVER['HTTP_HOST'] = 'something.example.com';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals('example.com', $request->domain());
+
+		$_SERVER['HTTP_HOST'] = 'something.example.co.uk';
+		$this->assertEquals('example.co.uk', $request->domain(2));
+	}
+
+/**
+ * test getting subdomains for a host.
+ *
+ * @return void
+ */
+	function testSubdomain() {
+		$_SERVER['HTTP_HOST'] = 'something.example.com';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals(array('something'), $request->subdomains());
+
+		$_SERVER['HTTP_HOST'] = 'www.something.example.com';
+		$this->assertEquals(array('www', 'something'), $request->subdomains());
+
+		$_SERVER['HTTP_HOST'] = 'www.something.example.co.uk';
+		$this->assertEquals(array('www', 'something'), $request->subdomains(2));
+	}
+
+/**
  * test ajax, flash and friends
  *
  * @return void

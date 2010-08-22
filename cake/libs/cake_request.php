@@ -562,6 +562,38 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Get the host that the request was handled on.
+ *
+ * @return void
+ */
+	public function host() {
+		return env('HTTP_HOST');
+	}
+
+/**
+ * Get the domain name and include $tldLength segments of the tld.
+ *
+ * @param int $tldLength Number of segments your tld contains
+ * @return string Domain name without subdomains.
+ */
+	function domain($tldLength = 1) {
+		$segments = explode('.', $this->host());
+		$domain = array_slice($segments, -1 * ($tldLength + 1));
+		return implode('.', $domain);
+	}
+
+/**
+ * Get the subdomains for a host.
+ *
+ * @param int $tldLength Number of segments your tld contains.
+ * @return array of subdomains.
+ */
+	function subdomains($tldLength = 1) {
+		$segments = explode('.', $this->host());
+		return array_slice($segments, 0, -1 * ($tldLength + 1));
+	}
+
+/**
  * Find out which content types the client accepts or check if they accept a 
  * particular type of content.
  *
