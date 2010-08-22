@@ -555,6 +555,9 @@ class CakeRequestTestCase extends CakeTestCase {
 
 		$_SERVER['HTTP_HOST'] = 'www.something.example.co.uk';
 		$this->assertEquals(array('www', 'something'), $request->subdomains(2));
+
+		$_SERVER['HTTP_HOST'] = 'example.co.uk';
+		$this->assertEquals(array(), $request->subdomains(2));
 	}
 
 /**
