@@ -25,7 +25,7 @@ if (Configure::read() == 0):
 endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-2-7"><?php __('Read the changelog'); ?> </a>
+<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-2-8"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSessionKey();
