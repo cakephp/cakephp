@@ -553,6 +553,15 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Get the HTTP method used for this request.
+ *
+ * @return string The name of the HTTP method used.
+ */
+	public function method() {
+		return env('REQUEST_METHOD');
+	}
+
+/**
  * Find out which content types the client accepts or check if they accept a 
  * particular type of content.
  *

@@ -501,6 +501,18 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test the method() method.
+ *
+ * @return void
+ */
+	function testMethod() {
+		$_SERVER['REQUEST_METHOD'] = 'delete';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals('delete', $request->method());
+	}
+
+/**
  * test ajax, flash and friends
  *
  * @return void
