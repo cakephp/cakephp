@@ -57,7 +57,12 @@ class Xml {
 			throw new Exception(__('The key of input must be alphanumeric'));
 		}
 		if (is_array($input[$key])) {
-			$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . ' />');
+			if (array_key_exists('@', $input[$key])) {
+				$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . '>' . $input[$key]['@'] . '</' . $key . '>');
+				unset($input[$key]['@']);
+			} else {
+				$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . ' />');
+			}
 			self::_fromArrayRecursive($simpleXml, $input[$key], $format);
 		} else {
 			$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . '>' . $input[$key] . '</' . $key . '>');
@@ -99,11 +104,21 @@ class Xml {
 					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
-							$child = $node->addChild($key);
+							if (array_key_exists('@', $item)) {
+								$child = $node->addChild($key, (string)$item['@']);
+								unset($item['@']);
+							} else {
+								$child = $node->addChild($key);
+							}
 							self::_fromArrayRecursive($child, $item, $format);
 						}
 					} else { // Struct
-						$child = $node->addChild($key);
+						if (array_key_exists('@', $value)) {
+							$child = $node->addChild($key, (string)$value['@']);
+							unset($value['@']);
+						} else {
+							$child = $node->addChild($key);
+						}
 						self::_fromArrayRecursive($child, $value, $format);
 					}
 				}
@@ -154,7 +169,7 @@ class Xml {
 		if (empty($data)) {
 			$data = $asString;
 		} elseif (!empty($asString)) {
-			$data['value'] = $asString;
+			$data['@'] = $asString;
 		}
 
 		$name = $xml->getName();

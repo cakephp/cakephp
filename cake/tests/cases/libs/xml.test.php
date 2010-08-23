@@ -103,6 +103,11 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($obj->getName(), 'tag');
 		$this->assertEqual((string)$obj, '');
 
+		$xml = array('tag' => array('@' => 'value'));
+		$obj = Xml::fromArray($xml);
+		$this->assertEqual($obj->getName(), 'tag');
+		$this->assertEqual((string)$obj, 'value');
+
 		$xml = array(
 			'tags' => array(
 				'tag' => array(
@@ -174,6 +179,38 @@ class XmlTest extends CakeTestCase {
 		);
 		$obj = Xml::fromArray($xml, 'tags');
 		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1"><name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
+
+		$xml = array(
+			'tags' => array(
+				'tag' => array(
+					array(
+						'@id' => '1',
+						'name' => 'defect',
+						'@' => 'Tag 1'
+					),
+					array(
+						'@id' => '2',
+						'name' => 'enhancement'
+					),
+				),
+				'@' => 'All tags'
+			)
+		);
+		$obj = Xml::fromArray($xml, 'tags');
+		$xmlText = '<' . '?xml version="1.0"?><tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
+
+		$xml = array(
+			'tags' => array(
+				'tag' => array(
+					'id' => 1,
+					'@' => 'defect'
+				)
+			)
+		);
+		$obj = Xml::fromArray($xml);
+		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1">defect</tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 	}
 
@@ -385,7 +422,7 @@ class XmlTest extends CakeTestCase {
 			'root' => array(
 				'tag' => array(
 					'@id' => 1,
-					'value' => 'defect'
+					'@' => 'defect'
 				)
 			)
 		);
