@@ -57,33 +57,28 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * data provider function for testBuildInvalidData
+ *
+ * @return void
+ */
+	public static function invalidDataProvider() {
+		return array(
+			array(null),
+			array(false),
+			array(''),
+			array('<tag>')
+		);
+	}
+
+/**
  * testBuildInvalidData
  *
+ * @dataProvider invalidDataProvider
  * @expectedException Exception
  * return void
  */
-	function testBuildInvalidData() {
-		Xml::build(false);
-	}
-
-/**
- * testBuildEmptyData
- *
- * @expectedException Exception
- * return void
- */
-	function testBuildEmptyData() {
-		Xml::build('');
-	}
-
-/**
- * testBuildInvalidTag
- *
- * @expectedException Exception
- * return void
- */
-	function testBuildInvalidTag() {
-		Xml::build('<tag>');
+	function testBuildInvalidData($value) {
+		Xml::build($value);
 	}
 
 /**
@@ -160,49 +155,20 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
- * testFromArrayFail method
+ * data provider for fromArray() failures
  *
- * @access public
  * @return void
  */
-	function testFromArrayFail() {
-		try {
-			Xml::fromArray(false);
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			Xml::fromArray(array());
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			Xml::fromArray(array('numeric key as root'));
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			Xml::fromArray(array('item1' => '', 'item2' => ''));
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			Xml::fromArray(array('items' => array('item1', 'item2')));
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertTrue(true);
-		}
-
-		try {
-			$xml = array(
+	public static function invalidArrayDataProvider() {
+		return array(
+			array(''),
+			array(null),
+			array(false),
+			array(array()),
+			array('numeric key as root'),
+			array('item1' => '', 'item2' => ''),
+			array('items' => array('item1', 'item2')),
+			array(array(
 				'tags' => array(
 					'tag' => array(
 						array(
@@ -212,34 +178,19 @@ class XmlTest extends CakeTestCase {
 						)
 					)
 				)
-			);
-			Xml::fromArray($xml);
-			$this->fail('No exception thrown');
-		} catch (Exception $e) {
-			$this->assertEqual($e->getMessage(), __('Invalid array'));
-		}
-
+			)),
+			array(new DateTime())
+		);
 	}
 
 /**
- * testToArrayInvalidObject
+ * testFromArrayFail method
  *
+ * @dataProvider invalidArrayDataProvider
  * @expectedException Exception
- * @return void
  */
-	function testToArrayInvalidObject() {
-		$obj = new DateTime();
-		Xml::toArray($obj);
-	}
-
-/**
- * testToArrayNoObject
- *
- * @expectedException Exception
- * @return void
- */
-	function testToArrayNoObject() {
-		Xml::toArray(array());
+	function testFromArrayFail($value) {
+		Xml::fromArray($value);
 	}
 
 /**
