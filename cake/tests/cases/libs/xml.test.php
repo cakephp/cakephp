@@ -157,6 +157,24 @@ class XmlTest extends CakeTestCase {
 		$this->assertIdentical((string)$obj->string, 'ok');
 		$this->assertIdentical((string)$obj->null, '');
 		$this->assertIdentical((string)$obj->array, '');
+
+		$xml = array(
+			'tags' => array(
+				'tag' => array(
+					array(
+						'@id' => '1',
+						'name' => 'defect'
+					),
+					array(
+						'@id' => '2',
+						'name' => 'enhancement'
+					)
+				)
+			)
+		);
+		$obj = Xml::fromArray($xml, 'tags');
+		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1"><name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 	}
 
 /**
@@ -219,6 +237,26 @@ class XmlTest extends CakeTestCase {
 			$this->assertEqual($e->getMessage(), __('Invalid array'));
 		}
 
+		try {
+			$xml = array(
+				'tags' => array(
+					'@tag' => array(
+						array(
+							'@id' => '1',
+							'name' => 'defect'
+						),
+						array(
+							'@id' => '2',
+							'name' => 'enhancement'
+						)
+					)
+				)
+			);
+			$obj = Xml::fromArray($xml);
+			$this->fail('No exception thrown');
+		} catch (Exception $e) {
+			$this->assertEqual($e->getMessage(), __('Invalid array'));
+		}
 	}
 
 /**
@@ -302,6 +340,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
 
 		$array = array(
 			'tags' => array(

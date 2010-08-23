@@ -85,12 +85,18 @@ class Xml {
 					} elseif ($value === null) {
 						$value = '';
 					}
-					if ($format === 'tags') {
+					if ($key[0] !== '@' && $format === 'tags') {
 						$node->addChild($key, $value);
 					} else {
+						if ($key[0] === '@') {
+							$key = substr($key, 1);
+						}
 						$node->addAttribute($key, $value);
 					}
 				} else {
+					if ($key[0] === '@') {
+						throw new Exception(__('Invalid array'));
+					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
 							$child = $node->addChild($key);
