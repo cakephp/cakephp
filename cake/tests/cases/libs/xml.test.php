@@ -59,7 +59,7 @@ class XmlTest extends CakeTestCase {
 /**
  * data provider function for testBuildInvalidData
  *
- * @return void
+ * @return array
  */
 	public static function invalidDataProvider() {
 		return array(
@@ -212,7 +212,7 @@ class XmlTest extends CakeTestCase {
 /**
  * data provider for fromArray() failures
  *
- * @return void
+ * @return array
  */
 	public static function invalidArrayDataProvider() {
 		return array(
@@ -220,9 +220,9 @@ class XmlTest extends CakeTestCase {
 			array(null),
 			array(false),
 			array(array()),
-			array('numeric key as root'),
-			array('item1' => '', 'item2' => ''),
-			array('items' => array('item1', 'item2')),
+			array(array('numeric key as root')),
+			array(array('item1' => '', 'item2' => '')),
+			array(array('items' => array('item1', 'item2'))),
 			array(array(
 				'tags' => array(
 					'tag' => array(
