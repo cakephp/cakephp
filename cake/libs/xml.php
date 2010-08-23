@@ -136,7 +136,7 @@ class Xml {
 
 		foreach ($namespaces as $namespace) {
 			foreach ($xml->attributes($namespace, true) as $key => $value) {
-				$data[$key] = (string)$value;
+				$data['@' . $key] = (string)$value;
 			}
 
 			foreach ($xml->children($namespace, true) as $child) {

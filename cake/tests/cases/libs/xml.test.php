@@ -259,6 +259,22 @@ class XmlTest extends CakeTestCase {
 			'tags' => array(
 				'tag' => array(
 					array(
+						'@id' => '1',
+						'name' => 'defect'
+					),
+					array(
+						'@id' => '2',
+						'name' => 'enhancement'
+					)
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray($obj), $expected);
+
+		$array = array(
+			'tags' => array(
+				'tag' => array(
+					array(
 						'id' => '1',
 						'name' => 'defect'
 					),
@@ -269,11 +285,25 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual(Xml::toArray($obj), $expected);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($expected)), $expected);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($expected, 'tags')), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
 
 		$expected = array(
+			'tags' => array(
+				'tag' => array(
+					array(
+						'@id' => '1',
+						'@name' => 'defect'
+					),
+					array(
+						'@id' => '2',
+						'@name' => 'enhancement'
+					)
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $expected);
+
+		$array = array(
 			'tags' => array(
 				'tag' => array(
 					'id' => '1',
@@ -289,7 +319,23 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($expected)), $expected);
+		$expected = array(
+			'tags' => array(
+				'tag' => array(
+					'@id' => '1',
+					'posts' => array(
+						array('@id' => '1'),
+						array('@id' => '2')
+					)
+				),
+				'tagOther' => array(
+					'subtag' => array(
+						'@id' => '1'
+					)
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $expected);
 
 		$xml = '<root>';
 		$xml .= '<tag id="1">defect</tag>';
@@ -299,7 +345,7 @@ class XmlTest extends CakeTestCase {
 		$expected = array(
 			'root' => array(
 				'tag' => array(
-					'id' => 1,
+					'@id' => 1,
 					'value' => 'defect'
 				)
 			)
