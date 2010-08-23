@@ -406,4 +406,26 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual(Xml::toArray($obj), $expected);
 	}
 
+/**
+ * data provider for toArray() failures
+ *
+ * @return array
+ */
+	public static function invalidToArrayDataProvider() {
+		return array(
+			array(new DateTime()),
+			array(array())
+		);
+	}
+
+/**
+ * testToArrayFail method
+ *
+ * @dataProvider invalidToArrayDataProvider
+ * @expectedException Exception
+ */
+	function testToArrayFail($value) {
+		Xml::toArray($value);
+	}
+
 }
