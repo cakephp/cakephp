@@ -25,8 +25,45 @@ class Xml {
 /**
  * Initialize SimpleXMLElement from a given XML string, file path, URL or array.
  *
+ * ### Usage:
+ *
+ * Building XML from a string:
+ *
+ * `$xml = Xml::build('<example>text</example>');`
+ *
+ * Building XML from a file path:
+ *
+ * `$xml = Xml::build('/path/to/an/xml/file.xml');`
+ *
+ * Building from a remote URL:
+ *
+ * `$xml = Xml::build('http://example.com/example.xml');`
+ *
+ * Building from an array:
+ *
+ * {{{
+ * 	$value = array(
+ * 		'tags' => array(
+ * 			'tag' => array(
+ * 				array(
+ * 					'id' => '1',
+ * 					'name' => 'defect'
+ * 				),
+ * 				array(
+ * 					'id' => '2',
+ * 					'name' => 'enhancement'
+ *				)
+ * 			)
+ * 		)
+ * 	);
+ * $xml = Xml::build($value);
+ * }}}
+ * 
+ * When building XML from an array ensure that there is only one top level element.
+ *
  * @param mixed $input XML string, a path to a file, an URL or an array
  * @return object SimpleXMLElement
+ * @throws Exception
  */
 	public static function build($input) {
 		if (is_array($input) || is_object($input)) {
@@ -42,10 +79,31 @@ class Xml {
 	}
 
 /**
- * Transform an array in a SimpleXMLElement
+ * Transform an array into a SimpleXMLElement
+ *
+ * Using the following data:
+ * 
+ * {{{
+ * $value = array(
+ *    'root' => array(
+ *        'tag' => array(
+ *            'id' => 1,
+ *            'value' => 'defect'
+ *         )
+ *     )
+ * );
+ * }}}
+ *
+ * Calling `Xml::fromArray($value, 'tags');`  Will generate:
+ *
+ * `<root><tag><id>1</id><value>defect</value></tag></root>`
+ *
+ * And calling `Xml::fromArray($value, 'attribute');` Will generate:
+ *
+ * `<root><tag id="1">defect</tag></root>`
  *
  * @param array $input Array with data
- * @param string $format If create childs ('tags') or attributes ('attribute')
+ * @param string $format If create childs ('tags') or attributes ('attribute').
  * @return object SimpleXMLElement
  */
 	public static function fromArray($input, $format = 'attribute') {
@@ -69,8 +127,8 @@ class Xml {
  * Recursive method to create SimpleXMLElement from array
  *
  * @param object $node Handler to SimpleXMLElement
- * @param array $array
- * @param string $format
+ * @param array $array Array of data to append to the $node.
+ * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
  */
 	protected static function _fromArrayRecursive(&$node, &$array, $format = 'attribute') {
