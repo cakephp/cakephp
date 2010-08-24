@@ -375,6 +375,19 @@ class ViewTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test that baking a view with no template doesn't make a file.
+ *
+ * @return void
+ */
+	function testBakeWithNoTemplate() {
+		$this->Task->controllerName = 'ViewTaskComments';
+		$this->Task->controllerPath = 'view_task_comments';
+
+		$this->Task->expectNever('createFile');
+		$this->Task->bake('delete', true);
+	}
+
+/**
  * test bake() with a -plugin param
  *
  * @return void

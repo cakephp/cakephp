@@ -366,6 +366,9 @@ class ViewTask extends BakeTask {
 		if ($content === true) {
 			$content = $this->getContent($action);
 		}
+		if (empty($content)) {
+			return false;
+		}
 		$path = $this->getPath();
 		$filename = $path . $this->controllerPath . DS . Inflector::underscore($action) . '.ctp';
 		return $this->createFile($filename, $content);
