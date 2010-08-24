@@ -442,7 +442,11 @@ class Helper extends Overloadable {
 		if (ClassRegistry::isKeySet($model)) {
 			$ModelObj =& ClassRegistry::getObject($model);
 			for ($i = 0; $i < $count; $i++) {
-				if ($ModelObj->hasField($parts[$i]) || array_key_exists($parts[$i], $ModelObj->validate)) {
+				if (
+					is_a($ModelObj, 'Model') && 
+					($ModelObj->hasField($parts[$i]) || 
+					array_key_exists($parts[$i], $ModelObj->validate))
+				) {
 					$hasField = $i;
 					if ($hasField === 0 || ($hasField === 1 && is_numeric($parts[0]))) {
 						$sameScope = true;
