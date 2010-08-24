@@ -1089,6 +1089,8 @@ class NumberTreeTest extends CakeTestCase {
 			array($modelClass => array( 'id' => 6, 'name' => '1.2.1', $parentField => 5, $leftField => 9, $rightField => 10)),
 			array($modelClass => array('id' => 7, 'name' => '1.2.2', $parentField => 5, $leftField => 11, $rightField => 12)));
 		$this->assertEqual($total, $expects);
+
+		$this->assertEqual(array(), $this->Tree->children(10000));
 	}
 
 /**
