@@ -1,14 +1,14 @@
 <div class="users form">
 <cake:nocache>
-	<?php echo $form->create('User');?>
+	<?php echo $this->Form->create('User');?>
 		<fieldset>
 	 		<legend><?php echo __('Add User');?></legend>
 		<?php
-			echo $form->input('username');
-			echo $form->input('email');
-			echo $form->input('password');
+			echo $this->Form->input('username');
+			echo $this->Form->input('email');
+			echo $this->Form->input('password');
 		?>
 		</fieldset>
-	<?php echo $form->end('Submit');?>
+	<?php echo $this->Form->end('Submit');?>
 </cake:nocache>
 </div>
