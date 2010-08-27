@@ -42,11 +42,8 @@ class AllHelpersTest extends PHPUnit_Framework_TestSuite {
 
 		$helperIterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS);
 
-		// The following test cases cause segfaults for me.
-		$segfaulty = array('cache.test.php');
-
 		foreach ($helperIterator as $i => $file) {
-			if (!$file->isDot() && !in_array($file->getFilename(), $segfaulty)) {
+			if (!$file->isDot()) {
 				$suite->addTestfile($file->getPathname());
 			}
 		}
