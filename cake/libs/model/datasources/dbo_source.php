@@ -630,7 +630,7 @@ class DboSource extends DataSource {
 			$controller = null;
 			$View =& new View($controller, false);
 			$View->set('logs', array($this->configKeyName => $log));
-			echo $View->element('sql_dump');
+			echo $View->element('sql_dump', array('_forced_from_dbo_' => true));
 		} else {
 			foreach ($log['log'] as $k => $i) {
 				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
