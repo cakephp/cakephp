@@ -772,9 +772,9 @@ class ViewTest extends CakeTestCase {
 		}
 		$view = 'test_view';
 		$View = new View($this->PostsController);
-		$path = CACHE . 'views' . DS . 'view_cache_'.$view;
+		$path = CACHE . 'views' . DS . 'view_cache_' . $view;
 
-		$cacheText = '<!--cachetime:'.time().'-->some cacheText';
+		$cacheText = '<!--cachetime:' . time() . '-->some cacheText';
 		$f = fopen($path, 'w+');
 		fwrite($f, $cacheText);
 		fclose($f);
@@ -783,7 +783,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertFalse($result);
 		@unlink($path);
 
-		$cacheText = '<!--cachetime:'.(time() + 10).'-->some cacheText';
+		$cacheText = '<!--cachetime:' . (time() + 10) . '-->some cacheText';
 		$f = fopen($path, 'w+');
 		fwrite($f, $cacheText);
 		fclose($f);

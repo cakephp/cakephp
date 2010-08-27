@@ -245,14 +245,7 @@ class CacheHelper extends AppHelper {
 		}
 
 		$file .= '
-				$loadedHelpers = array();
-				$loadedHelpers = $this->_loadHelpers($loadedHelpers, $this->helpers);
-				foreach (array_keys($loadedHelpers) as $helper) {
-					$camelBackedHelper = Inflector::variable($helper);
-					${$camelBackedHelper} =& $loadedHelpers[$helper];
-					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
-					$this->{$helper} =& $loadedHelpers[$helper];
-				}
+				$this->loadHelpers();
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
 		$file .= $content;
