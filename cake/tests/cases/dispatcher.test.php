@@ -1729,7 +1729,6 @@ class DispatcherTest extends CakeTestCase {
 		$result = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertTrue(class_exists('TestsController'));
 		$this->assertTrue(class_exists('TestPluginAppController'));
-		$this->assertTrue(class_exists('OtherComponentComponent'));
 		$this->assertTrue(class_exists('PluginsComponentComponent'));
 
 		$this->assertEqual($result->params['controller'], 'tests');
