@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php __('Missing Behavior Class'); ?></h2>
+<h2><?php echo __('Missing Behavior Class'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
 	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $behaviorClass); ?>

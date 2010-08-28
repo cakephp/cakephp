@@ -75,7 +75,8 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Controller = new CacheTestController();
+		$request = new CakeRequest();
+		$this->Controller = new CacheTestController($request);
 		$View = new View($this->Controller);
 		$this->Cache = new CacheHelper($View);
 		$this->_cacheSettings = Configure::read('Cache');
@@ -107,16 +108,16 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testLayoutCacheParsingNoTagsInView() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = 21600;
-		$this->Controller->here = '/cacheTest/cache_parsing';
-		$this->Controller->action = 'cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
+		$this->Controller->request->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -142,15 +143,15 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testCacheNonLatinCharactersInRoute() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array('風街ろまん'),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = 21600;
-		$this->Controller->here = '/posts/view/風街ろまん';
+		$this->Controller->request->here = '/posts/view/風街ろまん';
 		$this->Controller->action = 'view';
 
 		$View = new View($this->Controller);
@@ -169,15 +170,15 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testLayoutCacheParsingWithTagsInView() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = 21600;
-		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
@@ -204,15 +205,15 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testMultipleNoCacheTagsInViewfile() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = 21600;
-		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
@@ -236,15 +237,15 @@ class CacheHelperTest extends CakeTestCase {
  */
 	public function testComplexNoCache () {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_complex',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = array('cache_complex' => 21600);
-		$this->Controller->here = '/cacheTest/cache_complex';
+		$this->Controller->request->here = '/cacheTest/cache_complex';
 		$this->Controller->action = 'cache_complex';
 		$this->Controller->layout = 'multi_cache';
 		$this->Controller->viewPath = 'posts';
@@ -297,17 +298,17 @@ class CacheHelperTest extends CakeTestCase {
  */
 	function testCacheActionArray() {
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->here = '/cache_test/cache_parsing';
+		$this->Controller->request->here = '/cache_test/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
@@ -325,7 +326,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
@@ -340,17 +341,17 @@ class CacheHelperTest extends CakeTestCase {
 
 
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'some_other_action' => 21600
 		);
-		$this->Controller->here = '/cacheTest/cache_parsing';
+		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);
@@ -409,18 +410,18 @@ class CacheHelperTest extends CakeTestCase {
 		Router::connect('/:lang/:controller/:action/*', array(), array('lang' => '[a-z]{3}'));
 		
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'lang' => 'en',
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
 			'pass' => array(),
 			'named' => array()
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->here = '/en/cache_test/cache_parsing';
+		$this->Controller->request->here = '/en/cache_test/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
 		$View = new View($this->Controller);

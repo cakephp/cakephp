@@ -49,6 +49,7 @@ class Controller extends Object {
  * Stores the current URL, relative to the webroot of the application.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->here instead
  */
 	public $here = null;
 
@@ -56,6 +57,7 @@ class Controller extends Object {
  * The webroot of the application.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->webroot instead
  */
 	public $webroot = null;
 
@@ -96,6 +98,7 @@ class Controller extends Object {
  *
  * @var array
  * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
+ * @deprecated Will be removed in future versions.  Use $this->request instead
  */
 	public $params = array();
 
@@ -104,8 +107,16 @@ class Controller extends Object {
  * using the `$this->data['ModelName']['fieldName']` pattern.
  *
  * @var array
+ * @deprecated Will be removed in future versions.  Use $this->request->data instead
  */
 	public $data = array();
+
+/**
+ * An instance of a CakeRequest object that contains information about the current request.
+ *
+ * @var CakeRequest
+ */
+	public $request;
 
 /**
  * Holds pagination defaults for controller actions. The keys that can be included
@@ -159,6 +170,7 @@ class Controller extends Object {
  * Base URL path.
  *
  * @var string
+ * @deprecated Will be removed in future versions.  Use $this->request->base instead
  */
 	public $base = null;
 
@@ -225,15 +237,6 @@ class Controller extends Object {
  * @var string
  */
 	public $ext = '.ctp';
-
-/**
- * The output of the requested action.  Contains either a variable
- * returned from the action, or the data of the rendered view;
- * You can use this var in child controllers' afterFilter() callbacks to alter output.
- *
- * @var string
- */
-	public $output = null;
 
 /**
  * Automatically set to the name of a plugin.
@@ -322,19 +325,13 @@ class Controller extends Object {
 	public $validationErrors = null;
 
 /**
- * Contains a list of the HTTP codes that CakePHP recognizes. These may be
- * queried and/or modified through Controller::httpCodes(), which is also
- * tasked with their lazy-loading.
- *
- * @var array Associative array of HTTP codes and their associated messages.
- */
-	private $__httpCodes = null;
-
-/**
  * Constructor.
  *
+ * @param CakeRequest $request Request object for this controller can be null for testing.
+ *  But expect that features that use the params will not work.
+ * @param CakeResponse $response Response object for this controller
  */
-	public function __construct() {
+	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -355,7 +352,42 @@ class Controller extends Object {
 		$parentMethods = get_class_methods('Controller');
 
 		$this->methods = array_diff($childMethods, $parentMethods);
+
+		if ($request instanceof CakeRequest) {
+			$this->_setRequest($request);
+		}
+		$this->response = $response;
 		parent::__construct();
+	}
+
+/**
+ * Sets the request objects and configures a number of controller properties
+ * based on the contents of the request.
+ *
+ * @param CakeRequest $request
+ * @return void
+ */
+	protected function _setRequest(CakeRequest $request) {
+		$this->base = $request->base;
+		$this->here = $request->here;
+		$this->webroot = $request->webroot;
+		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
+		$this->params = $this->request = $request;
+		$this->action =& $request->params['action'];
+		if (isset($request->params['pass']) && isset($request->params['named'])) {
+			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
+		}
+
+		$this->data = null;
+		if (!empty($request->params['data'])) {
+			$this->data =& $request->params['data'];
+		}
+		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
+			$this->autoRender = false;
+		}
+		if (!empty($request->params['bare'])) {
+			$this->autoLayout = false;
+		}
 	}
 
 /**
@@ -523,43 +555,10 @@ class Controller extends Object {
  *
  * @return mixed Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
+ * @deprecated
  */
 	public function httpCodes($code = null) {
-		if (empty($this->__httpCodes)) {
-			$this->__httpCodes = array(
-				100 => 'Continue', 101 => 'Switching Protocols',
-				200 => 'OK', 201 => 'Created', 202 => 'Accepted',
-				203 => 'Non-Authoritative Information', 204 => 'No Content',
-				205 => 'Reset Content', 206 => 'Partial Content',
-				300 => 'Multiple Choices', 301 => 'Moved Permanently',
-				302 => 'Found', 303 => 'See Other',
-				304 => 'Not Modified', 305 => 'Use Proxy', 307 => 'Temporary Redirect',
-				400 => 'Bad Request', 401 => 'Unauthorized', 402 => 'Payment Required',
-				403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed',
-				406 => 'Not Acceptable', 407 => 'Proxy Authentication Required',
-				408 => 'Request Time-out', 409 => 'Conflict', 410 => 'Gone',
-				411 => 'Length Required', 412 => 'Precondition Failed',
-				413 => 'Request Entity Too Large', 414 => 'Request-URI Too Large',
-				415 => 'Unsupported Media Type', 416 => 'Requested range not satisfiable',
-				417 => 'Expectation Failed', 500 => 'Internal Server Error',
-				501 => 'Not Implemented', 502 => 'Bad Gateway',
-				503 => 'Service Unavailable', 504 => 'Gateway Time-out'
-			);
-		}
-
-		if (empty($code)) {
-			return $this->__httpCodes;
-		}
-
-		if (is_array($code)) {
-			$this->__httpCodes = $code + $this->__httpCodes;
-			return true;
-		}
-
-		if (!isset($this->__httpCodes[$code])) {
-			return null;
-		}
-		return array($code => $this->__httpCodes[$code]);
+		return $this->response->httpCodes($code);
 	}
 
 /**
@@ -652,51 +651,36 @@ class Controller extends Object {
 			session_write_close();
 		}
 
-		if (!empty($status)) {
-			$codes = $this->httpCodes();
-
-			if (is_string($status)) {
-				$codes = array_flip($codes);
-			}
-
+		if (!empty($status) && is_string($status)) {
+			$codes = array_flip($this->response->httpCodes());
 			if (isset($codes[$status])) {
-				$code = $msg = $codes[$status];
-				if (is_numeric($status)) {
-					$code = $status;
-				}
-				if (is_string($status)) {
-					$msg = $status;
-				}
-				$status = "HTTP/1.1 {$code} {$msg}";
-
-			} else {
-				$status = null;
+				$status = $codes[$status];
 			}
-			$this->header($status);
 		}
 
 		if ($url !== null) {
-			$this->header('Location: ' . Router::url($url, true));
+			$this->response->header('Location', Router::url($url, true));
 		}
 
 		if (!empty($status) && ($status >= 300 && $status < 400)) {
-			$this->header($status);
+			$this->response->statusCode($status);
 		}
 
 		if ($exit) {
+			$this->response->send();
 			$this->_stop();
 		}
 	}
 
 /**
- * Convenience and object wrapper method for header().  Useful when doing tests and
- * asserting that particular headers have been set.
+ * Convenience and object wrapper method for CakeResponse::header().
  *
  * @param string $status The header message that is being set.
  * @return void
+ * @deprecated
  */
 	public function header($status) {
-		header($status);
+		$this->response->header($status);
 	}
 
 /**
@@ -853,10 +837,8 @@ class Controller extends Object {
 		}
 
 		$this->autoRender = false;
-		$this->output .= $View->render($action, $layout, $file);
 		$this->View = $View;
-
-		return $this->output;
+		return $this->response->body($View->render($action, $layout, $file));
 	}
 
 /**
@@ -868,23 +850,12 @@ class Controller extends Object {
  * @link http://book.cakephp.org/view/987/referer
  */
 	public function referer($default = null, $local = false) {
-		$ref = env('HTTP_REFERER');
-		if (!empty($ref) && defined('FULL_BASE_URL')) {
-			$base = FULL_BASE_URL . $this->webroot;
-			if (strpos($ref, $base) === 0) {
-				$return =  substr($ref, strlen($base));
-				if ($return[0] != '/') {
-					$return = '/'.$return;
-				}
-				return $return;
-			} elseif (!$local) {
-				return $ref;
+		if ($this->request) {
+			$referer = $this->request->referer($local);
+			if ($referer == '/' && $default != null) {
+				return Router::url($default, true);
 			}
-		}
-
-		if ($default != null) {
-			$url = Router::url($default, true);
-			return $url;
+			return $referer;
 		}
 		return '/';
 	}
@@ -894,13 +865,10 @@ class Controller extends Object {
  *
  * @return void
  * @link http://book.cakephp.org/view/988/disableCache
+ * @deprecated
  */
 	public function disableCache() {
-		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-		header("Cache-Control: no-store, no-cache, must-revalidate");
-		header("Cache-Control: post-check=0, pre-check=0", false);
-		header("Pragma: no-cache");
+		$this->response->disableCache();
 	}
 
 /**
@@ -921,7 +889,7 @@ class Controller extends Object {
 		$this->set('message', $message);
 		$this->set('pause', $pause);
 		$this->set('page_title', $message);
-		$this->render(false, $layout);
+		$this->response->body($this->render(false, $layout));
 	}
 
 /**
@@ -1043,7 +1011,7 @@ class Controller extends Object {
 			), E_USER_WARNING);
 			return array();
 		}
-		$options = array_merge($this->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->request->params, $this->params['url'], $this->passedArgs);
 
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
@@ -1174,7 +1142,13 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-		$this->params['paging'][$object->alias] = $paging;
+		if (!isset($this->request['paging'])) {
+			$this->request['paging'] = array();
+		}
+		$this->request['paging'] = array_merge(
+			(array)$this->request['paging'],
+			array($object->alias => $paging)
+		);
 
 		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
 			$this->helpers[] = 'Paginator';

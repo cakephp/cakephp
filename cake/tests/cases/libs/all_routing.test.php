@@ -37,6 +37,8 @@ class AllRoutingTest extends PHPUnit_Framework_TestSuite {
 		$suite = new PHPUnit_Framework_TestSuite('All Router and Dispatcher class tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'router.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'route' . DS . 'cake_route.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'route' . DS . 'plugin_short_route.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'dispatcher.test.php');
 		return $suite;
 	}

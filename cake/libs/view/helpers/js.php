@@ -202,7 +202,8 @@ class JsHelper extends AppHelper {
  *   scripts null will be returned.
  */
 	public function writeBuffer($options = array()) {
-		$domReady = isset($this->params['isAjax']) ? !$this->params['isAjax'] : true;
+		$domReady = $this->request->is('ajax');
+		// $domReady = isset($this->params['isAjax']) ? !$this->params['isAjax'] : true;
 		$defaults = array(
 			'onDomReady' => $domReady, 'inline' => true, 
 			'cache' => false, 'clear' => true, 'safe' => true

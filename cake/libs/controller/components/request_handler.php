@@ -48,101 +48,20 @@ class RequestHandlerComponent extends Component {
 	public $enabled = true;
 
 /**
- * Holds the content-type of the response that is set when using
- * RequestHandler::respondAs()
+ * Holds the reference to Controller::$request
  *
- * @var string
- * @access private
- */
-	private $__responseTypeSet = null;
-
-/**
- * Holds the copy of Controller::$params
- *
- * @var array
+ * @var CakeRequest
  * @access public
  */
-	public $params = array();
+	public $request;
 
 /**
- * Friendly content-type mappings used to set response types and determine
- * request types.  Can be modified with RequestHandler::setContent()
+ * Holds the reference to Controller::$response
  *
- * @var array
- * @access private
- * @see RequestHandlerComponent::setContent
- */
-	private $__requestContent = array(
-		'javascript'	=> 'text/javascript',
-		'js'			=> 'text/javascript',
-		'json'			=> 'application/json',
-		'css'			=> 'text/css',
-		'html'			=> array('text/html', '*/*'),
-		'text'			=> 'text/plain',
-		'txt'			=> 'text/plain',
-		'csv'			=> array('application/vnd.ms-excel', 'text/plain'),
-		'form'			=> 'application/x-www-form-urlencoded',
-		'file'			=> 'multipart/form-data',
-		'xhtml'			=> array('application/xhtml+xml', 'application/xhtml', 'text/xhtml'),
-		'xhtml-mobile'	=> 'application/vnd.wap.xhtml+xml',
-		'xml'			=> array('application/xml', 'text/xml'),
-		'rss'			=> 'application/rss+xml',
-		'atom'			=> 'application/atom+xml',
-		'amf'			=> 'application/x-amf',
-		'wap'			=> array(
-			'text/vnd.wap.wml',
-			'text/vnd.wap.wmlscript',
-			'image/vnd.wap.wbmp'
-		),
-		'wml'			=> 'text/vnd.wap.wml',
-		'wmlscript'		=> 'text/vnd.wap.wmlscript',
-		'wbmp'			=> 'image/vnd.wap.wbmp',
-		'pdf'			=> 'application/pdf',
-		'zip'			=> 'application/x-zip',
-		'tar'			=> 'application/x-tar'
-	);
-
-/**
- * List of regular expressions for matching mobile device's user agent string
- *
- * @var array
+ * @var CakeResponse
  * @access public
  */
-	public $mobileUA = array(
-		'Android',
-		'AvantGo',
-		'BlackBerry',
-		'DoCoMo',
-		'iPod',
-		'iPhone',
-		'J2ME',
-		'MIDP',
-		'NetFront',
-		'Nokia',
-		'Opera Mini',
-		'PalmOS',
-		'PalmSource',
-		'portalmmm',
-		'Plucker',
-		'ReqwirelessWeb',
-		'SonyEricsson',
-		'Symbian',
-		'UP\.Browser',
-		'webOS',
-		'Windows CE',
-		'Xiino'
-	);
-
-/**
- * Content-types accepted by the client.  If extension parsing is enabled in the
- * Router, and an extension is detected, the corresponding content-type will be
- * used as the overriding primary content-type accepted.
- *
- * @var array
- * @access private
- * @see Router::parseExtensions()
- */
-	private $__acceptTypes = array();
+	public $response;
 
 /**
  * The template to use when rendering the given content type.
@@ -190,19 +109,32 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Initializes the component, gets a reference to Controller::$parameters, and
- * checks to see if a file extension has been parsed by the Router.  If yes, the
- * corresponding content-type is pushed onto the list of accepted content-types
- * as the first item.
+ * checks to see if a file extension has been parsed by the Router.  Or if the 
+ * HTTP_ACCEPT_TYPE is set to a single value that is a supported extension and mapped type.
+ * If yes, RequestHandler::$ext is set to that value
  *
  * @param object $controller A reference to the controller
  * @param array $settings Array of settings to _set().
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(&$controller) {
+	public function initialize(&$controller, $settings = array()) {
+		$this->request = $controller->request;
+		$this->response = $controller->response;
 		if (isset($controller->params['url']['ext'])) {
 			$this->ext = $controller->params['url']['ext'];
 		}
+		if (empty($this->ext)) {
+			$accepts = $this->request->accepts();
+			$extensions = Router::extensions();
+			if (count($accepts) == 1) {
+				$mapped = $this->mapType($accepts[0]);
+				if (in_array($mapped, $extensions)) {
+					$this->ext = $mapped;
+				}
+			}
+		}
+		$this->_set($settings);
 	}
 
 /**
@@ -211,8 +143,10 @@ class RequestHandlerComponent extends Component {
  *
  * - Disabling layout rendering for Ajax requests (based on the HTTP_X_REQUESTED_WITH header)
  * - If Router::parseExtensions() is enabled, the layout and template type are
- *   switched based on the parsed extension.  For example, if controller/action.xml
- *   is requested, the view path becomes <i>app/views/controller/xml/action.ctp</i>.
+ *   switched based on the parsed extension or Accept-Type header.  For example, if `controller/action.xml`
+ *   is requested, the view path becomes `app/views/controller/xml/action.ctp`. Also if
+ *   `controller/action` is requested with `Accept-Type: application/xml` in the headers
+ *   the view path will become `app/views/controller/xml/action.ctp`.
  * - If a helper with the same name as the extension exists, it is added to the controller.
  * - If the extension is of a type that RequestHandler understands, it will set that
  *   Content-type in the response header.
@@ -223,20 +157,15 @@ class RequestHandlerComponent extends Component {
  * @return void
  */
 	public function startup(&$controller) {
-		if (!$this->enabled) {
-			return;
-		}
-
-		$this->__initializeTypes();
-		$controller->params['isAjax'] = $this->isAjax();
+		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
-			in_array($this->ext, array_keys($this->__requestContent))
+			$this->response->getMimeType($this->ext)
 		);
 
 		if (!empty($this->ext) && $isRecognized) {
 			$this->renderAs($controller, $this->ext);
-		} elseif ($this->isAjax()) {
+		} elseif ($this->request->is('ajax')) {
 			$this->renderAs($controller, 'ajax');
 		}
 
@@ -262,7 +191,7 @@ class RequestHandlerComponent extends Component {
  * @param mixed HTTP Status for redirect
  */
 	public function beforeRedirect(&$controller, $url, $status = null) {
-		if (!$this->isAjax()) {
+		if (!$this->request->is('ajax')) {
 			return;
 		}
 		foreach ($_POST as $key => $val) {
@@ -272,12 +201,12 @@ class RequestHandlerComponent extends Component {
 			$url = Router::url($url + array('base' => false));
 		}
 		if (!empty($status)) {
-			$statusCode = $controller->httpCodes($status);
+			$statusCode = $this->response->httpCodes($status);
 			$code = key($statusCode);
-			$msg = $statusCode[$code];
-			$controller->header("HTTP/1.1 {$code} {$msg}");
+			$this->response->statusCode($code);
 		}
-		echo $this->requestAction($url, array('return', 'bare' => false));
+		$this->response->body($this->requestAction($url, array('return', 'bare' => false)));
+		$this->response->send();
 		$this->_stop();
 	}
 
@@ -287,7 +216,7 @@ class RequestHandlerComponent extends Component {
  * @return boolean True if call is Ajax
  */
 	public function isAjax() {
-		return env('HTTP_X_REQUESTED_WITH') === "XMLHttpRequest";
+		return $this->request->is('ajax');
 	}
 
 /**
@@ -296,7 +225,7 @@ class RequestHandlerComponent extends Component {
  * @return boolean True if call is from Flash
  */
 	public function isFlash() {
-		return (preg_match('/^(Shockwave|Adobe) Flash/', env('HTTP_USER_AGENT')) == 1);
+		return $this->request->is('flash');
 	}
 
 /**
@@ -305,7 +234,7 @@ class RequestHandlerComponent extends Component {
  * @return bool True if call is over HTTPS
  */
 	public function isSSL() {
-		return env('HTTPS');
+		return $this->request->is('ssl');
 	}
 
 /**
@@ -340,20 +269,9 @@ class RequestHandlerComponent extends Component {
  * client accepts WAP content.
  *
  * @return boolean True if user agent is a mobile web browser
- * @access public
- * @deprecated Use of constant REQUEST_MOBILE_UA is deprecated and will be removed in future versions
  */
 	function isMobile() {
-		if (defined('REQUEST_MOBILE_UA')) {
-			$regex = '/' . REQUEST_MOBILE_UA . '/i';
-		} else {
-			$regex = '/' . implode('|', $this->mobileUA) . '/i';
-		}
-
-		if (preg_match($regex, env('HTTP_USER_AGENT')) || $this->accepts('wap')) {
-			return true;
-		}
-		return false;
+		return $this->request->is('mobile') || $this->accepts('wap');
 	}
 
 /**
@@ -369,36 +287,40 @@ class RequestHandlerComponent extends Component {
  * Returns true if the current call a POST request
  *
  * @return boolean True if call is a POST
+ * @deprecated Use $this->request->is('post'); from your controller.
  */
 	public function isPost() {
-		return (strtolower(env('REQUEST_METHOD')) == 'post');
+		return $this->request->is('post');
 	}
 
 /**
  * Returns true if the current call a PUT request
  *
  * @return boolean True if call is a PUT
+ * @deprecated Use $this->request->is('put'); from your controller.
  */
 	public function isPut() {
-		return (strtolower(env('REQUEST_METHOD')) == 'put');
+		return $this->request->is('put');
 	}
 
 /**
  * Returns true if the current call a GET request
  *
  * @return boolean True if call is a GET
+ * @deprecated Use $this->request->is('get'); from your controller.
  */
 	public function isGet() {
-		return (strtolower(env('REQUEST_METHOD')) == 'get');
+		return $this->request->is('get');
 	}
 
 /**
  * Returns true if the current call a DELETE request
  *
  * @return boolean True if call is a DELETE
+ * @deprecated Use $this->request->is('delete'); from your controller.
  */
 	public function isDelete() {
-		return (strtolower(env('REQUEST_METHOD')) == 'delete');
+		return $this->request->is('delete');
 	}
 
 /**
@@ -426,59 +348,43 @@ class RequestHandlerComponent extends Component {
  * @return void
  */
 	public function setContent($name, $type = null) {
-		if (is_array($name)) {
-			$this->__requestContent = array_merge($this->__requestContent, $name);
-			return;
-		}
-		$this->__requestContent[$name] = $type;
+		$this->response->type(array($name => $type));
 	}
 
 /**
  * Gets the server name from which this request was referred
  *
  * @return string Server address
+ * @deprecated use $this->request->referer() from your controller instead
  */
 	public function getReferer() {
-		if (env('HTTP_HOST') != null) {
-			$sessHost = env('HTTP_HOST');
-		}
-
-		if (env('HTTP_X_FORWARDED_HOST') != null) {
-			$sessHost = env('HTTP_X_FORWARDED_HOST');
-		}
-		return trim(preg_replace('/(?:\:.*)/', '', $sessHost));
+		return $this->request->referer(false);
 	}
 
 /**
  * Gets remote client IP
  *
  * @return string Client IP address
+ * @deprecated use $this->request->clientIp() from your controller instead.
  */
 	public function getClientIP($safe = true) {
-		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
-			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
-		} else {
-			if (env('HTTP_CLIENT_IP') != null) {
-				$ipaddr = env('HTTP_CLIENT_IP');
-			} else {
-				$ipaddr = env('REMOTE_ADDR');
-			}
-		}
-
-		if (env('HTTP_CLIENTADDRESS') != null) {
-			$tmpipaddr = env('HTTP_CLIENTADDRESS');
-
-			if (!empty($tmpipaddr)) {
-				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
-			}
-		}
-		return trim($ipaddr);
+		return $this->request->clientIp($safe);
 	}
 
 /**
  * Determines which content types the client accepts.  Acceptance is based on
  * the file extension parsed by the Router (if present), and by the HTTP_ACCEPT
- * header.
+ * header. Unlike CakeRequest::accepts() this method deals entirely with mapped content types.
+ *
+ * Usage:
+ *
+ * `$this->RequestHandler->accepts(array('xml', 'html', 'json'));`
+ *
+ * Returns true if the client accepts any of the supplied types.
+ *
+ * `$this->RequestHandler->accepts('xml');`
+ *
+ * Returns true if the client accepts xml.
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an
  *   array of types
@@ -490,37 +396,21 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  */
 	function accepts($type = null) {
-		$this->__initializeTypes();
+		$accepted = $this->request->accepts();
 
 		if ($type == null) {
-			return $this->mapType($this->__acceptTypes);
-
+			return $this->mapType($accepted);
 		} elseif (is_array($type)) {
 			foreach ($type as $t) {
-				if ($this->accepts($t) == true) {
+				$t = $this->mapAlias($t);
+				if (in_array($t, $accepted)) {
 					return true;
 				}
 			}
 			return false;
 		} elseif (is_string($type)) {
-
-			if (!isset($this->__requestContent[$type])) {
-				return false;
-			}
-
-			$content = $this->__requestContent[$type];
-
-			if (is_array($content)) {
-				foreach ($content as $c) {
-					if (in_array($c, $this->__acceptTypes)) {
-						return true;
-					}
-				}
-			} else {
-				if (in_array($content, $this->__acceptTypes)) {
-					return true;
-				}
-			}
+			$type = $this->mapAlias($type);
+			return in_array($type, $accepted);
 		}
 		return false;
 	}
@@ -529,20 +419,22 @@ class RequestHandlerComponent extends Component {
  * Determines the content type of the data the client has sent (i.e. in a POST request)
  *
  * @param mixed $type Can be null (or no parameter), a string type name, or an array of types
- * @return mixed
+ * @return mixed If a single type is supplied a boolean will be returned.  If no type is provided
+ *   The mapped value of CONTENT_TYPE will be returned. If an array is supplied the first type
+ *   in the request content type will be returned.
  */
 	public function requestedWith($type = null) {
-		if (!$this->isPost() && !$this->isPut()) {
+		if (!$this->request->is('post') && !$this->request->is('put')) {
 			return null;
 		}
-
+	
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($type == null) {
 			return $this->mapType($contentType);
 		} elseif (is_array($type)) {
 			foreach ($type as $t) {
 				if ($this->requestedWith($t)) {
-					return $this->mapType($t);
+					return $t;
 				}
 			}
 			return false;
@@ -567,52 +459,33 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  */
 	function prefers($type = null) {
-		$this->__initializeTypes();
-		$accept = $this->accepts();
+		$accepts = $this->accepts();
 
 		if ($type == null) {
 			if (empty($this->ext)) {
-				if (is_array($accept)) {
-					return $accept[0];
+				if (is_array($accepts)) {
+					return $accepts[0];
 				}
-				return $accept;
+				return $accepts;
 			}
 			return $this->ext;
 		}
 
-		$types = $type;
-		if (is_string($type)) {
-			$types = array($type);
-		}
+		$types = (array)$type;
 
 		if (count($types) === 1) {
 			if (!empty($this->ext)) {
 				return ($types[0] == $this->ext);
 			}
-			return ($types[0] == $accept[0]);
-		}
-		$accepts = array();
-
-		foreach ($types as $type) {
-			if (in_array($type, $accept)) {
-				$accepts[] = $type;
-			}
+			return ($types[0] == $accepts[0]);
 		}
 
-		if (count($accepts) === 0) {
+	
+		$intersect = array_values(array_intersect($accepts, $types));
+		if (empty($intersect)) {
 			return false;
-		} elseif (count($types) === 1) {
-			return ($types[0] === $accepts[0]);
-		} elseif (count($accepts) === 1) {
-			return $accepts[0];
 		}
-
-		$acceptedTypes = array();
-		foreach ($this->__acceptTypes as $type) {
-			$acceptedTypes[] = $this->mapType($type);
-		}
-		$accepts = array_intersect($acceptedTypes, $accepts);
-		return $accepts[0];
+		return $intersect[0];
 	}
 
 /**
@@ -626,7 +499,6 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::respondAs()
  */
 	function renderAs(&$controller, $type) {
-		$this->__initializeTypes();
 		$options = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
@@ -648,7 +520,7 @@ class RequestHandlerComponent extends Component {
 		$this->__renderType = $type;
 		$controller->layoutPath = $type;
 
-		if (isset($this->__requestContent[$type])) {
+		if ($this->response->getMimeType($type)) {
 			$this->respondAs($type, $options);
 		}
 
@@ -680,25 +552,18 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  */
 	function respondAs($type, $options = array()) {
-		$this->__initializeTypes();
-		if (!array_key_exists($type, $this->__requestContent) && strpos($type, '/') === false) {
-			return false;
-		}
-		$defaults = array('index' => 0, 'charset' => null, 'attachment' => false);
-		$options = array_merge($defaults, $options);
+		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
+		$options = $options + $defaults;
 
-		if (strpos($type, '/') === false && isset($this->__requestContent[$type])) {
-			$cType = null;
-			if (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][$options['index']])) {
-				$cType = $this->__requestContent[$type][$options['index']];
-			} elseif (is_array($this->__requestContent[$type]) && isset($this->__requestContent[$type][0])) {
-				$cType = $this->__requestContent[$type][0];
-			} elseif (isset($this->__requestContent[$type])) {
-				$cType = $this->__requestContent[$type];
-			} else {
+		$cType = null;
+		if (strpos($type, '/') === false) {
+			$cType = $this->response->getMimeType($type);
+			if ($cType === false) {
 				return false;
 			}
-
+			if (is_array($cType) && isset($cType[$options['index']])) {
+				$cType = $cType[$options['index']];
+			}
 			if (is_array($cType)) {
 				if ($this->prefers($cType)) {
 					$cType = $this->prefers($cType);
@@ -711,94 +576,58 @@ class RequestHandlerComponent extends Component {
 		}
 
 		if ($cType != null) {
-			$header = 'Content-type: ' . $cType;
+			$this->response->type($cType);
 
 			if (!empty($options['charset'])) {
-				$header .= '; charset=' . $options['charset'];
+				$this->response->charset($options['charset']);
 			}
 			if (!empty($options['attachment'])) {
-				$this->_header("Content-Disposition: attachment; filename=\"{$options['attachment']}\"");
+				$this->response->download($options['attachment']);
 			}
-			if (Configure::read('debug') < 2 && !defined('CAKEPHP_SHELL')) {
-				$this->_header($header);
-			}
-			$this->__responseTypeSet = $cType;
 			return true;
 		}
 		return false;
 	}
 
 /**
- * Wrapper for header() so calls can be easily tested.
- *
- * @param string $header The header to be sent.
- * @return void
- */
-	protected function _header($header) {
-		header($header);
-	}
-
-/**
- * Returns the current response type (Content-type header), or null if none has been set
+ * Returns the current response type (Content-type header), or null if not alias exists
  *
  * @return mixed A string content type alias, or raw content type if no alias map exists,
- *    otherwise null
+ *	otherwise null
  */
 	public function responseType() {
-		if ($this->__responseTypeSet == null) {
-			return null;
-		}
-		return $this->mapType($this->__responseTypeSet);
+		return $this->mapType($this->response->type());
 	}
 
 /**
  * Maps a content-type back to an alias
  *
- * @param mixed $type Content type
- * @return mixed Alias
+ * @param mixed $cType Either a string content type to map, or an array of types.
+ * @return mixed Aliases for the types provided.
  */
-	public function mapType($ctype) {
-		if (is_array($ctype)) {
-			$out = array();
-			foreach ($ctype as $t) {
-				$out[] = $this->mapType($t);
-			}
-			return $out;
-		} else {
-			$keys = array_keys($this->__requestContent);
-			$count = count($keys);
-
-			for ($i = 0; $i < $count; $i++) {
-				$name = $keys[$i];
-				$type = $this->__requestContent[$name];
-
-				if (is_array($type) && in_array($ctype, $type)) {
-					return $name;
-				} elseif (!is_array($type) && $type == $ctype) {
-					return $name;
-				}
-			}
-			return $ctype;
-		}
+	public function mapType($cType) {
+		return $this->response->mapType($cType);
 	}
 
 /**
- * Initializes MIME types
+ * Maps a content type alias back to its mime-type(s)
  *
- * @return void
- * @access private
+ * @param mixed $alias String alias to convert back into a content type. Or an array of aliases to map.
+ * @return mixed Null on an undefined alias.  String value of the mapped alias type.  If an
+ *   alias maps to more than one content type, the first one will be returned.
  */
-	function __initializeTypes() {
-		if ($this->__typesInitialized) {
-			return;
+	public function mapAlias($alias) {
+		if (is_array($alias)) {
+			return array_map(array($this, 'mapAlias'), $alias);
 		}
-		if (isset($this->__requestContent[$this->ext])) {
-			$content = $this->__requestContent[$this->ext];
-			if (is_array($content)) {
-				$content = $content[0];
+		$type = $this->response->getMimeType($alias);
+		if ($type) {
+			if (is_array($type)) {
+				return $type[0];
 			}
-			array_unshift($this->__acceptTypes, $content);
+			return $type;
 		}
-		$this->__typesInitialized = true;
+		return null;
 	}
+
 }

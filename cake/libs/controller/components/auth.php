@@ -37,7 +37,6 @@ class AuthComponent extends Component {
  * Maintains current user login state.
  *
  * @var boolean
- * @access private
  */
 	protected $_loggedIn = false;
 
@@ -45,7 +44,6 @@ class AuthComponent extends Component {
  * Other components utilized by AuthComponent
  *
  * @var array
- * @access public
  */
 	public $components = array('Session', 'RequestHandler');
 
@@ -53,7 +51,6 @@ class AuthComponent extends Component {
  * A reference to the object used for authentication
  *
  * @var object
- * @access public
  * @link http://book.cakephp.org/view/1278/authenticate
  */
 	public $authenticate = null;
@@ -67,7 +64,6 @@ class AuthComponent extends Component {
  * 'object' will validate Controller::action against object::isAuthorized(user, controller, action)
  *
  * @var mixed
- * @access public
  * @link http://book.cakephp.org/view/1275/authorize
  */
 	public $authorize = false;
@@ -77,7 +73,6 @@ class AuthComponent extends Component {
  * with an invalid or expired session
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1277/ajaxLogin
  */
 	public $ajaxLogin = null;
@@ -86,7 +81,6 @@ class AuthComponent extends Component {
  * The name of the element used for SessionComponent::setFlash
  *
  * @var string
- * @access public
  */
 	public $flashElement = 'default';
 
@@ -94,7 +88,6 @@ class AuthComponent extends Component {
  * The name of the model that represents users which will be authenticated.  Defaults to 'User'.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1266/userModel
  */
 	public $userModel = 'User';
@@ -104,7 +97,6 @@ class AuthComponent extends Component {
  * i.e. array('User.is_active' => 1).
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/1268/userScope
  */
 	public $userScope = array();
@@ -114,7 +106,6 @@ class AuthComponent extends Component {
  * $userModel, i.e. array('username' => 'login_name', 'password' => 'passwd').
  *
  * @var array
- * @access public
  * @link http://book.cakephp.org/view/1267/fields
  */
 	public $fields = array('username' => 'username', 'password' => 'password');
@@ -124,7 +115,6 @@ class AuthComponent extends Component {
  * unspecified, it will be "Auth.{$userModel name}".
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1276/sessionKey
  */
 	public $sessionKey = null;
@@ -136,7 +126,6 @@ class AuthComponent extends Component {
  * "Controllers/".
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1279/actionPath
  */
 	public $actionPath = null;
@@ -146,7 +135,6 @@ class AuthComponent extends Component {
  * logins.
  *
  * @var mixed
- * @access public
  * @link http://book.cakephp.org/view/1269/loginAction
  */
 	public $loginAction = null;
@@ -158,7 +146,6 @@ class AuthComponent extends Component {
  * set, the user will be redirected to the page specified in $loginRedirect.
  *
  * @var mixed
- * @access public
  * @link http://book.cakephp.org/view/1270/loginRedirect
  */
 	public $loginRedirect = null;
@@ -169,7 +156,6 @@ class AuthComponent extends Component {
  * Defaults to AuthComponent::$loginAction.
  *
  * @var mixed
- * @access public
  * @see AuthComponent::$loginAction
  * @see AuthComponent::logout()
  * @link http://book.cakephp.org/view/1271/logoutRedirect
@@ -180,7 +166,6 @@ class AuthComponent extends Component {
  * The name of model or model object, or any other object has an isAuthorized method.
  *
  * @var string
- * @access public
  */
 	public $object = null;
 
@@ -189,7 +174,6 @@ class AuthComponent extends Component {
  * login failures, so as not to expose information on why the login failed.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1272/loginError
  */
 	public $loginError = null;
@@ -199,7 +183,6 @@ class AuthComponent extends Component {
  * acccess.
  *
  * @var string
- * @access public
  * @link http://book.cakephp.org/view/1273/authError
  */
 	public $authError = null;
@@ -208,7 +191,6 @@ class AuthComponent extends Component {
  * Determines whether AuthComponent will automatically redirect and exit if login is successful.
  *
  * @var boolean
- * @access public
  * @link http://book.cakephp.org/view/1274/autoRedirect
  */
 	public $autoRedirect = true;
@@ -217,7 +199,6 @@ class AuthComponent extends Component {
  * Controller actions for which user validation is not required.
  *
  * @var array
- * @access public
  * @see AuthComponent::allow()
  * @link http://book.cakephp.org/view/1251/Setting-Auth-Component-Variables
  */
@@ -227,7 +208,6 @@ class AuthComponent extends Component {
  * Maps actions to CRUD operations.  Used for controller-based validation ($validate = 'controller').
  *
  * @var array
- * @access public
  * @see AuthComponent::mapActions()
  */
 	public $actionMap = array(
@@ -239,18 +219,25 @@ class AuthComponent extends Component {
 	);
 
 /**
+ * Request object
+ *
+ * @var CakeRequest
+ */
+	public $request;
+
+/**
  * Form data from Controller::$data
  *
+ * @deprecated Use $this->request->data instead
  * @var array
- * @access public
  */
 	public $data = array();
 
 /**
  * Parameter data from Controller::$params
  *
+ * @deprecated Use $this->request instead
  * @var array
- * @access public
  */
 	public $params = array();
 
@@ -265,7 +252,6 @@ class AuthComponent extends Component {
  * Method list for bound controller
  *
  * @var array
- * @access protected
  */
 	protected $_methods = array();
 
@@ -275,8 +261,10 @@ class AuthComponent extends Component {
  * @param object $controller A reference to the instantiating controller object
  * @return void
  */
-	public function initialize(&$controller) {
-		$this->params = $controller->params;
+	public function initialize(Controller $controller, $settings = array()) {
+		$this->request = $controller->request;
+		$this->params = $this->request;
+
 		$crud = array('create', 'read', 'update', 'delete');
 		$this->actionMap = array_merge($this->actionMap, array_combine($crud, $crud));
 		$this->_methods = $controller->methods;
@@ -320,7 +308,8 @@ class AuthComponent extends Component {
 		}
 
 		$methods = array_flip($controller->methods);
-		$action = $controller->params['action'];
+		$action = $controller->request->params['action'];
+
 		$isMissingAction = (
 			$controller->scaffold === false &&
 			!isset($methods[$action])
@@ -333,12 +322,13 @@ class AuthComponent extends Component {
 		if (!$this->__setDefaults()) {
 			return false;
 		}
-
-		$this->data = $controller->data = $this->hashPasswords($controller->data);
+		$request =& $controller->request;
+		
+		$this->request->data = $controller->request->data = $this->hashPasswords($request->data);
 		$url = '';
 
-		if (isset($controller->params['url']['url'])) {
-			$url = $controller->params['url']['url'];
+		if (isset($request->query['url'])) {
+			$url = $request->query['url'];
 		}
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
@@ -354,20 +344,20 @@ class AuthComponent extends Component {
 		}
 
 		if ($loginAction == $url) {
-			$model =& $this->getModel();
-			if (empty($controller->data) || !isset($controller->data[$model->alias])) {
+			$model = $this->getModel();
+			if (empty($request->data) || !isset($request->data[$model->alias])) {
 				if (!$this->Session->check('Auth.redirect') && !$this->loginRedirect && env('HTTP_REFERER')) {
 					$this->Session->write('Auth.redirect', $controller->referer(null, true));
 				}
 				return false;
 			}
 
-			$isValid = !empty($controller->data[$model->alias][$this->fields['username']]) &&
-				!empty($controller->data[$model->alias][$this->fields['password']]);
+			$isValid = !empty($request->data[$model->alias][$this->fields['username']]) &&
+				!empty($request->data[$model->alias][$this->fields['password']]);
 
 			if ($isValid) {
-				$username = $controller->data[$model->alias][$this->fields['username']];
-				$password = $controller->data[$model->alias][$this->fields['password']];
+				$username = $request->data[$model->alias][$this->fields['username']];
+				$password = $request->data[$model->alias][$this->fields['password']];
 
 				$data = array(
 					$model->alias . '.' . $this->fields['username'] => $username,
@@ -383,14 +373,14 @@ class AuthComponent extends Component {
 			}
 
 			$this->Session->setFlash($this->loginError, $this->flashElement, array(), 'auth');
-			$controller->data[$model->alias][$this->fields['password']] = null;
+			$request->data[$model->alias][$this->fields['password']] = null;
 			return false;
 		} else {
 			if (!$this->user()) {
 				if (!$this->RequestHandler->isAjax()) {
 					$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
-					if (!empty($controller->params['url']) && count($controller->params['url']) >= 2) {
-						$query = $controller->params['url'];
+					if (!empty($request->query) && count($request->query) >= 2) {
+						$query = $request->query;
 						unset($query['url'], $query['ext']);
 						$url .= Router::queryString($query, array());
 					}
@@ -415,12 +405,12 @@ class AuthComponent extends Component {
 		extract($this->__authType());
 		switch ($type) {
 			case 'controller':
-				$this->object =& $controller;
+				$this->object = $controller;
 			break;
 			case 'crud':
 			case 'actions':
 				if (isset($controller->Acl)) {
-					$this->Acl =& $controller->Acl;
+					$this->Acl = $controller->Acl;
 				} else {
 					trigger_error(__('Could not find AclComponent. Please include Acl in Controller::$components.'), E_USER_WARNING);
 				}
@@ -531,22 +521,22 @@ class AuthComponent extends Component {
 			break;
 			case 'crud':
 				$this->mapActions();
-				if (!isset($this->actionMap[$this->params['action']])) {
+				if (!isset($this->actionMap[$this->request['action']])) {
 					trigger_error(
-						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->params['action'], $this->params['controller']),
+						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->request['action'], $this->request['controller']),
 						E_USER_WARNING
 					);
 				} else {
 					$valid = $this->Acl->check(
 						$user,
 						$this->action(':controller'),
-						$this->actionMap[$this->params['action']]
+						$this->actionMap[$this->request['action']]
 					);
 				}
 			break;
 			case 'model':
 				$this->mapActions();
-				$action = $this->params['action'];
+				$action = $this->request['action'];
 				if (isset($this->actionMap[$action])) {
 					$action = $this->actionMap[$action];
 				}
@@ -723,7 +713,7 @@ class AuthComponent extends Component {
 		}
 
 		if ($key == null) {
-			$model =& $this->getModel();
+			$model = $this->getModel();
 			return array($model->alias => $this->Session->read($this->sessionKey));
 		} else {
 			$user = $this->Session->read($this->sessionKey);
@@ -789,10 +779,10 @@ class AuthComponent extends Component {
  * @link http://book.cakephp.org/view/1256/action
  */
 	public function action($action = ':plugin/:controller/:action') {
-		$plugin = empty($this->params['plugin']) ? null : Inflector::camelize($this->params['plugin']) . '/';
+		$plugin = empty($this->request['plugin']) ? null : Inflector::camelize($this->request['plugin']) . '/';
 		return str_replace(
 			array(':controller', ':action', ':plugin/'),
-			array(Inflector::camelize($this->params['controller']), $this->params['action'], $plugin),
+			array(Inflector::camelize($this->request['controller']), $this->request['action'], $plugin),
 			$this->actionPath . $action
 		);
 	}
@@ -836,7 +826,7 @@ class AuthComponent extends Component {
 		} else {
 			$conditions = $this->userScope;
 		}
-		$model =& $this->getModel();
+		$model = $this->getModel();
 		if (empty($user)) {
 			$user = $this->user();
 			if (empty($user)) {
@@ -910,7 +900,7 @@ class AuthComponent extends Component {
 		}
 
 		if (is_array($data)) {
-			$model =& $this->getModel();
+			$model = $this->getModel();
 			
 			if(isset($data[$model->alias])) {
 				if (isset($data[$model->alias][$this->fields['username']]) && isset($data[$model->alias][$this->fields['password']])) {

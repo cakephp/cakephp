@@ -204,6 +204,8 @@ class HelperTest extends CakeTestCase {
 		$null = null;
 		$this->View = new View($null);
 		$this->Helper = new Helper($this->View);
+		$this->Helper->request = new CakeRequest(null, false);
+
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
@@ -363,42 +365,42 @@ class HelperTest extends CakeTestCase {
  * @return void
  */
 	function testValue() {
-		$this->Helper->data = array('fullname' => 'This is me');
+		$this->Helper->request->data = array('fullname' => 'This is me');
 		$this->Helper->setEntity('fullname');
 		$result = $this->Helper->value('fullname');
 		$this->assertEqual($result, 'This is me');
 
-		$this->Helper->data = array('Post' => array('name' => 'First Post'));
+		$this->Helper->request->data = array('Post' => array('name' => 'First Post'));
 		$this->Helper->setEntity('Post.name');
 		$result = $this->Helper->value('Post.name');
 		$this->assertEqual($result, 'First Post');
 
-		$this->Helper->data = array('Post' => array(2 => array('name' => 'First Post')));
+		$this->Helper->request->data = array('Post' => array(2 => array('name' => 'First Post')));
 		$this->Helper->setEntity('Post.2.name');
 		$result = $this->Helper->value('Post.2.name');
 		$this->assertEqual($result, 'First Post');
 
-		$this->Helper->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
+		$this->Helper->request->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
 		$this->Helper->setEntity('Post.2.created');
 		$result = $this->Helper->value('Post.2.created');
 		$this->assertEqual($result, array('year' => '2008'));
 
-		$this->Helper->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
+		$this->Helper->request->data = array('Post' => array(2 => array('created' => array('year' => '2008'))));
 		$this->Helper->setEntity('Post.2.created.year');
 		$result = $this->Helper->value('Post.2.created.year');
 		$this->assertEqual($result, '2008');
 
-		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => ''));
+		$this->Helper->request->data = array('HelperTestTag' => array('HelperTestTag' => ''));
 		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
 		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
 		$this->assertEqual($result, '');
 
-		$this->Helper->data = array('HelperTestTag' => array('HelperTestTag' => array(2, 3, 4)));
+		$this->Helper->request->data = array('HelperTestTag' => array('HelperTestTag' => array(2, 3, 4)));
 		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
 		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
 		$this->assertEqual($result, array(2, 3, 4));
 
-		$this->Helper->data = array(
+		$this->Helper->request->data = array(
 			'HelperTestTag' => array(
 				array('id' => 3),
 				array('id' => 5)
@@ -408,12 +410,12 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
 		$this->assertEqual($result, array(3 => 3, 5 => 5));
 
-		$this->Helper->data = array('zero' => 0);
+		$this->Helper->request->data = array('zero' => 0);
 		$this->Helper->setEntity('zero');
 		$result = $this->Helper->value(array('default' => 'something'), 'zero');
 		$this->assertEqual($result, array('value' => 0));
 
-		$this->Helper->data = array('zero' => '0');
+		$this->Helper->request->data = array('zero' => '0');
 		$result = $this->Helper->value(array('default' => 'something'), 'zero');
 		$this->assertEqual($result, array('value' => '0'));
 
@@ -489,7 +491,7 @@ class HelperTest extends CakeTestCase {
 		$result = $this->Helper->assetTimestamp(CSS_URL . 'cake.generic.css?someparam');
 		$this->assertEqual($result, CSS_URL . 'cake.generic.css?someparam');
 
-		$this->Helper->webroot = '/some/dir/';
+		$this->Helper->request->webroot = '/some/dir/';
 		$result = $this->Helper->assetTimestamp('/some/dir/' . CSS_URL . 'cake.generic.css');
 		$this->assertPattern('/' . preg_quote(CSS_URL . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
@@ -619,27 +621,27 @@ class HelperTest extends CakeTestCase {
 	function testMulitDimensionValue() {
 		$this->Helper->data = array();
 		for ($i = 0; $i < 2; $i++) {
-			$this->Helper->data['Model'][$i] = 'what';
+			$this->Helper->request->data['Model'][$i] = 'what';
 			$result[] = $this->Helper->value("Model.{$i}");
-			$this->Helper->data['Model'][$i] = array();
+			$this->Helper->request->data['Model'][$i] = array();
 			for ($j = 0; $j < 2; $j++) {
-				$this->Helper->data['Model'][$i][$j] = 'how';
+				$this->Helper->request->data['Model'][$i][$j] = 'how';
 				$result[] = $this->Helper->value("Model.{$i}.{$j}");
 			}
 		}
 		$expected = array('what', 'how', 'how', 'what', 'how', 'how');
 		$this->assertEqual($result, $expected);
 
-		$this->Helper->data['HelperTestComment']['5']['id'] = 'ok';
+		$this->Helper->request->data['HelperTestComment']['5']['id'] = 'ok';
 		$result = $this->Helper->value('HelperTestComment.5.id');
 		$this->assertEqual($result, 'ok');
 
 		$this->Helper->setEntity('HelperTestPost', true);
-		$this->Helper->data['HelperTestPost']['5']['created']['month'] = '10';
+		$this->Helper->request->data['HelperTestPost']['5']['created']['month'] = '10';
 		$result = $this->Helper->value('5.created.month');
 		$this->assertEqual($result, 10);
 
-		$this->Helper->data['HelperTestPost']['0']['id'] = 100;
+		$this->Helper->request->data['HelperTestPost']['0']['id'] = 100;
 		$result = $this->Helper->value('0.id');
 		$this->assertEqual($result, 100);
 	}
@@ -709,29 +711,29 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($this->View->modelId,1);
 		$this->assertEqual($this->View->fieldSuffix,'year');
 
-		$this->Helper->data['HelperTestPost'][2]['HelperTestComment'][1]['title'] = 'My Title';
+		$this->Helper->request->data['HelperTestPost'][2]['HelperTestComment'][1]['title'] = 'My Title';
 		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.title');
 		$this->assertEqual($result,'My Title');
 
-		$this->Helper->data['HelperTestPost'][2]['HelperTestComment'][1]['created']['year'] = 2008;
+		$this->Helper->request->data['HelperTestPost'][2]['HelperTestComment'][1]['created']['year'] = 2008;
 		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
 		$this->assertEqual($result,2008);
 
-		$this->Helper->data[2]['HelperTestComment'][1]['created']['year'] = 2008;
+		$this->Helper->request->data[2]['HelperTestComment'][1]['created']['year'] = 2008;
 		$result = $this->Helper->value('HelperTestPost.2.HelperTestComment.1.created.year');
 		$this->assertEqual($result,2008);
 
-		$this->Helper->data['HelperTestPost']['title'] = 'My Title';
+		$this->Helper->request->data['HelperTestPost']['title'] = 'My Title';
 		$result = $this->Helper->value('title');
 		$this->assertEqual($result,'My Title');
 
-		$this->Helper->data['My']['title'] = 'My Title';
+		$this->Helper->request->data['My']['title'] = 'My Title';
 		$result = $this->Helper->value('My.title');
 		$this->assertEqual($result,'My Title');
 	}
 
 	function testWebrootPaths() {
-		$this->Helper->webroot = '/';
+		$this->Helper->request->webroot = '/';
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/img/cake.power.gif';
 		$this->assertEqual($result, $expected);

@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller', 'Model'));
+App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller'));
 App::import('Helper', array('Html', 'Form'));
 
 if (!defined('FULL_BASE_URL')) {
@@ -110,7 +110,8 @@ class HtmlHelperTest extends CakeTestCase {
 	function startTest() {
 		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
 		$this->Html = new HtmlHelper($this->View);
-
+		$this->Html->request = new CakeRequest(null, false);
+		$this->Html->request->webroot = '';
 		$this->_appEncoding = Configure::read('App.encoding');
 		$this->_asset = Configure::read('Asset');
 		$this->_debug = Configure::read('debug');
@@ -155,6 +156,8 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testLink() {
+		$this->Html->request->webroot = '';
+
 		$result = $this->Html->link('/home');
 		$expected = array('a' => array('href' => '/home'), 'preg:/\/home/', '/a');
 		$this->assertTags($result, $expected);
@@ -287,6 +290,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testImageTag() {
+		$this->Html->request->webroot = '';
 		Configure::write('Asset.timestamp', false);
 
 		$result = $this->Html->image('test.gif');
@@ -310,7 +314,7 @@ class HtmlHelperTest extends CakeTestCase {
 	function testImageWithTimestampping() {
 		Configure::write('Asset.timestamp', 'force');
 
-		$this->Html->webroot = '/';
+		$this->Html->request->webroot = '/';
 		$result = $this->Html->image('cake.icon.png');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
@@ -320,14 +324,12 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('cake.icon.png');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
-		$webroot = $this->Html->webroot;
-		$this->Html->webroot = '/testing/longer/';
+		$this->Html->request->webroot = '/testing/longer/';
 		$result = $this->Html->image('cake.icon.png');
 		$expected = array(
 			'img' => array('src' => 'preg:/\/testing\/longer\/img\/cake\.icon\.png\?[0-9]+/', 'alt' => '')
 		);
 		$this->assertTags($result, $expected);
-		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -344,7 +346,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::import('Core', 'File');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
-		$file =& new File($testfile, true);
+		$file = new File($testfile, true);
 
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
@@ -352,7 +354,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
 
-		$this->Html->webroot = '/';
+		$this->Html->request->webroot = '/';
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->image('__cake_test_image.gif');
 		$this->assertTags($result, array(
@@ -361,8 +363,7 @@ class HtmlHelperTest extends CakeTestCase {
 				'alt' => ''
 		)));
 
-		$webroot = $this->Html->webroot;
-		$this->Html->webroot = '/testing/';
+		$this->Html->request->webroot = '/testing/';
 		$result = $this->Html->image('__cake_test_image.gif');
 
 		$this->assertTags($result, array(
@@ -370,9 +371,8 @@ class HtmlHelperTest extends CakeTestCase {
 				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
-		$this->Html->webroot = $webroot;
 
-		$dir =& new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$dir = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
 		$dir->delete();
 	}
 
@@ -390,7 +390,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
 
-		$webroot = $this->Html->webroot;
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
 		$expected = array(
@@ -398,7 +397,6 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$webroot = $this->Html->webroot;
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('theme_webroot');
 		$expected = array(
@@ -514,19 +512,15 @@ class HtmlHelperTest extends CakeTestCase {
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		$webroot = $this->Html->webroot;
-		$this->Html->webroot = '/testing/';
+		$this->Html->request->webroot = '/testing/';
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/\/testing\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
-		$this->Html->webroot = $webroot;
 
-		$webroot = $this->Html->webroot;
-		$this->Html->webroot = '/testing/longer/';
+		$this->Html->request->webroot = '/testing/longer/';
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/\/testing\/longer\/css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
-		$this->Html->webroot = $webroot;
 	}
 
 /**
@@ -617,7 +611,6 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => 'js/jquery-1.3.2.js', 'defer' => 'defer', 'encoding' => 'utf-8')
 		);
 		$this->assertTags($result, $expected);
-
 		
 		$this->View->expects($this->any())->method('addScript')
 			->with($this->matchesRegularExpression('/script_in_head.js/'));
@@ -709,7 +702,6 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->View->expects($this->once())->method('addScript');
-
 		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
 		$this->assertNull($result);
 		echo 'this is some javascript';

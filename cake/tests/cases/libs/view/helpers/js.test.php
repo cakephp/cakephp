@@ -96,6 +96,15 @@ class JsHelperTest extends CakeTestCase {
 		$controller = null;
 		$this->View = $this->getMock('View', array('addScript'), array(&$controller));
 		$this->Js = new JsHelper($this->View, 'Option');
+		$request = new CakeRequest(null, false);
+		$this->Js->request = $request;
+		$this->Js->Html = new HtmlHelper($this->View);
+		$this->Js->Html->request = $request;
+		$this->Js->Form = new FormHelper($this->View);
+
+		$this->Js->Form->request = $request;
+		$this->Js->Form->Html = $this->Js->Html;
+		$this->Js->OptionEngine = new OptionEngineHelper();
 
 		ClassRegistry::addObject('view', $this->View);
 	}
@@ -118,12 +127,21 @@ class JsHelperTest extends CakeTestCase {
  * @return void
  */
 	function _useMock() {
+		$request = new CakeRequest(null, false);
+
 		if (!class_exists('TestJsEngineHelper', false)) {
 			$this->getMock('JsBaseEngineHelper', array(), array(), 'TestJsEngineHelper');
 		}
+
 		$this->Js = new JsHelper($this->View, array('TestJs'));
 		$this->Js->TestJsEngine = new TestJsEngineHelper($this->View);
 		$this->mockObjects[] = $this->Js->TestJsEngine;
+		$this->Js->request = $request;
+		$this->Js->Html = new HtmlHelper($this->View);
+		$this->Js->Html->request = $request;
+		$this->Js->Form = new FormHelper($this->View);
+		$this->Js->Form->request = $request;
+		$this->Js->Form->Html = new HtmlHelper($this->View);
 	}
 
 /**
@@ -295,6 +313,7 @@ class JsHelperTest extends CakeTestCase {
 		if ($this->skipIf(!is_writable(JS), 'webroot/js is not Writable, script caching test has been skipped')) {
 			return;
 		}
+		$this->Js->request->webroot = '/';
 		$this->Js->JsBaseEngine = new TestJsEngineHelper();
 		$this->Js->buffer('one = 1;');
 		$this->Js->buffer('two = 2;');

@@ -193,10 +193,10 @@ class FormHelper extends AppHelper {
 			$options = $model;
 			$model = null;
 		}
-		if (empty($model) && $model !== false && !empty($this->params['models'])) {
-			$model = $this->params['models'][0];
-			$this->defaultModel = $this->params['models'][0];
-		} elseif (empty($model) && empty($this->params['models'])) {
+		if (empty($model) && $model !== false && !empty($this->request['models'])) {
+			$model = $this->request['models'][0];
+			$this->defaultModel = $this->request['models'][0];
+		} elseif (empty($model) && empty($this->request['models'])) {
 			$model = false;
 		}
 
@@ -217,13 +217,13 @@ class FormHelper extends AppHelper {
 		if (isset($this->fieldset[$modelEntity]['key'])) {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
-				isset($this->data[$model]) &&
-				!empty($this->data[$model][$data['key']])
+				isset($this->request->data[$model]) &&
+				!empty($this->request->data[$model][$data['key']])
 			);
 
 			if ($recordExists) {
 				$created = true;
-				$id = $this->data[$model][$data['key']];
+				$id = $this->request->data[$model][$data['key']];
 			}
 		}
 
@@ -242,12 +242,12 @@ class FormHelper extends AppHelper {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
-				} elseif (!empty($this->params['controller'])) {
-					$options['url']['controller'] = Inflector::underscore($this->params['controller']);
+				} elseif (!empty($this->request['controller'])) {
+					$options['url']['controller'] = Inflector::underscore($this->request['controller']);
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = $this->params['action'];
+				$options['action'] = $this->request['action'];
 			}
 
 			$actionDefaults = array(
@@ -304,9 +304,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
-				'value' => $this->params['_Token']['key'], 'id' => 'Token' . mt_rand())
+				'value' => $this->request['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
 		}
 
@@ -341,8 +341,8 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/view/1389/Closing-the-Form
  */
 	public function end($options = null) {
-		if (!empty($this->params['models'])) {
-			$models = $this->params['models'][0];
+		if (!empty($this->request['models'])) {
+			$models = $this->request['models'][0];
 		}
 		$out = null;
 		$submit = null;
@@ -364,7 +364,7 @@ class FormHelper extends AppHelper {
 			}
 			$out .= $this->submit($submit, $submitOptions);
 		}
-		if (isset($this->params['_Token']) && !empty($this->params['_Token'])) {
+		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
@@ -382,7 +382,7 @@ class FormHelper extends AppHelper {
  * @return string A hidden input field with a security hash
  */
 	public function secure($fields = array()) {
-		if (!isset($this->params['_Token']) || empty($this->params['_Token'])) {
+		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return;
 		}
 		$locked = array();
@@ -424,8 +424,8 @@ class FormHelper extends AppHelper {
 			$field = Set::filter(explode('.', $field), true);
 		}
 
-		if (!empty($this->params['_Token']['disabledFields'])) {
-			foreach ((array)$this->params['_Token']['disabledFields'] as $disabled) {
+		if (!empty($this->request['_Token']['disabledFields'])) {
+			foreach ((array)$this->request['_Token']['disabledFields'] as $disabled) {
 				$disabled = explode('.', $disabled);
 				if (array_values(array_intersect($field, $disabled)) === $disabled) {
 					return;
@@ -619,8 +619,8 @@ class FormHelper extends AppHelper {
 		if ($legend === true) {
 			$actionName = __('New %s');
 			$isEdit = (
-				strpos($this->action, 'update') !== false ||
-				strpos($this->action, 'edit') !== false
+				strpos($this->request->params['action'], 'update') !== false ||
+				strpos($this->request->params['action'], 'edit') !== false
 			);
 			if ($isEdit) {
 				$actionName = __('Edit %s');
@@ -2169,7 +2169,7 @@ class FormHelper extends AppHelper {
 			$secure = $options['secure'];
 			unset($options['secure']);
 		} else {
-			$secure = (isset($this->params['_Token']) && !empty($this->params['_Token']));
+			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
 		$result = parent::_initInputField($field, $options);
 

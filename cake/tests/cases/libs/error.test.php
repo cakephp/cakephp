@@ -262,6 +262,17 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * setup create a request object to get out of router later.
+ *
+ * @return void
+ */
+	function setUp() {
+		$request = new CakeRequest(null, false);
+		$request->base = '';
+		Router::setRequestInfo($request);
+	}
+
+/**
  * test that methods declared in an ErrorHandler subclass are not converted
  * into error404 when debug == 0
  *

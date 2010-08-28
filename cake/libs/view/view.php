@@ -278,7 +278,7 @@ class View extends Object {
 	private $__passedVars = array(
 		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
 		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
-		'params', 'data', 'plugin', 'passedArgs', 'cacheAction'
+		'params', 'request', 'data', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
 /**

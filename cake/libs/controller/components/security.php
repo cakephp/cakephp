@@ -160,7 +160,7 @@ class SecurityComponent extends Component {
  * @var array
  * @access public
  */
-	public $components = array('RequestHandler', 'Session');
+	public $components = array('Session');
 
 /**
  * Holds the current action of the controller
@@ -170,22 +170,41 @@ class SecurityComponent extends Component {
 	protected $_action = null;
 
 /**
+ * Request object
+ *
+ * @var CakeRequest
+ */
+	public $request;
+
+/**
+ * Initialize the SecurityComponent
+ *
+ * @param object $controller Controller instance for the request
+ * @param array $settings Settings to set to the component
+ * @return void
+ */
+	public function initialize(&$controller, $settings = array()) {
+		$this->_set($settings);
+	}
+
+/**
  * Component startup. All security checking happens here.
  *
  * @param object $controller Instantiating controller
  * @return void
  */
 	public function startup(&$controller) {
-		$this->_action = strtolower($controller->action);
+		$this->request = $controller->request;
+		$this->_action = strtolower($this->request->params['action']);
 		$this->_methodsRequired($controller);
 		$this->_secureRequired($controller);
 		$this->_authRequired($controller);
 		$this->_loginRequired($controller);
 
-		$isPost = ($this->RequestHandler->isPost() || $this->RequestHandler->isPut());
+		$isPost = ($this->request->is('post') || $this->request->is('put'));
 		$isRequestAction = (
-			!isset($controller->params['requested']) ||
-			$controller->params['requested'] != 1
+			!isset($controller->request->params['requested']) ||
+			$controller->request->params['requested'] != 1
 		);
 
 		if ($isPost && $isRequestAction && $this->validatePost) {
@@ -439,9 +458,8 @@ class SecurityComponent extends Component {
 			$property = 'require' . $method;
 			if (is_array($this->$property) && !empty($this->$property)) {
 				$require = array_map('strtolower', $this->$property);
-
 				if (in_array($this->_action, $require) || $this->$property == array('*')) {
-					if (!$this->RequestHandler->{'is' . $method}()) {
+					if (!$this->request->is(strtolower($method))) {
 						if (!$this->blackHole($controller, strtolower($method))) {
 							return null;
 						}
@@ -463,7 +481,7 @@ class SecurityComponent extends Component {
 			$requireSecure = array_map('strtolower', $this->requireSecure);
 
 			if (in_array($this->_action, $requireSecure) || $this->requireSecure == array('*')) {
-				if (!$this->RequestHandler->isSSL()) {
+				if (!$this->request->is('ssl')) {
 					if (!$this->blackHole($controller, 'secure')) {
 						return null;
 					}
@@ -480,11 +498,11 @@ class SecurityComponent extends Component {
  * @return bool true if authentication required
  */
 	protected function _authRequired(&$controller) {
-		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($controller->data)) {
+		if (is_array($this->requireAuth) && !empty($this->requireAuth) && !empty($this->request->data)) {
 			$requireAuth = array_map('strtolower', $this->requireAuth);
 
-			if (in_array($this->_action, $requireAuth) || $this->requireAuth == array('*')) {
-				if (!isset($controller->data['_Token'] )) {
+			if (in_array($this->request->params['action'], $requireAuth) || $this->requireAuth == array('*')) {
+				if (!isset($controller->request->data['_Token'] )) {
 					if (!$this->blackHole($controller, 'auth')) {
 						return null;
 					}
@@ -493,7 +511,7 @@ class SecurityComponent extends Component {
 				if ($this->Session->check('_Token')) {
 					$tData = unserialize($this->Session->read('_Token'));
 
-					if (!empty($tData['allowedControllers']) && !in_array($controller->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($controller->params['action'], $tData['allowedActions'])) {
+					if (!empty($tData['allowedControllers']) && !in_array($this->request->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($this->request->params['action'], $tData['allowedActions'])) {
 						if (!$this->blackHole($controller, 'auth')) {
 							return null;
 						}
@@ -562,10 +580,10 @@ class SecurityComponent extends Component {
  * @return bool true if submitted form is valid
  */
 	protected function _validatePost(&$controller) {
-		if (empty($controller->data)) {
+		if (empty($controller->request->data)) {
 			return true;
 		}
-		$data = $controller->data;
+		$data = $controller->request->data;
 
 		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['key'])) {
 			return false;
@@ -581,7 +599,7 @@ class SecurityComponent extends Component {
 		}
 
 		$locked = null;
-		$check = $controller->data;
+		$check = $controller->request->data;
 		$token = urldecode($check['_Token']['fields']);
 
 		if (strpos($token, ':')) {
@@ -659,8 +677,8 @@ class SecurityComponent extends Component {
 			'disabledFields' => $this->disabledFields
 		);
 
-		if (!isset($controller->data)) {
-			$controller->data = array();
+		if (!isset($controller->request->data)) {
+			$controller->request->data = array();
 		}
 
 		if ($this->Session->check('_Token')) {
@@ -675,7 +693,7 @@ class SecurityComponent extends Component {
 				$token['key'] = $tokenData['key'];
 			}
 		}
-		$controller->params['_Token'] = $token;
+		$controller->request->params['_Token'] = $token;
 		$this->Session->write('_Token', serialize($token));
 		return true;
 	}
