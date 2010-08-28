@@ -228,7 +228,8 @@ class ViewTest extends CakeTestCase {
 	function setUp() {
 		Router::reload();
 		$this->Controller = new Controller();
-		$this->PostsController = new ViewPostsController();
+		$request = $this->getMock('CakeRequest');
+		$this->PostsController = new ViewPostsController($request);
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
@@ -700,7 +701,7 @@ class ViewTest extends CakeTestCase {
 		$_check = Configure::read('Cache.check');
 		Configure::write('Cache.check', true);
 
-		$Controller = new ViewPostsController();
+		$Controller = new ViewPostsController($this->getMock('CakeRequest'));
 		$Controller->cacheAction = '1 day';
 		$View = new View($Controller);
 		$View->helpers = array('Cache', 'Html', 'Session');

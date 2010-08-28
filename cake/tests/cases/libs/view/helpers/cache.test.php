@@ -373,7 +373,7 @@ class CacheHelperTest extends CakeTestCase {
 		Router::reload();
 
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
@@ -382,12 +382,11 @@ class CacheHelperTest extends CakeTestCase {
 				'name' => 'mark',
 				'ice' => 'cream'
 			)
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
-		$this->Controller->action = 'cache_parsing';
+		$this->Controller->request->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
 		
 		$View = new View($this->Controller);
 		$result = $View->render('index');

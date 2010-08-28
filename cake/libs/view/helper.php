@@ -164,6 +164,7 @@ class Helper extends Object {
 	public function __construct(View $View, $settings = array()) {
 		$this->_View = $View;
 		$this->params = $View->params;
+		$this->request = $View->request;
 		if (!empty($this->helpers)) {
 			$this->_helperMap = ObjectCollection::normalizeObjectArray($this->helpers);
 		}
@@ -722,13 +723,13 @@ class Helper extends Object {
 		$data = $this->request->data;
 
 		$entity = $this->_View->entity();
-		if (!empty($this->data) && !empty($entity)) {
-			$result = Set::extract($this->data, join('.', $entity));
+		if (!empty($data) && !empty($entity)) {
+			$result = Set::extract($data, join('.', $entity));
 		}
 
 		$habtmKey = $this->field();
 		if (empty($result) && isset($data[$habtmKey][$habtmKey])) {
-			$result = $this->data[$habtmKey][$habtmKey];
+			$result = $data[$habtmKey][$habtmKey];
 		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
 			if (ClassRegistry::isKeySet($habtmKey)) {
 				$model =& ClassRegistry::getObject($habtmKey);
