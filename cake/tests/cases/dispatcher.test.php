@@ -852,7 +852,6 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		Configure::write('App.baseUrl', '/index.php');
 		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl','/index.php');
 
 		$url = array('controller' => 'pages', 'action' => 'display');
 		$controller = $Dispatcher->dispatch($url, array(
@@ -866,7 +865,7 @@ class DispatcherTest extends CakeTestCase {
 		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
 		
-		$this->assertEqual($Dispatcher->base . '/pages/display/home/param:value/param2:value2', $Dispatcher->here);
+		$this->assertEqual($Dispatcher->request->base . '/pages/display/home/param:value/param2:value2', $Dispatcher->request->here);
 	}
 
 /**
@@ -1581,50 +1580,6 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertTrue(file_exists($filename));
 
 		unlink($filename);
-	}
-
-/**
- * test that cached() registers a view and un-registers it.  Tests
- * that helpers using don't fail
- *
- * @return void
- */
-	function testCachedRegisteringViewObject() {
-		Configure::write('Cache.disable', false);
-		Configure::write('Cache.check', true);
-		Configure::write('debug', 2);
-
-		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/';
-
-		Router::reload();
-		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
-		));
-
-		$dispatcher = new TestDispatcher();
-		$dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$dispatcher->base = false;
-
-		$url = 'test_cached_pages/cache_form';
-		ob_start();
-		$dispatcher->dispatch($url);
-		$out = ob_get_clean();
-
-		ClassRegistry::flush();
-
-		ob_start();
-		$dispatcher->cached($url);
-		$cached = ob_get_clean();
-
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $out);
-		$cached = preg_replace('/<!--+[^<>]+-->/', '', $cached);
-		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $cached);
-
-		$this->assertEqual($result, $expected);
-		$filename = $this->__cachePath($dispatcher->here);
-		@unlink($filename);
-		ClassRegistry::flush();
 	}
 
 /**

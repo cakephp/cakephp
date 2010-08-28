@@ -317,11 +317,7 @@ class Dispatcher {
 				}
 				$controller = null;
 				$view = new View($controller);
-				$return = $view->renderCache($filename, microtime(true));
-				if (!$return) {
-					ClassRegistry::removeObject('view');
-				}
-				return $return;
+				return $view->renderCache($filename, microtime(true));
 			}
 		}
 		return false;
