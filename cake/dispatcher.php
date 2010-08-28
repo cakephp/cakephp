@@ -92,6 +92,8 @@ class Dispatcher extends Object {
  * @param string $url URL information to work on
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
+ * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
+ *    are encountered.
  */
 	public function dispatch($url = null, $additionalParams = array()) {
 		if ($this->base === false) {
