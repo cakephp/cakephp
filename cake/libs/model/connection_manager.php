@@ -274,7 +274,3 @@ class ConnectionManager {
 		}
 	}
 }
-
-
-class MissingDatabaseException extends RuntimeException {}
-class MissingConnectionException extends RuntimeException {}

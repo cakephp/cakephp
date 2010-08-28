@@ -652,10 +652,3 @@ class Dispatcher extends Object {
 		header($header);
 	}
 }
-
-/**
- * Runtime Exceptions for dispatcher.
- */
-class MissingControllerException extends RuntimeException {}
-class MissingActionException extends RuntimeException {}
-class PrivateActionException extends RuntimeException {}
