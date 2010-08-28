@@ -19,6 +19,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+class Error404Exception extends RuntimeException { }
+class Error500Exception extends RuntimeException { }
+
 /*
  * Exceptions used by Dispatcher
  */
