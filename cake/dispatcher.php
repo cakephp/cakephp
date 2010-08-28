@@ -78,10 +78,9 @@ class Dispatcher {
 	public $request = null;
 
 /**
- * The response object
+ * Response object used for asset/cached responses.
  *
  * @var CakeResponse
- * @access public
  */
 	public $response = null;
 
@@ -192,19 +191,20 @@ class Dispatcher {
 			);
 			throw new MissingActionException($message);
 		}
-		$output =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$result =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$response = $controller->getResponse();
 
 		if ($controller->autoRender) {
 			$controller->render();
-		} elseif ($this->response->body() === null) {
-			$this->response->body($output);
+		} elseif ($response->body() === null) {
+			$response->body($result);
 		}
 		$controller->shutdownProcess();
 
 		if (isset($request->params['return'])) {
-			return $this->response->body();
+			return $response->body();
 		}
-		$this->response->send();
+		$response->send();
 	}
 
 /**
@@ -256,14 +256,9 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return $controller;
 		}
-		if (!$this->response) {
-			$this->response = new CakeResponse(array(
-				'charset' => Configure::read('App.encoding')
-			));
-		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($this->request, $this->response);
+			$controller = new $ctrlClass($this->request);
 		}
 		return $controller;
 	}

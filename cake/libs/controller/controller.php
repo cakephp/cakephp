@@ -119,6 +119,21 @@ class Controller extends Object {
 	public $request;
 
 /**
+ * An instance of a CakeResponse object that contains information about the impending response
+ *
+ * @var CakeResponse
+ */
+	public $response;
+
+
+/**
+ * The classname to use for creating the response object.
+ *
+ * @var string
+ */
+	protected $_responseClass = 'CakeResponse';
+
+/**
  * Holds pagination defaults for controller actions. The keys that can be included
  * in this array are: 'conditions', 'fields', 'order', 'limit', 'page', and 'recursive',
  * similar to the keys in the second parameter of Model::find().
@@ -329,9 +344,8 @@ class Controller extends Object {
  *
  * @param CakeRequest $request Request object for this controller can be null for testing.
  *  But expect that features that use the params will not work.
- * @param CakeResponse $response Response object for this controller
  */
-	public function __construct($request = null, $response = null) {
+	public function __construct($request = null) {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -356,7 +370,7 @@ class Controller extends Object {
 		if ($request instanceof CakeRequest) {
 			$this->_setRequest($request);
 		}
-		$this->response = $response;
+		$this->getResponse();
 		parent::__construct();
 	}
 
@@ -506,6 +520,18 @@ class Controller extends Object {
 			}
 		}
 		return true;
+	}
+
+/**
+ * Gets the response object for this controller.  Will construct the response if it has not already been built.
+ *
+ * @return CakeResponse
+ */
+	public function getResponse() {
+		if (empty($this->response)) {
+			$this->response = new $this->_responseClass(array('charset' => Configure::read('App.encoding')));
+		}
+		return $this->response;
 	}
 
 /**
