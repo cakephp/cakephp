@@ -19,41 +19,6 @@
  * @since         CakePHP(tm) v 0.10.5.1732
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'App');
-
-/**
- * Error Handling Controller
- *
- * Controller used by ErrorHandler to render error views.
- *
- * @package       cake
- * @subpackage    cake.cake.libs
- */
-class CakeErrorController extends AppController {
-	public $name = 'CakeError';
-
-/**
- * Uses Property
- *
- * @var array
- */
-	public $uses = array();
-
-/**
- * __construct
- *
- * @access public
- * @return void
- */
-	function __construct() {
-		parent::__construct();
-		$this->_set(Router::getPaths());
-		$this->request = $this->params = Router::getRequest();
-		$this->constructClasses();
-		$this->Component->initialize($this);
-		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
-	}
-}
 
 /**
  * Error Handler.
@@ -65,7 +30,7 @@ class CakeErrorController extends AppController {
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class ErrorHandler extends Object {
+class ErrorHandler {
 
 /**
  * Controller instance.
@@ -81,39 +46,35 @@ class ErrorHandler extends Object {
  * @param string $method Method producing the error
  * @param array $messages Error messages
  */
-	function __construct($method, $messages) {
-		App::import('Core', 'Sanitize');
+	function __construct(Exception $exception) {
 		static $__previousError = null;
+		App::import('Core', 'Sanitize');
+		App::import('Controller', 'CakeError');
 
-		if ($__previousError != array($method, $messages)) {
-			$__previousError = array($method, $messages);
+		if ($__previousError != $exception) {
+			$__previousError = $exception;
 			$this->controller = new CakeErrorController();
 		} else {
 			$this->controller = new Controller();
 			$this->controller->viewPath = 'errors';
 		}
-		$options = array('escape' => false);
-		$messages = Sanitize::clean($messages, $options);
-
-		if (!isset($messages[0])) {
-			$messages = array($messages);
-		}
 
 		if (method_exists($this->controller, 'apperror')) {
-			return $this->controller->appError($method, $messages);
+			return $this->controller->appError($exception);
 		}
+		$method = Inflector::variable(str_replace('Exception', '', get_class($exception)));
 
-		if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($this)))) {
+		if (!in_array($method, get_class_methods($this))) {
 			$method = 'error';
 		}
 		if ($method !== 'error') {
 			if (Configure::read('debug') == 0) {
 				$parentClass = get_parent_class($this);
-				if (strtolower($parentClass) != 'errorhandler') {
+				if ($parentClass != 'ErrorHandler') {
 					$method = 'error404';
 				}
-				$parentMethods = array_map('strtolower', get_class_methods($parentClass));
-				if (in_array(strtolower($method), $parentMethods)) {
+				$parentMethods = get_class_methods($parentClass);
+				if (in_array($method, $parentMethods)) {
 					$method = 'error404';
 				}
 				if (isset($code) && $code == 500) {
@@ -121,8 +82,19 @@ class ErrorHandler extends Object {
 				}
 			}
 		}
-		$this->dispatchMethod($method, $messages);
-		$this->_stop();
+		call_user_func_array(array($this, $method), array($exception));
+	}
+
+/**
+ * Set as the default exception handler by the CakePHP bootstrap process.
+ * If you wish you use a custom default exception handler use set_exception_handler()
+ * in your app/config/bootstrap.php.
+ *
+ * @return void
+ * @see http://php.net/manual/en/function.set-exception-handler.php
+ */
+	public static function handleException(Exception $exception) {
+		$error = new ErrorHandler($exception);
 	}
 
 /**
@@ -146,14 +118,12 @@ class ErrorHandler extends Object {
  *
  * @param array $params Parameters for controller
  */
-	public function error404($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function error404($exception) {
 		if (!isset($url)) {
 			$url = $this->controller->here;
 		}
 		$url = Router::normalize($url);
-		$this->controller->header("HTTP/1.0 404 Not Found");
+		$this->controller->response->statusCode(404);
 		$this->controller->set(array(
 			'code' => '404',
 			'name' => __('Not Found'),
@@ -437,6 +407,6 @@ class ErrorHandler extends Object {
 	protected function _outputMessage($template) {
 		$this->controller->render($template);
 		$this->controller->afterFilter();
-		echo $this->controller->output;
+		$this->controller->response->send();
 	}
 }
