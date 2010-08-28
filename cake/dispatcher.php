@@ -116,12 +116,7 @@ class Dispatcher extends Object {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
-			return $this->cakeError('missingController', array(array(
-				'className' => Inflector::camelize($this->params['controller']) . 'Controller',
-				'webroot' => $this->webroot,
-				'url' => $url,
-				'base' => $this->base
-			)));
+			throw new MissingControllerException($this->params['controller'] . 'Controller');
 		}
 		$privateAction = $this->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
@@ -140,13 +135,12 @@ class Dispatcher extends Object {
 		));
 
 		if ($privateAction) {
-			return $this->cakeError('privateAction', array(array(
-				'className' => Inflector::camelize($this->params['controller'] . "Controller"),
-				'action' => $this->params['action'],
-				'webroot' => $this->webroot,
-				'url' => $url,
-				'base' => $this->base
-			)));
+			$message = sprintf(
+				'%s::%s()',
+				Inflector::camelize($this->params['controller']) . "Controller",
+				$this->params['action']
+			);
+			throw new PrivateActionException($message);
 		}
 		$controller->base = $this->base;
 		$controller->here = $this->here;
@@ -191,13 +185,12 @@ class Dispatcher extends Object {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $params);
 			}
-			return $this->cakeError('missingAction', array(array(
-				'className' => Inflector::camelize($params['controller']."Controller"),
-				'action' => $params['action'],
-				'webroot' => $this->webroot,
-				'url' => $this->here,
-				'base' => $this->base
-			)));
+			$message = sprintf(
+				'%s::%s',
+				Inflector::camelize($params['controller']) . "Controller",
+				$params['action']
+			);
+			throw new MissingActionException($message);
 		}
 		$output = call_user_func_array(array(&$controller, $params['action']), $params['pass']);
 
