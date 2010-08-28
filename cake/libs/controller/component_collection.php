@@ -68,9 +68,3 @@ class ComponentCollection extends ObjectCollection {
 	}
 
 }
-/**
- * Exceptions used by the ComponentCollection.
- */
-class MissingComponentFileException extends RuntimeException { }
-
-class MissingComponentClassException extends RuntimeException { }

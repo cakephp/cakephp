@@ -109,6 +109,8 @@ class Dispatcher {
  *   It will be used to create the request object.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
+ * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
+ *    are encountered.
  */
 	public function dispatch($url = null, $additionalParams = array()) {
 		if (is_array($url)) {
@@ -133,12 +135,7 @@ class Dispatcher {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
-			return $this->cakeError('missingController', array(array(
-				'className' => Inflector::camelize($request->params['controller']) . 'Controller',
-				'webroot' => $request->webroot,
-				'url' => $url,
-				'base' => $request->base
-			)));
+			throw new MissingControllerException(Inflector::camelize($request->params['controller']) . 'Controller');
 		}
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
@@ -155,13 +152,12 @@ class Dispatcher {
 		Router::setRequestInfo($request);
 
 		if ($privateAction) {
-			return $this->cakeError('privateAction', array(array(
-				'className' => Inflector::camelize($request->params['controller'] . "Controller"),
-				'action' => $request->params['action'],
-				'webroot' => $request->webroot,
-				'url' => $request->url,
-				'base' => $request->base
-			)));
+			$message = sprintf(
+				'%s::%s()',
+				Inflector::camelize($request->params['controller']) . "Controller",
+				$request->params['action']
+			);
+			throw new PrivateActionException($message);
 		}
 
 		return $this->_invoke($controller, $request);
@@ -189,13 +185,12 @@ class Dispatcher {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $request);
 			}
-			return $this->cakeError('missingAction', array(array(
-				'className' => Inflector::camelize($request->params['controller']."Controller"),
-				'action' => $request->params['action'],
-				'webroot' => $request->webroot,
-				'url' => $request->here,
-				'base' => $request->base
-			)));
+			$message = sprintf(
+				'%s::%s()',
+				Inflector::camelize($request->params['controller']) . "Controller",
+				$request->params['action']
+			);
+			throw new MissingActionException($message);
 		}
 		$output =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
 

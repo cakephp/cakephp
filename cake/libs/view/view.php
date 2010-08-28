@@ -855,6 +855,3 @@ class View extends Object {
 		return $this->__paths;
 	}
 }
-
-class MissingViewException extends RuntimeException { }
-class MissingLayoutException extends RuntimeException { }

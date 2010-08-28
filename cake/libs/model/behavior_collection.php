@@ -274,9 +274,3 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 }
-
-/**
- * Runtime Exceptions for behaviors
- */
-class MissingBehaviorFileException extends RuntimeException { }
-class MissingBehaviorClassException extends RuntimeException { }

@@ -515,14 +515,14 @@ class ScaffoldViewTest extends CakeTestCase {
 		new Scaffold($this->Controller, $this->Controller->request);
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<form id="ScaffoldMockEditForm" method="post" action="\/scaffold_mock\/edit\/1"/', $result);
-		$this->assertPattern('/<legend>Edit Scaffold Mock<\/legend>/', $result);
+		$this->assertContains('<form id="ScaffoldMockEditForm" method="post" action="/scaffold_mock/edit/1"', $result);
+		$this->assertContains('<legend>Edit Scaffold Mock</legend>', $result);
 
-		$this->assertPattern('/input type="hidden" name="data\[ScaffoldMock\]\[id\]" value="1" id="ScaffoldMockId"/', $result);
-		$this->assertPattern('/select name="data\[ScaffoldMock\]\[user_id\]" id="ScaffoldMockUserId"/', $result);
-		$this->assertPattern('/input name="data\[ScaffoldMock\]\[title\]" type="text" maxlength="255" value="First Article" id="ScaffoldMockTitle"/', $result);
-		$this->assertPattern('/input name="data\[ScaffoldMock\]\[published\]" type="text" maxlength="1" value="Y" id="ScaffoldMockPublished"/', $result);
-		$this->assertPattern('/textarea name="data\[ScaffoldMock\]\[body\]" cols="30" rows="6" id="ScaffoldMockBody"/', $result);
+		$this->assertContains('input type="hidden" name="data[ScaffoldMock][id]" value="1" id="ScaffoldMockId"', $result);
+		$this->assertContains('select name="data[ScaffoldMock][user_id]" id="ScaffoldMockUserId"', $result);
+		$this->assertContains('input name="data[ScaffoldMock][title]" maxlength="255" type="text" value="First Article" id="ScaffoldMockTitle"', $result);
+		$this->assertContains('input name="data[ScaffoldMock][published]" maxlength="1" type="text" value="Y" id="ScaffoldMockPublished"', $result);
+		$this->assertContains('textarea name="data[ScaffoldMock][body]" cols="30" rows="6" id="ScaffoldMockBody"', $result);
 		$this->assertPattern('/<li><a href="\/scaffold_mock\/delete\/1"[^>]*>Delete<\/a>\s*<\/li>/', $result);
 	}
 

@@ -85,9 +85,3 @@ class TaskCollection extends ObjectCollection {
 	}
 
 }
-/**
- * Exceptions used by the TaskCollection.
- */
-class MissingTaskFileException extends RuntimeException { }
-
-class MissingTaskClassException extends RuntimeException { }
