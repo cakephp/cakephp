@@ -321,10 +321,11 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new Error404Exception('Page not found');
 		ob_start();
-		$TestErrorHandler = new TestErrorHandler('error404', array('message' => 'Page not found'));
+		$TestErrorHandler = new TestErrorHandler($exception);
 		ob_clean();
+
 		ob_start();
 		$TestErrorHandler->error(array(
 			'code' => 404,

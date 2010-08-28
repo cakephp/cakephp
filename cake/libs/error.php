@@ -47,17 +47,9 @@ class ErrorHandler {
  * @param array $messages Error messages
  */
 	function __construct(Exception $exception) {
-		static $__previousError = null;
 		App::import('Core', 'Sanitize');
-		App::import('Controller', 'CakeError');
 
-		if ($__previousError != $exception) {
-			$__previousError = $exception;
-			$this->controller = new CakeErrorController();
-		} else {
-			$this->controller = new Controller();
-			$this->controller->viewPath = 'errors';
-		}
+		$this->controller = $this->_getController($exception);
 
 		if (method_exists($this->controller, 'apperror')) {
 			return $this->controller->appError($exception);
@@ -82,7 +74,31 @@ class ErrorHandler {
 				}
 			}
 		}
-		call_user_func_array(array($this, $method), array($exception));
+		$this->method = $method;
+		$this->error = $exception;
+	}
+
+/**
+ * Get the controller instance to handle the exception.
+ * Override this method in subclasses to customize the controller used. 
+ * This method returns the built in `CakeErrorController` normally, or if an error is repeated
+ * a bare controller will be used.
+ *
+ * @param Exception $exception The exception to get a controller for.
+ * @return Controller
+ */
+	protected function _getController($exception) {
+		static $__previousError = null;
+		App::import('Controller', 'CakeError');
+
+		if ($__previousError != $exception) {
+			$__previousError = $exception;
+			$controller = new CakeErrorController();
+		} else {
+			$controller = new Controller();
+			$controller->viewPath = 'errors';
+		}
+		return $controller; 
 	}
 
 /**
@@ -95,6 +111,16 @@ class ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		$error = new ErrorHandler($exception);
+		$error->render();
+	}
+
+/**
+ * Renders the response for the exception.
+ *
+ * @return void
+ */
+	public function render() {
+		call_user_func_array(array($this, $this->method), array($this->error));
 	}
 
 /**
