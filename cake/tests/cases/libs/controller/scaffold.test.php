@@ -789,7 +789,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->theme = 'test_theme';
 		$this->Controller->view = 'Theme';
 		$this->Controller->constructClasses();
-		$Scaffold =& new TestScaffoldMock($this->Controller, array());
+		$Scaffold =& new TestScaffoldMock($this->Controller, new CakeRequest());
 
 		$this->assertEqual($this->Controller->view, 'Scaffold');
 	}
