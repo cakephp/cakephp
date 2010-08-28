@@ -1035,8 +1035,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
 
-		$Controller->Component = new Component();
-		$Controller->Component->init($Controller);
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->response->expects($this->once())->method('statusCode')
 			->with($code);
@@ -1077,7 +1076,7 @@ class ControllerTest extends CakeTestCase {
 	function testRedirectTriggeringComponentsReturnNull() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Component = $this->getMock('Component');
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(null));
@@ -1099,7 +1098,7 @@ class ControllerTest extends CakeTestCase {
 	function testRedirectBeforeRedirectModifyingParams() {
 		$Controller = new Controller(null);
 		$Controller->response = $this->getMock('CakeResponse', array('header', 'statusCode'));
-		$Controller->Component = $this->getMock('Component');
+		$Controller->Components = $this->getMock('ComponentCollection');
 
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue(array('http://book.cakephp.org')));
@@ -1136,11 +1135,11 @@ class ControllerTest extends CakeTestCase {
 		$Controller->Components->expects($this->once())->method('trigger')
 			->will($this->returnValue($return));
 
-		$Controller->expects($this->at(0))->method('header')
-			->with('HTTP/1.1 302 Found');
+		$Controller->response->expects($this->at(0))->method('header')
+			->with('Location', 'http://example.com/test/2');
 
-		$Controller->expects($this->at(1))->method('header')
-			->with('Location: http://example.com/test/2');
+		$Controller->response->expects($this->at(1))->method('statusCode')
+			->with(302);
 
 		$Controller->expects($this->never())->method('_stop');
 		$Controller->redirect('http://cakephp.org', 301);
@@ -1438,16 +1437,15 @@ class ControllerTest extends CakeTestCase {
 		$Controller->modelClass='ControllerPost';
 		$Controller->params['url'] = array('ext' => 'rss');
 		$Controller->constructClasses();
-		$Controller->Component->initialize($Controller);
+		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();
-		$Controller->Component->startup($Controller);
+		$Controller->Components->trigger('startup', array(&$Controller));
 
 		$this->assertEqual($Controller->RequestHandler->prefers(), 'rss');
 		unset($Controller);
 	}
 
 /**
->>>>>>> 2.0-request
  * testControllerHttpCodes method
  *
  * @access public
