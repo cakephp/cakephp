@@ -60,12 +60,12 @@ class PagesControllerTest extends CakeTestCase {
 
 		$Pages->viewPath = 'posts';
 		$Pages->display('index');
-		$this->assertPattern('/posts index/', $Pages->output);
+		$this->assertPattern('/posts index/', $Pages->getResponse()->body());
 		$this->assertEqual($Pages->viewVars['page'], 'index');
 
 		$Pages->viewPath = 'themed';
 		$Pages->display('test_theme', 'posts', 'index');
-		$this->assertPattern('/posts index themed view/', $Pages->output);
+		$this->assertPattern('/posts index themed view/', $Pages->getResponse()->body());
 		$this->assertEqual($Pages->viewVars['page'], 'test_theme');
 		$this->assertEqual($Pages->viewVars['subpage'], 'posts');
 	}
