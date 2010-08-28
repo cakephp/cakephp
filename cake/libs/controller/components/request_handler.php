@@ -392,10 +392,9 @@ class RequestHandlerComponent extends Component {
  *   types the client accepts.  If a string is passed, returns true
  *   if the client accepts it.  If an array is passed, returns true
  *   if the client accepts one or more elements in the array.
- * @access public
  * @see RequestHandlerComponent::setContent()
  */
-	function accepts($type = null) {
+	public function accepts($type = null) {
 		$accepted = $this->request->accepts();
 
 		if ($type == null) {
@@ -455,10 +454,9 @@ class RequestHandlerComponent extends Component {
  *   'html', 'xml', 'js', etc.
  * @return mixed If $type is null or not provided, the first content-type in the
  *    list, based on preference, is returned.
- * @access public
  * @see RequestHandlerComponent::setContent()
  */
-	function prefers($type = null) {
+	public function prefers($type = null) {
 		$accepts = $this->accepts();
 
 		if ($type == null) {
@@ -493,11 +491,10 @@ class RequestHandlerComponent extends Component {
  * @param object $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
  * @return void
- * @access public
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	function renderAs(&$controller, $type) {
+	public function renderAs(&$controller, $type) {
 		$options = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
@@ -547,10 +544,9 @@ class RequestHandlerComponent extends Component {
  * @return boolean Returns false if the friendly type name given in $type does
  *    not exist in the type map, or if the Content-type header has
  *    already been set by this method.
- * @access public
  * @see RequestHandlerComponent::setContent()
  */
-	function respondAs($type, $options = array()) {
+	public function respondAs($type, $options = array()) {
 		$defaults = array('index' => null, 'charset' => null, 'attachment' => false);
 		$options = $options + $defaults;
 
@@ -628,5 +624,4 @@ class RequestHandlerComponent extends Component {
 		}
 		return null;
 	}
-
 }
