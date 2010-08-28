@@ -2825,7 +2825,7 @@ class Model extends Object {
 		}
 
 		if (empty($db) || !is_object($db)) {
-			return $this->cakeError('missingConnection', array(array('className' => $this->alias)));
+			throw new MissingConnectionException($this->useDbConfig);
 		}
 	}
 
