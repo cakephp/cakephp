@@ -480,7 +480,6 @@ class RequestHandlerComponent extends Component {
 			return ($types[0] == $accepts[0]);
 		}
 
-	
 		$intersect = array_values(array_intersect($accepts, $types));
 		if (empty($intersect)) {
 			return false;
