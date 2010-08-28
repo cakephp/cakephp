@@ -1,7 +1,9 @@
 <?php
 /**
- * A class reposible for managing the response text, status and headers of a HTTP response
+ * CakeResponse is responsible for managing the response text, status and headers of a HTTP response.
  * 
+ * By default controllers will use this class to render their response. If you are going to use 
+ * a custom response class it should subclass this object in order to ensure compatibility.
  *
  * PHP 5
  *
@@ -18,7 +20,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 class CakeResponse {
 
 /**
@@ -330,8 +331,10 @@ class CakeResponse {
 	}
 
 /**
-* Sends the complete response to the client including headers and message body
+* Sends the complete response to the client including headers and message body.
+* Will echo out the content in the response body.
 *
+* @return void
 */
 	public function send() {
 		if (isset($this->_headers['Location']) && $this->_status === 200) {
@@ -349,10 +352,11 @@ class CakeResponse {
 	}
 
 /**
-* Sends a header to the client
+* Sends a header to the client.
 *
 * @param $name the header name
 * @param $value the header value
+* @return void
 */
 	protected function _sendHeader($name, $value = null) {
 		if (is_null($value)) {
@@ -363,9 +367,10 @@ class CakeResponse {
 	}
 
 /**
-* Sends a content string to the client
+* Sends a content string to the client.
 *
 * @param $content string to send as response body
+* @return void
 */
 	protected function _sendContent($content) {
 		echo $content;
@@ -584,7 +589,7 @@ class CakeResponse {
 	}
 
 /**
- * Sets the correct headers to instruct the client to not cache te response
+ * Sets the correct headers to instruct the client to not cache the response
  *
  * @return void
  */
@@ -598,7 +603,7 @@ class CakeResponse {
 	}
 
 /**
- * Sets the correct headers to instruct the client to cache the response
+ * Sets the correct headers to instruct the client to cache the response.
  *
  * @param string $since a valid time since the response text has not been modified
  * @param string $time a valid time for cache expiry

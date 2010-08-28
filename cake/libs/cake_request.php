@@ -3,7 +3,7 @@
  * A class that helps wrap Request information and particulars about a single request.
  * Provides methods commonly used to introspect on the request headers and request body.
  * 
- * Has both an Array and Object interface. You can access framework parameters using indexes
+ * Has both an Array and Object interface. You can access framework parameters using indexes:
  *
  * `$request['controller']` or `$request->controller`.
  *
@@ -428,6 +428,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Magic get method allows access to parsed routing parameters directly on the object.
  *
+ * Allows access to `$this->params['controller']` via `$this->controller`
+ *
  * @param string $name The property being accessed.
  * @return mixed Either the value of the parameter or null.
  */
@@ -441,7 +443,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
  * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called 
- * with `is($type)` or `is$Type()`.
+ * as `is($type)` or `is$Type()`.
  *
  * @param string $type The type of request you want to check.
  * @return boolean Whether or not the request is the type you are checking.
@@ -513,7 +515,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add parameters to the request's parsed parameter set.
+ * Add parameters to the request's parsed parameter set. This will overwrite any existing parameters
  *
  * @param array $params Array of parameters to merge in
  * @return The current object, you can chain this method.
@@ -524,7 +526,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add paths to the requests' paths vars
+ * Add paths to the requests' paths vars.  This will overwrite any existing paths.
  *
  * @param array $paths Array of paths to merge in
  * @return the current object, you can chain this method.
@@ -596,6 +598,14 @@ class CakeRequest implements ArrayAccess {
 /**
  * Find out which content types the client accepts or check if they accept a 
  * particular type of content.
+ *
+ * #### Get all types:
+ *
+ * `$request->accepts();`
+ *
+ * #### Check for a single type:
+ *
+ * `$request->accepts('json');`
  *
  * @param string $type The content type to check for.  Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
