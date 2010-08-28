@@ -572,6 +572,7 @@ class Controller extends Object {
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
+ * @throws MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -593,9 +594,7 @@ class Controller extends Object {
 			));
 
 			if (!$this->{$modelClass}) {
-				return $this->cakeError('missingModel', array(array(
-					'className' => $modelClass, 'webroot' => '', 'base' => $this->base
-				)));
+				throw new MissingModelException($modelClass);
 			}
 
 			if ($this->persistModel === true) {
@@ -1252,3 +1251,5 @@ class Controller extends Object {
 		return false;
 	}
 }
+
+class MissingModelException extends RuntimeException {}
