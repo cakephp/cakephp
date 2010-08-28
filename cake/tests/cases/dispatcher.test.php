@@ -1206,17 +1206,15 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function testMissingController() {
-		$Dispatcher = new TestDispatcher();
-		Configure::write('App.baseUrl', '/index.php');
-		$url = 'some_controller/home/param:value/param2:value2';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$expected = array('missingController', array(array(
-			'className' => 'SomeControllerController',
-			'webroot' => '/',
-			'url' => 'some_controller/home/param:value/param2:value2',
-			'base' => '/index.php'
-		)));
-		$this->assertEqual($expected, $controller);
+		try {
+			$Dispatcher = new TestDispatcher();
+			Configure::write('App.baseUrl', '/index.php');
+			$url = 'some_controller/home/param:value/param2:value2';
+			$controller = $Dispatcher->dispatch($url, array('return' => 1));
+			$this->fail('No exception thrown');
+		} catch (MissingControllerException $e) {
+			$this->assertEquals('SomeControllerController', $e->getMessage());
+		}
 	}
 
 /**
@@ -1229,16 +1227,12 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/_protected/param:value/param2:value2';
 
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = array('privateAction', array(array(
-			'className' => 'SomePagesController',
-			'action' => '_protected',
-			'webroot' => '/',
-			'url' => 'some_pages/_protected/param:value/param2:value2',
-			'base' => '/index.php'
-		)));
-		$this->assertEqual($controller, $expected);
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return' => 1));
+			$this->fail('No exception thrown');
+		} catch (PrivateActionException $e) {
+			$this->assertEquals('SomePagesController::_protected()', $e->getMessage());
+		}
 	}
 
 /**
@@ -1251,31 +1245,30 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('App.baseUrl', '/index.php');
 		$url = 'some_pages/home/param:value/param2:value2';
 
-		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-
-		$expected = array('missingAction', array(array(
-			'className' => 'SomePagesController',
-			'action' => 'home',
-			'webroot' => '/',
-			'url' => '/index.php/some_pages/home/param:value/param2:value2',
-			'base' => '/index.php'
-		)));
-		$this->assertEqual($expected, $controller);
-
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception thrown');
+		} catch (MissingActionException $e) {
+			$this->assertEquals('SomePagesController::home()', $e->getMessage());
+		}
+	}
+	
+/**
+ * test that methods declared in Controller are treated as missing methods.
+ *
+ * @return void
+ */
+	function testMissingActionFromBaseClassMethods() {
 		$Dispatcher = new TestDispatcher();
 		Configure::write('App.baseUrl','/index.php');
 		$url = 'some_pages/redirect/param:value/param2:value2';
 
-		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-
-		$expected = array('missingAction', array(array(
-			'className' => 'SomePagesController',
-			'action' => 'redirect',
-			'webroot' => '/',
-			'url' => '/index.php/some_pages/redirect/param:value/param2:value2',
-			'base' => '/index.php'
-		)));
-		$this->assertEqual($expected, $controller);
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception thrown');
+		} catch (MissingActionException $e) {
+			$this->assertEquals('SomePagesController::redirect()', $e->getMessage());
+		}
 	}
 
 /**
@@ -1655,32 +1648,25 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/not_here/param:value/param2:value2';
-		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-
-		$expected = array('missingAction', array(array(
-			'className' => 'MyPluginController',
-			'action' => 'not_here',
-			'webroot' => '/cake/repo/branches/1.2.x.x/',
-			'url' => '/cake/repo/branches/1.2.x.x/my_plugin/not_here/param:value/param2:value2',
-			'base' => '/cake/repo/branches/1.2.x.x'
-		)));
-		$this->assertIdentical($expected, $controller);
+		
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception.');
+		} catch (MissingActionException $e) {
+			$this->assertEquals('MyPluginController::not_here()', $e->getMessage());
+		}
 
 		Router::reload();
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->base = false;
 
 		$url = 'my_plugin/param:value/param2:value2';
-		$controller = $Dispatcher->dispatch($url, array('return'=> 1));
-
-		$expected = array('missingAction', array(array(
-			'className' => 'MyPluginController',
-			'action' => 'param:value',
-			'webroot' => '/cake/repo/branches/1.2.x.x/',
-			'url' => '/cake/repo/branches/1.2.x.x/my_plugin/param:value/param2:value2',
-			'base' => '/cake/repo/branches/1.2.x.x'
-		)));
-		$this->assertIdentical($expected, $controller);
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception.');
+		} catch (MissingActionException $e) {
+			$this->assertEquals('MyPluginController::param:value()', $e->getMessage());
+		}
 	}
 
 /**
@@ -1699,16 +1685,12 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->base = false;
 
 		$url = 'test_dispatch_pages/admin_index/param:value/param2:value2';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = array('privateAction', array(array(
-			'className' => 'TestDispatchPagesController',
-			'action' => 'admin_index',
-			'webroot' => '/cake/repo/branches/1.2.x.x/',
-			'url' => 'test_dispatch_pages/admin_index/param:value/param2:value2',
-			'base' => '/cake/repo/branches/1.2.x.x'
-		)));
-		$this->assertIdentical($expected, $controller);
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception.');
+		} catch (PrivateActionException $e) {
+			$this->assertEquals('TestDispatchPagesController::admin_index()', $e->getMessage());
+		}
 	}
 
 /**
@@ -1747,16 +1729,13 @@ class DispatcherTest extends CakeTestCase {
 		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
 		$Dispatcher = new TestDispatcher();
 		$url = 'some_posts/index/param:value/param2:value2';
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-
-		$expected = array('missingAction', array(array(
-			'className' => 'SomePostsController',
-			'action' => 'view',
-			'webroot' => '/cake/repo/branches/1.2.x.x/',
-			'url' => '/cake/repo/branches/1.2.x.x/some_posts/index/param:value/param2:value2',
-			'base' => '/cake/repo/branches/1.2.x.x'
-		)));
-		$this->assertEqual($expected, $controller);
+		
+		try {
+			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
+			$this->fail('No exception.');
+		} catch (MissingActionException $e) {
+			$this->assertEquals('SomePostsController::view()', $e->getMessage());
+		}
 
 		$url = 'some_posts/something_else/param:value/param2:value2';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
@@ -1789,15 +1768,19 @@ class DispatcherTest extends CakeTestCase {
 		$debug = Configure::read('debug');
 		Configure::write('debug', 0);
 
-		ob_start();
-		$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
-		$result = ob_get_clean();
-		$this->assertEquals($result, '');
-
-		ob_start();
-		$Dispatcher->dispatch('theme/test_theme/pdfs');
-		$result = ob_get_clean();
-		$this->assertEquals($result, '');
+		try {
+			$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
+			$this->fail('No exception');
+		} catch (MissingControllerException $e) {
+			$this->assertEquals('ThemeController', $e->getMessage());
+		}
+		
+		try {
+			$Dispatcher->dispatch('theme/test_theme/pdfs');
+			$this->fail('No exception');
+		} catch (MissingControllerException $e) {
+			$this->assertEquals('ThemeController', $e->getMessage());
+		}
 
 		ob_start();
 		$Dispatcher->dispatch('theme/test_theme/flash/theme_test.swf');
@@ -2319,31 +2302,6 @@ class DispatcherTest extends CakeTestCase {
 			}
 		}
 		$this->__loadEnvironment(array_merge(array('reload' => true), $backup));
-	}
-
-/**
- * Tests that the Dispatcher does not return an empty action
- *
- * @return void
- */
-	public function testTrailingSlash() {
-		$_POST = array();
-		$_SERVER['PHP_SELF'] = '/cake/repo/branches/1.2.x.x/index.php';
-
-		Router::reload();
-		$Dispatcher = new TestDispatcher();
-		Router::connect('/myalias/:action/*', array('controller' => 'my_controller', 'action' => null));
-
-		$Dispatcher->base = false;
-		$url = 'myalias/'; //Fails
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$result = $Dispatcher->parseParams($url);
-		$this->assertEqual('index', $result['action']);
-
-		$url = 'myalias'; //Passes
-		$controller = $Dispatcher->dispatch($url, array('return' => 1));
-		$result = $Dispatcher->parseParams($url);
-		$this->assertEqual('index', $result['action']);
 	}
 
 /**

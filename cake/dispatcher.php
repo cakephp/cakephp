@@ -118,7 +118,7 @@ class Dispatcher extends Object {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo(array($this->params, array('base' => $this->base, 'webroot' => $this->webroot)));
-			throw new MissingControllerException($this->params['controller'] . 'Controller');
+			throw new MissingControllerException(Inflector::camelize($this->params['controller']) . 'Controller');
 		}
 		$privateAction = $this->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
@@ -188,7 +188,7 @@ class Dispatcher extends Object {
 				return new Scaffold($controller, $params);
 			}
 			$message = sprintf(
-				'%s::%s',
+				'%s::%s()',
 				Inflector::camelize($params['controller']) . "Controller",
 				$params['action']
 			);
