@@ -169,9 +169,7 @@ class Scaffold extends Object {
 		$this->modelKey = $controller->modelKey;
 
 		if (!is_object($this->controller->{$this->modelClass})) {
-			return $this->cakeError('missingModel', array(array(
-				'className' => $this->modelClass, 'webroot' => '', 'base' => $controller->base
-			)));
+			throw new MissingModelException($this->modelClass);
 		}
 
 		$this->ScaffoldModel =& $this->controller->{$this->modelClass};
@@ -485,17 +483,11 @@ class Scaffold extends Object {
 					break;
 				}
 			} else {
-				return $this->cakeError('missingAction', array(array(
-					'className' => $this->controller->name . "Controller",
-					'base' => $this->controller->base,
-					'action' => $this->action,
-					'webroot' => $this->controller->webroot
-				)));
+				$message = sprintf('%s::%s()', $this->controller->name . "Controller", $this->action);
+				throw new MissingActionException($message);
 			}
 		} else {
-			return $this->cakeError('missingDatabase', array(array(
-				'webroot' => $this->controller->webroot
-			)));
+			throw new MissingDatabaseException($this->ScaffoldModel->useDbConfig);
 		}
 	}
 
@@ -605,6 +597,6 @@ class ScaffoldView extends ThemeView {
 			return LIBS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		}
 
-		return $this->_missingView($paths[0] . $name . $this->ext, 'missingView');
+		throw new MissingViewException($paths[0] . $name . $this->ext);
 	}
 }
