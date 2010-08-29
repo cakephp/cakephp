@@ -102,7 +102,7 @@ class MissingTableException extends CakeException {
  */
 	public function __construct($model, $table) {
 		$this->model = $model;
-		$this->$table = $table;
+		$this->table = $table;
 		$message = sprintf(__('Database table %s for model %s was not found.'), $table, $model);
 		parent::__construct($message);
 	}

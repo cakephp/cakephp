@@ -20,7 +20,7 @@
 <h2><?php printf(__('Private Method in %s'), $controller); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('%s%s cannot be accessed directly.'), '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>'); ?>
+	<?php printf(__('%s%s cannot be accessed directly.'), '<em>' . $controller . '::</em>', '<em>' . $action . '</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>

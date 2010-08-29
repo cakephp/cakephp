@@ -20,7 +20,7 @@
 <h2><?php echo __('Missing View'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The view for %1$s%2$s was not found.'), '<em>' . $controller . 'Controller::</em>', '<em>' . $action . '()</em>'); ?>
+	<?php printf(__('The view for %1$s%2$s was not found.'), '<em>' . Inflector::camelize($this->request->controller) . 'Controller::</em>', '<em>' . $this->request->action . '()</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>

@@ -17,56 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (class_exists('TestErrorHandler')) {
-	return;
-}
 
-/**
- * BlueberryComponent class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
- */
-class BlueberryComponent extends Object {
-
-/**
- * testName property
- *
- * @access public
- * @return void
- */
-	public $testName = null;
-
-/**
- * initialize method
- *
- * @access public
- * @return void
- */
-	function initialize(&$controller) {
-		$this->testName = 'BlueberryComponent';
-	}
-}
-
-/**
- * BlueberryDispatcher class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
- */
-class BlueberryDispatcher extends Dispatcher {
-
-/**
- * cakeError method
- *
- * @access public
- * @return void
- */
-	function cakeError($method, $messages = array()) {
-		$error = new TestErrorHandler($method, $messages);
-		return $error;
-	}
-}
 
 /**
  * Short description for class.
@@ -138,7 +89,34 @@ if (!class_exists('AppController')) {
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
 }
-App::import('Core', array('Error', 'Controller'));
+App::import('Core', array('ErrorHandler', 'Controller', 'Component'));
+
+/**
+ * BlueberryComponent class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class BlueberryComponent extends Component {
+
+/**
+ * testName property
+ *
+ * @access public
+ * @return void
+ */
+	public $testName = null;
+
+/**
+ * initialize method
+ *
+ * @access public
+ * @return void
+ */
+	function initialize(&$controller) {
+		$this->testName = 'BlueberryComponent';
+	}
+}
 
 /**
  * TestErrorController class
@@ -453,20 +431,25 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingAction() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingActionException('PostsController::index()');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingAction', array('className' => 'PostsController', 'action' => 'index'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Method in PostsController<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController::<\/em><em>index\(\)<\/em>/', $result);
 
+		/* TODO: Integration test that needs to be moved
 		ob_start();
-		$dispatcher = new BlueberryDispatcher('/blueberry/inexistent');
+		$dispatcher = new Dispatcher('/blueberry/inexistent');
 		$result = ob_get_clean();
 		$this->assertPattern('/<h2>Missing Method in BlueberryController<\/h2>/', $result);
 		$this->assertPattern('/<em>BlueberryController::<\/em><em>inexistent\(\)<\/em>/', $result);
 		$this->assertNoPattern('/Location: (.*)\/users\/login/', $result);
 		$this->assertNoPattern('/Stopped with status: 0/', $result);
+		*/
 	}
 
 /**
@@ -476,10 +459,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testPrivateAction() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new PrivateActionException('PostsController::_secretSauce()');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('privateAction', array('className' => 'PostsController', 'action' => '_secretSauce'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Private Method in PostsController<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/', $result);
 	}
@@ -491,10 +477,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingTable() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingTableException('Article', 'articles');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingTable', array('className' => 'Article', 'table' => 'articles'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Table<\/h2>/', $result);
 		$this->assertPattern('/table <em>articles<\/em> for model <em>Article<\/em>/', $result);
@@ -507,10 +496,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingDatabase() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingDatabaseException('default');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingDatabase', array());
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Confirm you have created the file/', $result);
@@ -523,12 +515,14 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingView() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingViewException('/posts/about.ctp');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingView', array('className' => 'Pages', 'action' => 'display', 'file' => 'pages/about.ctp', 'base' => ''));
-		$expected = ob_get_clean();
-		$this->assertPattern("/PagesController::/", $expected);
-		$this->assertPattern("/pages\/about.ctp/", $expected);
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+
+		$this->assertPattern("/posts\/about.ctp/", $result);
 	}
 
 /**
@@ -538,12 +532,15 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingLayout() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingLayoutException('layouts/my_layout.ctp');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingLayout', array( 'layout' => 'my_layout', 'file' => 'layouts/my_layout.ctp', 'base' => ''));
-		$expected = ob_get_clean();
-		$this->assertPattern("/Missing Layout/", $expected);
-		$this->assertPattern("/layouts\/my_layout.ctp/", $expected);
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+
+		$this->assertPattern("/Missing Layout/", $result);
+		$this->assertPattern("/layouts\/my_layout.ctp/", $result);
 	}
 
 /**
