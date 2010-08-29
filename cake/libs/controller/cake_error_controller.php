@@ -26,7 +26,7 @@ class CakeErrorController extends AppController {
 	function __construct() {
 		parent::__construct();
 		$this->_set(Router::getPaths());
-		$this->request = $this->params = Router::getRequest();
+		$this->request = $this->params = Router::getRequest(false);
 		$this->constructClasses();
 		$this->Components->trigger('initialize', array(&$this));
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));

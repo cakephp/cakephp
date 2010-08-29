@@ -98,7 +98,7 @@ class ErrorHandler {
 			$controller = new Controller();
 			$controller->viewPath = 'errors';
 		}
-		return $controller; 
+		return $controller;
 	}
 
 /**
@@ -128,15 +128,8 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function error($params) {
-		extract($params, EXTR_OVERWRITE);
-		$this->controller->set(array(
-			'code' => $code,
-			'name' => $name,
-			'message' => $message,
-			'title' => $code . ' ' . $name
-		));
-		$this->_outputMessage('error404');
+	public function error(Exception $error) {
+		$this->error404($error);
 	}
 
 /**
@@ -144,17 +137,13 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function error404($exception) {
-		if (!isset($url)) {
-			$url = $this->controller->here;
-		}
-		$url = Router::normalize($url);
+	public function error404($error) {
+		$url = Router::normalize($this->controller->request->here);
 		$this->controller->response->statusCode(404);
 		$this->controller->set(array(
-			'code' => '404',
-			'name' => __('Not Found'),
-			'message' => h($url),
-			'base' => $this->controller->request->base
+			'code' => 404,
+			'name' => $error->getMessage(),
+			'url' => h($url),
 		));
 		$this->_outputMessage('error404');
 	}

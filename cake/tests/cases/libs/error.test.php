@@ -274,7 +274,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
-		$this->assertPattern('/Not Found/', $result, 'message missing.');
+		$this->assertPattern('/Kaboom!/', $result, 'message missing.');
 	}
 
 /**
@@ -345,15 +345,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError() {
-		$this->markTestIncomplete('Not done');
-		$exception = new Error404Exception('Page not found');
+		$exception = new Exception('Page not found');
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
-		$ErrorHandler->error($excpetion);
+		$ErrorHandler->error($exception);
 		$result = ob_get_clean();
-		$this->assertPattern("/<h2>Couldn't find what you were looking for<\/h2>/", $result);
-		$this->assertPattern('/Page not Found/', $result);
+		$this->assertPattern("/<h2>Page not found<\/h2>/", $result);
 	}
 
 /**
@@ -363,30 +361,47 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError404() {
-		$this->markTestIncomplete('Not implemented now');
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
 		), true);
+		Router::reload();
+
+		$request = new CakeRequest('posts/view/1000', false);
+		Router::setRequestInfo($request);
+
+		$exception = new Error404Exception('Custom message');
+		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
-		$ErrorHandler = new ErrorHandler('error404', array('message' => 'Page not found', 'url' => '/test_error'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
-		$this->assertPattern('/<h2>Not Found<\/h2>/', $result);
-	 	$this->assertPattern("/<strong>'\/test_error'<\/strong>/", $result);
 
-		ob_start();
-		$ErrorHandler = new ErrorHandler('error404', array('message' => 'Page not found'));
-		ob_get_clean();
-		ob_start();
-		$ErrorHandler->error404(array(
-			'url' => 'pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>',
-			'message' => 'Page not found'
-		));
-		$result = ob_get_clean();
-		$this->assertNoPattern('#<script>#', $result);
-		$this->assertNoPattern('#</script>#', $result);
-
+		$this->assertPattern('/<h2>Custom message<\/h2>/', $result);
+		$this->assertPattern("/<strong>'\/posts\/view\/1000'<\/strong>/", $result);
+		
 		App::build();
+	}
+
+/**
+ * test that error404 doesn't expose XSS
+ *
+ * @return void
+ */
+	function testError404NoInjection() {
+		Router::reload();
+
+		$request = new CakeRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>', false);
+		Router::setRequestInfo($request);
+
+		$exception = new Error404Exception('Custom message');
+		$ErrorHandler = new ErrorHandler($exception);
+
+		ob_start();
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+
+		$this->assertNoPattern('#<script>document#', $result);
+		$this->assertNoPattern('#alert\(t\);</script>#', $result);
 	}
 
 /**

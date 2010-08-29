@@ -20,5 +20,8 @@
 <h2><?php echo $name; ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The requested address %s was not found on this server.'), "<strong>'{$message}'</strong>"); ?>
+	<?php printf(
+		__('The requested address %s was not found on this server.'),
+		"<strong>'{$url}'</strong>"
+	); ?>
 </p>
