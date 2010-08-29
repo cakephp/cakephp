@@ -188,25 +188,13 @@ class MyCustomErrorHandler extends ErrorHandler {
 		echo 'widget thing is missing';
 	}
 }
-
 /**
- * TestErrorHandler class
+ * Exception class for testing app error handlers and custom errors.
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @package cake.test.cases.libs
  */
-class TestErrorHandler extends ErrorHandler {
+class MissingWidgetThingException extends Error404Exception { }
 
-/**
- * stop method
- *
- * @access public
- * @return void
- */
-	function _stop() {
-		return;
-	}
-}
 
 /**
  * ErrorHandlerTest class
@@ -257,34 +245,60 @@ class ErrorHandlerTest extends CakeTestCase {
 
 /**
  * test that methods declared in an ErrorHandler subclass are not converted
- * into error404 when debug == 0
+ * into error404 when debug > 0
  *
  * @return void
  */
 	function testSubclassMethodsNotBeingConvertedToError() {
-		$this->markTestIncomplete('Not implemented now');
-		$back = Configure::read('debug');
 		Configure::write('debug', 2);
+		
+		$exception = new MissingWidgetThingException('Widget not found');
+		$ErrorHandler = new MyCustomErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertEqual($result, 'widget thing is missing');
+	}
 
+/**
+ * test that subclass methods are not converted when debug = 0
+ *
+ * @return void
+ */
+	function testSubclassMethodsNotBeingConvertedDebug0() {
 		Configure::write('debug', 0);
-		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingWidgetThing', array('message' => 'doh!'));
-		$result = ob_get_clean();
-		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404. %s');
+		$exception = new MissingWidgetThingException('Widget not found');
+		$ErrorHandler = new MyCustomErrorHandler($exception);
 
-		Configure::write('debug', 0);
+		$this->assertEqual('missingWidgetThing', $ErrorHandler->method);
+
 		ob_start();
-		$ErrorHandler = new MyCustomErrorHandler('missingController', array(
-			'className' => 'Missing', 'message' => 'Page not found'
-		));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
+		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404');
+	}
+
+/**
+ * test that ErrorHandler subclasses properly convert framework errors.
+ *
+ * @return void
+ */
+	function testSubclassConvertingFrameworkErrors() {
+		Configure::write('debug', 0);
+		
+		$exception = new MissingControllerException('PostsController');
+		$ErrorHandler = new MyCustomErrorHandler($exception);
+		
+		$this->assertEqual('error404', $ErrorHandler->method);
+
+		ob_start();
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+
 		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error404. %s');
-
-		Configure::write('debug', $back);
 	}
 
 /**
@@ -349,6 +363,8 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$exception = new Error404Exception('Custom message');
 		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(404);
 
 		ob_start();
 		$ErrorHandler->render();
@@ -388,21 +404,16 @@ class ErrorHandlerTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testError500() {
-		$this->markTestIncomplete('Not implemented now');
-		ob_start();
-		$ErrorHandler = new ErrorHandler('error500', array(
-			'message' => 'An Internal Error Has Occurred'
-		));
-		$result = ob_get_clean();
-		$this->assertPattern('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
+	function testError500Message() {
+		$exception = new Error500Exception('An Internal Error Has Occurred');
+		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		ob_start();
-		$ErrorHandler = new ErrorHandler('error500', array(
-			'message' => 'An Internal Error Has Occurred',
-			'code' => '500'
-		));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>An Internal Error Has Occurred<\/h2>/', $result);
 	}
 
@@ -413,12 +424,15 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingController() {
-		$this->markTestIncomplete('Not implemented now');
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController');
 
+		$exception = new MissingControllerException('PostsController');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingController', array('className' => 'PostsController'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
 		$this->assertPattern('/BlueberryComponent/', $result);
@@ -674,19 +688,4 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
 	}
 
-/**
- * testMissingModel method
- *
- * @access public
- * @return void
- */
-	function testMissingModel() {
-		$this->markTestIncomplete('Not implemented now');
-		ob_start();
-		$ErrorHandler = new ErrorHandler('missingModel', array('className' => 'Article', 'file' => 'article.php'));
-		$result = ob_get_clean();
-		$this->assertPattern('/<h2>Missing Model<\/h2>/', $result);
-		$this->assertPattern('/<em>Article<\/em> could not be found./', $result);
-		$this->assertPattern('/(\/|\\\)article.php/', $result);
-	}
 }

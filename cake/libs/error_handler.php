@@ -139,11 +139,15 @@ class ErrorHandler {
  * @param array $params Parameters for controller
  */
 	public function error404($error) {
+		$message = $error->getMessage();
+		if (Configure::read('debug') == 0) {
+			$message = __('Not Found');
+		}
 		$url = Router::normalize($this->controller->request->here);
 		$this->controller->response->statusCode(404);
 		$this->controller->set(array(
 			'code' => 404,
-			'name' => $error->getMessage(),
+			'name' => $message,
 			'url' => h($url),
 		));
 		$this->_outputMessage('error404');
@@ -155,18 +159,11 @@ class ErrorHandler {
  * @param array $params Parameters for controller
  */
 	public function error500($params) {
-		extract($params, EXTR_OVERWRITE);
-
-		if (!isset($url)) {
-			$url = $this->controller->request->here;
-		}
-		$url = Router::normalize($url);
-		$this->controller->header("HTTP/1.0 500 Internal Server Error");
+		$url = Router::normalize($this->controller->request->here);
+		$this->controller->response->statusCode(500);
 		$this->controller->set(array(
-			'code' => '500',
 			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
-			'base' => $this->controller->request->base
 		));
 		$this->_outputMessage('error500');
 	}
@@ -175,14 +172,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingController($params) {
-		extract($params, EXTR_OVERWRITE);
-
-		$controllerName = str_replace('Controller', '', $className);
+	public function missingController($error) {
+		$controllerName = str_replace('Controller', '', $error->getMessage());
 		$this->controller->set(array(
-			'controller' => $className,
-			'controllerName' => $controllerName,
-			'title' => __('Missing Controller')
+			'controller' => $error->getMessage(),
+			'controllerName' => $controllerName
 		));
 		$this->_outputMessage('missingController');
 	}
@@ -369,21 +363,6 @@ class ErrorHandler {
 			'file' => $file,
 		));
 		$this->_outputMessage('missingComponentClass');
-	}
-
-/**
- * Renders the Missing Model class web page.
- *
- * @param unknown_type $params Parameters for controller
- */
-	public function missingModel($params) {
-		extract($params, EXTR_OVERWRITE);
-
-		$this->controller->set(array(
-			'model' => $className,
-			'title' => __('Missing Model')
-		));
-		$this->_outputMessage('missingModel');
 	}
 
 /**
