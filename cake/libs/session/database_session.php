@@ -55,8 +55,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function read($id) {
-		$model =& ClassRegistry::getObject('Session');
-
+		$model = ClassRegistry::getObject('Session');
 		$row = $model->find('first', array(
 			'conditions' => array($model->primaryKey => $id)
 		));
@@ -78,9 +77,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  */
 	public static function write($id, $data) {
 		$expires = time() + (Configure::read('Session.timeout') * 60);
-		$model =& ClassRegistry::getObject('Session');
-		$return = $model->save(compact('id', 'data', 'expires'));
-		return $return;
+		return ClassRegistry::getObject('Session')->save(compact('id', 'data', 'expires'));
 	}
 
 /**
@@ -91,10 +88,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function destroy($id) {
-		$model =& ClassRegistry::getObject('Session');
-		$return = $model->delete($id);
-
-		return $return;
+		return ClassRegistry::getObject('Session')->delete($id);
 	}
 
 /**
@@ -105,13 +99,10 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public static function gc($expires = null) {
-		$model =& ClassRegistry::getObject('Session');
-
 		if (!$expires) {
 			$expires = time();
 		}
-
-		$return = $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
-		return $return;
+		$model = ClassRegistry::getObject('Session');
+		return $model->deleteAll(array($model->alias . ".expires <" => $expires), false, false);
 	}
 }
