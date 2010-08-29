@@ -34,6 +34,6 @@ require LIBS . 'configure.php';
 require LIBS . 'set.php';
 require LIBS . 'cache.php';
 Configure::bootstrap();
-require LIBS . 'error.php';
+require LIBS . 'error_handler.php';
 set_exception_handler(array('ErrorHandler', 'handleException'));
 require CAKE . 'dispatcher.php';

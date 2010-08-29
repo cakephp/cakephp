@@ -61,6 +61,7 @@ class ErrorHandler {
 		}
 		if ($method !== 'error') {
 			if (Configure::read('debug') == 0) {
+				$code = $exception->getCode();
 				$parentClass = get_parent_class($this);
 				if ($parentClass != 'ErrorHandler') {
 					$method = 'error404';
@@ -69,7 +70,7 @@ class ErrorHandler {
 				if (in_array($method, $parentMethods)) {
 					$method = 'error404';
 				}
-				if (isset($code) && $code == 500) {
+				if ($code == 500) {
 					$method = 'error500';
 				}
 			}
@@ -191,15 +192,12 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingAction($params) {
-		extract($params, EXTR_OVERWRITE);
-
-		$controllerName = str_replace('Controller', '', $className);
+	public function missingAction($error) {
+		$message = $error->getMessage();
+		list($controllerName, $action)  = explode('::', $message);
 		$this->controller->set(array(
-			'controller' => $className,
-			'controllerName' => $controllerName,
+			'controller' => $controllerName,
 			'action' => $action,
-			'title' => __('Missing Method in Controller')
 		));
 		$this->_outputMessage('missingAction');
 	}
@@ -209,13 +207,12 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function privateAction($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function privateAction($error) {
+		$message = $error->getMessage();
+		list($controllerName, $action)  = explode('::', $message);
 		$this->controller->set(array(
-			'controller' => $className,
-			'action' => $action,
-			'title' => __('Trying to access private method in class')
+			'controller' => $controllerName,
+			'action' => $action
 		));
 		$this->_outputMessage('privateAction');
 	}
@@ -225,15 +222,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingTable($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingTable($error) {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
-			'code' => '500',
-			'model' => $className,
-			'table' => $table,
-			'title' => __('Missing Database Table')
+			'model' => $error->getModel(),
+			'table' => $error->getTable(),
 		));
 		$this->_outputMessage('missingTable');
 	}
@@ -243,7 +236,7 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingDatabase($params = array()) {
+	public function missingDatabase($exception) {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
@@ -257,14 +250,9 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingView($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingView($error) {
 		$this->controller->set(array(
-			'controller' => $className,
-			'action' => $action,
-			'file' => $file,
-			'title' => __('Missing View')
+			'file' => $error->getMessage(),
 		));
 		$this->_outputMessage('missingView');
 	}
@@ -274,13 +262,10 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingLayout($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingLayout($error) {
 		$this->controller->layout = 'default';
 		$this->controller->set(array(
-			'file' => $file,
-			'title' => __('Missing Layout')
+			'file' => $error->getMessage(),
 		));
 		$this->_outputMessage('missingLayout');
 	}
