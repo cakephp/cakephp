@@ -65,7 +65,7 @@ class ErrorHandler {
 				if ($parentClass != 'ErrorHandler') {
 					$method = 'error404';
 				}
-				$parentMethods = get_class_methods($parentClass);
+				$parentMethods = (array)get_class_methods($parentClass);
 				if (in_array($method, $parentMethods)) {
 					$method = 'error404';
 				}
