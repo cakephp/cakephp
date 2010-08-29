@@ -18,52 +18,68 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+/**
+ * CakeException is used a base class for CakePHP's internal exceptions.
+ * In general framework errors are interpreted as 500 code errors.
+ *
+ * @package cake.libs
+ */
+class CakeException extends RuntimeException { 
+	public function __construct($message, $code = 500, Exception $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
+}
 
-class Error404Exception extends RuntimeException { }
-class Error500Exception extends RuntimeException { }
+
+class Error404Exception extends RuntimeException {
+	public function __construct($message, $code = 404, Exception $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
+}
+class Error500Exception extends CakeException { }
 
 /*
  * Exceptions used by Dispatcher
  */
-class MissingControllerException extends RuntimeException { }
-class MissingActionException extends RuntimeException { }
-class PrivateActionException extends RuntimeException { }
+class MissingControllerException extends Error404Exception { }
+class MissingActionException extends Error404Exception { }
+class PrivateActionException extends Error404Exception { }
 
 /**
  * Exceptions used by the ComponentCollection.
  */
-class MissingComponentFileException extends RuntimeException { }
-class MissingComponentClassException extends RuntimeException { }
+class MissingComponentFileException extends CakeException { }
+class MissingComponentClassException extends CakeException { }
 
 /**
  * Runtime Exceptions for behaviors
  */
-class MissingBehaviorFileException extends RuntimeException { }
-class MissingBehaviorClassException extends RuntimeException { }
+class MissingBehaviorFileException extends CakeException { }
+class MissingBehaviorClassException extends CakeException { }
 
 /**
  * Runtime Exceptions for Views
  */
-class MissingViewException extends RuntimeException { }
-class MissingLayoutException extends RuntimeException { }
+class MissingViewException extends CakeException { }
+class MissingLayoutException extends CakeException { }
 
 /**
  * Runtime Exceptions for ConnectionManager
  */
-class MissingDatabaseException extends RuntimeException {}
-class MissingConnectionException extends RuntimeException {}
+class MissingDatabaseException extends CakeException {}
+class MissingConnectionException extends CakeException {}
 
 /**
  * Exceptions used by the TaskCollection.
  */
-class MissingTaskFileException extends RuntimeException { }
-class MissingTaskClassException extends RuntimeException { }
+class MissingTaskFileException extends CakeException { }
+class MissingTaskClassException extends CakeException { }
 
 /**
  * Exception class to be thrown when a database table is not found in the datasource
  *
  */
-class MissingTableException extends RuntimeException {
+class MissingTableException extends CakeException {
 /**
  * The name of the model wanting to load the database table
  *
