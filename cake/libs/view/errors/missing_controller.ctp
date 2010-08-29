@@ -30,7 +30,6 @@
 &lt;?php
 class <?php echo $controller;?> extends AppController {
 
-	public $name = '<?php echo $controllerName;?>';
 }
 ?&gt;
 </pre>
