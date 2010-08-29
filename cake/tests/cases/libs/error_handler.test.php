@@ -550,10 +550,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingConnection() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingConnectionException('Article');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingConnection', array('className' => 'Article'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Article requires a database connection/', $result);
 	}
@@ -565,10 +568,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingHelperFile() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingHelperFileException('my_custom.php');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingHelperFile', array('helper' => 'MyCustom', 'file' => 'my_custom.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Helper File<\/h2>/', $result);
 		$this->assertPattern('/Create the class below in file:/', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
@@ -581,10 +587,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingHelperClass() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingHelperClassException('MyCustomHelper');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingHelperClass', array('helper' => 'MyCustom', 'file' => 'my_custom.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Helper Class<\/h2>/', $result);
 		$this->assertPattern('/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
@@ -597,10 +606,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingBehaviorFile() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingBehaviorFileException('my_custom.php');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingBehaviorFile', array('behavior' => 'MyCustom', 'file' => 'my_custom.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Behavior File<\/h2>/', $result);
 		$this->assertPattern('/Create the class below in file:/', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
@@ -613,10 +625,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingBehaviorClass() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingBehaviorClassException('MyCustomBehavior');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingBehaviorClass', array('behavior' => 'MyCustom', 'file' => 'my_custom.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./', $result);
 		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
 	}
@@ -628,10 +643,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingComponentFile() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingComponentFileException('sidebox.php');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingComponentFile', array('className' => 'PostsController', 'component' => 'Sidebox', 'file' => 'sidebox.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Component File<\/h2>/', $result);
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
@@ -644,10 +662,13 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingComponentClass() {
-		$this->markTestIncomplete('Not implemented now');
+		$exception = new MissingComponentClassException('SideboxComponent');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		ob_start();
-		$ErrorHandler = new ErrorHandler('missingComponentClass', array('className' => 'PostsController', 'component' => 'Sidebox', 'file' => 'sidebox.php'));
+		$ErrorHandler->render();
 		$result = ob_get_clean();
+
 		$this->assertPattern('/<h2>Missing Component Class<\/h2>/', $result);
 		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
 		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);

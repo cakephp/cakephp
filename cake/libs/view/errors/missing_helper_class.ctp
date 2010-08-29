@@ -20,7 +20,7 @@
 <h2><?php echo __('Missing Helper Class'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The helper class <em>%s</em> can not be found or does not exist.'), $helperClass); ?>
+	<?php printf(__('The helper class <em>%s</em> can not be found or does not exist.'), $className); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $helperClass;?> extends AppHelper {
+class <?php echo $className;?> extends AppHelper {
 
 }
 ?&gt;

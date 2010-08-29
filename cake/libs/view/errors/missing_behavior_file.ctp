@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $behaviorClass;?> extends ModelBehavior {
+class <?php echo $className;?> extends ModelBehavior {
 
 }
 ?&gt;

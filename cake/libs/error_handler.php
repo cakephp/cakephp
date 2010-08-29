@@ -275,14 +275,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingConnection($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingConnection($error) {
 		$this->controller->header("HTTP/1.0 500 Internal Server Error");
 		$this->controller->set(array(
 			'code' => '500',
-			'model' => $className,
-			'title' => __('Missing Database Connection')
+			'model' => $error->getMessage(),
 		));
 		$this->_outputMessage('missingConnection');
 	}
@@ -292,13 +289,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingHelperFile($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingHelperFile($error) {
+		list($class, $ext) = explode('.', $error->getMessage());
 		$this->controller->set(array(
-			'helperClass' => Inflector::camelize($helper) . "Helper",
-			'file' => $file,
-			'title' => __('Missing Helper File')
+			'className' => Inflector::camelize($class),
+			'file' => $error->getMessage()
 		));
 		$this->_outputMessage('missingHelperFile');
 	}
@@ -308,13 +303,12 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingHelperClass($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingHelperClass($error) {
+		$class = $error->getMessage();
+		$file = Inflector::underscore(str_replace('Helper', '', $error->getMessage())) . '.php';
 		$this->controller->set(array(
-			'helperClass' => Inflector::camelize($helper) . "Helper",
+			'className' => $class,
 			'file' => $file,
-			'title' => __('Missing Helper Class')
 		));
 		$this->_outputMessage('missingHelperClass');
 	}
@@ -324,13 +318,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingBehaviorFile($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingBehaviorFile($error) {
+		list($class, $ext) = explode('.', $error->getMessage());
 		$this->controller->set(array(
-			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
-			'file' => $file,
-			'title' => __('Missing Behavior File')
+			'className' => Inflector::camelize($class),
+			'file' => $error->getMessage()
 		));
 		$this->_outputMessage('missingBehaviorFile');
 	}
@@ -340,13 +332,12 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingBehaviorClass($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingBehaviorClass($error) {
+		$class = $error->getMessage();
+		$file = Inflector::underscore(str_replace('Behavior', '', $error->getMessage())) . '.php';
 		$this->controller->set(array(
-			'behaviorClass' => Inflector::camelize($behavior) . "Behavior",
+			'className' => $class,
 			'file' => $file,
-			'title' => __('Missing Behavior Class')
 		));
 		$this->_outputMessage('missingBehaviorClass');
 	}
@@ -356,14 +347,11 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingComponentFile($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingComponentFile($error) {
+		list($class, $ext) = explode('.', $error->getMessage());
 		$this->controller->set(array(
-			'controller' => $className,
-			'component' => $component,
-			'file' => $file,
-			'title' => __('Missing Component File')
+			'className' => Inflector::camelize($class),
+			'file' => $error->getMessage()
 		));
 		$this->_outputMessage('missingComponentFile');
 	}
@@ -373,14 +361,12 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function missingComponentClass($params) {
-		extract($params, EXTR_OVERWRITE);
-
+	public function missingComponentClass($error) {
+		$class = $error->getMessage();
+		$file = Inflector::underscore(str_replace('Component', '', $error->getMessage())) . '.php';
 		$this->controller->set(array(
-			'controller' => $className,
-			'component' => $component,
+			'className' => $class,
 			'file' => $file,
-			'title' => __('Missing Component Class')
 		));
 		$this->_outputMessage('missingComponentClass');
 	}
