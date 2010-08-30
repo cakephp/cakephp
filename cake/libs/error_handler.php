@@ -179,7 +179,7 @@ class ErrorHandler {
  */
 	public function error404($error) {
 		$message = $error->getMessage();
-		if (Configure::read('debug') == 0) {
+		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
 			$message = __('Not Found');
 		}
 		$url = Router::normalize($this->controller->request->here);

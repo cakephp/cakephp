@@ -377,6 +377,30 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test that error404 only modifies the messages on CakeExceptions.
+ *
+ * @return void
+ */
+	function testError404OnlyChangingCakeException() {
+		Configure::write('debug', 0);
+
+		$exception = new Error404Exception('Custom message');
+		$ErrorHandler = new ErrorHandler($exception);
+
+		ob_start();
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+		$this->assertContains('Custom message', $result);
+
+		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
+		$ErrorHandler = new ErrorHandler($exception);
+
+		ob_start();
+		$ErrorHandler->render();
+		$result = ob_get_clean();
+		$this->assertContains('Not Found', $result);
+	}
+/**
  * test that error404 doesn't expose XSS
  *
  * @return void
