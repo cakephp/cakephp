@@ -414,11 +414,13 @@ class Scaffold {
 					break;
 				}
 			} else {
-				$message = sprintf('%s::%s()', $this->controller->name . "Controller", $request->action);
-				throw new MissingActionException($message);
+				throw new MissingActionException(array(
+					'controller' => $this->controller->name,
+					'action' => $request->action
+				));
 			}
 		} else {
-			throw new MissingDatabaseException($this->ScaffoldModel->useDbConfig);
+			throw new MissingDatabaseException(array('connection' => $this->ScaffoldModel->useDbConfig));
 		}
 	}
 

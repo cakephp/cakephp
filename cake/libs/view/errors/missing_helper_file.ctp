@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $className;?> extends AppHelper {
+class <?php echo $class;?> extends AppHelper {
 
 }
 ?&gt;

@@ -41,6 +41,27 @@ class ErrorHandler {
 	public $controller = null;
 
 /**
+ * template to render for CakeException
+ *
+ * @var string
+ */
+	public $template = '';
+
+/**
+ * The method corresponding to the Exception this object is for.
+ *
+ * @var string
+ */
+	public $method = '';
+
+/**
+ * The exception being handled.
+ *
+ * @var Exception
+ */
+	public $error = null;
+
+/**
  * Class constructor.
  *
  * @param string $method Method producing the error
@@ -54,27 +75,27 @@ class ErrorHandler {
 		if (method_exists($this->controller, 'apperror')) {
 			return $this->controller->appError($exception);
 		}
-		$method = Inflector::variable(str_replace('Exception', '', get_class($exception)));
+		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
 
-		if (!in_array($method, get_class_methods($this))) {
-			$method = 'error';
+		if ($exception instanceof CakeException && !in_array($method, get_class_methods($this))) {
+			$method = '_cakeError';
 		}
-		if ($method !== 'error') {
-			if (Configure::read('debug') == 0) {
-				$code = $exception->getCode();
-				$parentClass = get_parent_class($this);
-				if ($parentClass != 'ErrorHandler') {
-					$method = 'error404';
-				}
-				$parentMethods = (array)get_class_methods($parentClass);
-				if (in_array($method, $parentMethods)) {
-					$method = 'error404';
-				}
-				if ($code == 500) {
-					$method = 'error500';
-				}
+
+		if ($method !== 'error' && Configure::read('debug') == 0) {
+			$code = $exception->getCode();
+			$parentClass = get_parent_class($this);
+			if ($parentClass != 'ErrorHandler') {
+				$method = 'error404';
+			}
+			$parentMethods = (array)get_class_methods($parentClass);
+			if (in_array($method, $parentMethods)) {
+				$method = 'error404';
+			}
+			if ($code == 500) {
+				$method = 'error500';
 			}
 		}
+		$this->template = $template;
 		$this->method = $method;
 		$this->error = $exception;
 	}
@@ -134,6 +155,24 @@ class ErrorHandler {
 	}
 
 /**
+ * Generic handler for the internal framework errors CakePHP can generate.
+ *
+ * @param CakeExeption $error
+ * @return void
+ */
+	protected function _cakeError(CakeException $error) {
+		$url = Router::normalize($this->controller->request->here);
+		$code = $error->getCode();
+		$this->controller->response->statusCode($code);
+		$this->controller->set(array(
+			'code' => $code,
+			'url' => h($url),
+		));
+		$this->controller->set($error->getAttributes());
+		$this->_outputMessage($this->template);
+	}
+
+/**
  * Convenience method to display a 404 page.
  *
  * @param array $params Parameters for controller
@@ -167,207 +206,11 @@ class ErrorHandler {
 		));
 		$this->_outputMessage('error500');
 	}
-/**
- * Renders the Missing Controller web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingController($error) {
-		$controllerName = str_replace('Controller', '', $error->getMessage());
-		$this->controller->set(array(
-			'controller' => $error->getMessage(),
-			'controllerName' => $controllerName
-		));
-		$this->_outputMessage('missingController');
-	}
 
 /**
- * Renders the Missing Action web page.
+ * Generate the response using the controller object.
  *
- * @param array $params Parameters for controller
- */
-	public function missingAction($error) {
-		$message = $error->getMessage();
-		list($controllerName, $action)  = explode('::', $message);
-		$this->controller->set(array(
-			'controller' => $controllerName,
-			'action' => $action,
-		));
-		$this->_outputMessage('missingAction');
-	}
-
-/**
- * Renders the Private Action web page.
- *
- * @param array $params Parameters for controller
- */
-	public function privateAction($error) {
-		$message = $error->getMessage();
-		list($controllerName, $action)  = explode('::', $message);
-		$this->controller->set(array(
-			'controller' => $controllerName,
-			'action' => $action
-		));
-		$this->_outputMessage('privateAction');
-	}
-
-/**
- * Renders the Missing Table web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingTable($error) {
-		$this->controller->header("HTTP/1.0 500 Internal Server Error");
-		$this->controller->set(array(
-			'model' => $error->getModel(),
-			'table' => $error->getTable(),
-		));
-		$this->_outputMessage('missingTable');
-	}
-
-/**
- * Renders the Missing Database web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingDatabase($exception) {
-		$this->controller->header("HTTP/1.0 500 Internal Server Error");
-		$this->controller->set(array(
-			'code' => '500',
-			'title' => __('Scaffold Missing Database Connection')
-		));
-		$this->_outputMessage('missingScaffolddb');
-	}
-
-/**
- * Renders the Missing View web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingView($error) {
-		$this->controller->set(array(
-			'file' => $error->getMessage(),
-		));
-		$this->_outputMessage('missingView');
-	}
-
-/**
- * Renders the Missing Layout web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingLayout($error) {
-		$this->controller->layout = 'default';
-		$this->controller->set(array(
-			'file' => $error->getMessage(),
-		));
-		$this->_outputMessage('missingLayout');
-	}
-
-/**
- * Renders the Database Connection web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingConnection($error) {
-		$this->controller->header("HTTP/1.0 500 Internal Server Error");
-		$this->controller->set(array(
-			'code' => '500',
-			'model' => $error->getMessage(),
-		));
-		$this->_outputMessage('missingConnection');
-	}
-
-/**
- * Renders the Missing Helper file web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingHelperFile($error) {
-		list($class, $ext) = explode('.', $error->getMessage());
-		$this->controller->set(array(
-			'className' => Inflector::camelize($class),
-			'file' => $error->getMessage()
-		));
-		$this->_outputMessage('missingHelperFile');
-	}
-
-/**
- * Renders the Missing Helper class web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingHelperClass($error) {
-		$class = $error->getMessage();
-		$file = Inflector::underscore(str_replace('Helper', '', $error->getMessage())) . '.php';
-		$this->controller->set(array(
-			'className' => $class,
-			'file' => $file,
-		));
-		$this->_outputMessage('missingHelperClass');
-	}
-
-/**
- * Renders the Missing Behavior file web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingBehaviorFile($error) {
-		list($class, $ext) = explode('.', $error->getMessage());
-		$this->controller->set(array(
-			'className' => Inflector::camelize($class),
-			'file' => $error->getMessage()
-		));
-		$this->_outputMessage('missingBehaviorFile');
-	}
-
-/**
- * Renders the Missing Behavior class web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingBehaviorClass($error) {
-		$class = $error->getMessage();
-		$file = Inflector::underscore(str_replace('Behavior', '', $error->getMessage())) . '.php';
-		$this->controller->set(array(
-			'className' => $class,
-			'file' => $file,
-		));
-		$this->_outputMessage('missingBehaviorClass');
-	}
-
-/**
- * Renders the Missing Component file web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingComponentFile($error) {
-		list($class, $ext) = explode('.', $error->getMessage());
-		$this->controller->set(array(
-			'className' => Inflector::camelize($class),
-			'file' => $error->getMessage()
-		));
-		$this->_outputMessage('missingComponentFile');
-	}
-
-/**
- * Renders the Missing Component class web page.
- *
- * @param array $params Parameters for controller
- */
-	public function missingComponentClass($error) {
-		$class = $error->getMessage();
-		$file = Inflector::underscore(str_replace('Component', '', $error->getMessage())) . '.php';
-		$this->controller->set(array(
-			'className' => $class,
-			'file' => $file,
-		));
-		$this->_outputMessage('missingComponentClass');
-	}
-
-/**
- * Output message
- *
+ * @param string $template The template to render.
  */
 	protected function _outputMessage($template) {
 		$this->controller->render($template);

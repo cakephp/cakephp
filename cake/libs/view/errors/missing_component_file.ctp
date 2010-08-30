@@ -24,11 +24,11 @@
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create the class %s in file: %s'), '<em>' . $className . 'Component</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
+	<?php printf(__('Create the class %s in file: %s'), '<em>' . $class . '</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
-class <?php echo $className;?>Component extends Component {<br />
+class <?php echo $class;?> extends Component {<br />
 
 }
 ?&gt;

@@ -799,7 +799,10 @@ class Model extends Object {
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
-				throw new MissingTableException($this->alias, $this->tablePrefix . $tableName);
+				throw new MissingTableException(array(
+					'table' => $this->tablePrefix . $tableName,
+					'class' => $this->alias
+				));
 			}
 			$this->_schema = null;
 		}
@@ -2825,7 +2828,7 @@ class Model extends Object {
 		}
 
 		if (empty($db) || !is_object($db)) {
-			throw new MissingConnectionException($this->useDbConfig);
+			throw new MissingConnectionException(array('class' => $this->name));
 		}
 	}
 

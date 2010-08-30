@@ -18,38 +18,84 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+
+class Error404Exception extends RuntimeException {
+	public function __construct($message, $code = 404) {
+		if (empty($message)) {
+			$message = __('Not Found');
+		}
+		parent::__construct($message, $code);
+	}
+}
+class Error500Exception extends CakeException { 
+	public function __construct($message, $code = 500) {
+		if (empty($message)) {
+			$message = __('Internal Server Error');
+		}
+		parent::__construct($message, $code);
+	}
+}
+
 /**
  * CakeException is used a base class for CakePHP's internal exceptions.
  * In general framework errors are interpreted as 500 code errors.
  *
  * @package cake.libs
  */
-class CakeException extends RuntimeException { 
-	public function __construct($message, $code = 500, Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
+class CakeException extends RuntimeException {
+
+	protected $_attributes = array();
+
+	protected $_messageTemplate = '';
+
+	public function __construct($message, $code = 500) {
+		if (is_array($message)) {
+			$this->_attributes = $message;
+			$message = vsprintf(__($this->_messageTemplate), $message);
+		}
+		parent::__construct($message, $code);
+	}
+	
+	public function getAttributes() {
+		return $this->_attributes;
 	}
 }
-
-
-class Error404Exception extends RuntimeException {
-	public function __construct($message, $code = 404, Exception $previous = null) {
-		parent::__construct($message, $code, $previous);
-	}
-}
-class Error500Exception extends CakeException { }
 
 /*
  * Exceptions used by Dispatcher
  */
-class MissingControllerException extends Error404Exception { }
-class MissingActionException extends Error404Exception { }
-class PrivateActionException extends Error404Exception { }
+class MissingControllerException extends CakeException { 
+	protected $_messageTemplate = 'Controller class %s could not be found.';
+
+	public function __construct($message, $code = 404) {
+		parent::__construct($message, $code);
+	}
+}
+class MissingActionException extends CakeException { 
+	protected $_messageTemplate = 'Action %s::%s() could not be found.';
+
+	public function __construct($message, $code = 404) {
+		parent::__construct($message, $code);
+	}
+}
+class PrivateActionException extends CakeException { 
+	protected $_messageTemplate = 'Private Action %s::%s() is not directly accessible.';
+
+	public function __construct($message, $code = 404, Exception $previous = null) {
+		parent::__construct($message, $code, $previous);
+	}
+}
 
 /**
  * Exceptions used by the ComponentCollection.
  */
-class MissingComponentFileException extends CakeException { }
-class MissingComponentClassException extends CakeException { }
+class MissingComponentFileException extends CakeException { 
+	protected $_messageTemplate = 'Component File  "%s" is missing.';
+}
+class MissingComponentClassException extends CakeException { 
+	protected $_messageTemplate = 'Component class "%s" is missing.';
+}
 
 /**
  * Runtime Exceptions for behaviors
@@ -60,68 +106,48 @@ class MissingBehaviorClassException extends CakeException { }
 /**
  * Runtime Exceptions for Views
  */
-class MissingViewException extends CakeException { }
-class MissingLayoutException extends CakeException { }
+class MissingViewException extends CakeException { 
+	protected $_messageTemplate = 'View file "%s" is missing.';
+}
+class MissingLayoutException extends CakeException { 
+	protected $_messageTemplate = 'Layout file "%s" is missing.';
+}
+
+/**
+ * Exceptions used by the HelperCollection.
+ */
+class MissingHelperFileException extends CakeException { 
+	protected $_messageTemplate = 'Helper File "%s" is missing.';
+}
+class MissingHelperClassException extends CakeException { 
+	protected $_messageTemplate = 'Helper class "%s" is missing.';
+}
+
 
 /**
  * Runtime Exceptions for ConnectionManager
  */
-class MissingDatabaseException extends CakeException {}
-class MissingConnectionException extends CakeException {}
+class MissingDatabaseException extends CakeException {
+	protected $_messageTemplate = 'Database connection "%s" could not be found.';
+}
+class MissingConnectionException extends CakeException {
+	protected $_messageTemplate = 'Database connection "%s" is missing.';
+}
 
 /**
  * Exceptions used by the TaskCollection.
  */
-class MissingTaskFileException extends CakeException { }
-class MissingTaskClassException extends CakeException { }
+class MissingTaskFileException extends CakeException { 
+	protected $_messageTemplate = 'Task file "%s" is missing.';
+}
+class MissingTaskClassException extends CakeException { 
+	protected $_messageTemplate = 'Task class "%s" is missing.';
+}
 
 /**
  * Exception class to be thrown when a database table is not found in the datasource
  *
  */
 class MissingTableException extends CakeException {
-/**
- * The name of the model wanting to load the database table
- *
- * @var string
- */
-	protected $model;
-/**
- * The name of the missing table
- *
- * @var string
- */
-	protected $table;
-
-/**
- * Exception costructor
- *
- * @param string $model The name of the model wanting to load the database table
- * @param string $table The name of the missing table
- * @return void
- */
-	public function __construct($model, $table) {
-		$this->model = $model;
-		$this->table = $table;
-		$message = sprintf(__('Database table %s for model %s was not found.'), $table, $model);
-		parent::__construct($message);
-	}
-
-/**
- * Returns the name of the model wanting to load the database table
- *
- * @return string
- */
-	public function getModel() {
-		return $this->model;
-	}
-
-/**
- * Returns the name of the missing table
- *
- * @return string
- */
-	public function getTable() {
-		return $this->table;
-	}
+	protected $_messageTemplate = 'Database table %s for model %s was not found.';
 }

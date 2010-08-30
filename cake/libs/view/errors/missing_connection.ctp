@@ -20,7 +20,7 @@
 <h2><?php echo __('Missing Database Connection'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('%s requires a database connection'), $model); ?>
+	<?php printf(__('%s requires a database connection'), $class); ?>
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>

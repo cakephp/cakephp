@@ -94,10 +94,16 @@ class BehaviorCollection extends ObjectCollection {
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
-			throw new MissingBehaviorFileException(Inflector::underscore($behavior) . '.php');
+			throw new MissingBehaviorFileException(array(
+				'file' => Inflector::underscore($behavior) . '.php',
+				'class' => $class
+			));
 		}
 		if (!class_exists($class)) {
-			throw new MissingBehaviorClassException(Inflector::underscore($class));
+			throw new MissingBehaviorClassException(array(
+				'file' => Inflector::underscore($behavior) . '.php',
+				'class' => $class
+			));
 		}
 
 		if (!isset($this->{$name})) {

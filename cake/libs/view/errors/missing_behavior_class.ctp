@@ -20,7 +20,7 @@
 <h2><?php echo __('Missing Behavior Class'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $className); ?>
+	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $class); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $className;?> extends ModelBehavior {
+class <?php echo $class;?> extends ModelBehavior {
 
 }
 ?&gt;

@@ -24,7 +24,7 @@
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create %1$s%2$s in file: %3$s.'), '<em>' . $controller . '::</em>', '<em>' . $action . '</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
+	<?php printf(__('Create %1$s%2$s in file: %3$s.'), '<em>' . $controller . '::</em>', '<em>' . $action . '()</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
 </p>
 <pre>
 &lt;?php

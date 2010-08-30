@@ -426,7 +426,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testMissingController() {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController');
 
-		$exception = new MissingControllerException('PostsController');
+		$exception = new MissingControllerException(array('controller' => 'PostsController'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -445,7 +445,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingAction() {
-		$exception = new MissingActionException('PostsController::index()');
+		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -473,7 +473,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testPrivateAction() {
-		$exception = new PrivateActionException('PostsController::_secretSauce()');
+		$exception = new PrivateActionException(array('controller' => 'PostsController' , 'action' => '_secretSauce'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -491,14 +491,15 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingTable() {
-		$exception = new MissingTableException('Article', 'articles');
+		$exception = new MissingTableException(array('table' => 'articles', 'class' => 'Article'));
 		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		ob_start();
 		$ErrorHandler->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Table<\/h2>/', $result);
 		$this->assertPattern('/table <em>articles<\/em> for model <em>Article<\/em>/', $result);
 	}
@@ -510,14 +511,15 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingDatabase() {
-		$exception = new MissingDatabaseException('default');
+		$exception = new MissingDatabaseException(array('connection' => 'default'));
 		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		ob_start();
 		$ErrorHandler->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/HTTP\/1\.0 500 Internal Server Error/', $result);
 		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
 		$this->assertPattern('/Confirm you have created the file/', $result);
 	}
@@ -529,7 +531,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingView() {
-		$exception = new MissingViewException('/posts/about.ctp');
+		$exception = new MissingViewException(array('file' => '/posts/about.ctp'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -546,7 +548,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingLayout() {
-		$exception = new MissingLayoutException('layouts/my_layout.ctp');
+		$exception = new MissingLayoutException(array('file' => 'layouts/my_layout.ctp'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -564,7 +566,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingConnection() {
-		$exception = new MissingConnectionException('Article');
+		$exception = new MissingConnectionException(array('class' => 'Article'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -582,7 +584,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingHelperFile() {
-		$exception = new MissingHelperFileException('my_custom.php');
+		$exception = new MissingHelperFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -601,7 +603,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingHelperClass() {
-		$exception = new MissingHelperClassException('MyCustomHelper');
+		$exception = new MissingHelperClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -620,7 +622,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingBehaviorFile() {
-		$exception = new MissingBehaviorFileException('my_custom.php');
+		$exception = new MissingBehaviorFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -639,7 +641,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingBehaviorClass() {
-		$exception = new MissingBehaviorClassException('MyCustomBehavior');
+		$exception = new MissingBehaviorClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -657,7 +659,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingComponentFile() {
-		$exception = new MissingComponentFileException('sidebox.php');
+		$exception = new MissingComponentFileException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -676,7 +678,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingComponentClass() {
-		$exception = new MissingComponentClassException('SideboxComponent');
+		$exception = new MissingComponentClassException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent'));
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();

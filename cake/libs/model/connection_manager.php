@@ -222,7 +222,7 @@ class ConnectionManager {
 				$this->_connectionsEnum[$name] = $this->__connectionData($config);
 			}
 		} else {
-			throw new MissingConnectionException('ConnectionManager');
+			throw new MissingConnectionException(array('class' => 'ConnectionManager'));
 		}
 	}
 
