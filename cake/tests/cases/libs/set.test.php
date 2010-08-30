@@ -855,6 +855,13 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
 
+		$expected = array(
+			array('name' => 'zipfile.zip','type' => 'application/zip','tmp_name' => '/tmp/php178.tmp','error' => 0,'size' => '564647'),
+			array('name' => 'zipfile2.zip','type' => 'application/x-zip-compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784')
+		);
+		$r = Set::extract('/file/.[tmp_name=/tmp\/php17/]', $f);
+		$this->assertEqual($r, $expected);
+
 		$hasMany = array(
 			'Node' => array(
 				'id' => 1,
