@@ -38,6 +38,7 @@ class CakeErrorController extends AppController {
  * @return void
  */
 	function beforeRender() {
+		parent::beforeRender();
 		foreach ($this->viewVars as $key => $value) {
 			$this->viewVars[$key] = h($value);
 		}
