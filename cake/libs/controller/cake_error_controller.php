@@ -31,4 +31,15 @@ class CakeErrorController extends AppController {
 		$this->Components->trigger('initialize', array(&$this));
 		$this->_set(array('cacheAction' => false, 'viewPath' => 'errors'));
 	}
+
+/**
+ * Escapes the viewVars.
+ *
+ * @return void
+ */
+	function beforeRender() {
+		foreach ($this->viewVars as $key => $value) {
+			$this->viewVars[$key] = h($value);
+		}
+	}
 }
