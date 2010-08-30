@@ -438,256 +438,155 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertPattern('/BlueberryComponent/', $result);
 	}
 
+
+	/* TODO: Integration test that needs to be moved
+	ob_start();
+	$dispatcher = new Dispatcher('/blueberry/inexistent');
+	$result = ob_get_clean();
+	$this->assertPattern('/<h2>Missing Method in BlueberryController<\/h2>/', $result);
+	$this->assertPattern('/<em>BlueberryController::<\/em><em>inexistent\(\)<\/em>/', $result);
+	$this->assertNoPattern('/Location: (.*)\/users\/login/', $result);
+	$this->assertNoPattern('/Stopped with status: 0/', $result);
+	*/
+
 /**
- * testMissingAction method
+ * Returns an array of tests to run for the various CakeException classes.
  *
- * @access public
  * @return void
  */
-	function testMissingAction() {
-		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Method in PostsController<\/h2>/', $result);
-		$this->assertPattern('/<em>PostsController::<\/em><em>index\(\)<\/em>/', $result);
-
-		/* TODO: Integration test that needs to be moved
-		ob_start();
-		$dispatcher = new Dispatcher('/blueberry/inexistent');
-		$result = ob_get_clean();
-		$this->assertPattern('/<h2>Missing Method in BlueberryController<\/h2>/', $result);
-		$this->assertPattern('/<em>BlueberryController::<\/em><em>inexistent\(\)<\/em>/', $result);
-		$this->assertNoPattern('/Location: (.*)\/users\/login/', $result);
-		$this->assertNoPattern('/Stopped with status: 0/', $result);
-		*/
+	public static function testProvider() {
+		return array(
+			array(
+				new MissingActionException(array('controller' => 'PostsController', 'action' => 'index')),
+				array(
+					'/<h2>Missing Method in PostsController<\/h2>/',
+					'/<em>PostsController::<\/em><em>index\(\)<\/em>/'
+				),
+				404
+			),
+			array(
+				new PrivateActionException(array('controller' => 'PostsController' , 'action' => '_secretSauce')),
+				array(
+					'/<h2>Private Method in PostsController<\/h2>/',
+					'/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/'
+				),
+				404
+			),
+			array(
+				new MissingTableException(array('table' => 'articles', 'class' => 'Article')),
+				array(
+					'/<h2>Missing Database Table<\/h2>/',
+					'/table <em>articles<\/em> for model <em>Article<\/em>/'
+				),
+				500
+			),
+			array(
+				new MissingDatabaseException(array('connection' => 'default')),
+				array(
+					'/<h2>Missing Database Connection<\/h2>/',
+					'/Confirm you have created the file/'
+				),
+				500
+			),
+			array(
+				new MissingViewException(array('file' => '/posts/about.ctp')),
+				array(
+					"/posts\/about.ctp/"
+				),
+				500
+			),
+			array(
+				new MissingLayoutException(array('file' => 'layouts/my_layout.ctp')),
+				array(
+					"/Missing Layout/",
+					"/layouts\/my_layout.ctp/"
+				),
+				500
+			),
+			array(
+				new MissingConnectionException(array('class' => 'Article')),
+				array(
+					'/<h2>Missing Database Connection<\/h2>/',
+					'/Article requires a database connection/'
+				),
+				500
+			),
+			array(
+				new MissingHelperFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper')),
+				array(
+					'/<h2>Missing Helper File<\/h2>/',
+					'/Create the class below in file:/',
+					'/(\/|\\\)my_custom.php/'
+				),
+				500
+			),
+			array(
+				new MissingHelperClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper')),
+				array(
+					'/<h2>Missing Helper Class<\/h2>/',
+					'/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./',
+					'/(\/|\\\)my_custom.php/',
+				),
+				500
+			),
+			array(
+				new MissingBehaviorFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior')),
+				array(
+					'/<h2>Missing Behavior File<\/h2>/',
+					'/Create the class below in file:/',
+					'/(\/|\\\)my_custom.php/',
+				),
+				500
+			),
+			array(
+				new MissingBehaviorClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior')),
+				array(
+					'/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./',
+					'/(\/|\\\)my_custom.php/'
+				),
+				500
+			),
+			array(
+				new MissingComponentFileException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent')),
+				array(
+					'/<h2>Missing Component File<\/h2>/',
+					'/Create the class <em>SideboxComponent<\/em> in file:/',
+					'/(\/|\\\)sidebox.php/'
+				),
+				500
+			),
+			array(
+				new MissingComponentClassException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent')),
+				array(
+					'/<h2>Missing Component Class<\/h2>/',
+					'/Create the class <em>SideboxComponent<\/em> in file:/',
+					'/(\/|\\\)sidebox.php/'
+				),
+				500
+			)
+			
+		);
 	}
 
 /**
- * testPrivateAction method
+ * Test the various CakeException sub classes
  *
- * @access public
+ * @dataProvider testProvider
  * @return void
  */
-	function testPrivateAction() {
-		$exception = new PrivateActionException(array('controller' => 'PostsController' , 'action' => '_secretSauce'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Private Method in PostsController<\/h2>/', $result);
-		$this->assertPattern('/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/', $result);
-	}
-
-/**
- * testMissingTable method
- *
- * @access public
- * @return void
- */
-	function testMissingTable() {
-		$exception = new MissingTableException(array('table' => 'articles', 'class' => 'Article'));
+	function testCakeExceptionHandling($exception, $patterns, $code) {
 		$ErrorHandler = new ErrorHandler($exception);
 		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
-		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
+		$ErrorHandler->controller->response->expects($this->once())
+			->method('statusCode')
+			->with($code);
 
 		ob_start();
 		$ErrorHandler->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/<h2>Missing Database Table<\/h2>/', $result);
-		$this->assertPattern('/table <em>articles<\/em> for model <em>Article<\/em>/', $result);
+		foreach ($patterns as $pattern) {
+			$this->assertPattern($pattern, $result);
+		}
 	}
-
-/**
- * testMissingDatabase method
- *
- * @access public
- * @return void
- */
-	function testMissingDatabase() {
-		$exception = new MissingDatabaseException(array('connection' => 'default'));
-		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
-		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
-		$this->assertPattern('/Confirm you have created the file/', $result);
-	}
-
-/**
- * testMissingView method
- *
- * @access public
- * @return void
- */
-	function testMissingView() {
-		$exception = new MissingViewException(array('file' => '/posts/about.ctp'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern("/posts\/about.ctp/", $result);
-	}
-
-/**
- * testMissingLayout method
- *
- * @access public
- * @return void
- */
-	function testMissingLayout() {
-		$exception = new MissingLayoutException(array('file' => 'layouts/my_layout.ctp'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern("/Missing Layout/", $result);
-		$this->assertPattern("/layouts\/my_layout.ctp/", $result);
-	}
-
-/**
- * testMissingConnection method
- *
- * @access public
- * @return void
- */
-	function testMissingConnection() {
-		$exception = new MissingConnectionException(array('class' => 'Article'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Database Connection<\/h2>/', $result);
-		$this->assertPattern('/Article requires a database connection/', $result);
-	}
-
-/**
- * testMissingHelperFile method
- *
- * @access public
- * @return void
- */
-	function testMissingHelperFile() {
-		$exception = new MissingHelperFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Helper File<\/h2>/', $result);
-		$this->assertPattern('/Create the class below in file:/', $result);
-		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
-	}
-
-/**
- * testMissingHelperClass method
- *
- * @access public
- * @return void
- */
-	function testMissingHelperClass() {
-		$exception = new MissingHelperClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomHelper'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Helper Class<\/h2>/', $result);
-		$this->assertPattern('/The helper class <em>MyCustomHelper<\/em> can not be found or does not exist./', $result);
-		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
-	}
-
-/**
- * test missingBehaviorFile method
- *
- * @access public
- * @return void
- */
-	function testMissingBehaviorFile() {
-		$exception = new MissingBehaviorFileException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Behavior File<\/h2>/', $result);
-		$this->assertPattern('/Create the class below in file:/', $result);
-		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
-	}
-
-/**
- * test MissingBehaviorClass method
- *
- * @access public
- * @return void
- */
-	function testMissingBehaviorClass() {
-		$exception = new MissingBehaviorClassException(array('file' => 'my_custom.php', 'class' => 'MyCustomBehavior'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/The behavior class <em>MyCustomBehavior<\/em> can not be found or does not exist./', $result);
-		$this->assertPattern('/(\/|\\\)my_custom.php/', $result);
-	}
-
-/**
- * testMissingComponentFile method
- *
- * @access public
- * @return void
- */
-	function testMissingComponentFile() {
-		$exception = new MissingComponentFileException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Component File<\/h2>/', $result);
-		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
-		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
-	}
-
-/**
- * testMissingComponentClass method
- *
- * @access public
- * @return void
- */
-	function testMissingComponentClass() {
-		$exception = new MissingComponentClassException(array('file' => 'sidebox.php', 'class' => 'SideboxComponent'));
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->render();
-		$result = ob_get_clean();
-
-		$this->assertPattern('/<h2>Missing Component Class<\/h2>/', $result);
-		$this->assertPattern('/Create the class <em>SideboxComponent<\/em> in file:/', $result);
-		$this->assertPattern('/(\/|\\\)sidebox.php/', $result);
-	}
-
 }
