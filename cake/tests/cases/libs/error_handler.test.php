@@ -18,6 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
+App::import('Core', array('ErrorHandler', 'Controller', 'Component'));
 
 /**
  * Short description for class.
@@ -89,7 +90,6 @@ if (!class_exists('AppController')) {
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
 }
-App::import('Core', array('ErrorHandler', 'Controller', 'Component'));
 
 /**
  * BlueberryComponent class

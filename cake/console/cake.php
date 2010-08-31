@@ -260,6 +260,7 @@ class ShellDispatcher {
 
 		$includes = array(
 			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
+			CORE_PATH . 'cake' . DS . 'libs' . DS . 'exceptions.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
 			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
