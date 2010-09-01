@@ -627,6 +627,34 @@ class HtmlHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test a script file in the webroot/theme dir.
+ *
+ * @return void
+ */
+	function testScriptInTheme() {
+		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
+			return;
+		}
+		App::import('Core', 'File');
+
+		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
+		$file =& new File($testfile, true);
+
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+
+		$this->Html->webroot = '/';
+		$this->Html->theme = 'test_theme';
+		$result = $this->Html->script('__test_js.js');
+		$expected = array(
+			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
+		);
+		$this->assertTags($result, $expected);
+		App::build();
+	}
+
+/**
  * test Script block generation
  *
  * @return void
