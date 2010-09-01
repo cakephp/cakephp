@@ -30,10 +30,9 @@ class XmlTest extends CakeTestCase {
 /**
  * testBuild method
  *
- * @access public
  * @return void
  */
-	function testBuild() {
+	public function testBuild() {
 		$xml = '<tag>value</tag>';
 		$obj = Xml::build($xml);
 		$this->assertTrue($obj instanceof SimpleXMLElement);
@@ -77,17 +76,16 @@ class XmlTest extends CakeTestCase {
  * @expectedException Exception
  * return void
  */
-	function testBuildInvalidData($value) {
+	public function testBuildInvalidData($value) {
 		Xml::build($value);
 	}
 
 /**
  * testFromArray method
  *
- * @access public
  * @return void
  */
-	function testFromArray() {
+	public function testFromArray() {
 		$xml = array('tag' => 'value');
 		$obj = Xml::fromArray($xml);
 		$this->assertEqual($obj->getName(), 'tag');
@@ -258,17 +256,16 @@ class XmlTest extends CakeTestCase {
  * @dataProvider invalidArrayDataProvider
  * @expectedException Exception
  */
-	function testFromArrayFail($value) {
+	public function testFromArrayFail($value) {
 		Xml::fromArray($value);
 	}
 
 /**
  * testToArray method
  *
- * @access public
  * @return void
  */
-	function testToArray() {
+	public function testToArray() {
 		$xml = '<tag>name</tag>';
 		$obj = Xml::build($xml);
 		$this->assertEqual(Xml::toArray($obj), array('tag' => 'name'));
@@ -411,7 +408,7 @@ class XmlTest extends CakeTestCase {
  *
  * @return void
  */
-	function testToArrayRss() {
+	public function testToArrayRss() {
 		$rss = <<<EOF
 <?xml version="1.0" encoding="UTF-8" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -479,7 +476,7 @@ EOF;
  * @dataProvider invalidToArrayDataProvider
  * @expectedException Exception
  */
-	function testToArrayFail($value) {
+	public function testToArrayFail($value) {
 		Xml::toArray($value);
 	}
 
