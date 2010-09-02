@@ -25,7 +25,6 @@ if (!defined('E_DEPRECATED')) {
 error_reporting(E_ALL & ~E_DEPRECATED);
 
 require CORE_PATH . 'cake' . DS . 'basics.php';
-$TIME_START = microtime(true);
 require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 require LIBS . 'exceptions.php';
 require LIBS . 'object.php';
