@@ -75,16 +75,35 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @return void
  */
 	protected function _cakeError($error) {
-		$this->_outputMessage('');
+		$this->_outputMessage();
 	}
 
+/**
+ * Override error404 method
+ *
+ * @param Exception $error Exception
+ * @return void
+ */
+	public function error404($error) {
+		$this->_outputMessage();
+	}
+
+/**
+ * Override error500 method
+ *
+ * @param Exception $error Exception
+ * @return void
+ */
+	public function error500($error) {
+		$this->_outputMessage();
+	}
 /**
  * Outputs the exception to STDERR.
  *
  * @param string $template The name of the template to render.
  * @return void
  */
-	public function _outputMessage($template) {
+	public function _outputMessage($template = null) {
 		$this->stderr($this->error->getMessage());
 	}
 
