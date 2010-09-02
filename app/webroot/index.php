@@ -79,6 +79,7 @@
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 		return;
 	} else {
+		require CAKE . 'dispatcher.php';
 		$Dispatcher = new Dispatcher();
 		$Dispatcher->dispatch();
 	}
