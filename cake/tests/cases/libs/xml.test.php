@@ -490,6 +490,38 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testSoap
+ *
+ * @return void
+ */
+	public function testSoap() {
+		$xmlRequest = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_request.xml');
+		$expected = array(
+			'Envelope' => array(
+				'@encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
+				'Body' => array(
+					'GetStockPrice' => array(
+						'StockName' => 'IBM'
+					)
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray($xmlRequest), $expected);
+
+		$xmlResponse = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_response.xml');
+		$expected = array(
+			'Envelope' => array(
+				'@encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
+				'Body' => array(
+					'GetStockPriceResponse' => array(
+						'Price' => '34.5'
+					)
+				)
+			)
+		);
+	}
+
+/**
  * data provider for toArray() failures
  *
  * @return array
