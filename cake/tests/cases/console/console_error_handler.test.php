@@ -70,4 +70,34 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$this->assertEquals(1, count($result));
 		$this->assertEquals('Too many parameters.', $result[0]);
 	}
+
+/**
+ * test a Error404 exception.
+ *
+ * @return void
+ */
+	function testError404Exception() {
+		$exception = new Error404Exception('dont use me in cli.');
+		$error = new TestConsoleErrorHandler($exception);
+		$error->render();
+
+		$result = $error->output;
+		$this->assertEquals(1, count($result));
+		$this->assertEquals('dont use me in cli.', $result[0]);
+	}
+
+/**
+ * test a Error500 exception.
+ *
+ * @return void
+ */
+	function testError500Exception() {
+		$exception = new Error500Exception('dont use me in cli.');
+		$error = new TestConsoleErrorHandler($exception);
+		$error->render();
+
+		$result = $error->output;
+		$this->assertEquals(1, count($result));
+		$this->assertEquals('dont use me in cli.', $result[0]);
+	}
 }
