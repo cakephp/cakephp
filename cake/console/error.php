@@ -18,13 +18,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Core', 'ErrorHandler');
 /**
  * Error Handler for Cake console.
  *
  * @package       cake
  * @subpackage    cake.cake.console
  */
-class ErrorHandler extends Object {
+class ConsoleErrorHandler extends ErrorHandler {
 
 /**
  * Standard output stream.
