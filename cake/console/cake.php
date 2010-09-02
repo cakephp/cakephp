@@ -257,6 +257,8 @@ class ShellDispatcher {
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'cake' . DS . 'bootstrap.php';
+		require CORE_PATH . 'cake' . DS . 'console' . DS . 'console_error_handler.php';
+		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
