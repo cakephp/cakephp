@@ -331,6 +331,19 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test that unknown exception types are captured and converted to 500
+ *
+ * @return void
+ */
+	function testUnknownExceptionType() {
+		$exception = new MissingWidgetThingException('coding fail.');
+		$ErrorHandler = new ErrorHandler($exception);
+
+		$this->assertFalse(method_exists($ErrorHandler, 'missingWidgetThing'), 'no method should exist.');
+		$this->assertEquals('error500', $ErrorHandler->method, 'incorrect method coercion.');
+	}
+
+/**
  * testError method
  *
  * @access public

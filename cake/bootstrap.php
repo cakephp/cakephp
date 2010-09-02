@@ -33,7 +33,8 @@ require LIBS . 'inflector.php';
 require LIBS . 'configure.php';
 require LIBS . 'set.php';
 require LIBS . 'cache.php';
-Configure::bootstrap();
 require LIBS . 'error_handler.php';
 set_exception_handler(array('ErrorHandler', 'handleException'));
+
+Configure::bootstrap();
 require CAKE . 'dispatcher.php';

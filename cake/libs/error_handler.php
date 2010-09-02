@@ -62,7 +62,9 @@ class ErrorHandler {
 	public $error = null;
 
 /**
- * Class constructor.
+ * Creates the controller to perform rendering on the error response.
+ * If the error is a CakeException it will be converted to either a 404 or a 500 
+ * type error depending on the code used to construct the error.
  *
  * @param string $method Method producing the error
  * @param array $messages Error messages
@@ -79,6 +81,8 @@ class ErrorHandler {
 
 		if ($exception instanceof CakeException && !in_array($method, get_class_methods($this))) {
 			$method = '_cakeError';
+		} elseif (!method_exists($this, $method)) {
+			$method = 'error500';
 		}
 
 		if ($method !== 'error' && Configure::read('debug') == 0) {
