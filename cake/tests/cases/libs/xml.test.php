@@ -425,6 +425,71 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * testXmlRpc
+ *
+ * @return void
+ */
+	public function testXmlRpc() {
+		$xml = Xml::build('<methodCall><methodName>test</methodName><params /></methodCall>');
+		$expected = array(
+			'methodCall' => array(
+				'methodName' => 'test',
+				'params' => ''
+			)
+		);
+		$this->assertIdentical(Xml::toArray($xml), $expected);
+
+		$xml = Xml::build('<methodCall><methodName>test</methodName><params><param><value><array><data><value><int>12</int></value><value><string>Egypt</string></value><value><boolean>0</boolean></value><value><int>-31</int></value></data></array></value></param></params></methodCall>');
+		$expected = array(
+			'methodCall' => array(
+				'methodName' => 'test',
+				'params' => array(
+					'param' => array(
+						'value' => array(
+							'array' => array(
+								'data' => array(
+									'value' => array(
+										array('int' => '12'),
+										array('string' => 'Egypt'),
+										array('boolean' => '0'),
+										array('int' => '-31')
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+		$this->assertIdentical(Xml::toArray($xml), $expected);
+
+		$xmlText = '<?xml version="1.0"?><methodResponse><params><param><value><array><data><value><int>1</int></value><value><string>testing</string></value></data></array></value></param></params></methodResponse>';
+		$xml = Xml::build($xmlText);
+		$expected = array(
+			'methodResponse' => array(
+				'params' => array(
+					'param' => array(
+						'value' => array(
+							'array' => array(
+								'data' => array(
+									'value' => array(
+										array('int' => '1'),
+										array('string' => 'testing')
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+		$this->assertIdentical(Xml::toArray($xml), $expected);
+
+		$xml = Xml::fromArray($expected, 'tags');
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xml->asXML()), $xmlText);
+	}
+
+/**
  * data provider for toArray() failures
  *
  * @return array
