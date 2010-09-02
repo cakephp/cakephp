@@ -23,9 +23,31 @@
 /**
  * Error Handler.
  *
- * Captures and handles all cakeError() calls.
- * Displays helpful framework errors when debug > 1.
- * When debug < 1 cakeError() will render 404 or 500 errors.
+ * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
+ * When debug < 1 cakeError() will render 404 or  500 errors.  If an uncaught exception is thrown
+ * and it is a type that ErrorHandler does not know about it will be treated as a 500 error. 
+ *
+ * ### Implementing application specific exception handling
+ *
+ * You can implement application specific exception handling in one of a few ways:
+ *
+ * - Create a AppController::appError();
+ * - Create an AppError class.
+ *
+ * #### Using AppController::appError();
+ *
+ * This controller method is called instead of the default exception handling.  It receives the 
+ * thrown exception as its only argument.  You should implement your error handling in that method.
+ *
+ * #### Using an AppError class
+ *
+ * This approach gives more flexibility and power in how you handle exceptions.  You can create 
+ * `app/libs/app_error.php` and create a class called `AppError`.  The core ErrorHandler class
+ * will attempt to construct this class and let it handle the exception. This provides a more
+ * flexible way to handle exceptions in your application.
+ *
+ * Finally, in your `app/config/bootstrap.php` you can configure use `set_exception_handler()`
+ * to take total control over application exception handling.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
