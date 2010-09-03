@@ -168,7 +168,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->sort('TestTitle', 'title');
+		$result = $this->Paginator->sort('title', 'TestTitle');
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/param/page:1/sort:title/direction:asc'),
 			'TestTitle',
@@ -176,7 +176,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title');
+		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'));
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/param/page:1/sort:title/direction:asc'),
 			'ascending',
@@ -185,7 +185,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = 'title';
-		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title');
+		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'));
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/param/page:1/sort:title/direction:desc', 'class' => 'asc'),
 			'descending',
@@ -205,29 +205,29 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
-		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
-		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'asc'));
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'asc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:asc" class="desc">Title<\/a>$/', $result);
 
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
-		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'asc'));
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'asc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
-		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
 		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
-		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc', 'class' => 'foo'));
+		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc', 'class' => 'foo'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="foo asc">Title<\/a>$/', $result);
 	}
 
@@ -293,7 +293,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		));
 		$this->Paginator->options(array('url' => array('param')));
 
-		$result = $this->Paginator->sort('TestTitle', 'title', array('direction' => 'desc'));
+		$result = $this->Paginator->sort('title', 'TestTitle', array('direction' => 'desc'));
 		$expected = array(
 			'a' => array('href' => '/accounts/index/param/page:1/sort:title/direction:desc'),
 			'TestTitle',
@@ -301,7 +301,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->sort(array('asc' => 'ascending', 'desc' => 'descending'), 'title', array('direction' => 'desc'));
+		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'), array('direction' => 'desc'));
 		$expected = array(
 			'a' => array('href' => '/accounts/index/param/page:1/sort:title/direction:desc'),
 			'descending',
@@ -325,7 +325,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		));
 
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'desc');
-		$result = $this->Paginator->sort('Title','Article.title');
+		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/page:1/sort:Article.title/direction:asc', 'class' => 'desc'),
 			'Title',
@@ -333,8 +333,9 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+
 		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
-		$result = $this->Paginator->sort('Title','Article.title');
+		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/page:1/sort:Article.title/direction:desc', 'class' => 'asc'),
 			'Title',
@@ -483,7 +484,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Paginator->options(array('url' => array('param')));
-		$result = $this->Paginator->sort('Title', 'Article.title');
+		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
 			'a' => array('href' => '/admin/test/index/param/page:1/sort:Article.title/direction:asc'),
 			'Title',
