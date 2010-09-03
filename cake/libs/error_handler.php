@@ -99,10 +99,6 @@ class ErrorHandler {
 		if (method_exists($this->controller, 'apperror')) {
 			return $this->controller->appError($exception);
 		}
-		if (file_exists(APP . 'app_error.php') && class_exists('AppError')) {
-			$AppError = new AppError($exception);
-			return $AppError->render();
-		}
 		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
 
 		if ($exception instanceof CakeException && !in_array($method, get_class_methods($this))) {
@@ -155,13 +151,21 @@ class ErrorHandler {
 
 /**
  * Set as the default exception handler by the CakePHP bootstrap process.
- * If you wish you use a custom default exception handler use set_exception_handler()
- * in your app/config/bootstrap.php.
+ *
+ * This will either use an AppError class if your application has one,
+ * or use the default ErrorHandler.
  *
  * @return void
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(Exception $exception) {
+		if (file_exists(APP . 'app_error.php') || class_exists('AppError')) {
+			if (!class_exists('AppError')) {
+				require(APP . 'app_error.php');
+			}
+			$AppError = new AppError($exception);
+			return $AppError->render();
+		}
 		$error = new ErrorHandler($exception);
 		$error->render();
 	}
