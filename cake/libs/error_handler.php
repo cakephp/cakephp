@@ -4,7 +4,7 @@
  *
  * Provides Error Capturing for Framework errors.
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -98,6 +98,10 @@ class ErrorHandler {
 
 		if (method_exists($this->controller, 'apperror')) {
 			return $this->controller->appError($exception);
+		}
+		if (file_exists(APP . 'app_error.php') && class_exists('AppError')) {
+			$AppError = new AppError($exception);
+			return $AppError->render();
 		}
 		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
 
