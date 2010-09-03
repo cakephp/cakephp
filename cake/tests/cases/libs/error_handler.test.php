@@ -236,6 +236,9 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testHandleException() {
+		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
+			return;
+		}
 		$error = new Error404Exception('Kaboom!');
 		ob_start();
 		ErrorHandler::handleException($error);
