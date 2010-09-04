@@ -100,22 +100,27 @@ class ErrorHandler {
 			return $this->controller->appError($exception);
 		}
 		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
+		$code = $exception->getCode();
 
-		if ($exception instanceof CakeException && !in_array($method, get_class_methods($this))) {
+		$methodExists = method_exists($this, $method);
+
+		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
-		} elseif (!method_exists($this, $method)) {
+		} elseif (!$methodExists) {
 			$method = 'error500';
+			if ($code >= 400) {
+				$method = 'error400';
+			}
 		}
 
-		if ($method !== 'error' && Configure::read('debug') == 0) {
-			$code = $exception->getCode();
+		if (Configure::read('debug') == 0) {
 			$parentClass = get_parent_class($this);
 			if ($parentClass != 'ErrorHandler') {
-				$method = 'error404';
+				$method = 'error400';
 			}
 			$parentMethods = (array)get_class_methods($parentClass);
 			if (in_array($method, $parentMethods)) {
-				$method = 'error404';
+				$method = 'error400';
 			}
 			if ($code == 500) {
 				$method = 'error500';
@@ -180,15 +185,6 @@ class ErrorHandler {
 	}
 
 /**
- * Displays an error page (e.g. 404 Not found).
- *
- * @param array $params Parameters for controller
- */
-	public function error(Exception $error) {
-		$this->error404($error);
-	}
-
-/**
  * Generic handler for the internal framework errors CakePHP can generate.
  *
  * @param CakeExeption $error
@@ -207,23 +203,22 @@ class ErrorHandler {
 	}
 
 /**
- * Convenience method to display a 404 page.
+ * Convenience method to display a 400 series page.
  *
  * @param array $params Parameters for controller
  */
-	public function error404($error) {
+	public function error400($error) {
 		$message = $error->getMessage();
 		if (Configure::read('debug') == 0 && $error instanceof CakeException) {
 			$message = __('Not Found');
 		}
 		$url = Router::normalize($this->controller->request->here);
-		$this->controller->response->statusCode(404);
+		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
-			'code' => 404,
 			'name' => $message,
 			'url' => h($url),
 		));
-		$this->_outputMessage('error404');
+		$this->_outputMessage('error400');
 	}
 
 /**
@@ -231,9 +226,9 @@ class ErrorHandler {
  *
  * @param array $params Parameters for controller
  */
-	public function error500($params) {
+	public function error500($error) {
 		$url = Router::normalize($this->controller->request->here);
-		$this->controller->response->statusCode(500);
+		$this->controller->response->statusCode($error->getCode());
 		$this->controller->set(array(
 			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),

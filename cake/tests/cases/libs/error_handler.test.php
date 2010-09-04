@@ -248,7 +248,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 /**
  * test that methods declared in an ErrorHandler subclass are not converted
- * into error404 when debug > 0
+ * into error400 when debug > 0
  *
  * @return void
  */
@@ -281,7 +281,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$ErrorHandler->render();
 		$result = ob_get_clean();
 
-		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error404');
+		$this->assertEqual($result, 'widget thing is missing', 'Method declared in subclass converted to error400');
 	}
 
 /**
@@ -295,13 +295,13 @@ class ErrorHandlerTest extends CakeTestCase {
 		$exception = new MissingControllerException('PostsController');
 		$ErrorHandler = new MyCustomErrorHandler($exception);
 		
-		$this->assertEqual('error404', $ErrorHandler->method);
+		$this->assertEqual('error400', $ErrorHandler->method);
 
 		ob_start();
 		$ErrorHandler->render();
 		$result = ob_get_clean();
 
-		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error404. %s');
+		$this->assertPattern('/Not Found/', $result, 'Method declared in error handler not converted to error400. %s');
 	}
 
 /**
@@ -314,7 +314,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$ErrorHandler = new ErrorHandler($exception);
 
 		$this->assertType('CakeErrorController', $ErrorHandler->controller);
-		$this->assertEquals('error404', $ErrorHandler->method);
+		$this->assertEquals('error400', $ErrorHandler->method);
 		$this->assertEquals($exception, $ErrorHandler->error);
 	}
 
@@ -329,46 +329,42 @@ class ErrorHandlerTest extends CakeTestCase {
 		$ErrorHandler = new ErrorHandler($exception);
 
 		$this->assertType('CakeErrorController', $ErrorHandler->controller);
-		$this->assertEquals('error404', $ErrorHandler->method);
+		$this->assertEquals('error400', $ErrorHandler->method);
 		$this->assertEquals($exception, $ErrorHandler->error);
 	}
 
 /**
- * test that unknown exception types are captured and converted to 500
+ * test that unknown exception types with valid status codes are treated correctly.
  *
  * @return void
  */
-	function testUnknownExceptionType() {
+	function testUnknownExceptionTypeWithExceptionThatHasA400Code() {
 		$exception = new MissingWidgetThingException('coding fail.');
 		$ErrorHandler = new ErrorHandler($exception);
 
 		$this->assertFalse(method_exists($ErrorHandler, 'missingWidgetThing'), 'no method should exist.');
+		$this->assertEquals('error400', $ErrorHandler->method, 'incorrect method coercion.');
+	}
+
+/**
+ * test that unknown exception types with valid status codes are treated correctly.
+ *
+ * @return void
+ */
+	function testUnknownExceptionTypeWithNoCodeIsA500() {
+		$exception = new OutOfBoundsException('foul ball.');
+		$ErrorHandler = new ErrorHandler($exception);
+
 		$this->assertEquals('error500', $ErrorHandler->method, 'incorrect method coercion.');
 	}
 
 /**
- * testError method
+ * testerror400 method
  *
  * @access public
  * @return void
  */
-	function testError() {
-		$exception = new Exception('Page not found');
-		$ErrorHandler = new ErrorHandler($exception);
-
-		ob_start();
-		$ErrorHandler->error($exception);
-		$result = ob_get_clean();
-		$this->assertPattern("/<h2>Page not found<\/h2>/", $result);
-	}
-
-/**
- * testError404 method
- *
- * @access public
- * @return void
- */
-	function testError404() {
+	function testerror400() {
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
 		), true);
@@ -393,11 +389,11 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
- * test that error404 only modifies the messages on CakeExceptions.
+ * test that error400 only modifies the messages on CakeExceptions.
  *
  * @return void
  */
-	function testError404OnlyChangingCakeException() {
+	function testerror400OnlyChangingCakeException() {
 		Configure::write('debug', 0);
 
 		$exception = new Error404Exception('Custom message');
@@ -417,11 +413,11 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertContains('Not Found', $result);
 	}
 /**
- * test that error404 doesn't expose XSS
+ * test that error400 doesn't expose XSS
  *
  * @return void
  */
-	function testError404NoInjection() {
+	function testerror400NoInjection() {
 		Router::reload();
 
 		$request = new CakeRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>', false);
