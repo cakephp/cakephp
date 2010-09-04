@@ -44,11 +44,31 @@ class Error500Exception extends CakeException {
  * @package cake.libs
  */
 class CakeException extends RuntimeException {
-
+/**
+ * Array of attributes that are passed in from the constructor, and
+ * made available in the view when a development error is displayed.
+ *
+ * @var array
+ */
 	protected $_attributes = array();
 
+/**
+ * Template string that has attributes sprintf()'ed into it.
+ *
+ * @var string
+ */
 	protected $_messageTemplate = '';
 
+/**
+ * Constructor.
+ *
+ * Allows you to create exceptions that are treated as framework errors and disabled
+ * when debug = 0.
+ *
+ * @param mixed $message Either the string of the error message, or an array of attributes
+ *   that are made available in the view, and sprintf()'d into CakeException::$_messageTemplate
+ * @param string $code The code of the error, is also the HTTP status code for the error.
+ */
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
@@ -56,14 +76,22 @@ class CakeException extends RuntimeException {
 		}
 		parent::__construct($message, $code);
 	}
-	
+
+/**
+ * Get the passed in attributes
+ *
+ * @return array
+ */
 	public function getAttributes() {
 		return $this->_attributes;
 	}
 }
 
-/*
- * Exceptions used by Dispatcher
+/**
+ * Missing Controller exception - used when a controller 
+ * cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingControllerException extends CakeException { 
 	protected $_messageTemplate = 'Controller class %s could not be found.';
@@ -72,6 +100,13 @@ class MissingControllerException extends CakeException {
 		parent::__construct($message, $code);
 	}
 }
+
+/**
+ * Missing Action exception - used when a controller action 
+ * cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingActionException extends CakeException { 
 	protected $_messageTemplate = 'Action %s::%s() could not be found.';
 
@@ -79,6 +114,12 @@ class MissingActionException extends CakeException {
 		parent::__construct($message, $code);
 	}
 }
+/**
+ * Private Action exception - used when a controller action 
+ * is protected, or starts with a `_`.
+ *
+ * @package cake.libs
+ */
 class PrivateActionException extends CakeException { 
 	protected $_messageTemplate = 'Private Action %s::%s() is not directly accessible.';
 
@@ -88,37 +129,69 @@ class PrivateActionException extends CakeException {
 }
 
 /**
- * Exceptions used by the ComponentCollection.
+ * Used when a Component file cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingComponentFileException extends CakeException { 
 	protected $_messageTemplate = 'Component File  "%s" is missing.';
 }
+
+/**
+ * Used when a Component class cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingComponentClassException extends CakeException { 
 	protected $_messageTemplate = 'Component class "%s" is missing.';
 }
 
 /**
- * Runtime Exceptions for behaviors
+ * Used when a Behavior file cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingBehaviorFileException extends CakeException { }
+
+/**
+ * Used when a Behavior class cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingBehaviorClassException extends CakeException { }
 
 /**
- * Runtime Exceptions for Views
+ * Used when a view file cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingViewException extends CakeException { 
 	protected $_messageTemplate = 'View file "%s" is missing.';
 }
+
+/**
+ * Used when a layout file cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingLayoutException extends CakeException { 
 	protected $_messageTemplate = 'Layout file "%s" is missing.';
 }
 
 /**
- * Exceptions used by the HelperCollection.
+ * Used when a helper file cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingHelperFileException extends CakeException { 
 	protected $_messageTemplate = 'Helper File "%s" is missing.';
 }
+
+/**
+ * Used when a helper class cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingHelperClassException extends CakeException { 
 	protected $_messageTemplate = 'Helper class "%s" is missing.';
 }
@@ -130,16 +203,30 @@ class MissingHelperClassException extends CakeException {
 class MissingDatabaseException extends CakeException {
 	protected $_messageTemplate = 'Database connection "%s" could not be found.';
 }
+
+/**
+ * Used when no connections can be found.
+ *
+ * @package cake.libs
+ */
 class MissingConnectionException extends CakeException {
 	protected $_messageTemplate = 'Database connection "%s" is missing.';
 }
 
 /**
- * Exceptions used by the TaskCollection.
+ * Used when a Task file cannot be found.
+ *
+ * @package cake.libs
  */
 class MissingTaskFileException extends CakeException { 
 	protected $_messageTemplate = 'Task file "%s" is missing.';
 }
+
+/**
+ * Used when a Task class cannot be found.
+ *
+ * @package cake.libs
+ */
 class MissingTaskClassException extends CakeException { 
 	protected $_messageTemplate = 'Task class "%s" is missing.';
 }
@@ -147,6 +234,7 @@ class MissingTaskClassException extends CakeException {
 /**
  * Exception class to be thrown when a database table is not found in the datasource
  *
+ * @package cake.libs
  */
 class MissingTableException extends CakeException {
 	protected $_messageTemplate = 'Database table %s for model %s was not found.';
