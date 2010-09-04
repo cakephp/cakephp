@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'ConsoleErrorHandler');
+require CAKE . 'console' . DS . 'console_error_handler.php';
 
 class TestConsoleErrorHandler extends ConsoleErrorHandler {
 	public $output = array();
@@ -99,5 +99,17 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$result = $error->output;
 		$this->assertEquals(1, count($result));
 		$this->assertEquals('dont use me in cli.', $result[0]);
+	}
+
+/**
+ * test that ConsoleErrorHandler has a stderr file handle.
+ *
+ * @return void
+ */
+	function testStdErrFilehandle() {
+		$exception = new Error500Exception('dont use me in cli.');
+		$error = new TestConsoleErrorHandler($exception);
+		
+		$this->assertTrue(is_resource($error->stderr), 'No handle.');
 	}
 }
