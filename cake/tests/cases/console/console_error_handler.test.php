@@ -109,7 +109,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 	function testStdErrFilehandle() {
 		$exception = new Error500Exception('dont use me in cli.');
 		$error = new TestConsoleErrorHandler($exception);
-		
+
 		$this->assertTrue(is_resource($error->stderr), 'No handle.');
 	}
 }
