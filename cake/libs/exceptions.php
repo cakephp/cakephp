@@ -19,8 +19,18 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-
+/**
+ * Represents an HTTP 404 error.
+ *
+ * @package cake.libs
+ */
 class Error404Exception extends RuntimeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Not Found' will be the message
+ * @param string $code Status code, defaults to 404
+ */
 	public function __construct($message, $code = 404) {
 		if (empty($message)) {
 			$message = __('Not Found');
@@ -28,7 +38,19 @@ class Error404Exception extends RuntimeException {
 		parent::__construct($message, $code);
 	}
 }
-class Error500Exception extends CakeException { 
+
+/**
+ * Represents an HTTP 500 error.
+ *
+ * @package cake.libs
+ */
+class Error500Exception extends CakeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Not Found' will be the message
+ * @param string $code Status code, defaults to 404
+ */
 	public function __construct($message, $code = 500) {
 		if (empty($message)) {
 			$message = __('Internal Server Error');
