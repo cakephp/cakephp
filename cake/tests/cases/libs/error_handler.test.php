@@ -341,6 +341,12 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testUnknownExceptionTypeWithExceptionThatHasA400Code() {
 		$exception = new MissingWidgetThingException('coding fail.');
 		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(404);
+
+		ob_start();
+		$ErrorHandler->render();
+		$results = ob_get_clean();
 
 		$this->assertFalse(method_exists($ErrorHandler, 'missingWidgetThing'), 'no method should exist.');
 		$this->assertEquals('error400', $ErrorHandler->method, 'incorrect method coercion.');
@@ -354,6 +360,12 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testUnknownExceptionTypeWithNoCodeIsA500() {
 		$exception = new OutOfBoundsException('foul ball.');
 		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
+
+		ob_start();
+		$ErrorHandler->render();
+		$results = ob_get_clean();
 
 		$this->assertEquals('error500', $ErrorHandler->method, 'incorrect method coercion.');
 	}

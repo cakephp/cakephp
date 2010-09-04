@@ -85,8 +85,8 @@ class ErrorHandler {
 
 /**
  * Creates the controller to perform rendering on the error response.
- * If the error is a CakeException it will be converted to either a 404 or a 500 
- * type error depending on the code used to construct the error.
+ * If the error is a CakeException it will be converted to either a 400 or a 500
+ * code error depending on the code used to construct the error.
  *
  * @param string $method Method producing the error
  * @param array $messages Error messages
@@ -228,7 +228,8 @@ class ErrorHandler {
  */
 	public function error500($error) {
 		$url = Router::normalize($this->controller->request->here);
-		$this->controller->response->statusCode($error->getCode());
+		$code = ($error->getCode() > 500) ? $error->getCode() : 500;
+		$this->controller->response->statusCode($code);
 		$this->controller->set(array(
 			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
