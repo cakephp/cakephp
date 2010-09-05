@@ -193,7 +193,7 @@ class MyCustomErrorHandler extends ErrorHandler {
  *
  * @package cake.test.cases.libs
  */
-class MissingWidgetThingException extends Error404Exception { }
+class MissingWidgetThingException extends NotFoundException { }
 
 
 /**
@@ -239,7 +239,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
 			return;
 		}
-		$error = new Error404Exception('Kaboom!');
+		$error = new NotFoundException('Kaboom!');
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
@@ -310,7 +310,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testConstruction() {
-		$exception = new Error404Exception('Page not found');
+		$exception = new NotFoundException('Page not found');
 		$ErrorHandler = new ErrorHandler($exception);
 
 		$this->assertType('CakeErrorController', $ErrorHandler->controller);
@@ -385,7 +385,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$request = new CakeRequest('posts/view/1000', false);
 		Router::setRequestInfo($request);
 
-		$exception = new Error404Exception('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ErrorHandler = new ErrorHandler($exception);
 		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(404);
@@ -408,7 +408,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testerror400OnlyChangingCakeException() {
 		Configure::write('debug', 0);
 
-		$exception = new Error404Exception('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -429,13 +429,13 @@ class ErrorHandlerTest extends CakeTestCase {
  *
  * @return void
  */
-	function testerror400NoInjection() {
+	function testError400NoInjection() {
 		Router::reload();
 
 		$request = new CakeRequest('pages/<span id=333>pink</span></id><script>document.body.style.background = t=document.getElementById(333).innerHTML;window.alert(t);</script>', false);
 		Router::setRequestInfo($request);
 
-		$exception = new Error404Exception('Custom message');
+		$exception = new NotFoundException('Custom message');
 		$ErrorHandler = new ErrorHandler($exception);
 
 		ob_start();
@@ -453,7 +453,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError500Message() {
-		$exception = new Error500Exception('An Internal Error Has Occurred');
+		$exception = new InternalErrorException('An Internal Error Has Occurred');
 		$ErrorHandler = new ErrorHandler($exception);
 		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);

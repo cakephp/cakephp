@@ -106,6 +106,9 @@ class ErrorHandler {
 
 		if ($exception instanceof CakeException && !$methodExists) {
 			$method = '_cakeError';
+			if ($template == 'internalError') {
+				$template = 'error500';
+			}
 		} elseif (!$methodExists) {
 			$method = 'error500';
 			if ($code >= 400) {
@@ -197,6 +200,7 @@ class ErrorHandler {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
+			'name' => $error->getMessage()
 		));
 		$this->controller->set($error->getAttributes());
 		$this->_outputMessage($this->template);

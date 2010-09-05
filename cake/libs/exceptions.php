@@ -20,11 +20,71 @@
  */
 
 /**
+ * Represents an HTTP 400 error.
+ *
+ * @package cake.libs
+ */
+class BadRequestException extends RuntimeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Bad Request' will be the message
+ * @param string $code Status code, defaults to 401
+ */
+	public function __construct($message, $code = 400) {
+		if (empty($message)) {
+			$message = 'Bad Request';
+		}
+		parent::__construct($message, $code);
+	}
+}
+
+/**
+ * Represents an HTTP 401 error.
+ *
+ * @package cake.libs
+ */
+class UnauthorizedException extends RuntimeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Unauthorized' will be the message
+ * @param string $code Status code, defaults to 401
+ */
+	public function __construct($message, $code = 401) {
+		if (empty($message)) {
+			$message = 'Unauthorized';
+		}
+		parent::__construct($message, $code);
+	}
+}
+
+/**
+ * Represents an HTTP 403 error.
+ *
+ * @package cake.libs
+ */
+class ForbiddenException extends RuntimeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Forbidden' will be the message
+ * @param string $code Status code, defaults to 401
+ */
+	public function __construct($message, $code = 403) {
+		if (empty($message)) {
+			$message = 'Forbidden';
+		}
+		parent::__construct($message, $code);
+	}
+}
+
+/**
  * Represents an HTTP 404 error.
  *
  * @package cake.libs
  */
-class Error404Exception extends RuntimeException {
+class NotFoundException extends RuntimeException {
 /**
  * Constructor
  *
@@ -33,7 +93,7 @@ class Error404Exception extends RuntimeException {
  */
 	public function __construct($message, $code = 404) {
 		if (empty($message)) {
-			$message = __('Not Found');
+			$message = 'Not Found';
 		}
 		parent::__construct($message, $code);
 	}
@@ -44,7 +104,7 @@ class Error404Exception extends RuntimeException {
  *
  * @package cake.libs
  */
-class Error500Exception extends CakeException {
+class InternalErrorException extends CakeException {
 /**
  * Constructor
  *
@@ -53,7 +113,7 @@ class Error500Exception extends CakeException {
  */
 	public function __construct($message, $code = 500) {
 		if (empty($message)) {
-			$message = __('Internal Server Error');
+			$message = 'Internal Server Error';
 		}
 		parent::__construct($message, $code);
 	}
