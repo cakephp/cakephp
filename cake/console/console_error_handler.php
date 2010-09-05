@@ -84,7 +84,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @param Exception $error Exception
  * @return void
  */
-	public function error404($error) {
+	public function error400($error) {
 		$this->_outputMessage();
 	}
 

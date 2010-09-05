@@ -77,7 +77,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError404Exception() {
-		$exception = new Error404Exception('dont use me in cli.');
+		$exception = new NotFoundException('dont use me in cli.');
 		$error = new TestConsoleErrorHandler($exception);
 		$error->render();
 
@@ -92,7 +92,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testError500Exception() {
-		$exception = new Error500Exception('dont use me in cli.');
+		$exception = new InternalErrorException('dont use me in cli.');
 		$error = new TestConsoleErrorHandler($exception);
 		$error->render();
 
@@ -107,7 +107,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testStdErrFilehandle() {
-		$exception = new Error500Exception('dont use me in cli.');
+		$exception = new InternalErrorException('dont use me in cli.');
 		$error = new TestConsoleErrorHandler($exception);
 
 		$this->assertTrue(is_resource($error->stderr), 'No handle.');
