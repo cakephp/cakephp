@@ -2024,9 +2024,8 @@ class DboSource extends DataSource {
 								if (preg_match('/^[0-9]+\.[0-9]+$/', $string)) {
 									$value[] = $string;
 								} else {
-									$build = explode('.', $string);
-									array_map('trim', $build);
-									$value[] = $this->name(implode('.', $build));
+									$build = explode('.', $string);									
+									$value[] = $this->name(implode('.', array_map('trim', $build)));
 								}
 							}
 							$fields[$i] = implode(', ', $value);
