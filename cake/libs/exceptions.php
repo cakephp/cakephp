@@ -31,7 +31,7 @@ class BadRequestException extends RuntimeException {
  * @param string $message If no message is given 'Bad Request' will be the message
  * @param string $code Status code, defaults to 401
  */
-	public function __construct($message, $code = 400) {
+	public function __construct($message = null, $code = 400) {
 		if (empty($message)) {
 			$message = 'Bad Request';
 		}
@@ -51,7 +51,7 @@ class UnauthorizedException extends RuntimeException {
  * @param string $message If no message is given 'Unauthorized' will be the message
  * @param string $code Status code, defaults to 401
  */
-	public function __construct($message, $code = 401) {
+	public function __construct($message = null, $code = 401) {
 		if (empty($message)) {
 			$message = 'Unauthorized';
 		}
@@ -71,7 +71,7 @@ class ForbiddenException extends RuntimeException {
  * @param string $message If no message is given 'Forbidden' will be the message
  * @param string $code Status code, defaults to 401
  */
-	public function __construct($message, $code = 403) {
+	public function __construct($message = null, $code = 403) {
 		if (empty($message)) {
 			$message = 'Forbidden';
 		}
@@ -91,7 +91,7 @@ class NotFoundException extends RuntimeException {
  * @param string $message If no message is given 'Not Found' will be the message
  * @param string $code Status code, defaults to 404
  */
-	public function __construct($message, $code = 404) {
+	public function __construct($message = null, $code = 404) {
 		if (empty($message)) {
 			$message = 'Not Found';
 		}
@@ -111,7 +111,7 @@ class InternalErrorException extends CakeException {
  * @param string $message If no message is given 'Not Found' will be the message
  * @param string $code Status code, defaults to 404
  */
-	public function __construct($message, $code = 500) {
+	public function __construct($message = null, $code = 500) {
 		if (empty($message)) {
 			$message = 'Internal Server Error';
 		}
