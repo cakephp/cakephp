@@ -97,6 +97,7 @@ class ConsoleErrorHandler extends ErrorHandler {
 	public function error500($error) {
 		$this->_outputMessage();
 	}
+
 /**
  * Outputs the exception to STDERR.
  *

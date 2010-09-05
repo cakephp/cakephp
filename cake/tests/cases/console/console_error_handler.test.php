@@ -19,21 +19,6 @@
  */
 require CAKE . 'console' . DS . 'console_error_handler.php';
 
-class TestConsoleErrorHandler extends ConsoleErrorHandler {
-	public $output = array();
-
-/**
- * Override stderr() so it doesn't do bad things.
- *
- * @param string $line 
- * @return void
- */
-	function stderr($line) {
-		$this->output[] = $line;
-	}
-}
-
-
 /**
  * ConsoleErrorHandler Test case.
  *
@@ -42,18 +27,27 @@ class TestConsoleErrorHandler extends ConsoleErrorHandler {
 class ConsoleErrorHandlerTest extends CakeTestCase {
 
 /**
+ * Factory method for error handlers with stderr() mocked out.
+ *
+ * @return Mock object
+ */
+	function getErrorHandler($exception) {
+		return $this->getMock('ConsoleErrorHandler', array('stderr'), array($exception));
+	}
+
+/**
  * test that the console error handler can deal with CakeExceptions.
  *
  * @return void
  */
 	function testCakeErrors() {
 		$exception = new MissingActionException('Missing action');
-		$error = new TestConsoleErrorHandler($exception);
-		$error->render();
+		$error = $this->getErrorHandler($exception);
 
-		$result = $error->output;
-		$this->assertEquals(1, count($result));
-		$this->assertEquals('Missing action', $result[0]);
+		$error->expects($this->once())->method('stderr')
+			->with('Missing action');
+
+		$error->render();
 	}
 
 /**
@@ -63,12 +57,12 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testNonCakeExceptions() {
 		$exception = new InvalidArgumentException('Too many parameters.');
-		$error = new TestConsoleErrorHandler($exception);
-		$error->render();
+		$error = $this->getErrorHandler($exception);
 
-		$result = $error->output;
-		$this->assertEquals(1, count($result));
-		$this->assertEquals('Too many parameters.', $result[0]);
+		$error->expects($this->once())->method('stderr')
+			->with('Too many parameters.');
+		
+		$error->render();
 	}
 
 /**
@@ -78,12 +72,12 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testError404Exception() {
 		$exception = new NotFoundException('dont use me in cli.');
-		$error = new TestConsoleErrorHandler($exception);
-		$error->render();
+		$error = $this->getErrorHandler($exception);
 
-		$result = $error->output;
-		$this->assertEquals(1, count($result));
-		$this->assertEquals('dont use me in cli.', $result[0]);
+		$error->expects($this->once())->method('stderr')
+			->with('dont use me in cli.');
+
+		$error->render();
 	}
 
 /**
@@ -93,12 +87,12 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testError500Exception() {
 		$exception = new InternalErrorException('dont use me in cli.');
-		$error = new TestConsoleErrorHandler($exception);
-		$error->render();
+		$error = $this->getErrorHandler($exception);
 
-		$result = $error->output;
-		$this->assertEquals(1, count($result));
-		$this->assertEquals('dont use me in cli.', $result[0]);
+		$error->expects($this->once())->method('stderr')
+			->with('dont use me in cli.');
+
+		$error->render();
 	}
 
 /**
@@ -108,7 +102,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testStdErrFilehandle() {
 		$exception = new InternalErrorException('dont use me in cli.');
-		$error = new TestConsoleErrorHandler($exception);
+		$error = new ConsoleErrorHandler($exception);
 
 		$this->assertTrue(is_resource($error->stderr), 'No handle.');
 	}
