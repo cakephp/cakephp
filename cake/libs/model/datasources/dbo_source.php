@@ -2017,7 +2017,7 @@ class DboSource extends DataSource {
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
-								$fields[$i] = $this->name($build[0] . '.' . $build[1]);
+								$fields[$i] = $this->name(implode('.', $build));
 							}
 							$comma = String::tokenize($fields[$i]);
 							foreach ($comma as $string) {
@@ -2025,7 +2025,8 @@ class DboSource extends DataSource {
 									$value[] = $string;
 								} else {
 									$build = explode('.', $string);
-									$value[] = $this->name(trim($build[0]) . '.' . trim($build[1]));
+									array_map('trim', $build);
+									$value[] = $this->name(implode('.', $build));
 								}
 							}
 							$fields[$i] = implode(', ', $value);
