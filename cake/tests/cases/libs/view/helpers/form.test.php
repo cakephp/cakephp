@@ -3448,7 +3448,10 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testInputMultipleCheckboxes() {
-		$result = $this->Form->input('Model.multi_field', array('options' => array('first', 'second', 'third'), 'multiple' => 'checkbox'));
+		$result = $this->Form->input('Model.multi_field', array(
+			'options' => array('first', 'second', 'third'), 
+			'multiple' => 'checkbox'
+		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => 'ModelMultiField')),
@@ -3477,7 +3480,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Model.multi_field', array('options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'), 'multiple' => 'checkbox'));
+		$result = $this->Form->input('Model.multi_field', array(
+			'options' => array('a' => 'first', 'b' => 'second', 'c' => 'third'),
+			'multiple' => 'checkbox'
+		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
 			array('label' => array('for' => 'ModelMultiField')),
@@ -3506,7 +3512,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Model.multi_field', array('options' => array('1' => 'first'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
+		$result = $this->Form->input('Model.multi_field', array(
+			'options' => array('1' => 'first'),
+			'multiple' => 'checkbox',
+			'label' => false,
+			'div' => false
+		));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
@@ -3518,7 +3529,12 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Model.multi_field', array('options' => array('2' => 'second'), 'multiple' => 'checkbox', 'label' => false, 'div' => false));
+		$result = $this->Form->input('Model.multi_field', array(
+			'options' => array('2' => 'second'),
+			'multiple' => 'checkbox',
+			'label' => false, 
+			'div' => false
+		));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
@@ -3526,6 +3542,34 @@ class FormHelperTest extends CakeTestCase {
 			array('label' => array('for' => 'ModelMultiField2')),
 			'second',
 			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that select() with multiple = checkbox works with overriding name attribute.
+ *
+ * @return void
+ */
+	function testSelectCheckboxMultipleOverrideName() {
+		$result = $this->Form->input('category', array(
+			'type' => 'select',
+			'multiple' => 'checkbox',
+			'name' => 'data[fish]',
+			'options' => array('1', '2'),
+			'div' => false,
+			'label' => false,
+		));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[fish]', 'value' => '', 'id' => 'category'),
+			array('div' => array('class' => 'checkbox')),
+				array('input' => array('type' => 'checkbox', 'name' => 'data[fish][]', 'value' => '0', 'id' => 'Category0')),
+				array('label' => array('for' => 'Category0')), '1', '/label',
+			'/div',
+			array('div' => array('class' => 'checkbox')),
+				array('input' => array('type' => 'checkbox', 'name' => 'data[fish][]', 'value' => '1', 'id' => 'Category1')),
+				array('label' => array('for' => 'Category1')), '2', '/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
