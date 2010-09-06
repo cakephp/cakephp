@@ -29,7 +29,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function open() {
+	public function open() {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function close() {
+	public function close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
 			DatabaseSession::gc();
@@ -54,7 +54,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	public static function read($id) {
+	public function read($id) {
 		$model =& ClassRegistry::getObject('Session');
 
 		$row = $model->find('first', array(
@@ -76,7 +76,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	public static function write($id, $data) {
+	public function write($id, $data) {
 		$expires = time() + (Configure::read('Session.timeout') * 60);
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->save(compact('id', 'data', 'expires'));
@@ -90,7 +90,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	public static function destroy($id) {
+	public function destroy($id) {
 		$model =& ClassRegistry::getObject('Session');
 		$return = $model->delete($id);
 
@@ -104,7 +104,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function gc($expires = null) {
+	public function gc($expires = null) {
 		$model =& ClassRegistry::getObject('Session');
 
 		if (!$expires) {
