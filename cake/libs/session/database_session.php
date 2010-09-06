@@ -23,13 +23,43 @@
  * @package cake.libs
  */
 class DatabaseSession implements CakeSessionHandlerInterface {
+
+/**
+ * Constructor.  Looks at Session configuration information and 
+ * sets up the session model.
+ *
+ * @return void
+ */
+	function __construct() {
+		$modelName = Configure::read('Session.handler.model');
+		$database = Configure::read('Session.handler.database');
+		$table = Configure::read('Session.handler.table');
+
+		if (empty($database)) {
+			$database = 'default';
+		}
+		$settings = array(
+			'class' => 'Session',
+			'alias' => 'Session',
+			'table' => 'cake_sessions',
+			'ds' => $database
+		);
+		if (!empty($modelName)) {
+			$settings['class'] = $modelName;
+		}
+		if (!empty($table)) {
+			$settings['table'] = $table;
+		}
+		ClassRegistry::init($settings);
+	}
+
 /**
  * Method called on open of a database session.
  *
  * @return boolean Success
  * @access private
  */
-	public static function open() {
+	public function open() {
 		return true;
 	}
 
@@ -39,7 +69,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function close() {
+	public function close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
 			DatabaseSession::gc();
@@ -54,8 +84,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	public static function read($id) {
+	public function read($id) {
 		$model = ClassRegistry::getObject('Session');
+
 		$row = $model->find('first', array(
 			'conditions' => array($model->primaryKey => $id)
 		));
@@ -75,7 +106,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	public static function write($id, $data) {
+	public function write($id, $data) {
 		$expires = time() + (Configure::read('Session.timeout') * 60);
 		return ClassRegistry::getObject('Session')->save(compact('id', 'data', 'expires'));
 	}
@@ -87,7 +118,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	public static function destroy($id) {
+	public function destroy($id) {
 		return ClassRegistry::getObject('Session')->delete($id);
 	}
 
@@ -98,7 +129,9 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function gc($expires = null) {
+	public function gc($expires = null) {
+		$model = ClassRegistry::getObject('Session');
+
 		if (!$expires) {
 			$expires = time();
 		}

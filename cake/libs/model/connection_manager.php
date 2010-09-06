@@ -269,7 +269,7 @@ class ConnectionManager {
  *
  */
 	function __destruct() {
-		if (Configure::read('Session.save') == 'database' && function_exists('session_write_close')) {
+		if (Configure::read('Session.defaults') == 'database' && function_exists('session_write_close')) {
 			session_write_close();
 		}
 	}
