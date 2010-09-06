@@ -23,6 +23,36 @@
  * @package cake.libs
  */
 class DatabaseSession implements CakeSessionHandlerInterface {
+
+/**
+ * Constructor.  Looks at Session configuration information and 
+ * sets up the session model.
+ *
+ * @return void
+ */
+	function __construct() {
+		$modelName = Configure::read('Session.handler.model');
+		$database = Configure::read('Session.handler.database');
+		$table = Configure::read('Session.handler.table');
+
+		if (empty($database)) {
+			$database = 'default';
+		}
+		$settings = array(
+			'class' => 'Session',
+			'alias' => 'Session',
+			'table' => 'cake_sessions',
+			'ds' => $database
+		);
+		if (!empty($modelName)) {
+			$settings['class'] = $modelName;
+		}
+		if (!empty($table)) {
+			$settings['table'] = $table;
+		}
+		ClassRegistry::init($settings);
+	}
+
 /**
  * Method called on open of a database session.
  *

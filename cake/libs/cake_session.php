@@ -149,7 +149,6 @@ class CakeSession {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 
-		self::_setupDatabase();
 		if ($start === true) {
 			self::_setPath($base);
 			self::_setHost(env('HTTP_HOST'));
@@ -190,37 +189,6 @@ class CakeSession {
 		if (strpos(self::$host, ':') !== false) {
 			self::$host = substr(self::$host, 0, strpos(self::$host, ':'));
 		}
-	}
-
-/**
- * Setup database configuration for Session, if enabled.
- *
- * @return void
- */
-	protected function _setupDatabase() {
-		if (Configure::read('Session.defaults') !== 'database') {
-			return;
-		}
-		$modelName = Configure::read('Session.handler.model');
-		$database = Configure::read('Session.handler.database');
-		$table = Configure::read('Session.handler.table');
-
-		if (empty($database)) {
-			$database = 'default';
-		}
-		$settings = array(
-			'class' => 'Session',
-			'alias' => 'Session',
-			'table' => 'cake_sessions',
-			'ds' => $database
-		);
-		if (!empty($modelName)) {
-			$settings['class'] = $modelName;
-		}
-		if (!empty($table)) {
-			$settings['table'] = $table;
-		}
-		ClassRegistry::init($settings);
 	}
 
 /**
