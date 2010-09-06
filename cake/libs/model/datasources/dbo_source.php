@@ -740,6 +740,7 @@ class DboSource extends DataSource {
 				$id = $values[$i];
 			}
 		}
+
 		$query = array(
 			'table' => $this->fullTableName($model),
 			'fields' => implode(', ', $fieldInsert),

@@ -77,7 +77,7 @@ class DboPostgres extends DboSource {
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
-		'number' => array('name' => 'numeric'),
+		'number' => array('name' => 'numeric', 'length' => '4,2'),
 		'inet' => array('name'  => 'inet')
 	);
 
