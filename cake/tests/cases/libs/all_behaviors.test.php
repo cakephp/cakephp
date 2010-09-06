@@ -36,7 +36,7 @@ class AllBehaviorsTest extends PHPUnit_Framework_TestSuite {
 		$suite = new PHPUnit_Framework_TestSuite('Model Behavior and all behaviors');
 
 		$path = CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behaviors' . DS;
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'model_behavior.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'model' . DS . 'behavior_collection.test.php');
 
 		$suite->addTestFile($path . 'acl.test.php');
 		// $suite->addTestFile($path . 'containable.test.php');

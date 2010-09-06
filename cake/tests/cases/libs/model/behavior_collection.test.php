@@ -411,12 +411,12 @@ class Test7Behavior extends ModelBehavior{
 }
 
 /**
- * BehaviorTest class
+ * BehaviorCollection class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class BehaviorTest extends CakeTestCase {
+class BehaviorCollectionTest extends CakeTestCase {
 
 /**
  * fixtures property

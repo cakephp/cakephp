@@ -65,7 +65,7 @@ class BehaviorCollection extends ObjectCollection {
 
 		if (!empty($behaviors)) {
 			foreach (Set::normalize($behaviors) as $behavior => $config) {
-				$this->attach($behavior, $config);
+				$this->load($behavior, $config);
 			}
 		}
 	}
