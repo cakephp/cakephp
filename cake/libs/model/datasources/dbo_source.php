@@ -54,7 +54,7 @@ class DboSource extends DataSource {
 
 /**
  * Caches result from query parsing operations.  Cached results for both DboSource::name() and
- * DboSource::conditions() will be stored here.  Method caching uses `crc32()` which is 
+ * DboSource::conditions() will be stored here.  Method caching uses `crc32()` which is
  * fast but can collisions more easily than other hashing algorithms.  If you have problems
  * with collisions, set DboSource::$cacheMethods to false.
  *
@@ -504,7 +504,7 @@ class DboSource extends DataSource {
  * because the method uses a simple hashing algorithm it can infrequently have collisions.
  * Setting DboSource::$cacheMethods to false will disable the memory cache.
  *
- * @param mixed $data Either a string with a column to quote. An array of columns to quote or an 
+ * @param mixed $data Either a string with a column to quote. An array of columns to quote or an
  *   object from DboSource::expression() or DboSource::identifier()
  * @return string SQL field
  */
@@ -611,7 +611,7 @@ class DboSource extends DataSource {
 			$controller = null;
 			$View =& new View($controller, false);
 			$View->set('logs', array($this->configKeyName => $log));
-			echo $View->element('sql_dump');
+			echo $View->element('sql_dump', array('_forced_from_dbo_' => true));
 		} else {
 			foreach ($log['log'] as $k => $i) {
 				print (($k + 1) . ". {$i['query']} {$i['error']}\n");
@@ -822,6 +822,10 @@ class DboSource extends DataSource {
 						$stack = array($assoc);
 						$db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1, $stack);
 						unset($db);
+
+						if ($type === 'hasMany') {
+							$filtered []= $assoc;
+						}
 					}
 				}
 			}

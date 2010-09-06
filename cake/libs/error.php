@@ -106,6 +106,7 @@ class ErrorHandler extends Object {
 		if (!in_array(strtolower($method), array_map('strtolower', get_class_methods($this)))) {
 			$method = 'error';
 		}
+
 		if ($method !== 'error') {
 			if (Configure::read('debug') == 0) {
 				$parentClass = get_parent_class($this);
@@ -116,7 +117,7 @@ class ErrorHandler extends Object {
 				if (in_array(strtolower($method), $parentMethods)) {
 					$method = 'error404';
 				}
-				if (isset($code) && $code == 500) {
+				if (isset($messages[0]['code']) && $messages[0]['code'] == 500) {
 					$method = 'error500';
 				}
 			}

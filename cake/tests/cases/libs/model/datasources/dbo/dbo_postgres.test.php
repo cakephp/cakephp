@@ -330,8 +330,8 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testValueQuoting() {
-		$this->assertIdentical($this->Dbo2->value(1.2, 'float'), "'1.2'");
-		$this->assertEqual($this->Dbo2->value('1,2', 'float'), "'1,2'");
+		$this->assertIdentical($this->db2->value(1.2, 'float'), "'1.200000'");
+		$this->assertEqual($this->db2->value('1,2', 'float'), "'1,2'");
 
 		$this->assertEqual($this->Dbo2->value('0', 'integer'), "'0'");
 		$this->assertEqual($this->Dbo2->value('', 'integer'), 'NULL');
@@ -354,6 +354,24 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->Dbo2->value('1', 'boolean'), 'TRUE');
 		$this->assertEqual($this->Dbo2->value(null, 'boolean'), "NULL");
 		$this->assertEqual($this->Dbo2->value(array()), "NULL");
+	}
+
+/**
+ * test that localized floats don't cause trouble.
+ *
+ * @return void
+ */
+	function testLocalizedFloats() {
+		$restore = setlocale(LC_ALL, null);
+		setlocale(LC_ALL, 'de_DE');
+
+		$result = $this->db->value(3.141593, 'float');
+		$this->assertEqual((string)$result, "'3.141593'");
+
+		$result = $this->db->value(3.14);
+		$this->assertEqual((string)$result, "'3.140000'");
+
+		setlocale(LC_ALL, $restore);
 	}
 
 /**

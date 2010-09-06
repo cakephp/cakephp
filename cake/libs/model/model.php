@@ -1613,6 +1613,7 @@ class Model extends Object {
 
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
+				$return = array();
 				foreach ($data as $key => $record) {
 					if (!$currentValidates = $this->__save($record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
@@ -1644,7 +1645,6 @@ class Model extends Object {
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
-						$return = array();
 					break;
 					default:
 						if ($options['atomic']) {
@@ -2522,7 +2522,7 @@ class Model extends Object {
 		$_validate = $this->validate;
 		$whitelist = $this->whitelist;
 
-		if (array_key_exists('fieldList', $options)) {
+		if (!empty($options['fieldList'])) {
 			$whitelist = $options['fieldList'];
 		}
 

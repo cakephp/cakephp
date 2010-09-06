@@ -2549,11 +2549,11 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('score BETWEEN ? AND ?' => array(90.1, 95.7)));
-		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
+		$expected = " WHERE `score` BETWEEN 90.100000 AND 95.700000";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.title' => 1.1));
-		$expected = " WHERE `Post`.`title` = 1.1";
+		$expected = " WHERE `Post`.`title` = 1.100000";
 		$this->assertEqual($result, $expected);
 
 		$result = $this->testDb->conditions(array('Post.title' => 1.1), true, true, new Post());

@@ -87,6 +87,7 @@ class Configure {
 					break;
 					case 3:
 						self::$_values[$names[0]][$names[1]][$names[2]] = $value;
+					break;
 					case 4:
 						$names = explode('.', $name, 2);
 						if (!isset(self::$_values[$names[0]])) {

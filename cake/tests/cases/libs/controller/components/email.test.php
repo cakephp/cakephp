@@ -138,6 +138,15 @@ class EmailTestComponent extends EmailComponent {
 	function strip($content, $message = false) {
 		return parent::_strip($content, $message);
 	}
+
+/**
+ * Wrapper for testing.
+ *
+ * @return void
+ */
+	function formatAddress($string, $smtp = false) {
+		return parent::_formatAddress($string, $smtp);
+	}
 }
 
 /**
@@ -1154,5 +1163,24 @@ HTMLBLOC;
 			''
 		);
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * Test that _formatName doesn't jack up email addresses with alias parts.
+ *
+ * @return void
+ */
+	function testFormatAddressAliases() {
+		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
+		$this->assertEqual($result, 'email@example.com');
+
+		$result = $this->Controller->EmailTest->formatAddress('alias <email@example.com>');
+		$this->assertEqual($result, 'alias <email@example.com>');
+
+		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
+		$this->assertEqual($result, 'email@example.com');
+
+		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>');
+		$this->assertEqual($result, '<email@example.com>');
 	}
 }
