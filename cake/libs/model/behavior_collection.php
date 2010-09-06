@@ -191,10 +191,6 @@ class BehaviorCollection extends ObjectCollection {
  */
 	public function dispatchMethod(&$model, $method, $params = array(), $strict = false) {
 		$methods = array_keys($this->__methods);
-		foreach ($methods as $key => $value) {
-			$methods[$key] = strtolower($value);
-		}
-		$method = strtolower($method);
 		$check = array_flip($methods);
 		$found = isset($check[$method]);
 		$call = null;

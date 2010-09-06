@@ -1024,6 +1024,10 @@ class BehaviorTest extends CakeTestCase {
 		$result = $Apple->{'look for the remote'}('in the couch');
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
+
+		$result = $Apple->{'look for THE REMOTE'}('in the couch');
+		$expected = "Item.name = 'THE REMOTE' AND Location.name = 'the couch'";
+		$this->assertEqual($result, $expected, 'Mapped method was lowercased.');
 	}
 
 /**
