@@ -519,6 +519,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
+		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
 	}
 
 /**
