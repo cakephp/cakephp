@@ -399,13 +399,16 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->toList(array('Dusty', 'Lucky', 'Ned'), 'y');
 		$this->assertEqual($result, 'Dusty, Lucky y Ned');
 
-        $result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
-        $this->assertEqual($result, 'Dusty, Lucky y Ned');
+		$result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'y');
+		$this->assertEqual($result, 'Dusty, Lucky y Ned');
 
-        $result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
-        $this->assertEqual($result, 'Dusty + Lucky and Ned');
+		$result = $this->Text->toList(array( 1 => 'Dusty', 2 => 'Lucky', 3 => 'Ned'), 'and', ' + ');
+		$this->assertEqual($result, 'Dusty + Lucky and Ned');
 
-        $result = $this->Text->toList(array( 'name1' => 'Dusty', 'name2' => 'Lucky'));
-        $this->assertEqual($result, 'Dusty and Lucky');
+		$result = $this->Text->toList(array( 'name1' => 'Dusty', 'name2' => 'Lucky'));
+		$this->assertEqual($result, 'Dusty and Lucky');
+		
+		$result = $this->Text->toList(array( 'test_0' => 'banana', 'test_1' => 'apple', 'test_2' => 'lemon'));
+		$this->assertEqual($result, 'banana, apple and lemon');
 	}
 }

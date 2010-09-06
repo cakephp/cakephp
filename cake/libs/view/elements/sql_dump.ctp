@@ -20,7 +20,8 @@
 if (!class_exists('ConnectionManager') || Configure::read('debug') < 2) {
 	return false;
 }
-if (!isset($logs)):
+$noLogs = !isset($logs);
+if ($noLogs):
 	$sources = ConnectionManager::sourceList();
 
 	$logs = array();
@@ -31,8 +32,9 @@ if (!isset($logs)):
 		endif;
 		$logs[$source] = $db->getLog();
 	endforeach;
+endif;
 
-
+if ($noLogs || isset($_forced_from_dbo_)):
 	foreach ($logs as $source => $logInfo):
 		$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 		printf(
@@ -52,6 +54,8 @@ if (!isset($logs)):
 	?>
 	</tbody></table>
 	<?php 
-	endforeach; 
+	endforeach;
+else:
+	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';
 endif;
 ?>

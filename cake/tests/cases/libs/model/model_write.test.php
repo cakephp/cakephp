@@ -3585,6 +3585,65 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test saveAll()'s return is correct when using atomic = false and validate = first.
+ *
+ * @return void
+ */
+	function testSaveAllValidateFirstAtomicFalse() {
+		$Something =& new Something();
+		$invalidData = array(
+			array(
+				'title' => 'foo',
+				'body' => 'bar',
+				'published' => 'baz',
+			),
+			array(
+				'body' => 3,
+				'published' =>'sd',
+			),
+		);
+		$Something->create();
+		$Something->validate = array(
+			'title' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true,
+			),
+			'body' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true,
+				'allowEmpty' => true,
+			),
+		);
+		$result = $Something->saveAll($invalidData, array(
+			'atomic' => false,
+			'validate' => 'first',
+		));
+		$expected = array(true, false);
+		$this->assertEqual($result, $expected);
+
+		$Something =& new Something();
+		$validData = array(
+			array(
+				'title' => 'title value',
+				'body' => 'body value',
+				'published' => 'baz',
+			),
+			array(
+				'title' => 'valid',
+				'body' => 'this body',
+				'published' =>'sd',
+			),
+		);
+		$Something->create();
+		$result = $Something->saveAll($validData, array(
+			'atomic' => false,
+			'validate' => 'first',
+		));
+		$expected = array(true, true);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testUpdateWithCalculation method
  *
  * @access public

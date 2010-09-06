@@ -1593,6 +1593,7 @@ class Model extends Overloadable {
 
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
+				$return = array();
 				foreach ($data as $key => $record) {
 					if (!$currentValidates = $this->__save($record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
@@ -1624,7 +1625,6 @@ class Model extends Overloadable {
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
-						$return = array();
 					break;
 					default:
 						if ($options['atomic']) {

@@ -172,7 +172,7 @@ class FormHelper extends AppHelper {
  * ### Options:
  *
  * - `type` Form method defaults to POST
- * - `action`  The Action the form submits to. Can be a string or array,
+ * - `action`  The controller action the form submits to, (optional).
  * - `url`  The url the form submits to. Can be a string or a url array,
  * - `default`  Allows for the creation of Ajax forms.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
@@ -1461,7 +1461,8 @@ class FormHelper extends AppHelper {
 			$hiddenAttributes = array(
 				'value' => '',
 				'id' => $attributes['id'] . ($style ? '' : '_'),
-				'secure' => false
+				'secure' => false,
+				'name' => $attributes['name']
 			);
 			$select[] = $this->hidden(null, $hiddenAttributes);
 		} else {
@@ -1495,7 +1496,7 @@ class FormHelper extends AppHelper {
 			$selected,
 			array(),
 			$showParents,
-			array('escape' => $escapeOptions, 'style' => $style)
+			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'])
 		));
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
@@ -2041,7 +2042,7 @@ class FormHelper extends AppHelper {
 							$label['class'] = 'selected';
 						}
 
-						list($name) = array_values($this->_name());
+						$name = $attributes['name'];
 
 						if (empty($attributes['class'])) {
 							$attributes['class'] = 'checkbox';

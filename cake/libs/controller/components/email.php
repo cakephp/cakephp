@@ -743,19 +743,16 @@ class EmailComponent extends Object{
  * @access private
  */
 	function _formatAddress($string, $smtp = false) {
-		if (strpos($string, '<') !== false) {
-			$value = explode('<', $string);
-			if ($smtp) {
-				$string = '<' . $value[1];
-			} else {
-				$string = $this->_encode($value[0]) . ' <' . $value[1];
-			}
+		$hasAlias = preg_match('/(.+)\s<(.+)>/', $string, $matches);
+		if ($hasAlias) {
+			return $this->_strip($matches[1] . ' <' . $matches[2] . '>');
 		}
 		return $this->_strip($string);
 	}
 
 /**
- * Remove certain elements (such as bcc:, to:, %0a) from given value
+ * Remove certain elements (such as bcc:, to:, %0a) from given value.
+ * Helps prevent header injection / mainipulation on user content.
  *
  * @param string $value Value to strip
  * @param boolean $message Set to true to indicate main message content

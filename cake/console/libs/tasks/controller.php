@@ -275,8 +275,9 @@ class ControllerTask extends BakeTask {
  */
 	function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
 		$currentModelName = $modelImport = $this->_modelName($controllerName);
-		if ($this->plugin) {
-			$modelImport = $this->plugin . '.' . $modelImport;
+		$plugin = $this->plugin;
+		if ($plugin) {
+			$modelImport = $plugin . '.' . $modelImport;
 		}
 		if (!App::import('Model', $modelImport)) {
 			$this->err(__('You must have a model for this class to build basic methods. Please try again.', true));
@@ -290,7 +291,7 @@ class ControllerTask extends BakeTask {
 		$singularHumanName = $this->_singularHumanName($controllerName);
 		$pluralHumanName = $this->_pluralName($controllerName);
 
-		$this->Template->set(compact('admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
+		$this->Template->set(compact('plugin', 'admin', 'controllerPath', 'pluralName', 'singularName', 'singularHumanName',
 			'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName'));
 		$actions = $this->Template->generate('actions', 'controller_actions');
 		return $actions;

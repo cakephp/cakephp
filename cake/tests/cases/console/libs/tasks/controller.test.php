@@ -299,6 +299,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expectAt(1, 'createFile', array(
 			$path, new PatternExpectation('/ArticlesController extends ControllerTestAppController/')));
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
+
+		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');
 	}
 
 /**
