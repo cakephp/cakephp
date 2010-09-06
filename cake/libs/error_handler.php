@@ -222,6 +222,7 @@ class ErrorHandler {
 		$this->controller->set(array(
 			'name' => $message,
 			'url' => h($url),
+			'error' => $error,
 		));
 		$this->_outputMessage('error400');
 	}
@@ -238,6 +239,7 @@ class ErrorHandler {
 		$this->controller->set(array(
 			'name' => __('An Internal Error Has Occurred'),
 			'message' => h($url),
+			'error' => $error,
 		));
 		$this->_outputMessage('error500');
 	}

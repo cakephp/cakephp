@@ -22,3 +22,8 @@
 	<strong><?php echo __('Error', true); ?>: </strong>
 	<?php echo __('An Internal Error Has Occurred.'); ?>
 </p>
+<?php 
+if (Configure::read('debug') > 0 ):
+	echo $this->element('exception_stack_trace');
+endif;
+?>
