@@ -50,12 +50,11 @@ class DatabaseSessionTest extends CakeTestCase {
  */
 	public static function setupBeforeClass() {
 		self::$_sessionBackup = Configure::read('Session');
-		ClassRegistry::init(array(
-			'class' => 'SessionTestModel',
-			'alias' => 'Session',
-			'ds' => 'test_suite'
+		Configure::write('Session.handler', array(
+			'model' => 'SessionTestModel',
+			'database' => 'test_suite',
+			'table' => 'sessions'
 		));
-		Configure::write('Session.handler.model', 'SessionTestModel');
 		Configure::write('Session.timeout', 100);
 	}
 
@@ -84,6 +83,22 @@ class DatabaseSessionTest extends CakeTestCase {
  */
 	function teardown() {
 		unset($this->storage);
+		ClassRegistry::flush();
+	}
+
+/**
+ * test that constructor sets the right things up.
+ *
+ * @return void
+ */
+	function testConstructionSettings() {
+		ClassRegistry::flush();
+		$storage = new DatabaseSession();
+
+		$session = ClassRegistry::getObject('session');
+		$this->assertType('SessionTestModel', $session);
+		$this->assertEquals('Session', $session->alias);
+		$this->assertEquals('test_suite', $session->useDbConfig);
 	}
 
 /**
