@@ -3877,7 +3877,7 @@ class ModelWriteTest extends BaseModelTest {
 			'count' => 1,
 			'float' => 3.14593
 		));
-		$this->assertTrue($result);
+		$this->assertTrue((bool)$result);
 		setlocale(LC_ALL, $restore);
 	}
 
