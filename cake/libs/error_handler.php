@@ -200,7 +200,8 @@ class ErrorHandler {
 		$this->controller->set(array(
 			'code' => $code,
 			'url' => h($url),
-			'name' => $error->getMessage()
+			'name' => $error->getMessage(),
+			'error' => $error,
 		));
 		$this->controller->set($error->getAttributes());
 		$this->_outputMessage($this->template);

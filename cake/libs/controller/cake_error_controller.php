@@ -40,7 +40,9 @@ class CakeErrorController extends AppController {
 	function beforeRender() {
 		parent::beforeRender();
 		foreach ($this->viewVars as $key => $value) {
-			$this->viewVars[$key] = h($value);
+			if (!is_object($value)){ 
+				$this->viewVars[$key] = h($value);
+			}
 		}
 	}
 }
