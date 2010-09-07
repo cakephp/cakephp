@@ -4360,6 +4360,30 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that virtualFields with complex functions and aliases work.
+ *
+ * @return void
+ */
+	function testConditionsWithComplexVirtualFields() {
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'distance' => 'ACOS(SIN(20 * PI() / 180)
+					* SIN(Article.latitude * PI() / 180)
+					+ COS(20 * PI() / 180)
+					* COS(Article.latitude * PI() / 180)
+					* COS((50 - Article.longitude) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+
+		$conditions = array('distance >=' => 20);
+		$result = $this->db->conditions($conditions, true, true, $Article);
+
+		$this->assertPattern('/\) >= 20/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result);
+	}
+
+/**
  * test order to generate query order clause for virtual fields
  *
  * @return void
@@ -4430,6 +4454,33 @@ class DboSourceTest extends CakeTestCase {
 			'Article' => array('id' => 1, 'comment_count' => 4)
 		));
 		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test that virtualFields with complex functions and aliases work.
+ *
+ * @return void
+ */
+	function testFieldsWithComplexVirtualFields() {
+		$Article =& new Article();
+		$Article->virtualFields = array(
+			'distance' => 'ACOS(SIN(20 * PI() / 180)
+					* SIN(Article.latitude * PI() / 180)
+					+ COS(20 * PI() / 180)
+					* COS(Article.latitude * PI() / 180)
+					* COS((50 - Article.longitude) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+
+		$fields = array('id', 'distance');
+		$result = $this->db->fields($Article, null, $fields);
+		$qs = $this->db->startQuote;
+		$qe = $this->db->endQuote;
+
+		$this->assertEqual($result[0], "{$qs}Article{$qe}.{$qs}id{$qe}");
+		$this->assertPattern('/Article__distance/', $result[1]);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result[1]);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result[1]);
 	}
 
 /**
