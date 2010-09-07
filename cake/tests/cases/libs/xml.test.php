@@ -115,14 +115,14 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$obj = Xml::fromArray($xml);
+		$obj = Xml::fromArray($xml, 'attributes');
 		$this->assertTrue($obj instanceof SimpleXMLElement);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
 		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
-		$obj = Xml::fromArray($xml, 'tags');
+		$obj = Xml::fromArray($xml);
 		$this->assertTrue($obj instanceof SimpleXMLElement);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
@@ -202,7 +202,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$obj = Xml::fromArray($xml);
+		$obj = Xml::fromArray($xml, 'attributes');
 		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1">defect</tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 	}
@@ -318,8 +318,8 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $expected);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'tags')), $array);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $array);
 
 		$array = array(
 			'tags' => array(
@@ -353,7 +353,7 @@ class XmlTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
 
 		$xml = '<root>';
 		$xml .= '<tag id="1">defect</tag>';

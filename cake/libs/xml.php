@@ -106,7 +106,7 @@ class Xml {
  * @param string $format If create childs ('tags') or attributes ('attribute').
  * @return object SimpleXMLElement
  */
-	public static function fromArray($input, $format = 'attribute') {
+	public static function fromArray($input, $format = 'tags') {
 		if (!is_array($input) || count($input) !== 1) {
 			throw new Exception(__('Invalid input.'));
 		}
