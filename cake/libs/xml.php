@@ -88,7 +88,8 @@ class Xml {
  *    'root' => array(
  *        'tag' => array(
  *            'id' => 1,
- *            'value' => 'defect'
+ *            'value' => 'defect',
+ *            '@' => 'description'
  *         )
  *     )
  * );
@@ -96,11 +97,11 @@ class Xml {
  *
  * Calling `Xml::fromArray($value, 'tags');`  Will generate:
  *
- * `<root><tag><id>1</id><value>defect</value></tag></root>`
+ * `<root><tag><id>1</id><value>defect</value>description</tag></root>`
  *
  * And calling `Xml::fromArray($value, 'attribute');` Will generate:
  *
- * `<root><tag id="1">defect</tag></root>`
+ * `<root><tag id="1" value="defect">description</tag></root>`
  *
  * @param array $input Array with data
  * @param string $format If create childs ('tags') or attributes ('attribute').
