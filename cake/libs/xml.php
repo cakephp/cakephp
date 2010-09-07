@@ -198,7 +198,7 @@ class Xml {
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $simpleXML->getNamespaces(true));
-		self::_toArray($simpleXML, $result, array_keys($namespaces));
+		self::_toArray($simpleXML, $result, '', array_keys($namespaces));
 		return $result;
 	}
 
@@ -207,19 +207,23 @@ class Xml {
  *
  * @param object $xml SimpleXMLElement object
  * @param array $parentData Parent array with data
+ * @param string $ns Namespace of current child
  * @param array $namespaces List of namespaces in XML
  * @return void
  */
-	protected static function _toArray($xml, &$parentData, $namespaces) {
+	protected static function _toArray($xml, &$parentData, $ns, $namespaces) {
 		$data = array();
 
 		foreach ($namespaces as $namespace) {
 			foreach ($xml->attributes($namespace, true) as $key => $value) {
+				if (!empty($namespace)) {
+					$key = $namespace . ':' . $key;
+				}
 				$data['@' . $key] = (string)$value;
 			}
 
 			foreach ($xml->children($namespace, true) as $child) {
-				self::_toArray($child, $data, $namespaces);
+				self::_toArray($child, $data, $namespace, $namespaces);
 			}
 		}
 
@@ -230,7 +234,10 @@ class Xml {
 			$data['@'] = $asString;
 		}
 
-		$name = $xml->getName();
+		if (!empty($ns)) {
+			$ns .= ':';
+		}
+		$name = $ns . $xml->getName();
 		if (isset($parentData[$name])) {
 			if (!is_array($parentData[$name]) || !isset($parentData[$name][0])) {
 				$parentData[$name] = array($parentData[$name]);

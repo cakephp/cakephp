@@ -397,7 +397,7 @@ class XmlTest extends CakeTestCase {
 		$expected = array(
 			'root' => array(
 				'tag' => 'defect',
-				'bug' => 1
+				'cake:bug' => 1
 			)
 		);
 		$this->assertEqual(Xml::toArray($obj), $expected);
@@ -413,6 +413,10 @@ class XmlTest extends CakeTestCase {
 		$rssAsArray = Xml::toArray(Xml::build($rss));
 		$this->assertEqual($rssAsArray['rss']['@version'], '2.0');
 		$this->assertEqual(count($rssAsArray['rss']['channel']['item']), 2);
+
+		$atomLink = array('@href' => 'http://bakery.cakephp.org/articles/rss', '@rel' => 'self', '@type' => 'application/rss+xml');
+		$this->assertEqual($rssAsArray['rss']['channel']['atom:link'], $atomLink);
+		$this->assertEqual($rssAsArray['rss']['channel']['link'], 'http://bakery.cakephp.org/');
 
 		$expected = array(
 			'title' => 'Alertpay automated sales via IPN',
@@ -498,10 +502,10 @@ class XmlTest extends CakeTestCase {
 		$xmlRequest = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_request.xml');
 		$expected = array(
 			'Envelope' => array(
-				'@encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
-				'Body' => array(
-					'GetStockPrice' => array(
-						'StockName' => 'IBM'
+				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
+				'soap:Body' => array(
+					'm:GetStockPrice' => array(
+						'm:StockName' => 'IBM'
 					)
 				)
 			)
@@ -511,14 +515,58 @@ class XmlTest extends CakeTestCase {
 		$xmlResponse = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_response.xml');
 		$expected = array(
 			'Envelope' => array(
-				'@encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
-				'Body' => array(
-					'GetStockPriceResponse' => array(
-						'Price' => '34.5'
+				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
+				'soap:Body' => array(
+					'm:GetStockPriceResponse' => array(
+						'm:Price' => '34.5'
 					)
 				)
 			)
 		);
+		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+	}
+
+/**
+ * testNamespace
+ *
+ * @retun void
+ */
+	public function testNamespace() {
+		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1"><child>good</child><otherchild>bad</otherchild></ns:tag><tag>Tag without ns</tag></root>');
+		$expected = array(
+			'root' => array(
+				'ns:tag' => array(
+					'@id' => '1',
+					'child' => 'good',
+					'otherchild' => 'bad'
+				),
+				'tag' => 'Tag without ns'
+			)
+		);
+		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+
+		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:tag id="1" /><tag><id>1</id></tag></root>');
+		$expected = array(
+			'root' => array(
+				'ns:tag' => array(
+					'@id' => '1'
+				),
+				'tag' => array(
+					'id' => '1'
+				)
+			)
+		);
+		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+
+		$xmlResponse = Xml::build('<root xmlns:ns="http://cakephp.org"><ns:attr>1</ns:attr></root>');
+		$expected = array(
+			'root' => array(
+				'ns:attr' => '1'
+			)
+		);
+		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+
+		$xmlResponse = Xml::build('<root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>');
 		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
 	}
 
