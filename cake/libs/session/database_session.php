@@ -130,8 +130,6 @@ class DatabaseSession implements CakeSessionHandlerInterface {
  * @access private
  */
 	public function gc($expires = null) {
-		$model = ClassRegistry::getObject('Session');
-
 		if (!$expires) {
 			$expires = time();
 		}
