@@ -91,10 +91,10 @@ class BakeShellTest extends CakeTestCase {
 		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {
 			return;
 		}
-		$this->Shell->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatch));
-		$this->Shell->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatch));
-		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatch));
-		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatch));
+		$this->Shell->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
+		$this->Shell->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatcher));
+		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
+		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher));
 
 		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test_suite'));
 	
