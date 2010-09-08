@@ -462,9 +462,7 @@ class Scaffold {
  * @package       cake
  * @subpackage    cake.cake.libs.controller
 */
-if (!class_exists('ThemeView')) {
-	App::import('View', 'Theme');
-}
+App::import('View', 'Theme');
 
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
