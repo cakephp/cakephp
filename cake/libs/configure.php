@@ -1120,6 +1120,7 @@ class App {
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
+				App::import('View', 'View', false);
 				if ($plugin) {
 					$path = $pluginPath . DS . 'views' . DS;
 				}
