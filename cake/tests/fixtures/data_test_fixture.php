@@ -55,5 +55,12 @@ class DataTestFixture extends CakeTestFixture {
  * @var array
  * @access public
  */
-	var $records = array();
+	var $records = array(
+		array(
+			'count' => 2,
+			'float' => 2.4,
+			'created' => '2010-09-06 12:28:00',
+			'updated' => '2010-09-06 12:28:00'
+		)
+	);
 }

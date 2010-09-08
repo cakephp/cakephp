@@ -239,7 +239,7 @@ class ConnectionManager extends Object {
 				$this->_connectionsEnum[$name] = $this->__connectionData($config);
 			}
 		} else {
-			$this->cakeError('missingConnection', array(array('className' => 'ConnectionManager')));
+			$this->cakeError('missingConnection', array(array('code' => 500, 'className' => 'ConnectionManager')));
 		}
 	}
 
