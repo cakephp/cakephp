@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+App::import('View', 'View');
 App::import('Helper', array('Rss', 'Time'));
 
 /**
