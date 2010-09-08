@@ -115,33 +115,25 @@ class Xml {
 		if (is_integer($key)) {
 			throw new Exception(__('The key of input must be alphanumeric'));
 		}
-		if (is_array($input[$key])) {
-			if (array_key_exists('@', $input[$key])) {
-				$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . '>' . $input[$key]['@'] . '</' . $key . '>');
-				unset($input[$key]['@']);
-			} else {
-				$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . ' />');
-			}
-			self::_fromArrayRecursive($simpleXml, $input[$key], $format);
-		} else {
-			$simpleXml = new SimpleXMLElement('<' . '?xml version="1.0"?' . '><' . $key . '>' . $input[$key] . '</' . $key . '>');
-		}
-		return $simpleXml;
+		$dom = new DOMDocument('1.0');
+		self::_fromArray($dom, $dom, $input, $format);
+		return new SimpleXMLElement($dom->saveXML());
 	}
 
 /**
- * Recursive method to create SimpleXMLElement from array
+ * Recursive method to create childs from array
  *
- * @param object $node Handler to SimpleXMLElement
- * @param array $array Array of data to append to the $node.
+ * @param object $dom Handler to DOMDocument
+ * @param object $node Handler to DOMElement (child)
+ * @param array $data Array of data to append to the $node.
  * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
  */
-	protected static function _fromArrayRecursive(&$node, &$array, $format = 'attribute') {
-		if (empty($array) || !is_array($array)) {
+	protected function _fromArray(&$dom, &$node, &$data, $format) {
+		if (empty($data) || !is_array($data)) {
 			return;
 		}
-		foreach ($array as $key => $value) {
+		foreach ($data as $key => $value) {
 			if (is_string($key)) {
 				if (!is_array($value)) {
 					if (is_bool($value)) {
@@ -150,12 +142,15 @@ class Xml {
 						$value = '';
 					}
 					if ($key[0] !== '@' && $format === 'tags') {
-						$node->addChild($key, $value);
+						$child = $dom->createElement($key, $value);
+						$node->appendChild($child);
 					} else {
 						if ($key[0] === '@') {
 							$key = substr($key, 1);
 						}
-						$node->addAttribute($key, $value);
+						$attribute = $dom->createAttribute($key);
+						$attribute->appendChild($dom->createTextNode($value));
+						$node->appendChild($attribute);
 					}
 				} else {
 					if ($key[0] === '@') {
@@ -164,21 +159,23 @@ class Xml {
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
 							if (array_key_exists('@', $item)) {
-								$child = $node->addChild($key, (string)$item['@']);
+								$child = $dom->createElement($key, (string)$item['@']);
 								unset($item['@']);
 							} else {
-								$child = $node->addChild($key);
+								$child = $dom->createElement($key);
 							}
-							self::_fromArrayRecursive($child, $item, $format);
+							self::_fromArray($dom, $child, $item, $format);
+							$node->appendChild($child);
 						}
 					} else { // Struct
 						if (array_key_exists('@', $value)) {
-							$child = $node->addChild($key, (string)$value['@']);
+							$child = $dom->createElement($key, (string)$value['@']);
 							unset($value['@']);
 						} else {
-							$child = $node->addChild($key);
+							$child = $dom->createElement($key);
 						}
-						self::_fromArrayRecursive($child, $value, $format);
+						self::_fromArray($dom, $child, $value, $format);
+						$node->appendChild($child);
 					}
 				}
 			} else {
