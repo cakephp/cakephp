@@ -65,6 +65,11 @@ class XmlTest extends CakeTestCase {
 		$xml = '<?xml version="1.0" encoding="UTF-8"?><tag>value</tag>';
 		$this->assertEqual($obj, Xml::build($xml));
 
+		$obj = Xml::build($xml, array('return' => 'domdocument'));
+		$this->assertTrue($obj instanceof DOMDocument);
+		$this->assertEqual($obj->firstChild->nodeName, 'tag');
+		$this->assertEqual($obj->firstChild->nodeValue, 'value');
+
 		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
 		$this->assertEqual($obj->getName(), 'tags');
@@ -72,10 +77,20 @@ class XmlTest extends CakeTestCase {
 
 		$this->assertEqual(Xml::build($xml), Xml::build(file_get_contents($xml)));
 
+		$obj = Xml::build($xml, array('return' => 'domdocument'));
+		$this->assertEqual($obj->firstChild->nodeName, 'tags');
+
+		$this->assertEqual(Xml::build($xml, array('return' => 'domdocument')), Xml::build(file_get_contents($xml), array('return' => 'domdocument')));
+		$this->assertEqual(Xml::build($xml, array('return' => 'simplexml')), Xml::build($xml, 'simplexml'));
+
 		$xml = array('tag' => 'value');
 		$obj = Xml::build($xml);
 		$this->assertEqual($obj->getName(), 'tag');
 		$this->assertEqual((string)$obj, 'value');
+
+		$obj = Xml::build($xml, array('return' => 'domdocument'));
+		$this->assertEqual($obj->firstChild->nodeName, 'tag');
+		$this->assertEqual($obj->firstChild->nodeValue, 'value');
 	}
 
 /**

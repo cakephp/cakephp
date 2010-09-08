@@ -65,13 +65,31 @@ class Xml {
  * @return object SimpleXMLElement
  * @throws Exception
  */
-	public static function build($input) {
+	public static function build($input, $options = array()) {
+		if (!is_array($options)) {
+			$options = array('return' => (string)$options);
+		}
+		$defaults = array(
+			'return' => 'simplexml'
+		);
+		$options = array_merge($defaults, $options);
+
 		if (is_array($input) || is_object($input)) {
-			return self::fromArray((array)$input);
-		} elseif (strstr($input, "<")) {
-			return new SimpleXMLElement($input);
-		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0 ) {
-			return new SimpleXMLElement($input, null, true);
+			return self::fromArray((array)$input, $options);
+		} elseif (strpos($input, '<') !== false) {
+			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+				return new SimpleXMLElement($input);
+			}
+			$dom = new DOMDocument();
+			$dom->loadXML($input);
+			return $dom;
+		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
+			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+				return new SimpleXMLElement($input, null, true);
+			}
+			$dom = new DOMDocument();
+			$dom->load($input);
+			return $dom;
 		} elseif (!is_string($input)) {
 			throw new Exception(__('Invalid input.'));
 		}
@@ -123,8 +141,8 @@ class Xml {
 			throw new Exception(__('The key of input must be alphanumeric'));
 		}
 
-		if (is_string($options)) {
-			$options = array('format' => $options);
+		if (!is_array($options)) {
+			$options = array('format' => (string)$options);
 		}
 		$defaults = array(
 			'format' => 'tags',
