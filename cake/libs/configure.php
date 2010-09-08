@@ -1107,6 +1107,7 @@ class App {
 				return array('class' => $type, 'suffix' => $type, 'path' => $path);
 			break;
 			case 'component':
+				App::import('Core', 'Component', false);
 				if ($plugin) {
 					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
 				}
