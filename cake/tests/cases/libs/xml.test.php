@@ -28,6 +28,29 @@ App::import('Core', 'Xml');
 class XmlTest extends CakeTestCase {
 
 /**
+ * setup method
+ *
+ * @access public
+ * @return void
+ */
+	function setUp() {
+		parent::setup();
+		$this->_appEncoding = Configure::read('App.encoding');
+		Configure::write('App.encoding', 'UTF-8');
+	}
+
+/**
+ * tearDown method
+ *
+ * @access public
+ * @return void
+ */
+	function tearDown() {
+		parent::tearDown();
+		Configure::write('App.encoding', $this->_appEncoding);
+	}
+
+/**
  * testBuild method
  *
  * @return void
@@ -39,7 +62,7 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual((string)$obj->getName(), 'tag');
 		$this->assertEqual((string)$obj, 'value');
 
-		$xml = '<?xml version="1.0"?><tag>value</tag>';
+		$xml = '<?xml version="1.0" encoding="UTF-8"?><tag>value</tag>';
 		$this->assertEqual($obj, Xml::build($xml));
 
 		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
@@ -119,14 +142,14 @@ class XmlTest extends CakeTestCase {
 		$this->assertTrue($obj instanceof SimpleXMLElement);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
-		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
 		$obj = Xml::fromArray($xml);
 		$this->assertTrue($obj instanceof SimpleXMLElement);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
-		$xmlText = '<' . '?xml version="1.0"?><tags><tag><id>1</id><name>defect</name></tag><tag><id>2</id><name>enhancement</name></tag></tags>';
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag><id>1</id><name>defect</name></tag><tag><id>2</id><name>enhancement</name></tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
 		$xml = array(
@@ -171,7 +194,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml, 'tags');
-		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1"><name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1"><name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
 		$xml = array(
@@ -191,7 +214,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml, 'tags');
-		$xmlText = '<' . '?xml version="1.0"?><tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags>All tags<tag id="1">Tag 1<name>defect</name></tag><tag id="2"><name>enhancement</name></tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 
 		$xml = array(
@@ -203,7 +226,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$obj = Xml::fromArray($xml, 'attributes');
-		$xmlText = '<' . '?xml version="1.0"?><tags><tag id="1">defect</tag></tags>';
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?><tags><tag id="1">defect</tag></tags>';
 		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $xmlText);
 	}
 
@@ -467,7 +490,7 @@ class XmlTest extends CakeTestCase {
 		);
 		$this->assertIdentical(Xml::toArray($xml), $expected);
 
-		$xmlText = '<?xml version="1.0"?><methodResponse><params><param><value><array><data><value><int>1</int></value><value><string>testing</string></value></data></array></value></param></params></methodResponse>';
+		$xmlText = '<?xml version="1.0" encoding="UTF-8"?><methodResponse><params><param><value><array><data><value><int>1</int></value><value><string>testing</string></value></data></array></value></param></params></methodResponse>';
 		$xml = Xml::build($xmlText);
 		$expected = array(
 			'methodResponse' => array(

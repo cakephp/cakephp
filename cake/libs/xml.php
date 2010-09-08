@@ -81,6 +81,13 @@ class Xml {
 /**
  * Transform an array into a SimpleXMLElement
  *
+ * ### Options
+ *
+ * - `format` If create childs ('tags') or attributes ('attribute').
+ * - `version` Version of XML document. Default is 1.0.
+ * - `encoding` Encoding of XML document. Default is the some of application.
+ * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
+ *
  * Using the following data:
  * 
  * {{{
@@ -104,10 +111,10 @@ class Xml {
  * `<root><tag id="1" value="defect">description</tag></root>`
  *
  * @param array $input Array with data
- * @param string $format If create childs ('tags') or attributes ('attribute').
- * @return object SimpleXMLElement
+ * @param array $options The options to use
+ * @return object SimpleXMLElement or DOMDocument
  */
-	public static function fromArray($input, $format = 'tags') {
+	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
 			throw new Exception(__('Invalid input.'));
 		}
@@ -115,9 +122,26 @@ class Xml {
 		if (is_integer($key)) {
 			throw new Exception(__('The key of input must be alphanumeric'));
 		}
-		$dom = new DOMDocument('1.0');
-		self::_fromArray($dom, $dom, $input, $format);
-		return new SimpleXMLElement($dom->saveXML());
+
+		if (is_string($options)) {
+			$options = array('format' => $options);
+		}
+		$defaults = array(
+			'format' => 'tags',
+			'version' => '1.0',
+			'encoding' => Configure::read('App.encoding'),
+			'return' => 'simplexml'
+		);
+		$options = array_merge($defaults, $options);
+
+		$dom = new DOMDocument($options['version'], $options['encoding']);
+		self::_fromArray($dom, $dom, $input, $options['format']);
+
+		$options['return'] = strtolower($options['return']);
+		if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
+			return new SimpleXMLElement($dom->saveXML());
+		}
+		return $dom;
 	}
 
 /**
