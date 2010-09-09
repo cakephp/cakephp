@@ -454,6 +454,9 @@ class CakeSession extends Object {
  * @access public
  */
 	function destroy() {
+		if ($this->started()) {
+			session_destroy();
+		}
 		$_SESSION = null;
 		$this->__construct($this->path);
 		$this->start();
