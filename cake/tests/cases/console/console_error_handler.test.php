@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require CAKE . 'console' . DS . 'console_error_handler.php';
+require_once CAKE . 'console' . DS . 'console_error_handler.php';
 
 /**
  * ConsoleErrorHandler Test case.
@@ -45,7 +45,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$error = $this->getErrorHandler($exception);
 
 		$error->expects($this->once())->method('stderr')
-			->with('Missing action');
+			->with($this->stringContains('Missing action'));
 
 		$error->render();
 	}
@@ -60,7 +60,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$error = $this->getErrorHandler($exception);
 
 		$error->expects($this->once())->method('stderr')
-			->with('Too many parameters.');
+			->with($this->stringContains('Too many parameters.'));
 		
 		$error->render();
 	}
@@ -75,7 +75,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$error = $this->getErrorHandler($exception);
 
 		$error->expects($this->once())->method('stderr')
-			->with('dont use me in cli.');
+			->with($this->stringContains('dont use me in cli.'));
 
 		$error->render();
 	}
@@ -90,7 +90,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$error = $this->getErrorHandler($exception);
 
 		$error->expects($this->once())->method('stderr')
-			->with('dont use me in cli.');
+			->with($this->stringContains('dont use me in cli.'));
 
 		$error->render();
 	}

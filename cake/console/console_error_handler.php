@@ -105,7 +105,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @return void
  */
 	public function _outputMessage($template = null) {
-		$this->stderr($this->error->getMessage());
+		$this->stderr($this->error->getMessage() . "\n" . $this->error->getTraceAsString());
 	}
 
 /**
