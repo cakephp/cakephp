@@ -487,6 +487,16 @@ class RequestHandlerComponent extends Component {
 
 /**
  * Sets the layout and template paths for the content type defined by $type.
+ * 
+ * ### Usage:
+ *
+ * Render the response as an 'ajax' response.
+ *
+ * `$this->RequestHandler->renderAs($this, 'ajax');`
+ *
+ * Render the response as an xml file and force the result as a file download.
+ *
+ * `$this->RequestHandler->renderAs($this, 'xml', array('attachment' => 'myfile.xml');`
  *
  * @param object $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
@@ -536,8 +546,8 @@ class RequestHandlerComponent extends Component {
 	}
 
 /**
- * Sets the response header based on type map index name.  If DEBUG is greater than 2, the header
- * is not set.
+ * Sets the response header based on type map index name.  This wraps several methods
+ * available on CakeResponse. It also allows you to use Content-Type aliases.
  *
  * @param mixed $type Friendly type name, i.e. 'html' or 'xml', or a full content-type,
  *    like 'application/x-shockwave'.
@@ -601,6 +611,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param mixed $cType Either a string content type to map, or an array of types.
  * @return mixed Aliases for the types provided.
+ * @deprecated Use $this->response->mapType() in your controller instead.
  */
 	public function mapType($cType) {
 		return $this->response->mapType($cType);
