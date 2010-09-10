@@ -490,16 +490,18 @@ class RequestHandlerComponent extends Component {
  *
  * @param object $controller A reference to a controller object
  * @param string $type Type of response to send (e.g: 'ajax')
+ * @param array $options Array of options to use
  * @return void
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs(&$controller, $type) {
-		$options = array('charset' => 'UTF-8');
+	public function renderAs(&$controller, $type, $options = array()) {
+		$defaults = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {
-			$options = array('charset' => Configure::read('App.encoding'));
+			$defaults['charset'] = Configure::read('App.encoding');
 		}
+		$options = array_merge($defaults, $options);
 
 		if ($type == 'ajax') {
 			$controller->layout = $this->ajaxLayout;

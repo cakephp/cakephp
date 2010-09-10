@@ -320,6 +320,34 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that attachment headers work with renderAs
+ *
+ * @return void
+ */
+	function testRenderAsWithAttachment() {
+		$this->RequestHandler->request = $this->getMock('CakeRequest');
+		$this->RequestHandler->request->expects($this->any())
+			->method('accepts')
+			->will($this->returnValue(array('application/xml')));
+	
+		$this->RequestHandler->response = $this->getMock('CakeResponse', array('type', 'download', 'charset'));
+		$this->RequestHandler->response->expects($this->at(0))
+			->method('type')
+			->with('application/xml');
+		$this->RequestHandler->response->expects($this->at(1))
+			->method('charset')
+			->with('UTF-8');
+		$this->RequestHandler->response->expects($this->at(2))
+			->method('download')
+			->with('myfile.xml');
+		
+		$this->RequestHandler->renderAs($this->Controller, 'xml', array('attachment' => 'myfile.xml'));
+
+		$expected = 'request_handler_test' . DS . 'xml';
+		$this->assertEquals($expected, $this->Controller->viewPath);
+	}
+
+/**
  * test that respondAs works as expected.
  *
  * @return void
@@ -344,14 +372,22 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRespondAsWithAttachment() {
-		$this->RequestHandler = $this->getMock('RequestHandlerComponent', array('_header'), array(&$this->Controller->Components));
+		$this->RequestHandler = $this->getMock(
+			'RequestHandlerComponent', 
+			array('_header'), 
+			array(&$this->Controller->Components)
+		);
 		$this->RequestHandler->response = $this->getMock('CakeResponse', array('type', 'download'));
 		$this->RequestHandler->request = $this->getMock('CakeRequest');
+		
+		$this->RequestHandler->request->expects($this->once())
+			->method('accepts')
+			->will($this->returnValue(array('application/xml')));
+		
 		$this->RequestHandler->response->expects($this->once())->method('download')
 			->with('myfile.xml');
 		$this->RequestHandler->response->expects($this->once())->method('type')
 			->with('application/xml');
-
 
 		$result = $this->RequestHandler->respondAs('xml', array('attachment' => 'myfile.xml'));
 		$this->assertTrue($result);
