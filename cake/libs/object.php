@@ -22,7 +22,7 @@
  */
 
 /**
- * Object class, allowing __construct and __destruct in PHP4.
+ * Object class provides a few generic methods used in several subclasses.
  *
  * Also includes methods for logging and the special method RequestAction,
  * to call other Controllers' Actions from anywhere.
@@ -153,34 +153,6 @@ class Object {
 				}
 			}
 		}
-	}
-
-/**
- * Used to report user friendly errors.
- * If there is a file app/error.php or app/app_error.php this file will be loaded
- * error.php is the AppError class it should extend ErrorHandler class.
- *
- * @param string $method Method to be called in the error class (AppError or ErrorHandler classes)
- * @param array $messages Message that is to be displayed by the error class
- * @return error message
- */
-	public function cakeError($method, $messages = array()) {
-		if (!class_exists('ErrorHandler')) {
-			App::import('Core', 'Error');
-
-			if (file_exists(APP . 'error.php')) {
-				include_once (APP . 'error.php');
-			} elseif (file_exists(APP . 'app_error.php')) {
-				include_once (APP . 'app_error.php');
-			}
-		}
-
-		if (class_exists('AppError')) {
-			$error = new AppError($method, $messages);
-		} else {
-			$error = new ErrorHandler($method, $messages);
-		}
-		return $error;
 	}
 
 /**

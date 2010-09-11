@@ -20,9 +20,7 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('E_DEPRECATED')) {
-	define('E_DEPRECATED', 8192);
-}
+
 /**
  * Shell dispatcher
  *
@@ -172,7 +170,6 @@ class ShellDispatcher {
 				}
 			}
 		}
-		require_once(CORE_PATH . 'cake' . DS . 'basics.php');
 	}
 
 /**
@@ -258,26 +255,10 @@ class ShellDispatcher {
 			define('TMP', CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
 
-		$includes = array(
-			CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'object.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'inflector.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'configure.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'file.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'cache.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'string.php',
-			CORE_PATH . 'cake' . DS . 'libs' . DS . 'class_registry.php',
-			CORE_PATH . 'cake' . DS . 'console' . DS . 'error.php'
-		);
-
-		foreach ($includes as $inc) {
-			if (!require($inc)) {
-				$this->stderr("Failed to load Cake core file {$inc}");
-				return false;
-			}
-		}
-
-		Configure::bootstrap(file_exists(CONFIGS . 'bootstrap.php'));
+		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
+		require CORE_PATH . 'cake' . DS . 'bootstrap.php';
+		require_once CORE_PATH . 'cake' . DS . 'console' . DS . 'console_error_handler.php';
+		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';

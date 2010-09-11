@@ -720,7 +720,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return' => 1));
 			$this->fail('No exception thrown');
 		} catch (MissingControllerException $e) {
-			$this->assertEquals('SomeControllerController', $e->getMessage());
+			$this->assertEquals('Controller class SomeControllerController could not be found.', $e->getMessage());
 		}
 	}
 
@@ -738,7 +738,9 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return' => 1));
 			$this->fail('No exception thrown');
 		} catch (PrivateActionException $e) {
-			$this->assertEquals('SomePagesController::_protected()', $e->getMessage());
+			$this->assertEquals(
+				'Private Action SomePagesController::_protected() is not directly accessible.', $e->getMessage()
+			);
 		}
 	}
 
@@ -756,7 +758,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception thrown');
 		} catch (MissingActionException $e) {
-			$this->assertEquals('SomePagesController::home()', $e->getMessage());
+			$this->assertEquals('Action SomePagesController::home() could not be found.', $e->getMessage());
 		}
 	}
 	
@@ -774,7 +776,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception thrown');
 		} catch (MissingActionException $e) {
-			$this->assertEquals('SomePagesController::redirect()', $e->getMessage());
+			$this->assertEquals('Action SomePagesController::redirect() could not be found.', $e->getMessage());
 		}
 	}
 
@@ -1155,7 +1157,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception.');
 		} catch (MissingActionException $e) {
-			$this->assertEquals('MyPluginController::not_here()', $e->getMessage());
+			$this->assertEquals('Action MyPluginController::not_here() could not be found.', $e->getMessage());
 		}
 
 		Router::reload();
@@ -1167,7 +1169,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception.');
 		} catch (MissingActionException $e) {
-			$this->assertEquals('MyPluginController::param:value()', $e->getMessage());
+			$this->assertEquals('Action MyPluginController::param:value() could not be found.', $e->getMessage());
 		}
 	}
 
@@ -1190,7 +1192,10 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception.');
 		} catch (PrivateActionException $e) {
-			$this->assertEquals('TestDispatchPagesController::admin_index()', $e->getMessage());
+			$this->assertEquals(
+				'Private Action TestDispatchPagesController::admin_index() is not directly accessible.',
+				$e->getMessage()
+			);
 		}
 	}
 
@@ -1235,7 +1240,7 @@ class DispatcherTest extends CakeTestCase {
 			$controller = $Dispatcher->dispatch($url, array('return'=> 1));
 			$this->fail('No exception.');
 		} catch (MissingActionException $e) {
-			$this->assertEquals('SomePostsController::view()', $e->getMessage());
+			$this->assertEquals('Action SomePostsController::view() could not be found.', $e->getMessage());
 		}
 
 		$url = 'some_posts/something_else/param:value/param2:value2';
@@ -1274,14 +1279,14 @@ class DispatcherTest extends CakeTestCase {
 			$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
 			$this->fail('No exception');
 		} catch (MissingControllerException $e) {
-			$this->assertEquals('ThemeController', $e->getMessage());
+			$this->assertEquals('Controller class ThemeController could not be found.', $e->getMessage());
 		}
 		
 		try {
 			$Dispatcher->dispatch('theme/test_theme/pdfs');
 			$this->fail('No exception');
 		} catch (MissingControllerException $e) {
-			$this->assertEquals('ThemeController', $e->getMessage());
+			$this->assertEquals('Controller class ThemeController could not be found.', $e->getMessage());
 		}
 
 		ob_start();

@@ -25,7 +25,6 @@ if (!defined('E_DEPRECATED')) {
 error_reporting(E_ALL & ~E_DEPRECATED);
 
 require CORE_PATH . 'cake' . DS . 'basics.php';
-$TIME_START = microtime(true);
 require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
 require LIBS . 'exceptions.php';
 require LIBS . 'object.php';
@@ -33,5 +32,8 @@ require LIBS . 'inflector.php';
 require LIBS . 'configure.php';
 require LIBS . 'set.php';
 require LIBS . 'cache.php';
-Configure::bootstrap();
-require CAKE . 'dispatcher.php';
+require LIBS . 'error_handler.php';
+set_exception_handler(array('ErrorHandler', 'handleException'));
+
+Configure::bootstrap(isset($boot) ? $boot : true);
+

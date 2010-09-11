@@ -216,7 +216,9 @@ class DebuggerTest extends CakeTestCase {
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);
 		$result = Debugger::exportVar($View);
-		$expected = 'ViewView::$base = NULL
+		$expected = 'View
+		View::$Helpers = HelperCollection object
+		View::$base = NULL
 		View::$here = NULL
 		View::$plugin = NULL
 		View::$name = ""
@@ -237,7 +239,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$cacheAction = false
 		View::$validationErrors = array
 		View::$hasRendered = false
-		View::$loaded = array
 		View::$modelScope = false
 		View::$model = NULL
 		View::$association = NULL
@@ -246,7 +247,8 @@ class DebuggerTest extends CakeTestCase {
 		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
-		View::$webroot = NULL';
+		View::$webroot = NULL
+		View::$request = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
 		$this->assertEqual($result, $expected);

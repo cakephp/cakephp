@@ -791,7 +791,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingViewException($defaultPath . $name . $this->ext);
+		throw new MissingViewException(array('file' => $defaultPath . $name . $this->ext));
 	}
 
 /**
@@ -824,7 +824,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingLayoutException($paths[0] . $file . $this->ext);
+		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
 	}
 
 /**

@@ -20,7 +20,7 @@
 <h2><?php echo __('Missing Behavior Class'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $behaviorClass); ?>
+	<?php printf(__('The behavior class <em>%s</em> can not be found or does not exist.'), $class); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $behaviorClass;?> extends ModelBehavior {
+class <?php echo $class;?> extends ModelBehavior {
 
 }
 ?&gt;
@@ -37,3 +37,5 @@ class <?php echo $behaviorClass;?> extends ModelBehavior {
 	<strong><?php echo __('Notice'); ?>: </strong>
 	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_class.ctp'); ?>
 </p>
+
+<?php echo $this->element('exception_stack_trace'); ?>

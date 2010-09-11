@@ -134,7 +134,9 @@ class Dispatcher {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
-			throw new MissingControllerException(Inflector::camelize($request->params['controller']) . 'Controller');
+			throw new MissingControllerException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
+			));
 		}
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
@@ -151,12 +153,10 @@ class Dispatcher {
 		Router::setRequestInfo($request);
 
 		if ($privateAction) {
-			$message = sprintf(
-				'%s::%s()',
-				Inflector::camelize($request->params['controller']) . "Controller",
-				$request->params['action']
-			);
-			throw new PrivateActionException($message);
+			throw new PrivateActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
 		}
 
 		return $this->_invoke($controller, $request);
@@ -184,12 +184,10 @@ class Dispatcher {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $request);
 			}
-			$message = sprintf(
-				'%s::%s()',
-				Inflector::camelize($request->params['controller']) . "Controller",
-				$request->params['action']
-			);
-			throw new MissingActionException($message);
+			throw new MissingActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
 		}
 		$result =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
 		$response = $controller->getResponse();

@@ -678,10 +678,10 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$_SERVER['TEST_VAR'] = 'something';
-		$this->assertTrue($request->is('compare'), 'Value match failed %s.');
+		$this->assertTrue($request->is('compare'), 'Value match failed.');
 
 		$_SERVER['TEST_VAR'] = 'wrong';
-		$this->assertFalse($request->is('compare'), 'Value mis-match failed %s.');
+		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';

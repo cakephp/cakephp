@@ -54,10 +54,16 @@ class HelperCollection extends ObjectCollection {
 		$helperClass = $name . 'Helper';
 		if (!class_exists($helperClass)) {
 			if (!App::import('Helper', $helper)) {
-				throw new MissingHelperFileException(Inflector::underscore($name) . '.php');
+				throw new MissingHelperFileException(array(
+					'class' => $helperClass,
+					'file' => Inflector::underscore($name) . '.php'
+				));
 			}
 			if (!class_exists($helperClass)) {
-				throw new MissingHelperClassException($helperClass);
+				throw new MissingHelperClassException(array(
+					'class' => $helperClass,
+					'file' => Inflector::underscore($name) . '.php'
+				));
 			}
 		}
 		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
@@ -74,9 +80,3 @@ class HelperCollection extends ObjectCollection {
 	}
 
 }
-/**
- * Exceptions used by the HelperCollection.
- */
-class MissingHelperFileException extends RuntimeException { }
-
-class MissingHelperClassException extends RuntimeException { } 

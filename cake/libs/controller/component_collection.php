@@ -54,10 +54,16 @@ class ComponentCollection extends ObjectCollection {
 		$componentClass = $name . 'Component';
 		if (!class_exists($componentClass)) {
 			if (!App::import('Component', $component)) {
-				throw new MissingComponentFileException(Inflector::underscore($component) . '.php');
+				throw new MissingComponentFileException(array(
+					'file' => Inflector::underscore($component) . '.php',
+					'class' => $componentClass
+				));
 			}
 			if (!class_exists($componentClass)) {
-				throw new MissingComponentFileException($component);
+				throw new MissingComponentFileException(array(
+					'file' => Inflector::underscore($component) . '.php',
+					'class' => $componentClass
+				));
 			}
 		}
 		$this->_loaded[$name] = new $componentClass($this, $settings);

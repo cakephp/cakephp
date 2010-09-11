@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-App::import('Core', 'Scaffold');
+App::import('Core', 'Scaffold', false);
+App::import('Core', 'Controller', false);
 
 /**
  * ScaffoldMockController class
@@ -789,7 +790,7 @@ class ScaffoldTest extends CakeTestCase {
 		$this->Controller->theme = 'test_theme';
 		$this->Controller->view = 'Theme';
 		$this->Controller->constructClasses();
-		$Scaffold =& new TestScaffoldMock($this->Controller, new CakeRequest());
+		$Scaffold =& new TestScaffoldMock($this->Controller, $this->Controller->request);
 
 		$this->assertEqual($this->Controller->view, 'Scaffold');
 	}

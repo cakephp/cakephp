@@ -23,6 +23,7 @@
  */
 App::import('Core', 'CakeResponse', false);
 App::import('Controller', 'Component', false);
+App::import('Core', 'CakeResponse', false);
 App::import('View', 'View', false);
 
 /**
@@ -491,9 +492,10 @@ class Controller extends Object {
  * see Controller::loadModel(); for more info.
  * Loads Components and prepares them for initialization.
  *
- * @return mixed true if models found and instance created, or cakeError if models not found.
+ * @return mixed true if models found and instance created.
  * @see Controller::loadModel()
  * @link http://book.cakephp.org/view/977/Controller-Methods#constructClasses-986
+ * @throws MissingModelException
  */
 	public function constructClasses() {
 		$this->__mergeVars();
