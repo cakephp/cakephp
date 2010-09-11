@@ -19,10 +19,8 @@
  */
 App::import('Core', array('View', 'Controller'));
 App::import('Helper', 'Cache');
+App::import('Core', array('ErrorHandler'));
 
-if (!class_exists('ErrorHandler')) {
-	App::import('Core', array('Error'));
-}
 
 /**
  * ViewPostsController class
@@ -227,8 +225,9 @@ class ViewTest extends CakeTestCase {
  */
 	function setUp() {
 		Router::reload();
-		$this->Controller = new Controller();
+
 		$request = $this->getMock('CakeRequest');
+		$this->Controller = new Controller($request);
 		$this->PostsController = new ViewPostsController($request);
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();

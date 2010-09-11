@@ -43,21 +43,6 @@ class View extends Object {
 	public $Helpers;
 
 /**
- * Path parts for creating links in views.
- *
- * @var string Base URL
- * @access public
- */
-	public $base = null;
-
-/**
- * Stores the current URL (for links etc.)
- *
- * @var string Current URL
- */
-	public $here = null;
-
-/**
  * Name of the plugin.
  *
  * @link http://manual.cakephp.org/chapter/plugins
@@ -74,33 +59,11 @@ class View extends Object {
 	public $name = null;
 
 /**
- * Action to be performed.
- *
- * @var string Name of action
- * @access public
- */
-	public $action = null;
-
-/**
- * Array of parameter data
- *
- * @var array Parameter data
- */
-	public $params = array();
-
-/**
  * Current passed params
  *
  * @var mixed
  */
 	public $passedArgs = array();
-
-/**
- * Array of data
- *
- * @var array Parameter data
- */
-	public $data = array();
 
 /**
  * An array of names of built-in helpers to include.
@@ -270,15 +233,23 @@ class View extends Object {
 	public $output = false;
 
 /**
+ * An instance of a CakeRequest object that contains information about the current request.
+ * This object contains all the information about a request and several methods for reading
+ * additional information about the request. 
+ *
+ * @var CakeRequest
+ */
+	public $request;
+
+/**
  * List of variables to collect from the associated controller
  *
  * @var array
  * @access protected
  */
 	private $__passedVars = array(
-		'viewVars', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
-		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
-		'params', 'request', 'data', 'plugin', 'passedArgs', 'cacheAction'
+		'viewVars', 'autoLayout', 'autoRender', 'ext', 'helpers', 'layout', 'name',
+		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
 /**
@@ -645,17 +616,25 @@ class View extends Object {
 	}
 
 /**
- * Magic accessor for helpers.
+ * Magic accessor for helpers. Provides access to attributes that were deprecated.
  *
- * @return void
+ * @param string $name Name of the attribute to get.
+ * @return mixed
  */
 	public function __get($name) {
 		if (isset($this->Helpers->{$name})) {
 			return $this->Helpers->{$name};
 		}
 		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name};
 			case 'action':
-				return $this->request->params['action'];
+				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
+			case 'params':
+				return $this->request;
 		}
 		return null;
 	}
@@ -712,10 +691,10 @@ class View extends Object {
 		if ($caching) {
 			if (isset($this->Helpers->Cache)) {
 				$cache =& $this->Helpers->Cache;
-				$cache->base = $this->base;
-				$cache->here = $this->here;
+				$cache->base = $this->request->base;
+				$cache->here = $this->request->here;
 				$cache->helpers = $this->helpers;
-				$cache->action = $this->action;
+				$cache->action = $this->request->action;
 				$cache->controllerName = $this->name;
 				$cache->layout = $this->layout;
 				$cache->cacheAction = $this->cacheAction;

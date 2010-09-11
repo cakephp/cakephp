@@ -341,7 +341,7 @@ class Controller extends Object {
 			case 'data':
 				return $this->request->{$name};
 			case 'action':
-				return $this->request->params['action'];
+				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
 				return $this->request;
 		}

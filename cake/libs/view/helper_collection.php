@@ -68,7 +68,7 @@ class HelperCollection extends ObjectCollection {
 		}
 		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
 
-		$vars = array('request', 'base', 'webroot', 'here', 'params', 'action', 'data', 'theme', 'plugin');
+		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {
 			$this->_loaded[$name]->{$var} = $this->_View->{$var};
 		}
