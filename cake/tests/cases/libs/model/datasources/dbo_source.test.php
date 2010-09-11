@@ -4448,7 +4448,7 @@ class DboSourceTest extends CakeTestCase {
 		));
 		$this->assertEqual($expected, $result);
 	}
-˝
+
 /**
  * test reading complex virtualFields with subqueries.
  *
