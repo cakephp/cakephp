@@ -48,29 +48,6 @@ class Controller extends Object {
 	public $name = null;
 
 /**
- * Stores the current URL, relative to the webroot of the application.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->here instead
- */
-	public $here = null;
-
-/**
- * The webroot of the application.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->webroot instead
- */
-	public $webroot = null;
-
-/**
- * The name of the currently requested controller action.
- *
- * @var string
- */
-	public $action = null;
-
-/**
  * An array containing the class names of models this controller uses.
  *
  * Example: `public $uses = array('Product', 'Post', 'Comment');`
@@ -95,26 +72,9 @@ class Controller extends Object {
 	public $helpers = array('Session', 'Html', 'Form');
 
 /**
- * Parameters received in the current request: GET and POST data, information
- * about the request, etc.
- *
- * @var array
- * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
- * @deprecated Will be removed in future versions.  Use $this->request instead
- */
-	public $params = array();
-
-/**
- * Data POSTed to the controller using the HtmlHelper. Data here is accessible
- * using the `$this->data['ModelName']['fieldName']` pattern.
- *
- * @var array
- * @deprecated Will be removed in future versions.  Use $this->request->data instead
- */
-	public $data = array();
-
-/**
  * An instance of a CakeRequest object that contains information about the current request.
+ * This object contains all the information about a request and several methods for reading
+ * additional information about the request. 
  *
  * @var CakeRequest
  */
@@ -126,7 +86,6 @@ class Controller extends Object {
  * @var CakeResponse
  */
 	public $response;
-
 
 /**
  * The classname to use for creating the response object.
@@ -182,14 +141,6 @@ class Controller extends Object {
  * @var array Array of model objects.
  */
 	public $modelNames = array();
-
-/**
- * Base URL path.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->base instead
- */
-	public $base = null;
 
 /**
  * The name of the layout file to render the view inside of. The name specified
@@ -377,6 +328,27 @@ class Controller extends Object {
 	}
 
 /**
+ * Provides backwards compatbility access to the request object properties.
+ * Also provides the params alias.
+ *
+ * @return void
+ */
+	public function __get($name) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name};
+			case 'action':
+				return $this->request->params['action'];
+			case 'params':
+				return $this->request;
+		}
+		return null;
+	}
+
+/**
  * Sets the request objects and configures a number of controller properties
  * based on the contents of the request.
  *
@@ -384,20 +356,13 @@ class Controller extends Object {
  * @return void
  */
 	protected function _setRequest(CakeRequest $request) {
-		$this->base = $request->base;
-		$this->here = $request->here;
-		$this->webroot = $request->webroot;
+		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
-		$this->params = $this->request = $request;
-		$this->action =& $request->params['action'];
+
 		if (isset($request->params['pass']) && isset($request->params['named'])) {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
 		}
 
-		$this->data = null;
-		if (!empty($request->params['data'])) {
-			$this->data =& $request->params['data'];
-		}
 		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}

@@ -1499,4 +1499,40 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->shutdownProcess();
 	}
+
+/**
+ * test that BC works for attributes on the request object.
+ *
+ * @return void
+ */
+	function testPropertyBackwardsCompatibility() {
+		$request = new CakeRequest('posts/index', null);
+		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
+		$request->data = array('Post' => array('id' => 1));
+		$request->here = '/posts/index';
+		$request->webroot = '/';
+
+		$Controller = new TestController($request);
+		$this->assertEquals($request->data, $Controller->data);
+		$this->assertEquals($request->webroot, $Controller->webroot);
+		$this->assertEquals($request->here, $Controller->here);
+		$this->assertEquals($request->action, $Controller->action);
+
+		$this->assertEquals($request, $Controller->params);
+		$this->assertEquals($request->params['controller'], $Controller->params['controller']);
+	}
+
+/**
+ * test that the BC wrapper doesn't interfere with models and components.
+ *
+ * @return void
+ */
+	function testPropertyCompatibilityAndModelsComponents() {
+		$request = new CakeRequest('controller_posts/index');
+
+		$Controller = new TestController($request);
+		$Controller->constructClasses();
+		$this->assertType('SecurityComponent', $Controller->Security);
+		$this->assertType('ControllerComment', $Controller->ControllerComment);
+	}
 }
