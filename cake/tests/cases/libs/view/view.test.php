@@ -680,7 +680,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
 		$this->PostsController->cacheAction = array('index' => 3600);
-		$this->PostsController->params['action'] = 'index';
+		$this->PostsController->request->params['action'] = 'index';
 		Configure::write('Cache.check', true);
 
 		$View = new TestView($this->PostsController);
