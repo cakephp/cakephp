@@ -183,6 +183,12 @@ class Xml {
 					} elseif ($value === null) {
 						$value = '';
 					}
+					$isNamespace = strpos($key, 'xmlns:');
+					$nsUri = null;
+					if ($isNamespace !== false) {
+						$node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, $value);
+						continue;
+					}
 					if ($key[0] !== '@' && $format === 'tags') {
 						$child = $dom->createElement($key, $value);
 						$node->appendChild($child);
@@ -200,30 +206,53 @@ class Xml {
 					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
-							if (array_key_exists('@', $item)) {
-								$child = $dom->createElement($key, (string)$item['@']);
-								unset($item['@']);
-							} else {
-								$child = $dom->createElement($key);
-							}
-							self::_fromArray($dom, $child, $item, $format);
-							$node->appendChild($child);
+							$data = compact('dom', 'node', 'key', 'format');
+							$data['value'] = $item;
+							self::__createChild($data);
 						}
 					} else { // Struct
-						if (array_key_exists('@', $value)) {
-							$child = $dom->createElement($key, (string)$value['@']);
-							unset($value['@']);
-						} else {
-							$child = $dom->createElement($key);
-						}
-						self::_fromArray($dom, $child, $value, $format);
-						$node->appendChild($child);
+						self::__createChild(compact('dom', 'node', 'key', 'value', 'format'));
 					}
 				}
 			} else {
 				throw new Exception(__('Invalid array'));
 			}
 		}
+	}
+
+/**
+ * Helper to _fromArray(). It will create childs of arrays
+ *
+ * @param array $data Array with informations to create childs
+ * @return void
+ */
+	private function __createChild($data) {
+		extract($data);
+		$childNS = $childValue = null;
+		if (is_array($value)) {
+			if (isset($value['@'])) {
+				$childValue = (string)$value['@'];
+				unset($value['@']);
+			}
+			if (isset($value['xmlns:'])) {
+				$childNS = $value['xmlns:'];
+				unset($value['xmlns:']);
+			}
+		} elseif (!empty($value) || $value === 0) {
+			$childValue = (string)$value;
+		}
+
+		if ($childValue) {
+			$child = $dom->createElement($key, $childValue);
+		} else {
+			$child = $dom->createElement($key);
+		}
+		if ($childNS) {
+			$child->setAttribute('xmlns', $childNS);
+		}
+
+		self::_fromArray($dom, $child, $value, $format);
+		$node->appendChild($child);
 	}
 
 /**

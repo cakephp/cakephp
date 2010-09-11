@@ -606,6 +606,62 @@ class XmlTest extends CakeTestCase {
 
 		$xmlResponse = Xml::build('<root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>');
 		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+
+		$xml = array(
+			'root' => array(
+				'ns:attr' => array(
+					'xmlns:ns' => 'http://cakephp.org',
+					'@' => 1
+				)
+			)
+		);
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><ns:attr xmlns:ns="http://cakephp.org">1</ns:attr></root>';
+		$xmlResponse = Xml::fromArray($xml);
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
+
+		$xml = array(
+			'root' => array(
+				'tag' => array(
+					'xmlns:pref' => 'http://cakephp.org',
+					'pref:item' => array(
+						'item 1',
+						'item 2'
+					)
+				)
+			)
+		);
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><tag xmlns:pref="http://cakephp.org"><pref:item>item 1</pref:item><pref:item>item 2</pref:item></tag></root>';
+		$xmlResponse = Xml::fromArray($xml);
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
+
+		$xml = array(
+			'root' => array(
+				'tag' => array(
+					'xmlns:' => 'http://cakephp.org'
+				)
+			)
+		);
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root><tag xmlns="http://cakephp.org"/></root>';
+		$xmlResponse = Xml::fromArray($xml);
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
+
+		$xml = array(
+			'root' => array(
+				'xmlns:' => 'http://cakephp.org'
+			)
+		);
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns="http://cakephp.org"/>';
+		$xmlResponse = Xml::fromArray($xml);
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
+
+		$xml = array(
+			'root' => array(
+				'xmlns:ns' => 'http://cakephp.org'
+			)
+		);
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><root xmlns:ns="http://cakephp.org"/>';
+		$xmlResponse = Xml::fromArray($xml);
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlResponse->asXML()), $expected);
 	}
 
 /**
