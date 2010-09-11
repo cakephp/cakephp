@@ -276,7 +276,7 @@ class View extends Object {
  * @access protected
  */
 	private $__passedVars = array(
-		'viewVars', 'action', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
+		'viewVars', 'autoLayout', 'autoRender', 'ext', 'base', 'webroot',
 		'helpers', 'here', 'layout', 'name', 'layoutPath', 'viewPath',
 		'params', 'request', 'data', 'plugin', 'passedArgs', 'cacheAction'
 	);
@@ -652,6 +652,10 @@ class View extends Object {
 	public function __get($name) {
 		if (isset($this->Helpers->{$name})) {
 			return $this->Helpers->{$name};
+		}
+		switch ($name) {
+			case 'action':
+				return $this->request->params['action'];
 		}
 		return null;
 	}
