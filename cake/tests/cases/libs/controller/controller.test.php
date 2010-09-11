@@ -345,8 +345,10 @@ class TestController extends AppController {
  * @return void
  */
 	function index($testId, $test2Id) {
-		$this->data['testId'] = $testId;
-		$this->data['test2Id'] = $test2Id;
+		$this->data = array(
+			'testId' => $testId,
+			'test2Id' => $test2Id
+		);
 	}
 }
 
@@ -880,8 +882,10 @@ class ControllerTest extends CakeTestCase {
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEqual($result, $expected);
 
-		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
-		$Controller = new Controller(null);
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
+		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$Controller->flash('this should work', '/flash', 1, 'ajax2');
 		$result = $Controller->response->body();
@@ -979,7 +983,7 @@ class ControllerTest extends CakeTestCase {
 				$core[0]
 			)
 		), true);
-		$Controller =& new Controller(null, $this->getMock('CakeResponse'));
+		$Controller =& new Controller($this->getMock('CakeRequest'));
 		$Controller->uses = array();
 		$Controller->components = array('Test');
 		$Controller->constructClasses();

@@ -349,6 +349,26 @@ class Controller extends Object {
 	}
 
 /**
+ * Provides backwards compatiblity access for setting values to the request object.
+ *
+ * @return void
+ */
+	public function __set($name, $value) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name} = $value;
+			case 'action':
+				return $this->request->params['action'] = $value;
+			case 'params':
+				return $this->request->params = $value;
+		}
+		return $this->{$name} = $value;
+	}
+
+/**
  * Sets the request objects and configures a number of controller properties
  * based on the contents of the request.
  *
@@ -716,7 +736,7 @@ class Controller extends Object {
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
-		$this->action = $action;
+		$this->request->action = $action;
 		$args = func_get_args();
 		unset($args[0]);
 		return call_user_func_array(array(&$this, $action), $args);
@@ -798,7 +818,7 @@ class Controller extends Object {
 			App::import('View', $this->view);
 		}
 
-		$this->params['models'] = $this->modelNames;
+		$this->request->params['models'] = $this->modelNames;
 
 		$View = new $viewClass($this);
 
@@ -899,8 +919,8 @@ class Controller extends Object {
  */
 	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
-			if (!empty($this->data)) {
-				$data = $this->data;
+			if (!empty($this->request->data)) {
+				$data = $this->request->data;
 			} else {
 				return null;
 			}
