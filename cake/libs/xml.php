@@ -103,7 +103,7 @@ class Xml {
  *
  * - `format` If create childs ('tags') or attributes ('attribute').
  * - `version` Version of XML document. Default is 1.0.
- * - `encoding` Encoding of XML document. Default is the some of application.
+ * - `encoding` Encoding of XML document. If null remove from XML header. Default is the some of application.
  * - `return` If return object of SimpleXMLElement ('simplexml') or DOMDocument ('domdocument'). Default is SimpleXMLElement.
  *
  * Using the following data:
