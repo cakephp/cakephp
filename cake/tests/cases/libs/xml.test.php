@@ -448,11 +448,11 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
- * testToArrayRss
+ * testRss
  *
  * @return void
  */
-	public function testToArrayRss() {
+	public function testRss() {
 		$rss = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'rss.xml');
 		$rssAsArray = Xml::toArray(Xml::build($rss));
 		$this->assertEqual($rssAsArray['rss']['@version'], '2.0');
@@ -470,6 +470,47 @@ class XmlTest extends CakeTestCase {
 			'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn'
 		);
 		$this->assertIdentical($rssAsArray['rss']['channel']['item'][1], $expected);
+
+		$rss = array(
+			'rss' => array(
+				'xmlns:atom' => 'http://www.w3.org/2005/Atom',
+				'@version' => '2.0',
+				'channel' => array(
+					'atom:link' => array(
+						'@href' => 'http://bakery.cakephp.org/articles/rss',
+						'@rel' => 'self',
+						'@type' => 'application/rss+xml'
+					),
+					'title' => 'The Bakery: ',
+					'link' => 'http://bakery.cakephp.org/',
+					'description' => 'Recent  Articles at The Bakery.',
+					'pubDate' => 'Sun, 12 Sep 2010 04:18:26 -0500',
+					'item' => array(
+						array(
+							'title' => 'CakePHP 1.3.4 released',
+							'link' => 'http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released'
+						),
+						array(
+							'title' => 'Wizard Component 1.2 Tutorial',
+							'link' => 'http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial'
+						)
+					)
+				)
+			)
+		);
+		$rssAsSimpleXML = Xml::fromArray($rss);
+		$xmlText = '<' . '?xml version="1.0" encoding="UTF-8"?>';
+		$xmlText .= '<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">';
+		$xmlText .= '<channel>';
+		$xmlText .= '<atom:link href="http://bakery.cakephp.org/articles/rss" rel="self" type="application/rss+xml"/>';
+		$xmlText .= '<title>The Bakery: </title>';
+		$xmlText .= '<link>http://bakery.cakephp.org/</link>';
+		$xmlText .= '<description>Recent  Articles at The Bakery.</description>';
+		$xmlText .= '<pubDate>Sun, 12 Sep 2010 04:18:26 -0500</pubDate>';
+		$xmlText .= '<item><title>CakePHP 1.3.4 released</title><link>http://bakery.cakephp.org/articles/view/cakephp-1-3-4-released</link></item>';
+		$xmlText .= '<item><title>Wizard Component 1.2 Tutorial</title><link>http://bakery.cakephp.org/articles/view/wizard-component-1-2-tutorial</link></item>';
+		$xmlText .= '</channel></rss>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $rssAsSimpleXML->asXML()), $xmlText);
 	}
 
 /**
