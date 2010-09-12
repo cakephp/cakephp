@@ -360,7 +360,9 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, array('return' => 'domdocument', 'format' => 'attributes'))), $expected);
 		$this->assertEqual(Xml::toArray(Xml::fromArray($array)), $array);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, array('return' => 'domdocument'))), $array);
 
 		$array = array(
 			'tags' => array(
@@ -395,6 +397,7 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual(Xml::toArray(Xml::fromArray($array, 'attributes')), $expected);
+		$this->assertEqual(Xml::toArray(Xml::fromArray($array, array('format' => 'attributes', 'return' => 'domdocument'))), $expected);
 
 		$xml = '<root>';
 		$xml .= '<tag id="1">defect</tag>';

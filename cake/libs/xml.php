@@ -268,16 +268,19 @@ class Xml {
 /**
  * Returns this XML structure as a array.
  *
- * @param object $simpleXML SimpleXMLElement instance
+ * @param object $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
  */
-	public static function toArray($simpleXML) {
-		if (!($simpleXML instanceof SimpleXMLElement)) {
-			throw new Exception(__('The input is not instance of SimpleXMLElement.'));
+	public static function toArray($obj) {
+		if ($obj instanceof DOMNode) {
+			$obj = simplexml_import_dom($obj);
+		}
+		if (!($obj instanceof SimpleXMLElement)) {
+			throw new Exception(__('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
 		}
 		$result = array();
-		$namespaces = array_merge(array('' => ''), $simpleXML->getNamespaces(true));
-		self::_toArray($simpleXML, $result, '', array_keys($namespaces));
+		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));
+		self::_toArray($obj, $result, '', array_keys($namespaces));
 		return $result;
 	}
 
