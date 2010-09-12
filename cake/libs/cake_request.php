@@ -1,11 +1,6 @@
 <?php
 /**
- * A class that helps wrap Request information and particulars about a single request.
- * Provides methods commonly used to introspect on the request headers and request body.
- * 
- * Has both an Array and Object interface. You can access framework parameters using indexes:
- *
- * `$request['controller']` or `$request->controller`.
+ * CakeRequest 
  *
  * PHP 5
  *
@@ -24,6 +19,15 @@
  */
 App::import('Core', 'Set');
 
+/**
+ * A class that helps wrap Request information and particulars about a single request.
+ * Provides methods commonly used to introspect on the request headers and request body.
+ * 
+ * Has both an Array and Object interface. You can access framework parameters using indexes:
+ *
+ * `$request['controller']` or `$request->controller`.
+ *
+ */
 class CakeRequest implements ArrayAccess {
 /**
  * Array of parameters parsed from the url.
@@ -105,7 +109,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Constructor 
  *
- * @param string $url Url string to use
+ * @param string $url Trimmed url string to use.  Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  * @return void
  */
@@ -623,6 +627,36 @@ class CakeRequest implements ArrayAccess {
 			return $acceptTypes;
 		}
 		return in_array($type, $acceptTypes);
+	}
+
+/**
+ * Provides a read/write accessor for `$this->data`.  Allows you
+ * to use a syntax similar to `CakeSession` for reading post data.
+ *
+ * ## Reading values.
+ *
+ * `$request->data('Post.title');`
+ *
+ * When reading values you will get `null` for keys/values that do not exist.
+ *
+ * ## Writing values
+ *
+ * `$request->data('Post.title', 'New post!');`
+ *
+ * You can write to any value, even paths/keys that do not exist, and the arrays
+ * will be created for you.
+ *
+ * @param string $name Dot separated name of the value to read/write
+ * @param mixed $value Value to write to the data array.
+ * @return mixed Either the value being read, or this so you can chain consecutive writes.
+ */
+	public function data($name) {
+		$args = func_get_args();
+		if (count($args) == 2) {
+			$this->data = Set::insert($this->data, $name, $args[1]);
+			return $this;
+		}
+		return Set::classicExtract($this->data, $name);
 	}
 
 /**

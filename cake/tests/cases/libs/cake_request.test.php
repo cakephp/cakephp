@@ -1,4 +1,25 @@
 <?php
+/**
+ * CakeRequest Test case file.
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+if (!class_exists('dispatcher')) {
+	require CAKE . 'dispatcher.php';
+}
 App::import('Core', 'CakeRequest');
 
 class CakeRequestTestCase extends CakeTestCase {
@@ -1239,6 +1260,47 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request = new CakeRequest();
 		$expected = '/index.php/h1 onclick=alert(xss);heya';
 		$this->assertEqual($request->base, $expected);
+	}
+
+/**
+ * test the data() method reading
+ *
+ * @return void
+ */
+	function testDataReading() {
+		$_POST['data'] = array(
+			'Model' => array(
+				'field' => 'value'
+			)
+		);
+		$request = new CakeRequest('posts/index');
+		$result = $request->data('Model');
+		$this->assertEquals($_POST['data']['Model'], $result);
+
+		$result = $request->data('Model.imaginary');
+		$this->assertNull($result);
+	}
+
+/**
+ * test writing with data()
+ *
+ * @return void
+ */
+	function testDataWriting() {
+		$_POST['data'] = array(
+			'Model' => array(
+				'field' => 'value'
+			)
+		);
+		$request = new CakeRequest('posts/index');
+		$result = $request->data('Model.new_value', 'new value');
+		$this->assertSame($result, $request, 'Return was not $this');
+		
+		$this->assertEquals($request->data['Model']['new_value'], 'new value');
+
+		$request->data('Post.title', 'New post')->data('Comment.1.author', 'Mark');
+		$this->assertEquals($request->data['Post']['title'], 'New post');
+		$this->assertEquals($request->data['Comment']['1']['author'], 'Mark');
 	}
 
 /**
