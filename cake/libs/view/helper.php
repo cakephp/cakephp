@@ -48,43 +48,11 @@ class Helper extends Object {
 	protected $_helperMap = array();
 
 /**
- * Base URL
- *
- * @deprecated use $request->base instead
- * @var string
- */
-	public $base = null;
-
-/**
- * Webroot path
- *
- * @deprecated use $request->webroot instead
- * @var string
- */
-	public $webroot = null;
-
-/**
  * The current theme name if any.
  *
  * @var string
  */
 	public $theme = null;
-
-/**
- * URL to current action.
- *
- * @deprecated use $request->here instead
- * @var string
- */
-	public $here = null;
-
-/**
- * Parameter array.
- *
- * @deprecated use $request instead
- * @var array
- */
-	public $params = array();
 
 /**
  * Request object 
@@ -94,27 +62,11 @@ class Helper extends Object {
 	public $request = null;
 
 /**
- * Current action.
- *
- * @deprecated use $request->action instead
- * @var string
- */
-	public $action = null;
-
-/**
  * Plugin path
  *
  * @var string
  */
 	public $plugin = null;
-
-/**
- * POST data for models
- *
- * @deprecated use $request->data instead
- * @var array
- */
-	public $data = null;
 
 /**
  * Contains model validation errors of form post-backs
@@ -181,7 +133,7 @@ class Helper extends Object {
 	}
 
 /**
- * Lazy loads helpers
+ * Lazy loads helpers. Provides access to deprecated request properties as well.
  *
  * @param string $name Name of the property being accessed.
  * @return mixed Helper or property found at $name
@@ -195,6 +147,35 @@ class Helper extends Object {
 		if (isset($this->{$name})) {
 			return $this->{$name};
 		}
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name};
+			case 'action':
+				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
+			case 'params':
+				return $this->request;
+		}
+	}
+
+/**
+ * Provides backwards compatiblity access for setting values to the request object.
+ *
+ * @return void
+ */
+	public function __set($name, $value) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name} = $value;
+			case 'action':
+				return $this->request->params['action'] = $value;
+		}
+		return $this->{$name} = $value;
 	}
 
 /**
