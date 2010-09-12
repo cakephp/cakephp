@@ -1304,6 +1304,27 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test writing falsey values.
+ *
+ * @return void
+ */
+	function testDataWritingFalsey() {
+		$request = new CakeRequest('posts/index');
+
+		$request->data('Post.null', null);
+		$this->assertNull($request->data['Post']['null']);
+		
+		$request->data('Post.false', false);
+		$this->assertFalse($request->data['Post']['false']);
+		
+		$request->data('Post.zero', 0);
+		$this->assertSame(0, $request->data['Post']['zero']);
+		
+		$request->data('Post.empty', '');
+		$this->assertSame('', $request->data['Post']['empty']);
+	}
+
+/**
  * backupEnvironment method
  *
  * @return void
