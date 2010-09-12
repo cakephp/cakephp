@@ -23,13 +23,17 @@
 class Xml {
 
 /**
- * Initialize SimpleXMLElement from a given XML string, file path, URL or array.
+ * Initialize SimpleXMLElement or DOMDocument from a given XML string, file path, URL or array.
  *
  * ### Usage:
  *
  * Building XML from a string:
  *
  * `$xml = Xml::build('<example>text</example>');`
+ *
+ * Building XML from string (output DOMDocument):
+ *
+ * `$xml = Xml::build('<example>text</example>', array('return' => 'domdocument'));`
  *
  * Building XML from a file path:
  *
@@ -61,8 +65,14 @@ class Xml {
  * 
  * When building XML from an array ensure that there is only one top level element.
  *
+ * ### Options
+ *
+ * - `return` Can be 'simplexml' to return object of SimpleXMLElement or 'domdocument' to return DOMDocument.
+ * - If using array as input, you can pass `options` from Xml::fromArray.
+ *
  * @param mixed $input XML string, a path to a file, an URL or an array
- * @return object SimpleXMLElement
+ * @param array $options The options to use
+ * @return object SimpleXMLElement or DOMDocument
  * @throws Exception
  */
 	public static function build($input, $options = array()) {
