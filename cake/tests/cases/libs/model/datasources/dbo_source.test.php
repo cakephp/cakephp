@@ -1279,7 +1279,7 @@ class DboSourceTest extends CakeTestCase {
  */
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
-		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author'
+		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test'
 	);
 
 /**
@@ -4328,9 +4328,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInConditions() {
-		$this->loadFixtures('Article');
-
-		$Article = ClassRegistry::init('Article');
+		$Article =& ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4359,14 +4357,35 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test that virtualFields with complex functions and aliases work.
+ *
+ * @return void
+ */
+	function testConditionsWithComplexVirtualFields() {
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'distance' => 'ACOS(SIN(20 * PI() / 180)
+					* SIN(Article.latitude * PI() / 180)
+					+ COS(20 * PI() / 180)
+					* COS(Article.latitude * PI() / 180)
+					* COS((50 - Article.longitude) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+		$conditions = array('distance >=' => 20);
+		$result = $this->db->conditions($conditions, true, true, $Article);
+
+		$this->assertPattern('/\) >= 20/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result);
+	}
+
+/**
  * test order to generate query order clause for virtual fields
  *
  * @return void
  */
 	function testVirtualFieldsInOrder() {
-		$this->loadFixtures('Article');
-
-		$Article = ClassRegistry::init('Article');
+		$Article =& ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4388,9 +4407,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInCalculate() {
-		$this->loadFixtures('Article');
-
-		$Article = ClassRegistry::init('Article');
+		$Article =& ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4432,13 +4449,72 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test reading complex virtualFields with subqueries.
+ *
+ * @return void
+ */
+	function testVirtualFieldsComplexRead() {
+		$this->loadFixtures('DataTest', 'Article', 'Comment');
+		
+		$Article =& ClassRegistry::init('Article');
+		$commentTable = $this->db->fullTableName('comments');
+		$Article =& ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable . 
+				' AS Comment WHERE Article.id = Comment.article_id'
+		);
+		$result = $Article->find('all');
+		$this->assertTrue(count($result) > 0);
+		$this->assertTrue($result[0]['Article']['comment_count'] > 0);
+
+		$DataTest =& ClassRegistry::init('DataTest');
+		$DataTest->virtualFields = array(
+			'complicated' => 'ACOS(SIN(20 * PI() / 180)
+				* SIN(DataTest.float * PI() / 180)
+				+ COS(20 * PI() / 180)
+				* COS(DataTest.count * PI() / 180)
+				* COS((50 - DataTest.float) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+		$result = $DataTest->find('all');
+		$this->assertTrue(count($result) > 0);
+		$this->assertTrue($result[0]['DataTest']['complicated'] > 0);
+	}
+
+/**
+ * test that virtualFields with complex functions and aliases work.
+ *
+ * @return void
+ */
+	function testFieldsWithComplexVirtualFields() {
+		$Article =& new Article();
+		$Article->virtualFields = array(
+			'distance' => 'ACOS(SIN(20 * PI() / 180)
+					* SIN(Article.latitude * PI() / 180)
+					+ COS(20 * PI() / 180)
+					* COS(Article.latitude * PI() / 180)
+					* COS((50 - Article.longitude) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+
+		$fields = array('id', 'distance');
+		$result = $this->db->fields($Article, null, $fields);
+		$qs = $this->db->startQuote;
+		$qe = $this->db->endQuote;
+
+		$this->assertEqual($result[0], "{$qs}Article{$qe}.{$qs}id{$qe}");
+		$this->assertPattern('/Article__distance/', $result[1]);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result[1]);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result[1]);
+	}
+
+/**
  * test group to generate GROUP BY statements on virtual fields
  *
  * @return void
  */
 	function testVirtualFieldsInGroup() {
-		$this->loadFixtures('Article');
-		$Article = new Article();
+		$Article =& ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_year' => 'YEAR(Article.created)'
 		);

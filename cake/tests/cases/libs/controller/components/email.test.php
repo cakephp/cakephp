@@ -267,6 +267,9 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpConfig() {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions = array();
 		$this->Controller->EmailTest->send('anything');
@@ -291,6 +294,9 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testBadSmtpSend() {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
@@ -303,7 +309,7 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpSend() {
-		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
@@ -352,7 +358,7 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpEhlo() {
-		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
@@ -409,7 +415,7 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
-		if (!$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
 			return;
 		}
 		$this->Controller->EmailTest->reset();
@@ -458,7 +464,9 @@ TEMPDOC;
  * @return void
  */
 	function testAuthenticatedSmtpSend() {
-		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
@@ -649,7 +657,9 @@ TEXTBLOC;
  * @return void
  */
 	function testSmtpSendSocket() {
-		$this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost');
+		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+			return;
+		}
 
 		$socket = new CakeSocket(array_merge(array('protocol'=>'smtp'), $this->Controller->EmailTest->smtpOptions));
 		$this->Controller->EmailTest->setConnectionSocket($socket);
@@ -1041,6 +1051,7 @@ HTMLBLOC;
 		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 0.5;
 		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
 		$this->Controller->EmailTest->textMessage = 'This is the body of the message';
 		$this->Controller->EmailTest->htmlMessage = 'This is the body of the message';
@@ -1182,5 +1193,14 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>');
 		$this->assertEqual($result, '<email@example.com>');
+
+		$result = $this->Controller->EmailTest->formatAddress('email@example.com', true);
+		$this->assertEqual($result, ' <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>', true);
+		$this->assertEqual($result, ' <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
+		$this->assertEqual($result, ' <email@example.com>');
 	}
 }

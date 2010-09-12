@@ -1882,7 +1882,7 @@ class DboSource extends DataSource {
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
 			$expression = $this->__quoteFields($model->getVirtualField($field));
-			$virtual[] = '(' .$expression . ") {$this->alias} {$virtualField}";
+			$virtual[] = '(' . $expression . ") {$this->alias} {$virtualField}";
 		}
 		return $virtual;
 	}
