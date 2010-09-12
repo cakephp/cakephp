@@ -609,6 +609,26 @@ class XmlTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual(Xml::toArray($xmlResponse), $expected);
+
+		$xml = array(
+			'soap:Envelope' => array(
+				'xmlns:soap' => 'http://www.w3.org/2001/12/soap-envelope',
+				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
+				'soap:Body' => array(
+					'xmlns:m' => 'http://www.example.org/stock',
+					'm:GetStockPrice' => array(
+						'm:StockName' => 'IBM'
+					)
+				)
+			)
+		);
+		$xmlRequest = Xml::fromArray($xml, array('encoding' => null));
+		$xmlText = '<' . '?xml version="1.0"?>';
+		$xmlText .= '<soap:Envelope xmlns:soap="http://www.w3.org/2001/12/soap-envelope" soap:encodingStyle="http://www.w3.org/2001/12/soap-encoding">';
+		$xmlText .= '<soap:Body xmlns:m="http://www.example.org/stock">';
+		$xmlText .= '<m:GetStockPrice><m:StockName>IBM</m:StockName></m:GetStockPrice>';
+		$xmlText .= '</soap:Body></soap:Envelope>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $xmlRequest->asXML()), $xmlText);
 	}
 
 /**
