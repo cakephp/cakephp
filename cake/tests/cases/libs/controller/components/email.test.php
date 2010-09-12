@@ -692,6 +692,15 @@ TEXTBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>');
 		$this->assertEqual($result, '<email@example.com>');
+
+		$result = $this->Controller->EmailTest->formatAddress('email@example.com', true);
+		$this->assertEqual($result, ' <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>', true);
+		$this->assertEqual($result, ' <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
+		$this->assertEqual($result, ' <email@example.com>');
 	}
 }
 ?>
