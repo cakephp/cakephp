@@ -20,12 +20,73 @@
 App::import('Core', 'Xml');
 
 /**
+ * Article class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class Article extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'Article'
+ */
+	public $name = 'Article';
+
+/**
+ * belongsTo property
+ *
+ * @var array
+ */
+	public $belongsTo = array('User');
+}
+
+/**
+ * User class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class User extends CakeTestModel {
+
+/**
+ * name property
+ *
+ * @var string 'User'
+ */
+	public $name = 'User';
+
+/**
+ * hasMany property
+ *
+ * @var array
+ */
+	public $hasMany = array('Article');
+}
+
+/**
  * XmlTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
 class XmlTest extends CakeTestCase {
+
+/**
+ * autoFixtures property
+ *
+ * @var bool false
+ */
+	public $autoFixtures = false;
+
+/**
+ * fixtures property
+ * @var array
+ */
+	public $fixtures = array(
+		'core.article', 'core.user'
+	);
 
 /**
  * setup method
@@ -751,6 +812,29 @@ class XmlTest extends CakeTestCase {
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);
+	}
+
+/**
+ * testWithModel method
+ *
+ * @return void
+ */
+	public function testWithModel() {
+		$this->loadFixtures('User', 'Article');
+
+		$user = new User();
+		$data = $user->read(null, 1);
+
+		$obj = Xml::build(compact('data'));
+		$expected = '<' . '?xml version="1.0" encoding="UTF-8"?><data>';
+		$expected .= '<User><id>1</id><user>mariano</user><password>5f4dcc3b5aa765d61d8327deb882cf99</password>';
+		$expected .= '<created>2007-03-17 01:16:23</created><updated>2007-03-17 01:18:31</updated></User>';
+		$expected .= '<Article><id>1</id><user_id>1</user_id><title>First Article</title><body>First Article Body</body>';
+		$expected .= '<published>Y</published><created>2007-03-18 10:39:23</created><updated>2007-03-18 10:41:31</updated></Article>';
+		$expected .= '<Article><id>3</id><user_id>1</user_id><title>Third Article</title><body>Third Article Body</body>';
+		$expected .= '<published>Y</published><created>2007-03-18 10:43:23</created><updated>2007-03-18 10:45:31</updated></Article>';
+		$expected .= '</data>';
+		$this->assertEqual(str_replace(array("\r", "\n"), '', $obj->asXML()), $expected);
 	}
 
 }
