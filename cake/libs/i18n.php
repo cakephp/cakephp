@@ -80,12 +80,12 @@ class I18n extends Object {
  */
 	var $__noLocale = false;
 /**
- * Determine if $__domains cache should be wrote
+ * Determine what should be cached
  *
  * @var boolean
  * @access private
  */
-	var $__cache = false;
+	var $__cache = array();
 /**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
@@ -124,7 +124,7 @@ class I18n extends Object {
  */
 	function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
 		$_this =& I18n::getInstance();
-
+		
 		if (strpos($singular, "\r\n") !== false) {
 			$singular = str_replace("\r\n", "\n", $singular);
 		}
@@ -151,13 +151,19 @@ class I18n extends Object {
 		}
 		$_this->domain = $domain . '_' . $_this->l10n->locale;
 
-		if (empty($_this->__domains)) {
-			$_this->__domains = Cache::read($_this->domain, '_cake_core_');
+		if (!isset($_this->__domains[$_this->category][$_this->__lang][$domain])) {
+			$_this->__domains[$_this->category][$_this->__lang][$domain] = Cache::read($_this->domain, '_cake_core_');
 		}
 
-		if (!isset($_this->__domains[$_this->category][$_this->__lang][$domain])) {
+		if (empty($_this->__domains[$_this->category][$_this->__lang][$domain])) {
 			$_this->__bindTextDomain($domain);
-			$_this->__cache = true;
+			$_this->__cache[] = array(
+				'key' => $_this->domain,
+				'category' => $_this->category,
+				'lang' => $_this->__lang,
+				'domain' => $domain,
+				'locale' => $_this->l10n->locale
+			);
 		}
 
 		if (!isset($count)) {
@@ -445,9 +451,20 @@ class I18n extends Object {
  * @access private
  */
 	function __destruct() {
-		if ($this->__cache) {
-			Cache::write($this->domain, array_filter($this->__domains), '_cake_core_');
+		if (!empty($this->__cache)) {
+			foreach($this->__cache as $entry) {
+				if (empty($this->__domains[$entry['category']][$entry['lang']][$entry['domain']])) {
+					continue;
+				}
+				Cache::write(
+					$entry['key'],
+					array_filter($this->__domains[$entry['category']][$entry['lang']][$entry['domain']]),
+					'_cake_core_'
+				);
+			}
 		}
+		$this->__cache = array();
+		$this->__domains = array();
 	}
 }
 ?>
