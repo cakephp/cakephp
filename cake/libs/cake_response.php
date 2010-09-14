@@ -23,10 +23,10 @@
 class CakeResponse {
 
 /**
-* Holds HTTP response statuses
-*
-* @var array
-*/
+ * Holds HTTP response statuses
+ *
+ * @var array
+ */
 	protected $_statusCodes = array(
 		100 => 'Continue',
 		101 => 'Switching Protocols',
@@ -70,10 +70,10 @@ class CakeResponse {
 	);
 
 /**
-* Holds known mime type mappings
-*
-* @var array
-*/
+ * Holds known mime type mappings
+ *
+ * @var array
+ */
 	protected $_mimeTypes = array(
 		'ai' => 'application/postscript',
 		'bcpio' => 'application/x-bcpio',
@@ -263,58 +263,58 @@ class CakeResponse {
 	);
 
 /**
-* Protocol header to send to the client
-*
-* @var string
-*/
+ * Protocol header to send to the client
+ *
+ * @var string
+ */
 	protected $_protocol = 'HTTP/1.1';
 
 /**
-* Status code to send to the client
-*
-* @var integer
-*/
+ * Status code to send to the client
+ *
+ * @var integer
+ */
 	protected $_status = 200;
 
 /**
-* Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
-* or a complete mime-type
-*
-* @var integer
-*/
+ * Content type to send. This can be an 'extension' that will be transformed using the $_mimetypes array
+ * or a complete mime-type
+ *
+ * @var integer
+ */
 	protected $_contentType = 'text/html';
 
 /**
-* Buffer list of headers
-*
-* @var array
-*/
+ * Buffer list of headers
+ *
+ * @var array
+ */
 	protected $_headers = array();
 
 /**
-* Buffer string for response message
-*
-* @var string
-*/
+ * Buffer string for response message
+ *
+ * @var string
+ */
 	protected $_body = null;
 
 /**
-* The charset the response body is encoded with
-*
-* @var string
-*/
+ * The charset the response body is encoded with
+ *
+ * @var string
+ */
 	protected $_charset = 'UTF-8';
 
 /**
-* Class constructor
-*
-* @param array $options list of parameters to setup the response. Possible values are:
-*	- body: the rensonse text that should be sent to the client
-*	- status: the HTTP status code to respond with
-*	- type: a complete mime-type string or an extension mapepd in this class
-*	- charset: the charset for the response body
-* @return void
-*/
+ * Class constructor
+ *
+ * @param array $options list of parameters to setup the response. Possible values are:
+ *	- body: the rensonse text that should be sent to the client
+ *	- status: the HTTP status code to respond with
+ *	- type: a complete mime-type string or an extension mapepd in this class
+ *	- charset: the charset for the response body
+ * @return void
+ */
 	public function __construct(array $options = array()) {
 		if (isset($options['body'])) {
 			$this->body($options['body']);
@@ -331,11 +331,11 @@ class CakeResponse {
 	}
 
 /**
-* Sends the complete response to the client including headers and message body.
-* Will echo out the content in the response body.
-*
-* @return void
-*/
+ * Sends the complete response to the client including headers and message body.
+ * Will echo out the content in the response body.
+ *
+ * @return void
+ */
 	public function send() {
 		if (isset($this->_headers['Location']) && $this->_status === 200) {
 			$this->statusCode(302);
@@ -352,12 +352,12 @@ class CakeResponse {
 	}
 
 /**
-* Sends a header to the client.
-*
-* @param $name the header name
-* @param $value the header value
-* @return void
-*/
+ * Sends a header to the client.
+ *
+ * @param $name the header name
+ * @param $value the header value
+ * @return void
+ */
 	protected function _sendHeader($name, $value = null) {
 		if (is_null($value)) {
 			header($name);
@@ -367,42 +367,42 @@ class CakeResponse {
 	}
 
 /**
-* Sends a content string to the client.
-*
-* @param $content string to send as response body
-* @return void
-*/
+ * Sends a content string to the client.
+ *
+ * @param $content string to send as response body
+ * @return void
+ */
 	protected function _sendContent($content) {
 		echo $content;
 	}
 
 /**
-* Buffers a header string to be sent
-* Returns the complete list of buffered headers
-*
-* ### Single header
-* e.g `header('Location', 'http://example.com');`
-*
-* ### Multiple headers
-* e.g `header(array('Location' => 'http://example.com', 'X-Extra' => 'My header'));`
-*
-* ### String header
-* e.g `header('WWW-Authenticate: Negotiate');`
-*
-* ### Array of string headers
-* e.g `header(array('WWW-Authenticate: Negotiate'), array('Content-type: application/pdf'));`
-*
-* Multiple calls for setting the same header name will have the same effect as setting the header once
-* with the last value sent for it
-*  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
-* will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
-*
-* @param mixed $header. An array of header strings or a single header string
-*	- an assotiative array of "header name" => "header value" is also accepted
-*	- an array of string headers is also accepted
-* @param mixed $value. The header value.
-* @return array list of headers to be sent
-*/
+ * Buffers a header string to be sent
+ * Returns the complete list of buffered headers
+ *
+ * ### Single header
+ * e.g `header('Location', 'http://example.com');`
+ *
+ * ### Multiple headers
+ * e.g `header(array('Location' => 'http://example.com', 'X-Extra' => 'My header'));`
+ *
+ * ### String header
+ * e.g `header('WWW-Authenticate: Negotiate');`
+ *
+ * ### Array of string headers
+ * e.g `header(array('WWW-Authenticate: Negotiate'), array('Content-type: application/pdf'));`
+ *
+ * Multiple calls for setting the same header name will have the same effect as setting the header once
+ * with the last value sent for it
+ *  e.g `header('WWW-Authenticate: Negotiate'); header('WWW-Authenticate: Not-Negotiate');`
+ * will have the same effect as only doing `header('WWW-Authenticate: Not-Negotiate');`
+ *
+ * @param mixed $header. An array of header strings or a single header string
+ *	- an assotiative array of "header name" => "header value" is also accepted
+ *	- an array of string headers is also accepted
+ * @param mixed $value. The header value.
+ * @return array list of headers to be sent
+ */
 	public function header($header = null, $value = null) {
 		if (is_null($header)) {
 			return $this->_headers;
@@ -429,12 +429,12 @@ class CakeResponse {
 	}
 
 /**
-* Buffers the response message to be sent
-* if $content is null the current buffer is returned
-*
-* @param string $content the string message to be sent
-* @return string current message buffer if $content param is passed as null
-*/
+ * Buffers the response message to be sent
+ * if $content is null the current buffer is returned
+ *
+ * @param string $content the string message to be sent
+ * @return string current message buffer if $content param is passed as null
+ */
 	public function body($content = null) {
 		if (is_null($content)) {
 			return $this->_body;
@@ -443,12 +443,12 @@ class CakeResponse {
 	}
 
 /**
-* Sets the HTTP status code to be sent
-* if $code is null the current code is returned
-*
-* @param integer $code
-* @return integer current status code
-*/
+ * Sets the HTTP status code to be sent
+ * if $code is null the current code is returned
+ *
+ * @param integer $code
+ * @return integer current status code
+ */
 	public function statusCode($code = null) {
 		if (is_null($code)) {
 			return $this->_status;
@@ -494,26 +494,26 @@ class CakeResponse {
 	}
 
 /**
-* Sets the response content type. It can be either a file extension
-* which will be mapped internally to a mime-type or a string representing a mime-type
-* if $contentType is null the current content type is returned
-* if $contentType is an associative array, it will be stored as a content type definition
-*
-* ### Setting the content type
-* e.g `type('jpg');`
-*
-* ### Returning the current content type
-* e.g `type();`
-*
-* ### Storing a content type definition
-* e.g `type(array('keynote' => 'application/keynote'));`
-*
-* ### Replacing a content type definition
-* e.g `type(array('jpg' => 'text/plain'));`
-*
-* @param string $contentType
-* @return mixed current content type or false if supplied an invalid content type
-*/
+ * Sets the response content type. It can be either a file extension
+ * which will be mapped internally to a mime-type or a string representing a mime-type
+ * if $contentType is null the current content type is returned
+ * if $contentType is an associative array, it will be stored as a content type definition
+ *
+ * ### Setting the content type
+ * e.g `type('jpg');`
+ *
+ * ### Returning the current content type
+ * e.g `type();`
+ *
+ * ### Storing a content type definition
+ * e.g `type(array('keynote' => 'application/keynote'));`
+ *
+ * ### Replacing a content type definition
+ * e.g `type(array('jpg' => 'text/plain'));`
+ *
+ * @param string $contentType
+ * @return mixed current content type or false if supplied an invalid content type
+ */
 	public function type($contentType = null) {
 		if (is_null($contentType)) {
 			return $this->_contentType;
