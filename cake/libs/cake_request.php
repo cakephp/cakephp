@@ -359,7 +359,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
  *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
- * @return void
+ * @return string The client IP.
  */
 	public function clientIp($safe = true) {
 		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
