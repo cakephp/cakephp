@@ -1478,7 +1478,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->expects($this->once())->method('beforeFilter');
 		$Controller->Components->expects($this->at(0))->method('trigger')
-			->with('initialize', array(&$Controller));
+			->with('initialize', array(&$Controller), array('triggerDisabled' => true));
 
 		$Controller->Components->expects($this->at(1))->method('trigger')
 			->with('startup', array(&$Controller));

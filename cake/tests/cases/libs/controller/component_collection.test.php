@@ -150,6 +150,27 @@ class ComponentCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * test that the initalize callback is triggered on all components even those that are disabled.
+ *
+ * @return void
+ */
+	function testTriggerOnDisabledObjects() {
+		$controller = 'Not a controller';
+		
+		$this->_makeMockClasses();
+		$this->Components->load('TriggerMockCookie', array(), false);
+		$this->Components->load('TriggerMockSecurity');
+
+		$this->Components->TriggerMockCookie->expects($this->once())->method('initalize')
+			->with($controller);
+		$this->Components->TriggerMockSecurity->expects($this->once())->method('initalize')
+			->with($controller);
+
+		$result = $this->Components->trigger('initialize', array(&$controller), array('triggerDisabled' => true));
+		$this->assertTrue($result);
+	}
+
+/**
  * test trigger and disabled helpers.
  *
  * @return void
