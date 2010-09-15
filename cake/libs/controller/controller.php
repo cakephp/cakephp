@@ -497,10 +497,7 @@ class Controller extends Object {
 				$this->loadModel($this->modelClass, $id);
 			} elseif ($this->uses) {
 				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-				$modelClassName = $uses[0];
-				if (strpos($uses[0], '.') !== false) {
-					list($plugin, $modelClassName) = explode('.', $uses[0]);
-				}
+				list($plugin, $modelClassName) = pluginSplit($uses[0]);
 				$this->modelClass = $modelClassName;
 				foreach ($uses as $modelClass) {
 					$this->loadModel($modelClass);
