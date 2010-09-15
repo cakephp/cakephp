@@ -23,6 +23,18 @@ App::import('Controller', 'ComponentCollection', false);
  * controller logic that can be composed into a controller.  Components also 
  * provide request life-cycle callbacks for injecting logic at specific points.
  *
+ * ## Life cycle callbacks
+ *
+ * Components can provide several callbacks that are fired at various stages of the request
+ * cycle.  The available callbacks are:
+ *
+ * - `initialize()` - Fired before the controller's beforeFilter method.
+ * - `startup()` - Fired after the controller's beforeFilter method.
+ * - `beforeRender()` - Fired before the view + layout are rendered.
+ * - `shutdown()` - Fired after the action is complete and the view has been rendered 
+ *    but before Controller::afterFilter(). 
+ * - `beforeRedirect()` - Fired before a redirect() is done.
+ *
  * @package       cake
  * @subpackage    cake.cake.libs.controller
  * @link          http://book.cakephp.org/view/993/Components
