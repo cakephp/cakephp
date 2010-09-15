@@ -21,6 +21,13 @@ App::import('Core', 'ObjectCollection');
 class ComponentCollection extends ObjectCollection {
 
 /**
+ * The controller that this collection was initialized with.
+ *
+ * @var Controller
+ */
+	protected $_Controller = null;
+
+/**
  * Initializes all the Components for a controller.
  * Attaches a reference of each component to the Controller.
  *
@@ -31,10 +38,20 @@ class ComponentCollection extends ObjectCollection {
 		if (empty($Controller->components)) {
 			return;
 		}
+		$this->_Controller = $Controller;
 		$components = ComponentCollection::normalizeObjectArray($Controller->components);
 		foreach ($components as $name => $properties) {
 			$Controller->{$name} = $this->load($properties['class'], $properties['settings']);
 		}
+	}
+
+/**
+ * Get the controller associated with the collection.
+ *
+ * @return Controller.
+ */
+	public function getController() {
+		return $this->_Controller;
 	}
 
 /**

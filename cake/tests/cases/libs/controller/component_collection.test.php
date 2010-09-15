@@ -274,4 +274,18 @@ class ComponentCollectionTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * test getting the controller out of the collection
+ *
+ * @return void
+ */
+	function testGetController() {
+		$controller = $this->getMock('Controller');
+		$controller->components = array('Security');
+		$this->Components->init($controller);
+		$result = $this->Components->getController();
+
+		$this->assertSame($controller, $result);
+	}
 }
