@@ -79,7 +79,7 @@ abstract class ObjectCollection {
 		if ($options['triggerDisabled'] === true) {
 			$list = array_keys($this->_loaded);
 		}
-		foreach ($this->_enabled as $name) {
+		foreach ($list as $name) {
 			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
