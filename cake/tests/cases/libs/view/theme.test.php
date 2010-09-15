@@ -21,12 +21,6 @@ App::import('View', 'View');
 App::import('View', 'Theme');
 App::import('Core', 'Controller');
 
-if (!class_exists('ErrorHandler')) {
-	App::import('Core', array('Error'));
-}
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 
 /**
  * ThemePostsController class
@@ -43,6 +37,8 @@ class ThemePostsController extends Controller {
  * @access public
  */
 	public $name = 'ThemePosts';
+	
+	public $theme = null;
 
 /**
  * index method
@@ -55,25 +51,6 @@ class ThemePostsController extends Controller {
 		$test2 = 'more data';
 		$test3 = 'even more data';
 		$this->set(compact('test2', 'test3'));
-	}
-}
-
-/**
- * ThemeViewTestErrorHandler class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
- */
-class ThemeViewTestErrorHandler extends ErrorHandler {
-
-/**
- * stop method
- *
- * @access public
- * @return void
- */
-	function _stop() {
-		return;
 	}
 }
 
@@ -119,18 +96,6 @@ class TestThemeView extends ThemeView {
 		return $this->_getLayoutFileName($name);
 	}
 
-/**
- * cakeError method
- *
- * @param mixed $method
- * @param mixed $messages
- * @access public
- * @return void
- */
-	function cakeError($method, $messages) {
-		$error = new ThemeViewTestErrorHandler($method, $messages);
-		return $error;
-	}
 }
 
 /**
@@ -149,8 +114,9 @@ class ThemeViewTest extends CakeTestCase {
  */
 	function setUp() {
 		Router::reload();
-		$this->Controller = new Controller();
-		$this->PostsController = new ThemePostsController();
+		$request = new CakeRequest('posts/index');
+		$this->Controller = new Controller($request);
+		$this->PostsController = new ThemePostsController($request);
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->ThemeView = new ThemeView($this->PostsController);
