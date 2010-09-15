@@ -533,7 +533,7 @@ class Controller extends Object {
  * @return void
  */
 	public function startupProcess() {
-		$this->Components->trigger('initialize', array(&$this), array('triggerDisabled' => true));
+		$this->Components->trigger('initialize', array(&$this));
 		$this->beforeFilter();
 		$this->Components->trigger('startup', array(&$this));
 	}

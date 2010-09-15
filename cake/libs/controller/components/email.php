@@ -299,12 +299,22 @@ class EmailComponent extends Component {
 	protected $_smtpConnection = null;
 
 /**
+ * Constructor
+ *
+ * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param array $settings Array of configuration settings.
+ */
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		$this->Controller = $collection->getController();
+		parent::__construct($collection, $settings);
+	}
+
+/**
  * Initialize component
  *
  * @param object $controller Instantiating controller
  */
 	public function initialize(&$controller) {
-		$this->Controller = $controller;
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
