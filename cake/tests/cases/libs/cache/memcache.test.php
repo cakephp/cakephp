@@ -303,4 +303,16 @@ class MemcacheEngineTest extends CakeTestCase {
 		Cache::delete('short_duration_test', 'short_memcache');
 	}
 
+/**
+ * test clearing memcache.
+ *
+ * @return void
+ */
+	function testClear() {
+		Cache::write('some_value', 'value', 'memcache');
+
+		$result = Cache::clear(false, 'memcache');
+		$this->assertTrue($result);
+		$this->assertFalse(Cache::read('some_value', 'memcache'));
+	}
 }
