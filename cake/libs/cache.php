@@ -172,8 +172,10 @@ class Cache {
 	}
 
 /**
- * Temporarily change settings to current config options. if no params are passed, resets settings if needed
- * Cache::write() will reset the configuration changes made
+ * Temporarily change the settings on a cache config.  The settings will persist for the next write
+ * operation (write, decrement, increment, clear). Any reads that are done before the write, will 
+ * use the modified settings. If `$settings` is empty, the settings will be reset to the 
+ * original configuration.
  *
  * Can be called with 2 or 3 parameters. To set multiple values at once.
  *
@@ -182,6 +184,10 @@ class Cache {
  * Or to set one value.
  *
  * `Cache::set('duration', '+30 minutes', 'my_config');`
+ *
+ * To reset a config back to the originally configured values.
+ *
+ * `Cache::set(null, 'my_config');`
  *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
@@ -265,7 +271,7 @@ class Cache {
 		}
 
 		$success = self::$_engines[$config]->write($settings['prefix'] . $key, $value, $settings['duration']);
-		self::set(array(), null, $config);
+		self::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				sprintf(__("%s cache was unable to write '%s' to cache", true), $config, $key),
@@ -307,10 +313,7 @@ class Cache {
 		if (!$key) {
 			return false;
 		}
-		$success = self::$_engines[$config]->read($settings['prefix'] . $key);
-
-		self::set(array(), null, $config);
-		return $success;
+		return self::$_engines[$config]->read($settings['prefix'] . $key);
 	}
 
 /**
@@ -337,7 +340,7 @@ class Cache {
 			return false;
 		}
 		$success = self::$_engines[$config]->increment($settings['prefix'] . $key, $offset);
-		self::set(array(), null, $config);
+		self::set(null, $config);
 		return $success;
 	}
 /**
@@ -364,7 +367,7 @@ class Cache {
 			return false;
 		}
 		$success = self::$_engines[$config]->decrement($settings['prefix'] . $key, $offset);
-		self::set(array(), null, $config);
+		self::set(null, $config);
 		return $success;
 	}
 /**
@@ -399,7 +402,7 @@ class Cache {
 		}
 
 		$success = self::$_engines[$config]->delete($settings['prefix'] . $key);
-		self::set(array(), null, $config);
+		self::set(null, $config);
 		return $success;
 	}
 
@@ -421,7 +424,7 @@ class Cache {
 			return false;
 		}
 		$success = self::$_engines[$config]->clear($check);
-		self::set(array(), null, $config);
+		self::set(null, $config);
 		return $success;
 	}
 
