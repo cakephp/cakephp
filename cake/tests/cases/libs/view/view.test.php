@@ -874,6 +874,12 @@ class ViewTest extends CakeTestCase {
 
 		$View->set(array('key3' => 'value3'));
 		$this->assertIdentical($View->getVar('key3'), 'value3');
+		
+		$View->viewVars = array();
+		$View->set(array(3 => 'three', 4 => 'four'));
+		$View->set(array(1 => 'one', 2 => 'two'));
+		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
+		$this->assertEqual($View->viewVars, $expected);
 	}
 
 /**

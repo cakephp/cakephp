@@ -93,6 +93,12 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->templateVars['one'], 'three');
 		$this->assertTrue(isset($this->Task->templateVars['four']));
 		$this->assertEqual($this->Task->templateVars['four'], 'five');
+		
+		$this->Task->templateVars = array();
+		$this->Task->set(array(3 => 'three', 4 => 'four'));
+		$this->Task->set(array(1 => 'one', 2 => 'two'));
+		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
+		$this->assertEqual($this->Task->templateVars, $expected);
 	}
 
 /**

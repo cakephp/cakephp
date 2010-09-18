@@ -115,10 +115,7 @@ class TemplateTask extends Shell {
 		if ($data == null) {
 			return false;
 		}
-
-		foreach ($data as $name => $value) {
-			$this->templateVars[$name] = $value;
-		}
+		$this->templateVars = $data + $this->templateVars;
 	}
 
 /**
