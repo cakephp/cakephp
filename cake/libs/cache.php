@@ -414,12 +414,6 @@ class Cache {
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */
 	public static function clear($check = false, $config = 'default') {
-		$settings = self::settings($config);
-
-		if (empty($settings)) {
-			return null;
-		}
-
 		if (!self::isInitialized($config)) {
 			return false;
 		}

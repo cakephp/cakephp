@@ -193,4 +193,17 @@ class ApcEngineTest extends CakeTestCase {
 		$result = Cache::read('test_increment', 'apc');
 		$this->assertEqual(8, $result);
 	}
+
+/**
+ * test the clearing of cache keys
+ *
+ * @return void
+ */
+	function testClear() {
+		Cache::write('some_value', 'value', 'apc');
+
+		$result = Cache::clear(false, 'apc');
+		$this->assertTrue($result);
+		$this->assertFalse(Cache::read('some_value', 'apc'));
+	}
 }
