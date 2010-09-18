@@ -57,10 +57,13 @@ class I18nTest extends CakeTestCase {
 
 	function testTranslationCaching() {
 		Configure::write('Config.language', 'cache_test_po');
-		$i18n =& i18n::getInstance();
-		
+		$i18n =& i18n::getInstance();	
 		// reset cache & i18n
 		$i18n->__destruct();
+		// reset internally stored entries
+		$i18n->__cache = array();
+		$i18n->__domains = array();
+		
 		Cache::clear(false, '_cake_core_');
 		$lang = $i18n->l10n->locale;
 
@@ -69,29 +72,31 @@ class I18nTest extends CakeTestCase {
 		// make some calls to translate using different domains
 		$this->assertEqual(i18n::translate('dom1.foo', false, 'dom1'), 'Dom 1 Foo');
 		$this->assertEqual(i18n::translate('dom1.bar', false, 'dom1'), 'Dom 1 Bar');
-
 		$this->assertEqual($i18n->__cache[0]['key'], 'dom1_' . $lang);
 		$this->assertEqual($i18n->__cache[0]['domain'], 'dom1');
-		$this->assertEqual($i18n->__domains['LC_MESSAGES']['cache_test_po']['dom1']['dom1.foo'], 'Dom 1 Foo');
+		$this->assertEqual($i18n->__domains['dom1']['cache_test_po']['LC_MESSAGES']['dom1.foo'], 'Dom 1 Foo');
 
 		// destruct -> writes to cache
 		$i18n->__destruct();
+		// reset internally stored entries
+		$i18n->__domains = array();
+		$i18n->__cache = array();
 
 		// now only dom1 should be in cache
 		$cachedDom1 = Cache::read('dom1_' . $lang, '_cake_core_');
-		$this->assertEqual($cachedDom1['dom1.foo'], 'Dom 1 Foo');
-		$this->assertEqual($cachedDom1['dom1.bar'], 'Dom 1 Bar');
+		$this->assertEqual($cachedDom1['LC_MESSAGES']['dom1.foo'], 'Dom 1 Foo');
+		$this->assertEqual($cachedDom1['LC_MESSAGES']['dom1.bar'], 'Dom 1 Bar');
 		// dom2 not in cache
 		$this->assertFalse(Cache::read('dom2_' . $lang, '_cake_core_'));
 
 		// translate a item of dom2 (adds dom2 to cache)
 		$this->assertEqual(i18n::translate('dom2.foo', false, 'dom2'), 'Dom 2 Foo');
 
-		// modify cache entry to verify that dom1 entry is now read from cache 
-		$cachedDom1['dom1.foo'] = 'FOO';
+		// modify cache entry manually to verify that dom1 entry is now read from cache 
+		$cachedDom1['LC_MESSAGES']['dom1.foo'] = 'FOO';
 		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
 		$this->assertEqual(i18n::translate('dom1.foo', false, 'dom1'), 'FOO');
-
+		
 		// verify that only dom2 will be cached now
 		$this->assertEqual($i18n->__cache[0]['key'], 'dom2_' . $lang);
 		$this->assertEqual(count($i18n->__cache), 1);
@@ -101,8 +106,8 @@ class I18nTest extends CakeTestCase {
 
 		// verify caching through manual read from cache
 		$cachedDom2 = Cache::read('dom2_' . $lang, '_cake_core_');
-		$this->assertEqual($cachedDom2['dom2.foo'], 'Dom 2 Foo');
-		$this->assertEqual($cachedDom2['dom2.bar'], 'Dom 2 Bar');
+		$this->assertEqual($cachedDom2['LC_MESSAGES']['dom2.foo'], 'Dom 2 Foo');
+		$this->assertEqual($cachedDom2['LC_MESSAGES']['dom2.bar'], 'Dom 2 Bar');
 	}
 
 
