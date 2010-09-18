@@ -175,12 +175,23 @@ class Cache {
  * Temporarily change settings to current config options. if no params are passed, resets settings if needed
  * Cache::write() will reset the configuration changes made
  *
+ * Can be called with 2 or 3 parameters. To set multiple values at once.
+ *
+ * `Cache::set(array('duration' => '+30 minutes'), 'my_config');` 
+ *
+ * Or to set one value.
+ *
+ * `Cache::set('duration', '+30 minutes', 'my_config');`
+ *
  * @param mixed $settings Optional string for simple name-value pair or array
  * @param string $value Optional for a simple name-value pair
  * @param string $config The configuration name you are changing. Defaults to 'default'
  * @return array Array of settings.
  */
 	public static function set($settings = array(), $value = null, $config = 'default') {
+		if (is_array($settings) && $value !== null) {
+			$config = $value;
+		}
 		if (!isset(self::$_config[$config]) || !isset(self::$_engines[$config])) {
 			return false;
 		}
@@ -417,11 +428,11 @@ class Cache {
 /**
  * Check if Cache has initialized a working config for the given name.
  *
- * @param string $engine Name of the engine
+ * @param string $engine Name of the engine, Defaults to default
  * @param string $config Name of the configuration setting
  * @return bool Whether or not the config name has been initialized.
  */
-	public static function isInitialized($name) {
+	public static function isInitialized($name = 'default') {
 		if (Configure::read('Cache.disable')) {
 			return false;
 		}
@@ -431,7 +442,7 @@ class Cache {
 /**
  * Return the settings for the named cache engine.
  *
- * @param string $engine Name of the configuration to get settings for.
+ * @param string $engine Name of the configuration to get settings for. Defaults to 'default'
  * @return array list of settings for this engine
  * @see Cache::config()
  * @access public

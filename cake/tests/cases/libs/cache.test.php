@@ -399,4 +399,17 @@ class CacheTest extends CakeTestCase {
 		Cache::set($_cacheSet);
 	}
 
+/**
+ * test set() parameter handling for user cache configs.
+ *
+ * @return void
+ */
+	function testSetOnAlternateConfigs() {
+		Cache::config('file_config', array('engine' => 'File', 'prefix' => 'test_file_'));
+		Cache::set(array('duration' => '+1 year'), 'file_config');
+		$settings = Cache::settings('file_config');
+		
+		$this->assertEquals('test_file_', $settings['prefix']);
+		$this->assertEquals(31536000, $settings['duration']);
+	}
 }
