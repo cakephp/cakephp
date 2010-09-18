@@ -4510,6 +4510,24 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test reading virtual fields containing newlines when recursive > 0
+ *
+ * @return void
+ */
+	function testReadVirtualFieldsWithNewLines() {
+		$Article =& new Article();
+		$Article->recursive = 1;
+		$Article->virtualFields = array(
+			'test' => '
+			User.id + User.id
+			'
+		);
+		$result = $this->db->fields($Article, null, array());
+		$result = $this->db->fields($Article, $Article->alias, $result);
+		$this->assertPattern('/[`\"]User[`\"]\.[`\"]id[`\"] \+ [`\"]User[`\"]\.[`\"]id[`\"]/', $result[7]);
+	}
+
+/**
  * test group to generate GROUP BY statements on virtual fields
  *
  * @return void
