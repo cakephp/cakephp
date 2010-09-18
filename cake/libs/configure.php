@@ -378,7 +378,6 @@ class Configure {
 						'serialize' => true, 'duration' => $duration
 					)));
 				}
-				Cache::config('default');
 			}
 			App::init();
 			App::build();
