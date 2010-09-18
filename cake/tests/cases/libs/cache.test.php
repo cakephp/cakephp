@@ -172,12 +172,10 @@ class CacheTest extends CakeTestCase {
 	function testConfigSettingDefaultConfigKey() {
 		Cache::config('test_name', array('engine' => 'File', 'prefix' => 'test_name_'));
 
-		Cache::config('test_name');
-		Cache::write('value_one', 'I am cached');
-		$result = Cache::read('value_one');
+		Cache::write('value_one', 'I am cached', 'test_name');
+		$result = Cache::read('value_one', 'test_name');
 		$this->assertEqual($result, 'I am cached');
 
-		Cache::config('default');
 		$result = Cache::read('value_one');
 		$this->assertEqual($result, null);
 
@@ -185,13 +183,11 @@ class CacheTest extends CakeTestCase {
 		$result = Cache::read('value_one');
 		$this->assertEqual($result, 'I am in default config!');
 
-		Cache::config('test_name');
-		$result = Cache::read('value_one');
+		$result = Cache::read('value_one', 'test_name');
 		$this->assertEqual($result, 'I am cached');
 
-		Cache::delete('value_one');
-		Cache::config('default');
-		Cache::delete('value_one');
+		Cache::delete('value_one', 'test_name');
+		Cache::delete('value_one', 'default');
 	}
 
 /**
@@ -345,34 +341,34 @@ class CacheTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 		Cache::config('test_cache_disable_1', array('engine'=> 'File', 'path' => TMP . 'tests'));
 
-		$this->assertTrue(Cache::write('key_1', 'hello'));
-		$this->assertIdentical(Cache::read('key_1'), 'hello');
+		$this->assertTrue(Cache::write('key_1', 'hello', 'test_cache_disable_1'));
+		$this->assertIdentical(Cache::read('key_1', 'test_cache_disable_1'), 'hello');
 
 		Configure::write('Cache.disable', true);
 
-		$this->assertFalse(Cache::write('key_2', 'hello'));
-		$this->assertFalse(Cache::read('key_2'));
+		$this->assertFalse(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
+		$this->assertFalse(Cache::read('key_2', 'test_cache_disable_1'));
 
 		Configure::write('Cache.disable', false);
 
-		$this->assertTrue(Cache::write('key_3', 'hello'));
-		$this->assertIdentical(Cache::read('key_3'), 'hello');
+		$this->assertTrue(Cache::write('key_3', 'hello', 'test_cache_disable_1'));
+		$this->assertIdentical(Cache::read('key_3', 'test_cache_disable_1'), 'hello');
 
 		Configure::write('Cache.disable', true);
 		Cache::config('test_cache_disable_2', array('engine'=> 'File', 'path' => TMP . 'tests'));
 
-		$this->assertFalse(Cache::write('key_4', 'hello'));
-		$this->assertFalse(Cache::read('key_4'));
+		$this->assertFalse(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
+		$this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
 
 		Configure::write('Cache.disable', false);
 
-		$this->assertTrue(Cache::write('key_5', 'hello'));
-		$this->assertIdentical(Cache::read('key_5'), 'hello');
+		$this->assertTrue(Cache::write('key_5', 'hello', 'test_cache_disable_2'));
+		$this->assertIdentical(Cache::read('key_5', 'test_cache_disable_2'), 'hello');
 
 		Configure::write('Cache.disable', true);
 
-		$this->assertFalse(Cache::write('key_6', 'hello'));
-		$this->assertFalse(Cache::read('key_6'));
+		$this->assertFalse(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
+		$this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
 	}
 
 /**
