@@ -218,14 +218,9 @@ class DebuggerTest extends CakeTestCase {
 		$result = Debugger::exportVar($View);
 		$expected = 'View
 		View::$Helpers = HelperCollection object
-		View::$base = NULL
-		View::$here = NULL
 		View::$plugin = NULL
 		View::$name = ""
-		View::$action = NULL
-		View::$params = array
 		View::$passedArgs = array
-		View::$data = array
 		View::$helpers = array
 		View::$viewPath = ""
 		View::$viewVars = array
@@ -247,7 +242,6 @@ class DebuggerTest extends CakeTestCase {
 		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
-		View::$webroot = NULL
 		View::$request = NULL';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));

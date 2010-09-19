@@ -44,6 +44,7 @@ class AuthBlueberryUser extends CakeTestModel {
  */
 	public $useTable = false;
 }
+
 if (!class_exists('AppController')) {
 	/**
 	 * AppController class
@@ -67,24 +68,6 @@ if (!class_exists('AppController')) {
 	 */
 		function beforeRender() {
 			echo $this->Blueberry->testName;
-		}
-	/**
-	 * header method
-	 *
-	 * @access public
-	 * @return void
-	 */
-		function header($header) {
-			echo $header;
-		}
-	/**
-	 * _stop method
-	 *
-	 * @access public
-	 * @return void
-	 */
-		function _stop($status = 0) {
-			echo 'Stopped with status: ' . $status;
 		}
 	}
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
@@ -228,7 +211,17 @@ class ErrorHandlerTest extends CakeTestCase {
 
 	function teardown() {
 		Configure::write('debug', $this->_debug);
-	} 
+	}
+
+/**
+ * Mocks out the response on the errorhandler object so headers aren't modified.
+ *
+ * @return void
+ */
+	protected function _mockResponse($error) {
+		$error->controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		return $error;
+	}
 
 /**
  * test handleException generating a page.
@@ -237,6 +230,9 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function testHandleException() {
 		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
+			return;
+		}
+		if ($this->skipIf(PHP_SAPI == 'cli', 'This integration test can not be run in cli.')) {
 			return;
 		}
 		$error = new NotFoundException('Kaboom!');
@@ -256,7 +252,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Configure::write('debug', 2);
 		
 		$exception = new MissingWidgetThingException('Widget not found');
-		$ErrorHandler = new MyCustomErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new MyCustomErrorHandler($exception));
 
 		ob_start();
 		$ErrorHandler->render();
@@ -273,7 +269,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testSubclassMethodsNotBeingConvertedDebug0() {
 		Configure::write('debug', 0);
 		$exception = new MissingWidgetThingException('Widget not found');
-		$ErrorHandler = new MyCustomErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new MyCustomErrorHandler($exception));
 
 		$this->assertEqual('missingWidgetThing', $ErrorHandler->method);
 
@@ -293,7 +289,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Configure::write('debug', 0);
 		
 		$exception = new MissingControllerException('PostsController');
-		$ErrorHandler = new MyCustomErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new MyCustomErrorHandler($exception));
 		
 		$this->assertEqual('error400', $ErrorHandler->method);
 
@@ -341,7 +337,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testUnknownExceptionTypeWithExceptionThatHasA400Code() {
 		$exception = new MissingWidgetThingException('coding fail.');
 		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(404);
 
 		ob_start();
@@ -360,7 +356,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testUnknownExceptionTypeWithNoCodeIsA500() {
 		$exception = new OutOfBoundsException('foul ball.');
 		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		ob_start();
@@ -387,7 +383,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$exception = new NotFoundException('Custom message');
 		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(404);
 
 		ob_start();
@@ -409,7 +405,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Configure::write('debug', 0);
 
 		$exception = new NotFoundException('Custom message');
-		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new ErrorHandler($exception));
 
 		ob_start();
 		$ErrorHandler->render();
@@ -417,7 +413,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertContains('Custom message', $result);
 
 		$exception = new MissingActionException(array('controller' => 'PostsController', 'action' => 'index'));
-		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new ErrorHandler($exception));
 
 		ob_start();
 		$ErrorHandler->render();
@@ -436,7 +432,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		Router::setRequestInfo($request);
 
 		$exception = new NotFoundException('Custom message');
-		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new ErrorHandler($exception));
 
 		ob_start();
 		$ErrorHandler->render();
@@ -455,7 +451,7 @@ class ErrorHandlerTest extends CakeTestCase {
 	function testError500Message() {
 		$exception = new InternalErrorException('An Internal Error Has Occurred');
 		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
 		$ErrorHandler->controller->response->expects($this->once())->method('statusCode')->with(500);
 
 		ob_start();
@@ -475,7 +471,7 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController');
 
 		$exception = new MissingControllerException(array('controller' => 'PostsController'));
-		$ErrorHandler = new ErrorHandler($exception);
+		$ErrorHandler = $this->_mockResponse(new ErrorHandler($exception));
 
 		ob_start();
 		$ErrorHandler->render();
@@ -624,7 +620,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function testCakeExceptionHandling($exception, $patterns, $code) {
 		$ErrorHandler = new ErrorHandler($exception);
-		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode'));
+		$ErrorHandler->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
 		$ErrorHandler->controller->response->expects($this->once())
 			->method('statusCode')
 			->with($code);
