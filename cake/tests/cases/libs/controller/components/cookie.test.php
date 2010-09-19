@@ -75,6 +75,7 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$_COOKIE = array();
 		$Collection = new ComponentCollection();
 		$this->Cookie = new CookieComponent($Collection);
 		$this->Controller = new CookieComponentTestController();
@@ -86,7 +87,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Cookie->domain = '';
 		$this->Cookie->secure = false;
 		$this->Cookie->key = 'somerandomhaskey';
-		
+
 		$this->Cookie->startup($this->Controller);
 	}
 
