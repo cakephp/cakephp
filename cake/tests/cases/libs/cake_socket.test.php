@@ -145,13 +145,13 @@ class CakeSocketTest extends CakeTestCase {
 		$this->Socket->connect();
 		$this->assertEqual($this->Socket->read(26), null);
 
-		$config = array('host' => '127.0.0.1', 'timeout' => 1);
+		$config = array('host' => '127.0.0.1', 'timeout' => 0.5);
 		$this->Socket = new CakeSocket($config);
 		$this->assertTrue($this->Socket->connect());
 		$this->assertFalse($this->Socket->read(1024 * 1024));
 		$this->assertEqual($this->Socket->lastError(), '2: ' . __('Connection timed out'));
 
-		$config = array('host' => 'localhost', 'timeout' => 30);
+		$config = array('host' => 'cakephp.org', 'port' => 80, 'timeout' => 20);
 		$this->Socket = new CakeSocket($config);
 		$this->assertTrue($this->Socket->connect());
 		$this->assertEqual($this->Socket->read(26), null);
