@@ -356,7 +356,7 @@ class CookieComponent extends Component {
  * @param string $value Value for cookie
  */
 	protected function _write($name, $value) {
-		setcookie($this->name . $name, $this->_encrypt($value), $this->_expires, $this->path, $this->domain, $this->secure);
+		$this->_setcookie($this->name . $name, $this->_encrypt($value), $this->_expires, $this->path, $this->domain, $this->secure);
 
 		if (!is_null($this->_reset)) {
 			$this->_expires = $this->_reset;
@@ -368,20 +368,34 @@ class CookieComponent extends Component {
  * Sets a cookie expire time to remove cookie value
  *
  * @param string $name Name of cookie
- * @access private
+ * @return void
  */
-	function _delete($name) {
-		setcookie($this->name . $name, '', time() - 42000, $this->path, $this->domain, $this->secure);
+	protected function _delete($name) {
+		$this->_setcookie($this->name . $name, '', time() - 42000, $this->path, $this->domain, $this->secure);
 	}
 
+/**
+ * Object wrapper for setcookie() so it can be mocked in unit tests.
+ *
+ * @param string $name Name of the cookie
+ * @param integer $expire Time the cookie expires in
+ * @param string $path Path the cookie applies to
+ * @param string $domain Domain the cookie is for.
+ * @param boolean $secure Is the cookie https?
+ * @param boolean $httpOnly Is the cookie available in the client?
+ * @return void
+ */
+	protected function _setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly = false) {
+		setcookie($name, $value, $expire, $path, $domain, $secure, $httpOnly);
+	}
 /**
  * Encrypts $value using public $type method in Security class
  *
  * @param string $value Value to encrypt
  * @return string encrypted string
- * @access private
+ * @return string Encoded values
  */
-	function _encrypt($value) {
+	protected function _encrypt($value) {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
@@ -398,9 +412,8 @@ class CookieComponent extends Component {
  *
  * @param array $values Values to decrypt
  * @return string decrypted string
- * @access private
  */
-	function _decrypt($values) {
+	protected function _decrypt($values) {
 		$decrypted = array();
 		$type = $this->_type;
 
@@ -433,9 +446,8 @@ class CookieComponent extends Component {
  *
  * @param array $array Map of key and values
  * @return string String in the form key1|value1,key2|value2
- * @access private
  */
-	function _implode($array) {
+	protected function _implode($array) {
 		$string = '';
 		foreach ($array as $key => $value) {
 			$string .= ',' . $key . '|' . $value;
@@ -448,9 +460,8 @@ class CookieComponent extends Component {
  *
  * @param string $string String in the form key1|value1,key2|value2
  * @return array Map of key and values
- * @access private
  */
-	function _explode($string) {
+	protected function _explode($string) {
 		$array = array();
 		foreach (explode(',', $string) as $pair) {
 			$key = explode('|', $pair);
