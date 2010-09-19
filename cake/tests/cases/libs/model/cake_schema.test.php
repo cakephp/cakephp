@@ -570,9 +570,11 @@ class CakeSchemaTest extends CakeTestCase {
 		unset($read['tables']['missing']);
 
 		$expected = array('comments', 'datatypes', 'posts', 'posts_tags', 'tags');
-		$this->assertEqual(array_keys($read['tables']), $expected);
-		foreach ($read['tables'] as $table => $fields) {
-			$this->assertEqual(array_keys($fields), array_keys($this->Schema->tables[$table]));
+		foreach ($expected as $table) {
+			$this->assertTrue(isset($read['tables'][$table]), 'Missing table ' . $table);
+		}
+		foreach ($this->Schema->tables as $table => $fields) {
+			$this->assertEqual(array_keys($fields), array_keys($read['tables'][$table]));
 		}
 
 		$this->assertEqual(
@@ -647,7 +649,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertTrue(isset($read['tables']['authors']));
 		$this->assertTrue(isset($read['tables']['test_plugin_comments']));
 		$this->assertTrue(isset($read['tables']['posts']));
-		$this->assertEqual(count($read['tables']), 4);
+		$this->assertTrue(count($read['tables']) >= 4);
 
 		App::build();
 	}
