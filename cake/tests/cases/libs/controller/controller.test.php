@@ -445,12 +445,21 @@ class ControllerTest extends CakeTestCase {
 	public $fixtures = array('core.post', 'core.comment', 'core.name');
 
 /**
- * endTest
+ * reset environment.
+ *
+ * @return void
+ */
+	function setUp() {
+		App::objects('plugin', null, false);
+	}
+
+/**
+ * teardown
  *
  * @access public
  * @return void
  */
-	function endTest() {
+	function teardown() {
 		App::build();
 	}
 
@@ -960,6 +969,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertPattern('/this is the test element/', $result);
 
 		$Controller = new TestController($request);
+		$Controller->helpers = array('Html');
 		$Controller->constructClasses();
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
 		$expected = $Controller->ControllerComment->validationErrors;

@@ -562,6 +562,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->_debug = Configure::read('debug');
 
 		App::build(App::core());
+		App::objects('plugin', null, false);
 	}
 
 /**
