@@ -643,6 +643,9 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
 		);
 		$this->assertTags($result, $expected);
+
+		$folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$folder->delete();
 		App::build();
 	}
 
