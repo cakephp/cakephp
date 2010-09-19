@@ -714,6 +714,9 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testMultipleLoading() {
+		if (class_exists('I18n', false) || class_exists('CakeSocket', false)) {
+			$this->markTestSkipped('Cannot test loading of classes that exist.');
+		}
 		$toLoad = array('I18n', 'CakeSocket');
 
 		$classes = array_flip(get_declared_classes());

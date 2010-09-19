@@ -249,15 +249,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	function testCrossDatabaseJoins() {
 		$config = new DATABASE_CONFIG();
 
-		$skip = $this->skipIf(
-			!isset($config->test) || !isset($config->test2),
-			 '%s Primary and secondary test databases not configured, skipping cross-database '
-			.'join tests.'
-			.' To run these tests, you must define $test and $test2 in your database configuration.'
-		);
-
+		$skip = (!isset($config->test) || !isset($config->test2));
 		if ($skip) {
-			return;
+			$this->markTestSkipped('Primary and secondary test databases not configured, skipping cross-database
+				join tests.  To run theses tests defined $test and $test2 in your database configuration.'
+			);
 		}
 
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'User', 'Comment');
