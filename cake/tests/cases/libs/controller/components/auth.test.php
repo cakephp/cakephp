@@ -962,6 +962,8 @@ class AuthTest extends CakeTestCase {
 			$backup = $_SERVER['HTTP_REFERER'];
 		}
 		$_SERVER['HTTP_REFERER'] = false;
+		$_ENV['HTTP_REFERER'] = false;
+		putenv('HTTP_REFERER=');
 
 		$this->Controller->Session->write('Auth', array(
 			'AuthUser' => array('id' => '1', 'username' => 'nate')
