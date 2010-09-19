@@ -918,23 +918,23 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$this->assertIdentical($Apple->delete(4), false);
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'test2'));
-		if (ob_start()) {
-			$results = $Apple->delete(4);
-			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success (cascading)');
-			$this->assertIdentical($results, true);
-		}
-		if (ob_start()) {
-			$results = $Apple->delete(3, false);
-			$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success');
-			$this->assertIdentical($results, true);
-		}
+
+		ob_start();
+		$results = $Apple->delete(4);
+		$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success (cascading)');
+		$this->assertIdentical($results, true);
+
+		ob_start();
+		$results = $Apple->delete(3, false);
+		$this->assertIdentical(trim(ob_get_clean()), 'beforeDelete success');
+		$this->assertIdentical($results, true);
+
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'off', 'afterDelete' => 'on'));
-		if (ob_start()) {
-			$results = $Apple->delete(2, false);
-			$this->assertIdentical(trim(ob_get_clean()), 'afterDelete success');
-			$this->assertIdentical($results, true);
-		}
+		ob_start();
+		$results = $Apple->delete(2, false);
+		$this->assertIdentical(trim(ob_get_clean()), 'afterDelete success');
+		$this->assertIdentical($results, true);
 	}
 	/**
  * testBehaviorOnErrorCallback method
@@ -946,15 +946,9 @@ class BehaviorCollectionTest extends CakeTestCase {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'onError' => 'on'));
-		if (ob_start()) {
-			$Apple->Behaviors->Test->onError($Apple);
-			$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
-		}
-
-		if (ob_start()) {
-			$Apple->delete(99);
-			//$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
-		}
+		ob_start();
+		$Apple->Behaviors->Test->onError($Apple);
+		$this->assertIdentical(trim(ob_get_clean()), 'onError trigger success');
 	}
 	/**
  * testBehaviorValidateCallback method
