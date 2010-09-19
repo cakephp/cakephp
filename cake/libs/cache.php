@@ -296,7 +296,7 @@ class Cache {
 		}
 		$key = $self->_engines[$config]->key($key);
 
-		if (!$key || is_resource($value) || $settings['duration'] < 1) {
+		if (!$key || is_resource($value)) {
 			return false;
 		}
 
