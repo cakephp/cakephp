@@ -283,6 +283,7 @@ class ScaffoldViewTest extends CakeTestCase {
 	function startTest() {
 		$this->request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($this->request);
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
@@ -694,6 +695,7 @@ class ScaffoldTest extends CakeTestCase {
 	function startTest() {
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($request);
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 	}
 
 /**
@@ -775,9 +777,6 @@ class ScaffoldTest extends CakeTestCase {
 		$this->assertEqual($result['singularVar'], 'scaffoldMock');
 		$this->assertEqual($result['pluralVar'], 'scaffoldMock');
 		$this->assertEqual($result['scaffoldFields'], array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'));
-	}
-	function getTests() {
-		return array('start', 'startCase', 'testScaffoldChangingViewProperty', 'endCase', 'end');
 	}
 
 /**
@@ -875,6 +874,8 @@ class ScaffoldTest extends CakeTestCase {
 	function testEditScaffoldWithScaffoldFields() {
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockControllerWithFields($request);
+		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
+
 		$params = array(
 			'plugin' => null,
 			'pass' => array(1),
