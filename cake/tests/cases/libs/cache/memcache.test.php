@@ -30,26 +30,13 @@ if (!class_exists('Cache')) {
 class MemcacheEngineTest extends CakeTestCase {
 
 /**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$skip = true;
-		if (class_exists('Memcache')) {
-			$skip = false;
-		}
-		$this->skipIf($skip, '%s Memcache is not installed or configured properly.');
-	}
-
-/**
  * setUp method
  *
  * @access public
  * @return void
  */
 	function setUp() {
+		$this->skipIf(!class_exists('Memcache'), '%s Apc is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('memcache', array(
