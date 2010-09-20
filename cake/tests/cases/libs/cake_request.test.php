@@ -742,6 +742,8 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	function testHeader() {
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
 		$request = new CakeRequest('/', false);
 
 		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));
