@@ -71,7 +71,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 */
 	public function run(PHPUnit_Framework_TestResult $result = NULL) {
 		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->load($this); 
+			$this->sharedFixture->load($this);
 		}
 		$result = parent::run($result);
 		if (!empty($this->sharedFixture)) {

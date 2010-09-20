@@ -40,7 +40,7 @@ class AllShellsTest extends PHPUnit_Framework_TestSuite {
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'cake.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'console_error_handler.test.php');
-		$tasks = array('acl', 'api', 'bake', 'schema', 'shell');
+		$tasks = array('schema', 'acl', 'api', 'bake', 'shell');
 		foreach ($tasks as $task) {
 			$suite->addTestFile($path . $task . '.test.php');
 		}
