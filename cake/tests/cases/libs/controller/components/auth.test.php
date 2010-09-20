@@ -957,10 +957,6 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testLoginRedirect() {
-		$backup = null;
-		if (isset($_SERVER['HTTP_REFERER'])) {
-			$backup = $_SERVER['HTTP_REFERER'];
-		}
 		$_SERVER['HTTP_REFERER'] = false;
 		$_ENV['HTTP_REFERER'] = false;
 		putenv('HTTP_REFERER=');
@@ -1019,13 +1015,12 @@ class AuthTest extends CakeTestCase {
 		$expected = Router::normalize('/');
 		$this->assertEqual($expected, $this->Controller->testUrl);
 
-
 		$this->Controller->Session->delete('Auth');
-		$_SERVER['HTTP_REFERER'] = Router::url('/admin', true);
-
+		$_SERVER['HTTP_REFERER'] = $_ENV['HTTP_REFERER'] = Router::url('/admin', true);
 		$this->Controller->Session->write('Auth', array(
 			'AuthUser' => array('id'=>'1', 'username' => 'nate')
 		));
+		$this->Controller->request->params['action'] = 'login';
 		$this->Controller->request->query['url'] = 'auth_test/login';
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = 'auth_test/login';
@@ -1126,7 +1121,6 @@ class AuthTest extends CakeTestCase {
 		$expected = Router::normalize('/');
 		$this->assertEqual($expected, $this->Controller->Session->read('Auth.redirect'));
 
-		$_SERVER['HTTP_REFERER'] = $backup;
 		$this->Controller->Session->delete('Auth');
 	}
 
