@@ -214,8 +214,6 @@ class TestManager {
 	public static function addTestFile(&$groupTest, $file) {
 		if (file_exists($file . self::$_testExtension)) {
 			$file .= self::$_testExtension;
-		} elseif (file_exists($file . self::$_groupExtension)) {
-			$file .= self::$_groupExtension;
 		}
 		$groupTest->addTestFile($file);
 	}
