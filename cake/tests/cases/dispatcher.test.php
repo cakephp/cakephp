@@ -406,7 +406,7 @@ class SomePostsController extends AppController {
  * @package       cake
  * @subpackage    cake.tests.cases
  */
-class TestCachedPagesController extends AppController {
+class TestCachedPagesController extends Controller {
 
 /**
  * name property
@@ -430,7 +430,7 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	public $helpers = array('Cache');
+	public $helpers = array('Cache', 'Html');
 
 /**
  * cacheAction property
@@ -502,7 +502,7 @@ class TestCachedPagesController extends AppController {
  * @package       cake
  * @subpackage    cake.tests.cases
  */
-class TimesheetsController extends AppController {
+class TimesheetsController extends Controller {
 
 /**
  * name property
