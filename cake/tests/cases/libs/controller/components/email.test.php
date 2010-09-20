@@ -896,6 +896,7 @@ HTMLBLOC;
 		if ($this->skipIf($skip, 'Missing mb_* functions, cannot run test.')) {
 			return;
 		}
+		$restore = mb_internal_encoding();
 		mb_internal_encoding('ISO-8859-1');
 
 		$this->Controller->charset = 'UTF-8';
@@ -916,6 +917,8 @@ HTMLBLOC;
 
 		$result = mb_internal_encoding();
 		$this->assertEqual($result, 'ISO-8859-1');
+
+		mb_internal_encoding($restore);
 	}
 
 /**
