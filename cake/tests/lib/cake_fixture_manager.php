@@ -91,21 +91,12 @@ class CakeFixtureManager {
 			$testDbAvailable = $db->isConnected();
 		}
 
-		// Try for default DB
 		if (!$testDbAvailable) {
-			$db = ConnectionManager::getDataSource('default');
-			$_prefix = $db->config['prefix'];
-			$db->config['prefix'] = 'test_suite_';
+			throw new MissingConnectionException(__('You need to create a $test datasource connection to start using fixtures'));
 		}
 
-		ConnectionManager::create('test_suite', $db->config);
-		$db->config['prefix'] = $_prefix;
-
-		// Get db connection
-		$this->_db = ConnectionManager::getDataSource('test_suite');
-		$this->_db->cacheSources  = false;
-
-		ClassRegistry::config(array('ds' => 'test_suite'));
+		$this->_db = $db;
+		ClassRegistry::config(array('ds' => 'test'));
 		$this->_initialized = true;
 	}
 
