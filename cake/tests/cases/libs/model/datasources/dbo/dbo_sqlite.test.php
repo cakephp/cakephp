@@ -104,7 +104,7 @@ class DboSqliteTest extends CakeTestCase {
  */
 	public function setUp() {
 		Configure::write('Cache.disable', true);
-		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		$this->Dbo = ConnectionManager::getDataSource('test');
 		if ($this->Dbo->config['driver'] !== 'sqlite') {
 			$this->markTestSkipped('The Sqlite extension is not available.');
 		}
@@ -274,7 +274,7 @@ class DboSqliteTest extends CakeTestCase {
  */
 	function testDescribe() {
 		$this->loadFixtures('User');
-		$Model = new Model(array('name' => 'User', 'ds' => 'test_suite', 'table' => 'users'));
+		$Model = new Model(array('name' => 'User', 'ds' => 'test', 'table' => 'users'));
 		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'id' => array(
@@ -320,7 +320,7 @@ class DboSqliteTest extends CakeTestCase {
 	function testDescribeWithUuidPrimaryKey() {
 		$tableName = 'uuid_tests';
 		$this->Dbo->query("CREATE TABLE {$tableName} (id VARCHAR(36) PRIMARY KEY, name VARCHAR, created DATETIME, modified DATETIME)");
-		$Model = new Model(array('name' => 'UuidTest', 'ds' => 'test_suite', 'table' => 'uuid_tests'));
+		$Model = new Model(array('name' => 'UuidTest', 'ds' => 'test', 'table' => 'uuid_tests'));
 		$result = $this->Dbo->describe($Model);
 		$expected = array(
 			'type' => 'string',

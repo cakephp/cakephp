@@ -116,12 +116,12 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testListAll() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(1))->method('out')->with('1. BakeArticles');
 		$this->Task->expects($this->at(2))->method('out')->with('2. BakeArticlesBakeTags');
@@ -129,7 +129,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(4))->method('out')->with('4. BakeTags');
 
 		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
-		$result = $this->Task->listAll('test_suite');
+		$result = $this->Task->listAll('test');
 		$this->assertEqual($result, $expected);
 
 		$this->Task->interactive = false;
@@ -145,7 +145,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGetNameValidIndex() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
@@ -153,11 +153,11 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(5))->method('in')->will($this->returnValue(3));
 		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(1));
 		
-		$result = $this->Task->getName('test_suite');
+		$result = $this->Task->getName('test');
 		$expected = 'BakeComments';
 		$this->assertEqual($result, $expected);
 	
-		$result = $this->Task->getName('test_suite');
+		$result = $this->Task->getName('test');
 		$expected = 'BakeArticles';
 		$this->assertEqual($result, $expected);
 	}
@@ -175,7 +175,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('err');
 		$this->Task->expects($this->once())->method('_stop');
 
-		$this->Task->getName('test_suite');
+		$this->Task->getName('test');
 	}
 
 /**
@@ -417,7 +417,7 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->interactive = false;
 
 		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'BakeArticles');
@@ -434,12 +434,12 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testInteractive() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		
 		$this->Task->expects($this->any())->method('in')
@@ -469,12 +469,12 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	function testInteractiveAdminMethodsNotInteractive() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->interactive = true;
 		$this->Task->path = '/my/path/';
 
@@ -516,7 +516,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 
@@ -543,7 +543,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
 
@@ -579,7 +579,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array($name);
 
@@ -601,7 +601,7 @@ class ControllerTaskTest extends CakeTestCase {
 		if ($skip) {
 			return;
 		}
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles', 'public');
 
@@ -625,7 +625,7 @@ class ControllerTaskTest extends CakeTestCase {
 			return;
 		}
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles', 'public', 'admin');
 
@@ -648,7 +648,7 @@ class ControllerTaskTest extends CakeTestCase {
 			return;
 		}
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles', 'admin');
 

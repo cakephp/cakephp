@@ -1292,7 +1292,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->__config = $this->db->config;
 
 		if (!class_exists('DboTest')) {
-			$db = ConnectionManager::getDataSource('test_suite');
+			$db = ConnectionManager::getDataSource('test');
 			$class = get_class($db);
 			eval("class DboTest extends $class {
 				var \$simulated = array();

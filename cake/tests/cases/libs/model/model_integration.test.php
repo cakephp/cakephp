@@ -706,7 +706,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
 		$this->assertEqual($TestModel->data, $expected);
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$data = array();
 		$data['Apple']['mytime'] = $db->expression('NOW()');
 		$TestModel->data = null;
@@ -883,7 +883,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = array('Apple'=> array('date'=> '2006-12-25'));
 		$this->assertEqual($TestModel->data, $expected);
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$data = array();
 		$data['Apple']['modified'] = $db->expression('NOW()');
 		$TestModel->data = null;
@@ -1328,9 +1328,9 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	function testConstructWithAlternateDataSource() {
 		$TestModel = ClassRegistry::init(array(
-			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false
+			'class' => 'DoesntMatter', 'ds' => 'test', 'table' => false
 		));
-		$this->assertEqual('test_suite', $TestModel->useDbConfig);
+		$this->assertEqual('test', $TestModel->useDbConfig);
 
 		//deprecated but test it anyway
 		$NewVoid = new TheVoid(null, false, 'other');

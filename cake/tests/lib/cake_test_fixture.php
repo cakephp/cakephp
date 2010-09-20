@@ -53,7 +53,7 @@ class CakeTestFixture {
  */
 	public function __construct() {
 		App::import('Model', 'CakeSchema');
-		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
 		$this->init();
 	}
 
@@ -77,7 +77,7 @@ class CakeTestFixture {
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 				$this->table = $db->fullTableName($model, false);
-				ClassRegistry::config(array('ds' => 'test_suite'));
+				ClassRegistry::config(array('ds' => 'test'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
 				$model = new Model(null, $import['table'], $import['connection']);

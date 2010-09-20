@@ -39,10 +39,10 @@ class MyAppSchema extends CakeSchema {
 /**
  * connection property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $connection = 'test_suite';
+	public $connection = 'test';
 
 /**
  * comments property
@@ -563,7 +563,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function testSchemaRead() {
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPost', 'SchemaComment', 'SchemaTag', 'SchemaDatatype')
 		));
@@ -582,7 +582,7 @@ class CakeSchemaTest extends CakeTestCase {
 			$this->Schema->tables['datatypes']['float_field']
 		);
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);
@@ -593,14 +593,14 @@ class CakeSchemaTest extends CakeTestCase {
 		$SchemaPost->table = 'sts';
 		$SchemaPost->tablePrefix = 'po';
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPost')
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
 
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaComment', 'SchemaTag', 'SchemaPost')
 		));
@@ -617,7 +617,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$Schema =& new CakeSchema();
 		$read = $Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPrefixAuthUser')
 		));
@@ -640,7 +640,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$Schema =& new CakeSchema();
 		$Schema->plugin = 'TestPlugin';
 		$read = $Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => true
 		));
@@ -677,7 +677,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$fixture->insert($db2);
 
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaCrossDatabase', 'SchemaPost')
 		));
@@ -942,11 +942,11 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaCreateTable() {
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 
 		$Schema =& new CakeSchema(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
 				'int_null' => array('type' => 'integer', 'null' => true),

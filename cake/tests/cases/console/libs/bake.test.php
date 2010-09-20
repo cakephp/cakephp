@@ -96,7 +96,7 @@ class BakeShellTest extends CakeTestCase {
 		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
 		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher));
 
-		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test_suite'));
+		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test'));
 	
 		$this->Shell->Model->expects($this->never())->method('getName');
 		$this->Shell->Model->expects($this->once())->method('bake')->will($this->returnValue(true));

@@ -59,7 +59,7 @@ class AclShellTest extends CakeTestCase {
 		$this->_aclDb = Configure::read('Acl.database');
 		$this->_aclClass = Configure::read('Acl.classname');
 
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 
 		$this->Dispatcher = $this->getMock(
@@ -74,7 +74,7 @@ class AclShellTest extends CakeTestCase {
 		$collection = new ComponentCollection();
 		$this->Task->Acl = new AclComponent($collection);
 
-		$this->Task->params['datasource'] = 'test_suite';
+		$this->Task->params['datasource'] = 'test';
 	}
 
 /**

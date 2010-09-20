@@ -147,7 +147,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('in')
 			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', false, array(
@@ -168,7 +168,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithNamedModel() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article_fixture.php';
@@ -197,7 +197,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithNamedModelVariations($modelName) {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$this->Task->args = array($modelName);
@@ -214,7 +214,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->Model->expects($this->any())->method('listAll')
@@ -237,7 +237,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testAllWithCountAndRecordsFlags() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->params = array('count' => 10, 'records' => true);
@@ -263,7 +263,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteInteractive() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('y'));
@@ -285,7 +285,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBake() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article');
@@ -320,7 +320,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testRecordGenerationForBinaryAndFloat() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', 'datatypes');
@@ -336,7 +336,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGenerateFixtureFile() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$filename = '/my/path/article_fixture.php';
 
@@ -357,7 +357,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGeneratePluginFixtureFile() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->plugin = 'TestFixture';
 		$filename = APP . 'plugins' . DS . 'test_fixture' . DS . 'tests' . DS . 'fixtures' . DS . 'article_fixture.php';

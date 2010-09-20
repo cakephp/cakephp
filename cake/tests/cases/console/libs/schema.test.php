@@ -54,10 +54,10 @@ class SchemaShellTestSchema extends CakeSchema {
 /**
  * connection property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $connection = 'test_suite';
+	public $connection = 'test';
 
 /**
  * comments property
@@ -165,13 +165,13 @@ class SchemaShellTest extends CakeTestCase {
 		unset($this->Shell->Schema);
 		$this->Shell->params = array(
 			'file' => 'other_file.php',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
 		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
 		$this->assertEqual($this->Shell->Schema->file, 'other_file.php');
-		$this->assertEqual($this->Shell->Schema->connection, 'test_suite');
+		$this->assertEqual($this->Shell->Schema->connection, 'test');
 		$this->assertEqual($this->Shell->Schema->path, '/test/path');
 	}
 
@@ -251,7 +251,7 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'write' => TMP . 'tests' . DS . 'dump_test.sql'
 		);
 		$this->Shell->startup();
@@ -347,7 +347,7 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->startup();
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
@@ -375,7 +375,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testCreateNoArgs() {
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'path' => APP . 'config' . DS . 'sql'
 		);
 		$this->Shell->args = array('i18n');
@@ -383,7 +383,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
 
@@ -398,7 +398,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testCreateWithTableArgs() {
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'DbAcl',
 			'path' => APP . 'config' . DS . 'schema'
 		);
@@ -423,7 +423,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testUpdateWithTable() {
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'f' => true
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
@@ -431,7 +431,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->update();
 
-		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
+		$article =& new Model(array('name' => 'Article', 'ds' => 'test'));
 		$fields = $article->schema();
 		$this->assertTrue(isset($fields['summary']));
 
@@ -448,7 +448,7 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->startup();
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema';
@@ -467,14 +467,14 @@ class SchemaShellTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 		$this->Shell->params = array(
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
 

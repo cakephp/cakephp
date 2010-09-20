@@ -30,10 +30,10 @@ class AclNodeTwoTestBase extends AclNode {
 /**
  * useDbConfig property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 
 /**
  * cacheSources property
@@ -356,7 +356,7 @@ class DbAclTest extends CakeTestCase {
 		$this->_settings = Configure::read('Acl');
 
 		Configure::write('Acl.classname', 'DbAclTwoTest');
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 		$Collection = new ComponentCollection();
 		$this->Acl = new AclComponent($Collection);
 	}

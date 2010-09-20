@@ -31,10 +31,10 @@ class DbAclNodeTestBase extends AclNode {
 /**
  * useDbConfig property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 
 /**
  * cacheSources property
@@ -270,7 +270,7 @@ class AclNodeTest extends CakeTestCase {
  */
 	function setUp() {
 		Configure::write('Acl.classname', 'TestDbAcl');
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 	}
 
 /**
@@ -373,7 +373,7 @@ class AclNodeTest extends CakeTestCase {
  */
 	function testNodeAliasParenting() {
 		$Aco = new DbAcoTest();
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$db->truncate($Aco);
 
 		$Aco->create(array('model' => null, 'foreign_key' => null, 'parent_id' => null, 'alias' => 'Application'));

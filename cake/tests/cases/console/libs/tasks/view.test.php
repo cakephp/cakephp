@@ -613,7 +613,7 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteInteractive() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array();
 		$this->Task->params = array();
 
@@ -658,7 +658,7 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithAlternateTemplates() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array('ViewTaskComments', 'index', 'list');
 		$this->Task->params = array();
 
@@ -677,7 +677,7 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testExecuteInteractiveWithAdmin() {
 		Configure::write('Routing.prefixes', array('admin'));
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array();
 
 		$this->Task->Controller->expects($this->once())->method('getName')

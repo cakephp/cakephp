@@ -49,7 +49,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		//$suite->addTestFile($path . 'all_model.test.php');
 		$suite->addTestFile($path . 'all_routing.test.php');
 		$suite->addTestFile($path . 'all_socket.test.php');
-		//$suite->addTestFile($path . 'all_test_suite.test.php');;
+		//$suite->addTestFile($path . 'all_test.test.php');;
 		$suite->addTestFile($path . 'all_views.test.php');
 		$suite->addTestFile($path . 'all_xml.test.php');
 		return $suite;

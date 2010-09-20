@@ -112,7 +112,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testListAll() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
@@ -130,11 +130,11 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(10))->method('out')->with('4. Comment');
 		$this->Task->expects($this->at(11))->method('out')->with('5. Tag');
 
-		$result = $this->Task->listAll('test_suite');
+		$result = $this->Task->listAll('test');
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$result = $this->Task->listAll();
 		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
 		$this->assertEqual($result, $expected);
@@ -148,7 +148,7 @@ class ModelTaskTest extends CakeTestCase {
 	public function testGetNameQuit() {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('q'));
 		$this->Task->expects($this->once())->method('_stop');
-		$this->Task->getName('test_suite');
+		$this->Task->getName('test');
 	}
 
 /**
@@ -157,18 +157,18 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testGetNameValidOption() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 	
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
 
-		$result = $this->Task->getName('test_suite');
+		$result = $this->Task->getName('test');
 		$expected = 'Article';
 		$this->assertEqual($result, $expected);
 
-		$result = $this->Task->getName('test_suite');
+		$result = $this->Task->getName('test');
 		$expected = 'Comment';
 		$this->assertEqual($result, $expected);
 	}
@@ -182,7 +182,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
 		$this->Task->expects($this->once())->method('err');
 
-		$result = $this->Task->getName('test_suite');
+		$result = $this->Task->getName('test');
 	}
 
 /**
@@ -192,7 +192,7 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public function testGetTableName() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->getTable('Article', 'test_suite');
+		$result = $this->Task->getTable('Article', 'test');
 		$expected = 'articles';
 		$this->assertEqual($result, $expected);
 	}
@@ -204,7 +204,7 @@ class ModelTaskTest extends CakeTestCase {
  */
 	function testGetTableNameCustom() {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
-		$result = $this->Task->getTable('Article', 'test_suite');
+		$result = $this->Task->getTable('Article', 'test');
 		$expected = 'my_table';
 		$this->assertEqual($result, $expected);
 	}
@@ -421,7 +421,7 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBelongsToGeneration() {
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'Comment'));
+		$model = new Model(array('ds' => 'test', 'name' => 'Comment'));
 		$result = $this->Task->findBelongsTo($model, array());
 		$expected = array(
 			'belongsTo' => array(
@@ -439,7 +439,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
 		$result = $this->Task->findBelongsTo($model, array());
 		$expected = array(
 			'belongsTo' => array(
@@ -459,8 +459,8 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testHasManyHasOneGeneration() {
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
-		$this->Task->connection = 'test_suite';
+		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
+		$this->Task->connection = 'test';
 		$this->Task->listAll();
 		$result = $this->Task->findHasOneAndMany($model, array());
 		$expected = array(
@@ -481,7 +481,7 @@ class ModelTaskTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
 		$result = $this->Task->findHasOneAndMany($model, array());
 		$expected = array(
 			'hasOne' => array(
@@ -508,13 +508,13 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testHasAndBelongsToManyGeneration() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
-		$this->Task->connection = 'test_suite';
+		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
+		$this->Task->connection = 'test';
 		$this->Task->listAll();
 		$result = $this->Task->findHasAndBelongsToMany($model, array());
 		$expected = array(
@@ -537,9 +537,9 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testDoAssociationsNonInteractive() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->interactive = false;
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'Article'));
+		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
 		$result = $this->Task->doAssociations($model);
 		$expected = array(
 			'hasMany' => array(
@@ -623,7 +623,7 @@ class ModelTaskTest extends CakeTestCase {
 				),
 			)
 		);
-		$model = new Model(array('ds' => 'test_suite', 'name' => 'CategoryThread'));
+		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
 
 		$this->Task->expects($this->any())->method('in')
 			->will($this->onConsecutiveCalls('n', 'y', 'n', 'n', 'n'));
@@ -774,7 +774,7 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteWithNamedModel() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article.php';
@@ -807,7 +807,7 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteWithNamedModelVariations($name) {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 
@@ -825,7 +825,7 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteWithNamedModelHasManyCreated() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article.php';
@@ -843,12 +843,12 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
@@ -888,12 +888,12 @@ STRINGEND;
  * @return void
  */
 	function testSkipTablesAndAll() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
@@ -927,12 +927,12 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteIntoInteractive() {
-		$count = count($this->Task->listAll('test_suite'));
+		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->interactive = true;
 
@@ -969,7 +969,7 @@ STRINGEND;
  * @return void
  */
 	public function testExecuteWithNonExistantTableName() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$this->Task->expects($this->once())->method('_stop');

@@ -52,7 +52,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		self::$_sessionBackup = Configure::read('Session');
 		Configure::write('Session.handler', array(
 			'model' => 'SessionTestModel',
-			'database' => 'test_suite',
+			'database' => 'test',
 			'table' => 'sessions'
 		));
 		Configure::write('Session.timeout', 100);
@@ -98,7 +98,7 @@ class DatabaseSessionTest extends CakeTestCase {
 		$session = ClassRegistry::getObject('session');
 		$this->assertType('SessionTestModel', $session);
 		$this->assertEquals('Session', $session->alias);
-		$this->assertEquals('test_suite', $session->useDbConfig);
+		$this->assertEquals('test', $session->useDbConfig);
 	}
 
 /**

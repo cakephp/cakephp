@@ -172,7 +172,7 @@ class DboMysqlTest extends CakeTestCase {
  *
  */
 	public function setUp() {
-		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		$this->Dbo = ConnectionManager::getDataSource('test');
 		if ($this->Dbo->config['driver'] !== 'mysql') {
 			$this->markTestSkipped('The MySQL extension is not available.');
 		}
@@ -279,7 +279,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
-			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test_suite'
+			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
 		));
 
 		$result = $this->model->schema();
@@ -561,7 +561,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -572,7 +572,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -592,7 +592,7 @@ class DboMysqlTest extends CakeTestCase {
 		// Change three indexes, delete one and add another one
 		$schema3 = new CakeSchema(array(
 			'name' => 'AlterTest3',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -633,7 +633,7 @@ class DboMysqlTest extends CakeTestCase {
 		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
 		k”:;kÀAõ{*¡€Î˚˚[  ;;";
 
-		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
@@ -651,7 +651,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -665,7 +665,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Dbo->query($this->Dbo->createSchema($schema1));
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -698,7 +698,7 @@ class DboMysqlTest extends CakeTestCase {
 	function testAlteringTwoTables() {
 		$schema1 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -710,7 +710,7 @@ class DboMysqlTest extends CakeTestCase {
 		));
 		$schema2 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -792,7 +792,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldSeparators() {
-		$model =& new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test_suite', 'name' => 'BinaryTest'));
+		$model =& new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
 		$model->virtualFields = array(
 			'other__field' => 'SUM(id)'
 		);
@@ -810,7 +810,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	function testDescribeGettingFieldParameters() {
 		$schema =& new CakeSchema(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
 				'stringy' => array(

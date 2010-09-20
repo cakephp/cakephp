@@ -907,7 +907,7 @@ class Post extends CakeTestModel {
 	}
 
 	function afterFind($results) {
-		$this->useDbConfig = 'test_suite';
+		$this->useDbConfig = 'test';
 		return $results;
 	}
 }

@@ -243,7 +243,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	public function setUp() {
 		Configure::write('Cache.disable', true);
-		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		$this->Dbo = ConnectionManager::getDataSource('test');
 		$this->Dbo2 = new DboPostgresTestDb($this->Dbo->config, false);
 		$this->skipUnless($this->Dbo->config['driver'] == 'postgres', 'PostgreSQL connection not available');
 		$this->model = new PostgresTestModel();
@@ -423,7 +423,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function testLastInsertIdMultipleInsert() {
 		$this->loadFixtures('User');
-		$db1 = ConnectionManager::getDataSource('test_suite');
+		$db1 = ConnectionManager::getDataSource('test');
 
 		$db2 = clone $db1;
 		$db2->connect();
@@ -446,13 +446,13 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaScoping() {
-		$db1 = ConnectionManager::getDataSource('test_suite');
+		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));
 		$db1->query('CREATE SCHEMA _scope_test');
 
 		$db2 = ConnectionManager::create(
-			'test_suite_2',
+			'test_2',
 			array_merge($db1->config, array('driver' => 'postgres', 'schema' => '_scope_test'))
 		);
 		$db2->cacheSources = false;
@@ -504,7 +504,7 @@ class DboPostgresTest extends CakeTestCase {
 		ªºnh˚ºO^∏…®[Ó“‚ÅfıÌ≥∫F!Eœ(π∑T6`¬tΩÆ0ì»rTÎ`»Ñ«
 		]≈åp˝)=¿Ô0∆öVÂmˇˆ„ø~¯ÁÔ∏b*fc»‡Îı„Ú}∆tœs∂Y∫ÜaÆ˙X∏~<ÿ·Ùvé1‹p¿TD∆ÔîÄ“úhˆ*Ú€îe)K–p¨ÚJ3Ÿ∞ã>ÊuNê°“√Ü ‹Ê9iÙ0˙AAEÍ ˙`∂£\'ûce•åƒX›ŸÁ´1SK{qdá"tÏ[wQ#SµBe∞∑µó…ÌV`B"Ñ≥„!è_ÓÏ†-º*ºú¿Ë0ˆeê∂´ë+HFj…‡zvHÓN|ÔL÷ûñ3õÜ$z%sá…pÎóV38âs	Çoµ•ß3†<9B·¨û~¢3)ÂxóÿÁCÕòÆ∫Í=»ÿSπS;∆~±êÆTEp∑óÈ÷ÀuìDHÈ$ÉõæÜjÃ»§"≤ÃONM®RËíRr{õS	∏Ê™op±W;ÂUÔ P∫kÔˇﬂTæ∑óﬂË”ÆC©Ô[≥◊HÁ˚¨hê"ÆbF?ú%h˙ˇ4xèÕ(ó2ÙáíM])Ñd|=fë-cI0ñL¢kÖêk‰Rƒ«ıÄWñ8mO3∏&√æËX¯Hó—ì]yF2»–˜ádàà‡‹ÇÎ¿„≥7mªHAS∑¶.;Œx(1} _kd©.ﬁdç48M\'àáªCp^Krí<É‰XÓıïl!Ì$N<ı∞B»G]…∂Ó¯>˛ÔbõÒπÀ•:ôO<j∂™œ%âÏ—>@È$pÖu‹Ê´-QqV ?V≥JÆÍqÛX8(lπï@zgÖ}Fe<ˇ‡Sñ“ÿ˜ê?6‡L∫Oß~µ –?ËeäÚ®YîÕ=Ü=¢DÁu*GvBk;)L¬N«î:flö∂≠ÇΩq„Ñmí•˜Ë∂‚"û≥§:±≤i^ΩÑ!)WıyÅ§ô á„RÄ÷Òôc’≠—s™rı‚Pdêãh˘ßHVç5ﬁﬁÈF€çÌÛuçÖ/M=gëµ±ÿGû1coÔuñæ‘z®. õ∑7ÉÏÜÆ,°’H†ÍÉÌ∂7e	º® íˆ⁄◊øNWK”ÂYµ‚ñé;µ¶gV-ﬂ>µtË¥áßN2 ¯¶BaP-)eW.àôt^∏1›C∑Ö?L„&”5’4jvã–ªZ	÷+4% ´0l…»ú^°´© ûiπ∑é®óÜ±Òÿ‰ïˆÌ–dˆ◊Æ19rQ=Í|ı•rMæ¬;ò‰Y‰é9.”‹˝V«ã¯∏,+ë®j*¡·/';
 
-		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test_suite'));
+		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
@@ -553,7 +553,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	public function testCakeSchema() {
-		$db1 = ConnectionManager::getDataSource('test_suite');
+		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));
 		$db1->query('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
@@ -562,12 +562,12 @@ class DboPostgresTest extends CakeTestCase {
 			"full_length" character varying NOT NULL,
 			"timestamp" timestamp without time zone,
 			date date,
-			CONSTRAINT test_suite_data_types_pkey PRIMARY KEY (id)
+			CONSTRAINT test_data_types_pkey PRIMARY KEY (id)
 		)');
-		$model = new Model(array('name' => 'Datatype', 'ds' => 'test_suite'));
-		$schema = new CakeSchema(array('connection' => 'test_suite'));
+		$model = new Model(array('name' => 'Datatype', 'ds' => 'test'));
+		$schema = new CakeSchema(array('connection' => 'test'));
 		$result = $schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'models' => array('Datatype')
 		));
 		$schema->tables = array('datatypes' => $result['tables']['datatypes']);
@@ -581,7 +581,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$db1->query($result);
 		$result2 = $schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'models' => array('Datatype')
 		));
 		$schema->tables = array('datatypes' => $result2['tables']['datatypes']);
@@ -631,7 +631,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function testAlterSchema() {
 		$Old = new CakeSchema(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -646,7 +646,7 @@ class DboPostgresTest extends CakeTestCase {
 		$this->Dbo->query($this->Dbo->createSchema($Old));
 
 		$New = new CakeSchema(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'AlterPosts',
 			'alter_posts' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -660,7 +660,7 @@ class DboPostgresTest extends CakeTestCase {
 		));
 		$this->Dbo->query($this->Dbo->alterSchema($New->compare($Old), 'alter_posts'));
 
-		$model = new CakeTestModel(array('table' => 'alter_posts', 'ds' => 'test_suite'));
+		$model = new CakeTestModel(array('table' => 'alter_posts', 'ds' => 'test'));
 		$result = $model->schema();
 		$this->assertTrue(isset($result['status']));
 		$this->assertFalse(isset($result['published']));
@@ -683,7 +683,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -695,7 +695,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -717,7 +717,7 @@ class DboPostgresTest extends CakeTestCase {
 		// Change three indexes, delete one and add another one
 		$schema3 = new CakeSchema(array(
 			'name' => 'AlterTest3',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -825,7 +825,7 @@ class DboPostgresTest extends CakeTestCase {
 	function testAlteringTwoTables() {
 		$schema1 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
@@ -837,7 +837,7 @@ class DboPostgresTest extends CakeTestCase {
 		));
 		$schema2 =& new CakeSchema(array(
 			'name' => 'AlterTest1',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'altertest' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),

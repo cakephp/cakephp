@@ -222,7 +222,7 @@ class AclBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 
 		$this->Aco = new Aco();
 		$this->Aro = new Aro();

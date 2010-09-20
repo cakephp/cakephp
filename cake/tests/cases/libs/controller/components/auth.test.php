@@ -76,10 +76,10 @@ class AuthUser extends CakeTestModel {
 /**
  * useDbConfig property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 
 /**
  * parentNode method
@@ -155,10 +155,10 @@ class UuidUser extends CakeTestModel {
 /**
  * useDbConfig property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 
 /**
  * useTable property
@@ -488,7 +488,7 @@ class AuthTest extends CakeTestCase {
 		Configure::write('Security.cipherSeed', 770011223369876);
 
 		$this->_acl = Configure::read('Acl');
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 
 		$request = new CakeRequest(null, false);
