@@ -17,9 +17,6 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 App::import('Component', 'Acl');
 App::import('Core', 'db_acl');
 
@@ -228,12 +225,12 @@ class DbAroUserTest extends CakeTestModel {
 }
 
 /**
- * DbAclTest class
+ * TestDbAcl class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  */
-class DbAclTest extends DbAcl {
+class TestDbAcl extends DbAcl {
 
 /**
  * construct method
@@ -272,7 +269,7 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		Configure::write('Acl.classname', 'DbAclTest');
+		Configure::write('Acl.classname', 'TestDbAcl');
 		Configure::write('Acl.database', 'test_suite');
 	}
 
