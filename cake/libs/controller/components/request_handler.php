@@ -230,15 +230,17 @@ class RequestHandlerComponent extends Object {
 
 		$this->__initializeTypes();
 		$controller->params['isAjax'] = $this->isAjax();
+		$isRecognized = (
+			!in_array($this->ext, array('html', 'htm')) &&
+			in_array($this->ext, array_keys($this->__requestContent))
+		);
 
-		if (!empty($this->ext)) {
-			if (in_array($this->ext, array('html', 'htm'))) {
-				$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
-			} elseif (in_array($this->ext, array_keys($this->__requestContent))) {
-				$this->renderAs($controller, $this->ext);
-			}
+		if (!empty($this->ext) && $isRecognized) {
+			$this->renderAs($controller, $this->ext);
 		} elseif ($this->isAjax()) {
 			$this->renderAs($controller, 'ajax');
+		} elseif (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
+			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
 		}
 
 		if ($this->requestedWith('xml')) {

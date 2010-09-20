@@ -253,6 +253,27 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->ext, '.ctp');
 	}
 
+
+/**
+ * testAutoAjaxLayout method
+ *
+ * @access public
+ * @return void
+ */
+	function testAutoAjaxLayout() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertTrue($this->Controller->layout, $this->RequestHandler->ajaxLayout);
+
+		$this->_init();
+		$this->Controller->params['url']['ext'] = 'js';
+		$this->RequestHandler->initialize($this->Controller);
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertNotEqual($this->Controller->layout, 'ajax');
+
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
 /**
  * testStartupCallback method
  *
@@ -692,7 +713,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
- * assure that beforeRedirect with a status code will correctly set the status header 
+ * assure that beforeRedirect with a status code will correctly set the status header
  *
  * @return void
  */
