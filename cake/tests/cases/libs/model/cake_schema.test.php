@@ -703,7 +703,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateTable() {
-		$fields = array(
+		$posts = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 			'author_id' => array('type' => 'integer', 'null' => false),
 			'title' => array('type' => 'string', 'null' => false),
@@ -713,11 +713,8 @@ class CakeSchemaTest extends CakeTestCase {
 			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
-		$result = $this->Schema->generateTable('posts', $fields);
+		$result = $this->Schema->generateTable('posts', $posts);
 		$this->assertPattern('/var \$posts/', $result);
-
-		eval(substr($result, 4));
-		$this->assertEqual($posts, $fields);
 	}
 /**
  * testSchemaWrite method
