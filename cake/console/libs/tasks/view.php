@@ -344,7 +344,7 @@ class ViewTask extends BakeTask {
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?'), array('y','n'), 'y');
 		if (strtolower($looksGood) == 'y') {
-			$this->bake($action);
+			$this->bake($action, ' ');
 			$this->_stop();
 		} else {
 			$this->out(__('Bake Aborted.'));

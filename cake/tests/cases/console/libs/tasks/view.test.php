@@ -389,7 +389,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->controllerName = 'ViewTaskComments';
 		$this->Task->controllerPath = 'view_task_comments';
 
-		$this->Task->expectNever('createFile');
+		$this->Task->expects($this->never())->method('createFile');
 		$this->Task->bake('delete', true);
 	}
 
