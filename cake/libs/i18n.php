@@ -81,14 +81,6 @@ class I18n extends Object {
 	var $__noLocale = false;
 
 /**
- * Determine what should be cached
- *
- * @var boolean
- * @access private
- */
-	var $__cache = array();
-
-/**
  * Set to true when I18N::__bindTextDomain() is called for the first time.
  * If a translation file is found it is set to false again
  *
@@ -153,15 +145,16 @@ class I18n extends Object {
 		if (is_null($domain)) {
 			$domain = 'default';
 		}
-		$_this->domain = $domain . '_' . $_this->l10n->locale;
 
-		if (!isset($_this->__domains[$domain][$_this->__lang])) {
+		$_this->domain = $domain . '_' . $_this->l10n->lang;
+
+		if (empty($_this->__domains[$domain][$_this->__lang])) {
 			$_this->__domains[$domain][$_this->__lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
 		if (empty($_this->__domains[$domain][$_this->__lang][$_this->category])) {
 			$_this->__bindTextDomain($domain);
-			$_this->__cache[] = array('key' => $_this->domain, 'lang' => $_this->__lang, 'domain' => $domain);
+			Cache::write($_this->domain, $_this->__domains[$domain][$_this->__lang], '_cake_core_');
 		}
 
 		if ($_this->category == 'LC_TIME') {
@@ -559,20 +552,5 @@ class I18n extends Object {
 			}
 		}
 		return $format;
-	}
-
-/**
- * Object destructor
- *
- * Write cache file if changes have been made to the $__map or $__paths
- * @access private
- */
-	function __destruct() {
-		if (!empty($this->__cache)) {
-			foreach($this->__cache as $entry) {
-				if (empty($this->__domains[$entry['domain']][$entry['lang']])) continue;
-				Cache::write($entry['key'],	array_filter($this->__domains[$entry['domain']][$entry['lang']]), '_cake_core_');
-			}
-		}
 	}
 }
