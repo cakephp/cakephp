@@ -50,7 +50,7 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task =& new ExtractTask($this->Dispatcher);
 	}

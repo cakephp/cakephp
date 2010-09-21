@@ -122,7 +122,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function startTest() {
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
 		$this->Shell = $this->getMock(
 			'SchemaShell',

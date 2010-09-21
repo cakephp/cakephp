@@ -249,7 +249,7 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function startTest() {
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('TestTask', 
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
