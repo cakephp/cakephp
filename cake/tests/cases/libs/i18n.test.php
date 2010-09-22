@@ -57,25 +57,23 @@ class I18nTest extends CakeTestCase {
 
 	function testTranslationCaching() {
 		Configure::write('Config.language', 'cache_test_po');
-		$i18n =& i18n::getInstance();	
+		$i18n =& i18n::getInstance();
 
 		// reset internally stored entries
-		$i18n->__cache = array();
-		$i18n->__domains = array();
-		
+		I18n::clear();
+
 		Cache::clear(false, '_cake_core_');
 		$lang = Configure::read('Config.language');#$i18n->l10n->locale;
 
 		Cache::config('_cake_core_', Cache::config('default'));
 
 		// make some calls to translate using different domains
-		$this->assertEqual(i18n::translate('dom1.foo', false, 'dom1'), 'Dom 1 Foo');
-		$this->assertEqual(i18n::translate('dom1.bar', false, 'dom1'), 'Dom 1 Bar');
+		$this->assertEqual(I18n::translate('dom1.foo', false, 'dom1'), 'Dom 1 Foo');
+		$this->assertEqual(I18n::translate('dom1.bar', false, 'dom1'), 'Dom 1 Bar');
 		$this->assertEqual($i18n->__domains['dom1']['cache_test_po']['LC_MESSAGES']['dom1.foo'], 'Dom 1 Foo');
 
 		// reset internally stored entries
-		$i18n->__domains = array();
-		$i18n->__cache = array();
+		I18n::clear();
 
 		// now only dom1 should be in cache
 		$cachedDom1 = Cache::read('dom1_' . $lang, '_cake_core_');
@@ -85,7 +83,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertFalse(Cache::read('dom2_' . $lang, '_cake_core_'));
 
 		// translate a item of dom2 (adds dom2 to cache)
-		$this->assertEqual(i18n::translate('dom2.foo', false, 'dom2'), 'Dom 2 Foo');
+		$this->assertEqual(I18n::translate('dom2.foo', false, 'dom2'), 'Dom 2 Foo');
 
 		// verify dom2 was cached through manual read from cache
 		$cachedDom2 = Cache::read('dom2_' . $lang, '_cake_core_');
@@ -95,8 +93,7 @@ class I18nTest extends CakeTestCase {
 		// modify cache entry manually to verify that dom1 entries now will be read from cache 
 		$cachedDom1['LC_MESSAGES']['dom1.foo'] = 'FOO';
 		Cache::write('dom1_' . $lang, $cachedDom1, '_cake_core_');
-		$this->assertEqual(i18n::translate('dom1.foo', false, 'dom1'), 'FOO');
-	
+		$this->assertEqual(I18n::translate('dom1.foo', false, 'dom1'), 'FOO');
 	}
 
 
