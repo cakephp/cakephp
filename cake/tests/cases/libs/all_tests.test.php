@@ -39,7 +39,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		$console = CORE_TEST_CASES . DS . 'console' . DS;
 
 		$suite->addTestFile($console . 'all_shells.test.php');
-		$suite->addTestFile($console . 'libs' . DS . 'all_bake_tasks.test.php');
+		$suite->addTestFile($console . 'libs' . DS . 'all_tasks.test.php');
 
 		$suite->addTestFile($path . 'all_behaviors.test.php');
 		$suite->addTestFile($path . 'all_cache_engines.test.php');
