@@ -3652,6 +3652,7 @@ class ModelWriteTest extends BaseModelTest {
 	function testUpdateWithCalculation() {
 		$this->loadFixtures('DataTest');
 		$model =& new DataTest();
+		$model->deleteAll(true);
 		$result = $model->saveAll(array(
 			array('count' => 5, 'float' => 1.1),
 			array('count' => 3, 'float' => 1.2),

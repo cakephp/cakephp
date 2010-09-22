@@ -194,6 +194,16 @@ class I18n extends Object {
 	}
 
 /**
+ * Clears the domains internal data array.  Useful for testing i18n.
+ *
+ * @return void
+ */
+	function clear() {
+		$self =& I18n::getInstance();
+		$self->__domains = array();
+	}
+
+/**
  * Attempts to find the plural form of a string.
  *
  * @param string $header Type

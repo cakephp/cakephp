@@ -768,7 +768,7 @@ class Controller extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-		$this->viewVars = array_merge($this->viewVars, $data);
+		$this->viewVars = $data + $this->viewVars;
 	}
 
 /**
