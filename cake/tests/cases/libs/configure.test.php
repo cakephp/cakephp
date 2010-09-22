@@ -40,16 +40,8 @@ class ConfigureTest extends CakeTestCase {
 		$this->_debug = Configure::read('debug');
 
 		Configure::write('Cache.disable', true);
-	}
-
-/**
- * endTest
- *
- * @access public
- * @return void
- */
-	function endTest() {
 		App::build();
+		App::objects('plugin', null, true);
 	}
 
 /**
@@ -397,27 +389,27 @@ class AppImportTest extends CakeTestCase {
  * @return void
  */
 	function testListObjects() {
-		$result = App::objects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs');
+		$result = App::objects('class', TEST_CAKE_CORE_INCLUDE_PATH . 'libs', false);
 		$this->assertTrue(in_array('Xml', $result));
 		$this->assertTrue(in_array('Cache', $result));
 		$this->assertTrue(in_array('HttpSocket', $result));
 
-		$result = App::objects('behavior');
+		$result = App::objects('behavior', null, false);
 		$this->assertTrue(in_array('Tree', $result));
 
-		$result = App::objects('controller');
+		$result = App::objects('controller', null, false);
 		$this->assertTrue(in_array('Pages', $result));
 
-		$result = App::objects('component');
+		$result = App::objects('component', null, false);
 		$this->assertTrue(in_array('Auth', $result));
 
-		$result = App::objects('view');
+		$result = App::objects('view', null, false);
 		$this->assertTrue(in_array('Media', $result));
 
-		$result = App::objects('helper');
+		$result = App::objects('helper', null, false);
 		$this->assertTrue(in_array('Html', $result));
 
-		$result = App::objects('model');
+		$result = App::objects('model', null, false);
 		$notExpected = array('AppModel', 'ModelBehavior', 'ConnectionManager',  'DbAcl', 'Model', 'CakeSchema');
 		foreach ($notExpected as $class) {
 			$this->assertFalse(in_array($class, $result));

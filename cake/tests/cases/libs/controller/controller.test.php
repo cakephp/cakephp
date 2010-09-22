@@ -451,6 +451,8 @@ class ControllerTest extends CakeTestCase {
  */
 	function setUp() {
 		App::objects('plugin', null, false);
+		App::build();
+		Router::reload();
 	}
 
 /**
@@ -866,6 +868,8 @@ class ControllerTest extends CakeTestCase {
  */
 	function testFlash() {
 		$request = new CakeRequest('controller_posts/index');
+		$request->webroot = '/';
+		$request->base = '/';
 
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
