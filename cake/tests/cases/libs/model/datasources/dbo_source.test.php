@@ -4556,6 +4556,11 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'tbl_articles');
+		
+		$Article->useTable = $Article->table = 'with spaces';
+		$Article->tablePrefix = '';
+		$result = $this->testDb->fullTableName($Article);
+		$this->assertEqual($result, '`with spaces`');
 	}
 
 /**
