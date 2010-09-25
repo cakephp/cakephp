@@ -419,8 +419,6 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources), 'acos should be present.');
 		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources), 'aros should not be found.');
 		$this->assertFalse(in_array('aros_acos', $sources), 'aros_acos should not be found.');
-
-		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
 	}
 
 /**
@@ -486,6 +484,5 @@ class SchemaShellTest extends CakeTestCase {
 		$db =& ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
-
-		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');	}
+	}
 }

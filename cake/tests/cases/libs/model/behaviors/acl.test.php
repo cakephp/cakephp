@@ -347,7 +347,7 @@ class AclBehaviorTest extends CakeTestCase {
 		);
 		$this->Aro->save($aroData);
 
-		$Person =& new AclPerson();
+		$Person = new AclPerson();
 		$data = array(
 			'AclPerson' => array(
 				'name' => 'Trent',
