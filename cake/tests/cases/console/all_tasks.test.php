@@ -34,15 +34,12 @@ class AllTasksTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Tasks tests');
+		$suite = new CakeTestSuite('All Tasks tests');
 
 		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'tasks' . DS;
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'bake.test.php');
-		$tasks = array('controller', 'extract', 'model', 'view', 'fixture', 'test', 'db_config', 'project', 'plugin');
-		foreach ($tasks as $task) {
-			$suite->addTestFile($path . $task . '.test.php');
-		}
+		$suite->addTestDirectory($path);
 		return $suite;
 	}
 }
