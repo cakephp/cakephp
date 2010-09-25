@@ -2024,10 +2024,12 @@ class Model extends Overloadable {
  * find('all', array(
  * 		'conditions' => array('name' => 'Thomas Anderson'),
  * 		'joins' => array(
- * 			'alias' => 'Thought',
- * 			'table' => 'thoughts',
- * 			'type' => 'LEFT',
- * 			'conditions' => '`Thought`.`person_id` = `Person`.`id`'
+ *			array(
+ * 				'alias' => 'Thought',
+ * 				'table' => 'thoughts',
+ * 				'type' => 'LEFT',
+ * 				'conditions' => '`Thought`.`person_id` = `Person`.`id`'
+ *			)
  * 		)
  * ));
  * }}}
