@@ -258,7 +258,7 @@ class TestTaskTest extends CakeTestCase {
 		);
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->name = 'TestTask';
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher);
 	}
 
 /**
@@ -303,7 +303,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	function xtestMethodIntrospection() {
+	function testMethodIntrospection() {
 		$result = $this->Task->getTestableMethods('TestTaskArticle');
 		$expected = array('dosomething', 'dosomethingelse');
 		$this->assertEqual(array_map('strtolower', $result), $expected);
@@ -314,7 +314,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestFixtureArrayGenerationFromModel() {
+	public function testFixtureArrayGenerationFromModel() {
 		$subject = ClassRegistry::init('TestTaskArticle');
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
@@ -328,7 +328,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestFixtureArrayGenerationFromController() {
+	public function testFixtureArrayGenerationFromController() {
 		$subject = new TestTaskCommentsController();
 		$result = $this->Task->generateFixtureList($subject);
 		$expected = array('plugin.test_task.test_task_comment', 'app.articles_tags',
@@ -342,7 +342,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestGetObjectType() {
+	public function testGetObjectType() {
 		$this->Task->expects($this->once())->method('_stop');
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('q'));
 		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue(2));
@@ -358,7 +358,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestRegistryClearWhenBuildingTestObjects() {
+	public function testRegistryClearWhenBuildingTestObjects() {
 		ClassRegistry::flush();
 		$model = ClassRegistry::init('TestTaskComment');
 		$model->bindModel(array(
@@ -382,7 +382,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestGetClassName() {
+	public function testGetClassName() {
 		$objects = App::objects('model');
 		$skip = $this->skipIf(empty($objects), 'No models in app, this test will fail. %s');
 		if ($skip) {
@@ -404,7 +404,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestGetUserFixtures() {
+	public function testGetUserFixtures() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')
 			->will($this->returnValue('app.pizza, app.topping, app.side_dish'));
@@ -419,7 +419,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestGetRealClassname() {
+	public function testGetRealClassname() {
 		$result = $this->Task->getRealClassname('Model', 'Post');
 		$this->assertEqual($result, 'Post');
 
@@ -442,28 +442,28 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestBakeModelTest() {
+	public function testBakeModelTest() {
 		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
 		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Model', 'TestTaskArticle');
 
-		$this->assertPattern('/App::import\(\'Model\', \'TestTaskArticle\'\)/', $result);
-		$this->assertPattern('/class TestTaskArticleTestCase extends CakeTestCase/', $result);
+		$this->assertContains("App::import('Model', 'TestTaskArticle')", $result);
+		$this->assertContains('class TestTaskArticleTestCase extends CakeTestCase', $result);
 
-		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskArticle \=\& ClassRegistry::init\('TestTaskArticle'\)/", $result);
+		$this->assertContains('function startTest()', $result);
+		$this->assertContains("\$this->TestTaskArticle =& ClassRegistry::init('TestTaskArticle')", $result);
 
-		$this->assertPattern('/function endTest\(\)/', $result);
-		$this->assertPattern('/unset\(\$this->TestTaskArticle\)/', $result);
+		$this->assertContains('function endTest()', $result);
+		$this->assertContains('unset($this->TestTaskArticle)', $result);
 
-		$this->assertPattern('/function testDoSomething\(\)/i', $result);
-		$this->assertPattern('/function testDoSomethingElse\(\)/i', $result);
+		$this->assertContains('function testDoSomething()', $result);
+		$this->assertContains('function testDoSomethingElse()', $result);
 
-		$this->assertPattern("/'app\.test_task_article'/", $result);
-		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		$this->assertPattern("/'app\.test_task_tag'/", $result);
-		$this->assertPattern("/'app\.articles_tag'/", $result);
+		$this->assertContains("'app.test_task_article'", $result);
+		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_tag'", $result);
+		$this->assertContains("'app.articles_tag'", $result);
 	}
 
 /**
@@ -473,30 +473,30 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestBakeControllerTest() {
+	public function testBakeControllerTest() {
 		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
 		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
 
 		$result = $this->Task->bake('Controller', 'TestTaskComments');
 
-		$this->assertPattern('/App::import\(\'Controller\', \'TestTaskComments\'\)/', $result);
-		$this->assertPattern('/class TestTaskCommentsControllerTestCase extends CakeTestCase/', $result);
+		$this->assertContains("App::import('Controller', 'TestTaskComments')", $result);
+		$this->assertContains('class TestTaskCommentsControllerTestCase extends CakeTestCase', $result);
 
-		$this->assertPattern('/class TestTestTaskCommentsController extends TestTaskCommentsController/', $result);
-		$this->assertPattern('/public \$autoRender = false/', $result);
-		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
+		$this->assertContains('class TestTestTaskCommentsController extends TestTaskCommentsController', $result);
+		$this->assertContains('public $autoRender = false', $result);
+		$this->assertContains('function redirect($url, $status = null, $exit = true)', $result);
 
-		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController\(\)/", $result);
-		$this->assertPattern("/\\\$this->TestTaskComments->constructClasses\(\)/", $result);
+		$this->assertContains('function startTest()', $result);
+		$this->assertContains("\$this->TestTaskComments =& new TestTestTaskCommentsController()", $result);
+		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
 
-		$this->assertPattern('/function endTest\(\)/', $result);
-		$this->assertPattern('/unset\(\$this->TestTaskComments\)/', $result);
+		$this->assertContains('function endTest()', $result);
+		$this->assertContains('unset($this->TestTaskComments)', $result);
 
-		$this->assertPattern("/'app\.test_task_article'/", $result);
-		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		$this->assertPattern("/'app\.test_task_tag'/", $result);
-		$this->assertPattern("/'app\.articles_tag'/", $result);
+		$this->assertContains("'app.test_task_article'", $result);
+		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_tag'", $result);
+		$this->assertContains("'app.articles_tag'", $result);
 	}
 
 /**
@@ -504,7 +504,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestGenerateConstructor() {
+	public function testGenerateConstructor() {
 		$result = $this->Task->generateConstructor('controller', 'PostsController');
 		$expected = "new TestPostsController();\n\t\t\$this->Posts->constructClasses();\n";
 		$this->assertEqual($result, $expected);
@@ -523,7 +523,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestMockClassGeneration() {
+	public function testMockClassGeneration() {
 		$result = $this->Task->hasMockClass('controller');
 		$this->assertTrue($result);
 	}
@@ -533,7 +533,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestBakeWithPlugin() {
+	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'TestTest';
 
 		$path = APP . 'plugins' . DS . 'test_test' . DS . 'tests' . DS . 'cases' . DS . 'helpers' . DS . 'form.test.php';
@@ -548,7 +548,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestTestCaseFileName() {
+	public function testTestCaseFileName() {
 		$this->Task->path = '/my/path/tests/';
 
 		$result = $this->Task->testCaseFileName('Model', 'Post');
@@ -582,7 +582,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestExecuteWithOneArg() {
+	public function testExecuteWithOneArg() {
 		$this->Task->args[0] = 'Model';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
 		$this->Task->expects($this->once())->method('isLoadableClass')->will($this->returnValue(true));
@@ -599,7 +599,7 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function xtestExecuteWithTwoArgs() {
+	public function testExecuteWithTwoArgs() {
 		$this->Task->args = array('Model', 'TestTaskTag');
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestTaskTag'));
 		$this->Task->expects($this->once())->method('createFile')
