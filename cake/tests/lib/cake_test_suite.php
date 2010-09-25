@@ -74,7 +74,8 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 
 /**
  * Method that is called before the tests of this test suite are run.
- * It will load fixtures accordingly for each test
+ * It will load fixtures accordingly for each test.
+ *
  * @return void
  * @access protected
  */
@@ -92,6 +93,7 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 
 /**
  * Method that is called after all the tests of this test suite are run.
+ *
  * @return void
  * @access protected
  */

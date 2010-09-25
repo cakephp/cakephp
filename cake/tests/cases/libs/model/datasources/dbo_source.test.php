@@ -4154,16 +4154,19 @@ class DboSourceTest extends CakeTestCase {
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 
-		$this->testDb->error = true;
-		$this->expectError();
-		ob_start();
-		$this->testDb->showQuery('Error 2');
-		$contents = ob_get_clean();
-
-		$this->assertPattern('/Error 2/s', $contents);
-
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
+	}
+
+	function testShowQueryError() {
+		$this->testDb->error = true;
+		try {
+			$this->testDb->showQuery('Error 2');
+			$this->fail('No exception');
+		} catch (Exception $e) {
+			$this->assertPattern('/SQL Error/', $e->getMessage());
+			$this->assertTrue(true, 'Exception thrown');
+		}
 	}
 
 /**
