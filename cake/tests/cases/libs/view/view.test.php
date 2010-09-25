@@ -239,6 +239,9 @@ class ViewTest extends CakeTestCase {
 				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
 			)
 		), true);
+		
+		$this->_debug = Configure::read('debug');
+		Configure::write('debug', 2);
 	}
 
 /**
@@ -251,7 +254,9 @@ class ViewTest extends CakeTestCase {
 		unset($this->View);
 		unset($this->PostsController);
 		unset($this->Controller);
+
 		App::build();
+		Configure::write('debug', $this->_debug);
 	}
 
 /**
