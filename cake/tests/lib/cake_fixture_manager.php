@@ -89,10 +89,12 @@ class CakeFixtureManager {
 			// Try for test DB
 			@$db = ConnectionManager::getDataSource('test');
 			$testDbAvailable = $db->isConnected();
+		} else {
+			throw new MissingConnectionException(__('You need to create a $test datasource connection to start using fixtures'));
 		}
 
 		if (!$testDbAvailable) {
-			throw new MissingConnectionException(__('You need to create a $test datasource connection to start using fixtures'));
+			throw new MissingConnectionException(__('Unable to connect to the $test datasource'));
 		}
 
 		$this->_db = $db;
@@ -220,13 +222,7 @@ class CakeFixtureManager {
  * @return void
  */
 	public function unload(CakeTestCase $test) {
-		if (empty($test->fixtures)) {
-			return;
-		}
-		$fixtures = $test->fixtures;
-		if (empty($fixtures)) {
-			return;
-		}
+		$fixtures = !empty($test->fixtures) ? $test->fixtures : array();
 		foreach ($fixtures as $f) {
 			if (isset($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];

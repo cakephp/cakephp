@@ -102,7 +102,5 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 		if ($this->_fixtureManager) {
 			$this->_fixtureManager->shutDown();
 		}
-		$this->_fixtureManager = null;
-		$this->sharedFixture = null;
 	}
 }

@@ -60,7 +60,6 @@ class CakeTestFixture {
 /**
  * Initialize the fixture.
  *
- * @param object	Cake's DBO driver (e.g: DboMysql).
  */
 	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
