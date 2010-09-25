@@ -72,6 +72,16 @@ endif;
 	?>
 </p>
 <?php
+	App::import('Core', 'Validation');
+	if (!Validation::alphaNumeric('cakephp')) {
+		echo '<p><span class="notice">';
+		__('PCRE has not been compiled with Unicode support.');
+		echo '<br/>';
+		__('Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+		echo '</span></p>';
+	}
+?>
+<?php
 if (isset($filePresent)):
 	if (!class_exists('ConnectionManager')) {
 		require LIBS . 'model' . DS . 'connection_manager.php';

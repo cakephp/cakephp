@@ -264,6 +264,27 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEqual($this->Controller->ext, '.ctp');
 	}
 
+
+/**
+ * testAutoAjaxLayout method
+ *
+ * @access public
+ * @return void
+ */
+	function testAutoAjaxLayout() {
+		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
+
+		$this->_init();
+		$this->Controller->request->query['ext'] = 'js';
+		$this->RequestHandler->initialize($this->Controller);
+		$this->RequestHandler->startup($this->Controller);
+		$this->assertNotEqual($this->Controller->layout, 'ajax');
+
+		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
+	}
+
 /**
  * testStartupCallback method
  *

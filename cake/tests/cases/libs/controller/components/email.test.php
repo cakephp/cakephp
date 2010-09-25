@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+App::import('Core', 'Controller');
 App::import('Component', 'Email');
 App::import('Core', 'CakeSocket');
 

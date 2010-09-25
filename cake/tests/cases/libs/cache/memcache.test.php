@@ -315,4 +315,19 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'memcache'));
 	}
+/**
+ * test that a 0 duration can succesfully write.
+ *
+ * @return void
+ */
+	function testZeroDuration() {
+		Cache::config('memcache', array('duration' => 0));
+		$result = Cache::write('test_key', 'written!', 'memcache');
+
+		$this->assertTrue($result, 'Could not write with duration 0');
+		$result = Cache::read('test_key', 'memcache');
+		$this->assertEqual($result, 'written!');
+		
+	}
+
 }
