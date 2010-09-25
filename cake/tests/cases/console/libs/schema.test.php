@@ -399,6 +399,11 @@ class SchemaShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateWithTableArgs() {
+		$db = ConnectionManager::getDataSource('test');
+		$sources = $db->listSources();
+		if (in_array('acos', $sources)) {
+			$this->markTestSkipped('acos table already exists, cannot try to create it again.');
+		}
 		$this->Shell->params = array(
 			'connection' => 'test',
 			'name' => 'DbAcl',
@@ -409,11 +414,11 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
-		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
-		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources));
-		$this->assertFalse(in_array('aros_acos', $sources));
+		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources), 'acos should be present.');
+		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources), 'aros should not be found.');
+		$this->assertFalse(in_array('aros_acos', $sources), 'aros_acos should not be found.');
 
 		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
 	}

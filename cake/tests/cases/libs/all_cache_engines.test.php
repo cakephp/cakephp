@@ -34,16 +34,10 @@ class AllCacheEnginesTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Cache related class tests');
+		$suite = new CakeTestSuite('All Cache related class tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cache.test.php');
-
-		$cacheIterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
-		foreach ($cacheIterator as $i => $file) {
-			if (!$file->isDot()) {
-				$suite->addTestfile($file->getPathname());
-			}
-		}
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'cache');
 		return $suite;
 	}
 }
