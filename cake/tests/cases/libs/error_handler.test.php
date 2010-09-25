@@ -45,35 +45,6 @@ class AuthBlueberryUser extends CakeTestModel {
 	public $useTable = false;
 }
 
-if (!class_exists('AppController')) {
-	/**
-	 * AppController class
-	 *
-	 * @package       cake
-	 * @subpackage    cake.tests.cases.libs
-	 */
-	class AppController extends Controller {
-	/**
-	 * components property
-	 *
-	 * @access public
-	 * @return void
-	 */
-		public $components = array('Blueberry');
-	/**
-	 * beforeRender method
-	 *
-	 * @access public
-	 * @return void
-	 */
-		function beforeRender() {
-			echo $this->Blueberry->testName;
-		}
-	}
-} elseif (!defined('APP_CONTROLLER_EXISTS')){
-	define('APP_CONTROLLER_EXISTS', true);
-}
-
 /**
  * BlueberryComponent class
  *
@@ -107,7 +78,7 @@ class BlueberryComponent extends Component {
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class TestErrorController extends AppController {
+class TestErrorController extends Controller {
 
 /**
  * uses property
@@ -116,6 +87,24 @@ class TestErrorController extends AppController {
  * @access public
  */
 	public $uses = array();
+
+/**
+ * components property
+ *
+ * @access public
+ * @return void
+ */
+	public $components = array('Blueberry');
+
+/**
+ * beforeRender method
+ *
+ * @access public
+ * @return void
+ */
+	function beforeRender() {
+		echo $this->Blueberry->testName;
+	}
 
 /**
  * index method
@@ -127,31 +116,6 @@ class TestErrorController extends AppController {
 		$this->autoRender = false;
 		return 'what up';
 	}
-}
-
-/**
- * BlueberryController class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs
- */
-class BlueberryController extends AppController {
-
-/**
- * name property
- *
- * @access public
- * @return void
- */
-	public $name = 'BlueberryController';
-
-/**
- * uses property
- *
- * @access public
- * @return void
- */
-	public $uses = array();
 }
 
 /**
@@ -188,29 +152,33 @@ class MissingWidgetThingException extends NotFoundException { }
 class ErrorHandlerTest extends CakeTestCase {
 
 /**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$this->skipIf(PHP_SAPI === 'cli', '%s Cannot be run from console');
-	}
-
-/**
  * setup create a request object to get out of router later.
  *
  * @return void
  */
 	function setUp() {
+		App::build(array(
+			'views' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+			)
+		), true);
+		Router::reload();
+
 		$request = new CakeRequest(null, false);
 		$request->base = '';
 		Router::setRequestInfo($request);
 		$this->_debug = Configure::read('debug');
 	}
 
+/**
+ * teardown
+ *
+ * @return void
+ */
 	function teardown() {
 		Configure::write('debug', $this->_debug);
+		App::build();
 	}
 
 /**
@@ -372,10 +340,7 @@ class ErrorHandlerTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testerror400() {
-		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
-		), true);
+	function testError400() {
 		Router::reload();
 
 		$request = new CakeRequest('posts/view/1000', false);
@@ -392,8 +357,6 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$this->assertPattern('/<h2>Custom message<\/h2>/', $result);
 		$this->assertPattern("/<strong>'\/posts\/view\/1000'<\/strong>/", $result);
-		
-		App::build();
 	}
 
 /**
@@ -468,8 +431,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testMissingController() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController');
-
 		$exception = new MissingControllerException(array('controller' => 'PostsController'));
 		$ErrorHandler = $this->_mockResponse(new ErrorHandler($exception));
 
@@ -479,19 +440,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$this->assertPattern('/<h2>Missing Controller<\/h2>/', $result);
 		$this->assertPattern('/<em>PostsController<\/em>/', $result);
-		$this->assertPattern('/BlueberryComponent/', $result);
 	}
-
-
-	/* TODO: Integration test that needs to be moved
-	ob_start();
-	$dispatcher = new Dispatcher('/blueberry/inexistent');
-	$result = ob_get_clean();
-	$this->assertPattern('/<h2>Missing Method in BlueberryController<\/h2>/', $result);
-	$this->assertPattern('/<em>BlueberryController::<\/em><em>inexistent\(\)<\/em>/', $result);
-	$this->assertNoPattern('/Location: (.*)\/users\/login/', $result);
-	$this->assertNoPattern('/Stopped with status: 0/', $result);
-	*/
 
 /**
  * Returns an array of tests to run for the various CakeException classes.

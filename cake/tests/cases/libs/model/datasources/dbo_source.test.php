@@ -4243,16 +4243,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/Aff:/s', $contents);
 		$this->assertPattern('/Num:/s', $contents);
 		$this->assertPattern('/Took:/s', $contents);
-
-		$this->expectError();
-		$this->testDb->error = true;
-		ob_start();
-		$this->testDb->showQuery('Another Query');
-		$contents = ob_get_clean();
-		$this->assertPattern('/Another Query/s', $contents);
-		$this->assertNoPattern('/Aff:/s', $contents);
-		$this->assertNoPattern('/Num:/s', $contents);
-		$this->assertNoPattern('/Took:/s', $contents);
 	}
 
 /**
