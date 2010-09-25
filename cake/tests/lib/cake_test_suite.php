@@ -55,6 +55,24 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 	}
 
 /**
+ * Recursively adds all the files in a directory to the test suite.
+ *
+ * @param string $directory The directory subtree to add tests from.
+ * @return void
+ */
+	public function addTestDirectoryRecursive($directory = '.') {
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+
+		foreach ($files as $file) {
+			if (!$file->isFile()) {
+				continue;
+			}
+			$file = $file->getRealPath();
+			$this->addTestFile($file);
+		}
+	}
+
+/**
  * Method that is called before the tests of this test suite are run.
  * It will load fixtures accordingly for each test
  * @return void
