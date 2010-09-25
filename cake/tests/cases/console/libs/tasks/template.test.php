@@ -44,11 +44,11 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php
 class TemplateTaskTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setup() {
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
 			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
@@ -60,13 +60,14 @@ class TemplateTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
  * @return void
  */
-	public function endTest() {
+	public function teardown() {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
+		App::build();
 	}
 
 /**
