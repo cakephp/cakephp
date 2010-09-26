@@ -35,12 +35,14 @@ App::import('Core', 'Inflector');
 class InflectorTest extends CakeTestCase {
 
 /**
- * Inflector property
+ * teardown
  *
- * @var mixed null
- * @access public
+ * @return void
  */
-	public $Inflector = null;
+	function tearDown() {
+		parent::tearDown();
+		Inflector::reset();
+	}
 
 /**
  * testInflectingSingulars method

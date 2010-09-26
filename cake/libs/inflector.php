@@ -235,6 +235,13 @@ class Inflector {
 	protected static $_cache = array();
 
 /**
+ * The initial state of Inflector so reset() works.
+ *
+ * @var array
+ */
+	protected static $_initialState = array();
+
+/**
  * Cache inflected values, and return if already available
  *
  * @param string $type Inflection type
@@ -253,6 +260,24 @@ class Inflector {
 			return false;
 		}
 		return self::$_cache[$type][$key];
+	}
+
+/**
+ * Clears Inflectors inflected value caches. And resets the inflection
+ * rules to the initial values.
+ *
+ * @return void
+ */
+	public static function reset() {
+		if (empty(self::$_initialState)) {
+			self::$_initialState = get_class_vars('Inflector');
+			return;
+		}
+		foreach (self::$_initialState as $key => $val) {
+			if ($key != '_initialState') {
+				self::${$key} = $val;
+			}
+		}
 	}
 
 /**
@@ -540,3 +565,6 @@ class Inflector {
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 }
+
+// Store the initial state
+Inflector::reset();
