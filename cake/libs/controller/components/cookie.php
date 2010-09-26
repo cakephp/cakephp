@@ -117,6 +117,16 @@ class CookieComponent extends Component {
 	public $key = null;
 
 /**
+ * HTTP only cookie
+ *
+ * Set to true to make HTTP only cookies.  Cookies that are HTTP only 
+ * are not accessible in Javascript.
+ *
+ * @var boolean
+ */
+	public $httpOnly = false;
+
+/**
  * Values stored in the cookie.
  *
  * Accessed in the controller using $this->Cookie->read('Name.key');
@@ -356,7 +366,10 @@ class CookieComponent extends Component {
  * @param string $value Value for cookie
  */
 	protected function _write($name, $value) {
-		$this->_setcookie($this->name . $name, $this->_encrypt($value), $this->_expires, $this->path, $this->domain, $this->secure);
+		$this->_setcookie(
+			$this->name . $name, $this->_encrypt($value), 
+			$this->_expires, $this->path, $this->domain, $this->secure, $this->httpOnly
+		);
 
 		if (!is_null($this->_reset)) {
 			$this->_expires = $this->_reset;
@@ -371,7 +384,10 @@ class CookieComponent extends Component {
  * @return void
  */
 	protected function _delete($name) {
-		$this->_setcookie($this->name . $name, '', time() - 42000, $this->path, $this->domain, $this->secure);
+		$this->_setcookie(
+			$this->name . $name, '', 
+			time() - 42000, $this->path, $this->domain, $this->secure, $this->httpOnly
+		);
 	}
 
 /**

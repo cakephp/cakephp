@@ -193,6 +193,34 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test write with httpOnly cookies
+ *
+ * @return void
+ */
+	function testWriteHttpOnly() {
+		$this->Cookie->httpOnly = true;
+		$this->Cookie->secure = false;
+		$this->Cookie->expects($this->once())->method('_setcookie')
+			->with('CakeTestCookie[Testing]', 'value', time() + 10, '/', '', false, true);
+
+		$this->Cookie->write('Testing', 'value', false);
+	}
+
+/**
+ * test delete with httpOnly
+ *
+ * @return void
+ */
+	function testDeleteHttpOnly() {
+		$this->Cookie->httpOnly = true;
+		$this->Cookie->secure = false;
+		$this->Cookie->expects($this->once())->method('_setcookie')
+			->with('CakeTestCookie[Testing]', '', time() - 42000, '/', '', false, true);
+
+		$this->Cookie->delete('Testing', false);
+	}
+
+/**
  * testWritePlainCookieArray
  *
  * @access public
