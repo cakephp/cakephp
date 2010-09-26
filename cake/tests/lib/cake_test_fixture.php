@@ -69,10 +69,13 @@ class CakeTestFixture {
 			);
 
 			if (isset($import['model']) && App::import('Model', $import['model'])) {
-				ClassRegistry::config(array('ds' => $import['connection']));
-				$model = ClassRegistry::init($import['model']);
-				$db = ConnectionManager::getDataSource($model->useDbConfig);
-				$db->cacheSources = false;
+				App::import('Model', $import['model']);
+				list(, $modelClass) = pluginSplit($import['model']);
+				$model = new $modelClass(null, null, $import['connection']);
+				$db = $model->getDataSource();
+				if (empty($model->tablePrefix)) {
+					$model->tablePrefix = $db->config['prefix'];
+				}
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 				$this->table = $db->fullTableName($model, false);
