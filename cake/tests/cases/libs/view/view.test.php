@@ -905,6 +905,15 @@ class ViewTest extends CakeTestCase {
 		$View->entityPath = '0.Node.title';
 		$expected = array(0, 'Node', 'title');
 		$this->assertEqual($View->entity(), $expected);
+		
+		$View->model = 'HelperTestTag';
+		$View->field = 'HelperTestTag';
+		$View->modelId = null;
+		$View->association = null;
+		$View->fieldSuffix = null;
+		$View->entityPath = 'HelperTestTag';
+		$expected = array('HelperTestTag', 'HelperTestTag');
+		$this->assertEqual($View->entity(), $expected);
 	}
 
 /**

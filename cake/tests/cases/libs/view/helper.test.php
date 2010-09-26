@@ -586,6 +586,13 @@ class HelperTest extends CakeTestCase {
 		$this->assertEqual($this->View->association, null);
 		$this->assertEqual($this->View->fieldSuffix, null);
 
+		$this->Helper->setEntity('HelperTestTag');
+		$this->assertEqual($this->View->model, 'HelperTestTag');
+		$this->assertEqual($this->View->field, 'HelperTestTag');
+		$this->assertEqual($this->View->modelId, null);
+		$this->assertEqual($this->View->association, null);
+		$this->assertEqual($this->View->fieldSuffix, null);
+		$this->assertEqual($this->View->entityPath, 'HelperTestTag');
 	}
 
 /**

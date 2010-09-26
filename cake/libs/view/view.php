@@ -628,6 +628,7 @@ class View extends Object {
 			if (
 				($count == 1 && !empty($this->association)) ||
 				($count == 1 && $this->model != $this->entityPath) ||
+				($count == 1 && empty($this->association) && !empty($this->field)) ||
 				($count  == 2 && !empty($this->fieldSuffix)) ||
 				is_numeric($path[0]) && !empty($assoc)
 			) {
