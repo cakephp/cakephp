@@ -84,7 +84,7 @@ class CakeTestFixtureImportFixture extends CakeTestFixture {
  *
  * @var mixed
  */
-	public $import = array('table' => 'fixture_tests', 'connection' => 'fixture_test');
+	public $import = array('table' => 'fixture_tests', 'connection' => 'fixture_test_suite');
 }
 
 /**
@@ -139,12 +139,8 @@ class CakeTestFixtureTest extends CakeTestCase {
 	function setUp() {
 		$this->criticDb = $this->getMock('DboSource');
 		$this->criticDb->fullDebug = true;
-		
-		$dbs = ConnectionManager::enumConnectionObjects();
-		if (!isset($dbs['test'])) {
-			$db = ConnectionManager::getDatasource('test');
-			ConnectionManager::create('test', $db->config);
-		}
+		$this->db = ConnectionManager::getDataSource('test');
+		$this->_backupConfig = $this->db->config;
 	}
 
 /**
@@ -155,6 +151,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  */
 	function tearDown() {
 		unset($this->criticDb);
+		$this->db->config = $this->_backupConfig;
 	}
 
 /**
@@ -194,16 +191,16 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$this->assertEqual(array_keys($Fixture->fields), $expected);
 
 		$config = $db->config;
-		$config['prefix'] = 'fixture_test_';
-		ConnectionManager::create('fixture_test', $config);
+		$config['prefix'] = 'fixture_test_suite_';
+		ConnectionManager::create('fixture_test_suite', $config);
 
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('table' => 'fixture_tests', 'connection' => 'test', 'records' => true);
 		$Fixture->init();
 		$this->assertEqual(count($Fixture->records), count($Source->records));
-		$Fixture->create(ConnectionManager::getDataSource('fixture_test'));
+		$Fixture->create(ConnectionManager::getDataSource('fixture_test_suite'));
 
-		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture = new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 		$Fixture->init();
@@ -213,7 +210,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
-		$Fixture->drop(ConnectionManager::getDataSource('fixture_test'));
+		$Fixture->drop(ConnectionManager::getDataSource('fixture_test_suite'));
 		$Source->drop($db);
 	}
 
@@ -226,12 +223,15 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$db = ConnectionManager::getDataSource('test');
 		$backPrefix = $db->config['prefix'];
 		$db->config['prefix'] = 'cake_fixture_test_';
+		ConnectionManager::create('fixture_test_suite', $db->config);
+		$newDb = ConnectionManager::getDataSource('fixture_test_suite');
+		$newDb->config['prefix'] = 'cake_fixture_test_';
 
-		$Source =& new CakeTestFixtureTestFixture();
+		$Source = new CakeTestFixtureTestFixture();
 		$Source->create($db);
 		$Source->insert($db);
 
-		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture = new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
 		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 
@@ -249,16 +249,15 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	function testInitModelTablePrefix() {
-		$db = ConnectionManager::getDataSource('test');
-		$hasPrefix = !empty($db->config['prefix']);
-		if ($hasPrefix) {
-			$this->markTestSkipped('Cannot run this test, you have a database connection prefix.');
+		$hasPrefix = !empty($this->db->config['prefix']);
+		if ($this->skipIf($hasPrefix, 'Cannot run this test, you have a database connection prefix.')) {
+			return;
 		}
-		$Source =& new CakeTestFixtureTestFixture();
-		$Source->create($db);
-		$Source->insert($db);
+		$Source = new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
 
-		$Fixture =& new CakeTestFixtureTestFixture();
+		$Fixture = new CakeTestFixtureTestFixture();
 		unset($Fixture->table);
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test', 'records' => false);
@@ -268,7 +267,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
-		$Source->drop($db);
+		$Source->drop($this->db);
 	}
 
 /**
@@ -282,8 +281,8 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$testSuiteDb = ConnectionManager::getDataSource('test');
 		$defaultConfig = $defaultDb->config;
 		$testSuiteConfig = $testSuiteDb->config;
-		ConnectionManager::create('new_test', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
-		$newTestSuiteDb = ConnectionManager::getDataSource('new_test');
+		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
+		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
 
 		$Source = new CakeTestFixtureTestFixture();
 		$Source->create($newTestSuiteDb);
@@ -293,7 +292,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 
 		$Fixture = new CakeTestFixtureDefaultImportFixture();
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'new_test');
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
 
@@ -317,8 +316,8 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$testSuiteDb = ConnectionManager::getDataSource('test');
 		$defaultConfig = $defaultDb->config;
 		$testSuiteConfig = $testSuiteDb->config;
-		ConnectionManager::create('new_test', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
-		$newTestSuiteDb = ConnectionManager::getDataSource('new_test');
+		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
+		$newTestSuiteDb = ConnectionManager::getDataSource('new_test_suite');
 
 		$Source = new CakeTestFixtureTestFixture();
 		$Source->create($newTestSuiteDb);
@@ -329,7 +328,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 		$Fixture = new CakeTestFixtureDefaultImportFixture();
 		$Fixture->fields = $Fixture->records = null;
 		$Fixture->import = array(
-			'model' => 'FixtureImportTestModel', 'connection' => 'new_test', 'records' => true
+			'model' => 'FixtureImportTestModel', 'connection' => 'new_test_suite', 'records' => true
 		);
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
