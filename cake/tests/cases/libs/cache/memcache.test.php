@@ -135,6 +135,24 @@ class MemcacheEngineTest extends CakeTestCase {
 	}
 
 /**
+ * test connecting to an ipv6 server.
+ *
+ * @return void
+ */
+	function testConnectIpv6() {
+		$Memcache =& new MemcacheEngine();
+		$result = $Memcache->init(array(
+			'prefix' => 'cake_',
+			'duration' => 200,
+			'engine' => 'Memcache',
+			'servers' => array(
+				'[::1]:11211'
+			)
+		));
+		$this->assertTrue($result);
+	}
+
+/**
  * testReadAndWriteCache method
  *
  * @access public
