@@ -143,25 +143,26 @@ class SecurityComponentTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
+	
 		$request = new CakeRequest('posts/index', false);
 		$request->addParams(array('controller' => 'posts', 'action' => 'index'));
 		$this->Controller = new SecurityTestController($request);
 		$this->Controller->Components->init($this->Controller);
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
-		$this->oldSalt = Configure::read('Security.salt');
+
 		Configure::write('Security.salt', 'foo!');
 	}
 
 /**
  * Tear-down method. Resets environment state.
  *
- * @access public
  * @return void
  */
-	function endTest() {
-		Configure::write('Security.salt', $this->oldSalt);
+	function tearDown() {
+		parent::tearDown();
 		$this->Controller->Session->delete('_Token');
 		unset($this->Controller->Security);
 		unset($this->Controller->Component);

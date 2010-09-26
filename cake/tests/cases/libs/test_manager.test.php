@@ -48,6 +48,7 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_countFiles = 0;
 		$this->TestManager = new TestTestManager();
 		$this->testSuiteStub = $this->getMock('CakeTestSuite');

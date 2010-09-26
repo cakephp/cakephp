@@ -22,20 +22,22 @@ App::import('Helper', array('Html', 'Js', 'PrototypeEngine'));
 
 class PrototypeEngineHelperTest extends CakeTestCase {
 /**
- * startTest
+ * setUp
  *
  * @return void
  */
-	function startTest() {
-		$this->Proto =& new PrototypeEngineHelper();
+	function setUp() {
+		parent::setUp();
+		$this->Proto = new PrototypeEngineHelper();
 	}
 
 /**
- * end test
+ * tearDown
  *
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Proto);
 	}
 

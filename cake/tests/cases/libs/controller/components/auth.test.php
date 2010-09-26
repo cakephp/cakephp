@@ -473,21 +473,19 @@ class AuthTest extends CakeTestCase {
 	public $initialized = false;
 
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
 	function setUp() {
+		parent::setUp();
 		$this->_server = $_SERVER;
 		$this->_env = $_ENV;
 
-		$this->_securitySalt = Configure::read('Security.salt');
-		$this->_securityCipher = Configure::read('Security.cipherSeed');
 		Configure::write('Security.salt', 'YJfIxfs2guVoUubWDYhG93b0qyJfIxfs2guwvniR2G0FgaC9mi');
 		Configure::write('Security.cipherSeed', 770011223369876);
 
-		$this->_acl = Configure::read('Acl');
 		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 
@@ -505,27 +503,22 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
 
-		Router::reload();
-
 		$this->initialized = true;
+		Router::reload();
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
- * @access public
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		$_SERVER = $this->_server;
 		$_ENV = $this->_env;
-		Configure::write('Acl', $this->_acl);
-		Configure::write('Security.salt', $this->_securitySalt);
-		Configure::write('Security.cipherSeed', $this->_securityCipher);
 
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
-		ClassRegistry::flush();
 		unset($this->Controller, $this->AuthUser);
 	}
 

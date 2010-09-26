@@ -51,13 +51,12 @@ class AclShellTest extends CakeTestCase {
 	public $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
-		$this->_aclDb = Configure::read('Acl.database');
-		$this->_aclClass = Configure::read('Acl.classname');
+	public function setUp() {
+		parent::setUp();
 
 		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
@@ -75,17 +74,6 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->Acl = new AclComponent($collection);
 
 		$this->Task->params['datasource'] = 'test';
-	}
-
-/**
- * endTest method
- *
- * @return void
- */
-	public function endTest() {
-		ClassRegistry::flush();
-		Configure::write('Acl.database', $this->_aclDb);
-		Configure::write('Acl.classname', $this->_aclClass);
 	}
 
 /**

@@ -53,11 +53,12 @@ class ModelTaskTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
 
 /**
- * starTest method
+ * setUp method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
 			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
@@ -97,13 +98,13 @@ class ModelTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
  * @return void
  */
-	public function endTest() {
+	public function tearDown() {
+		parent::tearDown();
 		unset($this->Task, $this->Dispatcher);
-		ClassRegistry::flush();
 	}
 
 /**

@@ -38,18 +38,8 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->_routing = Configure::read('Routing');
+		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
-		Router::reload();
-	}
-
-/**
- * end the test and reset the environment
- *
- * @return void
- */
-	function endTest() {
-		Configure::write('Routing', $this->_routing);
 	}
 
 /**

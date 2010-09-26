@@ -1273,8 +1273,6 @@ class DispatcherTest extends CakeTestCase {
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$debug = Configure::read('debug');
-		//Configure::write('debug', 0);
 
 		try {
 			$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
@@ -1378,20 +1376,20 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$expected = "alert('plugin one nested js file');";
 		$this->assertEqual($result, $expected);
-		Configure::write('debug', $debug);
-		//reset the 
-		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/unknown.extension');
 		$result = ob_get_clean();
 		$this->assertEqual('Testing a file with unknown extension to mime mapping.', $result);
-		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/theme_one.htc');
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
+		
+		while (ob_get_level() > 0) {
+			ob_get_clean();
+		}
 	}
 
 /**
@@ -1406,7 +1404,6 @@ class DispatcherTest extends CakeTestCase {
 			'js' => '',
 			'css' => null
 		));
-		$this->assertNoErrors();
 
 		ob_start();
 		$Dispatcher->asset('ccss/cake.generic.css');

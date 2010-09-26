@@ -64,11 +64,12 @@ class TEST_DATABASE_CONFIG {
 class DbConfigTaskTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
 			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
@@ -87,9 +88,9 @@ class DbConfigTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function endTest() {
+	public function tearDown() {
+		parent::tearDown();
 		unset($this->Task, $this->Dispatcher);
-		ClassRegistry::flush();
 	}
 
 /**
