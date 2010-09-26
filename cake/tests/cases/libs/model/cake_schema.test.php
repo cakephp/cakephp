@@ -519,23 +519,22 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->Schema = new TestAppSchema();
 	}
 
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		@unlink(TMP . 'tests' . DS .'schema.php');
 		unset($this->Schema);
-		ClassRegistry::flush();
 	}
 
 /**

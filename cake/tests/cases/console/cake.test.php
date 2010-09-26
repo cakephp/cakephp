@@ -165,6 +165,7 @@ class ShellDispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		App::build(array(
 			'plugins' => array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
@@ -174,15 +175,6 @@ class ShellDispatcherTest extends CakeTestCase {
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS
 			)
 		), true);
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		App::build();
 	}
 
 /**

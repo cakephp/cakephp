@@ -28,25 +28,25 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->_server = $_SERVER;
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
-		$this->_app = Configure::read('App');
 	}
 
 /**
- * end test
+ * tearDown
  *
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		$_SERVER = $this->_server;
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
-		Configure::write('App', $this->_app);
 	}
 
 /**

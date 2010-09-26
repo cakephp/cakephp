@@ -43,11 +43,12 @@ if (!class_exists('ApiShell')) {
 class ApiShellTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setUp method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
 			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch', 'clear')
@@ -57,15 +58,6 @@ class ApiShellTest extends CakeTestCase {
 			array('in', 'out', 'createFile', 'hr', '_stop'),
 			array(&$this->Dispatcher)
 		);
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function endTest() {
-		ClassRegistry::flush();
 	}
 
 /**

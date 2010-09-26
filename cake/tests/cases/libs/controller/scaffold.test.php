@@ -275,12 +275,13 @@ class ScaffoldViewTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($this->request);
 		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -292,15 +293,13 @@ class ScaffoldViewTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
- * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Controller);
-
-		App::build();
 	}
 
 /**
@@ -687,24 +686,24 @@ class ScaffoldTest extends CakeTestCase {
  */
 	public $fixtures = array('core.article', 'core.user', 'core.comment', 'core.join_thing', 'core.tag');
 /**
- * startTest method
+ * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$request = new CakeRequest(null, false);
 		$this->Controller = new ScaffoldMockController($request);
 		$this->Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
- * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Controller);
 	}
 

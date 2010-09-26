@@ -10,24 +10,14 @@ App::import('Core', 'Router');
  **/
 class CakeRouteTestCase extends CakeTestCase {
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startTest() {
-		$this->_routing = Configure::read('Routing');
+	function setUp() {
+		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
-		Router::reload();
-	}
-
-/**
- * end the test and reset the environment
- *
- * @return void
- **/
-	function endTest() {
-		Configure::write('Routing', $this->_routing);
 	}
 
 /**

@@ -52,7 +52,8 @@ class XmlTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$manager =& new XmlManager();
+		parent::setUp();
+		$manager = new XmlManager();
 		$manager->namespaces = array();
 	}
 

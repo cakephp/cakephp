@@ -31,17 +31,16 @@ class NumberHelperTest extends CakeTestCase {
  * helper property
  *
  * @var mixed null
- * @access public
  */
 	public $helper = null;
 
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$view = $this->getMock('View', array(), array(), '', false);
 		$this->Number = new NumberHelper($view);
 	}
@@ -52,7 +51,8 @@ class NumberHelperTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Number);
 	}
 

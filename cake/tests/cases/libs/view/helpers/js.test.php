@@ -685,24 +685,23 @@ class JsHelperTest extends CakeTestCase {
  */
 class JsBaseEngineTest extends CakeTestCase {
 /**
- * startTest method
+ * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
 		$this->JsEngine = new OptionEngineHelper($this->View);
 	}
 /**
- * endTest method
+ * tearDown method
  *
- * @access public
  * @return void
  */
-	function endTest() {
-		ClassRegistry::removeObject('view');
+	function tearDown() {
+		parent::tearDown();
 		unset($this->JsEngine);
 	}
 

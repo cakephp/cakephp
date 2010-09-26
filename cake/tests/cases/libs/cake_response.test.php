@@ -4,7 +4,6 @@ App::import('Core', 'CakeResponse');
 
 class CakeResponseTestCase extends CakeTestCase {
 
-
 /**
 * Tests the request object constructor
 *

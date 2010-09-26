@@ -1283,12 +1283,13 @@ class DboSourceTest extends CakeTestCase {
 	);
 
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->__config = $this->db->config;
 
 		if (!class_exists('DboTest')) {
@@ -1325,8 +1326,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->cacheSources = false;
 		$this->testDb->startQuote = '`';
 		$this->testDb->endQuote = '`';
-		Configure::write('debug', 1);
-		$this->debug = Configure::read('debug');
+
 		$this->Model = new TestModel();
 	}
 
@@ -1336,11 +1336,9 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Model);
-		Configure::write('debug', $this->debug);
-		ClassRegistry::flush();
-		unset($this->debug);
 	}
 
 /**

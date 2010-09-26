@@ -189,12 +189,12 @@ class DbAclTwoTest extends DbAcl {
  */
 class AclComponentTest extends CakeTestCase {
 /**
- * startTest method
+ * setUp method
  *
- * @access public
  * @return void
  */
 	function setUp() {
+		parent::setUp();
 		if (!class_exists('MockAclImplementation', false)) {
 			$this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
 		}
@@ -206,10 +206,10 @@ class AclComponentTest extends CakeTestCase {
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		unset($this->Acl);
 	}
 
@@ -347,14 +347,12 @@ class DbAclTest extends CakeTestCase {
 	public $fixtures = array('core.aro_two', 'core.aco_two', 'core.aros_aco_two');
 
 /**
- * startTest method
+ * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
-		$this->_settings = Configure::read('Acl');
-
+	function setUp() {
+		parent::setUp();
 		Configure::write('Acl.classname', 'DbAclTwoTest');
 		Configure::write('Acl.database', 'test');
 		$Collection = new ComponentCollection();
@@ -367,9 +365,9 @@ class DbAclTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Acl);
-		Configure::write('Acl', $this->_settings);
 	}
 
 /**
