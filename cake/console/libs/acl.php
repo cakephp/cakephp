@@ -21,7 +21,8 @@ App::import('Component', 'Acl');
 App::import('Model', 'DbAcl');
 
 /**
- * Shell for ACL management.
+ * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode 
+ * being enabled.  Be sure to turn it off when using this shell.
  *
  * @package       cake
  * @subpackage    cake.cake.console.libs
