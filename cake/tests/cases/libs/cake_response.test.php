@@ -282,6 +282,8 @@ class CakeResponseTestCase extends CakeTestCase {
 		$result = $response->compress();
 		$this->assertTrue($result);
 		$this->assertTrue(in_array('ob_gzhandler', ob_list_handlers()));
+
+		ob_get_clean();
 	}
 
 /**

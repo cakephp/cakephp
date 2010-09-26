@@ -504,6 +504,7 @@ class AuthTest extends CakeTestCase {
 		$this->Controller->Session->delete('Message.auth');
 
 		$this->initialized = true;
+		Router::reload();
 	}
 
 /**

@@ -37,7 +37,7 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
- * tearDown
+ * tearDown-
  *
  * @return void
  */

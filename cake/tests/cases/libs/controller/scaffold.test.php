@@ -299,7 +299,7 @@ class ScaffoldViewTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
-		unset($this->Controller);
+		unset($this->Controller, $this->request);
 	}
 
 /**
@@ -579,23 +579,21 @@ class ScaffoldViewTest extends CakeTestCase {
  * @return void
  */
 	function testAdminEditScaffold() {
-		$_backAdmin = Configure::read('Routing.prefixes');
-
 		Configure::write('Routing.prefixes', array('admin'));
 		$params = array(
 			'plugin' => null,
-			'pass' => array(),
+			'pass' => array(1),
 			'form' => array(),
 			'named' => array(),
 			'prefix' => 'admin',
-			'url' => array('url' =>'admin/scaffold_mock/edit'),
+			'url' => array('url' =>'admin/scaffold_mock/edit/1'),
 			'controller' => 'scaffold_mock',
 			'action' => 'admin_edit',
 			'admin' => 1,
 		);
 		$this->Controller->request->base = '';
 		$this->Controller->request->webroot = '/';
-		$this->Controller->request->here = '/admin/scaffold_mock/edit';
+		$this->Controller->request->here = '/admin/scaffold_mock/edit/1';
 		$this->Controller->request->addParams($params);
 
 		//reset, and set router.
@@ -611,8 +609,6 @@ class ScaffoldViewTest extends CakeTestCase {
 
 		$this->assertPattern('#admin/scaffold_mock/edit/1#', $result);
 		$this->assertPattern('#Scaffold Mock#', $result);
-
-		Configure::write('Routing.prefixes', $_backAdmin);
 	}
 
 /**
