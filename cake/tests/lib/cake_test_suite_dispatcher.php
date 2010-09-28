@@ -145,7 +145,7 @@ class CakeTestSuiteDispatcher {
 	public function loadTestFramework() {
 		$found = $path = null;
 
-		if (@include 'PHPUnit' . DS . 'Framework.php') {
+		if (@include 'PHPUnit' . DS . 'Autoload.php') {
 			$found = true;
 		}
 
@@ -157,11 +157,11 @@ class CakeTestSuiteDispatcher {
 			}
 
 			if ($path && ini_set('include_path', $path . PATH_SEPARATOR . ini_get('include_path'))) {
-				$found = include 'PHPUnit' . DS . 'Framework.php';
+				$found = include 'PHPUnit' . DS . 'Autoload.php';
 			}
 		}
 		if ($found) {
-			PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+			PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 		}
 		return $found;
 	}

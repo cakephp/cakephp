@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 class CakeFixtureManager {
 

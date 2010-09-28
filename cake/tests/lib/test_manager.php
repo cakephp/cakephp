@@ -22,7 +22,7 @@ define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups'
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
 
 /**

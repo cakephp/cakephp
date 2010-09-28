@@ -18,7 +18,7 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
  * CakeBaseReporter contains common reporting features used in the CakePHP Test suite

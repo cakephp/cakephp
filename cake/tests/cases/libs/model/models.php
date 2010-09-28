@@ -23,7 +23,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
  * Test class

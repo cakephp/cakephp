@@ -22,7 +22,7 @@
 require 'PHPUnit/TextUI/Command.php';
 require_once 'test_manager.php';
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
  * Class to customize loading of test suites from CLI

@@ -20,7 +20,7 @@
 
 include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
 
-PHPUnit_Util_Filter::addFileToFilter(__FILE__, 'DEFAULT');
+PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 /**
  * CakeTextReporter contains reporting features used for plain text based output
