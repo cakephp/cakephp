@@ -98,12 +98,12 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function teardown() {
-		parent::teardown();
 		if (TestCakeSession::started()) {
-			CakeSession::destroy();
+			TestCakeSession::destroy();
 		}
 		unset($_SESSION);
 		@session_destroy();
+		parent::teardown();
 	}
 
 /**
