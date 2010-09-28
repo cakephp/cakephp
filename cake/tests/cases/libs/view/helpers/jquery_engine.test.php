@@ -19,6 +19,7 @@
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', array('Html', 'Js', 'JqueryEngine'));
+App::import('Core', 'View');
 
 class JqueryEngineHelperTest extends CakeTestCase {
 /**

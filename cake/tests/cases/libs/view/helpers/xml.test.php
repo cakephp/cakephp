@@ -21,6 +21,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 App::import('Helper', 'Xml');
+App::import('Core', 'View');
 
 /**
  * TestXml class
