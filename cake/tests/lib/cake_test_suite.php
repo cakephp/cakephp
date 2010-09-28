@@ -87,8 +87,8 @@ class CakeTestSuite extends PHPUnit_Framework_TestSuite {
 		$classes = array();
 		foreach ($this->getIterator() as $test) {
 			$this->_fixtureManager->fixturize($test);
+			$test->fixtureManager = $this->_fixtureManager;
 		}
-		$this->sharedFixture = $this->_fixtureManager;
 	}
 
 /**

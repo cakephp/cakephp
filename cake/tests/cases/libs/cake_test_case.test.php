@@ -123,7 +123,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$test = new FixturizedTestCase('testFixturePresent');
 		$manager = $this->getMock('CakeFixtureManager');
 		$manager->fixturize($test);
-		$test->sharedFixture = $manager;
+		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('load');
 		$manager->expects($this->once())->method('unload');
 		$result = $test->run();
@@ -143,7 +143,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
 		$manager->fixturize($test);
-		$test->sharedFixture = $manager;
+		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('loadSingle');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
@@ -160,7 +160,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
 		$manager->fixturize($test);
-		$test->sharedFixture = $manager;
+		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('loadSingle');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
@@ -177,7 +177,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$test->autoFixtures = false;
 		$manager = $this->getMock('CakeFixtureManager');
 		$manager->fixturize($test);
-		$test->sharedFixture = $manager;
+		$test->fixtureManager = $manager;
 		$manager->expects($this->once())->method('unload');
 		$result = $test->run();
 		$this->assertEquals(1, $result->errorCount());

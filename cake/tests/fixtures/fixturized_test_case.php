@@ -22,7 +22,7 @@ class FixturizedTestCase extends CakeTestCase {
  * @return void
  */
 	public function testFixturePresent() {
-		$this->assertType('CakeFixtureManager', $this->sharedFixture);
+		$this->assertType('CakeFixtureManager', $this->fixtureManager);
 	}
 
 /**

@@ -33,6 +33,14 @@ require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
 class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
+ * The class responsible for managinf the creation, loading and removing of fixtures
+ *
+ * @var CakeFixtureManager
+ * @access public
+ */
+	public $fixtureManager = null;
+
+/**
  * By default, all fixtures attached to this class will be truncated and reloaded after each test.
  * Set this to false to handle manually
  *
@@ -77,12 +85,12 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 * @throws InvalidArgumentException
 */
 	public function run(PHPUnit_Framework_TestResult $result = NULL) {
-		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->load($this);
+		if (!empty($this->fixtureManager)) {
+			$this->fixtureManager->load($this);
 		}
 		$result = parent::run($result);
-		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->unload($this);
+		if (!empty($this->fixtureManager)) {
+			$this->fixtureManager->unload($this);
 		}
 		return $result;
 	}
@@ -178,12 +186,12 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @see CakeTestCase::$autoFixtures
  */
 	function loadFixtures() {
-		if (empty($this->sharedFixture)) {
+		if (empty($this->fixtureManager)) {
 			throw new Exception(__('No fixture manager to load the test fixture'));
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			$this->sharedFixture->loadSingle($class);
+			$this->fixtureManager->loadSingle($class);
 		}
 	}
 

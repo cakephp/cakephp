@@ -468,7 +468,7 @@ HTML;
  */
 	function testFormatColumns() {
 		$this->autoFixtures = true;
-		$this->sharedFixture->load($this);
+		$this->fixtureManager->load($this);
 		$this->loadFixtures('DataTest', 'Article');
 
 		$this->DataTest =& new SanitizeDataTest(array('alias' => 'DataTest'));
