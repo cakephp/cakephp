@@ -58,7 +58,7 @@ class CacheSessionTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		parent::setUp()
+		parent::setUp();
 		$this->storage = new CacheSession();
 	}
 
