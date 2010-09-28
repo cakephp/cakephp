@@ -164,9 +164,32 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel->invalidFields();
 		$expected = array('name' => 'This field cannot be left blank');
 		$this->assertEqual($TestModel->validationErrors, $expected);
-		$TestModel->validationErrors = array();
 
 		$this->assertEqual($TestModel->validate, $validate);
+	}
+
+/**
+ * Test that invalidFields() integrates well with save().  And that fieldList can be an empty type.
+ *
+ * @return void
+ */
+	function testInvalidFieldsWhitelist() {
+		$TestModel =& new ValidationTest1();
+		$TestModel->validate = $validate = array(
+			'title' => array(
+				'rule' => 'customValidator',
+				'required' => true
+			),
+			'name' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true
+		));
+
+		$TestModel->whitelist = array('name');
+		$TestModel->save(array('name' => '#$$#'));
+
+		$expected = array('name' => 'This field cannot be left blank');
+		$this->assertEqual($TestModel->validationErrors, $expected);
 	}
 
 /**

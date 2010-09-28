@@ -29,7 +29,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function open() {
+	public function open() {
 		return true;
 	}
 
@@ -39,7 +39,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function close() {
+	public function close() {
 		$probability = mt_rand(1, 150);
 		if ($probability <= 3) {
 			Cache::gc();
@@ -54,7 +54,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return mixed The value of the key or false if it does not exist
  * @access private
  */
-	public static function read($id) {
+	public function read($id) {
 		return Cache::read($id, Configure::read('Session.handler.config'));
 	}
 
@@ -66,7 +66,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful write, false otherwise.
  * @access private
  */
-	public static function write($id, $data) {
+	public function write($id, $data) {
 		return Cache::write($id, $data, Configure::read('Session.handler.config'));
 	}
 
@@ -77,7 +77,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean True for successful delete, false otherwise.
  * @access private
  */
-	public static function destroy($id) {
+	public function destroy($id) {
 		return Cache::delete($id, Configure::read('Session.handler.config'));
 	}
 
@@ -88,7 +88,7 @@ class CacheSession implements CakeSessionHandlerInterface {
  * @return boolean Success
  * @access private
  */
-	public static function gc($expires = null) {
+	public function gc($expires = null) {
 		return Cache::gc();
 	}
 }

@@ -65,7 +65,7 @@ class BehaviorCollection extends ObjectCollection {
 
 		if (!empty($behaviors)) {
 			foreach (Set::normalize($behaviors) as $behavior => $config) {
-				$this->attach($behavior, $config);
+				$this->load($behavior, $config);
 			}
 		}
 	}
@@ -94,10 +94,16 @@ class BehaviorCollection extends ObjectCollection {
 		$class = $name . 'Behavior';
 
 		if (!App::import('Behavior', $behavior)) {
-			throw new MissingBehaviorFileException(Inflector::underscore($behavior) . '.php');
+			throw new MissingBehaviorFileException(array(
+				'file' => Inflector::underscore($behavior) . '.php',
+				'class' => $class
+			));
 		}
 		if (!class_exists($class)) {
-			throw new MissingBehaviorClassException(Inflector::underscore($class));
+			throw new MissingBehaviorClassException(array(
+				'file' => Inflector::underscore($behavior) . '.php',
+				'class' => $class
+			));
 		}
 
 		if (!isset($this->{$name})) {
@@ -191,10 +197,6 @@ class BehaviorCollection extends ObjectCollection {
  */
 	public function dispatchMethod(&$model, $method, $params = array(), $strict = false) {
 		$methods = array_keys($this->__methods);
-		foreach ($methods as $key => $value) {
-			$methods[$key] = strtolower($value);
-		}
-		$method = strtolower($method);
 		$check = array_flip($methods);
 		$found = isset($check[$method]);
 		$call = null;
@@ -274,9 +276,3 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 }
-
-/**
- * Runtime Exceptions for behaviors
- */
-class MissingBehaviorFileException extends RuntimeException { }
-class MissingBehaviorClassException extends RuntimeException { }

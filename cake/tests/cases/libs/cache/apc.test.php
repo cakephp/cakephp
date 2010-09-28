@@ -74,21 +74,21 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	function testReadAndWriteCache() {
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), 'apc');
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'apc');
 		$expecting = '';
 		$this->assertEqual($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('test', $data);
+		$result = Cache::write('test', $data, 'apc');
 		$this->assertTrue($result);
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'apc');
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 
-		Cache::delete('test');
+		Cache::delete('test', 'apc');
 	}
 
 /**
@@ -98,31 +98,31 @@ class ApcEngineTest extends CakeTestCase {
  * @return void
  */
 	function testExpiry() {
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), 'apc');
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'apc');
 		$this->assertFalse($result);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'apc');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'apc');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  1));
+		Cache::set(array('duration' =>  1), 'apc');
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'apc');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'apc');
 		$this->assertFalse($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'apc');
 		$this->assertFalse($result);
 	}
 
@@ -134,10 +134,10 @@ class ApcEngineTest extends CakeTestCase {
  */
 	function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('delete_test', $data);
+		$result = Cache::write('delete_test', $data, 'apc');
 		$this->assertTrue($result);
 
-		$result = Cache::delete('delete_test');
+		$result = Cache::delete('delete_test', 'apc');
 		$this->assertTrue($result);
 	}
 
@@ -151,19 +151,19 @@ class ApcEngineTest extends CakeTestCase {
 		if ($this->skipIf(!function_exists('apc_dec'), 'No apc_dec() function, cannot test decrement() %s')) {
 			return;
 		}
-		$result = Cache::write('test_decrement', 5);
+		$result = Cache::write('test_decrement', 5, 'apc');
 		$this->assertTrue($result);
 
-		$result = Cache::decrement('test_decrement');
+		$result = Cache::decrement('test_decrement', 1, 'apc');
 		$this->assertEqual(4, $result);
 
-		$result = Cache::read('test_decrement');
+		$result = Cache::read('test_decrement', 'apc');
 		$this->assertEqual(4, $result);
 
-		$result = Cache::decrement('test_decrement', 2);
+		$result = Cache::decrement('test_decrement', 2, 'apc');
 		$this->assertEqual(2, $result);
 
-		$result = Cache::read('test_decrement');
+		$result = Cache::read('test_decrement', 'apc');
 		$this->assertEqual(2, $result);
 		
 	}
@@ -178,19 +178,32 @@ class ApcEngineTest extends CakeTestCase {
 		if ($this->skipIf(!function_exists('apc_inc'), 'No apc_inc() function, cannot test increment() %s')) {
 			return;
 		}
-		$result = Cache::write('test_increment', 5);
+		$result = Cache::write('test_increment', 5, 'apc');
 		$this->assertTrue($result);
 
-		$result = Cache::increment('test_increment');
+		$result = Cache::increment('test_increment', 1, 'apc');
 		$this->assertEqual(6, $result);
 
-		$result = Cache::read('test_increment');
+		$result = Cache::read('test_increment', 'apc');
 		$this->assertEqual(6, $result);
 
-		$result = Cache::increment('test_increment', 2);
+		$result = Cache::increment('test_increment', 2, 'apc');
 		$this->assertEqual(8, $result);
 
-		$result = Cache::read('test_increment');
+		$result = Cache::read('test_increment', 'apc');
 		$this->assertEqual(8, $result);
+	}
+
+/**
+ * test the clearing of cache keys
+ *
+ * @return void
+ */
+	function testClear() {
+		Cache::write('some_value', 'value', 'apc');
+
+		$result = Cache::clear(false, 'apc');
+		$this->assertTrue($result);
+		$this->assertFalse(Cache::read('some_value', 'apc'));
 	}
 }

@@ -328,6 +328,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->Task->plugin = 'controllerTest';
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
 		$this->Task->bake('Articles', '--actions--', array(), array(), array());
+
+		$this->assertEqual($this->Task->Template->templateVars['plugin'], 'ControllerTest');
 	}
 
 /**

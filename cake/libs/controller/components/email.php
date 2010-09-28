@@ -299,12 +299,22 @@ class EmailComponent extends Component {
 	protected $_smtpConnection = null;
 
 /**
+ * Constructor
+ *
+ * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param array $settings Array of configuration settings.
+ */
+	public function __construct(ComponentCollection $collection, $settings = array()) {
+		$this->Controller = $collection->getController();
+		parent::__construct($collection, $settings);
+	}
+
+/**
  * Initialize component
  *
  * @param object $controller Instantiating controller
  */
 	public function initialize(&$controller) {
-		$this->Controller = $controller;
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
@@ -738,19 +748,21 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _formatAddress($string, $smtp = false) {
-		if (strpos($string, '<') !== false) {
-			$value = explode('<', $string);
-			if ($smtp) {
-				$string = '<' . $value[1];
-			} else {
-				$string = $this->_encode($value[0]) . ' <' . $value[1];
-			}
+		$hasAlias = preg_match('/((.*)\s)?<(.+)>/', $string, $matches);
+		if ($smtp && $hasAlias) {
+			return $this->_strip(' <' .  $matches[3] . '>');
+		} elseif ($smtp) {
+			return $this->_strip(' <' . $string . '>');
+		}
+		if ($hasAlias && !empty($matches[2])) {
+			return $this->_strip($matches[2] . ' <' . $matches[3] . '>');
 		}
 		return $this->_strip($string);
 	}
 
 /**
- * Remove certain elements (such as bcc:, to:, %0a) from given value
+ * Remove certain elements (such as bcc:, to:, %0a) from given value.
+ * Helps prevent header injection / mainipulation on user content.
  *
  * @param string $value Value to strip
  * @param boolean $message Set to true to indicate main message content

@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::import('Component', array('Cookie', 'Security'));
 App::import('Core', 'ComponentCollection');
 
 class ComponentCollectionTest extends CakeTestCase {
@@ -145,8 +146,35 @@ class ComponentCollectionTest extends CakeTestCase {
 			->with(null);
 		$this->Components->TriggerMockSecurity->expects($this->once())->method('startup')
 			->with(null);
+		
+		$this->mockObjects[] = $this->Components->TriggerMockCookie;
+		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
 		$this->assertTrue($this->Components->trigger('startup', array(&$controller)));
+	}
+
+/**
+ * test that the initalize callback is triggered on all components even those that are disabled.
+ *
+ * @return void
+ */
+	function testTriggerWithTriggerDisabledObjects() {
+		$controller = 'Not a controller';
+		
+		$this->_makeMockClasses();
+		$this->Components->load('TriggerMockCookie', array(), false);
+		$this->Components->load('TriggerMockSecurity');
+
+		$this->Components->TriggerMockCookie->expects($this->once())->method('initialize')
+			->with($controller);
+		$this->Components->TriggerMockSecurity->expects($this->once())->method('initialize')
+			->with($controller);
+	
+		$this->mockObjects[] = $this->Components->TriggerMockCookie;
+		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
+
+		$result = $this->Components->trigger('initialize', array(&$controller), array('triggerDisabled' => true));
+		$this->assertTrue($result);
 	}
 
 /**
@@ -161,9 +189,11 @@ class ComponentCollectionTest extends CakeTestCase {
 		$this->Components->load('TriggerMockSecurity');
 
 		$this->Components->TriggerMockCookie->expects($this->once())->method('startup')
-			->with(null);
-		$this->Components->TriggerMockSecurity->expects($this->never())->method('startup')
-			->with(null);
+			->with($controller);
+		$this->Components->TriggerMockSecurity->expects($this->never())->method('startup');
+
+		$this->mockObjects[] = $this->Components->TriggerMockCookie;
+		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
 		$this->Components->disable('TriggerMockSecurity');
 
@@ -185,6 +215,9 @@ class ComponentCollectionTest extends CakeTestCase {
 			->will($this->returnValue(array('one', 'two')));
 		$this->Components->TriggerMockSecurity->expects($this->once())->method('startup')
 			->will($this->returnValue(array('three', 'four')));
+		
+		$this->mockObjects[] = $this->Components->TriggerMockCookie;
+		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
 		$result = $this->Components->trigger('startup', array(&$controller), array('collectReturn' => true));
 		$expected = array(
@@ -208,6 +241,9 @@ class ComponentCollectionTest extends CakeTestCase {
 		$this->Components->TriggerMockCookie->expects($this->once())->method('startup')
 			->will($this->returnValue(false));
 		$this->Components->TriggerMockSecurity->expects($this->never())->method('startup');
+		
+		$this->mockObjects[] = $this->Components->TriggerMockCookie;
+		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
 		$result = $this->Components->trigger(
 			'startup', 
@@ -237,5 +273,19 @@ class ComponentCollectionTest extends CakeTestCase {
 			'Apple' => array('class' => 'Banana.Apple', 'settings' => array('foo' => 'bar')),
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test getting the controller out of the collection
+ *
+ * @return void
+ */
+	function testGetController() {
+		$controller = $this->getMock('Controller');
+		$controller->components = array('Security');
+		$this->Components->init($controller);
+		$result = $this->Components->getController();
+
+		$this->assertSame($controller, $result);
 	}
 }

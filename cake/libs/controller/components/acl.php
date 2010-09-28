@@ -160,10 +160,11 @@ class AclComponent extends Component {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  * @return boolean Success
+ * @deprecated
  */
 	public function grant($aro, $aco, $action = "*") {
 		trigger_error(__('AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
-		return $this->_Instance->grant($aro, $aco, $action);
+		return $this->_Instance->allow($aro, $aco, $action);
 	}
 
 /**
@@ -173,10 +174,11 @@ class AclComponent extends Component {
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
  * @return boolean Success
+ * @deprecated
  */
 	public function revoke($aro, $aco, $action = "*") {
 		trigger_error(__('AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
-		return $this->_Instance->revoke($aro, $aco, $action);
+		return $this->_Instance->deny($aro, $aco, $action);
 	}
 }
 

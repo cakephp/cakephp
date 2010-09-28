@@ -212,8 +212,8 @@ class PaginatorHelperTest extends CakeTestCase {
 		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="asc">Title<\/a>$/', $result);
 
-		$this->Paginator->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
-		$this->Paginator->params['paging']['Article']['options']['sort'] = null;
+		$this->Paginator->request->params['paging']['Article']['options']['order'] = array('Article.title' => 'asc');
+		$this->Paginator->request->params['paging']['Article']['options']['sort'] = null;
 		$result = $this->Paginator->sort('Title', 'title', array('direction' => 'desc', 'class' => 'foo'));
 		$this->assertPattern('/\/accounts\/index\/param\/page:1\/sort:title\/direction:desc" class="foo asc">Title<\/a>$/', $result);
 	}

@@ -78,7 +78,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testSettings() {
-		$settings = Cache::settings();
+		$settings = Cache::settings('memcache');
 		unset($settings['serialize'], $settings['path']);
 		$expecting = array(
 			'prefix' => 'cake_',
@@ -141,21 +141,21 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testReadAndWriteCache() {
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), null, 'memcache');
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'memcache');
 		$expecting = '';
 		$this->assertEqual($result, $expecting);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('test', $data);
+		$result = Cache::write('test', $data, 'memcache');
 		$this->assertTrue($result);
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'memcache');
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
 
-		Cache::delete('test');
+		Cache::delete('test', 'memcache');
 	}
 
 /**
@@ -165,47 +165,44 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testExpiry() {
-		Cache::set(array('duration' => 1));
+		Cache::set(array('duration' => 1), 'memcache');
 
-		$result = Cache::read('test');
+		$result = Cache::read('test', 'memcache');
 		$this->assertFalse($result);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'memcache');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' =>  "+1 second"));
+		Cache::set(array('duration' =>  "+1 second"), 'memcache');
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data);
+		$result = Cache::write('other_test', $data, 'memcache');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
 		Cache::config('memcache', array('duration' => '+1 second'));
 		sleep(2);
 
-		$result = Cache::read('other_test');
+		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::config('memcache', array('duration' => '+31 day'));
+		Cache::config('memcache', array('duration' => '+30 days'));
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('long_expiry_test', $data);
+		$result = Cache::write('long_expiry_test', $data, 'memcache');
 		$this->assertTrue($result);
 
 		sleep(2);
-		$result = Cache::read('long_expiry_test');
+		$result = Cache::read('long_expiry_test', 'memcache');
 		$expecting = $data;
 		$this->assertEqual($result, $expecting);
-
-		$result = Cache::read('long_expiry_test');
-		$this->assertEquals($expecting, $result);
 
 		Cache::config('memcache', array('duration' => 3600));
 	}
@@ -218,10 +215,10 @@ class MemcacheEngineTest extends CakeTestCase {
  */
 	function testDeleteCache() {
 		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('delete_test', $data);
+		$result = Cache::write('delete_test', $data, 'memcache');
 		$this->assertTrue($result);
 
-		$result = Cache::delete('delete_test');
+		$result = Cache::delete('delete_test', 'memcache');
 		$this->assertTrue($result);
 	}
 
@@ -232,19 +229,19 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testDecrement() {
-		$result = Cache::write('test_decrement', 5);
+		$result = Cache::write('test_decrement', 5, 'memcache');
 		$this->assertTrue($result);
 
-		$result = Cache::decrement('test_decrement');
+		$result = Cache::decrement('test_decrement', 1, 'memcache');
 		$this->assertEqual(4, $result);
 
-		$result = Cache::read('test_decrement');
+		$result = Cache::read('test_decrement', 'memcache');
 		$this->assertEqual(4, $result);
 
-		$result = Cache::decrement('test_decrement', 2);
+		$result = Cache::decrement('test_decrement', 2, 'memcache');
 		$this->assertEqual(2, $result);
 
-		$result = Cache::read('test_decrement');
+		$result = Cache::read('test_decrement', 'memcache');
 		$this->assertEqual(2, $result);
 	}
 
@@ -255,19 +252,19 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testIncrement() {
-		$result = Cache::write('test_increment', 5);
+		$result = Cache::write('test_increment', 5, 'memcache');
 		$this->assertTrue($result);
 
-		$result = Cache::increment('test_increment');
+		$result = Cache::increment('test_increment', 1, 'memcache');
 		$this->assertEqual(6, $result);
 
-		$result = Cache::read('test_increment');
+		$result = Cache::read('test_increment', 'memcache');
 		$this->assertEqual(6, $result);
 
-		$result = Cache::increment('test_increment', 2);
+		$result = Cache::increment('test_increment', 2, 'memcache');
 		$this->assertEqual(8, $result);
 
-		$result = Cache::read('test_increment');
+		$result = Cache::read('test_increment', 'memcache');
 		$this->assertEqual(8, $result);
 	}
 
@@ -306,4 +303,16 @@ class MemcacheEngineTest extends CakeTestCase {
 		Cache::delete('short_duration_test', 'short_memcache');
 	}
 
+/**
+ * test clearing memcache.
+ *
+ * @return void
+ */
+	function testClear() {
+		Cache::write('some_value', 'value', 'memcache');
+
+		$result = Cache::clear(false, 'memcache');
+		$this->assertTrue($result);
+		$this->assertFalse(Cache::read('some_value', 'memcache'));
+	}
 }

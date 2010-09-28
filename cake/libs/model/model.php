@@ -799,7 +799,10 @@ class Model extends Object {
 		if ($db->isInterfaceSupported('listSources')) {
 			$sources = $db->listSources();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
-				throw new MissingTableException($this->alias, $this->tablePrefix . $tableName);
+				throw new MissingTableException(array(
+					'table' => $this->tablePrefix . $tableName,
+					'class' => $this->alias
+				));
 			}
 			$this->_schema = null;
 		}
@@ -1613,6 +1616,7 @@ class Model extends Object {
 
 		if (Set::numeric(array_keys($data))) {
 			while ($validates) {
+				$return = array();
 				foreach ($data as $key => $record) {
 					if (!$currentValidates = $this->__save($record, $options)) {
 						$validationErrors[$key] = $this->validationErrors;
@@ -1644,7 +1648,6 @@ class Model extends Object {
 					break;
 					case ($options['validate'] === 'first'):
 						$options['validate'] = true;
-						$return = array();
 					break;
 					default:
 						if ($options['atomic']) {
@@ -2522,7 +2525,7 @@ class Model extends Object {
 		$_validate = $this->validate;
 		$whitelist = $this->whitelist;
 
-		if (array_key_exists('fieldList', $options)) {
+		if (!empty($options['fieldList'])) {
 			$whitelist = $options['fieldList'];
 		}
 
@@ -2825,7 +2828,7 @@ class Model extends Object {
 		}
 
 		if (empty($db) || !is_object($db)) {
-			return $this->cakeError('missingConnection', array(array('className' => $this->alias)));
+			throw new MissingConnectionException(array('class' => $this->name));
 		}
 	}
 
@@ -3064,53 +3067,3 @@ class Model extends Object {
 	}
 }
 
-/**
-* Exception class to be thrown when a database table is not found in the datasource
-*
-*/
-class MissingTableException extends RuntimeException {
-/**
- * The name of the model wanting to load the database table
- *
- * @var string
- */
-	protected $model;
-/**
- * The name of the missing table
- *
- * @var string
- */
-	protected $table;
-
-/**
- * Exception costructor
- *
- * @param string $model The name of the model wanting to load the database table
- * @param string $table The name of the missing table
- * @return void
- */
-	public function __construct($model, $table) {
-		$this->model = $model;
-		$this->$table = $table;
-		$message = sprintf(__('Database table %s for model %s was not found.'), $table, $model);
-		parent::__construct($message);
-	}
-
-/**
- * Returns the name of the model wanting to load the database table
- *
- * @return string
- */
-	public function getModel() {
-		return $this->model;
-	}
-
-/**
- * Returns the name of the missing table
- *
- * @return string
- */
-	public function getTable() {
-		return $this->table;
-	}
-}

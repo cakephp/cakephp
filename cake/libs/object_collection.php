@@ -57,6 +57,8 @@ abstract class ObjectCollection {
  * - `break` Set to true to enabled breaking. Defaults to `false`.
  * - `collectReturn` Set to true to collect the return of each object into an array.
  *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ * - `triggerDisabled` Will trigger the callback on all objects in the collection even the non-enabled
+ *   objects. Defaults to false.
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
@@ -69,11 +71,15 @@ abstract class ObjectCollection {
 			return true;
 		}
 		$options = array_merge(
-			array('break' => false, 'breakOn' => false, 'collectReturn' => false),
+			array('break' => false, 'breakOn' => false, 'collectReturn' => false, 'triggerDisabled' => false),
 			$options
 		);
 		$collected = array();
-		foreach ($this->_enabled as $name) {
+		$list = $this->_enabled;
+		if ($options['triggerDisabled'] === true) {
+			$list = array_keys($this->_loaded);
+		}
+		foreach ($list as $name) {
 			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;

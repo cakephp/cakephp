@@ -129,10 +129,12 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->load('TriggerMockHtml');
 		$this->Helpers->load('TriggerMockForm');
 
-		$this->Helpers->TriggerMockForm->expects($this->once())->method('beforeRender')
+		$this->Helpers->TriggerMockHtml->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
 		$this->Helpers->TriggerMockForm->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
+		
+		$this->mockObjects[] = $this->Helpers->TriggerMockForm;
 
 		$this->assertTrue($this->Helpers->trigger('beforeRender', array('one', 'two')));
 	}
@@ -154,6 +156,9 @@ class HelperCollectionTest extends CakeTestCase {
 		$this->Helpers->TriggerMockHtml->expects($this->once())->method('beforeRender')
 			->with('one', 'two');
 		$this->Helpers->TriggerMockForm->expects($this->never())->method('beforeRender');
+
+		$this->mockObjects[] = $this->Helpers->TriggerMockForm;
+		$this->mockObjects[] = $this->Helpers->TriggerMockHtml;
 
 		$this->Helpers->disable('TriggerMockForm');
 

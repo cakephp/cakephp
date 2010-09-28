@@ -35,7 +35,7 @@
 	<span class="notice">
 		<?php
 			echo __('Your cache is ');
-			if (Cache::isInitialized()):
+			if (Cache::isInitialized('default')):
 				echo __('set up and initialized properly.');
 				$settings = Cache::settings();
 				echo '<p>' . $settings['engine'];

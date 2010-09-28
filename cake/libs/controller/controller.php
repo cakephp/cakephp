@@ -21,7 +21,9 @@
 /**
  * Include files
  */
+App::import('Core', 'CakeResponse', false);
 App::import('Controller', 'Component', false);
+App::import('Core', 'CakeResponse', false);
 App::import('View', 'View', false);
 
 /**
@@ -44,29 +46,6 @@ class Controller extends Object {
  * @link http://book.cakephp.org/view/959/Controller-Attributes
  */
 	public $name = null;
-
-/**
- * Stores the current URL, relative to the webroot of the application.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->here instead
- */
-	public $here = null;
-
-/**
- * The webroot of the application.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->webroot instead
- */
-	public $webroot = null;
-
-/**
- * The name of the currently requested controller action.
- *
- * @var string
- */
-	public $action = null;
 
 /**
  * An array containing the class names of models this controller uses.
@@ -93,30 +72,27 @@ class Controller extends Object {
 	public $helpers = array('Session', 'Html', 'Form');
 
 /**
- * Parameters received in the current request: GET and POST data, information
- * about the request, etc.
- *
- * @var array
- * @link http://book.cakephp.org/view/963/The-Parameters-Attribute-params
- * @deprecated Will be removed in future versions.  Use $this->request instead
- */
-	public $params = array();
-
-/**
- * Data POSTed to the controller using the HtmlHelper. Data here is accessible
- * using the `$this->data['ModelName']['fieldName']` pattern.
- *
- * @var array
- * @deprecated Will be removed in future versions.  Use $this->request->data instead
- */
-	public $data = array();
-
-/**
  * An instance of a CakeRequest object that contains information about the current request.
+ * This object contains all the information about a request and several methods for reading
+ * additional information about the request. 
  *
  * @var CakeRequest
  */
 	public $request;
+
+/**
+ * An instance of a CakeResponse object that contains information about the impending response
+ *
+ * @var CakeResponse
+ */
+	public $response;
+
+/**
+ * The classname to use for creating the response object.
+ *
+ * @var string
+ */
+	protected $_responseClass = 'CakeResponse';
 
 /**
  * Holds pagination defaults for controller actions. The keys that can be included
@@ -165,14 +141,6 @@ class Controller extends Object {
  * @var array Array of model objects.
  */
 	public $modelNames = array();
-
-/**
- * Base URL path.
- *
- * @var string
- * @deprecated Will be removed in future versions.  Use $this->request->base instead
- */
-	public $base = null;
 
 /**
  * The name of the layout file to render the view inside of. The name specified
@@ -329,9 +297,8 @@ class Controller extends Object {
  *
  * @param CakeRequest $request Request object for this controller can be null for testing.
  *  But expect that features that use the params will not work.
- * @param CakeResponse $response Response object for this controller
  */
-	public function __construct($request = null, $response = null) {
+	public function __construct($request = null) {
 		if ($this->name === null) {
 			$r = null;
 			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
@@ -356,8 +323,49 @@ class Controller extends Object {
 		if ($request instanceof CakeRequest) {
 			$this->_setRequest($request);
 		}
-		$this->response = $response;
+		$this->getResponse();
 		parent::__construct();
+	}
+
+/**
+ * Provides backwards compatbility access to the request object properties.
+ * Also provides the params alias.
+ *
+ * @return void
+ */
+	public function __get($name) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name};
+			case 'action':
+				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
+			case 'params':
+				return $this->request;
+		}
+		return null;
+	}
+
+/**
+ * Provides backwards compatiblity access for setting values to the request object.
+ *
+ * @return void
+ */
+	public function __set($name, $value) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+				return $this->request->{$name} = $value;
+			case 'action':
+				return $this->request->params['action'] = $value;
+			case 'params':
+				return $this->request->params = $value;
+		}
+		return $this->{$name} = $value;
 	}
 
 /**
@@ -368,20 +376,13 @@ class Controller extends Object {
  * @return void
  */
 	protected function _setRequest(CakeRequest $request) {
-		$this->base = $request->base;
-		$this->here = $request->here;
-		$this->webroot = $request->webroot;
+		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
-		$this->params = $this->request = $request;
-		$this->action =& $request->params['action'];
+
 		if (isset($request->params['pass']) && isset($request->params['named'])) {
 			$this->passedArgs = array_merge($request->params['pass'], $request->params['named']);
 		}
 
-		$this->data = null;
-		if (!empty($request->params['data'])) {
-			$this->data =& $request->params['data'];
-		}
 		if (array_key_exists('return', $request->params) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
@@ -476,9 +477,10 @@ class Controller extends Object {
  * see Controller::loadModel(); for more info.
  * Loads Components and prepares them for initialization.
  *
- * @return mixed true if models found and instance created, or cakeError if models not found.
+ * @return mixed true if models found and instance created.
  * @see Controller::loadModel()
  * @link http://book.cakephp.org/view/977/Controller-Methods#constructClasses-986
+ * @throws MissingModelException
  */
 	public function constructClasses() {
 		$this->__mergeVars();
@@ -495,10 +497,7 @@ class Controller extends Object {
 				$this->loadModel($this->modelClass, $id);
 			} elseif ($this->uses) {
 				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-				$modelClassName = $uses[0];
-				if (strpos($uses[0], '.') !== false) {
-					list($plugin, $modelClassName) = explode('.', $uses[0]);
-				}
+				list($plugin, $modelClassName) = pluginSplit($uses[0]);
 				$this->modelClass = $modelClassName;
 				foreach ($uses as $modelClass) {
 					$this->loadModel($modelClass);
@@ -506,6 +505,18 @@ class Controller extends Object {
 			}
 		}
 		return true;
+	}
+
+/**
+ * Gets the response object for this controller.  Will construct the response if it has not already been built.
+ *
+ * @return CakeResponse
+ */
+	public function getResponse() {
+		if (empty($this->response)) {
+			$this->response = new $this->_responseClass(array('charset' => Configure::read('App.encoding')));
+		}
+		return $this->response;
 	}
 
 /**
@@ -571,6 +582,7 @@ class Controller extends Object {
  * @param string $modelClass Name of model class to load
  * @param mixed $id Initial ID the instanced model class should have
  * @return mixed true when single model found and instance created, error returned if model not found.
+ * @throws MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {
 		if ($modelClass === null) {
@@ -592,9 +604,7 @@ class Controller extends Object {
 			));
 
 			if (!$this->{$modelClass}) {
-				return $this->cakeError('missingModel', array(array(
-					'className' => $modelClass, 'webroot' => '', 'base' => $this->base
-				)));
+				throw new MissingModelException($modelClass);
 			}
 
 			if ($this->persistModel === true) {
@@ -723,7 +733,7 @@ class Controller extends Object {
  * @return mixed Returns the return value of the called action
  */
 	public function setAction($action) {
-		$this->action = $action;
+		$this->request->action = $action;
 		$args = func_get_args();
 		unset($args[0]);
 		return call_user_func_array(array(&$this, $action), $args);
@@ -805,7 +815,7 @@ class Controller extends Object {
 			App::import('View', $this->view);
 		}
 
-		$this->params['models'] = $this->modelNames;
+		$this->request->params['models'] = $this->modelNames;
 
 		$View = new $viewClass($this);
 
@@ -906,8 +916,8 @@ class Controller extends Object {
  */
 	public function postConditions($data = array(), $op = null, $bool = 'AND', $exclusive = false) {
 		if (!is_array($data) || empty($data)) {
-			if (!empty($this->data)) {
-				$data = $this->data;
+			if (!empty($this->request->data)) {
+				$data = $this->request->data;
 			} else {
 				return null;
 			}
@@ -1226,3 +1236,5 @@ class Controller extends Object {
 		return false;
 	}
 }
+
+class MissingModelException extends RuntimeException {}

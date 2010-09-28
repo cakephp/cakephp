@@ -21,6 +21,13 @@ App::import('Core', 'ObjectCollection');
 class ComponentCollection extends ObjectCollection {
 
 /**
+ * The controller that this collection was initialized with.
+ *
+ * @var Controller
+ */
+	protected $_Controller = null;
+
+/**
  * Initializes all the Components for a controller.
  * Attaches a reference of each component to the Controller.
  *
@@ -31,10 +38,20 @@ class ComponentCollection extends ObjectCollection {
 		if (empty($Controller->components)) {
 			return;
 		}
+		$this->_Controller = $Controller;
 		$components = ComponentCollection::normalizeObjectArray($Controller->components);
 		foreach ($components as $name => $properties) {
 			$Controller->{$name} = $this->load($properties['class'], $properties['settings']);
 		}
+	}
+
+/**
+ * Get the controller associated with the collection.
+ *
+ * @return Controller.
+ */
+	public function getController() {
+		return $this->_Controller;
 	}
 
 /**
@@ -54,10 +71,16 @@ class ComponentCollection extends ObjectCollection {
 		$componentClass = $name . 'Component';
 		if (!class_exists($componentClass)) {
 			if (!App::import('Component', $component)) {
-				throw new MissingComponentFileException(Inflector::underscore($component) . '.php');
+				throw new MissingComponentFileException(array(
+					'file' => Inflector::underscore($component) . '.php',
+					'class' => $componentClass
+				));
 			}
 			if (!class_exists($componentClass)) {
-				throw new MissingComponentFileException($component);
+				throw new MissingComponentFileException(array(
+					'file' => Inflector::underscore($component) . '.php',
+					'class' => $componentClass
+				));
 			}
 		}
 		$this->_loaded[$name] = new $componentClass($this, $settings);
@@ -68,9 +91,3 @@ class ComponentCollection extends ObjectCollection {
 	}
 
 }
-/**
- * Exceptions used by the ComponentCollection.
- */
-class MissingComponentFileException extends RuntimeException { }
-
-class MissingComponentClassException extends RuntimeException { }

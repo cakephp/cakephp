@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('View', 'View');
 
 /**
  * Theme view class
@@ -39,7 +40,7 @@ class ThemeView extends View {
  */
 	function __construct(&$controller) {
 		parent::__construct($controller);
-		$this->theme =& $controller->theme;
+		$this->theme = $controller->theme;
 	}
 
 /**

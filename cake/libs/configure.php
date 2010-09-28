@@ -87,6 +87,7 @@ class Configure {
 					break;
 					case 3:
 						self::$_values[$names[0]][$names[1]][$names[2]] = $value;
+					break;
 					case 4:
 						$names = explode('.', $name, 2);
 						if (!isset(self::$_values[$names[0]])) {
@@ -377,7 +378,6 @@ class Configure {
 						'serialize' => true, 'duration' => $duration
 					)));
 				}
-				Cache::config('default');
 			}
 			App::init();
 			App::build();
@@ -780,7 +780,8 @@ class App {
 	}
 
 /**
- * Finds classes based on $name or specific file(s) to search.
+ * Finds classes based on $name or specific file(s) to search.  Calling App::import() will
+ * not construct any classes contained in the files. It will only find and require() the file.
  *
  * @link          http://book.cakephp.org/view/934/Using-App-import
  * @param mixed $type The type of Class if passed as a string, or all params can be passed as
@@ -1107,6 +1108,7 @@ class App {
 				return array('class' => $type, 'suffix' => $type, 'path' => $path);
 			break;
 			case 'component':
+				App::import('Core', 'Component', false);
 				if ($plugin) {
 					$path = $pluginPath . DS . 'controllers' . DS . 'components' . DS;
 				}
@@ -1119,6 +1121,7 @@ class App {
 				return array('class' => null, 'suffix' => null, 'path' => $path);
 			break;
 			case 'view':
+				App::import('View', 'View', false);
 				if ($plugin) {
 					$path = $pluginPath . DS . 'views' . DS;
 				}

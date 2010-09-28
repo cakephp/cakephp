@@ -4,27 +4,27 @@
  */
 class TestPluginSession implements CakeSessionHandlerInterface {
 
-	public static function open() {
+	public function open() {
 		return true;
 	}
 
-	public static function close() {
+	public function close() {
 		
 	}
 
-	public static function read($id) {
+	public function read($id) {
 		
 	}
 
-	public static function write($id, $data) {
+	public function write($id, $data) {
 		
 	}
 
-	public static function destroy($id) {
+	public function destroy($id) {
 		
 	}
 
-	public static function gc($expires = null) {
+	public function gc($expires = null) {
 		
 	}
 }

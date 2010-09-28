@@ -30,10 +30,8 @@
 &lt;?php
 class <?php echo $controller;?> extends AppController {
 
-	public $name = '<?php echo $controllerName;?>';
-
 <strong>
-	function <?php echo $action;?>() {
+	function <?php echo $action;?> {
 
 	}
 </strong>
@@ -44,3 +42,4 @@ class <?php echo $controller;?> extends AppController {
 	<strong><?php echo __('Notice'); ?>: </strong>
 	<?php printf(__('If you want to customize this error message, create %s.'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_action.ctp'); ?>
 </p>
+<?php echo $this->element('exception_stack_trace'); ?>

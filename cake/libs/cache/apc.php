@@ -106,7 +106,7 @@ class ApcEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache
+ * Delete all keys from the cache.  This will clear every cache config using APC.
  *
  * @return boolean True if the cache was succesfully cleared, false otherwise
  */

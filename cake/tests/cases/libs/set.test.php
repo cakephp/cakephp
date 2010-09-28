@@ -1341,16 +1341,27 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 
 		$a = array(
-			array('Article' => array('id' => 1, 'title' => 'Article 1',
-				'Comment' => array(
-					array('id' => 10, 'title' => 'Comment 10'),
-					array('id' => 11, 'title' => 'Comment 11'),
-					array('id' => 12, 'title' => 'Comment 12')))),
-			array('Article' => array('id' => 2, 'title' => 'Article 2',
-				'Comment' => array(
-					array('id' => 13, 'title' => 'Comment 13'),
-					array('id' => 14, 'title' => 'Comment 14')))),
-			array('Article' => array('id' => 3, 'title' => 'Article 3')));
+			array(
+				'Article' => array(
+					'id' => 1, 'title' => 'Article 1',
+					'Comment' => array(
+						array('id' => 10, 'title' => 'Comment 10'),
+						array('id' => 11, 'title' => 'Comment 11'),
+						array('id' => 12, 'title' => 'Comment 12')
+					)
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 2, 'title' => 'Article 2',
+					'Comment' => array(
+						array('id' => 13, 'title' => 'Comment 13'),
+						array('id' => 14, 'title' => 'Comment 14')
+					)
+				)
+			),
+			array('Article' => array('id' => 3, 'title' => 'Article 3'))
+		);
 
 		$result = Set::extract($a, '{n}.Article.Comment.{n}.id');
 		$expected = array (array(10, 11, 12), array(13, 14), null);
@@ -1370,9 +1381,9 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 
 		$a = array(
-			'pages'     => array('name' => 'page'),
-			'fruites'   => array('name' => 'fruit'),
-			0           => array('name' => 'zero')
+			'pages' => array('name' => 'page'),
+			'fruites' => array('name' => 'fruit'),
+			0 => array('name' => 'zero')
 		);
 		$result = Set::extract($a, '{s}.name');
 		$expected = array('page','fruit');
@@ -1393,7 +1404,7 @@ class SetTest extends CakeTestCase {
 		$expected = array(array('jippi'), array('jippi'));
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{\w+}.{\w+}.name');
+		$result = Set::extract($a, '{\w+}.{\w+}.name');
 		$expected = array(
 			array('pages' => 'page'),
 			array('fruites' => 'fruit'),
@@ -1402,23 +1413,23 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{\d+}.{\w+}.name');
+		$result = Set::extract($a, '{\d+}.{\w+}.name');
 		$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{n}.{\w+}.name');
+		$result = Set::extract($a, '{n}.{\w+}.name');
 		$expected = array(array('pages' => 'page'), array('fruites' => 'fruit'));
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{s}.{\d+}.name');
+		$result = Set::extract($a, '{s}.{\d+}.name');
 		$expected = array(array('jippi'), array('jippi'));
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{s}');
+		$result = Set::extract($a, '{s}');
 		$expected = array(array(array('name' => 'jippi')), array(array('name' => 'jippi')));
 		$this->assertEquals($result, $expected);
 
-		$result = Set::extract($a,'{[a-z]}');
+		$result = Set::extract($a, '{[a-z]}');
 		$expected = array(
 			'test' => array(array('name' => 'jippi')),
 			'dot.test' => array(array('name' => 'jippi'))
@@ -1433,14 +1444,15 @@ class SetTest extends CakeTestCase {
 		$a->articles = array(
 			array('Article' => array('id' => 1, 'title' => 'Article 1')),
 			array('Article' => array('id' => 2, 'title' => 'Article 2')),
-			array('Article' => array('id' => 3, 'title' => 'Article 3')));
+			array('Article' => array('id' => 3, 'title' => 'Article 3'))
+		);
 
 		$result = Set::extract($a, 'articles.{n}.Article.id');
-		$expected = array( 1, 2, 3 );
+		$expected = array(1, 2, 3);
 		$this->assertEquals($result, $expected);
 
 		$result = Set::extract($a, 'articles.{n}.Article.title');
-		$expected = array( 'Article 1', 'Article 2', 'Article 3' );
+		$expected = array('Article 1', 'Article 2', 'Article 3');
 		$this->assertEquals($result, $expected);
 	}
 

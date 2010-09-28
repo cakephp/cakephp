@@ -1,11 +1,6 @@
 <?php
 /**
- * A class that helps wrap Request information and particulars about a single request.
- * Provides methods commonly used to introspect on the request headers and request body.
- * 
- * Has both an Array and Object interface. You can access framework parameters using indexes
- *
- * `$request['controller']` or `$request->controller`.
+ * CakeRequest 
  *
  * PHP 5
  *
@@ -24,6 +19,15 @@
  */
 App::import('Core', 'Set');
 
+/**
+ * A class that helps wrap Request information and particulars about a single request.
+ * Provides methods commonly used to introspect on the request headers and request body.
+ * 
+ * Has both an Array and Object interface. You can access framework parameters using indexes:
+ *
+ * `$request['controller']` or `$request->controller`.
+ *
+ */
 class CakeRequest implements ArrayAccess {
 /**
  * Array of parameters parsed from the url.
@@ -105,7 +109,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Constructor 
  *
- * @param string $url Url string to use
+ * @param string $url Trimmed url string to use.  Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  * @return void
  */
@@ -355,7 +359,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
  *   header.  Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
- * @return void
+ * @return string The client IP.
  */
 	public function clientIp($safe = true) {
 		if (!$safe && env('HTTP_X_FORWARDED_FOR') != null) {
@@ -428,6 +432,8 @@ class CakeRequest implements ArrayAccess {
 /**
  * Magic get method allows access to parsed routing parameters directly on the object.
  *
+ * Allows access to `$this->params['controller']` via `$this->controller`
+ *
  * @param string $name The property being accessed.
  * @return mixed Either the value of the parameter or null.
  */
@@ -441,7 +447,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Check whether or not a Request is a certain type.  Uses the built in detection rules
  * as well as additional rules defined with CakeRequest::addDetector().  Any detector can be called 
- * with `is($type)` or `is$Type()`.
+ * as `is($type)` or `is$Type()`.
  *
  * @param string $type The type of request you want to check.
  * @return boolean Whether or not the request is the type you are checking.
@@ -513,7 +519,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add parameters to the request's parsed parameter set.
+ * Add parameters to the request's parsed parameter set. This will overwrite any existing parameters
  *
  * @param array $params Array of parameters to merge in
  * @return The current object, you can chain this method.
@@ -524,7 +530,7 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Add paths to the requests' paths vars
+ * Add paths to the requests' paths vars.  This will overwrite any existing paths.
  *
  * @param array $paths Array of paths to merge in
  * @return the current object, you can chain this method.
@@ -553,8 +559,57 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
+ * Get the HTTP method used for this request.
+ *
+ * @return string The name of the HTTP method used.
+ */
+	public function method() {
+		return env('REQUEST_METHOD');
+	}
+
+/**
+ * Get the host that the request was handled on.
+ *
+ * @return void
+ */
+	public function host() {
+		return env('HTTP_HOST');
+	}
+
+/**
+ * Get the domain name and include $tldLength segments of the tld.
+ *
+ * @param int $tldLength Number of segments your tld contains
+ * @return string Domain name without subdomains.
+ */
+	function domain($tldLength = 1) {
+		$segments = explode('.', $this->host());
+		$domain = array_slice($segments, -1 * ($tldLength + 1));
+		return implode('.', $domain);
+	}
+
+/**
+ * Get the subdomains for a host.
+ *
+ * @param int $tldLength Number of segments your tld contains.
+ * @return array of subdomains.
+ */
+	function subdomains($tldLength = 1) {
+		$segments = explode('.', $this->host());
+		return array_slice($segments, 0, -1 * ($tldLength + 1));
+	}
+
+/**
  * Find out which content types the client accepts or check if they accept a 
  * particular type of content.
+ *
+ * #### Get all types:
+ *
+ * `$request->accepts();`
+ *
+ * #### Check for a single type:
+ *
+ * `$request->accepts('json');`
  *
  * @param string $type The content type to check for.  Leave null to get all types a client accepts.
  * @return mixed Either an array of all the types the client accepts or a boolean if they accept the
@@ -572,6 +627,36 @@ class CakeRequest implements ArrayAccess {
 			return $acceptTypes;
 		}
 		return in_array($type, $acceptTypes);
+	}
+
+/**
+ * Provides a read/write accessor for `$this->data`.  Allows you
+ * to use a syntax similar to `CakeSession` for reading post data.
+ *
+ * ## Reading values.
+ *
+ * `$request->data('Post.title');`
+ *
+ * When reading values you will get `null` for keys/values that do not exist.
+ *
+ * ## Writing values
+ *
+ * `$request->data('Post.title', 'New post!');`
+ *
+ * You can write to any value, even paths/keys that do not exist, and the arrays
+ * will be created for you.
+ *
+ * @param string $name Dot separated name of the value to read/write
+ * @param mixed $value Value to write to the data array.
+ * @return mixed Either the value being read, or this so you can chain consecutive writes.
+ */
+	public function data($name) {
+		$args = func_get_args();
+		if (count($args) == 2) {
+			$this->data = Set::insert($this->data, $name, $args[1]);
+			return $this;
+		}
+		return Set::classicExtract($this->data, $name);
 	}
 
 /**

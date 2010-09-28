@@ -107,7 +107,7 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the data was succesfully cached, false on failure
  * @see http://php.net/manual/en/memcache.set.php
  */
-	public function write($key, &$value, $duration) {
+	public function write($key, $value, $duration) {
 		return $this->__Memcache->set($key, $value, $this->settings['compress'], $duration);
 	}
 

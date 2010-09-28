@@ -78,10 +78,9 @@ class Dispatcher {
 	public $request = null;
 
 /**
- * The response object
+ * Response object used for asset/cached responses.
  *
  * @var CakeResponse
- * @access public
  */
 	public $response = null;
 
@@ -109,6 +108,8 @@ class Dispatcher {
  *   It will be used to create the request object.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
+ * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
+ *    are encountered.
  */
 	public function dispatch($url = null, $additionalParams = array()) {
 		if (is_array($url)) {
@@ -133,12 +134,9 @@ class Dispatcher {
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
-			return $this->cakeError('missingController', array(array(
-				'className' => Inflector::camelize($request->params['controller']) . 'Controller',
-				'webroot' => $request->webroot,
-				'url' => $url,
-				'base' => $request->base
-			)));
+			throw new MissingControllerException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
+			));
 		}
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
@@ -155,13 +153,10 @@ class Dispatcher {
 		Router::setRequestInfo($request);
 
 		if ($privateAction) {
-			return $this->cakeError('privateAction', array(array(
-				'className' => Inflector::camelize($request->params['controller'] . "Controller"),
-				'action' => $request->params['action'],
-				'webroot' => $request->webroot,
-				'url' => $request->url,
-				'base' => $request->base
-			)));
+			throw new PrivateActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
 		}
 
 		return $this->_invoke($controller, $request);
@@ -189,27 +184,25 @@ class Dispatcher {
 				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $request);
 			}
-			return $this->cakeError('missingAction', array(array(
-				'className' => Inflector::camelize($request->params['controller']."Controller"),
-				'action' => $request->params['action'],
-				'webroot' => $request->webroot,
-				'url' => $request->here,
-				'base' => $request->base
-			)));
+			throw new MissingActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
 		}
-		$output =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$result =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$response = $controller->getResponse();
 
 		if ($controller->autoRender) {
 			$controller->render();
-		} elseif ($this->response->body() === null) {
-			$this->response->body($output);
+		} elseif ($response->body() === null) {
+			$response->body($result);
 		}
 		$controller->shutdownProcess();
 
 		if (isset($request->params['return'])) {
-			return $this->response->body();
+			return $response->body();
 		}
-		$this->response->send();
+		$response->send();
 	}
 
 /**
@@ -261,14 +254,9 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return $controller;
 		}
-		if (!$this->response) {
-			$this->response = new CakeResponse(array(
-				'charset' => Configure::read('App.encoding')
-			));
-		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($this->request, $this->response);
+			$controller = new $ctrlClass($this->request);
 		}
 		return $controller;
 	}
@@ -322,11 +310,7 @@ class Dispatcher {
 				}
 				$controller = null;
 				$view = new View($controller);
-				$return = $view->renderCache($filename, microtime(true));
-				if (!$return) {
-					ClassRegistry::removeObject('view');
-				}
-				return $return;
+				return $view->renderCache($filename, microtime(true));
 			}
 		}
 		return false;

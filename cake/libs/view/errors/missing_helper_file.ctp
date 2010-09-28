@@ -28,7 +28,7 @@
 </p>
 <pre>
 &lt;?php
-class <?php echo $helperClass;?> extends AppHelper {
+class <?php echo $class;?> extends AppHelper {
 
 }
 ?&gt;
@@ -37,3 +37,5 @@ class <?php echo $helperClass;?> extends AppHelper {
 	<strong><?php echo __('Notice'); ?>: </strong>
 	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
 </p>
+
+<?php echo $this->element('exception_stack_trace'); ?>

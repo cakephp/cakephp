@@ -19,6 +19,11 @@
 ?>
 <h2><?php echo $name; ?></h2>
 <p class="error">
-	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('An Internal Error Has Occurred.'), "<strong>'{$message}'</strong>"); ?>
+	<strong><?php echo __('Error', true); ?>: </strong>
+	<?php echo __('An Internal Error Has Occurred.'); ?>
 </p>
+<?php 
+if (Configure::read('debug') > 0 ):
+	echo $this->element('exception_stack_trace');
+endif;
+?>

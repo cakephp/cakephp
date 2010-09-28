@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
+App::import('Core', 'Controller');
 App::import('Component', array('Auth', 'Acl'));
 App::import('Model', 'DbAcl');
 App::import('Core', 'Xml');
@@ -493,8 +494,10 @@ class AuthTest extends CakeTestCase {
 		$request = new CakeRequest(null, false);
 
 		$this->Controller = new AuthTestController($request);
-		$this->Controller->Component->init($this->Controller);
-		$this->Controller->Component->initialize($this->Controller);
+		$this->Controller->Components->init($this->Controller);
+		$this->Controller->Components->trigger(
+			'initialize', array(&$this->Controller), array('triggerDisabled' => true)
+		);
 		$this->Controller->beforeFilter();
 
 		ClassRegistry::addObject('view', new View($this->Controller));
@@ -641,7 +644,6 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testLoginActionNotSettingAuthRedirect() {
-		$_referer = $_SERVER['HTTP_REFERER'];
 		$_SERVER['HTTP_REFERER'] = '/pages/display/about';
 
 		$this->Controller->data = array();
@@ -1065,7 +1067,9 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/index/29';
-		$this->Controller->request = Dispatcher::parseParams(new CakeRequest($url));
+		$this->Controller->request = new CakeRequest($url);
+		$this->Controller->request->addParams(Router::parse($url));
+
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -1081,7 +1085,9 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/index/29';
-		$this->Controller->request = Dispatcher::parseParams(new CakeRequest($url));
+		$this->Controller->request = new CakeRequest($url);
+		$this->Controller->request->addParams(Router::parse($url));
+
 		$this->Controller->Auth->initialize($this->Controller);
 		$this->Controller->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
 		$this->Controller->Auth->userModel = 'AuthUser';
@@ -1094,6 +1100,7 @@ class AuthTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Controller->Session->delete('Auth');
 		$url = '/posts/edit/1';
+		$this->Controller->request = new CakeRequest($url);
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query = array('url' => Router::normalize($url));
 		$this->Controller->Auth->initialize($this->Controller);
@@ -1107,6 +1114,7 @@ class AuthTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = 'http://webmail.example.com/view/message';
 		$this->Controller->Session->delete('Auth');
 		$url = '/AuthTest/login';
+		$this->Controller->request = new CakeRequest($url);
 		$this->Controller->request->addParams(Router::parse($url));
 		$this->Controller->request->query['url'] = Router::normalize($url);
 		$this->Controller->Auth->initialize($this->Controller);
@@ -1192,8 +1200,12 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Session->delete($this->Controller->Auth->sessionKey);
 
-		$this->Controller->data['AuthUser']['username'] = 'nate';
-		$this->Controller->data['AuthUser']['password'] = 'cake1';
+		$this->Controller->request->data = array(
+			'AuthUser' => array(
+				'username' => 'nate',
+				'password' => 'cake1'
+			)
+		);
 		$this->Controller->request->query['url'] = 'auth_test/login';
 		$this->Controller->Auth->initialize($this->Controller);
 
@@ -1204,22 +1216,26 @@ class AuthTest extends CakeTestCase {
 
 		$this->Controller->Session->delete($this->Controller->Auth->sessionKey);
 
-		$this->Controller->data['AuthUser']['username'] = '> n';
-		$this->Controller->data['AuthUser']['password'] = 'cake';
+		$this->Controller->request->data = array(
+			'AuthUser' => array(
+				'username' => '> n',
+				'password' => 'cake'
+			)
+		);
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
 
-		unset($this->Controller->data['AuthUser']['password']);
-		$this->Controller->data['AuthUser']['username'] = "1'1";
+		unset($this->Controller->request->data['AuthUser']['password']);
+		$this->Controller->request->data['AuthUser']['username'] = "1'1";
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->startup($this->Controller);
 		$this->assertTrue(is_null($this->Controller->Auth->user()));
 
-		unset($this->Controller->data['AuthUser']['username']);
-		$this->Controller->data['AuthUser']['password'] = "1'1";
+		unset($this->Controller->request->data['AuthUser']['username']);
+		$this->Controller->request->data['AuthUser']['password'] = "1'1";
 		$this->Controller->Auth->initialize($this->Controller);
 
 		$this->Controller->Auth->startup($this->Controller);

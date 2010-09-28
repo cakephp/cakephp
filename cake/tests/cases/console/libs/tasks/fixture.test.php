@@ -87,8 +87,8 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$this->Dispatch->params['working'] = DS . 'my' . DS . 'path';
-		$Task = new FixtureTask($this->Dispatch);
+		$this->Dispatcher->params['working'] = DS . 'my' . DS . 'path';
+		$Task = new FixtureTask($this->Dispatcher);
 
 		$expected = DS . 'my' . DS . 'path' . DS . 'tests' . DS . 'fixtures' . DS;
 		$this->assertEqual($Task->path, $expected);

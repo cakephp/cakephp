@@ -299,8 +299,11 @@ class DboPostgres extends DboSource {
 		}
 
 		switch($column) {
-			case 'inet':
 			case 'float':
+				if (is_float($data)) {
+					$data = sprintf('%F', $data);
+				}
+			case 'inet':
 			case 'integer':
 			case 'date':
 			case 'datetime':

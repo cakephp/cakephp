@@ -373,7 +373,7 @@ class CacheHelperTest extends CakeTestCase {
 		Router::reload();
 
 		$this->Controller->cache_parsing();
-		$this->Controller->params = array(
+		$this->Controller->request->addParams(array(
 			'controller' => 'cache_test',
 			'action' => 'cache_parsing',
 			'url' => array(),
@@ -382,12 +382,11 @@ class CacheHelperTest extends CakeTestCase {
 				'name' => 'mark',
 				'ice' => 'cream'
 			)
-		);
+		));
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
-		$this->Controller->action = 'cache_parsing';
+		$this->Controller->request->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
 		
 		$View = new View($this->Controller);
 		$result = $View->render('index');
@@ -434,6 +433,43 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists($filename));
 		@unlink($filename);
 	}
+
+/**
+ * test ControllerName contains AppName
+ *
+ * This test verifys view cache is created correctly when the app name is contained in part of the controller name.
+ * (webapp Name) base name is 'cache' controller is 'cacheTest' action is 'cache_name'
+ * apps url would look somehing like http://localhost/cache/cacheTest/cache_name
+ *
+ * @return void
+ **/
+	function testCacheBaseNameControllerName() {
+		$this->Controller->cache_parsing();
+		$this->Controller->cacheAction = array(
+			'cache_name' => 21600
+		);
+		$this->Controller->params = array(
+			'controller' => 'cacheTest',
+			'action' => 'cache_name',
+			'url' => array(),
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->Controller->here = '/cache/cacheTest/cache_name';
+		$this->Controller->action = 'cache_name';
+		$this->Controller->base = '/cache';
+
+		$View = new View($this->Controller);
+		$result = $View->render('index');
+
+		$this->assertNoPattern('/cake:nocache/', $result);
+		$this->assertNoPattern('/php echo/', $result);
+
+		$filename = CACHE . 'views' . DS . 'cache_cachetest_cache_name.php';
+		$this->assertTrue(file_exists($filename));
+		@unlink($filename);
+    }
+
 /**
  * testCacheEmptySections method
  *

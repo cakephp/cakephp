@@ -63,7 +63,7 @@ class AclShellTest extends CakeTestCase {
 		Configure::write('Acl.classname', 'DbAcl');
 
 		$this->Dispatcher = $this->getMock(
-			'ShellDispather', 
+			'ShellDispatcher', 
 			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch')
 		);
 		$this->Task = $this->getMock(
@@ -71,7 +71,8 @@ class AclShellTest extends CakeTestCase {
 			array('in', 'out', 'hr', 'createFile', 'error', 'err'),
 			array(&$this->Dispatcher)
 		);
-		$this->Task->Acl = new AclComponent();
+		$collection = new ComponentCollection();
+		$this->Task->Acl = new AclComponent($collection);
 
 		$this->Task->params['datasource'] = 'test_suite';
 	}

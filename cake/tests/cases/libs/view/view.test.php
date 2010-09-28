@@ -19,10 +19,8 @@
  */
 App::import('Core', array('View', 'Controller'));
 App::import('Helper', 'Cache');
+App::import('Core', array('ErrorHandler'));
 
-if (!class_exists('ErrorHandler')) {
-	App::import('Core', array('Error'));
-}
 
 /**
  * ViewPostsController class
@@ -227,8 +225,10 @@ class ViewTest extends CakeTestCase {
  */
 	function setUp() {
 		Router::reload();
-		$this->Controller = new Controller();
-		$this->PostsController = new ViewPostsController();
+
+		$request = $this->getMock('CakeRequest');
+		$this->Controller = new Controller($request);
+		$this->PostsController = new ViewPostsController($request);
 		$this->PostsController->viewPath = 'posts';
 		$this->PostsController->index();
 		$this->View = new View($this->PostsController);
@@ -680,7 +680,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
 		$this->PostsController->cacheAction = array('index' => 3600);
-		$this->PostsController->params['action'] = 'index';
+		$this->PostsController->request->params['action'] = 'index';
 		Configure::write('Cache.check', true);
 
 		$View = new TestView($this->PostsController);
@@ -700,7 +700,7 @@ class ViewTest extends CakeTestCase {
 		$_check = Configure::read('Cache.check');
 		Configure::write('Cache.check', true);
 
-		$Controller = new ViewPostsController();
+		$Controller = new ViewPostsController($this->getMock('CakeRequest'));
 		$Controller->cacheAction = '1 day';
 		$View = new View($Controller);
 		$View->helpers = array('Cache', 'Html', 'Session');

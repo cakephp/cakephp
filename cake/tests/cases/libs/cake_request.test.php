@@ -1,4 +1,25 @@
 <?php
+/**
+ * CakeRequest Test case file.
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+if (!class_exists('dispatcher')) {
+	require CAKE . 'dispatcher.php';
+}
 App::import('Core', 'CakeRequest');
 
 class CakeRequestTestCase extends CakeTestCase {
@@ -501,6 +522,66 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test the method() method.
+ *
+ * @return void
+ */
+	function testMethod() {
+		$_SERVER['REQUEST_METHOD'] = 'delete';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals('delete', $request->method());
+	}
+
+/**
+ * test host retrieval.
+ *
+ * @return void
+ */
+	function testHost() {
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		$request = new CakeRequest('some/path');
+		
+		$this->assertEquals('localhost', $request->host());
+	}
+
+/**
+ * test domain retrieval.
+ *
+ * @return void
+ */
+	function testDomain() {
+		$_SERVER['HTTP_HOST'] = 'something.example.com';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals('example.com', $request->domain());
+
+		$_SERVER['HTTP_HOST'] = 'something.example.co.uk';
+		$this->assertEquals('example.co.uk', $request->domain(2));
+	}
+
+/**
+ * test getting subdomains for a host.
+ *
+ * @return void
+ */
+	function testSubdomain() {
+		$_SERVER['HTTP_HOST'] = 'something.example.com';
+		$request = new CakeRequest('some/path');
+
+		$this->assertEquals(array('something'), $request->subdomains());
+
+		$_SERVER['HTTP_HOST'] = 'www.something.example.com';
+		$this->assertEquals(array('www', 'something'), $request->subdomains());
+
+		$_SERVER['HTTP_HOST'] = 'www.something.example.co.uk';
+		$this->assertEquals(array('www', 'something'), $request->subdomains(2));
+
+		$_SERVER['HTTP_HOST'] = 'example.co.uk';
+		$this->assertEquals(array(), $request->subdomains(2));
+	}
+
+/**
  * test ajax, flash and friends
  *
  * @return void
@@ -618,10 +699,10 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$_SERVER['TEST_VAR'] = 'something';
-		$this->assertTrue($request->is('compare'), 'Value match failed %s.');
+		$this->assertTrue($request->is('compare'), 'Value match failed.');
 
 		$_SERVER['TEST_VAR'] = 'wrong';
-		$this->assertFalse($request->is('compare'), 'Value mis-match failed %s.');
+		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$_SERVER['TEST_VAR'] = 'banana';
@@ -1179,6 +1260,68 @@ class CakeRequestTestCase extends CakeTestCase {
 		$request = new CakeRequest();
 		$expected = '/index.php/h1 onclick=alert(xss);heya';
 		$this->assertEqual($request->base, $expected);
+	}
+
+/**
+ * test the data() method reading
+ *
+ * @return void
+ */
+	function testDataReading() {
+		$_POST['data'] = array(
+			'Model' => array(
+				'field' => 'value'
+			)
+		);
+		$request = new CakeRequest('posts/index');
+		$result = $request->data('Model');
+		$this->assertEquals($_POST['data']['Model'], $result);
+
+		$result = $request->data('Model.imaginary');
+		$this->assertNull($result);
+	}
+
+/**
+ * test writing with data()
+ *
+ * @return void
+ */
+	function testDataWriting() {
+		$_POST['data'] = array(
+			'Model' => array(
+				'field' => 'value'
+			)
+		);
+		$request = new CakeRequest('posts/index');
+		$result = $request->data('Model.new_value', 'new value');
+		$this->assertSame($result, $request, 'Return was not $this');
+		
+		$this->assertEquals($request->data['Model']['new_value'], 'new value');
+
+		$request->data('Post.title', 'New post')->data('Comment.1.author', 'Mark');
+		$this->assertEquals($request->data['Post']['title'], 'New post');
+		$this->assertEquals($request->data['Comment']['1']['author'], 'Mark');
+	}
+
+/**
+ * test writing falsey values.
+ *
+ * @return void
+ */
+	function testDataWritingFalsey() {
+		$request = new CakeRequest('posts/index');
+
+		$request->data('Post.null', null);
+		$this->assertNull($request->data['Post']['null']);
+		
+		$request->data('Post.false', false);
+		$this->assertFalse($request->data['Post']['false']);
+		
+		$request->data('Post.zero', 0);
+		$this->assertSame(0, $request->data['Post']['zero']);
+		
+		$request->data('Post.empty', '');
+		$this->assertSame('', $request->data['Post']['empty']);
 	}
 
 /**

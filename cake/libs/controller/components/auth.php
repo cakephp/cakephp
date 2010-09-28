@@ -377,7 +377,7 @@ class AuthComponent extends Component {
 			return false;
 		} else {
 			if (!$this->user()) {
-				if (!$this->RequestHandler->isAjax()) {
+				if (!$request->is('ajax')) {
 					$this->Session->setFlash($this->authError, $this->flashElement, array(), 'auth');
 					if (!empty($request->query) && count($request->query) >= 2) {
 						$query = $request->query;

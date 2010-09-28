@@ -411,12 +411,12 @@ class Test7Behavior extends ModelBehavior{
 }
 
 /**
- * BehaviorTest class
+ * BehaviorCollection class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  */
-class BehaviorTest extends CakeTestCase {
+class BehaviorCollectionTest extends CakeTestCase {
 
 /**
  * fixtures property
@@ -1024,6 +1024,10 @@ class BehaviorTest extends CakeTestCase {
 		$result = $Apple->{'look for the remote'}('in the couch');
 		$expected = "Item.name = 'the remote' AND Location.name = 'the couch'";
 		$this->assertEqual($result, $expected);
+
+		$result = $Apple->{'look for THE REMOTE'}('in the couch');
+		$expected = "Item.name = 'THE REMOTE' AND Location.name = 'the couch'";
+		$this->assertEqual($result, $expected, 'Mapped method was lowercased.');
 	}
 
 /**

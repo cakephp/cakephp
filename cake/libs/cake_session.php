@@ -149,7 +149,6 @@ class CakeSession {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 
-		self::_setupDatabase();
 		if ($start === true) {
 			self::_setPath($base);
 			self::_setHost(env('HTTP_HOST'));
@@ -190,37 +189,6 @@ class CakeSession {
 		if (strpos(self::$host, ':') !== false) {
 			self::$host = substr(self::$host, 0, strpos(self::$host, ':'));
 		}
-	}
-
-/**
- * Setup database configuration for Session, if enabled.
- *
- * @return void
- */
-	protected function _setupDatabase() {
-		if (Configure::read('Session.defaults') !== 'database') {
-			return;
-		}
-		$modelName = Configure::read('Session.handler.model');
-		$database = Configure::read('Session.handler.database');
-		$table = Configure::read('Session.handler.table');
-
-		if (empty($database)) {
-			$database = 'default';
-		}
-		$settings = array(
-			'class' => 'Session',
-			'alias' => 'Session',
-			'table' => 'cake_sessions',
-			'ds' => $database
-		);
-		if (!empty($modelName)) {
-			$settings['class'] = $modelName;
-		}
-		if (!empty($table)) {
-			$settings['table'] = $table;
-		}
-		ClassRegistry::init($settings);
 	}
 
 /**
@@ -559,14 +527,14 @@ class CakeSession {
 			call_user_func_array('session_set_save_handler', $sessionConfig['handler']);
 		}
 		if (!empty($sessionConfig['handler']['engine'])) {
-			$class = self::_getHandler($sessionConfig['handler']['engine']);
+			$handler = self::_getHandler($sessionConfig['handler']['engine']);
 			session_set_save_handler(
-				array($class, 'open'),
-				array($class, 'close'),
-				array($class, 'read'),
-				array($class, 'write'),
-				array($class, 'destroy'),
-				array($class, 'gc')
+				array($handler, 'open'),
+				array($handler, 'close'),
+				array($handler, 'read'),
+				array($handler, 'write'),
+				array($handler, 'destroy'),
+				array($handler, 'gc')
 			);
 		}
 		Configure::write('Session', $sessionConfig);
@@ -587,11 +555,11 @@ class CakeSession {
 		if (!class_exists($class)) {
 			throw new Exception(sprintf(__('Could not load %s to handle the session.'), $class));
 		}
-		$reflect = new ReflectionClass($class);
-		if (!$reflect->implementsInterface('CakeSessionHandlerInterface')) {
-			throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
+		$handler = new $class();
+		if ($handler instanceof CakeSessionHandlerInterface) {
+			return $handler;
 		}
-		return $class;
+		throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
 	}
 
 /**
@@ -768,14 +736,14 @@ interface CakeSessionHandlerInterface {
  *
  * @return boolean Success
  */
-	public static function open();
+	public function open();
 
 /**
  * Method called on close of a session.
  *
  * @return boolean Success
  */
-	public static function close();
+	public function close();
 
 /**
  * Method used to read from a session.
@@ -783,7 +751,7 @@ interface CakeSessionHandlerInterface {
  * @param mixed $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
  */
-	public static function read($id);
+	public function read($id);
 
 /**
  * Helper function called on write for sessions.
@@ -792,7 +760,7 @@ interface CakeSessionHandlerInterface {
  * @param mixed $data The value of the data to be saved.
  * @return boolean True for successful write, false otherwise.
  */
-	public static function write($id, $data);
+	public function write($id, $data);
 
 /**
  * Method called on the destruction of a session.
@@ -800,7 +768,7 @@ interface CakeSessionHandlerInterface {
  * @param integer $id ID that uniquely identifies session in database
  * @return boolean True for successful delete, false otherwise.
  */
-	public static function destroy($id);
+	public function destroy($id);
 
 /**
  * Run the Garbage collection on the session storage.  This method should vacuum all
@@ -809,7 +777,7 @@ interface CakeSessionHandlerInterface {
  * @param integer $expires Timestamp (defaults to current time)
  * @return boolean Success
  */
-	public static function gc($expires = null);
+	public function gc($expires = null);
 }
 
 

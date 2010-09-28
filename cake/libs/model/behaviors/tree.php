@@ -278,7 +278,7 @@ class TreeBehavior extends ModelBehavior {
 		if (!$id) {
 			$conditions = $scope;
 		} else {
-			$result = array_values($Model->find('first', array(
+			$result = array_values((array)$Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $id),
 				'fields' => array($left, $right),
 				'recursive' => $recursive
