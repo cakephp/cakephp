@@ -1,6 +1,6 @@
 <?php
 /**
- * AllBakeTasksTest file
+ * AllTasksTest file
  *
  * PHP 5
  *
@@ -19,14 +19,14 @@
  */
 
 /**
- * AllBakeTasksTest class
+ * AllTasksTest class
  *
- * This test group will run bake and its task's tests.
+ * This test group will run all the task tests.
  *
  * @package       cake
  * @subpackage    cake.tests.groups
  */
-class AllBakeTasksTest extends PHPUnit_Framework_TestSuite {
+class AllTasksTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -34,15 +34,12 @@ class AllBakeTasksTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('Bake and its task tests');
+		$suite = new CakeTestSuite('All Tasks tests');
 
 		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'tasks' . DS;
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS . 'bake.test.php');
-		$tasks = array('controller', 'model', 'view', 'fixture', 'test', 'db_config', 'project', 'plugin');
-		foreach ($tasks as $task) {
-			$suite->addTestFile($path . $task . '.test.php');
-		}
+		$suite->addTestDirectory($path);
 		return $suite;
 	}
 }

@@ -249,15 +249,11 @@ class ModelIntegrationTest extends BaseModelTest {
 	function testCrossDatabaseJoins() {
 		$config = new DATABASE_CONFIG();
 
-		$skip = $this->skipIf(
-			!isset($config->test) || !isset($config->test2),
-			 '%s Primary and secondary test databases not configured, skipping cross-database '
-			.'join tests.'
-			.' To run these tests, you must define $test and $test2 in your database configuration.'
-		);
-
+		$skip = (!isset($config->test) || !isset($config->test2));
 		if ($skip) {
-			return;
+			$this->markTestSkipped('Primary and secondary test databases not configured, skipping cross-database
+				join tests.  To run theses tests defined $test and $test2 in your database configuration.'
+			);
 		}
 
 		$this->loadFixtures('Article', 'Tag', 'ArticlesTag', 'User', 'Comment');
@@ -710,7 +706,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = array('Apple'=> array('mytime'=> '03:04:04'));
 		$this->assertEqual($TestModel->data, $expected);
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$data = array();
 		$data['Apple']['mytime'] = $db->expression('NOW()');
 		$TestModel->data = null;
@@ -887,7 +883,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = array('Apple'=> array('date'=> '2006-12-25'));
 		$this->assertEqual($TestModel->data, $expected);
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$data = array();
 		$data['Apple']['modified'] = $db->expression('NOW()');
 		$TestModel->data = null;
@@ -1332,9 +1328,9 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	function testConstructWithAlternateDataSource() {
 		$TestModel = ClassRegistry::init(array(
-			'class' => 'DoesntMatter', 'ds' => 'test_suite', 'table' => false
+			'class' => 'DoesntMatter', 'ds' => 'test', 'table' => false
 		));
-		$this->assertEqual('test_suite', $TestModel->useDbConfig);
+		$this->assertEqual('test', $TestModel->useDbConfig);
 
 		//deprecated but test it anyway
 		$NewVoid = new TheVoid(null, false, 'other');

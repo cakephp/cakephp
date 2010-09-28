@@ -54,14 +54,15 @@ class BakeShellTest extends CakeTestCase {
 	public $fixtures = array('core.user');
 
 /**
- * start test
+ * setup test
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
 		$this->Shell = $this->getMock(
 			'BakeShell',
@@ -72,11 +73,12 @@ class BakeShellTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
  * @return void
  */
-	public function endTest() {
+	public function tearDown() {
+		parent::tearDown();
 		unset($this->Dispatch, $this->Shell);
 	}
 
@@ -96,7 +98,7 @@ class BakeShellTest extends CakeTestCase {
 		$this->Shell->View = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
 		$this->Shell->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher));
 
-		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test_suite'));
+		$this->Shell->DbConfig->expects($this->once())->method('getConfig')->will($this->returnValue('test'));
 	
 		$this->Shell->Model->expects($this->never())->method('getName');
 		$this->Shell->Model->expects($this->once())->method('bake')->will($this->returnValue(true));

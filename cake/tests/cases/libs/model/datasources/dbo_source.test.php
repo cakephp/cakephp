@@ -1283,16 +1283,17 @@ class DboSourceTest extends CakeTestCase {
 	);
 
 /**
- * startTest method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->__config = $this->db->config;
 
 		if (!class_exists('DboTest')) {
-			$db = ConnectionManager::getDataSource('test_suite');
+			$db = ConnectionManager::getDataSource('test');
 			$class = get_class($db);
 			eval("class DboTest extends $class {
 				var \$simulated = array();
@@ -1325,8 +1326,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->cacheSources = false;
 		$this->testDb->startQuote = '`';
 		$this->testDb->endQuote = '`';
-		Configure::write('debug', 1);
-		$this->debug = Configure::read('debug');
+
 		$this->Model = new TestModel();
 	}
 
@@ -1336,11 +1336,9 @@ class DboSourceTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Model);
-		Configure::write('debug', $this->debug);
-		ClassRegistry::flush();
-		unset($this->debug);
 	}
 
 /**
@@ -4154,16 +4152,19 @@ class DboSourceTest extends CakeTestCase {
 		$oldDebug = Configure::read('debug');
 		Configure::write('debug', 2);
 
-		$this->testDb->error = true;
-		$this->expectError();
-		ob_start();
-		$this->testDb->showQuery('Error 2');
-		$contents = ob_get_clean();
-
-		$this->assertPattern('/Error 2/s', $contents);
-
 		$this->testDb->error = $oldError;
 		Configure::write('debug', $oldDebug);
+	}
+
+	function testShowQueryError() {
+		$this->testDb->error = true;
+		try {
+			$this->testDb->showQuery('Error 2');
+			$this->fail('No exception');
+		} catch (Exception $e) {
+			$this->assertPattern('/SQL Error/', $e->getMessage());
+			$this->assertTrue(true, 'Exception thrown');
+		}
 	}
 
 /**
@@ -4240,16 +4241,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertPattern('/Aff:/s', $contents);
 		$this->assertPattern('/Num:/s', $contents);
 		$this->assertPattern('/Took:/s', $contents);
-
-		$this->expectError();
-		$this->testDb->error = true;
-		ob_start();
-		$this->testDb->showQuery('Another Query');
-		$contents = ob_get_clean();
-		$this->assertPattern('/Another Query/s', $contents);
-		$this->assertNoPattern('/Aff:/s', $contents);
-		$this->assertNoPattern('/Num:/s', $contents);
-		$this->assertNoPattern('/Took:/s', $contents);
 	}
 
 /**
@@ -4509,6 +4500,24 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test reading virtual fields containing newlines when recursive > 0
+ *
+ * @return void
+ */
+	function testReadVirtualFieldsWithNewLines() {
+		$Article =& new Article();
+		$Article->recursive = 1;
+		$Article->virtualFields = array(
+			'test' => '
+			User.id + User.id
+			'
+		);
+		$result = $this->db->fields($Article, null, array());
+		$result = $this->db->fields($Article, $Article->alias, $result);
+		$this->assertPattern('/[`\"]User[`\"]\.[`\"]id[`\"] \+ [`\"]User[`\"]\.[`\"]id[`\"]/', $result[7]);
+	}
+
+/**
  * test group to generate GROUP BY statements on virtual fields
  *
  * @return void
@@ -4538,6 +4547,11 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'tbl_articles');
+		
+		$Article->useTable = $Article->table = 'with spaces';
+		$Article->tablePrefix = '';
+		$result = $this->testDb->fullTableName($Article);
+		$this->assertEqual($result, '`with spaces`');
 	}
 
 /**

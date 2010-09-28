@@ -116,7 +116,7 @@ class CakeSessionTest extends CakeTestCase {
 		$_SESSION = null;
 
 		Configure::write('Session', array(
-			'cookie' => 'test_suite',
+			'cookie' => 'test',
 			'checkAgent' => false,
 			'timeout' => 86400,
 			'ini' => array(
@@ -127,7 +127,7 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::start();
 		$this->assertEquals('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
 		$this->assertEquals('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
-		$this->assertEquals('test_suite', ini_get('session.name'), 'Ini value is incorrect');
+		$this->assertEquals('test', ini_get('session.name'), 'Ini value is incorrect');
 	}
 
 /**
@@ -682,7 +682,7 @@ class CakeSessionTest extends CakeTestCase {
 		Configure::write('Session.defaults', 'database');
 		Configure::write('Session.handler.table', 'sessions');
 		Configure::write('Session.handler.model', 'Session');
-		Configure::write('Session.handler.database', 'test_suite');
+		Configure::write('Session.handler.database', 'test');
 
 		TestCakeSession::init();
 		TestCakeSession::start();

@@ -390,7 +390,7 @@ class CakeResponse {
  * e.g `header('WWW-Authenticate: Negotiate');`
  *
  * ### Array of string headers
- * e.g `header(array('WWW-Authenticate: Negotiate'), array('Content-type: application/pdf'));`
+ * e.g `header(array('WWW-Authenticate: Negotiate', 'Content-type: application/pdf'));`
  *
  * Multiple calls for setting the same header name will have the same effect as setting the header once
  * with the last value sent for it

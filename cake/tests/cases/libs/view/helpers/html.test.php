@@ -63,12 +63,14 @@ class HtmlHelperTest extends CakeTestCase {
  * @var string
  */
 	public $cDataStart = 'preg:/^\/\/<!\[CDATA\[[\n\r]*/';
+
 /**
  * Regexp for CDATA end block
  *
  * @var string
  */
 	public $cDataEnd = 'preg:/[^\]]*\]\]\>[\s\r\n]*/';
+
 /**
  * html property
  *
@@ -78,56 +80,25 @@ class HtmlHelperTest extends CakeTestCase {
 	public $Html = null;
 
 /**
- * Backup of app encoding configuration setting
- *
- * @var string
- * @access protected
- */
-	protected $_appEncoding;
-
-/**
- * Backup of asset configuration settings
- *
- * @var string
- * @access protected
- */
-	protected $_asset;
-
-/**
- * Backup of debug configuration setting
- *
- * @var integer
- * @access protected
- */
-	protected $_debug;
-
-/**
  * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->View = $this->getMock('View', array('addScript'), array(new TheHtmlTestController()));
 		$this->Html = new HtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
-		$this->_appEncoding = Configure::read('App.encoding');
-		$this->_asset = Configure::read('Asset');
-		$this->_debug = Configure::read('debug');
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
- * @access public
  * @return void
  */
-	function endTest() {
-		Configure::write('App.encoding', $this->_appEncoding);
-		Configure::write('Asset', $this->_asset);
-		Configure::write('debug', $this->_debug);
-		ClassRegistry::flush();
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Html, $this->View);
 	}
 
@@ -643,6 +614,9 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
 		);
 		$this->assertTags($result, $expected);
+
+		$folder = new Folder(WWW_ROOT . 'theme' . DS . 'test_theme');
+		$folder->delete();
 		App::build();
 	}
 

@@ -4532,8 +4532,7 @@ class MultibyteTest extends CakeTestCase {
 		$string = 'državni';
 		$find = 'dž';
 		$result = mb_strripos($string, $find);
-		$expected = 0;
-		$this->assertEqual($result, $expected);
+		$this->assertFalse($result);
 	}
 
 /**

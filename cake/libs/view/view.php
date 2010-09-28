@@ -597,7 +597,7 @@ class View extends Object {
 		if ($data == null) {
 			return false;
 		}
-		$this->viewVars = array_merge($this->viewVars, $data);
+		$this->viewVars = $data + $this->viewVars;
 	}
 
 /**

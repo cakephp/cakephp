@@ -51,20 +51,19 @@ class AclShellTest extends CakeTestCase {
 	public $fixtures = array('core.aco', 'core.aro', 'core.aros_aco');
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
-		$this->_aclDb = Configure::read('Acl.database');
-		$this->_aclClass = Configure::read('Acl.classname');
+	public function setUp() {
+		parent::setUp();
 
-		Configure::write('Acl.database', 'test_suite');
+		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch')
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch', 'clear')
 		);
 		$this->Task = $this->getMock(
 			'AclShell',
@@ -74,18 +73,7 @@ class AclShellTest extends CakeTestCase {
 		$collection = new ComponentCollection();
 		$this->Task->Acl = new AclComponent($collection);
 
-		$this->Task->params['datasource'] = 'test_suite';
-	}
-
-/**
- * endTest method
- *
- * @return void
- */
-	public function endTest() {
-		ClassRegistry::flush();
-		Configure::write('Acl.database', $this->_aclDb);
-		Configure::write('Acl.classname', $this->_aclClass);
+		$this->Task->params['datasource'] = 'test';
 	}
 
 /**

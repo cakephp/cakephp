@@ -53,14 +53,13 @@ class CakeTestFixture {
  */
 	public function __construct() {
 		App::import('Model', 'CakeSchema');
-		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test_suite'));
+		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
 		$this->init();
 	}
 
 /**
  * Initialize the fixture.
  *
- * @param object	Cake's DBO driver (e.g: DboMysql).
  */
 	public function init() {
 		if (isset($this->import) && (is_string($this->import) || is_array($this->import))) {
@@ -70,14 +69,17 @@ class CakeTestFixture {
 			);
 
 			if (isset($import['model']) && App::import('Model', $import['model'])) {
-				ClassRegistry::config(array('ds' => $import['connection']));
-				$model = ClassRegistry::init($import['model']);
-				$db = ConnectionManager::getDataSource($model->useDbConfig);
-				$db->cacheSources = false;
+				App::import('Model', $import['model']);
+				list(, $modelClass) = pluginSplit($import['model']);
+				$model = new $modelClass(null, null, $import['connection']);
+				$db = $model->getDataSource();
+				if (empty($model->tablePrefix)) {
+					$model->tablePrefix = $db->config['prefix'];
+				}
 				$this->fields = $model->schema(true);
 				$this->fields[$model->primaryKey]['key'] = 'primary';
 				$this->table = $db->fullTableName($model, false);
-				ClassRegistry::config(array('ds' => 'test_suite'));
+				ClassRegistry::config(array('ds' => 'test'));
 				ClassRegistry::flush();
 			} elseif (isset($import['table'])) {
 				$model = new Model(null, $import['table'], $import['connection']);

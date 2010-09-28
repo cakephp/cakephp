@@ -264,6 +264,9 @@ class ShellDispatcher {
 			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 			App::build();
 		}
+		if (!defined('FULL_BASE_URL')) {
+			define('FULL_BASE_URL', '/');
+		}
 
 		return true;
 	}

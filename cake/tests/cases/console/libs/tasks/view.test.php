@@ -224,15 +224,16 @@ class ViewTaskTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
- * startTest method
+ * setUp method
  *
  * Ensure that the default theme is used
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('ViewTask',
 			array('in', 'err', 'createFile', '_stop'),
@@ -245,18 +246,16 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
-
-		$this->_routing = Configure::read('Routing');
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
  * @return void
  */
-	public function endTest() {
-		ClassRegistry::flush();
-		Configure::write('Routing', $this->_routing);
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->Task, $this->Dispatch);
 	}
 
 /**
@@ -389,7 +388,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->controllerName = 'ViewTaskComments';
 		$this->Task->controllerPath = 'view_task_comments';
 
-		$this->Task->expectNever('createFile');
+		$this->Task->expects($this->never())->method('createFile');
 		$this->Task->bake('delete', true);
 	}
 
@@ -613,7 +612,7 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteInteractive() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array();
 		$this->Task->params = array();
 
@@ -658,7 +657,7 @@ class ViewTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithAlternateTemplates() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array('ViewTaskComments', 'index', 'list');
 		$this->Task->params = array();
 
@@ -677,7 +676,7 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function testExecuteInteractiveWithAdmin() {
 		Configure::write('Routing.prefixes', array('admin'));
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->args = array();
 
 		$this->Task->Controller->expects($this->once())->method('getName')

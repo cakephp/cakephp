@@ -112,14 +112,14 @@ class CakeTestFixtureDefaultImportFixture extends CakeTestFixture {
 class FixtureImportTestModel extends Model {
 	public $name = 'FixtureImport';
 	public $useTable = 'fixture_tests';
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 }
 
 class FixturePrefixTest extends Model {
 	public $name = 'FixturePrefix';
 	public $useTable = '_tests';
 	public $tablePrefix = 'fixture';
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 }
 
 /**
@@ -139,12 +139,8 @@ class CakeTestFixtureTest extends CakeTestCase {
 	function setUp() {
 		$this->criticDb = $this->getMock('DboSource');
 		$this->criticDb->fullDebug = true;
-		
-		$dbs = ConnectionManager::enumConnectionObjects();
-		if (!isset($dbs['test_suite'])) {
-			$db = ConnectionManager::getDatasource('test');
-			ConnectionManager::create('test_suite', $db->config);
-		}
+		$this->db = ConnectionManager::getDataSource('test');
+		$this->_backupConfig = $this->db->config;
 	}
 
 /**
@@ -155,6 +151,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  */
 	function tearDown() {
 		unset($this->criticDb);
+		$this->db->config = $this->_backupConfig;
 	}
 
 /**
@@ -183,7 +180,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	function testInitDbPrefix() {
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$Source = new CakeTestFixtureTestFixture();
 		$Source->drop($db);
 		$Source->create($db);
@@ -198,14 +195,14 @@ class CakeTestFixtureTest extends CakeTestCase {
 		ConnectionManager::create('fixture_test_suite', $config);
 
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('table' => 'fixture_tests', 'connection' => 'test_suite', 'records' => true);
+		$Fixture->import = array('table' => 'fixture_tests', 'connection' => 'test', 'records' => true);
 		$Fixture->init();
 		$this->assertEqual(count($Fixture->records), count($Source->records));
 		$Fixture->create(ConnectionManager::getDataSource('fixture_test_suite'));
 
-		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture = new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
 		$this->assertEqual($Fixture->table, 'fixture_tests');
@@ -223,24 +220,27 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	function testInitDbPrefixDuplication() {
-		$this->_initDb();
-		$backPrefix = $this->db->config['prefix'];
-		$this->db->config['prefix'] = 'cake_fixture_test_';
+		$db = ConnectionManager::getDataSource('test');
+		$backPrefix = $db->config['prefix'];
+		$db->config['prefix'] = 'cake_fixture_test_';
+		ConnectionManager::create('fixture_test_suite', $db->config);
+		$newDb = ConnectionManager::getDataSource('fixture_test_suite');
+		$newDb->config['prefix'] = 'cake_fixture_test_';
 
-		$Source =& new CakeTestFixtureTestFixture();
-		$Source->create($this->db);
-		$Source->insert($this->db);
+		$Source = new CakeTestFixtureTestFixture();
+		$Source->create($db);
+		$Source->insert($db);
 
-		$Fixture =& new CakeTestFixtureImportFixture();
+		$Fixture = new CakeTestFixtureImportFixture();
 		$Fixture->fields = $Fixture->records = $Fixture->table = null;
-		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test_suite');
+		$Fixture->import = array('model' => 'FixtureImportTestModel', 'connection' => 'test');
 
 		$Fixture->init();
 		$this->assertEqual(array_keys($Fixture->fields), array('id', 'name', 'created'));
 		$this->assertEqual($Fixture->table, 'fixture_tests');
 
-		$Source->drop($this->db);
-		$this->db->config['prefix'] = $backPrefix;
+		$Source->drop($db);
+		$db->config['prefix'] = $backPrefix;
 	}
 
 /**
@@ -249,26 +249,25 @@ class CakeTestFixtureTest extends CakeTestCase {
  * @return void
  */
 	function testInitModelTablePrefix() {
-		$this->_initDb();
 		$hasPrefix = !empty($this->db->config['prefix']);
 		if ($this->skipIf($hasPrefix, 'Cannot run this test, you have a database connection prefix.')) {
 			return;
 		}
-		$Source =& new CakeTestFixtureTestFixture();
-		$Source->create($db);
-		$Source->insert($db);
+		$Source = new CakeTestFixtureTestFixture();
+		$Source->create($this->db);
+		$Source->insert($this->db);
 
-		$Fixture =& new CakeTestFixtureTestFixture();
+		$Fixture = new CakeTestFixtureTestFixture();
 		unset($Fixture->table);
 		$Fixture->fields = $Fixture->records = null;
-		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test_suite', 'records' => false);
+		$Fixture->import = array('model' => 'FixturePrefixTest', 'connection' => 'test', 'records' => false);
 		$Fixture->init();
 		$this->assertEqual($Fixture->table, 'fixture_tests');
 
 		$keys = array_flip(ClassRegistry::keys());
 		$this->assertFalse(array_key_exists('fixtureimporttestmodel', $keys));
 
-		$Source->drop($db);
+		$Source->drop($this->db);
 	}
 
 /**
@@ -279,7 +278,7 @@ class CakeTestFixtureTest extends CakeTestCase {
  */
 	function testImport() {
 		$defaultDb = ConnectionManager::getDataSource('default');
-		$testSuiteDb = ConnectionManager::getDataSource('test_suite');
+		$testSuiteDb = ConnectionManager::getDataSource('test');
 		$defaultConfig = $defaultDb->config;
 		$testSuiteConfig = $testSuiteDb->config;
 		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));
@@ -314,7 +313,7 @@ class CakeTestFixtureTest extends CakeTestCase {
 	function testImportWithRecords() {
 
 		$defaultDb = ConnectionManager::getDataSource('default');
-		$testSuiteDb = ConnectionManager::getDataSource('test_suite');
+		$testSuiteDb = ConnectionManager::getDataSource('test');
 		$defaultConfig = $defaultDb->config;
 		$testSuiteConfig = $testSuiteDb->config;
 		ConnectionManager::create('new_test_suite', array_merge($testSuiteConfig, array('prefix' => 'new_' . $testSuiteConfig['prefix'])));

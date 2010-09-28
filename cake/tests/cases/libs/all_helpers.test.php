@@ -35,18 +35,11 @@ class AllHelpersTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All Helper tests');
+		$suite = new CakeTestSuite('All Helper tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helper_collection.test.php');
-
-		$helperIterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS);
-
-		foreach ($helperIterator as $i => $file) {
-			if (!$file->isDot()) {
-				$suite->addTestfile($file->getPathname());
-			}
-		}
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS);
 		return $suite;
 	}
 }

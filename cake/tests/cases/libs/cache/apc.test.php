@@ -30,26 +30,13 @@ if (!class_exists('Cache')) {
 class ApcEngineTest extends CakeTestCase {
 
 /**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$skip = true;
-		if (function_exists('apc_store')) {
-			$skip = false;
-		}
-		$this->skipIf($skip, '%s Apc is not installed or configured properly');
-	}
-
-/**
  * setUp method
  *
  * @access public
  * @return void
  */
 	function setUp() {
+		$this->skipIf(!function_exists('apc_store'), '%s Apc is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('apc', array('engine' => 'Apc', 'prefix' => 'cake_'));

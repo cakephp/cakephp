@@ -120,14 +120,15 @@ class CacheTest extends CakeTestCase {
  */
 	function testInvaidConfig() {
 		$this->expectError();
-		Cache::config('Invalid', array(
+		Cache::config('invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
 			'prefix' => 'testing_invalid_',
 			'path' => 'data/',
-			'serialize' => true
+			'serialize' => true,
+			'random' => 'wii'
 		));
-		$read = Cache::read('Test', 'Invalid');
+		$read = Cache::read('Test', 'invalid');
 		$this->assertEqual($read, null);
 	}
 

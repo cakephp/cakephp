@@ -44,7 +44,7 @@ class TestSuiteShellTest extends CakeTestCase {
 	public function setUp() {
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
 		$this->Shell = $this->getMock(
 			'TestSuiteShell',

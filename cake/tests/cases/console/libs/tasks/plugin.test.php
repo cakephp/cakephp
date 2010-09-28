@@ -44,53 +44,36 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
  */
 class PluginTaskTest extends CakeTestCase {
 
-	public static $_paths = array();
-
-	public static $_testPath = array();
-
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
+
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('PluginTask', 
 			array('in', 'err', 'createFile', '_stop'),
 			array(&$this->Dispatcher)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
-	}
-
-/**
- * startCase methods
- *
- * @return void
- */
-	public static function setUpBeforeClass() {
-		self::$_paths = $paths = App::path('plugins');
-		self::$_testPath = array_push($paths, TMP . 'tests' . DS);
+		
+		$this->_paths = $paths = App::path('plugins');
+		$this->_testPath = array_push($paths, TMP . 'tests' . DS);
 		App::build(array('plugins' => $paths));
 	}
 
 /**
- * endCase
+ * teardown
  *
  * @return void
  */
-	public static function tearDownAfterClass() {
-		App::build(array('plugins' => self::$_paths));
-	}
-
-/**
- * endTest method
- *
- * @return void
- */
-	public function endTest() {
-		ClassRegistry::flush();
+	public function tearDown() {
+		parent::tearDown();
+		App::build(array('plugins' => $this->_paths));
 	}
 
 /**
@@ -99,7 +82,7 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBakeFoldersAndFiles() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(self::$_testPath));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'bake_test_plugin';
@@ -219,7 +202,7 @@ class PluginTaskTest extends CakeTestCase {
  */
 	public function testExecuteWithOneArg() {
 		$this->Task->expects($this->at(0))->method('in')
-			->will($this->returnValue(self::$_testPath));
+			->will($this->returnValue($this->_testPath));
 		$this->Task->expects($this->at(1))->method('in')
 			->will($this->returnValue('y'));
 
@@ -250,7 +233,7 @@ class PluginTaskTest extends CakeTestCase {
 	public function testExecuteWithTwoArgs() {
 		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
 
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue(self::$_testPath));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
 
 		$this->Task->Model->expects($this->once())->method('loadTasks');
 		$this->Task->Model->expects($this->once())->method('execute');

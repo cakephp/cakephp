@@ -44,13 +44,13 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php
 class TemplateTaskTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setup() {
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('TemplateTask', 
 			array('in', 'err', 'createFile', '_stop'),
@@ -60,13 +60,14 @@ class TemplateTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
  * @return void
  */
-	public function endTest() {
+	public function teardown() {
 		unset($this->Task, $this->Dispatcher);
 		ClassRegistry::flush();
+		App::build();
 	}
 
 /**
@@ -84,6 +85,12 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->assertEqual($this->Task->templateVars['one'], 'three');
 		$this->assertTrue(isset($this->Task->templateVars['four']));
 		$this->assertEqual($this->Task->templateVars['four'], 'five');
+		
+		$this->Task->templateVars = array();
+		$this->Task->set(array(3 => 'three', 4 => 'four'));
+		$this->Task->set(array(1 => 'one', 2 => 'two'));
+		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
+		$this->assertEqual($this->Task->templateVars, $expected);
 	}
 
 /**

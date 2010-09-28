@@ -107,30 +107,6 @@ class TestManager {
 	}
 
 /**
- * Runs all tests in the Application depending on the current appTest setting
- *
- * @param PHPUnit_Framework_TestListener $reporter Reporter instance to attach to the test case.
- * @return mixed
- */
-	public function runAllTests(&$reporter) {
-		$testCases = $this->_getTestFileList($this->_getTestsPath($reporter->params));
-
-		if ($this->appTest) {
-			$test = $this->getTestSuite(__('All App Tests', true));
-		} else if ($this->pluginTest) {
-			$test =  $this->getTestSuite(sprintf(__('All %s Plugin Tests', true), Inflector::humanize($this->pluginTest)));
-		} else {
-			$test =  $this->getTestSuite(__('All Core Tests', true));
-		}
-
-		foreach ($testCases as $testCase) {
-			$test->addTestFile($testCase);
-		}
-
-		return $this->run($reporter);
-	}
-
-/**
  * Runs a specific test case file
  *
  * @param string $testCaseFile Filename of the test to be run.
@@ -184,40 +160,6 @@ class TestManager {
 		$suite->addTestFile($testCaseFileWithPath);
 
 		return $suite;
-	}
-
-/**
- * Adds all testcases in a given directory to a given GroupTest object
- *
- * @param object $groupTest Instance of TestSuite/GroupTest that files are to be added to.
- * @param string $directory The directory to add tests from.
- * @return void
- * @access public
- * @static
- */
-	public static function addTestCasesFromDirectory(&$groupTest, $directory = '.') {
-		$testCases = self::_getTestFileList($directory);
-		foreach ($testCases as $testCase) {
-			$groupTest->addTestFile($testCase);
-		}
-	}
-
-/**
- * Adds a specific test file and thereby all of its test cases and group tests to a given group test file
- *
- * @param object $groupTest Instance of TestSuite/GroupTest that a file should be added to.
- * @param string $file The file name, minus the suffix to add.
- * @return void
- * @access public
- * @static
- */
-	public static function addTestFile(&$groupTest, $file) {
-		if (file_exists($file . self::$_testExtension)) {
-			$file .= self::$_testExtension;
-		} elseif (file_exists($file . self::$_groupExtension)) {
-			$file .= self::$_groupExtension;
-		}
-		$groupTest->addTestFile($file);
 	}
 
 /**

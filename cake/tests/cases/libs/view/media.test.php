@@ -124,13 +124,12 @@ class TestMediaView extends MediaView {
 class MediaViewTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
-		Router::reload();
+	function setUp() {
+		parent::setUp();
 		$this->Controller =& new Controller();
 		$this->MediaController =& new MediaController();
 		$this->MediaController->viewPath = 'posts';
@@ -144,11 +143,11 @@ class MediaViewTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->MediaView);
 		unset($this->MediaController);
 		unset($this->Controller);
-		ClassRegistry::flush();
 	}
 
 /**

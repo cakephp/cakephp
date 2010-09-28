@@ -167,6 +167,8 @@ class RequestHandlerComponent extends Component {
 			$this->renderAs($controller, $this->ext);
 		} elseif ($this->request->is('ajax')) {
 			$this->renderAs($controller, 'ajax');
+		} elseif (empty($this->ext) || in_array($this->ext, array('html', 'htm'))) {
+			$this->respondAs('html', array('charset' => Configure::read('App.encoding')));
 		}
 
 		if ($this->requestedWith('xml')) {

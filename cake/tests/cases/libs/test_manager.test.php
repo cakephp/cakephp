@@ -48,6 +48,7 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_countFiles = 0;
 		$this->TestManager = new TestTestManager();
 		$this->testSuiteStub = $this->getMock('CakeTestSuite');
@@ -88,20 +89,6 @@ class TestManagerTest extends CakeTestCase {
 	}
 
 /**
- * testRunAllTests method
- *
- * @return void
- */
-	public function testRunAllTests() {
-		$this->Reporter->params = array('show' => 'cases');
-		$files = $this->_getAllTestFiles();
-		$result = $this->TestManager->runAllTests($this->Reporter, true);
-
-		$this->assertEquals(count($files), $this->_countFiles);
-		$this->assertType('PHPUnit_Framework_TestResult', $result);
-	}
-
-/**
 * Tests that trying to run an unexistent file throws an exception
 * @expectedException InvalidArgumentException
 */
@@ -116,46 +103,10 @@ class TestManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testRunTestCase() {
-		$file = __FILE__;
+		$file = 'libs/test_manager.test.php';
 		$result = $this->TestManager->runTestCase($file, $this->Reporter, true);
 		$this->assertEquals(1, $this->_countFiles);
 		$this->assertType('PHPUnit_Framework_TestResult', $result);
 	}
 
-/**
- * testAddTestCasesFromDirectory method
- *
- * @return void
- */
-	public function testAddTestCasesFromDirectory() {
-		$this->TestManager->addTestCasesFromDirectory($this->testSuiteStub, CORE_TEST_CASES);
-		$this->assertEquals(count($this->_getAllTestFiles()), $this->_countFiles);
-	}
-
-/**
- * testAddTestFile method
- *
- * @return void
- */
-	public function testAddTestFile() {
-		$file = str_replace(CORE_TEST_CASES, '', __FILE__);
-		$this->TestManager->addTestFile($this->testSuiteStub, $file);
-		$this->assertEquals(1, $this->_countFiles);
-	}
-
-/**
- * testGetTestCaseList method
- *
- * @return void
- */
-	public function testGetTestCaseList() {
-	}
-
-/**
- * testGetGroupTestList method
- *
- * @return void
- */
-	public function testGetGroupTestList() {
-	}
 }

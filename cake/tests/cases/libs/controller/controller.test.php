@@ -445,12 +445,23 @@ class ControllerTest extends CakeTestCase {
 	public $fixtures = array('core.post', 'core.comment', 'core.name');
 
 /**
- * endTest
+ * reset environment.
+ *
+ * @return void
+ */
+	function setUp() {
+		App::objects('plugin', null, false);
+		App::build();
+		Router::reload();
+	}
+
+/**
+ * teardown
  *
  * @access public
  * @return void
  */
-	function endTest() {
+	function teardown() {
 		App::build();
 	}
 
@@ -857,6 +868,8 @@ class ControllerTest extends CakeTestCase {
  */
 	function testFlash() {
 		$request = new CakeRequest('controller_posts/index');
+		$request->webroot = '/';
+		$request->base = '/';
 
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -928,6 +941,13 @@ class ControllerTest extends CakeTestCase {
 		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');
 		$Controller->set(array('ModelName', 'ModelName2'), array('name', 'name2'));
 		$this->assertIdentical($Controller->viewVars, $expected);
+
+		$Controller->viewVars = array();
+		$Controller->set(array(3 => 'three', 4 => 'four'));
+		$Controller->set(array(1 => 'one', 2 => 'two'));
+		$expected = array(3 => 'three', 4 => 'four', 1 => 'one', 2 => 'two');
+		$this->assertEqual($Controller->viewVars, $expected);
+		
 	}
 
 /**
@@ -953,6 +973,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertPattern('/this is the test element/', $result);
 
 		$Controller = new TestController($request);
+		$Controller->helpers = array('Html');
 		$Controller->constructClasses();
 		$Controller->ControllerComment->validationErrors = array('title' => 'tooShort');
 		$expected = $Controller->ControllerComment->validationErrors;

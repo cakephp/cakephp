@@ -54,10 +54,10 @@ class SchemaShellTestSchema extends CakeSchema {
 /**
  * connection property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $connection = 'test_suite';
+	public $connection = 'test';
 
 /**
  * comments property
@@ -115,14 +115,14 @@ class SchemaShellTest extends CakeTestCase {
 	);
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setup() {
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment')
+			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
 		$this->Shell = $this->getMock(
 			'SchemaShell',
@@ -136,8 +136,13 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function endTest() {
+	public function teardown() {
 		ClassRegistry::flush();
+		if (!empty($this->file) && $this->file instanceof File) {
+			$this->file->delete();
+			unset($this->file);
+		}
+		App::build();
 	}
 
 /**
@@ -165,13 +170,13 @@ class SchemaShellTest extends CakeTestCase {
 		unset($this->Shell->Schema);
 		$this->Shell->params = array(
 			'file' => 'other_file.php',
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'path' => '/test/path'
 		);
 		$this->Shell->startup();
 		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
 		$this->assertEqual($this->Shell->Schema->file, 'other_file.php');
-		$this->assertEqual($this->Shell->Schema->connection, 'test_suite');
+		$this->assertEqual($this->Shell->Schema->connection, 'test');
 		$this->assertEqual($this->Shell->Schema->path, '/test/path');
 	}
 
@@ -226,8 +231,8 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->dump();
 
-		$sql =& new File(TMP . 'tests' . DS . 'i18n.sql');
-		$contents = $sql->read();
+		$this->file =& new File(TMP . 'tests' . DS . 'i18n.sql');
+		$contents = $this->file->read();
 		$this->assertPattern('/DROP TABLE/', $contents);
 		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
 		$this->assertPattern('/id/', $contents);
@@ -236,8 +241,6 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertPattern('/locale/', $contents);
 		$this->assertPattern('/foreign_key/', $contents);
 		$this->assertPattern('/content/', $contents);
-
-		$sql->delete();
 	}
 
 /**
@@ -251,21 +254,21 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'write' => TMP . 'tests' . DS . 'dump_test.sql'
 		);
 		$this->Shell->startup();
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->dump();
 
-		$file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
-		$contents = $file->read();
+		$this->file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
+		$contents = $this->file->read();
 
 		$this->assertPattern('/CREATE TABLE `acos`/', $contents);
 		$this->assertPattern('/id/', $contents);
 		$this->assertPattern('/model/', $contents);
 
-		$file->delete();
+		$this->file->delete();
 		App::build();
 	}
 
@@ -344,17 +347,19 @@ class SchemaShellTest extends CakeTestCase {
 	public function testGenerateWithPlugins() {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
-		));
+		), true);
+		App::objects('plugin', null, false);
+
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->startup();
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
 
 		$this->Shell->generate();
-		$file = new File(TMP . 'tests' . DS . 'schema.php');
-		$contents = $file->read();
+		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
+		$contents = $this->file->read();
 
 		$this->assertPattern('/class TestPluginSchema/', $contents);
 		$this->assertPattern('/var \$posts/', $contents);
@@ -363,9 +368,6 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertPattern('/var \$test_plugin_comments/', $contents);
 		$this->assertNoPattern('/var \$users/', $contents);
 		$this->assertNoPattern('/var \$articles/', $contents);
-
-		$file->delete();
-		App::build();
 	}
 
 /**
@@ -375,7 +377,7 @@ class SchemaShellTest extends CakeTestCase {
  */
 	public function testCreateNoArgs() {
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'path' => APP . 'config' . DS . 'sql'
 		);
 		$this->Shell->args = array('i18n');
@@ -383,7 +385,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'i18n', $sources));
 
@@ -397,8 +399,13 @@ class SchemaShellTest extends CakeTestCase {
  * @return void
  */
 	public function testCreateWithTableArgs() {
+		$db = ConnectionManager::getDataSource('test');
+		$sources = $db->listSources();
+		if (in_array('acos', $sources)) {
+			$this->markTestSkipped('acos table already exists, cannot try to create it again.');
+		}
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'DbAcl',
 			'path' => APP . 'config' . DS . 'schema'
 		);
@@ -407,13 +414,11 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
-		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
-		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources));
-		$this->assertFalse(in_array('aros_acos', $sources));
-
-		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
+		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources), 'acos should be present.');
+		$this->assertFalse(in_array($db->config['prefix'] . 'aros', $sources), 'aros should not be found.');
+		$this->assertFalse(in_array('aros_acos', $sources), 'aros_acos should not be found.');
 	}
 
 /**
@@ -422,19 +427,23 @@ class SchemaShellTest extends CakeTestCase {
  * @return void
  */
 	public function testUpdateWithTable() {
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '__run'),
+			array(&$this->Dispatcher)
+		);
+
 		$this->Shell->params = array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'f' => true
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
+		$this->Shell->expects($this->once())->method('__run')
+			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
+	
 		$this->Shell->update();
-
-		$article =& new Model(array('name' => 'Article', 'ds' => 'test_suite'));
-		$fields = $article->schema();
-		$this->assertTrue(isset($fields['summary']));
-
 	}
 
 /**
@@ -448,13 +457,11 @@ class SchemaShellTest extends CakeTestCase {
 		));
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->startup();
 		$expected = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'config' . DS . 'schema';
 		$this->assertEqual($this->Shell->Schema->path, $expected);
-		
-		App::build();
 	}
 
 /**
@@ -467,18 +474,15 @@ class SchemaShellTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 		$this->Shell->params = array(
-			'connection' => 'test_suite'
+			'connection' => 'test'
 		);
 		$this->Shell->args = array('TestPlugin.TestPluginApp');
 		$this->Shell->startup();
 		$this->Shell->expects($this->any())->method('in')->will($this->returnValue('y'));
 		$this->Shell->create();
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
-
-		$db->execute('DROP TABLE ' . $db->config['prefix'] . 'acos');
-		App::build();
 	}
 }

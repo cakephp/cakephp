@@ -18,11 +18,23 @@
  * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
  */
 require_once CAKE . 'dispatcher.php';
+App::import('Core', 'CakeResponse', false);
 
 if (!class_exists('AppController')) {
 	require_once LIBS . 'controller' . DS . 'app_controller.php';
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
+}
+
+/**
+ * A testing stub that doesn't send headers.
+ *
+ * @package cake.tests.cases
+ */
+class DispatcherMockCakeResponse extends CakeResponse {
+	protected function _sendHeader($name, $value = null) {
+		return $name . ' ' . $value;
+	}
 }
 
 /**
@@ -51,16 +63,6 @@ class TestDispatcher extends Dispatcher {
 	}
 
 /**
- * cakeError method
- *
- * @param mixed $filename
- * @return void
- */
-	public function cakeError($filename, $params) {
-		return array($filename, $params);
-	}
-
-/**
  * _stop method
  *
  * @return void
@@ -68,15 +70,6 @@ class TestDispatcher extends Dispatcher {
 	protected function _stop() {
 		$this->stopped = true;
 		return true;
-	}
-
-/**
- * header method
- *
- * @return void
- */
-	public function header() {
-
 	}
 }
 
@@ -413,7 +406,7 @@ class SomePostsController extends AppController {
  * @package       cake
  * @subpackage    cake.tests.cases
  */
-class TestCachedPagesController extends AppController {
+class TestCachedPagesController extends Controller {
 
 /**
  * name property
@@ -437,7 +430,7 @@ class TestCachedPagesController extends AppController {
  * @var array
  * @access public
  */
-	public $helpers = array('Cache');
+	public $helpers = array('Cache', 'Html');
 
 /**
  * cacheAction property
@@ -450,6 +443,13 @@ class TestCachedPagesController extends AppController {
 		'test_nocache_tags' => '+2 sec',
 		'view' => '+2 sec'
 	);
+
+/**
+ * Mock out the reponse object so it doesn't send headers.
+ *
+ * @var string
+ */
+	protected $_responseClass = 'DispatcherMockCakeResponse';
 
 /**
  * viewPath property
@@ -502,7 +502,7 @@ class TestCachedPagesController extends AppController {
  * @package       cake
  * @subpackage    cake.tests.cases
  */
-class TimesheetsController extends AppController {
+class TimesheetsController extends Controller {
 
 /**
  * name property
@@ -562,6 +562,7 @@ class DispatcherTest extends CakeTestCase {
 		$this->_debug = Configure::read('debug');
 
 		App::build(App::core());
+		App::objects('plugin', null, false);
 	}
 
 /**
@@ -1272,8 +1273,6 @@ class DispatcherTest extends CakeTestCase {
 
 		$Dispatcher = new TestDispatcher();
 		$Dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
-		$debug = Configure::read('debug');
-		//Configure::write('debug', 0);
 
 		try {
 			$Dispatcher->dispatch('theme/test_theme/../webroot/css/test_asset.css');
@@ -1377,20 +1376,20 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$expected = "alert('plugin one nested js file');";
 		$this->assertEqual($result, $expected);
-		Configure::write('debug', $debug);
-		//reset the 
-		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/unknown.extension');
 		$result = ob_get_clean();
 		$this->assertEqual('Testing a file with unknown extension to mime mapping.', $result);
-		
 
 		ob_start();
 		$Dispatcher->asset('test_plugin/css/theme_one.htc');
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
+		
+		while (ob_get_level() > 0) {
+			ob_get_clean();
+		}
 	}
 
 /**
@@ -1405,7 +1404,6 @@ class DispatcherTest extends CakeTestCase {
 			'js' => '',
 			'css' => null
 		));
-		$this->assertNoErrors();
 
 		ob_start();
 		$Dispatcher->asset('ccss/cake.generic.css');
@@ -1471,7 +1469,6 @@ class DispatcherTest extends CakeTestCase {
 		), true);
 
 		$dispatcher = new TestDispatcher();
-		$dispatcher->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$url = '/';
 
 		ob_start();

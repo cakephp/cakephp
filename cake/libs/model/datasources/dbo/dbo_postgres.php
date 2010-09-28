@@ -299,6 +299,17 @@ class DboPostgres extends DboSource {
 		}
 
 		switch($column) {
+			case 'binary':
+				$data = pg_escape_bytea($data);
+			break;
+			case 'boolean':
+				if ($data === true || $data === 't' || $data === 'true') {
+					return 'TRUE';
+				} elseif ($data === false || $data === 'f' || $data === 'false') {
+					return 'FALSE';
+				}
+				return (!empty($data) ? 'TRUE' : 'FALSE');
+			break;
 			case 'float':
 				if (is_float($data)) {
 					$data = sprintf('%F', $data);
@@ -312,17 +323,6 @@ class DboPostgres extends DboSource {
 				if ($data === '') {
 					return $read ? 'NULL' : 'DEFAULT';
 				}
-			case 'binary':
-				$data = pg_escape_bytea($data);
-			break;
-			case 'boolean':
-				if ($data === true || $data === 't' || $data === 'true') {
-					return 'TRUE';
-				} elseif ($data === false || $data === 'f' || $data === 'false') {
-					return 'FALSE';
-				}
-				return (!empty($data) ? 'TRUE' : 'FALSE');
-			break;
 			default:
 				$data = pg_escape_string($data);
 			break;

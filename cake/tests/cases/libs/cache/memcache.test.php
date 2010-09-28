@@ -30,26 +30,13 @@ if (!class_exists('Cache')) {
 class MemcacheEngineTest extends CakeTestCase {
 
 /**
- * skip method
- *
- * @access public
- * @return void
- */
-	function skip() {
-		$skip = true;
-		if (class_exists('Memcache')) {
-			$skip = false;
-		}
-		$this->skipIf($skip, '%s Memcache is not installed or configured properly.');
-	}
-
-/**
  * setUp method
  *
  * @access public
  * @return void
  */
 	function setUp() {
+		$this->skipIf(!class_exists('Memcache'), '%s Apc is not installed or configured properly');
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', false);
 		Cache::config('memcache', array(
@@ -315,4 +302,19 @@ class MemcacheEngineTest extends CakeTestCase {
 		$this->assertTrue($result);
 		$this->assertFalse(Cache::read('some_value', 'memcache'));
 	}
+/**
+ * test that a 0 duration can succesfully write.
+ *
+ * @return void
+ */
+	function testZeroDuration() {
+		Cache::config('memcache', array('duration' => 0));
+		$result = Cache::write('test_key', 'written!', 'memcache');
+
+		$this->assertTrue($result, 'Could not write with duration 0');
+		$result = Cache::read('test_key', 'memcache');
+		$this->assertEqual($result, 'written!');
+		
+	}
+
 }

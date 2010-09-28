@@ -272,7 +272,14 @@ class CakeTestSuiteDispatcher {
  * @return void
  */
 	function _runTestCase() {
-		$Reporter = CakeTestSuiteDispatcher::getReporter();
-		return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
+		try {
+			$Reporter = CakeTestSuiteDispatcher::getReporter();
+			return $this->Manager->runTestCase($this->params['case'], $Reporter, $this->params['codeCoverage']);
+		} catch (MissingConnectionException $exception) {
+			ob_end_clean();
+			$baseDir = $this->_baseDir;
+			include CAKE_TESTS_LIB . 'templates' . DS . 'missing_conenction.php';
+			exit();
+		}
 	}
 }

@@ -38,12 +38,12 @@ class FileEngineTest extends CakeTestCase {
 	public $config = array();
 
 /**
- * startCase method
+ * setUp method
  *
  * @access public
  * @return void
  */
-	function startCase() {
+	function setUp() {
 		$this->_cacheDisable = Configure::read('Cache.disable');
 		$this->_cacheConfig = Cache::config('default');
 		Configure::write('Cache.disable', false);
@@ -51,12 +51,13 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * endCase method
+ * teardown method
  *
  * @access public
  * @return void
  */
-	function endCase() {
+	function tearDown() {
+		Cache::clear(false, 'default');
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_cacheConfig['settings']);
 	}

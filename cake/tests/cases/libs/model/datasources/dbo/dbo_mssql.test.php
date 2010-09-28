@@ -328,7 +328,7 @@ class DboMssqlTest extends CakeTestCase {
  *
  */
 	public function setUp() {
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$this->db = new DboMssqlTestDb($db->config);
 		$this->model = new MssqlTestModel();
 	}

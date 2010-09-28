@@ -147,7 +147,7 @@ class DboMysqliTest extends CakeTestCase {
  *
  */
 	public function setUp() {
-		$this->Dbo = ConnectionManager::getDataSource('test_suite');
+		$this->Dbo = ConnectionManager::getDataSource('test');
 		if ($this->Dbo->config['driver'] !== 'mysqli') {
 			$this->markTestSkipped('The MySQLi extension is not available.');
 		}
@@ -295,7 +295,7 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	function testFloatParsing() {
-		$model =& new Model(array('ds' => 'test_suite', 'table' => 'datatypes', 'name' => 'Datatype'));
+		$model =& new Model(array('ds' => 'test', 'table' => 'datatypes', 'name' => 'Datatype'));
 		$result = $this->Dbo->describe($model);
 		$this->assertEqual((string)$result['float_field']['length'], '5,2');
 	}

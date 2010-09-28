@@ -19,6 +19,8 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Controller', 'Controller', false);
+require_once TEST_CAKE_CORE_INCLUDE_PATH  . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_html_reporter.php';
 
 if (!class_exists('AppController')) {
 	require_once LIBS . 'controller' . DS . 'app_controller.php';

@@ -45,13 +45,14 @@ require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php'
 class ProjectTaskTest extends CakeTestCase {
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('ProjectTask', 
 			array('in', 'err', 'createFile', '_stop'),
@@ -62,12 +63,12 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * teardown method
  *
  * @return void
  */
-	public function endTest() {
-		ClassRegistry::flush();
+	public function tearDown() {
+		parent::tearDown();
 
 		$Folder = new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();

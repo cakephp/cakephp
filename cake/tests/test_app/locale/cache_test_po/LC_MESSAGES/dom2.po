@@ -1,0 +1,8 @@
+msgid ""
+msgstr "Test Domain"
+
+msgid "dom2.foo"
+msgstr "Dom 2 Foo"
+
+msgid "dom2.bar"
+msgstr "Dom 2 Bar"

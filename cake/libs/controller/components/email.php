@@ -790,8 +790,8 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _mail() {
-		$header = implode("\n", $this->_header);
-		$message = implode("\n", $this->_message);
+		$header = implode("\r\n", $this->_header);
+		$message = implode("\r\n", $this->_message);
 		if (is_array($this->to)) {
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {

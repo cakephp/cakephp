@@ -28,25 +28,25 @@ class CakeRequestTestCase extends CakeTestCase {
  *
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->_server = $_SERVER;
 		$this->_get = $_GET;
 		$this->_post = $_POST;
 		$this->_files = $_FILES;
-		$this->_app = Configure::read('App');
 	}
 
 /**
- * end test
+ * tearDown-
  *
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		$_SERVER = $this->_server;
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;
-		Configure::write('App', $this->_app);
 	}
 
 /**
@@ -742,6 +742,8 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	function testHeader() {
+		$_SERVER['HTTP_HOST'] = 'localhost';
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
 		$request = new CakeRequest('/', false);
 
 		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));

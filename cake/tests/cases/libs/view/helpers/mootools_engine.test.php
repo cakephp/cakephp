@@ -24,21 +24,25 @@ App::import('Helper', array('Html', 'Js', 'MootoolsEngine'));
 
 class MooEngineHelperTest extends CakeTestCase {
 /**
- * startTest
+ * setUp
  *
  * @return void
  */
-	function startTest() {
-		$this->Moo =& new MootoolsEngineHelper();
+	function setUp() {
+		parent::setUp();
+		$this->Moo = new MootoolsEngineHelper();
 	}
+
 /**
- * end test
+ * tearDown
  *
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Moo);
 	}
+
 /**
  * test selector method
  *

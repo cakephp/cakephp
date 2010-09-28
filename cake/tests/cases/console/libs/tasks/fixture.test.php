@@ -50,13 +50,14 @@ class FixtureTaskTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.comment', 'core.datatype', 'core.binary_test');
 
 /**
- * startTest method
+ * setUp method
  *
  * @return void
  */
-	public function startTest() {
+	public function setUp() {
+		parent::setUp();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('FixtureTask', 
 			array('in', 'err', 'createFile', '_stop'),
@@ -72,13 +73,13 @@ class FixtureTaskTest extends CakeTestCase {
 	}
 
 /**
- * endTest method
+ * tearDown method
  *
  * @return void
  */
-	public function endTest() {
+	public function tearDown() {
+		parent::tearDown();
 		unset($this->Task, $this->Dispatcher);
-		ClassRegistry::flush();
 	}
 
 /**
@@ -147,7 +148,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('in')
 			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
 
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', false, array(
@@ -168,7 +169,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithNamedModel() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('article');
 		$filename = '/my/path/article_fixture.php';
@@ -197,7 +198,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithNamedModelVariations($modelName) {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$this->Task->args = array($modelName);
@@ -214,7 +215,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->Model->expects($this->any())->method('listAll')
@@ -237,7 +238,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testAllWithCountAndRecordsFlags() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->params = array('count' => 10, 'records' => true);
@@ -263,7 +264,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteInteractive() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('y'));
@@ -285,7 +286,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBake() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article');
@@ -320,7 +321,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testRecordGenerationForBinaryAndFloat() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
 		$result = $this->Task->bake('Article', 'datatypes');
@@ -336,7 +337,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGenerateFixtureFile() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$filename = '/my/path/article_fixture.php';
 
@@ -357,7 +358,7 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testGeneratePluginFixtureFile() {
-		$this->Task->connection = 'test_suite';
+		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->plugin = 'TestFixture';
 		$filename = APP . 'plugins' . DS . 'test_fixture' . DS . 'tests' . DS . 'fixtures' . DS . 'article_fixture.php';

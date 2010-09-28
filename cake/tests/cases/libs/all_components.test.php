@@ -34,17 +34,11 @@ class AllComponentsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new PHPUnit_Framework_TestSuite('All component class tests');
+		$suite = new CakeTestSuite('All component class tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'component_collection.test.php');
-
-		$iterator = new DirectoryIterator(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
-		foreach ($iterator as $i => $file) {
-			if (!$file->isDot()) {
-				$suite->addTestfile($file->getPathname());
-			}
-		}
+		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'controller' . DS . 'components');
 		return $suite;
 	}
 }

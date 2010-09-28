@@ -78,7 +78,7 @@ class ModelReadTest extends BaseModelTest {
  * @return void
  */
 	function testGroupBy() {
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
 		$message = '%s Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
@@ -6286,7 +6286,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		if ($db->config['driver'] == 'mysql') {
 			$result = $TestModel->find('list', array(
 				'order' => array('FIELD(Article.id, 3, 2) ASC', 'Article.title ASC')
@@ -6666,7 +6666,7 @@ class ModelReadTest extends BaseModelTest {
 			return;
 		}
 		$this->loadFixtures('Project');
-		$db = ConnectionManager::getDataSource('test_suite');
+		$db = ConnectionManager::getDataSource('test');
 		$TestModel = new Project();
 
 		$result = $TestModel->find('count', array('conditions' => array(

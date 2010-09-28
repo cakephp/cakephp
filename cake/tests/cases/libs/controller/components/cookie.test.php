@@ -75,8 +75,9 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		$_COOKIE = array();
 		$Collection = new ComponentCollection();
-		$this->Cookie = new CookieComponent($Collection);
+		$this->Cookie = $this->getMock('CookieComponent', array('_setcookie'), array($Collection));
 		$this->Controller = new CookieComponentTestController();
 		$this->Cookie->initialize($this->Controller);
 		
@@ -86,7 +87,7 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Cookie->domain = '';
 		$this->Cookie->secure = false;
 		$this->Cookie->key = 'somerandomhaskey';
-		
+
 		$this->Cookie->startup($this->Controller);
 	}
 
@@ -100,6 +101,11 @@ class CookieComponentTest extends CakeTestCase {
 		$this->Cookie->destroy();
 	}
 
+/**
+ * sets up some default cookie data.
+ *
+ * @return void
+ */
 	protected function _setCookieData() {
 		$this->Cookie->write(array('Encrytped_array' => array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!')));
 		$this->Cookie->write(array('Encrytped_multi_cookies.name' => 'CakePHP'));
@@ -170,6 +176,48 @@ class CookieComponentTest extends CakeTestCase {
 		$data = $this->Cookie->read('Plain_multi_cookies');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
 		$this->assertEqual($data, $expected);
+	}
+
+/**
+ * test a simple write()
+ *
+ * @return void
+ */
+	function testWriteSimple() {
+		$this->Cookie->expects($this->once())->method('_setcookie');
+
+		$this->Cookie->write('Testing', 'value');
+		$result = $this->Cookie->read('Testing');
+
+		$this->assertEquals('value', $result);
+	}
+
+/**
+ * test write with httpOnly cookies
+ *
+ * @return void
+ */
+	function testWriteHttpOnly() {
+		$this->Cookie->httpOnly = true;
+		$this->Cookie->secure = false;
+		$this->Cookie->expects($this->once())->method('_setcookie')
+			->with('CakeTestCookie[Testing]', 'value', time() + 10, '/', '', false, true);
+
+		$this->Cookie->write('Testing', 'value', false);
+	}
+
+/**
+ * test delete with httpOnly
+ *
+ * @return void
+ */
+	function testDeleteHttpOnly() {
+		$this->Cookie->httpOnly = true;
+		$this->Cookie->secure = false;
+		$this->Cookie->expects($this->once())->method('_setcookie')
+			->with('CakeTestCookie[Testing]', '', time() - 42000, '/', '', false, true);
+
+		$this->Cookie->delete('Testing', false);
 	}
 
 /**

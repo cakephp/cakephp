@@ -61,6 +61,13 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 	private $fixtures = array();
 
 /**
+ * Configure values to restore at end of test.
+ *
+ * @var array
+ */
+	protected $_configure = array();
+
+/**
 * Runs the test case and collects the results in a TestResult object.
 * If no TestResult object is passed a new one will be created.
 * This method is run for each test method in this class
@@ -71,7 +78,7 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 */
 	public function run(PHPUnit_Framework_TestResult $result = NULL) {
 		if (!empty($this->sharedFixture)) {
-			$this->sharedFixture->load($this); 
+			$this->sharedFixture->load($this);
 		}
 		$result = parent::run($result);
 		if (!empty($this->sharedFixture)) {
@@ -110,6 +117,33 @@ class CakeTestCase extends PHPUnit_Framework_TestCase {
 			$this->markTestSkipped($message);
 		}
 		return $shouldSkip;
+	}
+
+/**
+ * setup the test case, backup the static object values so they can be restored.
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->_configure = Configure::read();
+		if (class_exists('Router', false)) {
+			Router::reload();
+		}
+	}
+
+/**
+ * teardown any static object changes and restore them.
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		App::build();
+		if (class_exists('ClassRegistry', false)) {
+			ClassRegistry::flush();
+		}
+		Configure::write($this->_configure);
 	}
 
 /**

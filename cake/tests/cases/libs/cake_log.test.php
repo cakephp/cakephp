@@ -33,7 +33,8 @@ class CakeLogTest extends CakeTestCase {
  *
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$streams = CakeLog::configured();
 		foreach ($streams as $stream) {
 			CakeLog::drop($stream);

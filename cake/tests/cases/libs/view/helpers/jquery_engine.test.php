@@ -22,22 +22,24 @@ App::import('Helper', array('Html', 'Js', 'JqueryEngine'));
 
 class JqueryEngineHelperTest extends CakeTestCase {
 /**
- * startTest
+ * setUp
  *
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$controller = null;
 		$View = new View($controller);
 		$this->Jquery = new JqueryEngineHelper($View);
 	}
 
 /**
- * end test
+ * tearDown
  *
  * @return void
  */
-	function endTest() {
+	function tearDown() {
+		parent::tearDown();
 		unset($this->Jquery);
 	}
 

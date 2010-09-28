@@ -243,13 +243,14 @@ class TestTaskTest extends CakeTestCase {
 	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag');
 
 /**
- * startTest method
+ * setup method
  *
  * @return void
  */
-	public function startTest() {
+	public function setup() {
+		parent::setup();
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment'
+			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
 		));
 		$this->Task = $this->getMock('TestTask', 
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
@@ -257,7 +258,7 @@ class TestTaskTest extends CakeTestCase {
 		);
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->name = 'TestTask';
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher);
 	}
 
 /**
@@ -265,7 +266,8 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function endTest() {
+	public function teardown() {
+		parent::teardown();
 		ClassRegistry::flush();
 	}
 
@@ -275,8 +277,8 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testFilePathGenerationModelRepeated() {
-		$this->Task->Dispatch->expects($this->never())->method('stderr');
-		$this->Task->Dispatch->expects($this->never())->method('_stop');
+		$this->Dispatcher->expects($this->never())->method('stderr');
+		$this->Dispatcher->expects($this->never())->method('_stop');
 
 		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
 
@@ -446,22 +448,22 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Model', 'TestTaskArticle');
 
-		$this->assertPattern('/App::import\(\'Model\', \'TestTaskArticle\'\)/', $result);
-		$this->assertPattern('/class TestTaskArticleTestCase extends CakeTestCase/', $result);
+		$this->assertContains("App::import('Model', 'TestTaskArticle')", $result);
+		$this->assertContains('class TestTaskArticleTestCase extends CakeTestCase', $result);
 
-		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskArticle \=\& ClassRegistry::init\('TestTaskArticle'\)/", $result);
+		$this->assertContains('function startTest()', $result);
+		$this->assertContains("\$this->TestTaskArticle =& ClassRegistry::init('TestTaskArticle')", $result);
 
-		$this->assertPattern('/function endTest\(\)/', $result);
-		$this->assertPattern('/unset\(\$this->TestTaskArticle\)/', $result);
+		$this->assertContains('function endTest()', $result);
+		$this->assertContains('unset($this->TestTaskArticle)', $result);
 
-		$this->assertPattern('/function testDoSomething\(\)/i', $result);
-		$this->assertPattern('/function testDoSomethingElse\(\)/i', $result);
+		$this->assertContains('function testDoSomething()', $result);
+		$this->assertContains('function testDoSomethingElse()', $result);
 
-		$this->assertPattern("/'app\.test_task_article'/", $result);
-		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		$this->assertPattern("/'app\.test_task_tag'/", $result);
-		$this->assertPattern("/'app\.articles_tag'/", $result);
+		$this->assertContains("'app.test_task_article'", $result);
+		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_tag'", $result);
+		$this->assertContains("'app.articles_tag'", $result);
 	}
 
 /**
@@ -477,24 +479,24 @@ class TestTaskTest extends CakeTestCase {
 
 		$result = $this->Task->bake('Controller', 'TestTaskComments');
 
-		$this->assertPattern('/App::import\(\'Controller\', \'TestTaskComments\'\)/', $result);
-		$this->assertPattern('/class TestTaskCommentsControllerTestCase extends CakeTestCase/', $result);
+		$this->assertContains("App::import('Controller', 'TestTaskComments')", $result);
+		$this->assertContains('class TestTaskCommentsControllerTestCase extends CakeTestCase', $result);
 
-		$this->assertPattern('/class TestTestTaskCommentsController extends TestTaskCommentsController/', $result);
-		$this->assertPattern('/public \$autoRender = false/', $result);
-		$this->assertPattern('/function redirect\(\$url, \$status = null, \$exit = true\)/', $result);
+		$this->assertContains('class TestTestTaskCommentsController extends TestTaskCommentsController', $result);
+		$this->assertContains('public $autoRender = false', $result);
+		$this->assertContains('function redirect($url, $status = null, $exit = true)', $result);
 
-		$this->assertPattern('/function startTest\(\)/', $result);
-		$this->assertPattern("/\\\$this->TestTaskComments \=\& new TestTestTaskCommentsController\(\)/", $result);
-		$this->assertPattern("/\\\$this->TestTaskComments->constructClasses\(\)/", $result);
+		$this->assertContains('function startTest()', $result);
+		$this->assertContains("\$this->TestTaskComments =& new TestTestTaskCommentsController()", $result);
+		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
 
-		$this->assertPattern('/function endTest\(\)/', $result);
-		$this->assertPattern('/unset\(\$this->TestTaskComments\)/', $result);
+		$this->assertContains('function endTest()', $result);
+		$this->assertContains('unset($this->TestTaskComments)', $result);
 
-		$this->assertPattern("/'app\.test_task_article'/", $result);
-		$this->assertPattern("/'plugin\.test_task\.test_task_comment'/", $result);
-		$this->assertPattern("/'app\.test_task_tag'/", $result);
-		$this->assertPattern("/'app\.articles_tag'/", $result);
+		$this->assertContains("'app.test_task_article'", $result);
+		$this->assertContains("'plugin.test_task.test_task_comment'", $result);
+		$this->assertContains("'app.test_task_tag'", $result);
+		$this->assertContains("'app.articles_tag'", $result);
 	}
 
 /**

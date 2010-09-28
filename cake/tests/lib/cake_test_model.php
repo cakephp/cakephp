@@ -26,6 +26,6 @@ require_once LIBS.'model'.DS.'model.php';
  * @subpackage    cake.cake.tests.lib
  */
 class CakeTestModel extends Model {
-	public $useDbConfig = 'test_suite';
+	public $useDbConfig = 'test';
 	public $cacheSources = false;
 }

@@ -99,7 +99,7 @@ class SessionComponentTest extends CakeTestCase {
 		Configure::write('Session', array(
 			'defaults' => 'php',
 			'timeout' => 100,
-			'cookie' => 'test_suite'
+			'cookie' => 'test'
 		));
 	}
 

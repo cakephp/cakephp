@@ -39,10 +39,10 @@ class MyAppSchema extends CakeSchema {
 /**
  * connection property
  *
- * @var string 'test_suite'
+ * @var string 'test'
  * @access public
  */
-	public $connection = 'test_suite';
+	public $connection = 'test';
 
 /**
  * comments property
@@ -519,23 +519,22 @@ class CakeSchemaTest extends CakeTestCase {
 /**
  * setUp method
  *
- * @access public
  * @return void
  */
-	function startTest() {
+	function setUp() {
+		parent::setUp();
 		$this->Schema = new TestAppSchema();
 	}
 
 /**
  * tearDown method
  *
- * @access public
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		@unlink(TMP . 'tests' . DS .'schema.php');
 		unset($this->Schema);
-		ClassRegistry::flush();
 	}
 
 /**
@@ -563,16 +562,18 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function testSchemaRead() {
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPost', 'SchemaComment', 'SchemaTag', 'SchemaDatatype')
 		));
 		unset($read['tables']['missing']);
 
 		$expected = array('comments', 'datatypes', 'posts', 'posts_tags', 'tags');
-		$this->assertEqual(array_keys($read['tables']), $expected);
-		foreach ($read['tables'] as $table => $fields) {
-			$this->assertEqual(array_keys($fields), array_keys($this->Schema->tables[$table]));
+		foreach ($expected as $table) {
+			$this->assertTrue(isset($read['tables'][$table]), 'Missing table ' . $table);
+		}
+		foreach ($this->Schema->tables as $table => $fields) {
+			$this->assertEqual(array_keys($fields), array_keys($read['tables'][$table]));
 		}
 
 		$this->assertEqual(
@@ -580,7 +581,7 @@ class CakeSchemaTest extends CakeTestCase {
 			$this->Schema->tables['datatypes']['float_field']
 		);
 
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);
@@ -591,14 +592,14 @@ class CakeSchemaTest extends CakeTestCase {
 		$SchemaPost->table = 'sts';
 		$SchemaPost->tablePrefix = 'po';
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPost')
 		));
 		$this->assertFalse(isset($read['tables']['missing']['posts']), 'Posts table was not read from tablePrefix %s');
 
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaComment', 'SchemaTag', 'SchemaPost')
 		));
@@ -615,7 +616,7 @@ class CakeSchemaTest extends CakeTestCase {
 
 		$Schema =& new CakeSchema();
 		$read = $Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaPrefixAuthUser')
 		));
@@ -638,7 +639,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$Schema =& new CakeSchema();
 		$Schema->plugin = 'TestPlugin';
 		$read = $Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => true
 		));
@@ -647,7 +648,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$this->assertTrue(isset($read['tables']['authors']));
 		$this->assertTrue(isset($read['tables']['test_plugin_comments']));
 		$this->assertTrue(isset($read['tables']['posts']));
-		$this->assertEqual(count($read['tables']), 4);
+		$this->assertTrue(count($read['tables']) >= 4);
 
 		App::build();
 	}
@@ -675,7 +676,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$fixture->insert($db2);
 
 		$read = $this->Schema->read(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'name' => 'TestApp',
 			'models' => array('SchemaCrossDatabase', 'SchemaPost')
 		));
@@ -701,7 +702,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateTable() {
-		$fields = array(
+		$posts = array(
 			'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
 			'author_id' => array('type' => 'integer', 'null' => false),
 			'title' => array('type' => 'string', 'null' => false),
@@ -711,11 +712,8 @@ class CakeSchemaTest extends CakeTestCase {
 			'updated' => array('type' => 'datetime', 'null' => true, 'default' => null),
 			'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		);
-		$result = $this->Schema->generateTable('posts', $fields);
+		$result = $this->Schema->generateTable('posts', $posts);
 		$this->assertPattern('/var \$posts/', $result);
-
-		eval(substr($result, 4));
-		$this->assertEqual($posts, $fields);
 	}
 /**
  * testSchemaWrite method
@@ -940,11 +938,11 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaCreateTable() {
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 
 		$Schema =& new CakeSchema(array(
-			'connection' => 'test_suite',
+			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
 				'int_null' => array('type' => 'integer', 'null' => true),
