@@ -427,8 +427,8 @@ class View extends Object {
 			if ($layout && $this->autoLayout) {
 				$out = $this->renderLayout($out, $layout);
 				$isCached = (
-					isset($this->loaded['cache']) &&
-					(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
+					isset($this->loaded['cache']) ||
+					Configure::read('Cache.check') === true
 				);
 
 				if ($isCached) {
