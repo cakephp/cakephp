@@ -663,6 +663,17 @@ class ModelDeleteTest extends BaseModelTest {
 
 		$this->assertTrue($result > 1, 'Comments are all gone.');
 	}
+
+	function testBeforeDeleteWipingTable2() {
+		$this->loadFixtures('Comment');
+
+		$Comment =& new BeforeDeleteComment();
+		$Comment->delete(1);
+
+		$result = $Comment->find('count');
+
+		$this->assertTrue($result > 1, 'Comments are all gone.');
+	}
 }
 
 ?>
