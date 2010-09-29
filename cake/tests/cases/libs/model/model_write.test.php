@@ -3039,7 +3039,7 @@ class ModelWriteTest extends BaseModelTest {
  *
  * @return void
  */
-	function testSaveAllTransactionNoRollback() {
+	function testSaveAllManyRowsTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
 		Mock::generate('DboSource', 'MockTransactionDboSource');
@@ -3060,6 +3060,44 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => '')
 		);
 		$Post->saveAll($data, array('atomic' => true));
+	}
+
+/**
+ * test saveAll with transactions and ensure there is no missing rollback.
+ *
+ * @return void
+ */
+	function testSaveAllAssociatedTransactionNoRollback() {
+		$testDb = ConnectionManager::getDataSource('test_suite');
+
+		Mock::generate('DboSource', 'MockTransactionAssociatedDboSource');
+		$db = ConnectionManager::create('mock_transaction_assoc', array(
+			'datasource' => 'MockTransactionAssociatedDbo',
+		));
+		$db->columns = $testDb->columns;
+
+		$db->expectOnce('rollback');
+
+		$Post =& new Post();
+		$Post->useDbConfig = 'mock_transaction_assoc';
+		$Post->Author->useDbConfig = 'mock_transaction_assoc';
+
+		$Post->Author->validate = array(
+			'user' => array('rule' => array('notEmpty'))
+		);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => 'Content',
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => '',
+				'password' => "sekret"
+			)
+		);
+		$Post->saveAll($data);
 	}
 
 /**
