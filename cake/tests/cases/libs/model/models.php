@@ -259,6 +259,24 @@ class Article extends CakeTestModel {
 	}
 }
 /**
+ * Model stub for beforeDelete testing
+ *
+ * @see #250
+ * @package cake.tests
+ */
+class BeforeDeleteComment extends CakeTestModel {
+	var $name = 'BeforeDeleteComment';
+	
+	var $useTable = 'comments';
+
+	function beforeDelete($cascade = true) {
+		$db =& $this->getDataSource();
+		$db->delete($this, array($this->alias . '.' . $this->primaryKey => array(1, 3)));
+		return true;
+	}
+}
+
+/**
  * NumericArticle class
  *
  * @package       cake
