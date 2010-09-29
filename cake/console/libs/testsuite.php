@@ -249,7 +249,7 @@ class TestSuiteShell extends Shell {
 		$this->out("--stop-on-failure        Stop execution upon first error or failure.");
 		$this->out("--stop-on-skipped        Stop execution upon first skipped test.");
 		$this->out("--stop-on-incomplete     Stop execution upon first incomplete test.");
-		$this->out("--strict                 Mark a test as incomplete if no assertions are made.";
+		$this->out("--strict                 Mark a test as incomplete if no assertions are made.");
 		$this->out("--verbose                Output more verbose information.");
 		$this->out("--wait                   Waits for a keystroke after each test.");
 

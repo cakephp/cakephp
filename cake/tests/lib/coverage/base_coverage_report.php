@@ -109,39 +109,18 @@ abstract class BaseCoverageReport {
 
 /**
  * Filters the coverage data by path.  Files not in the provided path will be removed.
- * This method will merge all the various test run reports as well into a single report per file.
  *
  * @param string $path Path to filter files by.
  * @return array Array of coverage data for files that match the given path.
  */
 	public function filterCoverageDataByPath($path) {
 		$files = array();
-		foreach ($this->_rawCoverage as $testRun) {
-			foreach ($testRun['files'] as $filename => $fileCoverage) {
-				if (strpos($filename, $path) !== 0) {
-					continue;
-				}
-				$dead = isset($testRun['dead'][$filename]) ? $testRun['dead'][$filename] : array();
-				$executable = isset($testRun['executable'][$filename]) ? $testRun['executable'][$filename] : array();
-		
-				if (!isset($files[$filename])) {
-					$files[$filename] = array(
-						'covered' => array(),
-						'dead' => array(),
-						'executable' => array()
-					);
-				}
-				$files[$filename]['covered'] += $fileCoverage;
-				$files[$filename]['executable'] += $executable;
-				$files[$filename]['dead'] += $dead;
+		foreach ($this->_rawCoverage as $fileName => $fileCoverage) {
+			if (strpos($fileName, $path) !== 0) {
+				continue;
 			}
-			if (isset($testRun['test'])) {
-				$testReflection = new ReflectionClass(get_class($testRun['test']));
-				list($fileBasename, $x) = explode('.', basename($testReflection->getFileName()), 2);
-				$this->_testNames[] = $fileBasename;
-			}
+			$files[$fileName] = $fileCoverage;
 		}
-		ksort($files);
 		return $files;
 	}
 
@@ -155,15 +134,18 @@ abstract class BaseCoverageReport {
 	protected function _calculateCoveredLines($fileLines, $coverageData) {
 		$covered = $total = 0;
 
-		//shift line numbers forward one;
+		//shift line numbers forward one
 		array_unshift($fileLines, ' ');
 		unset($fileLines[0]);
 
 		foreach ($fileLines as $lineno => $line) {
-			if (isset($coverageData['covered'][$lineno])) {
+			if (!isset($coverageData[$lineno])) {
+				continue;
+			}
+			if (is_array($coverageData[$lineno])) {
 				$covered++;
 				$total++;
-			} elseif (isset($coverageData['executable'][$lineno])) {
+			} else if ($coverageData[$lineno] === -1) {
 				$total++;
 			}
 		}

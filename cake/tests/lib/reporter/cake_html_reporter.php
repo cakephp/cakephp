@@ -147,7 +147,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo $this->_paintLinks();
 		echo '</div>';
 		if (isset($this->params['codeCoverage']) && $this->params['codeCoverage']) {
-			$coverage = $result->getCodeCoverageInformation();
+			$coverage = $result->getCodeCoverage()->getSummary();
 			echo $this->paintCoverage($coverage);
 		}
 		$this->paintDocumentEnd();
@@ -158,7 +158,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
  *
  * @return void
  */
-	public function paintCoverage($coverage) {
+	public function paintCoverage(array $coverage) {
 		$file = dirname(dirname(__FILE__)) . '/coverage/html_coverage_report.php';
 		include_once $file;
 		$reporter = new HtmlCoverageReport($coverage, $this);

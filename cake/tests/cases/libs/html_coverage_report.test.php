@@ -60,80 +60,19 @@ class HtmlCoverageReportTest extends CakeTestCase {
  */
 	function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
-			array(
-				'files' => array(
-					TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
-						10 => -1,
-						12 => 1
-					),
-					APP . 'app_model.php' => array(
-						50 => 1,
-						52 => -1
-					)
-				)
+			TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+				10 => -1,
+				12 => 1
+			),
+			APP . 'app_model.php' => array(
+				50 => 1,
+				52 => -1
 			)
 		);
 		$this->Coverage->setCoverage($data);
 		$result = $this->Coverage->filterCoverageDataByPath(TEST_CAKE_CORE_INCLUDE_PATH);
 		$this->assertTrue(isset($result[TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php']));
 		$this->assertFalse(isset($result[APP . 'app_model.php']));
-	}
-
-/**
- * test that filterCoverageDataByPath correctly merges data sets in each test run.
- *
- * @return void
- */
-	function testFilterCoverageDataCorrectlyMergingValues() {
-		$data = array(
-			array(
-				'files' => array(
-					'/something/dispatcher.php' => array(
-						10 => 1,
-						12 => 1
-					),
-				), 
-				'executable' => array(
-					'/something/dispatcher.php' => array(
-						9 => -1
-					)
-				),
-				'dead' => array(
-					'/something/dispatcher.php' => array(
-						22 => -2,
-						23 => -2
-					)
-				)
-			),
-			array(
-				'files' => array(
-					'/something/dispatcher.php' => array(
-						10 => 1,
-						50 => 1,
-					),
-				),
-				'executable' => array(
-					'/something/dispatcher.php' => array(
-						12 => -1,
-						51 => -1
-					)
-				),
-				'dead' => array(
-					'/something/dispatcher.php' => array(
-						13 => -2,
-						42 => -2
-					)
-				)
-			),
-		);
-		$this->Coverage->setCoverage($data);
-		$result = $this->Coverage->filterCoverageDataByPath('/something/');
-
-		$path = '/something/dispatcher.php';
-		$this->assertTrue(isset($result[$path]));
-		$this->assertEquals(array(10, 12, 50), array_keys($result[$path]['covered']));
-		$this->assertEquals(array(9, 12, 51), array_keys($result[$path]['executable']));
-		$this->assertEquals(array(22, 23, 13, 42), array_keys($result[$path]['dead']));
 	}
 
 /**
@@ -155,22 +94,16 @@ class HtmlCoverageReportTest extends CakeTestCase {
 			'line 10',
 		);
 		$coverage = array(
-			'covered' => array(
-				1 => 1,
-				3 => 1,
-				4 => 1,
-				6 => 1,
-				7 => 1,
-				8 => 1,
-				10 => 1
-			),
-			'executable' => array(
-				5 => -1,
-				9 => -1
-			),
-			'dead' => array(
-				2 => -2
-			)
+			1 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			2 => -2,
+			3 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			4 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			5 => -1,
+			6 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			7 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			8 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff')),
+			9 => -1,
+			10 => array(array('id' => 'HtmlCoverageReportTest::testGenerateDiff'))
 		);
 		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
 		$this->assertRegExp('/myfile\.php Code coverage\: \d+\.?\d*\%/', $result);
@@ -202,53 +135,28 @@ class HtmlCoverageReportTest extends CakeTestCase {
 			'line 4',
 			'line 5',
 		);
-		$mock = $this->getMock('PHPUnit_Framework_TestCase');
-		$mock->expects($this->any())->method('getName')->will($this->returnValue('testAwesomeness'));
-
-		$rawdata = array(
-			array(
-				'test' => $mock,
-				'files' => array(
-					'myfile.php' => array(
-						1 => 1,
-						3 => 1,
-						4 => 1,
-					)
-				),
-				'executable' => array(
-					'myfile.php' => array(
-						5 => -1
-					)
-				)
-			)
-		);
 
 		$coverage = array(
-			'covered' => array(
-				1 => 1,
-				3 => 1,
-				4 => 1,
-			),
-			'executable' => array(
-				5 => -1,
-			),
-			'dead' => array(
-				2 => -2
-			)
+			1 => array(array('id' => 'HtmlCoverageReportTest::testAwesomeness')),
+			2 => -2,
+			3 => array(array('id' => 'HtmlCoverageReportTest::testCakeIsSuperior')),
+			4 => array(array('id' => 'HtmlCoverageReportTest::testOther')),
+			5 => -1
 		);
-		$this->Coverage->setCoverage($rawdata);
+
+
 		$result = $this->Coverage->generateDiff('myfile.php', $file, $coverage);
 
 		$this->assertTrue(
-			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">1") !== false,
+			strpos($result, "title=\"Covered by:\nHtmlCoverageReportTest::testAwesomeness\n\"><span class=\"line-num\">1") !== false,
 			'Missing method coverage for line 1'
 		);
 		$this->assertTrue(
-			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">3") !== false,
+			strpos($result, "title=\"Covered by:\nHtmlCoverageReportTest::testCakeIsSuperior\n\"><span class=\"line-num\">3") !== false,
 			'Missing method coverage for line 3'
 		);
 		$this->assertTrue(
-			strpos($result, "title=\"Covered by:\ntestAwesomeness\n\"><span class=\"line-num\">4") !== false,
+			strpos($result, "title=\"Covered by:\nHtmlCoverageReportTest::testOther\n\"><span class=\"line-num\">4") !== false,
 			'Missing method coverage for line 4'
 		);
 		$this->assertTrue(

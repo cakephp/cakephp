@@ -68,14 +68,18 @@ HTML;
 		foreach ($fileLines as $lineno => $line) {
 			$class = 'ignored';
 			$coveringTests = array();
-			if (isset($coverageData['covered'][$lineno])) {
-				$coveringTests = PHPUnit_Util_CodeCoverage::getCoveringTests(
-					$this->_rawCoverage, $filename, $lineno
-				);
+			if (isset($coverageData[$lineno]) && is_array($coverageData[$lineno])) {
+				$coveringTests = array();
+				foreach ($coverageData[$lineno] as $test) {
+					$testReflection = new ReflectionClass(current(explode('::', $test['id'])));
+					list($fileBasename,) = explode('.', basename($testReflection->getFileName()), 2);
+					$this->_testNames[] = $fileBasename;
+					$coveringTests[] = $test['id'];
+				}
 				$class = 'covered';
-			} elseif (isset($coverageData['executable'][$lineno])) {
+			} elseif (isset($coverageData[$lineno]) && $coverageData[$lineno] === -1) {
 				$class = 'uncovered';
-			} elseif (isset($coverageData['dead'][$lineno])) {
+			} elseif (isset($coverageData[$lineno]) && $coverageData[$lineno] === -2) {
 				$class .= ' dead';
 			}
 			$diff[] = $this->_paintLine($line, $lineno, $class, $coveringTests);
@@ -98,8 +102,8 @@ HTML;
 		$coveredBy = '';
 		if (!empty($coveringTests)) {
 			$coveredBy = "Covered by:\n";
-			foreach ($coveringTests as &$test) {
-				$coveredBy .= $test->getName() . "\n";
+			foreach ($coveringTests as $test) {
+				$coveredBy .= $test . "\n";
 			}
 		}
 
