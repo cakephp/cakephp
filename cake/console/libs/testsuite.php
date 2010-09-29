@@ -223,13 +223,11 @@ class TestSuiteShell extends Shell {
 		$this->out('Params:');
 		$this->out("--log-junit <file>       Log test execution in JUnit XML format to file.");
 		$this->out("--log-json <file>        Log test execution in JSON format.");
+		$this->out("--log-tap <file>         Log test execution in TAP format to file.");
+	 	$this->out("--log-dbus               Log test execution to DBUS.");
 
 		$this->out("--coverage-html <dir>    Generate code coverage report in HTML format.");
 		$this->out("--coverage-clover <file> Write code coverage data in Clover XML format.");
-		$this->out("--coverage-source <dir>  Write code coverage / source data in XML format.");
-
-		$this->out("--story-html <file>      Write Story/BDD results in HTML format to file.");
-		$this->out("--story-text <file>      Write Story/BDD results in Text format to file.");
 
 		$this->out("--testdox-html <file>    Write agile documentation in HTML format to file.");
 		$this->out("--testdox-text <file>    Write agile documentation in Text format to file.");
@@ -238,16 +236,20 @@ class TestSuiteShell extends Shell {
 		$this->out("--group ...              Only runs tests from the specified group(s).");
 		$this->out("--exclude-group ...      Exclude tests from the specified group(s).");
 		$this->out("--filter <pattern>       Filter which tests to run.");
+		$this->out("--list-groups            List available test groups.");
+
 		$this->out("--loader <loader>        TestSuiteLoader implementation to use.");
 		$this->out("--repeat <times>         Runs the test(s) repeatedly.");
 
-		$this->out("--story                  Report test execution progress in Story/BDD format.");
 		$this->out("--tap                    Report test execution progress in TAP format.");
 		$this->out("--testdox                Report test execution progress in TestDox format.");
 
 		$this->out("--colors                 Use colors in output.");
 		$this->out("--stderr                 Write to STDERR instead of STDOUT.");
 		$this->out("--stop-on-failure        Stop execution upon first error or failure.");
+		$this->out("--stop-on-skipped        Stop execution upon first skipped test.");
+		$this->out("--stop-on-incomplete     Stop execution upon first incomplete test.");
+		$this->out("--strict                 Mark a test as incomplete if no assertions are made.";
 		$this->out("--verbose                Output more verbose information.");
 		$this->out("--wait                   Waits for a keystroke after each test.");
 
