@@ -707,6 +707,36 @@ class ViewTest extends CakeTestCase {
 		@unlink($path);
 	}
 /**
+ * Test that render() will remove the cake:nocache tags when only the cachehelper is present.
+ *
+ * @return void
+ */
+	function testRenderStrippingNoCacheTagsOnlyCacheHelper() {
+		Configure::write('Cache.check', false);
+		$View =& new View($this->PostsController);
+		$View->set(array('superman' => 'clark', 'variable' => 'var'));
+		$View->helpers = array('Html', 'Form', 'Cache');
+		$View->layout = 'cache_layout';
+		$result = $View->render('index');
+		$this->assertNoPattern('/cake:nocache/', $result);
+	}
+
+/**
+ * Test that render() will remove the cake:nocache tags when only the Cache.check is true.
+ *
+ * @return void
+ */
+	function testRenderStrippingNoCacheTagsOnlyCacheCheck() {
+		Configure::write('Cache.check', true);
+		$View =& new View($this->PostsController);
+		$View->set(array('superman' => 'clark', 'variable' => 'var'));
+		$View->helpers = array('Html', 'Form');
+		$View->layout = 'cache_layout';
+		$result = $View->render('index');
+		$this->assertNoPattern('/cake:nocache/', $result);
+	}
+
+/**
  * testRenderNocache method
  *
  * @access public
