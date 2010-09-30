@@ -1237,11 +1237,13 @@ DIGEST;
  */
 	function testCsrfSettings() {
 		$this->Security->validatePost = false;
-		$this->Security->enableCsrf = true;
+		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
 		$this->Security->startup($this->Controller);
 		
 		$token = $this->Security->Session->read('_Token');
-		$this->assertEquals(count($token['csrf']), 1, 'Missing the csrf token.');
+		$this->assertEquals(count($token['csrfTokens']), 1, 'Missing the csrf token.');
+		$this->assertEquals(strtotime('+10 minutes'), current($token['csrfTokens']), 'Token expiry does not match');
+		
 	}
 }

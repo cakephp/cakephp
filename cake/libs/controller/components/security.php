@@ -155,6 +155,24 @@ class SecurityComponent extends Component {
 	public $validatePost = true;
 
 /**
+ * Whether to use CSRF protected forms.  Set to false to disable CSRF protection on forms.
+ *
+ * @var boolean
+ * @see http://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+ * @see SecurityComponent::$csrfExpires
+ */
+	public $csrfCheck = true;
+
+/**
+ * The duration from when a CSRF token is created that it will expire on.
+ * Each form/page request will generate a new token that can only be submitted once unless 
+ * it expires.  Can be any value compatible with strtotime()
+ *
+ * @var string
+ */
+	public $csrfExpires = '+30 minutes';
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -649,10 +667,10 @@ class SecurityComponent extends Component {
  * @return bool Success
  */
 	protected function _generateToken(&$controller) {
-		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
+		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
 				$tokenData = $this->Session->read('_Token');
-				$controller->params['_Token'] = $tokenData;
+				$controller->request->params['_Token'] = $tokenData;
 			}
 			return false;
 		}
@@ -666,8 +684,8 @@ class SecurityComponent extends Component {
 			'disabledFields' => $this->disabledFields
 		);
 
-		if (!isset($controller->request->data)) {
-			$controller->request->data = array();
+		if ($this->csrfCheck) {
+			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 
 		if ($this->Session->check('_Token')) {
