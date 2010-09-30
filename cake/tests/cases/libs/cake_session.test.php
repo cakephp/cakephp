@@ -99,10 +99,9 @@ class CakeSessionTest extends CakeTestCase {
  */
 	function teardown() {
 		if (TestCakeSession::started()) {
-			TestCakeSession::destroy();
+			TestCakeSession::clear();
 		}
 		unset($_SESSION);
-		@session_destroy();
 		parent::teardown();
 	}
 
@@ -112,7 +111,6 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testSessionConfigIniSetting() {
-		session_destroy();
 		$_SESSION = null;
 
 		Configure::write('Session', array(
@@ -708,6 +706,11 @@ class CakeSessionTest extends CakeTestCase {
 
 		TestCakeSession::destroy();
 		$this->assertNull(TestCakeSession::read('SessionTestCase'));
+		
+		Configure::write('Session', array(
+			'defaults' => 'php'
+		));
+		TestCakeSession::init();
 	}
 
 /**
@@ -722,7 +725,6 @@ class CakeSessionTest extends CakeTestCase {
 
 		$timeoutSeconds = Configure::read('Session.timeout') * 60;
 
-		session_destroy();
 		TestCakeSession::destroy();
 		TestCakeSession::write('Test', 'some value');
 

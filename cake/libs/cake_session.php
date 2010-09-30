@@ -471,6 +471,15 @@ class CakeSession {
 		if (self::started()) {
 			session_destroy();
 		}
+		self::clear();
+	}
+
+/**
+ * Clears the session, the session id, and renew's the session.
+ *
+ * @return void
+ */
+	public static function clear() {
 		$_SESSION = null;
 		self::$id = null;
 		self::start();
