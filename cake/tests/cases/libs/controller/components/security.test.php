@@ -152,6 +152,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Components->init($this->Controller);
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
+		$this->Security = $this->Controller->Security;
 
 		Configure::write('Security.salt', 'foo!');
 	}
@@ -857,16 +858,6 @@ DIGEST;
 	}
 
 /**
- * testLoginValidation method
- *
- * @access public
- * @return void
- */
-	function testLoginValidation() {
-
-	}
-
-/**
  * testValidateHasManyModel method
  *
  * @access public
@@ -1237,5 +1228,20 @@ DIGEST;
 
 		$this->Controller->Security->blackHole($this->Controller, 'auth');
 		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
+	}
+
+/**
+ * test setting 
+ *
+ * @return void
+ */
+	function testCsrfSettings() {
+		$this->Security->validatePost = false;
+		$this->Security->enableCsrf = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->startup($this->Controller);
+		
+		$token = $this->Security->Session->read('_Token');
+		$this->assertEquals(count($token['csrf']), 1, 'Missing the csrf token.');
 	}
 }

@@ -580,7 +580,7 @@ class SecurityComponent extends Component {
 		$token = $data['_Token']['key'];
 
 		if ($this->Session->check('_Token')) {
-			$tokenData = unserialize($this->Session->read('_Token'));
+			$tokenData = $this->Session->read('_Token');
 
 			if ($tokenData['expires'] < time() || $tokenData['key'] !== $token) {
 				return false;
@@ -651,7 +651,7 @@ class SecurityComponent extends Component {
 	protected function _generateToken(&$controller) {
 		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
-				$tokenData = unserialize($this->Session->read('_Token'));
+				$tokenData = $this->Session->read('_Token');
 				$controller->params['_Token'] = $tokenData;
 			}
 			return false;
@@ -671,7 +671,7 @@ class SecurityComponent extends Component {
 		}
 
 		if ($this->Session->check('_Token')) {
-			$tokenData = unserialize($this->Session->read('_Token'));
+			$tokenData = $this->Session->read('_Token');
 			$valid = (
 				isset($tokenData['expires']) &&
 				$tokenData['expires'] > time() &&
@@ -683,7 +683,7 @@ class SecurityComponent extends Component {
 			}
 		}
 		$controller->request->params['_Token'] = $token;
-		$this->Session->write('_Token', serialize($token));
+		$this->Session->write('_Token', $token);
 		return true;
 	}
 
