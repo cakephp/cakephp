@@ -1746,11 +1746,16 @@ class Model extends Overloadable {
 		}
 		$id = $this->id;
 
-		if ($this->exists() && $this->beforeDelete($cascade)) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
-			if (!$this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array('break' => true, 'breakOn' => false))) {
+
+		if ($this->beforeDelete($cascade)) {
+			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
+				'break' => true, 'breakOn' => false
+			));
+			if (!$filters || !$this->exists()) {
 				return false;
 			}
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
 			$this->id = $id;
