@@ -121,7 +121,7 @@
  * Set the value of 'Session.save' to <name> to utilize it in CakePHP.
  *
  * To use database sessions, run the app/config/schema/sessions.php schema using
- * the cake shell command: cake schema run create Sessions
+ * the cake shell command: cake schema create Sessions
  *
  */
 	Configure::write('Session.save', 'php');

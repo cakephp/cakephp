@@ -708,4 +708,47 @@ class ModelDeleteTest extends BaseModelTest {
 		// Removing Article #2 from Tag #1 is all that should have happened.
 		$this->assertEqual(count($before[0]["Tag"]), count($after[0]["Tag"]));
 	}
+
+/**
+ * test that deleting records inside the beforeDelete doesn't truncate the table.
+ *
+ * @return void
+ */
+	function testBeforeDeleteWipingTable() {
+		$this->loadFixtures('Comment');
+
+		$Comment =& new BeforeDeleteComment();
+		// Delete 3 records.
+		$Comment->delete(4);
+		$result = $Comment->find('count');
+
+		$this->assertTrue($result > 1, 'Comments are all gone.');
+		$Comment->create(array(
+			'article_id' => 1,
+			'user_id' => 2,
+			'comment' => 'new record',
+			'published' => 'Y'
+		));
+		$Comment->save();
+
+		$Comment->delete(5);
+		$result = $Comment->find('count');
+
+		$this->assertTrue($result > 1, 'Comments are all gone.');
+	}
+
+/**
+ * test that deleting the same record from the beforeDelete and the delete doesn't truncate the table.
+ *
+ * @return void
+ */
+	function testBeforeDeleteWipingTableWithDuplicateDelete() {
+		$this->loadFixtures('Comment');
+
+		$Comment =& new BeforeDeleteComment();
+		$Comment->delete(1);
+
+		$result = $Comment->find('count');
+		$this->assertTrue($result > 1, 'Comments are all gone.');
+	}
 }

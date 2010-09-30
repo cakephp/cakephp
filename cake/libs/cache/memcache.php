@@ -81,12 +81,7 @@ class MemcacheEngine extends CacheEngine {
 			$return = false;
 			$this->__Memcache =& new Memcache();
 			foreach ($this->settings['servers'] as $server) {
-				$parts = explode(':', $server);
-				$host = $parts[0];
-				$port = 11211;
-				if (isset($parts[1])) {
-					$port = $parts[1];
-				}
+				list($host, $port) = $this->_parseServerString($server);
 				if ($this->__Memcache->addServer($host, $port)) {
 					$return = true;
 				}
@@ -94,6 +89,31 @@ class MemcacheEngine extends CacheEngine {
 			return $return;
 		}
 		return true;
+	}
+
+/**
+ * Parses the server address into the host/port.  Handles both IPv6 and IPv4
+ * addresses
+ *
+ * @param string $server The server address string.
+ * @return array Array containing host, port
+ */
+	function _parseServerString($server) {
+		if (substr($server, 0, 1) == '[') {
+			$position = strpos($server, ']:');
+			if ($position !== false) {
+				$position++;
+			}
+		} else {
+		    $position = strpos($server, ':');
+		}
+		$port = 11211;
+		$host = $server;
+		if ($position !== false) {
+			$host = substr($server, 0, $position);
+			$port = substr($server, $position + 1);
+		}
+		return array($host, $port);
 	}
 
 /**
