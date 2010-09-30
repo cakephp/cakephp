@@ -516,7 +516,7 @@ class SecurityComponent extends Component {
 				}
 
 				if ($this->Session->check('_Token')) {
-					$tData = unserialize($this->Session->read('_Token'));
+					$tData = $this->Session->read('_Token');
 
 					if (!empty($tData['allowedControllers']) && !in_array($this->request->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($this->request->params['action'], $tData['allowedActions'])) {
 						if (!$this->blackHole($controller, 'auth')) {
@@ -681,7 +681,8 @@ class SecurityComponent extends Component {
 			'expires' => $expires,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
-			'disabledFields' => $this->disabledFields
+			'disabledFields' => $this->disabledFields,
+			'csrfTokens' => array()
 		);
 
 		if ($this->csrfCheck) {
@@ -698,6 +699,9 @@ class SecurityComponent extends Component {
 
 			if ($valid) {
 				$token['key'] = $tokenData['key'];
+			}
+			if (!empty($tokenData['csrfTokens'])) {
+				$token['csrfTokens'] += $tokenData['csrfTokens'];
 			}
 		}
 		$controller->request->params['_Token'] = $token;

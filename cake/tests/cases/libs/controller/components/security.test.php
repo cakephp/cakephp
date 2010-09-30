@@ -281,16 +281,16 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', serialize(array('allowedControllers' => array())));
+		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', serialize(array(
+		$this->Controller->Session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
-		)));
+		));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
@@ -311,9 +311,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 
-		$this->Controller->Security->Session->write('_Token', serialize(array(
+		$this->Controller->Security->Session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted')
-		)));
+		));
 		$this->Controller->request['controller'] = 'SecurityTest';
 		$this->Controller->request['action'] = 'posted';
 
@@ -1240,10 +1240,23 @@ DIGEST;
 		$this->Security->csrfCheck = true;
 		$this->Security->csrfExpires = '+10 minutes';
 		$this->Security->startup($this->Controller);
-		
+
 		$token = $this->Security->Session->read('_Token');
 		$this->assertEquals(count($token['csrfTokens']), 1, 'Missing the csrf token.');
 		$this->assertEquals(strtotime('+10 minutes'), current($token['csrfTokens']), 'Token expiry does not match');
-		
+	}
+	
+	function testCsrfSettingMultipleNonces() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->startup($this->Controller);
+		$this->Security->startup($this->Controller);
+
+		$token = $this->Security->Session->read('_Token');
+		$this->assertEquals(count($token['csrfTokens']), 2, 'Missing the csrf token.');
+		foreach ($token['csrfTokens'] as $key => $expires) {
+			$this->assertEquals(strtotime('+10 minutes'), $expires, 'Token expiry does not match');
+		}
 	}
 }
