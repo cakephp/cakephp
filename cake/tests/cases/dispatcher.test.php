@@ -1387,8 +1387,10 @@ class DispatcherTest extends CakeTestCase {
 		$result = ob_get_clean();
 		$this->assertEqual('htc file', $result);
 		
-		while (ob_get_level() > 0) {
-			ob_get_clean();
+		if (php_sapi_name() == 'cli') {
+			while (ob_get_level()) {
+				ob_get_clean();
+			}
 		}
 	}
 
