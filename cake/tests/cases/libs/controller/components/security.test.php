@@ -153,6 +153,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
 		$this->Security = $this->Controller->Security;
+		$this->Security->csrfCheck = false;
 
 		Configure::write('Security.salt', 'foo!');
 	}
@@ -233,7 +234,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -451,8 +452,8 @@ DIGEST;
 	function testRequireGetSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireGet('getted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Security->requireGet('getted');
+		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -1245,7 +1246,12 @@ DIGEST;
 		$this->assertEquals(count($token['csrfTokens']), 1, 'Missing the csrf token.');
 		$this->assertEquals(strtotime('+10 minutes'), current($token['csrfTokens']), 'Token expiry does not match');
 	}
-	
+
+/**
+ * Test setting multiple nonces, when startup() is called more than once, (ie more than one request.)
+ *
+ * @return void
+ */
 	function testCsrfSettingMultipleNonces() {
 		$this->Security->validatePost = false;
 		$this->Security->csrfCheck = true;
@@ -1258,5 +1264,36 @@ DIGEST;
 		foreach ($token['csrfTokens'] as $key => $expires) {
 			$this->assertEquals(strtotime('+10 minutes'), $expires, 'Token expiry does not match');
 		}
+	}
+
+/**
+ * test that nonces are consumed by form submits.
+ *
+ * @return void
+ */
+	function testCsrfNonceConsumption() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
+		
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'nonce' => 'nonce1'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$token = $this->Security->Session->read('_Token');
+		$this->assertFalse(isset($token['csrfTokens']['nonce1']), 'Token was not consumed');
 	}
 }

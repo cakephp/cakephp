@@ -216,9 +216,12 @@ class SecurityComponent extends Component {
 
 		if ($isPost && $isRequestAction && $this->validatePost) {
 			if ($this->_validatePost($controller) === false) {
-				if (!$this->blackHole($controller, 'auth')) {
-					return null;
-				}
+				return $this->blackHole($controller, 'auth');
+			}
+		}
+		if ($isPost && $this->csrfCheck) {
+			if ($this->_validateCsrf($controller) === false) {
+				return $this->blackHole($controller, 'csrf');
 			}
 		}
 		$this->_generateToken($controller);
@@ -434,7 +437,7 @@ class SecurityComponent extends Component {
 				$code = 401;
 				$controller->header($this->loginRequest());
 			}
-			$controller->redirect(null, $code, true);
+			return $controller->redirect(null, $code, true);
 		} else {
 			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
@@ -707,6 +710,23 @@ class SecurityComponent extends Component {
 		$controller->request->params['_Token'] = $token;
 		$this->Session->write('_Token', $token);
 		return true;
+	}
+
+/**
+ * Validate that the controller has a CSRF token in the POST data
+ * and that the token is legit/not expired.
+ *
+ * @param Controller $controller A controller to check
+ * @return boolean Valid csrf token.
+ */
+	protected function _validateCsrf($controller) {
+		$token = $this->Session->read('_Token');
+		$requestToken = $controller->request->data('_Token.nonce');
+		if (isset($token['csrfTokens'][$requestToken])) {
+			$this->Session->delete('_Token.csrfTokens.' . $requestToken);
+			return true;
+		}
+		return false;
 	}
 
 /**
