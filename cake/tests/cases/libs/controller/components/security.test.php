@@ -606,14 +606,8 @@ DIGEST;
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertFalse($result, 'validatePost passed when fields were missing. %s');
-
-		$this->Controller->request->data = array(
-			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
-			'_Token' => compact('fields')
-		);
-		$result = $this->Controller->Security->validatePost($this->Controller);
-		$this->assertFalse($result, 'validatePost passed when key was missing. %s');
 	}
+
 /**
  * Tests validation of checkbox arrays
  *
@@ -1286,7 +1280,7 @@ DIGEST;
 		$this->Controller->request->params['action'] = 'index';
 		$this->Controller->request->data = array(
 			'_Token' => array(
-				'nonce' => 'nonce1'
+				'key' => 'nonce1'
 			),
 			'Post' => array(
 				'title' => 'Woot'
@@ -1314,5 +1308,65 @@ DIGEST;
 		$this->Security->startup($this->Controller);
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
 		$this->assertEquals(1, count($tokens), 'Too many tokens left behind');
+	}
+
+/**
+ * test that when the key is missing the request is blackHoled
+ *
+ * @return void
+ */
+	function testCsrfBlackHoleOnKeyMismatch() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
+		
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'not the right value'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
+	}
+
+/**
+ * test that when the key is missing the request is blackHoled
+ *
+ * @return void
+ */
+	function testCsrfBlackHoleOnExpiredKey() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
+
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'nonce1'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
 	}
 }

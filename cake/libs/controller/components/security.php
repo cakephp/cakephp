@@ -595,17 +595,8 @@ class SecurityComponent extends Component {
 		}
 		$data = $controller->request->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['key'])) {
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
 			return false;
-		}
-		$token = $data['_Token']['key'];
-
-		if ($this->Session->check('_Token')) {
-			$tokenData = $this->Session->read('_Token');
-
-			if ($tokenData['expires'] < time() || $tokenData['key'] !== $token) {
-				return false;
-			}
 		}
 
 		$locked = null;
@@ -678,10 +669,8 @@ class SecurityComponent extends Component {
 			return false;
 		}
 		$authKey = Security::generateAuthKey();
-		$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
 		$token = array(
 			'key' => $authKey,
-			'expires' => $expires,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
 			'disabledFields' => $this->disabledFields,
@@ -694,15 +683,6 @@ class SecurityComponent extends Component {
 
 		if ($this->Session->check('_Token')) {
 			$tokenData = $this->Session->read('_Token');
-			$valid = (
-				isset($tokenData['expires']) &&
-				$tokenData['expires'] > time() &&
-				isset($tokenData['key'])
-			);
-
-			if ($valid) {
-				$token['key'] = $tokenData['key'];
-			}
 			if (!empty($tokenData['csrfTokens'])) {
 				$token['csrfTokens'] += $tokenData['csrfTokens'];
 				$token['csrfTokens'] = $this->_expireTokens($token['csrfTokens']);
@@ -723,8 +703,8 @@ class SecurityComponent extends Component {
  */
 	protected function _validateCsrf($controller) {
 		$token = $this->Session->read('_Token');
-		$requestToken = $controller->request->data('_Token.nonce');
-		if (isset($token['csrfTokens'][$requestToken])) {
+		$requestToken = $controller->request->data('_Token.key');
+		if (isset($token['csrfTokens'][$requestToken]) && $token['csrfTokens'][$requestToken] >= time()) {
 			$this->Session->delete('_Token.csrfTokens.' . $requestToken);
 			return true;
 		}
