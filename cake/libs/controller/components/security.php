@@ -715,7 +715,8 @@ class SecurityComponent extends Component {
 
 /**
  * Validate that the controller has a CSRF token in the POST data
- * and that the token is legit/not expired.
+ * and that the token is legit/not expired.  If the token is valid
+ * it will be removed from the list of valid tokens.
  *
  * @param Controller $controller A controller to check
  * @return boolean Valid csrf token.
