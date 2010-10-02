@@ -1296,4 +1296,23 @@ DIGEST;
 		$token = $this->Security->Session->read('_Token');
 		$this->assertFalse(isset($token['csrfTokens']['nonce1']), 'Token was not consumed');
 	}
+
+/**
+ * test that expired values in the csrfTokens are cleaned up.
+ *
+ * @return void
+ */
+	function testCsrfNonceVacuum() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array(
+			'poof' => strtotime('-11 minutes'),
+			'dust' => strtotime('-20 minutes')
+		));
+		$this->Security->startup($this->Controller);
+		$tokens = $this->Security->Session->read('_Token.csrfTokens');
+		$this->assertEquals(1, count($tokens), 'Too many tokens left behind');
+	}
 }

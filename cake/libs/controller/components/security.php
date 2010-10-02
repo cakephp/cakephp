@@ -705,6 +705,7 @@ class SecurityComponent extends Component {
 			}
 			if (!empty($tokenData['csrfTokens'])) {
 				$token['csrfTokens'] += $tokenData['csrfTokens'];
+				$token['csrfTokens'] = $this->_expireTokens($token['csrfTokens']);
 			}
 		}
 		$controller->request->params['_Token'] = $token;
@@ -727,6 +728,23 @@ class SecurityComponent extends Component {
 			return true;
 		}
 		return false;
+	}
+
+/**
+ * Expire CSRF nonces and remove them from the valid tokens.
+ * Uses a simple timeout to expire the tokens.
+ *
+ * @param array $tokens An array of nonce => expires.
+ * @return An array of nonce => expires.
+ */
+	protected function _expireTokens($tokens) {
+		$tokenExpiryTime = strtotime($this->csrfExpires);
+		foreach ($tokens as $nonce => $expires) {
+			if ($expires < $tokenExpiryTime) {
+				unset($tokens[$nonce]);
+			}
+		}
+		return $tokens;
 	}
 
 /**
