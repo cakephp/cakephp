@@ -234,17 +234,25 @@ class CakeSchema extends Object {
 
 		if (is_array($models)) {
 			foreach ($models as $model) {
+				$importModel = $model;
 				if (isset($this->plugin)) {
-					$model = $this->plugin . '.' . $model;
+					$importModel = $this->plugin . '.' . $model;
 				}
+				if (!App::import('Model', $importModel)) {
+					continue;
+				}
+				$vars = get_class_vars($model);
+				if (empty($vars['useDbConfig']) || $vars['useDbConfig'] != $connection) {
+					continue;
+				}
+
 				if (PHP5) {
-					$Object = ClassRegistry::init(array('class' => $model, 'ds' => null));
+					$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				} else {
-					$Object =& ClassRegistry::init(array('class' => $model, 'ds' => null));
+					$Object =& ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 				}
 
 				if (is_object($Object) && $Object->useTable !== false) {
-					$Object->setDataSource($connection);
 					$table = $db->fullTableName($Object, false);
 					if (in_array($table, $currentTables)) {
 						$key = array_search($table, $currentTables);
