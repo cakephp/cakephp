@@ -1302,12 +1302,15 @@ DIGEST;
 		$this->Security->csrfExpires = '+10 minutes';
 		
 		$this->Security->Session->write('_Token.csrfTokens', array(
+			'valid' => strtotime('+30 minutes'),
 			'poof' => strtotime('-11 minutes'),
 			'dust' => strtotime('-20 minutes')
 		));
 		$this->Security->startup($this->Controller);
 		$tokens = $this->Security->Session->read('_Token.csrfTokens');
-		$this->assertEquals(1, count($tokens), 'Too many tokens left behind');
+		$this->assertEquals(2, count($tokens), 'Too many tokens left behind');
+		$this->assertNotEmpty('valid', $tokens, 'Valid token was removed.');
+		
 	}
 
 /**

@@ -719,9 +719,9 @@ class SecurityComponent extends Component {
  * @return An array of nonce => expires.
  */
 	protected function _expireTokens($tokens) {
-		$tokenExpiryTime = strtotime($this->csrfExpires);
+		$now = time();
 		foreach ($tokens as $nonce => $expires) {
-			if ($expires < $tokenExpiryTime) {
+			if ($expires < $now) {
 				unset($tokens[$nonce]);
 			}
 		}
