@@ -229,9 +229,9 @@ class CakeResponseTestCase extends CakeTestCase {
 		$since = time();
 		$time = '+1 day';
 		$expected = array(
-			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
-			'Cache-Control' => 'cache',
+			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
 			'Pragma' => 'cache'
 		);
 		$response->cache($since);
@@ -241,9 +241,9 @@ class CakeResponseTestCase extends CakeTestCase {
 		$since = time();
 		$time = '+5 day';
 		$expected = array(
-			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
-			'Cache-Control' => 'cache',
+			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
 			'Pragma' => 'cache'
 		);
 		$response->cache($since, $time);
@@ -253,9 +253,9 @@ class CakeResponseTestCase extends CakeTestCase {
 		$since = time();
 		$time = time();
 		$expected = array(
-			'Date' => date("D, j M Y G:i:s ", $since) . 'GMT',
+			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
-			'Cache-Control' => 'cache',
+			'Cache-Control' => 'public, max-age=0',
 			'Pragma' => 'cache'
 		);
 		$response->cache($since, $time);

@@ -21,8 +21,6 @@ App::import('View', 'View', false);
 
 class MediaView extends View {
 
-
-
 /**
  * Constructor
  *

@@ -616,7 +616,7 @@ class CakeResponse {
 		$this->header(array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
-			'Cache-Control' => 'public, max-age=' . $time - time(),
+			'Cache-Control' => 'public, max-age=' . ($time - time()),
 			'Pragma' => 'cache'
 		));
 	}
