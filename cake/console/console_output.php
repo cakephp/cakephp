@@ -37,7 +37,8 @@
  * `$this->out('<warning>Overwrite:</warning> foo.php was overwritten.');`
  *
  * This would create orange 'Overwrite:' text, while the rest of the text would remain the normal colour.
- * See ConsoleOutput::styles() to learn more about defining your own styles.
+ * See ConsoleOutput::styles() to learn more about defining your own styles.  Nested styles are not supported
+ * at this time.
  *
  * @package cake.console
  */
@@ -132,7 +133,47 @@ class ConsoleOutput {
 		if (is_array($message)) {
 			$message = implode(self::LF, $message);
 		}
-		return $this->_write($message . str_repeat(self::LF, $newlines));
+		return $this->_write($this->styleText($message . str_repeat(self::LF, $newlines)));
+	}
+
+/**
+ * Apply styling to text.
+ *
+ * @param string $text Text with styling tags.
+ * @return string String with color codes added.
+ */
+	public function styleText($text) {
+		return preg_replace_callback(
+			'/<(?<tag>[a-z0-9-_]+)>(?<text>.*)<\/(\1)>/i', array($this, '_replaceTags'), $text
+		);
+	}
+
+/**
+ * Replace tags with color codes.
+ *
+ * @param array $matches.
+ * @return string
+ */
+	protected function _replaceTags($matches) {
+		$style = $this->styles($matches['tag']);
+		if (empty($style)) {
+			return $matches['text'];
+		}
+
+		$styleInfo = array();
+		if (!empty($style['text']) && isset(self::$_foregroundColors[$style['text']])) {
+			$styleInfo[] = self::$_foregroundColors[$style['text']];
+		}
+		if (!empty($style['background']) && isset(self::$_foregroundColors[$style['background']])) {
+			$styleInfo[] = self::$_foregroundColors[$style['background']];
+		}
+		unset($style['text'], $style['background']);
+		foreach ($style as $option => $value) {
+			if ($value) {
+				$styleInfo[] = self::$_options[$option];
+			}
+		}
+		return "\033[" . implode($styleInfo, ';') . 'm' . $matches['text'] . "\033[0m";
 	}
 
 /**
@@ -148,12 +189,32 @@ class ConsoleOutput {
 /**
  * Get the current styles offered, or append new ones in.
  *
+ * ### Get a style definition
+ *
+ * `$this->output->styles('error');`
+ *
+ * ### Get all the style definitions
+ *
+ * `$this->output->styles();`
+ *
+ * ### Create or modify an existing style
+ *
+ * `$this->output->styles('annoy', array('text' => 'purple', 'background' => 'yellow', 'blink' => true));`
+ *
+ * ### Remove a style
+ *
+ * `$this->output->styles('annoy', false);`
+ *
  * @param string $style The style to get or create.
  * @param mixed $definition The array definition of the style to change or create a style
  *   or false to remove a style.
- * @return mixed
+ * @return mixed If you are getting styles, the style or null will be returned. If you are creating/modifying
+ *   styles true will be returned.
  */
 	function styles($style = null, $definition = null) {
+		if ($style === null && $definition === null) {
+			return self::$_styles;
+		}
 		if (is_string($style) && $definition === null) {
 			return isset(self::$_styles[$style]) ? self::$_styles[$style] : null;
 		}
@@ -162,6 +223,7 @@ class ConsoleOutput {
 			return true;
 		}
 		self::$_styles[$style] = $definition;
+		return true;
 	}
 
 /**

@@ -98,8 +98,12 @@ class ConsoleOutputTest extends CakeTestCase {
 		$result = $this->output->styles('error');
 		$expected = array('text' => 'red');
 		$this->assertEqual($result, $expected);
-		
+
 		$this->assertNull($this->output->styles('made_up_goop'));
+
+		$result = $this->output->styles();
+		$this->assertNotEmpty($result, 'error', 'Error is missing');
+		$this->assertNotEmpty($result, 'warning', 'Warning is missing');
 	}
 
 /**
@@ -115,6 +119,42 @@ class ConsoleOutputTest extends CakeTestCase {
 		
 		$this->assertTrue($this->output->styles('test', false), 'Removing a style should return true.');
 		$this->assertNull($this->output->styles('test'), 'Removed styles should be null.');
+	}
+
+/**
+ * test formatting text with styles.
+ *
+ * @return void
+ */
+	function testFormattingSimple() {
+		$this->output->expects($this->once())->method('_write')
+			->with("\033[31mError:\033[0m Something bad");
+
+		$this->output->write('<error>Error:</error> Something bad', false);
+	}
+
+/**
+ * test formatting text with missing styles.
+ *
+ * @return void
+ */
+	function testFormattingMissingStyleName() {
+		$this->output->expects($this->once())->method('_write')
+			->with("Error: Something bad");
+
+		$this->output->write('<not_there>Error:</not_there> Something bad', false);
+	}
+
+/**
+ * test formatting text with multiple styles.
+ *
+ * @return void
+ */
+	function testFormattingMultipleStylesName() {
+		$this->output->expects($this->once())->method('_write')
+			->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
+
+		$this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
 	}
 
 }
