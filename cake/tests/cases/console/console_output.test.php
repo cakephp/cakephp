@@ -1,0 +1,92 @@
+<?php
+/**
+ * ShellDispatcherTest file
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * Copyright 2005-2010, Cake Software Foundation, Inc.
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc.
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @package       cake
+ * @subpackage    cake.tests.cases.console
+ * @since         CakePHP(tm) v 1.2.0.5432
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+require_once CAKE . 'console' .  DS . 'console_output.php';
+
+class ConsoleOutputTest extends CakeTestCase {
+
+/**
+ * setup
+ *
+ * @return void
+ */
+	function setUp() {
+		parent::setUp();
+		$this->output = $this->getMock('ConsoleOutput', array('_write'));
+	}
+
+/**
+ * tearDown
+ *
+ * @return void
+ */
+	function tearDown() {
+		unset($this->output);
+	}
+
+/**
+ * test writing with no new line
+ *
+ * @return void
+ */
+	function testWriteNoNewLine() {
+		$this->output->expects($this->once())->method('_write')
+			->with('Some output');
+
+		$this->output->write('Some output', false);
+	}
+
+/**
+ * test writing with no new line
+ *
+ * @return void
+ */
+	function testWriteNewLine() {
+		$this->output->expects($this->once())->method('_write')
+			->with('Some output' . PHP_EOL);
+
+		$this->output->write('Some output');
+	}
+
+/**
+ * test write() with multiple new lines
+ *
+ * @return void
+ */
+	function testWriteMultipleNewLines() {
+		$this->output->expects($this->once())->method('_write')
+			->with('Some output' . PHP_EOL . PHP_EOL . PHP_EOL . PHP_EOL);
+
+		$this->output->write('Some output', 4);
+	}
+
+/**
+ * test writing an array of messages.
+ *
+ * @return void
+ */
+	function testWriteArray() {
+		$this->output->expects($this->once())->method('_write')
+			->with('Line' . PHP_EOL . 'Line' . PHP_EOL . 'Line' . PHP_EOL);
+
+		$this->output->write(array('Line', 'Line', 'Line'));
+	}
+
+}
