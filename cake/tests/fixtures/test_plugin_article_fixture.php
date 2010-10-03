@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.fixtures
  * @since         CakePHP(tm) v 7660
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
 /**

@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once dirname(__FILE__) . DS . 'model.test.php';
 /**

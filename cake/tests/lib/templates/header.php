@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  * @since         CakePHP(tm) v 1.2.0.4433
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

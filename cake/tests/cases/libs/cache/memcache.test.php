@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.cache
  * @since         CakePHP(tm) v 1.2.0.5434
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';

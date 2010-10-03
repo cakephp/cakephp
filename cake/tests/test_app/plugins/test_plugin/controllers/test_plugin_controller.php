@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.test_app.plugins.test_plugin.views.helpers
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TestPluginController extends TestPluginAppController {
 	public $uses = array();

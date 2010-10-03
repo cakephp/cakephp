@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
 

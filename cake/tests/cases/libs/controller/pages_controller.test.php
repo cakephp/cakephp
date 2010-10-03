@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  * @since         CakePHP(tm) v 1.2.0.5436
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (!class_exists('AppController')) {
 	require_once LIBS . 'controller' . DS . 'app_controller.php';

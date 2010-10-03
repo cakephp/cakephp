@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.test_app.plugins.test_plugin.vendors
  * @since         CakePHP(tm) v 1.2.0.7629
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 This is the welcome.php file in test_plugin/vendors directory

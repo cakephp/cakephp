@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Helper', array('Js', 'Html', 'Form'));
 App::import('Core', array('View', 'ClassRegistry'));

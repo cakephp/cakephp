@@ -15,7 +15,7 @@
  * @package       cake
  * @subpackage    cake.tests.test_app.vendors.somename
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
 This is a file with dot in file name

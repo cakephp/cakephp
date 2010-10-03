@@ -17,7 +17,7 @@
  * @package       cake
  * @subpackage    cake.tests.cases.libs.model.behaviors
  * @since         CakePHP(tm) v 1.2.0.5330
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('AppModel', 'Model'));
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');

@@ -15,6 +15,6 @@
  * @package       cake
  * @subpackage    cake.tests.test_app
  * @since         CakePHP(tm) v 1.3
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 $config['plugin_more_load'] = '/test_app/plugins/test_plugin/config/more.load.php';
