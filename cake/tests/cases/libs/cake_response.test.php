@@ -230,6 +230,7 @@ class CakeResponseTestCase extends CakeTestCase {
 		$time = '+1 day';
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
 			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
 			'Pragma' => 'cache'
@@ -242,6 +243,7 @@ class CakeResponseTestCase extends CakeTestCase {
 		$time = '+5 day';
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
 			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time()),
 			'Pragma' => 'cache'
@@ -254,6 +256,7 @@ class CakeResponseTestCase extends CakeTestCase {
 		$time = time();
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
+			'Last-Modified' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
 			'Cache-Control' => 'public, max-age=0',
 			'Pragma' => 'cache'
