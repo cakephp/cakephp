@@ -5,7 +5,7 @@
  * This is an application wide file to load any function that is not used within a class
  * define. You can also use this to include or require any files in your application.
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2009, Cake Software Foundation, Inc. (http://cakefoundation.org)
