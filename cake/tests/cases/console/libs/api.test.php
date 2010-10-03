@@ -2,7 +2,7 @@
 /**
  * ApiShellTest file
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright 2006-2010, Cake Software Foundation, Inc.
