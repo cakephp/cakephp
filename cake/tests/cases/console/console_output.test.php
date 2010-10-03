@@ -134,6 +134,25 @@ class ConsoleOutputTest extends CakeTestCase {
 	}
 
 /**
+ * test formatting with custom styles.
+ *
+ * @return void
+ */
+	function testFormattingCustom() {
+		$this->output->styles('annoying', array(
+			'text' => 'magenta',
+			'background' => 'cyan',
+			'blink' => true,
+			'underline' => true
+		));
+
+		$this->output->expects($this->once())->method('_write')
+			->with("\033[35;46;5;4mAnnoy:\033[0m Something bad");
+
+		$this->output->write('<annoying>Annoy:</annoying> Something bad', false);
+	}
+
+/**
  * test formatting text with missing styles.
  *
  * @return void

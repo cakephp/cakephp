@@ -94,7 +94,7 @@ class ConsoleOutput {
  */
 	protected static $_options = array(
 		'bold' => 1,
-		'underscore' => 4,
+		'underline' => 4,
 		'blink' => 5,
 		'reverse' => 7,
 		'conceal' => 8
@@ -164,8 +164,8 @@ class ConsoleOutput {
 		if (!empty($style['text']) && isset(self::$_foregroundColors[$style['text']])) {
 			$styleInfo[] = self::$_foregroundColors[$style['text']];
 		}
-		if (!empty($style['background']) && isset(self::$_foregroundColors[$style['background']])) {
-			$styleInfo[] = self::$_foregroundColors[$style['background']];
+		if (!empty($style['background']) && isset(self::$_backgroundColors[$style['background']])) {
+			$styleInfo[] = self::$_backgroundColors[$style['background']];
 		}
 		unset($style['text'], $style['background']);
 		foreach ($style as $option => $value) {
