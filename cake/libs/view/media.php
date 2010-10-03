@@ -55,7 +55,10 @@ class MediaView extends View {
 			$path = APP . $path . $id;
 		}
 
-		if (!file_exists($path)) {
+		if (!is_file($path)) {
+			if (Configure::read('debug')) {
+				throw new NotFoundException(sprintf('The requested file %s was not found', $path));
+			}
 			throw new NotFoundException('The requested file was not found');
 		}
 
