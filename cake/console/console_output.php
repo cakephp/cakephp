@@ -51,6 +51,13 @@ class ConsoleOutput {
 	protected $_output;
 
 /**
+ * Is set to true for consoles that can take pretty output. (Not windows).
+ *
+ * @var boolean
+ */
+	protected $_prettyOutput = true;
+
+/**
  * Constant for a newline.
  */
 	const LF = PHP_EOL;
@@ -115,10 +122,17 @@ class ConsoleOutput {
 /**
  * Construct the output object.
  *
+ * Checks for a pretty console enviornment.  Ansicon allows pretty consoles
+ * on windows, and is supported.
+ *
  * @return void
  */
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
+
+		if (DS == '\\') {
+			$this->_prettyOutput = (bool)env('ANSICON');
+		}
 	}
 
 /**
@@ -143,6 +157,9 @@ class ConsoleOutput {
  * @return string String with color codes added.
  */
 	public function styleText($text) {
+		if (!$this->_prettyOutput) {
+			return strip_tags($text);
+		}
 		return preg_replace_callback(
 			'/<(?<tag>[a-z0-9-_]+)>(?<text>.*)<\/(\1)>/i', array($this, '_replaceTags'), $text
 		);
