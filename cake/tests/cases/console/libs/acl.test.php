@@ -19,20 +19,8 @@
  */
 App::import('Shell', 'Shell', false);
 
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
-
-if (!class_exists('ShellDispatcher')) {
-	ob_start();
-	$argv = false;
-	require CAKE . 'console' .  DS . 'cake.php';
-	ob_end_clean();
-}
-
-if (!class_exists('AclShell')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'acl.php';
-}
+require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'acl.php';
 
 /**
  * AclShellTest class

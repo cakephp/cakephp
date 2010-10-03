@@ -20,20 +20,9 @@
 App::import('Shell', 'Shell', false);
 App::import('Model', 'CakeSchema', false);
 
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
+require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+require_once CAKE . 'console' .  DS . 'libs' . DS . 'schema.php';
 
-if (!class_exists('ShellDispatcher')) {
-	ob_start();
-	$argv = false;
-	require CAKE . 'console' .  DS . 'cake.php';
-	ob_end_clean();
-}
-
-if (!class_exists('SchemaShell')) {
-	require CAKE . 'console' .  DS . 'libs' . DS . 'schema.php';
-}
 
 /**
  * Test for Schema database management
