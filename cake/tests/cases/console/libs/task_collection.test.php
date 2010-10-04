@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 
 App::import('Shell', 'TaskCollection', false);
 App::import('Shell', 'Shell', false);
@@ -29,9 +28,9 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function setup() {
-		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
-		$dispatcher->shellPaths = App::path('shells');
-		$this->Tasks = new TaskCollection($dispatcher);
+		$shell = $this->getMock('Shell', array(), array(), '', false);
+		$shell->shellPaths = App::path('shells');
+		$this->Tasks = new TaskCollection($shell);
 	}
 
 /**
@@ -87,10 +86,10 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPluginTask() {
-		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
-		$dispatcher->shellPaths = App::path('shells');
-		$dispatcher->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
-		$this->Tasks = new TaskCollection($dispatcher);
+		$shell = $this->getMock('Shell', array(), array(), '', false);
+		$shell->shellPaths = App::path('shells');
+		$shell->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
+		$this->Tasks = new TaskCollection($shell);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertType('OtherTaskTask', $result, 'Task class is wrong.');

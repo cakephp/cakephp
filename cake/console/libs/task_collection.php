@@ -20,11 +20,11 @@ App::import('Core', 'ObjectCollection');
 
 class TaskCollection extends ObjectCollection {
 /**
- * Shell Dispatcher to give to tasks. and use to find tasks.
+ * Shell to give to tasks. and use to find tasks.
  *
  * @var array
  */
-	protected $_Dispatch;
+	protected $_Shell;
 
 /**
  * Constructor
@@ -32,8 +32,8 @@ class TaskCollection extends ObjectCollection {
  * @param array $paths Array of paths to search for tasks on .
  * @return void
  */
-	public function __construct(ShellDispatcher $Dispatcher) {
-		$this->_Dispatch = $Dispatcher;
+	public function __construct(Shell $Shell) {
+		$this->_Shell = $Shell;
 	}
 /**
  * Loads/constructs a task.  Will return the instance in the registry if it already exists.
@@ -60,7 +60,7 @@ class TaskCollection extends ObjectCollection {
 			}
 		}
 
-		$this->_loaded[$name] = new $taskClass($this->_Dispatch);
+		$this->_loaded[$name] = new $taskClass($this->_Shell);
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}
@@ -75,7 +75,7 @@ class TaskCollection extends ObjectCollection {
  * @throws MissingTaskFileException
  */
 	protected function _getPath($file) {
-		foreach ($this->_Dispatch->shellPaths as $path) {
+		foreach ($this->_Shell->shellPaths as $path) {
 			$taskPath = $path . 'tasks' . DS . $file . '.php';
 			if (file_exists($taskPath)) {
 				return $taskPath;
