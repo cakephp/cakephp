@@ -39,6 +39,7 @@ class AllShellsTest extends PHPUnit_Framework_TestSuite {
 		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS;
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'shell_dispatcher.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'console_output.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'console' . DS . 'console_error_handler.test.php');
 		$suite->addTestDirectory($path);
 		return $suite;
