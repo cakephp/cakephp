@@ -59,7 +59,7 @@ class MediaViewTest extends CakeTestCase {
 /**
  * tests that rendering a file that does not exists throws an exception
  *
- * @expectedException NotFoundException 
+ * @expectedException NotFoundException
  * @return void
  */
 	public function testRenderNotFound() {
@@ -80,7 +80,7 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->viewVars = array(
 			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
 			'id' => 'test_asset.css',
-			'extension' => 'css',	
+			'extension' => 'css',
 		);
 		$this->MediaView->expects($this->exactly(2))
 			->method('_isActive')
@@ -123,7 +123,55 @@ class MediaViewTest extends CakeTestCase {
  * @return void
  */
 	function testConnectionAborted() {
-		$this->MediaView->active = false;
+		$this->MediaView->viewVars = array(
+			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'id' => 'test_asset.css',
+			'extension' => 'css',
+		);
+
+		$this->MediaView->expects($this->once())
+			->method('_isActive')
+			->will($this->returnValue(false));
+
+		$this->MediaView->response->expects($this->once())
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$result = $this->MediaView->render();
+		$this->assertFalse($result);
+	}
+
+/**
+ * testConnectionAbortedOnBuffering method
+ *
+ * @access public
+ * @return void
+ */
+	function testConnectionAbortedOnBuffering() {
+		$this->MediaView->viewVars = array(
+			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'id' => 'test_asset.css',
+			'extension' => 'css',
+		);
+
+		$this->MediaView->expects($this->at(0))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$this->MediaView->response->expects($this->any())
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$this->MediaView->expects($this->at(1))
+			->method('_isActive')
+			->will($this->returnValue(false));
+
+		$this->MediaView->response->expects($this->once())->method('send');
+		$this->MediaView->expects($this->once())->method('_clearBuffer');
+		$this->MediaView->expects($this->never())->method('_flushBuffer');
+
 		$result = $this->MediaView->render();
 		$this->assertFalse($result);
 	}
