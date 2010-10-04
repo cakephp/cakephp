@@ -79,34 +79,37 @@ class MediaView extends View {
 			if ($handle === false) {
 				return false;
 			}
-			if (!empty($modified)) {
-				$modified = gmdate('D, d M Y H:i:s', strtotime($modified, time())) . ' GMT';
+			if (!empty($modified) && !is_numeric($modified)) {
+				$modified = strtotime($modified, time());
 			} else {
-				$modified = gmdate('D, d M Y H:i:s') . ' GMT';
+				$modified = time();
+			}
+
+			if ($cache) {
+				$this->response->cache($modified, $cache);
+			} else {
+				$this->response->header(array(
+					'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
+					'Expires' => '0',
+					'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
+					'Pragma' => 'no-cache'
+				));
 			}
 
 			if ($download) {
-				$contentTypes = array('application/octet-stream');
 				$agent = env('HTTP_USER_AGENT');
 
 				if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
-					$contentTypes[0] = 'application/octetstream';
+					$contentType = 'application/octetstream';
 				} else if (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
-					$contentTypes[0] = 'application/force-download';
-					array_merge($contentTypes, array(
-						'application/octet-stream',
-						'application/download'
-					));
+					$contentType = 'application/force-download';
 				}
-				foreach($contentTypes as $contentType) {
-					$this->_header('Content-Type: ' . $contentType);
+
+				if (!empty($contentType)) {
+					$this->response->type($contentType);
 				}
-				$this->_header(array(
-					'Content-Disposition: attachment; filename="' . $name . '.' . $extension . '";',
-					'Expires: 0',
-					'Accept-Ranges: bytes',
-					'Cache-Control: private' => false,
-					'Pragma: private'));
+				$this->response->download($name . '.' . $extension);
+				$this->response->header(array('Accept-Ranges' => 'bytes'));
 
 				$httpRange = env('HTTP_RANGE');
 				if (isset($httpRange)) {
@@ -115,43 +118,35 @@ class MediaView extends View {
 					$size = $fileSize - 1;
 					$length = $fileSize - $range;
 
-					$this->_header(array(
-						'HTTP/1.1 206 Partial Content',
-						'Content-Length: ' . $length,
-						'Content-Range: bytes ' . $range . $size . '/' . $fileSize));
+					$this->response->header(array(
+						'Content-Length' => $length,
+						'Content-Range' => 'bytes ' . $range . $size . '/' . $fileSize
+					));
 
+					$this->response->statusCode(206);
 					fseek($handle, $range);
 				} else {
-					$this->_header('Content-Length: ' . $fileSize);
+					$this->response->header('Content-Length', $fileSize);
 				}
 			} else {
-
-				if ($cache) {
-					$this->response->cache(time(), $cache);
-				} else {
-					$this->response->header(array(
-						'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
-						'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-						'Pragma' => 'no-cache'
-					));
-				}
-
 				$this->response->type($extension);
-				$this->respose->header(array(
-					'Last-Modified' => $modified,
+				$this->response->header(array(
 					'Content-Length' => $fileSize
 				));
 			}
-			$this->response->send();
 			$this->_clearBuffer();
 			$this->_sendFile($handle);
 
-			return;
+			$this->response->send();
+			return $this->_sendFile($handle);
 		}
+
 		return false;
 	}
 
 	protected function _sendFile($handle) {
+		$chunkSize = 8192;
+		$buffer = '';
 		while (!feof($handle)) {
 			if (!$this->_isActive()) {
 				fclose($handle);
