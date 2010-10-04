@@ -2,20 +2,20 @@
 /**
  * SecurityComponentTest file
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller.components
  * @since         CakePHP(tm) v 1.2.0.5435
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'Controller', false);
 App::import('Component', 'Security');
@@ -152,6 +152,8 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Components->init($this->Controller);
 		$this->Controller->Security = $this->Controller->TestSecurity;
 		$this->Controller->Security->blackHoleCallback = 'fail';
+		$this->Security = $this->Controller->Security;
+		$this->Security->csrfCheck = false;
 
 		Configure::write('Security.salt', 'foo!');
 	}
@@ -232,7 +234,7 @@ class SecurityComponentTest extends CakeTestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requirePost('posted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -280,16 +282,16 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', serialize(array('allowedControllers' => array())));
+		$this->Controller->Session->write('_Token', array('allowedControllers' => array()));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed);
 
-		$this->Controller->Session->write('_Token', serialize(array(
+		$this->Controller->Session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted2')
-		)));
+		));
 		$this->Controller->request->data = array('username' => 'willy', 'password' => 'somePass');
 		$this->Controller->request['action'] = 'posted';
 		$this->Controller->Security->requireAuth('posted');
@@ -310,9 +312,9 @@ class SecurityComponentTest extends CakeTestCase {
 		$this->Controller->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 
-		$this->Controller->Security->Session->write('_Token', serialize(array(
+		$this->Controller->Security->Session->write('_Token', array(
 			'allowedControllers' => array('SecurityTest'), 'allowedActions' => array('posted')
-		)));
+		));
 		$this->Controller->request['controller'] = 'SecurityTest';
 		$this->Controller->request['action'] = 'posted';
 
@@ -450,8 +452,8 @@ DIGEST;
 	function testRequireGetSucceedWrongMethod() {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireGet('getted');
-		$this->Controller->Security->startup($this->Controller);
+		$this->Security->requireGet('getted');
+		$this->Security->startup($this->Controller);
 		$this->assertFalse($this->Controller->failed);
 	}
 
@@ -604,14 +606,8 @@ DIGEST;
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertFalse($result, 'validatePost passed when fields were missing. %s');
-
-		$this->Controller->request->data = array(
-			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
-			'_Token' => compact('fields')
-		);
-		$result = $this->Controller->Security->validatePost($this->Controller);
-		$this->assertFalse($result, 'validatePost passed when key was missing. %s');
 	}
+
 /**
  * Tests validation of checkbox arrays
  *
@@ -854,16 +850,6 @@ DIGEST;
 		);
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
-	}
-
-/**
- * testLoginValidation method
- *
- * @access public
- * @return void
- */
-	function testLoginValidation() {
-
 	}
 
 /**
@@ -1237,5 +1223,153 @@ DIGEST;
 
 		$this->Controller->Security->blackHole($this->Controller, 'auth');
 		$this->assertTrue($this->Controller->Security->Session->check('_Token'), '_Token was deleted by blackHole %s');
+	}
+
+/**
+ * test setting 
+ *
+ * @return void
+ */
+	function testCsrfSettings() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->startup($this->Controller);
+
+		$token = $this->Security->Session->read('_Token');
+		$this->assertEquals(count($token['csrfTokens']), 1, 'Missing the csrf token.');
+		$this->assertEquals(strtotime('+10 minutes'), current($token['csrfTokens']), 'Token expiry does not match');
+	}
+
+/**
+ * Test setting multiple nonces, when startup() is called more than once, (ie more than one request.)
+ *
+ * @return void
+ */
+	function testCsrfSettingMultipleNonces() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		$this->Security->startup($this->Controller);
+		$this->Security->startup($this->Controller);
+
+		$token = $this->Security->Session->read('_Token');
+		$this->assertEquals(count($token['csrfTokens']), 2, 'Missing the csrf token.');
+		foreach ($token['csrfTokens'] as $key => $expires) {
+			$this->assertEquals(strtotime('+10 minutes'), $expires, 'Token expiry does not match');
+		}
+	}
+
+/**
+ * test that nonces are consumed by form submits.
+ *
+ * @return void
+ */
+	function testCsrfNonceConsumption() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
+		
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'nonce1'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$token = $this->Security->Session->read('_Token');
+		$this->assertFalse(isset($token['csrfTokens']['nonce1']), 'Token was not consumed');
+	}
+
+/**
+ * test that expired values in the csrfTokens are cleaned up.
+ *
+ * @return void
+ */
+	function testCsrfNonceVacuum() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array(
+			'valid' => strtotime('+30 minutes'),
+			'poof' => strtotime('-11 minutes'),
+			'dust' => strtotime('-20 minutes')
+		));
+		$this->Security->startup($this->Controller);
+		$tokens = $this->Security->Session->read('_Token.csrfTokens');
+		$this->assertEquals(2, count($tokens), 'Too many tokens left behind');
+		$this->assertNotEmpty('valid', $tokens, 'Valid token was removed.');
+		
+	}
+
+/**
+ * test that when the key is missing the request is blackHoled
+ *
+ * @return void
+ */
+	function testCsrfBlackHoleOnKeyMismatch() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+		
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('+10 minutes')));
+		
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'not the right value'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
+	}
+
+/**
+ * test that when the key is missing the request is blackHoled
+ *
+ * @return void
+ */
+	function testCsrfBlackHoleOnExpiredKey() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfExpires = '+10 minutes';
+
+		$this->Security->Session->write('_Token.csrfTokens', array('nonce1' => strtotime('-5 minutes')));
+
+		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
+		$this->Controller->request->expects($this->once())->method('is')
+			->with('post')
+			->will($this->returnValue(true));
+
+		$this->Controller->request->params['action'] = 'index';
+		$this->Controller->request->data = array(
+			'_Token' => array(
+				'key' => 'nonce1'
+			),
+			'Post' => array(
+				'title' => 'Woot'
+			)
+		);
+		$this->Security->startup($this->Controller);
+		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
 	}
 }

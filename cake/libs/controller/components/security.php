@@ -2,7 +2,7 @@
 /**
  * Security Component
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -155,6 +155,24 @@ class SecurityComponent extends Component {
 	public $validatePost = true;
 
 /**
+ * Whether to use CSRF protected forms.  Set to false to disable CSRF protection on forms.
+ *
+ * @var boolean
+ * @see http://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+ * @see SecurityComponent::$csrfExpires
+ */
+	public $csrfCheck = true;
+
+/**
+ * The duration from when a CSRF token is created that it will expire on.
+ * Each form/page request will generate a new token that can only be submitted once unless 
+ * it expires.  Can be any value compatible with strtotime()
+ *
+ * @var string
+ */
+	public $csrfExpires = '+30 minutes';
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -198,9 +216,12 @@ class SecurityComponent extends Component {
 
 		if ($isPost && $isRequestAction && $this->validatePost) {
 			if ($this->_validatePost($controller) === false) {
-				if (!$this->blackHole($controller, 'auth')) {
-					return null;
-				}
+				return $this->blackHole($controller, 'auth');
+			}
+		}
+		if ($isPost && $this->csrfCheck) {
+			if ($this->_validateCsrf($controller) === false) {
+				return $this->blackHole($controller, 'csrf');
 			}
 		}
 		$this->_generateToken($controller);
@@ -416,7 +437,7 @@ class SecurityComponent extends Component {
 				$code = 401;
 				$controller->header($this->loginRequest());
 			}
-			$controller->redirect(null, $code, true);
+			return $controller->redirect(null, $code, true);
 		} else {
 			return $this->_callback($controller, $this->blackHoleCallback, array($error));
 		}
@@ -498,7 +519,7 @@ class SecurityComponent extends Component {
 				}
 
 				if ($this->Session->check('_Token')) {
-					$tData = unserialize($this->Session->read('_Token'));
+					$tData = $this->Session->read('_Token');
 
 					if (!empty($tData['allowedControllers']) && !in_array($this->request->params['controller'], $tData['allowedControllers']) || !empty($tData['allowedActions']) && !in_array($this->request->params['action'], $tData['allowedActions'])) {
 						if (!$this->blackHole($controller, 'auth')) {
@@ -574,17 +595,8 @@ class SecurityComponent extends Component {
 		}
 		$data = $controller->request->data;
 
-		if (!isset($data['_Token']) || !isset($data['_Token']['fields']) || !isset($data['_Token']['key'])) {
+		if (!isset($data['_Token']) || !isset($data['_Token']['fields'])) {
 			return false;
-		}
-		$token = $data['_Token']['key'];
-
-		if ($this->Session->check('_Token')) {
-			$tokenData = unserialize($this->Session->read('_Token'));
-
-			if ($tokenData['expires'] < time() || $tokenData['key'] !== $token) {
-				return false;
-			}
 		}
 
 		$locked = null;
@@ -649,42 +661,71 @@ class SecurityComponent extends Component {
  * @return bool Success
  */
 	protected function _generateToken(&$controller) {
-		if (isset($controller->params['requested']) && $controller->params['requested'] === 1) {
+		if (isset($controller->request->params['requested']) && $controller->request->params['requested'] === 1) {
 			if ($this->Session->check('_Token')) {
-				$tokenData = unserialize($this->Session->read('_Token'));
-				$controller->params['_Token'] = $tokenData;
+				$tokenData = $this->Session->read('_Token');
+				$controller->request->params['_Token'] = $tokenData;
 			}
 			return false;
 		}
 		$authKey = Security::generateAuthKey();
-		$expires = strtotime('+' . Security::inactiveMins() . ' minutes');
 		$token = array(
 			'key' => $authKey,
-			'expires' => $expires,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
-			'disabledFields' => $this->disabledFields
+			'disabledFields' => $this->disabledFields,
+			'csrfTokens' => array()
 		);
 
-		if (!isset($controller->request->data)) {
-			$controller->request->data = array();
+		if ($this->csrfCheck) {
+			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 
 		if ($this->Session->check('_Token')) {
-			$tokenData = unserialize($this->Session->read('_Token'));
-			$valid = (
-				isset($tokenData['expires']) &&
-				$tokenData['expires'] > time() &&
-				isset($tokenData['key'])
-			);
-
-			if ($valid) {
-				$token['key'] = $tokenData['key'];
+			$tokenData = $this->Session->read('_Token');
+			if (!empty($tokenData['csrfTokens'])) {
+				$token['csrfTokens'] += $tokenData['csrfTokens'];
+				$token['csrfTokens'] = $this->_expireTokens($token['csrfTokens']);
 			}
 		}
 		$controller->request->params['_Token'] = $token;
-		$this->Session->write('_Token', serialize($token));
+		$this->Session->write('_Token', $token);
 		return true;
+	}
+
+/**
+ * Validate that the controller has a CSRF token in the POST data
+ * and that the token is legit/not expired.  If the token is valid
+ * it will be removed from the list of valid tokens.
+ *
+ * @param Controller $controller A controller to check
+ * @return boolean Valid csrf token.
+ */
+	protected function _validateCsrf($controller) {
+		$token = $this->Session->read('_Token');
+		$requestToken = $controller->request->data('_Token.key');
+		if (isset($token['csrfTokens'][$requestToken]) && $token['csrfTokens'][$requestToken] >= time()) {
+			$this->Session->delete('_Token.csrfTokens.' . $requestToken);
+			return true;
+		}
+		return false;
+	}
+
+/**
+ * Expire CSRF nonces and remove them from the valid tokens.
+ * Uses a simple timeout to expire the tokens.
+ *
+ * @param array $tokens An array of nonce => expires.
+ * @return An array of nonce => expires.
+ */
+	protected function _expireTokens($tokens) {
+		$now = time();
+		foreach ($tokens as $nonce => $expires) {
+			if ($expires < $now) {
+				unset($tokens[$nonce]);
+			}
+		}
+		return $tokens;
 	}
 
 /**

@@ -2,22 +2,22 @@
 /**
  * SessionHelperTest file
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *  Licensed under The Open Group Test Suite License
- *  Redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       cake
  * @subpackage    cake.tests.cases.libs.view.helpers
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/opengroup.php The Open Group Test Suite License
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Helper', 'AppHelper', 'Controller', 'View'));
+App::import('Core', array('Controller', 'View'));
 App::import('Helper', array('Session'));
 
 /**
@@ -35,6 +35,7 @@ class SessionHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setUp();
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Session = new SessionHelper($this->View);
@@ -76,7 +77,7 @@ class SessionHelperTest extends CakeTestCase {
 	function tearDown() {
 		$_SESSION = array();
 		unset($this->View, $this->Session);
-		App::build();
+		parent::tearDown();
 	}
 
 /**
@@ -110,17 +111,6 @@ class SessionHelperTest extends CakeTestCase {
 	}
 
 /**
- * testWrite method
- *
- * @access public
- * @return void
- */
-	function testWrite() {
-		$this->expectError();
-		$this->Session->write('NoWay', 'AccessDenied');
-	}
-
-/**
  * testFlash method
  *
  * @access public
@@ -151,42 +141,4 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertFalse($this->Session->check('Message.bare'));
 	}
 
-/**
- * testID method
- *
- * @access public
- * @return void
- */
-	function testID() {
-		$id = session_id();
-		$result = CakeSession::id();
-		$this->assertEqual($id, $result);
-	}
-
-/**
- * testError method
- *
- * @access public
- * @return void
- */
-	function testError() {
-		$result = $this->Session->error();
-		$this->assertFalse($result);
-
-		$this->Session->read('CauseError');
-		$result = $this->Session->error();
-		$expected = "CauseError doesn't exist";
-		$this->assertEqual($result, $expected);
-	}
-
-/**
- * testValid method
- *
- * @access public
- * @return void
- */
-	function testValid() {
-		//wierd it always ends up false in the test suite
-		//$this->assertFalse($this->Session->valid());
-	}
 }

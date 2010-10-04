@@ -4,7 +4,7 @@
  *
  * Long description for after_tree_fixture.php
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  *

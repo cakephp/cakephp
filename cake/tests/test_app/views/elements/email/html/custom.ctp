@@ -3,7 +3,7 @@
 
 /**
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://www.cakephp.org)
  * Copyright 2005-2008, Cake Software Foundation, Inc. (http://www.cakefoundation.org)

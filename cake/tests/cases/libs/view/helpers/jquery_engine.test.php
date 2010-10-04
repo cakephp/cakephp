@@ -2,7 +2,7 @@
 /**
  * JqueryEngineTestCase
  *
- * PHP versions 4 and 5
+ * PHP 5
  *
  * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
  * Copyright 2006-2009, Cake Software Foundation, Inc.
