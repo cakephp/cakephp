@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once 'console_output.php';
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -34,22 +33,6 @@ class ShellDispatcher {
  * @access public
  */
 	public $stdin;
-
-/**
- * Standard output stream.
- *
- * @var filehandle
- * @access public
- */
-	public $stdout;
-
-/**
- * Standard error stream.
- *
- * @var filehandle
- * @access public
- */
-	public $stderr;
 
 /**
  * Contains command switches parsed from the command line.
@@ -138,7 +121,16 @@ class ShellDispatcher {
 		$this->parseParams($args);
 		$this->_initEnvironment();
 		$this->__buildPaths();
-		$this->_stop($this->dispatch() === false ? 1 : 0);
+	}
+
+/**
+ * Run the dispatcher
+ *
+ * @return void
+ */
+	public static function run($argv) {
+		$dispatcher = new ShellDispatcher($argv);
+		$dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
 	}
 
 /**
@@ -176,8 +168,6 @@ class ShellDispatcher {
  */
 	protected function _initEnvironment() {
 		$this->stdin = fopen('php://stdin', 'r');
-		$this->stdout = new ConsoleOutput('php://stdout');
-		$this->stderr = new ConsoleOutput('php://stderr');
 
 		if (!$this->__bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH;
@@ -259,21 +249,6 @@ class ShellDispatcher {
 	}
 
 /**
- * Clear the console
- *
- * @return void
- */
-	public function clear() {
-		if (empty($this->params['noclear'])) {
-			if ( DS === '/') {
-				passthru('clear');
-			} else {
-				passthru('cls');
-			}
-		}
-	}
-
-/**
  * Dispatches a CLI request
  *
  * @return boolean
@@ -306,7 +281,7 @@ class ShellDispatcher {
 
 		$methods = array();
 
-		if (is_a($Shell, 'Shell')) {
+		if ($Shell instanceof  Shell) {
 			$Shell->initialize();
 			$Shell->loadTasks();
 
@@ -391,18 +366,6 @@ class ShellDispatcher {
 	}
 
 /**
- * Returns a TaskCollection object for Shells to use when loading their tasks.
- *
- * @return TaskCollection object.
- */
-	public function getTaskCollection() {
-		if (empty($this->_Tasks)) {
-			$this->_Tasks = new TaskCollection($this);
-		}
-		return $this->_Tasks;
-	}
-
-/**
  * Prompts the user for input, and returns it.
  *
  * @param string $prompt Prompt text.
@@ -433,26 +396,6 @@ class ShellDispatcher {
 			return $default;
 		}
 		return $result;
-	}
-
-/**
- * Outputs to the stdout filehandle.
- *
- * @param string $string String to output.
- * @param boolean $newline If true, the outputs gets an added newline.
- * @return integer Returns the number of bytes output to stdout.
- */
-	public function stdout($string, $newline = true) {
-		return $this->stdout->write($string, $newline);
-	}
-
-/**
- * Outputs to the stderr filehandle.
- *
- * @param string $string Error text to output.
- */
-	public function stderr($string) {
-		$this->stderr->write($string, false);
 	}
 
 /**
@@ -545,7 +488,7 @@ class ShellDispatcher {
  */
 	public function help() {
 		$this->args = array('command_list');
-		$this->dispatch('command_list');
+		$this->dispatch();
 	}
 
 /**

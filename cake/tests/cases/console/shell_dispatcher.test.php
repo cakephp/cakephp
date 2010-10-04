@@ -38,22 +38,6 @@ class TestShellDispatcher extends ShellDispatcher {
 	public $params = array();
 
 /**
- * stdout property
- *
- * @var string
- * @access public
- */
-	public $stdout = '';
-
-/**
- * stderr property
- *
- * @var string
- * @access public
- */
-	public $stderr = '';
-
-/**
  * stopped property
  *
  * @var string
@@ -75,28 +59,6 @@ class TestShellDispatcher extends ShellDispatcher {
  * @return void
  */
 	protected function _initEnvironment() {
-	}
-
-/**
- * stderr method
- *
- * @return void
- */
-	public function stderr($string) {
-		$this->stderr .= rtrim($string, ' ');
-	}
-
-/**
- * stdout method
- *
- * @return void
- */
-	public function stdout($string, $newline = true) {
-		if ($newline) {
-			$this->stdout .= rtrim($string, ' ') . "\n";
-		} else {
-			$this->stdout .= rtrim($string, ' ');
-		}
 	}
 
 /**
@@ -757,42 +719,4 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertIdentical($Dispatcher->args, array());
 	}
 
-/**
- * testHelpCommand method
- *
- * @return void
- */
-	public function testHelpCommand() {
-		$Dispatcher = new TestShellDispatcher();
-
-		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/welcome \[.*TestPluginTwo.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/acl \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/api \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/bake \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/console \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/i18n \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/schema \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/testsuite \[.*CORE.*\]/";
-	 	$this->assertPattern($expected, $Dispatcher->stdout);
-
-		$expected = "/sample \[.*test_app.*\]/";
-		$this->assertPattern($expected, $Dispatcher->stdout);
-	}
 }

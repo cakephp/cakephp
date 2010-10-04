@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'TaskCollection');
+require_once CAKE . 'console' . DS . 'console_output.php';
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -140,11 +141,25 @@ class Shell extends Object {
 	public $Tasks;
 
 /**
+ * stdout object.
+ *
+ * @var ConsoleOutput
+ */
+	public $stdout;
+
+/**
+ * stderr object.
+ *
+ * @var ConsoleOutput
+ */
+	public $stderr;
+
+/**
  *  Constructs this Shell instance.
  *
  */
-	function __construct(&$dispatch) {
-		$vars = array('params', 'args', 'shell', 'shellCommand' => 'command');
+	function __construct(&$dispatch, $stdout = null, $stderr = null) {
+		$vars = array('params', 'args', 'shell', 'shellCommand' => 'command', 'shellPaths');
 
 		foreach ($vars as $key => $var) {
 			if (is_string($key)) {
@@ -161,8 +176,18 @@ class Shell extends Object {
 		if ($this->alias == null) {
 			$this->alias = $this->name;
 		}
+
 		$this->Dispatch =& $dispatch;
-		$this->Tasks = $dispatch->getTaskCollection();
+		$this->Tasks = new TaskCollection($this);
+
+		$this->stdout = $stdout;
+		$this->stderr = $stderr;
+		if ($this->stdout == null) {
+			$this->stdout = new ConsoleOutput('php://stdout');
+		}
+		if ($this->stderr == null) {
+			$this->stderr = new ConsoleOutput('php://stderr');
+		}
 	}
 
 /**
@@ -190,7 +215,7 @@ class Shell extends Object {
  *
  */
 	protected function _welcome() {
-		$this->Dispatch->clear();
+		$this->clear();
 		$this->out();
 		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
 		$this->hr();
@@ -310,10 +335,7 @@ class Shell extends Object {
  * @return integer Returns the number of bytes returned from writing to stdout.
  */
 	public function out($message = null, $newlines = 1) {
-		if (is_array($message)) {
-			$message = implode($this->nl(), $message);
-		}
-		return $this->Dispatch->stdout($message . $this->nl($newlines), false);
+		return $this->stdout->write($message, $newlines);
 	}
 
 /**
@@ -324,10 +346,7 @@ class Shell extends Object {
  * @param integer $newlines Number of newlines to append
  */
 	public function err($message = null, $newlines = 1) {
-		if (is_array($message)) {
-			$message = implode($this->nl(), $message);
-		}
-		$this->Dispatch->stderr($message . $this->nl($newlines));
+		$this->stderr->write($message, $newlines);
 	}
 
 /**
@@ -338,7 +357,7 @@ class Shell extends Object {
  * @return string
  */
 	function nl($multiplier = 1) {
-		return str_repeat("\n", $multiplier);
+		return str_repeat(ConsoleOutput::LF, $multiplier);
 	}
 
 /**
@@ -367,6 +386,21 @@ class Shell extends Object {
 			$this->err($message);
 		}
 		$this->_stop(1);
+	}
+
+/**
+ * Clear the console
+ *
+ * @return void
+ */
+	public function clear() {
+		if (empty($this->params['noclear'])) {
+			if ( DS === '/') {
+				passthru('clear');
+			} else {
+				passthru('cls');
+			}
+		}
 	}
 
 /**
