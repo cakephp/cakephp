@@ -1,6 +1,6 @@
 <?php
 /**
- * ShellDispatcherTest file
+ * ConsoleOutputTest file
  *
  * PHP 5
  *

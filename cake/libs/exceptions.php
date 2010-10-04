@@ -314,6 +314,33 @@ class MissingTaskClassException extends CakeException {
 }
 
 /**
+ * Used when a shell method cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellMethodException extends CakeException { 
+	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s help`";
+}
+
+/**
+ * Used when a shell class cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellClassException extends CakeException { 
+	protected $_messageTemplate = "Shell class %s could not be loaded.";
+}
+
+/**
+ * Used when a shell class cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellFileException extends CakeException { 
+	protected $_messageTemplate = "Shell file %s could not be loaded.";
+}
+
+/**
  * Exception class to be thrown when a database table is not found in the datasource
  *
  * @package cake.libs

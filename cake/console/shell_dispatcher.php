@@ -307,12 +307,6 @@ class ShellDispatcher {
 
 		$Shell = $this->_getShell($plugin);
 
-		if (!$Shell) {
-			$title = sprintf(__('Error: Class %s could not be loaded.'), $this->shellClass);
-			$this->stderr($title . "\n");
-			return false;
-		}
-
 		$methods = array();
 
 		if (is_a($Shell, 'Shell')) {
@@ -360,10 +354,7 @@ class ShellDispatcher {
 			}
 		}
 
-		$title = sprintf(__('Error: Unknown %1$s command %2$s.'), $this->shellName, $arg);
-		$message = sprintf(__('For usage try `cake %s help`'), $this->shell);
-		$this->stderr($title . "\n" . $message . "\n");
-		return false;
+		throw new MissingShellMethodException(array('shell' => $this->shell, 'method' => $arg));
 	}
 
 /**
@@ -386,7 +377,7 @@ class ShellDispatcher {
 			}
 		}
 		if (!isset($loaded)) {
-			return false;
+			throw new MissingShellFileException(array('shell' => $this->shell . '.php'));
 		}
 
 		if (!class_exists('Shell')) {
@@ -397,7 +388,7 @@ class ShellDispatcher {
 			require $this->shellPath;
 		}
 		if (!class_exists($this->shellClass)) {
-			return false;
+			throw new MissingShellClassException(array('shell' => $this->shell));
 		}
 		$Shell = new $this->shellClass($this);
 		return $Shell;
