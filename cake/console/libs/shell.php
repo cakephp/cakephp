@@ -192,7 +192,7 @@ class Shell extends Object {
 	protected function _welcome() {
 		$this->Dispatch->clear();
 		$this->out();
-		$this->out('Welcome to CakePHP v' . Configure::version() . ' Console');
+		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
 		$this->hr();
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
@@ -345,10 +345,11 @@ class Shell extends Object {
  * Outputs a series of minus characters to the standard output, acts as a visual separator.
  *
  * @param integer $newlines Number of newlines to pre- and append
+ * @param integer $width Width of the line, defaults to 63
  */
-	public function hr($newlines = 0) {
+	public function hr($newlines = 0, $width = 63) {
 		$this->out(null, $newlines);
-		$this->out('---------------------------------------------------------------');
+		$this->out(str_repeat('-', $width));
 		$this->out(null, $newlines);
 	}
 

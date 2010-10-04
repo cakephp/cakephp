@@ -116,7 +116,8 @@ class ConsoleOutput {
 	protected static $_styles = array(
 		'error' => array('text' => 'red'),
 		'warning' => array('text' => 'yellow'),
-		'info' => array('text' => 'cyan')
+		'info' => array('text' => 'cyan'),
+		'success' => array('text' => 'green')
 	);
 
 /**
