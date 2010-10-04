@@ -543,80 +543,12 @@ class ShellDispatcher {
 	}
 
 /**
- * Shows console help
+ * Shows console help.  Performs an internal dispatch to the CommandList Shell
  *
  */
 	public function help() {
-		// Make Command List and display it here.
-		$this->clear();
-		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		$this->stdout("---------------------------------------------------------------");
-		$this->stdout("Current Paths:");
-		$this->stdout(" -app: ". $this->params['app']);
-		$this->stdout(" -working: " . rtrim($this->params['working'], DS));
-		$this->stdout(" -root: " . rtrim($this->params['root'], DS));
-		$this->stdout(" -core: " . rtrim(CORE_PATH, DS));
-		$this->stdout("");
-		$this->stdout("Changing Paths:");
-		$this->stdout("your working path should be the same as your application path");
-		$this->stdout("to change your path use the '-app' param.");
-		$this->stdout("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
-
-		$this->stdout("\nAvailable Shells:");
-		$shellList = array();
-		foreach ($this->shellPaths as $path) {
-			if (!is_dir($path)) {
-				continue;
-			}
- 			$shells = App::objects('file', $path);
-			if (empty($shells)) {
-				continue;
-			}
-			if (preg_match('@plugins[\\\/]([^\\\/]*)@', $path, $matches)) {
-				$type = Inflector::camelize($matches[1]);
-			} elseif (preg_match('@([^\\\/]*)[\\\/]vendors[\\\/]@', $path, $matches)) {
-				$type = $matches[1];
-			} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH . DS . 'cake') === 0) {
-				$type = 'CORE';
-			} else {
-				$type = 'app';
-			}
-			foreach ($shells as $shell) {
-				if ($shell !== 'shell.php') {
-					$shell = str_replace('.php', '', $shell);
-					$shellList[$shell][$type] = $type;
-				}
-			}
-		}
-		if ($shellList) {
-			ksort($shellList);
-			if (DS === '/') {
-				$width = exec('tput cols') - 2;
-			}
-			if (empty($width)) {
-				$width = 80;
-			}
-			$columns = max(1, floor($width / 30));
-			$rows = ceil(count($shellList) / $columns);
-
-			foreach ($shellList as $shell => $types) {
-				sort($types);
-				$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
-			}
-			$out = array_chunk($shellList, $rows);
-			for ($i = 0; $i < $rows; $i++) {
-				$row = '';
-				for ($j = 0; $j < $columns; $j++) {
-					if (!isset($out[$j][$i])) {
-						continue;
- 					}
-					$row .= $out[$j][$i];
- 				}
-				$this->stdout(" " . $row);
-			}
-		}
-		$this->stdout("\nTo run a command, type 'cake shell_name [args]'");
-		$this->stdout("To get help on a specific command, type 'cake shell_name help'");
+		$this->args = array('command_list');
+		$this->dispatch('command_list');
 	}
 
 /**

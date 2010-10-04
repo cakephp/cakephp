@@ -30,8 +30,6 @@ class CommandListShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->out("\nWelcome to CakePHP v" . Configure::version() . " Console");
-		$this->out("---------------------------------------------------------------");
 		$this->out("Current Paths:");
 		$this->out(" -app: ". $this->params['app']);
 		$this->out(" -working: " . rtrim($this->params['working'], DS));
