@@ -180,19 +180,16 @@ class ShellDispatcher {
 		$this->stderr = new ConsoleOutput('php://stderr');
 
 		if (!$this->__bootstrap()) {
-			$this->stderr("\nCakePHP Console: ");
-			$this->stderr("\nUnable to load Cake core:");
-			$this->stderr("\tMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH);
-			$this->_stop();
+			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH;
+			throw new RuntimeException($message);
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
-			$this->stderr("\nCakePHP Console: ");
-			$this->stderr('This file has been loaded incorrectly and cannot continue.');
-			$this->stderr('Please make sure that ' . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console is in your system path,');
-			$this->stderr('and check the manual for the correct usage of this command.');
-			$this->stderr('(http://manual.cakephp.org/)');
-			$this->_stop();
+			$message = "This file has been loaded incorrectly and cannot continue.\n" .
+				"Please make sure that " . DIRECTORY_SEPARATOR . "cake" . DIRECTORY_SEPARATOR . "console is in your system path,\n" . 
+				"and check the cookbook for the correct usage of this command.\n" .
+				"(http://book.cakephp.org/)";
+			throw new RuntimeException($message);
 		}
 
 		$this->shiftArgs();
