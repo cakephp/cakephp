@@ -30,18 +30,18 @@ class CommandListShell extends Shell {
  * @return void
  */
 	public function main() {
-		$this->out("Current Paths:");
+		$this->out("<info>Current Paths:</info>", 2);
 		$this->out(" -app: ". $this->params['app']);
 		$this->out(" -working: " . rtrim($this->params['working'], DS));
 		$this->out(" -root: " . rtrim($this->params['root'], DS));
 		$this->out(" -core: " . rtrim(CORE_PATH, DS));
 		$this->out("");
-		$this->out("Changing Paths:");
-		$this->out("your working path should be the same as your application path");
+		$this->out("<info>Changing Paths:</info>", 2);
+		$this->out("Your working path should be the same as your application path");
 		$this->out("to change your path use the '-app' param.");
-		$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp");
+		$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp", 2);
 
-		$this->out("\nAvailable Shells:");
+		$this->out("<info>Available Shells:</info>", 2);
 		$shellList = array();
 		foreach ($this->Dispatch->shellPaths as $path) {
 			if (!is_dir($path)) {
@@ -94,7 +94,8 @@ class CommandListShell extends Shell {
 				$this->out(" " . $row);
 			}
 		}
-		$this->out("\nTo run a command, type 'cake shell_name [args]'");
-		$this->out("To get help on a specific command, type 'cake shell_name help'");
+		$this->out();
+		$this->out("To run a command, type 'cake shell_name [args]'");
+		$this->out("To get help on a specific command, type 'cake shell_name help'", 2);
 	}
 }
