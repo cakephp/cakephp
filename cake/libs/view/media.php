@@ -20,6 +20,12 @@
 App::import('View', 'View', false);
 
 class MediaView extends View {
+/**
+ * Indicates whether response gzip compression was enabled for this class
+ *
+ * @var boolean
+ */
+	private  $compressionEnabled = false;
 
 /**
  * Constructor
@@ -42,7 +48,7 @@ class MediaView extends View {
  * @return unknown
  */
 	function render() {
-		$name = $download = $extension = $id = $modified = $path = $size = $cache = $mimeType = null;
+		$name = $download = $extension = $id = $modified = $path = $size = $cache = $mimeType = $compress = null;
 		extract($this->viewVars, EXTR_OVERWRITE);
 
 		if ($size) {
@@ -135,7 +141,9 @@ class MediaView extends View {
 				));
 			}
 			$this->_clearBuffer();
-			$this->_sendFile($handle);
+			if ($compress) {
+				$this->compressionEnabled = $this->response->compress();
+			}
 
 			$this->response->send();
 			return $this->_sendFile($handle);
@@ -155,7 +163,9 @@ class MediaView extends View {
 			set_time_limit(0);
 			$buffer = fread($handle, $chunkSize);
 			echo $buffer;
-			$this->_flushBuffer();
+			if (!$this->compressionEnabled) {
+				$this->_flushBuffer();
+			}
 		}
 		fclose($handle);
 	}
