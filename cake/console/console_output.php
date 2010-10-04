@@ -1,6 +1,6 @@
 <?php
 /**
- * ConsoleOutput  file. 
+ * ConsoleOutput file.
  *
  * PHP 5
  *

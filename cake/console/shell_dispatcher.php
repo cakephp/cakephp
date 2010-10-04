@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+require_once 'console_output.php';
+
 /**
  * Shell dispatcher handles dispatching cli commands.
  *
@@ -174,8 +176,8 @@ class ShellDispatcher {
  */
 	protected function _initEnvironment() {
 		$this->stdin = fopen('php://stdin', 'r');
-		$this->stdout = fopen('php://stdout', 'w');
-		$this->stderr = fopen('php://stderr', 'w');
+		$this->stdout = new ConsoleOutput('php://stdout');
+		$this->stderr = new ConsoleOutput('php://stderr');
 
 		if (!$this->__bootstrap()) {
 			$this->stderr("\nCakePHP Console: ");
@@ -454,11 +456,7 @@ class ShellDispatcher {
  * @return integer Returns the number of bytes output to stdout.
  */
 	public function stdout($string, $newline = true) {
-		if ($newline) {
-			return fwrite($this->stdout, $string . "\n");
-		} else {
-			return fwrite($this->stdout, $string);
-		}
+		return $this->stdout->write($string, $newline);
 	}
 
 /**
@@ -467,7 +465,7 @@ class ShellDispatcher {
  * @param string $string Error text to output.
  */
 	public function stderr($string) {
-		fwrite($this->stderr, $string);
+		$this->stderr->write($string, false);
 	}
 
 /**
