@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Media', 'Controller'));
+App::import('Core', array('Media', 'Controller', 'CakeResponse'));
 
 if (!class_exists('ErrorHandler')) {
 	App::import('Core', array('Error'));
@@ -27,96 +27,7 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 }
 
 /**
- * ThemePostsController class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
- */
-class MediaController extends Controller {
-
-/**
- * name property
- *
- * @var string 'Media'
- * @access public
- */
-	public $name = 'Media';
-
-/**
- * index download
- *
- * @access public
- * @return void
- */
-	function download() {
-		$path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS;
-		$id = 'test_asset.css';
-		$extension = 'css';
-		$this->set(compact('path', 'id', 'extension'));
-	}
-}
-
-/**
- * TestMediaView class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
- */
-class TestMediaView extends MediaView {
-
-/**
- * headers public property as a copy from protected property _headers
- *
- * @var array
- * @access public
- */
-	public $headers = array();
-
-/**
- * active property to mock the status of a remote connection
- *
- * @var boolean true
- * @access public
- */
-	public $active = true;
-
-	function _output() {
-		$this->headers = $this->_headers;
-	}
-
-/**
- * _isActive method. Usted de $active property to mock an active (true) connection,
- * or an aborted (false) one
- *
- * @access protected
- * @return void
- */
-	function _isActive() {
-		return $this->active;
-	}
-
-/**
- * _clearBuffer method
- *
- * @access protected
- * @return void
- */
-	function _clearBuffer() {
-		return true;
-	}
-
-/**
- * _flushBuffer method
- *
- * @access protected
- * @return void
- */
-	function _flushBuffer() {
-	}
-}
-
-/**
- * ThemeViewTest class
+ * MediaViewTest class
  *
  * @package       cake
  * @subpackage    cake.tests.cases.libs
@@ -130,24 +41,33 @@ class MediaViewTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
-		$this->Controller =& new Controller();
-		$this->MediaController =& new MediaController();
-		$this->MediaController->viewPath = 'posts';
-		$this->MediaController->download();
-		$this->MediaView =& new TestMediaView($this->MediaController);
+		$controller = new Controller();
+		$this->MediaView = $this->getMock('MediaView', array('_isActive', '_clearBuffer', '_flushBuffer'));
+		$this->MediaView->response = $this->getMock('CakeResponse');
 	}
 
 /**
  * endTest method
  *
- * @access public
  * @return void
  */
 	function tearDown() {
 		parent::tearDown();
 		unset($this->MediaView);
-		unset($this->MediaController);
-		unset($this->Controller);
+	}
+
+/**
+ * tests that rendering a file that does not exists throws an exception
+ *
+ * @expectedException NotFoundException 
+ * @return void
+ */
+	public function testRenderNotFound() {
+		$this->MediaView->viewVars = array(
+			'path' => '/some/missing/folder',
+			'id' => 'file.jpg'
+		);
+		$this->MediaView->render();
 	}
 
 /**
@@ -157,12 +77,43 @@ class MediaViewTest extends CakeTestCase {
  * @return void
  */
 	function testRender() {
+		$this->MediaView->viewVars = array(
+			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'id' => 'test_asset.css',
+			'extension' => 'css',	
+		);
+		$this->MediaView->expects($this->exactly(2))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$this->MediaView->response->expects($this->exactly(2))
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$this->MediaView->response->expects($this->at(1))
+			->method('header')
+			->with(array(
+				'Date' => gmdate('D, d M Y H:i:s', time()) . ' GMT',
+				'Expires' => '0',
+				'Cache-Control' => 'private, must-revalidate, post-check=0, pre-check=0',
+				'Pragma' => 'no-cache'
+			));
+
+		$this->MediaView->response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Content-Length' => 31
+			));
+		$this->MediaView->response->expects($this->once())->method('send');
+		$this->MediaView->expects($this->once())->method('_clearBuffer');
+		$this->MediaView->expects($this->once())->method('_flushBuffer');
+
 		ob_start();
 		$result = $this->MediaView->render();
 		$output = ob_get_clean();
-
+		$this->assertEqual('this is the test asset css file', $output);
 		$this->assertTrue($result !== false);
-		$this->assertEqual($output, 'this is the test asset css file');
 	}
 
 /**
