@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::import('Core', 'ErrorHandler');
+require_once 'console_output.php';
 
 /**
  * Error Handler for Cake console. Does simple printing of the 
@@ -44,7 +44,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @param array $messages Error messages
  */
 	function __construct($error) {
-		$this->stderr = fopen('php://stderr', 'w');
+		$this->stderr = new ConsoleOutput('php://stderr');
 		parent::__construct($error);
 	}
 
@@ -105,15 +105,11 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @return void
  */
 	public function _outputMessage($template = null) {
-		$this->stderr($this->error->getMessage() . "\n" . $this->error->getTraceAsString());
+		$this->stderr->write(sprintf(
+			__("<error>Error:</error> %s\n%s"), 
+			$this->error->getMessage(), 
+			$this->error->getTraceAsString()
+		));
 	}
 
-/**
- * Outputs to the stderr filehandle.
- *
- * @param string $string Error text to output.
- */
-	public function stderr($string) {
-		fwrite($this->stderr, "Error: ". $string . "\n");
-	}
 }

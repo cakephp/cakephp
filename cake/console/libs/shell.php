@@ -360,7 +360,7 @@ class Shell extends Object {
  * @param string $message An optional error message
  */
 	public function error($title, $message = null) {
-		$this->err(sprintf(__('Error: %s'), $title));
+		$this->err(sprintf(__('<error>Error:</error> %s'), $title));
 
 		if (!empty($message)) {
 			$this->err($message);

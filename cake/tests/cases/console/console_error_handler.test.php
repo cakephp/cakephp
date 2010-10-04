@@ -32,7 +32,9 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return Mock object
  */
 	function getErrorHandler($exception) {
-		return $this->getMock('ConsoleErrorHandler', array('stderr'), array($exception));
+		$error = new ConsoleErrorHandler($exception);
+		$error->stderr = $this->getMock('ConsoleOutput');
+		return $error;
 	}
 
 /**
@@ -44,7 +46,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$exception = new MissingActionException('Missing action');
 		$error = $this->getErrorHandler($exception);
 
-		$error->expects($this->once())->method('stderr')
+		$error->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
 		$error->render();
@@ -59,7 +61,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$exception = new InvalidArgumentException('Too many parameters.');
 		$error = $this->getErrorHandler($exception);
 
-		$error->expects($this->once())->method('stderr')
+		$error->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 		
 		$error->render();
@@ -74,7 +76,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$exception = new NotFoundException('dont use me in cli.');
 		$error = $this->getErrorHandler($exception);
 
-		$error->expects($this->once())->method('stderr')
+		$error->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
 		$error->render();
@@ -89,7 +91,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$exception = new InternalErrorException('dont use me in cli.');
 		$error = $this->getErrorHandler($exception);
 
-		$error->expects($this->once())->method('stderr')
+		$error->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
 		$error->render();
@@ -104,6 +106,6 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
 		$exception = new InternalErrorException('dont use me in cli.');
 		$error = new ConsoleErrorHandler($exception);
 
-		$this->assertTrue(is_resource($error->stderr), 'No handle.');
+		$this->assertType('ConsoleOutput', $error->stderr, 'No handle.');
 	}
 }

@@ -325,11 +325,11 @@ class ShellTest extends CakeTestCase {
 	public function testError() {
 		$this->Shell->Dispatch->expects($this->at(0))
 			->method('stderr')
-			->with("Error: Foo Not Found\n");
+			->with("<error>Error:</error> Foo Not Found\n");
 
 		$this->Shell->Dispatch->expects($this->at(1))
 			->method('stderr')
-			->with("Error: Foo Not Found\n");
+			->with("<error>Error:</error> Foo Not Found\n");
 
 		$this->Shell->Dispatch->expects($this->at(2))
 			->method('stderr')
