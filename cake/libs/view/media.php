@@ -25,14 +25,22 @@ class MediaView extends View {
  *
  * @var boolean
  */
-	private  $compressionEnabled = false;
+	protected  $_compressionEnabled = false;
+
+/**
+ * Reference to the Response object responsible for sending the headers
+ *
+ * @var CakeResponse
+ */
+	public $response = null;
+
 
 /**
  * Constructor
  *
  * @param object $controller
  */
-	function __construct(&$controller) {
+	function __construct($controller = null) {
 		parent::__construct($controller);
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
@@ -142,7 +150,7 @@ class MediaView extends View {
 			}
 			$this->_clearBuffer();
 			if ($compress) {
-				$this->compressionEnabled = $this->response->compress();
+				$this->_compressionEnabled = $this->response->compress();
 			}
 
 			$this->response->send();
@@ -163,7 +171,7 @@ class MediaView extends View {
 			set_time_limit(0);
 			$buffer = fread($handle, $chunkSize);
 			echo $buffer;
-			if (!$this->compressionEnabled) {
+			if (!$this->_compressionEnabled) {
 				$this->_flushBuffer();
 			}
 		}
