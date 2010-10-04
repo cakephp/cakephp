@@ -353,7 +353,6 @@ class ShellDispatcher {
 				return $Shell->main();
 			}
 		}
-
 		throw new MissingShellMethodException(array('shell' => $this->shell, 'method' => $arg));
 	}
 
@@ -548,6 +547,7 @@ class ShellDispatcher {
  *
  */
 	public function help() {
+		// Make Command List and display it here.
 		$this->clear();
 		$this->stdout("\nWelcome to CakePHP v" . Configure::version() . " Console");
 		$this->stdout("---------------------------------------------------------------");
