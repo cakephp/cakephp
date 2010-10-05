@@ -36,7 +36,7 @@ class ConsoleInput {
  * @return void
  */
 	public function __construct($handle = 'php://stdin') {
-		$this->_input = fopen('php://stdin', 'r');
+		$this->_input = fopen($handle, 'r');
 	}
 
 /**
