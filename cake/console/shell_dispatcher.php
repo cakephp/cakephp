@@ -167,8 +167,6 @@ class ShellDispatcher {
  *
  */
 	protected function _initEnvironment() {
-		$this->stdin = fopen('php://stdin', 'r');
-
 		if (!$this->__bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'cake' . DS . 'libs exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new RuntimeException($message);

@@ -19,6 +19,7 @@
  */
 App::import('Shell', 'TaskCollection');
 require_once CAKE . 'console' . DS . 'console_output.php';
+require_once CAKE . 'console' . DS . 'console_input.php';
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -158,7 +159,7 @@ class Shell extends Object {
  *  Constructs this Shell instance.
  *
  */
-	function __construct(&$dispatch, $stdout = null, $stderr = null) {
+	function __construct(&$dispatch, $stdout = null, $stderr = null, $stdin = null) {
 		$vars = array('params', 'args', 'shell', 'shellCommand' => 'command', 'shellPaths');
 
 		foreach ($vars as $key => $var) {
@@ -182,11 +183,15 @@ class Shell extends Object {
 
 		$this->stdout = $stdout;
 		$this->stderr = $stderr;
+		$this->stdin = $stdin;
 		if ($this->stdout == null) {
 			$this->stdout = new ConsoleOutput('php://stdout');
 		}
 		if ($this->stderr == null) {
 			$this->stderr = new ConsoleOutput('php://stderr');
+		}
+		if ($this->stdin == null) {
+			$this->stdin = new ConsoleInput('php://stdin');
 		}
 	}
 
@@ -305,7 +310,7 @@ class Shell extends Object {
 		if (!$this->interactive) {
 			return $default;
 		}
-		$in = $this->Dispatch->getInput($prompt, $options, $default);
+		$in = $this->_getInput($prompt, $options, $default);
 
 		if ($options && is_string($options)) {
 			if (strpos($options, ',')) {
@@ -318,12 +323,45 @@ class Shell extends Object {
 		}
 		if (is_array($options)) {
 			while ($in == '' || ($in && (!in_array(strtolower($in), $options) && !in_array(strtoupper($in), $options)) && !in_array($in, $options))) {
-				$in = $this->Dispatch->getInput($prompt, $options, $default);
+				$in = $this->_getInput($prompt, $options, $default);
 			}
 		}
 		if ($in) {
 			return $in;
 		}
+	}
+
+/**
+ * Prompts the user for input, and returns it.
+ *
+ * @param string $prompt Prompt text.
+ * @param mixed $options Array or string of options.
+ * @param string $default Default input value.
+ * @return Either the default value, or the user-provided input.
+ */
+	protected function _getInput($prompt, $options, $default) {
+		if (!is_array($options)) {
+			$printOptions = '';
+		} else {
+			$printOptions = '(' . implode('/', $options) . ')';
+		}
+
+		if ($default === null) {
+			$this->stdout->write($prompt . " $printOptions \n" . '> ', 0);
+		} else {
+			$this->stdout->write($prompt . " $printOptions \n" . "[$default] > ", 0);
+		}
+		$result = $this->stdin->read();
+
+		if ($result === false) {
+			$this->_stop(1);
+		}
+		$result = trim($result);
+
+		if ($default != null && empty($result)) {
+			return $default;
+		}
+		return $result;
 	}
 
 /**
