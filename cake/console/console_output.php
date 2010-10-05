@@ -104,7 +104,6 @@ class ConsoleOutput {
 		'underline' => 4,
 		'blink' => 5,
 		'reverse' => 7,
-		'conceal' => 8
 	);
 
 /**
