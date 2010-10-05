@@ -39,6 +39,7 @@ class TestShell extends Shell {
  * @access public
  */
 	public $name = 'TestShell';
+
 /**
  * stopped property
  *
@@ -107,7 +108,9 @@ class ShellTest extends CakeTestCase {
 			'ShellDispatcher',
 			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
-		$this->Shell =& new TestShell($this->Dispatcher);
+		$output = $this->getMock('ConsoleOutput');
+		$error = $this->getMock('ConsoleOutput');
+		$this->Shell =& new TestShell($this->Dispatcher, $output, $error);
 	}
 
 /**
@@ -129,6 +132,8 @@ class ShellTest extends CakeTestCase {
 		$this->assertEquals($this->Dispatcher, $this->Shell->Dispatch);
 		$this->assertEqual($this->Shell->name, 'TestShell');
 		$this->assertEqual($this->Shell->alias, 'TestShell');
+		$this->assertType('ConsoleOutput', $this->Shell->stdout);
+		$this->assertType('ConsoleOutput', $this->Shell->stderr);
 	}
 
 /**
@@ -221,21 +226,21 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testOut() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stdout')
-			->with("Just a test\n", false);
+		$this->Shell->stdout->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stdout')
-			->with("Just\na\ntest\n", false);
+		$this->Shell->stdout->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stdout')
-			->with("Just\na\ntest\n\n", false);
+		$this->Shell->stdout->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expects($this->at(3))
-			->method('stdout')
-			->with("\n", false);
+		$this->Shell->stdout->expects($this->at(3))
+			->method('write')
+			->with('', 1);
 
 		$this->Shell->out('Just a test');
 
@@ -252,21 +257,21 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testErr() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stderr')
-			->with("Just a test\n");
+		$this->Shell->stderr->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stderr')
-			->with("Just\na\ntest\n");
+		$this->Shell->stderr->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stderr')
-			->with("Just\na\ntest\n\n");
+		$this->Shell->stderr->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expects($this->at(3))
-			->method('stderr')
-			->with("\n");
+		$this->Shell->stderr->expects($this->at(3))
+			->method('write')
+			->with('', 1);
 
 		$this->Shell->err('Just a test');
 
@@ -298,17 +303,17 @@ class ShellTest extends CakeTestCase {
 	public function testHr() {
 		$bar = '---------------------------------------------------------------';
 
-		$this->Shell->Dispatch->expects($this->at(0))->method('stdout')->with('', false);
-		$this->Shell->Dispatch->expects($this->at(1))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(2))->method('stdout')->with('', false);
+		$this->Shell->stdout->expects($this->at(0))->method('write')->with('', 0);
+        $this->Shell->stdout->expects($this->at(1))->method('write')->with($bar, 1);
+        $this->Shell->stdout->expects($this->at(2))->method('write')->with('', 0);
 
-		$this->Shell->Dispatch->expects($this->at(3))->method('stdout')->with("\n", false);
-		$this->Shell->Dispatch->expects($this->at(4))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(5))->method('stdout')->with("\n", false);
+		$this->Shell->stdout->expects($this->at(3))->method('write')->with("", true);
+		$this->Shell->stdout->expects($this->at(4))->method('write')->with($bar, 1);
+		$this->Shell->stdout->expects($this->at(5))->method('write')->with("", true);
 
-		$this->Shell->Dispatch->expects($this->at(6))->method('stdout')->with("\n\n", false);
-		$this->Shell->Dispatch->expects($this->at(7))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(8))->method('stdout')->with("\n\n", false);
+		$this->Shell->stdout->expects($this->at(6))->method('write')->with("", 2);
+		$this->Shell->stdout->expects($this->at(7))->method('write')->with($bar, 1);
+		$this->Shell->stdout->expects($this->at(8))->method('write')->with("", 2);
 
 		$this->Shell->hr();
 
@@ -323,17 +328,17 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testError() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stderr')
-			->with("<error>Error:</error> Foo Not Found\n");
+		$this->Shell->stderr->expects($this->at(0))
+			->method('write')
+			->with("<error>Error:</error> Foo Not Found", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stderr')
-			->with("<error>Error:</error> Foo Not Found\n");
+		$this->Shell->stderr->expects($this->at(1))
+			->method('write')
+			->with("<error>Error:</error> Foo Not Found", 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stderr')
-			->with("Searched all...\n");
+		$this->Shell->stderr->expects($this->at(2))
+			->method('write')
+			->with("Searched all...", 1);
 
 		$this->Shell->error('Foo Not Found');
 		$this->assertIdentical($this->Shell->stopped, 1);
