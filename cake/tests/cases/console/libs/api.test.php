@@ -40,7 +40,7 @@ class ApiShellTest extends CakeTestCase {
 		parent::setUp();
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'dispatch', 'clear')
+			array('_stop', '_initEnvironment', 'dispatch')
 		);
 		$this->Shell = $this->getMock(
 			'ApiShell',

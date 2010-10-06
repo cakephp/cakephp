@@ -50,14 +50,15 @@ class CommandListTest extends CakeTestCase {
 
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stderr', '_stop', '_initEnvironment', 'dispatch', 'clear')
+			array('_stop', '_initEnvironment', 'dispatch')
 		);
-		$this->Dispatcher->stdout = new TestStringOutput();
+		$out = new TestStringOutput();
+		$in = $this->getMock('ConsoleInput');
 
 		$this->Shell = $this->getMock(
 			'CommandListShell',
-			array('in', '_stop'),
-			array(&$this->Dispatcher)
+			array('in', '_stop', 'clear'),
+			array(&$this->Dispatcher, $out, null, $in)
 		);
 	}
 
@@ -77,7 +78,7 @@ class CommandListTest extends CakeTestCase {
  */
 	function testMain() {
 		$this->Shell->main();
-		$output = $this->Dispatcher->stdout->output;
+		$output = $this->Shell->stdout->output;
 
 		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
 	 	$this->assertPattern($expected, $output);

@@ -34,11 +34,11 @@ class TestSuiteShellTest extends CakeTestCase {
 	public function setUp() {
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
+			array('_stop', '_initEnvironment')
 		);
 		$this->Shell = $this->getMock(
 			'TestSuiteShell',
-			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', 'run'),
+			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', 'run', 'clear'),
 			array(&$this->Dispatcher)
 		);
 		$this->Shell->Dispatch->shellPaths = App::path('shells');

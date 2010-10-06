@@ -52,7 +52,7 @@ class BakeShellTest extends CakeTestCase {
 		parent::setUp();
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
+			array('_stop', '_initEnvironment')
 		);
 		$this->Shell = $this->getMock(
 			'BakeShell',
