@@ -60,12 +60,13 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput');
+		$in = $this->getMock('ConsoleInput');
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('DbConfigTask', 
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 
@@ -114,7 +115,12 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
-		$this->Task = $this->getMock('DbConfigTask', array('in', '_stop', 'createFile'), array(&$this->Dispatcher));
+
+		$out = $this->getMock('ConsoleOutput');
+		$this->Task = $this->getMock(
+			'DbConfigTask',
+			array('in', '_stop', 'createFile'), array(&$this->Dispatcher, $out, $out)
+		);
 
 		$this->Task->expects($this->once())->method('_stop');
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('default')); //name

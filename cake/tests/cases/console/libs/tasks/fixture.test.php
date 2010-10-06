@@ -19,10 +19,6 @@
  */
 App::import('Shell', 'Shell', false);
 
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
-
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
 require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'fixture.php';
@@ -50,18 +46,19 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput');
+		$in = $this->getMock('ConsoleInput');
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('FixtureTask', 
-			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher)
+			array('in', 'err', 'createFile', '_stop', 'clear'),
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Task->Model = $this->getMock('Shell',
-			array('in', 'out', 'erro', 'createFile', 'getName', 'getTable', 'listAll'),
-			array(&$this->Dispatcher)
+			array('in', 'out', 'error', 'createFile', 'getName', 'getTable', 'listAll'),
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->Template =& new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 		$this->Task->Dispatch->shellPaths = App::path('shells');
 		$this->Task->Template->initialize();
 	}
@@ -82,8 +79,11 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
+		$out = $this->getMock('ConsoleOutput');
+		$in = $this->getMock('ConsoleInput');
+
 		$this->Dispatcher->params['working'] = DS . 'my' . DS . 'path';
-		$Task = new FixtureTask($this->Dispatcher);
+		$Task = new FixtureTask($this->Dispatcher, $out, $out, $in);
 
 		$expected = DS . 'my' . DS . 'path' . DS . 'tests' . DS . 'fixtures' . DS;
 		$this->assertEqual($Task->path, $expected);
@@ -137,7 +137,7 @@ class FixtureTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function testImportRecordsFromDatabaseWithConditions() {
+	public function testImportRecordsFromDatabaseWithConditionsPoo() {
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(0))->method('in')
 			->will($this->returnValue('WHERE 1=1 LIMIT 10'));

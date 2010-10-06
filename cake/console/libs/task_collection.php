@@ -60,7 +60,9 @@ class TaskCollection extends ObjectCollection {
 			}
 		}
 
-		$this->_loaded[$name] = new $taskClass($this->_Shell);
+		$this->_loaded[$name] = new $taskClass(
+			$this->_Shell, $this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
+		);
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}

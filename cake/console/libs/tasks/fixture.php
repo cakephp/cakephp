@@ -54,8 +54,8 @@ class FixtureTask extends BakeTask {
  * Override initialize
  *
  */
-	public function __construct(&$dispatch) {
-		parent::__construct($dispatch);
+	public function __construct(&$dispatch, $stdout = null, $stderr = null, $stdin = null) {
+		parent::__construct($dispatch, $stdout, $stderr, $stdin);
 		$this->path = $this->params['working'] . DS . 'tests' . DS . 'fixtures' . DS;
 	}
 

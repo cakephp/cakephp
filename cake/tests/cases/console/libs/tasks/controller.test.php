@@ -67,12 +67,12 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
+		$out = $this->getMock('ConsoleOutput');
+		$in = $this->getMock('ConsoleInput');
 		$this->Task = $this->getMock('ControllerTask', 
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Task->name = 'ControllerTask';
 		$this->Task->Dispatch->shellPaths = App::path('shells');
@@ -81,13 +81,13 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$this->Task->Model = $this->getMock('ModelTask', 
 			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'), 
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Task->Project = $this->getMock('ProjectTask', 
 			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'), 
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->Test = $this->getMock('TestTask', array(), array(&$this->Dispatcher));
+		$this->Task->Test = $this->getMock('TestTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 	}
 
 /**
