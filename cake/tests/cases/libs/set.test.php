@@ -1127,6 +1127,27 @@ class SetTest extends CakeTestCase {
 		$expected = array(0 => array('Article' => array('id' => 1, 'approved' => 1)));
 		$result = Set::extract('/Article[approved=1]', $startingAtOne);
 		$this->assertEqual($result, $expected);
+
+		$items = array(
+			240 => array(
+				'A' => array(
+					'field1' => 'a240',
+					'field2' => 'a240',
+				),
+				'B' => array(
+					'field1' => 'b240',
+					'field2' => 'b240'
+				),
+			)
+		);
+
+		$expected = array(
+			0 => 'b240'
+		);
+
+		$result = Set::extract('/B/field1', $items);
+		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($result, Set::extract('{n}.B.field1', $items));
 	}
 /**
  * testExtractWithArrays method
