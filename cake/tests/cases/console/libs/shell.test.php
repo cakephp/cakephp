@@ -110,7 +110,8 @@ class ShellTest extends CakeTestCase {
 		);
 		$output = $this->getMock('ConsoleOutput');
 		$error = $this->getMock('ConsoleOutput');
-		$this->Shell =& new TestShell($this->Dispatcher, $output, $error);
+		$in = $this->getMock('ConsoleInput');
+		$this->Shell =& new TestShell($this->Dispatcher, $output, $error, $in);
 	}
 
 /**
@@ -174,29 +175,24 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testIn() {
-		$this->Dispatcher->expects($this->at(0))
-			->method('getInput')
-			->with('Just a test?', array('y', 'n'), 'n')
+		$this->Shell->stdin->expects($this->at(0))
+			->method('read')
 			->will($this->returnValue('n'));
 
-		$this->Dispatcher->expects($this->at(1))
-			->method('getInput')
-			->with('Just a test?', array('y', 'n'), 'n')
+		$this->Shell->stdin->expects($this->at(1))
+			->method('read')
 			->will($this->returnValue('Y'));
 
-		$this->Dispatcher->expects($this->at(2))
-			->method('getInput')
-			->with('Just a test?', 'y,n', 'n')
+		$this->Shell->stdin->expects($this->at(2))
+			->method('read')
 			->will($this->returnValue('y'));
 
-		$this->Dispatcher->expects($this->at(3))
-			->method('getInput')
-			->with('Just a test?', 'y/n', 'n')
+		$this->Shell->stdin->expects($this->at(3))
+			->method('read')
 			->will($this->returnValue('y'));
 
-		$this->Dispatcher->expects($this->at(4))
-			->method('getInput')
-			->with('Just a test?', 'y', 'y')
+		$this->Shell->stdin->expects($this->at(4))
+			->method('read')
 			->will($this->returnValue('y'));
 
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
@@ -471,14 +467,12 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = true;
 
-		$this->Shell->Dispatch->expects($this->at(5))
-			->method('getInput')
-			->withAnyParameters()
+		$this->Shell->stdin->expects($this->at(0))
+			->method('read')
 			->will($this->returnValue('n'));
 	
-		$this->Shell->Dispatch->expects($this->at(9))
-			->method('getInput')
-			->withAnyParameters()
+		$this->Shell->stdin->expects($this->at(1))
+			->method('read')
 			->will($this->returnValue('y'));
 
 

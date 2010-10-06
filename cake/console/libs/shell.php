@@ -156,6 +156,13 @@ class Shell extends Object {
 	public $stderr;
 
 /**
+ * stdin object
+ *
+ * @var ConsoleInput
+ */
+	public $stdin;
+
+/**
  *  Constructs this Shell instance.
  *
  */
