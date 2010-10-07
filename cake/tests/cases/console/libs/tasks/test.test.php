@@ -239,16 +239,17 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function setup() {
 		parent::setup();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('TestTask', 
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->name = 'TestTask';
-		$this->Task->Template = new TemplateTask($this->Dispatcher);
+		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 	}
 
 /**
@@ -256,9 +257,9 @@ class TestTaskTest extends CakeTestCase {
  *
  * @return void
  */
-	public function teardown() {
-		parent::teardown();
-		ClassRegistry::flush();
+	public function tearDown() {
+		parent::tearDown();
+		unset($this->Task, $this->Dispatcher);
 	}
 
 /**

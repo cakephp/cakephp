@@ -60,8 +60,8 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput');
-		$in = $this->getMock('ConsoleInput');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('DbConfigTask', 
@@ -116,7 +116,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testExecuteIntoInteractive() {
 		$this->Task->initialize();
 
-		$out = $this->getMock('ConsoleOutput');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$this->Task = $this->getMock(
 			'DbConfigTask',
 			array('in', '_stop', 'createFile'), array(&$this->Dispatcher, $out, $out)

@@ -33,7 +33,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function getErrorHandler($exception) {
 		$error = new ConsoleErrorHandler($exception);
-		$error->stderr = $this->getMock('ConsoleOutput');
+		$error->stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		return $error;
 	}
 

@@ -41,12 +41,13 @@ class ProjectTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment', 'clear'));
 		$this->Task = $this->getMock('ProjectTask', 
 			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->path = TMP . 'tests' . DS;

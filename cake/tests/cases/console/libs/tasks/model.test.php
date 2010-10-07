@@ -49,12 +49,13 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->_setupOtherMocks();
 	}
@@ -65,9 +66,12 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _useMockedOut() {
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
 		$this->Task = $this->getMock('ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->_setupOtherMocks();
 	}
@@ -78,9 +82,12 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	protected function _setupOtherMocks() {
-		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher));
-		$this->Task->Test = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher));
-		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Test = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Template =& new TemplateTask($this->Task->Dispatch, $out, $out, $in);
 
 		$this->Task->name = 'ModelTask';
 		$this->Task->interactive = true;

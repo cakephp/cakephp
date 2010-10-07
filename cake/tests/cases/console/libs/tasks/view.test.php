@@ -222,16 +222,17 @@ class ViewTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('ViewTask',
 			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->Template = new TemplateTask($this->Dispatcher);
-		$this->Task->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatcher));
-		$this->Task->Project = $this->getMock('ProjectTask', array(), array(&$this->Dispatcher));
+		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
+		$this->Task->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Project = $this->getMock('ProjectTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 
 		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->path = TMP;

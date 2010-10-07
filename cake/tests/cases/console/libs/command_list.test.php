@@ -53,12 +53,12 @@ class CommandListTest extends CakeTestCase {
 			array('_stop', '_initEnvironment', 'dispatch')
 		);
 		$out = new TestStringOutput();
-		$in = $this->getMock('ConsoleInput');
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
 			'CommandListShell',
 			array('in', '_stop', 'clear'),
-			array(&$this->Dispatcher, $out, null, $in)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 	}
 

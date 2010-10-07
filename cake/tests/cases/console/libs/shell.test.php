@@ -108,9 +108,9 @@ class ShellTest extends CakeTestCase {
 			'ShellDispatcher',
 			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
 		);
-		$output = $this->getMock('ConsoleOutput');
-		$error = $this->getMock('ConsoleOutput');
-		$in = $this->getMock('ConsoleInput');
+		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Shell =& new TestShell($this->Dispatcher, $output, $error, $in);
 	}
 

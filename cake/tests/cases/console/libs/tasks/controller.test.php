@@ -68,8 +68,8 @@ class ControllerTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
-		$out = $this->getMock('ConsoleOutput');
-		$in = $this->getMock('ConsoleInput');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ControllerTask', 
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
 			array(&$this->Dispatcher, $out, $out, $in)

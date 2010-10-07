@@ -50,6 +50,9 @@ class BakeShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
 			array('_stop', '_initEnvironment')
@@ -57,7 +60,7 @@ class BakeShellTest extends CakeTestCase {
 		$this->Shell = $this->getMock(
 			'BakeShell',
 			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}

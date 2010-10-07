@@ -39,10 +39,11 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
-		$this->Task =& new ExtractTask($this->Dispatcher);
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
+		$this->Task = new ExtractTask($this->Dispatcher, $out, $out, $in);
 	}
 
 /**
@@ -51,7 +52,8 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		ClassRegistry::flush();
+		parent::tearDown();
+		unset($this->Task, $this->Dispatcher);
 	}
 
 /**

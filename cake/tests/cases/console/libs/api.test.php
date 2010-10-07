@@ -38,6 +38,9 @@ class ApiShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
 			array('_stop', '_initEnvironment', 'dispatch')
@@ -45,7 +48,7 @@ class ApiShellTest extends CakeTestCase {
 		$this->Shell = $this->getMock(
 			'ApiShell',
 			array('in', 'out', 'createFile', 'hr', '_stop'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 	}
 

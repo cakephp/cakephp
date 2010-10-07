@@ -46,8 +46,8 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$out = $this->getMock('ConsoleOutput');
-		$in = $this->getMock('ConsoleInput');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('FixtureTask', 
@@ -79,8 +79,8 @@ class FixtureTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$out = $this->getMock('ConsoleOutput');
-		$in = $this->getMock('ConsoleInput');
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Dispatcher->params['working'] = DS . 'my' . DS . 'path';
 		$Task = new FixtureTask($this->Dispatcher, $out, $out, $in);

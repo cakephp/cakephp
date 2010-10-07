@@ -41,13 +41,13 @@ class PluginTaskTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array(
-			'getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear'
-		));
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('PluginTask', 
-			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher)
+			array('in', 'err', 'createFile', '_stop', 'clear'),
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 		
@@ -221,7 +221,10 @@ class PluginTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecuteWithTwoArgs() {
-		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher));
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+
+		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
 

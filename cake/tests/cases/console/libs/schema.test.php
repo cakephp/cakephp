@@ -108,15 +108,16 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function setup() {
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher', 
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
-		);
+	public function setUp() {
+		parent::setUp();
+
+		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Shell = $this->getMock(
 			'SchemaShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop'),
-			array(&$this->Dispatcher)
+			array(&$this->Dispatcher, $out, $out, $in)
 		);
 	}
 
@@ -125,13 +126,12 @@ class SchemaShellTest extends CakeTestCase {
  *
  * @return void
  */
-	public function teardown() {
-		ClassRegistry::flush();
+	public function tearDown() {
+		parent::tearDown();
 		if (!empty($this->file) && $this->file instanceof File) {
 			$this->file->delete();
 			unset($this->file);
 		}
-		App::build();
 	}
 
 /**
