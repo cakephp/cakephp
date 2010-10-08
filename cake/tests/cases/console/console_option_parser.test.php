@@ -49,12 +49,27 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
- * test adding an option.
+ * test adding an option returns self.
  *
  * @return void
  */
-	function testAddOption() {
+	function testAddOptionReturnSelf() {
 		$parser = new ConsoleOptionParser();
 		$result = $parser->addOption('test');
+		$this->assertEquals($parser, $result, 'Did not return $this from addOption');
+	}
+
+/**
+ * test adding an option and using the shortcut value for parsing.
+ *
+ * @return void
+ */
+	function testAddOptionShortcut() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('test', array(
+			'shortcut' => 't'
+		));
+		$result = $parser->parse(array('-t', 'value'));
+		$this->assertEqual(array('test' => 'value'), $result[0], 'Short parameter did not parse out');
 	}
 }

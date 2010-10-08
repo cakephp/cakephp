@@ -98,14 +98,34 @@ class ConsoleOptionParser {
  *    when this option is not present.
  * - `description` - Description for this option.
  * - `type` - Require a certain type. Available types are `int` and `string`.  If the options
- *   value is the wrong type an exception will be raised.
+ *   value is the wrong type an exception will be raised. Leave undefined to accept anything.
  * - `default` - The default value for this option.  If not defined the default will be null.
  * 
- * @param string $name The name you want to the value to be parsed out as when options are parsed.
+ * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
- * @return ConsoleOptionParser returns $this.
+ * @return returns $this.
  */
 	public function addOption($name, $params = array()) {
+		$defaults = array(
+			'shortcut' => null,
+			'required' => false,
+			'description' => '',
+			'type' => null,
+			'default' => null
+		);
+		$this->_options[$name] = array_merge($defaults, $params);
+		return $this;
+	}
+
+/**
+ * Parse the argv array into a set of params and args.
+ *
+ * @param array $argv Array of args (argv) to parse
+ * @return Array array($params, $args)
+ */
+	public function parse($argv) {
+		$params = $args = array();
 		
+		return array($params, $args);
 	}
 }
