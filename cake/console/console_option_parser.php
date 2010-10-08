@@ -27,6 +27,15 @@
  * @subpackage    cake.cake.console
  */
 class ConsoleOptionParser {
+
+	protected $_description = null;
+	
+	protected $_epilog = null;
+	
+	protected $_options = array();
+	
+	protected $_args = array();
+
 /**
  * Construct an OptionParser for a given ARGV array.
  *
@@ -44,9 +53,59 @@ class ConsoleOptionParser {
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
  * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
  *
- * @param array $args The array of arguments with the Shell/Task stripped off.
  */
-	public function __construct($args) {
+	public function __construct() {
+
+	}
+
+/**
+ * Get or set the description text for shell/task
+ *
+ * @param string $text The text to set, or null if you want to read
+ * @return mixed If reading, the value of the description. If setting $this will be returned
+ */
+	public function description($text = null) {
+		if ($text !== null) {
+			$this->_description = $text;
+			return $this;
+		}
+		return $this->_description;
+	}
+
+/**
+ * Get or set an epilog to the parser.  The epilog is added to the end of
+ * the options and arguments listing when help is generated.
+ *
+ * @param string $text Text when setting or null when reading.
+ * @return mixed If reading, the value of the epilog. If setting $this will be returned.
+ */
+	public function epilog($text = null) {
+		if ($text !== null) {
+			$this->_epilog = $text;
+			return $this;
+		}
+		return $this->_epilog;
+	}
+
+/**
+ * Add an option to the option parser. Options allow you to define optional or required
+ * parameters for your console application. Options are defined by the parameters they use.
+ *
+ * ### Params
+ *
+ * - `shortcut` - The single letter variant for this option, leave undefined for none.
+ * - `required` - Set to true to force this option to be required.  An exception will be thrown
+ *    when this option is not present.
+ * - `description` - Description for this option.
+ * - `type` - Require a certain type. Available types are `int` and `string`.  If the options
+ *   value is the wrong type an exception will be raised.
+ * - `default` - The default value for this option.  If not defined the default will be null.
+ * 
+ * @param string $name The name you want to the value to be parsed out as when options are parsed.
+ * @param array $params An array of parameters that define the behavior of the option
+ * @return ConsoleOptionParser returns $this.
+ */
+	public function addOption($name, $params = array()) {
 		
 	}
 }

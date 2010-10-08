@@ -21,5 +21,40 @@
 require_once CAKE . 'console' .  DS . 'console_option_parser.php';
 
 class ConsoleOptionParserTest extends CakeTestCase {
-	
+
+/**
+ * test setting the console description
+ *
+ * @return void
+ */
+	function testDescription() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->description('A test');
+
+		$this->assertEquals($parser, $result, 'Setting description is not chainable');
+		$this->assertEquals('A test', $parser->description(), 'getting value is wrong.');
+	}
+
+/**
+ * test setting the console epliog
+ *
+ * @return void
+ */
+	function testEpilog() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->epilog('A test');
+
+		$this->assertEquals($parser, $result, 'Setting epilog is not chainable');
+		$this->assertEquals('A test', $parser->epilog(), 'getting value is wrong.');
+	}
+
+/**
+ * test adding an option.
+ *
+ * @return void
+ */
+	function testAddOption() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->addOption('test');
+	}
 }
