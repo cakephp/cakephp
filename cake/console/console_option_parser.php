@@ -98,8 +98,8 @@ class ConsoleOptionParser {
  *    when this option is not present.
  * - `description` - Description for this option.
  * - `type` - Require a certain type. Available types are `int` and `string`.  If the options
- *   value is the wrong type an exception will be raised. Leave undefined to accept anything.
- * - `default` - The default value for this option.  If not defined the default will be null.
+ *    value is the wrong type an exception will be raised. Leave undefined to accept anything.
+ * - `default` - The default value for this option.  If not defined the default will be true.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
@@ -107,13 +107,18 @@ class ConsoleOptionParser {
  */
 	public function addOption($name, $params = array()) {
 		$defaults = array(
+			'name' => $name,
 			'shortcut' => null,
 			'required' => false,
 			'description' => '',
 			'type' => null,
-			'default' => null
+			'default' => true
 		);
-		$this->_options[$name] = array_merge($defaults, $params);
+		$options = array_merge($defaults, $params);
+		$this->_options[$name] = $options;
+		if (!empty($options['shortcut'])) {
+			$this->_options[$options['shortcut']] = $options;
+		}
 		return $this;
 	}
 
@@ -125,7 +130,67 @@ class ConsoleOptionParser {
  */
 	public function parse($argv) {
 		$params = $args = array();
-		
+		$this->_tokens = $argv;
+		while ($token = array_shift($this->_tokens)) {
+			if (substr($token, 0, 2) == '--') {
+				$params = $this->_parseLongOption($token, $params);
+			} elseif (substr($token, 0, 1) == '-') {
+				$params = $this->_parseShortOption($token, $params);
+			}
+		}
 		return array($params, $args);
+	}
+
+/**
+ * Parse the value for a long option out of $this->_tokens
+ *
+ * @param string $option The option to parse.
+ * @param array $params The params to append the parsed value into
+ * @return array Params with $option added in.
+ */
+	protected function _parseLongOption($option, $params) {
+		$name = substr($option, 2);
+		return $this->_parseOptionName($name, $params);
+	}
+
+/**
+ * Parse the value for a short option out of $this->_tokens
+ *
+ * @param string $option The option to parse.
+ * @param array $params The params to append the parsed value into
+ * @return array Params with $option added in.
+ */
+	protected function _parseShortOption($option, $params) {
+		$key = substr($option, 1);
+		$name = $this->_options[$key]['name'];
+		return $this->_parseOptionName($name, $params);
+	}
+
+/**
+ * Parse an option by its name index.
+ *
+ * @param string $option The option to parse.
+ * @param array $params The params to append the parsed value into
+ * @return array Params with $option added in.
+ */
+	protected function _parseOptionName($name, $params) {
+		$definition = $this->_options[$name];
+		$nextValue = $this->_nextToken();
+		if (empty($nextValue)) {
+			$value = $definition['default'];
+		} else if ($nextValue{0} != '-') {
+			$value = $nextValue;
+		}
+		$params[$name] = $value;
+		return $params;
+	}
+
+/**
+ * Find the next token in the argv set.
+ *
+ * @return next token or ''
+ */
+	protected function _nextToken() {
+		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';
 	}
 }
