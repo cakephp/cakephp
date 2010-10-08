@@ -175,10 +175,10 @@ class ConsoleOptionParser {
 	protected function _parseOptionName($name, $params) {
 		$definition = $this->_options[$name];
 		$nextValue = $this->_nextToken();
-		if (empty($nextValue)) {
-			$value = $definition['default'];
-		} else if ($nextValue{0} != '-') {
+		if (!empty($nextValue) && $nextValue{0} != '-') {
 			$value = $nextValue;
+		} else {
+			$value = $definition['default'];
 		}
 		$params[$name] = $value;
 		return $params;

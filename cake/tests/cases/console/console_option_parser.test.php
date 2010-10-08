@@ -70,7 +70,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			'shortcut' => 't'
 		));
 		$result = $parser->parse(array('--test', 'value'));
-		$this->assertEqual(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
+		$this->assertEquals(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
 	}
 
 /**
@@ -84,7 +84,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			'shortcut' => 't'
 		));
 		$result = $parser->parse(array('--test=value'));
-		$this->assertEqual(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
+		$this->assertEquals(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
 	}
 
 /**
@@ -98,7 +98,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			'default' => 'default value',
 		));
 		$result = $parser->parse(array('--test'));
-		$this->assertEqual(array('test' => 'default value'), $result[0], 'Default value did not parse out');
+		$this->assertEquals(array('test' => 'default value'), $result[0], 'Default value did not parse out');
 	}
 
 /**
@@ -112,6 +112,22 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			'shortcut' => 't'
 		));
 		$result = $parser->parse(array('-t', 'value'));
-		$this->assertEqual(array('test' => 'value'), $result[0], 'Short parameter did not parse out');
+		$this->assertEquals(array('test' => 'value'), $result[0], 'Short parameter did not parse out');
+	}
+
+/**
+ * test multiple options at once.
+ *
+ * @return void
+ */
+	function testMultipleOptions() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('test')
+			->addOption('connection')
+			->addOption('table', array('shortcut' => 't'));
+
+		$result = $parser->parse(array('--test', 'value', '-t', '--connection', 'postgres'));
+		$expected = array('test' => 'value', 'table' => true, 'connection' => 'postgres');
+		$this->assertEquals($expected, $result[0], 'multiple options did not parse');
 	}
 }
