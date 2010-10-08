@@ -393,7 +393,7 @@ class Set {
 				$contexts = array($data);
 			}
 		}
-		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-]*\])/', $path), 1);
+		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-\s]*\])/', $path), 1);
 
 		do {
 			$token = array_shift($tokens);
