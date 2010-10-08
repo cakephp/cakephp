@@ -74,6 +74,20 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test adding an option and using the long value for parsing.
+ *
+ * @return void
+ */
+	function testAddOptionLongEquals() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('test', array(
+			'shortcut' => 't'
+		));
+		$result = $parser->parse(array('--test=value'));
+		$this->assertEqual(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
+	}
+
+/**
  * test adding an option and using the default.
  *
  * @return void

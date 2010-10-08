@@ -94,11 +94,7 @@ class ConsoleOptionParser {
  * ### Params
  *
  * - `shortcut` - The single letter variant for this option, leave undefined for none.
- * - `required` - Set to true to force this option to be required.  An exception will be thrown
- *    when this option is not present.
- * - `description` - Description for this option.
- * - `type` - Require a certain type. Available types are `int` and `string`.  If the options
- *    value is the wrong type an exception will be raised. Leave undefined to accept anything.
+ * - `description` - Description for this option.  Used when generating help for the option.
  * - `default` - The default value for this option.  If not defined the default will be true.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
@@ -111,7 +107,6 @@ class ConsoleOptionParser {
 			'shortcut' => null,
 			'required' => false,
 			'description' => '',
-			'type' => null,
 			'default' => true
 		);
 		$options = array_merge($defaults, $params);
@@ -150,6 +145,10 @@ class ConsoleOptionParser {
  */
 	protected function _parseLongOption($option, $params) {
 		$name = substr($option, 2);
+		if (strpos($name, '=') !== false) {
+			list($name, $value) = explode('=', $name, 2);
+			array_unshift($this->_tokens, $value);
+		}
 		return $this->_parseOptionName($name, $params);
 	}
 
@@ -188,6 +187,7 @@ class ConsoleOptionParser {
 /**
  * Find the next token in the argv set.
  *
+ * @param string
  * @return next token or ''
  */
 	protected function _nextToken() {
