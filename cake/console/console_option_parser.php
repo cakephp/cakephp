@@ -105,7 +105,6 @@ class ConsoleOptionParser {
 		$defaults = array(
 			'name' => $name,
 			'shortcut' => null,
-			'required' => false,
 			'description' => '',
 			'default' => true
 		);
