@@ -242,9 +242,40 @@ cake mycommand [-h] [--test] [-c default]
 
 <info>Options:</info>
 
---help, -h       Display this help.
---test           A test option.
---connection, -c The connection to use. <comment>(default: default)</comment>
+--help, -h        Display this help.
+--test            A test option.
+--connection, -c  The connection to use. <comment>(default: default)</comment>
+
+TEXT;
+		$this->assertEquals($expected, $result, 'Help does not match');
+	}
+
+/**
+ * test getting help with defined options.
+ *
+ * @return void
+ */
+	function testGetHelpWithOptionsAndArguments() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$result = $parser->help();
+		$expected = <<<TEXT
+<info>Usage:</info>
+cake mycommand [-h] [--test] model [other_longer]
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
+
+<info>Arguments:</info>
+
+model         The model to make.
+other_longer  Another argument. <comment>(optional)</comment>
+
 TEXT;
 		$this->assertEquals($expected, $result, 'Help does not match');
 	}

@@ -278,12 +278,26 @@ class ConsoleOptionParser {
 			foreach ($this->_options as $description) {
 				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
 			}
-			$max += 6;
+			$max += 8;
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($this->_options as $description) {
 				$out[] = $this->_optionHelp($description, $max);
 			}
+			$out[] = '';
+		}
+		if (!empty($this->_args)) {
+			$max = 0;
+			foreach ($this->_args as $description) {
+				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
+			}
+			$max += 1;
+			$out[] = '<info>Arguments:</info>';
+			$out[] = '';
+			foreach ($this->_args as $description) {
+				$out[] = $this->_argumentHelp($description, $max);
+			}
+			$out[] = '';
 		}
 		return implode("\n", $out);
 	}
@@ -305,6 +319,13 @@ class ConsoleOptionParser {
 			}
 			$usage[] = sprintf('[%s%s]', $name, $default);
 		}
+		foreach ($this->_args as $definition) {
+			$name = $definition['name'];
+			if (!$definition['required']) {
+				$name = '[' . $name . ']';
+			}
+			$usage[] = $name;
+		}
 		return implode(' ', $usage);
 	}
 
@@ -325,7 +346,24 @@ class ConsoleOptionParser {
 		if (strlen($name) < $nameWidth) {
 			$name = str_pad($name, $nameWidth, ' ');
 		}
-		return sprintf('%s %s%s', $name, $definition['help'], $default);
+		return sprintf('%s%s%s', $name, $definition['help'], $default);
+	}
+
+/**
+ * Generate the usage for a single argument.
+ *
+ * @return string
+ */
+	protected function _argumentHelp($definition, $width) {
+		$name = $definition['name'];
+		if (strlen($name) < $width) {
+			$name = str_pad($name, $width, ' ');
+		}
+		$optional = '';
+		if (!$definition['required']) {
+			$optional = ' <comment>(optional)</comment>';
+		}
+		return sprintf('%s %s%s', $name, $definition['help'], $optional);
 	}
 
 /**
