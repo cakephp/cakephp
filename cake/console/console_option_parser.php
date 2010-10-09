@@ -53,6 +53,13 @@ class ConsoleOptionParser {
 	protected $_options = array();
 
 /**
+ * Map of short -> long options, generated when using addOption()
+ *
+ * @var string
+ */
+	protected $_shortOptions = array();
+
+/**
  * Positional argument definitions.
  *
  * @see ConsoleOptionParser::addArgument()
@@ -99,8 +106,24 @@ class ConsoleOptionParser {
  * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
  *
  */
-	public function __construct() {
+	public function __construct($command = null, $defaultOptions = true) {
+		$this->_command = $command;
 
+		$this->addOption('help', array(
+			'short' => 'h',
+			'help' => 'Display this help.',
+			'boolean' => true
+		));
+
+		if ($defaultOptions) {
+			$this->addOption('verbose', array(
+				'short' => 'v',
+				'help' => __('Enable verbose output.')
+			))->addOption('quiet', array(
+				'short' => 'q',
+				'help' => __('Enable quiet output.')
+			));
+		}
 	}
 
 /**
@@ -158,7 +181,7 @@ class ConsoleOptionParser {
 		$options = array_merge($defaults, $params);
 		$this->_options[$name] = $options;
 		if (!empty($options['short'])) {
-			$this->_options[$options['short']] = $options;
+			$this->_shortOptions[$options['short']] = $name;
 		}
 		return $this;
 	}
@@ -201,6 +224,15 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Get the defined options in the parser.
+ *
+ * @return array
+ */
+	public function options() {
+		return $this->_options;
+	}
+
+/**
  * Parse the argv array into a set of params and args.
  *
  * @param array $argv Array of args (argv) to parse
@@ -227,6 +259,62 @@ class ConsoleOptionParser {
 			}
 		}
 		return array($params, $args);
+	}
+
+/**
+ * Gets formatted help for this parser object.
+ * Generates help text based on the description, options, arguments and epilog
+ * in the parser.
+ *
+ * @return string
+ */
+	public function help() {
+		$out = array();
+		$out[] = '<info>Usage:</info>';
+		$out[] = 'cake ' . $this->_command . $this->_generateUsage();
+		$out[] = '';
+		if (!empty($this->_options)) {
+			$max = 0;
+			foreach ($this->_options as $description) {
+				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
+			}
+			$max += 3;
+			$out[] = '<info>Options:</info>';
+			$out[] = '';
+			foreach ($this->_options as $description) {
+				$out[] = $this->_optionHelp($description, $max);
+			}
+		}
+		return implode("\n", $out);
+	}
+
+/**
+ * Generate the usage for a shell based on its arguments and options.
+ *
+ * @return void
+ */
+	protected function _generateUsage() {
+		
+	}
+
+/**
+ * Generate the usage for a single option.
+ *
+ * @return string
+ */
+	protected function _optionHelp($definition, $nameWidth) {
+		$default = $short = '';
+		if (!empty($definition['default']) && $definition['default'] !== true) {
+			$default = sprintf(__(' <comment>(default: %s)</comment>'), $definition['default']);
+		}
+		if (!empty($definition['short'])) {
+			$short = ', -' . $definition['short'];
+		}
+		$name = sprintf('--%s%s', $definition['name'], $short);
+		if (strlen($name) < $nameWidth) {
+			$name = str_pad($name, $nameWidth, ' ');
+		}
+		return sprintf('%s %s%s', $name, $definition['help'], $default);
 	}
 
 /**
@@ -264,7 +352,7 @@ class ConsoleOptionParser {
 				array_unshift($this->_tokens, '-' . $flags[$i]);
 			}
 		}
-		$name = $this->_options[$key]['name'];
+		$name = $this->_shortOptions[$key];
 		return $this->_parseOptionName($name, $params);
 	}
 

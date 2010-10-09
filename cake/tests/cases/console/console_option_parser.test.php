@@ -222,4 +222,28 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$parser->parse(array('one'));
 	}
+
+/**
+ * test getting help with defined options.
+ *
+ * @return void
+ */
+	function testGetHelpWithOptions() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('short' => 't', 'help' => 'A test option.'))
+			->addOption('connection', array('help' => 'The connection to use.', 'default' => 'default'));
+
+		$result = $parser->help();
+		$expected = <<<TEXT
+<info>Usage:</info>
+cake mycommand [-h] [-t] [--connection default]
+
+<info>Options:</info>
+
+--help, -h    Display this help.
+--test, -t    A test option.
+--connection  The connection to use. <comment>(default: default)</comment>
+TEXT;
+		$this->assertEquals($expected, $result, 'Help does not match');
+	}
 }
