@@ -28,12 +28,36 @@
  */
 class ConsoleOptionParser {
 
+/**
+ * Description text - displays before options when help is generated
+ *
+ * @see ConsoleOptionParser::description()
+ * @var string
+ */
 	protected $_description = null;
-	
+
+/**
+ * Epilog text - displays after options when help is generated
+ *
+ * @see ConsoleOptionParser::epilog()
+ * @var string
+ */
 	protected $_epilog = null;
-	
+
+/**
+ * Option definitions.
+ *
+ * @see ConsoleOptionParser::addOption()
+ * @var array
+ */	
 	protected $_options = array();
-	
+
+/**
+ * Positional argument definitions.
+ *
+ * @see ConsoleOptionParser::addArgument()
+ * @var array
+ */
 	protected $_args = array();
 
 /**
@@ -193,6 +217,13 @@ class ConsoleOptionParser {
 				$params = $this->_parseShortOption($token, $params);
 			} else {
 				$args = $this->_parseArg($token, $args);
+			}
+		}
+		foreach ($this->_args as $i => $arg) {
+			if ($arg['required'] && !isset($args[$i])) {
+				throw new RuntimeException(
+					sprintf(__('Missing required arguments. %s is required.'), $arg['name'])
+				);
 			}
 		}
 		return array($params, $args);

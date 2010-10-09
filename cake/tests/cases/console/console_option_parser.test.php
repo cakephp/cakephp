@@ -197,7 +197,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
  * @expectedException InvalidArgumentException
  * @return void
  */
-	function testParseArgument() {
+	function testParseArgumentTooMany() {
 		$parser = new ConsoleOptionParser();
 		$parser->addArgument('name', array('help' => 'An argument'))
 			->addArgument('other');
@@ -207,5 +207,19 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$this->assertEquals($expected, $result[1], 'Arguments are not as expected');
 
 		$result = $parser->parse(array('one', 'two', 'three'));
+	}
+
+/**
+ * test that when there are not enough arguments an exception is raised
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	function testPositionalArgNotEnough() {
+		$parser = new ConsoleOptionParser();
+		$parser->addArgument('name', array('required' => true))
+			->addArgument('other', array('required' => true));
+
+		$parser->parse(array('one'));
 	}
 }
