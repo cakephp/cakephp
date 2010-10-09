@@ -151,6 +151,22 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test that boolean options work
+ *
+ * @return void
+ */
+	function testOptionWithBooleanParam() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('no-commit', array('boolean' => true))
+			->addOption('table', array('short' => 't'));
+		
+		$result = $parser->parse(array('--table', 'posts', '--no-commit', 'arg1', 'arg2'));
+		$expected = array(array('table' => 'posts', 'no-commit' => true), array('arg1', 'arg2'));
+		$this->assertEquals($expected, $result, 'Boolean option did not parse correctly.');
+		
+	}
+
+/**
  * test positional argument parsing.
  *
  * @return void
@@ -189,6 +205,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$expected = array('one', 'two');
 		$result = $parser->parse($expected);
 		$this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+
 		$result = $parser->parse(array('one', 'two', 'three'));
 	}
 }

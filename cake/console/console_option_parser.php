@@ -117,6 +117,7 @@ class ConsoleOptionParser {
  * - `short` - The single letter variant for this option, leave undefined for none.
  * - `help` - Help text for this option.  Used when generating help for the option.
  * - `default` - The default value for this option.  If not defined the default will be true.
+ * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
@@ -127,7 +128,8 @@ class ConsoleOptionParser {
 			'name' => $name,
 			'short' => null,
 			'help' => '',
-			'default' => true
+			'default' => true,
+			'boolean' => false
 		);
 		$options = array_merge($defaults, $params);
 		$this->_options[$name] = $options;
@@ -245,7 +247,8 @@ class ConsoleOptionParser {
 	protected function _parseOptionName($name, $params) {
 		$definition = $this->_options[$name];
 		$nextValue = $this->_nextToken();
-		if (!empty($nextValue) && $nextValue{0} != '-') {
+		if (!$definition['boolean'] && !empty($nextValue) && $nextValue{0} != '-') {
+			array_shift($this->_tokens);
 			$value = $nextValue;
 		} else {
 			$value = $definition['default'];
