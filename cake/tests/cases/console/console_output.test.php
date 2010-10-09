@@ -96,7 +96,7 @@ class ConsoleOutputTest extends CakeTestCase {
  */
 	function testStylesGet() {
 		$result = $this->output->styles('error');
-		$expected = array('text' => 'red');
+		$expected = array('text' => 'red', 'underline' => true);
 		$this->assertEqual($result, $expected);
 
 		$this->assertNull($this->output->styles('made_up_goop'));
@@ -128,7 +128,7 @@ class ConsoleOutputTest extends CakeTestCase {
  */
 	function testFormattingSimple() {
 		$this->output->expects($this->once())->method('_write')
-			->with("\033[31mError:\033[0m Something bad");
+			->with("\033[31;4mError:\033[0m Something bad");
 
 		$this->output->write('<error>Error:</error> Something bad', false);
 	}
@@ -171,7 +171,7 @@ class ConsoleOutputTest extends CakeTestCase {
  */
 	function testFormattingMultipleStylesName() {
 		$this->output->expects($this->once())->method('_write')
-			->with("\033[31mBad\033[0m \033[33mWarning\033[0m Regular");
+			->with("\033[31;4mBad\033[0m \033[33mWarning\033[0m Regular");
 
 		$this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
 	}

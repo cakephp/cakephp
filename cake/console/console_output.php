@@ -24,9 +24,10 @@
  * Can generate colourzied output on consoles that support it. There are a few 
  * built in styles
  *
- * - `error` Error messages. Bright red text.
- * - `warning` Warning messages. Bright orange text
- * - `info` Informational messages. Cyan text.
+ * - `error` Error messages.
+ * - `warning` Warning messages.
+ * - `info` Informational messages.
+ * - `comment` Additional text.
  *
  * By defining styles with addStyle() you can create custom console styles.
  *
@@ -113,10 +114,11 @@ class ConsoleOutput {
  * @var array
  */
 	protected static $_styles = array(
-		'error' => array('text' => 'red'),
+		'error' => array('text' => 'red', 'underline' => true),
 		'warning' => array('text' => 'yellow'),
 		'info' => array('text' => 'cyan'),
-		'success' => array('text' => 'green')
+		'success' => array('text' => 'green'),
+		'comment' => array('text' => 'blue')
 	);
 
 /**
