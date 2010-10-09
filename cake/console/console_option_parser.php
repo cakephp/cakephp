@@ -271,7 +271,7 @@ class ConsoleOptionParser {
 	public function help() {
 		$out = array();
 		$out[] = '<info>Usage:</info>';
-		$out[] = 'cake ' . $this->_command . $this->_generateUsage();
+		$out[] = $this->_generateUsage();
 		$out[] = '';
 		if (!empty($this->_options)) {
 			$max = 0;
@@ -290,11 +290,22 @@ class ConsoleOptionParser {
 
 /**
  * Generate the usage for a shell based on its arguments and options.
+ * Usage strings favour short options over the long ones. and optional args will 
+ * be indicated with []
  *
- * @return void
+ * @return string
  */
 	protected function _generateUsage() {
-		
+		$usage = array('cake ' . $this->_command);
+		foreach ($this->_options as $definition) {
+			$name = empty($definition['short']) ? '--' . $definition['name'] : '-' . $definition['short'];
+			$default = '';
+			if (!empty($definition['default']) && $definition['default'] !== true) {
+				$default = ' ' . $definition['default'];
+			}
+			$usage[] = sprintf('[%s%s]', $name, $default);
+		}
+		return implode(' ', $usage);
 	}
 
 /**
