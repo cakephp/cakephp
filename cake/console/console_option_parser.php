@@ -37,20 +37,31 @@ class ConsoleOptionParser {
 	protected $_args = array();
 
 /**
- * Construct an OptionParser for a given ARGV array.
+ * Construct an OptionParser so you can define its behavior
  *
- * ### Positional arguments
- *
- * ### Switches
+ * ### Options
  *
  * Named arguments come in two forms, long and short. Long arguments are preceeded 
  * by two - and give a more verbose option name. i.e. `--version`. Short arguments are 
  * preceeded by one - and are only one character long.  They usually match with a long option, 
  * and provide a more terse alternative.
  *
- * #### Using switches
+ * #### Using Options
  * 
- * Switches can be defined with both long and short forms.
+ * Options can be defined with both long and short forms.  By using `$parser->addOption()`
+ * you can define new options.  The name of the option is used as its long form, and you 
+ * can supply an additional short form, with the `short` option.
+ *
+ * Calling options can be done using syntax similar to most *nix command line tools. Long options
+ * cane either include an `=` or leave it out.
+ *
+ * `cake myshell command --connection default --name=something`
+ *
+ * Short options can be defined singally or in groups.
+ *
+ * `cake myshell command -cn`
+ *
+ * ### Positional arguments
  *
  * ### Providing Help text
  *
