@@ -278,7 +278,7 @@ class ConsoleOptionParser {
 			foreach ($this->_options as $description) {
 				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
 			}
-			$max += 3;
+			$max += 6;
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($this->_options as $description) {
