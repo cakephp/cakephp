@@ -129,7 +129,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$result = $parser->parse(array('-o', '-t', '-f'));
 		$expected = array('file' => true, 'test' => true, 'output' => true);
 		$this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
-		
+
 		$result = $parser->parse(array('-otf'));
 		$this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
 	}
@@ -148,5 +148,47 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$result = $parser->parse(array('--test', 'value', '-t', '--connection', 'postgres'));
 		$expected = array('test' => 'value', 'table' => true, 'connection' => 'postgres');
 		$this->assertEquals($expected, $result[0], 'multiple options did not parse');
+	}
+
+/**
+ * test positional argument parsing.
+ *
+ * @return void
+ */
+	function testPositionalArgument() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->addArgument('name', array('help' => 'An argument'));
+		$this->assertEquals($parser, $result, 'Should returnn this');
+	}
+
+/**
+ * test overwriting positional arguments.
+ *
+ * @return void
+ */
+	function testPositionalArgOverwrite() {
+		$parser = new ConsoleOptionParser();
+		$parser->addArgument('name', array('help' => 'An argument'))
+			->addArgument('other', array('index' => 0));
+
+		$result = $parser->arguments();
+		$this->assertEquals(1, count($result), 'Overwrite did not occur');
+	}
+
+/**
+ * test parsing arguments.
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	function testParseArgument() {
+		$parser = new ConsoleOptionParser();
+		$parser->addArgument('name', array('help' => 'An argument'))
+			->addArgument('other');
+
+		$expected = array('one', 'two');
+		$result = $parser->parse($expected);
+		$this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+		$result = $parser->parse(array('one', 'two', 'three'));
 	}
 }

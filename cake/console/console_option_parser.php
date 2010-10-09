@@ -63,6 +63,12 @@ class ConsoleOptionParser {
  *
  * ### Positional arguments
  *
+ * If no positional arguments are defined, all of them will be parsed.  If you define positional 
+ * arguments any arguments greater than those defined will cause exceptions.  Additionally you can 
+ * declare arguments as optional, by setting the required param to false.
+ *
+ * `$parser->addArgument('model', array('required' => false));`
+ *
  * ### Providing Help text
  *
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
@@ -109,7 +115,7 @@ class ConsoleOptionParser {
  * ### Params
  *
  * - `short` - The single letter variant for this option, leave undefined for none.
- * - `description` - Description for this option.  Used when generating help for the option.
+ * - `help` - Help text for this option.  Used when generating help for the option.
  * - `default` - The default value for this option.  If not defined the default will be true.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
@@ -120,7 +126,7 @@ class ConsoleOptionParser {
 		$defaults = array(
 			'name' => $name,
 			'short' => null,
-			'description' => '',
+			'help' => '',
 			'default' => true
 		);
 		$options = array_merge($defaults, $params);
@@ -134,10 +140,38 @@ class ConsoleOptionParser {
 /**
  * Add a positional argument to the option parser.
  *
- * @return void
+ * ### Params
+ *
+ * - `help` The help text to display for this argument.
+ * - `required` Whether this parameter is required.
+ * - `index` The index for the arg, if left undefined the argument will be put
+ *   onto the end of the arguments. If you define the same index twice the first
+ *   option will be overwritten.
+ *
+ * @param string $name The name of the argument.
+ * @param array $params Parameters for the argument, see above.
+ * @return $this.
  */
 	public function addArgument($name, $params = array()) {
-		
+		$index = count($this->_args);
+		$defaults = array(
+			'name' => $name,
+			'help' => '',
+			'index' => $index,
+			'required' => false
+		);
+		$options = array_merge($defaults, $params);
+		$this->_args[$options['index']] = $options;
+		return $this;
+	}
+
+/**
+ * Gets the arguments defined in the parser.
+ *
+ * @return array Array of argument descriptions
+ */
+	public function arguments() {
+		return $this->_args;
 	}
 
 /**
@@ -145,6 +179,7 @@ class ConsoleOptionParser {
  *
  * @param array $argv Array of args (argv) to parse
  * @return Array array($params, $args)
+ * @throws InvalidArgumentException When an invalid parameter is encountered.
  */
 	public function parse($argv) {
 		$params = $args = array();
@@ -154,6 +189,8 @@ class ConsoleOptionParser {
 				$params = $this->_parseLongOption($token, $params);
 			} elseif (substr($token, 0, 1) == '-') {
 				$params = $this->_parseShortOption($token, $params);
+			} else {
+				$args = $this->_parseArg($token, $args);
 			}
 		}
 		return array($params, $args);
@@ -215,6 +252,27 @@ class ConsoleOptionParser {
 		}
 		$params[$name] = $value;
 		return $params;
+	}
+
+/**
+ * Checks that the argument doesn't exceed the declared arguments.
+ *
+ * @param string $argument The argument to append
+ * @param array $args The array of parsed args to append to.
+ * @return array Args
+ */
+	protected function _parseArg($argument, $args) {
+		if (empty($this->_args)) {
+			array_push($args, $argument);
+			return $args;
+		}
+		$position = 0;
+		$next = count($args);
+		if (!isset($this->_args[$next])) {
+			throw new InvalidArgumentException(__('Too many arguments.'));
+		}
+		array_push($args, $argument);
+		return $args;
 	}
 
 /**
