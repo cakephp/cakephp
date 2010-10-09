@@ -132,6 +132,15 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Add a positional argument to the option parser.
+ *
+ * @return void
+ */
+	public function addArgument($name, $params = array()) {
+		
+	}
+
+/**
  * Parse the argv array into a set of params and args.
  *
  * @param array $argv Array of args (argv) to parse
@@ -151,7 +160,8 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Parse the value for a long option out of $this->_tokens
+ * Parse the value for a long option out of $this->_tokens.  Will handle
+ * options with an `=` in them.
  *
  * @param string $option The option to parse.
  * @param array $params The params to append the parsed value into
