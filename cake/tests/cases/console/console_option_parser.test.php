@@ -67,7 +67,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	function testAddOptionLong() {
 		$parser = new ConsoleOptionParser();
 		$parser->addOption('test', array(
-			'shortcut' => 't'
+			'short' => 't'
 		));
 		$result = $parser->parse(array('--test', 'value'));
 		$this->assertEquals(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
@@ -81,7 +81,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	function testAddOptionLongEquals() {
 		$parser = new ConsoleOptionParser();
 		$parser->addOption('test', array(
-			'shortcut' => 't'
+			'short' => 't'
 		));
 		$result = $parser->parse(array('--test=value'));
 		$this->assertEquals(array('test' => 'value'), $result[0], 'Long parameter did not parse out');
@@ -102,17 +102,36 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
- * test adding an option and using the shortcut value for parsing.
+ * test adding an option and using the short value for parsing.
  *
  * @return void
  */
-	function testAddOptionShortcut() {
+	function testAddOptionShort() {
 		$parser = new ConsoleOptionParser();
 		$parser->addOption('test', array(
-			'shortcut' => 't'
+			'short' => 't'
 		));
 		$result = $parser->parse(array('-t', 'value'));
 		$this->assertEquals(array('test' => 'value'), $result[0], 'Short parameter did not parse out');
+	}
+
+/**
+ * test adding an multiple shorts.
+ *
+ * @return void
+ */
+	function testAddOptionMultipleShort() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('test', array('short' => 't'))
+			->addOption('file', array('short' => 'f'))
+			->addOption('output', array('short' => 'o'));
+
+		$result = $parser->parse(array('-o', '-t', '-f'));
+		$expected = array('file' => true, 'test' => true, 'output' => true);
+		$this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
+		
+		$result = $parser->parse(array('-otf'));
+		$this->assertEquals($expected, $result[0], 'Short parameter did not parse out');
 	}
 
 /**
@@ -124,7 +143,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser = new ConsoleOptionParser();
 		$parser->addOption('test')
 			->addOption('connection')
-			->addOption('table', array('shortcut' => 't'));
+			->addOption('table', array('short' => 't'));
 
 		$result = $parser->parse(array('--test', 'value', '-t', '--connection', 'postgres'));
 		$expected = array('test' => 'value', 'table' => true, 'connection' => 'postgres');

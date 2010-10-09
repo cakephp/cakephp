@@ -48,6 +48,10 @@ class ConsoleOptionParser {
  * preceeded by one - and are only one character long.  They usually match with a long option, 
  * and provide a more terse alternative.
  *
+ * #### Using switches
+ * 
+ * Switches can be defined with both long and short forms.
+ *
  * ### Providing Help text
  *
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
@@ -93,7 +97,7 @@ class ConsoleOptionParser {
  *
  * ### Params
  *
- * - `shortcut` - The single letter variant for this option, leave undefined for none.
+ * - `short` - The single letter variant for this option, leave undefined for none.
  * - `description` - Description for this option.  Used when generating help for the option.
  * - `default` - The default value for this option.  If not defined the default will be true.
  * 
@@ -104,14 +108,14 @@ class ConsoleOptionParser {
 	public function addOption($name, $params = array()) {
 		$defaults = array(
 			'name' => $name,
-			'shortcut' => null,
+			'short' => null,
 			'description' => '',
 			'default' => true
 		);
 		$options = array_merge($defaults, $params);
 		$this->_options[$name] = $options;
-		if (!empty($options['shortcut'])) {
-			$this->_options[$options['shortcut']] = $options;
+		if (!empty($options['short'])) {
+			$this->_options[$options['short']] = $options;
 		}
 		return $this;
 	}
@@ -153,6 +157,8 @@ class ConsoleOptionParser {
 
 /**
  * Parse the value for a short option out of $this->_tokens
+ * If the $option is a combination of multiple shortcuts like -otf
+ * they will be shifted onto the token stack and parsed individually.
  *
  * @param string $option The option to parse.
  * @param array $params The params to append the parsed value into
@@ -160,6 +166,13 @@ class ConsoleOptionParser {
  */
 	protected function _parseShortOption($option, $params) {
 		$key = substr($option, 1);
+		if (strlen($key) > 1) {
+			$flags = str_split($key);
+			$key = $flags[0];
+			for ($i = 1, $len = count($flags); $i < $len; $i++) {
+				array_unshift($this->_tokens, '-' . $flags[$i]);
+			}
+		}
 		$name = $this->_options[$key]['name'];
 		return $this->_parseOptionName($name, $params);
 	}
