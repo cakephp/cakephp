@@ -146,7 +146,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual(strtolower($this->Shell->Schema->name), strtolower(APP_DIR));
 		$this->assertEqual($this->Shell->Schema->file, 'schema.php');
 
-		unset($this->Shell->Schema);
+		$this->Shell->Schema = null;
 		$this->Shell->params = array(
 			'name' => 'TestSchema'
 		);
@@ -156,7 +156,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->assertEqual($this->Shell->Schema->connection, 'default');
 		$this->assertEqual($this->Shell->Schema->path, APP . 'config' . DS . 'schema');
 
-		unset($this->Shell->Schema);
+		$this->Shell->Schema = null;
 		$this->Shell->params = array(
 			'file' => 'other_file.php',
 			'connection' => 'test',

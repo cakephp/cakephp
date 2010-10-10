@@ -41,6 +41,13 @@ class SchemaShell extends Shell {
 	private $__dry = null;
 
 /**
+ * Schema class being used.
+ *
+ * @var CakeSchema
+ */
+	public $Schema;
+
+/**
  * Override initialize
  *
  */
