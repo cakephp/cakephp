@@ -194,6 +194,47 @@ class BakeShell extends Shell {
 	}
 
 /**
+ * get the option parser.
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(array(
+			'The Bake script generates controllers, views and models for your application.',
+			'If run with no command line arguments, Bake guides the user through the class',
+			'creation process. You can customize the generation process by telling Bake',
+			'where different parts of your application are using command line arguments.'
+		))->addSubcommand('all', array(
+			'help' => __('Bake a complete MVC. optional <name> of a Model'),
+		))->addSubcommand('project', array(
+			'help' => __('Bake a new app folder in the path supplied or in current directory if no path is specified'),
+			'parser' => $this->Project->getOptionParser()
+		))->addSubcommand('plugin', array(
+			'help' => __('Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
+			'parser' => $this->Plugin->getOptionParser()
+		))->addSubcommand('db_config', array(
+			'help' => __('Bake a database.php file in config directory.'),
+			'parser' => $this->DbConfig->getOptionParser()
+		))->addSubcommand('model', array(
+			'help' => __('Bake a model.'),
+			'parser' => $this->Model->getOptionParser()
+		))->addSubcommand('view', array(
+			'help' => __('Bake views for controllers.'),
+			'parser' => $this->View->getOptionParser()
+		))->addSubcommand('controller', array(
+			'help' => __('Bake a controller.'),
+			'parser' => $this->Controller->getOptionParser()
+		))->addSubcommand('fixture', array(
+			'help' => __('Bake a fixture.'),
+			'parser' => $this->Fixture->getOptionParser()
+		))->addSubcommand('test', array(
+			'help' => __('Bake a unit test.'),
+			'parser' => $this->Test->getOptionParser()
+		));
+	}
+
+/**
  * Displays help contents
  *
  */
