@@ -193,6 +193,8 @@ class ConsoleOptionParser {
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
  *    If an option is defined as boolean, it will always be added to the parsed params.  If no present
  *    it will be false, if present it will be true.
+ * - `choices` A list of valid choices for this option.  If left empty all values are valid..
+ *   An exception will be raised when parse() encounters an invalid value.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
@@ -225,6 +227,8 @@ class ConsoleOptionParser {
  * - `index` The index for the arg, if left undefined the argument will be put
  *   onto the end of the arguments. If you define the same index twice the first
  *   option will be overwritten.
+ * - `choices` A list of valid choices for this argument.  If left empty all values are valid..
+ *   An exception will be raised when parse() encounters an invalid value.
  *
  * @param string $name The name of the argument.
  * @param array $params Parameters for the argument, see above.
