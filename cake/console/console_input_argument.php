@@ -26,6 +26,8 @@
  */
 class ConsoleInputArgument {
 
+	protected $_name, $_help, $_required, $_choices;
+
 /**
  * Make a new Input Argument
  *
@@ -38,13 +40,13 @@ class ConsoleInputArgument {
 	public function __construct($name, $help = '', $required = false, $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
 			foreach ($name as $key => $value) {
-				$this->{$key} = $value;
+				$this->{'_' . $key} = $value;
 			}
 		} else {
-			$this->name = $name;
-			$this->help = $help;
-			$this->required = $required;
-			$this->choices = $choices;
+			$this->_name = $name;
+			$this->_help = $help;
+			$this->_required = $required;
+			$this->_choices = $choices;
 		}
 	}
 
@@ -54,7 +56,7 @@ class ConsoleInputArgument {
  * @return string
  */
 	public function name() {
-		return $this->name;
+		return $this->_name;
 	}
 
 /**
@@ -64,7 +66,7 @@ class ConsoleInputArgument {
  * @return string 
  */
 	public function help($width = 0) {
-		$name = $this->name;
+		$name = $this->_name;
 		if (strlen($name) < $width) {
 			$name = str_pad($name, $width, ' ');
 		}
@@ -72,7 +74,7 @@ class ConsoleInputArgument {
 		if (!$this->isRequired()) {
 			$optional = ' <comment>(optional)</comment>';
 		}
-		return sprintf('%s%s%s', $name, $this->help, $optional);
+		return sprintf('%s%s%s', $name, $this->_help, $optional);
 	}
 
 /**
@@ -81,7 +83,7 @@ class ConsoleInputArgument {
  * @return string
  */
 	public function usage() {
-		$name = $this->name;
+		$name = $this->_name;
 		if (!$this->isRequired()) {
 			$name = '[' . $name . ']';
 		}
@@ -94,6 +96,6 @@ class ConsoleInputArgument {
  * @return boolean
  */
 	public function isRequired() {
-		return (bool) $this->required;
+		return (bool) $this->_required;
 	}
 }

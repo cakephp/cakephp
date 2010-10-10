@@ -27,6 +27,8 @@
  */
 class ConsoleInputOption {
 
+	protected $_name, $_short, $_help, $_boolean, $_default, $_choices;
+
 /**
  * Make a new Input Option
  *
@@ -41,15 +43,15 @@ class ConsoleInputOption {
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {
 			foreach ($name as $key => $value) {
-				$this->{$key} = $value;
+				$this->{'_' . $key} = $value;
 			}
 		} else {
-			$this->name = $name;
-			$this->short = $short;
-			$this->help = $help;
-			$this->boolean = $boolean;
-			$this->default = $default;
-			$this->choices = $choices;
+			$this->_name = $name;
+			$this->_short = $short;
+			$this->_help = $help;
+			$this->_boolean = $boolean;
+			$this->_default = $default;
+			$this->_choices = $choices;
 		}
 	}
 
@@ -59,7 +61,7 @@ class ConsoleInputOption {
  * @return string
  */
 	public function name() {
-		return $this->name;
+		return $this->_name;
 	}
 
 /**
@@ -70,17 +72,17 @@ class ConsoleInputOption {
  */
 	public function help($width = 0) {
 		$default = $short = '';
-		if (!empty($this->default) && $this->default !== true) {
-			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->default);
+		if (!empty($this->_default) && $this->_default !== true) {
+			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->_default);
 		}
-		if (!empty($this->short)) {
-			$short = ', -' . $this->short;
+		if (!empty($this->_short)) {
+			$short = ', -' . $this->_short;
 		}
-		$name = sprintf('--%s%s', $this->name, $short);
+		$name = sprintf('--%s%s', $this->_name, $short);
 		if (strlen($name) < $width) {
 			$name = str_pad($name, $width, ' ');
 		}
-		return sprintf('%s%s%s', $name, $this->help, $default);
+		return sprintf('%s%s%s', $name, $this->_help, $default);
 	}
 
 /**
@@ -89,10 +91,10 @@ class ConsoleInputOption {
  * @return string
  */
 	public function usage() {
-		$name = empty($this->short) ? '--' . $this->name : '-' . $this->short;
+		$name = empty($this->_short) ? '--' . $this->_name : '-' . $this->_short;
 		$default = '';
-		if (!empty($this->default) && $this->default !== true) {
-			$default = ' ' . $this->default;
+		if (!empty($this->_default) && $this->_default !== true) {
+			$default = ' ' . $this->_default;
 		}
 		return sprintf('[%s%s]', $name, $default);
 	}
@@ -103,7 +105,7 @@ class ConsoleInputOption {
  * @return void
  */
 	public function defaultValue() {
-		return $this->default;
+		return $this->_default;
 	}
 
 /**
@@ -112,6 +114,6 @@ class ConsoleInputOption {
  * @return boolean
  */
 	public function isBoolean() {
-		return (bool) $this->boolean;
+		return (bool) $this->_boolean;
 	}
 }

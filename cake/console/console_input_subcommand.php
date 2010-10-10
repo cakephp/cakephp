@@ -27,6 +27,10 @@
  */
 class ConsoleInputSubcommand {
 
+	protected $_name;
+	protected $_help;
+	protected $_parser;
+
 /**
  * Make a new Subcommand
  *
@@ -38,12 +42,12 @@ class ConsoleInputSubcommand {
 	public function __construct($name, $help = '', $parser = null) {
 		if (is_array($name) && isset($name['name'])) {
 			foreach ($name as $key => $value) {
-				$this->{$key} = $value;
+				$this->{'_' . $key} = $value;
 			}
 		} else {
-			$this->name = $name;
-			$this->help = $help;
-			$this->parser = $parser;
+			$this->_name = $name;
+			$this->_help = $help;
+			$this->_parser = $parser;
 		}
 	}
 
@@ -53,7 +57,7 @@ class ConsoleInputSubcommand {
  * @return string
  */
 	public function name() {
-		return $this->name;
+		return $this->_name;
 	}
 
 /**
@@ -63,21 +67,21 @@ class ConsoleInputSubcommand {
  * @return string 
  */
 	public function help($width = 0) {
-		$name = $this->name;
+		$name = $this->_name;
 		if (strlen($name) < $width) {
 			$name = str_pad($name, $width, ' ');
 		}
-		return $name . $this->help;
+		return $name . $this->_help;
 	}
 
 /**
  * Get the usage value for this option
  *
- * @return string
+ * @return mixed Either false or a ConsoleOptionParser
  */
 	public function parser() {
-		if ($this->parser instanceof ConsoleOptionParser) {
-			return $this->parser;
+		if ($this->_parser instanceof ConsoleOptionParser) {
+			return $this->_parser;
 		}
 		return false;
 	}
