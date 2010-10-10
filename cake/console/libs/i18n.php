@@ -109,7 +109,9 @@ class I18nShell extends Shell {
  */
 	protected function _getOptionParser() {
 		$parser = parent::_getOptionParser();
-		return $parser->description(__('I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.'));
+		return $parser->description(__('I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.'))
+			->addSubcommand('initdb', array('help' => __('Initialize the i18n table.')))
+			->addSubcommand('extract', array('help' => __('Extract the po translations from your application')));
 	}
 
 /**

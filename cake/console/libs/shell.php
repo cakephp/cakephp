@@ -320,14 +320,14 @@ class Shell extends Object {
 		$isMethod = $this->hasMethod($command);
 		$isMain = $this->hasMethod('main');
 
-		if ($isTask || $isMethod) {
+		if ($isTask || $isMethod && $command !== 'execute') {
 			array_shift($argv);
 		}
 
 		$this->OptionParser = $this->_getOptionParser();
 		list($this->params, $this->args) = $this->OptionParser->parse($argv);
 
-		if ($isTask || $isMethod || $isMain) {
+		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();
 		}
 		if ($isTask) {
