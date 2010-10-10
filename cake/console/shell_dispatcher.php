@@ -184,9 +184,7 @@ class ShellDispatcher {
  */
 	function __buildPaths() {
 		$paths = array();
-		if (!class_exists('Folder')) {
-			require LIBS . 'folder.php';
-		}
+
 		$plugins = App::objects('plugin', null, false);
 		foreach ((array)$plugins as $plugin) {
 			$pluginPath = App::pluginPath($plugin);
@@ -272,16 +270,9 @@ class ShellDispatcher {
 
 		$methods = array();
 
-		if ($Shell instanceof  Shell) {
+		if ($Shell instanceof Shell) {
 			$Shell->initialize();
 			$Shell->loadTasks();
-
-			foreach ($Shell->taskNames as $task) {
-				if (is_a($Shell->{$task}, 'Shell')) {
-					$Shell->{$task}->initialize();
-					$Shell->{$task}->loadTasks();
-				}
-			}
 
 			$task = Inflector::camelize($arg);
 

@@ -62,6 +62,13 @@ class Shell extends Object {
 	public $args = array();
 
 /**
+ * Shell paths
+ *
+ * @var string
+ */
+	public $shellPaths = array();
+
+/**
  * The file name of the shell that was invoked.
  *
  * @var string
@@ -133,6 +140,13 @@ class Shell extends Object {
 	public $Tasks;
 
 /**
+ * Normalized map of tasks.
+ *
+ * @var string
+ */
+	protected $_taskMap = array();
+
+/**
  * stdout object.
  *
  * @var ConsoleOutput
@@ -177,7 +191,7 @@ class Shell extends Object {
 		}
 
 		$this->Dispatch =& $dispatch;
-		$this->Tasks = new TaskCollection($this);
+		$this->Tasks = new TaskCollection($this, $dispatch);
 
 		$this->stdout = $stdout;
 		$this->stderr = $stderr;
@@ -272,12 +286,26 @@ class Shell extends Object {
 		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
 			return true;
 		}
-		$tasks = TaskCollection::normalizeObjectArray((array)$this->tasks);
-		foreach ($tasks as $task => $properties) {
-			$this->{$task} = $this->Tasks->load($properties['class'], $properties['settings']);
+		$this->_taskMap = TaskCollection::normalizeObjectArray((array)$this->tasks);
+		foreach ($this->_taskMap as $task => $properties) {
 			$this->taskNames[] = $task;
 		}
 		return true;
+	}
+
+/**
+ * Overload get for lazy building of tasks
+ *
+ * @return void
+ */
+	public function __get($name) {
+		if (empty($this->{$name}) && in_array($name, $this->taskNames)) {
+			$properties = $this->_taskMap[$name];
+			$this->{$name} = $this->Tasks->load($properties['class'], $properties['settings']);
+			$this->{$name}->initialize();
+			$this->{$name}->loadTasks();
+		}
+		return $this->{$name};
 	}
 
 /**

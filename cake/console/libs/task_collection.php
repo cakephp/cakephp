@@ -25,6 +25,7 @@ class TaskCollection extends ObjectCollection {
  * @var array
  */
 	protected $_Shell;
+	protected $_Dispatch;
 
 /**
  * Constructor
@@ -32,8 +33,9 @@ class TaskCollection extends ObjectCollection {
  * @param array $paths Array of paths to search for tasks on .
  * @return void
  */
-	public function __construct(Shell $Shell) {
+	public function __construct(Shell $Shell, ShellDispatcher $dispatcher) {
 		$this->_Shell = $Shell;
+		$this->_Dispatch = $dispatcher;
 	}
 /**
  * Loads/constructs a task.  Will return the instance in the registry if it already exists.
@@ -61,7 +63,7 @@ class TaskCollection extends ObjectCollection {
 		}
 
 		$this->_loaded[$name] = new $taskClass(
-			$this->_Shell, $this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
+			$this->_Dispatch, $this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
 		if ($enable === true) {
 			$this->_enabled[] = $name;

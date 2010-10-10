@@ -30,7 +30,8 @@ class TaskCollectionTest extends CakeTestCase {
 	function setup() {
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$shell->shellPaths = App::path('shells');
-		$this->Tasks = new TaskCollection($shell);
+		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
+		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
 /**
@@ -86,10 +87,12 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPluginTask() {
+		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$shell->shellPaths = App::path('shells');
 		$shell->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
-		$this->Tasks = new TaskCollection($shell);
+		$dispatcher->shellPaths = $shell->shellPaths;
+		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertType('OtherTaskTask', $result, 'Task class is wrong.');
