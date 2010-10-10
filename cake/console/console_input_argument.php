@@ -72,10 +72,10 @@ class ConsoleInputArgument {
 		}
 		$optional = '';
 		if (!$this->isRequired()) {
-			$optional = ' <comment>(optional)</comment>';
+			$optional = __(' <comment>(optional)</comment>');
 		}
 		if (!empty($this->_choices)) {
-			$optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+			$optional .= sprintf(__(' <comment>(choices: %s)</comment>'), implode('|', $this->_choices));
 		}
 		return sprintf('%s%s%s', $name, $this->_help, $optional);
 	}
