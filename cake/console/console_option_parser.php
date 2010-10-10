@@ -239,7 +239,8 @@ class ConsoleOptionParser {
 			'name' => $name,
 			'help' => '',
 			'index' => count($this->_args),
-			'required' => false
+			'required' => false,
+			'choices' => array()
 		);
 		$options = array_merge($defaults, $params);
 		$index = $options['index'];
