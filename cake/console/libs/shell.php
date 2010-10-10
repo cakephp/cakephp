@@ -254,11 +254,6 @@ class Shell extends Object {
 			return;
 		}
 
-		if ($this->uses === true && App::import('Model', 'AppModel')) {
-			$this->AppModel =& new AppModel(false, false, false);
-			return true;
-		}
-
 		if ($this->uses !== true && !empty($this->uses)) {
 			$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 
