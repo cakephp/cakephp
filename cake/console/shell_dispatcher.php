@@ -17,6 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+require_once 'console_option_parser.php';
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -25,14 +26,6 @@
  * @subpackage    cake.cake.console
  */
 class ShellDispatcher {
-
-/**
- * Standard input stream.
- *
- * @var filehandle
- * @access public
- */
-	public $stdin;
 
 /**
  * Contains command switches parsed from the command line.
@@ -252,18 +245,18 @@ class ShellDispatcher {
  * @return boolean
  */
 	public function dispatch() {
-		$arg = $this->shiftArgs();
+		$command = $this->shiftArgs();
 
-		if (!$arg) {
+		if (!$command) {
 			$this->help();
 			return false;
 		}
-		if ($arg == 'help') {
+		if (in_array($command, array('help', '--help', '-h'))) {
 			$this->help();
 			return true;
 		}
-		
-		list($plugin, $shell) = pluginSplit($arg);
+
+		list($plugin, $shell) = pluginSplit($command);
 		$this->shell = $shell;
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';
@@ -361,39 +354,6 @@ class ShellDispatcher {
 		}
 		$Shell = new $this->shellClass($this);
 		return $Shell;
-	}
-
-/**
- * Prompts the user for input, and returns it.
- *
- * @param string $prompt Prompt text.
- * @param mixed $options Array or string of options.
- * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
- */
-	public function getInput($prompt, $options = null, $default = null) {
-		if (!is_array($options)) {
-			$printOptions = '';
-		} else {
-			$printOptions = '(' . implode('/', $options) . ')';
-		}
-
-		if ($default === null) {
-			$this->stdout($prompt . " $printOptions \n" . '> ', false);
-		} else {
-			$this->stdout($prompt . " $printOptions \n" . "[$default] > ", false);
-		}
-		$result = fgets($this->stdin);
-
-		if ($result === false) {
-			exit;
-		}
-		$result = trim($result);
-
-		if ($default != null && empty($result)) {
-			return $default;
-		}
-		return $result;
 	}
 
 /**

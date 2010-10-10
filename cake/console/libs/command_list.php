@@ -96,6 +96,6 @@ class CommandListShell extends Shell {
 		}
 		$this->out();
 		$this->out("To run a command, type 'cake shell_name [args]'");
-		$this->out("To get help on a specific command, type 'cake shell_name help'", 2);
+		$this->out("To get help on a specific command, type 'cake shell_name --help'", 2);
 	}
 }

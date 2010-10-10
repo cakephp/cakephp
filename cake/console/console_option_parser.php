@@ -238,6 +238,7 @@ class ConsoleOptionParser {
  * @param array $argv Array of args (argv) to parse
  * @return Array array($params, $args)
  * @throws InvalidArgumentException When an invalid parameter is encountered.
+ *   RuntimeException when required arguments are not supplied.
  */
 	public function parse($argv) {
 		$params = $args = array();
