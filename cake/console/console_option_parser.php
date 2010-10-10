@@ -134,6 +134,20 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Get or set the command name for shell/task
+ *
+ * @param string $text The text to set, or null if you want to read
+ * @return mixed If reading, the value of the command. If setting $this will be returned
+ */
+	public function command($text = null) {
+		if ($text !== null) {
+			$this->_command = $text;
+			return $this;
+		}
+		return $this->_command;
+	}
+
+/**
  * Get or set the description text for shell/task
  *
  * @param string $text The text to set, or null if you want to read
@@ -301,9 +315,19 @@ class ConsoleOptionParser {
  * Generates help text based on the description, options, arguments and epilog
  * in the parser.
  *
+ * @param string $subcommand If present and a valid subcommand that has a linked parser.
+ *    That subcommands help will be shown instead.
  * @return string
  */
-	public function help() {
+	public function help($subcommand = null) {
+		if (
+			isset($this->_subcommands[$subcommand]) && 
+			$this->_subcommands[$subcommand]['parser'] instanceof self
+		) {
+			$subparser = $this->_subcommands[$subcommand]['parser'];
+			$subparser->command($this->command() . ' ' . $subparser->command());
+			return $subparser->help();
+		}
 		$out = array();
 		if (!empty($this->_description)) {
 			$out[] = $this->_description;

@@ -363,6 +363,35 @@ method  This is another command
 
 TEXT;
 		$this->assertEquals($expected, $result, 'Help is not correct.');
-		
+	}
+
+/**
+ * test that help() with a command param shows the help for a subcommand
+ *
+ * @return void
+ */
+	function testHelpSubcommandHelp() {
+		$subParser = new ConsoleOptionParser('method', false);
+		$subParser->addOption('connection', array('help' => 'Db connection.'));
+
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addSubcommand('method', array(
+				'help' => 'This is another command',
+				'parser' => $subParser
+			))
+			->addOption('test', array('help' => 'A test option.'));
+
+		$result = $parser->help('method');
+		$expected = <<<TEXT
+<info>Usage:</info>
+cake mycommand method [-h] [--connection]
+
+<info>Options:</info>
+
+--help, -h        Display this help.
+--connection      Db connection.
+
+TEXT;
+		$this->assertEquals($expected, $result, 'Help is not correct.');
 	}
 }
