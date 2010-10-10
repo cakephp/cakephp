@@ -228,15 +228,17 @@ class ConsoleOptionParser {
  * @return $this.
  */
 	public function addArgument($name, $params = array()) {
-		$index = count($this->_args);
 		$defaults = array(
 			'name' => $name,
 			'help' => '',
-			'index' => $index,
+			'index' => count($this->_args),
 			'required' => false
 		);
 		$options = array_merge($defaults, $params);
-		$this->_args[$options['index']] = $options;
+		$index = $options['index'];
+		unset($options['index']);
+
+		$this->_args[$index] = new ConsoleInputArgument($options);
 		return $this;
 	}
 
@@ -336,9 +338,9 @@ class ConsoleOptionParser {
 			}
 		}
 		foreach ($this->_args as $i => $arg) {
-			if ($arg['required'] && !isset($args[$i])) {
+			if ($arg->isRequired() && !isset($args[$i])) {
 				throw new RuntimeException(
-					sprintf(__('Missing required arguments. %s is required.'), $arg['name'])
+					sprintf(__('Missing required arguments. %s is required.'), $arg->name())
 				);
 			}
 		}
@@ -400,14 +402,14 @@ class ConsoleOptionParser {
 		}
 		if (!empty($this->_args)) {
 			$max = 0;
-			foreach ($this->_args as $description) {
-				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
+			foreach ($this->_args as $argument) {
+				$max = (strlen($argument->name) > $max) ? strlen($argument->name) : $max;
 			}
 			$max += 2;
 			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
-			foreach ($this->_args as $description) {
-				$out[] = $this->_argumentHelp($description, $max);
+			foreach ($this->_args as $argument) {
+				$out[] = $argument->help($max);
 			}
 			$out[] = '';
 		}
@@ -432,31 +434,10 @@ class ConsoleOptionParser {
 		foreach ($this->_options as $option) {
 			$usage[] = $option->usage();
 		}
-		foreach ($this->_args as $definition) {
-			$name = $definition['name'];
-			if (!$definition['required']) {
-				$name = '[' . $name . ']';
-			}
-			$usage[] = $name;
+		foreach ($this->_args as $argument) {
+			$usage[] = $argument->usage();
 		}
 		return implode(' ', $usage);
-	}
-
-/**
- * Generate the usage for a single argument.
- *
- * @return string
- */
-	protected function _argumentHelp($definition, $width) {
-		$name = $definition['name'];
-		if (strlen($name) < $width) {
-			$name = str_pad($name, $width, ' ');
-		}
-		$optional = '';
-		if (!$definition['required']) {
-			$optional = ' <comment>(optional)</comment>';
-		}
-		return sprintf('%s%s%s', $name, $definition['help'], $optional);
 	}
 
 /**
@@ -653,5 +634,88 @@ class ConsoleInputOption {
  */
 	public function isBoolean() {
 		return (bool) $this->boolean;
+	}
+}
+
+
+
+/**
+ * An object to represent a single argument used in the command line.
+ * ConsoleOptionParser creates these when you use addArgument()
+ *
+ * @see ConsoleOptionParser::addArgument()
+ * @package cake.console
+ */
+class ConsoleInputArgument {
+
+/**
+ * Make a new Input Argument
+ *
+ * @param mixed $name The long name of the option, or an array with all the properites.
+ * @param string $help The help text for this option
+ * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
+ * @param arraty $choices Valid choices for this option.
+ * @return void
+ */
+	public function __construct($name, $help = '', $required = false, $choices = array()) {
+		if (is_array($name) && isset($name['name'])) {
+			foreach ($name as $key => $value) {
+				$this->{$key} = $value;
+			}
+		} else {
+			$this->name = $name;
+			$this->help = $help;
+			$this->required = $required;
+			$this->choices = $choices;
+		}
+	}
+
+/**
+ * Get the name of the argument
+ *
+ * @return void
+ */
+	public function name() {
+		return $this->name;
+	}
+
+/**
+ * Generate the help for this this argument.
+ *
+ * @param int $width The width to make the name of the option.
+ * @return string 
+ */
+	public function help($width = 0) {
+		$name = $this->name;
+		if (strlen($name) < $width) {
+			$name = str_pad($name, $width, ' ');
+		}
+		$optional = '';
+		if (!$this->isRequired()) {
+			$optional = ' <comment>(optional)</comment>';
+		}
+		return sprintf('%s%s%s', $name, $this->help, $optional);
+	}
+
+/**
+ * Get the usage value for this argument
+ *
+ * @return string
+ */
+	public function usage() {
+		$name = $this->name;
+		if (!$this->isRequired()) {
+			$name = '[' . $name . ']';
+		}
+		return $name;
+	}
+
+/**
+ * Check if this argument is a required argument
+ *
+ * @return boolean
+ */
+	public function isRequired() {
+		return (bool) $this->required;
 	}
 }
