@@ -128,7 +128,7 @@ class ConsoleInputOption {
 		}
 		if (!in_array($value, $this->_choices)) {
 			throw new InvalidArgumentException(
-				sprintf(__('"%s" is not a valid option for --%s'), $value, $this->_name)
+				sprintf(__('"%s" is not a valid value for --%s'), $value, $this->_name)
 			);
 		}
 		return true;
