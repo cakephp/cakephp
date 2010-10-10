@@ -228,7 +228,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
  *
  * @return void
  */
-	function testGetHelpWithOptions() {
+	function testHelpWithOptions() {
 		$parser = new ConsoleOptionParser('mycommand', false);
 		$parser->addOption('test', array('help' => 'A test option.'))
 			->addOption('connection', array(
@@ -255,7 +255,7 @@ TEXT;
  *
  * @return void
  */
-	function testGetHelpWithOptionsAndArguments() {
+	function testHelpWithOptionsAndArguments() {
 		$parser = new ConsoleOptionParser('mycommand', false);
 		$parser->addOption('test', array('help' => 'A test option.'))
 			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
@@ -278,5 +278,38 @@ other_longer  Another argument. <comment>(optional)</comment>
 
 TEXT;
 		$this->assertEquals($expected, $result, 'Help does not match');
+	}
+
+/**
+ * test description and epilog in the help
+ *
+ * @return void
+ */
+	function testDescriptionAndEpilog() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->description('Description text')
+			->epilog('epilog text')
+			->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true));
+
+		$result = $parser->help();
+		$expected = <<<TEXT
+Description text
+
+<info>Usage:</info>
+cake mycommand [-h] [--test] model
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
+
+<info>Arguments:</info>
+
+model  The model to make.
+
+epilog text
+TEXT;
+		$this->assertEquals($expected, $result, 'Help is wrong.');
 	}
 }

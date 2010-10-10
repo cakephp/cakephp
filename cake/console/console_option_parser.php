@@ -270,6 +270,10 @@ class ConsoleOptionParser {
  */
 	public function help() {
 		$out = array();
+		if (!empty($this->_description)) {
+			$out[] = $this->_description;
+			$out[] = '';
+		}
 		$out[] = '<info>Usage:</info>';
 		$out[] = $this->_generateUsage();
 		$out[] = '';
@@ -298,6 +302,9 @@ class ConsoleOptionParser {
 				$out[] = $this->_argumentHelp($description, $max);
 			}
 			$out[] = '';
+		}
+		if (!empty($this->_epilog)) {
+			$out[] = $this->_epilog;
 		}
 		return implode("\n", $out);
 	}
