@@ -495,7 +495,7 @@ class AclShell extends Shell {
 			))->addSubcommand('initdb', array(
 				'help' => __('Initialize the DbAcl tables. Uses this command : cake schema run create DbAcl')
 			))->epilog(
-				implode("\n", array(
+				array(
 					'Node and parent arguments can be in one of the following formats:',
 					'',
 					' - <model>.<id> - The node will be bound to a specific record of the given model.',
@@ -505,7 +505,7 @@ class AclShell extends Shell {
 					"   i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
-				))
+				)
 			);
 		return $parser;
 	}
