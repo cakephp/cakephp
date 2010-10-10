@@ -183,6 +183,21 @@ class ExtractTask extends Shell {
 	}
 
 /**
+ * Get & configure the option parser
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(__('CakePHP Language String Extraction:'))
+			->addOption('app', array('help' => __('directory where your application is located.')))
+			->addOption('paths', array('help' => __('comma separted list of paths, full paths are needed.')))
+			->addOption('merge', array('help' => __('[yes|no] Merge all domain strings into the default.po file.')))
+			->addOption('output', array('help' => __('Full path to output directory.')))
+			->addOption('files', array('help' => __('comma separated list of files, full paths are needed.')));
+	}
+
+/**
  * Show help options
  *
  * @return void

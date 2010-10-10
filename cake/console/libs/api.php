@@ -139,8 +139,8 @@ class ApiShell extends Shell {
  *
  * @return ConsoleOptionParser
  */
-	protected function _getOptionParser() {
-		$parser = parent::_getOptionParser();
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
 		$parser->addArgument('type', array(
 			'help' => 'Either a full path or type of class (model, behavior, controller, component, view, helper)'
 		))->addArgument('className', array(

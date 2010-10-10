@@ -174,7 +174,7 @@ class Shell extends Object {
 		}
 
 		if ($this->name == null) {
-			$this->name = Inflector::underscore(str_replace('Shell', '', get_class($this)));
+			$this->name = Inflector::underscore(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
 
 		$this->Dispatch =& $dispatch;
@@ -324,18 +324,18 @@ class Shell extends Object {
 			array_shift($argv);
 		}
 
-		$this->OptionParser = $this->_getOptionParser();
+		$this->OptionParser = $this->getOptionParser();
 		list($this->params, $this->args) = $this->OptionParser->parse($argv);
 
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();
 		}
+		if (isset($this->params['help'])) {
+			return $this->out($this->OptionParser->help($command));
+		}
 		if ($isTask) {
 			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
-		}
-		if (isset($this->params['help'])) {
-			return $this->out($this->OptionParser->help());
 		}
 		if ($isMethod) {
 			return $this->{$command}();
@@ -352,7 +352,7 @@ class Shell extends Object {
  *
  * @return ConsoleOptionParser
  */
-	protected function _getOptionParser() {
+	public function getOptionParser() {
 		$parser = new ConsoleOptionParser($this->name);
 		return $parser;
 	}
