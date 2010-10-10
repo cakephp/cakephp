@@ -524,7 +524,7 @@ TEXT;
 		$options = $parser->options();
 		$this->assertTrue(isset($options['name']));
 		$this->assertTrue(isset($options['other']));
-		
+
 		$args = $parser->arguments();
 		$this->assertEquals(2, count($args));
 	}
