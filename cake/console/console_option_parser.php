@@ -184,8 +184,12 @@ class ConsoleOptionParser {
  *
  * - `short` - The single letter variant for this option, leave undefined for none.
  * - `help` - Help text for this option.  Used when generating help for the option.
- * - `default` - The default value for this option.  If not defined the default will be true.
+ * - `default` - The default value for this option. Defaults are added into the parsed params when the 
+ *    attached option is not provided.  Using default and boolean together will not work.
+ *    are added into the parsed parameters when the option is undefined. 
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
+ *    If an option is defined as boolean, it will always be added to the parsed params.  If no present
+ *    it will be false, if present it will be true.
  * 
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
@@ -197,10 +201,11 @@ class ConsoleOptionParser {
 			'short' => null,
 			'help' => '',
 			'default' => true,
-			'boolean' => false
+			'boolean' => false,
+			'choices' => array()
 		);
 		$options = array_merge($defaults, $params);
-		$this->_options[$name] = $options;
+		$this->_options[$name] = new ConsoleInputOption($options);
 		if (!empty($options['short'])) {
 			$this->_shortOptions[$options['short']] = $name;
 		}
@@ -383,13 +388,13 @@ class ConsoleOptionParser {
 		if (!empty($this->_options)) {
 			$max = 0;
 			foreach ($this->_options as $description) {
-				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
+				$max = (strlen($description->name) > $max) ? strlen($description->name) : $max;
 			}
 			$max += 8;
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
-			foreach ($this->_options as $description) {
-				$out[] = $this->_optionHelp($description, $max);
+			foreach ($this->_options as $option) {
+				$out[] = $option->help($max);
 			}
 			$out[] = '';
 		}
@@ -424,13 +429,8 @@ class ConsoleOptionParser {
 		if (!empty($this->_subcommands)) {
 			$usage[] = '[subcommand]';
 		}
-		foreach ($this->_options as $definition) {
-			$name = empty($definition['short']) ? '--' . $definition['name'] : '-' . $definition['short'];
-			$default = '';
-			if (!empty($definition['default']) && $definition['default'] !== true) {
-				$default = ' ' . $definition['default'];
-			}
-			$usage[] = sprintf('[%s%s]', $name, $default);
+		foreach ($this->_options as $option) {
+			$usage[] = $option->usage();
 		}
 		foreach ($this->_args as $definition) {
 			$name = $definition['name'];
@@ -440,26 +440,6 @@ class ConsoleOptionParser {
 			$usage[] = $name;
 		}
 		return implode(' ', $usage);
-	}
-
-/**
- * Generate the usage for a single option.
- *
- * @return string
- */
-	protected function _optionHelp($definition, $nameWidth) {
-		$default = $short = '';
-		if (!empty($definition['default']) && $definition['default'] !== true) {
-			$default = sprintf(__(' <comment>(default: %s)</comment>'), $definition['default']);
-		}
-		if (!empty($definition['short'])) {
-			$short = ', -' . $definition['short'];
-		}
-		$name = sprintf('--%s%s', $definition['name'], $short);
-		if (strlen($name) < $nameWidth) {
-			$name = str_pad($name, $nameWidth, ' ');
-		}
-		return sprintf('%s%s%s', $name, $definition['help'], $default);
 	}
 
 /**
@@ -542,13 +522,13 @@ class ConsoleOptionParser {
 		if (!isset($this->_options[$name])) {
 			throw new InvalidArgumentException(sprintf(__('Unknown option `%s`'), $name));
 		}
-		$definition = $this->_options[$name];
+		$option = $this->_options[$name];
 		$nextValue = $this->_nextToken();
-		if (!$definition['boolean'] && !empty($nextValue) && $nextValue{0} != '-') {
+		if (!$option->isBoolean() && !empty($nextValue) && $nextValue{0} != '-') {
 			array_shift($this->_tokens);
 			$value = $nextValue;
 		} else {
-			$value = $definition['default'];
+			$value = $option->defaultValue();
 		}
 		$params[$name] = $value;
 		return $params;
@@ -583,5 +563,95 @@ class ConsoleOptionParser {
  */
 	protected function _nextToken() {
 		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';
+	}
+}
+
+
+/**
+ * An object to represent a single option used in the command line.
+ * ConsoleOptionParser creates these when you use addOption()
+ *
+ * @see ConsoleOptionParser::addOption()
+ * @package cake.console
+ */
+class ConsoleInputOption {
+
+/**
+ * Make a new Input Option
+ *
+ * @param mixed $name The long name of the option, or an array with all the properites.
+ * @param string $short The short alias for this option
+ * @param string $help The help text for this option
+ * @param boolean $boolean Whether this option is a boolean option.  Boolean options don't consume extra tokens
+ * @param string $default The default value for this option.
+ * @param arraty $choices Valid choices for this option.
+ * @return void
+ */
+	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
+		if (is_array($name) && isset($name['name'])) {
+			foreach ($name as $key => $value) {
+				$this->{$key} = $value;
+			}
+		} else {
+			$this->name = $name;
+			$this->short = $short;
+			$this->help = $help;
+			$this->boolean = $boolean;
+			$this->default = $default;
+			$this->choices = $choices;
+		}
+	}
+
+/**
+ * Generate the help for this this option.
+ *
+ * @param int $width The width to make the name of the option.
+ * @return string 
+ */
+	public function help($width = 0) {
+		$default = $short = '';
+		if (!empty($this->default) && $this->default !== true) {
+			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->default);
+		}
+		if (!empty($this->short)) {
+			$short = ', -' . $this->short;
+		}
+		$name = sprintf('--%s%s', $this->name, $short);
+		if (strlen($name) < $width) {
+			$name = str_pad($name, $width, ' ');
+		}
+		return sprintf('%s%s%s', $name, $this->help, $default);
+	}
+
+/**
+ * Get the usage value for this option
+ *
+ * @return string
+ */
+	public function usage() {
+		$name = empty($this->short) ? '--' . $this->name : '-' . $this->short;
+		$default = '';
+		if (!empty($this->default) && $this->default !== true) {
+			$default = ' ' . $this->default;
+		}
+		return sprintf('[%s%s]', $name, $default);
+	}
+
+/**
+ * Get the default value for this option
+ *
+ * @return void
+ */
+	public function defaultValue() {
+		return $this->default;
+	}
+
+/**
+ * Check if this option is a boolean option
+ *
+ * @return boolean
+ */
+	public function isBoolean() {
+		return (bool) $this->boolean;
 	}
 }
