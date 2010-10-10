@@ -19,6 +19,7 @@
  */
 require_once 'console_input_option.php';
 require_once 'console_input_argument.php';
+require_once 'console_input_subcommand.php';
 
 /**
  * Handles parsing the ARGV in the command line and provides support 
@@ -297,7 +298,7 @@ class ConsoleOptionParser {
 			'parser' => null
 		);
 		$options = array_merge($defaults, $params);
-		$this->_subcommands[$name] = $options;
+		$this->_subcommands[$name] = new ConsoleInputSubcommand($options);
 		return $this;
 	}
 
@@ -361,9 +362,9 @@ class ConsoleOptionParser {
 	public function help($subcommand = null) {
 		if (
 			isset($this->_subcommands[$subcommand]) && 
-			$this->_subcommands[$subcommand]['parser'] instanceof self
+			$this->_subcommands[$subcommand]->parser() instanceof self
 		) {
-			$subparser = $this->_subcommands[$subcommand]['parser'];
+			$subparser = $this->_subcommands[$subcommand]->parser();
 			$subparser->command($this->command() . ' ' . $subparser->command());
 			return $subparser->help();
 		}
@@ -378,13 +379,9 @@ class ConsoleOptionParser {
 		if (!empty($this->_subcommands)) {
 			$out[] = '<info>Subcommands:</info>';
 			$out[] = '';
-			$max = 0;
-			foreach ($this->_subcommands as $description) {
-				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
-			}
-			$max += 2;
-			foreach ($this->_subcommands as $description) {
-				$out[] = $this->_subcommandHelp($description, $max);
+			$max = $this->_getMaxLength($this->_subcommands) + 2;
+			foreach ($this->_subcommands as $command) {
+				$out[] = $command->help($max);
 			}
 			$out[] = '';
 		}
@@ -432,19 +429,6 @@ class ConsoleOptionParser {
 			$usage[] = $argument->usage();
 		}
 		return implode(' ', $usage);
-	}
-
-/**
- * Generate help for a single subcommand.
- *
- * @return string
- */
-	protected function _subcommandHelp($definition, $width) {
-		$name = $definition['name'];
-		if (strlen($name) < $width) {
-			$name = str_pad($name, $width, ' ');
-		}
-		return $name . $definition['help'];
 	}
 
 /**
