@@ -33,6 +33,9 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$this->assertEquals($parser, $result, 'Setting description is not chainable');
 		$this->assertEquals('A test', $parser->description(), 'getting value is wrong.');
+		
+		$result = $parser->description(array('A test', 'something'));
+		$this->assertEquals("A test\nsomething", $parser->description(), 'getting value is wrong.');
 	}
 
 /**
@@ -46,6 +49,9 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$this->assertEquals($parser, $result, 'Setting epilog is not chainable');
 		$this->assertEquals('A test', $parser->epilog(), 'getting value is wrong.');
+		
+		$result = $parser->epilog(array('A test', 'something'));
+		$this->assertEquals("A test\nsomething", $parser->epilog(), 'getting value is wrong.');
 	}
 
 /**

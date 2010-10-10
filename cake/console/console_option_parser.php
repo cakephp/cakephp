@@ -184,11 +184,14 @@ class ConsoleOptionParser {
 /**
  * Get or set the description text for shell/task
  *
- * @param string $text The text to set, or null if you want to read
+ * @param mixed $text The text to set, or null if you want to read. . If an array the text will be imploded with "\n"
  * @return mixed If reading, the value of the description. If setting $this will be returned
  */
 	public function description($text = null) {
 		if ($text !== null) {
+			if (is_array($text)) {
+				$text = implode("\n", $text);
+			}
 			$this->_description = $text;
 			return $this;
 		}
@@ -199,11 +202,14 @@ class ConsoleOptionParser {
  * Get or set an epilog to the parser.  The epilog is added to the end of
  * the options and arguments listing when help is generated.
  *
- * @param string $text Text when setting or null when reading.
+ * @param mixed $text Text when setting or null when reading. If an array the text will be imploded with "\n"
  * @return mixed If reading, the value of the epilog. If setting $this will be returned.
  */
 	public function epilog($text = null) {
 		if ($text !== null) {
+			if (is_array($text)) {
+				$text = implode("\n", $text);
+			}
 			$this->_epilog = $text;
 			return $this;
 		}
