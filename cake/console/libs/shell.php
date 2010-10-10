@@ -323,6 +323,43 @@ class Shell extends Object {
 	}
 
 /**
+ * Runs the Shell with the provided argv
+ *
+ * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
+ * @return void
+ */
+	public function runCommand($command, $argv) {
+		$this->startup();
+		if (!empty($command) && $this->hasTask($command)) {
+			return $this->{$command}->runCommand('execute', $argv);
+		}
+
+		$this->parser = $this->_getOptionParser();
+		list($this->params, $this->args) = $this->parser->parse($argv);
+		if (isset($this->params['help'])) {
+			return $this->out($this->parser->help());
+		}
+		if ($this->hasMethod($command)) {
+			return $this->{$command}();
+		}
+		if ($this->hasMethod('main')) {
+			return $this->main();
+		}
+		throw new RuntimeException(sprintf(__('Unhandled method `%s`'), $command));
+	}
+
+/**
+ * Gets the option parser instance and configures it.
+ * By overriding this method you can configure the ConsoleOptionParser before returning it.
+ *
+ * @return ConsoleOptionParser
+ */
+	protected function _getOptionParser() {
+		$parser = new ConsoleOptionParser($this->name);
+		return $parser;
+	}
+
+/**
  * Overload get for lazy building of tasks
  *
  * @return void

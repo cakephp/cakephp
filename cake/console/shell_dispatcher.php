@@ -243,64 +243,43 @@ class ShellDispatcher {
  * @return boolean
  */
 	public function dispatch() {
-		$command = $this->shiftArgs();
+		$shell = $this->shiftArgs();
 
-		if (!$command) {
+		if (!$shell) {
 			$this->help();
 			return false;
 		}
-		if (in_array($command, array('help', '--help', '-h'))) {
+		if (in_array($shell, array('help', '--help', '-h'))) {
 			$this->help();
 			return true;
 		}
 
-		list($plugin, $shell) = pluginSplit($command);
+		list($plugin, $shell) = pluginSplit($shell);
 		$this->shell = $shell;
 		$this->shellName = Inflector::camelize($shell);
 		$this->shellClass = $this->shellName . 'Shell';
 
-		$arg = null;
-
-		if (isset($this->args[0])) {
-			$arg = $this->args[0];
-			$this->shellCommand = Inflector::variable($arg);
-		}
-
 		$Shell = $this->_getShell($plugin);
-
-		$methods = array();
+		
+		$command = null;
+		if (isset($this->args[0])) {
+			$command = $this->args[0];
+		}
 
 		if ($Shell instanceof Shell) {
 			$Shell->initialize();
 			$Shell->loadTasks();
-
-			$task = Inflector::camelize($arg);
-
-			if (in_array($task, $Shell->taskNames)) {
-				$this->shiftArgs();
-				$Shell->{$task}->startup();
-
-				if (isset($this->args[0]) && $this->args[0] == 'help') {
-					if (method_exists($Shell->{$task}, 'help')) {
-						$Shell->{$task}->help();
-					} else {
-						$this->help();
-					}
-					return true;
-				}
-				return $Shell->{$task}->execute();
-			}
-			$methods = array_diff(get_class_methods('Shell'), array('help'));
+			return $Shell->runCommand($command, $this->args);
 		}
-		$methods = array_diff(get_class_methods($Shell), $methods);
-		$added = in_array(strtolower($arg), array_map('strtolower', $methods));
-		$private = $arg[0] == '_' && method_exists($Shell, $arg);
+		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
+		$added = in_array($command, $methods);
+		$private = $arg[0] == '_' && method_exists($Shell, $command);
 
 		if (!$private) {
 			if ($added) {
 				$this->shiftArgs();
 				$Shell->startup();
-				return $Shell->{$arg}();
+				return $Shell->{$command}();
 			}
 			if (method_exists($Shell, 'main')) {
 				$Shell->startup();
@@ -348,13 +327,19 @@ class ShellDispatcher {
 	}
 
 /**
- * Parses command line options
+ * Parses command line options and extracts the directory paths from $params
  *
  * @param array $params Parameters to parse
  */
-	public function parseParams($params) {
-		$this->__parseParams($params);
-		$defaults = array('app' => 'app', 'root' => dirname(dirname(dirname(__FILE__))), 'working' => null, 'webroot' => 'webroot');
+	public function parseParams($args) {
+		$this->_parsePaths($args);
+
+		$defaults = array(
+			'app' => 'app', 
+			'root' => dirname(dirname(dirname(__FILE__))),
+			'working' => null, 
+			'webroot' => 'webroot'
+		);
 		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
 		$isWin = false;
 		foreach ($defaults as $default => $value) {
@@ -391,35 +376,24 @@ class ShellDispatcher {
 	}
 
 /**
- * Helper for recursively parsing params
+ * Parses out the paths from from the argv
  *
- * @return array params
- * @access private
+ * @return void
  */
-	function __parseParams($params) {
-		$count = count($params);
-		for ($i = 0; $i < $count; $i++) {
-			if (isset($params[$i])) {
-				if ($params[$i]{0} === '-') {
-					$key = substr($params[$i], 1);
-					$this->params[$key] = true;
-					unset($params[$i]);
-					if (isset($params[++$i])) {
-						if ($params[$i]{0} !== '-') {
-							$this->params[$key] = str_replace('"', '', $params[$i]);
-							unset($params[$i]);
-						} else {
-							$i--;
-							$this->__parseParams($params);
-						}
-					}
-				} else {
-					$this->args[] = $params[$i];
-					unset($params[$i]);
-				}
-
+	protected function _parsePaths($args) {
+		$parsed = array();
+		$keys = array('-working', '--working', '-app', '--app', '-root', '--root');
+		foreach ($keys as $key) {
+			$index = array_search($key, $args);
+			if ($index !== false) {
+				$keyname = str_replace('-', '', $key);
+				$valueIndex = $index + 1;
+				$parsed[$keyname] = $args[$valueIndex];
+				array_splice($args, $index, 2);
 			}
 		}
+		$this->args = $args;
+		$this->params = $parsed;
 	}
 
 /**
