@@ -57,6 +57,18 @@ class TestShell extends Shell {
 	protected function _stop($status = 0) {
 		$this->stopped = $status;
 	}
+
+	public function do_something() {
+		
+	}
+	
+	public function _secret() {
+		
+	}
+	
+	protected function no_access() {
+		
+	}
 }
 
 /**
@@ -577,5 +589,17 @@ class ShellTest extends CakeTestCase {
 		
 		$this->assertTrue($this->Shell->hasTask('db_config'));
 		$this->assertTrue($this->Shell->hasTask('DbConfig'));
+	}
+
+/**
+ * test the hasMethod
+ *
+ * @return void
+ */
+	function testHasMethod() {
+		$this->assertTrue($this->Shell->hasMethod('do_something'));
+		$this->assertFalse($this->Shell->hasMethod('hr'), 'hr is callable');
+		$this->assertFalse($this->Shell->hasMethod('_secret'), '_secret is callable');
+		$this->assertFalse($this->Shell->hasMethod('no_access'), 'no_access is callable');
 	}
 }

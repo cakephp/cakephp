@@ -305,7 +305,21 @@ class Shell extends Object {
  * @return boolean
  */
 	public function hasMethod($name) {
-		
+		if (empty($this->_reflection)) {
+			$this->_reflection = new ReflectionClass($this);
+		}
+		try {
+			$method = $this->_reflection->getMethod($name);
+			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
+				return false;
+			}
+			if ($method->getDeclaringClass() != $this->_reflection) {
+				return false;
+			}
+			return true;
+		} catch (ReflectionException $e) {
+			return false;
+		}
 	}
 
 /**
