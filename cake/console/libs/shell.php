@@ -38,6 +38,13 @@ class Shell extends Object {
 	public $Dispatch = null;
 
 /**
+ * An instance of ConsoleOptionParser that has been configured for this class.
+ *
+ * @var ConsoleOptionParser
+ */
+	public $OptionParser;
+
+/**
  * If true, the script will ask for permission to perform actions.
  *
  * @var boolean
@@ -345,10 +352,10 @@ class Shell extends Object {
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 
-		$this->parser = $this->_getOptionParser();
-		list($this->params, $this->args) = $this->parser->parse($argv);
+		$this->OptionParser = $this->_getOptionParser();
+		list($this->params, $this->args) = $this->OptionParser->parse($argv);
 		if (isset($this->params['help'])) {
-			return $this->out($this->parser->help());
+			return $this->out($this->OptionParser->help());
 		}
 
 		if ($isMethod) {
