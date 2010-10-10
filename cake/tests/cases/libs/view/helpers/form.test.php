@@ -1865,7 +1865,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
@@ -2502,6 +2502,18 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), null, array('multiple' => 'checkbox'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
+			array('label' => array('for' => 'ModelMultiField12')),
+			'half',
+			'/label',
+			'/div',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -2687,6 +2699,16 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
 			'label' => array('for' => 'ModelField0'),
 			'option A',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1/2', 'id' => 'ModelField12')),
+			'label' => array('for' => 'ModelField12'),
+			'half',
 			'/label'
 		);
 		$this->assertTags($result, $expected);
@@ -3476,7 +3498,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testInputMultipleCheckboxes() {
 		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('first', 'second', 'third'), 
+			'options' => array('first', 'second', 'third'),
 			'multiple' => 'checkbox'
 		));
 		$expected = array(
@@ -3559,7 +3581,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('2' => 'second'),
 			'multiple' => 'checkbox',
-			'label' => false, 
+			'label' => false,
 			'div' => false
 		));
 		$expected = array(
