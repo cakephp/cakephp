@@ -329,8 +329,8 @@ class Shell extends Object {
  * @return void
  */
 	public function runCommand($command, $argv) {
-		$this->startup();
 		if (!empty($command) && $this->hasTask($command)) {
+			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 

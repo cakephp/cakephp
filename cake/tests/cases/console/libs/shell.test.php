@@ -613,7 +613,6 @@ class ShellTest extends CakeTestCase {
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
-		$Mock->expects($this->once())->method('startup');
 		$result = $Mock->runCommand(null, array());
 		$this->assertTrue($result);
 	}
@@ -628,7 +627,6 @@ class ShellTest extends CakeTestCase {
 		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('startup'), array(), '', false);
 
-		$Mock->expects($this->once())->method('startup');
 		$Mock->expects($this->never())->method('hr');
 		$result = $Mock->runCommand('hr', array());
 	}
@@ -638,7 +636,7 @@ class ShellTest extends CakeTestCase {
  *
  * @return void
  */
-	function testHelpParamTriggeringHelp() {
+	function testRunCommandTriggeringHelp() {
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 		$Parser->expects($this->once())->method('parse')
 			->with(array('--help'))
@@ -649,8 +647,22 @@ class ShellTest extends CakeTestCase {
 		$Shell->expects($this->once())->method('_getOptionParser')
 			->will($this->returnValue($Parser));
 		$Shell->expects($this->once())->method('out');
-		$Shell->expects($this->once())->method('startup');
 
 		$Shell->runCommand(null, array('--help'));
+	}
+
+/**
+ * test that runCommand will call runCommand on the task.
+ *
+ * @return void
+ */
+	function testRunCommandHittingTask() {
+		$Shell = $this->getMock('Shell', array('hasTask'), array(), '', false);
+		$task = $this->getMock('Shell', array('execute'), array(), '', false);
+		$Shell->tasks = array('RunCommand');
+		$Shell->expects($this->once())->method('hasTask')->will($this->returnValue(true));
+		$Shell->RunCommand = $task;
+
+		$Shell->runCommand('run_command', array());
 	}
 }
