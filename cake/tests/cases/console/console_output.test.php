@@ -134,6 +134,18 @@ class ConsoleOutputTest extends CakeTestCase {
 	}
 
 /**
+ * test that formatting doesn't eat tags it doesn't know about.
+ *
+ * @return void
+ */
+	function testFormattingNotEatingTags() {
+		$this->output->expects($this->once())->method('_write')
+			->with("<red> Something bad");
+
+		$this->output->write('<red> Something bad', false);
+	}
+
+/**
  * test formatting with custom styles.
  *
  * @return void
