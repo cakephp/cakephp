@@ -235,6 +235,19 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test setting a subcommand up.
+ *
+ * @return void
+ */
+	function testSubcommand() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->addSubcommand('initdb', array(
+			'help' => 'Initialize the database'
+		));
+		$this->assertEquals($parser, $result, 'Adding a subcommand is not chainable');
+	}
+
+/**
  * test getting help with defined options.
  *
  * @return void
@@ -296,7 +309,7 @@ TEXT;
  *
  * @return void
  */
-	function testDescriptionAndEpilog() {
+	function testHelpDescriptionAndEpilog() {
 		$parser = new ConsoleOptionParser('mycommand', false);
 		$parser->description('Description text')
 			->epilog('epilog text')
@@ -322,5 +335,34 @@ model  The model to make.
 epilog text
 TEXT;
 		$this->assertEquals($expected, $result, 'Help is wrong.');
+	}
+
+/**
+ * test that help() outputs subcommands.
+ *
+ * @return void
+ */
+	function testHelpSubcommand() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addSubcommand('method', array('help' => 'This is another command'))
+			->addOption('test', array('help' => 'A test option.'));
+		
+		$result = $parser->help();
+		$expected = <<<TEXT
+<info>Usage:</info>
+cake mycommand [subcommand] [-h] [--test]
+
+<info>Subcommands:</info>
+
+method  This is another command
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option.
+
+TEXT;
+		$this->assertEquals($expected, $result, 'Help is not correct.');
+		
 	}
 }

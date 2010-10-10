@@ -68,6 +68,13 @@ class ConsoleOptionParser {
 	protected $_args = array();
 
 /**
+ * Subcommands for this Shell.
+ *
+ * @var array
+ */
+	protected $_subcommands = array();
+
+/**
  * Construct an OptionParser so you can define its behavior
  *
  * ### Options
@@ -215,6 +222,33 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Append a subcommand to the subcommand list.
+ * Subcommands are usually methods on your Shell, but can also be used to document 
+ * Tasks
+ *
+ * ### Params
+ *
+ * - `help` - Help text for the subcommand.
+ * - `parser` - A ConsoleOptionParser for the subcommand.  This allows you to create method
+ *    specific option parsers.  When help is generated for a subcommand, if a parser is present
+ *    it will be used.
+ *
+ * @param string $name Name of the subcommand
+ * @param array $params Array of params, see above.
+ * @return $this.
+ */
+	public function addSubcommand($name, $params = array()) {
+		$defaults = array(
+			'name' => $name,
+			'help' => '',
+			'parser' => null
+		);
+		$options = array_merge($defaults, $params);
+		$this->_subcommands[$name] = $options;
+		return $this;
+	}
+
+/**
  * Gets the arguments defined in the parser.
  *
  * @return array Array of argument descriptions
@@ -278,6 +312,20 @@ class ConsoleOptionParser {
 		$out[] = '<info>Usage:</info>';
 		$out[] = $this->_generateUsage();
 		$out[] = '';
+		if (!empty($this->_subcommands)) {
+			$out[] = '<info>Subcommands:</info>';
+			$out[] = '';
+			$max = 0;
+			foreach ($this->_subcommands as $description) {
+				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
+			}
+			$max += 2;
+			foreach ($this->_subcommands as $description) {
+				$out[] = $this->_subcommandHelp($description, $max);
+			}
+			$out[] = '';
+		}
+		
 		if (!empty($this->_options)) {
 			$max = 0;
 			foreach ($this->_options as $description) {
@@ -296,7 +344,7 @@ class ConsoleOptionParser {
 			foreach ($this->_args as $description) {
 				$max = (strlen($description['name']) > $max) ? strlen($description['name']) : $max;
 			}
-			$max += 1;
+			$max += 2;
 			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
 			foreach ($this->_args as $description) {
@@ -319,6 +367,9 @@ class ConsoleOptionParser {
  */
 	protected function _generateUsage() {
 		$usage = array('cake ' . $this->_command);
+		if (!empty($this->_subcommands)) {
+			$usage[] = '[subcommand]';
+		}
 		foreach ($this->_options as $definition) {
 			$name = empty($definition['short']) ? '--' . $definition['name'] : '-' . $definition['short'];
 			$default = '';
@@ -371,7 +422,20 @@ class ConsoleOptionParser {
 		if (!$definition['required']) {
 			$optional = ' <comment>(optional)</comment>';
 		}
-		return sprintf('%s %s%s', $name, $definition['help'], $optional);
+		return sprintf('%s%s%s', $name, $definition['help'], $optional);
+	}
+
+/**
+ * Generate help for a single subcommand.
+ *
+ * @return string
+ */
+	protected function _subcommandHelp($definition, $width) {
+		$name = $definition['name'];
+		if (strlen($name) < $width) {
+			$name = str_pad($name, $width, ' ');
+		}
+		return $name . $definition['help'];
 	}
 
 /**
