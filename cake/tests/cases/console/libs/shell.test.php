@@ -161,11 +161,6 @@ class ShellTest extends CakeTestCase {
 		$this->assertIsA($this->Shell->Comment, 'Comment');
 		$this->assertEqual($this->Shell->modelClass, 'Comment');
 
-		$this->Shell->uses = true;
-		$this->Shell->initialize();
-		$this->assertTrue(isset($this->Shell->AppModel));
-		$this->assertIsA($this->Shell->AppModel, 'AppModel');
-
 		App::build();
 	}
 
@@ -565,5 +560,22 @@ class ShellTest extends CakeTestCase {
 		$this->assertEqual(file_get_contents($file), $contents);
 
 		$Folder->delete();
+	}
+
+/**
+ * test hasTask method
+ *
+ * @return void
+ */
+	function testHasTask() {
+		$this->Shell->tasks = array('Extract', 'DbConfig');
+		$this->Shell->loadTasks();
+		
+		$this->assertTrue($this->Shell->hasTask('extract'));
+		$this->assertTrue($this->Shell->hasTask('Extract'));
+		$this->assertFalse($this->Shell->hasTask('random'));
+		
+		$this->assertTrue($this->Shell->hasTask('db_config'));
+		$this->assertTrue($this->Shell->hasTask('DbConfig'));
 	}
 }

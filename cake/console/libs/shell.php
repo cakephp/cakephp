@@ -289,6 +289,26 @@ class Shell extends Object {
 	}
 
 /**
+ * Check to see if this shell has a task with the provided name.
+ *
+ * @param string $task The task name to check.
+ * @return boolean Success
+ */
+	public function hasTask($task) {
+		return isset($this->_taskMap[Inflector::camelize($task)]);
+	}
+
+/**
+ * Check to see if this shell has a callable method by the given name.
+ *
+ * @param string $name The method name to check.
+ * @return boolean
+ */
+	public function hasMethod($name) {
+		
+	}
+
+/**
  * Overload get for lazy building of tasks
  *
  * @return void
