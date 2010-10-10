@@ -151,6 +151,23 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * Test adding multiple options.
+ *
+ * @return void
+ */
+	function testAddOptions() {
+		$parser = new ConsoleOptionParser('something', false);
+		$result = $parser->addOptions(array(
+			'name' => array('help' => 'The name'),
+			'other' => array('help' => 'The other arg')
+		));
+		$this->assertEquals($parser, $result, 'addOptions is not chainable.');
+
+		$result = $parser->options();
+		$this->assertEquals(3, count($result), 'Not enough options');
+	}
+
+/**
  * test that boolean options work
  *
  * @return void
@@ -232,6 +249,23 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			->addArgument('other', array('required' => true));
 
 		$parser->parse(array('one'));
+	}
+
+/**
+ * Test adding multiple arguments.
+ *
+ * @return void
+ */
+	function testAddArguments() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->addArguments(array(
+			'name' => array('help' => 'The name'),
+			'other' => array('help' => 'The other arg')
+		));
+		$this->assertEquals($parser, $result, 'addArguments is not chainable.');
+
+		$result = $parser->arguments();
+		$this->assertEquals(2, count($result), 'Not enough arguments');
 	}
 
 /**

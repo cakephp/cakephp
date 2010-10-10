@@ -236,6 +236,36 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Add multiple arugments at once. Take an array of arugment defintions.
+ * The keys are used as the argument names, and the values as params for the argument.
+ *
+ * @param array $args Array of arguments to add.
+ * @see ConsoleOptionParser::addArgument()
+ * @return $this
+ */
+	public function addArguments(array $args) {
+		foreach ($args as $name => $params) {
+			$this->addArgument($name, $params);
+		}
+		return $this;
+	}
+
+/**
+ * Add multiple options at once. Takes an array of option definitions.
+ * The keys are used as option names, and the values as params for the option.
+ *
+ * @param array $options Array of options to add.
+ * @see ConsoleOptionParser::addOption()
+ * @return $this
+ */
+	public function addOptions(array $options) {
+		foreach ($options as $name => $params) {
+			$this->addOption($name, $params);
+		}
+		return $this;
+	}
+
+/**
  * Append a subcommand to the subcommand list.
  * Subcommands are usually methods on your Shell, but can also be used to document 
  * Tasks
