@@ -420,6 +420,9 @@ class ConsoleOptionParser {
  * @return array Params with $option added in.
  */
 	protected function _parseOptionName($name, $params) {
+		if (!isset($this->_options[$name])) {
+			throw new InvalidArgumentException(sprintf(__('Unknown option `%s`'), $name));
+		}
 		$definition = $this->_options[$name];
 		$nextValue = $this->_nextToken();
 		if (!$definition['boolean'] && !empty($nextValue) && $nextValue{0} != '-') {

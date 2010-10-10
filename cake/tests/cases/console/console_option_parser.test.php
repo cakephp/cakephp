@@ -159,11 +159,22 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser = new ConsoleOptionParser();
 		$parser->addOption('no-commit', array('boolean' => true))
 			->addOption('table', array('short' => 't'));
-		
+
 		$result = $parser->parse(array('--table', 'posts', '--no-commit', 'arg1', 'arg2'));
 		$expected = array(array('table' => 'posts', 'no-commit' => true), array('arg1', 'arg2'));
 		$this->assertEquals($expected, $result, 'Boolean option did not parse correctly.');
-		
+	}
+
+/**
+ * test parsing options that do not exist.
+ *
+ * @expectedException InvalidArgumentException
+ */
+	function testOptionThatDoesNotExist() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('no-commit', array('boolean' => true));
+
+		$result = $parser->parse(array('--fail', 'other'));
 	}
 
 /**
