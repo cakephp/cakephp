@@ -230,7 +230,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		);
 		$expected = array(
 			'app' => 'new',
-			'dry' => true,
 			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'new'),
 			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH),
 			'webroot' => 'webroot'
@@ -256,15 +255,14 @@ class ShellDispatcherTest extends CakeTestCase {
 			'webroot' => 'webroot',
 			'working' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH . DS . 'app'),
 			'root' => str_replace('\\', '/', CAKE_CORE_INCLUDE_PATH),
-			'dry' => true,
-			'f' => true,
-			'name' => 'DbAcl'
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
-		$expected = array('./console/cake.php', 'schema', 'run', 'create');
+		$expected = array(
+			'./console/cake.php', 'schema', 'run', 'create', '-dry', '-f', '-name', 'DbAcl'
+		);
 		$this->assertEqual($expected, $Dispatcher->args);
 
 		$params = array(
@@ -283,15 +281,11 @@ class ShellDispatcherTest extends CakeTestCase {
 			'webroot' => 'webroot',
 			'working' => '/cake/1.2.x.x/app',
 			'root' => '/cake/1.2.x.x',
-			'dry' => true,
-			'name' => 'DbAcl'
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);
 		$this->assertEqual($expected, $Dispatcher->params);
 
-		$expected = array('/cake/1.2.x.x/cake/console/cake.php', 'schema', 'run', 'create');
-		$this->assertEqual($expected, $Dispatcher->args);
 		$params = array(
 			'cake.php',
 			'-working',
@@ -344,7 +338,6 @@ class ShellDispatcherTest extends CakeTestCase {
 			'webroot' => 'webroot',
 			'working' => 'C:\wamp\www\apps\cake\app',
 			'root' => 'C:\wamp\www\apps\cake',
-			'url' => 'http://example.com/some/url/with/a/path'
 		);
 		$Dispatcher->params = $Dispatcher->args = array();
 		$Dispatcher->parseParams($params);

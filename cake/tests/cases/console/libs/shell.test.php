@@ -602,4 +602,55 @@ class ShellTest extends CakeTestCase {
 		$this->assertFalse($this->Shell->hasMethod('_secret'), '_secret is callable');
 		$this->assertFalse($this->Shell->hasMethod('no_access'), 'no_access is callable');
 	}
+
+/**
+ * test run command calling main.
+ *
+ * @return void
+ */
+	function testRunCommandMain() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
+
+		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
+		$Mock->expects($this->once())->method('startup');
+		$result = $Mock->runCommand(null, array());
+		$this->assertTrue($result);
+	}
+
+/**
+ * test run command causing exception on Shell method.
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	function testRunCommandBaseclassMethod() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('startup'), array(), '', false);
+
+		$Mock->expects($this->once())->method('startup');
+		$Mock->expects($this->never())->method('hr');
+		$result = $Mock->runCommand('hr', array());
+	}
+
+/**
+ * test that a --help causes help to show.
+ *
+ * @return void
+ */
+	function testHelpParamTriggeringHelp() {
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
+		$Parser->expects($this->once())->method('parse')
+			->with(array('--help'))
+			->will($this->returnValue(array(array('help' => true), array())));
+		$Parser->expects($this->once())->method('help');
+		
+		$Shell = $this->getMock('Shell', array('_getOptionParser', 'out', 'startup'), array(), '', false);
+		$Shell->expects($this->once())->method('_getOptionParser')
+			->will($this->returnValue($Parser));
+		$Shell->expects($this->once())->method('out');
+		$Shell->expects($this->once())->method('startup');
+
+		$Shell->runCommand(null, array('--help'));
+	}
 }
