@@ -60,7 +60,7 @@ class ApiShell extends Shell {
  */
 	public function main() {
 		if (empty($this->args)) {
-			return $this->help();
+			return $this->out($this->OptionParser->help());
 		}
 
 		$type = strtolower($this->args[0]);
@@ -78,7 +78,6 @@ class ApiShell extends Shell {
 			$file = Inflector::underscore($this->args[1]);
 			$class = Inflector::camelize($file);
 		}
-
 		$objects = App::objects('class', $path);
 		if (in_array($class, $objects)) {
 			if (in_array($type, array('behavior', 'component', 'helper')) && $type !== $file) {
@@ -88,19 +87,18 @@ class ApiShell extends Shell {
 			}
 
 		} else {
-			$this->err(sprintf(__('%s not found'), $class));
-			$this->_stop();
+			$this->error(sprintf(__('%s not found'), $class));
 		}
 
 		$parsed = $this->__parseClass($path . $file .'.php', $class);
 
 		if (!empty($parsed)) {
-			if (isset($this->params['m'])) {
-				if (!isset($parsed[$this->params['m']])) {
-					$this->err(sprintf(__('%s::%s() could not be found'), $class, $this->params['m']));
+			if (isset($this->params['method'])) {
+				if (!isset($parsed[$this->params['method']])) {
+					$this->err(sprintf(__('%s::%s() could not be found'), $class, $this->params['method']));
 					$this->_stop();
 				}
-				$method = $parsed[$this->params['m']];
+				$method = $parsed[$this->params['method']];
 				$this->out($class .'::'.$method['method'] . $method['parameters']);
 				$this->hr();
 				$this->out($method['comment'], true);
@@ -136,6 +134,23 @@ class ApiShell extends Shell {
 		}
 	}
 
+/**
+ * Get and configure the optionparser.
+ *
+ * @return ConsoleOptionParser
+ */
+	protected function _getOptionParser() {
+		$parser = parent::_getOptionParser();
+		$parser->addArgument('type', array(
+			'help' => 'Either a full path or type of class (model, behavior, controller, component, view, helper)'
+		))->addArgument('className', array(
+			'help' => 'A CakePHP core class name (e.g: Component, HtmlHelper).'
+		))->addOption('method', array(
+			'short' => 'm',
+			'help' => __('The specific method you want help on.')
+		))->description(__('Lookup doc block comments for classes in CakePHP.'));
+		return $parser;
+	}
 /**
  * Show help for this shell.
  *
