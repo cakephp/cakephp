@@ -46,15 +46,6 @@ class Shell extends Object {
 	public $interactive = true;
 
 /**
- * Holds the DATABASE_CONFIG object for the app. Null if database.php could not be found,
- * or the app does not exist.
- *
- * @var DATABASE_CONFIG
- * @access public
- */
-	public $DbConfig = null;
-
-/**
  * Contains command switches parsed from the command line.
  *
  * @var array
@@ -234,22 +225,6 @@ class Shell extends Object {
 		$this->out('App : '. $this->params['app']);
 		$this->out('Path: '. $this->params['working']);
 		$this->hr();
-	}
-
-/**
- * Loads database file and constructs DATABASE_CONFIG class
- * makes $this->DbConfig available to subclasses
- *
- * @return bool
- */
-	protected function _loadDbConfig() {
-		if (config('database') && class_exists('DATABASE_CONFIG')) {
-			$this->DbConfig =& new DATABASE_CONFIG();
-			return true;
-		}
-		$this->err('Database config could not be loaded.');
-		$this->out('Run `bake` to create the database configuration.');
-		return false;
 	}
 
 /**
