@@ -548,11 +548,11 @@ class Shell extends Object {
 		$this->out(sprintf(__('Creating file %s'), $path));
 
 		if (is_file($path) && $this->interactive === true) {
-			$prompt = sprintf(__('File `%s` exists, overwrite?'), $path);
+			$prompt = sprintf(__('<warning>File `%s` exists</warning>, overwrite?'), $path);
 			$key = $this->in($prompt,  array('y', 'n', 'q'), 'n');
 
 			if (strtolower($key) == 'q') {
-				$this->out(__('Quitting.'), 2);
+				$this->out(__('<error>Quitting</error>.'), 2);
 				$this->_stop();
 			} elseif (strtolower($key) != 'y') {
 				$this->out(sprintf(__('Skip `%s`'), $path), 2);
@@ -566,24 +566,11 @@ class Shell extends Object {
 		if ($File = new File($path, true)) {
 			$data = $File->prepare($contents);
 			$File->write($data);
-			$this->out(sprintf(__('Wrote `%s`'), $path));
+			$this->out(sprintf(__('<success>Wrote</success> `%s`'), $path));
 			return true;
 		} else {
-			$this->err(sprintf(__('Could not write to `%s`.'), $path), 2);
+			$this->err(sprintf(__('<error>Could not write to `%s`</error>.'), $path), 2);
 			return false;
-		}
-	}
-
-/**
- * Outputs usage text on the standard output. Implement it in subclasses.
- *
- */
-	public function help() {
-		if ($this->command != null) {
-			$this->err("Unknown {$this->name} command `{$this->command}`.");
-			$this->err("For usage, try `cake {$this->shell} help`.", 2);
-		} else {
-			$this->Dispatch->help();
 		}
 	}
 
