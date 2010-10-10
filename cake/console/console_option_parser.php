@@ -137,6 +137,37 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Static factory method for creating new OptionParsers so you can chain methods off of them.
+ *
+ * @return ConsoleOptionParser
+ */
+	public static function create($command, $defaultOptions = true) {
+		return new ConsoleOptionParser($command, $defaultOptions);
+	}
+
+/**
+ * Build a parser from an array.
+ *
+ * @return ConsoleOptionParser
+ */
+	public static function buildFromArray($spec) {
+		$parser = new ConsoleOptionParser($spec['command']);
+		if (!empty($spec['arguments'])) {
+			$parser->addArguments($spec['arguments']);
+		}
+		if (!empty($spec['options'])) {
+			$parser->addOptions($spec['options']);
+		}
+		if (!empty($spec['description'])) {
+			$parser->description($spec['description']);
+		}
+		if (!empty($spec['epilog'])) {
+			$parser->epilog($spec['epilog']);
+		}
+		return $parser;
+	}
+
+/**
  * Get or set the command name for shell/task
  *
  * @param string $text The text to set, or null if you want to read

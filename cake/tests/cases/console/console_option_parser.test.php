@@ -496,4 +496,36 @@ cake mycommand method [-h] [--connection]
 TEXT;
 		$this->assertEquals($expected, $result, 'Help is not correct.');
 	}
+
+/**
+ * test building a parser from an array.
+ *
+ * @return void
+ */
+	function testBuildFromArray() {
+		$spec = array(
+			'command' => 'test',
+			'arguments' => array(
+				'name' => array('help' => 'The name'),
+				'other' => array('help' => 'The other arg')
+			),
+			'options' => array(
+				'name' => array('help' => 'The name'),
+				'other' => array('help' => 'The other arg')
+			),
+			'description' => 'description text',
+			'epilog' => 'epilog text'
+		);
+		$parser = ConsoleOptionParser::buildFromArray($spec);
+
+		$this->assertEquals($spec['description'], $parser->description());
+		$this->assertEquals($spec['epilog'], $parser->epilog());
+
+		$options = $parser->options();
+		$this->assertTrue(isset($options['name']));
+		$this->assertTrue(isset($options['other']));
+		
+		$args = $parser->arguments();
+		$this->assertEquals(2, count($args));
+	}
 }
