@@ -54,6 +54,15 @@ class ConsoleInputOption {
 	}
 
 /**
+ * Get the name of the argument
+ *
+ * @return string
+ */
+	public function name() {
+		return $this->name;
+	}
+
+/**
  * Generate the help for this this option.
  *
  * @param int $width The width to make the name of the option.

@@ -390,11 +390,7 @@ class ConsoleOptionParser {
 		}
 		
 		if (!empty($this->_options)) {
-			$max = 0;
-			foreach ($this->_options as $description) {
-				$max = (strlen($description->name) > $max) ? strlen($description->name) : $max;
-			}
-			$max += 8;
+			$max = $this->_getMaxLength($this->_options) + 8;
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($this->_options as $option) {
@@ -403,11 +399,7 @@ class ConsoleOptionParser {
 			$out[] = '';
 		}
 		if (!empty($this->_args)) {
-			$max = 0;
-			foreach ($this->_args as $argument) {
-				$max = (strlen($argument->name) > $max) ? strlen($argument->name) : $max;
-			}
-			$max += 2;
+			$max = $this->_getMaxLength($this->_args) + 2;
 			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
 			foreach ($this->_args as $argument) {
@@ -546,5 +538,18 @@ class ConsoleOptionParser {
  */
 	protected function _nextToken() {
 		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';
+	}
+
+/**
+ * Iterate over a collection and find the longest named thing.
+ *
+ * @return integer
+ */
+	protected function _getMaxLength($collection) {
+		$max = 0;
+		foreach ($collection as $item) {
+			$max = (strlen($item->name()) > $max) ? strlen($item->name()) : $max;
+		}
+		return $max;
 	}
 }
