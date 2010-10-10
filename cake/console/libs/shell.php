@@ -84,14 +84,6 @@ class Shell extends Object {
 	public $shell = null;
 
 /**
- * The class name of the shell that was invoked.
- *
- * @var string
- * @access public
- */
-	public $className = null;
-
-/**
  * The command called if public methods are available.
  *
  * @var string
@@ -106,14 +98,6 @@ class Shell extends Object {
  * @access public
  */
 	public $name = null;
-
-/**
- * An alias for the shell
- *
- * @var string
- * @access public
- */
-	public $alias = null;
 
 /**
  * Contains tasks to load and instantiate
@@ -179,22 +163,18 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch, $stdout = null, $stderr = null, $stdin = null) {
-		$vars = array('params', 'args', 'shell', 'shellCommand' => 'command', 'shellPaths');
+		$vars = array('shell', 'shellCommand' => 'command', 'shellPaths');
 
 		foreach ($vars as $key => $var) {
 			if (is_string($key)) {
-				$this->{$var} =& $dispatch->{$key};
+				$this->{$var} = $dispatch->{$key};
 			} else {
-				$this->{$var} =& $dispatch->{$var};
+				$this->{$var} = $dispatch->{$var};
 			}
 		}
 
 		if ($this->name == null) {
-			$this->name = get_class($this);
-		}
-
-		if ($this->alias == null) {
-			$this->alias = $this->name;
+			$this->name = Inflector::underscore(str_replace('Shell', '', get_class($this)));
 		}
 
 		$this->Dispatch =& $dispatch;
@@ -243,8 +223,8 @@ class Shell extends Object {
 		$this->out();
 		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
 		$this->hr();
-		$this->out('App : '. $this->params['app']);
-		$this->out('Path: '. $this->params['working']);
+		$this->out('App : '. $this->Dispatch->params['app']);
+		$this->out('Path: '. $this->Dispatch->params['working']);
 		$this->hr();
 	}
 
@@ -343,21 +323,20 @@ class Shell extends Object {
 		if ($isTask || $isMethod) {
 			array_shift($argv);
 		}
+
+		$this->OptionParser = $this->_getOptionParser();
+		list($this->params, $this->args) = $this->OptionParser->parse($argv);
+
 		if ($isTask || $isMethod || $isMain) {
 			$this->startup();
 		}
-
 		if ($isTask) {
 			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
 		}
-
-		$this->OptionParser = $this->_getOptionParser();
-		list($this->params, $this->args) = $this->OptionParser->parse($argv);
 		if (isset($this->params['help'])) {
 			return $this->out($this->OptionParser->help());
 		}
-
 		if ($isMethod) {
 			return $this->{$command}();
 		}

@@ -260,7 +260,7 @@ class ShellDispatcher {
 		$this->shellClass = $this->shellName . 'Shell';
 
 		$Shell = $this->_getShell($plugin);
-		
+
 		$command = null;
 		if (isset($this->args[0])) {
 			$command = $this->args[0];

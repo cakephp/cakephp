@@ -65,7 +65,7 @@ class I18nShell extends Shell {
  *
  */
 	public function main() {
-		$this->out(__('I18n Shell'));
+		$this->out(__('<info>I18n Shell</info>'));
 		$this->hr();
 		$this->out(__('[E]xtract POT file from sources'));
 		$this->out(__('[I]nitialize i18n database table'));
@@ -81,7 +81,7 @@ class I18nShell extends Shell {
 				$this->initdb();
 			break;
 			case 'h':
-				$this->help();
+				$this->out($this->OptionParser->help());
 			break;
 			case 'q':
 				exit(0);
@@ -100,6 +100,16 @@ class I18nShell extends Shell {
 	public function initdb() {
 		$this->Dispatch->args = array('schema', 'create', 'i18n');
 		$this->Dispatch->dispatch();
+	}
+
+/**
+ * Get and configure the Option parser
+ *
+ * @return ConsoleOptionParser
+ */
+	protected function _getOptionParser() {
+		$parser = parent::_getOptionParser();
+		return $parser->description(__('I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.'));
 	}
 
 /**
