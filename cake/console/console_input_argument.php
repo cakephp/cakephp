@@ -98,4 +98,21 @@ class ConsoleInputArgument {
 	public function isRequired() {
 		return (bool) $this->_required;
 	}
+
+/**
+ * Check that $value is a valid choice for this argument.
+ *
+ * @return boolean
+ */
+	public function validChoice($value) {
+		if (empty($this->_choices)) {
+			return true;
+		}
+		if (!in_array($value, $this->_choices)) {
+			throw new InvalidArgumentException(
+				sprintf(__('"%s" is not a valid value for %s'), $value, $this->_name)
+			);
+		}
+		return true;
+	}
 }

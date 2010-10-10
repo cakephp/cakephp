@@ -269,6 +269,23 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test that arguments with choices enforce them.
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	function testPositionalArgWithChoices() {
+		$parser = new ConsoleOptionParser();
+		$parser->addArgument('name', array('choices' => array('mark', 'jose')));
+
+		$result = $parser->parse(array('mark'));
+		$expected = array('mark');
+		$this->assertEquals($expected, $result[1], 'Got the correct value.');
+
+		$result = $parser->parse(array('jimmy'));
+	}
+
+/**
  * Test adding multiple arguments.
  *
  * @return void

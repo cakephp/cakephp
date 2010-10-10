@@ -516,13 +516,15 @@ class ConsoleOptionParser {
 			array_push($args, $argument);
 			return $args;
 		}
-		$position = 0;
 		$next = count($args);
 		if (!isset($this->_args[$next])) {
 			throw new InvalidArgumentException(__('Too many arguments.'));
 		}
-		array_push($args, $argument);
-		return $args;
+		$index = max($next - 1, 0);
+		if ($this->_args[$index]->validChoice($argument)) {
+			array_push($args, $argument);
+			return $args;
+		}
 	}
 
 /**
