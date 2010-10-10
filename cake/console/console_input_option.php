@@ -116,4 +116,21 @@ class ConsoleInputOption {
 	public function isBoolean() {
 		return (bool) $this->_boolean;
 	}
+
+/**
+ * Check that a value is a valid choice for this option.
+ *
+ * @return boolean
+ */
+	public function validChoice($value) {
+		if (empty($this->_choices)) {
+			return true;
+		}
+		if (!in_array($value, $this->_choices)) {
+			throw new InvalidArgumentException(
+				sprintf(__('"%s" is not a valid option for --%s'), $value, $this->_name)
+			);
+		}
+		return true;
+	}
 }

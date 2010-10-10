@@ -454,7 +454,7 @@ class ConsoleOptionParser {
 			list($name, $value) = explode('=', $name, 2);
 			array_unshift($this->_tokens, $value);
 		}
-		return $this->_parseOptionName($name, $params);
+		return $this->_parseOption($name, $params);
 	}
 
 /**
@@ -476,7 +476,7 @@ class ConsoleOptionParser {
 			}
 		}
 		$name = $this->_shortOptions[$key];
-		return $this->_parseOptionName($name, $params);
+		return $this->_parseOption($name, $params);
 	}
 
 /**
@@ -486,7 +486,7 @@ class ConsoleOptionParser {
  * @param array $params The params to append the parsed value into
  * @return array Params with $option added in.
  */
-	protected function _parseOptionName($name, $params) {
+	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
 			throw new InvalidArgumentException(sprintf(__('Unknown option `%s`'), $name));
 		}
@@ -498,8 +498,10 @@ class ConsoleOptionParser {
 		} else {
 			$value = $option->defaultValue();
 		}
-		$params[$name] = $value;
-		return $params;
+		if ($option->validChoice($value)) {
+			$params[$name] = $value;
+			return $params;
+		}
 	}
 
 /**
