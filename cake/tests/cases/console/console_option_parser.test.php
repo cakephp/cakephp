@@ -373,6 +373,40 @@ TEXT;
 	}
 
 /**
+ * test help() with options and arguments that have choices.
+ *
+ * @return void
+ */
+	function testHelpWithChoices() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.', 'choices' => array('one', 'two')))
+			->addArgument('type', array(
+				'help' => 'Resource type.',
+				'choices' => array('aco', 'aro'),
+				'required' => true
+			))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+		
+		$result = $parser->help();
+		$expected = <<<TEXT
+<info>Usage:</info>
+cake mycommand [-h] [--test one|two] aco|aro [other_longer]
+
+<info>Options:</info>
+
+--help, -h  Display this help.
+--test      A test option. <comment>(choices: one|two)</comment>
+
+<info>Arguments:</info>
+
+type          Resource type. <comment>(choices: aco|aro)</comment>
+other_longer  Another argument. <comment>(optional)</comment>
+
+TEXT;
+		$this->assertEquals($expected, $result, 'Help does not match');
+	}
+
+/**
  * test description and epilog in the help
  *
  * @return void

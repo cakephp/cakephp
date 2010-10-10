@@ -74,6 +74,9 @@ class ConsoleInputArgument {
 		if (!$this->isRequired()) {
 			$optional = ' <comment>(optional)</comment>';
 		}
+		if (!empty($this->_choices)) {
+			$optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+		}
 		return sprintf('%s%s%s', $name, $this->_help, $optional);
 	}
 
@@ -84,6 +87,9 @@ class ConsoleInputArgument {
  */
 	public function usage() {
 		$name = $this->_name;
+		if (!empty($this->_choices)) {
+			$name = implode('|', $this->_choices);
+		}
 		if (!$this->isRequired()) {
 			$name = '[' . $name . ']';
 		}

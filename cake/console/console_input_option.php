@@ -75,6 +75,9 @@ class ConsoleInputOption {
 		if (!empty($this->_default) && $this->_default !== true) {
 			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->_default);
 		}
+		if (!empty($this->_choices)) {
+			$default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
+		}
 		if (!empty($this->_short)) {
 			$short = ', -' . $this->_short;
 		}
@@ -95,6 +98,9 @@ class ConsoleInputOption {
 		$default = '';
 		if (!empty($this->_default) && $this->_default !== true) {
 			$default = ' ' . $this->_default;
+		}
+		if (!empty($this->_choices)) {
+			$default = ' ' . implode('|', $this->_choices);
 		}
 		return sprintf('[%s%s]', $name, $default);
 	}
