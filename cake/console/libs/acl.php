@@ -433,7 +433,10 @@ class AclShell extends Shell {
 			))->addSubcommand('getpath', array(
 				'help' => __('Print out the path to an ACL node.'),
 				'parser' => array(
-					'description' => __("Returns the path to the ACL object specified by <node>. \nThis command is useful in determining the inhertiance of permissions for a \ncertain object in the tree."
+					'description' => array(
+						__("Returns the path to the ACL object specified by <node>."),
+						__("This command is useful in determining the inhertiance of permissions"),
+						__("for a certain object in the tree.")
 					),
 					'arguments' => array(
 						'type' => $type,
@@ -446,7 +449,11 @@ class AclShell extends Shell {
 			))->addSubcommand('check', array(
 				'help' => __('Check the permissions between an ACO and ARO.'),
 				'parser' => array(
-					'description' => __("Use this command to grant ACL permissions. Once executed, the ARO \nspecified (and its children, if any) will have ALLOW access to the \nspecified ACO action (and the ACO's children, if any)."),
+					'description' => array(
+						__("Use this command to grant ACL permissions. Once executed, the ARO "),
+						__("specified (and its children, if any) will have ALLOW access to the"),
+						__("specified ACO action (and the ACO's children, if any).")
+					),
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to check.'), 'required' => true),
 						'aco' => array('help' => __('ACO to check.'), 'required' => true),
@@ -456,7 +463,11 @@ class AclShell extends Shell {
 			))->addSubcommand('grant', array(
 				'help' => __('Grant an ARO permissions to an ACO.'),
 				'parser' => array(
-					'description' => __("Use this command to grant ACL permissions. Once executed, the ARO \nspecified (and its children, if any) will have ALLOW access to the \nspecified ACO action (and the ACO's children, if any)."),
+					'description' => array(
+						__("Use this command to grant ACL permissions. Once executed, the ARO"),
+						__("specified (and its children, if any) will have ALLOW access to the"),
+						__("specified ACO action (and the ACO's children, if any).")
+					),
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to grant permission to.'), 'required' => true),
 						'aco' => array('help' => __('ACO to grant access to.'), 'required' => true),
@@ -466,7 +477,11 @@ class AclShell extends Shell {
 			))->addSubcommand('deny', array(
 				'help' => __('Deny an ARO permissions to an ACO.'),
 				'parser' => array(
-					'description' => __("Use this command to deny ACL permissions. Once executed, the ARO \nspecified (and its children, if any) will have DENY access to the \nspecified ACO action (and the ACO's children, if any)."),
+					'description' => array(
+						__("Use this command to deny ACL permissions. Once executed, the ARO"),
+						__("specified (and its children, if any) will have DENY access to the"),
+						__("specified ACO action (and the ACO's children, if any).")
+					),
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to deny.'), 'required' => true),
 						'aco' => array('help' => __('ACO to deny.'), 'required' => true),
@@ -476,7 +491,10 @@ class AclShell extends Shell {
 			))->addSubcommand('inherit', array(
 				'help' => __('Inherit an ARO\'s parent permissions.'),
 				'parser' => array(
-					'description' => __("Use this command to force a child ARO object to inherit its \npermissions settings from its parent."),
+					'description' => array(
+						__("Use this command to force a child ARO object to inherit its"),
+						__("permissions settings from its parent.")
+					),
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to have permisssions inherit.'), 'required' => true),
 						'aco' => array('help' => __('ACO to inherit permissions on.'), 'required' => true),
@@ -486,7 +504,11 @@ class AclShell extends Shell {
 			))->addSubcommand('view', array(
 				'help' => __('View a tree or a single node\'s subtree.'),
 				'parser' => array(
-					'description' => __("The view command will return the ARO or ACO tree. \nThe optional node parameter allows you to return \nonly a portion of the requested tree."),
+					'description' => array(
+						__("The view command will return the ARO or ACO tree."),
+						__("The optional node parameter allows you to return"),
+						__("only a portion of the requested tree.")
+					),
 					'arguments' => array(
 						'type' => $type,
 						'node' => array('help' => __('The optional node to view the subtree of.'))
