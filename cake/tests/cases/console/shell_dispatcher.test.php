@@ -438,103 +438,20 @@ class ShellDispatcherTest extends CakeTestCase {
  */
 	public function testDispatchShellWithMain() {
 		$Dispatcher = new TestShellDispatcher();
-		$methods = get_class_methods('Shell');
-		array_push($methods, 'main', '_secret');
-		$Mock = $this->getMock('Shell', $methods, array(&$Dispatcher), 'MockWithMainShell');
+		$Mock = $this->getMock('Shell', array(), array(&$Dispatcher), 'MockWithMainShell');
 
-		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Mock->expects($this->once())->method('initialize');
 		$Mock->expects($this->once())->method('loadTasks');
-		$Mock->expects($this->once())->method('startup');
+		$Mock->expects($this->once())->method('runCommand')
+			->with(null, array())
+			->will($this->returnValue(true));
+
 		$Dispatcher->TestShell = $Mock;
 
 		$Dispatcher->args = array('mock_with_main');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
 		$this->assertEqual($Dispatcher->args, array());
-
-		$Shell = new MockWithMainShell($Dispatcher);
-		$this->mockObjects[] = $Shell;
-		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
-		$Shell->expects($this->once())->method('startup');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('mock_with_main', 'initdb');
-		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
-		$this->assertEqual($Dispatcher->args, array('initdb'));
-
-		$Shell = new MockWithMainShell($Dispatcher);
-		$this->mockObjects[] = $Shell;
-		$Shell->expects($this->once())->method('startup');
-		$Shell->expects($this->once())->method('help');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('mock_with_main', 'help');
-		$result = $Dispatcher->dispatch();
-		$this->assertNull($result);
-		$this->assertEqual($Dispatcher->args, array());
-	}
-
-/**
- * test missing shell exceptions on underscored (private methods)
- *
- * @expectedException MissingShellMethodException
- * @return void
- */
-	function testMissingShellMethodExceptionPrivateMethod() {
-		$Dispatcher = new TestShellDispatcher();
-
-		$methods = get_class_methods('Shell');
-		array_push($methods, 'main', '_secret');
-
-		$Shell = $this->getMock('Shell', $methods, array(&$Dispatcher), 'MissingShellPrivateMethod');
-		$Shell->expects($this->never())->method('main');
-		$Shell->expects($this->never())->method('startup');
-		$Shell->expects($this->never())->method('_secret');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('missing_shell_private_method', '_secret');
-		$result = $Dispatcher->dispatch();
-	}
-
-/**
- * test exception when calling shell class methods.
- *
- * @expectedException MissingShellMethodException
- * @return void
- */
-	function testMissingShellMethodBaseClassMethod() {
-		$Dispatcher = new TestShellDispatcher();
-
-		$Shell = $this->getMock('Shell', array(), array(&$Dispatcher), 'MissingShellBaseClass');
-		$Shell->expects($this->never())->method('main');
-		$Shell->expects($this->never())->method('startup');
-		$Shell->expects($this->never())->method('hr');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('missing_shell_base_class', 'hr');
-		$result = $Dispatcher->dispatch();
-	}
-
-/**
- * test missing shell exception on missing method.
- *
- * @expectedException MissingShellMethodException
- * @return void
- */
-	function testMissingShellMethodExceptionMissingMethod() {
-		$Dispatcher = new TestShellDispatcher();
-
-		$methods = get_class_methods('Shell');
-
-		$Shell = $this->getMock('Shell', $methods, array(&$Dispatcher), 'MissingShellNoMethod');
-		$Shell->expects($this->never())->method('main');
-		$Shell->expects($this->never())->method('startup');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('missing_shell_method_no_method', 'idontexist');
-		$result = $Dispatcher->dispatch();
 	}
 
 /**
@@ -544,22 +461,22 @@ class ShellDispatcherTest extends CakeTestCase {
  */
 	public function testDispatchShellWithoutMain() {
 		$Dispatcher = new TestShellDispatcher();
-		$methods = get_class_methods('Shell');
-		array_push($methods, 'initDb', '_secret');
-		$Shell = $this->getMock('Shell', $methods, array(&$Dispatcher), 'MockWithoutMainShell');
+		$Shell = $this->getMock('Shell', array(), array(&$Dispatcher), 'MockWithoutMainShell');
 
 		$Shell = new MockWithoutMainShell($Dispatcher);
 		$this->mockObjects[] = $Shell;
-		$Shell->expects($this->once())->method('initDb')->will($this->returnValue(true));
+
 		$Shell->expects($this->once())->method('initialize');
 		$Shell->expects($this->once())->method('loadTasks');
-		$Shell->expects($this->once())->method('startup');
+		$Shell->expects($this->once())->method('runCommand')
+			->with('initdb', array('initdb'))
+			->will($this->returnValue(true));
+
 		$Dispatcher->TestShell = $Shell;
 
 		$Dispatcher->args = array('mock_without_main', 'initdb');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
-		$this->assertEqual($Dispatcher->args, array());
 	}
 
 /**
@@ -624,61 +541,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Dispatcher->TestShell = $Shell;
 
 		$Dispatcher->args = array('mock_without_main_not_a', 'initdb');
-		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
-	}
-
-/**
- * Verify that a task is called instead of the shell if the first arg equals
- * the name of the task
- *
- * @return void
- */
-	public function testDispatchTask() {
-		$Dispatcher = new TestShellDispatcher();
-		$mainMethods = $executeMethods = get_class_methods('Shell');
-		array_push($mainMethods, 'main');
-		array_push($executeMethods, 'execute');
-
-		$Week = $this->getMock('Shell', $mainMethods, array(&$Dispatcher), 'MockWeekShell');
-		$Sunday = $this->getMock('Shell', $executeMethods, array(&$Dispatcher), 'MockOnSundayTask');
-
-		$Shell = new MockWeekShell($Dispatcher);
-		$this->mockObjects[] = $Shell;
-		$Shell->expects($this->once())->method('initialize');
-		$Shell->expects($this->once())->method('loadTasks');
-		$Shell->expects($this->never())->method('startup');
-		$Shell->expects($this->never())->method('main');
-
-		$Task = new MockOnSundayTask($Dispatcher);
-		$this->mockObjects[] = $Task;
-		$Task->expects($this->once())->method('execute')->will($this->returnValue(true));
-		$Task->expects($this->once())->method('initialize');;
-		$Task->expects($this->once())->method('loadTasks');
-		$Task->expects($this->once())->method('startup');
-		$Task->expects($this->once())->method('execute');
-
-		$Shell->MockOnSunday = $Task;
-		$Shell->taskNames = array('MockOnSunday');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('mock_week', 'mock_on_sunday');
-		$result = $Dispatcher->dispatch();
-		$this->assertTrue($result);
-		$this->assertEqual($Dispatcher->args, array());
-
-		$Shell = new MockWeekShell($Dispatcher);
-		$Task = new MockOnSundayTask($Dispatcher);
-		array_push($this->mockObjects, $Shell, $Task);
-
-		$Task->expects($this->never())->method('execute');
-		$Task->expects($this->once())->method('help');
-
-		$Shell->MockOnSunday = $Task;
-		$Shell->taskNames = array('MockOnSunday');
-		$Dispatcher->TestShell = $Shell;
-
-		$Dispatcher->args = array('mock_week', 'mock_on_sunday', 'help');
 		$result = $Dispatcher->dispatch();
 		$this->assertTrue($result);
 	}

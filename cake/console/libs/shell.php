@@ -329,9 +329,19 @@ class Shell extends Object {
  * @return void
  */
 	public function runCommand($command, $argv) {
-		if (!empty($command) && $this->hasTask($command)) {
-			$command = Inflector::camelize($command);
+		$isTask = $this->hasTask($command);
+		$isMethod = $this->hasMethod($command);
+		$isMain = $this->hasMethod('main');
+
+		if ($isTask || $isMethod) {
 			array_shift($argv);
+		}
+		if ($isTask || $isMethod || $isMain) {
+			$this->startup();
+		}
+
+		if ($isTask) {
+			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 
@@ -340,14 +350,14 @@ class Shell extends Object {
 		if (isset($this->params['help'])) {
 			return $this->out($this->parser->help());
 		}
-		if ($this->hasMethod($command)) {
-			array_shift($argv);
+
+		if ($isMethod) {
 			return $this->{$command}();
 		}
-		if ($this->hasMethod('main')) {
+		if ($isMain) {
 			return $this->main();
 		}
-		throw new RuntimeException(sprintf(__('Unhandled method `%s`'), $command));
+		throw new MissingShellMethodException(array('shell' => get_class($this), 'method' => $command));
 	}
 
 /**

@@ -620,7 +620,7 @@ class ShellTest extends CakeTestCase {
 /**
  * test run command causing exception on Shell method.
  *
- * @expectedException RuntimeException
+ * @expectedException MissingShellMethodException
  * @return void
  */
 	function testRunCommandBaseclassMethod() {
@@ -629,6 +629,20 @@ class ShellTest extends CakeTestCase {
 
 		$Mock->expects($this->never())->method('hr');
 		$result = $Mock->runCommand('hr', array());
+	}
+
+/**
+ * test run command causing exception on Shell method.
+ *
+ * @expectedException MissingShellMethodException
+ * @return void
+ */
+	function testRunCommandMissingMethod() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('startup'), array(), '', false);
+
+		$Mock->expects($this->never())->method('idontexist');
+		$result = $Mock->runCommand('idontexist', array());
 	}
 
 /**
@@ -657,11 +671,12 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	function testRunCommandHittingTask() {
-		$Shell = $this->getMock('Shell', array('hasTask'), array(), '', false);
+		$Shell = $this->getMock('Shell', array('hasTask', 'startup'), array(), '', false);
 		$task = $this->getMock('Shell', array('execute', 'runCommand'), array(), '', false);
 		$task->expects($this->any())->method('runCommand')
 			->with('execute', array('one', 'value'));
 
+		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->any())->method('hasTask')->will($this->returnValue(true));
 		$Shell->RunCommand = $task;
 
