@@ -321,6 +321,15 @@ class ConsoleOptionParser {
 	}
 
 /**
+ * Get the array of defined subcommands
+ *
+ * @return array
+ */
+	public function subcommands() {
+		return $this->_subcommands;
+	}
+
+/**
  * Parse the argv array into a set of params and args.
  *
  * @param array $argv Array of args (argv) to parse
