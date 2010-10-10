@@ -331,6 +331,7 @@ class Shell extends Object {
 	public function runCommand($command, $argv) {
 		if (!empty($command) && $this->hasTask($command)) {
 			$command = Inflector::camelize($command);
+			array_shift($argv);
 			return $this->{$command}->runCommand('execute', $argv);
 		}
 
@@ -340,6 +341,7 @@ class Shell extends Object {
 			return $this->out($this->parser->help());
 		}
 		if ($this->hasMethod($command)) {
+			array_shift($argv);
 			return $this->{$command}();
 		}
 		if ($this->hasMethod('main')) {

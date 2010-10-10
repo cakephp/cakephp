@@ -658,11 +658,13 @@ class ShellTest extends CakeTestCase {
  */
 	function testRunCommandHittingTask() {
 		$Shell = $this->getMock('Shell', array('hasTask'), array(), '', false);
-		$task = $this->getMock('Shell', array('execute'), array(), '', false);
-		$Shell->tasks = array('RunCommand');
-		$Shell->expects($this->once())->method('hasTask')->will($this->returnValue(true));
+		$task = $this->getMock('Shell', array('execute', 'runCommand'), array(), '', false);
+		$task->expects($this->any())->method('runCommand')
+			->with('execute', array('one', 'value'));
+
+		$Shell->expects($this->any())->method('hasTask')->will($this->returnValue(true));
 		$Shell->RunCommand = $task;
 
-		$Shell->runCommand('run_command', array());
+		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 }
