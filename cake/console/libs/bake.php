@@ -234,33 +234,4 @@ class BakeShell extends Shell {
 		));
 	}
 
-/**
- * Displays help contents
- *
- */
-	public function help() {
-		$this->out('CakePHP Bake:');
-		$this->hr();
-		$this->out('The Bake script generates controllers, views and models for your application.');
-		$this->out('If run with no command line arguments, Bake guides the user through the class');
-		$this->out('creation process. You can customize the generation process by telling Bake');
-		$this->out('where different parts of your application are using command line arguments.');
-		$this->hr();
-		$this->out("Usage: cake bake <command> <arg1> <arg2>...");
-		$this->hr();
-		$this->out('Params:');
-		$this->out("\t-app <path> Absolute/Relative path to your app folder.\n");
-		$this->out('Commands:');
-		$this->out("\n\tbake help\n\t\tshows this help message.");
-		$this->out("\n\tbake all <name>\n\t\tbakes complete MVC. optional <name> of a Model");
-		$this->out("\n\tbake project <path>\n\t\tbakes a new app folder in the path supplied\n\t\tor in current directory if no path is specified");
-		$this->out("\n\tbake plugin <name>\n\t\tbakes a new plugin folder in the path supplied\n\t\tor in current directory if no path is specified.");
-		$this->out("\n\tbake db_config\n\t\tbakes a database.php file in config directory.");
-		$this->out("\n\tbake model\n\t\tbakes a model. run 'bake model help' for more info");
-		$this->out("\n\tbake view\n\t\tbakes views. run 'bake view help' for more info");
-		$this->out("\n\tbake controller\n\t\tbakes a controller. run 'bake controller help' for more info");
-		$this->out("\n\tbake fixture\n\t\tbakes fixtures. run 'bake fixture help' for more info.");
-		$this->out("\n\tbake test\n\t\tbakes unit tests. run 'bake test help' for more info.");
-		$this->out();
-	}
 }
