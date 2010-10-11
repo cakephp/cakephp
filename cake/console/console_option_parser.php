@@ -573,8 +573,8 @@ class ConsoleOptionParser {
 		if (!isset($this->_args[$next])) {
 			throw new InvalidArgumentException(__('Too many arguments.'));
 		}
-		$index = max($next - 1, 0);
-		if ($this->_args[$index]->validChoice($argument)) {
+
+		if ($this->_args[$next]->validChoice($argument)) {
 			array_push($args, $argument);
 			return $args;
 		}

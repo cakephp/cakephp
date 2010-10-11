@@ -282,13 +282,15 @@ class ConsoleOptionParserTest extends CakeTestCase {
  */
 	function testPositionalArgWithChoices() {
 		$parser = new ConsoleOptionParser();
-		$parser->addArgument('name', array('choices' => array('mark', 'jose')));
+		$parser->addArgument('name', array('choices' => array('mark', 'jose')))
+			->addArgument('alias', array('choices' => array('cowboy', 'samurai')))
+			->addArgument('weapon', array('choices' => array('gun', 'sword')));
 
-		$result = $parser->parse(array('mark'));
-		$expected = array('mark');
+		$result = $parser->parse(array('mark', 'samurai', 'sword'));
+		$expected = array('mark', 'samurai', 'sword');
 		$this->assertEquals($expected, $result[1], 'Got the correct value.');
 
-		$result = $parser->parse(array('jimmy'));
+		$result = $parser->parse(array('jose', 'coder'));
 	}
 
 /**
