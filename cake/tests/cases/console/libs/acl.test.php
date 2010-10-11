@@ -58,7 +58,7 @@ class AclShellTest extends CakeTestCase {
 		);
 		$this->Task = $this->getMock(
 			'AclShell',
-			array('in', 'out', 'hr', 'createFile', 'error', 'err'),
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$collection = new ComponentCollection();

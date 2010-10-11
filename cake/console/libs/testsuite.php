@@ -74,9 +74,6 @@ class TestSuiteShell extends Shell {
 		if (isset($this->args[1])) {
 			$params['case'] = Inflector::underscore($this->args[1]);
 		}
-		if (isset($this->params['filter'])) {
-			$this->params['-filter'] = $this->params['filter'];
-		}
 		return $params;
 	}
 
@@ -88,11 +85,9 @@ class TestSuiteShell extends Shell {
 	protected function runnerOptions() {
 		$options = array();
 		foreach ($this->params as $param => $value) {
-			if ($param[0] === '-') {
-				$options[] = '-' . $param;
-				if (is_string($value)) {
-					$options[] = $value;
-				}
+			$options[] = '--' . $param;
+			if (is_string($value)) {
+				$options[] = $value;
 			}
 		}
 		return $options;

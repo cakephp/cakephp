@@ -97,12 +97,12 @@ class TestSuiteShellTest extends CakeTestCase {
 	public function testRunnerOptions() {
 		$this->Shell->startup();
 		$this->Shell->args = array('core', 'Basics');
-		$this->Shell->params = array('filter' => 'myFilter', '-colors' => null, '-verbose' => null);
+		$this->Shell->params = array('filter' => 'myFilter', 'colors' => null, 'verbose' => null);
 
 		$this->Shell->expects($this->once())->method('run')
 			->with(
 				array('app' => false, 'plugin' => null, 'output' => 'text', 'case' => 'basics'),
-				array('--colors', '--verbose', '--filter', 'myFilter')
+				array('--filter', 'myFilter', '--colors', '--verbose')
 			);
 		$this->Shell->main();
 	}

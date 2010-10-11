@@ -31,9 +31,9 @@ class CommandListShell extends Shell {
  */
 	public function main() {
 		$this->out("<info>Current Paths:</info>", 2);
-		$this->out(" -app: ". $this->params['app']);
-		$this->out(" -working: " . rtrim($this->params['working'], DS));
-		$this->out(" -root: " . rtrim($this->params['root'], DS));
+		$this->out(" -app: ". $this->Dispatch->params['app']);
+		$this->out(" -working: " . rtrim($this->Dispatch->params['working'], DS));
+		$this->out(" -root: " . rtrim($this->Dispatch->params['root'], DS));
 		$this->out(" -core: " . rtrim(CORE_PATH, DS));
 		$this->out("");
 		$this->out("<info>Changing Paths:</info>", 2);

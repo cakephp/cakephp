@@ -325,7 +325,7 @@ class Shell extends Object {
 		}
 
 		$this->OptionParser = $this->getOptionParser();
-		list($this->params, $this->args) = $this->OptionParser->parse($argv);
+		list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();

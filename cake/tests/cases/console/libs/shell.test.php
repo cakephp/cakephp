@@ -144,7 +144,6 @@ class ShellTest extends CakeTestCase {
 	public function testConstruct() {
 		$this->assertEquals($this->Dispatcher, $this->Shell->Dispatch);
 		$this->assertEqual($this->Shell->name, 'TestShell');
-		$this->assertEqual($this->Shell->alias, 'TestShell');
 		$this->assertType('ConsoleOutput', $this->Shell->stdout);
 		$this->assertType('ConsoleOutput', $this->Shell->stderr);
 	}
