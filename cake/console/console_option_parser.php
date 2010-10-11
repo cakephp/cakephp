@@ -113,8 +113,10 @@ class ConsoleOptionParser {
  * ### Providing Help text
  *
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
- * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
+ * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch. 
  *
+ * @param string $command The command name this parser is for.  The command name is used for generating help.
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  */
 	public function __construct($command = null, $defaultOptions = true) {
 		$this->_command = $command;
@@ -139,6 +141,8 @@ class ConsoleOptionParser {
 /**
  * Static factory method for creating new OptionParsers so you can chain methods off of them.
  *
+ * @param string $command The command name this parser is for.  The command name is used for generating help.
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
 	public static function create($command, $defaultOptions = true) {
@@ -146,8 +150,22 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Build a parser from an array.
+ * Build a parser from an array. Uses an array like
  *
+ * {{{
+ * $spec = array(
+ *		'description' => 'text',
+ *		'epilog' => 'text',
+ *		'arguments' => array( 
+ *			// list of arguments compatible with addArguments.
+ *		),
+ *		'options' => array(
+ *			// list of options compatible with addOptions
+ *		)
+ * );
+ * }}}
+ *
+ * @param array $spec The spec to build the OptionParser with.
  * @return ConsoleOptionParser
  */
 	public static function buildFromArray($spec) {
@@ -377,7 +395,8 @@ class ConsoleOptionParser {
  * to parse the $argv
  *
  * @param array $argv Array of args (argv) to parse.
- * @param string $command The subcommand to use for parsing.
+ * @param string $command The subcommand to use.  If this parameter is a subcommand, that has a parser,
+ *    That parser will be used to parse $argv instead.
  * @return Array array($params, $args)
  * @throws InvalidArgumentException When an invalid parameter is encountered.
  *   RuntimeException when required arguments are not supplied.
@@ -409,12 +428,12 @@ class ConsoleOptionParser {
 
 /**
  * Gets formatted help for this parser object.
- * Generates help text based on the description, options, arguments and epilog
+ * Generates help text based on the description, options, arguments, subcommands and epilog
  * in the parser.
  *
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
- * @return string
+ * @return string Generated help.
  */
 	public function help($subcommand = null) {
 		if (
@@ -558,7 +577,8 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Checks that the argument doesn't exceed the declared arguments.
+ * Parse an argument, and ensure that the argument doesn't exceed the number of arguments
+ * and that the argument is a valid choice.
  *
  * @param string $argument The argument to append
  * @param array $args The array of parsed args to append to.

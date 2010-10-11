@@ -133,9 +133,10 @@ class ConsoleInputOption {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new InvalidArgumentException(
-				sprintf(__('"%s" is not a valid value for --%s'), $value, $this->_name)
-			);
+			throw new InvalidArgumentException(sprintf(
+				__('"%s" is not a valid value for --%s. Please use one of "%s"'), 
+				$value, $this->_name, implode(', ', $this->_choices)
+			));
 		}
 		return true;
 	}
