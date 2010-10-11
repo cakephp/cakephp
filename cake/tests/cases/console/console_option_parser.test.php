@@ -324,6 +324,22 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test adding multiple subcommands
+ *
+ * @return void
+ */
+	function testAddSubcommands() {
+		$parser = new ConsoleOptionParser();
+		$result = $parser->addSubcommands(array(
+			'initdb' => array('help' => 'Initialize the database'),
+			'create' => array('help' => 'Create something')
+		));
+		$this->assertEquals($parser, $result, 'Adding a subcommands is not chainable');
+		$result = $parser->subcommands();
+		$this->assertEquals(2, count($result), 'Not enough subcommands');
+	}
+
+/**
  * test getting help with defined options.
  *
  * @return void
@@ -523,6 +539,9 @@ TEXT;
 				'name' => array('help' => 'The name'),
 				'other' => array('help' => 'The other arg')
 			),
+			'subcommands' => array(
+				'initdb' => array('help' => 'make database')
+			),
 			'description' => 'description text',
 			'epilog' => 'epilog text'
 		);
@@ -537,6 +556,9 @@ TEXT;
 
 		$args = $parser->arguments();
 		$this->assertEquals(2, count($args));
+		
+		$commands = $parser->subcommands();
+		$this->assertEquals(1, count($commands));
 	}
 
 /**

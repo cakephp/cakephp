@@ -161,6 +161,9 @@ class ConsoleOptionParser {
  *		),
  *		'options' => array(
  *			// list of options compatible with addOptions
+ *		),
+ *		'subcommands' => array(
+ *			// list of subcommands to add.
  *		)
  * );
  * }}}
@@ -175,6 +178,9 @@ class ConsoleOptionParser {
 		}
 		if (!empty($spec['options'])) {
 			$parser->addOptions($spec['options']);
+		}
+		if (!empty($spec['subcommands'])) {
+			$parser->addSubcommands($spec['subcommands']);
 		}
 		if (!empty($spec['description'])) {
 			$parser->description($spec['description']);
@@ -359,6 +365,19 @@ class ConsoleOptionParser {
 		);
 		$options = array_merge($defaults, $params);
 		$this->_subcommands[$name] = new ConsoleInputSubcommand($options);
+		return $this;
+	}
+
+/**
+ * Add multiple subcommands at once.
+ *
+ * @param array $commands Array of subcommands.
+ * @return $this
+ */
+	public function addSubcommands(array $commands) {
+		foreach ($commands as $name => $params) {
+			$this->addSubcommand($name, $params);
+		}
 		return $this;
 	}
 
