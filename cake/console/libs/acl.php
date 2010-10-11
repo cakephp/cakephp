@@ -84,7 +84,7 @@ class AclShell extends Shell {
 			$this->_stop();
 		}
 
-		if ($this->command && !in_array($this->command, array('help'))) {
+		if ($this->command) {
 			if (!config('database')) {
 				$this->out(__('Your database configuration was not found. Take a moment to create one.'), true);
 				$this->args = null;
@@ -162,8 +162,6 @@ class AclShell extends Shell {
  *
  */
 	public function setParent() {
-		$this->_checkArgs(3, 'setParent');
-		$this->checkNodeType();
 		extract($this->__dataVars());
 		$target = $this->parseIdentifier($this->args[1]);
 		$parent = $this->parseIdentifier($this->args[2]);
@@ -187,8 +185,6 @@ class AclShell extends Shell {
  *
  */
 	public function getPath() {
-		$this->_checkArgs(2, 'getPath');
-		$this->checkNodeType();
 		extract($this->__dataVars());
 		$identifier = $this->parseIdentifier($this->args[1]);
 
@@ -231,13 +227,12 @@ class AclShell extends Shell {
  *
  */
 	public function check() {
-		$this->_checkArgs(3, 'check');
 		extract($this->__getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
-			$this->out(sprintf(__('%s is allowed.'), $aroName), true);
+			$this->out(sprintf(__('%s is <success>allowed</success>.'), $aroName), true);
 		} else {
-			$this->out(sprintf(__('%s is not allowed.'), $aroName), true);
+			$this->out(sprintf(__('%s is <error>not allowed</error>.'), $aroName), true);
 		}
 	}
 
@@ -246,13 +241,12 @@ class AclShell extends Shell {
  *
  */
 	public function grant() {
-		$this->_checkArgs(3, 'grant');
 		extract($this->__getParams());
 
 		if ($this->Acl->allow($aro, $aco, $action)) {
-			$this->out(__('Permission granted.'), true);
+			$this->out(__('Permission <success>granted</success>.'), true);
 		} else {
-			$this->out(__('Permission was not granted.'), true);
+			$this->out(__('Permission was <error>not granted</error>.'), true);
 		}
 	}
 
@@ -261,7 +255,6 @@ class AclShell extends Shell {
  *
  */
 	public function deny() {
-		$this->_checkArgs(3, 'deny');
 		extract($this->__getParams());
 
 		if ($this->Acl->deny($aro, $aco, $action)) {
@@ -276,7 +269,6 @@ class AclShell extends Shell {
  *
  */
 	public function inherit() {
-		$this->_checkArgs(3, 'inherit');
 		extract($this->__getParams());
 
 		if ($this->Acl->inherit($aro, $aco, $action)) {
@@ -291,8 +283,6 @@ class AclShell extends Shell {
  *
  */
 	public function view() {
-		$this->_checkArgs(1, 'view');
-		$this->checkNodeType();
 		extract($this->__dataVars());
 
 		if (isset($this->args[1])) {
@@ -442,7 +432,7 @@ class AclShell extends Shell {
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to check.'), 'required' => true),
 						'aco' => array('help' => __('ACO to check.'), 'required' => true),
-						'action' => array('help' => __('Action to check'))
+						'action' => array('help' => __('Action to check'), 'default' => 'all')
 					)
 				)
 			))->addSubcommand('grant', array(
@@ -456,7 +446,7 @@ class AclShell extends Shell {
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to grant permission to.'), 'required' => true),
 						'aco' => array('help' => __('ACO to grant access to.'), 'required' => true),
-						'action' => array('help' => __('Action to grant'))
+						'action' => array('help' => __('Action to grant'), 'default' => 'all')
 					)
 				)
 			))->addSubcommand('deny', array(
@@ -470,7 +460,7 @@ class AclShell extends Shell {
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to deny.'), 'required' => true),
 						'aco' => array('help' => __('ACO to deny.'), 'required' => true),
-						'action' => array('help' => __('Action to deny'))
+						'action' => array('help' => __('Action to deny'), 'default' => 'all')
 					)
 				)
 			))->addSubcommand('inherit', array(
@@ -483,7 +473,7 @@ class AclShell extends Shell {
 					'arguments' => array(
 						'aro' => array('help' => __('ARO to have permisssions inherit.'), 'required' => true),
 						'aco' => array('help' => __('ACO to inherit permissions on.'), 'required' => true),
-						'action' => array('help' => __('Action to inherit'))
+						'action' => array('help' => __('Action to inherit'), 'default' => 'all')
 					)
 				)
 			))->addSubcommand('view', array(
@@ -518,19 +508,6 @@ class AclShell extends Shell {
 	}
 
 /**
- * Check that first argument specifies a valid Node type (ARO/ACO)
- *
- */
-	public function checkNodeType() {
-		if (!isset($this->args[0])) {
-			return false;
-		}
-		if ($this->args[0] != 'aco' && $this->args[0] != 'aro') {
-			$this->error(sprintf(__("Missing/Unknown node type: '%s'"), $this->args[0]), __('Please specify which ACL object type you wish to create. Either "aro" or "aco"'));
-		}
-	}
-
-/**
  * Checks that given node exists
  *
  * @param string $type Node type (ARO/ACO)
@@ -538,7 +515,7 @@ class AclShell extends Shell {
  * @return boolean Success
  */
 	public function nodeExists() {
-		if (!$this->checkNodeType() && !isset($this->args[1])) {
+		if (!isset($this->args[0]) || !isset($this->args[1])) {
 			return false;
 		}
 		extract($this->__dataVars($this->args[0]));
