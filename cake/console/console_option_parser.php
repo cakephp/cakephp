@@ -372,14 +372,20 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Parse the argv array into a set of params and args.
+ * Parse the argv array into a set of params and args.  If $command is not null
+ * and $command is equal to a subcommand that has a parser, that parser will be used
+ * to parse the $argv
  *
- * @param array $argv Array of args (argv) to parse
+ * @param array $argv Array of args (argv) to parse.
+ * @param string $command The subcommand to use for parsing.
  * @return Array array($params, $args)
  * @throws InvalidArgumentException When an invalid parameter is encountered.
  *   RuntimeException when required arguments are not supplied.
  */
-	public function parse($argv) {
+	public function parse($argv, $command = null) {
+		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
+			return $this->_subcommands[$command]->parser()->parse($argv);
+		}
 		$params = $args = array();
 		$this->_tokens = $argv;
 		while ($token = array_shift($this->_tokens)) {
@@ -434,6 +440,11 @@ class ConsoleOptionParser {
 			foreach ($this->_subcommands as $command) {
 				$out[] = $command->help($max);
 			}
+			$out[] = '';
+			$out[] = sprintf(
+				__('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'), 
+				$this->command()
+			);
 			$out[] = '';
 		}
 		

@@ -464,6 +464,8 @@ cake mycommand [subcommand] [-h] [--test]
 
 method  This is another command
 
+To see help on a subcommand use <info>`cake mycommand [subcommand] --help`</info>
+
 <info>Options:</info>
 
 --help, -h  Display this help.
@@ -533,5 +535,33 @@ TEXT;
 
 		$args = $parser->arguments();
 		$this->assertEquals(2, count($args));
+	}
+
+/**
+ * test that parse() takes a subcommand argument, and that the subcommand parser
+ * is used.
+ *
+ * @return void
+ */
+	function testParsingWithSubParser() {
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('primary')
+			->addArgument('one', array('required' => true, 'choices' => array('a', 'b')))
+			->addArgument('two', array('required' => true))
+			->addSubcommand('sub', array(
+				'parser' => array(
+					'options' => array(
+						'secondary' => array('boolean' => true),
+						'fourth' => array('help' => 'fourth option')
+					),
+					'arguments' => array(
+						'sub_arg' => array('choices' => array('c', 'd'))
+					)
+				)
+			));
+		
+		$result = $parser->parse(array('--secondary', '--fourth', '4', 'c'), 'sub');
+		$expected = array(array('secondary' => true, 'fourth' => '4'), array('c'));
+		$this->assertEquals($expected, $result, 'Sub parser did not parse request.');
 	}
 }
