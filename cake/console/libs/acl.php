@@ -106,20 +106,7 @@ class AclShell extends Shell {
  *
  */
 	public function main() {
-		$out  = __('Available ACL commands:') . "\n";
-		$out .= "\t - create\n";
-		$out .= "\t - delete\n";
-		$out .= "\t - setParent\n";
-		$out .= "\t - getPath\n";
-		$out .= "\t - check\n";
-		$out .= "\t - grant\n";
-		$out .= "\t - deny\n";
-		$out .= "\t - inherit\n";
-		$out .= "\t - view\n";
-		$out .= "\t - initdb\n";
-		$out .= "\t - help\n\n";
-		$out .= __("For help, run the 'help' command.  For help on a specific command, run 'help <command>'");
-		$this->out($out);
+		$this->out($this->OptionParser->help());
 	}
 
 /**
@@ -127,8 +114,6 @@ class AclShell extends Shell {
  *
  */
 	public function create() {
-		$this->_checkArgs(3, 'create');
-		$this->checkNodeType();
 		extract($this->__dataVars());
 
 		$class = ucfirst($this->args[0]);
@@ -144,13 +129,13 @@ class AclShell extends Shell {
 		if (is_string($data) && $data != '/') {
 			$data = array('alias' => $data);
 		} elseif (is_string($data)) {
-			$this->error(__('/ can not be used as an alias!'), __("\t/ is the root, please supply a sub alias"));
+			$this->error(__('/ can not be used as an alias!') . __("	/ is the root, please supply a sub alias"));
 		}
 
 		$data['parent_id'] = $parent;
 		$this->Acl->{$class}->create();
 		if ($this->Acl->{$class}->save($data)) {
-			$this->out(sprintf(__("New %s '%s' created.\n"), $class, $this->args[2]), true);
+			$this->out(sprintf(__("<success>New %s</success> '%s' created."), $class, $this->args[2]), 2);
 		} else {
 			$this->err(sprintf(__("There was a problem creating a new %s '%s'."), $class, $this->args[2]));
 		}
@@ -161,17 +146,15 @@ class AclShell extends Shell {
  *
  */
 	public function delete() {
-		$this->_checkArgs(2, 'delete');
-		$this->checkNodeType();
 		extract($this->__dataVars());
 
 		$identifier = $this->parseIdentifier($this->args[1]);
 		$nodeId = $this->_getNodeId($class, $identifier);
 
 		if (!$this->Acl->{$class}->delete($nodeId)) {
-			$this->error(__('Node Not Deleted'), sprintf(__('There was an error deleting the %s. Check that the node exists'), $class) . ".\n");
+			$this->error(__('Node Not Deleted') . sprintf(__('There was an error deleting the %s. Check that the node exists'), $class) . ".\n");
 		}
-		$this->out(sprintf(__('%s deleted'), $class) . ".\n", true);
+		$this->out(sprintf(__('<success>%s deleted.</success>'), $class), 2);
 	}
 
 /**
@@ -396,9 +379,11 @@ class AclShell extends Shell {
 						'type' => $type,
 						'parent' => array(
 							'help' => __('The node selector for the parent.'),
+							'required' => true
 						),
 						'alias' => array(
-							'help' => __('The alias to use for the newly created node.')
+							'help' => __('The alias to use for the newly created node.'),
+							'required' => true
 						)
 					)
 				)

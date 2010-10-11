@@ -326,6 +326,7 @@ class Shell extends Object {
 
 		$this->OptionParser = $this->getOptionParser();
 		list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
+		$this->command = $command;
 
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();
@@ -333,6 +334,7 @@ class Shell extends Object {
 		if (isset($this->params['help'])) {
 			return $this->out($this->OptionParser->help($command));
 		}
+
 		if ($isTask) {
 			$command = Inflector::camelize($command);
 			return $this->{$command}->runCommand('execute', $argv);
