@@ -104,7 +104,9 @@ class TestSuiteShell extends Shell {
  */
 	protected function runnerOptions() {
 		$options = array();
-		foreach ($this->params as $param => $value) {
+		$params = $this->params;
+		unset($params['help']);
+		foreach ($params as $param => $value) {
 			$options[] = '--' . $param;
 			if (is_string($value)) {
 				$options[] = $value;

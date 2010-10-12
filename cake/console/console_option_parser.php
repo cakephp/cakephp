@@ -445,8 +445,15 @@ class ConsoleOptionParser {
 			}
 		}
 		foreach ($this->_options as $option) {
-			if ($option->defaultValue() !== null && !isset($params[$option->name()]) && !$option->isBoolean()) {
-				$params[$option->name()] = $option->defaultValue();
+			$name = $option->name();
+			$isBoolean = $option->isBoolean();
+			$default = $option->defaultValue();
+	
+			if ($default !== null && !isset($params[$name]) && !$isBoolean) {
+				$params[$name] = $default;
+			}
+			if ($isBoolean && !isset($params[$name])) {
+				$params[$name] = false;
 			}
 		}
 		return array($params, $args);

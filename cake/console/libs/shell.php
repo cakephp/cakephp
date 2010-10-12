@@ -331,7 +331,7 @@ class Shell extends Object {
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();
 		}
-		if (isset($this->params['help'])) {
+		if (!empty($this->params['help'])) {
 			return $this->out($this->OptionParser->help($command));
 		}
 
