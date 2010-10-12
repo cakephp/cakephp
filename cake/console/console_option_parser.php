@@ -130,10 +130,12 @@ class ConsoleOptionParser {
 		if ($defaultOptions) {
 			$this->addOption('verbose', array(
 				'short' => 'v',
-				'help' => __('Enable verbose output.')
+				'help' => __('Enable verbose output.'),
+				'boolean' => true
 			))->addOption('quiet', array(
 				'short' => 'q',
-				'help' => __('Enable quiet output.')
+				'help' => __('Enable quiet output.'),
+				'boolean' => true
 			));
 		}
 	}
@@ -249,7 +251,7 @@ class ConsoleOptionParser {
  * - `short` - The single letter variant for this option, leave undefined for none.
  * - `help` - Help text for this option.  Used when generating help for the option.
  * - `default` - The default value for this option. Defaults are added into the parsed params when the 
- *    attached option is not provided.  Using default and boolean together will not work.
+ *    attached option is not provided or has no value.  Using default and boolean together will not work.
  *    are added into the parsed parameters when the option is undefined. 
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
  *    If an option is defined as boolean, it will always be added to the parsed params.  If no present
@@ -440,6 +442,11 @@ class ConsoleOptionParser {
 				throw new RuntimeException(
 					sprintf(__('Missing required arguments. %s is required.'), $arg->name())
 				);
+			}
+		}
+		foreach ($this->_options as $option) {
+			if ($option->defaultValue() !== null && !isset($params[$option->name()]) && !$option->isBoolean()) {
+				$params[$option->name()] = $option->defaultValue();
 			}
 		}
 		return array($params, $args);

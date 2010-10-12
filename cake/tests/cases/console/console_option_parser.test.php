@@ -105,6 +105,13 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		));
 		$result = $parser->parse(array('--test'));
 		$this->assertEquals(array('test' => 'default value'), $result[0], 'Default value did not parse out');
+		
+		$parser = new ConsoleOptionParser();
+		$parser->addOption('test', array(
+			'default' => 'default value',
+		));
+		$result = $parser->parse(array());
+		$this->assertEquals(array('test' => 'default value'), $result[0], 'Default value did not parse out');
 	}
 
 /**
