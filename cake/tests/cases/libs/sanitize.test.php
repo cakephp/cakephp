@@ -236,6 +236,16 @@ class SanitizeTest extends CakeTestCase {
 		$expected = 'The &quot;lazy&quot; dog &#039;jumped&#039; &amp; flew over the moon. If (1+1) = 2 &lt;em&gt;is&lt;/em&gt; true, (2-1) = 1 is also true';
 		$result = Sanitize::html($string);
 		$this->assertEqual($result, $expected);
+
+		$string = 'The "lazy" dog & his friend Apple&reg; conquered the world';
+		$expected = 'The &quot;lazy&quot; dog &amp; his friend Apple&amp;reg; conquered the world';
+		$result = Sanitize::html($string);
+		$this->assertEqual($result, $expected);
+
+		$string = 'The "lazy" dog & his friend Apple&reg; conquered the world';
+		$expected = 'The &quot;lazy&quot; dog &amp; his friend Apple&reg; conquered the world';
+		$result = Sanitize::html($string, array('double' => false));
+		$this->assertEqual($result, $expected);
 	}
 
 /**
