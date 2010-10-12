@@ -76,7 +76,7 @@ class ControllerTaskTest extends CakeTestCase {
 		);
 		$this->Task->name = 'ControllerTask';
 		$this->Task->Dispatch->shellPaths = App::path('shells');
-		$this->Task->Template =& new TemplateTask($this->Task->Dispatch);
+		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('ModelTask', 

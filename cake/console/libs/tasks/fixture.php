@@ -60,6 +60,35 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
+ * get the option parser.
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+			__('Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
+		)->addArgument('name', array(
+			'help' => __('Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
+		))->addOption('count', array(
+			'help' => __('When using generated data, the number of records to include in the fixture(s).'),
+			'short' => 'n',
+			'default' => 10
+		))->addOption('connection', array(
+			'help' => __('Which database configuration to use for baking.'),
+			'short' => 'c',
+			'default' => 'default'
+		))->addOption('plugin', array(
+			'help' => __('CamelCased name of the plugin to bake fixtures for.'),
+			'short' => 'p',
+		))->addOption('records', array(
+			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10',
+			'short' => 'r',
+			'boolean' => true
+		));
+	}
+
+/**
  * Execution method always used for tasks
  * Handles dispatching to interactive, named, or all processess.
  *
@@ -382,31 +411,4 @@ class FixtureTask extends BakeTask {
 		return $out;
 	}
 
-/**
- * Displays help contents
- *
- */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake fixture <arg1> <params>");
-		$this->hr();
-		$this->out('Arguments:');
-		$this->out();
-		$this->out("<name>");
-		$this->out("\tName of the fixture to bake. Can use Plugin.name");
-		$this->out("\tas a shortcut for plugin baking.");
-		$this->out();
-		$this->out('Commands:');
-		$this->out("\nfixture <name>\n\tbakes fixture with specified name.");
-		$this->out("\nfixture all\n\tbakes all fixtures.");
-		$this->out();
-		$this->out('Parameters:');
-		$this->out("\t-count       When using generated data, the number of records to include in the fixture(s).");
-		$this->out("\t-connection  Which database configuration to use for baking.");
-		$this->out("\t-plugin      CamelCased name of plugin to bake fixtures for.");
-		$this->out("\t-records     Used with -count and <name>/all commands to pull [n] records from the live tables");
-		$this->out("\t             Where [n] is either -count or the default of 10.");
-		$this->out();
-		$this->_stop();
-	}
 }

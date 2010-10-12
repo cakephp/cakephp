@@ -226,7 +226,7 @@ class PluginTaskTest extends CakeTestCase {
 
 		$this->Task->Model = $this->getMock('ModelTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
+		$this->Task->expects($this->once())->method('in')->will($this->returnValue($this->_testPath));
 
 		$this->Task->Model->expects($this->once())->method('loadTasks');
 		$this->Task->Model->expects($this->once())->method('execute');
