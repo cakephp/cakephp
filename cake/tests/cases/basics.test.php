@@ -200,6 +200,14 @@ class BasicsTest extends CakeTestCase {
 		$result = h($in);
 		$expected = array('this &amp; that', '&lt;p&gt;Which one&lt;/p&gt;');
 		$this->assertEqual($expected, $result);
+
+		$string = '<foo> & &nbsp;';
+		$result = h($string);
+		$this->assertEqual('&lt;foo&gt; &amp; &amp;nbsp;', $result);
+
+		$string = '<foo> & &nbsp;';
+		$result = h($string, false);
+		$this->assertEqual('&lt;foo&gt; &amp; &nbsp;', $result);
 	}
 
 /**

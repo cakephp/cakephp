@@ -143,11 +143,12 @@ if (!function_exists('sortByKey')) {
  * Convenience method for htmlspecialchars.
  *
  * @param string $text Text to wrap through htmlspecialchars
+ * @param boolean $double Encode existing html entities
  * @param string $charset Character set to use when escaping.  Defaults to config value in 'App.encoding' or 'UTF-8'
  * @return string Wrapped text
  * @link http://book.cakephp.org/view/1132/h
  */
-	function h($text, $charset = null) {
+	function h($text, $double = true, $charset = null) {
 		if (is_array($text)) {
 			return array_map('h', $text);
 		}
@@ -160,9 +161,9 @@ if (!function_exists('sortByKey')) {
 			}
 		}
 		if ($charset) {
-			return htmlspecialchars($text, ENT_QUOTES, $charset);
+			return htmlspecialchars($text, ENT_QUOTES, $charset, $double);
 		} else {
-			return htmlspecialchars($text, ENT_QUOTES, $defaultCharset);
+			return htmlspecialchars($text, ENT_QUOTES, $defaultCharset, $double);
 		}
 	}
 
