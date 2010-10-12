@@ -29,6 +29,26 @@ class TestSuiteShell extends Shell {
 	protected $_dispatcher = null;
 
 /**
+ * get the option parser for the test suite.
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = new ConsoleOptionParser($this->name, false);
+		$parser->description(array(
+			'The CakPHP Testsuite allows you to run test cases from the command line',
+			'If run with no command line arguments, a list of available core test cases will be shown'
+		))->addArgument('category', array(
+			'help' => __('app, core or name of a plugin.'),
+			'required' => true
+		))->addArgument('file', array(
+			'help' => __('file name with folder prefix and without the test.php suffix.'),
+			'required' => true,
+		));
+		return $parser;
+	}
+
+/**
  * Initialization method installs Simpletest and loads all plugins
  *
  * @return void
