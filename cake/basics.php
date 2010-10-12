@@ -150,7 +150,11 @@ if (!function_exists('sortByKey')) {
  */
 	function h($text, $double = true, $charset = null) {
 		if (is_array($text)) {
-			return array_map('h', $text);
+			$texts = array();
+			foreach ($text as $t) {
+				$texts[] = h($t, $double, $charset);
+			}
+			return $texts;
 		}
 
 		static $defaultCharset = false;
@@ -159,6 +163,9 @@ if (!function_exists('sortByKey')) {
 			if ($defaultCharset === null) {
 				$defaultCharset = 'UTF-8';
 			}
+		}
+		if (is_string($double)) {
+			$charset = $double;
 		}
 		if ($charset) {
 			return htmlspecialchars($text, ENT_QUOTES, $charset, $double);
