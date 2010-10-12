@@ -397,6 +397,20 @@ TEXT;
 	}
 
 /**
+ * test that no exception is triggered when help is being generated
+ *
+ * @return void
+ */
+	function testHelpNoExceptionWhenGettingHelp() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true));
+
+		$result = $parser->parse(array('--help'));
+		$this->assertTrue($result[0]['help']);
+	}
+
+/**
  * test help() with options and arguments that have choices.
  *
  * @return void

@@ -436,7 +436,7 @@ class ConsoleOptionParser {
 			}
 		}
 		foreach ($this->_args as $i => $arg) {
-			if ($arg->isRequired() && !isset($args[$i])) {
+			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
 				throw new RuntimeException(
 					sprintf(__('Missing required arguments. %s is required.'), $arg->name())
 				);
