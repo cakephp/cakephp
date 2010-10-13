@@ -69,25 +69,21 @@ class ControllerTask extends BakeTask {
 			}
 
 			$controller = $this->_controllerName($this->args[0]);
-			$actions = 'scaffold';
+			$actions = '';
 
-			if (!empty($this->args[1]) && ($this->args[1] == 'public' || $this->args[1] == 'scaffold')) {
+			if (!empty($this->params['public'])) {
 				$this->out(__('Baking basic crud methods for ') . $controller);
-				$actions = $this->bakeActions($controller);
-			} elseif (!empty($this->args[1]) && $this->args[1] == 'admin') {
-				$admin = $this->Project->getPrefix();
-				if ($admin) {
-					$this->out(sprintf(__('Adding %s methods'), $admin));
-					$actions = $this->bakeActions($controller, $admin);
-				}
+				$actions .= $this->bakeActions($controller);
 			}
-
-			if (!empty($this->args[2]) && $this->args[2] == 'admin') {
+			if (!empty($this->params['admin'])) {
 				$admin = $this->Project->getPrefix();
 				if ($admin) {
 					$this->out(sprintf(__('Adding %s methods'), $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
+			}
+			if (empty($actions)) {
+				$actions = 'scaffold';
 			}
 
 			if ($this->bake($controller, $actions)) {
@@ -429,6 +425,34 @@ class ControllerTask extends BakeTask {
 			$controllerName = Inflector::camelize($enteredController);
 		}
 		return $controllerName;
+	}
+
+/**
+ * get the option parser.
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+				__('Bake a controller for a model. Using options you can bake public, admin or both.')
+			)->addArgument('name', array(
+				'help' => __('Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.')
+			))->addOption('public', array(
+				'help' => __('Bake a controller with basic crud actions (index, view, add, edit, delete).'),
+				'boolean' => true
+			))->addOption('admin', array(
+				'help' => __('Bake a controller with crud actions for one of the Routing.prefixes.'),
+				'boolean' => true
+			))->addOption('plugin', array(
+				'short' => 'p',
+				'help' => __('Plugin to bake the controller into.')
+			))->addOption('connection', array(
+				'short' => 'c',
+				'help' => __('The connection the controller\'s model is on.')
+			))->addSubcommand('all', array(
+				'help' => __('Bake all controllers with CRUD methods.')
+			))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
 /**
