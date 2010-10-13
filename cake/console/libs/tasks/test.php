@@ -60,7 +60,6 @@ class TestTask extends BakeTask {
  */
 	protected $_fixtures = array();
 
-
 /**
  * Execution method always used for tasks
  *
@@ -77,7 +76,7 @@ class TestTask extends BakeTask {
 		if (count($this->args) > 1) {
 			$type = Inflector::underscore($this->args[0]);
 			if ($this->bake($type, $this->args[1])) {
-				$this->out('done');
+				$this->out('<success>Done</success>');
 			}
 		}
 	}
@@ -412,27 +411,21 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Show help file.
+ * get the option parser.
  *
  * @return void
  */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake test <type> <class>");
-		$this->hr();
-		$this->out('Commands:');
-		$this->out("");
-		$this->out("test model post\n\tbakes a test case for the post model.");
-		$this->out("");
-		$this->out("test controller comments\n\tbakes a test case for the comments controller.");
-		$this->out("");
-		$this->out('Arguments:');
-		$this->out("\t<type>   Can be any of the following 'controller', 'model', 'helper',\n\t'component', 'behavior'.");
-		$this->out("\t<class>  Any existing class for the chosen type.");
-		$this->out("");
-		$this->out("Parameters:");
-		$this->out("\t-plugin  CamelCased name of plugin to bake tests for.");
-		$this->out("");
-		$this->_stop();
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(__('Bake test case skeletons for classes.'))
+			->addArgument('type', array(
+				'help' => __('Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
+				'choices' => array('controller', 'model', 'helper', 'component', 'behavior')
+			))->addArgument('name', array(
+				'help' => __('An existing class to bake tests for.')
+			))->addOption('plugin', array(
+				'short' => 'p',
+				'help' => __('CamelCased name of the plugin to bake tests for.')
+			));
 	}
 }
