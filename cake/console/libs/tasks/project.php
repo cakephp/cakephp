@@ -343,21 +343,17 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Help
+ * get the option parser.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake project <arg1>");
-		$this->hr();
-		$this->out('Commands:');
-		$this->out();
-		$this->out("project <name>");
-		$this->out("\tbakes app directory structure.");
-		$this->out("\tif <name> begins with '/' path is absolute.");
-		$this->out();
-		$this->_stop();
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+				__('Generate a new CakePHP project skeleton.')
+			)->addArgument('name', array(
+				'help' => __('Application directory to make, if it starts with "/" the path is absolute.')
+			));
 	}
 
 }
