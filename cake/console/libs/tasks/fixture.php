@@ -85,7 +85,7 @@ class FixtureTask extends BakeTask {
 			'help' => 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10',
 			'short' => 'r',
 			'boolean' => true
-		));
+		))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));;
 	}
 
 /**

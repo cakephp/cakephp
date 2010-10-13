@@ -461,6 +461,33 @@ class ViewTask extends BakeTask {
 	}
 
 /**
+ * get the option parser for this task
+ *
+ * @return ConsoleOptionParser
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+			__('Bake views for a controller, using built-in or custom templates.')
+		)->addArgument('controller', array(
+			'help' => __('Name of the controller views to bake.  Can be Plugin.name as a shortcut for plugin baking.')
+		))->addArgument('action', array(
+			'help' => __("Will bake a single action's file. core templates are (index, add, edit, view)")
+		))->addArgument('alias', array(
+			'help' => __('Will bake the template in <action> but create the filename after <alias>.')
+		))->addOption('plugin', array(
+			'help' => __('Plugin to bake the view into.')
+		))->addOption('admin', array(
+			'help' => __('Set to only bake views for a prefix in Routing.prefixes'),
+			'boolean' => true
+		))->addOption('connection', array(
+			'help' => __('The connection the connected model is on.')
+		))->addSubcommand('all', array(
+			'help' => __('Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
+		))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));
+	}
+
+/**
  * Returns associations for controllers models.
  *
  * @return  array $associations

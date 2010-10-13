@@ -426,6 +426,6 @@ class TestTask extends BakeTask {
 			))->addOption('plugin', array(
 				'short' => 'p',
 				'help' => __('CamelCased name of the plugin to bake tests for.')
-			));
+			))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));
 	}
 }
