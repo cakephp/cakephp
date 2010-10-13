@@ -362,4 +362,16 @@ class DbConfigTask extends Shell {
 		}
 		return $useDbConfig;
 	}
+
+/**
+ * get the option parser
+ *
+ * @return ConsoleOptionParser
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+				__('Bake new database configuration settings.')
+			);
+	}
 }
