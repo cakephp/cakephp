@@ -421,46 +421,6 @@ class ViewTask extends BakeTask {
 	}
 
 /**
- * Displays help contents
- *
- */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake view <arg1> <arg2>...");
-		$this->hr();
-		$this->out('Arguments:');
-		$this->out();
-		$this->out("<controller>");
-		$this->out("\tName of the controller views to bake. Can use Plugin.name");
-		$this->out("\tas a shortcut for plugin baking.");
-		$this->out();
-		$this->out("<action>");
-		$this->out("\tName of the action view to bake");
-		$this->out();
-		$this->out('Commands:');
-		$this->out();
-		$this->out("view <controller>");
-		$this->out("\tWill read the given controller for methods");
-		$this->out("\tand bake corresponding views.");
-		$this->out("\tUsing the -admin flag will only bake views for actions");
-		$this->out("\tthat begin with Routing.prefixes.");
-		$this->out("\tIf var scaffold is found it will bake the CRUD actions");
-		$this->out("\t(index,view,add,edit)");
-		$this->out();
-		$this->out("view <controller> <action>");
-		$this->out("\tWill bake a template. core templates: (index, add, edit, view)");
-		$this->out();
-		$this->out("view <controller> <template> <alias>");
-		$this->out("\tWill use the template specified");
-		$this->out("\tbut name the file based on the alias");
-		$this->out();
-		$this->out("view all");
-		$this->out("\tBake all CRUD action views for all controllers.");
-		$this->out("\tRequires that models and controllers exist.");
-		$this->_stop();
-	}
-
-/**
  * get the option parser for this task
  *
  * @return ConsoleOptionParser
@@ -476,11 +436,13 @@ class ViewTask extends BakeTask {
 		))->addArgument('alias', array(
 			'help' => __('Will bake the template in <action> but create the filename after <alias>.')
 		))->addOption('plugin', array(
+			'short' => 'p',
 			'help' => __('Plugin to bake the view into.')
 		))->addOption('admin', array(
 			'help' => __('Set to only bake views for a prefix in Routing.prefixes'),
 			'boolean' => true
 		))->addOption('connection', array(
+			'short' => 'c',
 			'help' => __('The connection the connected model is on.')
 		))->addSubcommand('all', array(
 			'help' => __('Bake all CRUD action views for all controllers. Requires models and controllers to exist.')

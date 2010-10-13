@@ -873,31 +873,25 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Displays help contents
+ * get the option parser.
  *
+ * @return void
  */
-	public function help() {
-		$this->hr();
-		$this->out("Usage: cake bake model <arg1>");
-		$this->hr();
-		$this->out('Arguments:');
-		$this->out();
-		$this->out("<name>");
-		$this->out("\tName of the model to bake. Can use Plugin.name");
-		$this->out("\tas a shortcut for plugin baking.");
-		$this->out();
-		$this->out('Commands:');
-		$this->out();
-		$this->out("model");
-		$this->out("\tbakes model in interactive mode.");
-		$this->out();
-		$this->out("model <name>");
-		$this->out("\tbakes model file with no associations or validation");
-		$this->out();
-		$this->out("model all");
-		$this->out("\tbakes all model files with associations and validation");
-		$this->out();
-		$this->_stop();
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description(
+				__('Bake models.')
+			)->addArgument('name', array(
+				'help' => __('Name of the model to bake. Can use Plugin.name to bake plugin models.')
+			))->addSubcommand('all', array(
+				'help' => __('Bake all model files with associations and validation.')
+			))->addOption('plugin', array(
+				'short' => 'p',
+				'help' => __('Plugin to bake the model into.')
+			))->addOption('connection', array(
+				'short' => 'c',
+				'help' => __('The connection the model table is on.')
+			))->epilog(__('Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
 /**
