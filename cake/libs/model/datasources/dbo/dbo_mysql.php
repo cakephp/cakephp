@@ -539,6 +539,15 @@ class DboMysql extends DboMysqlBase {
 		'port' => '3306'
 	);
 
+	protected $_errors = array();
+
+/**
+ * Reference to the PDO object connection
+ *
+ * @var PDO $_connection
+ */
+	protected $_connection = null;
+
 /**
  * Connects to the database using options in the given configuration array.
  *
@@ -547,25 +556,29 @@ class DboMysql extends DboMysqlBase {
 	function connect() {
 		$config = $this->config;
 		$this->connected = false;
-
-		if (!$config['persistent']) {
-			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
-			$config['connect'] = 'mysql_connect';
-		} else {
-			$this->connection = mysql_pconnect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
-		}
-
-		if (mysql_select_db($config['database'], $this->connection)) {
+		try {
+			$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
+			}
+			$this->_connection = new PDO(
+				"mysql:{$config['host']}:{$config['port']};dbname={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
 			$this->connected = true;
+		} catch (PDOException $e) {
+			$this->errors[] = $e->getMessage();
 		}
 
-		if (!empty($config['encoding'])) {
-			$this->setEncoding($config['encoding']);
-		}
-
-		$this->_useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
+		//$this->_useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
 
 		return $this->connected;
+	}
+
+	public function getConnection() {
+		return $this->_connection;
 	}
 
 /**
@@ -593,10 +606,17 @@ class DboMysql extends DboMysqlBase {
  * Executes given SQL statement.
  *
  * @param string $sql SQL statement
- * @return resource Result resource identifier
+ * @param array $params list of params to be bound to query
+ * @return PDOStatement if query executes with no problem, false otherwise
  */
-	protected function _execute($sql) {
-		return mysql_query($sql, $this->connection);
+	protected function _execute($sql, $params = array()) {
+		$query = $this->_connection->prepare($sql);
+		$query->setFetchMode(PDO::FETCH_LAZY);
+		if (!$query->execute($params)) {
+			$this->errors[] = $query->errorInfo();
+			return false;
+		}
+		return $query;
 	}
 
 /**
@@ -609,14 +629,14 @@ class DboMysql extends DboMysqlBase {
 		if ($cache != null) {
 			return $cache;
 		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']) . ';');
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
 
 		if (!$result) {
 			return array();
 		} else {
 			$tables = array();
 
-			while ($line = mysql_fetch_row($result)) {
+			while ($line = $result->fetch()) {
 				$tables[] = $line[0];
 			}
 			parent::listSources($tables);

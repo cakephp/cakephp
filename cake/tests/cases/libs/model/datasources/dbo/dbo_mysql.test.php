@@ -158,7 +158,7 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-	public $fixtures = array('core.binary_test');
+	//public $fixtures = array('core.binary_test');
 /**
  * The Dbo instance to be tested
  *
@@ -838,4 +838,28 @@ class DboMysqlTest extends CakeTestCase {
 		$this->db->execute($this->db->dropSchema($schema));
 	}
 
+/**
+ * Tests that listSources method sends the correct query and parses the result accordingly
+ * @return void
+ */
+	public function testListSources() {
+		$db = $this->getMock('DboMysql', array('connect', '_execute'));
+		$queryResult = $this->getMock('PDOStatement');
+		$db->expects($this->once())
+			->method('_execute')
+			->with('SHOW TABLES FROM cake')
+			->will($this->returnValue($queryResult));
+		$queryResult->expects($this->at(0))
+			->method('fetch')
+			->will($this->returnValue(array('cake_table')));
+		$queryResult->expects($this->at(1))
+			->method('fetch')
+			->will($this->returnValue(array('another_table')));
+		$queryResult->expects($this->at(2))
+			->method('fetch')
+			->will($this->returnValue(null));
+
+		$tables = $db->listSources();
+		$this->assertEqual($tables, array('cake_table', 'another_table'));
+	}
 }
