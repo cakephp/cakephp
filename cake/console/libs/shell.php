@@ -451,8 +451,16 @@ class Shell extends Object {
  * Outputs a single or multiple messages to stdout. If no parameters
  * are passed outputs just a newline.
  *
+ * ### Output levels
+ *
+ * There are 3 built-in output level.  Shell::QUIET, Shell::NORMAL, Shell::VERBOSE.
+ * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
+ * present in  most shells.  Using Shell::QUIET for a message means it will always display.
+ * While using Shell::VERBOSE means it will only display when verbose output is toggled.
+ *
  * @param mixed $message A string or a an array of strings to output
  * @param integer $newlines Number of newlines to append
+ * @param integer $level The message's output level, see above.
  * @return integer Returns the number of bytes returned from writing to stdout.
  */
 	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
