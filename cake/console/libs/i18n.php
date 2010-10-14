@@ -109,33 +109,13 @@ class I18nShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__('I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.'))
-			->addSubcommand('initdb', array(
+		return $parser->description(
+			__('I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.')
+			)->addSubcommand('initdb', array(
 				'help' => __('Initialize the i18n table.')
-			))
-			->addSubcommand('extract', array(
+			))->addSubcommand('extract', array(
 				'help' => __('Extract the po translations from your application'),
 				'parser' => $this->Extract->getOptionParser()
 			));
-	}
-
-/**
- * Show help screen.
- *
- */
-	public function help() {
-		$this->hr();
-		$this->out(__('I18n Shell:'));
-		$this->hr();
-		$this->out(__('I18n Shell initializes i18n database table for your application'));
-		$this->out(__('and generates .pot file(s) with translations.'));
-		$this->hr();
-		$this->out(__('usage:'));
-		$this->out('   cake i18n help');
-		$this->out('   cake i18n initdb [-datasource custom]');
-		$this->out();
-		$this->hr();
-
-		$this->Extract->help();
 	}
 }
