@@ -251,14 +251,13 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 		$options['url'] = $url;
 		if (isset($options['update'])) {
 			$wrapCallbacks = isset($options['wrapCallbacks']) ? $options['wrapCallbacks'] : true;
-			if ($wrapCallbacks) {
-				$success = $this->jQueryObject . '("' . $options['update'] . '").html(data);';
-			} else {
-				$success = sprintf(
-					'function (data, textStatus) {%s("%s").html(data);}',
-					$this->jQueryObject,
-					$options['update']
-				);
+			$success = '';
+			if(isset($options['success']) AND !empty($options['success'])) {
+				$success .= $options['success'];
+			}
+			$success .= $this->jQueryObject . '("' . $options['update'] . '").html(data);';
+			if (!$wrapCallbacks) {
+				$success = 'function (data, textStatus) {' . $success . '}';
 			}
 			$options['dataType'] = 'html';
 			$options['success'] = $success;

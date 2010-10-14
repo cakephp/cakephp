@@ -25,7 +25,7 @@ App::import('Core', 'Xml');
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class Article extends CakeTestModel {
+class XmlArticle extends CakeTestModel {
 
 /**
  * name property
@@ -39,7 +39,12 @@ class Article extends CakeTestModel {
  *
  * @var array
  */
-	public $belongsTo = array('User');
+	public $belongsTo = array(
+		'XmlUser' => array(
+			'className' => 'XmlArticle',
+			'foreignKey' => 'user_id'
+		)
+	);
 }
 
 /**
@@ -48,7 +53,7 @@ class Article extends CakeTestModel {
  * @package       cake
  * @subpackage    cake.tests.cases.libs
  */
-class User extends CakeTestModel {
+class XmlUser extends CakeTestModel {
 
 /**
  * name property
@@ -822,7 +827,7 @@ class XmlTest extends CakeTestCase {
 	public function testWithModel() {
 		$this->loadFixtures('User', 'Article');
 
-		$user = new User();
+		$user = new XmlUser();
 		$data = $user->read(null, 1);
 
 		$obj = Xml::build(compact('data'));

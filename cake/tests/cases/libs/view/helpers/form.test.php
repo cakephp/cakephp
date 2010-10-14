@@ -1871,7 +1871,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
@@ -2250,6 +2250,33 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * fields with the same name as the model should work.
+ *
+ * @return void
+ */
+	function testInputWithMatchingFieldAndModelName() {
+		$this->Form->create('User');
+		$this->Form->fieldset = array(
+			'User' => array(
+				'fields' => array(
+					'User' => array('type' => 'text')
+				),
+				'validates' => array(),
+				'key' => 'id'
+			)
+		);
+		$this->Form->data['User']['User'] = 'ABC, Inc.';
+		$result = $this->Form->input('User', array('type' => 'text'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'UserUser'), 'User', '/label',
+			'input' => array('name' => 'data[User][User]', 'type' => 'text', 'id' => 'UserUser', 'value' => 'ABC, Inc.'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testFormInputs method
  *
  * test correct results from form::inputs().
@@ -2475,6 +2502,18 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), null, array('multiple' => 'checkbox'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			array('div' => array('class' => 'checkbox')),
+			array('input' => array('type' => 'checkbox', 'name' => 'data[Model][multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
+			array('label' => array('for' => 'ModelMultiField12')),
+			'half',
+			'/label',
+			'/div',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -2660,6 +2699,16 @@ class FormHelperTest extends CakeTestCase {
 			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '0', 'id' => 'ModelField0')),
 			'label' => array('for' => 'ModelField0'),
 			'option A',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'value' => '1/2', 'id' => 'ModelField12')),
+			'label' => array('for' => 'ModelField12'),
+			'half',
 			'/label'
 		);
 		$this->assertTags($result, $expected);
@@ -3067,6 +3116,47 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that select() with optiongroups listens to the escape param.
+ *
+ * @return void
+ */
+	function testSelectOptionGroupEscaping() {
+		$options = array(
+			'>< Key' => array(
+				1 => 'One',
+				2 => 'Two'
+			)
+		);
+		$result = $this->Form->select('Model.field', $options, null, array('empty' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'optgroup' => array('label' => '&gt;&lt; Key'),
+			array('option' => array('value' => '1')), 'One', '/option',
+			array('option' => array('value' => '2')), 'Two', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+		
+		$options = array(
+			'>< Key' => array(
+				1 => 'One',
+				2 => 'Two'
+			)
+		);
+		$result = $this->Form->select('Model.field', $options, null, array('empty' => false, 'escape' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'optgroup' => array('label' => '>< Key'),
+			array('option' => array('value' => '1')), 'One', '/option',
+			array('option' => array('value' => '2')), 'Two', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Tests that FormHelper::select() allows null to be passed in the $attributes parameter
  *
  * @access public
@@ -3448,7 +3538,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testInputMultipleCheckboxes() {
 		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('first', 'second', 'third'), 
+			'options' => array('first', 'second', 'third'),
 			'multiple' => 'checkbox'
 		));
 		$expected = array(
@@ -3531,7 +3621,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('2' => 'second'),
 			'multiple' => 'checkbox',
-			'label' => false, 
+			'label' => false,
 			'div' => false
 		));
 		$expected = array(
@@ -5475,6 +5565,36 @@ class FormHelperTest extends CakeTestCase {
 				'id' => 'ContactAddForm',
 				'method' => 'post',
 				'action' => '/controller/action?param1=value1&amp;param2=value2',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected, true);
+	}
+
+/**
+ * test that create() doesn't add in extra passed params.
+ *
+ * @return void
+ */
+	function testCreatePassedArgs() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$this->Form->data['Contact']['id'] = 1;
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'action' => 'edit',
+				'myparam'
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/edit/myparam',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
