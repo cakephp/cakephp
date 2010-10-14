@@ -30,6 +30,13 @@ require_once CAKE . 'console' . DS . 'console_input.php';
 class Shell extends Object {
 
 /**
+ * Output constants for making verbose and quiet shells.
+ */
+	const VERBOSE = 2;
+	const NORMAL = 1;
+	const QUIET = 0;
+
+/**
  * An instance of the ShellDispatcher object that loaded this script
  *
  * @var ShellDispatcher
@@ -448,8 +455,18 @@ class Shell extends Object {
  * @param integer $newlines Number of newlines to append
  * @return integer Returns the number of bytes returned from writing to stdout.
  */
-	public function out($message = null, $newlines = 1) {
-		return $this->stdout->write($message, $newlines);
+	public function out($message = null, $newlines = 1, $level = Shell::NORMAL) {
+		$currentLevel = Shell::NORMAL;
+		if (!empty($this->params['verbose'])) {
+			$currentLevel = Shell::VERBOSE;
+		}
+		if (!empty($this->params['quiet'])) {
+			$currentLevel = Shell::QUIET;
+		}
+		if ($level <= $currentLevel) {
+			return $this->stdout->write($message, $newlines);
+		}
+		return true;
 	}
 
 /**

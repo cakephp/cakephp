@@ -259,7 +259,36 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	function testVerboseOutput() {
-		$this->markTestIncomplete('This needs to be written.');
+		$this->Shell->stdout->expects($this->at(0))->method('write')
+			->with('Verbose', 1);
+		$this->Shell->stdout->expects($this->at(1))->method('write')
+			->with('Normal', 1);
+		$this->Shell->stdout->expects($this->at(2))->method('write')
+			->with('Quiet', 1);
+
+		$this->Shell->params['verbose'] = true;
+		$this->Shell->params['quiet'] = false;
+
+		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
+		$this->Shell->out('Normal', 1, Shell::NORMAL);
+		$this->Shell->out('Quiet', 1, Shell::QUIET);
+	}
+
+/**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	function testQuietOutput() {
+		$this->Shell->stdout->expects($this->once())->method('write')
+			->with('Quiet', 1);
+
+		$this->Shell->params['verbose'] = false;
+		$this->Shell->params['quiet'] = true;
+
+		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
+		$this->Shell->out('Normal', 1, Shell::NORMAL);
+		$this->Shell->out('Quiet', 1, Shell::QUIET);
 	}
 
 /**
