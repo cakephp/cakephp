@@ -2737,7 +2737,7 @@ class ModelWriteTest extends BaseModelTest {
 				'Attachment' => array('attachment' => '')
 			),
 			array('validate' => 'first')
-		), array());
+		), false);
 		$expected = array(
 			'Comment' => array('comment' => 'This field cannot be left blank'),
 			'Attachment' => array('attachment' => 'This field cannot be left blank')
@@ -2990,15 +2990,25 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveAllAssociatedTransactionNoRollback() {
-		$testDb = ConnectionManager::getDataSource('test_suite');
+		$testDb = ConnectionManager::getDataSource('test');
 
-		Mock::generate('DboSource', 'MockTransactionAssociatedDboSource');
-		$db = ConnectionManager::create('mock_transaction_assoc', array(
+		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
+		$db =& ConnectionManager::create('mock_transaction_assoc', array(
 			'datasource' => 'MockTransactionAssociatedDbo',
 		));
+		$this->mockObjects[] = $db;
 		$db->columns = $testDb->columns;
 
-		$db->expectOnce('rollback');
+		$db->expects($this->once())->method('rollback');
+		$db->expects($this->any())->method('isInterfaceSupported')
+			->will($this->returnValue(true));
+		$db->expects($this->any())->method('describe')
+			->will($this->returnValue(array(
+				'id' => array('type' => 'integer'),
+				'title' => array('type' => 'string'),
+				'body' => array('type' => 'text'),
+				'published' => array('type' => 'string')
+			)));
 
 		$Post =& new Post();
 		$Post->useDbConfig = 'mock_transaction_assoc';
@@ -3489,7 +3499,7 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		), array('validate' => 'first'));
 
-		$this->assertEquals($result, array());
+		$this->assertFalse($result);
 
 		$result = $model->find('all');
 		$this->assertEqual($result, array());

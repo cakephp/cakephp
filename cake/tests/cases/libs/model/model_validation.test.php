@@ -631,7 +631,7 @@ class ModelValidationTest extends BaseModelTest {
 
 		$Something->create();
 		$result = $Something->saveAll($data, array('validate' => 'first'));
-		$this->assertEquals($result, array());
+		$this->assertFalse($result);
 		$this->assertEqual($JoinThing->validationErrors, $expectedError);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));

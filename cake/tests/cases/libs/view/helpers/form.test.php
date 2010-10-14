@@ -2265,7 +2265,7 @@ class FormHelperTest extends CakeTestCase {
 				'key' => 'id'
 			)
 		);
-		$this->Form->data['User']['User'] = 'ABC, Inc.';
+		$this->Form->request->data['User']['User'] = 'ABC, Inc.';
 		$result = $this->Form->input('User', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
@@ -5581,7 +5581,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testCreatePassedArgs() {
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$this->Form->data['Contact']['id'] = 1;
+		$this->Form->request->data['Contact']['id'] = 1;
 		$result = $this->Form->create('Contact', array(
 			'type' => 'post',
 			'escape' => false,
