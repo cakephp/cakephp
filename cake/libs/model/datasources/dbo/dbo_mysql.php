@@ -574,7 +574,7 @@ class DboMysql extends DboMysqlBase {
  * @return boolean
  */
 	function enabled() {
-		return extension_loaded('mysql');
+		return in_array('mysql', PDO::getAvailableDrivers());
 	}
 /**
  * Disconnects from database.
