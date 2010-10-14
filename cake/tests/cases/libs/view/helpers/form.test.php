@@ -5542,6 +5542,36 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that create() doesn't add in extra passed params.
+ *
+ * @return void
+ */
+	function testCreatePassedArgs() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$this->Form->data['Contact']['id'] = 1;
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'action' => 'edit',
+				'myparam'
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/edit/myparam',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected, true);
+	}
+
+/**
  * test creating a get form, and get form inputs.
  *
  * @access public

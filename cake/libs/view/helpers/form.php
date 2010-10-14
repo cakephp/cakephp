@@ -256,13 +256,15 @@ class FormHelper extends AppHelper {
 			$actionDefaults = array(
 				'plugin' => $this->plugin,
 				'controller' => $view->viewPath,
-				'action' => $options['action'],
-				0 => $id
+				'action' => $options['action']
 			);
 			if (!empty($options['action']) && !isset($options['id'])) {
 				$options['id'] = $this->domId($options['action'] . 'Form');
 			}
 			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
+			if (empty($options['action'][0])) {
+				$options['action'][0] = $id;
+			}
 		} elseif (is_string($options['url'])) {
 			$options['action'] = $options['url'];
 		}
