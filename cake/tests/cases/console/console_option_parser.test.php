@@ -407,7 +407,7 @@ TEXT;
 		$result = $parser->help();
 		$expected = <<<TEXT
 <info>Usage:</info>
-cake mycommand [-h] [--test] model [other_longer]
+cake mycommand [-h] [--test] <model> [<other_longer>]
 
 <info>Options:</info>
 
@@ -455,7 +455,7 @@ TEXT;
 		$result = $parser->help();
 		$expected = <<<TEXT
 <info>Usage:</info>
-cake mycommand [-h] [--test one|two] aco|aro [other_longer]
+cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
 
 <info>Options:</info>
 
@@ -488,7 +488,7 @@ TEXT;
 Description text
 
 <info>Usage:</info>
-cake mycommand [-h] [--test] model
+cake mycommand [-h] [--test] <model>
 
 <info>Options:</info>
 

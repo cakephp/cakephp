@@ -90,6 +90,7 @@ class ConsoleInputArgument {
 		if (!empty($this->_choices)) {
 			$name = implode('|', $this->_choices);
 		}
+		$name = '<' . $name . '>';
 		if (!$this->isRequired()) {
 			$name = '[' . $name . ']';
 		}
