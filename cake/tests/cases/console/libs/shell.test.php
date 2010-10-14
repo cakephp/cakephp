@@ -254,6 +254,15 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	function testVerboseOutput() {
+		$this->markTestIncomplete('This needs to be written.');
+	}
+
+/**
  * testErr method
  *
  * @return void

@@ -634,4 +634,14 @@ TEXT;
 			'quiet' => false), array('c'));
 		$this->assertEquals($expected, $result, 'Sub parser did not parse request.');
 	}
+
+/**
+ * test that the console max width is respected when generating help.
+ *
+ * @return void
+ */
+	function testWidthFormatting() {
+		$this->markTestIncomplete('Width formatting is not done.');
+	}
+
 }

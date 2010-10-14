@@ -188,4 +188,21 @@ class ConsoleOutputTest extends CakeTestCase {
 		$this->output->write('<error>Bad</error> <warning>Warning</warning> Regular', false);
 	}
 
+/**
+ * test that multiple tags of the same name work in one string.
+ *
+ * @return void
+ */
+	function testFormattingMultipleSameTags() {
+		$this->markTestIncomplete('This test needs to be written.');
+	}
+
+/**
+ * test wrapping blocks at certain widths.
+ *
+ * @return void
+ */
+	function testFormatBlock() {
+		$this->markTestIncomplete('This test needs to be written.');
+	}
 }
