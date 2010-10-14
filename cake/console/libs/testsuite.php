@@ -44,6 +44,9 @@ class TestSuiteShell extends Shell {
 		))->addArgument('file', array(
 			'help' => __('file name with folder prefix and without the test.php suffix.'),
 			'required' => true,
+		))->addOption('filter', array(
+			'help' => __('Filter which tests to run.'),
+			'default' => false
 		));
 		return $parser;
 	}
@@ -106,6 +109,7 @@ class TestSuiteShell extends Shell {
 		$options = array();
 		$params = $this->params;
 		unset($params['help']);
+		$params = array_filter($params);
 		foreach ($params as $param => $value) {
 			$options[] = '--' . $param;
 			if (is_string($value)) {
