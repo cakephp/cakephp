@@ -3116,6 +3116,47 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that select() with optiongroups listens to the escape param.
+ *
+ * @return void
+ */
+	function testSelectOptionGroupEscaping() {
+		$options = array(
+			'>< Key' => array(
+				1 => 'One',
+				2 => 'Two'
+			)
+		);
+		$result = $this->Form->select('Model.field', $options, null, array('empty' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'optgroup' => array('label' => '&gt;&lt; Key'),
+			array('option' => array('value' => '1')), 'One', '/option',
+			array('option' => array('value' => '2')), 'Two', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+		
+		$options = array(
+			'>< Key' => array(
+				1 => 'One',
+				2 => 'Two'
+			)
+		);
+		$result = $this->Form->select('Model.field', $options, null, array('empty' => false, 'escape' => false));
+		$expected = array(
+			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
+			'optgroup' => array('label' => '>< Key'),
+			array('option' => array('value' => '1')), 'One', '/option',
+			array('option' => array('value' => '2')), 'Two', '/option',
+			'/optgroup',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Tests that FormHelper::select() allows null to be passed in the $attributes parameter
  *
  * @access public
