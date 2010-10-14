@@ -85,6 +85,7 @@ class Sanitize {
  * - remove (boolean) if true strips all HTML tags before encoding
  * - charset (string) the charset used to encode the string
  * - quotes (int) see http://php.net/manual/en/function.htmlentities.php
+ * - double (boolean) doube encode html entities
  *
  * @param string $string String from where to strip tags
  * @param array $options Array of options to use.
@@ -101,7 +102,8 @@ class Sanitize {
 		$default = array(
 			'remove' => false,
 			'charset' => $defaultCharset,
-			'quotes' => ENT_QUOTES
+			'quotes' => ENT_QUOTES,
+			'double' => true
 		);
 
 		$options = array_merge($default, $options);
@@ -110,7 +112,7 @@ class Sanitize {
 			$string = strip_tags($string);
 		}
 
-		return htmlentities($string, $options['quotes'], $options['charset']);
+		return htmlentities($string, $options['quotes'], $options['charset'], $options['double']);
 	}
 
 /**
