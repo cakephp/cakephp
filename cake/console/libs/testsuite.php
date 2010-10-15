@@ -34,7 +34,7 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function getOptionParser() {
-		$parser = new ConsoleOptionParser($this->name, false);
+		$parser = new ConsoleOptionParser($this->name);
 		$parser->description(array(
 			'The CakPHP Testsuite allows you to run test cases from the command line',
 			'If run with no command line arguments, a list of available core test cases will be shown'
