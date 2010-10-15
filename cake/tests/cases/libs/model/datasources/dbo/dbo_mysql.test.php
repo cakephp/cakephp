@@ -884,4 +884,26 @@ class DboMysqlTest extends CakeTestCase {
 		$version = $db->getVersion();
 		$this->assertEqual('5.1', $version);
 	}
+
+/**
+ * Tests that getVersion method sends the correct query for getting the client encoding
+ * @return void
+ */
+	public function testGetEncoding() {
+		$db = $this->getMock('DboMysql', array('connect', '_execute'));
+		$queryResult = $this->getMock('PDOStatement');
+
+		$db->expects($this->once())
+			->method('_execute')
+			->with('SHOW VARIABLES LIKE ?', array('character_set_client'))
+			->will($this->returnValue($queryResult));
+		$result = new StdClass;
+		$result->Value = 'utf-8';
+		$queryResult->expects($this->once())
+			->method('fetchObject')
+			->will($this->returnValue($result));
+
+		$encoding = $db->getEncoding();
+		$this->assertEqual('utf-8', $encoding);
+	}
 }
