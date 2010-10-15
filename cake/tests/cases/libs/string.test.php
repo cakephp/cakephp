@@ -307,4 +307,31 @@ class StringTest extends CakeTestCase {
 		$result = String::insert($string, array('b' => 2, 'c' => 3), array('clean' => true));
 		$this->assertEqual($expected, $result);
 	}
+
+/**
+ * test wrap method.
+ *
+ * @return void
+ */
+	function testWrap() {
+		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+		$result = String::wrap($text, 33);
+		$expected = <<<TEXT
+This is the song that never ends.
+This is the song that never ends.
+This is the song that never ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
+
+		$result = String::wrap($text, array('width' => 20, 'wordWrap' => false));
+		$expected = <<<TEXT
+This is the song th
+at never ends. This
+ is the song that n
+ever ends. This is 
+the song that never
+ ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
+	}
 }

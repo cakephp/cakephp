@@ -319,4 +319,27 @@ class String {
 		}
 		return $str;
 	}
+
+/**
+ * Wraps text to a specific width, can optionally wrap at word breaks.
+ *
+ * ### Options
+ *
+ * - `width` The width to wrap to.  Defaults to 72
+ * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
+ *
+ * @param string $text Text the text to format.
+ * @param mixed $options Array of options to use, or an integer to wrap the text to.
+ * @return string Formatted text.
+ */
+	public static function wrap($text, $options = array()) {
+		if (is_numeric($options)) {
+			$options = array('width' => $options);
+		}
+		$options += array('width' => 72, 'wordWrap' => true);
+		if ($options['wordWrap']) {
+			return wordwrap($text, $options['width'], "\n");
+		}
+		return trim(chunk_split($text, $options['width'] - 1, "\n"));
+	}
 }
