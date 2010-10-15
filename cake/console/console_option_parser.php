@@ -466,9 +466,10 @@ class ConsoleOptionParser {
  *
  * @param string $subcommand If present and a valid subcommand that has a linked parser.
  *    That subcommands help will be shown instead.
+ * @param int $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
-	public function help($subcommand = null) {
+	public function help($subcommand = null, $width = 72) {
 		if (
 			isset($this->_subcommands[$subcommand]) && 
 			$this->_subcommands[$subcommand]->parser() instanceof self
@@ -479,7 +480,7 @@ class ConsoleOptionParser {
 		}
 		$out = array();
 		if (!empty($this->_description)) {
-			$out[] = $this->_description;
+			$out[] = String::wrap($this->_description, $width);
 			$out[] = '';
 		}
 		$out[] = '<info>Usage:</info>';
@@ -490,7 +491,7 @@ class ConsoleOptionParser {
 			$out[] = '';
 			$max = $this->_getMaxLength($this->_subcommands) + 2;
 			foreach ($this->_subcommands as $command) {
-				$out[] = $command->help($max);
+				$out[] = String::wrap($command->help($max), $width);
 			}
 			$out[] = '';
 			$out[] = sprintf(
@@ -505,7 +506,7 @@ class ConsoleOptionParser {
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($this->_options as $option) {
-				$out[] = $option->help($max);
+				$out[] = String::wrap($option->help($max), $width);
 			}
 			$out[] = '';
 		}
@@ -514,12 +515,12 @@ class ConsoleOptionParser {
 			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
 			foreach ($this->_args as $argument) {
-				$out[] = $argument->help($max);
+				$out[] = String::wrap($argument->help($max), $width);
 			}
 			$out[] = '';
 		}
 		if (!empty($this->_epilog)) {
-			$out[] = $this->_epilog;
+			$out[] = String::wrap($this->_epilog, $width);
 		}
 		return implode("\n", $out);
 	}

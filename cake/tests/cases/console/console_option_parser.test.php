@@ -33,7 +33,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 
 		$this->assertEquals($parser, $result, 'Setting description is not chainable');
 		$this->assertEquals('A test', $parser->description(), 'getting value is wrong.');
-		
+
 		$result = $parser->description(array('A test', 'something'));
 		$this->assertEquals("A test\nsomething", $parser->description(), 'getting value is wrong.');
 	}
@@ -387,7 +387,8 @@ cake mycommand [-h] [--test] [-c default]
 
 --help, -h        Display this help.
 --test            A test option.
---connection, -c  The connection to use. <comment>(default: default)</comment>
+--connection, -c  The connection to use. <comment>(default:
+default)</comment>
 
 TEXT;
 		$this->assertEquals($expected, $result, 'Help does not match');
@@ -641,7 +642,42 @@ TEXT;
  * @return void
  */
 	function testWidthFormatting() {
-		$this->markTestIncomplete('Width formatting is not done.');
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->description(__('This is 10 This is 10'))
+			->addOption('four', array('help' => 'more text'))
+			->addArgument('four', array('help' => 'more text'))
+			->addSubcommand('four', array('help' => 'more text'));
+		$result = $parser->help(null, 10);
+		$expected = <<<TEXT
+This is 10
+This is 10
+
+<info>Usage:</info>
+cake test [subcommand] [-h] [--four] [<four>]
+
+<info>Subcommands:</info>
+
+four  more
+text
+
+To see help on a subcommand use <info>`cake test [subcommand] --help`</info>
+
+<info>Options:</info>
+
+--help, -h
+ Display
+this help.
+--four    
+ more text
+
+<info>Arguments:</info>
+
+four  more
+text
+<comment>(optional)</comment>
+
+TEXT;
+		$this->assertEquals($expected, $result, 'Generated help is too wide');
 	}
 
 }
