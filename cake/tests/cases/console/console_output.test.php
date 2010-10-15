@@ -194,7 +194,10 @@ class ConsoleOutputTest extends CakeTestCase {
  * @return void
  */
 	function testFormattingMultipleSameTags() {
-		$this->markTestIncomplete('This test needs to be written.');
+		$this->output->expects($this->once())->method('_write')
+			->with("\033[31;4mBad\033[0m \033[31;4mWarning\033[0m Regular");
+
+		$this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
 	}
 
 /**
