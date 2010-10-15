@@ -815,11 +815,12 @@ class DboMysql extends DboMysqlBase {
  * @param string $name Collation name
  * @return string Character set name
  */
-	function getCharsetName($name) {
-		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
-			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
-			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
-				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
+	public function getCharsetName($name) {
+		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
+			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
+			$cols = $r->fetchArray();
+			if (isset($cols['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols['COLLATIONS']['CHARACTER_SET_NAME'];
 			}
 		}
 		return false;
