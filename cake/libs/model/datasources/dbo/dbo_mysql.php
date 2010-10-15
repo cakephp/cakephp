@@ -249,10 +249,13 @@ class DboMysqlBase extends DboSource {
 	function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
+		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
 			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
-
 			while ($idx = $indices->fetch()) {
+				if ($old) {
+					$idx = (object) current((array)$idx);
+				}
 				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
 					$index[$idx->Key_name]['column'] = $idx->Column_name;

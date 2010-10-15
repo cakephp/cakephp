@@ -313,6 +313,7 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testIndexDetection method
  *
+ * @group indices
  * @return void
  */
 	public function testIndexDetection() {
@@ -376,7 +377,6 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testBuildColumn method
  *
- * @access public
  * @return void
  */
 	function testBuildColumn() {
@@ -413,12 +413,13 @@ class DboMysqlTest extends CakeTestCase {
  * MySQL 4.x returns index data in a different format,
  * Using a mock ensure that MySQL 4.x output is properly parsed.
  *
+ * @group indices
  * @return void
  */
 	function testIndexOnMySQL4Output() {
 		$name = $this->Dbo->fullTableName('simple');
 
-		$mockDbo = $this->getMock('DboMysql', array('query'));
+		$mockDbo = $this->getMock('DboMysql', array('connect', '_execute', 'getVersion'));
 		$columnData = array(
 			array('0' => array(
 				'Table' => 'with_compound_keys',
@@ -491,10 +492,17 @@ class DboMysqlTest extends CakeTestCase {
 				'Comment' => ''
 			))
 		);
+
+		$mockDbo->expects($this->once())->method('getVersion')->will($this->returnValue('4.1'));
+		$resultMock = $this->getMock('PDOStatement', array('fetch'));
 		$mockDbo->expects($this->once())
-			->method('query')
+			->method('_execute')
 			->with('SHOW INDEX FROM ' . $name)
-			->will($this->returnValue($columnData));
+			->will($this->returnValue($resultMock));
+		
+		foreach ($columnData as $i => $data) {
+			$resultMock->expects($this->at($i))->method('fetch')->will($this->returnValue((object) $data));
+		}
 
 		$result = $mockDbo->index($name, false);
 		$expected = array(
@@ -556,7 +564,7 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testAlterSchemaIndexes method
  *
- * @access public
+ * @group indices
  * @return void
  */
 	function testAlterSchemaIndexes() {
