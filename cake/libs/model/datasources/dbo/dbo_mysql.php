@@ -551,7 +551,10 @@ class DboMysql extends DboMysqlBase {
 		$config = $this->config;
 		$this->connected = false;
 		try {
-			$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
+			$flags = array(
+				PDO::ATTR_PERSISTENT => $config['persistent'],
+				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+			);
 			if (!empty($config['encoding'])) {
 				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
 			}
@@ -566,7 +569,7 @@ class DboMysql extends DboMysqlBase {
 			$this->errors[] = $e->getMessage();
 		}
 
-		//$this->_useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
+		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
 
 		return $this->connected;
 	}
@@ -800,7 +803,7 @@ class DboMysql extends DboMysqlBase {
  * @return string The database encoding
  */
 	public function getVersion() {
-		return $this->_execute('SELECT VERSION() as mysql_version')->fetchObject()->mysql_version;
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
 	}
 
 /**
