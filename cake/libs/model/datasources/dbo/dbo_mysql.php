@@ -562,7 +562,7 @@ class DboMysql extends DboMysqlBase {
 				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
 			}
 			$this->_connection = new PDO(
-				"mysql:{$config['host']}:{$config['port']};dbname={$config['database']}",
+				"mysql:{$config['host']};port={$config['port']};dbname={$config['database']}",
 				$config['login'],
 				$config['password'],
 				$flags
