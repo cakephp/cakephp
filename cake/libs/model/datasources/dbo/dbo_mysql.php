@@ -250,23 +250,19 @@ class DboMysqlBase extends DboSource {
 		$index = array();
 		$table = $this->fullTableName($model);
 		if ($table) {
-			$indexes = $this->query('SHOW INDEX FROM ' . $table);
-			if (isset($indexes[0]['STATISTICS'])) {
-				$keys = Set::extract($indexes, '{n}.STATISTICS');
-			} else {
-				$keys = Set::extract($indexes, '{n}.0');
-			}
-			foreach ($keys as $i => $key) {
-				if (!isset($index[$key['Key_name']])) {
+			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
+
+			while ($idx = $indices->fetch()) {
+				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
-					$index[$key['Key_name']]['column'] = $key['Column_name'];
-					$index[$key['Key_name']]['unique'] = intval($key['Non_unique'] == 0);
+					$index[$idx->Key_name]['column'] = $idx->Column_name;
+					$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
 				} else {
-					if (!is_array($index[$key['Key_name']]['column'])) {
-						$col[] = $index[$key['Key_name']]['column'];
+					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {
+						$col[] = $index[$idx->Key_name]['column'];
 					}
-					$col[] = $key['Column_name'];
-					$index[$key['Key_name']]['column'] = $col;
+					$col[] = $idx->Column_name;
+					$index[$idx->Key_name]['column'] = $col;
 				}
 			}
 		}
@@ -538,8 +534,6 @@ class DboMysql extends DboMysqlBase {
 		'database' => 'cake',
 		'port' => '3306'
 	);
-
-	protected $_errors = array();
 
 /**
  * Reference to the PDO object connection

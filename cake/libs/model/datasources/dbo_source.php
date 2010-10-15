@@ -218,9 +218,9 @@ class DboSource extends DataSource {
  * @param string $sql SQL statement
  * @return boolean
  */
-	public function rawQuery($sql) {
+	public function rawQuery($sql, $params = array()) {
 		$this->took = $this->error = $this->numRows = false;
-		return $this->execute($sql);
+		return $this->execute($sql, $params);
 	}
 
 /**

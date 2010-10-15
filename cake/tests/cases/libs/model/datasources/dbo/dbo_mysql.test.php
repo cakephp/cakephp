@@ -194,6 +194,7 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * Test Dbo value method
  *
+ * @group quoting
  */
 	public function testQuoting() {
 		$result = $this->Dbo->fields($this->model);
@@ -252,16 +253,17 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * test that localized floats don't cause trouble.
  *
+ * @group quoting
  * @return void
  */
 	function testLocalizedFloats() {
 		$restore = setlocale(LC_ALL, null);
 		setlocale(LC_ALL, 'de_DE');
 
-		$result = $this->db->value(3.141593, 'float');
+		$result = $this->Dbo->value(3.141593, 'float');
 		$this->assertEqual((string)$result, '3.141593');
 		
-		$result = $this->db->value(3.141593);
+		$result = $this->Dbo->value(3.141593);
 		$this->assertEqual((string)$result, '3.141593');
 
 		setlocale(LC_ALL, $restore);
@@ -270,13 +272,14 @@ class DboMysqlTest extends CakeTestCase {
 /**
  * testTinyintCasting method
  *
- * @access public
+ *
  * @return void
  */
 	function testTinyintCasting() {
+		$this->skipIf(true, 'Is this a test over the DBO?');
 		$this->Dbo->cacheSources = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$this->Dbo->execute('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
@@ -316,35 +319,36 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Dbo->cacheSources = false;
 
 		$name = $this->Dbo->fullTableName('simple');
-		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 		$expected = array('PRIMARY' => array('column' => 'id', 'unique' => 1));
 		$result = $this->Dbo->index('simple', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		$this->Dbo->query('DROP TABLE ' . $name);
+		
 
 		$name = $this->Dbo->fullTableName('with_a_key');
-		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 		);
 		$result = $this->Dbo->index('with_a_key', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		$this->Dbo->query('DROP TABLE ' . $name);
 
 		$name = $this->Dbo->fullTableName('with_two_keys');
-		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
 			'pointless_small_int' => array('column' => 'small_int', 'unique' => 0),
 		);
 		$result = $this->Dbo->index('with_two_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		$this->Dbo->query('DROP TABLE ' . $name);
 
 		$name = $this->Dbo->fullTableName('with_compound_keys');
-		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
@@ -352,11 +356,11 @@ class DboMysqlTest extends CakeTestCase {
 			'one_way' => array('column' => array('bool', 'small_int'), 'unique' => 0),
 		);
 		$result = $this->Dbo->index('with_compound_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		$this->Dbo->query('DROP TABLE ' . $name);
 
 		$name = $this->Dbo->fullTableName('with_multiple_compound_keys');
-		$this->Dbo->query('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ), KEY `other_way` ( `small_int`, `bool` ));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ), KEY `pointless_small_int` ( `small_int` ), KEY `one_way` ( `bool`, `small_int` ), KEY `other_way` ( `small_int`, `bool` ));');
 		$expected = array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1),
 			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
@@ -365,8 +369,8 @@ class DboMysqlTest extends CakeTestCase {
 			'other_way' => array('column' => array('small_int', 'bool'), 'unique' => 0),
 		);
 		$result = $this->Dbo->index('with_multiple_compound_keys', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		$this->Dbo->query('DROP TABLE ' . $name);
 	}
 
 /**
