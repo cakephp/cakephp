@@ -200,12 +200,4 @@ class ConsoleOutputTest extends CakeTestCase {
 		$this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
 	}
 
-/**
- * test wrapping blocks at certain widths.
- *
- * @return void
- */
-	function testFormatBlock() {
-		$this->markTestIncomplete('This test needs to be written.');
-	}
 }
