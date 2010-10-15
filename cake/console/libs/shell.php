@@ -448,6 +448,32 @@ class Shell extends Object {
 	}
 
 /**
+ * Wrap a block of text.
+ * Allows you to set the width, and indenting on a block of text. 
+ *
+ * ### Options
+ *
+ * - `width` The width to wrap to.  Defaults to 72
+ * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
+ * - `indent` Indent the text with the string provided. Defaults to null.
+ *
+ * @param string $text Text the text to format.
+ * @param mixed $options Array of options to use, or an integer to wrap the text to. 
+ * @return string Wrapped / indented text
+ */
+	public function wrapText($text, $options = array()) {
+		$wrapped = String::wrap($text, $options);
+		if (is_array($options) && !empty($options['indent'])) {
+			$chunks = explode("\n", $wrapped);
+			foreach ($chunks as &$chunk) {
+				$chunk = $options['indent'] . $chunk;
+			}
+			return implode("\n", $chunks);
+		}
+		return $wrapped;
+	}
+
+/**
  * Outputs a single or multiple messages to stdout. If no parameters
  * are passed outputs just a newline.
  *

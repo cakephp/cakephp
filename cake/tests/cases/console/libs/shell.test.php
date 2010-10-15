@@ -719,4 +719,28 @@ class ShellTest extends CakeTestCase {
 
 		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
+
+/**
+ * test wrapBlock wrapping text.
+ *
+ * @return void
+ */
+	function testWrapText() {
+		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+		$result = $this->Shell->wrapText($text, 33);
+		$expected = <<<TEXT
+This is the song that never ends.
+This is the song that never ends.
+This is the song that never ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
+
+		$result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
+		$expected = <<<TEXT
+  This is the song that never ends.
+  This is the song that never ends.
+  This is the song that never ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
+	}
 }
