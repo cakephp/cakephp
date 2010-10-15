@@ -262,7 +262,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$result = $this->Dbo->value(3.141593, 'float');
 		$this->assertEqual((string)$result, '3.141593');
-		
+
 		$result = $this->Dbo->value(3.141593);
 		$this->assertEqual((string)$result, '3.141593');
 
@@ -325,7 +325,7 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->Dbo->index('simple', false);
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
-		
+
 
 		$name = $this->Dbo->fullTableName('with_a_key');
 		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id), KEY `pointless_bool` ( `bool` ));');
@@ -499,7 +499,7 @@ class DboMysqlTest extends CakeTestCase {
 			->method('_execute')
 			->with('SHOW INDEX FROM ' . $name)
 			->will($this->returnValue($resultMock));
-		
+
 		foreach ($columnData as $i => $data) {
 			$resultMock->expects($this->at($i))->method('fetch')->will($this->returnValue((object) $data));
 		}
@@ -580,7 +580,15 @@ class DboMysqlTest extends CakeTestCase {
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true)
 		)));
-		$this->Dbo->query($this->Dbo->createSchema($schema1));
+		$result = $this->Dbo->createSchema($schema1);
+		$this->assertContains('`id` int(11) DEFAULT 0 NOT NULL,', $result);
+		$this->assertContains('`name` varchar(50) NOT NULL,', $result);
+		$this->assertContains('`group1` int(11) DEFAULT NULL', $result);
+		$this->assertContains('`group2` int(11) DEFAULT NULL', $result);
+
+		//Test that the string is syntactically correct
+		$query = $this->Dbo->getConnection()->prepare($result);
+		$this->assertEquals($result, $query->queryString);
 
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
@@ -596,10 +604,17 @@ class DboMysqlTest extends CakeTestCase {
 					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
 					'PRIMARY' => array('column' => 'id', 'unique' => 1))
 		)));
-		$this->Dbo->query($this->Dbo->alterSchema($schema2->compare($schema1)));
 
-		$indexes = $this->Dbo->index('altertest');
-		$this->assertEqual($schema2->tables['altertest']['indexes'], $indexes);
+		$result = $this->Dbo->alterSchema($schema2->compare($schema1));
+		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains('ADD KEY name_idx (`name`),', $result);
+		$this->assertContains('ADD KEY group_idx (`group1`),', $result);
+		$this->assertContains('ADD KEY compound_idx (`group1`, `group2`),', $result);
+		$this->assertContains('ADD PRIMARY KEY  (`id`);', $result);
+
+		//Test that the string is syntactically correct
+		$query = $this->Dbo->getConnection()->prepare($result);
+		$this->assertEquals($result, $query->queryString);
 
 		// Change three indexes, delete one and add another one
 		$schema3 = new CakeSchema(array(
@@ -617,22 +632,36 @@ class DboMysqlTest extends CakeTestCase {
 					'id_name_idx' => array('column' => array('id', 'name'), 'unique' => 0))
 		)));
 
-		$this->Dbo->query($this->Dbo->alterSchema($schema3->compare($schema2)));
+		$result = $this->Dbo->alterSchema($schema3->compare($schema2));
+		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains('DROP PRIMARY KEY,', $result);
+		$this->assertContains('DROP KEY name_idx,', $result);
+		$this->assertContains('DROP KEY group_idx,', $result);
+		$this->assertContains('DROP KEY compound_idx,', $result);
+		$this->assertContains('ADD KEY id_name_idx (`id`, `name`),', $result);
+		$this->assertContains('ADD UNIQUE KEY name_idx (`name`),', $result);
+		$this->assertContains('ADD KEY group_idx (`group2`),', $result);
+		$this->assertContains('ADD KEY compound_idx (`group2`, `group1`);', $result);
 
-		$indexes = $this->Dbo->index('altertest');
-		$this->assertEqual($schema3->tables['altertest']['indexes'], $indexes);
+		$query = $this->Dbo->getConnection()->prepare($result);
+		$this->assertEquals($result, $query->queryString);
 
 		// Compare us to ourself.
 		$this->assertEqual($schema3->compare($schema3), array());
 
 		// Drop the indexes
-		$this->Dbo->query($this->Dbo->alterSchema($schema1->compare($schema3)));
+		$result = $this->Dbo->alterSchema($schema1->compare($schema3));
 
-		$indexes = $this->Dbo->index('altertest');
-		$this->assertEqual(array(), $indexes);
+		$this->assertContains('ALTER TABLE `altertest`', $result);
+		$this->assertContains('DROP KEY name_idx,', $result);
+		$this->assertContains('DROP KEY group_idx,', $result);
+		$this->assertContains('DROP KEY compound_idx,', $result);
+		$this->assertContains('DROP KEY id_name_idx;', $result);
 
-		$this->Dbo->query($this->Dbo->dropSchema($schema1));
+		$query = $this->Dbo->getConnection()->prepare($result);
+		$this->assertEquals($result, $query->queryString);
 	}
+
 /**
  * test saving and retrieval of blobs
  *
