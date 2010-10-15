@@ -695,8 +695,12 @@ class DboMysql extends DboMysqlBase {
  * @return string Error message with error number
  */
 	function lastError() {
-		if (mysql_errno($this->connection)) {
-			return mysql_errno($this->connection).': '.mysql_error($this->connection);
+		if ($this->hasResult()) {
+			$error = $this->_result->errorInfo();
+			if (empty($error)) {
+				$error;
+			}
+			return $error[1] . ': ' . $error[2];
 		}
 		return null;
 	}
@@ -708,8 +712,8 @@ class DboMysql extends DboMysqlBase {
  * @return integer Number of affected rows
  */
 	function lastAffected() {
-		if ($this->_result) {
-			return mysql_affected_rows($this->connection);
+		if ($this->hasResult()) {
+			return $this->_result->rowCount();
 		}
 		return null;
 	}

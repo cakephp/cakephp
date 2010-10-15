@@ -235,20 +235,20 @@ class DboSource extends DataSource {
  * - log - Whether or not the query should be logged to the memory log.
  *
  * @param string $sql
+ * @param array $params values to be bided to the query
  * @param array $options
  * @return mixed Resource or object representing the result set, or false on failure
  */
-	public function execute($sql, $options = array()) {
+	public function execute($sql, $params = array(), $options = array()) {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 
 		$t = microtime(true);
-		$this->_result = $this->_execute($sql);
+		$this->_result = $this->_execute($sql, $params);
 		if ($options['stats']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->affected = $this->lastAffected();
-			$this->error = $this->lastError();
-			$this->numRows = $this->lastNumRows();
+			//$this->numRows = $this->lastNumRows();
 		}
 
 		if ($options['log']) {
@@ -576,7 +576,7 @@ class DboSource extends DataSource {
  * @return boolean True if the result is valid else false
  */
 	public function hasResult() {
-		return is_resource($this->_result);
+		return is_a($this->_result, 'PDOStatement');
 	}
 
 /**
