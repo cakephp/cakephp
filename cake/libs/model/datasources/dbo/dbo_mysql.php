@@ -656,10 +656,10 @@ class DboMysql extends DboMysqlBase {
 			return $parent;
 		}
 		if ($data === null || (is_array($data) && empty($data))) {
-			return 'NULL';
+			return $this->_connection->quote($data, PDO::PARAM_NULL);
 		}
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
+			return $this->_connection->quote($data, PDO::PARAM_STR);
 		}
 		if (empty($column)) {
 			$column = $this->introspectType($data);
@@ -684,7 +684,7 @@ class DboMysql extends DboMysqlBase {
 					return $data;
 				}
 			default:
-				return "'" . mysql_real_escape_string($data, $this->connection) . "'";
+				return $this->_connection->quote($data, PDO::PARAM_STR);
 			break;
 		}
 	}
