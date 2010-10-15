@@ -796,8 +796,17 @@ class DboMysql extends DboMysqlBase {
  *
  * @return string The database encoding
  */
-	function getEncoding() {
-		return mysql_client_encoding($this->connection);
+	public function getEncoding() {
+		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
+	}
+
+/**
+ * Gets the version string of the database server
+ *
+ * @return string The database encoding
+ */
+	public function getVersion() {
+		return $this->_execute('SELECT VERSION() as mysql_version')->fetchObject()->mysql_version;
 	}
 
 /**

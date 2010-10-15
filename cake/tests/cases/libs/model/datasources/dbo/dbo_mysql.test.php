@@ -862,4 +862,26 @@ class DboMysqlTest extends CakeTestCase {
 		$tables = $db->listSources();
 		$this->assertEqual($tables, array('cake_table', 'another_table'));
 	}
+
+/**
+ * Tests that getVersion method sends the correct query for getting the mysql version
+ * @return void
+ */
+	public function testGetVersion() {
+		$db = $this->getMock('DboMysql', array('connect', '_execute'));
+		$queryResult = $this->getMock('PDOStatement');
+
+		$db->expects($this->once())
+			->method('_execute')
+			->with('SELECT VERSION() as mysql_version')
+			->will($this->returnValue($queryResult));
+		$result = new StdClass;
+		$result->mysql_version = '5.1';
+		$queryResult->expects($this->once())
+			->method('fetchObject')
+			->will($this->returnValue($result));
+
+		$version = $db->getVersion();
+		$this->assertEqual('5.1', $version);
+	}
 }
