@@ -19,19 +19,42 @@
  */
 
 /**
- * Provides common base for MySQL & MySQLi connections
+ * MySQL DBO driver object
+ *
+ * Provides connection and SQL generation for MySQL RDMS
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
-class DboMysqlBase extends DboSource {
+class DboMysql extends DboSource {
 
 /**
- * Description property.
+ * Datasource description
  *
  * @var string
  */
-	public $description = "MySQL DBO Base Driver";
+	public $description = "MySQL DBO Driver";
+
+/**
+ * Base configuration settings for MySQL driver
+ *
+ * @var array
+ */
+	protected $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '3306'
+	);
+
+/**
+ * Reference to the PDO object connection
+ *
+ * @var PDO $_connection
+ */
+	protected $_connection = null;
 
 /**
  * Start quote
@@ -109,6 +132,274 @@ class DboMysqlBase extends DboSource {
 		'binary' => array('name' => 'blob'),
 		'boolean' => array('name' => 'tinyint', 'limit' => '1')
 	);
+
+/**
+ * Connects to the database using options in the given configuration array.
+ *
+ * @return boolean True if the database could be connected, else false
+ */
+	function connect() {
+		$config = $this->config;
+		$this->connected = false;
+		try {
+			$flags = array(
+				PDO::ATTR_PERSISTENT => $config['persistent'],
+				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+			);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
+			}
+			$this->_connection = new PDO(
+				"mysql:{$config['host']};port={$config['port']};dbname={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
+			$this->connected = true;
+		} catch (PDOException $e) {
+			$this->errors[] = $e->getMessage();
+		}
+
+		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
+
+		return $this->connected;
+	}
+
+	public function getConnection() {
+		return $this->_connection;
+	}
+
+/**
+ * Check whether the MySQL extension is installed/loaded
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return in_array('mysql', PDO::getAvailableDrivers());
+	}
+/**
+ * Disconnects from database.
+ *
+ * @return boolean True if the database could be disconnected, else false
+ */
+	function disconnect() {
+		if (isset($this->results) && is_resource($this->results)) {
+			mysql_free_result($this->results);
+		}
+		$this->connected = !@mysql_close($this->connection);
+		return !$this->connected;
+	}
+
+/**
+ * Returns an array of sources (tables) in the database.
+ *
+ * @return array Array of tablenames in the database
+ */
+	function listSources() {
+		$cache = parent::listSources();
+		if ($cache != null) {
+			return $cache;
+		}
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
+
+		if (!$result) {
+			return array();
+		} else {
+			$tables = array();
+
+			while ($line = $result->fetch()) {
+				$tables[] = $line[0];
+			}
+			parent::listSources($tables);
+			return $tables;
+		}
+	}
+
+/**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column The column into which this data will be inserted
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @return string Quoted and escaped data
+ */
+	function value($data, $column = null, $safe = false) {
+		$parent = parent::value($data, $column, $safe);
+
+		if ($parent != null) {
+			return $parent;
+		}
+		if ($data === null || (is_array($data) && empty($data))) {
+			return $this->_connection->quote($data, PDO::PARAM_NULL);
+		}
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
+			return $this->_connection->quote($data, PDO::PARAM_STR);
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
+		}
+
+		switch ($column) {
+			case 'boolean':
+				return $this->boolean((bool)$data);
+			break;
+			case 'integer':
+			case 'float':
+				if ($data === '') {
+					return 'NULL';
+				}
+				if (is_float($data)) {
+					return sprintf('%F', $data);
+				}
+				if ((is_int($data) || $data === '0') || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false)
+				) {
+					return $data;
+				}
+			default:
+				return $this->_connection->quote($data, PDO::PARAM_STR);
+			break;
+		}
+	}
+
+/**
+ * Returns a formatted error message from previous database operation.
+ *
+ * @return string Error message with error number
+ */
+	function lastError() {
+		if ($this->hasResult()) {
+			$error = $this->_result->errorInfo();
+			if (empty($error)) {
+				$error;
+			}
+			return $error[1] . ': ' . $error[2];
+		}
+		return null;
+	}
+
+/**
+ * Returns number of affected rows in previous database operation. If no previous operation exists,
+ * this returns false.
+ *
+ * @return integer Number of affected rows
+ */
+	function lastAffected() {
+		if ($this->hasResult()) {
+			return $this->_result->rowCount();
+		}
+		return null;
+	}
+
+/**
+ * Returns number of rows in previous resultset. If no previous resultset exists,
+ * this returns false.
+ *
+ * @return integer Number of rows in resultset
+ */
+	function lastNumRows() {
+		if ($this->hasResult()) {
+			return mysql_num_rows($this->_result);
+		}
+		return null;
+	}
+
+/**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastInsertId($source = null) {
+		$id = $this->fetchRow('SELECT LAST_INSERT_ID() AS insertID', false);
+		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
+			return $id[0]['insertID'];
+		}
+
+		return null;
+	}
+
+/**
+ * Enter description here...
+ *
+ * @param unknown_type $results
+ */
+	function resultSet(&$results) {
+		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
+			mysql_free_result($this->results);
+		}
+		$this->results =& $results;
+		$this->map = array();
+		$numFields = mysql_num_fields($results);
+		$index = 0;
+		$j = 0;
+
+		while ($j < $numFields) {
+			$column = mysql_fetch_field($results, $j);
+			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
+				$this->map[$index++] = array($column->table, $column->name);
+			} else {
+				$this->map[$index++] = array(0, $column->name);
+			}
+			$j++;
+		}
+	}
+
+/**
+ * Fetches the next row from the current result set
+ *
+ * @return unknown
+ */
+	function fetchResult() {
+		if ($row = mysql_fetch_row($this->results)) {
+			$resultRow = array();
+			$i = 0;
+			foreach ($row as $index => $field) {
+				list($table, $column) = $this->map[$index];
+				$resultRow[$table][$column] = $row[$index];
+				$i++;
+			}
+			return $resultRow;
+		} else {
+			return false;
+		}
+	}
+
+/**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	public function getEncoding() {
+		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
+	}
+
+/**
+ * Gets the version string of the database server
+ *
+ * @return string The database encoding
+ */
+	public function getVersion() {
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+	}
+
+/**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	public function getCharsetName($name) {
+		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
+			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
+			$cols = $r->fetchArray();
+			if (isset($cols['COLLATIONS']['CHARACTER_SET_NAME'])) {
+				return $cols['COLLATIONS']['CHARACTER_SET_NAME'];
+			}
+		}
+		return false;
+	}
 
 /**
  * Returns an array of the fields in given table name.
@@ -504,329 +795,5 @@ class DboMysqlBase extends DboSource {
 			return "enum($vals)";
 		}
 		return 'text';
-	}
-}
-
-/**
- * MySQL DBO driver object
- *
- * Provides connection and SQL generation for MySQL RDMS
- *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
- */
-class DboMysql extends DboMysqlBase {
-
-/**
- * Datasource description
- *
- * @var string
- */
-	public $description = "MySQL DBO Driver";
-
-/**
- * Base configuration settings for MySQL driver
- *
- * @var array
- */
-	protected $_baseConfig = array(
-		'persistent' => true,
-		'host' => 'localhost',
-		'login' => 'root',
-		'password' => '',
-		'database' => 'cake',
-		'port' => '3306'
-	);
-
-/**
- * Reference to the PDO object connection
- *
- * @var PDO $_connection
- */
-	protected $_connection = null;
-
-/**
- * Connects to the database using options in the given configuration array.
- *
- * @return boolean True if the database could be connected, else false
- */
-	function connect() {
-		$config = $this->config;
-		$this->connected = false;
-		try {
-			$flags = array(
-				PDO::ATTR_PERSISTENT => $config['persistent'],
-				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
-			);
-			if (!empty($config['encoding'])) {
-				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
-			}
-			$this->_connection = new PDO(
-				"mysql:{$config['host']};port={$config['port']};dbname={$config['database']}",
-				$config['login'],
-				$config['password'],
-				$flags
-			);
-			$this->connected = true;
-		} catch (PDOException $e) {
-			$this->errors[] = $e->getMessage();
-		}
-
-		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
-
-		return $this->connected;
-	}
-
-	public function getConnection() {
-		return $this->_connection;
-	}
-
-/**
- * Check whether the MySQL extension is installed/loaded
- *
- * @return boolean
- */
-	function enabled() {
-		return in_array('mysql', PDO::getAvailableDrivers());
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		if (isset($this->results) && is_resource($this->results)) {
-			mysql_free_result($this->results);
-		}
-		$this->connected = !@mysql_close($this->connection);
-		return !$this->connected;
-	}
-
-/**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @param array $params list of params to be bound to query
- * @return PDOStatement if query executes with no problem, false otherwise
- */
-	protected function _execute($sql, $params = array()) {
-		$query = $this->_connection->prepare($sql);
-		$query->setFetchMode(PDO::FETCH_LAZY);
-		if (!$query->execute($params)) {
-			$this->errors[] = $query->errorInfo();
-			return false;
-		}
-		return $query;
-	}
-
-/**
- * Returns an array of sources (tables) in the database.
- *
- * @return array Array of tablenames in the database
- */
-	function listSources() {
-		$cache = parent::listSources();
-		if ($cache != null) {
-			return $cache;
-		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
-
-		if (!$result) {
-			return array();
-		} else {
-			$tables = array();
-
-			while ($line = $result->fetch()) {
-				$tables[] = $line[0];
-			}
-			parent::listSources($tables);
-			return $tables;
-		}
-	}
-
-/**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
- * @return string Quoted and escaped data
- */
-	function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
-
-		if ($parent != null) {
-			return $parent;
-		}
-		if ($data === null || (is_array($data) && empty($data))) {
-			return $this->_connection->quote($data, PDO::PARAM_NULL);
-		}
-		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return $this->_connection->quote($data, PDO::PARAM_STR);
-		}
-		if (empty($column)) {
-			$column = $this->introspectType($data);
-		}
-
-		switch ($column) {
-			case 'boolean':
-				return $this->boolean((bool)$data);
-			break;
-			case 'integer':
-			case 'float':
-				if ($data === '') {
-					return 'NULL';
-				}
-				if (is_float($data)) {
-					return sprintf('%F', $data);
-				}
-				if ((is_int($data) || $data === '0') || (
-					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false)
-				) {
-					return $data;
-				}
-			default:
-				return $this->_connection->quote($data, PDO::PARAM_STR);
-			break;
-		}
-	}
-
-/**
- * Returns a formatted error message from previous database operation.
- *
- * @return string Error message with error number
- */
-	function lastError() {
-		if ($this->hasResult()) {
-			$error = $this->_result->errorInfo();
-			if (empty($error)) {
-				$error;
-			}
-			return $error[1] . ': ' . $error[2];
-		}
-		return null;
-	}
-
-/**
- * Returns number of affected rows in previous database operation. If no previous operation exists,
- * this returns false.
- *
- * @return integer Number of affected rows
- */
-	function lastAffected() {
-		if ($this->hasResult()) {
-			return $this->_result->rowCount();
-		}
-		return null;
-	}
-
-/**
- * Returns number of rows in previous resultset. If no previous resultset exists,
- * this returns false.
- *
- * @return integer Number of rows in resultset
- */
-	function lastNumRows() {
-		if ($this->hasResult()) {
-			return mysql_num_rows($this->_result);
-		}
-		return null;
-	}
-
-/**
- * Returns the ID generated from the previous INSERT operation.
- *
- * @param unknown_type $source
- * @return in
- */
-	function lastInsertId($source = null) {
-		$id = $this->fetchRow('SELECT LAST_INSERT_ID() AS insertID', false);
-		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
-			return $id[0]['insertID'];
-		}
-
-		return null;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $results
- */
-	function resultSet(&$results) {
-		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
-			mysql_free_result($this->results);
-		}
-		$this->results =& $results;
-		$this->map = array();
-		$numFields = mysql_num_fields($results);
-		$index = 0;
-		$j = 0;
-
-		while ($j < $numFields) {
-			$column = mysql_fetch_field($results, $j);
-			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
-				$this->map[$index++] = array($column->table, $column->name);
-			} else {
-				$this->map[$index++] = array(0, $column->name);
-			}
-			$j++;
-		}
-	}
-
-/**
- * Fetches the next row from the current result set
- *
- * @return unknown
- */
-	function fetchResult() {
-		if ($row = mysql_fetch_row($this->results)) {
-			$resultRow = array();
-			$i = 0;
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
-			}
-			return $resultRow;
-		} else {
-			return false;
-		}
-	}
-
-/**
- * Gets the database encoding
- *
- * @return string The database encoding
- */
-	public function getEncoding() {
-		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
-	}
-
-/**
- * Gets the version string of the database server
- *
- * @return string The database encoding
- */
-	public function getVersion() {
-		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
-	}
-
-/**
- * Query charset by collation
- *
- * @param string $name Collation name
- * @return string Character set name
- */
-	public function getCharsetName($name) {
-		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
-			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetchArray();
-			if (isset($cols['COLLATIONS']['CHARACTER_SET_NAME'])) {
-				return $cols['COLLATIONS']['CHARACTER_SET_NAME'];
-			}
-		}
-		return false;
 	}
 }

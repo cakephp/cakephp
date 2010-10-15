@@ -263,6 +263,25 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @return PDOStatement if query executes with no problem, false otherwise
+ */
+	protected function _execute($sql, $params = array()) {
+		$query = $this->_connection->prepare($sql);
+		$query->setFetchMode(PDO::FETCH_LAZY);
+		if (!$query->execute($params)) {
+			debug($query->errorInfo());
+			$this->error = $this->lastError();
+			return false;
+		}
+
+		return $query;
+	}
+
+/**
  * DataSource Query abstraction
  *
  * @return resource Result resource identifier.
