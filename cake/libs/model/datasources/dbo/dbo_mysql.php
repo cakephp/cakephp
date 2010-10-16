@@ -394,9 +394,10 @@ class DboMysql extends DboSource {
 	public function getCharsetName($name) {
 		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
 			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetchArray();
-			if (isset($cols['COLLATIONS']['CHARACTER_SET_NAME'])) {
-				return $cols['COLLATIONS']['CHARACTER_SET_NAME'];
+			$cols = $r->fetch();
+
+			if (isset($cols['CHARACTER_SET_NAME'])) {
+				return $cols['CHARACTER_SET_NAME'];
 			}
 		}
 		return false;
