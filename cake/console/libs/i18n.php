@@ -98,8 +98,7 @@ class I18nShell extends Shell {
  *
  */
 	public function initdb() {
-		$this->Dispatch->args = array('schema', 'create', 'i18n');
-		$this->Dispatch->dispatch();
+		$this->dispatchShell('schema create i18n');
 	}
 
 /**

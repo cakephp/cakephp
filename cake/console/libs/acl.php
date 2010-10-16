@@ -342,8 +342,7 @@ class AclShell extends Shell {
  *
  */
 	public function initdb() {
-		$this->Dispatch->args = array('schema', 'create', 'DbAcl');
-		$this->Dispatch->dispatch();
+		return $this->dispatchShell('schema create DbAcl');
 	}
 
 /**
