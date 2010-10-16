@@ -424,7 +424,7 @@ class SchemaShellTest extends CakeTestCase {
 
 		$this->Shell->params = array(
 			'connection' => 'test',
-			'f' => true
+			'force' => true
 		);
 		$this->Shell->args = array('SchemaShellTest', 'articles');
 		$this->Shell->startup();

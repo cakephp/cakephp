@@ -103,14 +103,6 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Override main
- *
- */
-	public function main() {
-		$this->help();
-	}
-
-/**
  * Read and output contents of schema object
  * path to read as second arg
  *
@@ -135,7 +127,7 @@ class SchemaShell extends Shell {
 	public function generate() {
 		$this->out(__('Generating Schema...'));
 		$options = array();
-		if (isset($this->params['f'])) {
+		if (isset($this->params['force'])) {
 			$options = array('models' => false);
 		}
 
@@ -163,8 +155,8 @@ class SchemaShell extends Shell {
 			$result = $Folder->read();
 
 			$numToUse = false;
-			if (isset($this->params['s'])) {
-				$numToUse = $this->params['s'];
+			if (isset($this->params['snapshot'])) {
+				$numToUse = $this->params['snapshot'];
 			}
 
 			$count = 0;
@@ -210,7 +202,7 @@ class SchemaShell extends Shell {
 			$this->err(__('Schema could not be loaded'));
 			$this->_stop();
 		}
-		if (isset($this->params['write'])) {
+		if (!empty($this->params['write'])) {
 			if ($this->params['write'] == 1) {
 				$write = Inflector::underscore($this->Schema->name);
 			} else {
@@ -270,10 +262,10 @@ class SchemaShell extends Shell {
  */
 	function _loadSchema() {
 		$name = $plugin = null;
-		if (isset($this->params['name'])) {
+		if (!empty($this->params['name'])) {
 			$name = $this->params['name'];
 		}
-		if (isset($this->params['plugin'])) {
+		if (!empty($this->params['plugin'])) {
 			$plugin = $this->params['plugin'];
 		}
 		
@@ -283,9 +275,9 @@ class SchemaShell extends Shell {
 		}
 
 		$options = array('name' => $name, 'plugin' => $plugin);
-		if (isset($this->params['s'])) {
+		if (!empty($this->params['snapshot'])) {
 			$fileName = rtrim($this->Schema->file, '.php');
-			$options['file'] = $fileName . '_' . $this->params['s'] . '.php';
+			$options['file'] = $fileName . '_' . $this->params['snapshot'] . '.php';
 		}
 
 		$Schema =& $this->Schema->load($options);
@@ -355,7 +347,7 @@ class SchemaShell extends Shell {
 
 		$this->out(__('Comparing Database to Schema...'));
 		$options = array();
-		if (isset($this->params['f'])) {
+		if (isset($this->params['force'])) {
 			$options['models'] = false;
 		}
 		$Old = $this->Schema->read($options);
@@ -429,78 +421,97 @@ class SchemaShell extends Shell {
 	}
 
 /**
- * Displays help contents
+ * get the option parser
  *
+ * @return void
  */
-	public function help() {
-		$help = <<<TEXT
-The Schema Shell generates a schema object from
-the database and updates the database from the schema.
----------------------------------------------------------------
-Usage: cake schema <command> <arg1> <arg2>...
----------------------------------------------------------------
-Params:
-	-connection <config>
-		set db config <config>. uses 'default' if none is specified
-
-	-path <dir>
-		path <dir> to read and write schema.php.
-		default path: {$this->Schema->path}
-
-	-name <name>
-		Classname to use. If <name> is Plugin.className, it will
-		set the plugin and name params.
-
-	-file <name>
-		file <name> to read and write.
-		default file: {$this->Schema->file}
-
-	-s <number>
-		snapshot <number> to use for run.
-
-	-dry
-		Perform a dry run on create + update commands.
-		Queries will be output to window instead of executed.
-
-	-f
-		force 'generate' to create a new schema.
-
-	-plugin
-		Indicate the plugin to use.
-
-Commands:
-
-	schema help
-		shows this help message.
-
-	schema view <name>
-		read and output contents of schema file.
-
-	schema generate
-		reads from 'connection' writes to 'path'
-		To force generation of all tables into the schema, use the -f param.
-		Use 'schema generate snapshot <number>' to generate snapshots
-		which you can use with the -s parameter in the other operations.
-
-	schema dump <name>
-		Dump database sql based on schema file to stdout.
-		If you use the `-write` param is used a .sql will be generated.
-		If `-write` is a filename, then that file name will be generate.
-		If `-write` is a full path, the schema will be written there.
-
-	schema create <name> <table>
-		Drop and create tables based on schema file
-		optional <table> argument can be used to create only a single 
-		table in the schema. Pass the -s param with a number to use a snapshot.
-		Use the `-dry` param to preview the changes.
-
-	schema update <name> <table>
-		Alter the tables based on schema file. Optional <table>
-		parameter will only update one table. 
-		To use a snapshot pass the `-s` param with the snapshot number.
-		To preview the changes that will be done use `-dry`.
-TEXT;
-		$this->out($help);
-		$this->_stop();
+	public function getOptionParser() {
+		$plugin = array(
+			'help' => __('The plugin to use.'),
+		);
+		$connection = array(
+			'help' => __('Set the db config to use.'),
+			'default' => 'default'
+		);
+		$path = array(
+			'help' => __('Path to read and write schema.php'),
+			'default' => 'app/config/schema'
+		);
+		$file = array(
+			'help' => __('File name to read and write.'),
+			'default' => 'schema.php'
+		);
+		$name = array(
+			'help' => __('Classname to use. If its Plugin.class, both name and plugin options will be set.')
+		);
+		$snapshot = array(
+			'short' => 's',
+			'help' => __('Snapshot number to use/make.')
+		);
+		$dry = array(
+			'help' => 'Perform a dry run on create and update commands. Queries will be output instead of run.',
+			'boolean' => true
+		);
+		$force = array(
+			'short' => 'f',
+			'help' => __('Force "generate" to create a new schema'),
+			'boolean' => true
+		);
+		$write = array(
+			'help' => __('Write the dumped SQL to a file.')
+		);
+		
+		$parser = parent::getOptionParser();
+		$parser->description(
+			'The Schema Shell generates a schema object from' .
+			'the database and updates the database from the schema.'
+		)->addSubcommand('view', array(
+			'help' => 'read and output the contents of a schema file',
+			'parser' => array(
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
+				'arguments' => compact('name')
+			)
+		))->addSubcommand('generate', array(
+			'help' => __('Reads from --connection and writes to --path. Generate snapshots with -s'),
+			'parser' => array(
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force'),
+				'arguments' => array(
+					'snapshot' => array('help' => __('Generate a snapshot.'))
+				)
+			)
+		))->addSubcommand('dump', array(
+			'help' => __('Dump database SQL based on a schema file to stdout.'),
+			'parser' => array(
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
+				'arguments' => compact('name')
+			)
+		))->addSubcommand('create', array(
+			'help' => __('Drop and create tables based on the schema file.'),
+			'parser' => array(
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot'),
+				'args' => array(
+					'name' => array(
+						'help' => __('Name of schema to use.')
+					),
+					'table' => array(
+						'help' => __('Only create the specified table.')
+					)
+				)
+			)
+		))->addSubcommand('update', array(
+			'help' => __('Alter the tables based on the schema file.'),
+			'parser' => array(
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot'),
+				'args' => array(
+					'name' => array(
+						'help' => __('Name of schema to use.')
+					),
+					'table' => array(
+						'help' => __('Only create the specified table.')
+					)
+				)
+			)
+		));
+		return $parser;
 	}
 }
