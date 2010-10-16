@@ -334,4 +334,19 @@ the song that never
 TEXT;
 		$this->assertEquals($expected, $result, 'Text not wrapped.');
 	}
+
+/**
+ * test wrap() indenting
+ *
+ * @return void
+ */
+	function testWrapIndent() {
+		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+		$result = String::wrap($text, array('width' => 33, 'indent' => "\t", 'indentAt' => 1));
+		$expected = <<<TEXT
+This is the song that never ends.
+	This is the song that never ends.
+	This is the song that never ends.
+TEXT;
+	}
 }
