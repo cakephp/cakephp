@@ -74,7 +74,6 @@ class ProjectTaskTest extends CakeTestCase {
 	protected function _setupTestProject() {
 		$skel = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS . 'templates' . DS . 'skel';
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
 		$this->Task->bake($this->Task->path . 'bake_test_app', $skel);
 	}
 
