@@ -163,7 +163,7 @@ class ConsoleOutput {
 			return strip_tags($text);
 		}
 		return preg_replace_callback(
-			'/<(?<tag>[a-z0-9-_]+)>(?<text>.*?)<\/(\1)>/i', array($this, '_replaceTags'), $text
+			'/<(?<tag>[a-z0-9-_]+)>(?<text>.*?)<\/(\1)>/ims', array($this, '_replaceTags'), $text
 		);
 	}
 
