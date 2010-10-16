@@ -317,26 +317,26 @@ class DboMysql extends DboSource {
 	}
 
 /**
- * Enter description here...
+ * Builds a map of the columns contained in a result
  *
- * @param unknown_type $results
+ * @param PDOStatement $results
  */
-	function resultSet(&$results) {
-		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
-			mysql_free_result($this->results);
-		}
-		$this->results =& $results;
+	function resultSet($results) {
+		//if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
+		//	mysql_free_result($this->results);
+		//}
+		$this->results = $results;
 		$this->map = array();
-		$numFields = mysql_num_fields($results);
+		$numFields = $results->columnCount();
 		$index = 0;
 		$j = 0;
 
 		while ($j < $numFields) {
-			$column = mysql_fetch_field($results, $j);
-			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
-				$this->map[$index++] = array($column->table, $column->name);
+			$column = $results->getColumnMeta($j);
+			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
+				$this->map[$index++] = array($column['table'], $column['name']);
 			} else {
-				$this->map[$index++] = array(0, $column->name);
+				$this->map[$index++] = array(0, $column['name']);
 			}
 			$j++;
 		}
@@ -345,16 +345,15 @@ class DboMysql extends DboSource {
 /**
  * Fetches the next row from the current result set
  *
- * @return unknown
+ * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
 	function fetchResult() {
-		if ($row = mysql_fetch_row($this->results)) {
+		if ($row = $this->results->fetch()) {
 			$resultRow = array();
-			$i = 0;
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
+
+			foreach ($this->map as $col => $meta) {
+				list($table, $column) = $meta;
+				$resultRow[$table][$column] = $row->{$meta[1]};
 			}
 			return $resultRow;
 		} else {
