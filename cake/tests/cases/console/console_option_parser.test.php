@@ -155,9 +155,9 @@ class ConsoleOptionParserTest extends CakeTestCase {
  */
 	function testAddOptionMultipleShort() {
 		$parser = new ConsoleOptionParser('test', false);
-		$parser->addOption('test', array('short' => 't'))
-			->addOption('file', array('short' => 'f'))
-			->addOption('output', array('short' => 'o'));
+		$parser->addOption('test', array('short' => 't', 'boolean' => true))
+			->addOption('file', array('short' => 'f', 'boolean' => true))
+			->addOption('output', array('short' => 'o', 'boolean' => true));
 
 		$result = $parser->parse(array('-o', '-t', '-f'));
 		$expected = array('file' => true, 'test' => true, 'output' => true, 'help' => false);
@@ -176,7 +176,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser = new ConsoleOptionParser('test', false);
 		$parser->addOption('test')
 			->addOption('connection')
-			->addOption('table', array('short' => 't'));
+			->addOption('table', array('short' => 't', 'default' => true));
 
 		$result = $parser->parse(array('--test', 'value', '-t', '--connection', 'postgres'));
 		$expected = array('test' => 'value', 'table' => true, 'connection' => 'postgres', 'help' => false);

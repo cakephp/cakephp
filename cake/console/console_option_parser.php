@@ -252,7 +252,7 @@ class ConsoleOptionParser {
  * - `help` - Help text for this option.  Used when generating help for the option.
  * - `default` - The default value for this option. Defaults are added into the parsed params when the 
  *    attached option is not provided or has no value.  Using default and boolean together will not work.
- *    are added into the parsed parameters when the option is undefined. 
+ *    are added into the parsed parameters when the option is undefined. Defaults to null.
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
  *    If an option is defined as boolean, it will always be added to the parsed params.  If no present
  *    it will be false, if present it will be true.
@@ -268,7 +268,7 @@ class ConsoleOptionParser {
 			'name' => $name,
 			'short' => null,
 			'help' => '',
-			'default' => true,
+			'default' => null,
 			'boolean' => false,
 			'choices' => array()
 		);
@@ -609,10 +609,13 @@ class ConsoleOptionParser {
 			throw new InvalidArgumentException(sprintf(__('Unknown option `%s`'), $name));
 		}
 		$option = $this->_options[$name];
+		$isBoolean = $option->isBoolean();
 		$nextValue = $this->_nextToken();
-		if (!$option->isBoolean() && !empty($nextValue) && $nextValue{0} != '-') {
+		if (!$isBoolean && !empty($nextValue) && $nextValue{0} != '-') {
 			array_shift($this->_tokens);
 			$value = $nextValue;
+		} elseif ($isBoolean) {
+			$value = true;
 		} else {
 			$value = $option->defaultValue();
 		}
