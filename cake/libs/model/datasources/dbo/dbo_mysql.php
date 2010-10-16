@@ -231,7 +231,7 @@ class DboMysql extends DboSource {
 			return $parent;
 		}
 		if ($data === null || (is_array($data) && empty($data))) {
-			return $this->_connection->quote($data, PDO::PARAM_NULL);
+			return 'NULL';
 		}
 		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
 			return $this->_connection->quote($data, PDO::PARAM_STR);

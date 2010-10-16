@@ -277,10 +277,9 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testTinyintCasting() {
-		$this->skipIf(true, 'Is this a test over the DBO?');
 		$this->Dbo->cacheSources = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->execute('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id));');
 
 		$this->model = new CakeTestModel(array(
 			'name' => 'Tinyint', 'table' => $tableName, 'ds' => 'test'
@@ -308,7 +307,7 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertIdentical($result['Tinyint']['small_int'], '0');
 		$this->model->deleteAll(true);
 
-		$this->Dbo->query('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
+		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
 
 /**
