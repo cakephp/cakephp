@@ -852,7 +852,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testDescribeGettingFieldParameters() {
-		$schema =& new CakeSchema(array(
+		$schema = new CakeSchema(array(
 			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -872,7 +872,7 @@ class DboMysqlTest extends CakeTestCase {
 		));
 		$this->db->execute($this->db->createSchema($schema));
 
-		$model =& new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
+		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
 		$result = $this->db->describe($model);
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
 		$this->assertEqual($result['stringy']['charset'], 'cp1250');
