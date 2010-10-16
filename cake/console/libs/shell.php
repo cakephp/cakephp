@@ -317,6 +317,22 @@ class Shell extends Object {
 	}
 
 /**
+ * Dispatch a command to another Shell. Similar to Object::requestAction()
+ * but intended for running shells from other shells.
+ *
+ * @param mixed $command Either an array of args similar to $argv. Or a string command, that can be 
+ *   exploded on space to simulate argv.
+ * @return mixed. The return of the other shell.
+ */
+	public function dispatchShell($command) {
+		if (is_string($command)) {
+			$command = explode(' ', $command);
+		}
+		$Dispatcher = new ShellDispatcher($command);
+		return $Dispatcher->dispatch();
+	}
+
+/**
  * Runs the Shell with the provided argv
  *
  * @param array $argv Array of arguments to run the shell with. This array should be missing the shell name.
