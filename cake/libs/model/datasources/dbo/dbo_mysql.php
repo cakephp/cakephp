@@ -400,42 +400,36 @@ class DboMysql extends DboSource {
 /**
  * Returns an array of the fields in given table name.
  *
- * @param string $tableName Name of database table to inspect
+ * @param mixed $tableName Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  */
-	function describe(&$model) {
+	function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
 		$fields = false;
-		$cols = $this->query('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
+		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
 
 		foreach ($cols as $column) {
-			$colKey = array_keys($column);
-			if (isset($column[$colKey[0]]) && !isset($column[0])) {
-				$column[0] = $column[$colKey[0]];
+			$fields[$column->Field] = array(
+				'type' => $this->column($column->Type),
+				'null' => ($column->Null == 'YES' ? true : false),
+				'default' => $column->Default,
+				'length' => $this->length($column->Type),
+			);
+			if (!empty($column->Key) && isset($this->index[$column->Key])) {
+				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}
-			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array(
-					'type' => $this->column($column[0]['Type']),
-					'null' => ($column[0]['Null'] == 'YES' ? true : false),
-					'default' => $column[0]['Default'],
-					'length' => $this->length($column[0]['Type']),
-				);
-				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
-					$fields[$column[0]['Field']]['key'] = $this->index[$column[0]['Key']];
+			foreach ($this->fieldParameters as $name => $value) {
+				if (!empty($column->{$value['column']})) {
+					$fields[$column->Field][$name] = $column[0][$value['column']];
 				}
-				foreach ($this->fieldParameters as $name => $value) {
-					if (!empty($column[0][$value['column']])) {
-						$fields[$column[0]['Field']][$name] = $column[0][$value['column']];
-					}
-				}
-				if (isset($fields[$column[0]['Field']]['collate'])) {
-					$charset = $this->getCharsetName($fields[$column[0]['Field']]['collate']);
-					if ($charset) {
-						$fields[$column[0]['Field']]['charset'] = $charset;
-					}
+			}
+			if (isset($fields[$column->Field]['collate'])) {
+				$charset = $this->getCharsetName($fields[$column->Field]['collate']);
+				if ($charset) {
+					$fields[$column->Field]['charset'] = $charset;
 				}
 			}
 		}

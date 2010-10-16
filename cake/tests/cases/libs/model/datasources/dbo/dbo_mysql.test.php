@@ -158,7 +158,8 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-	//public $fixtures = array('core.binary_test');
+	public $fixtures = array('core.binary_test');
+	public $autoFixtures = false;
 /**
  * The Dbo instance to be tested
  *
@@ -668,13 +669,14 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testBlobSaving() {
+		$this->loadFixtures('BinaryTest');
 		$this->Dbo->cacheSources = false;
 		$data = "GIF87ab 
 		 Ò   4A¿¿¿ˇˇˇ   ,    b 
 		  ¢îè©ÀÌ#¥⁄ã≥ﬁ:¯Ü‚Héá¶jV∂ÓúÎL≥çÀóËıÎ…>ï ≈ vFE%ÒâLFI<†µw˝±≈£7˘ç^H“≤«>ÉÃ¢*∑Ç nÖA•Ù|ﬂêèj£:=ÿ6óUàµ5'∂®àA¬ñ∆ˆGE(gt’≈àÚyÁó«7	‚VìöÇ√˙Ç™
 		k”:;kÀAõ{*¡€Î˚˚[  ;;";
 
-		$model = new AppModel(array('name' => 'BinaryTest', 'ds' => 'test'));
+		$model = new CakeTestModel(array('name' => 'BinaryTest', 'ds' => 'test'));
 		$model->save(compact('data'));
 
 		$result = $model->find('first');
