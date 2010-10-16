@@ -39,16 +39,15 @@ class ProjectTask extends Shell {
  *
  * @param string $project Project path
  */
-	public function execute($project = null) {
-		if ($project === null) {
-			if (isset($this->args[0])) {
-				$project = $this->args[0];
-			}
+	public function execute() {
+		$project = null;
+		if (isset($this->args[0])) {
+			$project = $this->args[0];
 		}
 
 		if ($project) {
 			$this->Dispatch->parseParams(array('-app', $project));
-			$project = $this->params['working'];
+			$project = $this->Dispatch->params['working'];
 		}
 
 		if (empty($this->params['skel'])) {
@@ -60,14 +59,14 @@ class ProjectTask extends Shell {
 
 		while (!$project) {
 			$prompt = __("What is the full path for this app including the app directory name?\n Example:");
-			$default = $this->params['working'] . DS . 'myapp';
+			$default = $this->Dispatch->params['working'] . DS . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
 
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$prompt = sprintf(__('A project already exists in this location: %s Overwrite?'), $project);
+				$prompt = sprintf(__('<warning>A project already exists in this location:</warning> %s Overwrite?'), $project);
 				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
@@ -80,7 +79,7 @@ class ProjectTask extends Shell {
 			if ($this->createHome($path)) {
 				$this->out(__('Welcome page created'));
 			} else {
-				$this->out(__('The Welcome page was NOT created'));
+				$this->out(__('The Welcome page was <error>NOT</error> created'));
 			}
 
 			if ($this->securitySalt($path) === true ) {
@@ -109,8 +108,8 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__('chmod -R 0777 %s'), $path . DS .'tmp'));
 			}
 
-			$this->params['working'] = $path;
-			$this->params['app'] = basename($path);
+			$this->Dispatch->params['working'] = $path;
+			$this->Dispatch->params['app'] = basename($path);
 			return true;
 		}
 	}
@@ -133,7 +132,7 @@ class ProjectTask extends Shell {
 		while (!$skel) {
 			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
-				$this->out(__('The directory path you supplied was empty. Please try again.'));
+				$this->err(__('The directory path you supplied was empty. Please try again.'));
 			} else {
 				while (is_dir($skel) === false) {
 					$skel = $this->in(__('Directory path does not exist please choose another:'));
@@ -151,25 +150,21 @@ class ProjectTask extends Shell {
 		$looksGood = $this->in(__('Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
-			$verbose = $this->in(__('Do you want verbose output?'), array('y', 'n'), 'n');
-
 			$Folder = new Folder($skel);
 			if (!empty($this->params['empty'])) {
 				$skip = array();
 			}
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
-				$this->out(sprintf(__('Created: %s in %s'), $app, $path));
+				$this->out(sprintf(__('<success>Created:</success> %s in %s'), $app, $path));
 				$this->hr();
 			} else {
 				$this->err(sprintf(__(" '%s' could not be created properly"), $app));
 				return false;
 			}
 
-			if (strtolower($verbose) == 'y') {
-				foreach ($Folder->messages() as $message) {
-					$this->out($message);
-				}
+			foreach ($Folder->messages() as $message) {
+				$this->out($message, 1, Shell::VERBOSE);
 			}
 
 			return true;
