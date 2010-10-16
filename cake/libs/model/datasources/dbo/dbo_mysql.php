@@ -707,6 +707,7 @@ class DboMysql extends DboSource {
 		$values = implode(', ', $values);
 		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
 	}
+
 /**
  * Returns an detailed array of sources (tables) in the database.
  *
@@ -715,20 +716,24 @@ class DboMysql extends DboSource {
  */
 	function listDetailedSources($name = null) {
 		$condition = '';
+		$params = array();
 		if (is_string($name)) {
-			$condition = ' LIKE ' . $this->value($name);
+			$condition = ' WHERE name = ?' ;
+			$params = array($name);
 		}
-		$result = $this->query('SHOW TABLE STATUS FROM ' . $this->name($this->config['database']) . $condition . ';');
+		$result = $this->_execute('SHOW TABLE STATUS ' . $condition, $params);
+
 		if (!$result) {
 			return array();
 		} else {
 			$tables = array();
-			foreach ($result as $row) {
-				$tables[$row['TABLES']['Name']] = $row['TABLES'];
-				if (!empty($row['TABLES']['Collation'])) {
-					$charset = $this->getCharsetName($row['TABLES']['Collation']);
+			while ($row = $result->fetch()) {
+				$tables[$row->Name] = (array) $row;
+				unset($tables[$row->Name]['queryString']);
+				if (!empty($row->Collation)) {
+					$charset = $this->getCharsetName($row->Collation);
 					if ($charset) {
-						$tables[$row['TABLES']['Name']]['charset'] = $charset;
+						$tables[$row->Name]['charset'] = $charset;
 					}
 				}
 			}

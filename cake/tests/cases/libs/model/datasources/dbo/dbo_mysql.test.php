@@ -705,7 +705,7 @@ class DboMysqlTest extends CakeTestCase {
 				)
 			)
 		));
-		$this->Dbo->query($this->Dbo->createSchema($schema1));
+		$this->Dbo->rawQuery($this->Dbo->createSchema($schema1));
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
@@ -720,17 +720,17 @@ class DboMysqlTest extends CakeTestCase {
 			)
 		));
 		$result = $this->Dbo->alterSchema($schema2->compare($schema1));
-		$this->assertPattern('/DEFAULT CHARSET=utf8/', $result);
-		$this->assertPattern('/ENGINE=InnoDB/', $result);
-		$this->assertPattern('/COLLATE=utf8_general_ci/', $result);
+		$this->assertContains('DEFAULT CHARSET=utf8', $result);
+		$this->assertContains('ENGINE=InnoDB', $result);
+		$this->assertContains('COLLATE=utf8_general_ci', $result);
 
-		$this->Dbo->query($result);
+		$this->Dbo->rawQuery($result);
 		$result = $this->Dbo->listDetailedSources('altertest');
 		$this->assertEqual($result['Collation'], 'utf8_general_ci');
 		$this->assertEqual($result['Engine'], 'InnoDB');
 		$this->assertEqual($result['charset'], 'utf8');
 
-		$this->Dbo->query($this->Dbo->dropSchema($schema1));
+		$this->Dbo->rawQuery($this->Dbo->dropSchema($schema1));
 	}
 
 /**
@@ -739,7 +739,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTwoTables() {
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(
@@ -751,7 +751,7 @@ class DboMysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(
@@ -776,23 +776,23 @@ class DboMysqlTest extends CakeTestCase {
 	function testReadTableParameters() {
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 		$tableName = 'tinyint_' . uniqid();
-		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;');
 		$result = $this->Dbo->readTableParameters($tableName);
+		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 		$expected = array(
 			'charset' => 'utf8',
 			'collate' => 'utf8_unicode_ci',
 			'engine' => 'InnoDB');
 		$this->assertEqual($result, $expected);
 
-		$this->Dbo->query('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
-		$this->Dbo->query('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $this->Dbo->fullTableName($tableName) . ' (id int(11) AUTO_INCREMENT, bool tinyint(1), small_int tinyint(2), primary key(id)) ENGINE=MyISAM DEFAULT CHARSET=cp1250 COLLATE=cp1250_general_ci;');
 		$result = $this->Dbo->readTableParameters($tableName);
+		$this->Dbo->rawQuery('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 		$expected = array(
 			'charset' => 'cp1250',
 			'collate' => 'cp1250_general_ci',
 			'engine' => 'MyISAM');
 		$this->assertEqual($result, $expected);
-		$this->Dbo->query('DROP TABLE ' . $this->Dbo->fullTableName($tableName));
 	}
 
 /**
