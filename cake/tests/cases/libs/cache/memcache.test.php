@@ -20,6 +20,20 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
+App::import('Core', 'cache/Memcache');
+
+
+class TestMemcacheEngine extends MemcacheEngine {
+/**
+ * public accessor to _parseServerString
+ *
+ * @param string $server 
+ * @return array
+ */
+	function parseServerString($server) {
+		return $this->_parseServerString($server);
+	}
+}
 
 /**
  * MemcacheEngineTest class
@@ -119,6 +133,38 @@ class MemcacheEngineTest extends CakeTestCase {
 		$Memcache->init(Cache::settings('memcache'));
 		$result = $Memcache->connect('127.0.0.1');
 		$this->assertTrue($result);
+	}
+
+/**
+ * test connecting to an ipv6 server.
+ *
+ * @return void
+ */
+	function testConnectIpv6() {
+		$Memcache =& new MemcacheEngine();
+		$result = $Memcache->init(array(
+			'prefix' => 'cake_',
+			'duration' => 200,
+			'engine' => 'Memcache',
+			'servers' => array(
+				'[::1]:11211'
+			)
+		));
+		$this->assertTrue($result);
+	}
+
+/**
+ * test non latin domains.
+ *
+ * @return void
+ */
+	function testParseServerStringNonLatin() {
+		$Memcache =& new TestMemcacheEngine();
+		$result = $Memcache->parseServerString('schülervz.net:13211');
+		$this->assertEqual($result, array('schülervz.net', '13211'));
+
+		$result = $Memcache->parseServerString('sülül:1111');
+		$this->assertEqual($result, array('sülül', '1111'));
 	}
 
 /**

@@ -2737,7 +2737,7 @@ class ModelWriteTest extends BaseModelTest {
 				'Attachment' => array('attachment' => '')
 			),
 			array('validate' => 'first')
-		), array());
+		), false);
 		$expected = array(
 			'Comment' => array('comment' => 'This field cannot be left blank'),
 			'Attachment' => array('attachment' => 'This field cannot be left blank')
@@ -2954,7 +2954,7 @@ class ModelWriteTest extends BaseModelTest {
  *
  * @return void
  */
-	function testSaveAllTransactionNoRollback() {
+	function testSaveAllManyRowsTransactionNoRollback() {
 		$this->loadFixtures('Post');
 
 		$this->getMock('DboSource', array(), array(), 'MockTransactionDboSource');
@@ -2982,6 +2982,54 @@ class ModelWriteTest extends BaseModelTest {
 			array('author_id' => 1, 'title' => '')
 		);
 		$Post->saveAll($data, array('atomic' => true));
+	}
+
+/**
+ * test saveAll with transactions and ensure there is no missing rollback.
+ *
+ * @return void
+ */
+	function testSaveAllAssociatedTransactionNoRollback() {
+		$testDb = ConnectionManager::getDataSource('test');
+
+		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
+		$db =& ConnectionManager::create('mock_transaction_assoc', array(
+			'datasource' => 'MockTransactionAssociatedDbo',
+		));
+		$this->mockObjects[] = $db;
+		$db->columns = $testDb->columns;
+
+		$db->expects($this->once())->method('rollback');
+		$db->expects($this->any())->method('isInterfaceSupported')
+			->will($this->returnValue(true));
+		$db->expects($this->any())->method('describe')
+			->will($this->returnValue(array(
+				'id' => array('type' => 'integer'),
+				'title' => array('type' => 'string'),
+				'body' => array('type' => 'text'),
+				'published' => array('type' => 'string')
+			)));
+
+		$Post =& new Post();
+		$Post->useDbConfig = 'mock_transaction_assoc';
+		$Post->Author->useDbConfig = 'mock_transaction_assoc';
+
+		$Post->Author->validate = array(
+			'user' => array('rule' => array('notEmpty'))
+		);
+
+		$data = array(
+			'Post' => array(
+				'title' => 'New post',
+				'body' => 'Content',
+				'published' => 'Y'
+			),
+			'Author' => array(
+				'user' => '',
+				'password' => "sekret"
+			)
+		);
+		$Post->saveAll($data);
 	}
 
 /**
@@ -3451,7 +3499,7 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		), array('validate' => 'first'));
 
-		$this->assertEquals($result, array());
+		$this->assertFalse($result);
 
 		$result = $model->find('all');
 		$this->assertEqual($result, array());

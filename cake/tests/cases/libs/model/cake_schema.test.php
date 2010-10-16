@@ -680,17 +680,17 @@ class CakeSchemaTest extends CakeTestCase {
 			'name' => 'TestApp',
 			'models' => array('SchemaCrossDatabase', 'SchemaPost')
 		));
-		unset($read['tables']['missing']);
 		$this->assertTrue(isset($read['tables']['posts']));
-		$this->assertFalse(isset($read['tables']['cross_database']));
+		$this->assertFalse(isset($read['tables']['cross_database']), 'Cross database should not appear');
+		$this->assertFalse(isset($read['tables']['missing']['cross_database']), 'Cross database should not appear');
 
 		$read = $this->Schema->read(array(
 			'connection' => 'test2',
 			'name' => 'TestApp',
 			'models' => array('SchemaCrossDatabase', 'SchemaPost')
 		));
-		unset($read['tables']['missing']);
-		$this->assertFalse(isset($read['tables']['posts']));
+		$this->assertFalse(isset($read['tables']['posts']), 'Posts should not appear');
+		$this->assertFalse(isset($read['tables']['posts']), 'Posts should not appear');
 		$this->assertTrue(isset($read['tables']['cross_database']));
 
 		$fixture->drop($db2);

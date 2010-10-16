@@ -800,6 +800,75 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that render() will remove the cake:nocache tags when only the cachehelper is present.
+ *
+ * @return void
+ */
+	function testRenderStrippingNoCacheTagsOnlyCacheHelper() {
+		Configure::write('Cache.check', false);
+		$View =& new View($this->PostsController);
+		$View->set(array('superman' => 'clark', 'variable' => 'var'));
+		$View->helpers = array('Html', 'Form', 'Cache');
+		$View->layout = 'cache_layout';
+		$result = $View->render('index');
+		$this->assertNoPattern('/cake:nocache/', $result);
+	}
+
+/**
+ * Test that render() will remove the cake:nocache tags when only the Cache.check is true.
+ *
+ * @return void
+ */
+	function testRenderStrippingNoCacheTagsOnlyCacheCheck() {
+		Configure::write('Cache.check', true);
+		$View =& new View($this->PostsController);
+		$View->set(array('superman' => 'clark', 'variable' => 'var'));
+		$View->helpers = array('Html', 'Form');
+		$View->layout = 'cache_layout';
+		$result = $View->render('index');
+		$this->assertNoPattern('/cake:nocache/', $result);
+	}
+
+/**
+ * testRenderNocache method
+ *
+ * @access public
+ * @return void
+ */
+
+/* This is a new test case for a pending enhancement
+	function testRenderNocache() {
+		$this->PostsController->helpers = array('Cache', 'Html');
+		$this->PostsController->constructClasses();
+		$this->PostsController->cacheAction = 21600;
+		$this->PostsController->here = '/posts/nocache_multiple_element';
+		$this->PostsController->action = 'nocache_multiple_element';
+		$this->PostsController->nocache_multiple_element();
+		Configure::write('Cache.check', true);
+		Configure::write('Cache.disable', false);
+
+		$filename = CACHE . 'views' . DS . 'posts_nocache_multiple_element.php';
+
+		$View = new TestView($this->PostsController);
+		$View->render();
+
+		ob_start();
+		$View->renderCache($filename, getMicroTime());
+		$result = ob_get_clean();
+		@unlink($filename);
+
+		$this->assertPattern('/php echo \$foo;/', $result);
+		$this->assertPattern('/php echo \$bar;/', $result);
+		$this->assertPattern('/php \$barfoo = \'in sub2\';/', $result);
+		$this->assertPattern('/php echo \$barfoo;/', $result);
+		$this->assertPattern('/printing: "in sub2"/', $result);
+		$this->assertPattern('/php \$foobar = \'in sub1\';/', $result);
+		$this->assertPattern('/php echo \$foobar;/', $result);
+		$this->assertPattern('/printing: "in sub1"/', $result);
+	}
+*/
+
+/**
  * testSet method
  *
  * @access public
@@ -853,6 +922,15 @@ class ViewTest extends CakeTestCase {
 		$View->fieldSuffix = 'title';
 		$View->entityPath = '0.Node.title';
 		$expected = array(0, 'Node', 'title');
+		$this->assertEqual($View->entity(), $expected);
+		
+		$View->model = 'HelperTestTag';
+		$View->field = 'HelperTestTag';
+		$View->modelId = null;
+		$View->association = null;
+		$View->fieldSuffix = null;
+		$View->entityPath = 'HelperTestTag';
+		$expected = array('HelperTestTag', 'HelperTestTag');
 		$this->assertEqual($View->entity(), $expected);
 	}
 

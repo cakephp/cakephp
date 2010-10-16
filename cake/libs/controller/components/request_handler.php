@@ -172,15 +172,15 @@ class RequestHandlerComponent extends Component {
 		}
 
 		if ($this->requestedWith('xml')) {
-			if (!class_exists('XmlNode')) {
+			if (!class_exists('Xml')) {
 				App::import('Core', 'Xml');
 			}
-			$xml = new Xml(trim(file_get_contents('php://input')));
+			$xml = Xml::build(trim(file_get_contents('php://input')));
 
-			if (count($xml->children) == 1 && is_object($dataNode = $xml->child('data'))) {
-				$controller->data = $dataNode->toArray();
+			if (isset($xml->data)) {
+				$controller->data = Xml::toArray($xml->data);
 			} else {
-				$controller->data = $xml->toArray();
+				$controller->data = Xml::toArray($xml);
 			}
 		}
 	}

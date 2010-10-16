@@ -331,11 +331,11 @@ class RequestHandlerComponentTest extends CakeTestCase {
  * @return void
  */
 	function testRenderAs() {
-		$this->assertFalse(in_array('Xml', $this->Controller->helpers));
-		$this->RequestHandler->renderAs($this->Controller, 'xml');
-		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
+		$this->assertFalse(in_array('Rss', $this->Controller->helpers));
+		$this->RequestHandler->renderAs($this->Controller, 'rss');
+		$this->assertTrue(in_array('Rss', $this->Controller->helpers));
 
-		$this->Controller->viewPath = 'request_handler_test\\xml';
+		$this->Controller->viewPath = 'request_handler_test\\rss';
 		$this->RequestHandler->renderAs($this->Controller, 'js');
 		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'js');
 	}
@@ -424,8 +424,6 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->RequestHandler->renderAs($this->Controller, 'xml');
 		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'xml');
 		$this->assertEqual($this->Controller->layoutPath, 'xml');
-
-		$this->assertTrue(in_array('Xml', $this->Controller->helpers));
 
 		$this->RequestHandler->renderAs($this->Controller, 'js');
 		$this->assertEqual($this->Controller->viewPath, 'request_handler_test' . DS . 'js');

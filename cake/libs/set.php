@@ -368,11 +368,11 @@ class Set {
 		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
 			$current = current($data);
-			if ((is_array($current) && count($data) <= 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
+			if ((is_array($current) && count($data) < 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
 				$contexts = array($data);
 			}
 		}
-		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-]*\])/', $path), 1);
+		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-\s]*\])/', $path), 1);
 
 		do {
 			$token = array_shift($tokens);
@@ -941,9 +941,8 @@ class Set {
  */
 	public static function reverse($object) {
 		$out = array();
-		if (is_a($object, 'XmlNode')) {
-			$out = $object->toArray();
-			return $out;
+		if ($object instanceof SimpleXMLElement) {
+			return Xml::toArray($object);
 		} else if (is_object($object)) {
 			$keys = get_object_vars($object);
 			if (isset($keys['_name_'])) {

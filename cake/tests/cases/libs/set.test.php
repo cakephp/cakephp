@@ -855,6 +855,39 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
 
+		$f = array(
+			array(
+				'file' => array(
+					'name' => 'zipfile.zip',
+					'type' => 'application/zip',
+					'tmp_name' => '/tmp/php178.tmp',
+					'error' => 0,
+					'size' => '564647'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'zipfile2.zip',
+					'type' => 'application/x zip compressed',
+					'tmp_name' => '/tmp/php179.tmp',
+					'error' => 0,
+					'size' => '354784'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'picture.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => '/tmp/php180.tmp',
+					'error' => 0,
+					'size' => '21324'
+				)
+			)
+		);
+		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x zip compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
+		$r = Set::extract('/file/.[type=application/x zip compressed]', $f);
+		$this->assertEqual($r, $expected);
+
 		$hasMany = array(
 			'Node' => array(
 				'id' => 1,
@@ -1132,6 +1165,27 @@ class SetTest extends CakeTestCase {
 		$expected = array(0 => array('Article' => array('id' => 1, 'approved' => 1)));
 		$result = Set::extract('/Article[approved=1]', $startingAtOne);
 		$this->assertEqual($result, $expected);
+
+		$items = array(
+			240 => array(
+				'A' => array(
+					'field1' => 'a240',
+					'field2' => 'a240',
+				),
+				'B' => array(
+					'field1' => 'b240',
+					'field2' => 'b240'
+				),
+			)
+		);
+
+		$expected = array(
+			0 => 'b240'
+		);
+
+		$result = Set::extract('/B/field1', $items);
+		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($result, Set::extract('{n}.B.field1', $items));
 	}
 /**
  * testExtractWithArrays method
@@ -2674,20 +2728,20 @@ class SetTest extends CakeTestCase {
 			 </item>
 		</channel>
 		</rss>';
-		$xml = new Xml($string);
+		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
-		$expected = array('Rss' => array(
+		$expected = array('rss' => array(
 			'version' => '2.0',
-			'Channel' => array(
+			'channel' => array(
 				'title' => 'Cake PHP Google Group',
 				'link' => 'http://groups.google.com/group/cake-php',
 				'description' => 'Search this group before posting anything. There are over 20,000 posts and it&#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.',
 				'language' => 'en',
-				'Item' => array(
+				'item' => array(
 					array(
 						'title' => 'constructng result array when using findall',
 						'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
-						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br><p>Array( <br> [0] =&gt; Array(",
+						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br> <p>Array( <br> [0] =&gt; Array(",
 						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
 						'author' => 'bmil...@gmail.com(bpscrugs)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
@@ -2706,43 +2760,43 @@ class SetTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		$string ='<data><post title="Title of this post" description="cool"/></data>';
 
-		$xml = new Xml($string);
+		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
-		$expected = array('Data' => array('Post' => array('title' => 'Title of this post', 'description' => 'cool')));
+		$expected = array('data' => array('post' => array('title' => 'Title of this post', 'description' => 'cool')));
 		$this->assertEqual($result, $expected);
 
-		$xml = new Xml('<example><item><title>An example of a correctly reversed XMLNode</title><desc/></item></example>');
+		$xml = Xml::build('<example><item><title>An example of a correctly reversed SimpleXMLElement</title><desc/></item></example>');
 		$result = Set::reverse($xml);
-		$expected = array('Example' =>
+		$expected = array('example' =>
 			array(
-				'Item' => array(
-					'title' => 'An example of a correctly reversed XMLNode',
-					'desc' => array(),
+				'item' => array(
+					'title' => 'An example of a correctly reversed SimpleXMLElement',
+					'desc' => '',
 				)
 			)
 		);
 		$this->assertEquals($result, $expected);
 
-		$xml = new Xml('<example><item attr="123"><titles><title>title1</title><title>title2</title></titles></item></example>');
+		$xml = Xml::build('<example><item attr="123"><titles><title>title1</title><title>title2</title></titles></item></example>');
 		$result = Set::reverse($xml);
 		$expected =
-			array('Example' => array(
-				'Item' => array(
+			array('example' => array(
+				'item' => array(
 					'attr' => '123',
-					'Titles' => array(
-						'Title' => array('title1', 'title2')
+					'titles' => array(
+						'title' => array('title1', 'title2')
 					)
 				)
 			)
 		);
 		$this->assertEquals($result, $expected);
 
-		$xml = new Xml('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
+		$xml = Xml::build('<example attr="ex_attr"><item attr="123"><titles>list</titles>textforitems</item></example>');
 		$result = Set::reverse($xml);
 		$expected =
-			array('Example' => array(
+			array('example' => array(
 				'attr' => 'ex_attr',
-				'Item' => array(
+				'item' => array(
 					'attr' => '123',
 					'titles' => 'list',
 					'value'  => 'textforitems'
@@ -2752,7 +2806,7 @@ class SetTest extends CakeTestCase {
 		$this->assertEquals($result, $expected);
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-		<rss version="2.0">
+		<rss version="2.0" xmlns:dc="http://www.cakephp.org/">
 		  <channel>
 		  <title>Cake PHP Google Group</title>
 		  <link>http://groups.google.com/group/cake-php</link>
@@ -2783,23 +2837,23 @@ class SetTest extends CakeTestCase {
 		</channel>
 		</rss>';
 
-		$xml = new Xml($string);
+		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
 
-		$expected = array('Rss' => array(
+		$expected = array('rss' => array(
 			'version' => '2.0',
-			'Channel' => array(
+			'channel' => array(
 				'title' => 'Cake PHP Google Group',
 				'link' => 'http://groups.google.com/group/cake-php',
 				'description' => 'Search this group before posting anything. There are over 20,000 posts and it&#39;s very likely your question was answered before. Visit the IRC channel #cakephp at irc.freenode.net for live chat with users and developers of Cake. If you post, tell us the version of Cake, PHP, and database.',
 				'language' => 'en',
-				'Item' => array(
+				'item' => array(
 					array(
 						'title' => 'constructng result array when using findall',
 						'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
-						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br><p>Array( <br> [0] =&gt; Array(",
+						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br> <p>Array( <br> [0] =&gt; Array(",
 						'creator' => 'cakephp',
-						'Category' => array('cakephp', 'model'),
+						'category' => array('cakephp', 'model'),
 						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
 						'author' => 'bmil...@gmail.com(bpscrugs)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
@@ -2809,7 +2863,7 @@ class SetTest extends CakeTestCase {
 						'link' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8',
 						'description' => 'Then perhaps you might do us all a favour and refrain from replying to <br> things you do not understand. That goes especially for asinine comments. <br> Indeed. <br> To sum up: <br> No comment. <br> In my day, a simple &quot;RTFM&quot; would suffice. I\'ll keep in mind to ignore any <br> further responses from you. <br> You (and I) were referring to the *online documentation*, not other',
 						'creator' => 'cakephp',
-						'Category' => array('cakephp', 'model'),
+						'category' => array('cakephp', 'model'),
 						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
 						'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
@@ -2841,15 +2895,13 @@ class SetTest extends CakeTestCase {
 		</XRD>
 		</XRDS>';
 
-		$xml = new Xml($text);
+		$xml = Xml::build($text);
 		$result = Set::reverse($xml);
 
 		$expected = array('XRDS' => array(
-			'xmlns' => 'xri://$xrds',
 			'XRD' => array(
 				array(
-					'xml:id' => 'oauth',
-					'xmlns' => 'xri://$XRD*($v*2.0)',
+					'id' => 'oauth',
 					'version' => '2.0',
 					'Type' => 'xri://$xrds*simple',
 					'Expires' => '2008-04-13T07:34:58Z',
@@ -2872,7 +2924,6 @@ class SetTest extends CakeTestCase {
 					)
 				),
 				array(
-					'xmlns' => 'xri://$XRD*($v*2.0)',
 					'version' => '2.0',
 					'Type' => 'xri://$xrds*simple',
 					'Service' => array(

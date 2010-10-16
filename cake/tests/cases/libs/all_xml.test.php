@@ -38,7 +38,6 @@ class AllXmlTest extends PHPUnit_Framework_TestSuite {
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'xml.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'rss.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'view' . DS . 'helpers' . DS . 'xml.test.php');
 		return $suite;
 	}
 }

@@ -1054,6 +1054,7 @@ DIGEST;
 DIGEST;
 			$expected = array(
 				'username' => 'Mufasa',
+				'realm' => 'testrealm@host.com',
 				'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
 				'uri' => '/dir/index.html',
 				'qop' => 'auth',
@@ -1088,6 +1089,7 @@ DIGEST;
 DIGEST;
 		$expected = array(
 			'username' => 'Mufasa',
+			'realm' => 'testrealm@host.com',
 			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
 			'uri' => '/dir/index.html',
 			'qop' => 'auth',
@@ -1101,6 +1103,39 @@ DIGEST;
 
 		$result = $this->Controller->Security->parseDigestAuthData('');
 		$this->assertNull($result);
+	}
+
+/**
+ * test parsing digest information with email addresses
+ *
+ * @return void
+ */
+	function testParseDigestAuthEmailAddress() {
+		$this->Controller->Security->startup($this->Controller);
+		$digest = <<<DIGEST
+			Digest username="mark@example.com",
+			realm="testrealm@host.com",
+			nonce="dcd98b7102dd2f0e8b11d0f600bfb0c093",
+			uri="/dir/index.html",
+			qop=auth,
+			nc=00000001,
+			cnonce="0a4f113b",
+			response="6629fae49393a05397450978507c4ef1",
+			opaque="5ccc069c403ebaf9f0171e9517f40e41"
+DIGEST;
+		$expected = array(
+			'username' => 'mark@example.com',
+			'realm' => 'testrealm@host.com',
+			'nonce' => 'dcd98b7102dd2f0e8b11d0f600bfb0c093',
+			'uri' => '/dir/index.html',
+			'qop' => 'auth',
+			'nc' => '00000001',
+			'cnonce' => '0a4f113b',
+			'response' => '6629fae49393a05397450978507c4ef1',
+			'opaque' => '5ccc069c403ebaf9f0171e9517f40e41'
+		);
+		$result = $this->Controller->Security->parseDigestAuthData($digest);
+		$this->assertIdentical($result, $expected);
 	}
 
 /**

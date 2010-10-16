@@ -17,18 +17,16 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', 'Xml');
+App::import('Core', 'Xml');
 
 /**
- * XML Helper class for easy output of XML structures.
- *
- * XmlHelper encloses all methods needed while working with XML documents.
+ * RSS Helper class for easy output RSS structures.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.view.helpers
  * @link http://book.cakephp.org/view/1460/RSS
  */
-class RssHelper extends XmlHelper {
+class RssHelper extends AppHelper {
 
 /**
  * Helpers used by RSS Helper
@@ -270,7 +268,7 @@ class RssHelper extends XmlHelper {
 		if (!empty($elements)) {
 			$content = implode('', $elements);
 		}
-		return $this->elem('item', $att, $content, !($content === null));
+		return $this->elem('item', (array)$att, $content, !($content === null));
 	}
 
 /**
@@ -282,5 +280,63 @@ class RssHelper extends XmlHelper {
  */
 	function time($time) {
 		return $this->Time->toRSS($time);
+	}
+
+/**
+ * Generates an XML element
+ *
+ * @param string $name The name of the XML element
+ * @param array $attrib The attributes of the XML element
+ * @param mixed $content XML element content
+ * @param boolean $endTag Whether the end tag of the element should be printed
+ * @return string XML
+ */
+	function elem($name, $attrib = array(), $content = null, $endTag = true) {
+		$namespace = null;
+		if (isset($attrib['namespace'])) {
+			$namespace = $attrib['namespace'];
+			unset($attrib['namespace']);
+		}
+		$cdata = false;
+		if (is_array($content) && isset($content['cdata'])) {
+			$cdata = true;
+			unset($content['cdata']);
+		}
+		if (is_array($content) && array_key_exists('value', $content)) {
+			$content = $content['value'];
+		}
+		$children = array();
+		if (is_array($content)) {
+			$children = $content;
+			$content = null;
+		}
+
+		$xml = '<' . $name;
+		if (!empty($namespace)) {
+			$xml .= ' xmlns:"' . $namespace . '"';
+		}
+		if (strpos($name, ':') !== false) {
+			list($prefix, ) = explode(':', $name, 2);
+			switch ($prefix) {
+				case 'atom':
+					$xml .= ' xmlns:atom="http://www.w3.org/2005/Atom"';
+					break;
+			}
+		}
+		if ($cdata && !empty($content)) {
+			$content = '<![CDATA[' . $content . ']]>';
+		}
+		$xml .= '>' . $content . '</' . $name. '>';
+		$elem = Xml::build($xml);
+		foreach ($attrib as $key => $value) {
+			$elem->addAttribute($key, $value);
+		}
+		foreach ($children as $child) {
+			$elem->addChild($child);
+		}
+
+		$xml = $elem->asXML();
+		$xml = trim(substr($xml, strpos($xml, '?>') + 2));
+		return $xml;
 	}
 }
