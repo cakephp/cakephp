@@ -107,12 +107,16 @@ class ShellDispatcher {
  * @param array $args the argv
  * @return void
  */
-	public function __construct($args = array()) {
+	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);
 
-		$this->__initConstants();
+		if ($bootstrap) {
+			$this->__initConstants();
+		}
 		$this->parseParams($args);
-		$this->_initEnvironment();
+		if ($bootstrap) {
+			$this->_initEnvironment();
+		}
 		$this->__buildPaths();
 	}
 

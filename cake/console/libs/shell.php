@@ -320,15 +320,27 @@ class Shell extends Object {
  * Dispatch a command to another Shell. Similar to Object::requestAction()
  * but intended for running shells from other shells.
  *
+ * ### Usage:
+ * 
+ * With a string commmand:
+ *
+ *	`return $this->dispatchShell('schema create DbAcl');`
+ *
+ * With an array command:
+ *
+ * `return $this->dispatchShell('schema', 'create', 'i18n', '--dry');` 
+ *
  * @param mixed $command Either an array of args similar to $argv. Or a string command, that can be 
  *   exploded on space to simulate argv.
  * @return mixed. The return of the other shell.
  */
-	public function dispatchShell($command) {
-		if (is_string($command)) {
-			$command = explode(' ', $command);
+	public function dispatchShell() {
+		$args = func_get_args();
+		if (is_string($args[0]) && count($args) == 1) {
+			$args = explode(' ', $args[0]);
 		}
-		$Dispatcher = new ShellDispatcher($command);
+
+		$Dispatcher = new ShellDispatcher($args, false);
 		return $Dispatcher->dispatch();
 	}
 
