@@ -460,17 +460,10 @@ class Shell extends Object {
  * @param string $text Text the text to format.
  * @param mixed $options Array of options to use, or an integer to wrap the text to. 
  * @return string Wrapped / indented text
+ * @see String::wrap()
  */
 	public function wrapText($text, $options = array()) {
-		$wrapped = String::wrap($text, $options);
-		if (is_array($options) && !empty($options['indent'])) {
-			$chunks = explode("\n", $wrapped);
-			foreach ($chunks as &$chunk) {
-				$chunk = $options['indent'] . $chunk;
-			}
-			return implode("\n", $chunks);
-		}
-		return $wrapped;
+		return String::wrap($text, $options);
 	}
 
 /**

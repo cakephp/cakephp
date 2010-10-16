@@ -200,12 +200,12 @@ class BakeShell extends Shell {
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(array(
-			'The Bake script generates controllers, views and models for your application.',
-			'If run with no command line arguments, Bake guides the user through the class',
-			'creation process. You can customize the generation process by telling Bake',
+		return $parser->description(
+			'The Bake script generates controllers, views and models for your application.' . 
+			'If run with no command line arguments, Bake guides the user through the class' . 
+			'creation process. You can customize the generation process by telling Bake' . 
 			'where different parts of your application are using command line arguments.'
-		))->addSubcommand('all', array(
+		)->addSubcommand('all', array(
 			'help' => __('Bake a complete MVC. optional <name> of a Model'),
 		))->addSubcommand('project', array(
 			'help' => __('Bake a new app folder in the path supplied or in current directory if no path is specified'),

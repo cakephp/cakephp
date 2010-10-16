@@ -491,7 +491,11 @@ class ConsoleOptionParser {
 			$out[] = '';
 			$max = $this->_getMaxLength($this->_subcommands) + 2;
 			foreach ($this->_subcommands as $command) {
-				$out[] = String::wrap($command->help($max), $width);
+				$out[] = String::wrap($command->help($max), array(
+					'width' => $width, 
+					'indent' => str_repeat(' ', $max),
+					'indentAt' => 1
+				));
 			}
 			$out[] = '';
 			$out[] = sprintf(
@@ -506,7 +510,11 @@ class ConsoleOptionParser {
 			$out[] = '<info>Options:</info>';
 			$out[] = '';
 			foreach ($this->_options as $option) {
-				$out[] = String::wrap($option->help($max), $width);
+				$out[] = String::wrap($option->help($max), array(
+					'width' => $width,
+					'indent' => str_repeat(' ', $max),
+					'indentAt' => 1
+				));
 			}
 			$out[] = '';
 		}
@@ -515,7 +523,11 @@ class ConsoleOptionParser {
 			$out[] = '<info>Arguments:</info>';
 			$out[] = '';
 			foreach ($this->_args as $argument) {
-				$out[] = String::wrap($argument->help($max), $width);
+				$out[] = String::wrap($argument->help($max), array(
+					'width' => $width,
+					'indent' => str_repeat(' ', $max),
+					'indentAt' => 1
+				));
 			}
 			$out[] = '';
 		}

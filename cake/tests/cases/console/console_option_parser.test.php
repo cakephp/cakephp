@@ -388,7 +388,7 @@ cake mycommand [-h] [--test] [-c default]
 --help, -h        Display this help.
 --test            A test option.
 --connection, -c  The connection to use. <comment>(default:
-default)</comment>
+                  default)</comment>
 
 TEXT;
 		$this->assertEquals($expected, $result, 'Help does not match');
@@ -643,38 +643,36 @@ TEXT;
  */
 	function testWidthFormatting() {
 		$parser = new ConsoleOptionParser('test', false);
-		$parser->description(__('This is 10 This is 10'))
-			->addOption('four', array('help' => 'more text'))
-			->addArgument('four', array('help' => 'more text'))
-			->addSubcommand('four', array('help' => 'more text'));
-		$result = $parser->help(null, 10);
+		$parser->description(__('This is fifteen This is fifteen This is fifteen'))
+			->addOption('four', array('help' => 'this is help text this is help text'))
+			->addArgument('four', array('help' => 'this is help text this is help text'))
+			->addSubcommand('four', array('help' => 'this is help text this is help text'));
+		$result = $parser->help(null, 30);
 		$expected = <<<TEXT
-This is 10
-This is 10
+This is fifteen This is
+fifteen This is fifteen
 
 <info>Usage:</info>
 cake test [subcommand] [-h] [--four] [<four>]
 
 <info>Subcommands:</info>
 
-four  more
-text
+four  this is help text this
+      is help text
 
 To see help on a subcommand use <info>`cake test [subcommand] --help`</info>
 
 <info>Options:</info>
 
---help, -h
- Display
-this help.
---four    
- more text
+--help, -h  Display this help.
+--four      this is help text
+            this is help text
 
 <info>Arguments:</info>
 
-four  more
-text
-<comment>(optional)</comment>
+four  this is help text this
+      is help text
+      <comment>(optional)</comment>
 
 TEXT;
 		$this->assertEquals($expected, $result, 'Generated help is too wide');
