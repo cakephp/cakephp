@@ -97,7 +97,7 @@ class TestSuiteShellTest extends CakeTestCase {
 	public function testRunnerOptions() {
 		$this->Shell->startup();
 		$this->Shell->args = array('core', 'Basics');
-		$this->Shell->params = array('filter' => 'myFilter', 'colors' => null, 'verbose' => null);
+		$this->Shell->params = array('filter' => 'myFilter', 'colors' => true, 'verbose' => true);
 
 		$this->Shell->expects($this->once())->method('run')
 			->with(
