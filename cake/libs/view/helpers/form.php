@@ -1381,6 +1381,7 @@ class FormHelper extends AppHelper {
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+ * - `class` - When using multiple = checkbox the classname to apply to the divs. Defaults to 'checkbox'.
  *
  * ### Using options
  *
@@ -1418,27 +1419,25 @@ class FormHelper extends AppHelper {
  */
 	function select($fieldName, $options = array(), $selected = null, $attributes = array()) {
 		$select = array();
-		$showParents = false;
-		$escapeOptions = true;
 		$style = null;
 		$tag = null;
-		$showEmpty = '';
+		$attributes += array(
+			'class' => null, 
+			'escape' => true,
+			'secure' => null,
+			'empty' => '',
+			'showParents' => false
+		);
 
-		if (isset($attributes['escape'])) {
-			$escapeOptions = $attributes['escape'];
-			unset($attributes['escape']);
-		}
-		if (isset($attributes['secure'])) {
-			$secure = $attributes['secure'];
-		}
-		if (isset($attributes['empty'])) {
-			$showEmpty = $attributes['empty'];
-			unset($attributes['empty']);
-		}
+		$escapeOptions = $this->_extractOption('escape', $attributes);
+		$secure = $this->_extractOption('secure', $attributes);
+		$showEmpty = $this->_extractOption('empty', $attributes);
+		$showParents = $this->_extractOption('showParents', $attributes);
+		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents']);
+
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
 		));
-		$attributes += array('class' => null);
 
 		if (is_string($options) && isset($this->__options[$options])) {
 			$options = $this->__generateOptions($options);
@@ -1447,10 +1446,6 @@ class FormHelper extends AppHelper {
 		}
 		if (isset($attributes['type'])) {
 			unset($attributes['type']);
-		}
-		if (in_array('showParents', $attributes)) {
-			$showParents = true;
-			unset($attributes['showParents']);
 		}
 
 		if (!isset($selected)) {
