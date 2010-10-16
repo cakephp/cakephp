@@ -3509,6 +3509,50 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test multiple checkboxes with div styles.
+ *
+ * @return void
+ */
+	function testSelectMultipleCheckboxDiv() {
+		$result = $this->Form->select(
+			'Model.tags', 
+			array('first', 'second'),
+			null,
+			array('multiple' => 'checkbox', 'class' => 'my-class')
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'
+			),
+			array('div' => array('class' => 'my-class')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => '0', 'id' => 'ModelTags0'
+			)),
+			array('label' => array('for' => 'ModelTags0')), 'first', '/label',
+			'/div',
+
+			array('div' => array('class' => 'my-class')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => '1', 'id' => 'ModelTags1'
+			)),
+			array('label' => array('for' => 'ModelTags1')), 'second', '/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.tags', array(
+			'options' => array('first', 'second'),
+			'multiple' => 'checkbox', 
+			'class' => 'my-class',
+			'div' => false,
+			'label' => false
+		));
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Checks the security hash array generated for multiple-input checkbox elements
  *
  * @access public
