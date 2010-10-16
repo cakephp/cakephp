@@ -423,7 +423,7 @@ class DboMysql extends DboSource {
 			}
 			foreach ($this->fieldParameters as $name => $value) {
 				if (!empty($column->{$value['column']})) {
-					$fields[$column->Field][$name] = $column[0][$value['column']];
+					$fields[$column->Field][$name] = $column->{$value['column']};
 				}
 			}
 			if (isset($fields[$column->Field]['collate'])) {

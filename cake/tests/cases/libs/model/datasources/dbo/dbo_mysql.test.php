@@ -835,7 +835,8 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldSeparators() {
-		$model =& new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
+		$this->loadFixtures('BinaryTest');
+		$model = new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
 		$model->virtualFields = array(
 			'other__field' => 'SUM(id)'
 		);
@@ -870,15 +871,15 @@ class DboMysqlTest extends CakeTestCase {
 				)
 			)
 		));
-		$this->db->execute($this->db->createSchema($schema));
 
+		$this->db->execute($this->db->createSchema($schema));
 		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
 		$result = $this->db->describe($model);
+		$this->db->execute($this->db->dropSchema($schema));
+
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
 		$this->assertEqual($result['stringy']['charset'], 'cp1250');
 		$this->assertEqual($result['other_col']['comment'], 'Test Comment');
-
-		$this->db->execute($this->db->dropSchema($schema));
 	}
 
 /**
