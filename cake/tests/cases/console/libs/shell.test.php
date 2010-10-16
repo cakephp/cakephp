@@ -657,28 +657,38 @@ class ShellTest extends CakeTestCase {
 /**
  * test run command causing exception on Shell method.
  *
- * @expectedException MissingShellMethodException
  * @return void
  */
 	function testRunCommandBaseclassMethod() {
-		$methods = get_class_methods('Shell');
-		$Mock = $this->getMock('Shell', array('startup'), array(), '', false);
+		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
+		$Parser->expects($this->once())->method('help');
+		$Mock->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
 		$Mock->expects($this->never())->method('hr');
+		$Mock->expects($this->once())->method('out');
+
 		$result = $Mock->runCommand('hr', array());
 	}
 
 /**
  * test run command causing exception on Shell method.
  *
- * @expectedException MissingShellMethodException
  * @return void
  */
 	function testRunCommandMissingMethod() {
 		$methods = get_class_methods('Shell');
-		$Mock = $this->getMock('Shell', array('startup'), array(), '', false);
+		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
+		$Parser->expects($this->once())->method('help');
 		$Mock->expects($this->never())->method('idontexist');
+		$Mock->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
+		$Mock->expects($this->once())->method('out');
+
+
 		$result = $Mock->runCommand('idontexist', array());
 	}
 

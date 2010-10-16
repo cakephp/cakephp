@@ -352,7 +352,7 @@ class Shell extends Object {
 		if ($isMain) {
 			return $this->main();
 		}
-		throw new MissingShellMethodException(array('shell' => get_class($this), 'method' => $command));
+		return $this->out($this->OptionParser->help($command));
 	}
 
 /**
