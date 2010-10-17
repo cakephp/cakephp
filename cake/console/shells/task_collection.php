@@ -38,7 +38,8 @@ class TaskCollection extends ObjectCollection {
 		$this->_Dispatch = $dispatcher;
 	}
 /**
- * Loads/constructs a task.  Will return the instance in the registry if it already exists.
+ * Loads/constructs a task.  Will return the instance in the collection
+ * if it already exists.
  * 
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
