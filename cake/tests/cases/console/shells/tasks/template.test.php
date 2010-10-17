@@ -48,7 +48,6 @@ class TemplateTaskTest extends CakeTestCase {
 			array('in', 'err', 'createFile', '_stop', 'clear'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
 
 /**
@@ -130,7 +129,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerate() {
 		App::build(array(
 			'shells' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'console' . DS
 			)
 		));
 		$this->Task->initialize();
@@ -150,7 +149,7 @@ class TemplateTaskTest extends CakeTestCase {
 	public function testGenerateWithTemplateFallbacks() {
 		App::build(array(
 			'shells' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'vendors' . DS . 'shells' . DS,
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS .  'test_app' . DS . 'console' . DS,
 				CAKE_CORE_INCLUDE_PATH . DS . 'console' . DS
 			)
 		));
