@@ -226,7 +226,6 @@ class ConnectionManagerTest extends CakeTestCase {
 	function testLoadDataSource() {
 		$connections = array(
 			array('classname' => 'DboMysql', 'filename' => 'dbo' . DS . 'dbo_mysql'),
-			array('classname' => 'DboMysqli', 'filename' => 'dbo' . DS . 'dbo_mysqli'),
 			array('classname' => 'DboMssql', 'filename' => 'dbo' . DS . 'dbo_mssql'),
 			array('classname' => 'DboOracle', 'filename' => 'dbo' . DS . 'dbo_oracle'),
 		);
