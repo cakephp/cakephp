@@ -373,8 +373,7 @@ class DboSource extends DataSource {
 				} else {
 					$cache = true;
 				}
-				$args[1] = array_map(array(&$this, 'value'), $args[1]);
-				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
+				return $this->fetchAll($args[0], $args[1], array('cache' => $cache));
 			}
 		}
 	}
@@ -407,16 +406,31 @@ class DboSource extends DataSource {
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
+ *
+ * ### Options
+ *
+ * - cache - Returns the cached version of the query, if exists and stores the result in cache
+ *
  * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param array $params parameters to be bound as values for the SQL statement
+ * @param array $options additional options for the query.
  * @return array Array of resultset rows, or false if no rows matched
  */
-	public function fetchAll($sql, $cache = true, $modelName = null) {
+	public function fetchAll($sql, $params = array(), $options = array()) {
+		if (is_string($options)) {
+			$options = array('modelName' => $options);
+		}
+		if (is_bool($params)) {
+			$options['cache'] = $params;
+			$params = array();
+		}
+		$defaults = array('cache' => true);
+		$options = $options + $defaults;
+		$cache = $options['cache'];
 		if ($cache && ($cached = $this->getQueryCache($sql)) !== false) {
 			return $cached;
 		}
-
-		if ($this->execute($sql)) {
+		if ($this->execute($sql, array(), $params)) {
 			$out = array();
 
 			$first = $this->fetchRow();
