@@ -320,10 +320,6 @@ class DboMysql extends DboSource {
  * @param PDOStatement $results
  */
 	function resultSet($results) {
-		//if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
-		//	mysql_free_result($this->results);
-		//}
-		$this->results = $results;
 		$this->map = array();
 		$numFields = $results->columnCount();
 		$index = 0;
@@ -346,7 +342,7 @@ class DboMysql extends DboSource {
  * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
  */
 	function fetchResult() {
-		if ($row = $this->results->fetch()) {
+		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 			foreach ($this->map as $col => $meta) {
 				list($table, $column) = $meta;
