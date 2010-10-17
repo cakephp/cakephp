@@ -242,6 +242,7 @@ class DboSource extends DataSource {
 	public function execute($sql, $options = array(), $params = array()) {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
+		$this->error = null;
 
 		$t = microtime(true);
 		$this->_result = $this->_execute($sql, $params);
@@ -274,7 +275,8 @@ class DboSource extends DataSource {
 		$query = $this->_connection->prepare($sql);
 		$query->setFetchMode(PDO::FETCH_LAZY);
 		if (!$query->execute($params)) {
-			$this->error = $this->lastError();
+			$this->_results = $query;
+			$this->error = $this->lastError($query);
 			return false;
 		}
 		if (!$query->columnCount()) {

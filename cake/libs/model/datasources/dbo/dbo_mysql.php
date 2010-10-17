@@ -267,17 +267,15 @@ class DboMysql extends DboSource {
 /**
  * Returns a formatted error message from previous database operation.
  *
+ * @param PDOStatement $query the query to extract the error from if any
  * @return string Error message with error number
  */
-	function lastError() {
-		if ($this->hasResult()) {
-			$error = $this->_result->errorInfo();
-			if (empty($error)) {
-				$error;
-			}
-			return $error[1] . ': ' . $error[2];
+	function lastError(PDOStatement $query = null) {
+		$error = $query->errorInfo();
+		if (empty($error[2])) {
+			return null;
 		}
-		return null;
+		return $error[1] . ': ' . $error[2];
 	}
 
 /**
