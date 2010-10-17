@@ -43,30 +43,19 @@ class CommandListShell extends Shell {
 
 		$this->out("<info>Available Shells:</info>", 2);
 		$shellList = array();
-		foreach ($this->Dispatch->shellPaths as $path) {
-			if (!is_dir($path)) {
-				continue;
-			}
- 			$shells = App::objects('file', $path);
-			if (empty($shells)) {
-				continue;
-			}
-			if (preg_match('@plugins[\\\/]([^\\\/]*)@', $path, $matches)) {
-				$type = Inflector::camelize($matches[1]);
-			} elseif (preg_match('@([^\\\/]*)[\\\/]vendors[\\\/]@', $path, $matches)) {
-				$type = $matches[1];
-			} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH . DS . 'cake') === 0) {
-				$type = 'CORE';
-			} else {
-				$type = 'app';
-			}
-			foreach ($shells as $shell) {
-				if ($shell !== 'shell.php') {
-					$shell = str_replace('.php', '', $shell);
-					$shellList[$shell][$type] = $type;
-				}
-			}
+
+		$corePaths = App::core('shells');
+		$shellList = $this->_appendShells('CORE', $corePaths, $shellList);
+
+		$appPaths = array_diff(App::path('shells'), $corePaths);
+		$shellList = $this->_appendShells('app', $appPaths, $shellList);
+
+		$plugins = App::objects('plugin');
+		foreach ($plugins as $plugin) {
+			$pluginPath = App::pluginPath($plugin) . 'console' . DS . 'shells' . DS;
+			$shellList = $this->_appendShells($plugin, array($pluginPath), $shellList);
 		}
+
 		if ($shellList) {
 			ksort($shellList);
 			if (DS === '/') {
@@ -95,7 +84,32 @@ class CommandListShell extends Shell {
 			}
 		}
 		$this->out();
-		$this->out("To run a command, type 'cake shell_name [args]'");
-		$this->out("To get help on a specific command, type 'cake shell_name --help'", 2);
+		$this->out("To run a command, type <info>cake shell_name [args]</info>");
+		$this->out("To get help on a specific command, type <info>cake shell_name --help</info>", 2);
+	}
+
+/**
+ * Scan the provided paths for shells, and append them into $shellList
+ *
+ * @return array
+ */
+	protected function _appendShells($type, $paths, $shellList) {
+		foreach ($paths as $path) {
+			if (!is_dir($path)) {
+				continue;
+			}
+ 			$shells = App::objects('file', $path);
+
+			if (empty($shells)) {
+				continue;
+			}
+			foreach ($shells as $shell) {
+				if ($shell !== 'shell.php') {
+					$shell = str_replace('.php', '', $shell);
+					$shellList[$shell][$type] = $type;
+				}
+			}
+		}
+		return $shellList;
 	}
 }
