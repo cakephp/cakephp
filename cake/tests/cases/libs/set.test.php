@@ -2731,7 +2731,7 @@ class SetTest extends CakeTestCase {
 		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
 		$expected = array('rss' => array(
-			'version' => '2.0',
+			'@version' => '2.0',
 			'channel' => array(
 				'title' => 'Cake PHP Google Group',
 				'link' => 'http://groups.google.com/group/cake-php',
@@ -2742,7 +2742,7 @@ class SetTest extends CakeTestCase {
 						'title' => 'constructng result array when using findall',
 						'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
 						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br> <p>Array( <br> [0] =&gt; Array(",
-						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
+						'guid' => array('@isPermaLink' => 'true', '@' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
 						'author' => 'bmil...@gmail.com(bpscrugs)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
 					),
@@ -2750,7 +2750,7 @@ class SetTest extends CakeTestCase {
 						'title' => 'Re: share views between actions?',
 						'link' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8',
 						'description' => 'Then perhaps you might do us all a favour and refrain from replying to <br> things you do not understand. That goes especially for asinine comments. <br> Indeed. <br> To sum up: <br> No comment. <br> In my day, a simple &quot;RTFM&quot; would suffice. I\'ll keep in mind to ignore any <br> further responses from you. <br> You (and I) were referring to the *online documentation*, not other',
-						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
+						'guid' => array('@isPermaLink' => 'true', '@' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
 						'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
 					)
@@ -2762,7 +2762,7 @@ class SetTest extends CakeTestCase {
 
 		$xml = Xml::build($string);
 		$result = Set::reverse($xml);
-		$expected = array('data' => array('post' => array('title' => 'Title of this post', 'description' => 'cool')));
+		$expected = array('data' => array('post' => array('@title' => 'Title of this post', '@description' => 'cool')));
 		$this->assertEqual($result, $expected);
 
 		$xml = Xml::build('<example><item><title>An example of a correctly reversed SimpleXMLElement</title><desc/></item></example>');
@@ -2782,7 +2782,7 @@ class SetTest extends CakeTestCase {
 		$expected =
 			array('example' => array(
 				'item' => array(
-					'attr' => '123',
+					'@attr' => '123',
 					'titles' => array(
 						'title' => array('title1', 'title2')
 					)
@@ -2795,11 +2795,11 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($xml);
 		$expected =
 			array('example' => array(
-				'attr' => 'ex_attr',
+				'@attr' => 'ex_attr',
 				'item' => array(
-					'attr' => '123',
+					'@attr' => '123',
 					'titles' => 'list',
-					'value'  => 'textforitems'
+					'@'  => 'textforitems'
 				)
 			)
 		);
@@ -2841,7 +2841,7 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($xml);
 
 		$expected = array('rss' => array(
-			'version' => '2.0',
+			'@version' => '2.0',
 			'channel' => array(
 				'title' => 'Cake PHP Google Group',
 				'link' => 'http://groups.google.com/group/cake-php',
@@ -2852,9 +2852,9 @@ class SetTest extends CakeTestCase {
 						'title' => 'constructng result array when using findall',
 						'link' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f',
 						'description' => "i'm using cakephp to construct a logical data model array that will be <br> passed to a flex app. I have the following model association: <br> ServiceDay-&gt;(hasMany)ServiceTi me-&gt;(hasMany)ServiceTimePrice. So what <br> the current output from my findall is something like this example: <br> <p>Array( <br> [0] =&gt; Array(",
-						'creator' => 'cakephp',
+						'dc:creator' => 'cakephp',
 						'category' => array('cakephp', 'model'),
-						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
+						'guid' => array('@isPermaLink' => 'true', '@' => 'http://groups.google.com/group/cake-php/msg/49bc00f3bc651b4f'),
 						'author' => 'bmil...@gmail.com(bpscrugs)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:44:14 UT',
 					),
@@ -2862,9 +2862,9 @@ class SetTest extends CakeTestCase {
 						'title' => 'Re: share views between actions?',
 						'link' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8',
 						'description' => 'Then perhaps you might do us all a favour and refrain from replying to <br> things you do not understand. That goes especially for asinine comments. <br> Indeed. <br> To sum up: <br> No comment. <br> In my day, a simple &quot;RTFM&quot; would suffice. I\'ll keep in mind to ignore any <br> further responses from you. <br> You (and I) were referring to the *online documentation*, not other',
-						'creator' => 'cakephp',
+						'dc:creator' => 'cakephp',
 						'category' => array('cakephp', 'model'),
-						'guid' => array('isPermaLink' => 'true', 'value' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
+						'guid' => array('@isPermaLink' => 'true', '@' => 'http://groups.google.com/group/cake-php/msg/8b350d898707dad8'),
 						'author' => 'subtropolis.z...@gmail.com(subtropolis zijn)',
 						'pubDate' => 'Fri, 28 Dec 2007 00:45:01 UT'
 					)
@@ -2901,8 +2901,8 @@ class SetTest extends CakeTestCase {
 		$expected = array('XRDS' => array(
 			'XRD' => array(
 				array(
-					'id' => 'oauth',
-					'version' => '2.0',
+					'@xml:id' => 'oauth',
+					'@version' => '2.0',
 					'Type' => 'xri://$xrds*simple',
 					'Expires' => '2008-04-13T07:34:58Z',
 					'Service' => array(
@@ -2913,21 +2913,21 @@ class SetTest extends CakeTestCase {
 						),
 						'URI' => array(
 							array(
-								'value' => 'https://ma.gnolia.com/oauth/authorize',
-								'priority' => '10',
+								'@' => 'https://ma.gnolia.com/oauth/authorize',
+								'@priority' => '10',
 							),
 							array(
-								'value' => 'http://ma.gnolia.com/oauth/authorize',
-								'priority' => '20'
+								'@' => 'http://ma.gnolia.com/oauth/authorize',
+								'@priority' => '20'
 							)
 						)
 					)
 				),
 				array(
-					'version' => '2.0',
+					'@version' => '2.0',
 					'Type' => 'xri://$xrds*simple',
 					'Service' => array(
-						'priority' => '10',
+						'@priority' => '10',
 						'Type' => 'http://oauth.net/discovery/1.0',
 						'URI' => '#oauth'
 					)
