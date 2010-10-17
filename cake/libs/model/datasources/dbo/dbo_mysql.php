@@ -299,7 +299,11 @@ class DboMysql extends DboSource {
  */
 	function lastNumRows() {
 		if ($this->hasResult()) {
-			return mysql_num_rows($this->_result);
+			$i = 0;
+			foreach ($this->_result as $row) {
+				$i++;
+			}
+			return $i;
 		}
 		return null;
 	}

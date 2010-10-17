@@ -230,8 +230,6 @@ class DboSource extends DataSource {
  *
  * ### Options
  *
- * - stats - Collect meta data stats for this query. Stats include time take, rows affected,
- *   any errors, and number of rows returned. Defaults to `true`.
  * - log - Whether or not the query should be logged to the memory log.
  *
  * @param string $sql
@@ -240,19 +238,17 @@ class DboSource extends DataSource {
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
-		$defaults = array('stats' => true, 'log' => $this->fullDebug);
+		$defaults = array('log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 		$this->error = null;
 
 		$t = microtime(true);
 		$this->_result = $this->_execute($sql, $params);
-		if ($options['stats']) {
+
+		if ($options['log']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
 			$this->affected = $this->lastAffected();
 			//$this->numRows = $this->lastNumRows();
-		}
-
-		if ($options['log']) {
 			$this->logQuery($sql);
 		}
 
