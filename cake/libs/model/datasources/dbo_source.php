@@ -427,7 +427,7 @@ class DboSource extends DataSource {
 		$defaults = array('cache' => true);
 		$options = $options + $defaults;
 		$cache = $options['cache'];
-		if ($cache && ($cached = $this->getQueryCache($sql)) !== false) {
+		if ($cache && ($cached = $this->getQueryCache($sql, $params)) !== false) {
 			return $cached;
 		}
 		if ($this->execute($sql, array(), $params)) {
@@ -443,7 +443,7 @@ class DboSource extends DataSource {
 			}
 
 			if ($cache) {
-				$this->_writeQueryCache($sql, $out);
+				$this->_writeQueryCache($sql, $out, $params);
 			}
 			if (empty($out) && is_bool($this->_result)) {
 				return $this->_result;
@@ -2902,11 +2902,12 @@ class DboSource extends DataSource {
  *
  * @param string $sql SQL query
  * @param mixed $data result of $sql query
+ * @param array $params query params bound as values
  * @return void
  */
-	protected function _writeQueryCache($sql, $data) {
-		if (strpos(trim(strtolower($sql)), 'select') !== false) {
-			$this->_queryCache[$sql] = $data;
+	protected function _writeQueryCache($sql, $data, $params = array()) {
+		if (preg_match('/^\s*select/i', $sql)) {
+			$this->_queryCache[$sql][serialize($params)] = $data;
 		}
 	}
 
@@ -2914,11 +2915,15 @@ class DboSource extends DataSource {
  * Returns the result for a sql query if it is already cached
  *
  * @param string $sql SQL query
+ * @param array $params query params bound as values
  * @return mixed results for query if it is cached, false otherwise
  */
-	public function getQueryCache($sql = null) {
+	public function getQueryCache($sql, $params = array()) {
 		if (isset($this->_queryCache[$sql]) && preg_match('/^\s*select/i', $sql)) {
-			return $this->_queryCache[$sql];
+			$serialized = serialize($params);
+			if (isset($this->_queryCache[$sql][$serialized])) {
+				return $this->_queryCache[$sql][$serialized];
+			}
 		}
 		return false;
 	}

@@ -279,13 +279,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
-		$finalQuery = 'SELECT title, published FROM ';
-		$finalQuery .= $this->db->fullTableName('articles');
-		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.id = ' . $this->db->value(1);
-		$finalQuery .= ' AND ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.published = ' . $this->db->value('Y');
-
 		$query = 'SELECT title, published FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
@@ -305,13 +298,8 @@ class ModelReadTest extends BaseModelTest {
 		}
 
 		$this->assertEqual($result, $expected);
-		$result = $this->db->getQueryCache($finalQuery);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
-
-		$finalQuery = 'SELECT id, created FROM ';
-		$finalQuery .= $this->db->fullTableName('articles');
-		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.title = ' . $this->db->value('First Article');
 
 		$query  = 'SELECT id, created FROM ';
 		$query .= $this->db->fullTableName('articles');
@@ -324,7 +312,7 @@ class ModelReadTest extends BaseModelTest {
 			   isset($result[0][$this->db->fullTableName('articles', false)])
 			|| isset($result[0][0])
 		);
-		$result = $this->db->getQueryCache($finalQuery);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
 
 		$query  = 'SELECT title FROM ';
@@ -345,10 +333,7 @@ class ModelReadTest extends BaseModelTest {
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
 
-		$expected  = 'SELECT title FROM ';
-		$expected .= $this->db->fullTableName('articles');
-		$expected .= " WHERE title = 'First? Article' AND published = 'Y'";
-		$result = $this->db->getQueryCache($expected);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse($result === false);
 
 	}
