@@ -832,7 +832,7 @@ class DboSource extends DataSource {
 
 		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
 
-		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->alias);
+		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 
 		if ($resultSet === false) {
 			$model->onError();
@@ -1001,7 +1001,7 @@ class DboSource extends DataSource {
 				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
 
 				if ($q != false) {
-					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+					$fetch = $this->fetchAll($q, $model->cacheQueries);
 				} else {
 					$fetch = null;
 				}
@@ -1013,7 +1013,7 @@ class DboSource extends DataSource {
 				if ($type !== 'hasAndBelongsToMany') {
 					$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
 					if ($q != false) {
-						$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+						$fetch = $this->fetchAll($q, $model->cacheQueries);
 					} else {
 						$fetch = null;
 					}
@@ -1088,7 +1088,7 @@ class DboSource extends DataSource {
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
 		}
-		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
+		return $this->fetchAll($query, $model->cacheQueries);
 	}
 
 /**
