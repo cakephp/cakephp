@@ -1,6 +1,6 @@
 <?php
 /**
- * AllShellsTest file
+ * AllConsoleLibsTest file
  *
  * PHP 5
  *
@@ -19,14 +19,14 @@
  */
 
 /**
- * AllShellsTest class
+ * AllConsoleLibsTest class
  *
- * This test group will run all top level shell classes.
+ * This test group will run all console lib classes.
  *
  * @package       cake
  * @subpackage    cake.tests.cases.console
  */
-class AllShellsTest extends PHPUnit_Framework_TestSuite {
+class AllConsoleLibsTest extends PHPUnit_Framework_TestSuite {
 
 /**
  * suite method, defines tests for this suite.
@@ -34,9 +34,9 @@ class AllShellsTest extends PHPUnit_Framework_TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new CakeTestSuite('All shell classes');
+		$suite = new CakeTestSuite('All console lib classes');
 
-		$path = CORE_TEST_CASES . DS . 'console' . DS . 'shells' . DS;
+		$path = CORE_TEST_CASES . DS . 'console' . DS . 'libs' . DS;
 
 		$suite->addTestDirectory($path);
 		return $suite;
