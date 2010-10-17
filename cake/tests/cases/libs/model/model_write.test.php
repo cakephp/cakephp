@@ -1015,6 +1015,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveFromXml() {
+		$this->markTestSkipped('This feature needs to be fixed or dropped');
 		$this->loadFixtures('Article');
 		App::import('Core', 'Xml');
 

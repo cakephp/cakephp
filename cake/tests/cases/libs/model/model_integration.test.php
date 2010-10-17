@@ -184,7 +184,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
-		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC');
+		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC', 'ItemsPortfolio');
 		$TestModel = new Content();
 		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
 
@@ -1867,7 +1867,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testCreation() {
-		$this->loadFixtures('Article', 'ArticleFeaturedsTags');
+		$this->loadFixtures('Article', 'ArticleFeaturedsTags', 'User', 'Featured');
 		$TestModel = new Test();
 		$result = $TestModel->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
@@ -1882,9 +1882,10 @@ class ModelIntegrationTest extends BaseModelTest {
 		} else {
 			$intLength = 11;
 		}
-		foreach (array('collate', 'charset') as $type) {
-			unset($result['user'][$type]);
-			unset($result['password'][$type]);
+		foreach (array('collate', 'charset', 'comment') as $type) {
+			foreach ($result as $i => $r) {
+				unset($result[$i][$type]);
+			}
 		}
 
 		$expected = array(
