@@ -153,7 +153,7 @@ class DboSource extends DataSource {
  * @return boolean True on success, false on failure
  * @access public
  */
-	function reconnect($config = null) {
+	function reconnect($config = array()) {
 		$this->disconnect();
 		$this->setConfig($config);
 		$this->_sources = null;

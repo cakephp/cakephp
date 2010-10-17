@@ -216,7 +216,7 @@ class XmlNode extends Object {
 
 		if (isset($tagOpts['name'])) {
 			$name = $tagOpts['name'];
-		} elseif ($name != strtolower($name)) {
+		} elseif ($name != strtolower($name) && $options['slug'] !== false) {
 			$name = Inflector::slug(Inflector::underscore($name));
 		}
 
@@ -852,6 +852,9 @@ class Xml extends XmlNode {
  *    rendered out as text, either 'attributes' or 'tags', defaults to 'attributes'
  * - 'tags': An array specifying any tag-specific formatting options, indexed
  *    by tag name.  See XmlNode::normalize().
+ * - 'slug':  A boolean to indicate whether or not you want the string version of the XML document
+ *   to have its tags run through Inflector::slug().  Defaults to true
+ *
  * @param mixed $input The content with which this XML document should be initialized.  Can be a
  *    string, array or object.  If a string is specified, it may be a literal XML
  *    document, or a URL or file path to read from.
@@ -861,7 +864,8 @@ class Xml extends XmlNode {
 	function __construct($input = null, $options = array()) {
 		$defaults = array(
 			'root' => '#document', 'tags' => array(), 'namespaces' => array(),
-			'version' => '1.0', 'encoding' => 'UTF-8', 'format' => 'attributes'
+			'version' => '1.0', 'encoding' => 'UTF-8', 'format' => 'attributes',
+			'slug' => true
 		);
 		$options = array_merge($defaults, Xml::options(), $options);
 

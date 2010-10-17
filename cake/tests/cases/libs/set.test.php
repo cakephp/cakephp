@@ -855,6 +855,39 @@ class SetTest extends CakeTestCase {
 		$r = Set::extract('/file/.[type=application/zip]', $f);
 		$this->assertEqual($r, $expected);
 
+		$f = array(
+			array(
+				'file' => array(
+					'name' => 'zipfile.zip',
+					'type' => 'application/zip',
+					'tmp_name' => '/tmp/php178.tmp',
+					'error' => 0,
+					'size' => '564647'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'zipfile2.zip',
+					'type' => 'application/x zip compressed',
+					'tmp_name' => '/tmp/php179.tmp',
+					'error' => 0,
+					'size' => '354784'
+				)
+			),
+			array(
+				'file' => array(
+					'name' => 'picture.jpg',
+					'type' => 'image/jpeg',
+					'tmp_name' => '/tmp/php180.tmp',
+					'error' => 0,
+					'size' => '21324'
+				)
+			)
+		);
+		$expected = array(array('name' => 'zipfile2.zip','type' => 'application/x zip compressed','tmp_name' => '/tmp/php179.tmp','error' => 0,'size' => '354784'));
+		$r = Set::extract('/file/.[type=application/x zip compressed]', $f);
+		$this->assertEqual($r, $expected);
+
 		$hasMany = array(
 			'Node' => array(
 				'id' => 1,
@@ -1132,6 +1165,27 @@ class SetTest extends CakeTestCase {
 		$expected = array(0 => array('Article' => array('id' => 1, 'approved' => 1)));
 		$result = Set::extract('/Article[approved=1]', $startingAtOne);
 		$this->assertEqual($result, $expected);
+
+		$items = array(
+			240 => array(
+				'A' => array(
+					'field1' => 'a240',
+					'field2' => 'a240',
+				),
+				'B' => array(
+					'field1' => 'b240',
+					'field2' => 'b240'
+				),
+			)
+		);
+
+		$expected = array(
+			0 => 'b240'
+		);
+
+		$result = Set::extract('/B/field1', $items);
+		$this->assertIdentical($result, $expected);
+		$this->assertIdentical($result, Set::extract('{n}.B.field1', $items));
 	}
 /**
  * testExtractWithArrays method

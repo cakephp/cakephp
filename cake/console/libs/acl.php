@@ -434,21 +434,21 @@ class AclShell extends Shell {
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'grant' => "grant <node> <node> [<aco_action>] " . __("or", true) . " all\n" .
+			'grant' => "grant <aronode> <aconode> [<aco_action>] " . __("or", true) . " all\n" .
 				"\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
 				"\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
 				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'deny' => "deny <node> <node> [<aco_action>]" . __("or", true) . " all\n" .
+			'deny' => "deny <aronode> <aconode> [<aco_action>]" . __("or", true) . " all\n" .
 				"\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
 				"\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
 				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
 				"\t" . __("see help for the 'create' command.", true),
 
-			'inherit' => "inherit <node> <node> [<aco_action>]" . __("or", true) . " all\n" .
+			'inherit' => "inherit <aronode> <aconode> [<aco_action>]" . __("or", true) . " all\n" .
 				"\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
 				"\t" . __("permissions settings from its parent.", true) . "\n" .
 				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
