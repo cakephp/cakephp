@@ -350,10 +350,9 @@ class DboMysql extends DboSource {
 	function fetchResult() {
 		if ($row = $this->results->fetch()) {
 			$resultRow = array();
-
 			foreach ($this->map as $col => $meta) {
 				list($table, $column) = $meta;
-				$resultRow[$table][$column] = $row->{$meta[1]};
+				$resultRow[$table][$column] = $row[$col];
 			}
 			return $resultRow;
 		} else {
