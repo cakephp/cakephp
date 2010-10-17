@@ -4220,11 +4220,11 @@ class DboSourceTest extends CakeTestCase {
 		$name = $this->db->fullTableName('test_query');
 		$query = "CREATE TABLE {$name} (name varchar(10));";
 		$result = $this->db->query($query);
-		$this->assertTrue($result, 'Query did not return a boolean. %s');
+		$this->assertTrue($result, 'Query did not return a boolean');
 
 		$query = "DROP TABLE {$name};";
-		$result = $this->db->fetchAll($query);
-		$this->assertTrue($result, 'Query did not return a boolean. %s');
+		$result = $this->db->query($query);
+		$this->assertTrue($result, 'Query did not return a boolean');
 	}
 
 /**
@@ -4563,7 +4563,7 @@ class DboSourceTest extends CakeTestCase {
 		ConnectionManager::create('test_no_queryAssociation', array(
 			'datasource' => 'data'
 		));
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->Comment->useDbConfig = 'test_no_queryAssociation';
 		$result = $Article->find('all');
 		$this->assertTrue(is_array($result));

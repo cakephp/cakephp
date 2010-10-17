@@ -235,11 +235,11 @@ class DboSource extends DataSource {
  * - log - Whether or not the query should be logged to the memory log.
  *
  * @param string $sql
- * @param array $params values to be bided to the query
  * @param array $options
+ * @param array $params values to be bided to the query
  * @return mixed Resource or object representing the result set, or false on failure
  */
-	public function execute($sql, $params = array(), $options = array()) {
+	public function execute($sql, $options = array(), $params = array()) {
 		$defaults = array('stats' => true, 'log' => $this->fullDebug);
 		$options = array_merge($defaults, $options);
 
@@ -267,17 +267,19 @@ class DboSource extends DataSource {
  *
  * @param string $sql SQL statement
  * @param array $params list of params to be bound to query
- * @return PDOStatement if query executes with no problem, false otherwise
+ * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array()) {
 		$query = $this->_connection->prepare($sql);
 		$query->setFetchMode(PDO::FETCH_LAZY);
 		if (!$query->execute($params)) {
-			debug($query->errorInfo());
 			$this->error = $this->lastError();
 			return false;
 		}
-
+		if (!$query->columnCount()) {
+			return true;
+		}
 		return $query;
 	}
 
