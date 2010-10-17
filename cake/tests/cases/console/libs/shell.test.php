@@ -127,16 +127,6 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		ClassRegistry::flush();
-	}
-
-/**
  * testConstruct method
  *
  * @return void
