@@ -29,7 +29,6 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	function setup() {
 		$shell = $this->getMock('Shell', array(), array(), '', false);
-		$shell->shellPaths = App::path('shells');
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
@@ -89,9 +88,9 @@ class TaskCollectionTest extends CakeTestCase {
 	function testLoadPluginTask() {
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
 		$shell = $this->getMock('Shell', array(), array(), '', false);
-		$shell->shellPaths = App::path('shells');
-		$shell->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
-		$dispatcher->shellPaths = $shell->shellPaths;
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
 		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');

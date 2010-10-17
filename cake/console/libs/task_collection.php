@@ -28,6 +28,13 @@ class TaskCollection extends ObjectCollection {
 	protected $_Dispatch;
 
 /**
+ * The directory inside each shell path that contains tasks.
+ *
+ * @var string
+ */
+	public $taskPathPrefix = 'tasks/';
+
+/**
  * Constructor
  *
  * @param array $paths Array of paths to search for tasks on .
@@ -56,8 +63,9 @@ class TaskCollection extends ObjectCollection {
 		$taskFile = Inflector::underscore($name);
 		$taskClass = $name . 'Task';
 		if (!class_exists($taskClass)) {
-			$taskFile = $this->_getPath($taskFile);
-			require_once $taskFile;
+			if (!App::import('Shell', $plugin . $this->taskPathPrefix . $name)) {
+				throw new MissingTaskFileException($taskFile . '.php');
+			}
 			if (!class_exists($taskClass)) {
 				throw new MissingTaskClassException($taskClass);
 			}
@@ -70,23 +78,6 @@ class TaskCollection extends ObjectCollection {
 			$this->_enabled[] = $name;
 		}
 		return $this->_loaded[$name];
-	}
-
-/**
- * Find a task file on one of the paths.
- *
- * @param string $file Underscored name of the file to find missing .php
- * @return string Filename to the task
- * @throws MissingTaskFileException
- */
-	protected function _getPath($file) {
-		foreach ($this->_Shell->shellPaths as $path) {
-			$taskPath = $path . 'tasks' . DS . $file . '.php';
-			if (file_exists($taskPath)) {
-				return $taskPath;
-			}
-		}
-		throw new MissingTaskFileException($file . '.php');
 	}
 
 }

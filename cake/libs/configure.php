@@ -1142,6 +1142,15 @@ class App {
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;
+			case 'shell':
+				if (!class_exists('Shell')) {
+					App::import($type, 'Shell', false);
+				}
+				if ($plugin) {
+					$path = $pluginPath . DS . 'console' . DS . 'shells' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
 			case 'vendor':
 				if ($plugin) {
 					$path = $pluginPath . DS . 'vendors' . DS;
