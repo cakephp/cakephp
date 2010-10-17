@@ -20,14 +20,15 @@
 App::import('Core', 'ClassRegistry');
 App::import('View', 'Helper', false);
 App::import('Shell', 'Shell', false);
+App::import('Shell', array(
+	'tasks/project',
+	'tasks/controller',
+	'tasks/model',
+	'tasks/template',
+	'tasks/test'
+));
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'test.php';
-
 
 $imported = App::import('Model', 'BakeArticle');
 $imported = $imported || App::import('Model', 'BakeComment');

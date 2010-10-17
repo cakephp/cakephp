@@ -20,11 +20,14 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Shell', array(
+	'tasks/plugin',
+	'tasks/model'
+));
+
 App::import('Core', array('File'));
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'plugin.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
 
 /**
  * PluginTaskPlugin class

@@ -317,7 +317,7 @@ class ShellDispatcher {
 		}
 
 		if (!class_exists('Shell')) {
-			App::import('Shell', 'Shell');
+			require_once CONSOLE_LIBS . 'shell.php';
 		}
 
 		if (!class_exists($this->shellClass)) {

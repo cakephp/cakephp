@@ -20,13 +20,15 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Shell', array(
+	'tasks/view',
+	'tasks/controller',
+	'tasks/template',
+	'tasks/project',
+	'tasks/db_config'
+));
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'view.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'template.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'project.php';
-
 
 /**
  * Test View Task Comment Model

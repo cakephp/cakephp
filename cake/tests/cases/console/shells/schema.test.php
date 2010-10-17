@@ -18,10 +18,11 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Shell', 'Schema', false);
 App::import('Model', 'CakeSchema', false);
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'schema.php';
+
 
 
 /**

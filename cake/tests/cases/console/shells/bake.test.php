@@ -19,13 +19,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
-App::import('Core', 'Controller');
+App::import('Shell', 'Bake', false);
+App::import('Shell', 'tasks/model', false);
+App::import('Shell', 'tasks/controller', false);
+App::import('Shell', 'tasks/db_config', false);
 
+App::import('Core', 'Controller');
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'bake.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'model.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'controller.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'db_config.php';
 
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {

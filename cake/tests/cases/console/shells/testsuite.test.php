@@ -19,9 +19,10 @@
  */
 
 App::import('Shell', 'Shell', false);
+App::import('Shell', 'TestSuite');
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'testsuite.php';
+
 
 class TestSuiteShellTest extends CakeTestCase {
 

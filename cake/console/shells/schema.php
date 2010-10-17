@@ -269,7 +269,7 @@ class SchemaShell extends Shell {
 			$plugin = $this->params['plugin'];
 		}
 		
-		if ($this->params['dry']) {
+		if (!empty($this->params['dry'])) {
 			$this->__dry = true;
 			$this->out(__('Performing a dry run.'));
 		}

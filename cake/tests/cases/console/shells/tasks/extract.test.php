@@ -21,9 +21,9 @@
  */
 App::import('Core', 'Folder');
 App::import('Shell', 'Shell', false);
+App::import('Shell', 'tasks/Extract', false);
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'tasks' . DS . 'extract.php';
 
 /**
  * ExtractTaskTest class

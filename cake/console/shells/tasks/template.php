@@ -55,7 +55,7 @@ class TemplateTask extends Shell {
 		$paths = App::path('shells');
 		$core = array_pop($paths);
 		$separator = DS === '/' ? '/' : '\\\\';
-		$core = preg_replace('#libs' . $separator . '$#', '', $core);
+		$core = preg_replace('#shells' . $separator . '$#', '', $core);
 		$paths[] = $core;
 		$Folder =& new Folder($core . 'templates' . DS . 'default');
 		$contents = $Folder->read();
@@ -63,6 +63,7 @@ class TemplateTask extends Shell {
 
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $plugin) {
+			$paths[] = $this->_pluginPath($plugin) . 'console' . DS . 'shells' . DS;
 			$paths[] = $this->_pluginPath($plugin) . 'vendors' . DS . 'shells' . DS;
 		}
 

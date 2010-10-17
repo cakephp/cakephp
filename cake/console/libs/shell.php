@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'TaskCollection');
+require_once CONSOLE_LIBS . 'task_collection.php';
 require_once CAKE . 'console' . DS . 'console_output.php';
 require_once CAKE . 'console' . DS . 'console_input.php';
 

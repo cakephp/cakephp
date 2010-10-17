@@ -18,9 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Shell', 'Shell', false);
+App::import('Shell', 'Acl');
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CAKE . 'console' .  DS . 'libs' . DS . 'acl.php';
 
 /**
  * AclShellTest class
@@ -58,7 +58,7 @@ class AclShellTest extends CakeTestCase {
 		);
 		$this->Task = $this->getMock(
 			'AclShell',
-			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear'),
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear', 'dispatchShell'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
 		$collection = new ComponentCollection();
@@ -302,9 +302,9 @@ class AclShellTest extends CakeTestCase {
  * @return void
  */
 	function testInitDb() {
-		$this->Task->Dispatch->expects($this->once())->method('dispatch');
+		$this->Task->expects($this->once())->method('dispatchShell')
+			->with('schema create DbAcl');
+	
 		$this->Task->initdb();
-
-		$this->assertEqual($this->Task->Dispatch->args, array('schema', 'create', 'DbAcl'));
 	}
 }
