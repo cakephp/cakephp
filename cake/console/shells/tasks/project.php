@@ -154,6 +154,7 @@ class ProjectTask extends Shell {
 			if (!empty($this->params['empty'])) {
 				$skip = array();
 			}
+
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
 				$this->out(sprintf(__('<success>Created:</success> %s in %s'), $app, $path));
@@ -348,6 +349,8 @@ class ProjectTask extends Shell {
 				__('Generate a new CakePHP project skeleton.')
 			)->addArgument('name', array(
 				'help' => __('Application directory to make, if it starts with "/" the path is absolute.')
+			))->addOption('empty', array(
+				'help' => __('Create empty files in each of the directories. Good if you are using git')
 			));
 	}
 
