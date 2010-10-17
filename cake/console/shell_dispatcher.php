@@ -17,7 +17,6 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once 'console_option_parser.php';
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -227,7 +226,7 @@ class ShellDispatcher {
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'cake' . DS . 'bootstrap.php';
-		require_once CORE_PATH . 'cake' . DS . 'console' . DS . 'console_error_handler.php';
+		require_once CONSOLE_LIBS . 'console_error_handler.php';
 		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {

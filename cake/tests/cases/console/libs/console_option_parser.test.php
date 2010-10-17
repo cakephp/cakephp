@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CAKE . 'console' .  DS . 'console_option_parser.php';
+require_once CONSOLE_LIBS . 'console_option_parser.php';
 
 class ConsoleOptionParserTest extends CakeTestCase {
 

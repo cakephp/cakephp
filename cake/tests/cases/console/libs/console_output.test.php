@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CAKE . 'console' .  DS . 'console_output.php';
+require_once CONSOLE_LIBS . 'console_output.php';
 
 class ConsoleOutputTest extends CakeTestCase {
 

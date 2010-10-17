@@ -18,8 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 require_once CONSOLE_LIBS . 'task_collection.php';
-require_once CAKE . 'console' . DS . 'console_output.php';
-require_once CAKE . 'console' . DS . 'console_input.php';
+require_once CONSOLE_LIBS . 'console_output.php';
+require_once CONSOLE_LIBS . 'console_input.php';
+require_once CONSOLE_LIBS . 'console_option_parser.php';
 
 /**
  * Base class for command-line utilities for automating programmer chores.

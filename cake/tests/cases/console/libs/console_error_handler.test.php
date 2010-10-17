@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once CAKE . 'console' . DS . 'console_error_handler.php';
+require_once CONSOLE_LIBS . 'console_error_handler.php';
 
 /**
  * ConsoleErrorHandler Test case.
