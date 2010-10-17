@@ -2048,7 +2048,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateAssociationQueryHasManyAndAggregateFunction() {
-		$this->Model =& new TestModel5();
+		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
@@ -4319,7 +4319,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInConditions() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4353,7 +4353,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testConditionsWithComplexVirtualFields() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
 					* SIN(Article.latitude * PI() / 180)
@@ -4376,7 +4376,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInOrder() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4398,7 +4398,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInCalculate() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_moment' => 'NOW()',
 			'two' => '1 + 1',
@@ -4447,9 +4447,9 @@ class DboSourceTest extends CakeTestCase {
 	function testVirtualFieldsComplexRead() {
 		$this->loadFixtures('DataTest', 'Article', 'Comment');
 		
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$commentTable = $this->db->fullTableName('comments');
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable . 
 				' AS Comment WHERE Article.id = Comment.article_id'
@@ -4458,7 +4458,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertTrue(count($result) > 0);
 		$this->assertTrue($result[0]['Article']['comment_count'] > 0);
 
-		$DataTest =& ClassRegistry::init('DataTest');
+		$DataTest = ClassRegistry::init('DataTest');
 		$DataTest->virtualFields = array(
 			'complicated' => 'ACOS(SIN(20 * PI() / 180)
 				* SIN(DataTest.float * PI() / 180)
@@ -4478,7 +4478,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testFieldsWithComplexVirtualFields() {
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
 					* SIN(Article.latitude * PI() / 180)
@@ -4505,7 +4505,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testReadVirtualFieldsWithNewLines() {
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->recursive = 1;
 		$Article->virtualFields = array(
 			'test' => '
@@ -4523,7 +4523,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsInGroup() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$Article->virtualFields = array(
 			'this_year' => 'YEAR(Article.created)'
 		);
@@ -4540,7 +4540,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testFullTablePermutations() {
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'articles');
 
