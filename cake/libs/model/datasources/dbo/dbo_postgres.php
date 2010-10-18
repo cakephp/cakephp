@@ -161,8 +161,8 @@ class DboPostgres extends DboSource {
 		}
 
 		$schema = $this->config['schema'];
-		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = '{$schema}';";
-		$result = $this->fetchAll($sql, false);
+		$sql = "SELECT table_name as name FROM INFORMATION_SCHEMA.tables WHERE table_schema = ?";
+		$result = $this->_execute($sql, array($schema));
 
 		if (!$result) {
 			return array();
@@ -170,7 +170,7 @@ class DboPostgres extends DboSource {
 			$tables = array();
 
 			foreach ($result as $item) {
-				$tables[] = $item[0]['name'];
+				$tables[] = $item->Name;
 			}
 
 			parent::listSources($tables);

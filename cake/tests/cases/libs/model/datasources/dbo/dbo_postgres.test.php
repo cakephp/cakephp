@@ -427,7 +427,7 @@ class DboPostgresTest extends CakeTestCase {
 
 		$db2 = clone $db1;
 		$db2->connect();
-		$this->assertNotEqual($db1->connection, $db2->connection);
+		$this->assertNotSame($db1->getConnection(), $db2->getConnection());
 
 		$table = $db1->fullTableName('users', false);
 		$password = '5f4dcc3b5aa765d61d8327deb882cf99';
