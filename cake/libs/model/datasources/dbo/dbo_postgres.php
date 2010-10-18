@@ -190,61 +190,51 @@ class DboPostgres extends DboSource {
 		$this->_sequenceMap[$table] = array();
 
 		if ($fields === null) {
-			$cols = $this->fetchAll(
+			$cols = $this->_execute(
 				"SELECT DISTINCT column_name AS name, data_type AS type, is_nullable AS null,
 					column_default AS default, ordinal_position AS position, character_maximum_length AS char_length,
 					character_octet_length AS oct_length FROM information_schema.columns
-				WHERE table_name = " . $this->value($table) . " AND table_schema = " .
-				$this->value($this->config['schema'])."  ORDER BY position",
-				false
+				WHERE table_name = ? AND table_schema = ?  ORDER BY position",
+				array($table, $this->config['schema'])
 			);
 
-			foreach ($cols as $column) {
-				$colKey = array_keys($column);
-
-				if (isset($column[$colKey[0]]) && !isset($column[0])) {
-					$column[0] = $column[$colKey[0]];
-				}
-
-				if (isset($column[0])) {
-					$c = $column[0];
-
-					if (!empty($c['char_length'])) {
-						$length = intval($c['char_length']);
-					} elseif (!empty($c['oct_length'])) {
-						if ($c['type'] == 'character varying') {
-							$length = null;
-							$c['type'] = 'text';
-						} else {
-							$length = intval($c['oct_length']);
-						}
+			foreach ($cols as $c) {
+				$type = $c->type;
+				if (!empty($c->char_length)) {
+					$length = intval($c->char_length);
+				} elseif (!empty($c->oct_length)) {
+					if ($c->type == 'character varying') {
+						$length = null;
+						$type = 'text';
 					} else {
-						$length = $this->length($c['type']);
+						$length = intval($c->oct_length);
 					}
-					$fields[$c['name']] = array(
-						'type'    => $this->column($c['type']),
-						'null'    => ($c['null'] == 'NO' ? false : true),
-						'default' => preg_replace(
-							"/^'(.*)'$/",
-							"$1",
-							preg_replace('/::.*/', '', $c['default'])
-						),
-						'length'  => $length
-					);
-					if ($c['name'] == $model->primaryKey) {
-						$fields[$c['name']]['key'] = 'primary';
-						if ($fields[$c['name']]['type'] !== 'string') {
-							$fields[$c['name']]['length'] = 11;
-						}
+				} else {
+					$length = $this->length($c->type);
+				}
+				$fields[$c->name] = array(
+					'type'    => $this->column($type),
+					'null'    => ($c->null == 'NO' ? false : true),
+					'default' => preg_replace(
+						"/^'(.*)'$/",
+						"$1",
+						preg_replace('/::.*/', '', $c->default)
+					),
+					'length'  => $length
+				);
+				if ($c->name == $model->primaryKey) {
+					$fields[$c->name]['key'] = 'primary';
+					if ($fields[$c->name]['type'] !== 'string') {
+						$fields[$c->name]['length'] = 11;
 					}
-					if (
-						$fields[$c['name']]['default'] == 'NULL' ||
-						preg_match('/nextval\([\'"]?([\w.]+)/', $c['default'], $seq)
-					) {
-						$fields[$c['name']]['default'] = null;
-						if (!empty($seq) && isset($seq[1])) {
-							$this->_sequenceMap[$table][$c['name']] = $seq[1];
-						}
+				}
+				if (
+					$fields[$c->name]['default'] == 'NULL' ||
+					preg_match('/nextval\([\'"]?([\w.]+)/', $c->default, $seq)
+				) {
+					$fields[$c->name]['default'] = null;
+					if (!empty($seq) && isset($seq[1])) {
+						$this->_sequenceMap[$table][$c->default] = $seq[1];
 					}
 				}
 			}
