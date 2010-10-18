@@ -266,13 +266,30 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir %s');
-		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir %s');
-		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir %s');
-		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir %s');
-		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir %s');
-		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir %s');
-		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir %s');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir %s');
-		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir %s');
+		$this->assertTrue(is_dir($path . DS . 'controllers'), 'No controllers dir ');
+		$this->assertTrue(is_dir($path . DS . 'controllers' . DS .'components'), 'No components dir ');
+		$this->assertTrue(is_dir($path . DS . 'models'), 'No models dir');
+		$this->assertTrue(is_dir($path . DS . 'views'), 'No views dir');
+		$this->assertTrue(is_dir($path . DS . 'views' . DS . 'helpers'), 'No helpers dir');
+		$this->assertTrue(is_dir($path . DS . 'tests'), 'No tests dir');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'cases'), 'No cases dir');
+		$this->assertTrue(is_dir($path . DS . 'tests' . DS . 'fixtures'), 'No fixtures dir');
+	}
+
+/**
+ * test console path
+ *
+ * @return void
+ */
+	function testConsolePath() {
+		$this->_setupTestProject();
+		
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->consolePath($path);
+		$this->assertTrue($result);
+
+		$file = new File($path . 'console' . DS . 'cake.php');
+		$contents = $file->read();
+		$this->assertNoPattern('/__CAKE_PATH__/', $contents, 'Console path placeholder left behind.');
 	}
 }
