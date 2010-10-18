@@ -160,9 +160,28 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Prepares a value, or an array of values for database queries by quoting and escaping them.
+ * Disconnects from database.
  *
- * @param mixed $data A value or an array of values to prepare.
+ * @return boolean True if the database could be disconnected, else false
+ */
+	function disconnect() {
+		if (is_a($this->_result, 'PDOStatement')) {
+			$this->_result->closeCursor();
+		}
+		unset($this->_connection);
+		$this->connected = false;
+		return !$this->connected;
+	}
+
+	public function getConnection() {
+		return $this->_connection;
+	}
+
+
+/**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
  * @param boolean $read Value to be used in READ or WRITE context
  * @return mixed Prepared value or array of values.

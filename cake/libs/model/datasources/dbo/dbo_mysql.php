@@ -165,10 +165,6 @@ class DboMysql extends DboSource {
 		return $this->connected;
 	}
 
-	public function getConnection() {
-		return $this->_connection;
-	}
-
 /**
  * Check whether the MySQL extension is installed/loaded
  *
@@ -176,19 +172,6 @@ class DboMysql extends DboSource {
  */
 	function enabled() {
 		return in_array('mysql', PDO::getAvailableDrivers());
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		if (is_a($this->_result, 'PDOStatement')) {
-			$this->_result->closeCursor();
-		}
-		unset($this->_connection);
-		$this->connected = false;
-		return !$this->connected;
 	}
 
 /**
