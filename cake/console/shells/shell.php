@@ -77,29 +77,6 @@ class Shell extends Object {
 	public $args = array();
 
 /**
- * Shell paths
- *
- * @var string
- */
-	public $shellPaths = array();
-
-/**
- * The file name of the shell that was invoked.
- *
- * @var string
- * @access public
- */
-	public $shell = null;
-
-/**
- * The command called if public methods are available.
- *
- * @var string
- * @access public
- */
-	public $command = null;
-
-/**
  * The name of the shell in camelized.
  *
  * @var string
@@ -171,16 +148,6 @@ class Shell extends Object {
  *
  */
 	function __construct(&$dispatch, $stdout = null, $stderr = null, $stdin = null) {
-		$vars = array('shell', 'shellCommand' => 'command', 'shellPaths');
-
-		foreach ($vars as $key => $var) {
-			if (is_string($key)) {
-				$this->{$var} = $dispatch->{$key};
-			} else {
-				$this->{$var} = $dispatch->{$var};
-			}
-		}
-
 		if ($this->name == null) {
 			$this->name = Inflector::underscore(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
@@ -587,25 +554,6 @@ class Shell extends Object {
 			} else {
 				passthru('cls');
 			}
-		}
-	}
-
-/**
- * Will check the number args matches otherwise throw an error
- *
- * @param integer $expectedNum Expected number of paramters
- * @param string $command Command
- */
-	protected function _checkArgs($expectedNum, $command = null) {
-		if (!$command) {
-			$command = $this->command;
-		}
-		if (count($this->args) < $expectedNum) {
-			$message[] = "Got: " . count($this->args);
-			$message[] = "Expected: {$expectedNum}";
-			$message[] = "Please type `cake {$this->shell} help` for help";
-			$message[] = "on usage of the {$this->name} {$command}.";
-			$this->error('Wrong number of parameters', $message);
 		}
 	}
 

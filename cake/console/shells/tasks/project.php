@@ -160,7 +160,7 @@ class ProjectTask extends Shell {
 				$this->out(sprintf(__('<success>Created:</success> %s in %s'), $app, $path));
 				$this->hr();
 			} else {
-				$this->err(sprintf(__(" '%s' could not be created properly"), $app));
+				$this->err(sprintf(__("<error>Could not create</error> '%s' properly."), $app));
 				return false;
 			}
 
@@ -198,7 +198,7 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function securitySalt($path) {
-		$File =& new File($path . 'config' . DS . 'core.php');
+		$File = new File($path . 'config' . DS . 'core.php');
 		$contents = $File->read();
 		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 			if (!class_exists('Security')) {
@@ -221,7 +221,7 @@ class ProjectTask extends Shell {
 	 * @return boolean Success
 		 */
 		public function securityCipherSeed($path) {
-			$File =& new File($path . 'config' . DS . 'core.php');
+			$File = new File($path . 'config' . DS . 'core.php');
 			$contents = $File->read();
 			if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
 				if (!class_exists('Security')) {

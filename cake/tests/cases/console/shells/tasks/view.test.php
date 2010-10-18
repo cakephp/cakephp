@@ -237,7 +237,6 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->Project = $this->getMock('ProjectTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 
-		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';
 	}

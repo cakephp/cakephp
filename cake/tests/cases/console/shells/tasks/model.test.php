@@ -93,7 +93,6 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task->name = 'ModelTask';
 		$this->Task->interactive = true;
-		$this->Task->Dispatch->shellPaths = App::path('shells');
 	}
 
 /**

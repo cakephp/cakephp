@@ -49,7 +49,6 @@ class ProjectTaskTest extends CakeTestCase {
 			array('in', 'err', 'createFile', '_stop'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->path = TMP . 'tests' . DS;
 	}
 

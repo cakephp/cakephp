@@ -42,7 +42,6 @@ class TestSuiteShellTest extends CakeTestCase {
 			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', 'run', 'clear'),
 			array(&$this->Dispatcher)
 		);
-		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}
 
 /**

@@ -43,61 +43,6 @@ class ShellDispatcher {
 	public $args = array();
 
 /**
- * The file name of the shell that was invoked.
- *
- * @var string
- * @access public
- */
-	public $shell = null;
-
-/**
- * The class name of the shell that was invoked.
- *
- * @var string
- * @access public
- */
-	public $shellClass = null;
-
-/**
- * The command called if public methods are available.
- *
- * @var string
- * @access public
- */
-	public $shellCommand = null;
-
-/**
- * The path locations of shells.
- *
- * @var array
- * @access public
- */
-	public $shellPaths = array();
-
-/**
- * The path to the current shell location.
- *
- * @var string
- * @access public
- */
-	public $shellPath = null;
-
-/**
- * The name of the shell in camelized.
- *
- * @var string
- * @access public
- */
-	public $shellName = null;
-
-/**
- * TaskCollection object for the command
- *
- * @var TaskCollection
- */
-	protected $_Tasks;
-
-/**
  * Constructor
  *
  * The execution of the script is stopped after dispatching the request with
@@ -116,7 +61,6 @@ class ShellDispatcher {
 		if ($bootstrap) {
 			$this->_initEnvironment();
 		}
-		$this->__buildPaths();
 	}
 
 /**
@@ -180,35 +124,6 @@ class ShellDispatcher {
 	}
 
 /**
- * Builds the shell paths.
- *
- * @access private
- * @return void
- */
-	function __buildPaths() {
-		$paths = array();
-
-		$plugins = App::objects('plugin', null, false);
-		foreach ((array)$plugins as $plugin) {
-			$pluginPath = App::pluginPath($plugin);
-			$path = $pluginPath . 'vendors' . DS . 'shells' . DS;
-			if (file_exists($path)) {
-				$paths[] = $path;
-			}
-		}
-
-		$vendorPaths = array_values(App::path('vendors'));
-		foreach ($vendorPaths as $vendorPath) {
-			$path = rtrim($vendorPath, DS) . DS . 'shells' . DS;
-			if (file_exists($path)) {
-				$paths[] = $path;
-			}
-		}
-
-		$this->shellPaths = array_values(array_unique(array_merge($paths, App::path('shells'))));
-	}
-
-/**
  * Initializes the environment and loads the Cake core.
  *
  * @return boolean Success.
@@ -257,12 +172,7 @@ class ShellDispatcher {
 			return true;
 		}
 
-		list($plugin, $shell) = pluginSplit($shell);
-		$this->shell = $shell;
-		$this->shellName = Inflector::camelize($shell);
-		$this->shellClass = $this->shellName . 'Shell';
-
-		$Shell = $this->_getShell($plugin);
+		$Shell = $this->_getShell($shell);
 
 		$command = null;
 		if (isset($this->args[0])) {
@@ -289,43 +199,31 @@ class ShellDispatcher {
 				return $Shell->main();
 			}
 		}
-		throw new MissingShellMethodException(array('shell' => $this->shell, 'method' => $arg));
+		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $arg));
 	}
 
 /**
  * Get shell to use, either plugin shell or application shell
  *
- * All paths in the shellPaths property are searched.
- * shell, shellPath and shellClass properties are taken into account.
+ * All paths in the loaded shell paths are searched.
  *
- * @param string $plugin Optionally the name of a plugin
+ * @param string $shell Optionally the name of a plugin
  * @return mixed False if no shell could be found or an object on success
+ * @throws MissingShellFileException, MissingShellClassException when errors are encountered.
  */
-	protected function _getShell($plugin = null) {
-		foreach ($this->shellPaths as $path) {
-			$this->shellPath = $path . $this->shell . '.php';
-			$pluginShellPath =  DS . $plugin . DS . 'vendors' . DS . 'shells' . DS;
+	protected function _getShell($shell) {
+		list($plugin, $shell) = pluginSplit($shell, true);
 
-			if ((strpos($path, $pluginShellPath) !== false || !$plugin) && file_exists($this->shellPath)) {
-				$loaded = true;
-				break;
-			}
+		$loaded = App::import('Shell', $plugin . $shell);
+		$class = Inflector::camelize($shell) . 'Shell';
+	
+		if (!$loaded) {
+			throw new MissingShellFileException(array('shell' => $shell));
 		}
-		if (!isset($loaded)) {
-			throw new MissingShellFileException(array('shell' => $this->shell . '.php'));
+		if (!class_exists($class)) {
+			throw new MissingShellClassException(array('shell' => $class));
 		}
-
-		if (!class_exists('Shell')) {
-			require_once CONSOLE_LIBS . 'shell.php';
-		}
-
-		if (!class_exists($this->shellClass)) {
-			require $this->shellPath;
-		}
-		if (!class_exists($this->shellClass)) {
-			throw new MissingShellClassException(array('shell' => $this->shell));
-		}
-		$Shell = new $this->shellClass($this);
+		$Shell = new $class($this);
 		return $Shell;
 	}
 

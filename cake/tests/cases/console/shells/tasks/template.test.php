@@ -90,7 +90,6 @@ class TemplateTaskTest extends CakeTestCase {
  */
 	public function testFindingInstalledThemesForBake() {
 		$consoleLibs = CAKE_CORE_INCLUDE_PATH . DS . CAKE . 'console' . DS;
-		$this->Task->Dispatch->shellPaths = array($consoleLibs);
 		$this->Task->initialize();
 		$this->assertEqual($this->Task->templatePaths, array('default' => $consoleLibs . 'templates' . DS . 'default' . DS));
 	}

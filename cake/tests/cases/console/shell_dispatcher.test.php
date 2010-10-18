@@ -17,9 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-require_once CONSOLE_LIBS . 'shell.php';
 
 /**
  * TestShellDispatcher class
@@ -83,11 +81,11 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * getShell
  *
- * @param mixed $plugin
+ * @param mixed $shell
  * @return mixed
  */
-	public function getShell($plugin = null) {
-		return $this->_getShell($plugin);
+	public function getShell($shell) {
+		return $this->_getShell($shell);
 	}
 
 /**
@@ -96,11 +94,11 @@ class TestShellDispatcher extends ShellDispatcher {
  * @param mixed $plugin
  * @return mixed
  */
-	protected function _getShell($plugin = null) {
+	protected function _getShell($shell) {
 		if (isset($this->TestShell)) {
 			return $this->TestShell;
 		}
-		return parent::_getShell($plugin);
+		return parent::_getShell($shell);
 	}
 }
 
@@ -125,7 +123,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			),
 			'shells' => array(
 				CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
 	}
@@ -382,28 +380,6 @@ class ShellDispatcherTest extends CakeTestCase {
 	}
 
 /**
- * testBuildPaths method
- *
- * @return void
- */
-	public function testBuildPaths() {
-		$Dispatcher = new TestShellDispatcher();
-
-		$result = $Dispatcher->shellPaths;
-
-		$expected = array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS,
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin_two' . DS . 'vendors' . DS . 'shells' . DS,
-			APP . 'vendors' . DS . 'shells' . DS,
-			VENDORS . 'shells' . DS,
-			CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
-			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS . 'shells' . DS,
-		);
-		$this->assertIdentical(array_diff($result, $expected), array());
-		$this->assertIdentical(array_diff($expected, $result), array());
-	}
-
-/**
  * Verify loading of (plugin-) shells
  *
  * @return void
@@ -414,21 +390,12 @@ class ShellDispatcherTest extends CakeTestCase {
 
 		$Dispatcher = new TestShellDispatcher();
 
-		$Dispatcher->shell = 'sample';
-		$Dispatcher->shellName = 'Sample';
-		$Dispatcher->shellClass = 'SampleShell';
-
-		$result = $Dispatcher->getShell();
-		$this->assertIsA($result, 'SampleShell');
+		$result = $Dispatcher->getShell('sample');
+		$this->assertInstanceOf('SampleShell', $result);
 
 		$Dispatcher = new TestShellDispatcher();
-
-		$Dispatcher->shell = 'example';
-		$Dispatcher->shellName = 'Example';
-		$Dispatcher->shellClass = 'ExampleShell';
-
-		$result = $Dispatcher->getShell('test_plugin');
-		$this->assertIsA($result, 'ExampleShell');
+		$result = $Dispatcher->getShell('test_plugin.example');
+		$this->assertInstanceOf('ExampleShell', $result);
 	}
 
 /**

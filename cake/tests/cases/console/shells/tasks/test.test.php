@@ -250,7 +250,6 @@ class TestTaskTest extends CakeTestCase {
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Dispatcher->shellPaths = App::path('shells');
 		$this->Task->name = 'TestTask';
 		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 	}

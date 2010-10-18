@@ -62,7 +62,6 @@ class BakeShellTest extends CakeTestCase {
 			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Shell->Dispatch->shellPaths = App::path('shells');
 	}
 
 /**
