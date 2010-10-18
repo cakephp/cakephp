@@ -22,7 +22,7 @@ require_once CONSOLE_LIBS . 'console_input_argument.php';
 require_once CONSOLE_LIBS . 'console_input_subcommand.php';
 
 /**
- * Handles parsing the ARGV in the command line and provides support 
+ * Handles parsing the ARGV in the command line and provides support
  * for GetOpt compatible option definition.  Provides a builder pattern implementation
  * for creating shell option parsers.
  *
@@ -52,7 +52,7 @@ class ConsoleOptionParser {
  *
  * @see ConsoleOptionParser::addOption()
  * @var array
- */	
+ */
 	protected $_options = array();
 
 /**
@@ -82,15 +82,15 @@ class ConsoleOptionParser {
  *
  * ### Options
  *
- * Named arguments come in two forms, long and short. Long arguments are preceeded 
- * by two - and give a more verbose option name. i.e. `--version`. Short arguments are 
- * preceeded by one - and are only one character long.  They usually match with a long option, 
+ * Named arguments come in two forms, long and short. Long arguments are preceeded
+ * by two - and give a more verbose option name. i.e. `--version`. Short arguments are
+ * preceeded by one - and are only one character long.  They usually match with a long option,
  * and provide a more terse alternative.
  *
  * #### Using Options
- * 
+ *
  * Options can be defined with both long and short forms.  By using `$parser->addOption()`
- * you can define new options.  The name of the option is used as its long form, and you 
+ * you can define new options.  The name of the option is used as its long form, and you
  * can supply an additional short form, with the `short` option.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
@@ -104,8 +104,8 @@ class ConsoleOptionParser {
  *
  * ### Positional arguments
  *
- * If no positional arguments are defined, all of them will be parsed.  If you define positional 
- * arguments any arguments greater than those defined will cause exceptions.  Additionally you can 
+ * If no positional arguments are defined, all of them will be parsed.  If you define positional
+ * arguments any arguments greater than those defined will cause exceptions.  Additionally you can
  * declare arguments as optional, by setting the required param to false.
  *
  * `$parser->addArgument('model', array('required' => false));`
@@ -113,7 +113,7 @@ class ConsoleOptionParser {
  * ### Providing Help text
  *
  * By providing help text for your positional arguments and named arguments, the ConsoleOptionParser
- * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch. 
+ * can generate a help display for you.  You can view the help for shells by using the `--help` or `-h` switch.
  *
  * @param string $command The command name this parser is for.  The command name is used for generating help.
  * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
@@ -158,7 +158,7 @@ class ConsoleOptionParser {
  * $spec = array(
  *		'description' => 'text',
  *		'epilog' => 'text',
- *		'arguments' => array( 
+ *		'arguments' => array(
  *			// list of arguments compatible with addArguments.
  *		),
  *		'options' => array(
@@ -250,7 +250,7 @@ class ConsoleOptionParser {
  *
  * - `short` - The single letter variant for this option, leave undefined for none.
  * - `help` - Help text for this option.  Used when generating help for the option.
- * - `default` - The default value for this option. Defaults are added into the parsed params when the 
+ * - `default` - The default value for this option. Defaults are added into the parsed params when the
  *    attached option is not provided or has no value.  Using default and boolean together will not work.
  *    are added into the parsed parameters when the option is undefined. Defaults to null.
  * - `boolean` - The option uses no value, its just a boolean switch. Defaults to false.
@@ -258,7 +258,7 @@ class ConsoleOptionParser {
  *    it will be false, if present it will be true.
  * - `choices` A list of valid choices for this option.  If left empty all values are valid..
  *   An exception will be raised when parse() encounters an invalid value.
- * 
+ *
  * @param string $name The long name you want to the value to be parsed out as when options are parsed.
  * @param array $params An array of parameters that define the behavior of the option
  * @return returns $this.
@@ -345,7 +345,7 @@ class ConsoleOptionParser {
 
 /**
  * Append a subcommand to the subcommand list.
- * Subcommands are usually methods on your Shell, but can also be used to document 
+ * Subcommands are usually methods on your Shell, but can also be used to document
  * Tasks
  *
  * ### Params
@@ -448,7 +448,7 @@ class ConsoleOptionParser {
 			$name = $option->name();
 			$isBoolean = $option->isBoolean();
 			$default = $option->defaultValue();
-	
+
 			if ($default !== null && !isset($params[$name]) && !$isBoolean) {
 				$params[$name] = $default;
 			}
@@ -471,7 +471,7 @@ class ConsoleOptionParser {
  */
 	public function help($subcommand = null, $width = 72) {
 		if (
-			isset($this->_subcommands[$subcommand]) && 
+			isset($this->_subcommands[$subcommand]) &&
 			$this->_subcommands[$subcommand]->parser() instanceof self
 		) {
 			$subparser = $this->_subcommands[$subcommand]->parser();
@@ -492,19 +492,19 @@ class ConsoleOptionParser {
 			$max = $this->_getMaxLength($this->_subcommands) + 2;
 			foreach ($this->_subcommands as $command) {
 				$out[] = String::wrap($command->help($max), array(
-					'width' => $width, 
+					'width' => $width,
 					'indent' => str_repeat(' ', $max),
 					'indentAt' => 1
 				));
 			}
 			$out[] = '';
 			$out[] = sprintf(
-				__('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'), 
+				__('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'),
 				$this->command()
 			);
 			$out[] = '';
 		}
-		
+
 		if (!empty($this->_options)) {
 			$max = $this->_getMaxLength($this->_options) + 8;
 			$out[] = '<info>Options:</info>';
@@ -539,7 +539,7 @@ class ConsoleOptionParser {
 
 /**
  * Generate the usage for a shell based on its arguments and options.
- * Usage strings favour short options over the long ones. and optional args will 
+ * Usage strings favour short options over the long ones. and optional args will
  * be indicated with []
  *
  * @return string

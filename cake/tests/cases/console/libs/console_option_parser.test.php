@@ -604,6 +604,17 @@ TEXT;
 	}
 
 /**
+ * test that create() returns instances
+ *
+ * @return void
+ */
+	function testCreateFactory() {
+		$parser = ConsoleOptionParser::create('factory', false);
+		$this->assertInstanceOf('ConsoleOptionParser', $parser);
+		$this->assertEquals('factory', $parser->command());
+	}
+
+/**
  * test that parse() takes a subcommand argument, and that the subcommand parser
  * is used.
  *
