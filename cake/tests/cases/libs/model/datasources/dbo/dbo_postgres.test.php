@@ -380,17 +380,17 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testDateAndTimeAsNull() {
-		$this->assertEqual($this->Dbo2->value(null, 'date'), 'NULL');
-		$this->assertEqual($this->Dbo2->value('', 'date'), 'NULL');
+		$this->assertEqual($this->Dbo->value(null, 'date'), 'NULL');
+		$this->assertEqual($this->Dbo->value('', 'date'), 'NULL');
 
-		$this->assertEqual($this->Dbo2->value('', 'datetime'), 'NULL');
-		$this->assertEqual($this->Dbo2->value(null, 'datetime'), 'NULL');
+		$this->assertEqual($this->Dbo->value('', 'datetime'), 'NULL');
+		$this->assertEqual($this->Dbo->value(null, 'datetime'), 'NULL');
 
-		$this->assertEqual($this->Dbo2->value('', 'timestamp'), 'NULL');
-		$this->assertEqual($this->Dbo2->value(null, 'timestamp'), 'NULL');
+		$this->assertEqual($this->Dbo->value('', 'timestamp'), 'NULL');
+		$this->assertEqual($this->Dbo->value(null, 'timestamp'), 'NULL');
 
-		$this->assertEqual($this->Dbo2->value('', 'time'), 'NULL');
-		$this->assertEqual($this->Dbo2->value(null, 'time'), 'NULL');
+		$this->assertEqual($this->Dbo->value('', 'time'), 'NULL');
+		$this->assertEqual($this->Dbo->value(null, 'time'), 'NULL');
 	}
 
 /**

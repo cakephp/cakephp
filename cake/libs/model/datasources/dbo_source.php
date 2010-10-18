@@ -205,22 +205,22 @@ class DboSource extends DataSource {
 		if ($data === null || (is_array($data) && empty($data))) {
 			return 'NULL';
 		}
-		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return $this->_connection->quote($data, PDO::PARAM_STR);
-		}
+
 		if (empty($column)) {
 			$column = $this->introspectType($data);
 		}
 
 		switch ($column) {
 			case 'binary':
-				$data = $this->_connection->quote($data, PDO::PARAM_LOB);
+				return $this->_connection->quote($data, PDO::PARAM_LOB);
 			break;
 			case 'boolean':
 				return $this->boolean($data);
 			break;
-			case 'integer':
-			case 'float':
+			case 'string':
+			case 'text':
+				return $this->_connection->quote($data, PDO::PARAM_STR);
+			default:
 				if ($data === '') {
 					return 'NULL';
 				}
@@ -233,8 +233,7 @@ class DboSource extends DataSource {
 				) {
 					return $data;
 				}
-			default:
-				return $this->_connection->quote($data, PDO::PARAM_STR);
+				return $this->_connection->quote($data);
 			break;
 		}
 	}
