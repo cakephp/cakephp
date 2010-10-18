@@ -606,13 +606,13 @@ class Shell extends Object {
 		if (App::import('vendor', 'simpletest' . DS . 'simpletest')) {
 			return true;
 		}
-		$prompt = 'SimpleTest is not installed. Do you want to bake unit test files anyway?';
+		$prompt = 'PHPUnit is not installed. Do you want to bake unit test files anyway?';
 		$unitTest = $this->in($prompt, array('y','n'), 'y');
 		$result = strtolower($unitTest) == 'y' || strtolower($unitTest) == 'yes';
 
 		if ($result) {
 			$this->out();
-			$this->out('You can download SimpleTest from http://simpletest.org');
+			$this->out('You can download PHPUnit from http://phpunit.de');
 		}
 		return $result;
 	}
