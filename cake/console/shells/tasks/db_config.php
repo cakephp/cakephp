@@ -305,10 +305,9 @@ class DbConfigTask extends Shell {
 		$out .= "class DATABASE_CONFIG {\n\n";
 
 		foreach ($configs as $config) {
-			$config = array_merge($this->__defaultConfig, $config);
-			extract($config);
+			$config = array_merge($this->_defaultConfig, $config);
 
-			$out .= "\tvar \${$name} = array(\n";
+			$out .= "\tpublic \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
 			$out .= "\t\t'persistent' => {$persistent},\n";
 			$out .= "\t\t'host' => '{$host}',\n";
@@ -337,7 +336,6 @@ class DbConfigTask extends Shell {
 		}
 
 		$out .= "}\n";
-		$out .= "?>";
 		$filename = $this->path . 'database.php';
 		return $this->createFile($filename, $out);
 	}
