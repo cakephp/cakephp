@@ -118,7 +118,7 @@ class DbConfigTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$this->Task = $this->getMock(
 			'DbConfigTask',
-			array('in', '_stop', 'createFile'), array(&$this->Dispatcher, $out, $out)
+			array('in', '_stop', 'createFile', 'bake'), array(&$this->Dispatcher, $out, $out)
 		);
 
 		$this->Task->expects($this->once())->method('_stop');
@@ -134,6 +134,22 @@ class DbConfigTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(12))->method('in')->will($this->returnValue('n')); //encoding
 		$this->Task->expects($this->at(13))->method('in')->will($this->returnValue('y')); //looks good
 		$this->Task->expects($this->at(14))->method('in')->will($this->returnValue('n')); //another
+		$this->Task->expects($this->at(15))->method('bake')
+			->with(array(
+				array(
+					'name' => 'default',
+					'driver' => 'mysql',
+					'persistent' => 'false',
+					'host' => 'localhost',
+					'login' => 'root',
+					'password' => 'password',
+					'database' => 'cake_test',
+					'prefix' => null,
+					'encoding' => null,
+					'port' => '',
+					'schema' => null
+				)
+			));
 
 		$result = $this->Task->execute();
 	}
