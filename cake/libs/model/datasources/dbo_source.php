@@ -2612,7 +2612,7 @@ class DboSource extends DataSource {
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
- * @return mixed Converted boolean value
+ * @return int Converted boolean value
  */
 	public function boolean($data) {
 		if ($data === true || $data === false) {
@@ -2621,7 +2621,7 @@ class DboSource extends DataSource {
 			}
 			return 0;
 		} else {
-			return !empty($data);
+			return (int) !empty($data);
 		}
 	}
 
