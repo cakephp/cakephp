@@ -22,4 +22,4 @@
  */
 require_once(__CAKE_PATH__ . 'shell_dispatcher.php');
 
-ShellDispatcher::run($argv);
+return ShellDispatcher::run($argv);

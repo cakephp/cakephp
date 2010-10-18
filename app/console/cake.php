@@ -22,4 +22,4 @@
  */
 require_once(dirname(dirname(dirname(__FILE__))) . DIRECTORY_SEPARATOR . 'cake' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR . 'shell_dispatcher.php');
 
-ShellDispatcher::run($argv);
+return ShellDispatcher::run($argv);
