@@ -5155,6 +5155,28 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testPostButton method
+ *
+ * @return void
+ */
+	public function testPostButton() {
+		$result = $this->Form->postButton('Hi', '/controller/action');
+		$this->assertTags($result, array(
+			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div',
+			'button' => array('type' => 'submit'),
+			'Hi',
+			'/button',
+			'/form'
+		));
+
+		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
+		$this->assertTrue(strpos($result, '<input type="hidden" name="data[extra]" value="value" />') !== false);
+	}
+
+/**
  * testSubmitButton method
  *
  * @access public

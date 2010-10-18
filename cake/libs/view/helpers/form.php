@@ -1264,6 +1264,32 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Create a `<button>` tag with `<form>` using POST method.
+ *
+ * ### Options:
+ *
+ * - `data` - Array with key/value to pass in input hidden
+ * - Other options is the same of button method.
+ *
+ * @param string $title The button's caption. Not automatically HTML encoded
+ * @param mixed $url URL as string or array
+ * @param array $options Array of options and HTML attributes.
+ * @return string A HTML button tag.
+ */
+	public function postButton($title, $url, $options = array()) {
+		$out = $this->create(false, array('id' => false, 'url' => $url));
+		if (isset($options['data']) && is_array($options['data'])) {
+			foreach ($options['data'] as $key => $value) {
+				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+			}
+			unset($options['data']);
+		}
+		$out .= $this->button($title, $options);
+		$out .= $this->end();
+		return $out;
+	}
+
+/**
  * Creates a submit button element.  This method will generate `<input />` elements that
  * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an
  * image path for $caption.
