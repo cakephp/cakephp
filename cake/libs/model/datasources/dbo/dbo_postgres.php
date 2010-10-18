@@ -170,7 +170,7 @@ class DboPostgres extends DboSource {
 			$tables = array();
 
 			foreach ($result as $item) {
-				$tables[] = $item->Name;
+				$tables[] = $item->name;
 			}
 
 			parent::listSources($tables);
