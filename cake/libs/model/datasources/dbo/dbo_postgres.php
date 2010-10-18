@@ -112,23 +112,30 @@ class DboPostgres extends DboSource {
  */
 	function connect() {
 		$config = $this->config;
-		$conn  = "host='{$config['host']}' port='{$config['port']}' dbname='{$config['database']}' ";
-		$conn .= "user='{$config['login']}' password='{$config['password']}'";
-
-		if (!$config['persistent']) {
-			$this->connection = pg_connect($conn, PGSQL_CONNECT_FORCE_NEW);
-		} else {
-			$this->connection = pg_pconnect($conn);
-		}
 		$this->connected = false;
+		try {
+			$flags = array(
+				PDO::ATTR_PERSISTENT => $config['persistent']
+			);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET search_path TO ' . $config['schema'];
+			}
+			$this->_connection = new PDO(
+				"pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
 
-		if ($this->connection) {
+			if (!empty($config['encoding'])) {
+				$this->setEncoding($config['encoding']);
+			}
+
 			$this->connected = true;
-			$this->_execute("SET search_path TO " . $config['schema']);
+		} catch (PDOException $e) {
+			$this->errors[] = $e->getMessage();
 		}
-		if (!empty($config['encoding'])) {
-			$this->setEncoding($config['encoding']);
-		}
+
 		return $this->connected;
 	}
 
@@ -138,33 +145,7 @@ class DboPostgres extends DboSource {
  * @return boolean
  */
 	function enabled() {
-		return extension_loaded('pgsql');
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		if ($this->hasResult()) {
-			pg_free_result($this->_result);
-		}
-		if (is_resource($this->connection)) {
-			$this->connected = !pg_close($this->connection);
-		} else {
-			$this->connected = false;
-		}
-		return !$this->connected;
-	}
-
-/**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @return resource Result resource identifier
- */
-	function _execute($sql) {
-		return pg_query($this->connection, $sql);
+		return in_array('pgsql', PDO::getAvailableDrivers());
 	}
 
 /**
