@@ -43,8 +43,8 @@ class BakeShell extends Shell {
  * Override loadTasks() to handle paths
  *
  */
-	public function loadTasks() {
-		parent::loadTasks();
+	public function startup() {
+		parent::startup();
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
 			if (isset($this->params['connection'])) {
@@ -188,7 +188,7 @@ class BakeShell extends Shell {
 			$this->out(__('Bake All complete'));
 			array_shift($this->args);
 		} else {
-			$this->err(__('Bake All could not continue without a valid model'));
+			$this->error(__('Bake All could not continue without a valid model'));
 		}
 		$this->_stop();
 	}

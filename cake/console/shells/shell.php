@@ -69,6 +69,13 @@ class Shell extends Object {
 	public $params = array();
 
 /**
+ * The command (method/task) that is being run.
+ *
+ * @var string
+ */
+	public $command;
+
+/**
  * Contains arguments parsed from the command line.
  *
  * @var array
