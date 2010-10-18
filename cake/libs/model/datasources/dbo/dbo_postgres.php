@@ -696,20 +696,18 @@ class DboPostgres extends DboSource {
  * @param unknown_type $results
  */
 	function resultSet(&$results) {
-		$this->results =& $results;
 		$this->map = array();
-		$num_fields = pg_num_fields($results);
+		$numFields = $results->columnCount();
 		$index = 0;
 		$j = 0;
 
-		while ($j < $num_fields) {
-			$columnName = pg_field_name($results, $j);
-
-			if (strpos($columnName, '__')) {
-				$parts = explode('__', $columnName);
-				$this->map[$index++] = array($parts[0], $parts[1]);
+		while ($j < $numFields) {
+			$column = $results->getColumnMeta($j);
+			if (strpos($column['name'], '__')) {
+				list($table, $name) = explode('__', $column['name']);
+				$this->map[$index++] = array($table, $name, $column['native_type']);
 			} else {
-				$this->map[$index++] = array(0, $columnName);
+				$this->map[$index++] = array(0, $column['name'], $column['native_type']);
 			}
 			$j++;
 		}
@@ -721,12 +719,11 @@ class DboPostgres extends DboSource {
  * @return unknown
  */
 	function fetchResult() {
-		if ($row = pg_fetch_row($this->results)) {
+		if ($row = $this->_result->fetch()) {
 			$resultRow = array();
 
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$type = pg_field_type($this->results, $index);
+			foreach ($this->map as $index => $meta) {
+				list($table, $column, $type) = $meta;
 
 				switch ($type) {
 					case 'bool':
@@ -734,7 +731,7 @@ class DboPostgres extends DboSource {
 					break;
 					case 'binary':
 					case 'bytea':
-						$resultRow[$table][$column] = pg_unescape_bytea($row[$index]);
+						$resultRow[$table][$column] = stream_get_contents($row[$index]);
 					break;
 					default:
 						$resultRow[$table][$column] = $row[$index];
