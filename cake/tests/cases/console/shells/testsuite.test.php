@@ -19,7 +19,7 @@
  */
 
 App::import('Shell', 'Shell', false);
-App::import('Shell', 'TestSuite');
+App::import('Shell', 'Testsuite');
 
 require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 
