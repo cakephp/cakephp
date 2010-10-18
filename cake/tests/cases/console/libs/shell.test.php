@@ -645,6 +645,20 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
+ * test run command calling a legit method.
+ *
+ * @return void
+ */
+	function testRunCommandWithMethod() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
+
+		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
+		$result = $Mock->runCommand('hit_me', array());
+		$this->assertTrue($result);
+	}
+
+/**
  * test run command causing exception on Shell method.
  *
  * @return void
