@@ -20,6 +20,6 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once(__APP_PATH__ . 'shell_dispatcher.php');
+require_once(__CAKE_PATH__ . 'shell_dispatcher.php');
 
 ShellDispatcher::run($argv);
