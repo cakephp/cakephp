@@ -257,61 +257,6 @@ class DboPostgres extends DboSource {
 	}
 
 /**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
- * @param boolean $read Value to be used in READ or WRITE context
- * @return string Quoted and escaped
- * @todo Add logic that formats/escapes data based on column type
- */
-	function value($data, $column = null, $read = true) {
-
-		$parent = parent::value($data, $column);
-		if ($parent != null) {
-			return $parent;
-		}
-
-		if ($data === null || (is_array($data) && empty($data))) {
-			return 'NULL';
-		}
-		if (empty($column)) {
-			$column = $this->introspectType($data);
-		}
-
-		switch($column) {
-			case 'binary':
-				$data = pg_escape_bytea($data);
-			break;
-			case 'boolean':
-				if ($data === true || $data === 't' || $data === 'true') {
-					return 'TRUE';
-				} elseif ($data === false || $data === 'f' || $data === 'false') {
-					return 'FALSE';
-				}
-				return (!empty($data) ? 'TRUE' : 'FALSE');
-			break;
-			case 'float':
-				if (is_float($data)) {
-					$data = sprintf('%F', $data);
-				}
-			case 'inet':
-			case 'integer':
-			case 'date':
-			case 'datetime':
-			case 'timestamp':
-			case 'time':
-				if ($data === '') {
-					return $read ? 'NULL' : 'DEFAULT';
-				}
-			default:
-				$data = pg_escape_string($data);
-			break;
-		}
-		return "'" . $data . "'";
-	}
-
-/**
  * Returns a formatted error message from previous database operation.
  *
  * @return string Error message

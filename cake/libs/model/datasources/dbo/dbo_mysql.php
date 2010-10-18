@@ -200,54 +200,6 @@ class DboMysql extends DboSource {
 	}
 
 /**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
- * @return string Quoted and escaped data
- */
-	function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
-
-		if ($parent != null) {
-			return $parent;
-		}
-		if ($data === null || (is_array($data) && empty($data))) {
-			return 'NULL';
-		}
-		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return $this->_connection->quote($data, PDO::PARAM_STR);
-		}
-		if (empty($column)) {
-			$column = $this->introspectType($data);
-		}
-
-		switch ($column) {
-			case 'boolean':
-				return $this->boolean((bool)$data);
-			break;
-			case 'integer':
-			case 'float':
-				if ($data === '') {
-					return 'NULL';
-				}
-				if (is_float($data)) {
-					return sprintf('%F', $data);
-				}
-				if ((is_int($data) || $data === '0') || (
-					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false)
-				) {
-					return $data;
-				}
-			default:
-				return $this->_connection->quote($data, PDO::PARAM_STR);
-			break;
-		}
-	}
-
-/**
  * Returns a formatted error message from previous database operation.
  *
  * @param PDOStatement $query the query to extract the error from if any

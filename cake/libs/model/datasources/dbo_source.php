@@ -183,14 +183,14 @@ class DboSource extends DataSource {
  *
  * @param string $data String to be prepared for use in an SQL statement
  * @param string $column The column into which this data will be inserted
- * @param boolean $read Value to be used in READ or WRITE context
- * @return mixed Prepared value or array of values.
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @return string Quoted and escaped data
  */
-	public function value($data, $column = null, $read = true) {
+	function value($data, $column = null, $safe = false) {
 		if (is_array($data) && !empty($data)) {
 			return array_map(
 				array(&$this, 'value'),
-				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $read)
+				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $safe)
 			);
 		} elseif (is_object($data) && isset($data->type)) {
 			if ($data->type == 'identifier') {
@@ -200,10 +200,45 @@ class DboSource extends DataSource {
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
-		} else {
-			return null;
+		} 
+
+		if ($data === null || (is_array($data) && empty($data))) {
+			return 'NULL';
+		}
+		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
+			return $this->_connection->quote($data, PDO::PARAM_STR);
+		}
+		if (empty($column)) {
+			$column = $this->introspectType($data);
+		}
+
+		switch ($column) {
+			case 'binary':
+				$data = $this->_connection->quote($data, PDO::PARAM_LOB);
+			break;
+			case 'boolean':
+				return $this->boolean($data);
+			break;
+			case 'integer':
+			case 'float':
+				if ($data === '') {
+					return 'NULL';
+				}
+				if (is_float($data)) {
+					return sprintf('%F', $data);
+				}
+				if ((is_int($data) || $data === '0') || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false)
+				) {
+					return $data;
+				}
+			default:
+				return $this->_connection->quote($data, PDO::PARAM_STR);
+			break;
 		}
 	}
+
 
 /**
  * Returns an object to represent a database identifier in a query
@@ -462,6 +497,7 @@ class DboSource extends DataSource {
 			if ($cache) {
 				$this->_writeQueryCache($sql, $out, $params);
 			}
+
 			if (empty($out) && is_bool($this->_result)) {
 				return $this->_result;
 			}
