@@ -1019,11 +1019,19 @@ class ModelWriteTest extends BaseModelTest {
 		App::import('Core', 'Xml');
 
 		$Article = new Article();
-		$Article->save(new Xml('<article title="test xml" user_id="5" />'));
-		$result = $Article->save(new Xml('<article title="test xml" user_id="5" />'));
+		$result = $Article->save(Xml::build('<article title="test xml" user_id="5" />'));
 		$this->assertFalse(empty($result));
-
 		$results = $Article->find(array('Article.title' => 'test xml'));
+		$this->assertFalse(empty($results));
+
+		$result = $Article->save(Xml::build('<article><title>testing</title><user_id>6</user_id></article>'));
+		$this->assertFalse(empty($result));
+		$results = $Article->find(array('Article.title' => 'testing'));
+		$this->assertFalse(empty($results));
+
+		$result = $Article->save(Xml::build('<article><title>testing with DOMDocument</title><user_id>7</user_id></article>', array('return' => 'domdocument')));
+		$this->assertFalse(empty($result));
+		$results = $Article->find(array('Article.title' => 'testing with DOMDocument'));
 		$this->assertFalse(empty($results));
 	}
 

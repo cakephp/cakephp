@@ -831,7 +831,12 @@ class Model extends Object {
 			return;
 		}
 		if (is_object($one)) {
-			$one = Set::reverse($one);
+			if ($one instanceof SimpleXMLElement || $one instanceof DOMNode) {
+				App::import('Core', 'Xml');
+				$one = $this->_normalizeXmlData(Xml::toArray($one));
+			} else {
+				$one = Set::reverse($one);
+			}
 		}
 
 		if (is_array($one)) {
@@ -866,6 +871,26 @@ class Model extends Object {
 			}
 		}
 		return $data;
+	}
+
+/**
+ * Normalize Xml::toArray() to use in Model::save()
+ *
+ * @param array $xml XML as array
+ * @return array
+ */
+	protected function _normalizeXmlData(array $xml) {
+		$return = array();
+		foreach ($xml as $key => $value) {
+			if (is_array($value)) {
+				$return[Inflector::camelize($key)] = $this->_normalizeXmlData($value);
+			} elseif ($key[0] === '@') {
+				$return[substr($key, 1)] = $value;
+			} else {
+				$return[$key] = $value;
+			}
+		}
+		return $return;
 	}
 
 /**
