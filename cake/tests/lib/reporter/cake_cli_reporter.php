@@ -98,7 +98,7 @@ class CakeCliReporter extends CakeBaseReporter {
  */
 	function paintException($exception) {
 		parent::paintException($exception);
-		$message .= sprintf('Unexpected exception of type [%s] with message [%s] in [%s] line [%s]',
+		$message = sprintf('Unexpected exception of type [%s] with message [%s] in [%s] line [%s]',
 			get_class($exception),
 			$exception->getMessage(),
 			$exception->getFile(),
