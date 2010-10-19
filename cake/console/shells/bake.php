@@ -231,6 +231,10 @@ class BakeShell extends Shell {
 		))->addSubcommand('test', array(
 			'help' => __('Bake a unit test.'),
 			'parser' => $this->Test->getOptionParser()
+		))->addOption('connection', array(
+			'help' => __('Database connection to use in conjunction with     `bake all`.'),
+			'short' => 'c',
+			'default' => 'default'
 		));
 	}
 
