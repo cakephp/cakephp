@@ -250,7 +250,7 @@ class TestTaskTest extends CakeTestCase {
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->name = 'TestTask';
+		$this->Task->name = 'Test';
 		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 	}
 

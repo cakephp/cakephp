@@ -56,6 +56,7 @@ class ControllerTask extends BakeTask {
  *
  */
 	public function execute() {
+		parent::execute();
 		if (empty($this->args)) {
 			return $this->_interactive();
 		}

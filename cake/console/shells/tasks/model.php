@@ -74,6 +74,7 @@ class ModelTask extends BakeTask {
  */
 	public function execute() {
 		App::import('Model', 'Model', false);
+		parent::execute();
 
 		if (empty($this->args)) {
 			$this->_interactive();

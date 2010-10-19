@@ -65,6 +65,7 @@ class TestTask extends BakeTask {
  *
  */
 	public function execute() {
+		parent::execute();
 		if (empty($this->args)) {
 			$this->_interactive();
 		}

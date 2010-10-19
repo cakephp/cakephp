@@ -95,6 +95,7 @@ class FixtureTask extends BakeTask {
  * @return void
  */
 	public function execute() {
+		parent::execute();
 		if (empty($this->args)) {
 			$this->_interactive();
 		}

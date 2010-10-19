@@ -50,15 +50,6 @@ class BakeShell extends Shell {
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
-			foreach($this->args as $i => $arg) {
-				if (strpos($arg, '.')) {
-					list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
-					break;
-				}
-			}
-			if (isset($this->params['plugin'])) {
-				$this->{$task}->plugin = $this->params['plugin'];
-			}
 		}
 	}
 

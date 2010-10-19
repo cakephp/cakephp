@@ -394,7 +394,7 @@ class ViewTaskTest extends CakeTestCase {
 		$this->Task->controllerName = 'ViewTaskComments';
 		$this->Task->controllerPath = 'view_task_comments';
 		$this->Task->plugin = 'TestTest';
-		$this->Task->name = 'ViewTask';
+		$this->Task->name = 'View';
 
 		$path = APP . 'plugins' . DS . 'test_test' . DS . 'views' . DS . 'view_task_comments' . DS  . 'view.ctp';
 		$this->Task->expects($this->once())->method('createFile')

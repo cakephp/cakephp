@@ -51,9 +51,27 @@ class BakeTask extends Shell {
 	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$name = substr($this->name, 0, strlen($this->name) - 4);
-			$path = $this->_pluginPath($this->plugin) . Inflector::pluralize(Inflector::underscore($name)) . DS;
+			$path = $this->_pluginPath($this->plugin) . Inflector::pluralize(Inflector::underscore($this->name)) . DS;
 		}
 		return $path;
 	}
+
+/**
+ * Base execute method parses some parameters and sets some properties on the bake tasks.
+ * call when overriding execute()
+ *
+ * @return void
+ */
+	public function execute() {
+		foreach($this->args as $i => $arg) {
+			if (strpos($arg, '.')) {
+				list($this->params['plugin'], $this->args[$i]) = pluginSplit($arg);
+				break;
+			}
+		}
+		if (isset($this->params['plugin'])) {
+			$this->plugin = $this->params['plugin'];
+		}
+	}
+
 }

@@ -91,7 +91,7 @@ class ModelTaskTest extends CakeTestCase {
 		$this->Task->Test = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher, $out, $out, $in));
 		$this->Task->Template = new TemplateTask($this->Task->Dispatch, $out, $out, $in);
 
-		$this->Task->name = 'ModelTask';
+		$this->Task->name = 'Model';
 		$this->Task->interactive = true;
 	}
 

@@ -75,7 +75,7 @@ class ControllerTaskTest extends CakeTestCase {
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
-		$this->Task->name = 'ControllerTask';
+		$this->Task->name = 'Controller';
 		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
