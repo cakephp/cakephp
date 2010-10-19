@@ -117,9 +117,6 @@ class DboPostgres extends DboSource {
 			$flags = array(
 				PDO::ATTR_PERSISTENT => $config['persistent']
 			);
-			if (!empty($config['encoding'])) {
-				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET search_path TO ' . $config['schema'];
-			}
 			$this->_connection = new PDO(
 				"pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}",
 				$config['login'],
@@ -127,11 +124,13 @@ class DboPostgres extends DboSource {
 				$flags
 			);
 
+			$this->connected = true;
 			if (!empty($config['encoding'])) {
 				$this->setEncoding($config['encoding']);
 			}
-
-			$this->connected = true;
+			if (!empty($config['schema'])) {
+				 $this->_execute('SET search_path TO ' . $config['schema']);
+			}
 		} catch (PDOException $e) {
 			$this->errors[] = $e->getMessage();
 		}
