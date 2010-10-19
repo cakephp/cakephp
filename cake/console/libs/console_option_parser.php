@@ -533,6 +533,7 @@ class ConsoleOptionParser {
 		}
 		if (!empty($this->_epilog)) {
 			$out[] = String::wrap($this->_epilog, $width);
+			$out[] = '';
 		}
 		return implode("\n", $out);
 	}

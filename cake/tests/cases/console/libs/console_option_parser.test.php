@@ -501,6 +501,7 @@ cake mycommand [-h] [--test] <model>
 model  The model to make.
 
 epilog text
+
 TEXT;
 		$this->assertEquals($expected, $result, 'Help is wrong.');
 	}
