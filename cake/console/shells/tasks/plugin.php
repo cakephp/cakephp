@@ -28,12 +28,6 @@ App::import('Core', 'File');
 class PluginTask extends Shell {
 
 /**
- * Tasks
- *
- */
-	public $tasks = array('Model', 'Controller', 'View');
-
-/**
  * path to CONTROLLERS directory
  *
  * @var array
@@ -61,13 +55,9 @@ class PluginTask extends Shell {
 		if (isset($this->args[0])) {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
-			$this->Dispatch->shiftArgs();
 			if (is_dir($pluginPath)) {
 				$this->out(sprintf(__('Plugin: %s'), $plugin));
 				$this->out(sprintf(__('Path: %s'), $pluginPath));
-			} elseif (isset($this->args[0])) {
-				$this->err(sprintf(__('%s in path %s not found.'), $plugin, $pluginPath));
-				$this->_stop();
 			} else {
 				$this->_interactive($plugin);
 			}
