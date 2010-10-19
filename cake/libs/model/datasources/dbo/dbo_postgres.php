@@ -199,15 +199,15 @@ class DboPostgres extends DboSource {
 
 			foreach ($cols as $c) {
 				$type = $c->type;
-				if (!empty($c->char_length)) {
-					$length = intval($c->char_length);
-				} elseif (!empty($c->oct_length)) {
+				if (!empty($c->oct_length) && $c->char_length === null) {
 					if ($c->type == 'character varying') {
 						$length = null;
 						$type = 'text';
 					} else {
 						$length = intval($c->oct_length);
 					}
+				} elseif (!empty($c->char_length)) {
+					$length = intval($c->char_length);
 				} else {
 					$length = $this->length($c->type);
 				}

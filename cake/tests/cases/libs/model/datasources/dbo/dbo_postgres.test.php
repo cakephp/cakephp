@@ -556,12 +556,12 @@ class DboPostgresTest extends CakeTestCase {
 		$db1 = ConnectionManager::getDataSource('test');
 		$db1->cacheSources = false;
 		$db1->reconnect(array('persistent' => false));
-		$db1->query('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
+		$db1->rawQuery('CREATE TABLE ' .  $db1->fullTableName('datatypes') . ' (
 			id serial NOT NULL,
 			"varchar" character varying(40) NOT NULL,
 			"full_length" character varying NOT NULL,
 			"timestamp" timestamp without time zone,
-			date date,
+			"date" date,
 			CONSTRAINT test_data_types_pkey PRIMARY KEY (id)
 		)');
 		$model = new Model(array('name' => 'Datatype', 'ds' => 'test'));
@@ -570,21 +570,21 @@ class DboPostgresTest extends CakeTestCase {
 			'connection' => 'test',
 			'models' => array('Datatype')
 		));
-		$schema->tables = array('datatypes' => $result['tables']['datatypes']);
+
+		$schema->tables = array('datatypes' => $result['tables']['missing']['datatypes']);
 		$result = $db1->createSchema($schema, 'datatypes');
+		$db1->rawQuery('DROP TABLE ' . $db1->fullTableName('datatypes'));
 
 		$this->assertNoPattern('/timestamp DEFAULT/', $result);
 		$this->assertPattern('/\"full_length\"\s*text\s.*,/', $result);
 		$this->assertPattern('/timestamp\s*,/', $result);
-
-		$db1->query('DROP TABLE ' . $db1->fullTableName('datatypes'));
 
 		$db1->query($result);
 		$result2 = $schema->read(array(
 			'connection' => 'test',
 			'models' => array('Datatype')
 		));
-		$schema->tables = array('datatypes' => $result2['tables']['datatypes']);
+		$schema->tables = array('datatypes' => $result2['tables']['missing']['datatypes']);
 		$result2 = $db1->createSchema($schema, 'datatypes');
 		$this->assertEqual($result, $result2);
 
