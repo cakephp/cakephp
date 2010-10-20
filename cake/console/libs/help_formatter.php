@@ -29,11 +29,12 @@ class HelpFormatter {
 	}
 
 /**
- * Get the help as text.
+ * Get the help as formatted text suitable for output on the command line.
  *
+ * @param integer $width The width of the help output.
  * @return string
  */
-	public function text($width) {
+	public function text($width = 72) {
 		$parser = $this->_parser;
 		$out = array();
 		$description = $parser->description();

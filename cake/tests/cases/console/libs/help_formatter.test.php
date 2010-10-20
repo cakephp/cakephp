@@ -16,7 +16,9 @@ class HelpFormatterTest extends CakeTestCase {
 			->addOption('four', array('help' => 'this is help text this is help text'))
 			->addArgument('four', array('help' => 'this is help text this is help text'))
 			->addSubcommand('four', array('help' => 'this is help text this is help text'));
-		$result = $parser->help(null, 30);
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text(30);
 		$expected = <<<TEXT
 This is fifteen This is
 fifteen This is fifteen
@@ -62,7 +64,8 @@ TEXT;
 			))
 			->addArgument('other_longer', array('help' => 'Another argument.'));
 
-		$result = $parser->help();
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
 		$expected = <<<TEXT
 <info>Usage:</info>
 cake mycommand [-h] [--test one|two] <aco|aro> [<other_longer>]
@@ -93,7 +96,8 @@ TEXT;
 			->addOption('test', array('help' => 'A test option.'))
 			->addArgument('model', array('help' => 'The model to make.', 'required' => true));
 
-		$result = $parser->help();
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
 		$expected = <<<TEXT
 Description text
 
@@ -125,7 +129,8 @@ TEXT;
 		$parser->addSubcommand('method', array('help' => 'This is another command'))
 			->addOption('test', array('help' => 'A test option.'));
 
-		$result = $parser->help();
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
 		$expected = <<<TEXT
 <info>Usage:</info>
 cake mycommand [subcommand] [-h] [--test]
@@ -146,36 +151,6 @@ TEXT;
 	}
 
 /**
- * test that help() with a command param shows the help for a subcommand
- *
- * @return void
- */
-	function testHelpSubcommandHelp() {
-		$subParser = new ConsoleOptionParser('method', false);
-		$subParser->addOption('connection', array('help' => 'Db connection.'));
-
-		$parser = new ConsoleOptionParser('mycommand', false);
-		$parser->addSubcommand('method', array(
-				'help' => 'This is another command',
-				'parser' => $subParser
-			))
-			->addOption('test', array('help' => 'A test option.'));
-
-		$result = $parser->help('method');
-		$expected = <<<TEXT
-<info>Usage:</info>
-cake mycommand method [-h] [--connection]
-
-<info>Options:</info>
-
---help, -h        Display this help.
---connection      Db connection.
-
-TEXT;
-		$this->assertEquals($expected, $result, 'Help is not correct.');
-	}
-
-/**
  * test getting help with defined options.
  *
  * @return void
@@ -187,7 +162,8 @@ TEXT;
 				'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
 			));
 
-		$result = $parser->help();
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
 		$expected = <<<TEXT
 <info>Usage:</info>
 cake mycommand [-h] [--test] [-c default]
@@ -214,7 +190,8 @@ TEXT;
 			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
 			->addArgument('other_longer', array('help' => 'Another argument.'));
 
-		$result = $parser->help();
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->text();
 		$expected = <<<TEXT
 <info>Usage:</info>
 cake mycommand [-h] [--test] <model> [<other_longer>]
