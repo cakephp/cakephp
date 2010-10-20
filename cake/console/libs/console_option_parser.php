@@ -470,7 +470,7 @@ class ConsoleOptionParser {
  * @param int $width The width to format user content to. Defaults to 72
  * @return string Generated help.
  */
-	public function help($subcommand = null, $width = 72) {
+	public function help($subcommand = null, $format = 'text', $width = 72) {
 		if (
 			isset($this->_subcommands[$subcommand]) &&
 			$this->_subcommands[$subcommand]->parser() instanceof self
@@ -480,7 +480,11 @@ class ConsoleOptionParser {
 			return $subparser->help();
 		}
 		$formatter = new HelpFormatter($this);
-		return $formatter->text($width);
+		if ($format == 'text' || $format === true) {
+			return $formatter->text($width);
+		} elseif ($format == 'xml') {
+			return $formatter->xml();
+		}
 	}
 
 /**

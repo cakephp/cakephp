@@ -338,11 +338,19 @@ class Shell extends Object {
 		list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
 		$this->command = $command;
 
+		if (!empty($this->params['help'])) {
+			$isXml = false;
+			$format = 'text';
+			if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
+				$format = 'xml';
+			} else {
+				$this->_welcome();
+			}
+			return $this->out($this->OptionParser->help($command, $format));
+		}
+
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
 			$this->startup();
-		}
-		if (!empty($this->params['help'])) {
-			return $this->out($this->OptionParser->help($command));
 		}
 
 		if ($isTask) {
