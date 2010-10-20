@@ -1,7 +1,6 @@
 <?php
 /**
- * A class to format help for console shells.  Can format to either
- * text or XML formats
+ * HelpFormatter
  *
  * PHP 5
  *
@@ -17,6 +16,16 @@
  * @subpackage    cake.cake.console
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+/**
+ * HelpFormatter formats help for console shells.  Can format to either
+ * text or XML formats.  Uses ConsoleOptionParser methods to generate help.
+ *
+ * Generally not directly used. Using $parser->help($command, 'xml'); is usually
+ * how you would access help.  Or via the `--help=xml` option on the command line.
+ *
+ * Xml output is useful for intergration with other tools like IDE's or other build tools.
+ *
  */
 class HelpFormatter {
 /**
@@ -140,9 +149,28 @@ class HelpFormatter {
 /**
  * Get the help as an xml string.
  *
- * @return string
+ * @param boolean $string Return the SimpleXml object or a string.  Defaults to true.
+ * @return mixed. See $string
  */
-	public function xml() {
+	public function xml($string = false) {
+		$parser = $this->_parser;
+		$xml = new SimpleXmlElement('<shell></shell>');
+		$xml->addChild('commmand', $parser->command());
+		$xml->addChild('description', $parser->description());
 		
+		$xml->addChild('epilog', $parser->epilog());
+		$subcommands = $xml->addChild('subcommands');
+		foreach ($parser->subcommands() as $command) {
+			$command->xml($subcommands);
+		}
+		$options = $xml->addChild('options');
+		foreach ($parser->options() as $option) {
+			$option->xml($options);
+		}
+		$arguments = $xml->addChild('arguments');
+		foreach ($parser->arguments() as $argument) {
+			$argument->xml($arguments);
+		}
+		return $xml->asXml();
 	}
 }

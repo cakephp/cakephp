@@ -209,4 +209,216 @@ other_longer  Another argument. <comment>(optional)</comment>
 TEXT;
 		$this->assertEquals($expected, $result, 'Help does not match');
 	}
+
+/**
+ * test help() with options and arguments that have choices.
+ *
+ * @return void
+ */
+	function testXmlHelpWithChoices() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.', 'choices' => array('one', 'two')))
+			->addArgument('type', array(
+				'help' => 'Resource type.',
+				'choices' => array('aco', 'aro'),
+				'required' => true
+			))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml();
+		$expected = <<<TEXT
+<?xml version="1.0"?>
+<shell>
+<name>mycommand</name>
+<description>Description text</description>
+<subcommands />
+<options>
+	<option name="--help" short="-h" help="Display this help." boolean="1">
+		<default></default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0">
+		<default></default>
+		<choices>
+			<choice>one</choice>
+			<choice>two</choice>
+		</choices>
+	</option>
+</options>
+<arguments>
+	<argument name="type" help="Resource type." required="1">
+		<choices>
+			<choice>aco</choice>
+			<choice>aro</choice>
+		</choices>
+	</argument>
+</arguments>
+<epilog>epilog text</epilog>
+</shell>
+TEXT;
+		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+	}
+
+/**
+ * test description and epilog in the help
+ *
+ * @return void
+ */
+	function testXmlHelpDescriptionAndEpilog() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->description('Description text')
+			->epilog('epilog text')
+			->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml();
+		$expected = <<<TEXT
+<?xml version="1.0"?>
+<shell>
+<name>mycommand</name>
+<description>Description text</description>
+<subcommands />
+<options>
+	<option name="--help" short="-h" help="Display this help." boolean="1">
+		<default></default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0">
+		<default></default>
+		<choices></choices>
+	</option>
+</options>
+<arguments>
+	<argument name="model" help="The model to make." required="1">
+		<choices></choices>
+	</argument>
+</arguments>
+<epilog>epilog text</epilog>
+</shell>
+TEXT;
+		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+	}
+
+/**
+ * test that help() outputs subcommands.
+ *
+ * @return void
+ */
+	function testXmlHelpSubcommand() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addSubcommand('method', array('help' => 'This is another command'))
+			->addOption('test', array('help' => 'A test option.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml();
+		$expected = <<<TEXT
+<?xml version="1.0"?>
+<shell>
+<name>mycommand</name>
+<description/>
+<subcommands>
+	<command name="method" help="This is another command" />
+</subcommands>
+<options>
+	<option name="--help" short="-h" help="Display this help." boolean="1">
+		<default></default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0">
+		<default></default>
+		<choices></choices>
+	</option>
+</options>
+<arguments/>
+<epilog/>
+</shell>
+TEXT;
+		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+	}
+
+/**
+ * test getting help with defined options.
+ *
+ * @return void
+ */
+	function testXmlHelpWithOptions() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.'))
+			->addOption('connection', array(
+				'short' => 'c', 'help' => 'The connection to use.', 'default' => 'default'
+			));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml();
+		$expected = <<<TEXT
+<?xml version="1.0"?>
+<shell>
+<name>mycommand</name>
+<description/>
+<subcommands/>
+<options>
+	<option name="--help" short="-h" help="Display this help." boolean="1">
+		<default></default>
+		<choices></choices>
+	</option>
+	<option name="--test" short="" help="A test option." boolean="0">
+		<default></default>
+		<choices></choices>
+	</option>
+	<option name="--connection" short="-c" help="The connection to use." boolean="0">
+		<default>default</default>
+		<choices></choices>
+	</option>
+</options>
+<arguments/>
+<epilog/>
+</shell>
+TEXT;
+		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+	}
+
+/**
+ * test getting help with defined options.
+ *
+ * @return void
+ */
+	function testXmlHelpWithOptionsAndArguments() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml();
+		$expected = <<<TEXT
+<?xml version="1.0"?>
+<shell>
+	<name>mycommand</name>
+	<description/>
+	<subcommands/>
+	<options>
+		<option name="--help" short="-h" help="Display this help." boolean="1">
+			<default></default>
+			<choices></choices>
+		</option>
+		<option name="--test" short="" help="A test option." boolean="0">
+			<default></default>
+			<choices></choices>
+		</option>
+	</options>
+	<arguments>
+		<argument name="model" help="The model to make." required="1">
+			<choices></choices>
+		</argument>
+		<argument name="other_longer" help="Another argument." required="0">
+			<choices></choices>
+		</argument>
+	</arguments>
+	<epilog/>
+</shell>
+TEXT;
+		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
+	}
 }

@@ -123,4 +123,22 @@ class ConsoleInputArgument {
 		}
 		return true;
 	}
+
+/**
+ * Append this argument to the passed in SimpleXml object.
+ *
+ * @param SimpleXmlElement The parent element.
+ * @return SimpleXmlElement The parent with this argument appended.
+ */
+	public function xml(SimpleXmlElement $parent) {
+		$option = $parent->addChild('argument');
+		$option->addAttribute('name', $this->_name);
+		$option->addAttribute('help', $this->_help);
+		$option->addAttribute('required', $this->isRequired());
+		$choices = $option->addChild('choices');
+		foreach ($this->_choices as $valid) {
+			$choices->addChild('choice', $valid);
+		}
+		return $parent;
+	}
 }

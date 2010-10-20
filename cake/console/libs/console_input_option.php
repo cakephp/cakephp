@@ -140,4 +140,27 @@ class ConsoleInputOption {
 		}
 		return true;
 	}
+
+/**
+ * Append the option's xml into the parent.
+ *
+ * @param SimpleXmlElement The parent element.
+ * @return SimpleXmlElement The parent with this option appended.
+ */
+	public function xml(SimpleXmlElement $parent) {
+		$option = $parent->addChild('option');
+		$option->addAttribute('name', '--' . $this->_name);
+		$short = '';
+		if (strlen($this->_short)) {
+			$short = $this->_short;
+		}
+		$option->addAttribute('short', '-' . $short);
+		$option->addAttribute('boolean', $this->_boolean);
+		$option->addChild('default', $this->_default);
+		$choices = $option->addChild('choices');
+		foreach ($this->_choices as $valid) {
+			$choices->addChild('choice', $valid);
+		}
+		return $parent;
+	}
 }

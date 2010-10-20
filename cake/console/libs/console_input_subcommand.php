@@ -89,4 +89,17 @@ class ConsoleInputSubcommand {
 		}
 		return false;
 	}
+
+/**
+ * Append this subcommand to the Parent element
+ *
+ * @param SimpleXmlElement The parent element.
+ * @return SimpleXmlElement The parent with this subcommand appended.
+ */
+	public function xml(SimpleXmlElement $parent) {
+		$command = $parent->addChild('command');
+		$command->addAttribute('name', $this->_name);
+		$command->addAttribute('help', $this->_help);
+		return $parent;
+	}
 }
