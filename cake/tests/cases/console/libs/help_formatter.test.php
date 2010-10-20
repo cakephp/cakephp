@@ -421,4 +421,20 @@ TEXT;
 TEXT;
 		$this->assertEquals(new DomDocument($expected), new DomDocument($result), 'Help does not match');
 	}
+
+/**
+ * Test xml help as object
+ *
+ * @return void
+ */
+	function testXmlHelpAsObject() {
+		$parser = new ConsoleOptionParser('mycommand', false);
+		$parser->addOption('test', array('help' => 'A test option.'))
+			->addArgument('model', array('help' => 'The model to make.', 'required' => true))
+			->addArgument('other_longer', array('help' => 'Another argument.'));
+
+		$formatter = new HelpFormatter($parser);
+		$result = $formatter->xml(false);
+		$this->assertType('SimpleXmlElement', $result);
+	}
 }

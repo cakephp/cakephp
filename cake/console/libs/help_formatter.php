@@ -152,7 +152,7 @@ class HelpFormatter {
  * @param boolean $string Return the SimpleXml object or a string.  Defaults to true.
  * @return mixed. See $string
  */
-	public function xml($string = false) {
+	public function xml($string = true) {
 		$parser = $this->_parser;
 		$xml = new SimpleXmlElement('<shell></shell>');
 		$xml->addChild('commmand', $parser->command());
@@ -171,6 +171,6 @@ class HelpFormatter {
 		foreach ($parser->arguments() as $argument) {
 			$argument->xml($arguments);
 		}
-		return $xml->asXml();
+		return $string ? $xml->asXml() : $xml;
 	}
 }
