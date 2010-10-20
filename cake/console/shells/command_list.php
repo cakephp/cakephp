@@ -24,24 +24,38 @@
  * @package cake.console.libs
  */
 class CommandListShell extends Shell {
+
+/**
+ * undocumented function
+ *
+ * @return void
+ */
+	public function startup() {
+		if (empty($this->params['xml'])) {
+			parent::startup();
+		}
+	}
+
 /**
  * Main function Prints out the list of shells.
  *
  * @return void
  */
 	public function main() {
-		$this->out("<info>Current Paths:</info>", 2);
-		$this->out(" -app: ". $this->Dispatch->params['app']);
-		$this->out(" -working: " . rtrim($this->Dispatch->params['working'], DS));
-		$this->out(" -root: " . rtrim($this->Dispatch->params['root'], DS));
-		$this->out(" -core: " . rtrim(CORE_PATH, DS));
-		$this->out("");
-		$this->out("<info>Changing Paths:</info>", 2);
-		$this->out("Your working path should be the same as your application path");
-		$this->out("to change your path use the '-app' param.");
-		$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp", 2);
+		if (empty($this->params['xml'])) {
+			$this->out("<info>Current Paths:</info>", 2);
+			$this->out(" -app: ". $this->Dispatch->params['app']);
+			$this->out(" -working: " . rtrim($this->Dispatch->params['working'], DS));
+			$this->out(" -root: " . rtrim($this->Dispatch->params['root'], DS));
+			$this->out(" -core: " . rtrim(CORE_PATH, DS));
+			$this->out("");
+			$this->out("<info>Changing Paths:</info>", 2);
+			$this->out("Your working path should be the same as your application path");
+			$this->out("to change your path use the '-app' param.");
+			$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp", 2);
 
-		$this->out("<info>Available Shells:</info>", 2);
+			$this->out("<info>Available Shells:</info>", 2);
+		}
 
 		$shellList = $this->_getShellList();
 
