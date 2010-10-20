@@ -484,27 +484,6 @@ class ConsoleOptionParser {
 	}
 
 /**
- * Generate the usage for a shell based on its arguments and options.
- * Usage strings favour short options over the long ones. and optional args will
- * be indicated with []
- *
- * @return string
- */
-	protected function _generateUsage() {
-		$usage = array('cake ' . $this->_command);
-		if (!empty($this->_subcommands)) {
-			$usage[] = '[subcommand]';
-		}
-		foreach ($this->_options as $option) {
-			$usage[] = $option->usage();
-		}
-		foreach ($this->_args as $argument) {
-			$usage[] = $argument->usage();
-		}
-		return implode(' ', $usage);
-	}
-
-/**
  * Parse the value for a long option out of $this->_tokens.  Will handle
  * options with an `=` in them.
  *
@@ -605,16 +584,4 @@ class ConsoleOptionParser {
 		return isset($this->_tokens[0]) ? $this->_tokens[0] : '';
 	}
 
-/**
- * Iterate over a collection and find the longest named thing.
- *
- * @return integer
- */
-	protected function _getMaxLength($collection) {
-		$max = 0;
-		foreach ($collection as $item) {
-			$max = (strlen($item->name()) > $max) ? strlen($item->name()) : $max;
-		}
-		return $max;
-	}
 }
