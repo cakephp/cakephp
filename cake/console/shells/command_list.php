@@ -26,7 +26,7 @@
 class CommandListShell extends Shell {
 
 /**
- * undocumented function
+ * startup
  *
  * @return void
  */
