@@ -48,7 +48,7 @@ class CommandListTest extends CakeTestCase {
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
-		App::objects('plugins', null, false);
+		App::objects('plugin', null, false);
 
 		$this->Dispatcher = $this->getMock(
 			'ShellDispatcher', 
@@ -82,7 +82,7 @@ class CommandListTest extends CakeTestCase {
 	function testMain() {
 		$this->Shell->main();
 		$output = $this->Shell->stdout->output;
-
+;
 		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
 		$this->assertPattern($expected, $output);
 
@@ -112,5 +112,26 @@ class CommandListTest extends CakeTestCase {
 
 		$expected = "/sample \[.*app.*\]/";
 		$this->assertPattern($expected, $output);
+	}
+
+/**
+ * test xml output.
+ *
+ * @return void
+ */
+	function testMainXml() {
+		$this->Shell->params['xml'] = true;
+		$this->Shell->main();
+
+		$output = $this->Shell->stdout->output;
+
+		$find = '<shell name="sample" call_as="sample" provider="app" help="sample -h"/>';
+		$this->assertContains($find, $output);
+
+		$find = '<shell name="bake" call_as="bake" provider="CORE" help="bake -h"/>';
+		$this->assertContains($find, $output);
+		
+		$find = '<shell name="welcome" call_as="test_plugin_two.welcome" provider="TestPluginTwo" help="test_plugin_two.welcome -h"/>';
+		$this->assertContains($find, $output);
 	}
 }

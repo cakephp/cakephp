@@ -42,6 +42,25 @@ class CommandListShell extends Shell {
 		$this->out("Example: -app relative/path/to/myapp or -app /absolute/path/to/myapp", 2);
 
 		$this->out("<info>Available Shells:</info>", 2);
+
+		$shellList = $this->_getShellList();
+
+		if ($shellList) {
+			ksort($shellList);
+			if (empty($this->params['xml'])) {
+				$this->_asText($shellList);
+			} else {
+				$this->_asXml($shellList);
+			}
+		}
+	}
+
+/**
+ * Gets the shell command listing.
+ *
+ * @return array 
+ */
+	protected function _getShellList() {
 		$shellList = array();
 
 		$corePaths = App::core('shells');
@@ -55,37 +74,7 @@ class CommandListShell extends Shell {
 			$pluginPath = App::pluginPath($plugin) . 'console' . DS . 'shells' . DS;
 			$shellList = $this->_appendShells($plugin, array($pluginPath), $shellList);
 		}
-
-		if ($shellList) {
-			ksort($shellList);
-			if (DS === '/') {
-				$width = exec('tput cols') - 2;
-			}
-			if (empty($width)) {
-				$width = 80;
-			}
-			$columns = max(1, floor($width / 30));
-			$rows = ceil(count($shellList) / $columns);
-
-			foreach ($shellList as $shell => $types) {
-				sort($types);
-				$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
-			}
-			$out = array_chunk($shellList, $rows);
-			for ($i = 0; $i < $rows; $i++) {
-				$row = '';
-				for ($j = 0; $j < $columns; $j++) {
-					if (!isset($out[$j][$i])) {
-						continue;
- 					}
-					$row .= $out[$j][$i];
- 				}
-				$this->out(" " . $row);
-			}
-		}
-		$this->out();
-		$this->out("To run a command, type <info>cake shell_name [args]</info>");
-		$this->out("To get help on a specific command, type <info>cake shell_name --help</info>", 2);
+		return $shellList;
 	}
 
 /**
@@ -111,5 +100,77 @@ class CommandListShell extends Shell {
 			}
 		}
 		return $shellList;
+	}
+
+/**
+ * Output text.
+ *
+ * @return void
+ */
+	protected function _asText($shellList) {
+		if (DS === '/') {
+			$width = exec('tput cols') - 2;
+		}
+		if (empty($width)) {
+			$width = 80;
+		}
+		$columns = max(1, floor($width / 30));
+		$rows = ceil(count($shellList) / $columns);
+
+		foreach ($shellList as $shell => $types) {
+			sort($types);
+			$shellList[$shell] = str_pad($shell . ' [' . implode ($types, ', ') . ']', $width / $columns);
+		}
+		$out = array_chunk($shellList, $rows);
+		for ($i = 0; $i < $rows; $i++) {
+			$row = '';
+			for ($j = 0; $j < $columns; $j++) {
+				if (!isset($out[$j][$i])) {
+					continue;
+				}
+				$row .= $out[$j][$i];
+			}
+			$this->out(" " . $row);
+		}
+		$this->out();
+		$this->out("To run a command, type <info>cake shell_name [args]</info>");
+		$this->out("To get help on a specific command, type <info>cake shell_name --help</info>", 2);
+	}
+
+/**
+ * Output as XML
+ *
+ * @return void
+ */
+	protected function _asXml($shellList) {
+		$plugins = App::objects('plugin');
+		$shells = new SimpleXmlElement('<shells></shells>');
+		foreach ($shellList as $name => $location) {
+			$source = current($location);
+			$callable = $name;
+			if (in_array($source, $plugins)) {
+				$callable = Inflector::underscore($source) . '.' . $name;
+			}
+			$shell = $shells->addChild('shell');
+			$shell->addAttribute('name', $name);
+			$shell->addAttribute('call_as', $callable);
+			$shell->addAttribute('provider', $source);
+			$shell->addAttribute('help', $callable . ' -h');
+		}
+		$this->out($shells->saveXml());
+	}
+
+/**
+ * get the option parser
+ *
+ * @return void
+ */
+	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+		return $parser->description('Get the list of available shells for this CakePHP application.')
+			->addOption('xml', array(
+				'help' => __('Get the listing as XML.'),
+				'boolean' => true
+			));
 	}
 }
