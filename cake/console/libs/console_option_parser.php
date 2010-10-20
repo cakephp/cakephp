@@ -20,6 +20,7 @@
 require_once CONSOLE_LIBS . 'console_input_option.php';
 require_once CONSOLE_LIBS . 'console_input_argument.php';
 require_once CONSOLE_LIBS . 'console_input_subcommand.php';
+require_once CONSOLE_LIBS . 'help_formatter.php';
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -478,64 +479,8 @@ class ConsoleOptionParser {
 			$subparser->command($this->command() . ' ' . $subparser->command());
 			return $subparser->help();
 		}
-		$out = array();
-		if (!empty($this->_description)) {
-			$out[] = String::wrap($this->_description, $width);
-			$out[] = '';
-		}
-		$out[] = '<info>Usage:</info>';
-		$out[] = $this->_generateUsage();
-		$out[] = '';
-		if (!empty($this->_subcommands)) {
-			$out[] = '<info>Subcommands:</info>';
-			$out[] = '';
-			$max = $this->_getMaxLength($this->_subcommands) + 2;
-			foreach ($this->_subcommands as $command) {
-				$out[] = String::wrap($command->help($max), array(
-					'width' => $width,
-					'indent' => str_repeat(' ', $max),
-					'indentAt' => 1
-				));
-			}
-			$out[] = '';
-			$out[] = sprintf(
-				__('To see help on a subcommand use <info>`cake %s [subcommand] --help`</info>'),
-				$this->command()
-			);
-			$out[] = '';
-		}
-
-		if (!empty($this->_options)) {
-			$max = $this->_getMaxLength($this->_options) + 8;
-			$out[] = '<info>Options:</info>';
-			$out[] = '';
-			foreach ($this->_options as $option) {
-				$out[] = String::wrap($option->help($max), array(
-					'width' => $width,
-					'indent' => str_repeat(' ', $max),
-					'indentAt' => 1
-				));
-			}
-			$out[] = '';
-		}
-		if (!empty($this->_args)) {
-			$max = $this->_getMaxLength($this->_args) + 2;
-			$out[] = '<info>Arguments:</info>';
-			$out[] = '';
-			foreach ($this->_args as $argument) {
-				$out[] = String::wrap($argument->help($max), array(
-					'width' => $width,
-					'indent' => str_repeat(' ', $max),
-					'indentAt' => 1
-				));
-			}
-			$out[] = '';
-		}
-		if (!empty($this->_epilog)) {
-			$out[] = String::wrap($this->_epilog, $width);
-			$out[] = '';
-		}
-		return implode("\n", $out);
+		$formatter = new HelpFormatter($this);
+		return $formatter->text($width);
 	}
 
 /**
