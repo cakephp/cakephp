@@ -477,7 +477,7 @@ class ConsoleOptionParser {
 		) {
 			$subparser = $this->_subcommands[$subcommand]->parser();
 			$subparser->command($this->command() . ' ' . $subparser->command());
-			return $subparser->help();
+			return $subparser->help(null, $format, $width);
 		}
 		$formatter = new HelpFormatter($this);
 		if ($format == 'text' || $format === true) {

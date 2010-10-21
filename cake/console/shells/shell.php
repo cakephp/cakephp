@@ -339,7 +339,6 @@ class Shell extends Object {
 		$this->command = $command;
 
 		if (!empty($this->params['help'])) {
-			$isXml = false;
 			$format = 'text';
 			if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
 				$format = 'xml';
