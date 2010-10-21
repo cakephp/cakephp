@@ -773,7 +773,10 @@ class DboPostgres extends DboSource {
  * @return boolean True on success, false on failure
  */
 	function setEncoding($enc) {
-		return pg_set_client_encoding($this->connection, $enc) == 0;
+		if ($this->_execute('SET NAMES ?', array($enc))) {
+			return true;
+		}
+		return false;
 	}
 
 /**
