@@ -318,9 +318,9 @@ class DboPostgres extends DboSource {
 			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
 					if ($reset === 0) {
-						$this->execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
+						$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
 					} elseif ($reset === -1) {
-						$this->execute("DROP SEQUENCE IF EXISTS \"{$sequence}\"");
+						$this->_execute("DROP SEQUENCE IF EXISTS \"{$sequence}\"");
 					}
 				}
 			}
