@@ -321,6 +321,15 @@ class DboSource extends DataSource {
  * query returning no rows, suchs as a CREATE statement, false otherwise
  */
 	protected function _execute($sql, $params = array()) {
+		$sql = trim($sql);
+		if (preg_match('/^CREATE|^ALTER|^DROP/i', $sql)) {
+			$statements = array_filter(explode(';', $sql));
+			if (count($statements) > 1) {
+				$result = array_map(array($this, '_execute'), $statements);
+				return array_search(false, $result) === false;
+			}
+		}
+
 		$query = $this->_connection->prepare($sql);
 		$query->setFetchMode(PDO::FETCH_LAZY);
 		if (!$query->execute($params)) {

@@ -691,7 +691,7 @@ class DboPostgresTest extends CakeTestCase {
 				'group2' => array('type' => 'integer', 'null' => true)
 			)
 		));
-		$this->Dbo->query($this->Dbo->createSchema($schema1));
+		$this->Dbo->rawQuery($this->Dbo->createSchema($schema1));
 
 		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest2',
