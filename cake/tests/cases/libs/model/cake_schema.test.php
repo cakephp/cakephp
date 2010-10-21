@@ -559,13 +559,6 @@ class CakeSchemaTest extends CakeTestCase {
 			$this->Schema->tables['datatypes']['float_field']
 		);
 
-		$db =& ConnectionManager::getDataSource('test_suite');
-		$config = $db->config;
-		$config['prefix'] = 'schema_test_prefix_';
-		ConnectionManager::create('schema_prefix', $config);
-		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
-		$this->assertTrue(empty($read['tables']));
-
 		$SchemaPost =& ClassRegistry::init('SchemaPost');
 		$SchemaPost->table = 'sts';
 		$SchemaPost->tablePrefix = 'po';
@@ -601,6 +594,20 @@ class CakeSchemaTest extends CakeTestCase {
 		unset($read['tables']['missing']);
 		$this->assertTrue(isset($read['tables']['auth_users']), 'auth_users key missing %s');
 
+	}
+
+/**
+ * test reading schema with config prefix.
+ *
+ * @return void
+ */
+	function testSchemaReadWithConfigPrefix() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$config = $db->config;
+		$config['prefix'] = 'schema_test_prefix_';
+		ConnectionManager::create('schema_prefix', $config);
+		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
+		$this->assertTrue(empty($read['tables']));
 	}
 
 /**

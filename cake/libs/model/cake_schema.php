@@ -253,13 +253,18 @@ class CakeSchema extends Object {
 				}
 
 				if (is_object($Object) && $Object->useTable !== false) {
-					$table = $db->fullTableName($Object, false);
-					if (in_array($table, $currentTables)) {
-						$key = array_search($table, $currentTables);
+					$fulltable = $table = $db->fullTableName($Object, false);
+					if ($prefix && strpos($table, $prefix) !== 0) {
+						continue;
+					}
+					$table = str_replace($prefix, '', $table);
+
+					if (in_array($fulltable, $currentTables)) {
+						$key = array_search($fulltable, $currentTables);
 						if (empty($tables[$table])) {
 							$tables[$table] = $this->__columns($Object);
 							$tables[$table]['indexes'] = $db->index($Object);
-							$tables[$table]['tableParameters'] = $db->readTableParameters($table);
+							$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
 							unset($currentTables[$key]);
 						}
 						if (!empty($Object->hasAndBelongsToMany)) {
