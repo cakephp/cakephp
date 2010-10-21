@@ -92,7 +92,7 @@ class CakeCliReporter extends CakeBaseReporter {
 /**
  * Paint exception faildetail to STDERR.
  *
- * @param string $message Message of the Error
+ * @param object $exception Exception instance
  * @return void
  * @access public
  */
