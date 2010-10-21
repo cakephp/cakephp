@@ -171,7 +171,7 @@ class ConsoleOutputTest extends CakeTestCase {
  */
 	function testFormattingMissingStyleName() {
 		$this->output->expects($this->once())->method('_write')
-			->with("Error: Something bad");
+			->with("<not_there>Error:</not_there> Something bad");
 
 		$this->output->write('<not_there>Error:</not_there> Something bad', false);
 	}

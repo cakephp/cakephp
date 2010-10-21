@@ -176,7 +176,7 @@ class ConsoleOutput {
 	protected function _replaceTags($matches) {
 		$style = $this->styles($matches['tag']);
 		if (empty($style)) {
-			return $matches['text'];
+			return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
 		}
 
 		$styleInfo = array();
