@@ -361,7 +361,7 @@ class DboPostgres extends DboSource {
 		}
 		$count = count($fields);
 
-		if ($count >= 1 && strpos($fields[0], 'COUNT(*)') === false) {
+		if ($count >= 1 && !preg_match('/^\s*COUNT\(/', $fields[0])) {
 			$result = array();
 			for ($i = 0; $i < $count; $i++) {
 				if (!preg_match('/^.+\\(.*\\)/', $fields[$i]) && !preg_match('/\s+AS\s+/', $fields[$i])) {
