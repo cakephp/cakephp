@@ -308,20 +308,16 @@ class DboPostgres extends DboSource {
  * Deletes all the records in a table and drops all associated auto-increment sequences
  *
  * @param mixed $table A string or model class representing the table to be truncated
- * @param integer $reset If -1, sequences are dropped, if 0 (default), sequences are reset,
+ * @param boolean $reset true for resseting the sequence, false to leave it as is.
  *						and if 1, sequences are not modified
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
-	public function truncate($table, $reset = 0) {
+	public function truncate($table, $reset = true) {
 		if (parent::truncate($table)) {
 			$table = $this->fullTableName($table, false);
-			if (isset($this->_sequenceMap[$table]) && $reset !== 1) {
+			if (isset($this->_sequenceMap[$table]) && $reset) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
-					if ($reset === 0) {
-						$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
-					} elseif ($reset === -1) {
-						$this->_execute("DROP SEQUENCE IF EXISTS \"{$sequence}\"");
-					}
+					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
 				}
 			}
 			return true;
