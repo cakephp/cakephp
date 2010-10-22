@@ -742,24 +742,29 @@ class DboPostgres extends DboSource {
 /**
  * Translates between PHP boolean values and PostgreSQL boolean values
  *
- * @param mixed $data Value to be translated
- * @param boolean $quote	True to quote value, false otherwise
- * @return mixed Converted boolean value
+ * @param mixed $data Value to be translated  
+ * @param boolean $quote true to quote a boolean to be used in a query, flase to return the boolean value
+ * @return boolean Converted boolean value
  */
 	function boolean($data, $quote = true) {
 		switch (true) {
 			case ($data === true || $data === false):
-				return $data;
+				$result = $data;
 			case ($data === 't' || $data === 'f'):
-				return ($data === 't');
+				$result = ($data === 't');
 			case ($data === 'true' || $data === 'false'):
-				return ($data === 'true');
+				$result = ($data === 'true');
 			case ($data === 'TRUE' || $data === 'FALSE'):
-				return ($data === 'TRUE');
+				$result = ($data === 'TRUE');
 			default:
-				return (bool)$data;
+				$result = (bool)$data;
 			break;
 		}
+
+		if ($quote) {
+			$result = ($result) ? 'TRUE' : 'FALSE';
+		}
+		return $result;
 	}
 
 /**

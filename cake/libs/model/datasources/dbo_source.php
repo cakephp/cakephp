@@ -215,7 +215,7 @@ class DboSource extends DataSource {
 				return $this->_connection->quote($data, PDO::PARAM_LOB);
 			break;
 			case 'boolean':
-				return $this->boolean($data);
+				return $this->_connection->quote($this->boolean($data), PDO::PARAM_BOOL);
 			break;
 			case 'string':
 			case 'text':

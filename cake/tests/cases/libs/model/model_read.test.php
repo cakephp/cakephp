@@ -57,8 +57,8 @@ class ModelReadTest extends BaseModelTest {
 
 		$result = $Something->JoinThing->find('all', array('conditions' => array('something_else_id' => 2)));
 
-		$this->assertEqual($result[0]['JoinThing']['doomed'], '1');
-		$this->assertEqual($result[1]['JoinThing']['doomed'], '0');
+		$this->assertEqual((bool)$result[0]['JoinThing']['doomed'], true);
+		$this->assertEqual((bool)$result[1]['JoinThing']['doomed'], false);
 
 		$result = $Something->find('first');
 		$this->assertEqual(count($result['SomethingElse']), 2);
