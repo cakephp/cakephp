@@ -246,35 +246,6 @@ class DboPostgres extends DboSource {
 	}
 
 /**
- * Returns a formatted error message from previous database operation.
- *
- * @return string Error message
- */
-	function lastError() {
-		$error = pg_last_error($this->connection);
-		return ($error) ? $error : null;
-	}
-
-/**
- * Returns number of affected rows in previous database operation. If no previous operation exists, this returns false.
- *
- * @return integer Number of affected rows
- */
-	function lastAffected() {
-		return ($this->_result) ? pg_affected_rows($this->_result) : false;
-	}
-
-/**
- * Returns number of rows in previous resultset. If no previous resultset exists,
- * this returns false.
- *
- * @return integer Number of rows in resultset
- */
-	function lastNumRows() {
-		return ($this->_result) ? pg_num_rows($this->_result) : false;
-	}
-
-/**
  * Returns the ID generated from the previous INSERT operation.
  *
  * @param string $source Name of the database table

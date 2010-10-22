@@ -344,6 +344,50 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Returns a formatted error message from previous database operation.
+ *
+ * @param PDOStatement $query the query to extract the error from if any
+ * @return string Error message with error number
+ */
+	function lastError(PDOStatement $query = null) {
+		$error = $query->errorInfo();
+		if (empty($error[2])) {
+			return null;
+		}
+		return $error[1] . ': ' . $error[2];
+	}
+
+/**
+ * Returns number of affected rows in previous database operation. If no previous operation exists,
+ * this returns false.
+ *
+ * @return integer Number of affected rows
+ */
+	function lastAffected() {
+		if ($this->hasResult()) {
+			return $this->_result->rowCount();
+		}
+		return null;
+	}
+
+/**
+ * Returns number of rows in previous resultset. If no previous resultset exists,
+ * this returns false.
+ *
+ * @return integer Number of rows in resultset
+ */
+	function lastNumRows() {
+		if ($this->hasResult()) {
+			$i = 0;
+			foreach ($this->_result as $row) {
+				$i++;
+			}
+			return $i;
+		}
+		return null;
+	}
+
+/**
  * DataSource Query abstraction
  *
  * @return resource Result resource identifier.
