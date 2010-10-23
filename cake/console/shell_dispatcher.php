@@ -136,7 +136,7 @@ class ShellDispatcher {
 		define('APP_PATH', $this->params['working'] . DS);
 		define('WWW_ROOT', APP_PATH . $this->params['webroot'] . DS);
 		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
-			define('TMP', CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
+			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
@@ -145,7 +145,7 @@ class ShellDispatcher {
 		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
-			include_once CORE_PATH . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
+			include_once CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 			App::build();
 		}
 		if (!defined('FULL_BASE_URL')) {
