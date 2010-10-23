@@ -151,8 +151,8 @@ if (!function_exists('sortByKey')) {
 	function h($text, $double = true, $charset = null) {
 		if (is_array($text)) {
 			$texts = array();
-			foreach ($text as $t) {
-				$texts[] = h($t, $double, $charset);
+			foreach ($text as $k => $t) {
+				$texts[$k] = h($t, $double, $charset);
 			}
 			return $texts;
 		}
