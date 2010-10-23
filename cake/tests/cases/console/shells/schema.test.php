@@ -254,7 +254,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
 		$contents = $this->file->read();
 
-		$this->assertPattern('/CREATE TABLE `acos`/', $contents);
+		$this->assertPattern('/CREATE TABLE `test_plugin_acos`/', $contents);
 		$this->assertPattern('/id/', $contents);
 		$this->assertPattern('/model/', $contents);
 
@@ -478,11 +478,7 @@ class SchemaShellTest extends CakeTestCase {
 		$sources = $db->listSources();
 		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
 
-		$schema = new CakeSchema(array(
-			'acos' => array(
-				'id' => array('type' => 'integer')
-			)
-		));
-		$db->execute($db->dropSchema($schema, 'acos'));
+		$schema = new TestPluginAppSchema();
+		$db->execute($db->dropSchema($schema, 'test_plugin_acos'));
 	}
 }
