@@ -213,4 +213,16 @@ class ConsoleOutputTest extends CakeTestCase {
 		$this->output->write('<error>Bad</error> Regular', false);
 	}
 
+/**
+ * test plain output.
+ *
+ * @return void
+ */
+	function testOutputAsPlain() {
+		$this->output->outputAs(ConsoleOutput::PLAIN);
+		$this->output->expects($this->once())->method('_write')
+			->with('Bad Regular');
+
+		$this->output->write('<error>Bad</error> Regular', false);
+	}
 }
