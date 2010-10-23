@@ -30,7 +30,6 @@ class DbConfigTask extends Shell {
  * path to CONFIG directory
  *
  * @var string
- * @access public
  */
 	public $path = null;
 
@@ -38,12 +37,19 @@ class DbConfigTask extends Shell {
  * Default configuration settings to use
  *
  * @var array
- * @access private
  */
 	protected $_defaultConfig = array(
-		'name' => 'default', 'driver'=> 'mysql', 'persistent'=> 'false', 'host'=> 'localhost',
-		'login'=> 'root', 'password'=> 'password', 'database'=> 'project_name',
-		'schema'=> null, 'prefix'=> null, 'encoding' => null, 'port' => null
+		'name' => 'default',
+		'driver'=> 'mysql',
+		'persistent'=> 'false',
+		'host'=> 'localhost',
+		'login'=> 'root',
+		'password'=> 'password',
+		'database'=> 'project_name',
+		'schema'=> null,
+		'prefix'=> null,
+		'encoding' => null,
+		'port' => null
 	);
 
 /**
@@ -306,6 +312,7 @@ class DbConfigTask extends Shell {
 
 		foreach ($configs as $config) {
 			$config = array_merge($this->_defaultConfig, $config);
+			extract($config);
 
 			$out .= "\tpublic \${$name} = array(\n";
 			$out .= "\t\t'driver' => '{$driver}',\n";
