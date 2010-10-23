@@ -435,7 +435,7 @@ class SchemaShell extends Shell {
 		);
 		$path = array(
 			'help' => __('Path to read and write schema.php'),
-			'default' => 'app/config/schema'
+			'default' => CONFIGS . 'schema'
 		);
 		$file = array(
 			'help' => __('File name to read and write.'),
