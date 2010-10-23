@@ -708,7 +708,7 @@ class ShellTest extends CakeTestCase {
 			->will($this->returnValue(array(array('help' => true), array())));
 		$Parser->expects($this->once())->method('help');
 		
-		$Shell = $this->getMock('Shell', array('getOptionParser', 'out', 'startup'), array(), '', false);
+		$Shell = $this->getMock('Shell', array('getOptionParser', 'out', 'startup', '_welcome'), array(), '', false);
 		$Shell->expects($this->once())->method('getOptionParser')
 			->will($this->returnValue($Parser));
 		$Shell->expects($this->once())->method('out');

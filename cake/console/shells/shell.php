@@ -339,13 +339,7 @@ class Shell extends Object {
 		$this->command = $command;
 
 		if (!empty($this->params['help'])) {
-			$format = 'text';
-			if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
-				$format = 'xml';
-			} else {
-				$this->_welcome();
-			}
-			return $this->out($this->OptionParser->help($command, $format));
+			return $this->_displayHelp();
 		}
 
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
@@ -363,6 +357,22 @@ class Shell extends Object {
 			return $this->main();
 		}
 		return $this->out($this->OptionParser->help($command));
+	}
+
+/**
+ * Display the help in the correct format
+ *
+ * @return void
+ */
+	protected function _displayHelp() {
+		$format = 'text';
+		if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
+			$format = 'xml';
+			$this->output->outputAs(ConsoleOutput::RAW);
+		} else {
+			$this->_welcome();
+		}
+		return $this->out($this->OptionParser->help($command, $format));
 	}
 
 /**
