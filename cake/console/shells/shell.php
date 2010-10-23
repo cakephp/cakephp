@@ -339,7 +339,7 @@ class Shell extends Object {
 		$this->command = $command;
 
 		if (!empty($this->params['help'])) {
-			return $this->_displayHelp();
+			return $this->_displayHelp($command);
 		}
 
 		if (($isTask || $isMethod || $isMain) && $command !== 'execute' ) {
@@ -364,7 +364,7 @@ class Shell extends Object {
  *
  * @return void
  */
-	protected function _displayHelp() {
+	protected function _displayHelp($command) {
 		$format = 'text';
 		if (!empty($this->args[0]) && $this->args[0] == 'xml')  {
 			$format = 'xml';
