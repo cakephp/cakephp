@@ -59,7 +59,7 @@ class ProjectTask extends Shell {
 
 		while (!$project) {
 			$prompt = __("What is the full path for this app including the app directory name?\n Example:");
-			$default = $this->Dispatch->params['working'] . DS . 'myapp';
+			$default = APP_PATH . 'myapp';
 			$project = $this->in($prompt . $default, null, $default);
 		}
 
@@ -124,10 +124,7 @@ class ProjectTask extends Shell {
 			} else {
 				$this->out(__('Project baked but with <warning>some issues.</warning>.'));
 			}
-
-			$this->Dispatch->params['working'] = $path;
-			$this->Dispatch->params['app'] = basename($path);
-			return true;
+			return $path;
 		}
 	}
 
