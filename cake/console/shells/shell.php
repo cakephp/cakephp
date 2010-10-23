@@ -205,8 +205,8 @@ class Shell extends Object {
 		$this->out();
 		$this->out('<info>Welcome to CakePHP v' . Configure::version() . ' Console</info>');
 		$this->hr();
-		$this->out('App : '. $this->Dispatch->params['app']);
-		$this->out('Path: '. $this->Dispatch->params['working']);
+		$this->out('App : '. APP_DIR);
+		$this->out('Path: '. APP_PATH);
 		$this->hr();
 	}
 

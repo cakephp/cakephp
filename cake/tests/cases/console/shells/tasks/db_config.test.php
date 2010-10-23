@@ -69,7 +69,7 @@ class DbConfigTaskTest extends CakeTestCase {
 			array(&$this->Dispatcher, $out, $out, $in)
 		);
 
-		$this->Task->params['working'] = rtrim(APP, DS);
+		$this->Task->path = APP . 'config' . DS;
 		$this->Task->databaseClassName = 'TEST_DATABASE_CONFIG';
 	}
 
@@ -100,7 +100,6 @@ class DbConfigTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testInitialize() {
-		$this->assertTrue(empty($this->Task->path));
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
 		$this->assertEqual($this->Task->path, APP . 'config' . DS);

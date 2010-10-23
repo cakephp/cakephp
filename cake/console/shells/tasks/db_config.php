@@ -60,7 +60,7 @@ class DbConfigTask extends Shell {
  * @var string
  */
 	public function initialize() {
-		$this->path = $this->Dispatch->params['working'] . DS . 'config' . DS;
+		$this->path = APP_PATH . 'config' . DS;
 	}
 
 /**

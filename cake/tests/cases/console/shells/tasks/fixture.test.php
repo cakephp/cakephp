@@ -85,11 +85,8 @@ class FixtureTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher->params['working'] = DS . 'my' . DS . 'path';
 		$Task = new FixtureTask($this->Dispatcher, $out, $out, $in);
-
-		$expected = DS . 'my' . DS . 'path' . DS . 'tests' . DS . 'fixtures' . DS;
-		$this->assertEqual($Task->path, $expected);
+		$this->assertEqual($Task->path, APP . 'tests' . DS . 'fixtures' . DS);
 	}
 
 /**
