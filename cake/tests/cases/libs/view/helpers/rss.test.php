@@ -35,7 +35,7 @@ class RssHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$controller = null;
+		parent::setUp();
 		$this->View = new View($controller);
 		$this->Rss = new RssHelper($this->View);
 	}
@@ -47,6 +47,7 @@ class RssHelperTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		unset($this->Rss);
 	}
 
@@ -62,15 +63,6 @@ class RssHelperTest extends CakeTestCase {
 			'rss' => array(
 				'version' => '2.0'
 			)
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Rss->document(array('contrived' => 'parameter'));
-		$expected = array(
-			'rss' => array(
-				'version' => '2.0'
-			),
-			'<parameter'
 		);
 		$this->assertTags($result, $expected);
 
@@ -173,6 +165,7 @@ class RssHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+
 	function testChannelElementAttributes() {
 		$attrib = array();
 		$elements = array(
@@ -288,15 +281,9 @@ class RssHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$item = array(
-			'title' => array(
-				'value' => 'My Title',
-				'cdata' => true,
-			),
+			'title' => 'My Title',
 			'link' => 'http://www.example.com/1',
-			'description' => array(
-				'value' => 'descriptive words',
-				'cdata' => true,
-			),
+			'description' => 'descriptive words',
 			'pubDate' => '2008-05-31 12:00:00',
 			'guid' => 'http://www.example.com/1'
 		);
@@ -305,13 +292,13 @@ class RssHelperTest extends CakeTestCase {
 		$expected = array(
 			'<item',
 			'<title',
-			'<![CDATA[My Title]]',
+			'My Title',
 			'/title',
 			'<link',
 			'http://www.example.com/1',
 			'/link',
 			'<description',
-			'<![CDATA[descriptive words]]',
+			'descriptive words',
 			'/description',
 			'<pubDate',
 			date('r', strtotime('2008-05-31 12:00:00')),
@@ -324,21 +311,57 @@ class RssHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$item = array(
-			'title' => array(
-				'value' => 'My Title & more',
-				'cdata' => true
-			)
+			'title' => 'My Title & more'
+		);
+		$result = $this->Rss->item(null, $item);
+		$expected = array(
+			'<item',
+			'<title', 'My Title &amp; more', '/title',
+			'/item'
+		);
+		$this->assertTags($result, $expected);
+
+		$item = array(
+			'title' => 'Foo bar',
+			'link' => array(
+				'url' => 'http://example.com/foo?a=1&b=2',
+				'convertEntities' => false
+			),
+			'description' =>  array(
+				'value' => 'descriptive words',
+				'cdata' => true,
+			),
+			'pubDate' => '2008-05-31 12:00:00'
 		);
 		$result = $this->Rss->item(null, $item);
 		$expected = array(
 			'<item',
 			'<title',
-			'<![CDATA[My Title &amp; more]]',
+			'Foo bar',
 			'/title',
+			'<link',
+			'http://example.com/foo?a=1&amp;b=2',
+			'/link',
+			'<description',
+			'<![CDATA[descriptive words]]',
+			'/description',
+			'<pubDate',
+			date('r', strtotime('2008-05-31 12:00:00')),
+			'/pubDate',
+			'<guid',
+			'http://example.com/foo?a=1&amp;b=2',
+			'/guid',
 			'/item'
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * test item() with cdata blocks.
+ *
+ * @return void
+ */
+	function testItemCdata() {
 		$item = array(
 			'title' => array(
 				'value' => 'My Title & more',
@@ -360,7 +383,7 @@ class RssHelperTest extends CakeTestCase {
 			'category' => array(
 				'value' => 'CakePHP',
 				'cdata' => true,
-				'domain' => 'http://www.cakephp.org'
+				'domain' => 'http://www.cakephp.org',
 			)
 		);
 		$result = $this->Rss->item(null, $item);
@@ -451,40 +474,6 @@ class RssHelperTest extends CakeTestCase {
 			'<category',
 			'<![CDATA[Bakery]]',
 			'/category',
-			'/item'
-		);
-		$this->assertTags($result, $expected);
-
-		$item = array(
-			'title' => 'Foo bar',
-			'link' => array(
-				'url' => 'http://example.com/foo?a=1&b=2',
-				'convertEntities' => false
-			),
-			'description' =>  array(
-				'value' => 'descriptive words',
-				'cdata' => true,
-			),
-			'pubDate' => '2008-05-31 12:00:00'
-		);
-		$result = $this->Rss->item(null, $item);
-		$expected = array(
-			'<item',
-			'<title',
-			'Foo bar',
-			'/title',
-			'<link',
-			'http://example.com/foo?a=1&amp;b=2',
-			'/link',
-			'<description',
-			'<![CDATA[descriptive words]]',
-			'/description',
-			'<pubDate',
-			date('r', strtotime('2008-05-31 12:00:00')),
-			'/pubDate',
-			'<guid',
-			'http://example.com/foo?a=1&amp;b=2',
-			'/guid',
 			'/item'
 		);
 		$this->assertTags($result, $expected);
