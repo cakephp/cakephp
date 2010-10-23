@@ -45,6 +45,26 @@
  */
 class ConsoleOutput {
 /**
+ * Raw output constant - no modification of output text.
+ */
+	const RAW = 0;
+
+/**
+ * Plain output - tags will be stripped.
+ */
+	const PLAIN = 1;
+
+/**
+ * Colour output - Convert known tags in to ANSI color escape codes.
+ */
+	const COLOR = 2;
+
+/**
+ * Constant for a newline.
+ */
+	const LF = PHP_EOL;
+
+/**
  * File handle for output.
  *
  * @var resource
@@ -52,16 +72,11 @@ class ConsoleOutput {
 	protected $_output;
 
 /**
- * Is set to true for consoles that can take pretty output. (Not windows).
+ * The current output type. Manipulated with ConsoleOutput::outputAs();
  *
- * @var boolean
+ * @var integer.
  */
-	protected $_prettyOutput = true;
-
-/**
- * Constant for a newline.
- */
-	const LF = PHP_EOL;
+	protected $_outputAs = self::COLOR;
 
 /**
  * text colors used in coloured output.
@@ -132,8 +147,8 @@ class ConsoleOutput {
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
 
-		if (DS == '\\') {
-			$this->_prettyOutput = (bool)env('ANSICON');
+		if (DS == '\\' && !(bool)env('ANSICON')) {
+			$this->_outputAs = self::PLAIN;
 		}
 	}
 
@@ -159,7 +174,10 @@ class ConsoleOutput {
  * @return string String with color codes added.
  */
 	public function styleText($text) {
-		if (!$this->_prettyOutput) {
+		if ($this->_outputAs == self::RAW) {
+			return $text;
+		}
+		if ($this->_outputAs == self::PLAIN) {
 			return strip_tags($text);
 		}
 		return preg_replace_callback(
@@ -243,6 +261,19 @@ class ConsoleOutput {
 		}
 		self::$_styles[$style] = $definition;
 		return true;
+	}
+
+/**
+ * Get/Set the output type to use.  The output type how formatting tags are treated.
+ * 
+ * @param int $type The output type to use.  Should be one of the class contstants.
+ * @return mixed Either null or the value if getting.
+ */
+	public function outputAs($type = null) {
+		if ($type === null) {
+			return $this->_outputAs;
+		}
+		$this->_outputAs = $type;
 	}
 
 /**

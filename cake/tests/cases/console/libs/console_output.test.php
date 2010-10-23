@@ -200,4 +200,17 @@ class ConsoleOutputTest extends CakeTestCase {
 		$this->output->write('<error>Bad</error> <error>Warning</error> Regular', false);
 	}
 
+/**
+ * test raw output not getting tags replaced.
+ *
+ * @return void
+ */
+	function testOutputAsRaw() {
+		$this->output->outputAs(ConsoleOutput::RAW);
+		$this->output->expects($this->once())->method('_write')
+			->with('<error>Bad</error> Regular');
+
+		$this->output->write('<error>Bad</error> Regular', false);
+	}
+
 }
