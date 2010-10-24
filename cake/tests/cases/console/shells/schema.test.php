@@ -114,11 +114,10 @@ class SchemaShellTest extends CakeTestCase {
 
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Shell = $this->getMock(
 			'SchemaShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 	}
 
@@ -476,7 +475,7 @@ class SchemaShellTest extends CakeTestCase {
 
 		$db =& ConnectionManager::getDataSource('test');
 		$sources = $db->listSources();
-		$this->assertTrue(in_array($db->config['prefix'] . 'acos', $sources));
+		$this->assertTrue(in_array($db->config['prefix'] . 'test_plugin_acos', $sources));
 
 		$schema = new TestPluginAppSchema();
 		$db->execute($db->dropSchema($schema, 'test_plugin_acos'));

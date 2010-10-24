@@ -50,17 +50,13 @@ class CommandListTest extends CakeTestCase {
 		), true);
 		App::objects('plugin', null, false);
 
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher', 
-			array('_stop', '_initEnvironment', 'dispatch')
-		);
 		$out = new TestStringOutput();
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
 			'CommandListShell',
 			array('in', '_stop', 'clear'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 	}
 
@@ -71,7 +67,7 @@ class CommandListTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
-		unset($this->Dispatcher, $this->Shell);
+		unset($this->Shell);
 	}
 
 /**
@@ -82,7 +78,7 @@ class CommandListTest extends CakeTestCase {
 	function testMain() {
 		$this->Shell->main();
 		$output = $this->Shell->stdout->output;
-;
+
 		$expected = "/example \[.*TestPlugin, TestPluginTwo.*\]/";
 		$this->assertPattern($expected, $output);
 

@@ -53,14 +53,10 @@ class BakeShellTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher', 
-			array('_stop', '_initEnvironment')
-		);
 		$this->Shell = $this->getMock(
 			'BakeShell',
 			array('in', 'out', 'hr', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 	}
 

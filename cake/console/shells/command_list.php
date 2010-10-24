@@ -44,9 +44,9 @@ class CommandListShell extends Shell {
 	public function main() {
 		if (empty($this->params['xml'])) {
 			$this->out("<info>Current Paths:</info>", 2);
-			$this->out(" -app: ". $this->Dispatch->params['app']);
-			$this->out(" -working: " . rtrim($this->Dispatch->params['working'], DS));
-			$this->out(" -root: " . rtrim($this->Dispatch->params['root'], DS));
+			$this->out(" -app: ". APP_DIR);
+			$this->out(" -working: " . rtrim(APP_PATH, DS));
+			$this->out(" -root: " . rtrim(ROOT, DS));
 			$this->out(" -core: " . rtrim(CORE_PATH, DS));
 			$this->out("");
 			$this->out("<info>Changing Paths:</info>", 2);
