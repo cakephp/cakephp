@@ -28,6 +28,7 @@
  * - `warning` Warning messages.
  * - `info` Informational messages.
  * - `comment` Additional text.
+ * - `question` Magenta text used for user prompts
  *
  * By defining styles with addStyle() you can create custom console styles.
  *
@@ -133,7 +134,8 @@ class ConsoleOutput {
 		'warning' => array('text' => 'yellow'),
 		'info' => array('text' => 'cyan'),
 		'success' => array('text' => 'green'),
-		'comment' => array('text' => 'blue')
+		'comment' => array('text' => 'blue'),
+		'question' => array('text' => "magenta"),
 	);
 
 /**

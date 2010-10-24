@@ -442,9 +442,9 @@ class Shell extends Object {
 		}
 
 		if ($default === null) {
-			$this->stdout->write($prompt . " $printOptions \n" . '> ', 0);
+			$this->stdout->write('<question>' . $prompt . '</question>' . " $printOptions \n" . '> ', 0);
 		} else {
-			$this->stdout->write($prompt . " $printOptions \n" . "[$default] > ", 0);
+			$this->stdout->write('<question>' . $prompt . '</question>' . " $printOptions \n" . "[$default] > ", 0);
 		}
 		$result = $this->stdin->read();
 
@@ -584,11 +584,10 @@ class Shell extends Object {
 		$path = str_replace(DS . DS, DS, $path);
 
 		$this->out();
-		$this->out(sprintf(__('Creating file %s'), $path));
 
 		if (is_file($path) && $this->interactive === true) {
-			$prompt = sprintf(__('<warning>File `%s` exists</warning>, overwrite?'), $path);
-			$key = $this->in($prompt,  array('y', 'n', 'q'), 'n');
+			$this->out(sprintf(__('<warning>File `%s` exists</warning>'), $path));
+			$key = $this->in(__('Do you want to overwrite?'),  array('y', 'n', 'q'), 'n');
 
 			if (strtolower($key) == 'q') {
 				$this->out(__('<error>Quitting</error>.'), 2);
@@ -597,7 +596,10 @@ class Shell extends Object {
 				$this->out(sprintf(__('Skip `%s`'), $path), 2);
 				return false;
 			}
+		} else {
+			$this->out(sprintf(__('Creating file %s'), $path));
 		}
+
 		if (!class_exists('File')) {
 			require LIBS . 'file.php';
 		}
