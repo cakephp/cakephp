@@ -52,14 +52,10 @@ class AclShellTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher', 
-			array('_stop', '_initEnvironment', 'dispatch')
-		);
 		$this->Task = $this->getMock(
 			'AclShell',
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear', 'dispatchShell'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$collection = new ComponentCollection();
 		$this->Task->Acl = new AclComponent($collection);

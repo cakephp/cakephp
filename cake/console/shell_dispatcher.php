@@ -223,7 +223,7 @@ class ShellDispatcher {
 		if (!class_exists($class)) {
 			throw new MissingShellClassException(array('shell' => $class));
 		}
-		$Shell = new $class($this);
+		$Shell = new $class();
 		return $Shell;
 	}
 

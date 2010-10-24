@@ -20,12 +20,11 @@ App::import('Core', 'ObjectCollection');
 
 class TaskCollection extends ObjectCollection {
 /**
- * Shell to give to tasks. and use to find tasks.
+ * Shell to use to set params to tasks.
  *
  * @var array
  */
 	protected $_Shell;
-	protected $_Dispatch;
 
 /**
  * The directory inside each shell path that contains tasks.
@@ -40,10 +39,10 @@ class TaskCollection extends ObjectCollection {
  * @param array $paths Array of paths to search for tasks on .
  * @return void
  */
-	public function __construct(Shell $Shell, ShellDispatcher $dispatcher) {
+	public function __construct(Shell $Shell) {
 		$this->_Shell = $Shell;
-		$this->_Dispatch = $dispatcher;
 	}
+
 /**
  * Loads/constructs a task.  Will return the instance in the collection
  * if it already exists.
@@ -72,7 +71,7 @@ class TaskCollection extends ObjectCollection {
 		}
 
 		$this->_loaded[$name] = new $taskClass(
-			$this->_Dispatch, $this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
+			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
 		if ($enable === true) {
 			$this->_enabled[] = $name;

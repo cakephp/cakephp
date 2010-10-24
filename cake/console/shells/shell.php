@@ -38,14 +38,6 @@ class Shell extends Object {
 	const QUIET = 0;
 
 /**
- * An instance of the ShellDispatcher object that loaded this script
- *
- * @var ShellDispatcher
- * @access public
- */
-	public $Dispatch = null;
-
-/**
  * An instance of ConsoleOptionParser that has been configured for this class.
  *
  * @var ConsoleOptionParser
@@ -154,13 +146,11 @@ class Shell extends Object {
  *  Constructs this Shell instance.
  *
  */
-	function __construct(&$dispatch, $stdout = null, $stderr = null, $stdin = null) {
+	function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if ($this->name == null) {
 			$this->name = Inflector::underscore(str_replace(array('Shell', 'Task'), '', get_class($this)));
 		}
-
-		$this->Dispatch =& $dispatch;
-		$this->Tasks = new TaskCollection($this, $dispatch);
+		$this->Tasks = new TaskCollection($this);
 
 		$this->stdout = $stdout;
 		$this->stderr = $stderr;
