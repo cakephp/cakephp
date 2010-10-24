@@ -701,36 +701,36 @@ class ControllerTest extends CakeTestCase {
  * @return void
  * @access public
  */
-        function testPaginateFieldsDouble(){
-                $Controller =& new Controller();
-                $Controller->uses = array('ControllerPost');
-                $Controller->params['url'] = array();
-                $Controller->constructClasses();
+	function testPaginateFieldsDouble(){
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
 
-                $Controller->paginate = array(
-                        'fields' => array(
-                            'ControllerPost.id',
-                            'radians(180.0) as floatvalue'
-                            ),
-                        'order' => array('ControllerPost.created'=>'DESC'),
-                        'limit' => 1,
-                        'page' => 1,
-                        'recursive' => -1
-                );
-                $conditions = array();
-                $result = $Controller->paginate('ControllerPost',$conditions);
-                $expected = array(
-                    0=>array(
-                        'ControllerPost'=>array(
-                            'id'=>3,
-                            ),
-                        0=>array(
-                            'floatvalue'=>3.1415926545898,
-                            ),
-                        ),
-                    );
-                $this->assertEqual($result, $expected);
-        }
+		$Controller->paginate = array(
+			'fields' => array(
+				'ControllerPost.id',
+				'radians(180.0) as floatvalue'
+			),
+			'order' => array('ControllerPost.created'=>'DESC'),
+			'limit' => 1,
+			'page' => 1,
+			'recursive' => -1
+		);
+		$conditions = array();
+		$result = $Controller->paginate('ControllerPost',$conditions);
+		$expected = array(
+			array(
+				'ControllerPost' => array(
+					'id' => 3,
+				),
+				0 => array(
+					'floatvalue' => '3.14159265358979',
+				),
+			),
+		);
+		$this->assertEqual($result, $expected);
+	}
 
 
 /**
