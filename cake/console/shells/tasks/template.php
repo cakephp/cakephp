@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'Folder');
+
 class TemplateTask extends Shell {
 
 /**
@@ -179,7 +181,7 @@ class TemplateTask extends Shell {
 		}
 		$index = $this->in(__('Which bake theme would you like to use?'), range(1, $i - 1), 1);
 		$themeNames = array_keys($this->templatePaths);
-		$this->Dispatch->params['theme'] = $themeNames[$index - 1];
+		$this->params['theme'] = $themeNames[$index - 1];
 		return $indexedPaths[$index];
 	}
 
