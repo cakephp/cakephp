@@ -789,6 +789,7 @@ class AjaxHelperTest extends CakeTestCase {
 		$expected = "if (confirm('Are you sure?')) { new Ajax.Updater('myDiv','/', {asynchronous:true, evalScripts:true, requestHeaders:['X-Update', 'myDiv']}); } else { event.returnValue = false; return false; }";
 		$this->assertEqual($result, $expected);
 	}
+
 /**
  * testDiv method
  *
@@ -796,7 +797,7 @@ class AjaxHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDiv() {
-		ob_flush();
+		ob_start();
 		$oldXUpdate = env('HTTP_X_UPDATE');
 
 		$result = $this->Ajax->div('myDiv');
@@ -828,6 +829,7 @@ class AjaxHelperTest extends CakeTestCase {
  * @return void
  */
 	function testAfterRender() {
+		ob_start();
 		$oldXUpdate = env('HTTP_X_UPDATE');
 		$this->Ajax->Javascript =& new TestJavascriptHelper();
 
