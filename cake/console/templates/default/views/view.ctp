@@ -35,7 +35,7 @@ foreach ($fields as $field) {
 	}
 	if ($isKey !== true) {
 		echo "\t\t<dt<?php if (\$i % 2 == 0) echo \$class;?>><?php echo __('" . Inflector::humanize($field) . "'); ?></dt>\n";
-		echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
+		echo "\t\t<dd<?php if (\$i++ % 2 == 0) echo \$class;?>>\n\t\t\t<?php echo h(\${$singularVar}['{$modelClass}']['{$field}']); ?>\n\t\t\t&nbsp;\n\t\t</dd>\n";
 	}
 }
 ?>
