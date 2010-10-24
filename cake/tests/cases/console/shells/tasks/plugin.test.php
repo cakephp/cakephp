@@ -47,10 +47,9 @@ class PluginTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('PluginTask', 
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 		
@@ -156,8 +155,7 @@ class PluginTaskTest extends CakeTestCase {
 		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new PHPUnit_Framework_Constraint_IsAnything());
 		
-		$this->Task->Dispatch->args = array('BakeTestPlugin');
-		$this->Task->args =& $this->Task->Dispatch->args;
+		$this->Task->args = array('BakeTestPlugin');
 
 		$this->Task->execute();
 

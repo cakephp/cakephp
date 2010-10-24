@@ -52,17 +52,16 @@ class FixtureTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('FixtureTask', 
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->Model = $this->getMock('Shell',
 			array('in', 'out', 'error', 'createFile', 'getName', 'getTable', 'listAll'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
-		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
-		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array($out, $out, $in));
 		$this->Task->Template->initialize();
 	}
 
@@ -73,7 +72,7 @@ class FixtureTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**
@@ -85,7 +84,7 @@ class FixtureTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$Task = new FixtureTask($this->Dispatcher, $out, $out, $in);
+		$Task = new FixtureTask($out, $out, $in);
 		$this->assertEqual($Task->path, APP . 'tests' . DS . 'fixtures' . DS);
 	}
 

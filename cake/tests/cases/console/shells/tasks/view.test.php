@@ -227,15 +227,14 @@ class ViewTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('ViewTask',
 			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
-		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
-		$this->Task->Controller = $this->getMock('ControllerTask', array(), array(&$this->Dispatcher, $out, $out, $in));
-		$this->Task->Project = $this->getMock('ProjectTask', array(), array(&$this->Dispatcher, $out, $out, $in));
-		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Template = new TemplateTask($out, $out, $in);
+		$this->Task->Controller = $this->getMock('ControllerTask', array(), array($out, $out, $in));
+		$this->Task->Project = $this->getMock('ProjectTask', array(), array($out, $out, $in));
+		$this->Task->DbConfig = $this->getMock('DbConfigTask', array(), array($out, $out, $in));
 
 		$this->Task->path = TMP;
 		$this->Task->Template->params['theme'] = 'default';

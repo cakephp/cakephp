@@ -54,10 +54,9 @@ class ModelTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
 	}
@@ -73,7 +72,7 @@ class ModelTaskTest extends CakeTestCase {
 
 		$this->Task = $this->getMock('ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->_setupOtherMocks();
 	}
@@ -87,9 +86,9 @@ class ModelTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher, $out, $out, $in));
-		$this->Task->Test = $this->getMock('FixtureTask', array(), array(&$this->Dispatcher, $out, $out, $in));
-		$this->Task->Template = new TemplateTask($this->Task->Dispatch, $out, $out, $in);
+		$this->Task->Fixture = $this->getMock('FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Test = $this->getMock('FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Template = new TemplateTask($out, $out, $in);
 
 		$this->Task->name = 'Model';
 		$this->Task->interactive = true;
@@ -102,7 +101,7 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**

@@ -68,26 +68,25 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ControllerTask', 
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->name = 'Controller';
-		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
+		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('ModelTask', 
 			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'), 
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->Project = $this->getMock('ProjectTask', 
 			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'), 
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
-		$this->Task->Test = $this->getMock('TestTask', array(), array(&$this->Dispatcher, $out, $out, $in));
+		$this->Task->Test = $this->getMock('TestTask', array(), array($out, $out, $in));
 	}
 
 /**
@@ -96,7 +95,7 @@ class ControllerTaskTest extends CakeTestCase {
  * @return void
  */
 	public function teardown() {
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 		ClassRegistry::flush();
 	}
 

@@ -43,10 +43,9 @@ class TemplateTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('TemplateTask', 
 			array('in', 'err', 'createFile', '_stop', 'clear'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 	}
 
@@ -57,7 +56,7 @@ class TemplateTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**
@@ -117,7 +116,7 @@ class TemplateTaskTest extends CakeTestCase {
 		$this->Task->params = array();
 		$result = $this->Task->getThemePath();
 		$this->assertEqual($result, $defaultTheme);
-		$this->assertEqual($this->Dispatcher->params['theme'], 'default');
+		$this->assertEqual($this->Task->params['theme'], 'default');
 	}
 
 /**

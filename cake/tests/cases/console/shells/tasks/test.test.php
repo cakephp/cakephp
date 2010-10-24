@@ -245,13 +245,12 @@ class TestTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('TestTask', 
 			array('in', 'err', 'createFile', '_stop', 'isLoadableClass'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->name = 'Test';
-		$this->Task->Template = new TemplateTask($this->Dispatcher, $out, $out, $in);
+		$this->Task->Template = new TemplateTask($out, $out, $in);
 	}
 
 /**
@@ -261,7 +260,7 @@ class TestTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**
@@ -270,8 +269,8 @@ class TestTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testFilePathGenerationModelRepeated() {
-		$this->Dispatcher->expects($this->never())->method('stderr');
-		$this->Dispatcher->expects($this->never())->method('_stop');
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->never())->method('_stop');
 
 		$file = TESTS . 'cases' . DS . 'models' . DS . 'my_class.test.php';
 

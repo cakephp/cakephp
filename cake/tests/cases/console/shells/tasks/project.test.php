@@ -44,10 +44,9 @@ class ProjectTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment', 'clear'));
 		$this->Task = $this->getMock('ProjectTask', 
 			array('in', 'err', 'createFile', '_stop'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 		$this->Task->path = TMP . 'tests' . DS;
 	}
@@ -62,7 +61,7 @@ class ProjectTaskTest extends CakeTestCase {
 
 		$Folder = new Folder($this->Task->path . 'bake_test_app');
 		$Folder->delete();
-		unset($this->Dispatcher, $this->Task);
+		unset($this->Task);
 	}
 
 /**

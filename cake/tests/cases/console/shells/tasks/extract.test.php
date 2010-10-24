@@ -42,8 +42,11 @@ class ExtractTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
-		$this->Task = new ExtractTask($this->Dispatcher, $out, $out, $in);
+		$this->Task = $this->getMock(
+			'ExtractTask',
+			array('in', 'out', 'err', '_stop'),
+			array($out, $out, $in)
+		);
 	}
 
 /**
@@ -53,7 +56,7 @@ class ExtractTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**
@@ -69,8 +72,10 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
 		$this->Task->params['output'] = $path . DS;
-		$this->Dispatcher->expects($this->never())->method('stderr');
-		$this->Dispatcher->expects($this->never())->method('_stop');
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+		$this->Task->expects($this->never())->method('_stop');
 
 		$this->Task->execute();
 		$this->assertTrue(file_exists($path . DS . 'default.pot'));
@@ -158,8 +163,8 @@ class ExtractTaskTest extends CakeTestCase {
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'posts';
 	
 		$this->Task->params['output'] = $path . DS;
-		$this->Task->Dispatch->expects($this->never())->method('stderr');
-		$this->Task->Dispatch->expects($this->never())->method('_stop');
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->never())->method('_stop');
 		$this->Task->execute();
 
 		$result = file_get_contents($path . DS . 'default.pot');

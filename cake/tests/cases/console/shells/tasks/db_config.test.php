@@ -63,10 +63,9 @@ class DbConfigTaskTest extends CakeTestCase {
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 
-		$this->Dispatcher = $this->getMock('ShellDispatcher', array('_stop', '_initEnvironment'));
 		$this->Task = $this->getMock('DbConfigTask', 
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest', '_verify'),
-			array(&$this->Dispatcher, $out, $out, $in)
+			array($out, $out, $in)
 		);
 
 		$this->Task->path = APP . 'config' . DS;
@@ -80,7 +79,7 @@ class DbConfigTaskTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		unset($this->Task, $this->Dispatcher);
+		unset($this->Task);
 	}
 
 /**
@@ -115,9 +114,10 @@ class DbConfigTaskTest extends CakeTestCase {
 		$this->Task->initialize();
 
 		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock(
 			'DbConfigTask',
-			array('in', '_stop', 'createFile', 'bake'), array(&$this->Dispatcher, $out, $out)
+			array('in', '_stop', 'createFile', 'bake'), array($out, $out, $in)
 		);
 
 		$this->Task->expects($this->once())->method('_stop');
