@@ -116,14 +116,10 @@ class ShellTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher',
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
-		);
 		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Shell =& new TestShell($this->Dispatcher, $output, $error, $in);
+		$this->Shell =& new TestShell($output, $error, $in);
 	}
 
 /**
@@ -132,8 +128,8 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$this->assertEquals($this->Dispatcher, $this->Shell->Dispatch);
 		$this->assertEqual($this->Shell->name, 'TestShell');
+		$this->assertType('ConsoleInput', $this->Shell->stdin);
 		$this->assertType('ConsoleOutput', $this->Shell->stdout);
 		$this->assertType('ConsoleOutput', $this->Shell->stderr);
 	}
@@ -401,19 +397,37 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->tasks = array('TestApple');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
 
 		$this->Shell->tasks = 'TestBanana';
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
-		$this->assertIsA($this->Shell->TestBanana, 'TestBananaTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('TestBananaTask', $this->Shell->TestBanana);
 
 		unset($this->Shell->ShellTestApple, $this->Shell->TestBanana);
 
 		$this->Shell->tasks = array('TestApple', 'TestBanana');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
-		$this->assertIsA($this->Shell->TestBanana, 'TestBananaTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('TestBananaTask', $this->Shell->TestBanana);
+	}
+
+/**
+ * test that __get() makes args and params references
+ *
+ * @return void
+ */
+	function test__getArgAndParamReferences() {
+		$this->Shell->tasks = array('TestApple');
+		$this->Shell->args = array('one');
+		$this->Shell->params = array('help' => false);
+		$this->Shell->loadTasks();
+		$result = $this->Shell->TestApple;
+		
+		$this->Shell->args = array('one', 'two');
+		
+		$this->assertSame($this->Shell->args, $result->args);
+		$this->assertSame($this->Shell->params, $result->params);
 	}
 
 /**
