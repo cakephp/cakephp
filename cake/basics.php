@@ -92,33 +92,39 @@
  */
 	function debug($var = false, $showHtml = false, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
+			$file = '';
+			$line = '';
 			if ($showFrom) {
 				$calledFrom = debug_backtrace();
-				if(defined('CAKEPHP_SHELL')){
-					echo "##########DEBUG##########\n";
-					echo substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) ;
-					echo ' (line ' . $calledFrom[0]['line'] . ')'."\n";
-				}else{
-					echo '<strong>' . substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1) . '</strong>';
-					echo ' (line <strong>' . $calledFrom[0]['line'] . '</strong>)';
-				}
+				$file = substr(str_replace(ROOT, '', $calledFrom[0]['file']), 1);
+				$line = $calledFrom[0]['line'];
 			}
-			if(!defined('CAKEPHP_SHELL')){
-				echo "\n<pre class=\"cake-debug\">\n";
-			}
+			$html = <<<HTML
+<strong>%s</strong> (line <strong>%s</strong>)
+<pre class="cake-debug">
+%s
+</pre>
+HTML;
+			$text = <<<TEXT
 
+%s (line %s)
+########## DEBUG ##########
+%s
+###########################
+
+TEXT;
+			$template = $html;
+			if (php_sapi_name() == 'cli') {
+				$template = $text;
+			}
 			$var = print_r($var, true);
 			if ($showHtml) {
 				$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
 			}
-			echo $var . "\n";
-			if(!defined('CAKEPHP_SHELL')){
-				echo "<pre class=\"cake-debug\">\n";
-			}else{
-				echo "#########################\n";
-			};
+			printf($template, $file, $line, $var);
 		}
 	}
+
 if (!function_exists('sortByKey')) {
 
 /**
