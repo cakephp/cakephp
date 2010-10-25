@@ -728,14 +728,14 @@ class DboPostgres extends DboSource {
 			case ($data === 'TRUE' || $data === 'FALSE'):
 				$result = ($data === 'TRUE');
 			default:
-				$result = (bool)$data;
+				$result = (bool) $data;
 			break;
 		}
 
 		if ($quote) {
 			$result = ($result) ? 'TRUE' : 'FALSE';
 		}
-		return $result;
+		return (int) $result;
 	}
 
 /**
