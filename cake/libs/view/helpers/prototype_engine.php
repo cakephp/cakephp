@@ -211,7 +211,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			break;
 			case 'slideIn':
 			case 'slideOut':
-				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
+				$name = ($name == 'slideIn') ? 'SlideDown' : 'SlideUp';
 				$effect = 'Effect.' . $name . '(' . $this->selection . $optionString . ');';
 			break;
 			case 'fadeIn':

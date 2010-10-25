@@ -1,0 +1,5 @@
+msgid "default.foo"
+msgstr "Default Foo"
+
+msgid "default.bar"
+msgstr "Default Bar"

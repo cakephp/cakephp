@@ -102,7 +102,7 @@ class File extends Object {
 			$this->name = basename($path);
 		}
 		$this->pwd();
-		!$this->exists() && $create && $this->safe($path) && $this->create();
+		$create && !$this->exists() && $this->safe($path) && $this->create();
 	}
 
 /**

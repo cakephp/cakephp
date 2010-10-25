@@ -21,7 +21,7 @@ if (Configure::read() == 0):
 endif;
 ?>
 <h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-3-3"><?php __('Read the changelog'); ?> </a>
+<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-3-5"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
@@ -72,6 +72,16 @@ endif;
 	?>
 </p>
 <?php
+	App::import('Core', 'Validation');
+	if (!Validation::alphaNumeric('cakephp')) {
+		echo '<p><span class="notice">';
+		__('PCRE has not been compiled with Unicode support.');
+		echo '<br/>';
+		__('Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+		echo '</span></p>';
+	}
+?>
+<?php
 if (isset($filePresent)):
 	if (!class_exists('ConnectionManager')) {
 		require LIBS . 'model' . DS . 'connection_manager.php';
@@ -106,7 +116,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			sprintf('<strong>%s</strong>%s', __('new', true), __('CakePHP 1.3 Docs', true)),
+			sprintf('<strong>%s</strong> %s', __('New', true), __('CakePHP 1.3 Docs', true)),
 			'http://book.cakephp.org/view/875/x1-3-Collection',
 			array('target' => '_blank', 'escape' => false)
 		);
@@ -116,7 +126,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 	<?php
 		echo $this->Html->link(
 			__('The 15 min Blog Tutorial', true),
-			'http://book.cakephp.org/view/219/the-cakephp-blog-tutorial',
+			'http://book.cakephp.org/view/1528/Blog',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>

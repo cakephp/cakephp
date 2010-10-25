@@ -153,7 +153,7 @@ class DboSource extends DataSource {
  * @return boolean True on success, false on failure
  * @access public
  */
-	function reconnect($config = null) {
+	function reconnect($config = array()) {
 		$this->disconnect();
 		$this->setConfig($config);
 		$this->_sources = null;
@@ -570,6 +570,9 @@ class DboSource extends DataSource {
 					'/\s{2,}/', ' ', $this->name($matches[1]) . ' ' . $this->alias . ' ' . $this->name($matches[3])
 				)
 			);
+		}
+		if (preg_match('/^[\w-_\s]*[\w-_]+/', $data)) {
+			return $this->cacheMethod(__FUNCTION__, $cacheKey, $this->startQuote . $data . $this->endQuote);
 		}
 		return $this->cacheMethod(__FUNCTION__, $cacheKey, $data);
 	}
@@ -1690,8 +1693,10 @@ class DboSource extends DataSource {
 					$noJoin = false;
 					break;
 				}
-				$conditions[$field] = $value;
-				unset($conditions[$originalField]);
+				if ($field !== $originalField) {
+					$conditions[$field] = $value;
+					unset($conditions[$originalField]);
+				}
 			}
 			if ($noJoin === true) {
 				return $this->conditions($conditions);
@@ -1954,8 +1959,8 @@ class DboSource extends DataSource {
 			$quote
 		);
 		$cacheKey = crc32(serialize($cacheKey));
-		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
-			return $this->methodCache[__FUNCTION__][$cacheKey];
+		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
+			return $return;
 		}
 		$allFields = empty($fields);
 		if ($allFields) {
@@ -2022,18 +2027,8 @@ class DboSource extends DataSource {
 						if ($comma === false) {
 							$build = explode('.', $fields[$i]);
 							if (!Set::numeric($build)) {
-								$fields[$i] = $this->name($build[0] . '.' . $build[1]);
+								$fields[$i] = $this->name(implode('.', $build));
 							}
-							$comma = String::tokenize($fields[$i]);
-							foreach ($comma as $string) {
-								if (preg_match('/^[0-9]+\.[0-9]+$/', $string)) {
-									$value[] = $string;
-								} else {
-									$build = explode('.', $string);
-									$value[] = $this->name(trim($build[0]) . '.' . trim($build[1]));
-								}
-							}
-							$fields[$i] = implode(', ', $value);
 						}
 					}
 					$fields[$i] = $prepend . $fields[$i];
@@ -2055,7 +2050,7 @@ class DboSource extends DataSource {
 		if (!empty($virtual)) {
 			$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
 		}
-		return $this->methodCache[__FUNCTION__][$cacheKey] = array_unique($fields);
+		return $this->cacheMethod(__FUNCTION__, $cacheKey, array_unique($fields));
 	}
 
 /**

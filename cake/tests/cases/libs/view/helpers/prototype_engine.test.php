@@ -153,19 +153,19 @@ class PrototypeEngineHelperTestCase extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Proto->effect('slideIn');
-		$expected = 'Effect.slideDown($("foo"));';
+		$expected = 'Effect.SlideDown($("foo"));';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Proto->effect('slideOut');
-		$expected = 'Effect.slideUp($("foo"));';
+		$expected = 'Effect.SlideUp($("foo"));';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Proto->effect('slideOut', array('speed' => 'fast'));
-		$expected = 'Effect.slideUp($("foo"), {duration:0.50000000000});';
+		$expected = 'Effect.SlideUp($("foo"), {duration:0.50000000000});';
 		$this->assertEqual($result, $expected);
 
 		$result = $this->Proto->effect('slideOut', array('speed' => 'slow'));
-		$expected = 'Effect.slideUp($("foo"), {duration:2});';
+		$expected = 'Effect.SlideUp($("foo"), {duration:2});';
 		$this->assertEqual($result, $expected);
 	}
 

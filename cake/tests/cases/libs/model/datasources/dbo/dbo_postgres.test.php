@@ -834,13 +834,13 @@ class DboPostgresTest extends CakeTestCase {
 	function testUpdateAllWithNonQualifiedConditions() {
 		$this->loadFixtures('Article');
 		$Article =& new Article();
-		$result = $Article->updateAll(array('title' => "'Awesome'"), array('published' => 'Y'));
+		$result = $Article->updateAll(array('title' => "'Awesome'"), array('title' => 'Third Article'));
 		$this->assertTrue($result);
 
 		$result = $Article->find('count', array(
 			'conditions' => array('Article.title' => 'Awesome')
 		));
-		$this->assertEqual($result, 3, 'Article count is wrong or fixture has changed.');
+		$this->assertEqual($result, 1, 'Article count is wrong or fixture has changed.');
 	}
 
 /**

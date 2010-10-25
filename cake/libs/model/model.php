@@ -1665,6 +1665,7 @@ class Model extends Overloadable {
 					}
 				}
 			}
+
 			if (!$this->__save($data, $options)) {
 				$validationErrors[$this->alias] = $this->validationErrors;
 				$validates = false;
@@ -1735,7 +1736,6 @@ class Model extends Overloadable {
 				case ($options['validate'] === 'first'):
 					$options['validate'] = true;
 					$return = array();
-					continue;
 				break;
 				default:
 					if ($options['atomic']) {
@@ -1747,6 +1747,10 @@ class Model extends Overloadable {
 					}
 					return $return;
 				break;
+			}
+			if ($options['atomic'] && !$validates) {
+				$db->rollback($this);
+				return false;
 			}
 		}
 	}
@@ -1799,14 +1803,15 @@ class Model extends Overloadable {
 		}
 		$id = $this->id;
 
-		if ($this->exists() && $this->beforeDelete($cascade)) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+		if ($this->beforeDelete($cascade)) {
 			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
 				'break' => true, 'breakOn' => false
 			));
-			if (!$filters) {
+			if (!$filters || !$this->exists()) {
 				return false;
 			}
+			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
 			$this->id = $id;
@@ -2024,10 +2029,12 @@ class Model extends Overloadable {
  * find('all', array(
  * 		'conditions' => array('name' => 'Thomas Anderson'),
  * 		'joins' => array(
- * 			'alias' => 'Thought',
- * 			'table' => 'thoughts',
- * 			'type' => 'LEFT',
- * 			'conditions' => '`Thought`.`person_id` = `Person`.`id`'
+ *			array(
+ * 				'alias' => 'Thought',
+ * 				'table' => 'thoughts',
+ * 				'type' => 'LEFT',
+ * 				'conditions' => '`Thought`.`person_id` = `Person`.`id`'
+ *			)
  * 		)
  * ));
  * }}}

@@ -454,6 +454,9 @@ class CakeSession extends Object {
  * @access public
  */
 	function destroy() {
+		if ($this->started()) {
+			session_destroy();
+		}
 		$_SESSION = null;
 		$this->__construct($this->path);
 		$this->start();
@@ -473,7 +476,7 @@ class CakeSession extends Object {
 		}
 		if ($iniSet && ($this->security === 'high' || $this->security === 'medium')) {
 			ini_set('session.referer_check', $this->host);
-		} 
+		}
 
 		if ($this->security == 'high') {
 			$this->cookieLifeTime = 0;
@@ -750,7 +753,7 @@ class CakeSession extends Object {
 	function __write($id, $data) {
 		$expires = time() + Configure::read('Session.timeout') * Security::inactiveMins();
 		$model =& ClassRegistry::getObject('Session');
-		$return = $model->save(compact('id', 'data', 'expires'));
+		$return = $model->save(array($model->primaryKey => $id) + compact('data', 'expires'));
 		return $return;
 	}
 

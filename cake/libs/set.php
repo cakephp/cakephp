@@ -389,11 +389,11 @@ class Set {
 		$options = array_merge(array('flatten' => true), $options);
 		if (!isset($contexts[0])) {
 			$current = current($data);
-			if ((is_array($current) && count($data) <= 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
+			if ((is_array($current) && count($data) < 1) || !is_array($current) || !Set::numeric(array_keys($data))) {
 				$contexts = array($data);
 			}
 		}
-		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-]*\])/', $path), 1);
+		$tokens = array_slice(preg_split('/(?<!=)\/(?![a-z-\s]*\])/', $path), 1);
 
 		do {
 			$token = array_shift($tokens);

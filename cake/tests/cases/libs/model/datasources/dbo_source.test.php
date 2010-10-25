@@ -4448,7 +4448,7 @@ class DboSourceTest extends CakeTestCase {
 		));
 		$this->assertEqual($expected, $result);
 	}
-˝
+
 /**
  * test reading complex virtualFields with subqueries.
  *
@@ -4510,6 +4510,24 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * test reading virtual fields containing newlines when recursive > 0
+ *
+ * @return void
+ */
+	function testReadVirtualFieldsWithNewLines() {
+		$Article =& new Article();
+		$Article->recursive = 1;
+		$Article->virtualFields = array(
+			'test' => '
+			User.id + User.id
+			'
+		);
+		$result = $this->db->fields($Article, null, array());
+		$result = $this->db->fields($Article, $Article->alias, $result);
+		$this->assertPattern('/[`\"]User[`\"]\.[`\"]id[`\"] \+ [`\"]User[`\"]\.[`\"]id[`\"]/', $result[7]);
+	}
+
+/**
  * test group to generate GROUP BY statements on virtual fields
  *
  * @return void
@@ -4538,6 +4556,11 @@ class DboSourceTest extends CakeTestCase {
 		$Article->tablePrefix = 'tbl_';
 		$result = $this->testDb->fullTableName($Article, false);
 		$this->assertEqual($result, 'tbl_articles');
+		
+		$Article->useTable = $Article->table = 'with spaces';
+		$Article->tablePrefix = '';
+		$result = $this->testDb->fullTableName($Article);
+		$this->assertEqual($result, '`with spaces`');
 	}
 
 /**
@@ -4553,5 +4576,19 @@ class DboSourceTest extends CakeTestCase {
 		$Article->Comment->useDbConfig = 'test_no_queryAssociation';
 		$result = $Article->find('all');
 		$this->assertTrue(is_array($result));
+	}
+
+/**
+ * test that fields() is using methodCache()
+ *
+ * @return void
+ */
+	function testFieldsUsingMethodCache() {
+		$this->testDb->cacheMethods = false;
+		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
+
+		$Article =& ClassRegistry::init('Article');
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
+		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
 	}
 }

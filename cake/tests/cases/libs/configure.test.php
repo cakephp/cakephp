@@ -575,7 +575,15 @@ class AppImportTest extends CakeTestCase {
 			$this->assertTrue($file);
 			$this->assertTrue(class_exists('DboSource'));
 		}
+		App::build();
+	}
 
+/**
+ * test import() with plugins
+ *
+ * @return void
+ */
+	function testPluginImporting() {
 		App::build(array(
 			'libs' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'libs' . DS),
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
@@ -597,10 +605,15 @@ class AppImportTest extends CakeTestCase {
 		$result = App::import('Helper', 'TestPlugin.OtherHelper');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('OtherHelperHelper'));
+		
+		$result = App::import('Helper', 'TestPlugin.TestPluginApp');
+		$this->assertTrue($result);
+		$this->assertTrue(class_exists('TestPluginAppHelper'));
 
 		$result = App::import('Datasource', 'TestPlugin.TestSource');
 		$this->assertTrue($result);
 		$this->assertTrue(class_exists('TestSource'));
+		
 		App::build();
 	}
 

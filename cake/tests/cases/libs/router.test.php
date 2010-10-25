@@ -1695,6 +1695,45 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that patterns work for :action
+ *
+ * @return void
+ */
+	function testParsingWithPatternOnAction() {
+		Router::reload();
+		Router::connect(
+			'/blog/:action/*', 
+			array('controller' => 'blog_posts'), 
+			array('action' => 'other|actions')
+		);
+		$result = Router::parse('/blog/other');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog_posts',
+			'action' => 'other',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = Router::parse('/blog/foobar');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog',
+			'action' => 'foobar',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+		
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertEqual('/blog_posts/foo', $result);
+
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertEqual('/blog/actions', $result);
+	}
+
+/**
  * testParsingWithPrefixes method
  *
  * @access public
@@ -2486,6 +2525,31 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result, '/posts/view/922');
 
 		$result = $route->match(array('plugin' => null, 'controller' => 'posts', 'action' => 'view', 'id' => 'a99'));
+		$this->assertFalse($result);
+	}
+
+/**
+ * test that patterns work for :action
+ *
+ * @return void
+ */
+	function testPatternOnAction() {
+		$route =& new CakeRoute(
+			'/blog/:action/*', 
+			array('controller' => 'blog_posts'), 
+			array('action' => 'other|actions')
+		);
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertFalse($result);
+		
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertTrue($result);
+		
+		$result = $route->parse('/blog/other');
+		$expected = array('controller' => 'blog_posts', 'action' => 'other', 'pass' => array(), 'named' => array());
+		$this->assertEqual($expected, $result);
+		
+		$result = $route->parse('/blog/foobar');
 		$this->assertFalse($result);
 	}
 
