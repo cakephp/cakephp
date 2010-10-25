@@ -1407,4 +1407,26 @@ DIGEST;
 		$this->Security->startup($this->Controller);
 		$this->assertTrue($this->Controller->failed, 'fail() was not called.');
 	}
+
+/**
+ * test that csrfUseOnce = false works.
+ *
+ * @return void
+ */
+	function testCsrfNotUseOnce() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = true;
+		$this->Security->csrfUseOnce = false;
+		$this->Security->csrfExpires = '+10 minutes';
+
+		// Generate one token
+		$this->Security->startup($this->Controller);
+		$token = $this->Security->Session->read('_Token.csrfTokens');
+		$this->assertEquals(1, count($token), 'Should only be one token.');
+
+		$this->Security->startup($this->Controller);
+		$token2 = $this->Security->Session->read('_Token.csrfTokens');
+		$this->assertEquals(1, count($token2), 'Should only be one token.');
+		$this->assertEquals($token, $token2, 'Tokens should not be different.');
+	}
 }

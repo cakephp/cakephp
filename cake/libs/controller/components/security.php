@@ -173,6 +173,16 @@ class SecurityComponent extends Component {
 	public $csrfExpires = '+30 minutes';
 
 /**
+ * Controls whether or not CSRF tokens are use and burn.  Set to false to not generate
+ * new tokens on each request.  One token will be reused until it expires. This reduces
+ * the chances of users getting invalid requests because of token consumption.
+ * It has the side effect of making CSRF less secure, as tokens are reusable.
+ *
+ * @var boolean
+ */
+	public $csrfUseOnce = true;
+
+/**
  * Other components used by the Security component
  *
  * @var array
@@ -677,16 +687,15 @@ class SecurityComponent extends Component {
 			'csrfTokens' => array()
 		);
 
-		if ($this->csrfCheck) {
-			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
-		}
-
+		$tokenData = array();
 		if ($this->Session->check('_Token')) {
 			$tokenData = $this->Session->read('_Token');
 			if (!empty($tokenData['csrfTokens'])) {
-				$token['csrfTokens'] += $tokenData['csrfTokens'];
-				$token['csrfTokens'] = $this->_expireTokens($token['csrfTokens']);
+				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
 			}
+		} 
+		if ($this->csrfCheck && ($this->csrfUseOnce || empty($tokenData['csrfTokens'])) ) {
+			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
 		}
 		$controller->request->params['_Token'] = $token;
 		$this->Session->write('_Token', $token);
@@ -705,7 +714,9 @@ class SecurityComponent extends Component {
 		$token = $this->Session->read('_Token');
 		$requestToken = $controller->request->data('_Token.key');
 		if (isset($token['csrfTokens'][$requestToken]) && $token['csrfTokens'][$requestToken] >= time()) {
-			$this->Session->delete('_Token.csrfTokens.' . $requestToken);
+			if ($this->csrfUseOnce) {
+				$this->Session->delete('_Token.csrfTokens.' . $requestToken);
+			}
 			return true;
 		}
 		return false;
