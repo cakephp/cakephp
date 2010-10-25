@@ -315,8 +315,9 @@ class RssHelper extends AppHelper {
 		if (!empty($namespace)) {
 			$xml .= ' xmlns:"' . $namespace . '"';
 		}
+		$bareName = $name;
 		if (strpos($name, ':') !== false) {
-			list($prefix, ) = explode(':', $name, 2);
+			list($prefix, $bareName) = explode(':', $name, 2);
 			switch ($prefix) {
 				case 'atom':
 					$xml .= ' xmlns:atom="http://www.w3.org/2005/Atom"';
@@ -327,15 +328,17 @@ class RssHelper extends AppHelper {
 			$content = '<![CDATA[' . $content . ']]>';
 		}
 		$xml .= '>' . $content . '</' . $name. '>';
-		$elem = Xml::build($xml);
+		$elem = Xml::build($xml, array('return' => 'domdocument'));
+		$nodes = $elem->getElementsByTagName($bareName);
 		foreach ($attrib as $key => $value) {
-			$elem->addAttribute($key, $value);
+			$nodes->item(0)->setAttribute($key, $value);
 		}
-		foreach ($children as $child) {
-			$elem->addChild($child);
+		foreach ($children as $k => $child) {
+			$child = $elem->createElement($name, $child);
+			$nodes->item(0)->appendChild($child);
 		}
 
-		$xml = $elem->asXML();
+		$xml = $elem->saveXml();
 		$xml = trim(substr($xml, strpos($xml, '?>') + 2));
 		return $xml;
 	}

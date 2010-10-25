@@ -88,14 +88,14 @@ class Xml {
 			return self::fromArray((array)$input, $options);
 		} elseif (strpos($input, '<') !== false) {
 			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-				return new SimpleXMLElement($input);
+				return new SimpleXMLElement($input, LIBXML_NOCDATA);
 			}
 			$dom = new DOMDocument();
 			$dom->loadXML($input);
 			return $dom;
 		} elseif (file_exists($input) || strpos($input, 'http://') === 0 || strpos($input, 'https://') === 0) {
 			if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-				return new SimpleXMLElement($input, null, true);
+				return new SimpleXMLElement($input, LIBXML_NOCDATA, true);
 			}
 			$dom = new DOMDocument();
 			$dom->load($input);

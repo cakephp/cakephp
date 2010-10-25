@@ -798,6 +798,19 @@ class XmlTest extends CakeTestCase {
 	}
 
 /**
+ * test that CDATA blocks don't get screwed up by SimpleXml
+ *
+ * @return void
+ */
+	function testCdata() {
+		$xml = '<' . '?xml version="1.0" encoding="UTF-8"?>' .
+			'<people><name><![CDATA[ Mark ]]></name></people>';
+
+		$result = Xml::build($xml);
+		$this->assertEquals(' Mark ', (string)$result->name);
+	}
+
+/**
  * data provider for toArray() failures
  *
  * @return array

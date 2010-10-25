@@ -48,7 +48,7 @@
 				}
 			}
 			if ($isKey !== true) {
-				echo "\t\t<td><?php echo \${$singularVar}['{$modelClass}']['{$field}']; ?>&nbsp;</td>\n";
+				echo "\t\t<td><?php echo h(\${$singularVar}['{$modelClass}']['{$field}']); ?>&nbsp;</td>\n";
 			}
 		}
 

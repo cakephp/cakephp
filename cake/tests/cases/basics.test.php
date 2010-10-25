@@ -228,6 +228,14 @@ class BasicsTest extends CakeTestCase {
 			'&nbsp;'
 		);
 		$this->assertEqual($expected, $result);
+		
+		$arr = array('f' => '<foo>', 'n' => '&nbsp;');
+		$result = h($arr, false);
+		$expected = array(
+			'f' => '&lt;foo&gt;',
+			'n' => '&nbsp;'
+		);
+		$this->assertEqual($expected, $result);
 	}
 
 /**

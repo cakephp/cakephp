@@ -47,7 +47,7 @@ echo "\n";
 				}
 			}
 			if ($isKey !== true) {
-				echo "\t\t<td>\n\t\t\t" . ${$singularVar}[$modelClass][$_field] . " \n\t\t</td>\n";
+				echo "\t\t<td>" . h(${$singularVar}[$modelClass][$_field]) . "</td>\n";
 			}
 		}
 
