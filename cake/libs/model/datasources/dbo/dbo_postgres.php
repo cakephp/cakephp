@@ -757,7 +757,7 @@ class DboPostgres extends DboSource {
  * @return string The database encoding
  */
 	function getEncoding() {
-		return pg_client_encoding($this->connection);
+		$cosa = $this->_execute('SHOW client_encoding')->fetch();
 	}
 
 /**
