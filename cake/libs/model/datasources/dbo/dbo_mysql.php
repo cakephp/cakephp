@@ -581,22 +581,6 @@ class DboMysql extends DboSource {
 	}
 
 /**
- * Inserts multiple values into a table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		$table = $this->fullTableName($table);
-		if (is_array($fields)) {
-			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		}
-		$values = implode(', ', $values);
-		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
-	}
-
-/**
  * Returns an detailed array of sources (tables) in the database.
  *
  * @param string $name Table name to get parameters 

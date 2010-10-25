@@ -5076,7 +5076,7 @@ class ModelReadTest extends BaseModelTest {
 					'typ' => 2
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5646,7 +5646,7 @@ class ModelReadTest extends BaseModelTest {
 								'name' => 'computer'
 		))))));
 
-		$this->assertIdentical($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**

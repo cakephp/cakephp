@@ -291,8 +291,7 @@ class DboSource extends DataSource {
  * @return mixed Resource or object representing the result set, or false on failure
  */
 	public function execute($sql, $options = array(), $params = array()) {
-		$defaults = array('log' => $this->fullDebug);
-		$options = array_merge($defaults, $options);
+		$options = $options + array('log' => $this->fullDebug);
 		$this->error = null;
 
 		$t = microtime(true);
@@ -2686,13 +2685,17 @@ class DboSource extends DataSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
-		if (is_array($fields)) {
-			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		}
+		$holder = implode(',', array_fill(0, count($fields), '?'));
+		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
+
 		$count = count($values);
+		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
+		$statement = $this->_connection->prepare($sql);
 		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+			$statement->execute($values[$x]);
+			$statement->closeCursor();
 		}
+		return true;
 	}
 
 /**

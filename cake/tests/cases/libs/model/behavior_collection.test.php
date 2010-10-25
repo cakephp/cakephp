@@ -546,6 +546,7 @@ class BehaviorCollectionTest extends CakeTestCase {
  */
 	function testBehaviorToggling() {
 		$Apple = new Apple();
+		$expected = $Apple->find('all');
 		$this->assertIdentical($Apple->Behaviors->enabled(), array());
 
 		$Apple->Behaviors->init('Apple', array('Test' => array('key' => 'value')));

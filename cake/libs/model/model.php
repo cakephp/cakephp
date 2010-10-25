@@ -1459,15 +1459,11 @@ class Model extends Object {
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
-						$values = array(
-							$db->value($id, $this->getColumnType($this->primaryKey)),
-							$db->value($row)
-						);
+						$values = array($id, $row);
 						if ($isUUID && $primaryAdded) {
-							$values[] = $db->value(String::uuid());
+							$values[] = String::uuid();
 						}
-						$values = implode(',', $values);
-						$newValues[] = "({$values})";
+						$newValues[] = $values;
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
@@ -1506,7 +1502,6 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$fields = implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
