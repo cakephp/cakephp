@@ -142,7 +142,10 @@ class TranslateBehavior extends ModelBehavior {
 
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-						$model->virtualFields['_i18n_'.$field.'_'.$_locale] = 'COALESCE('. 'I18n__'.$field.'__'.$_locale.'.content, NULL)';
+						$model->virtualFields['i18n_'.$field.'_'.$_locale] = 'I18n__'.$field.'__'.$_locale.'.content';
+						if (!empty($query['fields'])) {
+							$query['fields'][] = 'i18n_'.$field.'_'.$_locale;
+						}
 						$query['joins'][] = array(
 							'type' => 'LEFT',
 							'alias' => 'I18n__'.$field.'__'.$_locale,
@@ -156,7 +159,10 @@ class TranslateBehavior extends ModelBehavior {
 						);
 					}
 				} else {
-					$model->virtualFields['_i18n_'.$field] = 'COALESCE('. 'I18n__'.$field.'.content, NULL)';
+					$model->virtualFields['i18n_'.$field] = 'I18n__'.$field.'.content';
+					if (!empty($query['fields'])) {
+						$query['fields'][] = 'i18n_'.$field;
+					}
 					$query['joins'][] = array(
 						'type' => 'LEFT',
 						'alias' => 'I18n__'.$field,
@@ -189,7 +195,8 @@ class TranslateBehavior extends ModelBehavior {
  * @return array Modified results
  */
 	public function afterFind(&$model, $results, $primary) {
-		$this->runtime[$model->alias]['fields'] = array();
+		$model->virtualFields = $this->runtime[$model->alias]['virtualFields'];
+		$this->runtime[$model->alias]['virtualFields'] = $this->runtime[$model->alias]['fields'] = array();
 		$locale = $this->_getLocale($model);
 
 		if (empty($locale) || empty($results) || empty($this->runtime[$model->alias]['beforeFind'])) {
