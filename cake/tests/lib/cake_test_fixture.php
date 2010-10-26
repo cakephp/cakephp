@@ -163,7 +163,6 @@ class CakeTestFixture {
  * @return boolean on success or if there are no records to insert, or false on failure
  */
 	public function insert(&$db) {
-		$this->truncate($db);
 		if (!isset($this->_insert)) {
 			$values = array();
 			if (isset($this->records) && !empty($this->records)) {
