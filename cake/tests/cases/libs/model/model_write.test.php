@@ -439,7 +439,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveWithCounterCacheScope() {
-		$this->loadFixtures('Syfile', 'Item');
+		$this->loadFixtures('Syfile', 'Item', 'Image', 'ItemsPortfolio', 'Portfolio');
 		$TestModel = new Syfile();
 		$TestModel2 = new Item();
 		$TestModel2->belongsTo['Syfile']['counterCache'] = true;
@@ -455,12 +455,13 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '1');
+		debug($result);
+		$this->assertEquals($result['Syfile']['item_count'], 1);
 
 		$TestModel2->id = 1;
 		$TestModel2->saveField('published', true);
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '2');
+		$this->assertEquals($result['Syfile']['item_count'], 2);
 
 		$TestModel2->save(array(
 			'id' => 1,
@@ -469,7 +470,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '1');
+		$this->assertEquals($result['Syfile']['item_count'], 1);
 	}
 
 /**
@@ -2416,7 +2417,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveAll() {
-		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment');
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment', 'Article', 'User');
 		$TestModel = new Post();
 
 		$result = $TestModel->find('all');
@@ -2556,7 +2557,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveAllHabtm() {
-		$this->loadFixtures('Article', 'Tag', 'Comment', 'User');
+		$this->loadFixtures('Article', 'Tag', 'Comment', 'User', 'ArticlesTag');
 		$data = array(
 			'Article' => array(
 				'user_id' => 1,
