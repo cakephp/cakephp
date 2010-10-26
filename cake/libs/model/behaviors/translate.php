@@ -87,6 +87,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return array Modified query
  */
 	public function beforeFind(&$model, $query) {
+		$this->runtime[$model->alias]['virtualFields'] = $model->virtualFields;
 		$locale = $this->_getLocale($model);
 		if (empty($locale)) {
 			return $query;
@@ -128,6 +129,7 @@ class TranslateBehavior extends ModelBehavior {
 			}
 		}
 
+		$this->runtime[$model->alias]['virtualFields'] = $model->virtualFields;
 		if ($addFields) {
 			foreach ($addFields as $field) {
 				// foreach (array($field, $model->alias.'.'.$field) as $_field) {
