@@ -206,27 +206,28 @@ class TranslateBehavior extends ModelBehavior {
 
 		foreach ($results as $key => &$row) {
 			$results[$key][$model->alias]['locale'] = (is_array($locale)) ? current($locale) : $locale;
-
 			foreach ($beforeFind as $_f => $field) {
+				$aliasField = is_numeric($_f) ? $field : $_f;
+
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-						if (!isset($results[$key][$model->alias][$field]) && !empty($results[$key]['I18n__'.$field.'__'.$_locale]['content'])) {
-							$results[$key][$model->alias][$field] = $results[$key]['I18n__'.$field.'__'.$_locale]['content'];
+						if (!isset($row[$model->alias][$aliasField]) && !empty($row[$model->alias]['i18n_'.$field.'_'.$_locale])) {
+							$row[$model->alias][$aliasField] = $row[$model->alias]['i18n_'.$field.'_'.$_locale];
+							$row[$model->alias]['locale'] = $_locale;
 						}
-						unset($results[$key]['I18n__'.$field.'__'.$_locale]);
+						unset($row[$model->alias]['i18n_'.$field.'_'.$_locale]);
 					}
 
-					if (!isset($results[$key][$model->alias][$field])) {
-						$results[$key][$model->alias][$field] = '';
+					if (!isset($row[$model->alias][$aliasField])) {
+						$row[$model->alias][$aliasField] = '';
 					}
 				} else {
 					$value = '';
-					if (!empty($row[$model->alias]['_i18n_' . $field])) {
-						$value = $row[$model->alias]['_i18n_' . $field];
+					if (!empty($row[$model->alias]['i18n_' . $field])) {
+						$value = $row[$model->alias]['i18n_' . $field];
 					}
-					$aliasField = is_numeric($_f) ? $field : $_f;
 					$row[$model->alias][$aliasField] = $value;
-					unset($row[$model->alias]['_i18n_' . $field]);
+					unset($row[$model->alias]['i18n_' . $field]);
 				}
 			}
 		}
