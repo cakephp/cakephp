@@ -221,10 +221,12 @@ class DboPostgres extends DboSource {
 					),
 					'length'  => $length
 				);
-				if ($c->name == $model->primaryKey) {
-					$fields[$c->name]['key'] = 'primary';
-					if ($fields[$c->name]['type'] !== 'string') {
-						$fields[$c->name]['length'] = 11;
+				if ($model instanceof Model) {
+					if ($c->name == $model->primaryKey) {
+						$fields[$c->name]['key'] = 'primary';
+						if ($fields[$c->name]['type'] !== 'string') {
+							$fields[$c->name]['length'] = 11;
+						}
 					}
 				}
 				if (
@@ -284,8 +286,14 @@ class DboPostgres extends DboSource {
  * @return boolean	SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table, $reset = true) {
+		$table = $this->fullTableName($table, false);
+		if (!isset($this->_sequenceMap[$table])) {
+			$cache = $this->cacheSources;
+			$this->cacheSources = false;
+			$this->describe($table);
+			$this->cacheSources = $cache;
+		}
 		if (parent::truncate($table)) {
-			$table = $this->fullTableName($table, false);
 			if (isset($this->_sequenceMap[$table]) && $reset) {
 				foreach ($this->_sequenceMap[$table] as $field => $sequence) {
 					$this->_execute("ALTER SEQUENCE \"{$sequence}\" RESTART WITH 1");
