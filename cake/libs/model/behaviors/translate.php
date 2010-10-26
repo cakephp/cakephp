@@ -131,8 +131,10 @@ class TranslateBehavior extends ModelBehavior {
 
 		$this->runtime[$model->alias]['virtualFields'] = $model->virtualFields;
 		if ($addFields) {
-			foreach ($addFields as $field) {
-				foreach (array($field, $model->alias.'.'.$field) as $_field) {
+			foreach ($addFields as $_f => $field) {
+				$aliasField = is_numeric($_f) ? $field : $_f;
+
+				foreach (array($aliasField, $model->alias.'.'.$aliasField) as $_field) {
 					$key = array_search($_field, (array)$query['fields']);
 
 					if ($key !== false) {
@@ -153,7 +155,7 @@ class TranslateBehavior extends ModelBehavior {
 							'conditions' => array(
 								$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}__{$_locale}.foreign_key"),
 								'I18n__'.$field.'__'.$_locale.'.model' => $model->name,
-								'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $field,
+								'I18n__'.$field.'__'.$_locale.'.'.$RuntimeModel->displayField => $aliasField,
 								'I18n__'.$field.'__'.$_locale.'.locale' => $_locale
 							)
 						);
@@ -170,7 +172,7 @@ class TranslateBehavior extends ModelBehavior {
 						'conditions' => array(
 							$model->alias . '.' . $model->primaryKey => $db->identifier("I18n__{$field}.foreign_key"),
 							'I18n__'.$field.'.model' => $model->name,
-							'I18n__'.$field.'.'.$RuntimeModel->displayField => $field
+							'I18n__'.$field.'.'.$RuntimeModel->displayField => $aliasField
 						)
 					);
 
