@@ -164,7 +164,9 @@ class DboPostgres extends DboSource {
  * @return resource Result resource identifier
  */
 	function _execute($sql) {
-		return pg_query($this->connection, $sql);
+        pg_send_query($this->connection, $sql);
+        $this->_result = pg_get_result($this->connection);
+        return $this->_result;
 	}
 
 /**
@@ -336,7 +338,7 @@ class DboPostgres extends DboSource {
  * @return string Error message
  */
 	function lastError() {
-		$error = pg_last_error($this->connection);
+        $error = pg_result_error($this->_result);
 		return ($error) ? $error : null;
 	}
 
