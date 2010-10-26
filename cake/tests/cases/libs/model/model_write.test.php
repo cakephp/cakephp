@@ -203,8 +203,8 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel->create(array());
 		$TestModel->save();
 		$result = $TestModel->findById($TestModel->id);
-		$this->assertIdentical($result['DataTest']['count'], '0');
-		$this->assertIdentical($result['DataTest']['float'], '0');
+		$this->assertEquals($result['DataTest']['count'], 0);
+		$this->assertEquals($result['DataTest']['float'], 0);
 	}
 
 /**
@@ -288,20 +288,20 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '2');
+		$this->assertEquals($result['Syfile']['item_count'], 2);
 
 		$TestModel2->delete(1);
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '1');
+		$this->assertEquals($result['Syfile']['item_count'], 1);
 
 		$TestModel2->id = 2;
 		$TestModel2->saveField('syfile_id', 1);
 
 		$result = $TestModel->findById(1);
-		$this->assertIdentical($result['Syfile']['item_count'], '2');
+		$this->assertEquals($result['Syfile']['item_count'], 2);
 
 		$result = $TestModel->findById(2);
-		$this->assertIdentical($result['Syfile']['item_count'], '0');
+		$this->assertEquals($result['Syfile']['item_count'], 0);
 	}
 
 /**
