@@ -132,13 +132,13 @@ class TranslateBehavior extends ModelBehavior {
 		$this->runtime[$model->alias]['virtualFields'] = $model->virtualFields;
 		if ($addFields) {
 			foreach ($addFields as $field) {
-				// foreach (array($field, $model->alias.'.'.$field) as $_field) {
-				// 					$key = array_search($_field, $query['fields']);
-				// 
-				// 					if ($key !== false) {
-				// 						unset($query['fields'][$key]);
-				// 					}
-				// 				}
+				foreach (array($field, $model->alias.'.'.$field) as $_field) {
+					$key = array_search($_field, (array)$query['fields']);
+
+					if ($key !== false) {
+						unset($query['fields'][$key]);
+					}
+				}
 
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
