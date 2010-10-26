@@ -455,7 +455,7 @@ class ModelWriteTest extends BaseModelTest {
 		));
 
 		$result = $TestModel->findById(1);
-		debug($result);
+
 		$this->assertEquals($result['Syfile']['item_count'], 1);
 
 		$TestModel2->id = 1;

@@ -211,6 +211,9 @@ class DboPostgres extends DboSource {
 				} else {
 					$length = $this->length($c->type);
 				}
+				if (empty($length)) {
+					$length = null;
+				}
 				$fields[$c->name] = array(
 					'type'    => $this->column($type),
 					'null'    => ($c->null == 'NO' ? false : true),
