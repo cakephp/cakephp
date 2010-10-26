@@ -313,17 +313,17 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$result = $TestModel->find('all', array('fields' => array('TranslatedItem.title')));
 		$expected = array(
 			array(
-				'TranslatedItem' => array('id' => 1, 'locale' => 'eng', 'title' => 'Title #1'),
+				'TranslatedItem' => array('id' => 1, 'locale' => 'eng', 'title' => 'Title #1', 'slug' => 'first_translated'),
 				'Title' => array(array('foreign_key' => 1, 'content' => 'Title #1')),
 				'Content' => array(array('foreign_key' => 1, 'content' => 'Content #1'))
 			),
 			array(
-				'TranslatedItem' => array('id' => 2, 'locale' => 'eng', 'title' => 'Title #2'),
+				'TranslatedItem' => array('id' => 2, 'locale' => 'eng', 'title' => 'Title #2', 'slug' => 'second_translated'),
 				'Title' => array(array('foreign_key' => 2, 'content' => 'Title #2')),
 				'Content' => array(array('foreign_key' => 2, 'content' => 'Content #2'))
 			),
 			array(
-				'TranslatedItem' => array('id' => 3, 'locale' => 'eng', 'title' => 'Title #3'),
+				'TranslatedItem' => array('id' => 3, 'locale' => 'eng', 'title' => 'Title #3','slug' => 'third_translated'),
 				'Title' => array(array('foreign_key' => 3, 'content' => 'Title #3')),
 				'Content' => array(array('foreign_key' => 3, 'content' => 'Content #3'))
 			)
