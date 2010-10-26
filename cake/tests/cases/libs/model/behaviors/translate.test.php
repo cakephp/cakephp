@@ -185,6 +185,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'eng';
+
 		$result = $TestModel->read(null, 1);
 		$expected = array(
 			'TranslatedItem' => array(
@@ -342,16 +343,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = array('deu', 'eng', 'cze');
-		$delete = array(
-			array('locale' => 'deu'),
-			array('foreign_key' => 1, 'field' => 'title', 'locale' => 'eng'),
-			array('foreign_key' => 1, 'field' => 'content', 'locale' => 'cze'),
-			array('foreign_key' => 2, 'field' => 'title', 'locale' => 'cze'),
-			array('foreign_key' => 2, 'field' => 'content', 'locale' => 'eng'),
-			array('foreign_key' => 3, 'field' => 'title')
-		);
-		$I18nModel = ClassRegistry::getObject('TranslateTestModel');
-		$I18nModel->deleteAll(array('or' => $delete));
+
 
 		$result = $TestModel->read(null, 1);
 		$expected = array(
@@ -359,8 +351,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'id' => 1,
 				'slug' => 'first_translated',
 				'locale' => 'deu',
-				'title' => 'Titulek #1',
-				'content' => 'Content #1'
+				'title' => 'Titel #1',
+				'content' => 'Inhalt #1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -371,28 +363,29 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'TranslatedItem' => array(
 					'slug' => 'first_translated',
 					'locale' => 'deu',
-					'title' => 'Titulek #1',
-					'content' => 'Content #1'
+					'content' => 'Inhalt #1',
+					'title' => 'Titel #1'
 				)
 			),
 			array(
 				'TranslatedItem' => array(
 					'slug' => 'second_translated',
 					'locale' => 'deu',
-					'title' => 'Title #2',
-					'content' => 'Obsah #2'
+					'title' => 'Titel #2',
+					'content' => 'Inhalt #2'
 				)
 			),
 			array(
 				'TranslatedItem' => array(
 					'slug' => 'third_translated',
 					'locale' => 'deu',
-					'title' => '',
-					'content' => 'Content #3'
+					'title' => 'Titel #3',
+					'content' => 'Inhalt #3'
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+
+		$this->assertEquals($result, $expected);
 	}
 
 /**
