@@ -165,8 +165,7 @@ class DboPostgres extends DboSource {
  */
 	function _execute($sql) {
         pg_send_query($this->connection, $sql);
-        $this->_result = pg_get_result($this->connection);
-        return $this->_result;
+        return pg_get_result($this->connection);
 	}
 
 /**
