@@ -741,7 +741,7 @@ class DboPostgres extends DboSource {
 		}
 
 		if ($quote) {
-			$result = ($result) ? 'TRUE' : 'FALSE';
+			return ($result) ? 'TRUE' : 'FALSE';
 		}
 		return (int) $result;
 	}
