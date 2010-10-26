@@ -113,39 +113,16 @@ class TranslateBehavior extends ModelBehavior {
 			);
 			return $query;
 		}
-		$autoFields = false;
 
-		if (empty($query['fields'])) {
-			$query['fields'] = array($model->alias.'.*');
-
-			$recursive = $model->recursive;
-			if (isset($query['recursive'])) {
-				$recursive = $query['recursive'];
-			}
-
-			if ($recursive >= 0) {
-				foreach (array('hasOne', 'belongsTo') as $type) {
-					foreach ($model->{$type} as $key => $value) {
-
-						if (empty($value['fields'])) {
-							$query['fields'][] = $key.'.*';
-						} else {
-							foreach ($value['fields'] as $field) {
-								$query['fields'][] = $key.'.'.$field;
-							}
-						}
-					}
-				}
-			}
-			$autoFields = true;
-		}
 		$fields = array_merge($this->settings[$model->alias], $this->runtime[$model->alias]['fields']);
 		$addFields = array();
-		if (is_array($query['fields'])) {
+		if (empty($query['fields'])) {
+			$addFields = $fields;
+		} else if (is_array($query['fields'])) {
 			foreach ($fields as $key => $value) {
 				$field = (is_numeric($key)) ? $value : $key;
 
-				if (in_array($model->alias.'.*', $query['fields']) || $autoFields || in_array($model->alias.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
+				if (in_array($model->alias.'.*', $query['fields']) || in_array($model->alias.'.'.$field, $query['fields']) || in_array($field, $query['fields'])) {
 					$addFields[] = $field;
 				}
 			}
@@ -153,17 +130,17 @@ class TranslateBehavior extends ModelBehavior {
 
 		if ($addFields) {
 			foreach ($addFields as $field) {
-				foreach (array($field, $model->alias.'.'.$field) as $_field) {
-					$key = array_search($_field, $query['fields']);
-
-					if ($key !== false) {
-						unset($query['fields'][$key]);
-					}
-				}
+				// foreach (array($field, $model->alias.'.'.$field) as $_field) {
+				// 					$key = array_search($_field, $query['fields']);
+				// 
+				// 					if ($key !== false) {
+				// 						unset($query['fields'][$key]);
+				// 					}
+				// 				}
 
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
-						$query['fields'][] = 'I18n__'.$field.'__'.$_locale.'.content';
+						$model->virtualFields['_i18n_'.$field.'_'.$_locale] = 'COALESCE('. 'I18n__'.$field.'__'.$_locale.'.content, NULL)';
 						$query['joins'][] = array(
 							'type' => 'LEFT',
 							'alias' => 'I18n__'.$field.'__'.$_locale,
@@ -177,7 +154,7 @@ class TranslateBehavior extends ModelBehavior {
 						);
 					}
 				} else {
-					$query['fields'][] = 'I18n__'.$field.'.content';
+					$model->virtualFields['_i18n_'.$field] = 'COALESCE('. 'I18n__'.$field.'.content, NULL)';
 					$query['joins'][] = array(
 						'type' => 'LEFT',
 						'alias' => 'I18n__'.$field,
@@ -196,9 +173,6 @@ class TranslateBehavior extends ModelBehavior {
 					}
 				}
 			}
-		}
-		if (is_array($query['fields'])) {
-			$query['fields'] = array_merge($query['fields']);
 		}
 		$this->runtime[$model->alias]['beforeFind'] = $addFields;
 		return $query;
@@ -221,10 +195,10 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$beforeFind = $this->runtime[$model->alias]['beforeFind'];
 
-		foreach ($results as $key => $row) {
-			$results[$key][$model->alias]['locale'] = (is_array($locale)) ? @$locale[0] : $locale;
+		foreach ($results as $key => &$row) {
+			$results[$key][$model->alias]['locale'] = (is_array($locale)) ? current($locale) : $locale;
 
-			foreach ($beforeFind as $field) {
+			foreach ($beforeFind as $_f => $field) {
 				if (is_array($locale)) {
 					foreach ($locale as $_locale) {
 						if (!isset($results[$key][$model->alias][$field]) && !empty($results[$key]['I18n__'.$field.'__'.$_locale]['content'])) {
@@ -238,11 +212,12 @@ class TranslateBehavior extends ModelBehavior {
 					}
 				} else {
 					$value = '';
-					if (!empty($results[$key]['I18n__'.$field]['content'])) {
-						$value = $results[$key]['I18n__'.$field]['content'];
+					if (!empty($row[$model->alias]['_i18n_' . $field])) {
+						$value = $row[$model->alias]['_i18n_' . $field];
 					}
-					$results[$key][$model->alias][$field] = $value;
-					unset($results[$key]['I18n__'.$field]);
+					$aliasField = is_numeric($_f) ? $field : $_f;
+					$row[$model->alias][$aliasField] = $value;
+					unset($row[$model->alias]['_i18n_' . $field]);
 				}
 			}
 		}
