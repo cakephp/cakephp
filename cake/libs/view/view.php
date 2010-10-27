@@ -673,11 +673,7 @@ class View extends Object {
 		extract($___dataForView, EXTR_SKIP);
 		ob_start();
 
-		if (Configure::read('debug') > 0) {
-			include ($___viewFn);
-		} else {
-			@include ($___viewFn);
-		}
+		include $___viewFn;
 
 		if ($loadHelpers === true) {
 			$this->Helpers->trigger('afterRender', array(&$this));
