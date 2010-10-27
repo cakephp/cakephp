@@ -19,7 +19,6 @@
  */
 App::import('Shell', 'CommandList', false);
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 
 class TestStringOutput extends ConsoleOutput {
 	public $output = '';
@@ -107,6 +106,30 @@ class CommandListTest extends CakeTestCase {
 		$this->assertPattern($expected, $output);
 
 		$expected = "/sample \[.*app.*\]/";
+		$this->assertPattern($expected, $output);
+	}
+
+/**
+ * Test the sort param
+ *
+ * @return void
+ */
+	function testSortPlugin() {
+		$this->Shell->params['sort'] = true;
+		$this->Shell->main();
+
+		$output = $this->Shell->stdout->output;
+
+		$expected = "/\[.*App.*\]\n[ ]+sample/";
+		$this->assertPattern($expected, $output);
+
+		$expected = "/\[.*TestPluginTwo.*\]\n[ ]+example, welcome/";
+		$this->assertPattern($expected, $output);
+
+		$expected = "/\[.*TestPlugin.*\]\n[ ]+example/";
+		$this->assertPattern($expected, $output);
+		
+		$expected = "/\[.*Core.*\]\n[ ]+acl, api, bake, command_list, console, i18n, schema, testsuite/";
 		$this->assertPattern($expected, $output);
 	}
 

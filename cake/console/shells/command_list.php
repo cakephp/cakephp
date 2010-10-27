@@ -62,7 +62,11 @@ class CommandListShell extends Shell {
 		if ($shellList) {
 			ksort($shellList);
 			if (empty($this->params['xml'])) {
-				$this->_asText($shellList);
+				if (!empty($this->params['sort'])) {
+					$this->_asSorted($shellList);
+				} else {
+					$this->_asText($shellList);
+				}
 			} else {
 				$this->_asXml($shellList);
 			}
@@ -152,6 +156,44 @@ class CommandListShell extends Shell {
 	}
 
 /**
+ * Generates the shell list sorted by where the shells are found.
+ *
+ * @return void
+ */
+	protected function _asSorted($shellList) {
+		$grouped = array();
+		foreach ($shellList as $shell => $types) {
+			foreach ($types as $type) {
+				$type = Inflector::camelize($type);
+				if (empty($grouped[$type])) {
+					$grouped[$type] = array();
+				}
+				$grouped[$type][] = $shell;
+			}
+		}
+		if (!empty($grouped['App'])) {
+			sort($grouped['App'], SORT_STRING);
+			$this->out('[ App ]');
+			$this->out('  ' . implode(', ', $grouped['App']), 2);
+			unset($grouped['App']);
+		}
+		foreach ($grouped as $section => $shells) {
+			if ($section == 'CORE') {
+				continue;
+			}
+			sort($shells, SORT_STRING);
+			$this->out('[ ' . $section . ' ]');
+			$this->out('  ' . implode(', ', $shells), 2);
+		}
+		if (!empty($grouped['CORE'])) {
+			sort($grouped['CORE'], SORT_STRING);
+			$this->out('[ Core ]');
+			$this->out('  ' . implode(', ', $grouped['CORE']), 2);
+		}
+		$this->out();
+	}
+
+/**
  * Output as XML
  *
  * @return void
@@ -184,6 +226,9 @@ class CommandListShell extends Shell {
 		return $parser->description('Get the list of available shells for this CakePHP application.')
 			->addOption('xml', array(
 				'help' => __('Get the listing as XML.'),
+				'boolean' => true
+			))->addOption('sort', array(
+				'help' => __('Sorts the commands by where they are located.'),
 				'boolean' => true
 			));
 	}
