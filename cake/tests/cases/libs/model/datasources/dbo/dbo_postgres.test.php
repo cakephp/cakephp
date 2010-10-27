@@ -400,19 +400,19 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testBooleanNormalization() {
-		$this->assertTrue($this->Dbo2->boolean('t'));
-		$this->assertTrue($this->Dbo2->boolean('true'));
-		$this->assertTrue($this->Dbo2->boolean('TRUE'));
-		$this->assertTrue($this->Dbo2->boolean(true));
-		$this->assertTrue($this->Dbo2->boolean(1));
-		$this->assertTrue($this->Dbo2->boolean(" "));
+		$this->assertEquals(1, $this->Dbo2->boolean('t', false));
+		$this->assertEquals(1, $this->Dbo2->boolean('true', false));
+		$this->assertEquals(1, $this->Dbo2->boolean('TRUE', false));
+		$this->assertEquals(1, $this->Dbo2->boolean(true, false));
+		$this->assertEquals(1, $this->Dbo2->boolean(1, false));
+		$this->assertEquals(1, $this->Dbo2->boolean(" ", false));
 
-		$this->assertFalse($this->Dbo2->boolean('f'));
-		$this->assertFalse($this->Dbo2->boolean('false'));
-		$this->assertFalse($this->Dbo2->boolean('FALSE'));
-		$this->assertFalse($this->Dbo2->boolean(false));
-		$this->assertFalse($this->Dbo2->boolean(0));
-		$this->assertFalse($this->Dbo2->boolean(''));
+		$this->assertEquals(0, $this->Dbo2->boolean('f', false));
+		$this->assertEquals(0, $this->Dbo2->boolean('false', false));
+		$this->assertEquals(0, $this->Dbo2->boolean('FALSE', false));
+		$this->assertEquals(0, $this->Dbo2->boolean(false, false));
+		$this->assertEquals(0, $this->Dbo2->boolean(0, false));
+		$this->assertEquals(0, $this->Dbo2->boolean('', false));
 	}
 
 /**
