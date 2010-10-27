@@ -732,12 +732,16 @@ class DboPostgres extends DboSource {
 		switch (true) {
 			case ($data === true || $data === false):
 				$result = $data;
+				break;
 			case ($data === 't' || $data === 'f'):
 				$result = ($data === 't');
+				break;
 			case ($data === 'true' || $data === 'false'):
 				$result = ($data === 'true');
+				break;
 			case ($data === 'TRUE' || $data === 'FALSE'):
 				$result = ($data === 'TRUE');
+				break;
 			default:
 				$result = (bool) $data;
 			break;

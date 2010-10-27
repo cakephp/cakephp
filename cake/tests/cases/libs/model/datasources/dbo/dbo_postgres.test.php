@@ -340,18 +340,18 @@ class DboPostgresTest extends CakeTestCase {
 		$this->assertEqual($this->Dbo->value('', 'float', false), "NULL");
 		$this->assertEqual($this->Dbo->value('0.0', 'float'), "'0.0'");
 
-		$this->assertEqual($this->Dbo->value('t', 'boolean'), true);
-		$this->assertEqual($this->Dbo->value('f', 'boolean'), false);
-		$this->assertEqual($this->Dbo->value(true), true);
-		$this->assertEqual($this->Dbo->value(false), false);
+		$this->assertEqual($this->Dbo->value('t', 'boolean'), "'TRUE'");
+		$this->assertEqual($this->Dbo->value('f', 'boolean'), "'FALSE'");
+		$this->assertEqual($this->Dbo->value(true), "'TRUE'");
+		$this->assertEqual($this->Dbo->value(false), "'FALSE'");
 		$this->assertEqual($this->Dbo->value('t'), "'t'");
 		$this->assertEqual($this->Dbo->value('f'), "'f'");
-		$this->assertEqual($this->Dbo->value('true', 'boolean'), true);
-		$this->assertEqual($this->Dbo->value('false', 'boolean'), false);
-		$this->assertEqual($this->Dbo->value('', 'boolean'), false);
-		$this->assertEqual($this->Dbo->value(0, 'boolean'), false);
-		$this->assertEqual($this->Dbo->value(1, 'boolean'), true);
-		$this->assertEqual($this->Dbo->value('1', 'boolean'), true);
+		$this->assertEqual($this->Dbo->value('true', 'boolean'), "'TRUE'");
+		$this->assertEqual($this->Dbo->value('false', 'boolean'), "'FALSE'");
+		$this->assertEqual($this->Dbo->value('', 'boolean'), "'FALSE'");
+		$this->assertEqual($this->Dbo->value(0, 'boolean'), "'FALSE'");
+		$this->assertEqual($this->Dbo->value(1, 'boolean'), "'TRUE'");
+		$this->assertEqual($this->Dbo->value('1', 'boolean'), "'TRUE'");
 		$this->assertEqual($this->Dbo->value(null, 'boolean'), "NULL");
 		$this->assertEqual($this->Dbo->value(array()), "NULL");
 	}
