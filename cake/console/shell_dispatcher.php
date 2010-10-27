@@ -311,7 +311,7 @@ class ShellDispatcher {
  *
  */
 	public function help() {
-		$this->args = array('command_list');
+		$this->args = array_merge(array('command_list'), $this->args);
 		$this->dispatch();
 	}
 
