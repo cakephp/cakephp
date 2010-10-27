@@ -602,25 +602,25 @@ class DboPostgresTest extends CakeTestCase {
 		$this->Dbo->query('CREATE INDEX pointless_bool ON ' . $name . '("bool")');
 		$this->Dbo->query('CREATE UNIQUE INDEX char_index ON ' . $name . '("small_char")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => true),
-			'pointless_bool' => array('column' => 'bool', 'unique' => false),
-			'char_index' => array('column' => 'small_char', 'unique' => true),
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'pointless_bool' => array('column' => 'bool', 'unique' => 0),
+			'char_index' => array('column' => 'small_char', 'unique' => 1),
 
 		);
 		$result = $this->Dbo->index($name);
+		$this->Dbo->query('DROP TABLE ' . $name);
 		$this->assertEqual($expected, $result);
 
-		$this->Dbo->query('DROP TABLE ' . $name);
 		$name = $this->Dbo->fullTableName('index_test_2', false);
 		$this->Dbo->query('CREATE TABLE ' . $name . ' ("id" serial NOT NULL PRIMARY KEY, "bool" integer, "small_char" varchar(50), "description" varchar(40) )');
 		$this->Dbo->query('CREATE UNIQUE INDEX multi_col ON ' . $name . '("small_char", "bool")');
 		$expected = array(
-			'PRIMARY' => array('column' => 'id', 'unique' => true),
-			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => true),
+			'PRIMARY' => array('column' => 'id', 'unique' => 1),
+			'multi_col' => array('column' => array('small_char', 'bool'), 'unique' => 1),
 		);
 		$result = $this->Dbo->index($name);
-		$this->assertEqual($expected, $result);
 		$this->Dbo->query('DROP TABLE ' . $name);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -697,15 +697,15 @@ class DboPostgresTest extends CakeTestCase {
 			'name' => 'AlterTest2',
 			'connection' => 'test',
 			'altertest' => array(
-				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
-				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
-				'group1' => array('type' => 'integer', 'null' => true),
-				'group2' => array('type' => 'integer', 'null' => true),
+				'id' => array('type' => 'integer', 'null' => 0, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => 0, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => 1),
+				'group2' => array('type' => 'integer', 'null' => 1),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => false),
-					'group_idx' => array('column' => 'group1', 'unique' => false),
-					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => false),
-					'PRIMARY' => array('column' => 'id', 'unique' => true)
+					'name_idx' => array('column' => 'name', 'unique' => 0),
+					'group_idx' => array('column' => 'group1', 'unique' => 0),
+					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
+					'PRIMARY' => array('column' => 'id', 'unique' => 1)
 				)
 			)
 		));
@@ -719,15 +719,15 @@ class DboPostgresTest extends CakeTestCase {
 			'name' => 'AlterTest3',
 			'connection' => 'test',
 			'altertest' => array(
-				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
-				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
-				'group1' => array('type' => 'integer', 'null' => true),
-				'group2' => array('type' => 'integer', 'null' => true),
+				'id' => array('type' => 'integer', 'null' => 0, 'default' => 0),
+				'name' => array('type' => 'string', 'null' => 0, 'length' => 50),
+				'group1' => array('type' => 'integer', 'null' => 1),
+				'group2' => array('type' => 'integer', 'null' => 1),
 				'indexes' => array(
-					'name_idx' => array('column' => 'name', 'unique' => true),
-					'group_idx' => array('column' => 'group2', 'unique' => false),
-					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => false),
-					'another_idx' => array('column' => array('group1', 'name'), 'unique' => false))
+					'name_idx' => array('column' => 'name', 'unique' => 1),
+					'group_idx' => array('column' => 'group2', 'unique' => 0),
+					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
+					'another_idx' => array('column' => array('group1', 'name'), 'unique' => 0))
 		)));
 
 		$this->Dbo->query($this->Dbo->alterSchema($schema3->compare($schema2)));
