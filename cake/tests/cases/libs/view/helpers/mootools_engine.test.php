@@ -7,14 +7,14 @@
  * PHP versions 4 and 5
  *
  * CakePHP : Rapid Development Framework <http://www.cakephp.org/>
- * Copyright 2006-2009, Cake Software Foundation, Inc.
+ * Copyright 2006-2010, Cake Software Foundation, Inc.
  *								1785 E. Sahara Avenue, Suite 490-204
  *								Las Vegas, Nevada 89104
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright       Copyright 2006-2009, Cake Software Foundation, Inc.
+ * @copyright       Copyright 2006-2010, Cake Software Foundation, Inc.
  * @link            http://cakephp.org CakePHP Project
  * @package         cake.tests
  * @subpackage      cake.tests.cases.views.helpers

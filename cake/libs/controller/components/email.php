@@ -745,9 +745,9 @@ class EmailComponent extends Object{
 	function _formatAddress($string, $smtp = false) {
 		$hasAlias = preg_match('/((.*)\s)?<(.+)>/', $string, $matches);
 		if ($smtp && $hasAlias) {
-			return $this->_strip(' <' .  $matches[3] . '>');
+			return $this->_strip('<' .  $matches[3] . '>');
 		} elseif ($smtp) {
-			return $this->_strip(' <' . $string . '>');
+			return $this->_strip('<' . $string . '>');
 		}
 		if ($hasAlias && !empty($matches[2])) {
 			return $this->_strip($matches[2] . ' <' . $matches[3] . '>');

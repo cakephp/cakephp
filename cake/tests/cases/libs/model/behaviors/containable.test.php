@@ -3637,6 +3637,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertNoErrors();
 		$this->assertEqual($result, 'First Article', 'Field is wrong');
 	}
+
+/**
+ * test that find(all) doesn't return incorrect values when mixed with containable.
+ *
+ * @return void
+ */
+	function testFindAllReturn() {
+		$result = $this->Article->find('all', array(
+			'conditions' => array('Article.id' => 999999999)
+		));
+		$this->assertEqual($result, array(), 'Should be empty.');
+	}
+
 /**
  * containments method
  *

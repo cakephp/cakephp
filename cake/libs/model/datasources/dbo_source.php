@@ -1958,8 +1958,8 @@ class DboSource extends DataSource {
 			$quote
 		);
 		$cacheKey = crc32(serialize($cacheKey));
-		if (isset($this->methodCache[__FUNCTION__][$cacheKey])) {
-			return $this->methodCache[__FUNCTION__][$cacheKey];
+		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
+			return $return;
 		}
 		$allFields = empty($fields);
 		if ($allFields) {
@@ -2049,7 +2049,7 @@ class DboSource extends DataSource {
 		if (!empty($virtual)) {
 			$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
 		}
-		return $this->methodCache[__FUNCTION__][$cacheKey] = array_unique($fields);
+		return $this->cacheMethod(__FUNCTION__, $cacheKey, array_unique($fields));
 	}
 
 /**
