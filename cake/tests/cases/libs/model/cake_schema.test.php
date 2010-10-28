@@ -799,6 +799,35 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 
 /**
+ * test comparing '' and null and making sure they are different.
+ *
+ * @return void
+ */
+	function testCompareEmptyStringAndNull() {
+		$One =& new CakeSchema(array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '')
+			)
+		));
+		$Two =& new CakeSchema(array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => null)
+			)
+		));
+		$compare = $One->compare($Two);
+		$expected = array(
+			'posts' => array(
+				'change' => array(
+					'name' => array('type' => 'string', 'null' => false, 'default' => null)
+				)
+			)
+		);
+		$this->assertEqual($expected, $compare);
+	}
+
+/**
  * Test comparing tableParameters and indexes.
  *
  * @return void
