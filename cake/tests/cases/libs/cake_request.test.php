@@ -605,8 +605,20 @@ class CakeRequestTestCase extends CakeTestCase {
 		$_SERVER['HTTP_USER_AGENT'] = 'Android 2.0';
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
+		
+		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre';
+		$this->assertTrue($request->is('mobile'));
+		$this->assertTrue($request->isMobile());
+	}
 
-		$this->expectException();
+/**
+ * test __call expcetions
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function test__callExceptionOnUnknownMethod() {
+		$request = new CakeRequest('some/path');
 		$request->IamABanana();
 	}
 
