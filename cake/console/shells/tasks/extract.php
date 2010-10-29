@@ -91,12 +91,22 @@ class ExtractTask extends Shell {
 	private $__output = null;
 
 /**
+ * An array of directories to exclude.
+ *
+ * @var array
+ */
+	protected $_exclude = array();
+
+/**
  * Execution method always used for tasks
  *
  * @return void
  * @access private
  */
 	function execute() {
+		if (!empty($this->params['exclude'])) {
+			$this->_exclude = explode(',', $this->params['exclude']);
+		}
 		if (isset($this->params['files']) && !is_array($this->params['files'])) {
 			$this->__files = explode(',', $this->params['files']);
 		}
@@ -190,14 +200,17 @@ class ExtractTask extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(__('CakePHP Language String Extraction:'))
-			->addOption('app', array('help' => __('directory where your application is located.')))
-			->addOption('paths', array('help' => __('comma separted list of paths, full paths are needed.')))
+			->addOption('app', array('help' => __('Directory where your application is located.')))
+			->addOption('paths', array('help' => __('Comma separted list of paths, full paths are needed.')))
 			->addOption('merge', array(
-				'help' => __('[yes|no] Merge all domain strings into the default.po file.'),
+				'help' => __('Merge all domain strings into the default.po file.'),
 				'choices' => array('yes', 'no')
 			))
 			->addOption('output', array('help' => __('Full path to output directory.')))
-			->addOption('files', array('help' => __('comma separated list of files, full paths are needed.')));
+			->addOption('files', array('help' => __('Comma separated list of files, full paths are needed.')))
+			->addOption('exclude', array(
+				'help' => __('Comma separated list of directories to exclude. Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+			));
 	}
 
 /**
@@ -502,9 +515,21 @@ class ExtractTask extends Shell {
  * @access private
  */
 	function __searchFiles() {
+		$pattern = false;
+		if (!empty($this->_exclude)) {
+			$pattern = '/[\/\\\\]' . implode('|', $this->_exclude) . '[\/\\\\]/'; 
+		}
 		foreach ($this->__paths as $path) {
 			$Folder = new Folder($path);
 			$files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
+			if (!empty($pattern)) {
+				foreach ($files as $i => $file) {
+					if (preg_match($pattern, $file)) {
+						unset($files[$i]);
+					}
+				}
+				$files = array_values($files);
+			}
 			$this->__files = array_merge($this->__files, $files);
 		}
 	}

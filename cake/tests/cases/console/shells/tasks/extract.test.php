@@ -47,6 +47,8 @@ class ExtractTaskTest extends CakeTestCase {
 			array('in', 'out', 'err', '_stop'),
 			array($out, $out, $in)
 		);
+		$this->path = TMP . 'tests' . DS . 'extract_task_test';
+		$Folder = new Folder($this->path . DS . 'locale', true);
 	}
 
 /**
@@ -57,6 +59,9 @@ class ExtractTaskTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Task);
+
+		$Folder = new Folder($this->path);
+		$Folder->delete();
 	}
 
 /**
@@ -65,21 +70,18 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testExecute() {
-		$path = TMP . 'tests' . DS . 'extract_task_test';
-		new Folder($path . DS . 'locale', true);
-
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages';
-		$this->Task->params['output'] = $path . DS;
+		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->any())->method('in')
 			->will($this->returnValue('y'));
 		$this->Task->expects($this->never())->method('_stop');
 
 		$this->Task->execute();
-		$this->assertTrue(file_exists($path . DS . 'default.pot'));
-		$result = file_get_contents($path . DS . 'default.pot');
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = '/"Content-Type\: text\/plain; charset\=utf-8/';
 		$this->assertPattern($pattern, $result);
@@ -131,7 +133,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 
 		// extract.ctp - reading the domain.pot
-		$result = file_get_contents($path . DS . 'domain.pot');
+		$result = file_get_contents($this->path . DS . 'domain.pot');
 
 		$pattern = '/msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
 		$this->assertNoPattern($pattern, $result);
@@ -142,9 +144,32 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertPattern($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertPattern($pattern, $result);
+	}
 
-		$Folder = new Folder($path);
-		$Folder->delete();
+/**
+ * test exclusions
+ *
+ * @return void
+ */
+	function testExtractWithExclude() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views';
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['exclude'] = 'pages,layouts';
+
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '/\#: .*extract\.ctp:6\n/';
+		$this->assertNotRegExp($pattern, $result);
+		
+		$pattern = '/\#: .*default\.ctp:26\n/';
+		$this->assertNotRegExp($pattern, $result);
 	}
 
 /**
@@ -153,21 +178,18 @@ class ExtractTaskTest extends CakeTestCase {
  * @return void
  */
 	function testExtractMultiplePaths() {
-		$path = TMP . 'tests' . DS . 'extract_task_test';
-		new Folder($path . DS . 'locale', true);
-
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = 
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'pages,' .
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'posts';
 	
-		$this->Task->params['output'] = $path . DS;
+		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->expects($this->never())->method('err');
 		$this->Task->expects($this->never())->method('_stop');
 		$this->Task->execute();
 
-		$result = file_get_contents($path . DS . 'default.pot');
+		$result = file_get_contents($this->path . DS . 'default.pot');
 
 		$pattern = '/msgid "Add User"/';
 		$this->assertPattern($pattern, $result);
