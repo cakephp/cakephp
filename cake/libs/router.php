@@ -724,11 +724,11 @@ class Router {
 
 		$path = array('base' => null);
 		if (!empty(self::$_requests)) {
-			// bad hack for detecting if doing a request action.
-			if (isset($this) && !isset($this->params['requested'])) {
+			$currentRequest = self::$_requests[count(self::$_requests) - 1];
+			if (!empty($currentRequest->params['requested'])) {
 				$request = self::$_requests[0];
 			} else {
-				$request = end(self::$_requests);
+				$request = $currentRequest;
 			}
 			$params = $request->params;
 			$path = array('base' => $request->base, 'here' => $request->here);
