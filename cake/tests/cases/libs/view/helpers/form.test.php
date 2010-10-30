@@ -24,8 +24,8 @@ App::import('Helper', 'Form');
 /**
  * ContactTestController class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ContactTestController extends Controller {
 
@@ -49,8 +49,8 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class Contact extends CakeTestModel {
 
@@ -146,8 +146,8 @@ class Contact extends CakeTestModel {
 /**
  * ContactTagsContact class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ContactTagsContact extends CakeTestModel {
 
@@ -194,8 +194,8 @@ class ContactTagsContact extends CakeTestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ContactNonStandardPk extends Contact {
 
@@ -232,8 +232,8 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ContactTag extends Model {
 
@@ -262,8 +262,8 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class UserForm extends CakeTestModel {
 
@@ -322,8 +322,8 @@ class UserForm extends CakeTestModel {
 /**
  * OpenidUrl class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class OpenidUrl extends CakeTestModel {
 
@@ -398,8 +398,8 @@ class OpenidUrl extends CakeTestModel {
 /**
  * ValidateUser class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ValidateUser extends CakeTestModel {
 
@@ -467,8 +467,8 @@ class ValidateUser extends CakeTestModel {
 /**
  * ValidateProfile class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ValidateProfile extends CakeTestModel {
 
@@ -547,8 +547,8 @@ class ValidateProfile extends CakeTestModel {
 /**
  * ValidateItem class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class ValidateItem extends CakeTestModel {
 
@@ -616,8 +616,8 @@ class ValidateItem extends CakeTestModel {
 /**
  * TestMail class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class TestMail extends CakeTestModel {
 
@@ -649,8 +649,8 @@ class TestMail extends CakeTestModel {
 /**
  * FormHelperTest class
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view.helpers
+ * @package	   cake
+ * @subpackage	cake.tests.cases.libs.view.helpers
  */
 class FormHelperTest extends CakeTestCase {
 
@@ -2479,7 +2479,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectAsCheckbox() {
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array(0, 1), array('multiple' => 'checkbox'));
+		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array('multiple' => 'checkbox', 'value' => array(0, 1)));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
@@ -3066,7 +3066,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.field', array('first' => 'first "html" <chars>', 'second' => 'value'),
-			null, array('empty' => false)
+			array('empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
@@ -3083,7 +3083,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.field',
 			array('first' => 'first "html" <chars>', 'second' => 'value'),
-			null, array('escape' => false, 'empty' => false)
+			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
@@ -3101,7 +3101,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->select(
 			'Model.contact_id',
 			array('228' => '228 value', '228-1' => '228-1 value', '228-2' => '228-2 value'),
-			null, array('escape' => false, 'empty' => 'pick something')
+			array('escape' => false, 'empty' => 'pick something')
 		);
 
 		$expected = array(
@@ -3163,7 +3163,7 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testSelectWithNullAttributes() {
-		$result = $this->Form->select('Model.field', array('first', 'second'), null, array('empty' => false));
+		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			array('option' => array('value' => '0')),
@@ -3190,7 +3190,7 @@ class FormHelperTest extends CakeTestCase {
 			'Model.field',
 			array(1 => 'One', 2 => 'Two', 'Three' => array(
 				3 => 'Three', 4 => 'Four', 5 => 'Five'
-			)), null, array('empty' => false)
+			)), array('empty' => false)
 		);
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]',
@@ -3215,7 +3215,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.field',
-			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')), null,
+			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')),
 			array('showParents' => true, 'empty' => false)
 		);
 
@@ -3251,7 +3251,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelectMultiple() {
 		$options = array('first', 'second', 'third');
 		$result = $this->Form->select(
-			'Model.multi_field', $options, null, array('multiple' => true)
+			'Model.multi_field', $options, array('multiple' => true)
 		);
 		$expected = array(
 			'input' => array(
@@ -3275,7 +3275,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', $options, null, array('multiple' => 'multiple')
+			'Model.multi_field', $options, array('multiple' => 'multiple')
 		);
 		$expected = array(
 			'input' => array(
@@ -3299,7 +3299,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', $options, array(0, 1), array('multiple' => true)
+			'Model.multi_field', $options, array('multiple' => true, 'value' => array(0, 1))
 		);
 		$expected = array(
 			'input' => array(
@@ -3380,7 +3380,7 @@ class FormHelperTest extends CakeTestCase {
 	function testSelectMultipleCheckboxes() {
 		$result = $this->Form->select(
 			'Model.multi_field',
-			array('first', 'second', 'third'), null,
+			array('first', 'second', 'third'),
 			array('multiple' => 'checkbox')
 		);
 
@@ -3420,7 +3420,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.multi_field',
-			array('a' => 'first', 'b' => 'second', 'c' => 'third'), null,
+			array('a' => 'first', 'b' => 'second', 'c' => 'third'),
 			array('multiple' => 'checkbox')
 		);
 		$expected = array(
@@ -3458,7 +3458,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', array('1' => 'first'), null, array('multiple' => 'checkbox')
+			'Model.multi_field', array('1' => 'first'), array('multiple' => 'checkbox')
 		);
 		$expected = array(
 			'input' => array(
@@ -3478,7 +3478,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array('Model' => array('tags' => array(1)));
 		$result = $this->Form->select(
-			'Model.tags', array('1' => 'first', 'Array' => 'Array'), null, array('multiple' => 'checkbox')
+			'Model.tags', array('1' => 'first', 'Array' => 'Array'), array('multiple' => 'checkbox')
 		);
 		$expected = array(
 			'input' => array(
@@ -3858,7 +3858,7 @@ class FormHelperTest extends CakeTestCase {
 	function testDateTime() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array('empty' => false));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
 		$now = strtotime('now');
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
@@ -3944,7 +3944,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', false);
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -3984,7 +3984,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '');
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4024,7 +4024,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('interval' => 5));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4073,7 +4073,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', '', array('minuteInterval' => 5));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('minuteInterval' => 5, 'value' => ''));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][date][day]', 'id' => 'ContactDateDay')),
 			$daysRegex,
@@ -4164,8 +4164,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertNoPattern('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 
 		$this->Form->request->data['Model']['field'] = date('Y') . '-01-01 00:00:00';
-		$now = strtotime($this->Form->request->data['Model']['field']);
-		$result = $this->Form->dateTime('Model.field', 'DMY', '12', null, array('empty' => false));
+		$now = strtotime($this->Form->data['Model']['field']);
+		$result = $this->Form->dateTime('Model.field', 'DMY', '12', array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			$daysRegex,
@@ -4211,7 +4211,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$selected = strtotime('2008-10-26 10:33:00');
-		$result = $this->Form->dateTime('Model.field', 'DMY', '12', $selected);
+		$result = $this->Form->dateTime('Model.field', 'DMY', '12', array('value' => $selected));
 		$this->assertPattern('/<option[^<>]+value="2008"[^<>]+selected="selected"[^>]*>2008<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="10"[^<>]+selected="selected"[^>]*>10<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="26"[^<>]+selected="selected"[^>]*>26<\/option>/', $result);
@@ -4366,7 +4366,7 @@ class FormHelperTest extends CakeTestCase {
 				'meridian' => ''
 			)
 		);
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', null, array('empty' => false));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
 	}
 
 /**
@@ -4500,7 +4500,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', null, array('empty' => true));
+		$result = $this->Form->month('Model.field', array('empty' => true));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
@@ -4515,7 +4515,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', null, array('monthNames' => false));
+		$result = $this->Form->month('Model.field', array('monthNames' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
@@ -4533,7 +4533,7 @@ class FormHelperTest extends CakeTestCase {
 		$monthNames = array(
 			'01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr', '05' => 'May', '06' => 'Jun',
 			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
-		$result = $this->Form->month('Model.field', null, array('monthNames' => $monthNames));
+		$result = $this->Form->month('Model.field', array('monthNames' => $monthNames));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
 			array('option' => array('value' => '')),
@@ -4558,7 +4558,7 @@ class FormHelperTest extends CakeTestCase {
 	function testDay() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->day('Model.field', false);
+		$result = $this->Form->day('Model.field', array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
@@ -4596,7 +4596,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->day('Model.field', '10');
+		$result = $this->Form->day('Model.field', array('value' => '10'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
@@ -4617,7 +4617,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
-		$result = $this->Form->day('Model.field', true);
+		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
 			array('option' => array('value' => '')),
@@ -4691,7 +4691,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
@@ -4711,7 +4711,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
-		$result = $this->Form->minute('Model.field', null, array('interval' => 5));
+		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
 			array('option' => array('value' => '')),
@@ -4777,7 +4777,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->hour('Model.field', true, '23');
+		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
 			array('option' => array('value' => '')),
@@ -4820,7 +4820,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		unset($this->Form->request->data['Model']['field']);
-		$result = $this->Form->hour('Model.field', true, 'now');
+		$result = $this->Form->hour('Model.field', true, array('value' => 'now'));
 		$thisHour = date('H');
 		$optValue = date('G');
 		$this->assertPattern('/<option value="' . $thisHour . '" selected="selected">'. $optValue .'<\/option>/', $result);
@@ -4848,7 +4848,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->year('Model.field', 2006, 2007, null, array('orderYear' => 'asc'));
+		$result = $this->Form->year('Model.field', 2006, 2007, array('orderYear' => 'asc'));
 		$expected = array(
 			array('select' => array('name' => 'data[Model][field][year]', 'id' => 'ModelFieldYear')),
 			array('option' => array('value' => '')),
@@ -4864,7 +4864,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('class' => 'year'));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('class' => 'year'));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
 			array('option' => array('value' => '')),
@@ -4880,7 +4880,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, null, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
@@ -4894,7 +4894,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, false);
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
@@ -4910,7 +4910,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, false, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007')),
@@ -4924,7 +4924,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, 2007);
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '')),
@@ -4940,7 +4940,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, 2007, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2007', 'selected' => 'selected')),
@@ -4954,7 +4954,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2008, 2007, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false, 'value' => 2007));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
@@ -4971,7 +4971,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2008, null, array('empty' => false));
+		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
@@ -4989,7 +4989,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$this->Form->request->data = array();
 		$this->Form->create('Contact');
-		$result = $this->Form->year('published', 2006, 2008, null, array('empty' => false));
+		$result = $this->Form->year('published', 2006, 2008, array('empty' => false));
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
 			array('option' => array('value' => '2008')),
@@ -5675,7 +5675,7 @@ class FormHelperTest extends CakeTestCase {
 		$options = array(1 => 'Nate', 2 => 'Garrett', 3 => 'Larry');
 
 		$this->Form->create();
-		$result = $this->Form->select('People.People', $options, null, array('multiple' => true));
+		$result = $this->Form->select('People.People', $options, array('multiple' => true));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[People][People]', 'value' => '', 'id' => 'PeoplePeople_'),
 			'select' => array(
@@ -5958,15 +5958,15 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('User.stuff');
+		$result = $this->Form->input('UserForm.stuff');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserStuff'),
+			'label' => array('for' => 'UserFormStuff'),
 			'Stuff',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'data[User][stuff]',
-				'id' => 'UserStuff', 'maxlength' => 10
+				'type' => 'text', 'name' => 'data[UserForm][stuff]',
+				'id' => 'UserFormStuff', 'maxlength' => 10
 			),
 			'/div'
 		);
@@ -6313,7 +6313,6 @@ class FormHelperTest extends CakeTestCase {
 				'berts_son_1' => 'Albert',
 				'berts_son_2' => 'Bertie')
 			),
-			null,
 			array('showParents' => true, 'empty' => false)
 		);
 
@@ -6352,7 +6351,7 @@ class FormHelperTest extends CakeTestCase {
 			3 => 'Three', 4 => 'Four', 5 => 'Five'
 		));
 		$result = $this->Form->select(
-			'Model.field', $options, null, array('showParents' => true, 'empty' => false)
+			'Model.field', $options, array('showParents' => true, 'empty' => false)
 		);
 
 		$expected = array(
