@@ -824,8 +824,8 @@ class Router {
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 		}
-		$protocol = strpos($output, '://');
-		if ($protocol === false || $protocol > 6) {
+		$protocol = preg_match('#^[a-z]+\://#', $output);
+		if ($protocol === 0) {
 			$output = str_replace('//', '/', $base . '/' . $output);
 
 			if ($full && defined('FULL_BASE_URL')) {
