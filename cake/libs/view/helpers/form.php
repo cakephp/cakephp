@@ -1266,6 +1266,8 @@ class FormHelper extends AppHelper {
 /**
  * Create a `<button>` tag with `<form>` using POST method.
  *
+ * This method creates an element <form>. So do not use this method in some opened form.
+ *
  * ### Options:
  *
  * - `data` - Array with key/value to pass in input hidden
@@ -1291,6 +1293,8 @@ class FormHelper extends AppHelper {
 
 /**
  * Creates an HTML link, but access the url using method POST. Requires javascript enabled in browser.
+ *
+ * This method creates an element <form>. So do not use this method in some opened form.
  *
  * ### Options:
  *
