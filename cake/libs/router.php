@@ -736,8 +736,10 @@ class Router {
 
 		$base = $path['base'];
 		$extension = $output = $mapped = $q = $frag = null;
-
-		if (is_array($url)) {
+		
+		if (empty($url)) {
+			return isset($path['here']) ? $path['here'] : '/';
+		} elseif (is_array($url)) {
 			if (isset($url['base']) && $url['base'] === false) {
 				$base = null;
 				unset($url['base']);
@@ -798,20 +800,13 @@ class Router {
 			if ($match === false) {
 				$output = self::_handleNoRoute($url);
 			}
-			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
 			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
 				return $url;
 			}
-			if (empty($url)) {
-				if (!isset($path['here'])) {
-					$path['here'] = '/';
-				}
-				$output = $path['here'];
-			} elseif (substr($url, 0, 1) === '/') {
-				$output = $base . $url;
+			if (substr($url, 0, 1) === '/') {
+				$output = substr($url, 1);
 			} else {
-				$output = $base . '/';
 				foreach (self::$_prefixes as $prefix) {
 					if (isset($params[$prefix])) {
 						$output .= $prefix . '/';
@@ -823,15 +818,19 @@ class Router {
 				}
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
-			$output = str_replace('//', '/', $output);
 		}
+		$protocol = strpos($output, '://');
+		if ($protocol > 3 && $protocol < 6) {
+			return $output . $extension . self::queryString($q, array(), $escape) . $frag;
+		}
+		$output = str_replace('//', '/', $base . '/' . $output);
+
 		if ($full && defined('FULL_BASE_URL')) {
 			$output = FULL_BASE_URL . $output;
 		}
-		if (!empty($extension) && substr($output, -1) === '/') {
-			$output = substr($output, 0, -1);
+		if (!empty($extension)) {
+			$output = rtrim($output, '/');
 		}
-
 		return $output . $extension . self::queryString($q, array(), $escape) . $frag;
 	}
 

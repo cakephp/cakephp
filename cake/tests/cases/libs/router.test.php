@@ -2191,4 +2191,22 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result->here, '/protected/images/index');
 		$this->assertEqual($result->webroot, '/');
 	}
+
+/**
+ * test that a route object returning a full url is not modified.
+ *
+ * @return void
+ */
+	function testUrlFullUrlReturnFromRoute() {
+		$url = 'http://example.com/posts/view/1';
+
+		$this->getMock('CakeRoute', array(), array('/'), 'MockReturnRoute');
+		$routes = Router::connect('/:controller/:action', array(), array('routeClass' => 'MockReturnRoute'));
+		$routes[0]->expects($this->any())->method('match')
+			->will($this->returnValue($url));
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 1));
+		$this->assertEquals($url, $result);
+	}
+
 }
