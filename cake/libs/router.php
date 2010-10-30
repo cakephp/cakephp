@@ -820,16 +820,15 @@ class Router {
 			}
 		}
 		$protocol = strpos($output, '://');
-		if ($protocol > 3 && $protocol < 6) {
-			return $output . $extension . self::queryString($q, array(), $escape) . $frag;
-		}
-		$output = str_replace('//', '/', $base . '/' . $output);
+		if ($protocol === false || $protocol > 6) {
+			$output = str_replace('//', '/', $base . '/' . $output);
 
-		if ($full && defined('FULL_BASE_URL')) {
-			$output = FULL_BASE_URL . $output;
-		}
-		if (!empty($extension)) {
-			$output = rtrim($output, '/');
+			if ($full && defined('FULL_BASE_URL')) {
+				$output = FULL_BASE_URL . $output;
+			}
+			if (!empty($extension)) {
+				$output = rtrim($output, '/');
+			}
 		}
 		return $output . $extension . self::queryString($q, array(), $escape) . $frag;
 	}
