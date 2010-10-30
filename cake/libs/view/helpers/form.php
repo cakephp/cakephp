@@ -1374,6 +1374,7 @@ class FormHelper extends AppHelper {
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+ * - `value` The selected value of the input.
  *
  * ### Using options
  *
@@ -1499,6 +1500,7 @@ class FormHelper extends AppHelper {
  *
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param array $attributes HTML attributes for the select element
@@ -1527,6 +1529,7 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  * - `orderYear` - Ordering of year values in select options.
  *   Possible values 'asc', 'desc'. Default 'desc'
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param integer $minYear First year in sequence
@@ -1581,6 +1584,7 @@ class FormHelper extends AppHelper {
  *   If a array, the given array will be used.
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param array $attributes Attributes for the select element
@@ -1616,6 +1620,7 @@ class FormHelper extends AppHelper {
  *
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param boolean $format24Hours True for 24 hours format
@@ -1651,6 +1656,7 @@ class FormHelper extends AppHelper {
  *
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $attributes Array of Attributes
@@ -1712,6 +1718,7 @@ class FormHelper extends AppHelper {
  *
  * - `empty` - If true, the empty select option is shown.  If a string,
  *   that string is displayed as the empty element.
+ * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $attributes Array of Attributes
@@ -2153,7 +2160,7 @@ class FormHelper extends AppHelper {
 /**
  * Sets field defaults and adds field to form security input hash
  *
- * Options
+ * ### Options
  *
  *  - `secure` - boolean whether or not the field should be added to the security fields.
  *
