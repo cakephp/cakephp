@@ -756,6 +756,10 @@ class Router {
 				$frag = '#' . urlencode($url['#']);
 				unset($url['#']);
 			}
+			if (isset($url['ext'])) {
+				$extension = '.' . $url['ext'];
+				unset($url['ext']);
+			}
 			if (empty($url['action'])) {
 				if (empty($url['controller']) || $params['controller'] === $url['controller']) {
 					$url['action'] = $params['action'];
@@ -778,10 +782,6 @@ class Router {
 
 			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
 
-			if (isset($url['ext'])) {
-				$extension = '.' . $url['ext'];
-				unset($url['ext']);
-			}
 			$match = false;
 
 			for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
@@ -801,7 +801,12 @@ class Router {
 				$output = self::_handleNoRoute($url);
 			}
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
+			if (
+				(strpos($url, '://') || 
+				(strpos($url, 'javascript:') === 0) || 
+				(strpos($url, 'mailto:') === 0)) ||
+				(!strncmp($url, '#', 1))
+			) {
 				return $url;
 			}
 			if (substr($url, 0, 1) === '/') {
