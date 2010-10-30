@@ -115,6 +115,9 @@
 	}
 
 	public function <?php echo $admin; ?>delete($id = null) {
+		if (!$this->request->is('post')) {
+			throw new ForbiddenException();
+		}
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
