@@ -1279,7 +1279,7 @@ class FormHelper extends AppHelper {
  * @return string A HTML button tag.
  */
 	public function postButton($title, $url, $options = array()) {
-		$out = $this->create(false, array('id' => false, 'url' => $url));
+		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
@@ -1315,7 +1315,7 @@ class FormHelper extends AppHelper {
 		}
 
 		$formName = uniqid('post_');
-		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName));
+		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
