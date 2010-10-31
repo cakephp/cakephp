@@ -82,7 +82,14 @@ class CakeBaseReporter extends SimpleReporter {
  * @access public
  */
 	function CakeBaseReporter($charset = 'utf-8', $params = array()) {
-		$this->SimpleReporter();
+		$simpleTestVersion = file_get_contents(SIMPLE_TEST . 'VERSION');
+		$simpleTestVersion = (float) substr($simpleTestVersion, 0, 3);
+		if($simpleTestVersion >= 1.1) {
+ 			parent::__construct();
+ 		} else {
+ 			$this->SimpleReporter();
+ 		}
+
 		if (!$charset) {
 			$charset = 'utf-8';
 		}
