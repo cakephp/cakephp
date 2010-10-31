@@ -945,11 +945,6 @@ class EmailComponent extends Object{
 		} else {
 			$to = $this->to;
 		}
-		if ($this->delivery == 'smtp') {
-			$fm .= sprintf('%s %s%s', 'Host:', $this->smtpOptions['host'], $nl);
-			$fm .= sprintf('%s %s%s', 'Port:', $this->smtpOptions['port'], $nl);
-			$fm .= sprintf('%s %s%s', 'Timeout:', $this->smtpOptions['timeout'], $nl);
-		}
 		$fm .= sprintf('%s %s%s', 'To:', $to, $nl);
 		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);
 		$fm .= sprintf('%s %s%s', 'Subject:', $this->_encode($this->subject), $nl);
