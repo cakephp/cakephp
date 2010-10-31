@@ -116,7 +116,7 @@
 
 	public function <?php echo $admin; ?>delete($id = null) {
 		if (!$this->request->is('post')) {
-			throw new ForbiddenException();
+			throw new MethodNotAllowedException();
 		}
 		if (!$id) {
 <?php if ($wannaUseSession): ?>
