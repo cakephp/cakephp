@@ -379,7 +379,7 @@ class View extends Object {
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
-			$out = $this->_render($viewFileName, $this->viewVars);
+			$out = $this->_render($viewFileName);
 		}
 
 		if ($layout === null) {
@@ -425,13 +425,13 @@ class View extends Object {
 		}
 		$this->Helpers->trigger('beforeLayout', array(&$this));
 
-		$dataForLayout = array_merge($this->viewVars, array(
+		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
 			'scripts_for_layout' => implode("\n\t", $this->_scripts),
 		));
 
-		if (!isset($dataForLayout['title_for_layout'])) {
-			$dataForLayout['title_for_layout'] = Inflector::humanize($this->viewPath);
+		if (!isset($this->viewVars['title_for_layout'])) {
+			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
 		
 		$attached = $this->Helpers->attached();
@@ -439,10 +439,9 @@ class View extends Object {
 			$loadHelpers = true;
 		} else {
 			$loadHelpers = false;
-			$dataForLayout = array_merge($dataForLayout);
 		}
 
-		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
+		$this->output = $this->_render($layoutFileName, array(), $loadHelpers, true);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
@@ -662,12 +661,15 @@ class View extends Object {
  * @param boolean $cached Whether or not to trigger the creation of a cache file.
  * @return string Rendered output
  */
-	protected function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
+	protected function _render($___viewFn, $___dataForView = array(), $loadHelpers = true, $cached = false) {
 		$attached = $this->Helpers->attached();
 		if (count($attached) === 0 && $loadHelpers === true) {
 			$this->loadHelpers();
 			$this->Helpers->trigger('beforeRender', array(&$this));
 			unset($attached);
+		}
+		if (empty($___dataForView)) {
+			$___dataForView = $this->viewVars;
 		}
 
 		extract($___dataForView, EXTR_SKIP);

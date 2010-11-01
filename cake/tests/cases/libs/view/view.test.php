@@ -665,6 +665,9 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+		
+		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
+		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
 
 		$this->PostsController->set('url', 'flash');
 		$this->PostsController->set('message', 'yo what up');
