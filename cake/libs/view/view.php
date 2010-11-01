@@ -423,6 +423,7 @@ class View extends Object {
 		if (empty($layoutFileName)) {
 			return $this->output;
 		}
+		$this->Helpers->trigger('beforeLayout', array(&$this));
 
 		$dataForLayout = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
@@ -441,7 +442,6 @@ class View extends Object {
 			$dataForLayout = array_merge($dataForLayout);
 		}
 
-		$this->Helpers->trigger('beforeLayout', array(&$this));
 		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
 
 		if ($this->output === false) {
