@@ -1375,6 +1375,7 @@ class FormHelper extends AppHelper {
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
  * - `value` The selected value of the input.
+ * - `class` - When using multiple = checkbox the classname to apply to the divs. Defaults to 'checkbox'.
  *
  * ### Using options
  *
@@ -1410,23 +1411,22 @@ class FormHelper extends AppHelper {
  */
 	public function select($fieldName, $options = array(), $attributes = array()) {
 		$select = array();
-		$showParents = false;
-		$escapeOptions = true;
 		$style = null;
 		$tag = null;
-		$showEmpty = '';
+		$attributes += array(
+			'class' => null, 
+			'escape' => true,
+			'secure' => null,
+			'empty' => '',
+			'showParents' => false
+		);
 
-		if (isset($attributes['escape'])) {
-			$escapeOptions = $attributes['escape'];
-			unset($attributes['escape']);
-		}
-		if (isset($attributes['secure'])) {
-			$secure = $attributes['secure'];
-		}
-		if (isset($attributes['empty'])) {
-			$showEmpty = $attributes['empty'];
-			unset($attributes['empty']);
-		}
+		$escapeOptions = $this->_extractOption('escape', $attributes);
+		$secure = $this->_extractOption('secure', $attributes);
+		$showEmpty = $this->_extractOption('empty', $attributes);
+		$showParents = $this->_extractOption('showParents', $attributes);
+		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents']);
+
 		$attributes = $this->_initInputField($fieldName, array_merge(
 			(array)$attributes, array('secure' => false)
 		));
@@ -1438,10 +1438,6 @@ class FormHelper extends AppHelper {
 		}
 		if (isset($attributes['type'])) {
 			unset($attributes['type']);
-		}
-		if (in_array('showParents', $attributes)) {
-			$showParents = true;
-			unset($attributes['showParents']);
 		}
 
 		if (isset($attributes) && array_key_exists('multiple', $attributes)) {
@@ -1485,7 +1481,7 @@ class FormHelper extends AppHelper {
 			array_reverse($options, true),
 			array(),
 			$showParents,
-			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'], 'value' => $attributes['value'])
+			array('escape' => $escapeOptions, 'style' => $style, 'name' => $attributes['name'], 'value' => $attributes['value'], 'class' => $attributes['class'])
 		));
 
 		$template = ($style == 'checkbox') ? 'checkboxmultipleend' : 'selectend';
@@ -1968,7 +1964,10 @@ class FormHelper extends AppHelper {
  */
 	function __selectOptions($elements = array(), $parents = array(), $showParents = null, $attributes = array()) {
 		$select = array();
-		$attributes = array_merge(array('escape' => true, 'style' => null, 'value' => null), $attributes);
+		$attributes = array_merge(
+			array('escape' => true, 'style' => null, 'value' => null, 'class' => null), 
+			$attributes
+		);
 		$selectedIsEmpty = ($attributes['value'] === '' || $attributes['value'] === null);
 		$selectedIsArray = is_array($attributes['value']);
 

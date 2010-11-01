@@ -1699,6 +1699,45 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that patterns work for :action
+ *
+ * @return void
+ */
+	function testParsingWithPatternOnAction() {
+		Router::reload();
+		Router::connect(
+			'/blog/:action/*', 
+			array('controller' => 'blog_posts'), 
+			array('action' => 'other|actions')
+		);
+		$result = Router::parse('/blog/other');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog_posts',
+			'action' => 'other',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = Router::parse('/blog/foobar');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog',
+			'action' => 'foobar',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+		
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertEqual('/blog_posts/foo', $result);
+
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertEqual('/blog/actions', $result);
+	}
+
+/**
  * testParsingWithPrefixes method
  *
  * @access public

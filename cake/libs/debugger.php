@@ -116,7 +116,7 @@ class Debugger {
 	function __construct() {
 		$docRef = ini_get('docref_root');
 
-		if (empty($docRef)) {
+		if (empty($docRef) && function_exists('ini_set')) {
 			ini_set('docref_root', 'http://php.net/');
 		}
 		if (!defined('E_RECOVERABLE_ERROR')) {

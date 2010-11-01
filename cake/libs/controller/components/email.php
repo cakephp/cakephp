@@ -750,9 +750,9 @@ class EmailComponent extends Component {
 	function _formatAddress($string, $smtp = false) {
 		$hasAlias = preg_match('/((.*)\s)?<(.+)>/', $string, $matches);
 		if ($smtp && $hasAlias) {
-			return $this->_strip(' <' .  $matches[3] . '>');
+			return $this->_strip('<' .  $matches[3] . '>');
 		} elseif ($smtp) {
-			return $this->_strip(' <' . $string . '>');
+			return $this->_strip('<' . $string . '>');
 		}
 		if ($hasAlias && !empty($matches[2])) {
 			return $this->_strip($matches[2] . ' <' . $matches[3] . '>');
@@ -949,11 +949,6 @@ class EmailComponent extends Component {
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
 			$to = $this->to;
-		}
-		if ($this->delivery == 'smtp') {
-			$fm .= sprintf('%s %s%s', 'Host:', $this->smtpOptions['host'], $nl);
-			$fm .= sprintf('%s %s%s', 'Port:', $this->smtpOptions['port'], $nl);
-			$fm .= sprintf('%s %s%s', 'Timeout:', $this->smtpOptions['timeout'], $nl);
 		}
 		$fm .= sprintf('%s %s%s', 'To:', $to, $nl);
 		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);

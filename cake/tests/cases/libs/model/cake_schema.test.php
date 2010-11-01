@@ -626,6 +626,20 @@ class CakeSchemaTest extends CakeTestCase {
 	}
 
 /**
+ * test reading schema with config prefix.
+ *
+ * @return void
+ */
+	function testSchemaReadWithConfigPrefix() {
+		$db =& ConnectionManager::getDataSource('test_suite');
+		$config = $db->config;
+		$config['prefix'] = 'schema_test_prefix_';
+		ConnectionManager::create('schema_prefix', $config);
+		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
+		$this->assertTrue(empty($read['tables']));
+	}
+
+/**
  * test reading schema from plugins.
  *
  * @return void
@@ -806,6 +820,35 @@ class CakeSchemaTest extends CakeTestCase {
 					'modified' => array('type' => 'datetime', 'null' => false, 'default' => NULL),
 					'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => 1)),
 					'tableParameters' => array('charset' => 'latin1', 'collate' => 'latin1_swedish_ci', 'engine' => 'MyISAM')
+				)
+			)
+		);
+		$this->assertEqual($expected, $compare);
+	}
+
+/**
+ * test comparing '' and null and making sure they are different.
+ *
+ * @return void
+ */
+	function testCompareEmptyStringAndNull() {
+		$One =& new CakeSchema(array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => '')
+			)
+		));
+		$Two =& new CakeSchema(array(
+			'posts' => array(
+				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
+				'name' => array('type' => 'string', 'null' => false, 'default' => null)
+			)
+		));
+		$compare = $One->compare($Two);
+		$expected = array(
+			'posts' => array(
+				'change' => array(
+					'name' => array('type' => 'string', 'null' => false, 'default' => null)
 				)
 			)
 		);

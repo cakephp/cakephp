@@ -392,4 +392,29 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($result['controller'], 'posts');
 		$this->assertEqual($result['action'], 'index');
 	}
+
+/**
+ * test that patterns work for :action
+ *
+ * @return void
+ */
+	function testPatternOnAction() {
+		$route =& new CakeRoute(
+			'/blog/:action/*', 
+			array('controller' => 'blog_posts'), 
+			array('action' => 'other|actions')
+		);
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertFalse($result);
+
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertNotEmpty($result);
+
+		$result = $route->parse('/blog/other');
+		$expected = array('controller' => 'blog_posts', 'action' => 'other', 'pass' => array(), 'named' => array());
+		$this->assertEqual($expected, $result);
+
+		$result = $route->parse('/blog/foobar');
+		$this->assertFalse($result);
+	}
 }

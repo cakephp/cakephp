@@ -410,36 +410,36 @@ class AclShell extends Shell {
 				"\t" . __("see help for the 'create' command."),
 
 			'getpath' => "getPath aro|aco <node>\n" .
-				"\t" . __("Returns the path to the ACL object specified by <node>. This command") . "\n" .
-				"\t" . __("is useful in determining the inhertiance of permissions for a certain") . "\n" .
-				"\t" . __("object in the tree.") . "\n" .
-				"\t" . __("For more detailed parameter usage info,") . "\n" .
-				"\t" . __("see help for the 'create' command."),
+				"\t" . __("Returns the path to the ACL object specified by <node>. This command", true) . "\n" .
+				"\t" . __("is useful in determining the inhertiance of permissions for a certain", true) . "\n" .
+				"\t" . __("object in the tree.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'check' => "check <node> <node> [<aco_action>] " . __("or") . " all\n" .
-				"\t" . __("Use this command to check ACL permissions.") . "\n" .
-				"\t" . __("For more detailed parameter usage info,") . "\n" .
-				"\t" . __("see help for the 'create' command."),
+			'check' => "check <node> <node> [<aco_action>] " . __("or", true) . " all\n" .
+				"\t" . __("Use this command to check ACL permissions.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'grant' => "grant <node> <node> [<aco_action>] " . __("or") . " all\n" .
-				"\t" . __("Use this command to grant ACL permissions. Once executed, the ARO") . "\n" .
-				"\t" . __("specified (and its children, if any) will have ALLOW access to the") . "\n" .
-				"\t" . __("specified ACO action (and the ACO's children, if any).") . "\n" .
-				"\t" . __("For more detailed parameter usage info,") . "\n" .
-				"\t" . __("see help for the 'create' command."),
+			'grant' => "grant <aronode> <aconode> [<aco_action>] " . __("or", true) . " all\n" .
+				"\t" . __("Use this command to grant ACL permissions. Once executed, the ARO", true) . "\n" .
+				"\t" . __("specified (and its children, if any) will have ALLOW access to the", true) . "\n" .
+				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'deny' => "deny <node> <node> [<aco_action>]" . __("or") . " all\n" .
-				"\t" . __("Use this command to deny ACL permissions. Once executed, the ARO") . "\n" .
-				"\t" . __("specified (and its children, if any) will have DENY access to the") . "\n" .
-				"\t" . __("specified ACO action (and the ACO's children, if any).") . "\n" .
-				"\t" . __("For more detailed parameter usage info,") . "\n" .
-				"\t" . __("see help for the 'create' command."),
+			'deny' => "deny <aronode> <aconode> [<aco_action>]" . __("or", true) . " all\n" .
+				"\t" . __("Use this command to deny ACL permissions. Once executed, the ARO", true) . "\n" .
+				"\t" . __("specified (and its children, if any) will have DENY access to the", true) . "\n" .
+				"\t" . __("specified ACO action (and the ACO's children, if any).", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
-			'inherit' => "inherit <node> <node> [<aco_action>]" . __("or") . " all\n" .
-				"\t" . __("Use this command to force a child ARO object to inherit its") . "\n" .
-				"\t" . __("permissions settings from its parent.") . "\n" .
-				"\t" . __("For more detailed parameter usage info,") . "\n" .
-				"\t" . __("see help for the 'create' command."),
+			'inherit' => "inherit <aronode> <aconode> [<aco_action>]" . __("or", true) . " all\n" .
+				"\t" . __("Use this command to force a child ARO object to inherit its", true) . "\n" .
+				"\t" . __("permissions settings from its parent.", true) . "\n" .
+				"\t" . __("For more detailed parameter usage info,", true) . "\n" .
+				"\t" . __("see help for the 'create' command.", true),
 
 			'view' => "view aro|aco [<node>]\n" .
 				"\t" . __("The view command will return the ARO or ACO tree.") . "\n" .

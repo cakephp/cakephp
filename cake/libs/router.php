@@ -239,7 +239,10 @@ class Router {
 			self::$_prefixes[] = $defaults['prefix'];
 			self::$_prefixes = array_keys(array_flip(self::$_prefixes));
 		}
-		$defaults += array('action' => 'index', 'plugin' => null);
+		$defaults += array('plugin' => null);
+		if (empty($options['action'])) {
+			$defaults += array('action' => 'index'); 
+		}
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];

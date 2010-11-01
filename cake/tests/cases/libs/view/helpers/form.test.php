@@ -1229,7 +1229,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertEqual($this->Form->fields, $expected);
 
 		$this->Form->fields = array();
-		$this->Form->select('Model.select', $options, null, array('multiple' => true));
+		$this->Form->select('Model.select', $options, array('multiple' => true));
 		$this->assertEqual($this->Form->fields, $expected);
 	}
 
@@ -2503,7 +2503,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), null, array('multiple' => 'checkbox'));
+		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), array('multiple' => 'checkbox'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
@@ -3127,7 +3127,7 @@ class FormHelperTest extends CakeTestCase {
 				2 => 'Two'
 			)
 		);
-		$result = $this->Form->select('Model.field', $options, null, array('empty' => false));
+		$result = $this->Form->select('Model.field', $options, array('empty' => false));
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			'optgroup' => array('label' => '&gt;&lt; Key'),
@@ -3144,7 +3144,7 @@ class FormHelperTest extends CakeTestCase {
 				2 => 'Two'
 			)
 		);
-		$result = $this->Form->select('Model.field', $options, null, array('empty' => false, 'escape' => false));
+		$result = $this->Form->select('Model.field', $options, array('empty' => false, 'escape' => false));
 		$expected = array(
 			'select' => array('name' => 'data[Model][field]', 'id' => 'ModelField'),
 			'optgroup' => array('label' => '>< Key'),
@@ -3508,6 +3508,49 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test multiple checkboxes with div styles.
+ *
+ * @return void
+ */
+	function testSelectMultipleCheckboxDiv() {
+		$result = $this->Form->select(
+			'Model.tags', 
+			array('first', 'second'),
+			array('multiple' => 'checkbox', 'class' => 'my-class')
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][tags]', 'value' => '', 'id' => 'ModelTags'
+			),
+			array('div' => array('class' => 'my-class')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => '0', 'id' => 'ModelTags0'
+			)),
+			array('label' => array('for' => 'ModelTags0')), 'first', '/label',
+			'/div',
+
+			array('div' => array('class' => 'my-class')),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[Model][tags][]',
+				'value' => '1', 'id' => 'ModelTags1'
+			)),
+			array('label' => array('for' => 'ModelTags1')), 'second', '/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.tags', array(
+			'options' => array('first', 'second'),
+			'multiple' => 'checkbox', 
+			'class' => 'my-class',
+			'div' => false,
+			'label' => false
+		));
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Checks the security hash array generated for multiple-input checkbox elements
  *
  * @access public
@@ -3519,7 +3562,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->select(
 			'Model.multi_field', array('1' => 'first', '2' => 'second', '3' => 'third'),
-			null, array('multiple' => 'checkbox')
+			array('multiple' => 'checkbox')
 		);
 		$this->assertEqual($this->Form->fields, array('Model.multi_field'));
 
@@ -4375,12 +4418,12 @@ class FormHelperTest extends CakeTestCase {
  * @return void
  */
 	function testDatetimeWithDefault() {
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', null, array('value' => '2009-06-01 11:15:30'));
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => '2009-06-01 11:15:30'));
 		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
 		$this->assertPattern('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
 
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', null, array(
+		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array(
 			'default' => '2009-06-01 11:15:30'
 		));
 		$this->assertPattern('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
