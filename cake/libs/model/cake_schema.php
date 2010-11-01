@@ -540,9 +540,9 @@ class CakeSchema extends Object {
 				$difference[$key] = $value;
 				continue;
 			}
-			$value = strval($value);
+			$compare = strval($value);
 			$correspondingValue = strval($correspondingValue);
-			if ($value === $correspondingValue) {
+			if ($compare === $correspondingValue) {
 				continue;
 			}
 			$difference[$key] = $value;
