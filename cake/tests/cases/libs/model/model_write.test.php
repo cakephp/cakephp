@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
-
 /**
  * ModelWriteTest file
  *
@@ -2181,7 +2179,7 @@ class ModelWriteTest extends BaseModelTest {
 			'title' => '',
 			'body' => ''
 		));
-		$this->assertTrue($result);
+		$this->assertTrue((bool)$result);
 		$result = $Article->find('first', array('conditions' => array('Article.id' => 1)));
 		$this->assertEqual('', $result['Article']['title'], 'Title is not blank');
 		$this->assertEqual('', $result['Article']['body'], 'Body is not blank');

@@ -631,7 +631,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaReadWithConfigPrefix() {
-		$db =& ConnectionManager::getDataSource('test_suite');
+		$db =& ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);
