@@ -1778,7 +1778,7 @@ class FormHelper extends AppHelper {
 		$year = $month = $day = $hour = $min = $meridian = null;
 
 		if (empty($attributes['value'])) {
-			$attributes['value'] = $this->value($fieldName);
+			$attributes = $this->value($attributes, $fieldName);
 		}
 
 		if ($attributes['value'] === null && $attributes['empty'] != true) {
