@@ -1581,6 +1581,11 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals($request->here, $Controller->here);
 		$this->assertEquals($request->action, $Controller->action);
 
+		$this->assertFalse(empty($Controller->data));
+		$this->assertTrue(isset($Controller->data));
+		$this->assertTrue(empty($Controller->something));
+		$this->assertFalse(isset($Controller->something));
+
 		$this->assertEquals($request, $Controller->params);
 		$this->assertEquals($request->params['controller'], $Controller->params['controller']);
 	}
