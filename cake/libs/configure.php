@@ -587,7 +587,11 @@ class App {
 			'views' => array(VIEWS),
 			'helpers' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
-			'shells' => array(APP . 'vendors' . DS . 'shells' . DS, VENDORS . 'shells' . DS),
+			'shells' => array(
+				APP . 'console' . DS . 'shells' . DS,
+				APP . 'vendors' . DS . 'shells' . DS, 
+				VENDORS . 'shells' . DS
+			),
 			'vendors' => array(APP . 'vendors' . DS, VENDORS),
 			'plugins' => array(APP . 'plugins' . DS)
 		);
@@ -690,7 +694,9 @@ class App {
 			$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
 			$paths['plugins'][] = $path . 'plugins' . DS;
 			$paths['vendors'][] = $path . 'vendors' . DS;
-			$paths['shells'][] = $cake . 'console' . DS . 'libs' . DS;
+			$paths['shells'][] = $cake . 'console' . DS . 'shells' . DS;
+			// Provide BC path to vendors/shells
+			$paths['shells'][] = $path . 'vendors' . DS . 'shells' . DS;
 
 			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}
@@ -1133,6 +1139,15 @@ class App {
 				}
 				if ($plugin) {
 					$path = $pluginPath . DS . 'views' . DS . 'helpers' . DS;
+				}
+				return array('class' => $type, 'suffix' => null, 'path' => $path);
+			break;
+			case 'shell':
+				if (!class_exists('Shell')) {
+					App::import($type, 'Shell', false);
+				}
+				if ($plugin) {
+					$path = $pluginPath . DS . 'console' . DS . 'shells' . DS;
 				}
 				return array('class' => $type, 'suffix' => null, 'path' => $path);
 			break;

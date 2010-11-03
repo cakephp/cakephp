@@ -585,7 +585,7 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 			debug('this-is-a-test');
 		$result = ob_get_clean();
-		$pattern = '/.*\>(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
+		$pattern = '/(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
 		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
 		$pattern .= '.*line.*' . (__LINE__ - 4) . '.*this-is-a-test.*/s';
 		$this->assertPattern($pattern, $result);
@@ -593,7 +593,7 @@ class BasicsTest extends CakeTestCase {
 		ob_start();
 			debug('<div>this-is-a-test</div>', true);
 		$result = ob_get_clean();
-		$pattern = '/.*\>(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
+		$pattern = '/(.+?tests(\/|\\\)cases(\/|\\\)basics\.test\.php|';
 		$pattern .= preg_quote(substr(__FILE__, 1), '/') . ')';
 		$pattern .=	'.*line.*' . (__LINE__ - 4) . '.*&lt;div&gt;this-is-a-test&lt;\/div&gt;.*/s';
 		$this->assertPattern($pattern, $result);

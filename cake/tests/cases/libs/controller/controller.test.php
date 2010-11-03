@@ -751,6 +751,44 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * testPaginateFieldsDouble method
+ *
+ * @return void
+ * @access public
+ */
+	function testPaginateFieldsDouble(){
+		$Controller =& new Controller();
+		$Controller->uses = array('ControllerPost');
+		$Controller->request->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->paginate = array(
+			'fields' => array(
+				'ControllerPost.id',
+				'radians(180.0) as floatvalue'
+			),
+			'order' => array('ControllerPost.created'=>'DESC'),
+			'limit' => 1,
+			'page' => 1,
+			'recursive' => -1
+		);
+		$conditions = array();
+		$result = $Controller->paginate('ControllerPost',$conditions);
+		$expected = array(
+			array(
+				'ControllerPost' => array(
+					'id' => 3,
+				),
+				0 => array(
+					'floatvalue' => '3.14159265358979',
+				),
+			),
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+
+/**
  * testPaginatePassedArgs method
  *
  * @return void
@@ -1542,6 +1580,11 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEquals($request->webroot, $Controller->webroot);
 		$this->assertEquals($request->here, $Controller->here);
 		$this->assertEquals($request->action, $Controller->action);
+
+		$this->assertFalse(empty($Controller->data));
+		$this->assertTrue(isset($Controller->data));
+		$this->assertTrue(empty($Controller->something));
+		$this->assertFalse(isset($Controller->something));
 
 		$this->assertEquals($request, $Controller->params);
 		$this->assertEquals($request->params['controller'], $Controller->params['controller']);

@@ -1699,6 +1699,45 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * test that patterns work for :action
+ *
+ * @return void
+ */
+	function testParsingWithPatternOnAction() {
+		Router::reload();
+		Router::connect(
+			'/blog/:action/*', 
+			array('controller' => 'blog_posts'), 
+			array('action' => 'other|actions')
+		);
+		$result = Router::parse('/blog/other');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog_posts',
+			'action' => 'other',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = Router::parse('/blog/foobar');
+		$expected = array(
+			'plugin' => null,
+			'controller' => 'blog',
+			'action' => 'foobar',
+			'pass' => array(),
+			'named' => array()
+		);
+		$this->assertEqual($expected, $result);
+		
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertEqual('/blog_posts/foo', $result);
+
+		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertEqual('/blog/actions', $result);
+	}
+
+/**
  * testParsingWithPrefixes method
  *
  * @access public
@@ -2191,4 +2230,38 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result->here, '/protected/images/index');
 		$this->assertEqual($result->webroot, '/');
 	}
+
+/**
+ * test that a route object returning a full url is not modified.
+ *
+ * @return void
+ */
+	function testUrlFullUrlReturnFromRoute() {
+		$url = 'http://example.com/posts/view/1';
+
+		$this->getMock('CakeRoute', array(), array('/'), 'MockReturnRoute');
+		$routes = Router::connect('/:controller/:action', array(), array('routeClass' => 'MockReturnRoute'));
+		$routes[0]->expects($this->any())->method('match')
+			->will($this->returnValue($url));
+
+		$result = Router::url(array('controller' => 'posts', 'action' => 'view', 1));
+		$this->assertEquals($url, $result);
+	}
+
+/**
+ * test protocol in url
+ *
+ * @return void
+ */
+	public function testUrlProtocol() {
+		$url = 'http://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = 'ed2k://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = 'svn+ssh://example.com';
+		$this->assertEqual($url, Router::url($url));
+	}
+
 }

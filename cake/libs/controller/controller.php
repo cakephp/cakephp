@@ -328,6 +328,24 @@ class Controller extends Object {
 	}
 
 /**
+ * Provides backwards compatbility avoid problems with empty and isset to alias properties.
+ *
+ * @return void
+ */
+	public function __isset($name) {
+		switch ($name) {
+			case 'base':
+			case 'here':
+			case 'webroot':
+			case 'data':
+			case 'action':
+			case 'params':
+				return true;
+		}
+		return false;
+	}
+
+/**
  * Provides backwards compatbility access to the request object properties.
  * Also provides the params alias.
  *

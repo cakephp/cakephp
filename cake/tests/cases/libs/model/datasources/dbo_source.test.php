@@ -4568,4 +4568,18 @@ class DboSourceTest extends CakeTestCase {
 		$result = $Article->find('all');
 		$this->assertTrue(is_array($result));
 	}
+
+/**
+ * test that fields() is using methodCache()
+ *
+ * @return void
+ */
+	function testFieldsUsingMethodCache() {
+		$this->testDb->cacheMethods = false;
+		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
+
+		$Article =& ClassRegistry::init('Article');
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
+		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
+	}
 }

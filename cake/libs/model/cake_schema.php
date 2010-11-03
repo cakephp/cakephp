@@ -247,13 +247,18 @@ class CakeSchema extends Object {
 				$Object = ClassRegistry::init(array('class' => $model, 'ds' => $connection));
 
 				if (is_object($Object) && $Object->useTable !== false) {
-					$table = $db->fullTableName($Object, false);
-					if (in_array($table, $currentTables)) {
-						$key = array_search($table, $currentTables);
+					$fulltable = $table = $db->fullTableName($Object, false);
+					if ($prefix && strpos($table, $prefix) !== 0) {
+						continue;
+					}
+					$table = str_replace($prefix, '', $table);
+
+					if (in_array($fulltable, $currentTables)) {
+						$key = array_search($fulltable, $currentTables);
 						if (empty($tables[$table])) {
 							$tables[$table] = $this->__columns($Object);
 							$tables[$table]['indexes'] = $db->index($Object);
-							$tables[$table]['tableParameters'] = $db->readTableParameters($table);
+							$tables[$table]['tableParameters'] = $db->readTableParameters($fulltable);
 							unset($currentTables[$key]);
 						}
 						if (!empty($Object->hasAndBelongsToMany)) {
@@ -453,11 +458,11 @@ class CakeSchema extends Object {
 			if (!array_key_exists($table, $old)) {
 				$tables[$table]['add'] = $fields;
 			} else {
-				$diff = array_diff_assoc($fields, $old[$table]);
+				$diff = $this->_arrayDiffAssoc($fields, $old[$table]);
 				if (!empty($diff)) {
 					$tables[$table]['add'] = $diff;
 				}
-				$diff = array_diff_assoc($old[$table], $fields);
+				$diff = $this->_arrayDiffAssoc($old[$table], $fields);
 				if (!empty($diff)) {
 					$tables[$table]['drop'] = $diff;
 				}
@@ -465,7 +470,7 @@ class CakeSchema extends Object {
 
 			foreach ($fields as $field => $value) {
 				if (isset($old[$table][$field])) {
-					$diff = array_diff_assoc($value, $old[$table][$field]);
+					$diff = $this->_arrayDiffAssoc($value, $old[$table][$field]);
 					if (!empty($diff) && $field !== 'indexes' && $field !== 'tableParameters') {
 						$tables[$table]['change'][$field] = array_merge($old[$table][$field], $diff);
 					}
@@ -503,6 +508,46 @@ class CakeSchema extends Object {
 			}
 		}
 		return $tables;
+	}
+
+/**
+ * Extended array_diff_assoc noticing change from/to NULL values
+ *
+ * It behaves almost the same way as array_diff_assoc except for NULL values: if
+ * one of the values is not NULL - change is detected. It is useful in situation
+ * where one value is strval('') ant other is strval(null) - in string comparing
+ * methods this results as EQUAL, while it is not.
+ *
+ * @param array $array1 Base array
+ * @param array $array2 Corresponding array checked for equality
+ * @return array Difference as array with array(keys => values) from input array
+ *     where match was not found.
+ * @access protected
+ */
+	function _arrayDiffAssoc($array1, $array2) {
+		$difference = array();
+		foreach ($array1 as $key => $value) {
+			if (!array_key_exists($key, $array2)) {
+				$difference[$key] = $value;
+				continue;
+			}
+			$correspondingValue = $array2[$key];
+			if (is_null($value) !== is_null($correspondingValue)) {
+				$difference[$key] = $value;
+				continue;
+			}
+			if (is_bool($value) !== is_bool($correspondingValue)) {
+				$difference[$key] = $value;
+				continue;
+			}
+			$compare = strval($value);
+			$correspondingValue = strval($correspondingValue);
+			if ($compare === $correspondingValue) {
+				continue;
+			}
+			$difference[$key] = $value;
+		}
+		return $difference;
 	}
 
 /**
@@ -579,7 +624,7 @@ class CakeSchema extends Object {
 		if (!is_array($new) || !is_array($old)) {
 			return false;
 		}
-		$change = array_diff_assoc($new, $old);
+		$change = $this->_arrayDiffAssoc($new, $old);
 		return $change;
 	}
 
@@ -597,12 +642,12 @@ class CakeSchema extends Object {
 
 		$add = $drop = array();
 
-		$diff = array_diff_assoc($new, $old);
+		$diff = $this->_arrayDiffAssoc($new, $old);
 		if (!empty($diff)) {
 			$add = $diff;
 		}
 
-		$diff = array_diff_assoc($old, $new);
+		$diff = $this->_arrayDiffAssoc($old, $new);
 		if (!empty($diff)) {
 			$drop = $diff;
 		}

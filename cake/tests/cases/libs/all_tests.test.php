@@ -38,6 +38,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		$path = CORE_TEST_CASES . DS . 'libs' . DS;
 		$console = CORE_TEST_CASES . DS . 'console' . DS;
 
+		$suite->addTestFile($console . 'all_console_libs.test.php');
 		$suite->addTestFile($console . 'all_shells.test.php');
 		$suite->addTestFile($console . 'all_tasks.test.php');
 

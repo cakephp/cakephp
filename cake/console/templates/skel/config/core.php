@@ -121,7 +121,8 @@
  * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
- * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions?
+ * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the 
+ *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
  *    There are four builtins: php, cake, cache, database.
  * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,

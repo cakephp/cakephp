@@ -100,6 +100,26 @@ class NotFoundException extends RuntimeException {
 }
 
 /**
+ * Represents an HTTP 405 error.
+ *
+ * @package cake.libs
+ */
+class MethodNotAllowedException extends RuntimeException {
+/**
+ * Constructor
+ *
+ * @param string $message If no message is given 'Method Not Allowed' will be the message
+ * @param string $code Status code, defaults to 401
+ */
+	public function __construct($message = null, $code = 405) {
+		if (empty($message)) {
+			$message = 'Method Not Allowed';
+		}
+		parent::__construct($message, $code);
+	}
+}
+
+/**
  * Represents an HTTP 500 error.
  *
  * @package cake.libs
@@ -311,6 +331,33 @@ class MissingTaskFileException extends CakeException {
  */
 class MissingTaskClassException extends CakeException { 
 	protected $_messageTemplate = 'Task class "%s" is missing.';
+}
+
+/**
+ * Used when a shell method cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellMethodException extends CakeException { 
+	protected $_messageTemplate = "Unknown command %1\$s %2\$s.\nFor usage try `cake %1\$s --help`";
+}
+
+/**
+ * Used when a shell class cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellClassException extends CakeException { 
+	protected $_messageTemplate = "Shell class %s could not be loaded.";
+}
+
+/**
+ * Used when a shell class cannot be found.
+ *
+ * @package cake.libs
+ */
+class MissingShellFileException extends CakeException { 
+	protected $_messageTemplate = "Shell file %s could not be loaded.";
 }
 
 /**

@@ -227,7 +227,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::config('memcache', array('duration' => '+30 days'));
+		Cache::config('memcache', array('duration' => '+29 days'));
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('long_expiry_test', $data, 'memcache');
 		$this->assertTrue($result);

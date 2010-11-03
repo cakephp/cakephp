@@ -17,15 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
-if (!class_exists('ShellDispatcher')) {
-	ob_start();
-	$argv = false;
-	require CAKE . 'console' .  DS . 'cake.php';
-	ob_end_clean();
-}
+
 App::import('Shell', 'TaskCollection', false);
 App::import('Shell', 'Shell', false);
 
@@ -36,9 +28,9 @@ class TaskCollectionTest extends CakeTestCase {
  * @return void
  */
 	function setup() {
+		$shell = $this->getMock('Shell', array(), array(), '', false);
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
-		$dispatcher->shellPaths = App::path('shells');
-		$this->Tasks = new TaskCollection($dispatcher);
+		$this->Tasks = new TaskCollection($shell, $dispatcher);
 	}
 
 /**
@@ -95,9 +87,11 @@ class TaskCollectionTest extends CakeTestCase {
  */
 	function testLoadPluginTask() {
 		$dispatcher = $this->getMock('ShellDispatcher', array(), array(), '', false);
-		$dispatcher->shellPaths = App::path('shells');
-		$dispatcher->shellPaths[] = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'vendors' . DS . 'shells' . DS;
-		$this->Tasks = new TaskCollection($dispatcher);
+		$shell = $this->getMock('Shell', array(), array(), '', false);
+		App::build(array(
+			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+		));
+		$this->Tasks = new TaskCollection($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertType('OtherTaskTask', $result, 'Task class is wrong.');

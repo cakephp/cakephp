@@ -1,6 +1,4 @@
 <?php
-/* SVN FILE: $Id: model.test.php 8225 2009-07-08 03:25:30Z mark_story $ */
-
 /**
  * ModelWriteTest file
  *
@@ -2166,6 +2164,27 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $Comment->save($data);
 		$this->assertFalse(empty($result));
+	}
+
+/**
+ * test updating records and saving blank values.
+ *
+ * @return void
+ */
+	function testUpdateSavingBlankValues() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$Article->validate = array();
+		$Article->create();
+		$result = $Article->save(array(
+			'id' => 1,
+			'title' => '',
+			'body' => ''
+		));
+		$this->assertTrue((bool)$result);
+		$result = $Article->find('first', array('conditions' => array('Article.id' => 1)));
+		$this->assertEqual('', $result['Article']['title'], 'Title is not blank');
+		$this->assertEqual('', $result['Article']['body'], 'Body is not blank');
 	}
 
 /**

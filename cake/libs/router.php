@@ -239,7 +239,10 @@ class Router {
 			self::$_prefixes[] = $defaults['prefix'];
 			self::$_prefixes = array_keys(array_flip(self::$_prefixes));
 		}
-		$defaults += array('action' => 'index', 'plugin' => null);
+		$defaults += array('plugin' => null);
+		if (empty($options['action'])) {
+			$defaults += array('action' => 'index'); 
+		}
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
@@ -724,11 +727,11 @@ class Router {
 
 		$path = array('base' => null);
 		if (!empty(self::$_requests)) {
-			// bad hack for detecting if doing a request action.
-			if (isset($this) && !isset($this->params['requested'])) {
+			$currentRequest = self::$_requests[count(self::$_requests) - 1];
+			if (!empty($currentRequest->params['requested'])) {
 				$request = self::$_requests[0];
 			} else {
-				$request = end(self::$_requests);
+				$request = $currentRequest;
 			}
 			$params = $request->params;
 			$path = array('base' => $request->base, 'here' => $request->here);
@@ -736,8 +739,14 @@ class Router {
 
 		$base = $path['base'];
 		$extension = $output = $mapped = $q = $frag = null;
-
-		if (is_array($url)) {
+		
+		if (empty($url)) {
+			$output = isset($path['here']) ? $path['here'] : '/';
+			if ($full && defined('FULL_BASE_URL')) {
+				$output = FULL_BASE_URL . $output;
+			}
+			return $output;
+		} elseif (is_array($url)) {
 			if (isset($url['base']) && $url['base'] === false) {
 				$base = null;
 				unset($url['base']);
@@ -753,6 +762,10 @@ class Router {
 			if (isset($url['#'])) {
 				$frag = '#' . urlencode($url['#']);
 				unset($url['#']);
+			}
+			if (isset($url['ext'])) {
+				$extension = '.' . $url['ext'];
+				unset($url['ext']);
 			}
 			if (empty($url['action'])) {
 				if (empty($url['controller']) || $params['controller'] === $url['controller']) {
@@ -776,10 +789,6 @@ class Router {
 
 			$url += array('controller' => $params['controller'], 'plugin' => $params['plugin']);
 
-			if (isset($url['ext'])) {
-				$extension = '.' . $url['ext'];
-				unset($url['ext']);
-			}
 			$match = false;
 
 			for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
@@ -798,20 +807,18 @@ class Router {
 			if ($match === false) {
 				$output = self::_handleNoRoute($url);
 			}
-			$output = str_replace('//', '/', $base . '/' . $output);
 		} else {
-			if (((strpos($url, '://')) || (strpos($url, 'javascript:') === 0) || (strpos($url, 'mailto:') === 0)) || (!strncmp($url, '#', 1))) {
+			if (
+				(strpos($url, '://') || 
+				(strpos($url, 'javascript:') === 0) || 
+				(strpos($url, 'mailto:') === 0)) ||
+				(!strncmp($url, '#', 1))
+			) {
 				return $url;
 			}
-			if (empty($url)) {
-				if (!isset($path['here'])) {
-					$path['here'] = '/';
-				}
-				$output = $path['here'];
-			} elseif (substr($url, 0, 1) === '/') {
-				$output = $base . $url;
+			if (substr($url, 0, 1) === '/') {
+				$output = substr($url, 1);
 			} else {
-				$output = $base . '/';
 				foreach (self::$_prefixes as $prefix) {
 					if (isset($params[$prefix])) {
 						$output .= $prefix . '/';
@@ -823,15 +830,18 @@ class Router {
 				}
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
-			$output = str_replace('//', '/', $output);
 		}
-		if ($full && defined('FULL_BASE_URL')) {
-			$output = FULL_BASE_URL . $output;
-		}
-		if (!empty($extension) && substr($output, -1) === '/') {
-			$output = substr($output, 0, -1);
-		}
+		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
+		if ($protocol === 0) {
+			$output = str_replace('//', '/', $base . '/' . $output);
 
+			if ($full && defined('FULL_BASE_URL')) {
+				$output = FULL_BASE_URL . $output;
+			}
+			if (!empty($extension)) {
+				$output = rtrim($output, '/');
+			}
+		}
 		return $output . $extension . self::queryString($q, array(), $escape) . $frag;
 	}
 
