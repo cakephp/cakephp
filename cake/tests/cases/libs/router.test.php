@@ -2248,4 +2248,20 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals($url, $result);
 	}
 
+/**
+ * test protocol in url
+ *
+ * @return void
+ */
+	public function testUrlProtocol() {
+		$url = 'http://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = 'ed2k://example.com';
+		$this->assertEqual($url, Router::url($url));
+
+		$url = 'svn+ssh://example.com';
+		$this->assertEqual($url, Router::url($url));
+	}
+
 }

@@ -831,7 +831,7 @@ class Router {
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 		}
-		$protocol = preg_match('#^[a-z]+\://#', $output);
+		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', $base . '/' . $output);
 
