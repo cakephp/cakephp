@@ -167,7 +167,7 @@
 	Configure::write('Session.cookie', 'CAKEPHP');
 
 /**
- * Session time out time (in minutes).
+ * Session time out time (in seconds).
  * Actual value depends on 'Security.level' setting.
  */
 	Configure::write('Session.timeout', '120');
