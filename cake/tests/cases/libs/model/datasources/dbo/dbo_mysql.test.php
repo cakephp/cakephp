@@ -868,4 +868,138 @@ class DboMysqlTest extends CakeTestCase {
 		));
 	}
 
+/**
+ * testGenerateAssociationQuerySelfJoin method
+ *
+ * @return void
+ */
+	function testGenerateAssociationQuerySelfJoin() {
+		$this->testDb = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$this->startTime = microtime(true);
+		$this->Model = new Article2();
+		$this->_buildRelatedModels($this->Model);
+		$this->_buildRelatedModels($this->Model->Category2);
+		$this->Model->Category2->ChildCat = new Category2();
+		$this->Model->Category2->ParentCat = new Category2();
+
+		$queryData = array();
+
+		foreach ($this->Model->Category2->associations() as $type) {
+			foreach ($this->Model->Category2->{$type} as $assoc => $assocData) {
+				$linkModel = $this->Model->Category2->{$assoc};
+				$external = isset($assocData['external']);
+
+				if ($this->Model->Category2->alias == $linkModel->alias && $type != 'hasAndBelongsToMany' && $type != 'hasMany') {
+					$result = $this->testDb->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+					$this->assertFalse(empty($result));
+				} else {
+					if ($this->Model->Category2->useDbConfig == $linkModel->useDbConfig) {
+						$result = $this->testDb->generateAssociationQuery($this->Model->Category2, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null);
+						$this->assertFalse(empty($result));
+					}
+				}
+			}
+		}
+
+		$query = $this->testDb->generateAssociationQuery($this->Model->Category2, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+(.+)FROM(.+)`Category2`\.`group_id`\s+=\s+`Group`\.`id`\)\s+LEFT JOIN(.+)WHERE\s+1 = 1\s*$/', $query);
+
+		$this->Model = new TestModel4();
+		$this->Model->schema();
+		$this->_buildRelatedModels($this->Model);
+
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel4Parent');
+		$queryData = array();
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+
+		$_queryData = $queryData;
+		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+		$this->assertTrue($result);
+
+		$expected = array(
+			'conditions' => array(),
+			'fields' => array(
+				'`TestModel4`.`id`',
+				'`TestModel4`.`name`',
+				'`TestModel4`.`created`',
+				'`TestModel4`.`updated`',
+				'`TestModel4Parent`.`id`',
+				'`TestModel4Parent`.`name`',
+				'`TestModel4Parent`.`created`',
+				'`TestModel4Parent`.`updated`'
+			),
+			'joins' => array(
+				array(
+					'table' => '`test_model4`',
+					'alias' => 'TestModel4Parent',
+					'type' => 'LEFT',
+					'conditions' => '`TestModel4`.`parent_id` = `TestModel4Parent`.`id`'
+				)
+			),
+			'order' => array(),
+			'limit' => array(),
+			'offset' => array(),
+			'group' => array()
+		);
+		$this->assertEqual($queryData, $expected);
+
+		$result = $this->testDb->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+`TestModel4`\.`id`, `TestModel4`\.`name`, `TestModel4`\.`created`, `TestModel4`\.`updated`, `TestModel4Parent`\.`id`, `TestModel4Parent`\.`name`, `TestModel4Parent`\.`created`, `TestModel4Parent`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model4` AS `TestModel4`\s+LEFT JOIN\s+`test_model4` AS `TestModel4Parent`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel4`.`parent_id` = `TestModel4Parent`.`id`\)\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+1 = 1\s+$/', $result);
+
+		$params['assocData']['type'] = 'INNER';
+		$this->Model->belongsTo['TestModel4Parent']['type'] = 'INNER';
+		$result = $this->testDb->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $_queryData, $params['external'], $resultSet);
+		$this->assertTrue($result);
+		$this->assertEqual($_queryData['joins'][0]['type'], 'INNER');
+	}
+
+/**
+ * buildRelatedModels method
+ *
+ * @param mixed $model
+ * @access protected
+ * @return void
+ */
+	function _buildRelatedModels(&$model) {
+		foreach ($model->associations() as $type) {
+			foreach ($model->{$type} as $assoc => $assocData) {
+				if (is_string($assocData)) {
+					$className = $assocData;
+				} elseif (isset($assocData['className'])) {
+					$className = $assocData['className'];
+				}
+				$model->$className = new $className();
+				$model->$className->schema();
+			}
+		}
+	}
+
+/**
+ * &_prepareAssociationQuery method
+ *
+ * @param mixed $model
+ * @param mixed $queryData
+ * @param mixed $binding
+ * @access public
+ * @return void
+ */
+	function &_prepareAssociationQuery(&$model, &$queryData, $binding) {
+		$type = $binding['type'];
+		$assoc = $binding['model'];
+		$assocData = $model->{$type}[$assoc];
+		$className = $assocData['className'];
+
+		$linkModel = $model->{$className};
+		$external = isset($assocData['external']);
+		$queryData = $this->testDb->__scrubQueryData($queryData);
+
+		$result = array_merge(array('linkModel' => &$linkModel), compact('type', 'assoc', 'assocData', 'external'));
+		return $result;
+	}
 }
