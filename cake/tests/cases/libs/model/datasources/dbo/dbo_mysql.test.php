@@ -18,138 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
-
-/**
- * DboMysqlTestDb class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
- */
-class DboMysqlTestDb extends DboMysql {
-
-/**
- * simulated property
- *
- * @var array
- * @access public
- */
-	public $simulated = array();
-
-/**
- * testing property
- *
- * @var bool true
- * @access public
- */
-	public $testing = true;
-
-/**
- * execute method
- *
- * @param mixed $sql
- * @access protected
- * @return void
- */
-	function _execute($sql) {
-		if ($this->testing) {
-			$this->simulated[] = $sql;
-			return null;
-		}
-		return parent::_execute($sql);
-	}
-
-/**
- * getLastQuery method
- *
- * @access public
- * @return void
- */
-	function getLastQuery() {
-		return $this->simulated[count($this->simulated) - 1];
-	}
-}
-
-/**
- * MysqlTestModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model.datasources
- */
-class MysqlTestModel extends Model {
-
-/**
- * name property
- *
- * @var string 'MysqlTestModel'
- * @access public
- */
-	public $name = 'MysqlTestModel';
-
-/**
- * useTable property
- *
- * @var bool false
- * @access public
- */
-	public $useTable = false;
-
-/**
- * find method
- *
- * @param mixed $conditions
- * @param mixed $fields
- * @param mixed $order
- * @param mixed $recursive
- * @access public
- * @return void
- */
-	function find($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
-	}
-
-/**
- * findAll method
- *
- * @param mixed $conditions
- * @param mixed $fields
- * @param mixed $order
- * @param mixed $recursive
- * @access public
- * @return void
- */
-	function findAll($conditions = null, $fields = null, $order = null, $recursive = null) {
-		return $conditions;
-	}
-
-/**
- * schema method
- *
- * @access public
- * @return void
- */
-	function schema() {
-		return array(
-			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
-			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'login'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-			'passwd'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_1'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'addr_2'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '25'),
-			'zip_code'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'city'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'country'	=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'phone'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'fax'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'url'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '255'),
-			'email'		=> array('type' => 'string', 'null' => '1', 'default' => '', 'length' => '155'),
-			'comments'	=> array('type' => 'text', 'null' => '1', 'default' => '', 'length' => ''),
-			'last_login'=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => ''),
-			'created'	=> array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-			'updated'	=> array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-		);
-	}
-}
+App::import('Model', 'App');
+require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 /**
  * DboMysqlTest class
@@ -158,8 +28,26 @@ class MysqlTestModel extends Model {
  * @subpackage    cake.tests.cases.libs.model.datasources.dbo
  */
 class DboMysqlTest extends CakeTestCase {
-	public $fixtures = array('core.binary_test');
+/**
+ * autoFixtures property
+ *
+ * @var bool false
+ * @access public
+ */
 	public $autoFixtures = false;
+
+/**
+ * fixtures property
+ *
+ * @var array
+ * @access public
+ */
+	public $fixtures = array(
+		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
+		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
+		'core.binary_test'
+	);
+
 /**
  * The Dbo instance to be tested
  *
@@ -238,7 +126,7 @@ class DboMysqlTest extends CakeTestCase {
 		$result = $this->Dbo->value('', 'integer');
 		$this->assertEqual($expected, $result);
 
-		$expected = 0;
+		$expected = "'0'";
 		$result = $this->Dbo->value('', 'boolean');
 		$this->assertEqual($expected, $result);
 
@@ -936,4 +824,48 @@ class DboMysqlTest extends CakeTestCase {
 		$encoding = $db->getEncoding();
 		$this->assertEqual('utf-8', $encoding);
 	}
+
+/**
+ * testFieldDoubleEscaping method
+ *
+ * @access public
+ * @return void
+ */
+	function testFieldDoubleEscaping() {
+		$test = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$this->Model = $this->getMock('Article2', array('getDataSource'));
+		$this->Model->alias = 'Article';
+		$this->Model->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($test));
+
+		$this->assertEqual($this->Model->escapeField(), '`Article`.`id`');
+		$result = $test->fields($this->Model, null, $this->Model->escapeField());
+		$this->assertEqual($result, array('`Article`.`id`'));
+
+		$test->expects($this->at(0))->method('execute')
+			->with('SELECT `Article`.`id` FROM `articles` AS `Article`   WHERE 1 = 1');
+
+		$result = $test->read($this->Model, array(
+			'fields' => $this->Model->escapeField(),
+			'conditions' => null,
+			'recursive' => -1
+		));
+
+		$test->startQuote = '[';
+		$test->endQuote = ']';
+		$this->assertEqual($this->Model->escapeField(), '[Article].[id]');
+
+		$result = $test->fields($this->Model, null, $this->Model->escapeField());
+		$this->assertEqual($result, array('[Article].[id]'));
+
+		$test->expects($this->at(0))->method('execute')
+			->with('SELECT [Article].[id] FROM [' . $test->fullTableName('articles', false) . '] AS [Article]   WHERE 1 = 1');
+		$result = $test->read($this->Model, array(
+			'fields' => $this->Model->escapeField(),
+			'conditions' => null,
+			'recursive' => -1
+		));
+	}
+
 }
