@@ -90,7 +90,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testGetConfig() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('otherOne'));
 		$result = $this->Task->getConfig();
-		$this->assertEqual($result, 'otherOne');
+		$this->assertEquals('otherOne', $result);
 	}
 
 /**
@@ -101,8 +101,7 @@ class DbConfigTaskTest extends CakeTestCase {
 	public function testInitialize() {
 		$this->Task->initialize();
 		$this->assertFalse(empty($this->Task->path));
-		$this->assertEqual($this->Task->path, APP . 'config' . DS);
-
+		$this->assertEquals(APP . 'config' . DS, $this->Task->path);
 	}
 
 /**
