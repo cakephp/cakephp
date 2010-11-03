@@ -43,7 +43,7 @@ class TestSuiteShell extends Shell {
 			'required' => true
 		))->addArgument('file', array(
 			'help' => __('file name with folder prefix and without the test.php suffix.'),
-			'required' => true,
+			'required' => false,
 		))->addOption('log-junit', array(
 			'help' => __('<file> Log test execution in JUnit XML format to file.'),
 			'default' => false
