@@ -741,7 +741,11 @@ class Router {
 		$extension = $output = $mapped = $q = $frag = null;
 		
 		if (empty($url)) {
-			return isset($path['here']) ? $path['here'] : '/';
+			$output = isset($path['here']) ? $path['here'] : '/';
+			if ($full && defined('FULL_BASE_URL')) {
+				$output = FULL_BASE_URL . $output;
+			}
+			return $output;
 		} elseif (is_array($url)) {
 			if (isset($url['base']) && $url['base'] === false) {
 				$base = null;
