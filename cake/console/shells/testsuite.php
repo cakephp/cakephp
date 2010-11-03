@@ -43,11 +43,106 @@ class TestSuiteShell extends Shell {
 			'required' => true
 		))->addArgument('file', array(
 			'help' => __('file name with folder prefix and without the test.php suffix.'),
-			'required' => true,
+			'required' => false,
+		))->addOption('log-junit', array(
+			'help' => __('<file> Log test execution in JUnit XML format to file.'),
+			'default' => false
+		))->addOption('log-json', array(
+			'help' => __('<file> Log test execution in TAP format to file.'),
+			'default' => false
+		))->addOption('log-tap', array(
+			'help' => __('<file> Log test execution in TAP format to file.'),
+			'default' => false
+		))->addOption('log-dbus', array(
+			'help' => __('Log test execution to DBUS.'),
+			'default' => false
+		))->addOption('--coverage-html', array(
+			'help' => __('<dir> Generate code coverage report in HTML format.'),
+			'default' => false
+		))->addOption('coverage-clover', array(
+			'help' => __('<file> Write code coverage data in Clover XML format.'),
+			'default' => false
+		))->addOption('testdox-html', array(
+			'help' => __('<file> Write agile documentation in HTML format to file.'),
+			'default' => false
+		))->addOption('testdox-text', array(
+			'help' => __('<file> Write agile documentation in Text format to file.'),
+			'default' => false
 		))->addOption('filter', array(
-			'help' => __('Filter which tests to run.'),
+			'help' => __('<pattern> Filter which tests to run.'),
+			'default' => false
+		))->addOption('group', array(
+			'help' => __('<name> Only runs tests from the specified group(s).'),
+			'default' => false
+		))->addOption('exclude-group', array(
+			'help' => __('<name> Exclude tests from the specified group(s).'),
+			'default' => false
+		))->addOption('list-groups', array(
+			'help' => __('List available test groups.'),
+			'boolean' => true
+		))->addOption('loader', array(
+			'help' => __('TestSuiteLoader implementation to use.'),
+			'default' => false
+		))->addOption('repeat', array(
+			'help' => __('<times> Runs the test(s) repeatedly.'),
+			'default' => false
+		))->addOption('tap', array(
+			'help' => __('Report test execution progress in TAP format.'),
+			'boolean' => true
+		))->addOption('testdox', array(
+			'help' => __('Report test execution progress in TestDox format.'),
+			'default' => false,
+			'boolean' => true
+		))->addOption('no-colors', array(
+			'help' => __('Do not use colors in output.'),
+			'boolean' => true
+		))->addOption('stderr', array(
+			'help' => __('Write to STDERR instead of STDOUT.'),
+			'boolean' => true
+		))->addOption('stop-on-failure', array(
+			'help' => __('Stop execution upon first error or failure.'),
+			'boolean' => true
+		))->addOption('stop-on-skipped ', array(
+			'help' => __('Stop execution upon first skipped test.'),
+			'boolean' => true
+		))->addOption('stop-on-incomplete', array(
+			'help' => __('Stop execution upon first incomplete test.'),
+			'boolean' => true
+		))->addOption('strict', array(
+			'help' => __('Mark a test as incomplete if no assertions are made.'),
+			'boolean' => true
+		))->addOption('wait', array(
+			'help' => __('Waits for a keystroke after each test.'),
+			'boolean' => true
+		))->addOption('process-isolation', array(
+			'help' => __('Run each test in a separate PHP process.'),
+			'boolean' => true
+		))->addOption('no-globals-backup', array(
+			'help' => __('Do not backup and restore $GLOBALS for each test.'),
+			'boolean' => true
+		))->addOption('static-backup ', array(
+			'help' => __('Backup and restore static attributes for each test.'),
+			'boolean' => true
+		))->addOption('syntax-check', array(
+			'help' => __('Try to check source files for syntax errors.'),
+			'boolean' => true
+		))->addOption('bootstrap', array(
+			'help' => __('<file> A "bootstrap" PHP file that is run before the tests.'),
+			'default' => false
+		))->addOption('configuraion', array(
+			'help' => __('<file> Read configuration from XML file.'),
+			'default' => false
+		))->addOption('no-configuration', array(
+			'help' => __('Ignore default configuration file (phpunit.xml).'),
+			'boolean' => true
+		))->addOption('include-path', array(
+			'help' => __('<path(s)> Prepend PHP include_path with given path(s).'),
+			'default' => false
+		))->addOption('directive', array(
+			'help' => __('key[=value] Sets a php.ini value.'),
 			'default' => false
 		));
+
 		return $parser;
 	}
 
@@ -109,8 +204,17 @@ class TestSuiteShell extends Shell {
 		$options = array();
 		$params = $this->params;
 		unset($params['help']);
-		$params = array_filter($params);
+
+		if (!empty($params['no-colors'])) {
+			unset($params['no-colors'], $params['colors']);
+		} else {
+			$params['colors'] = true;
+		}
+
 		foreach ($params as $param => $value) {
+			if ($value === false) {
+				continue;
+			}
 			$options[] = '--' . $param;
 			if (is_string($value)) {
 				$options[] = $value;
@@ -131,7 +235,7 @@ class TestSuiteShell extends Shell {
 		$args = $this->parseArgs();
 
 		if (empty($args['case'])) {
-			$this->available();
+			return $this->available();
 		}
 
 		$this->run($args, $this->runnerOptions());
@@ -209,85 +313,4 @@ class TestSuiteShell extends Shell {
 			}
 		}
 	}
-
-/**
- * Help screen
- *
- * @return void
- */
-	public function help() {
-		$this->out('CakePHP Testsuite:');
-		$this->hr();
-
-		$this->out('The CakPHP Testsuite allows you to run test cases from the command line');
-		$this->out('If run with no command line arguments, a list of available core test cases will be shown');
-		$this->hr();
-
-		$this->out("Usage: cake testuite <category> <file> [params]");
-		$this->out("\t- category: app, core or name of a plugin");
-		$this->out("\t- file: file name with folder prefix and without the test.php suffix");
-		$this->hr();
-
-		$this->out("Usage: cake testuite available <category> [params]");
-		$this->out("\t Shows a list of available testcases for the specified category");
-		$this->out("\t Params list will be used for running the selected test case");
-		$this->hr();
-
-		$this->out('Examples:');
-		$this->out('cake testsuite app models/my_model');
-		$this->out("cake testsuite app controllers/my_controller \n");
-		$this->out('cake testsuite core libs/file');
-		$this->out("cake testsuite core libs/set \n");
-		$this->out('cake testsuite bugs models/bug -- for the plugin bugs and its test case models/bug');
-		$this->hr();
-
-		$this->out('Params:');
-		$this->out("--log-junit <file>       Log test execution in JUnit XML format to file.");
-		$this->out("--log-json <file>        Log test execution in JSON format.");
-		$this->out("--log-tap <file>         Log test execution in TAP format to file.");
-	 	$this->out("--log-dbus               Log test execution to DBUS.");
-
-		$this->out("--coverage-html <dir>    Generate code coverage report in HTML format.");
-		$this->out("--coverage-clover <file> Write code coverage data in Clover XML format.");
-
-		$this->out("--testdox-html <file>    Write agile documentation in HTML format to file.");
-		$this->out("--testdox-text <file>    Write agile documentation in Text format to file.");
-
-		$this->out("--filter <pattern>       Filter which tests to run.");
-		$this->out("--group ...              Only runs tests from the specified group(s).");
-		$this->out("--exclude-group ...      Exclude tests from the specified group(s).");
-		$this->out("--filter <pattern>       Filter which tests to run.");
-		$this->out("--list-groups            List available test groups.");
-
-		$this->out("--loader <loader>        TestSuiteLoader implementation to use.");
-		$this->out("--repeat <times>         Runs the test(s) repeatedly.");
-
-		$this->out("--tap                    Report test execution progress in TAP format.");
-		$this->out("--testdox                Report test execution progress in TestDox format.");
-
-		$this->out("--colors                 Use colors in output.");
-		$this->out("--stderr                 Write to STDERR instead of STDOUT.");
-		$this->out("--stop-on-failure        Stop execution upon first error or failure.");
-		$this->out("--stop-on-skipped        Stop execution upon first skipped test.");
-		$this->out("--stop-on-incomplete     Stop execution upon first incomplete test.");
-		$this->out("--strict                 Mark a test as incomplete if no assertions are made.");
-		$this->out("--verbose                Output more verbose information.");
-		$this->out("--wait                   Waits for a keystroke after each test.");
-
-		$this->out("--skeleton-class         Generate Unit class for UnitTest in UnitTest.php.");
-		$this->out("--skeleton-test          Generate UnitTest class for Unit in Unit.php.");
-
-		$this->out("--process-isolation      Run each test in a separate PHP process.");
-		$this->out("--no-globals-backup      Do not backup and restore \$GLOBALS for each test.");
-		$this->out("--static-backup          Backup and restore static attributes for each test.");
-		$this->out("--syntax-check           Try to check source files for syntax errors.");
-
-		$this->out("--bootstrap <file>       A \"bootstrap\" PHP file that is run before the tests.");
-		$this->out("--configuration <file>   Read configuration from XML file.");
-		$this->out("--no-configuration       Ignore default configuration file (phpunit.xml).");
-		$this->out("--include-path <path(s)> Prepend PHP's include_path with given path(s).");
-
-		$this->out("-d key[=value]           Sets a php.ini value. \n");
-	}
-
 }
