@@ -1269,6 +1269,81 @@ class FormHelper extends AppHelper {
 	}
 
 /**
+ * Create a `<button>` tag with `<form>` using POST method.
+ *
+ * This method creates an element <form>. So do not use this method in some opened form.
+ *
+ * ### Options:
+ *
+ * - `data` - Array with key/value to pass in input hidden
+ * - Other options is the same of button method.
+ *
+ * @param string $title The button's caption. Not automatically HTML encoded
+ * @param mixed $url URL as string or array
+ * @param array $options Array of options and HTML attributes.
+ * @return string A HTML button tag.
+ */
+	public function postButton($title, $url, $options = array()) {
+		$out = $this->create(false, array('id' => false, 'url' => $url, 'style' => 'display:none;'));
+		if (isset($options['data']) && is_array($options['data'])) {
+			foreach ($options['data'] as $key => $value) {
+				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+			}
+			unset($options['data']);
+		}
+		$out .= $this->button($title, $options);
+		$out .= $this->end();
+		return $out;
+	}
+
+/**
+ * Creates an HTML link, but access the url using method POST. Requires javascript enabled in browser.
+ *
+ * This method creates an element <form>. So do not use this method in some opened form.
+ *
+ * ### Options:
+ *
+ * - `data` - Array with key/value to pass in input hidden
+ * - Other options is the same of HtmlHelper::link() method.
+ * - The option `onclick` will be replaced.
+ *
+ * @param string $title The content to be wrapped by <a> tags.
+ * @param mixed $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
+ * @param array $options Array of HTML attributes.
+ * @param string $confirmMessage JavaScript confirmation message.
+ * @return string An `<a />` element.
+ */
+	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
+		if (!empty($options['confirm'])) {
+			$confirmMessage = $options['confirm'];
+			unset($options['confirm']);
+		}
+
+		$formName = uniqid('post_');
+		$out = $this->create(false, array('url' => $url, 'name' => $formName, 'id' => $formName, 'style' => 'display:none;'));
+		if (isset($options['data']) && is_array($options['data'])) {
+			foreach ($options['data'] as $key => $value) {
+				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+			}
+			unset($options['data']);
+		}
+		$out .= $this->end();
+
+		$url = '#';
+		$onClick = 'document.' . $formName . '.submit();';
+		if ($confirmMessage) {
+			$confirmMessage = str_replace(array("'", '"'), array("\'", '\"'), $confirmMessage);
+			$options['onclick'] = "if (confirm('{$confirmMessage}')) { {$onClick} }";
+		} else {
+			$options['onclick'] = $onClick;
+		}
+		$options['onclick'] .= ' event.returnValue = false; return false;';
+
+		$out .= $this->Html->link($title, $url, $options);
+		return $out;
+	}
+
+/**
  * Creates a submit button element.  This method will generate `<input />` elements that
  * can be used to submit, and reset forms by using $options.  image submits can be created by supplying an
  * image path for $caption.
