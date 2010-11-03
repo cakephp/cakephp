@@ -969,7 +969,7 @@ class CakeSchemaTest extends CakeTestCase {
 		));
 		$Other =& $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
 		$this->assertEqual($Other->name, 'TestPluginApp');
-		$this->assertEqual(array_keys($Other->tables), array('acos'));
+		$this->assertEqual(array_keys($Other->tables), array('test_plugin_acos'));
 
 		App::build();
 	}

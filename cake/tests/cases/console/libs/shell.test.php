@@ -22,18 +22,7 @@
 App::import('Core', 'Folder');
 App::import('Shell', 'Shell', false);
 
-
-if (!defined('DISABLE_AUTO_DISPATCH')) {
-	define('DISABLE_AUTO_DISPATCH', true);
-}
-
-if (!class_exists('ShellDispatcher')) {
-	ob_start();
-	$argv = false;
-	require CAKE . 'console' .  DS . 'cake.php';
-	ob_end_clean();
-}
-
+require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
 
 /**
  * TestShell class
@@ -50,6 +39,7 @@ class TestShell extends Shell {
  * @access public
  */
 	public $name = 'TestShell';
+
 /**
  * stopped property
  *
@@ -66,6 +56,18 @@ class TestShell extends Shell {
  */
 	protected function _stop($status = 0) {
 		$this->stopped = $status;
+	}
+
+	public function do_something() {
+		
+	}
+	
+	public function _secret() {
+		
+	}
+	
+	protected function no_access() {
+		
 	}
 }
 
@@ -114,21 +116,10 @@ class ShellTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$this->Dispatcher = $this->getMock(
-			'ShellDispatcher',
-			array('getInput', 'stdout', 'stderr', '_stop', '_initEnvironment', 'clear')
-		);
-		$this->Shell =& new TestShell($this->Dispatcher);
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		ClassRegistry::flush();
+		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
+		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$this->Shell =& new TestShell($output, $error, $in);
 	}
 
 /**
@@ -137,9 +128,10 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testConstruct() {
-		$this->assertEquals($this->Dispatcher, $this->Shell->Dispatch);
 		$this->assertEqual($this->Shell->name, 'TestShell');
-		$this->assertEqual($this->Shell->alias, 'TestShell');
+		$this->assertType('ConsoleInput', $this->Shell->stdin);
+		$this->assertType('ConsoleOutput', $this->Shell->stdout);
+		$this->assertType('ConsoleOutput', $this->Shell->stderr);
 	}
 
 /**
@@ -166,11 +158,6 @@ class ShellTest extends CakeTestCase {
 		$this->assertIsA($this->Shell->Comment, 'Comment');
 		$this->assertEqual($this->Shell->modelClass, 'Comment');
 
-		$this->Shell->uses = true;
-		$this->Shell->initialize();
-		$this->assertTrue(isset($this->Shell->AppModel));
-		$this->assertIsA($this->Shell->AppModel, 'AppModel');
-
 		App::build();
 	}
 
@@ -180,29 +167,24 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testIn() {
-		$this->Dispatcher->expects($this->at(0))
-			->method('getInput')
-			->with('Just a test?', array('y', 'n'), 'n')
+		$this->Shell->stdin->expects($this->at(0))
+			->method('read')
 			->will($this->returnValue('n'));
 
-		$this->Dispatcher->expects($this->at(1))
-			->method('getInput')
-			->with('Just a test?', array('y', 'n'), 'n')
+		$this->Shell->stdin->expects($this->at(1))
+			->method('read')
 			->will($this->returnValue('Y'));
 
-		$this->Dispatcher->expects($this->at(2))
-			->method('getInput')
-			->with('Just a test?', 'y,n', 'n')
+		$this->Shell->stdin->expects($this->at(2))
+			->method('read')
 			->will($this->returnValue('y'));
 
-		$this->Dispatcher->expects($this->at(3))
-			->method('getInput')
-			->with('Just a test?', 'y/n', 'n')
+		$this->Shell->stdin->expects($this->at(3))
+			->method('read')
 			->will($this->returnValue('y'));
 
-		$this->Dispatcher->expects($this->at(4))
-			->method('getInput')
-			->with('Just a test?', 'y', 'y')
+		$this->Shell->stdin->expects($this->at(4))
+			->method('read')
 			->will($this->returnValue('y'));
 
 		$result = $this->Shell->in('Just a test?', array('y', 'n'), 'n');
@@ -232,21 +214,21 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testOut() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stdout')
-			->with("Just a test\n", false);
+		$this->Shell->stdout->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stdout')
-			->with("Just\na\ntest\n", false);
+		$this->Shell->stdout->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stdout')
-			->with("Just\na\ntest\n\n", false);
+		$this->Shell->stdout->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expects($this->at(3))
-			->method('stdout')
-			->with("\n", false);
+		$this->Shell->stdout->expects($this->at(3))
+			->method('write')
+			->with('', 1);
 
 		$this->Shell->out('Just a test');
 
@@ -258,26 +240,64 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	function testVerboseOutput() {
+		$this->Shell->stdout->expects($this->at(0))->method('write')
+			->with('Verbose', 1);
+		$this->Shell->stdout->expects($this->at(1))->method('write')
+			->with('Normal', 1);
+		$this->Shell->stdout->expects($this->at(2))->method('write')
+			->with('Quiet', 1);
+
+		$this->Shell->params['verbose'] = true;
+		$this->Shell->params['quiet'] = false;
+
+		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
+		$this->Shell->out('Normal', 1, Shell::NORMAL);
+		$this->Shell->out('Quiet', 1, Shell::QUIET);
+	}
+
+/**
+ * test that verbose and quiet output levels work
+ *
+ * @return void
+ */
+	function testQuietOutput() {
+		$this->Shell->stdout->expects($this->once())->method('write')
+			->with('Quiet', 1);
+
+		$this->Shell->params['verbose'] = false;
+		$this->Shell->params['quiet'] = true;
+
+		$this->Shell->out('Verbose', 1, Shell::VERBOSE);
+		$this->Shell->out('Normal', 1, Shell::NORMAL);
+		$this->Shell->out('Quiet', 1, Shell::QUIET);
+	}
+
+/**
  * testErr method
  *
  * @return void
  */
 	public function testErr() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stderr')
-			->with("Just a test\n");
+		$this->Shell->stderr->expects($this->at(0))
+			->method('write')
+			->with("Just a test", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stderr')
-			->with("Just\na\ntest\n");
+		$this->Shell->stderr->expects($this->at(1))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stderr')
-			->with("Just\na\ntest\n\n");
+		$this->Shell->stderr->expects($this->at(2))
+			->method('write')
+			->with(array('Just', 'a', 'test'), 2);
 
-		$this->Shell->Dispatch->expects($this->at(3))
-			->method('stderr')
-			->with("\n");
+		$this->Shell->stderr->expects($this->at(3))
+			->method('write')
+			->with('', 1);
 
 		$this->Shell->err('Just a test');
 
@@ -309,17 +329,17 @@ class ShellTest extends CakeTestCase {
 	public function testHr() {
 		$bar = '---------------------------------------------------------------';
 
-		$this->Shell->Dispatch->expects($this->at(0))->method('stdout')->with('', false);
-		$this->Shell->Dispatch->expects($this->at(1))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(2))->method('stdout')->with('', false);
+		$this->Shell->stdout->expects($this->at(0))->method('write')->with('', 0);
+        $this->Shell->stdout->expects($this->at(1))->method('write')->with($bar, 1);
+        $this->Shell->stdout->expects($this->at(2))->method('write')->with('', 0);
 
-		$this->Shell->Dispatch->expects($this->at(3))->method('stdout')->with("\n", false);
-		$this->Shell->Dispatch->expects($this->at(4))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(5))->method('stdout')->with("\n", false);
+		$this->Shell->stdout->expects($this->at(3))->method('write')->with("", true);
+		$this->Shell->stdout->expects($this->at(4))->method('write')->with($bar, 1);
+		$this->Shell->stdout->expects($this->at(5))->method('write')->with("", true);
 
-		$this->Shell->Dispatch->expects($this->at(6))->method('stdout')->with("\n\n", false);
-		$this->Shell->Dispatch->expects($this->at(7))->method('stdout')->with($bar . "\n", false);
-		$this->Shell->Dispatch->expects($this->at(8))->method('stdout')->with("\n\n", false);
+		$this->Shell->stdout->expects($this->at(6))->method('write')->with("", 2);
+		$this->Shell->stdout->expects($this->at(7))->method('write')->with($bar, 1);
+		$this->Shell->stdout->expects($this->at(8))->method('write')->with("", 2);
 
 		$this->Shell->hr();
 
@@ -334,17 +354,17 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testError() {
-		$this->Shell->Dispatch->expects($this->at(0))
-			->method('stderr')
-			->with("Error: Foo Not Found\n");
+		$this->Shell->stderr->expects($this->at(0))
+			->method('write')
+			->with("<error>Error:</error> Foo Not Found", 1);
 
-		$this->Shell->Dispatch->expects($this->at(1))
-			->method('stderr')
-			->with("Error: Foo Not Found\n");
+		$this->Shell->stderr->expects($this->at(1))
+			->method('write')
+			->with("<error>Error:</error> Foo Not Found", 1);
 
-		$this->Shell->Dispatch->expects($this->at(2))
-			->method('stderr')
-			->with("Searched all...\n");
+		$this->Shell->stderr->expects($this->at(2))
+			->method('write')
+			->with("Searched all...", 1);
 
 		$this->Shell->error('Foo Not Found');
 		$this->assertIdentical($this->Shell->stopped, 1);
@@ -377,19 +397,37 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->tasks = array('TestApple');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
 
 		$this->Shell->tasks = 'TestBanana';
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
-		$this->assertIsA($this->Shell->TestBanana, 'TestBananaTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('TestBananaTask', $this->Shell->TestBanana);
 
 		unset($this->Shell->ShellTestApple, $this->Shell->TestBanana);
 
 		$this->Shell->tasks = array('TestApple', 'TestBanana');
 		$this->assertTrue($this->Shell->loadTasks());
-		$this->assertIsA($this->Shell->TestApple, 'TestAppleTask');
-		$this->assertIsA($this->Shell->TestBanana, 'TestBananaTask');
+		$this->assertInstanceOf('TestAppleTask', $this->Shell->TestApple);
+		$this->assertInstanceOf('TestBananaTask', $this->Shell->TestBanana);
+	}
+
+/**
+ * test that __get() makes args and params references
+ *
+ * @return void
+ */
+	function test__getArgAndParamReferences() {
+		$this->Shell->tasks = array('TestApple');
+		$this->Shell->args = array('one');
+		$this->Shell->params = array('help' => false);
+		$this->Shell->loadTasks();
+		$result = $this->Shell->TestApple;
+		
+		$this->Shell->args = array('one', 'two');
+		
+		$this->assertSame($this->Shell->args, $result->args);
+		$this->assertSame($this->Shell->params, $result->params);
 	}
 
 /**
@@ -477,14 +515,12 @@ class ShellTest extends CakeTestCase {
 
 		$this->Shell->interactive = true;
 
-		$this->Shell->Dispatch->expects($this->at(5))
-			->method('getInput')
-			->withAnyParameters()
+		$this->Shell->stdin->expects($this->at(0))
+			->method('read')
 			->will($this->returnValue('n'));
 	
-		$this->Shell->Dispatch->expects($this->at(9))
-			->method('getInput')
-			->withAnyParameters()
+		$this->Shell->stdin->expects($this->at(1))
+			->method('read')
 			->will($this->returnValue('y'));
 
 
@@ -577,5 +613,162 @@ class ShellTest extends CakeTestCase {
 		$this->assertEqual(file_get_contents($file), $contents);
 
 		$Folder->delete();
+	}
+
+/**
+ * test hasTask method
+ *
+ * @return void
+ */
+	function testHasTask() {
+		$this->Shell->tasks = array('Extract', 'DbConfig');
+		$this->Shell->loadTasks();
+		
+		$this->assertTrue($this->Shell->hasTask('extract'));
+		$this->assertTrue($this->Shell->hasTask('Extract'));
+		$this->assertFalse($this->Shell->hasTask('random'));
+		
+		$this->assertTrue($this->Shell->hasTask('db_config'));
+		$this->assertTrue($this->Shell->hasTask('DbConfig'));
+	}
+
+/**
+ * test the hasMethod
+ *
+ * @return void
+ */
+	function testHasMethod() {
+		$this->assertTrue($this->Shell->hasMethod('do_something'));
+		$this->assertFalse($this->Shell->hasMethod('hr'), 'hr is callable');
+		$this->assertFalse($this->Shell->hasMethod('_secret'), '_secret is callable');
+		$this->assertFalse($this->Shell->hasMethod('no_access'), 'no_access is callable');
+	}
+
+/**
+ * test run command calling main.
+ *
+ * @return void
+ */
+	function testRunCommandMain() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
+
+		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
+		$result = $Mock->runCommand(null, array());
+		$this->assertTrue($result);
+	}
+
+/**
+ * test run command calling a legit method.
+ *
+ * @return void
+ */
+	function testRunCommandWithMethod() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
+
+		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
+		$result = $Mock->runCommand('hit_me', array());
+		$this->assertTrue($result);
+	}
+
+/**
+ * test run command causing exception on Shell method.
+ *
+ * @return void
+ */
+	function testRunCommandBaseclassMethod() {
+		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
+
+		$Parser->expects($this->once())->method('help');
+		$Mock->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
+		$Mock->expects($this->never())->method('hr');
+		$Mock->expects($this->once())->method('out');
+
+		$result = $Mock->runCommand('hr', array());
+	}
+
+/**
+ * test run command causing exception on Shell method.
+ *
+ * @return void
+ */
+	function testRunCommandMissingMethod() {
+		$methods = get_class_methods('Shell');
+		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
+
+		$Parser->expects($this->once())->method('help');
+		$Mock->expects($this->never())->method('idontexist');
+		$Mock->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
+		$Mock->expects($this->once())->method('out');
+
+
+		$result = $Mock->runCommand('idontexist', array());
+	}
+
+/**
+ * test that a --help causes help to show.
+ *
+ * @return void
+ */
+	function testRunCommandTriggeringHelp() {
+		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
+		$Parser->expects($this->once())->method('parse')
+			->with(array('--help'))
+			->will($this->returnValue(array(array('help' => true), array())));
+		$Parser->expects($this->once())->method('help');
+		
+		$Shell = $this->getMock('Shell', array('getOptionParser', 'out', 'startup', '_welcome'), array(), '', false);
+		$Shell->expects($this->once())->method('getOptionParser')
+			->will($this->returnValue($Parser));
+		$Shell->expects($this->once())->method('out');
+
+		$Shell->runCommand(null, array('--help'));
+	}
+
+/**
+ * test that runCommand will call runCommand on the task.
+ *
+ * @return void
+ */
+	function testRunCommandHittingTask() {
+		$Shell = $this->getMock('Shell', array('hasTask', 'startup'), array(), '', false);
+		$task = $this->getMock('Shell', array('execute', 'runCommand'), array(), '', false);
+		$task->expects($this->any())->method('runCommand')
+			->with('execute', array('one', 'value'));
+
+		$Shell->expects($this->once())->method('startup');
+		$Shell->expects($this->any())->method('hasTask')->will($this->returnValue(true));
+		$Shell->RunCommand = $task;
+
+		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+	}
+
+/**
+ * test wrapBlock wrapping text.
+ *
+ * @return void
+ */
+	function testWrapText() {
+		$text = 'This is the song that never ends. This is the song that never ends. This is the song that never ends.';
+		$result = $this->Shell->wrapText($text, 33);
+		$expected = <<<TEXT
+This is the song that never ends.
+This is the song that never ends.
+This is the song that never ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
+
+		$result = $this->Shell->wrapText($text, array('indent' => '  ', 'width' => 33));
+		$expected = <<<TEXT
+  This is the song that never ends.
+  This is the song that never ends.
+  This is the song that never ends.
+TEXT;
+		$this->assertEquals($expected, $result, 'Text not wrapped.');
 	}
 }

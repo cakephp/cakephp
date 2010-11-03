@@ -319,4 +319,38 @@ class String {
 		}
 		return $str;
 	}
+
+/**
+ * Wraps text to a specific width, can optionally wrap at word breaks.
+ *
+ * ### Options
+ *
+ * - `width` The width to wrap to.  Defaults to 72
+ * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
+ * - `indent` String to indent with. Defaults to null.
+ * - `indentAt` 0 based index to start indenting at. Defaults to 0.
+ *
+ * @param string $text Text the text to format.
+ * @param mixed $options Array of options to use, or an integer to wrap the text to.
+ * @return string Formatted text.
+ */
+	public static function wrap($text, $options = array()) {
+		if (is_numeric($options)) {
+			$options = array('width' => $options);
+		}
+		$options += array('width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0);
+		if ($options['wordWrap']) {
+			$wrapped = wordwrap($text, $options['width'], "\n");
+		} else {
+			$wrapped = trim(chunk_split($text, $options['width'] - 1, "\n"));
+		}
+		if (!empty($options['indent'])) {
+			$chunks = explode("\n", $wrapped);
+			for ($i = $options['indentAt'], $len = count($chunks); $i < $len; $i++) {
+				$chunks[$i] = $options['indent'] . $chunks[$i];
+			}
+			$wrapped = implode("\n", $chunks);
+		}
+		return $wrapped;
+	}
 }
