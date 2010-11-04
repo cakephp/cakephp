@@ -21,7 +21,6 @@
 /**
  * Included libraries.
  */
-App::import('Core', 'ClassRegistry');
 App::import('View', 'HelperCollection', false);
 App::import('View', 'Helper', false);
 
