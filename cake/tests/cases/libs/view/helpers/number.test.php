@@ -322,7 +322,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP', array('escape' => true));
-		$expected = '&amp;#163;1,234,567.89';
+		$expected = '&#163;1,234,567.89';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency('0.35', 'USD', array('after' => false));
