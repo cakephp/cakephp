@@ -1002,4 +1002,33 @@ class DboMysqlTest extends CakeTestCase {
 		$result = array_merge(array('linkModel' => &$linkModel), compact('type', 'assoc', 'assocData', 'external'));
 		return $result;
 	}
+
+/**
+ * testGenerateInnerJoinAssociationQuery method
+ *
+ * @access public
+ * @return void
+ */
+	function testGenerateInnerJoinAssociationQuery() {
+		$test = $this->getMock('DboMysql', array('connect', '_execute', 'execute'));
+		$this->Model = $this->getMock('TestModel9', array('getDataSource'));
+		$this->Model->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($test));
+
+		$this->Model->TestModel8 = $this->getMock('TestModel8', array('getDataSource'));
+		$this->Model->TestModel8->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($test));
+
+		$test->expects($this->at(0))->method('execute')
+			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` LEFT JOIN `test_model8`/'));
+
+		$test->expects($this->at(1))->method('execute')
+			->with(new PHPUnit_Framework_Constraint_PCREMatch('/`TestModel9` INNER JOIN `test_model8`/'));
+
+		$test->read($this->Model, array('recursive' => 1));
+		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
+		$test->read($this->Model, array('recursive' => 1));
+	}
 }

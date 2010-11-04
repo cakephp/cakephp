@@ -118,30 +118,6 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * testGenerateInnerJoinAssociationQuery method
- *
- * @access public
- * @return void
- */
-	function testGenerateInnerJoinAssociationQuery() {
-		$this->Model = new TestModel9();
-		$test = ConnectionManager::create('test2', $this->__config);
-		$this->Model->setDataSource('test2');
-		$this->Model->TestModel8 = new TestModel8();
-		$this->Model->TestModel8->setDataSource('test2');
-
-		$this->testDb->read($this->Model, array('recursive' => 1));
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/`TestModel9` LEFT JOIN `' . $this->testDb->fullTableName('test_model8', false) . '`/', $result);
-
-		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
-		$this->testDb->read($this->Model, array('recursive' => 1));
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/`TestModel9` INNER JOIN `' . $this->testDb->fullTableName('test_model8', false) . '`/', $result);
-
-	}
-
-/**
  * testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding method
  *
  * @access public
