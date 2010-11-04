@@ -997,7 +997,7 @@ class DboMysqlTest extends CakeTestCase {
 
 		$linkModel = $model->{$className};
 		$external = isset($assocData['external']);
-		$queryData = $this->testDb->__scrubQueryData($queryData);
+		$queryData = $this->Dbo->__scrubQueryData($queryData);
 
 		$result = array_merge(array('linkModel' => &$linkModel), compact('type', 'assoc', 'assocData', 'external'));
 		return $result;
@@ -1030,5 +1030,60 @@ class DboMysqlTest extends CakeTestCase {
 		$test->read($this->Model, array('recursive' => 1));
 		$this->Model->belongsTo['TestModel8']['type'] = 'INNER';
 		$test->read($this->Model, array('recursive' => 1));
+	}
+
+/**
+ * testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding method
+ *
+ * @access public
+ * @return void
+ */
+	function testGenerateAssociationQuerySelfJoinWithConditionsInHasOneBinding() {
+		$this->Model = new TestModel8();
+		$this->Model->schema();
+		$this->_buildRelatedModels($this->Model);
+
+		$binding = array('type' => 'hasOne', 'model' => 'TestModel9');
+		$queryData = array();
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$_queryData = $queryData;
+		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+		$this->assertTrue($result);
+
+		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+`TestModel8`\.`id`, `TestModel8`\.`test_model9_id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`, `TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model8` AS `TestModel8`\s+LEFT JOIN\s+`test_model9` AS `TestModel9`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel9`\.`name` != \'mariano\'\s+AND\s+`TestModel9`.`test_model8_id` = `TestModel8`.`id`\)\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
+	}
+
+/**
+ * testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding method
+ *
+ * @access public
+ * @return void
+ */
+	function testGenerateAssociationQuerySelfJoinWithConditionsInBelongsToBinding() {
+		$this->Model = new TestModel9();
+		$this->Model->schema();
+		$this->_buildRelatedModels($this->Model);
+
+		$binding = array('type' => 'belongsTo', 'model' => 'TestModel8');
+		$queryData = array();
+		$resultSet = null;
+		$null = null;
+
+		$params = &$this->_prepareAssociationQuery($this->Model, $queryData, $binding);
+		$result = $this->Dbo->generateAssociationQuery($this->Model, $params['linkModel'], $params['type'], $params['assoc'], $params['assocData'], $queryData, $params['external'], $resultSet);
+		$this->assertTrue($result);
+
+		$result = $this->Dbo->generateAssociationQuery($this->Model, $null, null, null, null, $queryData, false, $null);
+		$this->assertPattern('/^SELECT\s+`TestModel9`\.`id`, `TestModel9`\.`test_model8_id`, `TestModel9`\.`name`, `TestModel9`\.`created`, `TestModel9`\.`updated`, `TestModel8`\.`id`, `TestModel8`\.`test_model9_id`, `TestModel8`\.`name`, `TestModel8`\.`created`, `TestModel8`\.`updated`\s+/', $result);
+		$this->assertPattern('/FROM\s+`test_model9` AS `TestModel9`\s+LEFT JOIN\s+`test_model8` AS `TestModel8`/', $result);
+		$this->assertPattern('/\s+ON\s+\(`TestModel8`\.`name` != \'larry\'\s+AND\s+`TestModel9`.`test_model8_id` = `TestModel8`.`id`\)\s+WHERE/', $result);
+		$this->assertPattern('/\s+WHERE\s+(?:\()?1\s+=\s+1(?:\))?\s*$/', $result);
 	}
 }
