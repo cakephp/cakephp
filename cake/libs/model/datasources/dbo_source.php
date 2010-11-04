@@ -934,7 +934,7 @@ class DboSource extends DataSource {
 			}
 		}
 
-		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
+		$query = trim($this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null));
 
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 
