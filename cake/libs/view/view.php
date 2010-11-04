@@ -600,21 +600,6 @@ class View extends Object {
 	}
 
 /**
- * Displays an error page to the user. Uses layouts/error.ctp to render the page.
- *
- * @param integer $code HTTP Error code (for instance: 404)
- * @param string $name Name of the error (for instance: Not Found)
- * @param string $message Error message as a web page
- */
-	public function error($code, $name, $message) {
-		header ("HTTP/1.1 {$code} {$name}");
-		print ($this->_render(
-			$this->_getLayoutFileName('error'),
-			array('code' => $code, 'name' => $name, 'message' => $message)
-		));
-	}
-
-/**
  * Magic accessor for helpers. Provides access to attributes that were deprecated.
  *
  * @param string $name Name of the attribute to get.
