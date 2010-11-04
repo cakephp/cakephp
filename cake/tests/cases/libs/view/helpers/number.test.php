@@ -107,7 +107,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '&#8364;100.100.100,00';
+		$expected = '100.100.100,00&#160;&#8364;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
@@ -179,7 +179,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '&#8364;100.100.100,00';
+		$expected = '100.100.100,00&#160;&#8364;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
@@ -213,7 +213,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR', array('negative'=>'-'));
-		$expected = '-&#8364;100.100.100,00';
+		$expected = '-100.100.100,00&#160;&#8364;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP', array('negative'=>'-'));
@@ -236,7 +236,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '99c';
+		$expected = '0,99&#160;&#8364;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
@@ -258,7 +258,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '(99c)';
+		$expected = '(-0,99&#160;&#8364;)';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
@@ -292,7 +292,7 @@ class NumberHelperTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'EUR');
-		$expected = '&#8364;0,00';
+		$expected = '0,00&#160;&#8364;';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP');
