@@ -99,8 +99,11 @@ class TestSuiteShell extends Shell {
 		))->addOption('stderr', array(
 			'help' => __('Write to STDERR instead of STDOUT.'),
 			'boolean' => true
-		))->addOption('stop-on-failure', array(
+		))->addOption('stop-on-error', array(
 			'help' => __('Stop execution upon first error or failure.'),
+			'boolean' => true
+		))->addOption('stop-on-failure', array(
+			'help' => __('Stop execution upon first failure.'),
 			'boolean' => true
 		))->addOption('stop-on-skipped ', array(
 			'help' => __('Stop execution upon first skipped test.'),
