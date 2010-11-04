@@ -74,6 +74,8 @@ class RouterTest extends CakeTestCase {
 	function testFullBaseURL() {
 		$this->assertPattern('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertPattern('/^http(s)?:\/\//', Router::url(null, true));
+		$this->assertPattern('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
+		$this->assertIdentical(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
 	}
 
 /**
@@ -1702,8 +1704,8 @@ class RouterTest extends CakeTestCase {
 	function testParsingWithPatternOnAction() {
 		Router::reload();
 		Router::connect(
-			'/blog/:action/*', 
-			array('controller' => 'blog_posts'), 
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')
 		);
 		$result = Router::parse('/blog/other');
@@ -1725,7 +1727,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array()
 		);
 		$this->assertEqual($expected, $result);
-		
+
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
 		$this->assertEqual('/blog_posts/foo', $result);
 
@@ -2535,20 +2537,20 @@ class CakeRouteTestCase extends CakeTestCase {
  */
 	function testPatternOnAction() {
 		$route =& new CakeRoute(
-			'/blog/:action/*', 
-			array('controller' => 'blog_posts'), 
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')
 		);
 		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'foo'));
 		$this->assertFalse($result);
-		
+
 		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'actions'));
 		$this->assertTrue($result);
-		
+
 		$result = $route->parse('/blog/other');
 		$expected = array('controller' => 'blog_posts', 'action' => 'other', 'pass' => array(), 'named' => array());
 		$this->assertEqual($expected, $result);
-		
+
 		$result = $route->parse('/blog/foobar');
 		$this->assertFalse($result);
 	}
