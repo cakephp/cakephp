@@ -309,9 +309,11 @@ class View extends Object {
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
  *    view (i.e. the Element)
+ * @param boolean $callbacks Set to true to fire beforeRender and afterRender helper callbacks for this element.
+ *   Defaults to false.
  * @return string Rendered Element
  */
-	public function element($name, $params = array(), $loadHelpers = false) {
+	public function element($name, $params = array(), $callbacks = false) {
 		$file = $plugin = $key = null;
 
 		if (isset($params['plugin'])) {
@@ -355,7 +357,13 @@ class View extends Object {
 			if (!$this->_helpersLoaded) {
 				$this->loadHelpers();
 			}
+			if ($callbacks) {
+				$this->Helpers->trigger('beforeRender', array($file));
+			}
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
+			if ($callbacks) {
+				$this->Helpers->trigger('afterRender', array($file, $element));
+			}
 			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
 			}
