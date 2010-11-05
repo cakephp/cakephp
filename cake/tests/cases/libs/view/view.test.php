@@ -635,7 +635,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
 		$View = new TestView($this->PostsController);
 
-		$result = $View->render_($View->getViewFileName('index'), array());
+		$result = $View->render('index', false);
 		$this->assertEqual($result, 'posts index');
 
 		$attached = $View->Helpers->attached();
@@ -644,7 +644,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = new TestView($this->PostsController);
 
-		$result = $View->render_($View->getViewFileName('index'), array());
+		$result = $View->render('index', false);
 		$this->assertEqual($result, 'posts index');
 
 		$attached = $View->Helpers->attached();

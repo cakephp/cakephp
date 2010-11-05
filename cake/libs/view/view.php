@@ -268,6 +268,13 @@ class View extends Object {
 	private $__paths = array();
 
 /**
+ * boolean to indicate that helpers have been loaded.
+ *
+ * @var boolean
+ */
+	protected $_helpersLoaded = false;
+
+/**
  * Constructor
  *
  * @param Controller $controller A controller object to pull View::__passedArgs from.
@@ -345,6 +352,9 @@ class View extends Object {
 		}
 
 		if (is_file($file)) {
+			if (!$this->_helpersLoaded) {
+				$this->loadHelpers();
+			}
 			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
 			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
@@ -371,6 +381,9 @@ class View extends Object {
 		if ($this->hasRendered) {
 			return true;
 		}
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
+		}
 		$out = null;
 
 		if ($file != null) {
@@ -378,7 +391,9 @@ class View extends Object {
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
+			$this->Helpers->trigger('beforeRender', array($this, $viewFileName));
 			$out = $this->_render($viewFileName);
+			$this->Helpers->trigger('afterRender', array($this, $viewFileName, $out));
 		}
 
 		if ($layout === null) {
@@ -422,7 +437,10 @@ class View extends Object {
 		if (empty($layoutFileName)) {
 			return $this->output;
 		}
-		$this->Helpers->trigger('beforeLayout', array(&$this));
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
+		}
+		$this->Helpers->trigger('beforeLayout', array(&$this, $layoutFileName));
 
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
@@ -432,23 +450,16 @@ class View extends Object {
 		if (!isset($this->viewVars['title_for_layout'])) {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
-		
-		$attached = $this->Helpers->attached();
-		if (empty($attached) && !empty($this->helpers)) {
-			$loadHelpers = true;
-		} else {
-			$loadHelpers = false;
-		}
 
-		$this->output = $this->_render($layoutFileName, array(), $loadHelpers, true);
+		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
 			$this->output = $this->_render($layoutFileName, $data_for_layout);
 			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layoutFileName, $this->output), E_USER_ERROR);
 			return false;
 		}
-		
-		$this->Helpers->trigger('afterLayout', array(&$this));
+
+		$this->Helpers->trigger('afterLayout', array(&$this, $layoutFileName, $this->output));
 
 		return $this->output;
 	}
@@ -633,6 +644,7 @@ class View extends Object {
 		foreach ($helpers as $name => $properties) {
 			$this->Helpers->load($properties['class'], $properties['settings'], true);
 		}
+		$this->_helpersLoaded = true;
 	}
 
 /**
@@ -646,12 +658,6 @@ class View extends Object {
  * @return string Rendered output
  */
 	protected function _render($___viewFn, $___dataForView = array(), $loadHelpers = true, $cached = false) {
-		$attached = $this->Helpers->attached();
-		if (count($attached) === 0 && $loadHelpers === true) {
-			$this->loadHelpers();
-			$this->Helpers->trigger('beforeRender', array(&$this));
-			unset($attached);
-		}
 		if (empty($___dataForView)) {
 			$___dataForView = $this->viewVars;
 		}
@@ -661,11 +667,8 @@ class View extends Object {
 
 		include $___viewFn;
 
-		if ($loadHelpers === true) {
-			$this->Helpers->trigger('afterRender', array(&$this));
-		}
-
 		$out = ob_get_clean();
+
 		$caching = (
 			isset($this->Helpers->Cache) &&
 			(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
