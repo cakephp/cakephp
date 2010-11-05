@@ -360,7 +360,7 @@ class View extends Object {
 			if ($callbacks) {
 				$this->Helpers->trigger('beforeRender', array($file));
 			}
-			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
+			$element = $this->_render($file, array_merge($this->viewVars, $params));
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
 			}

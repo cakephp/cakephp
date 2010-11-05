@@ -476,6 +476,21 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test that elements can have callbacks
+ *
+ */
+	function testElementCallbacks() {
+		$this->getMock('HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
+		$this->View->helpers = array('ElementCallbackMockHtml');
+		$this->View->loadHelpers();
+
+		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
+		$this->View->ElementCallbackMockHtml->expects($this->at(1))->method('afterRender');
+
+		$this->View->element('test_element', array(), true);
+		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
+	}
+/**
  * testElementCacheHelperNoCache method
  *
  * @access public
