@@ -401,7 +401,7 @@ class View extends Object {
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
 			$this->Helpers->trigger('beforeRender', array($viewFileName));
 			$this->output = $this->_render($viewFileName);
-			$this->Helpers->trigger('afterRender', array($viewFileName, $this->output));
+			$this->Helpers->trigger('afterRender', array($viewFileName));
 		}
 
 		if ($layout === null) {
@@ -462,7 +462,7 @@ class View extends Object {
 			throw new RuntimeException(sprintf(__("Error in layout %s, got no content."), $layoutFileName));
 		}
 
-		$this->Helpers->trigger('afterLayout', array($layoutFileName, $this->output));
+		$this->Helpers->trigger('afterLayout', array($layoutFileName));
 
 		return $this->output;
 	}
