@@ -391,9 +391,9 @@ class View extends Object {
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
-			$this->Helpers->trigger('beforeRender', array($this, $viewFileName));
+			$this->Helpers->trigger('beforeRender', array($viewFileName));
 			$out = $this->_render($viewFileName);
-			$this->Helpers->trigger('afterRender', array($this, $viewFileName, $out));
+			$this->Helpers->trigger('afterRender', array($viewFileName, $out));
 		}
 
 		if ($layout === null) {
@@ -437,7 +437,7 @@ class View extends Object {
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
-		$this->Helpers->trigger('beforeLayout', array(&$this, $layoutFileName));
+		$this->Helpers->trigger('beforeLayout', array($layoutFileName));
 
 		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
@@ -454,7 +454,7 @@ class View extends Object {
 			throw new RuntimeException(sprintf(__("Error in layout %s, got no content."), $layoutFileName));
 		}
 
-		$this->Helpers->trigger('afterLayout', array(&$this, $layoutFileName, $this->output));
+		$this->Helpers->trigger('afterLayout', array($layoutFileName, $this->output));
 
 		return $this->output;
 	}

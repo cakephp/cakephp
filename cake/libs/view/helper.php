@@ -801,9 +801,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $viewFile The view file that is going to be rendered
  * @return void
  */
-	public function beforeRender() {
+	public function beforeRender($viewFile) {
 	}
 
 /**
@@ -812,9 +813,11 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $viewFile The view file that was rendered.
+ * @param string $content The content of the rendered view.
  * @return void
  */
-	public function afterRender() {
+	public function afterRender($viewFile, $content) {
 	}
 
 /**
@@ -822,9 +825,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $layoutFile The layout about to be rendered.
  * @return void
  */
-	public function beforeLayout() {
+	public function beforeLayout($layoutFile) {
 	}
 
 /**
@@ -832,9 +836,11 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $layoutFile The layout file that was rendered.
+ * @param string $content The content of the rendered layout.
  * @return void
  */
-	public function afterLayout() {
+	public function afterLayout($layoutFile, $content) {
 	}
 
 /**

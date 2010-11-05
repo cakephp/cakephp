@@ -657,7 +657,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$this->Paginator->request->params['pass'] = array(2);
 		$this->Paginator->request->params['named'] = array('foo' => 'bar');
-		$this->Paginator->beforeRender();
+		$this->Paginator->beforeRender('posts/index');
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
