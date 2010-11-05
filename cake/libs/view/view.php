@@ -392,7 +392,7 @@ class View extends Object {
 		if (!$this->_helpersLoaded) {
 			$this->loadHelpers();
 		}
-		$out = null;
+		$this->output = null;
 
 		if ($file != null) {
 			$action = $file;
@@ -400,18 +400,18 @@ class View extends Object {
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
 			$this->Helpers->trigger('beforeRender', array($viewFileName));
-			$out = $this->_render($viewFileName);
-			$this->Helpers->trigger('afterRender', array($viewFileName, $out));
+			$this->output = $this->_render($viewFileName);
+			$this->Helpers->trigger('afterRender', array($viewFileName, $this->output));
 		}
 
 		if ($layout === null) {
 			$layout = $this->layout;
 		}
-		if ($out === false) {
+		if ($this->output === false) {
 			throw new RuntimeException(sprintf(__("Error in view %s, got no content."), $viewFileName));
 		}
 		if ($layout && $this->autoLayout) {
-			$out = $this->renderLayout($out, $layout);
+			$this->output = $this->renderLayout($this->output, $layout);
 			$isCached = (
 				isset($this->Helpers->Cache) ||
 				Configure::read('Cache.check') === true
@@ -419,11 +419,11 @@ class View extends Object {
 
 			if ($isCached) {
 				$replace = array('<cake:nocache>', '</cake:nocache>');
-				$out = str_replace($replace, '', $out);
+				$this->output = str_replace($replace, '', $this->output);
 			}
 		}
 		$this->hasRendered = true;
-		return $out;
+		return $this->output;
 	}
 
 /**
