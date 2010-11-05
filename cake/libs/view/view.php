@@ -399,25 +399,22 @@ class View extends Object {
 		if ($layout === null) {
 			$layout = $this->layout;
 		}
-
-		if ($out !== false) {
-			if ($layout && $this->autoLayout) {
-				$out = $this->renderLayout($out, $layout);
-				$isCached = (
-					isset($this->Helpers->Cache) ||
-					Configure::read('Cache.check') === true
-				);
-
-				if ($isCached) {
-					$replace = array('<cake:nocache>', '</cake:nocache>');
-					$out = str_replace($replace, '', $out);
-				}
-			}
-			$this->hasRendered = true;
-		} else {
-			$out = $this->_render($viewFileName, $this->viewVars);
-			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
+		if ($out === false) {
+			throw new RuntimeException(sprintf(__("Error in view %s, got no content."), $viewFileName));
 		}
+		if ($layout && $this->autoLayout) {
+			$out = $this->renderLayout($out, $layout);
+			$isCached = (
+				isset($this->Helpers->Cache) ||
+				Configure::read('Cache.check') === true
+			);
+
+			if ($isCached) {
+				$replace = array('<cake:nocache>', '</cake:nocache>');
+				$out = str_replace($replace, '', $out);
+			}
+		}
+		$this->hasRendered = true;
 		return $out;
 	}
 
@@ -454,9 +451,7 @@ class View extends Object {
 		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
-			$this->output = $this->_render($layoutFileName, $data_for_layout);
-			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layoutFileName, $this->output), E_USER_ERROR);
-			return false;
+			throw new RuntimeException(sprintf(__("Error in layout %s, got no content."), $layoutFileName));
 		}
 
 		$this->Helpers->trigger('afterLayout', array(&$this, $layoutFileName, $this->output));
