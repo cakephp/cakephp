@@ -49,12 +49,28 @@ class CacheHelper extends AppHelper {
 	private $__match = array();
 
 /**
- * cache action time
+ * Parses the view file and stores content for cache file building.
  *
- * @var object
- * @access public
+ * @return void
  */
-	public $cacheAction;
+	public function afterRender($viewFile) {
+		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		if ($caching) {
+			$this->cache($viewFile, $this->_View->output, false);
+		}
+	}
+
+/**
+ * Parses the layout file and stores content for cache file building.
+ *
+ * @return void
+ */
+	public function afterLayout($layoutFile) {
+		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		if ($caching) {
+			$this->cache($layoutFile, $this->_View->output, true);
+		}
+	}
 
 /**
  * Main method used to cache a view
@@ -67,8 +83,10 @@ class CacheHelper extends AppHelper {
 	function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
 		$useCallbacks = false;
-		if (is_array($this->cacheAction)) {
-			$keys = array_keys($this->cacheAction);
+		$cacheAction = $this->_View->cacheAction;
+
+		if (is_array($cacheAction)) {
+			$keys = array_keys($cacheAction);
 			$index = null;
 
 			foreach ($keys as $action) {
@@ -82,12 +100,12 @@ class CacheHelper extends AppHelper {
 				$index = 'index';
 			}
 
-			$options = $this->cacheAction;
-			if (isset($this->cacheAction[$index])) {
-				if (is_array($this->cacheAction[$index])) {
-					$options = array_merge(array('duration' => 0, 'callbacks' => false), $this->cacheAction[$index]);
+			$options = $cacheAction;
+			if (isset($cacheAction[$index])) {
+				if (is_array($cacheAction[$index])) {
+					$options = array_merge(array('duration' => 0, 'callbacks' => false), $cacheAction[$index]);
 				} else {
-					$cacheTime = $this->cacheAction[$index];
+					$cacheTime = $cacheAction[$index];
 				}
 			}
 			if (isset($options['duration'])) {
@@ -97,7 +115,7 @@ class CacheHelper extends AppHelper {
 				$useCallbacks = $options['callbacks'];
 			}
 		} else {
-			$cacheTime = $this->cacheAction;
+			$cacheTime = $cacheAction;
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
@@ -213,36 +231,28 @@ class CacheHelper extends AppHelper {
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
 
-		if (empty($this->plugin)) {
+		if (empty($this->_View->plugin)) {
 			$file .= '
-			App::import(\'Controller\', \'' . $this->controllerName. '\');
+			App::import(\'Controller\', \'' . $this->_View->name. '\');
 			';
 		} else {
 			$file .= '
-			App::import(\'Controller\', \'' . $this->plugin . '.' . $this->controllerName. '\');
+			App::import(\'Controller\', \'' . $this->_View->plugin . '.' . $this->_View->name. '\');
 			';
 		}
 
-		$file .= '$controller =& new ' . $this->controllerName . 'Controller();
-				$controller->plugin = $this->plugin = \''.$this->plugin.'\';
-				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
-				$controller->base = $this->base = \'' . $this->base . '\';
-				$controller->layout = $this->layout = \'' . $this->layout. '\';
-				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
-				$controller->here = $this->here = \'' . $this->here . '\';
-				$controller->params = $this->params = unserialize(\'' . str_replace("'", "\\'", serialize($this->params)) . '\');
+		$file .= '$controller = new ' . $this->_View->name . 'Controller();
+				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
+				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->_View->helpers) . '\');
+				$controller->layout = $this->layout = \'' . $this->_View->layout. '\';
 				$controller->request = $this->request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
-				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
-				$controller->data = $this->data = unserialize(\'' . str_replace("'", "\\'", serialize($this->data)) . '\');
-				$controller->theme = $this->theme = \'' . $this->theme . '\';
-				Router::setRequestInfo($this->params);';
+				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
+				Router::setRequestInfo($controller->request);';
 
 		if ($useCallbacks == true) {
 			$file .= '
 				$controller->constructClasses();
-				$controller->Component->initialize($controller);
-				$controller->beforeFilter();
-				$controller->Component->startup($controller);';
+				$controller->startupProcess();';
 		}
 
 		$file .= '

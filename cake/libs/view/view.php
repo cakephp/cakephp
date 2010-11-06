@@ -463,7 +463,6 @@ class View extends Object {
 		}
 
 		$this->Helpers->trigger('afterLayout', array($layoutFileName));
-
 		return $this->output;
 	}
 
@@ -670,27 +669,7 @@ class View extends Object {
 
 		include $___viewFn;
 
-		$out = ob_get_clean();
-
-		$caching = (
-			isset($this->Helpers->Cache) &&
-			(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
-		);
-
-		if ($caching) {
-			if (isset($this->Helpers->Cache)) {
-				$cache =& $this->Helpers->Cache;
-				$cache->base = $this->request->base;
-				$cache->here = $this->request->here;
-				$cache->helpers = $this->helpers;
-				$cache->action = $this->request->action;
-				$cache->controllerName = $this->name;
-				$cache->layout = $this->layout;
-				$cache->cacheAction = $this->cacheAction;
-				$cache->cache($___viewFn, $out, $cached);
-			}
-		}
-		return $out;
+		return ob_get_clean();
 	}
 
 /**
