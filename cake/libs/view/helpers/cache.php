@@ -78,7 +78,7 @@ class CacheHelper extends AppHelper {
  * @param boolean $cache Whether or not a cache file should be written.
  * @return string view ouput
  */
-	function cache($file, $out, $cache = false) {
+	public function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
 		$useCallbacks = false;
 		$cacheAction = $this->_View->cacheAction;
@@ -117,10 +117,10 @@ class CacheHelper extends AppHelper {
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
-			$this->__parseFile($file, $out);
+			$this->_parseFile($file, $out);
 			if ($cache === true) {
-				$cached = $this->__parseOutput($out);
-				$this->__writeFile($cached, $cacheTime, $useCallbacks);
+				$cached = $this->_parseOutput($out);
+				$this->_writeFile($cached, $cacheTime, $useCallbacks);
 			}
 			return $out;
 		} else {
@@ -133,9 +133,8 @@ class CacheHelper extends AppHelper {
  *
  * @param string $file The filename that needs to be parsed.
  * @param string $cache The cached content
- * @access private
  */
-	function __parseFile($file, $cache) {
+	protected function _parseFile($file, $cache) {
 		if (is_file($file)) {
 			$file = file_get_contents($file);
 		} elseif ($file = fileExistsInPath($file)) {
@@ -173,9 +172,8 @@ class CacheHelper extends AppHelper {
  *
  * @param string $cache Output to replace content in.
  * @return string with all replacements made to <!--nocache--><!--nocache-->
- * @access private
  */
-	function __parseOutput($cache) {
+	protected function _parseOutput($cache) {
 		$count = 0;
 		if (!empty($this->_match)) {
 			foreach ($this->_match as $found) {
@@ -207,9 +205,8 @@ class CacheHelper extends AppHelper {
  * @param string $content view content to write to a cache file.
  * @param sting $timestamp Duration to set for cache file.
  * @return boolean success of caching view.
- * @access private
  */
-	function __writeFile($content, $timestamp, $useCallbacks = false) {
+	protected function _writeFile($content, $timestamp, $useCallbacks = false) {
 		$now = time();
 
 		if (is_numeric($timestamp)) {
