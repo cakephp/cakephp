@@ -712,30 +712,6 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
- * test rendering layout with cache helper loaded
- *
- * @return void
- */
-	function testRenderLayoutWithMockCacheHelper() {
-		$_check = Configure::read('Cache.check');
-		Configure::write('Cache.check', true);
-
-		$Controller = new ViewPostsController($this->getMock('CakeRequest'));
-		$Controller->cacheAction = '1 day';
-		$View = new View($Controller);
-		$View->helpers = array('Cache', 'Html', 'Session');
-		$View->loadHelpers();
-
-		$View->Helpers->Cache = $this->getMock('CacheHelper', array(), array($View));
-		$View->Helpers->Cache->expects($this->exactly(2))->method('cache');
-
-		$result = $View->render('index');
-		$this->assertPattern('/posts index/', $result);
-
-		Configure::write('Cache.check', $_check);
-	}
-
-/**
  * test that view vars can replace the local helper variables
  * and not overwrite the $this->Helper references
  *
