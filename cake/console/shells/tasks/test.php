@@ -19,6 +19,7 @@
  */
 
 include_once dirname(__FILE__) . DS . 'bake.php';
+App::import('Model', 'ClassRegistry');
 
 /**
  * Task class for creating and updating test files.
