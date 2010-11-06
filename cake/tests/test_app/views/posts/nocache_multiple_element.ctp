@@ -1,9 +1,9 @@
-<cake:nocache>
+<!--nocache-->
 	<?php echo $foo; ?>
-</cake:nocache>
+<!--/nocache-->
 
-<cake:nocache>
+<!--nocache-->
 	<?php echo $bar; ?>
-</cake:nocache>
+<!--/nocache-->
 
 <?php echo $this->element('nocache/sub1'); ?>

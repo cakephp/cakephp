@@ -18,7 +18,7 @@
  */
 ?>
 <p>
-	<cake:nocache>
+	<!--nocache-->
 	<span class="notice">
 		<?php
 			echo __('Your tmp directory is ');
@@ -29,7 +29,7 @@
 			endif;
 		?>
 	</span>
-	</cake:nocache>
+	<!--/nocache-->
 </p>
 <p>
 	<span class="notice">

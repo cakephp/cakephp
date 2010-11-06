@@ -1,6 +1,6 @@
-<cake:nocache>
+<!--nocache-->
 	<?php $barfoo = 'in sub2'; ?>
 	<?php echo $barfoo; ?>
-</cake:nocache>
+<!--/nocache-->
 
 <?php echo 'printing: "' . $barfoo . '"'; ?>

@@ -32,21 +32,19 @@ class CacheHelper extends AppHelper {
 
 /**
  * Array of strings replaced in cached views.
- * The strings are found between <cake:nocache><cake:nocache> in views
+ * The strings are found between `<!--nocache--><!--/nocache-->` in views
  *
  * @var array
- * @access private
  */
-	private $__replace = array();
+	protected $_replace = array();
 
 /**
  * Array of string that are replace with there var replace above.
- * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
+ * The strings are any content inside `<!--nocache--><!--/nocache-->` and includes the tags in views
  *
  * @var array
- * @access private
  */
-	private $__match = array();
+	protected $_match = array();
 
 /**
  * Parses the view file and stores content for cache file building.
@@ -143,14 +141,14 @@ class CacheHelper extends AppHelper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
-		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $fileResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(<!--nocache-->(?<=<!--nocache-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i', $file, $fileResult, PREG_PATTERN_ORDER);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
 
-		if (!empty($this->__replace)) {
+		if (!empty($this->_replace)) {
 			foreach ($outputResult as $i => $element) {
-				$index = array_search($element, $this->__match);
+				$index = array_search($element, $this->_match);
 				if ($index !== false) {
 					unset($outputResult[$i]);
 				}
@@ -162,8 +160,8 @@ class CacheHelper extends AppHelper {
 			$i = 0;
 			foreach ($fileResult as $cacheBlock) {
 				if (isset($outputResult[$i])) {
-					$this->__replace[] = $cacheBlock;
-					$this->__match[] = $outputResult[$i];
+					$this->_replace[] = $cacheBlock;
+					$this->_match[] = $outputResult[$i];
 				}
 				$i++;
 			}
@@ -174,13 +172,13 @@ class CacheHelper extends AppHelper {
  * Parse the output and replace cache tags
  *
  * @param string $cache Output to replace content in.
- * @return string with all replacements made to <cake:nocache><cake:nocache>
+ * @return string with all replacements made to <!--nocache--><!--nocache-->
  * @access private
  */
 	function __parseOutput($cache) {
 		$count = 0;
-		if (!empty($this->__match)) {
-			foreach ($this->__match as $found) {
+		if (!empty($this->_match)) {
+			foreach ($this->_match as $found) {
 				$original = $cache;
 				$length = strlen($found);
 				$position = 0;
@@ -190,7 +188,7 @@ class CacheHelper extends AppHelper {
 
 					if ($position !== false) {
 						$cache = substr($original, 0, $position);
-						$cache .= $this->__replace[$count];
+						$cache .= $this->_replace[$count];
 						$cache .= substr($original, $position + $length);
 					} else {
 						break;

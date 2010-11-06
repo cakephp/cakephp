@@ -198,7 +198,7 @@ class CacheHelperTest extends CakeTestCase {
 	}
 
 /**
- * test that multiple <cake:nocache> tags function with multiple nocache tags in the layout.
+ * test that multiple <!--nocache--> tags function with multiple nocache tags in the layout.
  *
  * @return void
  */

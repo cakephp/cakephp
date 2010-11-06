@@ -418,7 +418,7 @@ class View extends Object {
 			);
 
 			if ($isCached) {
-				$replace = array('<cake:nocache>', '</cake:nocache>');
+				$replace = array('<!--nocache-->', '<!--/nocache-->');
 				$this->output = str_replace($replace, '', $this->output);
 			}
 		}
