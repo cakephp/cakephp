@@ -339,7 +339,7 @@ class Dispatcher extends Object {
 			if ($webroot === 'webroot' && $webroot === basename($base)) {
 				$base = dirname($base);
 			}
-			if ($dir === APP_DIR && $dir === basename($base)) {
+			if ($dir === 'app' && $dir === basename($base)) {
 				$base = dirname($base);
 			}
 
