@@ -75,11 +75,11 @@ class CacheHelperTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setUp();
 		$request = new CakeRequest();
 		$this->Controller = new CacheTestController($request);
 		$View = new View($this->Controller);
 		$this->Cache = new CacheHelper($View);
-		$this->_cacheSettings = Configure::read('Cache');
 		Configure::write('Cache.check', true);
 		Configure::write('Cache.disable', false);
 		App::build(array(
@@ -96,8 +96,7 @@ class CacheHelperTest extends CakeTestCase {
 	function tearDown() {
 		clearCache();
 		unset($this->Cache);
-		Configure::write('Cache', $this->_cacheSettings);
-		App::build();
+		parent::tearDown();
 	}
 
 /**
@@ -469,6 +468,54 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists($filename));
 		@unlink($filename);
     }
+
+/**
+ * test that afterRender checks the conditions correctly.
+ *
+ * @return void
+ */
+	function testAfterRenderConditions() {
+		Configure::write('Cache.check', true);
+		$View = new View($this->Controller);
+		$View->cacheAction = '+1 day';
+		$View->output = 'test';
+
+		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
+		$Cache->expects($this->once())->method('cache')
+			->with('posts/index', $View->output, false);
+		$Cache->afterRender('posts/index');
+		
+		Configure::write('Cache.check', false);
+		$Cache->afterRender('posts/index');
+		
+		Configure::write('Cache.check', true);
+		$View->cacheAction = false;
+		$Cache->afterRender('posts/index');
+	}
+
+/**
+ * test that afterRender checks the conditions correctly.
+ *
+ * @return void
+ */
+	function testAfterLayoutConditions() {
+		Configure::write('Cache.check', true);
+		$View = new View($this->Controller);
+		$View->cacheAction = '+1 day';
+		$View->output = 'test';
+
+		$Cache = $this->getMock('CacheHelper', array('cache'), array($View));
+		$Cache->expects($this->once())->method('cache')
+			->with('posts/index', $View->output, true);
+		$Cache->afterLayout('posts/index');
+
+		Configure::write('Cache.check', false);
+		$Cache->afterLayout('posts/index');
+
+		Configure::write('Cache.check', true);
+		$View->cacheAction = false;
+		$Cache->afterLayout('posts/index');
+	}
 
 /**
  * testCacheEmptySections method
