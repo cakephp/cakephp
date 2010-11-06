@@ -22,8 +22,8 @@
  * Include files
  */
 App::import('Core', 'CakeResponse', false);
+App::import('Core', 'ClassRegistry', false);
 App::import('Controller', 'Component', false);
-App::import('Core', 'CakeResponse', false);
 App::import('View', 'View', false);
 
 /**
