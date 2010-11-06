@@ -69,6 +69,20 @@ class HelperCollectionTest extends CakeTestCase {
 
 		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
 	}
+
+/**
+ * test that the callbacks setting disables the helper.
+ *
+ * @return void
+ */
+	function testLoadWithCallbacksFalse() {
+		$result = $this->Helpers->load('Html', array('callbacks' => false));
+		$this->assertType('HtmlHelper', $result);
+		$this->assertType('HtmlHelper', $this->Helpers->Html);
+
+		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
+	}
+
 /**
  * test missinghelper exception
  *
