@@ -35,6 +35,7 @@
 		<li>pear channel-discover pear.symfony-project.com</li>
 		<li>pear install phpunit/PHPUnit</li>
 	</ul>
+	<p>For full instructions on how to <a href="http://www.phpunit.de/manual/current/en/installation.html">install PHPUnit, see the PHPUnit installation guide</a>.</p>
 	<p><a href="http://github.com/sebastianbergmann/phpunit" target="_blank">Download PHPUnit</a></p>
 </div>
 <?php include dirname(__FILE__) . DS . 'footer.php'; ?>
