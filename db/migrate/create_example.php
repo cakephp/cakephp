@@ -1,6 +1,6 @@
 <?php
 
-class CreateBanners extends Pake{
+class CreateExample extends Pake{
   function selfUp(){
     return array(
       'page_id' => 'integer',
