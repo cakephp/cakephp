@@ -582,7 +582,7 @@ class CakeRequest implements ArrayAccess {
  * @param int $tldLength Number of segments your tld contains
  * @return string Domain name without subdomains.
  */
-	function domain($tldLength = 1) {
+	public function domain($tldLength = 1) {
 		$segments = explode('.', $this->host());
 		$domain = array_slice($segments, -1 * ($tldLength + 1));
 		return implode('.', $domain);
@@ -594,7 +594,7 @@ class CakeRequest implements ArrayAccess {
  * @param int $tldLength Number of segments your tld contains.
  * @return array of subdomains.
  */
-	function subdomains($tldLength = 1) {
+	public function subdomains($tldLength = 1) {
 		$segments = explode('.', $this->host());
 		return array_slice($segments, 0, -1 * ($tldLength + 1));
 	}
