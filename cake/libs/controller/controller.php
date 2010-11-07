@@ -1039,7 +1039,7 @@ class Controller extends Object {
 			), E_USER_WARNING);
 			return array();
 		}
-		$options = array_merge($this->request->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->request->params, $this->request->params['url'], $this->passedArgs);
 
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
