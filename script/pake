@@ -14,20 +14,30 @@ class Pake extends DATABASE_CONFIG{
   
   function __construct($argv = null){
     $this->write(';Wait, Pake is running...;;');
-    $connection = $this->dbConnect();
-    if($connection != -1){
-      $migration = $this->migrationsConnect();
-      $migrate = $this->getMigrates();
-      $migrate = $this->removeMigrate($migrate, $migration);
-      if($migrate == -1 or !isset($migrate[0])){
-        $this->write(';There are no pending migration.;;');
-      } else {
-        $this->write(';Starting the process...;;');
-        foreach($migrate as $run){
-          $this->migrate($run);
+    $request = explode(':', $argv[1]);
+    if($request[0] == 'db'){
+      $connection = $this->dbConnect();
+      if($connection != -1){
+        if($request[1] == 'migrate'){
+          if($request[2] == 'reset') $this->dropTables();
+          $migration = $this->migrationsConnect();
+          $migrate = $this->getMigrates();
+          $migrate = $this->removeMigrate($migrate, $migration);
+          if($migrate == -1 or !isset($migrate[0])){
+            $this->write(';There are no pending migration.;;');
+          } else {
+            $this->write(';Starting the process...;;');
+            foreach($migrate as $run){
+              $this->migrate($run);
+            }
+            $this->write(';');
+          }
+        } else {
+          $this->write(';Action "db:'.$request[1].'" no defined.;;');
         }
-        $this->write(';');
       }
+    } else {
+      $this->write('Try "db:create" after pake to continue.;;');
     }
     $this->write('Pake termined.;;');
   }
@@ -36,7 +46,9 @@ class Pake extends DATABASE_CONFIG{
     require './db/migrate/'.$run.'.php';
     $className = $this->className($run);
     $values = $className['class']::selfUp();
+    $create = $className['class']::create();
     $this->createTable($className['table'], $values);
+    $this->create($className['table'], $create);
     @mysql_query("INSERT INTO  `schema_migrations` (`version`) VALUES ('".$run."');");
   }
   
@@ -88,6 +100,28 @@ class Pake extends DATABASE_CONFIG{
     $this->write('  [ OK ];');
   }
   
+  function create($table, $creates){
+    if(is_array($creates)){
+      foreach($creates as $create){
+        $query = "INSERT INTO `".$table."` ";
+        $keys = '(';
+        $values = '(';
+        $i = 0;
+        foreach($create as $key => $value){
+          if($i != 0) $keys .= ', ';
+          if($i != 0) $values .= ', ';
+          $keys .= "`".$key."`";
+          $values .= "'".$value."'";
+          $i++;
+        }
+        $keys .= ', `id`, `created`, `modifield`)';
+        $values .= ', NULL, now(), NULL)';
+        $query .= $keys." VALUES ".$values.";";
+        mysql_query($query);
+      }
+    }
+  }
+  
   function dbConnect(){
     $this->write('Connecting to database...');
     $connection = -1;
@@ -130,6 +164,22 @@ class Pake extends DATABASE_CONFIG{
     if($i == 0) $results = 0;
     $this->write('  [ OK ];');
     return($results);
+  }
+  
+  function dropTables(){
+    $this->write('Reseting tables...  [ OK ];');
+    $tables = $this->dbRead("SHOW TABLES");
+    if(is_array($tables)){
+      $i = 0;
+      $query = 'DROP TABLE ';
+      foreach($tables as $table){
+        if($i != 0) $query .= ', ';
+        $query .= '`'.$table[0].'`';
+        $i++;
+      }
+      $query .= ';';
+    }
+    @mysql_query($query);
   }
   
   function getMigrates(){

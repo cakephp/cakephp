@@ -12,7 +12,10 @@ class CreateExample extends Pake{
   }
   
   function create(){
-    //Comming
+    return array(
+      array('page_id' => 1, 'type' => '325', 'ordem' => '23', 'banner' => 'test.jpg', 'link' => '/home'),
+      array('page_id' => 2, 'type' => '325', 'ordem' => '23', 'banner' => 'test.jpg', 'link' => '/home'),
+    );
   }
 
 }
