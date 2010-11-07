@@ -81,8 +81,9 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 /**
- * Loads a behavior into the collection. You can use use `$config['callbacks'] = false`
- * to load a behavior with callbacks disabled. By default callbacks are enabled.
+ * Loads a behavior into the collection. You can use use `$config['enabled'] = false`
+ * to load a behavior with callbacks disabled. By default callbacks are enabled. Disable behaviors
+ * can still be used as normal.
  *
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
@@ -150,7 +151,7 @@ class BehaviorCollection extends ObjectCollection {
 			}
 		}
 
-		$configDisabled = isset($config['callbacks']) && $config['callbacks'] === false;
+		$configDisabled = isset($config['enabled']) && $config['enabled'] === false;
 		if (!in_array($name, $this->_enabled) && !$configDisabled) {
 			$this->enable($name);
 		} elseif ($configDisabled) {

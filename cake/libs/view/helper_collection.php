@@ -39,7 +39,7 @@ class HelperCollection extends ObjectCollection {
 /**
  * Loads/constructs a helper.  Will return the instance in the registry if it already exists.
  * By setting `$enable` to false you can disable callbacks for a helper.  Alternatively you 
- * can set `$settings['callbacks'] = false` to disable callbacks.  This alias is provided so that when
+ * can set `$settings['enabled'] = false` to disable callbacks.  This alias is provided so that when
  * declaring $helpers arrays you can disable callbacks on helpers.
  * 
  * @param string $helper Helper name to load
@@ -74,7 +74,7 @@ class HelperCollection extends ObjectCollection {
 		foreach ($vars as $var) {
 			$this->_loaded[$name]->{$var} = $this->_View->{$var};
 		}
-		$enable = isset($settings['callbacks']) ? $settings['callbacks'] : false;
+		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}

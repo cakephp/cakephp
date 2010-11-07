@@ -140,9 +140,8 @@ class Helper extends Object {
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-			$this->{$name} = $this->_View->loadHelper(
-				$this->_helperMap[$name]['class'], $this->_helperMap[$name]['settings'], false
-			);
+			$settings = array_merge((array)$this->_helperMap[$name]['settings'], array('enabled' => false));
+			$this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $settings);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};

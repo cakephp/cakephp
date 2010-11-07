@@ -56,8 +56,8 @@ class ComponentCollection extends ObjectCollection {
 
 /**
  * Loads/constructs a component.  Will return the instance in the registry if it already exists.
- * You can use `$settings['callbacks'] = false` to disable callbacks on a component when loading it. 
- * Callbacks default to on.
+ * You can use `$settings['enabled'] = false` to disable callbacks on a component when loading it.
+ * Callbacks default to on.  Disabled component methods work as normal, only callbacks are disabled.
  * 
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
@@ -85,7 +85,7 @@ class ComponentCollection extends ObjectCollection {
 			}
 		}
 		$this->_loaded[$name] = new $componentClass($this, $settings);
-		$enable = isset($settings['callbacks']) ? $settings['callbacks'] : true;
+		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}
