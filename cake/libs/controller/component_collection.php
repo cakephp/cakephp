@@ -56,14 +56,15 @@ class ComponentCollection extends ObjectCollection {
 
 /**
  * Loads/constructs a component.  Will return the instance in the registry if it already exists.
+ * You can use `$settings['callbacks'] = false` to disable callbacks on a component when loading it. 
+ * Callbacks default to on.
  * 
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
- * @param boolean $enable Whether or not this component should be enabled by default
  * @return Component A component object, Either the existing loaded component or a new one.
  * @throws MissingComponentFileException, MissingComponentClassException when the component could not be found
  */
-	public function load($component, $settings = array(), $enable = true) {
+	public function load($component, $settings = array()) {
 		list($plugin, $name) = pluginSplit($component);
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
@@ -84,6 +85,7 @@ class ComponentCollection extends ObjectCollection {
 			}
 		}
 		$this->_loaded[$name] = new $componentClass($this, $settings);
+		$enable = isset($settings['callbacks']) ? $settings['callbacks'] : true;
 		if ($enable === true) {
 			$this->_enabled[] = $name;
 		}

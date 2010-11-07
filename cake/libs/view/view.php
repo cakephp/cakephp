@@ -673,14 +673,15 @@ class View extends Object {
 	}
 
 /**
- * Loads a helper.  Delegates to the HelperCollection to load the helper
+ * Loads a helper.  Delegates to the `HelperCollection::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
  * @param array $settings Settings for the helper
  * @return Helper a constructed helper object.
+ * @see HelperCollection::load()
  */
-	public function loadHelper($helperName, $settings = array(), $attach = true) {
-		return $this->Helpers->load($helperName, $settings, $attach);
+	public function loadHelper($helperName, $settings = array()) {
+		return $this->Helpers->load($helperName, $settings);
 	}
 
 /**
