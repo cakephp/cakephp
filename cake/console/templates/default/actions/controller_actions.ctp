@@ -38,9 +38,9 @@
 
 <?php $compact = array(); ?>
 	public function <?php echo $admin ?>add() {
-		if (!empty($this->data)) {
+		if ($this->request->is('post')) {
 			$this-><?php echo $currentModelName; ?>->create();
-			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
+			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
@@ -72,7 +72,7 @@
 
 <?php $compact = array(); ?>
 	public function <?php echo $admin; ?>edit($id = null) {
-		if (!$id && empty($this->data)) {
+		if (!$id && empty($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 			$this->redirect(array('action' => 'index'));
@@ -80,8 +80,8 @@
 			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
 <?php endif; ?>
 		}
-		if (!empty($this->data)) {
-			if ($this-><?php echo $currentModelName; ?>->save($this->data)) {
+		if ($this->request->is('post')) {
+			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
 				$this->redirect(array('action' => 'index'));
@@ -94,7 +94,7 @@
 <?php endif; ?>
 			}
 		}
-		if (empty($this->data)) {
+		if (!$this->request->is('post')) {
 			$this->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
 		}
 <?php
