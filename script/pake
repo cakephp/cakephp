@@ -1,0 +1,171 @@
+<?php
+
+require './app/config/database.php';
+
+class Pake extends DATABASE_CONFIG{
+  
+  var $types = array(
+    'boolean' => 'bool',
+    'string' => 'varchar( 255 )',
+    'integer' => 'int( 11 )',
+    'text' => 'text',
+    'rgbhex' => 'varchar( 6 )',
+  );
+  
+  function __construct($argv = null){
+    $this->write(';Wait, Pake is running...;;');
+    $connection = $this->dbConnect();
+    if($connection != -1){
+      $migration = $this->migrationsConnect();
+      $migrate = $this->getMigrates();
+      $migrate = $this->removeMigrate($migrate, $migration);
+      if($migrate == -1 or !isset($migrate[0])){
+        $this->write(';There are no pending migration.;;');
+      } else {
+        $this->write(';Starting the process...;;');
+        foreach($migrate as $run){
+          $this->migrate($run);
+        }
+        $this->write(';');
+      }
+    }
+    $this->write('Pake termined.;;');
+  }
+  
+  function migrate($run){
+    require './db/migrate/'.$run.'.php';
+    $className = $this->className($run);
+    $values = $className['class']::selfUp();
+    $this->createTable($className['table'], $values);
+    @mysql_query("INSERT INTO  `schema_migrations` (`version`) VALUES ('".$run."');");
+  }
+  
+  function removeMigrate($migrate, $migration){
+    $return = array();
+    if(is_array($migrate) and is_array($migration)){
+      foreach($migrate as $eachMigrate){
+        $offlist = 0;
+        foreach($migration as $eachMigration){
+          if($eachMigrate == $eachMigration['version']){
+            $offlist = 1;
+          }
+        }
+        if($offlist == 0){
+          $return[] = $eachMigrate;
+        }
+      }
+      return $return;
+    } elseif(is_array($migrate) and $migration == 0){
+      return $migrate;
+    } else {
+      return -1;
+    }
+  }
+  
+  function write($text){
+    $text = str_replace(';', "\n", $text);
+    echo $text;
+  }
+  
+  function createTable($table, $values){
+    $this->write("CREATE TABLE  '".$table."'");
+    $types = $this->types;
+    
+    $query  = "CREATE TABLE  `".$table."` (";
+    $query .= "`id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,";
+    foreach($values as $value => $key){
+      foreach($types as $typeKey => $type){
+        if($key == $typeKey){
+          $key = $type;
+        }
+      }
+      $query .= "`".$value."` ".strtoupper($key)." NULL ,";
+    }
+    $query .= "`created` DATETIME NULL ,";
+    $query .= "`modifield` DATETIME NULL";
+    $query .= ") ENGINE = MYISAM ;";
+    @mysql_query($query);
+    $this->write('  [ OK ];');
+  }
+  
+  function dbConnect(){
+    $this->write('Connecting to database...');
+    $connection = -1;
+    if(is_array($this->default)){
+      $database = $this->default;
+    } else {
+      $this->write('  [FAIL];;Pake aborted!;Missing a default database config.;;');
+    }
+    if(isset($database)){
+      if($database['driver'] == 'mysql'){
+        $connection = @mysql_connect($database['host'], $database['login'], $database['password']) or die ($this->write('  [FAIL];;Pake aborted!;Error to connect in mysql.;;'));
+        @mysql_select_db($database['database']) or die ($this->write('  [FAIL];;Pake aborted!;Database "'.$database['login'].'@'.$database['database'].'" not exists.;;'));
+        $this->write('  [ OK ];');
+      } else {
+        $this->write(' [FAIL];;Pake aborted!;Driver "'.$database['driver'].'" not compatible.;;');
+      }
+    }
+    return $connection;
+  }
+  
+  function migrationsConnect(){
+    $this->write('Verifying migration completed...'); 
+    if(!(@mysql_query("SELECT * FROM schema_migrations"))){
+      $this->write('  [ OK ];'); 
+      $this->write('Created "schema_migrations" for Pake.');
+      mysql_query("CREATE TABLE IF NOT EXISTS `schema_migrations` (`version` varchar(255) COLLATE utf8_unicode_ci NOT NULL,UNIQUE KEY `unique_schema_migrations` (`version`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;");
+    }
+    $this->write('  [ OK ];'); 
+    return $this->dbRead("SELECT * FROM schema_migrations");
+  }
+  
+  function dbRead($query){
+    $this->write('Reading database...');
+    $select = @mysql_query($query);
+    $i = 0;
+    while($row = @mysql_fetch_array($select)) {
+      $results[$i] = $row;
+      $i++;
+    }
+    if($i == 0) $results = 0;
+    $this->write('  [ OK ];');
+    return($results);
+  }
+  
+  function getMigrates(){
+    $this->write('Reading migrate folder...');
+    $migrates = array();
+    if ($handle = @opendir('./db/migrate')) {
+      while (false !== ($file = @readdir($handle))) {
+        if ($file != "." AND ($file != ".." AND $file != ".DS_Store")) {
+          $migrates[] = str_replace('.php', '', $file);
+        }
+      }
+      @closedir($handle);
+      $this->write('  [ OK ];');
+    } else {
+      $this->write('  [FAIL];;Pake aborted!;Missing migrate folder. (app/db/migrate);');
+    }
+    return $migrates;
+  }
+  
+  function className($migrate){
+    $migrate = explode('_', $migrate);
+    unset($migrate[0]);
+    $class = '';
+    $table = '';
+    $i = 0;
+    foreach($migrate as $name){
+      $class .= ucfirst($name);
+      if($i != 0) $table .= '_';
+      $table .= $name;
+      $i++;
+    }
+    return array('table' => $table, 'class' => 'Create'.$class);
+  }
+  
+}
+
+$Pake = new Pake($_SERVER['argv']);
+
+?>
