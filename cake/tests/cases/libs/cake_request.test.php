@@ -1339,6 +1339,27 @@ class CakeRequestTestCase extends CakeTestCase {
 	}
 
 /**
+ * test accept language
+ *
+ * @return void
+ */
+	function testAcceptLanguage() {
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
+
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx;en_ca';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('es-mx', 'en-ca'), $result, 'Languages do not match');
+		
+		$result = CakeRequest::acceptLanguage('en-ca');
+		$this->assertTrue($result);
+
+		$result = CakeRequest::acceptLanguage('en-us');
+		$this->assertFalse($result);
+	}
+
+/**
  * backupEnvironment method
  *
  * @return void
