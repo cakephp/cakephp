@@ -582,6 +582,7 @@ class PaginatorHelper extends AppHelper {
  *    links to generate
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
  *    links to generate
+ * - `ellipsis` Ellipsis content, defaults to '...'
  *
  * @param mixed $options Options for the numbers, (before, after, model, modulus, separator)
  * @return string numbers string.
@@ -595,7 +596,7 @@ class PaginatorHelper extends AppHelper {
 
 		$defaults = array(
 			'tag' => 'span', 'before' => null, 'after' => null, 'model' => $this->defaultModel(),
-			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null,
+			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null, 'ellipsis' => '...',
 		);
 		$options += $defaults;
 
@@ -608,7 +609,9 @@ class PaginatorHelper extends AppHelper {
 
 		extract($options);
 		unset($options['tag'], $options['before'], $options['after'], $options['model'],
-			$options['modulus'], $options['separator'], $options['first'], $options['last']);
+			$options['modulus'], $options['separator'], $options['first'], $options['last'],
+			$options['ellipsis']
+		);
 
 		$out = '';
 
@@ -628,7 +631,7 @@ class PaginatorHelper extends AppHelper {
 			if ($first && $start > 1) {
 				$offset = ($start <= (int)$first) ? $start - 1 : $first;
 				if ($offset < $start - 1) {
-					$out .= $this->first($offset, array('tag' => $tag, 'separator' => $separator));
+					$out .= $this->first($offset, array('tag' => $tag, 'separator' => $separator, 'ellipsis' => $ellipsis));
 				} else {
 					$out .= $this->first($offset, array('tag' => $tag, 'after' => $separator, 'separator' => $separator));
 				}
@@ -661,7 +664,7 @@ class PaginatorHelper extends AppHelper {
 			if ($last && $end < $params['pageCount']) {
 				$offset = ($params['pageCount'] < $end + (int)$last) ? $params['pageCount'] - $end : $last;
 				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
-					$out .= $this->last($offset, array('tag' => $tag, 'separator' => $separator));
+					$out .= $this->last($offset, array('tag' => $tag, 'separator' => $separator, 'ellipsis' => $ellipsis));
 				} else {
 					$out .= $this->last($offset, array('tag' => $tag, 'before' => $separator, 'separator' => $separator));
 				}
@@ -696,6 +699,7 @@ class PaginatorHelper extends AppHelper {
  * - `before` Content to insert before the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
+ * - `ellipsis` Content for ellipsis, defaults to '...'
  *
  * @param mixed $first if string use as label for the link, if numeric print page numbers
  * @param mixed $options
@@ -708,6 +712,7 @@ class PaginatorHelper extends AppHelper {
 				'after'=> null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
+				'ellipsis' => '...',
 			),
 		(array)$options);
 
@@ -718,13 +723,13 @@ class PaginatorHelper extends AppHelper {
 			return false;
 		}
 		extract($options);
-		unset($options['tag'], $options['after'], $options['model'], $options['separator']);
+		unset($options['tag'], $options['after'], $options['model'], $options['separator'], $options['ellipsis']);
 
 		$out = '';
 
 		if (is_int($first) && $params['page'] > $first) {
 			if ($after === null) {
-				$after = '...';
+				$after = $ellipsis;
 			}
 			for ($i = 1; $i <= $first; $i++) {
 				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options));
@@ -749,6 +754,7 @@ class PaginatorHelper extends AppHelper {
  * - `before` Content to insert before the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
  * - `separator` Content between the generated links, defaults to ' | '
+ * - `ellipsis` Content for ellipsis, defaults to '...'
  *
  * @param mixed $last if string use as label for the link, if numeric print page numbers
  * @param mixed $options Array of options
@@ -761,6 +767,7 @@ class PaginatorHelper extends AppHelper {
 				'before'=> null,
 				'model' => $this->defaultModel(),
 				'separator' => ' | ',
+				'ellipsis' => '...',
 			),
 		(array)$options);
 
@@ -772,14 +779,14 @@ class PaginatorHelper extends AppHelper {
 		}
 
 		extract($options);
-		unset($options['tag'], $options['before'], $options['model'], $options['separator']);
+		unset($options['tag'], $options['before'], $options['model'], $options['separator'], $options['ellipsis']);
 
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
 		if (is_int($last) && $params['page'] < $lower) {
 			if ($before === null) {
-				$before = '...';
+				$before = $ellipsis;
 			}
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
 				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options));
