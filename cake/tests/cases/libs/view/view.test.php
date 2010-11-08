@@ -499,9 +499,7 @@ class ViewTest extends CakeTestCase {
 	function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = new TestView($Controller);
-		$empty = array();
-		$helpers = $View->loadHelpers($empty, array('cache'));
-		$View->loaded = $helpers;
+		$helpers = $View->loadHelpers();
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEqual($result, 'this is the test element');
 	}
