@@ -325,23 +325,22 @@ class View extends Object {
 		}
 
 		if (isset($params['cache'])) {
-			$expires = '+1 day';
-
 			if (is_array($params['cache'])) {
-				$expires = $params['cache']['time'];
-				$key = Inflector::slug($params['cache']['key']);
-			} elseif ($params['cache'] !== true) {
-				$expires = $params['cache'];
-				$key = implode('_', array_keys($params));
+				$defaults = array(
+					'config' => 'default',
+					'key' => '',
+				);
+				$caching = array_merge($defaults, $params['cache']);
+			} else {
+				$caching = array(
+					'config' => 'default',
+					'key' => implode('_', array_keys($params))
+				);
 			}
-
-			if ($expires) {
-				$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
-				$cache = cache('views' . DS . $cacheFile, null, $expires);
-
-				if (is_string($cache)) {
-					return $cache;
-				}
+			$key = 'element_' . $caching['key'] . '_' . $plugin . Inflector::slug($name);
+			$contents = Cache::read($key, $caching['config']);
+			if ($contents !== false) {
+				return $contents;
 			}
 		}
 		$paths = $this->_paths($plugin);
@@ -364,8 +363,8 @@ class View extends Object {
 			if ($callbacks) {
 				$this->Helpers->trigger('afterRender', array($file, $element));
 			}
-			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
-				cache('views' . DS . $cacheFile, $element, $expires);
+			if (isset($params['cache'])) {
+				Cache::write($key, $element, $caching['config']);
 			}
 			return $element;
 		}

@@ -511,6 +511,22 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testElementCache() {
+		Cache::drop('test_view');
+		Cache::config('test_view', array(
+			'engine' => 'File',
+			'duration' => '+1 day',
+			'path' => CACHE . 'views' . DS
+		));
+
+		$View = new TestView($this->PostsController);
+		$result = $View->element('test_element', array('cache' => array('config' => 'test_view')));
+		$expected = 'this is the test element';
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::read('element__test_element', 'test_view');
+		$this->assertEquals($expected, $result);
+
+/*
 		$writable = is_writable(CACHE . 'views' . DS);
 		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test elementCache. %s')) {
 			return;
@@ -553,7 +569,7 @@ class ViewTest extends CakeTestCase {
 		}
 		$this->assertTrue($cached);
 		$this->assertEqual($result, $expected);
-
+	*/
 	}
 
 /**
