@@ -257,6 +257,41 @@ class Router {
 	}
 
 /**
+ * Connects a new redirection Route in the router.
+ *
+ * Redirection routes are different from normal routes as they perform an actual
+ * header redirection if a match is found. The redirection can occur within your
+ * application or redirect to an outside location.
+ *
+ * Examples:
+ *
+ * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
+ *
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view
+ *
+ * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
+ *
+ * Redirects /posts/* to http://google.com with a HTTP status of 302
+ *
+ * ### Options:
+ * - `status` Sets the HTTP status (default 301)
+ * - `persist` Passes the params to the redirected route, if it can
+ *
+ * @param string $route A string describing the template of the route
+ * @param array $url A url to redirect to. Can be a string or a Cake array-based url
+ * @param array $options An array matching the named elements in the route to regular expressions which that
+ *   element should match.  Also contains additional parameters such as which routed parameters should be
+ *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
+ * @see routes
+ * @return array Array of routes
+ */
+	public static function redirect($route, $url, $options) {
+		App::import('Core', 'route/RedirectRoute');
+		$options['routeClass'] = 'RedirectRoute';
+		return self::connect($route, $url, $options);
+	}
+
+/**
  * Specifies what named parameters CakePHP should be parsing. The most common setups are:
  *
  * Do not parse any named parameters:

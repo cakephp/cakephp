@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Router'));
+App::import('Core', 'CakeResponse');
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
@@ -2262,6 +2263,26 @@ class RouterTest extends CakeTestCase {
 
 		$url = 'svn+ssh://example.com';
 		$this->assertEqual($url, Router::url($url));
+	}
+
+/**
+ * test setting redirect routes
+ *
+ * @return void
+ */
+	function testRouteRedirection() {
+		Router::redirect('/blog', array('controller' => 'posts'), array('status' => 302));
+		$this->assertEqual(count(Router::$routes), 1);
+		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$this->assertEqual(Router::$routes[0]->options['status'], 302);
+
+		Router::parse('/blog');
+		$this->assertEqual(Router::$routes[0]->response->header(), array('Location' => Router::url('/posts', true)));
+		$this->assertEqual(Router::$routes[0]->response->statusCode(), 302);
+
+		Router::$routes[0]->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		Router::parse('/not-a-match');
+		$this->assertEqual(Router::$routes[0]->response->header(), array());
 	}
 
 }
