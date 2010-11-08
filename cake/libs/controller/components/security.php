@@ -564,10 +564,15 @@ class SecurityComponent extends Object {
 		}
 		unset($check['_Token']);
 
+		$locked = str_rot13($locked);
+		if (preg_match('/(\A|;|{|})O\:[0-9]+/', $locked)) {
+			return false;
+		}
+
 		$lockedFields = array();
 		$fields = Set::flatten($check);
 		$fieldList = array_keys($fields);
-		$locked = unserialize(str_rot13($locked));
+		$locked = unserialize($locked);
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {
