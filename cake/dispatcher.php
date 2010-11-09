@@ -189,7 +189,7 @@ class Dispatcher {
 				'action' => $request->params['action']
 			));
 		}
-		$result =& call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
+		$result = call_user_func_array(array(&$controller, $request->params['action']), $request->params['pass']);
 		$response = $controller->getResponse();
 
 		if ($controller->autoRender) {
