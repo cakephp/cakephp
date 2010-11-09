@@ -278,7 +278,7 @@ class CakeSession {
  * @param array $new New set of variable => value
  * @access private
  */
-	function __overwrite(&$old, $new) {
+	private static function __overwrite(&$old, $new) {
 		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
@@ -298,7 +298,7 @@ class CakeSession {
  * @return string Error as string
  * @access private
  */
-	function __error($errorNumber) {
+	private static function __error($errorNumber) {
 		if (!is_array(self::$error) || !array_key_exists($errorNumber, self::$error)) {
 			return false;
 		} else {
@@ -650,7 +650,7 @@ class CakeSession {
  *
  * @return boolean Success
  */
-	protected function _startSession() {
+	protected static function _startSession() {
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
@@ -723,7 +723,7 @@ class CakeSession {
  * @return void
  * @access private
  */
-	function __setError($errorNumber, $errorMessage) {
+	private static function __setError($errorNumber, $errorMessage) {
 		if (self::$error === false) {
 			self::$error = array();
 		}
