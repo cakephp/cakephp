@@ -1764,7 +1764,7 @@ class Model extends Overloadable {
 				$keys = $this->find('first', array('fields' => $this->__collectForeignKeys()));
 			}
 
-			if ($db->delete($this)) {
+			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
