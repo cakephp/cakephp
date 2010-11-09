@@ -650,7 +650,7 @@ class DboMysqlTest extends CakeTestCase {
 				'field_two' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$result = $this->db->alterSchema($schema2->compare($schema1));
+		$result = $this->Dbo->alterSchema($schema2->compare($schema1));
 		$this->assertEqual(2, substr_count($result, 'field_two'), 'Too many fields');
 	}
 
@@ -728,8 +728,8 @@ class DboMysqlTest extends CakeTestCase {
 			'other__field' => 'SUM(id)'
 		);
 		
-		$this->db->virtualFieldSeparator = '_$_';
-		$result = $this->db->fields($model, null, array('data', 'other__field'));
+		$this->Dbo->virtualFieldSeparator = '_$_';
+		$result = $this->Dbo->fields($model, null, array('data', 'other__field'));
 		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  `BinaryTest_$_other__field`');
 		$this->assertEqual($result, $expected);
 	}
@@ -759,10 +759,10 @@ class DboMysqlTest extends CakeTestCase {
 			)
 		));
 
-		$this->db->execute($this->db->createSchema($schema));
+		$this->Dbo->execute($this->Dbo->createSchema($schema));
 		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
-		$result = $this->db->describe($model);
-		$this->db->execute($this->db->dropSchema($schema));
+		$result = $this->Dbo->describe($model);
+		$this->Dbo->execute($this->Dbo->dropSchema($schema));
 
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
 		$this->assertEqual($result['stringy']['charset'], 'cp1250');

@@ -362,7 +362,7 @@ class DboSource extends DataSource {
  *
  * @return integer Number of affected rows
  */
-	function lastAffected() {
+	function lastAffected($source = null) {
 		if ($this->hasResult()) {
 			return $this->_result->rowCount();
 		}
@@ -375,7 +375,7 @@ class DboSource extends DataSource {
  *
  * @return integer Number of rows in resultset
  */
-	function lastNumRows() {
+	function lastNumRows($source = null) {
 		if ($this->hasResult()) {
 			$i = 0;
 			foreach ($this->_result as $row) {

@@ -263,7 +263,7 @@ class DataSource extends Object {
  * @param Model $model
  * @return array Array of Metadata for the $model
  */
-	public function describe(&$model) {
+	public function describe($model) {
 		if ($this->cacheSources === false) {
 			return null;
 		}
@@ -556,7 +556,7 @@ class DataSource extends Object {
  * @param string $key Key name to make
  * @return string Key name for model.
  */
-	public function resolveKey(&$model, $key) {
+	public function resolveKey($model, $key) {
 		return $model->alias . $key;
 	}
 

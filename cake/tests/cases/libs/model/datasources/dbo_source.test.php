@@ -992,36 +992,36 @@ class DboSourceTest extends CakeTestCase {
 
 		// EMPTY STRING
 		$result = $this->testDb->value('', 'boolean');
-		$this->assertEqual($result, 0);
+		$this->assertEqual($result, "'0'");
 
 
 		// BOOLEAN
 		$result = $this->testDb->value('true', 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value('false', 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value(true, 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value(false, 'boolean');
-		$this->assertEqual($result, 0);
+		$this->assertEqual($result, "'0'");
 
 		$result = $this->testDb->value(1, 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value(0, 'boolean');
-		$this->assertEqual($result, 0);
+		$this->assertEqual($result, "'0'");
 
 		$result = $this->testDb->value('abc', 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value(1.234, 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		$result = $this->testDb->value('1.234e05', 'boolean');
-		$this->assertEqual($result, 1);
+		$this->assertEqual($result, "'1'");
 
 		// NUMBERS
 		$result = $this->testDb->value(123, 'integer');
