@@ -102,6 +102,30 @@ class CakeSocketTest extends CakeTestCase {
 	}
 
 /**
+ * data provider function for testInvalidConnection
+ *
+ * @return array
+ */
+	public static function invalidConnections() {
+		return array(
+			array(array('host' => 'invalid.host')),
+			array(array('host' => '127.0.0.1', 'port' => '70000'))
+		);
+	}
+
+/**
+ * testInvalidConnection method
+ *
+ * @dataProvider invalidConnections
+ * @expectedException Exception
+ * return void
+ */
+	public function testInvalidConnection($data) {
+		$this->Socket->config = array_merge($this->Socket->config, $data);
+		$this->Socket->connect();
+	}
+
+/**
  * testSocketHost method
  *
  * @access public
