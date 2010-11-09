@@ -2845,4 +2845,178 @@ class DboMysqlTest extends CakeTestCase {
 		$this->Dbo->hasAny($this->Model, array());
 		
 	}
+
+
+/**
+ * testStatements method
+ *
+ * @access public
+ * @return void
+ */
+	function testStatements() {
+		$this->skipIf(true, 'Fix me');
+		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
+		$Article = new Article();
+		//$this->testDb = $this->getMock('DboMysql', array('connect', 'execute', '_execute'));
+
+		$result = $this->testDb->update($Article, array('field1'), array('value1'));
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
+
+		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
+		$this->assertFalse($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+
+		$result = $this->testDb->delete($Article);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
+
+		$result = $this->testDb->delete($Article, true);
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
+
+		$result = $this->testDb->delete($Article, '2=2');
+		$this->assertTrue($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+
+		$result = $this->testDb->hasAny($Article, '1=2');
+		$this->assertFalse($result);
+
+		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
+		$this->assertNull($result);
+		$result = $this->testDb->getLastQuery();
+		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
+	}
+
+/**
+ * test fields generating usable virtual fields to use in query
+ *
+ * @return void
+ */
+	function testVirtualFields() {
+		$this->loadFixtures('Article', 'Comment');
+		$this->Dbo->virtualFieldSeparator = '__';
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments') . '.article_id'
+		);
+		$result = $this->Dbo->fields($Article);
+		$expected = array(
+			'`Article`.`id`',
+			'`Article`.`user_id`',
+			'`Article`.`title`',
+			'`Article`.`body`',
+			'`Article`.`published`',
+			'`Article`.`created`',
+			'`Article`.`updated`',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->fields($Article, null, array('this_moment', 'title'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->fields($Article, null, array('Article.title', 'Article.this_moment'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->fields($Article, null, array('Article.this_moment', 'Article.title'));
+		$expected = array(
+			'`Article`.`title`',
+			'(NOW()) AS  `Article__this_moment`',
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->fields($Article, null, array('Article.*'));
+		$expected = array(
+			'`Article`.*',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Dbo->fields($Article, null, array('*'));
+		$expected = array(
+			'*',
+			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`',
+			'(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS  `Article__comment_count`'
+		);
+		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test conditions to generate query conditions for virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsInConditions() {
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'two' => '1 + 1',
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments') . '.article_id'
+		);
+		$conditions = array('two' => 2);
+		$result = $this->Dbo->conditions($conditions, true, false, $Article);
+		$expected = '(1 + 1) = 2';
+		$this->assertEqual($expected, $result);
+
+		$conditions = array('this_moment BETWEEN ? AND ?' => array(1,2));
+		$expected = 'NOW() BETWEEN 1 AND 2';
+		$result = $this->Dbo->conditions($conditions, true, false, $Article);
+		$this->assertEqual($expected, $result);
+
+		$conditions = array('comment_count >' => 5);
+		$expected = '(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) > 5';
+		$result = $this->Dbo->conditions($conditions, true, false, $Article);
+		$this->assertEqual($expected, $result);
+
+		$conditions = array('NOT' => array('two' => 2));
+		$result = $this->Dbo->conditions($conditions, true, false, $Article);
+		$expected = 'NOT ((1 + 1) = 2)';
+		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test that virtualFields with complex functions and aliases work.
+ *
+ * @return void
+ */
+	function testConditionsWithComplexVirtualFields() {
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'distance' => 'ACOS(SIN(20 * PI() / 180)
+					* SIN(Article.latitude * PI() / 180)
+					+ COS(20 * PI() / 180)
+					* COS(Article.latitude * PI() / 180)
+					* COS((50 - Article.longitude) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+		$conditions = array('distance >=' => 20);
+		$result = $this->Dbo->conditions($conditions, true, true, $Article);
+
+		$this->assertPattern('/\) >= 20/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result);
+		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result);
+	}
 }
