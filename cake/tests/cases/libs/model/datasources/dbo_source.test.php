@@ -1000,29 +1000,6 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test calculate to generate claculate statements on virtual fields
- *
- * @return void
- */
-	function testVirtualFieldsInCalculate() {
-		$Article = ClassRegistry::init('Article');
-		$Article->virtualFields = array(
-			'this_moment' => 'NOW()',
-			'two' => '1 + 1',
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->db->fullTableName('comments'). '.article_id'
-		);
-
-		$result = $this->db->calculate($Article, 'count', array('this_moment'));
-		$expected = 'COUNT(NOW()) AS `count`';
-		$this->assertEqual($expected, $result);
-
-		$result = $this->db->calculate($Article, 'max', array('comment_count'));
-		$expected = 'MAX(SELECT COUNT(*) FROM comments WHERE `Article`.`id` = `comments`.`article_id`) AS `comment_count`';
-		$this->assertEqual($expected, $result);
-	}
-
-/**
  * test a full example of using virtual fields
  *
  * @return void
@@ -1080,68 +1057,6 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that virtualFields with complex functions and aliases work.
- *
- * @return void
- */
-	function testFieldsWithComplexVirtualFields() {
-		$Article = new Article();
-		$Article->virtualFields = array(
-			'distance' => 'ACOS(SIN(20 * PI() / 180)
-					* SIN(Article.latitude * PI() / 180)
-					+ COS(20 * PI() / 180)
-					* COS(Article.latitude * PI() / 180)
-					* COS((50 - Article.longitude) * PI() / 180)
-				) * 180 / PI() * 60 * 1.1515 * 1.609344'
-		);
-
-		$fields = array('id', 'distance');
-		$result = $this->db->fields($Article, null, $fields);
-		$qs = $this->db->startQuote;
-		$qe = $this->db->endQuote;
-
-		$this->assertEqual($result[0], "{$qs}Article{$qe}.{$qs}id{$qe}");
-		$this->assertPattern('/Article__distance/', $result[1]);
-		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result[1]);
-		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result[1]);
-	}
-
-/**
- * test reading virtual fields containing newlines when recursive > 0
- *
- * @return void
- */
-	function testReadVirtualFieldsWithNewLines() {
-		$Article = new Article();
-		$Article->recursive = 1;
-		$Article->virtualFields = array(
-			'test' => '
-			User.id + User.id
-			'
-		);
-		$result = $this->db->fields($Article, null, array());
-		$result = $this->db->fields($Article, $Article->alias, $result);
-		$this->assertPattern('/[`\"]User[`\"]\.[`\"]id[`\"] \+ [`\"]User[`\"]\.[`\"]id[`\"]/', $result[7]);
-	}
-
-/**
- * test group to generate GROUP BY statements on virtual fields
- *
- * @return void
- */
-	function testVirtualFieldsInGroup() {
-		$Article = ClassRegistry::init('Article');
-		$Article->virtualFields = array(
-			'this_year' => 'YEAR(Article.created)'
-		);
-
-		$result = $this->db->group('this_year', $Article);
-
-		$expected = " GROUP BY (YEAR(`Article`.`created`))";
-		$this->assertEqual($expected, $result);
-	}
-
-/**
  * test the permutations of fullTableName()
  *
  * @return void
@@ -1185,7 +1100,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->cacheMethods = false;
 		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
 
-		$Article =& ClassRegistry::init('Article');
+		$Article = ClassRegistry::init('Article');
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
 		$this->assertTrue(empty($this->testDb->methodCache['fields']), 'Cache not empty');
 	}
