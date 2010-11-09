@@ -31,14 +31,6 @@ App::import('Core', array('CakeSocket', 'Set', 'Router'));
 class HttpSocket extends CakeSocket {
 
 /**
- * Object description
- *
- * @var string
- * @access public
- */
-	public $description = 'HTTP-based DataSource Interface';
-
-/**
  * When one activates the $quirksMode by setting it to true, all checks meant to
  * enforce RFC 2616 (HTTP/1.1 specs).
  * will be disabled and additional measures to deal with non-standard responses will be enabled.
