@@ -2457,4 +2457,392 @@ class DboMysqlTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * testRenderStatement method
+ *
+ * @access public
+ * @return void
+ */
+	function testRenderStatement() {
+		$result = $this->Dbo->renderStatement('select', array(
+			'fields' => 'id', 'table' => 'table', 'conditions' => 'WHERE 1=1',
+			'alias' => '', 'joins' => '', 'order' => '', 'limit' => '', 'group' => ''
+		));
+		$this->assertPattern('/^\s*SELECT\s+id\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+
+		$result = $this->Dbo->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+
+		$result = $this->Dbo->renderStatement('update', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*UPDATE\s+table\s+AS\s+alias\s+SET\s+value=2\s+WHERE\s+1=1\s*$/', $result);
+
+		$result = $this->Dbo->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => ''));
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+table\s+WHERE\s+1=1\s*$/', $result);
+
+		$result = $this->Dbo->renderStatement('delete', array('fields' => 'value=2', 'table' => 'table', 'conditions' => 'WHERE 1=1', 'alias' => 'alias', 'joins' => ''));
+		$this->assertPattern('/^\s*DELETE\s+alias\s+FROM\s+table\s+AS\s+alias\s+WHERE\s+1=1\s*$/', $result);
+	}
+
+/**
+ * testSchema method
+ *
+ * @access public
+ * @return void
+ */
+	function testSchema() {
+		$Schema = new CakeSchema();
+		$Schema->tables = array('table' => array(), 'anotherTable' => array());
+
+		$this->expectError();
+		$result = $this->Dbo->dropSchema(null);
+		$this->assertTrue($result === null);
+
+		$result = $this->Dbo->dropSchema($Schema, 'non_existing');
+		$this->assertTrue(empty($result));
+
+		$result = $this->Dbo->dropSchema($Schema, 'table');
+		$this->assertPattern('/^\s*DROP TABLE IF EXISTS\s+' . $this->Dbo->fullTableName('table') . ';\s*$/s', $result);
+	}
+
+/**
+ * testOrderParsing method
+ *
+ * @access public
+ * @return void
+ */
+	function testOrderParsing() {
+		$result = $this->Dbo->order("ADDTIME(Event.time_begin, '-06:00:00') ASC");
+		$expected = " ORDER BY ADDTIME(`Event`.`time_begin`, '-06:00:00') ASC";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->order("title, id");
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->Dbo->order("title desc, id desc");
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+desc,\s+`id`\s+desc\s*$/', $result);
+
+		$result = $this->Dbo->order(array("title desc, id desc"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+desc,\s+`id`\s+desc\s*$/', $result);
+
+		$result = $this->Dbo->order(array("title", "id"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->Dbo->order(array(array('title'), array('id')));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC,\s+`id`\s+ASC\s*$/', $result);
+
+		$result = $this->Dbo->order(array("Post.title" => 'asc', "Post.id" => 'desc'));
+		$this->assertPattern('/^\s*ORDER BY\s+`Post`.`title`\s+asc,\s+`Post`.`id`\s+desc\s*$/', $result);
+
+		$result = $this->Dbo->order(array(array("Post.title" => 'asc', "Post.id" => 'desc')));
+		$this->assertPattern('/^\s*ORDER BY\s+`Post`.`title`\s+asc,\s+`Post`.`id`\s+desc\s*$/', $result);
+
+		$result = $this->Dbo->order(array("title"));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
+
+		$result = $this->Dbo->order(array(array("title")));
+		$this->assertPattern('/^\s*ORDER BY\s+`title`\s+ASC\s*$/', $result);
+
+		$result = $this->Dbo->order("Dealer.id = 7 desc, Dealer.id = 3 desc, Dealer.title asc");
+		$expected = " ORDER BY `Dealer`.`id` = 7 desc, `Dealer`.`id` = 3 desc, `Dealer`.`title` asc";
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->order(array("Page.name" => "='test' DESC"));
+		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*='test'\s+DESC\s*$/", $result);
+
+		$result = $this->Dbo->order("Page.name = 'view' DESC");
+		$this->assertPattern("/^\s*ORDER BY\s+`Page`\.`name`\s*=\s*'view'\s+DESC\s*$/", $result);
+
+		$result = $this->Dbo->order("(Post.views)");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\)\s+ASC\s*$/", $result);
+
+		$result = $this->Dbo->order("(Post.views)*Post.views");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\)\*`Post`\.`views`\s+ASC\s*$/", $result);
+
+		$result = $this->Dbo->order("(Post.views) * Post.views");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Post`\.`views`\) \* `Post`\.`views`\s+ASC\s*$/", $result);
+
+		$result = $this->Dbo->order("(Model.field1 + Model.field2) * Model.field3");
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field1` \+ `Model`\.`field2`\) \* `Model`\.`field3`\s+ASC\s*$/", $result);
+
+		$result = $this->Dbo->order("Model.name+0 ASC");
+		$this->assertPattern("/^\s*ORDER BY\s+`Model`\.`name`\+0\s+ASC\s*$/", $result);
+
+		$result = $this->Dbo->order("Anuncio.destaque & 2 DESC");
+		$expected = ' ORDER BY `Anuncio`.`destaque` & 2 DESC';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->order("3963.191 * id");
+		$expected = ' ORDER BY 3963.191 * id ASC';
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->order(array('Property.sale_price IS NULL'));
+		$expected = ' ORDER BY `Property`.`sale_price` IS NULL ASC';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testComplexSortExpression method
+ *
+ * @return void
+ */
+	public function testComplexSortExpression() {
+		$result = $this->Dbo->order(array('(Model.field > 100) DESC', 'Model.field ASC'));
+		$this->assertPattern("/^\s*ORDER BY\s+\(`Model`\.`field`\s+>\s+100\)\s+DESC,\s+`Model`\.`field`\s+ASC\s*$/", $result);
+	}
+
+/**
+ * testCalculations method
+ *
+ * @access public
+ * @return void
+ */
+	function testCalculations() {
+		$result = $this->Dbo->calculate($this->Model, 'count');
+		$this->assertEqual($result, 'COUNT(*) AS `count`');
+
+		$result = $this->Dbo->calculate($this->Model, 'count', array('id'));
+		$this->assertEqual($result, 'COUNT(`id`) AS `count`');
+
+		$result = $this->Dbo->calculate(
+			$this->Model,
+			'count',
+			array($this->Dbo->expression('DISTINCT id'))
+		);
+		$this->assertEqual($result, 'COUNT(DISTINCT id) AS `count`');
+
+		$result = $this->Dbo->calculate($this->Model, 'count', array('id', 'id_count'));
+		$this->assertEqual($result, 'COUNT(`id`) AS `id_count`');
+
+		$result = $this->Dbo->calculate($this->Model, 'count', array('Model.id', 'id_count'));
+		$this->assertEqual($result, 'COUNT(`Model`.`id`) AS `id_count`');
+
+		$result = $this->Dbo->calculate($this->Model, 'max', array('id'));
+		$this->assertEqual($result, 'MAX(`id`) AS `id`');
+
+		$result = $this->Dbo->calculate($this->Model, 'max', array('Model.id', 'id'));
+		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
+
+		$result = $this->Dbo->calculate($this->Model, 'max', array('`Model`.`id`', 'id'));
+		$this->assertEqual($result, 'MAX(`Model`.`id`) AS `id`');
+
+		$result = $this->Dbo->calculate($this->Model, 'min', array('`Model`.`id`', 'id'));
+		$this->assertEqual($result, 'MIN(`Model`.`id`) AS `id`');
+
+		$result = $this->Dbo->calculate($this->Model, 'min', 'left');
+		$this->assertEqual($result, 'MIN(`left`) AS `left`');
+	}
+
+/**
+ * testLength method
+ *
+ * @access public
+ * @return void
+ */
+	function testLength() {
+		$result = $this->Dbo->length('varchar(255)');
+		$expected = 255;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length('int(11)');
+		$expected = 11;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length('float(5,3)');
+		$expected = '5,3';
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length('decimal(5,2)');
+		$expected = '5,2';
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length("enum('test','me','now')");
+		$expected = 4;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length("set('a','b','cd')");
+		$expected = 2;
+		$this->assertIdentical($result, $expected);
+
+		$this->expectError();
+		$result = $this->Dbo->length(false);
+		$this->assertTrue($result === null);
+
+		$result = $this->Dbo->length('datetime');
+		$expected = null;
+		$this->assertIdentical($result, $expected);
+
+		$result = $this->Dbo->length('text');
+		$expected = null;
+		$this->assertIdentical($result, $expected);
+	}
+
+/**
+ * testBuildIndex method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildIndex() {
+		$data = array(
+			'PRIMARY' => array('column' => 'id')
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('PRIMARY KEY  (`id`)');
+		$this->assertIdentical($result, $expected);
+
+		$data = array(
+			'MyIndex' => array('column' => 'id', 'unique' => true)
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('UNIQUE KEY `MyIndex` (`id`)');
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'MyIndex' => array('column' => array('id', 'name'), 'unique' => true)
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('UNIQUE KEY `MyIndex` (`id`, `name`)');
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * testBuildColumn method
+ *
+ * @access public
+ * @return void
+ */
+	function testBuildColumn2() {
+		$this->expectError();
+		$data = array(
+			'name' => 'testName',
+			'type' => 'varchar(255)',
+			'default',
+			'null' => true,
+			'key'
+		);
+		$this->Dbo->buildColumn($data);
+
+		$data = array(
+			'name' => 'testName',
+			'type' => 'string',
+			'length' => 255,
+			'default',
+			'null' => true,
+			'key'
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`testName` varchar(255) DEFAULT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+		);
+		$restore = $this->Dbo->columns;
+
+		$this->Dbo->columns = array('integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'), );
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`int_field` int(11) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$this->Dbo->fieldParameters['param'] = array(
+			'value' => 'COLLATE',
+			'quote' => false,
+			'join' => ' ',
+			'column' => 'Collate',
+			'position' => 'beforeDefault',
+			'options' => array('GOOD', 'OK')
+		);
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+			'param' => 'BAD'
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`int_field` int(11) NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'int_field',
+			'type' => 'integer',
+			'default' => '',
+			'null' => false,
+			'param' => 'GOOD'
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`int_field` int(11) COLLATE GOOD NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$this->Dbo->columns = $restore;
+
+		$data = array(
+			'name' => 'created',
+			'type' => 'timestamp',
+			'default' => 'current_timestamp',
+			'null' => false,
+ 		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'created',
+			'type' => 'timestamp',
+			'default' => 'CURRENT_TIMESTAMP',
+			'null' => true,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`created` timestamp DEFAULT CURRENT_TIMESTAMP';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'modified',
+			'type' => 'timestamp',
+			'null' => true,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`modified` timestamp NULL';
+		$this->assertEqual($result, $expected);
+
+		$data = array(
+			'name' => 'modified',
+			'type' => 'timestamp',
+			'default' => null,
+			'null' => true,
+		);
+		$result = $this->Dbo->buildColumn($data);
+		$expected = '`modified` timestamp NULL';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test hasAny()
+ *
+ * @return void
+ */
+	function testHasAny() {
+		$this->Dbo = $this->getMock('DboMysql', array('connect', '_execute', 'execute', 'value'));
+		$this->Model = $this->getMock('TestModel', array('getDataSource'));
+		$this->Model->expects($this->any())
+			->method('getDataSource')
+			->will($this->returnValue($this->Dbo));
+
+		$this->Dbo->expects($this->at(0))->method('value')
+			->with('harry')
+			->will($this->returnValue("'harry'"));
+
+		$this->Dbo->expects($this->at(1))->method('execute')
+			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE `TestModel`.`name` = \'harry\'');
+		$this->Dbo->expects($this->at(2))->method('execute')
+			->with('SELECT COUNT(`TestModel`.`id`) AS count FROM `test_models` AS `TestModel` WHERE 1 = 1');
+
+		$this->Dbo->hasAny($this->Model, array('TestModel.name' => 'harry'));
+		$this->Dbo->hasAny($this->Model, array());
+		
+	}
 }
