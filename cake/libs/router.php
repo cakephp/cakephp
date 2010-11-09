@@ -506,7 +506,7 @@ class Router {
  * @return array Returns an array containing the altered URL and the parsed extension.
  * @access private
  */
-	function __parseExtension($url) {
+	private static function __parseExtension($url) {
 		$ext = null;
 
 		if (self::$_parseExtensions) {
@@ -563,7 +563,7 @@ class Router {
  * @return void
  * @access private
  */
-	function __connectDefaultRoutes() {
+	private static function __connectDefaultRoutes() {
 		if ($plugins = App::objects('plugin')) {
 			App::import('Core', 'route/PluginShortRoute');
 			foreach ($plugins as $key => $value) {
