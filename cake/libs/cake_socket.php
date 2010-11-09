@@ -112,7 +112,6 @@ class CakeSocket {
 		}
 
 		if ($this->config['persistent'] == true) {
-			$tmp = null;
 			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
 			$this->connection = @fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
