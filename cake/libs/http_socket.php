@@ -532,6 +532,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param string $body A string continaing the chunked body to decode.
  * @return mixed Array of response headers and body or false.
+ * @throws Exception
  */
 	protected function _decodeChunkedBody($body) {
 		if (!is_string($body)) {
@@ -544,8 +545,7 @@ class HttpSocket extends CakeSocket {
 		while ($chunkLength !== 0) {
 			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
 				if (!$this->quirksMode) {
-					trigger_error(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.'), E_USER_WARNING);
-					return false;
+					throw new Exception(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.'));
 				}
 				break;
 			}
@@ -794,6 +794,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
  * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
+ * @throws Exception
  */
 	protected function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
 		$asteriskMethods = array('OPTIONS');
@@ -801,8 +802,7 @@ class HttpSocket extends CakeSocket {
 		if (is_string($request)) {
 			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
 			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
-				trigger_error(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'), E_USER_WARNING);
-				return false;
+				throw new Exception(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
 			}
 			return $request;
 		} elseif (!is_array($request)) {
@@ -816,8 +816,7 @@ class HttpSocket extends CakeSocket {
 		$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
-			trigger_error(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.'), join(',', $asteriskMethods)), E_USER_WARNING);
-			return false;
+			throw new Exception(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.'), join(',', $asteriskMethods)));
 		}
 		return $request['method'].' '.$request['uri'].' '.$versionToken.$this->lineBreak;
 	}
