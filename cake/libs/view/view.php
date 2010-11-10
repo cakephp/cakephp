@@ -334,18 +334,17 @@ class View extends Object {
 		}
 
 		if (isset($params['cache'])) {
+			$keys = array_merge(array($plugin, $name), array_keys($params));
+			$caching = array(
+				'config' => $this->elementCache,
+				'key' => implode('_', $keys)
+			);
 			if (is_array($params['cache'])) {
 				$defaults = array(
 					'config' => $this->elementCache,
-					'key' => $plugin . '_' . $name,
+					'key' => $caching['key']
 				);
 				$caching = array_merge($defaults, $params['cache']);
-			} else {
-				$keys = array_merge(array($plugin, $name), array_keys($params));
-				$caching = array(
-					'config' => $this->elementCache,
-					'key' => implode('_', $keys)
-				);
 			}
 			$key = 'element_' . $caching['key'];
 			$contents = Cache::read($key, $caching['config']);
