@@ -277,7 +277,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$this->assertEquals($this->Controller->layout, $this->RequestHandler->ajaxLayout);
 
 		$this->_init();
-		$this->Controller->request->query['ext'] = 'js';
+		$this->Controller->request->params['url']['ext'] = 'js';
 		$this->RequestHandler->initialize($this->Controller);
 		$this->RequestHandler->startup($this->Controller);
 		$this->assertNotEqual($this->Controller->layout, 'ajax');
