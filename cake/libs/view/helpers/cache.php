@@ -68,6 +68,7 @@ class CacheHelper extends AppHelper {
 		if ($caching) {
 			$this->cache($layoutFile, $this->_View->output, true);
 		}
+		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
 	}
 
 /**
