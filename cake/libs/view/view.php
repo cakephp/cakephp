@@ -241,6 +241,16 @@ class View extends Object {
 	public $request;
 
 /**
+ * The Cache configuration View will use to store cached elements.  Changing this will change
+ * the default configuration elements are stored under.  You can also choose a cache config
+ * per element.
+ *
+ * @var string
+ * @see View::element()
+ */
+	public $elementCache = 'default';
+
+/**
  * List of variables to collect from the associated controller
  *
  * @var array
@@ -300,10 +310,10 @@ class View extends Object {
  *
  * ### Special params
  *
- * - `cache` - enable caching for this element accepts boolean or strtotime compatible string.
- *   Can also be an array. If `cache` is an array,
- *   `time` is used to specify duration of cache.
- *   `key` can be used to create unique cache files.
+ * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
+ *   If an array, the following keys can be used:
+ *   - `config` - Used to store the cached element in a custom cache configuration.
+ *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
  * - `plugin` - Load an element from a specific plugin.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
@@ -319,7 +329,6 @@ class View extends Object {
 		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 		}
-
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
 		}
@@ -327,32 +336,26 @@ class View extends Object {
 		if (isset($params['cache'])) {
 			if (is_array($params['cache'])) {
 				$defaults = array(
-					'config' => 'default',
-					'key' => '',
+					'config' => $this->elementCache,
+					'key' => $plugin . '_' . $name,
 				);
 				$caching = array_merge($defaults, $params['cache']);
 			} else {
+				$keys = array_merge(array($plugin, $name), array_keys($params));
 				$caching = array(
-					'config' => 'default',
-					'key' => implode('_', array_keys($params))
+					'config' => $this->elementCache,
+					'key' => implode('_', $keys)
 				);
 			}
-			$key = 'element_' . $caching['key'] . '_' . $plugin . Inflector::slug($name);
+			$key = 'element_' . $caching['key'];
 			$contents = Cache::read($key, $caching['config']);
 			if ($contents !== false) {
 				return $contents;
 			}
 		}
-		$paths = $this->_paths($plugin);
+		$file = $this->_getElementFilename($name, $plugin);
 
-		foreach ($paths as $path) {
-			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				$file = $path . 'elements' . DS . $name . $this->ext;
-				break;
-			}
-		}
-
-		if (is_file($file)) {
+		if ($file) {
 			if (!$this->_helpersLoaded) {
 				$this->loadHelpers();
 			}
@@ -368,10 +371,10 @@ class View extends Object {
 			}
 			return $element;
 		}
-		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
+		$file = 'elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
-			return "Not Found: " . $file;
+			return "Element Not Found: " . $file;
 		}
 	}
 
@@ -776,6 +779,23 @@ class View extends Object {
 			}
 		}
 		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+	}
+
+/**
+ * Finds an element filename, returns false on failure.
+ *
+ * @param string $name The name of the element to find.
+ * @param string $plugin The plugin name the element is in.
+ * @return mixed Either a string to the element filename or false when one can't be found.
+ */
+	protected function _getElementFileName($name, $plugin = null) {
+		$paths = $this->_paths($plugin);
+		foreach ($paths as $path) {
+			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
+				return $path . 'elements' . DS . $name . $this->ext;
+			}
+		}
+		return false;
 	}
 
 /**

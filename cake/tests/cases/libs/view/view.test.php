@@ -515,61 +515,36 @@ class ViewTest extends CakeTestCase {
 		Cache::config('test_view', array(
 			'engine' => 'File',
 			'duration' => '+1 day',
-			'path' => CACHE . 'views' . DS
+			'path' => CACHE . 'views' . DS,
+			'prefix' => ''
 		));
+		Cache::clear('test_view');
 
 		$View = new TestView($this->PostsController);
-		$result = $View->element('test_element', array('cache' => array('config' => 'test_view')));
+		$View->elementCache = 'test_view';
+
+		$result = $View->element('test_element', array('cache' => true));
 		$expected = 'this is the test element';
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element__test_element', 'test_view');
+		$result = Cache::read('element_test_element_cache', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$result = $View->element('test_element', array('cache' => true, 'param' => 'one', 'foo' => 'two'));
 		$this->assertEquals($expected, $result);
 
-/*
-		$writable = is_writable(CACHE . 'views' . DS);
-		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test elementCache. %s')) {
-			return;
-		}
-		$View = new TestView($this->PostsController);
-		$element = 'test_element';
-		$expected = 'this is the test element';
-		$result = $View->element($element);
-		$this->assertEqual($result, $expected);
+		$result = Cache::read('element_test_element_cache_param_foo', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$result = $View->element('test_element', array(
+			'cache' => array('key' => 'custom_key'),
+			'param' => 'one',
+			'foo' => 'two'
+		));
+		$result = Cache::read('element_custom_key', 'test_view');
+		$this->assertEquals($expected, $result);
 
-		$cached = false;
-		$result = $View->element($element, array('cache'=>'+1 second'));
-		if (file_exists(CACHE . 'views' . DS . 'element_cache_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_cache_'.$element);
-		}
-		$this->assertTrue($cached);
-
-		$cached = false;
-		$result = $View->element($element, array('cache'=>'+1 second', 'other_param'=> true, 'anotherParam'=> true));
-		if (file_exists(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element);
-		}
-		$this->assertTrue($cached);
-
-		$cached = false;
-		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'/whatever/here')));
-		if (file_exists(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element);
-		}
-		$this->assertTrue($cached);
-
-		$cached = false;
-		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'whatever_here')));
-		if (file_exists(CACHE . 'views' . DS . 'element_whatever_here_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_whatever_here_'.$element);
-		}
-		$this->assertTrue($cached);
-		$this->assertEqual($result, $expected);
-	*/
+		Cache::drop('test_view');
 	}
 
 /**
