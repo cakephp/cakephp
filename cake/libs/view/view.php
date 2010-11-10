@@ -413,15 +413,6 @@ class View extends Object {
 		}
 		if ($layout && $this->autoLayout) {
 			$this->output = $this->renderLayout($this->output, $layout);
-			$isCached = (
-				isset($this->Helpers->Cache) ||
-				Configure::read('Cache.check') === true
-			);
-
-			if ($isCached) {
-				$replace = array('<!--nocache-->', '<!--/nocache-->');
-				$this->output = str_replace($replace, '', $this->output);
-			}
 		}
 		$this->hasRendered = true;
 		return $this->output;
