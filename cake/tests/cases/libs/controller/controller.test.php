@@ -610,7 +610,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
@@ -700,7 +700,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 
 		$Controller->passedArgs = array('page' => '-1', 'contain' => array('ControllerComment'));
@@ -731,7 +731,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPaginateModel');
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 		$Controller->paginate = array(
 			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
@@ -760,7 +760,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller =& new Controller();
 		$Controller->uses = array('ControllerPost');
 		$Controller->request = $this->getMock('CakeRequest');
-		$Controller->request->params['url'] = array();
+		$Controller->request->query = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array(
@@ -801,7 +801,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost');
 		$Controller->passedArgs[] = array('1', '2', '3');
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array(
@@ -837,7 +837,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
@@ -861,7 +861,7 @@ class ControllerTest extends CakeTestCase {
 		
 		$Controller = new Controller($request);
 		$Controller->modelClass = 'ControllerPost';
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->paginate = array('order' => 'ControllerPost.id DESC');
 		$Controller->constructClasses();
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
@@ -881,7 +881,7 @@ class ControllerTest extends CakeTestCase {
 		
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->params['url'] = array();
+		$Controller->query = array();
 		$Controller->constructClasses();
 		$Controller->ControllerPost->virtualFields = array(
 			'offset_test' => 'ControllerPost.id + 1'
@@ -1499,7 +1499,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->components = array("RequestHandler");
 		$Controller->modelClass='ControllerPost';
-		$Controller->params['url'] = array('ext' => 'rss');
+		$Controller->request->params['url'] = array('ext' => 'rss');
 		$Controller->constructClasses();
 		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();
