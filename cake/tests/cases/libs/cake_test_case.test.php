@@ -184,7 +184,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/a'
 		);
 		$this->assertTrue($this->Case->assertTags($input, $pattern), 'Single quoted attributes %s');
-		
+
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
 			'a' => array('href' => 'preg:/.*\.html/', 'class' => 'active'),
@@ -348,10 +348,10 @@ class CakeTestCaseTest extends CakeTestCase {
 		), true);
 
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'view'));
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertPattern('/^\s*This is the TestsAppsController index view\s*$/i', $result);
 
 		$result = $this->Case->testAction('/tests_apps/index', array('return' => 'contents'));
-		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertPattern('/\bThis is the TestsAppsController index view\b/i', $result);
 		$this->assertPattern('/<html/', $result);
 		$this->assertPattern('/<\/html>/', $result);
 

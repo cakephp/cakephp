@@ -64,6 +64,10 @@ class CakeTestDispatcher extends Dispatcher {
 	function _invoke(&$controller, $params, $missingAction = false) {
 		$this->controller =& $controller;
 
+		if (array_key_exists('layout', $params)) {
+			$this->controller->layout = $params['layout'];
+		}
+
 		if (isset($this->testCase) && method_exists($this->testCase, 'startController')) {
 			$this->testCase->startController($this->controller, $params);
 		}
