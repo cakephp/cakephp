@@ -527,13 +527,13 @@ class ViewTest extends CakeTestCase {
 		$expected = 'this is the test element';
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element_test_element_cache', 'test_view');
+		$result = Cache::read('element__test_element_cache', 'test_view');
 		$this->assertEquals($expected, $result);
 		
 		$result = $View->element('test_element', array('cache' => true, 'param' => 'one', 'foo' => 'two'));
 		$this->assertEquals($expected, $result);
 
-		$result = Cache::read('element_test_element_cache_param_foo', 'test_view');
+		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 		
 		$result = $View->element('test_element', array(
@@ -542,6 +542,15 @@ class ViewTest extends CakeTestCase {
 			'foo' => 'two'
 		));
 		$result = Cache::read('element_custom_key', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$View->elementCache = 'default';
+		$result = $View->element('test_element', array(
+			'cache' => array('config' => 'test_view'),
+			'param' => 'one',
+			'foo' => 'two'
+		));
+		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
 		$this->assertEquals($expected, $result);
 
 		Cache::drop('test_view');
