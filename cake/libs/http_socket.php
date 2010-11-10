@@ -236,12 +236,7 @@ class HttpSocket extends CakeSocket {
 			$this->request['header'] = array_merge(compact('Host'), $this->request['header']);
 		}
 
-		if (isset($this->request['auth']['user']) && isset($this->request['auth']['pass'])) {
-			$this->request['header']['Authorization'] = $this->request['auth']['method'] . " " . base64_encode($this->request['auth']['user'] . ":" . $this->request['auth']['pass']);
-		}
-		if (isset($this->request['uri']['user']) && isset($this->request['uri']['pass'])) {
-			$this->request['header']['Authorization'] = $this->request['auth']['method'] . " " . base64_encode($this->request['uri']['user'] . ":" . $this->request['uri']['pass']);
-		}
+		$this->_setAuth();
 
 		if (is_array($this->request['body'])) {
 			$this->request['body'] = $this->_httpSerialize($this->request['body']);
@@ -437,6 +432,31 @@ class HttpSocket extends CakeSocket {
 			return $this->_buildUri($url, $uriTemplate);
 		}
 		return $this->_buildUri($url);
+	}
+
+/**
+ * Set authentication in request
+ *
+ * @return void
+ * @throws Exception
+ */
+	protected function _setAuth() {
+		if (empty($this->request['auth']['method'])) {
+			if (isset($this->request['uri']['user'], $this->request['uri']['pass'])) {
+				$this->request['auth'] = array(
+					'method' => 'Basic',
+					'user' => $this->request['uri']['user'],
+					'pass' => $this->request['uri']['pass']
+				);
+			} else {
+				return;
+			}
+		}
+		$authClass = Inflector::camelize($this->request['auth']['method']) . 'Method';
+		if (!App::import('Lib', 'http/' . $authClass)) {
+			throw new Exception(__('Authentication method unknown.'));
+		}
+		$authClass::authentication($this);
 	}
 
 /**

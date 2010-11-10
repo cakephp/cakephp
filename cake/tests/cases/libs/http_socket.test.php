@@ -694,14 +694,17 @@ class HttpSocketTest extends CakeTestCase {
 		$socket->get('http://mark:secret@example.com/test');
 		$this->assertEqual($socket->request['uri']['user'], 'mark');
 		$this->assertEqual($socket->request['uri']['pass'], 'secret');
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
 		$socket->get('/test2');
 		$this->assertEqual($socket->request['auth']['user'], 'mark');
 		$this->assertEqual($socket->request['auth']['pass'], 'secret');
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
 		$socket->get('/test3');
 		$this->assertEqual($socket->request['auth']['user'], 'mark');
 		$this->assertEqual($socket->request['auth']['pass'], 'secret');
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 	}
 
 /**
