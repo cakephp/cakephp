@@ -72,25 +72,6 @@ class ViewPostsController extends Controller {
 }
 
 /**
- * ViewTestErrorHandler class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
- */
-class ViewTestErrorHandler extends ErrorHandler {
-
-/**
- * stop method
- *
- * @access public
- * @return void
- */
-	function _stop() {
-		return;
-	}
-}
-
-/**
  * TestView class
  *
  * @package       cake
@@ -147,23 +128,9 @@ class TestView extends View {
 	}
 
 /**
- * cakeError method
- *
- * @param mixed $method
- * @param mixed $messages
- * @access public
- * @return void
- */
-	function cakeError($method, $messages) {
-		$error = new ViewTestErrorHandler($method, $messages);
-		return $error;
-	}
-
-/**
  * Test only function to return instance scripts.
  *
  * @return array Scripts
- * @access public
  */
 	function scripts() {
 		return $this->_scripts;
@@ -182,7 +149,6 @@ class TestAfterHelper extends Helper {
  * property property
  *
  * @var string ''
- * @access public
  */
 	public $property = '';
 
@@ -192,7 +158,7 @@ class TestAfterHelper extends Helper {
  * @access public
  * @return void
  */
-	function beforeLayout() {
+	function beforeLayout($viewFile) {
 		$this->property = 'Valuation';
 	}
 
@@ -202,9 +168,8 @@ class TestAfterHelper extends Helper {
  * @access public
  * @return void
  */
-	function afterLayout() {
-		$View = ClassRegistry::getObject('afterView');
-		$View->output .= 'modified in the afterlife';
+	function afterLayout($layoutFile) {
+		$this->_View->output .= 'modified in the afterlife';
 	}
 }
 
