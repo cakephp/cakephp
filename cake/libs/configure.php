@@ -863,8 +863,6 @@ class App {
 		if ($name != null && !class_exists($name . $ext['class'])) {
 			if ($load = self::__mapped($name . $ext['class'], $type, $plugin)) {
 				if (self::__load($load)) {
-					self::__overload($type, $name . $ext['class'], $parent);
-
 					if (self::$return) {
 						return include($load);
 					}
@@ -904,7 +902,6 @@ class App {
 			if ($directory !== null) {
 				self::$__cache = true;
 				self::__map($directory . $file, $name . $ext['class'], $type, $plugin);
-				self::__overload($type, $name . $ext['class'], $parent);
 
 				if (self::$return) {
 					return include($directory . $file);
@@ -1044,17 +1041,6 @@ class App {
 			return self::$__map[$type][$name];
 		}
 		return false;
-	}
-
-/**
- * Used to overload objects as needed.
- *
- * @param string $type Model or Helper
- * @param string $name Class name to overload
- * @access private
- */
-	private static function __overload($type, $name, $parent) {
-		
 	}
 
 /**

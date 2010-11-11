@@ -886,10 +886,9 @@ class Router {
  *
  * @param array $url A url that didn't match any routes
  * @return string A generated url for the array
- * @access protected
  * @see Router::url()
  */
-	function _handleNoRoute($url) {
+	protected static function _handleNoRoute($url) {
 		$named = $args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
