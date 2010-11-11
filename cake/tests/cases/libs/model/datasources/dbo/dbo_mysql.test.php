@@ -2857,40 +2857,40 @@ class DboMysqlTest extends CakeTestCase {
 		$this->skipIf(true, 'Fix me');
 		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
 		$Article = new Article();
-		//$this->testDb = $this->getMock('DboMysql', array('connect', 'execute', '_execute'));
+		//$this->Dbo = $this->getMock('DboMysql', array('connect', 'execute', '_execute'));
 
-		$result = $this->testDb->update($Article, array('field1'), array('value1'));
+		$result = $this->Dbo->update($Article, array('field1'), array('value1'));
 		$this->assertFalse($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->Dbo->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
 
-		$result = $this->testDb->update($Article, array('field1'), array('2'), '2=2');
+		$result = $this->Dbo->update($Article, array('field1'), array('2'), '2=2');
 		$this->assertFalse($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->testDb->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*UPDATE\s+' . $this->Dbo->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
-		$result = $this->testDb->delete($Article);
+		$result = $this->Dbo->delete($Article);
 		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
 
-		$result = $this->testDb->delete($Article, true);
+		$result = $this->Dbo->delete($Article, true);
 		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
 
-		$result = $this->testDb->delete($Article, '2=2');
+		$result = $this->Dbo->delete($Article, '2=2');
 		$this->assertTrue($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->testDb->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->testDb->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
 
-		$result = $this->testDb->hasAny($Article, '1=2');
+		$result = $this->Dbo->hasAny($Article, '1=2');
 		$this->assertFalse($result);
 
-		$result = $this->testDb->insertMulti('articles', array('field'), array('(1)', '(2)'));
+		$result = $this->Dbo->insertMulti('articles', array('field'), array('(1)', '(2)'));
 		$this->assertNull($result);
-		$result = $this->testDb->getLastQuery();
-		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->testDb->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
+		$result = $this->Dbo->getLastQuery();
+		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->Dbo->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
 	}
 
 /**
@@ -3103,5 +3103,313 @@ class DboMysqlTest extends CakeTestCase {
 		$this->assertPattern('/Article__distance/', $result[1]);
 		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]latitude[`\'"]/', $result[1]);
 		$this->assertPattern('/[`\'"]Article[`\'"].[`\'"]longitude[`\'"]/', $result[1]);
+	}
+
+/**
+ * test that execute runs queries.
+ *
+ * @return void
+ */
+	function testExecute() {
+		$query = 'SELECT * FROM ' . $this->Dbo->fullTableName('articles') . ' WHERE 1 = 1';
+		$this->Dbo->took = null;
+		$this->Dbo->affected = null;
+		$result = $this->Dbo->execute($query, array('log' => false));
+		$this->assertNotNull($result, 'No query performed! %s');
+		$this->assertNull($this->Dbo->took, 'Stats were set %s');
+		$this->assertNull($this->Dbo->affected, 'Stats were set %s');
+
+		$result = $this->Dbo->execute($query);
+		$this->assertNotNull($result, 'No query performed! %s');
+		$this->assertNotNull($this->Dbo->took, 'Stats were not set %s');
+		$this->assertNotNull($this->Dbo->affected, 'Stats were not set %s');
+	}
+
+/**
+ * test a full example of using virtual fields
+ *
+ * @return void
+ */
+	function testVirtualFieldsFetch() {
+		$this->loadFixtures('Article', 'Comment');
+
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->Dbo->fullTableName('comments') .
+				' WHERE Article.id = ' . $this->Dbo->fullTableName('comments') . '.article_id'
+		);
+
+		$conditions = array('comment_count >' => 2);
+		$query = 'SELECT ' . join(',',$this->Dbo->fields($Article, null, array('id', 'comment_count'))) .
+				' FROM ' .  $this->Dbo->fullTableName($Article) . ' Article ' . $this->Dbo->conditions($conditions, true, true, $Article);
+		$result = $this->Dbo->fetchAll($query);
+		$expected = array(array(
+			'Article' => array('id' => 1, 'comment_count' => 4)
+		));
+		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test reading complex virtualFields with subqueries.
+ *
+ * @return void
+ */
+	function testVirtualFieldsComplexRead() {
+		$this->loadFixtures('DataTest', 'Article', 'Comment', 'User', 'Tag');
+
+		$Article = ClassRegistry::init('Article');
+		$commentTable = $this->Dbo->fullTableName('comments');
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable . 
+				' AS Comment WHERE Article.id = Comment.article_id'
+		);
+		$result = $Article->find('all');
+		$this->assertTrue(count($result) > 0);
+		$this->assertTrue($result[0]['Article']['comment_count'] > 0);
+
+		$DataTest = ClassRegistry::init('DataTest');
+		$DataTest->virtualFields = array(
+			'complicated' => 'ACOS(SIN(20 * PI() / 180)
+				* SIN(DataTest.float * PI() / 180)
+				+ COS(20 * PI() / 180)
+				* COS(DataTest.count * PI() / 180)
+				* COS((50 - DataTest.float) * PI() / 180)
+				) * 180 / PI() * 60 * 1.1515 * 1.609344'
+		);
+		$result = $DataTest->find('all');
+		$this->assertTrue(count($result) > 0);
+		$this->assertTrue($result[0]['DataTest']['complicated'] > 0);
+	}
+
+/**
+ * testIntrospectType method
+ *
+ * @access public
+ * @return void
+ */
+	function testIntrospectType() {
+		$this->assertEqual($this->Dbo->introspectType(0), 'integer');
+		$this->assertEqual($this->Dbo->introspectType(2), 'integer');
+		$this->assertEqual($this->Dbo->introspectType('2'), 'string');
+		$this->assertEqual($this->Dbo->introspectType('2.2'), 'string');
+		$this->assertEqual($this->Dbo->introspectType(2.2), 'float');
+		$this->assertEqual($this->Dbo->introspectType('stringme'), 'string');
+		$this->assertEqual($this->Dbo->introspectType('0stringme'), 'string');
+
+		$data = array(2.2);
+		$this->assertEqual($this->Dbo->introspectType($data), 'float');
+
+		$data = array('2.2');
+		$this->assertEqual($this->Dbo->introspectType($data), 'float');
+
+		$data = array(2);
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array('2');
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array('string');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array(2.2, '2.2');
+		$this->assertEqual($this->Dbo->introspectType($data), 'float');
+
+		$data = array(2, '2');
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array('string one', 'string two');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array('2.2', 3);
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array('2.2', '0stringme');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array(2.2, 3);
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array(2.2, '0stringme');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array(2, 'stringme');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array(2, '2.2', 'stringgme');
+		$this->assertEqual($this->Dbo->introspectType($data), 'string');
+
+		$data = array(2, '2.2');
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+		$data = array(2, 2.2);
+		$this->assertEqual($this->Dbo->introspectType($data), 'integer');
+
+
+		// NULL
+		$result = $this->Dbo->value(null, 'boolean');
+		$this->assertEqual($result, 'NULL');
+
+		// EMPTY STRING
+		$result = $this->Dbo->value('', 'boolean');
+		$this->assertEqual($result, "'0'");
+
+
+		// BOOLEAN
+		$result = $this->Dbo->value('true', 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value('false', 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value(true, 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value(false, 'boolean');
+		$this->assertEqual($result, "'0'");
+
+		$result = $this->Dbo->value(1, 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value(0, 'boolean');
+		$this->assertEqual($result, "'0'");
+
+		$result = $this->Dbo->value('abc', 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value(1.234, 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		$result = $this->Dbo->value('1.234e05', 'boolean');
+		$this->assertEqual($result, "'1'");
+
+		// NUMBERS
+		$result = $this->Dbo->value(123, 'integer');
+		$this->assertEqual($result, 123);
+
+		$result = $this->Dbo->value('123', 'integer');
+		$this->assertEqual($result, '123');
+
+		$result = $this->Dbo->value('0123', 'integer');
+		$this->assertEqual($result, "'0123'");
+
+		$result = $this->Dbo->value('0x123ABC', 'integer');
+		$this->assertEqual($result, "'0x123ABC'");
+
+		$result = $this->Dbo->value('0x123', 'integer');
+		$this->assertEqual($result, "'0x123'");
+
+		$result = $this->Dbo->value(1.234, 'float');
+		$this->assertEqual($result, 1.234);
+
+		$result = $this->Dbo->value('1.234', 'float');
+		$this->assertEqual($result, '1.234');
+
+		$result = $this->Dbo->value(' 1.234 ', 'float');
+		$this->assertEqual($result, "' 1.234 '");
+
+		$result = $this->Dbo->value('1.234e05', 'float');
+		$this->assertEqual($result, "'1.234e05'");
+
+		$result = $this->Dbo->value('1.234e+5', 'float');
+		$this->assertEqual($result, "'1.234e+5'");
+
+		$result = $this->Dbo->value('1,234', 'float');
+		$this->assertEqual($result, "'1,234'");
+
+		$result = $this->Dbo->value('FFF', 'integer');
+		$this->assertEqual($result, "'FFF'");
+
+		$result = $this->Dbo->value('abc', 'integer');
+		$this->assertEqual($result, "'abc'");
+
+		// STRINGS
+		$result = $this->Dbo->value('123', 'string');
+		$this->assertEqual($result, "'123'");
+
+		$result = $this->Dbo->value(123, 'string');
+		$this->assertEqual($result, "'123'");
+
+		$result = $this->Dbo->value(1.234, 'string');
+		$this->assertEqual($result, "'1.234'");
+
+		$result = $this->Dbo->value('abc', 'string');
+		$this->assertEqual($result, "'abc'");
+
+		$result = $this->Dbo->value(' abc ', 'string');
+		$this->assertEqual($result, "' abc '");
+
+		$result = $this->Dbo->value('a bc', 'string');
+		$this->assertEqual($result, "'a bc'");
+	}
+
+/**
+ * testRealQueries method
+ *
+ * @access public
+ * @return void
+ */
+	function testRealQueries() {
+		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag', 'Sample');
+
+		$Apple = ClassRegistry::init('Apple');
+		$Article = ClassRegistry::init('Article');
+
+		$result = $this->Dbo->rawQuery('SELECT color, name FROM ' . $this->Dbo->fullTableName('apples'));
+		$this->assertTrue(!empty($result));
+
+		$result = $this->Dbo->fetchRow($result);
+		$expected = array($this->Dbo->fullTableName('apples', false) => array(
+			'color' => 'Red 1',
+			'name' => 'Red Apple 1'
+		));
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->fetchAll('SELECT name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
+		$expected = array(
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'green blue')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Test Name')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Blue Green')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'My new apple')),
+			array($this->Dbo->fullTableName('apples', false) => array('name' => 'Some odd color'))
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->field($this->Dbo->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->Dbo->fullTableName('apples') . ' ORDER BY id');
+		$expected = array(
+			'color' => 'Red 1',
+			'name' => 'Red Apple 1'
+		);
+		$this->assertEqual($result, $expected);
+
+		$Apple->unbindModel(array(), false);
+		$result = $this->Dbo->read($Apple, array(
+			'fields' => array($Apple->escapeField('name')),
+			'conditions' => null,
+			'recursive' => -1
+		));
+		$expected = array(
+			array('Apple' => array('name' => 'Red Apple 1')),
+			array('Apple' => array('name' => 'Bright Red Apple')),
+			array('Apple' => array('name' => 'green blue')),
+			array('Apple' => array('name' => 'Test Name')),
+			array('Apple' => array('name' => 'Blue Green')),
+			array('Apple' => array('name' => 'My new apple')),
+			array('Apple' => array('name' => 'Some odd color'))
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = $this->Dbo->read($Article, array(
+			'fields' => array('id', 'user_id', 'title'),
+			'conditions' => null,
+			'recursive' => 1
+		));
+
+		$this->assertTrue(Set::matches('/Article[id=1]', $result));
+		$this->assertTrue(Set::matches('/Comment[id=1]', $result));
+		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
+		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
 	}
 }

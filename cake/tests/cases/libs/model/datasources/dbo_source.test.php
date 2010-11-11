@@ -502,166 +502,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
-/**
- * testIntrospectType method
- *
- * @access public
- * @return void
- */
-	function testIntrospectType() {
-		$this->assertEqual($this->testDb->introspectType(0), 'integer');
-		$this->assertEqual($this->testDb->introspectType(2), 'integer');
-		$this->assertEqual($this->testDb->introspectType('2'), 'string');
-		$this->assertEqual($this->testDb->introspectType('2.2'), 'string');
-		$this->assertEqual($this->testDb->introspectType(2.2), 'float');
-		$this->assertEqual($this->testDb->introspectType('stringme'), 'string');
-		$this->assertEqual($this->testDb->introspectType('0stringme'), 'string');
-
-		$data = array(2.2);
-		$this->assertEqual($this->testDb->introspectType($data), 'float');
-
-		$data = array('2.2');
-		$this->assertEqual($this->testDb->introspectType($data), 'float');
-
-		$data = array(2);
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array('2');
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array('string');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array(2.2, '2.2');
-		$this->assertEqual($this->testDb->introspectType($data), 'float');
-
-		$data = array(2, '2');
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array('string one', 'string two');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array('2.2', 3);
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array('2.2', '0stringme');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array(2.2, 3);
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array(2.2, '0stringme');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array(2, 'stringme');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array(2, '2.2', 'stringgme');
-		$this->assertEqual($this->testDb->introspectType($data), 'string');
-
-		$data = array(2, '2.2');
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-		$data = array(2, 2.2);
-		$this->assertEqual($this->testDb->introspectType($data), 'integer');
-
-
-		// NULL
-		$result = $this->testDb->value(null, 'boolean');
-		$this->assertEqual($result, 'NULL');
-
-		// EMPTY STRING
-		$result = $this->testDb->value('', 'boolean');
-		$this->assertEqual($result, "'0'");
-
-
-		// BOOLEAN
-		$result = $this->testDb->value('true', 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value('false', 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value(true, 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value(false, 'boolean');
-		$this->assertEqual($result, "'0'");
-
-		$result = $this->testDb->value(1, 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value(0, 'boolean');
-		$this->assertEqual($result, "'0'");
-
-		$result = $this->testDb->value('abc', 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value(1.234, 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		$result = $this->testDb->value('1.234e05', 'boolean');
-		$this->assertEqual($result, "'1'");
-
-		// NUMBERS
-		$result = $this->testDb->value(123, 'integer');
-		$this->assertEqual($result, 123);
-
-		$result = $this->testDb->value('123', 'integer');
-		$this->assertEqual($result, '123');
-
-		$result = $this->testDb->value('0123', 'integer');
-		$this->assertEqual($result, "'0123'");
-
-		$result = $this->testDb->value('0x123ABC', 'integer');
-		$this->assertEqual($result, "'0x123ABC'");
-
-		$result = $this->testDb->value('0x123', 'integer');
-		$this->assertEqual($result, "'0x123'");
-
-		$result = $this->testDb->value(1.234, 'float');
-		$this->assertEqual($result, 1.234);
-
-		$result = $this->testDb->value('1.234', 'float');
-		$this->assertEqual($result, '1.234');
-
-		$result = $this->testDb->value(' 1.234 ', 'float');
-		$this->assertEqual($result, "' 1.234 '");
-
-		$result = $this->testDb->value('1.234e05', 'float');
-		$this->assertEqual($result, "'1.234e05'");
-
-		$result = $this->testDb->value('1.234e+5', 'float');
-		$this->assertEqual($result, "'1.234e+5'");
-
-		$result = $this->testDb->value('1,234', 'float');
-		$this->assertEqual($result, "'1,234'");
-
-		$result = $this->testDb->value('FFF', 'integer');
-		$this->assertEqual($result, "'FFF'");
-
-		$result = $this->testDb->value('abc', 'integer');
-		$this->assertEqual($result, "'abc'");
-
-		// STRINGS
-		$result = $this->testDb->value('123', 'string');
-		$this->assertEqual($result, "'123'");
-
-		$result = $this->testDb->value(123, 'string');
-		$this->assertEqual($result, "'123'");
-
-		$result = $this->testDb->value(1.234, 'string');
-		$this->assertEqual($result, "'1.234'");
-
-		$result = $this->testDb->value('abc', 'string');
-		$this->assertEqual($result, "'abc'");
-
-		$result = $this->testDb->value(' abc ', 'string');
-		$this->assertEqual($result, "' abc '");
-
-		$result = $this->testDb->value('a bc', 'string');
-		$this->assertEqual($result, "'a bc'");
-	}
 
 /**
  * testValue method
@@ -688,76 +528,6 @@ class DboSourceTest extends CakeTestCase {
 		$this->testDb->reconnect(array('prefix' => 'foo'));
 		$this->assertTrue($this->testDb->connected);
 		$this->assertEqual($this->testDb->config['prefix'], 'foo');
-	}
-
-/**
- * testRealQueries method
- *
- * @access public
- * @return void
- */
-	function testRealQueries() {
-		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag', 'Sample');
-
-		$Apple = ClassRegistry::init('Apple');
-		$Article = ClassRegistry::init('Article');
-
-		$result = $this->db->rawQuery('SELECT color, name FROM ' . $this->db->fullTableName('apples'));
-		$this->assertTrue(!empty($result));
-
-		$result = $this->db->fetchRow($result);
-		$expected = array($this->db->fullTableName('apples', false) => array(
-			'color' => 'Red 1',
-			'name' => 'Red Apple 1'
-		));
-		$this->assertEqual($result, $expected);
-
-		$result = $this->db->fetchAll('SELECT name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
-		$expected = array(
-			array($this->db->fullTableName('apples', false) => array('name' => 'Red Apple 1')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'Bright Red Apple')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'green blue')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'Test Name')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'Blue Green')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'My new apple')),
-			array($this->db->fullTableName('apples', false) => array('name' => 'Some odd color'))
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $this->db->field($this->testDb->fullTableName('apples', false), 'SELECT color, name FROM ' . $this->testDb->fullTableName('apples') . ' ORDER BY id');
-		$expected = array(
-			'color' => 'Red 1',
-			'name' => 'Red Apple 1'
-		);
-		$this->assertEqual($result, $expected);
-
-		$Apple->unbindModel(array(), false);
-		$result = $this->db->read($Apple, array(
-			'fields' => array($Apple->escapeField('name')),
-			'conditions' => null,
-			'recursive' => -1
-		));
-		$expected = array(
-			array('Apple' => array('name' => 'Red Apple 1')),
-			array('Apple' => array('name' => 'Bright Red Apple')),
-			array('Apple' => array('name' => 'green blue')),
-			array('Apple' => array('name' => 'Test Name')),
-			array('Apple' => array('name' => 'Blue Green')),
-			array('Apple' => array('name' => 'My new apple')),
-			array('Apple' => array('name' => 'Some odd color'))
-		);
-		$this->assertEqual($result, $expected);
-
-		$result = $this->db->read($Article, array(
-			'fields' => array('id', 'user_id', 'title'),
-			'conditions' => null,
-			'recursive' => 1
-		));
-
-		$this->assertTrue(Set::matches('/Article[id=1]', $result));
-		$this->assertTrue(Set::matches('/Comment[id=1]', $result));
-		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
-		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
 	}
 
 /**
@@ -926,26 +696,6 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that execute runs queries.
- *
- * @return void
- */
-	function testExecute() {
-		$query = 'SELECT * FROM ' . $this->testDb->fullTableName('articles') . ' WHERE 1 = 1';
-		$this->db->took = null;
-		$this->db->affected = null;
-		$result = $this->db->execute($query, array('log' => false));
-		$this->assertNotNull($result, 'No query performed! %s');
-		$this->assertNull($this->db->took, 'Stats were set %s');
-		$this->assertNull($this->db->affected, 'Stats were set %s');
-
-		$result = $this->db->execute($query);
-		$this->assertNotNull($result, 'No query performed! %s');
-		$this->assertNotNull($this->db->took, 'Stats were not set %s');
-		$this->assertNotNull($this->db->affected, 'Stats were not set %s');
-	}
-
-/**
  * test that query() returns boolean values from operations like CREATE TABLE
  *
  * @return void
@@ -999,62 +749,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($expected, $result);
 	}
 
-/**
- * test a full example of using virtual fields
- *
- * @return void
- */
-	function testVirtualFieldsFetch() {
-		$this->loadFixtures('Article', 'Comment');
 
-		$Article = ClassRegistry::init('Article');
-		$Article->virtualFields = array(
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $this->db->fullTableName('comments') .
-				' WHERE Article.id = ' . $this->db->fullTableName('comments') . '.article_id'
-		);
-
-		$conditions = array('comment_count >' => 2);
-		$query = 'SELECT ' . join(',',$this->db->fields($Article, null, array('id', 'comment_count'))) .
-				' FROM ' .  $this->db->fullTableName($Article) . ' Article ' . $this->db->conditions($conditions, true, true, $Article);
-		$result = $this->db->fetchAll($query);
-		$expected = array(array(
-			'Article' => array('id' => 1, 'comment_count' => 4)
-		));
-		$this->assertEqual($expected, $result);
-	}
-
-/**
- * test reading complex virtualFields with subqueries.
- *
- * @return void
- */
-	function testVirtualFieldsComplexRead() {
-		$this->loadFixtures('DataTest', 'Article', 'Comment');
-		
-		$Article = ClassRegistry::init('Article');
-		$commentTable = $this->db->fullTableName('comments');
-		$Article = ClassRegistry::init('Article');
-		$Article->virtualFields = array(
-			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentTable . 
-				' AS Comment WHERE Article.id = Comment.article_id'
-		);
-		$result = $Article->find('all');
-		$this->assertTrue(count($result) > 0);
-		$this->assertTrue($result[0]['Article']['comment_count'] > 0);
-
-		$DataTest = ClassRegistry::init('DataTest');
-		$DataTest->virtualFields = array(
-			'complicated' => 'ACOS(SIN(20 * PI() / 180)
-				* SIN(DataTest.float * PI() / 180)
-				+ COS(20 * PI() / 180)
-				* COS(DataTest.count * PI() / 180)
-				* COS((50 - DataTest.float) * PI() / 180)
-				) * 180 / PI() * 60 * 1.1515 * 1.609344'
-		);
-		$result = $DataTest->find('all');
-		$this->assertTrue(count($result) > 0);
-		$this->assertTrue($result[0]['DataTest']['complicated'] > 0);
-	}
 
 /**
  * test the permutations of fullTableName()
@@ -1082,6 +777,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testReadOnlyCallingQueryAssociationWhenDefined() {
+		$this->loadFixtures('Article', 'User', 'ArticlesTag', 'Tag');
 		ConnectionManager::create('test_no_queryAssociation', array(
 			'datasource' => 'data'
 		));
