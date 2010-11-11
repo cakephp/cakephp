@@ -2846,53 +2846,6 @@ class DboMysqlTest extends CakeTestCase {
 		
 	}
 
-
-/**
- * testStatements method
- *
- * @access public
- * @return void
- */
-	function testStatements() {
-		$this->skipIf(true, 'Fix me');
-		$this->loadFixtures('Article', 'User', 'Comment', 'Tag', 'Attachment', 'ArticlesTag');
-		$Article = new Article();
-		//$this->Dbo = $this->getMock('DboMysql', array('connect', 'execute', '_execute'));
-
-		$result = $this->Dbo->update($Article, array('field1'), array('value1'));
-		$this->assertFalse($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->Dbo->fullTableName('articles') . '\s+SET\s+`field1`\s*=\s*\'value1\'\s+WHERE\s+1 = 1\s*$/', $result);
-
-		$result = $this->Dbo->update($Article, array('field1'), array('2'), '2=2');
-		$this->assertFalse($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*UPDATE\s+' . $this->Dbo->fullTableName('articles') . ' AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+SET\s+`Article`\.`field1`\s*=\s*2\s+WHERE\s+2\s*=\s*2\s*$/', $result);
-
-		$result = $this->Dbo->delete($Article);
-		$this->assertTrue($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+WHERE\s+1 = 1\s*$/', $result);
-
-		$result = $this->Dbo->delete($Article, true);
-		$this->assertTrue($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+1\s*=\s*1\s*$/', $result);
-
-		$result = $this->Dbo->delete($Article, '2=2');
-		$this->assertTrue($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*DELETE\s+`Article`\s+FROM\s+' . $this->Dbo->fullTableName('articles') . '\s+AS `Article`\s+LEFT JOIN\s+' . $this->Dbo->fullTableName('users') . ' AS `User` ON \(`Article`.`user_id` = `User`.`id`\)\s+WHERE\s+2\s*=\s*2\s*$/', $result);
-
-		$result = $this->Dbo->hasAny($Article, '1=2');
-		$this->assertFalse($result);
-
-		$result = $this->Dbo->insertMulti('articles', array('field'), array('(1)', '(2)'));
-		$this->assertNull($result);
-		$result = $this->Dbo->getLastQuery();
-		$this->assertPattern('/^\s*INSERT INTO\s+' . $this->Dbo->fullTableName('articles') . '\s+\(`field`\)\s+VALUES\s+\(1\),\s*\(2\)\s*$/', $result);
-	}
-
 /**
  * test fields generating usable virtual fields to use in query
  *
