@@ -934,7 +934,7 @@ class DboSourceTest extends CakeTestCase {
 		$query = 'SELECT * FROM ' . $this->testDb->fullTableName('articles') . ' WHERE 1 = 1';
 		$this->db->took = null;
 		$this->db->affected = null;
-		$result = $this->db->execute($query, array('stats' => false));
+		$result = $this->db->execute($query, array('log' => false));
 		$this->assertNotNull($result, 'No query performed! %s');
 		$this->assertNull($this->db->took, 'Stats were set %s');
 		$this->assertNull($this->db->affected, 'Stats were set %s');
