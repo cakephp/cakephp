@@ -1053,7 +1053,7 @@ class App {
  * @param string $name Class name to overload
  * @access private
  */
-	private function __overload($type, $name, $parent) {
+	private static function __overload($type, $name, $parent) {
 		
 	}
 
