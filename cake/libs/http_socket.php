@@ -442,7 +442,7 @@ class HttpSocket extends CakeSocket {
  */
 	protected function _setAuth() {
 		if (empty($this->request['auth']['method'])) {
-			if (isset($this->request['uri']['user'], $this->request['uri']['pass'])) {
+			if (isset($this->request['uri']['user'], $this->request['uri']['pass']) && !isset($this->request['auth']['user'])) {
 				$this->request['auth'] = array(
 					'method' => 'Basic',
 					'user' => $this->request['uri']['user'],
