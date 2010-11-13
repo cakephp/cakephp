@@ -27,9 +27,7 @@
  */
 class ConsoleInputSubcommand {
 
-	protected $_name;
-	protected $_help;
-	protected $_parser;
+	protected $_name, $_help, $_parser;
 
 /**
  * Make a new Subcommand
@@ -53,6 +51,19 @@ class ConsoleInputSubcommand {
 			$this->_parser['command'] = $this->_name;
 			$this->_parser = ConsoleOptionParser::buildFromArray($this->_parser);
 		}
+	}
+
+/**
+ * Protected attribute accessor.
+ *
+ * @param string $name Name of attribute to read.
+ * @return mixed.
+ */
+	public function __get($name) {
+		if (isset($this->{'_' . $name})) {
+			return $this->{'_' . $name};
+		}
+		return null;
 	}
 
 /**
