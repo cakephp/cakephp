@@ -38,7 +38,7 @@ class ThemeView extends View {
  *
  * @param Controller $controller Controller object to be rendered.
  */
-	function __construct(&$controller) {
+	function __construct($controller) {
 		parent::__construct($controller);
 		$this->theme = $controller->theme;
 	}

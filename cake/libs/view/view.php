@@ -289,7 +289,7 @@ class View extends Object {
  *
  * @param Controller $controller A controller object to pull View::__passedArgs from.
  */
-	function __construct(&$controller) {
+	function __construct($controller) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
