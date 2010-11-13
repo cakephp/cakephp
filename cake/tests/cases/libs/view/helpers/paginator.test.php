@@ -1574,7 +1574,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->params['paging']['Client']['page'] = 3;
+		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => ' ~~~ '));
 		$expected = array(
 			array('span' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
@@ -1591,7 +1591,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->params['paging']['Client']['page'] = 3;
+		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => '<span class="ellipsis">...</span>'));
 		$expected = array(
 			array('span' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
