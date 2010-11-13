@@ -55,10 +55,10 @@ class DigestMethod {
 		$http->request($http->request);
 		$http->request = $originalRequest;
 
-		if (empty($http->response['header']['Www-Authenticate'])) {
+		if (empty($http->response['header']['WWW-Authenticate'])) {
 			return false;
 		}
-		preg_match_all('@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@', $http->response['header']['Www-Authenticate'], $matches, PREG_SET_ORDER);
+		preg_match_all('@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@', $http->response['header']['WWW-Authenticate'], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$http->config['request']['auth'][$match[1]] = $match[2];
 		}

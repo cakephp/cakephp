@@ -37,7 +37,7 @@ class DigestHttpSocket extends HttpSocket {
  * @return void
  */
 	public function request($request) {
-		$this->response['header']['Www-Authenticate'] = $this->nextHeader;
+		$this->response['header']['WWW-Authenticate'] = $this->nextHeader;
 	}
 
 }
