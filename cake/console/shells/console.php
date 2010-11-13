@@ -61,7 +61,7 @@ class ConsoleShell extends Shell {
 		foreach ($this->models as $model) {
 			$class = Inflector::camelize(str_replace('.php', '', $model));
 			$this->models[$model] = $class;
-			$this->{$class} =& new $class();
+			$this->{$class} = new $class();
 		}
 		$this->out('Model classes:');
 		$this->out('--------------');
@@ -290,7 +290,7 @@ class ConsoleShell extends Shell {
 					}
 				break;
 				case (preg_match("/^routes\s+reload/i", $command, $tmp) == true):
-					$router =& Router::getInstance();
+					$router = Router::getInstance();
 					if (!$this->_loadRoutes()) {
 						$this->out("There was an error loading the routes config.  Please check that the file");
 						$this->out("exists and is free of parse errors.");
@@ -299,7 +299,7 @@ class ConsoleShell extends Shell {
 					$this->out("Routes configuration reloaded, " . count($router->routes) . " routes connected");
 				break;
 				case (preg_match("/^routes\s+show/i", $command, $tmp) == true):
-					$router =& Router::getInstance();
+					$router = Router::getInstance();
 					$this->out(implode("\n", Set::extract($router->routes, '{n}.0')));
 				break;
 				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
@@ -335,7 +335,7 @@ class ConsoleShell extends Shell {
  * @return boolean True if config reload was a success, otherwise false
  */
 	protected function _loadRoutes() {
-		$router =& Router::getInstance();
+		$router = Router::getInstance();
 
 		$router->reload();
 		extract($router->getNamedExpressions());

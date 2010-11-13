@@ -146,12 +146,12 @@ class HttpSocket extends CakeSocket {
  * You can use a url string to set the url and use default configurations for
  * all other options:
  *
- * `$http =& new HttpSockect('http://cakephp.org/');`
+ * `$http = new HttpSockect('http://cakephp.org/');`
  *
  * Or use an array to configure multiple options:
  *
  * {{{
- * $http =& new HttpSocket(array(
+ * $http = new HttpSocket(array(
  *    'host' => 'cakephp.org',
  *    'timeout' => 20
  * ));

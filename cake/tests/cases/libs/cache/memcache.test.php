@@ -101,7 +101,7 @@ class MemcacheEngineTest extends CakeTestCase {
 	function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
 		$available = true;
-		$Memcache =& new Memcache();
+		$Memcache = new Memcache();
 
 		foreach($servers as $server) {
 			list($host, $port) = explode(':', $server);
@@ -113,7 +113,7 @@ class MemcacheEngineTest extends CakeTestCase {
 		if ($this->skipIf(!$available, '%s Need memcache servers at ' . implode(', ', $servers) . ' to run this test')) {
 			return;
 		}
-		$Memcache =& new MemcacheEngine();
+		$Memcache = new MemcacheEngine();
 		$Memcache->init(array('engine' => 'Memcache', 'servers' => $servers));
 
 		$servers = array_keys($Memcache->__Memcache->getExtendedStats());
@@ -129,7 +129,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testConnect() {
-		$Memcache =& new MemcacheEngine();
+		$Memcache = new MemcacheEngine();
 		$Memcache->init(Cache::settings('memcache'));
 		$result = $Memcache->connect('127.0.0.1');
 		$this->assertTrue($result);
@@ -141,7 +141,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testConnectIpv6() {
-		$Memcache =& new MemcacheEngine();
+		$Memcache = new MemcacheEngine();
 		$result = $Memcache->init(array(
 			'prefix' => 'cake_',
 			'duration' => 200,
@@ -159,7 +159,7 @@ class MemcacheEngineTest extends CakeTestCase {
  * @return void
  */
 	function testParseServerStringNonLatin() {
-		$Memcache =& new TestMemcacheEngine();
+		$Memcache = new TestMemcacheEngine();
 		$result = $Memcache->parseServerString('schülervz.net:13211');
 		$this->assertEqual($result, array('schülervz.net', '13211'));
 

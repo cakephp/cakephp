@@ -126,7 +126,7 @@ class FileTest extends CakeTestCase {
  */
 	function testRead() {
 		$file = __FILE__;
-		$this->File =& new File($file);
+		$this->File = new File($file);
 
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);

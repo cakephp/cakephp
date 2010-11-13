@@ -94,7 +94,7 @@ class AclShell extends Shell {
 
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();
-				$this->Acl =& new AclComponent($collection);
+				$this->Acl = new AclComponent($collection);
 				$controller = null;
 				$this->Acl->startup($controller);
 			}

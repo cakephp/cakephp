@@ -119,7 +119,7 @@ class ShellTest extends CakeTestCase {
 		$output = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$error = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Shell =& new TestShell($output, $error, $in);
+		$this->Shell = new TestShell($output, $error, $in);
 	}
 
 /**

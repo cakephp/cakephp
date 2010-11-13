@@ -718,7 +718,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testBeforeDeleteWipingTable() {
 		$this->loadFixtures('Comment');
 
-		$Comment =& new BeforeDeleteComment();
+		$Comment = new BeforeDeleteComment();
 		// Delete 3 records.
 		$Comment->delete(4);
 		$result = $Comment->find('count');
@@ -746,7 +746,7 @@ class ModelDeleteTest extends BaseModelTest {
 	function testBeforeDeleteWipingTableWithDuplicateDelete() {
 		$this->loadFixtures('Comment');
 
-		$Comment =& new BeforeDeleteComment();
+		$Comment = new BeforeDeleteComment();
 		$Comment->delete(1);
 
 		$result = $Comment->find('count');

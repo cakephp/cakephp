@@ -4744,7 +4744,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testBindModelMultipleTimesResetCorrectly() {
 		$this->loadFixtures('User', 'Comment', 'Article');
-		$TestModel =& new User();
+		$TestModel = new User();
 
 		$TestModel->bindModel(array('hasMany' => array('Comment')));
 		$TestModel->bindModel(array('hasMany' => array('Comment')));
@@ -4761,7 +4761,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testBindMultipleTimesWithDifferentResetSettings() {
 		$this->loadFixtures('User', 'Comment', 'Article');
-		$TestModel =& new User();
+		$TestModel = new User();
 
 		$result = $TestModel->hasMany;
 		$expected = array();
@@ -4815,7 +4815,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testUnbindMultipleTimesResetCorrectly() {
 		$this->loadFixtures('User', 'Comment', 'Article');
-		$TestModel =& new Article10();
+		$TestModel = new Article10();
 
 		$TestModel->unbindModel(array('hasMany' => array('Comment')));
 		$TestModel->unbindModel(array('hasMany' => array('Comment')));
@@ -4832,7 +4832,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testUnBindMultipleTimesWithDifferentResetSettings() {
 		$this->loadFixtures('User', 'Comment', 'Article');
-		$TestModel =& new Comment();
+		$TestModel = new Comment();
 
 		$result = array_keys($TestModel->belongsTo);
 		$expected = array('Article', 'User');
@@ -6526,7 +6526,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEqual($result, $expected);
 
-		$TestModel =& new Article();
+		$TestModel = new Article();
 		$TestModel->displayField = 'title';
 		$result = $TestModel->find('list', array(
 			'conditions' => array('User.user' => 'mariano'),

@@ -280,8 +280,8 @@ class DbAcl extends Object implements AclInterface {
  * @return void
  */
 	public function initialize($component) {
-		$component->Aro =& $this->Aro;
-		$component->Aco =& $this->Aco;
+		$component->Aro = $this->Aro;
+		$component->Aco = $this->Aco;
 	}
 
 /**

@@ -479,7 +479,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains('function redirect($url, $status = null, $exit = true)', $result);
 
 		$this->assertContains('function startTest()', $result);
-		$this->assertContains("\$this->TestTaskComments =& new TestTestTaskCommentsController()", $result);
+		$this->assertContains("\$this->TestTaskComments = new TestTestTaskCommentsController()", $result);
 		$this->assertContains("\$this->TestTaskComments->constructClasses()", $result);
 
 		$this->assertContains('function endTest()', $result);

@@ -967,7 +967,7 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEnvironmentDetection() {
-		$dispatcher =& new Dispatcher();
+		$dispatcher = new Dispatcher();
 
 		$environments = array(
 			'IIS' => array(

@@ -757,7 +757,7 @@ class ControllerTest extends CakeTestCase {
  * @access public
  */
 	function testPaginateFieldsDouble(){
-		$Controller =& new Controller();
+		$Controller = new Controller();
 		$Controller->uses = array('ControllerPost');
 		$Controller->request->params['url'] = array();
 		$Controller->constructClasses();
@@ -1042,7 +1042,7 @@ class ControllerTest extends CakeTestCase {
 				$core[0]
 			)
 		), true);
-		$Controller =& new Controller($this->getMock('CakeRequest'));
+		$Controller = new Controller($this->getMock('CakeRequest'));
 		$Controller->uses = array();
 		$Controller->components = array('Test');
 		$Controller->constructClasses();
@@ -1406,7 +1406,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testValidateErrorsOnArbitraryModels() {
-		$TestController =& new TestController();
+		$TestController = new TestController();
 
 		$Post = new ControllerPost();
 		$Post->validate = array('title' => 'notEmpty');
