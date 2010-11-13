@@ -56,16 +56,21 @@ class ConsoleInputOption {
 	}
 
 /**
- * Protected attribute accessor.
+ * Get the value of the name attribute.
  *
- * @param string $name Name of attribute to read.
- * @return mixed.
+ * @return string Value of this->_name.
  */
-	public function __get($name) {
-		if (isset($this->{'_' . $name})) {
-			return $this->{'_' . $name};
-		}
-		return null;
+	public function name() {
+		return $this->_name;
+	}
+
+/**
+ * Get the value of the short attribute.
+ *
+ * @return string Value of this->_short.
+ */
+	public function short() {
+		return $this->_short;
 	}
 
 /**

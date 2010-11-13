@@ -277,7 +277,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser->addArgument(new ConsoleInputArgument('test'));
 		$result = $parser->arguments();
 		$this->assertEquals(1, count($result));
-		$this->assertEquals('test', $result[0]->name);
+		$this->assertEquals('test', $result[0]->name());
 	}
 
 /**
@@ -385,7 +385,7 @@ class ConsoleOptionParserTest extends CakeTestCase {
 		$parser->addSubcommand(new ConsoleInputSubcommand('test'));
 		$result = $parser->subcommands();
 		$this->assertEquals(1, count($result));
-		$this->assertEquals('test', $result['test']->name);
+		$this->assertEquals('test', $result['test']->name());
 	}
 
 /**

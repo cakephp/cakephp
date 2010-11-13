@@ -267,7 +267,7 @@ class ConsoleOptionParser {
 	public function addOption($name, $params = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
 			$option = $name;
-			$name = $option->name;
+			$name = $option->name();
 		} else {
 			$defaults = array(
 				'name' => $name,
@@ -281,8 +281,8 @@ class ConsoleOptionParser {
 			$option = new ConsoleInputOption($options);
 		}
 		$this->_options[$name] = $option;
-		if ($option->short !== null) {
-			$this->_shortOptions[$option->short] = $name;
+		if ($option->short() !== null) {
+			$this->_shortOptions[$option->short()] = $name;
 		}
 		return $this;
 	}
@@ -374,7 +374,7 @@ class ConsoleOptionParser {
 	public function addSubcommand($name, $params = array()) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
 			$command = $name;
-			$name = $command->name;
+			$name = $command->name();
 		} else {
 			$defaults = array(
 				'name' => $name,
@@ -458,12 +458,12 @@ class ConsoleOptionParser {
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
 				throw new RuntimeException(
-					sprintf(__('Missing required arguments. %s is required.'), $arg->name)
+					sprintf(__('Missing required arguments. %s is required.'), $arg->name())
 				);
 			}
 		}
 		foreach ($this->_options as $option) {
-			$name = $option->name;
+			$name = $option->name();
 			$isBoolean = $option->isBoolean();
 			$default = $option->defaultValue();
 
