@@ -67,15 +67,6 @@ class ConsoleInputSubcommand {
 	}
 
 /**
- * Get the name of the subcommand
- *
- * @return string
- */
-	public function name() {
-		return $this->_name;
-	}
-
-/**
  * Generate the help for this this subcommand.
  *
  * @param int $width The width to make the name of the subcommand.

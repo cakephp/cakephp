@@ -80,6 +80,18 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test addOption with an object.
+ *
+ * @return void
+ */
+	function testAddOptionObject() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addOption(new ConsoleInputOption('test', 't'));
+		$result = $parser->parse(array('--test=value'));
+		$this->assertEquals(array('test' => 'value', 'help' => false), $result[0], 'Long parameter did not parse out');
+	}
+
+/**
  * test adding an option and using the long value for parsing.
  *
  * @return void
@@ -256,6 +268,19 @@ class ConsoleOptionParserTest extends CakeTestCase {
 	}
 
 /**
+ * test addOption with an object.
+ *
+ * @return void
+ */
+	function testAddArgumentObject() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addArgument(new ConsoleInputArgument('test'));
+		$result = $parser->arguments();
+		$this->assertEquals(1, count($result));
+		$this->assertEquals('test', $result[0]->name);
+	}
+
+/**
  * test overwriting positional arguments.
  *
  * @return void
@@ -348,6 +373,19 @@ class ConsoleOptionParserTest extends CakeTestCase {
 			'help' => 'Initialize the database'
 		));
 		$this->assertEquals($parser, $result, 'Adding a subcommand is not chainable');
+	}
+
+/**
+ * test addSubcommand with an object.
+ *
+ * @return void
+ */
+	function testAddSubcommandObject() {
+		$parser = new ConsoleOptionParser('test', false);
+		$parser->addSubcommand(new ConsoleInputSubcommand('test'));
+		$result = $parser->subcommands();
+		$this->assertEquals(1, count($result));
+		$this->assertEquals('test', $result['test']->name);
 	}
 
 /**

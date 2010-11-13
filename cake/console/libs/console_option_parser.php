@@ -265,18 +265,24 @@ class ConsoleOptionParser {
  * @return returns $this.
  */
 	public function addOption($name, $params = array()) {
-		$defaults = array(
-			'name' => $name,
-			'short' => null,
-			'help' => '',
-			'default' => null,
-			'boolean' => false,
-			'choices' => array()
-		);
-		$options = array_merge($defaults, $params);
-		$this->_options[$name] = new ConsoleInputOption($options);
-		if (!empty($options['short'])) {
-			$this->_shortOptions[$options['short']] = $name;
+		if (is_object($name) && $name instanceof ConsoleInputOption) {
+			$option = $name;
+			$name = $option->name;
+		} else {
+			$defaults = array(
+				'name' => $name,
+				'short' => null,
+				'help' => '',
+				'default' => null,
+				'boolean' => false,
+				'choices' => array()
+			);
+			$options = array_merge($defaults, $params);
+			$option = new ConsoleInputOption($options);
+		}
+		$this->_options[$name] = $option;
+		if ($option->short !== null) {
+			$this->_shortOptions[$option->short] = $name;
 		}
 		return $this;
 	}
@@ -299,18 +305,23 @@ class ConsoleOptionParser {
  * @return $this.
  */
 	public function addArgument($name, $params = array()) {
-		$defaults = array(
-			'name' => $name,
-			'help' => '',
-			'index' => count($this->_args),
-			'required' => false,
-			'choices' => array()
-		);
-		$options = array_merge($defaults, $params);
-		$index = $options['index'];
-		unset($options['index']);
-
-		$this->_args[$index] = new ConsoleInputArgument($options);
+		if (is_object($name) && $name instanceof ConsoleInputArgument) {
+			$arg = $name;
+			$index = count($this->_args);
+		} else {
+			$defaults = array(
+				'name' => $name,
+				'help' => '',
+				'index' => count($this->_args),
+				'required' => false,
+				'choices' => array()
+			);
+			$options = array_merge($defaults, $params);
+			$index = $options['index'];
+			unset($options['index']);
+			$arg = new ConsoleInputArgument($options);
+		}
+		$this->_args[$index] = $arg;
 		return $this;
 	}
 
@@ -361,13 +372,19 @@ class ConsoleOptionParser {
  * @return $this.
  */
 	public function addSubcommand($name, $params = array()) {
-		$defaults = array(
-			'name' => $name,
-			'help' => '',
-			'parser' => null
-		);
-		$options = array_merge($defaults, $params);
-		$this->_subcommands[$name] = new ConsoleInputSubcommand($options);
+		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
+			$command = $name;
+			$name = $command->name;
+		} else {
+			$defaults = array(
+				'name' => $name,
+				'help' => '',
+				'parser' => null
+			);
+			$options = array_merge($defaults, $params);
+			$command = new ConsoleInputSubcommand($options);
+		}
+		$this->_subcommands[$name] = $command;
 		return $this;
 	}
 
@@ -441,12 +458,12 @@ class ConsoleOptionParser {
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
 				throw new RuntimeException(
-					sprintf(__('Missing required arguments. %s is required.'), $arg->name())
+					sprintf(__('Missing required arguments. %s is required.'), $arg->name)
 				);
 			}
 		}
 		foreach ($this->_options as $option) {
-			$name = $option->name();
+			$name = $option->name;
 			$isBoolean = $option->isBoolean();
 			$default = $option->defaultValue();
 
