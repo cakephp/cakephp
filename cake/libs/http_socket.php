@@ -441,6 +441,9 @@ class HttpSocket extends CakeSocket {
  * @throws Exception
  */
 	protected function _setAuth() {
+		if ($this->request['auth']['method'] === false) {
+			return;
+		}
 		if (empty($this->request['auth']['method'])) {
 			if (isset($this->request['uri']['user'], $this->request['uri']['pass']) && !isset($this->request['auth']['user'])) {
 				$this->request['auth'] = array(
@@ -454,7 +457,7 @@ class HttpSocket extends CakeSocket {
 		}
 		$authClass = Inflector::camelize($this->request['auth']['method']) . 'Method';
 		if (!App::import('Lib', 'http/' . $authClass)) {
-			throw new Exception(__('Authentication method unknown.'));
+			throw new Exception(__('Unknown authentication method.'));
 		}
 		$authClass::authentication($this);
 	}
