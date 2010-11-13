@@ -363,7 +363,7 @@ class TestTaskTest extends CakeTestCase {
 		));
 		$keys = ClassRegistry::keys();
 		$this->assertTrue(in_array('test_task_comment', $keys));
-		$object =& $this->Task->buildTestSubject('Model', 'TestTaskComment');
+		$object = $this->Task->buildTestSubject('Model', 'TestTaskComment');
 
 		$keys = ClassRegistry::keys();
 		$this->assertFalse(in_array('random', $keys));
@@ -444,7 +444,7 @@ class TestTaskTest extends CakeTestCase {
 		$this->assertContains('class TestTaskArticleTestCase extends CakeTestCase', $result);
 
 		$this->assertContains('function startTest()', $result);
-		$this->assertContains("\$this->TestTaskArticle =& ClassRegistry::init('TestTaskArticle')", $result);
+		$this->assertContains("\$this->TestTaskArticle = ClassRegistry::init('TestTaskArticle')", $result);
 
 		$this->assertContains('function endTest()', $result);
 		$this->assertContains('unset($this->TestTaskArticle)', $result);
