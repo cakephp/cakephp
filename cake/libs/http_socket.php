@@ -864,6 +864,7 @@ class HttpSocket extends CakeSocket {
  * Builds the header.
  *
  * @param array $header Header to build
+ * @param string $mode
  * @return string Header built from array
  */
 	protected function _buildHeader($header, $mode = 'standard') {
@@ -871,6 +872,17 @@ class HttpSocket extends CakeSocket {
 			return $header;
 		} elseif (!is_array($header)) {
 			return false;
+		}
+
+		$fieldsInHeader = array();
+		foreach ($header as $key => $value) {
+			$lowKey = strtolower($key);
+			if (array_key_exists($lowKey, $fieldsInHeader)) {
+				$header[$fieldsInHeader[$lowKey]] = $value;
+				unset($header[$key]);
+			} else {
+				$fieldsInHeader[$lowKey] = $key;
+			}
 		}
 
 		$returnHeader = '';
@@ -896,16 +908,6 @@ class HttpSocket extends CakeSocket {
  */
 	protected function _parseHeader($header) {
 		if (is_array($header)) {
-			foreach ($header as $field => $value) {
-				unset($header[$field]);
-				$field = strtolower($field);
-				preg_match_all('/(?:^|(?<=-))[a-z]/U', $field, $offsets, PREG_OFFSET_CAPTURE);
-
-				foreach ($offsets[0] as $offset) {
-					$field = substr_replace($field, strtoupper($offset[0]), $offset[1], 1);
-				}
-				$header[$field] = $value;
-			}
 			return $header;
 		} elseif (!is_string($header)) {
 			return false;
@@ -921,12 +923,6 @@ class HttpSocket extends CakeSocket {
 			$value = preg_replace("/[\t ]\r\n/", "\r\n", $value);
 
 			$field = $this->_unescapeToken($field);
-
-			$field = strtolower($field);
-			preg_match_all('/(?:^|(?<=-))[a-z]/U', $field, $offsets, PREG_OFFSET_CAPTURE);
-			foreach ($offsets[0] as $offset) {
-				$field = substr_replace($field, strtoupper($offset[0]), $offset[1], 1);
-			}
 
 			if (!isset($header[$field])) {
 				$header[$field] = $value;

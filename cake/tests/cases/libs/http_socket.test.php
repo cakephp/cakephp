@@ -529,7 +529,7 @@ class HttpSocketTest extends CakeTestCase {
 			$expectation['request']['raw'] = $expectation['request']['line'].$expectation['request']['header']."\r\n".$raw;
 
 			$r = array('config' => $this->Socket->config, 'request' => $this->Socket->request);
-			$v = $this->assertEquals($r, $expectation, '%s in test #'.$i.' ');
+			$v = $this->assertEquals($r, $expectation, 'Failed test #'.$i.' ');
 			$expectation['request']['raw'] = $raw;
 		}
 
@@ -948,13 +948,13 @@ class HttpSocketTest extends CakeTestCase {
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n0\r\nfoo-header: bar\r\ncake: PHP\r\n\r\n";
 		$r = $this->Socket->decodeChunkedBody($encoded);
 		$this->assertEquals($r['body'], $decoded);
-		$this->assertEquals($r['header'], array('Foo-Header' => 'bar', 'Cake' => 'PHP'));
+		$this->assertEquals($r['header'], array('foo-header' => 'bar', 'cake' => 'PHP'));
 
 		$this->Socket->quirksMode = true;
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\nfoo-header: bar\r\ncake: PHP\r\n\r\n";
 		$r = $this->Socket->decodeChunkedBody($encoded);
 		$this->assertEquals($r['body'], $decoded);
-		$this->assertEquals($r['header'], array('Foo-Header' => 'bar', 'Cake' => 'PHP'));
+		$this->assertEquals($r['header'], array('foo-header' => 'bar', 'cake' => 'PHP'));
 
 		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n";
 		$r = $this->Socket->decodeChunkedBody($encoded);
@@ -1393,7 +1393,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->reset();
 
 		$r = $this->Socket->parseHeader(array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
-		$this->assertEquals($r, array('Foo' => 'Bar', 'Foo-Bar' => 'quux'));
+		$this->assertEquals($r, array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
 
 		$r = $this->Socket->parseHeader(true);
 		$this->assertEquals($r, false);
@@ -1416,9 +1416,9 @@ class HttpSocketTest extends CakeTestCase {
 		$header = "people: Jim,John\r\nfoo-LAND: Bar\r\ncAKe-PHP: rocks\r\n";
 		$r = $this->Socket->parseHeader($header);
 		$expected = array(
-			'People' => 'Jim,John'
-			, 'Foo-Land' => 'Bar'
-			, 'Cake-Php' =>  'rocks'
+			'people' => 'Jim,John'
+			, 'foo-LAND' => 'Bar'
+			, 'cAKe-PHP' =>  'rocks'
 		);
 		$this->assertEquals($r, $expected);
 
