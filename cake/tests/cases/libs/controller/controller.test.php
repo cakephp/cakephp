@@ -773,7 +773,7 @@ class ControllerTest extends CakeTestCase {
 			'recursive' => -1
 		);
 		$conditions = array();
-		$result = $Controller->paginate('ControllerPost',$conditions);
+		$result = $Controller->paginate('ControllerPost', $conditions);
 		$expected = array(
 			array(
 				'ControllerPost' => array(
