@@ -106,10 +106,10 @@ class Dispatcher {
 				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
 			));
 		}
-		$privateAction = $this->_isPrivateAction($request);
+
 		Router::setRequestInfo($request);
 
-		if ($privateAction) {
+		if ($this->_isPrivateAction($request)) {
 			throw new PrivateActionException(array(
 				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
 				'action' => $request->params['action']
