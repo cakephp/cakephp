@@ -131,12 +131,12 @@ class Dispatcher {
  * Triggers the controller action, and invokes the rendering if Controller::$autoRender is true and echo's the output.
  * Otherwise the return value of the controller action are returned.
  *
- * @param object $controller Controller to invoke
- * @param array $params Parameters with at least the 'action' to invoke
- * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
+ * @param Controller $controller Controller to invoke
+ * @param CakeRequest $request The request object to invoke the controller for.
  * @return string Output as sent by controller
+ * @throws MissingActionException when the action being called is missing.
  */
-	protected function _invoke(&$controller, $request) {
+	protected function _invoke(Controller $controller, CakeRequest $request) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
