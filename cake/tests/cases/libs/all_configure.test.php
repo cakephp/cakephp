@@ -37,6 +37,7 @@ class AllConfigureTest extends PHPUnit_Framework_TestSuite {
 		$suite = new PHPUnit_Framework_TestSuite('All Configure, App and ClassRegistry related tests');
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'configure.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'app.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'class_registry.test.php');
 		return $suite;
 	}
