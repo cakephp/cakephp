@@ -74,7 +74,7 @@
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 		return;
 	} else {
-		App::import('Core', 'Dispatcher');
+		require LIBS . 'dispatcher.php';
 		$Dispatcher = new Dispatcher();
 		$Dispatcher->dispatch(new CakeRequest($_GET['url']));
 	}
