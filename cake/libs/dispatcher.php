@@ -28,9 +28,9 @@ App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'), false);
 App::import('Controller', 'Controller', false);
 
 /**
- * Dispatcher translates URLs to controller-action-paramter triads.
- *
- * Dispatches the request, creating appropriate models and controllers.
+ * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
+ * to locate and load the correct controller.  If found, the requested action is called on 
+ * the controller.
  *
  * @package       cake
  * @subpackage    cake.cake
@@ -73,12 +73,16 @@ class Dispatcher {
 	}
 
 /**
- * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the 
- * results (if autoRender is set).
+ * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
+ * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
- * If no controller of given name can be found, invoke() shows error messages in
- * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
- * Actions).
+ * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
+ * want controller methods to be public and in-accesible by URL, then prefix them with a `_`.  
+ * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
+ * are also not accessible via URL.
+ *
+ * If no controller of given name can be found, invoke() will throw an exception.
+ * If the controller is found, and the action is not found an exception will be thrown.
  *
  * @param CakeRequest $request Request object to dispatch.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
@@ -102,6 +106,27 @@ class Dispatcher {
 				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
 			));
 		}
+		$privateAction = $this->_isPrivateAction($request);
+		Router::setRequestInfo($request);
+
+		if ($privateAction) {
+			throw new PrivateActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
+		}
+
+		return $this->_invoke($controller, $request);
+	}
+
+/**
+ * Check if the request's action is marked as private, with an underscore, of if the request is attempting to 
+ * directly accessing a prefixed action.
+ *
+ * @param CakeRequest $request The request to check
+ * @return boolean
+ */
+	protected function _isPrivateAction($request) {
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
@@ -113,17 +138,7 @@ class Dispatcher {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-
-		Router::setRequestInfo($request);
-
-		if ($privateAction) {
-			throw new PrivateActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
-		}
-
-		return $this->_invoke($controller, $request);
+		return $privateAction;
 	}
 
 /**
