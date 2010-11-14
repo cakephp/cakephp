@@ -757,9 +757,9 @@ class ControllerTest extends CakeTestCase {
  * @access public
  */
 	function testPaginateFieldsDouble(){
-		$Controller = new Controller();
+		$Controller = new Controller($this->getMock('CakeRequest'));
 		$Controller->uses = array('ControllerPost');
-		$Controller->request->params['url'] = array();
+		$Controller->request->query = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array(
