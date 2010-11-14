@@ -157,7 +157,6 @@ class Dispatcher {
 
 		$methods = array_flip($controller->methods);
 
-
 		if (!isset($methods[$request->params['action']])) {
 			if ($controller->scaffold !== false) {
 				App::import('Controller', 'Scaffold', false);
@@ -185,10 +184,13 @@ class Dispatcher {
 	}
 
 /**
- * Returns array of GET and POST parameters. GET parameters are taken from given URL.
+ * Applies Routing and additionalParameters to the request to be dispatched.
+ * If Routes have not been loaded they will be loaded, and app/config/routes.php will be run.
  *
- * @param CakeRequest $fromUrl CakeRequest object to mine for parameter information.
- * @return array Parameters found in POST and GET.
+ * @param CakeRequest $request CakeRequest object to mine for parameter information.
+ * @param array $additionalParams An array of additional parameters to set to the request.
+ *   Useful when Object::requestAction() is involved
+ * @return CakeRequest The request object with routing params set.
  */
 	public function parseParams(CakeRequest $request, $additionalParams = array()) {
 		if (count(Router::$routes) > 0) {
@@ -213,16 +215,14 @@ class Dispatcher {
  * @return mixed name of controller if not loaded, or object if loaded
  */
 	protected function _getController($request) {
-		$controller = false;
 		$ctrlClass = $this->_loadController($request);
 		if (!$ctrlClass) {
-			return $controller;
+			return false;
 		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($request);
+			return new $ctrlClass($request);
 		}
-		return $controller;
 	}
 
 /**
