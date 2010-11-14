@@ -711,7 +711,7 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths(Inflector::underscore($this->plugin));
+		$paths = $this->_paths($this->plugin);
 		
 		$exts = array($this->ext);
 		if ($this->ext !== '.ctp') {
@@ -754,7 +754,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths(Inflector::underscore($this->plugin));
+		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
 		
 		$exts = array($this->ext);
