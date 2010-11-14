@@ -104,14 +104,14 @@ class Dispatcher {
  * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
  * Actions).
  *
- * @param mixed $url Either a string url or a CakeRequest object information to work on.  If $url is a string
- *   It will be used to create the request object.
+ * @param CakeRequest $request Request object to dispatch.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
  * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
  *    are encountered.
  */
-	public function dispatch($url = null, $additionalParams = array()) {
+	public function dispatch(CakeRequest $request, $additionalParams = array()) {
+		/* Should move to Object::requestAction()
 		if (is_array($url)) {
 			$url = $this->_extractParams($url, $additionalParams);
 		}
@@ -120,6 +120,7 @@ class Dispatcher {
 		} else {
 			$request = new CakeRequest($url);
 		}
+		*/
 		$this->here = $request->here;
 
 
