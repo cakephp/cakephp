@@ -195,9 +195,9 @@ class Dispatcher {
  * @param array $params Array of parameters
  * @return mixed name of controller if not loaded, or object if loaded
  */
-	protected function &_getController($request) {
+	protected function _getController($request) {
 		$controller = false;
-		$ctrlClass = $this->__loadController($request);
+		$ctrlClass = $this->_loadController($request);
 		if (!$ctrlClass) {
 			return $controller;
 		}
@@ -213,9 +213,8 @@ class Dispatcher {
  *
  * @param array $params Array of parameters
  * @return string|bool Name of controller class name
- * @access private
  */
-	function __loadController($request) {
+	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;
 		if (!empty($request->params['plugin'])) {
 			$pluginName = $controller = Inflector::camelize($request->params['plugin']);
