@@ -19,7 +19,11 @@
  */
 
 /**
- * Configuration class (singleton). Used for managing runtime configuration information.
+ * Configuration class. Used for managing runtime configuration information.
+ *
+ * Provides features for reading and writing to the runtime configuration, as well
+ * as methods for loading additional configuration files or storing runtime configuration 
+ * for future use.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
@@ -46,7 +50,7 @@ class Configure {
 	}
 
 /**
- * Used to store a dynamic variable in the Configure instance.
+ * Used to store a dynamic variable in Configure.
  *
  * Usage:
  * {{{
@@ -126,7 +130,7 @@ class Configure {
 	}
 
 /**
- * Used to read information stored in the Configure instance.  Currently its not
+ * Used to read information stored in Configure.  Its not
  * possible to store `null` values in Configure.
  *
  * Usage:
@@ -173,7 +177,7 @@ class Configure {
 	}
 
 /**
- * Used to delete a variable from the Configure instance.
+ * Used to delete a variable from Configure.
  *
  * Usage:
  * {{{
@@ -197,6 +201,7 @@ class Configure {
 
 /**
  * Loads a file from app/config/configure_file.php.
+ *
  * Config file variables should be formated like:
  *  `$config['name'] = 'value';`
  * These will be used to create dynamic Configure vars. load() is also used to

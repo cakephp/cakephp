@@ -1,6 +1,6 @@
 <?php
 /**
- * Configure class
+ * App class
  *
  * PHP 5
  *
@@ -18,7 +18,29 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 /**
- * Class/file loader and path management.
+ * App is responsible for path managment, class location and class loading.
+ *
+ * ### Adding paths 
+ *
+ * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
+ * additional controller paths for example would alter where CakePHP looks for controllers when you 
+ * call App::import('Controller', 'Posts');  This allows you to split your application up across the filesystem.
+ *
+ * ### Inspecting loaded paths
+ *
+ * You can inspect the currently loaded paths using `App::path('controller')` for example to see loaded
+ * controller paths.
+ *
+ * ### Locating plugins and themes
+ *
+ * Plugins and Themes can be located with App as well.  Using App::pluginPath('DebugKit') for example, will
+ * give you the full path to the DebugKit plugin.  App::themePath('purple'), would give the full path to the 
+ * `purple` theme.
+ *
+ * ### Inspecting known objects
+ *
+ * You can find out which objects App knows about using App::objects('controller') for example to find
+ * which application controllers App knows about.
  *
  * @link          http://book.cakephp.org/view/933/The-App-Class
  * @package       cake
