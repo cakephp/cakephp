@@ -24,7 +24,7 @@
 /**
  * List of helpers to include
  */
-App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'));
+App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'), false);
 App::import('Controller', 'Controller', false);
 
 /**
@@ -38,36 +38,12 @@ App::import('Controller', 'Controller', false);
 class Dispatcher {
 
 /**
- * Base URL
- *
- * @var string
- * @access public
- */
-	public $base = false;
-
-/**
- * webroot path
- *
- * @var string
- * @access public
- */
-	public $webroot = '/';
-
-/**
  * Current URL
  *
  * @var string
  * @access public
  */
 	public $here = false;
-
-/**
- * the params for this request
- *
- * @var string
- * @access public
- */
-	public $params = null;
 
 /**
  * The request object
@@ -129,9 +105,7 @@ class Dispatcher {
 		}
 
 		$request = $this->parseParams($request, $additionalParams);
-		$this->request = $request;
-
-		$controller = $this->_getController();
+		$controller = $this->_getController($request);
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
@@ -217,7 +191,6 @@ class Dispatcher {
 	protected function _extractParams($url, $additionalParams = array()) {
 		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
 		$params = array_merge($defaults, $url, $additionalParams);
-		$this->params = $params;
 
 		$params += array('base' => false, 'url' => array());
 		return ltrim(Router::reverse($params), '/');
@@ -249,15 +222,15 @@ class Dispatcher {
  * @param array $params Array of parameters
  * @return mixed name of controller if not loaded, or object if loaded
  */
-	protected function &_getController() {
+	protected function &_getController($request) {
 		$controller = false;
-		$ctrlClass = $this->__loadController($this->request);
+		$ctrlClass = $this->__loadController($request);
 		if (!$ctrlClass) {
 			return $controller;
 		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($this->request);
+			$controller = new $ctrlClass($request);
 		}
 		return $controller;
 	}
