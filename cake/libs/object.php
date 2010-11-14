@@ -67,7 +67,7 @@ class Object {
 			return false;
 		}
 		if (!class_exists('dispatcher')) {
-			require CAKE . 'dispatcher.php';
+			require LIBS . 'dispatcher.php';
 		}
 		if (in_array('return', $extra, true)) {
 			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
@@ -75,9 +75,21 @@ class Object {
 		if (is_array($url) && !isset($extra['url'])) {
 			$extra['url'] = array();
 		}
-		$params = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
-		$dispatcher = new Dispatcher;
-		return $dispatcher->dispatch($url, $params);
+		$extra = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
+		
+		if (is_string($url)) {
+			$request = new CakeRequest($url);
+		} elseif (is_array($url)) {
+			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
+			$params = array_merge($params, $extra);
+			$request = new CakeRequest(Router::reverse($params), false);
+			if (isset($params['data'])) {
+				$request->data = $params['data'];
+			}
+		}
+
+		$dispatcher = new Dispatcher();
+		return $dispatcher->dispatch($request, $extra);
 	}
 
 /**

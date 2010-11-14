@@ -87,18 +87,7 @@ class Dispatcher {
  *    are encountered.
  */
 	public function dispatch(CakeRequest $request, $additionalParams = array()) {
-		/* Should move to Object::requestAction()
-		if (is_array($url)) {
-			$url = $this->_extractParams($url, $additionalParams);
-		}
-		if ($url instanceof CakeRequest) {
-			$request = $url;
-		} else {
-			$request = new CakeRequest($url);
-		}
-		*/
 		$this->here = $request->here;
-
 
 		if ($this->asset($request->url) || $this->cached($request->url)) {
 			return;
@@ -178,22 +167,6 @@ class Dispatcher {
 			return $response->body();
 		}
 		$response->send();
-	}
-
-/**
- * Sets the params when $url is passed as an array to Object::requestAction();
- * Merges the $url and $additionalParams and creates a string url.
- *
- * @param array $url Array or request parameters
- * @param array $additionalParams Array of additional parameters.
- * @return string $url The generated url string.
- */
-	protected function _extractParams($url, $additionalParams = array()) {
-		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
-		$params = array_merge($defaults, $url, $additionalParams);
-
-		$params += array('base' => false, 'url' => array());
-		return ltrim(Router::reverse($params), '/');
 	}
 
 /**
