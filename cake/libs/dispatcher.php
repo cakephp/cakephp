@@ -176,9 +176,11 @@ class Dispatcher {
  * @return array Parameters found in POST and GET.
  */
 	public function parseParams(CakeRequest $request, $additionalParams = array()) {
-		$namedExpressions = Router::getNamedExpressions();
-		extract($namedExpressions);
-		include CONFIGS . 'routes.php';
+		if (count(Router::$routes) > 0) {
+			$namedExpressions = Router::getNamedExpressions();
+			extract($namedExpressions);
+			include CONFIGS . 'routes.php';
+		}
 
 		$params = Router::parse($request->url);
 		$request->addParams($params);
