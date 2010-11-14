@@ -757,7 +757,7 @@ class ControllerTest extends CakeTestCase {
  * @access public
  */
 	function testPaginateFieldsDouble(){
-		$Controller =& new Controller();
+		$Controller = new Controller();
 		$Controller->uses = array('ControllerPost');
 		$Controller->request = $this->getMock('CakeRequest');
 		$Controller->request->query = array();
@@ -774,7 +774,7 @@ class ControllerTest extends CakeTestCase {
 			'recursive' => -1
 		);
 		$conditions = array();
-		$result = $Controller->paginate('ControllerPost',$conditions);
+		$result = $Controller->paginate('ControllerPost', $conditions);
 		$expected = array(
 			array(
 				'ControllerPost' => array(
@@ -1043,7 +1043,7 @@ class ControllerTest extends CakeTestCase {
 				$core[0]
 			)
 		), true);
-		$Controller =& new Controller($this->getMock('CakeRequest'));
+		$Controller = new Controller($this->getMock('CakeRequest'));
 		$Controller->uses = array();
 		$Controller->components = array('Test');
 		$Controller->constructClasses();
@@ -1407,7 +1407,7 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testValidateErrorsOnArbitraryModels() {
-		$TestController =& new TestController();
+		$TestController = new TestController();
 
 		$Post = new ControllerPost();
 		$Post->validate = array('title' => 'notEmpty');

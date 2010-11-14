@@ -278,7 +278,7 @@ class ControllerTask extends BakeTask {
 			$this->_stop();
 		}
 
-		$modelObj =& ClassRegistry::init($currentModelName);
+		$modelObj = ClassRegistry::init($currentModelName);
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);

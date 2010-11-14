@@ -282,11 +282,11 @@ class ViewTask extends BakeTask {
 			$this->_stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
-		$controllerObj =& new $controllerClassName();
+		$controllerObj = new $controllerClassName();
 		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();
 		$modelClass = $controllerObj->modelClass;
-		$modelObj =& $controllerObj->{$controllerObj->modelClass};
+		$modelObj = $controllerObj->{$controllerObj->modelClass};
 
 		if ($modelObj) {
 			$primaryKey = $modelObj->primaryKey;

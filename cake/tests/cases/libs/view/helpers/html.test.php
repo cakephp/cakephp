@@ -601,7 +601,7 @@ class HtmlHelperTest extends CakeTestCase {
 		App::import('Core', 'File');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
-		$file =& new File($testfile, true);
+		$file = new File($testfile, true);
 
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)

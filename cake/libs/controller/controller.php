@@ -627,7 +627,7 @@ class Controller extends Object {
 
 			if ($this->persistModel === true) {
 				$this->_persist($modelClass, true, $this->{$modelClass});
-				$registry =& ClassRegistry::getInstance();
+				$registry = ClassRegistry::getInstance();
 				$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
 			}
 		} else {
@@ -1170,11 +1170,11 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-		if (!isset($this->request['paging'])) {
-			$this->request['paging'] = array();
+		if (!isset($this->request->params['paging'])) {
+			$this->request->params['paging'] = array();
 		}
-		$this->request['paging'] = array_merge(
-			(array)$this->request['paging'],
+		$this->request->params['paging'] = array_merge(
+			(array)$this->request->params['paging'],
 			array($object->alias => $paging)
 		);
 

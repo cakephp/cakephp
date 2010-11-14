@@ -447,7 +447,7 @@ class ObjectTest extends CakeTestCase {
 
 		@unlink(CACHE . 'persistent' . DS . 'testmodel.php');
 
-		$model =& new ObjectTestModel();
+		$model = new ObjectTestModel();
 		$expected = ClassRegistry::keys();
 
 		ClassRegistry::flush();

@@ -56,12 +56,21 @@ class ConsoleInputOption {
 	}
 
 /**
- * Get the name of the argument
+ * Get the value of the name attribute.
  *
- * @return string
+ * @return string Value of this->_name.
  */
 	public function name() {
 		return $this->_name;
+	}
+
+/**
+ * Get the value of the short attribute.
+ *
+ * @return string Value of this->_short.
+ */
+	public function short() {
+		return $this->_short;
 	}
 
 /**

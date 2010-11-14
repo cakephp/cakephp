@@ -763,7 +763,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testRenderStrippingNoCacheTagsOnlyCacheHelper() {
 		Configure::write('Cache.check', false);
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$View->set(array('superman' => 'clark', 'variable' => 'var'));
 		$View->helpers = array('Html', 'Form', 'Cache');
 		$View->layout = 'cache_layout';
@@ -778,7 +778,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testRenderStrippingNoCacheTagsOnlyCacheCheck() {
 		Configure::write('Cache.check', true);
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$View->set(array('superman' => 'clark', 'variable' => 'var'));
 		$View->helpers = array('Html', 'Form');
 		$View->layout = 'cache_layout';

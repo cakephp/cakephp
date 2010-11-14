@@ -239,10 +239,10 @@ class TestDbAcl extends DbAcl {
  * @return void
  */
 	function __construct() {
-		$this->Aro =& new DbAroTest();
-		$this->Aro->Permission =& new DbPermissionTest();
-		$this->Aco =& new DbAcoTest();
-		$this->Aro->Permission =& new DbPermissionTest();
+		$this->Aro = new DbAroTest();
+		$this->Aro->Permission = new DbPermissionTest();
+		$this->Aco = new DbAcoTest();
+		$this->Aro->Permission = new DbPermissionTest();
 	}
 }
 
@@ -280,7 +280,7 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	function testNode() {
-		$Aco =& new DbAcoTest();
+		$Aco = new DbAcoTest();
 		$result = Set::extract($Aco->node('Controller1'), '{n}.DbAcoTest.id');
 		$expected = array(2, 1);
 		$this->assertEqual($result, $expected);
@@ -321,7 +321,7 @@ class AclNodeTest extends CakeTestCase {
  * @return void
  */
 	function testNodeWithDuplicatePathSegments() {
-		$Aco =& new DbAcoTest();
+		$Aco = new DbAcoTest();
 		$nodes = $Aco->node('ROOT/Users');
 		$this->assertEqual($nodes[0]['DbAcoTest']['parent_id'], 1, 'Parent id does not point at ROOT. %s');
 	}

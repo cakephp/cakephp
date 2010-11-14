@@ -614,7 +614,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function testSchemaReadWithTablePrefix() {
 		$model =& new SchemaPrefixAuthUser();
 
-		$Schema =& new CakeSchema();
+		$Schema = new CakeSchema();
 		$read = $Schema->read(array(
 			'connection' => 'test',
 			'name' => 'TestApp',
@@ -650,7 +650,7 @@ class CakeSchemaTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
-		$Schema =& new CakeSchema();
+		$Schema = new CakeSchema();
 		$Schema->plugin = 'TestPlugin';
 		$read = $Schema->read(array(
 			'connection' => 'test',
@@ -832,13 +832,13 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testCompareEmptyStringAndNull() {
-		$One =& new CakeSchema(array(
+		$One = new CakeSchema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => '')
 			)
 		));
-		$Two =& new CakeSchema(array(
+		$Two = new CakeSchema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => null)
@@ -984,7 +984,7 @@ class CakeSchemaTest extends CakeTestCase {
 		$db =& ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 
-		$Schema =& new CakeSchema(array(
+		$Schema = new CakeSchema(array(
 			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),

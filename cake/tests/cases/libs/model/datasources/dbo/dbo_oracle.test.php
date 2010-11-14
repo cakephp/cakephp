@@ -105,7 +105,7 @@ class DboOracleTest extends CakeTestCase {
  */
 	function testName() {
 		$Db = $this->db;
-		#$Db =& new DboOracle($config = null, $autoConnect = false);
+		#$Db = new DboOracle($config = null, $autoConnect = false);
 
 		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
 		$e = 'foo.last_update_date';
