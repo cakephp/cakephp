@@ -76,5 +76,5 @@
 	} else {
 		require LIBS . 'dispatcher.php';
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest($_GET['url']));
+		$Dispatcher->dispatch(new CakeRequest(isset($_GET['url']) ? $_GET['url'] : null));
 	}
