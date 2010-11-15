@@ -53,11 +53,16 @@
 /**
  * Configure the Error handler used to handle errors for your application.  By default
  * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
- * and log errors with CakeLog when debug = 0.  You can set it to any static method that is built to handle 
- * errors.
+ * and log errors with CakeLog when debug = 0.
+ *
+ * Options:
+ *
+ * - `handler` The callback to handle errors. You can set this to any callback type, including anonymous functions.
+ * - `level` The level of errors you are interested in capturing.
  */
 	Configure::write('Error', array(
 		'handler' => 'ErrorHandler::handleError',
+		'level' => E_ALL & ~E_DEPRECATED
 	));
 
 /**

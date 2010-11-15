@@ -106,6 +106,9 @@ class Configure {
 			if (!empty(self::$_values['Error']['handler'])) {
 				set_error_handler(self::$_values['Error']['handler']);
 			}
+			if (isset(self::$_values['Error']['level'])) {
+				error_reporting(self::$_values['Error']['level']);
+			}
 			if (!empty(self::$_values['Exception']['handler'])) {
 				set_exception_handler(self::$_values['Exception']['handler']);
 			}
@@ -164,16 +167,13 @@ class Configure {
 		}
 
 		if (isset($config['debug']) || isset($config['log'])) {
-			$reporting = 0;
-			if (self::$_values['debug']) {
-				$reporting = E_ALL & ~E_DEPRECATED;
-				if (function_exists('ini_set')) {
+			if (function_exists('ini_set')) {
+				if (self::$_values['debug']) {
 					ini_set('display_errors', 1);
+				} else {
+					ini_set('display_errors', 0);
 				}
-			} elseif (function_exists('ini_set')) {
-				ini_set('display_errors', 0);
 			}
-			error_reporting($reporting);
 		}
 		return true;
 	}
