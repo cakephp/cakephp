@@ -368,17 +368,17 @@ class Configure {
 				}
 			}
 
+			App::init();
+			App::build();
+			if (!include(CONFIGS . 'bootstrap.php')) {
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
+			}
+			
 			if (!empty(self::$_values['Error']['handler'])) {
 				set_error_handler(self::$_values['Error']['handler']);
 			}
 			if (!empty(self::$_values['Exception']['handler'])) {
 				set_exception_handler(self::$_values['Exception']['handler']);
-			}
-
-			App::init();
-			App::build();
-			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
 			}
 		}
 	}
