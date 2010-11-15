@@ -179,6 +179,29 @@ class ErrorHandler {
 	}
 
 /**
+ * Set as the default error handler by CakePHP. Use Configure::write('Error.handler', $callback), to use your own
+ * error handling methods.  This function will use Debugger to display errors when debug > 0.  And 
+ * will log errors to CakeLog, when debug == 0.
+ *
+ * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.
+ *
+ * @param integer $code Code of error
+ * @param string $description Error description
+ * @param string $file File on which error occurred
+ * @param integer $line Line that triggered the error
+ * @param array $context Context
+ * @return boolean true if error was handled
+ */
+	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+		$debug = Configure::read('debug');
+		if ($debug) {
+			return Debugger::handleError($code, $description, $file, $line, $context);
+		} else {
+			return CakeLog::handleError($code, $description, $file, $line, $context);
+		}
+	}
+
+/**
  * Renders the response for the exception.
  *
  * @return void

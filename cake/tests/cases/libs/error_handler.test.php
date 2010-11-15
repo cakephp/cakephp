@@ -151,6 +151,7 @@ class MissingWidgetThingException extends NotFoundException { }
  */
 class ErrorHandlerTest extends CakeTestCase {
 
+	var $_restoreError = false;
 /**
  * setup create a request object to get out of router later.
  *
@@ -179,6 +180,9 @@ class ErrorHandlerTest extends CakeTestCase {
 	function teardown() {
 		Configure::write('debug', $this->_debug);
 		App::build();
+		if ($this->_restoreError) {
+			restore_error_handler();
+		}
 	}
 
 /**
@@ -189,6 +193,47 @@ class ErrorHandlerTest extends CakeTestCase {
 	protected function _mockResponse($error) {
 		$error->controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
 		return $error;
+	}
+
+/**
+ * test error handling when debug is on, an error should be printed from Debugger.
+ *
+ * @return void
+ */
+	function testHandleErrorDebugOn() {
+		set_error_handler('ErrorHandler::handleError');
+		$this->_restoreError = true;
+
+		ob_start();
+		$wrong .= '';
+		$result = ob_get_clean();
+
+		$this->assertPattern('/<pre class="cake-debug">/', $result);
+		$this->assertPattern('/<b>Notice<\/b>/', $result);
+		$this->assertPattern('/variable:\s+wrong/', $result);
+	}
+
+/**
+ * Test that errors go into CakeLog when debug = 0.
+ *
+ * @return void
+ */
+	function testHandleErrorDebugOff() {
+		Configure::write('debug', 0);
+		@unlink(LOGS . 'debug.log');
+
+		set_error_handler('ErrorHandler::handleError');
+		$this->_restoreError = true;
+
+		$out .= '';
+
+		$result = file(LOGS . 'debug.log');
+		$this->assertEqual(count($result), 1);
+		$this->assertPattern(
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			$result[0]
+		);
+		@unlink(LOGS . 'debug.log');
 	}
 
 /**
