@@ -39,6 +39,8 @@ class DebuggerTest extends CakeTestCase {
 // !!! Be careful with changing code below as it may
 // !!! change line numbers which are used in the tests
 // !!!
+	protected $_restoreError = false;
+
 /**
  * setUp method
  *
@@ -60,6 +62,9 @@ class DebuggerTest extends CakeTestCase {
 	function tearDown() {
 		parent::teardown();
 		Configure::write('log', true);
+		if ($this->_restoreError) {
+			restore_error_handler();
+		}
 	}
 
 /**
@@ -106,7 +111,9 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function testOutput() {
-		Debugger::invoke(Debugger::getInstance());
+		set_error_handler('Debugger::showError');
+		$this->_restoreError = true;
+
 		$result = Debugger::output(false);
 		$this->assertEqual($result, '');
 		$out .= '';
@@ -141,8 +148,8 @@ class DebuggerTest extends CakeTestCase {
 			'pre' => array('class' => 'cake-debug'),
 			'a' => array(
 				'href' => "javascript:void(0);",
-				'onclick' => "document.getElementById('cakeErr4-trace').style.display = " .
-				             "(document.getElementById('cakeErr4-trace').style.display == 'none'" .
+				'onclick' => "document.getElementById('cakeErr9-trace').style.display = " .
+				             "(document.getElementById('cakeErr9-trace').style.display == 'none'" .
 				             " ? '' : 'none');"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
@@ -151,8 +158,6 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertPattern('/Undefined variable:\s+buzz/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Code/', $result[1]);
 		$this->assertPattern('/<a[^>]+>Context/', $result[2]);
-
-		restore_error_handler();
 	}
 
 /**
@@ -161,7 +166,9 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function testChangeOutputFormats() {
-		Debugger::invoke(Debugger::getInstance());
+		set_error_handler('Debugger::showError');
+		$this->_restoreError = true;
+
 		Debugger::output('js', array(
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
 			               '&line={:line}">{:path}</a>, line {:line}'
@@ -190,8 +197,6 @@ class DebuggerTest extends CakeTestCase {
 			'/error'
 		);
 		$this->assertTags($result, $data, true);
-		
-		restore_error_handler();
 	}
 
 /**

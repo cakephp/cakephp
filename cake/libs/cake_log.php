@@ -236,10 +236,7 @@ class CakeLog {
  * @param array $context Context
  * @return void
  */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if ($code === 2048 || $code === 8192) {
-			return;
-		}
+	public static function logError($code, $description, $file = null, $line = null, $context = null) {
 		switch ($code) {
 			case E_PARSE:
 			case E_ERROR:
@@ -268,8 +265,4 @@ class CakeLog {
 		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		CakeLog::write($level, $message);
 	}
-}
-
-if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
-	set_error_handler(array('CakeLog', 'handleError'));
 }

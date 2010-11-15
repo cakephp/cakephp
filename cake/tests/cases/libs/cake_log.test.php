@@ -174,7 +174,7 @@ class CakeLogTest extends CakeTestCase {
 		Configure::write('log', E_ALL & ~E_DEPRECATED);
 		Configure::write('debug', 0);
 
-		set_error_handler(array('CakeLog', 'handleError'));
+		set_error_handler(array('CakeLog', 'logError'));
 		$out .= '';
 
 		$result = file(LOGS . 'debug.log');
