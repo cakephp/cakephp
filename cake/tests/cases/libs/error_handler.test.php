@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'ErrorHandler');
+App::import('Core', array('ErrorHandler', 'Controller', 'Router'));
 
 /**
  * ErrorHandlerTest class
@@ -145,14 +145,36 @@ class ErrorHandlerTest extends CakeTestCase {
 		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
 			return;
 		}
-		if ($this->skipIf(PHP_SAPI == 'cli', 'This integration test can not be run in cli.')) {
-			return;
-		}
+
 		$error = new NotFoundException('Kaboom!');
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
 		$this->assertPattern('/Kaboom!/', $result, 'message missing.');
+	}
+
+/**
+ * test handleException generating a page.
+ *
+ * @return void
+ */
+	function testHandleExceptionLog() {
+		if ($this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.')) {
+			return;
+		}
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		Configure::write('Exception.log', true);
+		$error = new NotFoundException('Kaboom!');
+
+		ob_start();
+		ErrorHandler::handleException($error);
+		$result = ob_get_clean();
+		$this->assertPattern('/Kaboom!/', $result, 'message missing.');
+
+		$log = file(LOGS . 'error.log');
+		$this->assertPattern('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
 	}
 
 }

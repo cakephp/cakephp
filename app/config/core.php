@@ -58,9 +58,16 @@
  * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
  * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0, 
  * framework errors will be coerced into generic HTTP errors.
+ *
+ * Options:
+ *
+ * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type, 
+ *   including anonymous functions.
+ * - `log` - boolean - Should Exceptions be logged?
  */
 	Configure::write('Exception', array(
-		'handler' => 'ErrorHandler::handleException'
+		'handler' => 'ErrorHandler::handleException',
+		'log' => true
 	));
 
 /**

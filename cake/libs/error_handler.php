@@ -72,6 +72,12 @@ class ErrorHandler {
 			$AppError = new AppError($exception);
 			return $AppError->render();
 		}
+		if (Configure::read('Exception.log')) {
+			if (!class_exists('CakeLog')) {
+				require LIBS . 'cake_log.php';
+			}
+			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
+		}
 		$error = new ExceptionRenderer($exception);
 		$error->render();
 	}
