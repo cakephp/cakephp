@@ -169,6 +169,10 @@ class ErrorHandler {
 				$error = 'Strict';
 				$log = LOG_NOTICE;
 			break;
+			case E_DEPRECATED:
+				$error = 'Deprecated';
+				$log = LOG_NOTICE;
+			break;
 			default:
 				return array();
 			break;
