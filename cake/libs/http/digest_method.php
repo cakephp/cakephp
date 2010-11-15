@@ -34,7 +34,7 @@ class DigestMethod {
  * @throws Exception
  * @link http://www.ietf.org/rfc/rfc2617.txt
  */
-	public static function authentication(&$http) {
+	public static function authentication(HttpSocket $http) {
 		if (isset($http->request['auth']['user'], $http->request['auth']['pass'])) {
 			if (!isset($http->config['request']['auth']['realm']) && !self::_getServerInformation($http)) {
 				return;
@@ -49,7 +49,7 @@ class DigestMethod {
  * @param HttpSocket $http
  * @return boolean
  */
-	protected static function _getServerInformation(&$http) {
+	protected static function _getServerInformation(HttpSocket $http) {
 		$originalRequest = $http->request;
 		$http->request['auth'] = array('method' => false);
 		$http->request($http->request);
@@ -74,7 +74,7 @@ class DigestMethod {
  * @param HttpSocket $http
  * @return string
  */
-	protected static function _generateHeader(&$http) {
+	protected static function _generateHeader(HttpSocket $http) {
 		$a1 = md5($http->request['auth']['user'] . ':' . $http->config['request']['auth']['realm'] . ':' . $http->request['auth']['pass']);
 		$a2 = md5($http->request['method'] . ':' . $http->request['uri']['path']);
 

@@ -33,7 +33,7 @@ class BasicMethod {
  * @return void
  * @throws Exception
  */
-	public static function authentication(&$http) {
+	public static function authentication(HttpSocket $http) {
 		if (isset($http->request['auth']['user'], $http->request['auth']['pass'])) {
 			$http->request['header']['Authorization'] = 'Basic ' . base64_encode($http->request['auth']['user'] . ':' . $http->request['auth']['pass']);
 		}
