@@ -48,6 +48,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'all_configure.test.php');
 		$suite->addTestFile($path . 'all_controllers.test.php');
 		$suite->addTestFile($path . 'all_database.test.php');
+		$suite->addTestFile($path . 'all_error.test.php');
 		$suite->addTestFile($path . 'all_helpers.test.php');
 		$suite->addTestFile($path . 'all_libs.test.php');
 		$suite->addTestFile($path . 'all_localization.test.php');
