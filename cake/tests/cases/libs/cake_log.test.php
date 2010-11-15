@@ -116,7 +116,9 @@ class CakeLogTest extends CakeTestCase {
 		$result = CakeLog::configured();
 		$this->assertEqual($result, array('file'));
 
-		@unlink(LOGS . 'error.log');
+		if (file_exists(LOGS . 'error.log')) {
+			@unlink(LOGS . 'error.log');
+		}
 		CakeLog::write(LOG_WARNING, 'Test warning');
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 
@@ -164,25 +166,4 @@ class CakeLogTest extends CakeTestCase {
 		unlink(LOGS . 'error.log');
 	}
 
-/**
- * Test logging with the error handler.
- *
- * @return void
- */
-	function testLoggingWithErrorHandling() {
-		@unlink(LOGS . 'debug.log');
-		Configure::write('log', E_ALL & ~E_DEPRECATED);
-		Configure::write('debug', 0);
-
-		set_error_handler(array('CakeLog', 'logError'));
-		$out .= '';
-
-		$result = file(LOGS . 'debug.log');
-		$this->assertEqual(count($result), 1);
-		$this->assertPattern(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
-			$result[0]
-		);
-		@unlink(LOGS . 'debug.log');
-	}
 }
