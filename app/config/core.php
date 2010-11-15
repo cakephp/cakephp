@@ -36,39 +36,28 @@
 	Configure::write('debug', 2);
 
 /**
- * CakePHP Log Level:
- *
- * In case of Production Mode CakePHP gives you the possibility to continue logging errors.
- *
- * The following parameters can be used:
- *  Boolean: Set true/false to activate/deactivate logging
- *    Configure::write('log', true);
- *
- *  Integer: Use built-in PHP constants to set the error level (see error_reporting)
- *    Configure::write('log', E_ERROR | E_WARNING);
- *    Configure::write('log', E_ALL ^ E_NOTICE);
- */
-	Configure::write('log', true);
-
-/**
  * Configure the Error handler used to handle errors for your application.  By default
  * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
  * and log errors with CakeLog when debug = 0.
  *
  * Options:
  *
- * - `handler` The callback to handle errors. You can set this to any callback type, including anonymous functions.
- * - `level` The level of errors you are interested in capturing.
+ * - `handler` - callback - The callback to handle errors. You can set this to any callback type, 
+ *    including anonymous functions.
+ * - `level` - int - The level of errors you are interested in capturing.
+ * - `trace` - boolean - Include stack traces for errors in log files.
  */
 	Configure::write('Error', array(
 		'handler' => 'ErrorHandler::handleError',
-		'level' => E_ALL & ~E_DEPRECATED
+		'level' => E_ALL & ~E_DEPRECATED,
+		'trace' => true
 	));
 
 /**
- * Configure the default Exception handler.  This method will be invoked each time there is an uncaught exception
- * by default, ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
- * while debug > 0, framework errors like Missing Controller will be displayed.
+ * Configure the Exception handler used for uncaught exceptions.  By default, 
+ * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
+ * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0, 
+ * framework errors will be coerced into generic HTTP errors.
  */
 	Configure::write('Exception', array(
 		'handler' => 'ErrorHandler::handleException'

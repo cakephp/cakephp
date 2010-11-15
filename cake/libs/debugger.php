@@ -293,12 +293,6 @@ class Debugger {
 		);
 		echo $_this->outputError($data);
 
-		if (Configure::read('log')) {
-			$tpl = $_this->_templates['log']['error'];
-			$options = array('before' => '{:', 'after' => '}');
-			CakeLog::write($level, String::insert($tpl, $data, $options));
-		}
-
 		if ($error == 'Fatal Error') {
 			exit();
 		}
