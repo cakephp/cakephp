@@ -195,9 +195,15 @@ class ErrorHandler {
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
 		$debug = Configure::read('debug');
 		if ($debug) {
-			return Debugger::handleError($code, $description, $file, $line, $context);
+			if (!class_exists('Debugger')) {
+				require LIBS . 'debugger.php';
+			}
+			return Debugger::showError($code, $description, $file, $line, $context);
 		} else {
-			return CakeLog::handleError($code, $description, $file, $line, $context);
+			if (!class_exists('CakeLog')) {
+				require LIBS . 'cake_log.php';
+			}
+			return CakeLog::logError($code, $description, $file, $line, $context);
 		}
 	}
 

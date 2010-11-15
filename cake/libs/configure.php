@@ -103,26 +103,12 @@ class Configure {
 		if (isset($config['debug']) || isset($config['log'])) {
 			$reporting = 0;
 			if (self::$_values['debug']) {
-				if (!class_exists('Debugger')) {
-					require LIBS . 'debugger.php';
-				}
 				$reporting = E_ALL & ~E_DEPRECATED;
 				if (function_exists('ini_set')) {
 					ini_set('display_errors', 1);
 				}
 			} elseif (function_exists('ini_set')) {
 				ini_set('display_errors', 0);
-			}
-
-			if (isset(self::$_values['log']) && self::$_values['log']) {
-				if (!class_exists('CakeLog')) {
-					require LIBS . 'cake_log.php';
-				}
-				if (is_integer(self::$_values['log']) && !self::$_values['debug']) {
-					$reporting = self::$_values['log'];
-				} else {
-					$reporting = E_ALL & ~E_DEPRECATED;
-				}
 			}
 			error_reporting($reporting);
 		}
@@ -381,6 +367,14 @@ class Configure {
 					)));
 				}
 			}
+
+			if (!empty(self::$_values['Error']['handler'])) {
+				set_error_handler(self::$_values['Error']['handler']);
+			}
+			if (!empty(self::$_values['Exception']['handler'])) {
+				set_exception_handler(self::$_values['Exception']['handler']);
+			}
+
 			App::init();
 			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {

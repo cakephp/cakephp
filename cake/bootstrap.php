@@ -34,7 +34,6 @@ require LIBS . 'configure.php';
 require LIBS . 'set.php';
 require LIBS . 'cache.php';
 require LIBS . 'error_handler.php';
-set_exception_handler(array('ErrorHandler', 'handleException'));
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 
