@@ -581,11 +581,12 @@ class Debugger {
 	}
 
 /**
- * Renders error messages
+ * Takes a processed array of data from an error and displays it in the chosen format.
  *
- * @param array $data Data about the current error
+ * @param string $data 
+ * @return void
  */
-	protected function _output($data = array()) {
+	public function outputError($data) {
 		$defaults = array(
 			'level' => 0,
 			'error' => 0,
@@ -594,13 +595,14 @@ class Debugger {
 			'description' => '',
 			'file' => '',
 			'line' => 0,
-			'context' => array()
+			'context' => array(),
+			'start' => 2
 		);
 		$data += $defaults;
 
-		$files = $this->trace(array('start' => 2, 'format' => 'points'));
+		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
 		$code = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
-		$trace = $this->trace(array('start' => 2, 'depth' => '20'));
+		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
 		$context = array();
 		$links = array();

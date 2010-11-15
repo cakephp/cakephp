@@ -170,6 +170,8 @@ class ErrorHandlerTest extends CakeTestCase {
 		$request->base = '';
 		Router::setRequestInfo($request);
 		$this->_debug = Configure::read('debug');
+		$this->_error = Configure::read('Error');
+		Configure::write('debug', 2);
 	}
 
 /**
@@ -179,6 +181,7 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function teardown() {
 		Configure::write('debug', $this->_debug);
+		Configure::write('Error', $this->_error);
 		App::build();
 		if ($this->_restoreError) {
 			restore_error_handler();
@@ -220,7 +223,10 @@ class ErrorHandlerTest extends CakeTestCase {
  */
 	function testHandleErrorDebugOff() {
 		Configure::write('debug', 0);
-		@unlink(LOGS . 'debug.log');
+		Configure::write('Error.trace', false);
+		if (file_exists(LOGS . 'debug.log')) {
+			@unlink(LOGS . 'debug.log');
+		}
 
 		set_error_handler('ErrorHandler::handleError');
 		$this->_restoreError = true;
@@ -233,6 +239,33 @@ class ErrorHandlerTest extends CakeTestCase {
 			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
 			$result[0]
 		);
+		@unlink(LOGS . 'debug.log');
+	}
+
+/**
+ * Test that errors going into CakeLog include traces.
+ *
+ * @return void
+ */
+	function testHandleErrorLoggingTrace() {
+		Configure::write('debug', 0);
+		Configure::write('Error.trace', true);
+		if (file_exists(LOGS . 'debug.log')) {
+			@unlink(LOGS . 'debug.log');
+		}
+
+		set_error_handler('ErrorHandler::handleError');
+		$this->_restoreError = true;
+
+		$out .= '';
+
+		$result = file(LOGS . 'debug.log');
+		$this->assertPattern(
+			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} Notice: Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
+			$result[0]
+		);
+		$this->assertPattern('/^Trace:/', $result[1]);
+		$this->assertPattern('/^ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[2]);
 		@unlink(LOGS . 'debug.log');
 	}
 

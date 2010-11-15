@@ -184,6 +184,7 @@ class ErrorHandler {
  * will log errors to CakeLog, when debug == 0.
  *
  * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.
+ * Stack traces for errors can be enabled with Configure::write('Error.trace', true);
  *
  * @param integer $code Code of error
  * @param string $description Error description
@@ -193,18 +194,82 @@ class ErrorHandler {
  * @return boolean true if error was handled
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+		$errorConfig = Configure::read('Error');
+		if ($errorConfig['level'] && ($code & ~$errorConfig['level'])) {
+			return;
+		}
+		list($error, $log) = self::_mapErrorCode($code);
+
 		$debug = Configure::read('debug');
 		if ($debug) {
 			if (!class_exists('Debugger')) {
 				require LIBS . 'debugger.php';
 			}
-			return Debugger::showError($code, $description, $file, $line, $context);
+			$data = array(
+				'level' => $log,
+				'code' => $code,
+				'error' => $error,
+				'description' => $description,
+				'file' => $file,
+				'line' => $line,
+				'context' => $context,
+				'start' => 2,
+				'path' => Debugger::trimPath($file)
+			);
+			return Debugger::getInstance()->outputError($data);
 		} else {
 			if (!class_exists('CakeLog')) {
 				require LIBS . 'cake_log.php';
 			}
-			return CakeLog::logError($code, $description, $file, $line, $context);
+			$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
+			if (!empty($errorConfig['trace'])) {
+				if (!class_exists('Debugger')) {
+					require LIBS . 'debugger.php';
+				}
+				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
+				$message .= "\nTrace:\n" . $trace . "\n";
+			}
+			return CakeLog::write($log, $message);
 		}
+	}
+
+/**
+ * Map an error code into an Error word, and log location.
+ *
+ * @param int $code Error code to map
+ * @return array Array of error word, and log location.
+ */
+	protected static function _mapErrorCode($code) {
+		switch ($code) {
+			case E_PARSE:
+			case E_ERROR:
+			case E_CORE_ERROR:
+			case E_COMPILE_ERROR:
+			case E_USER_ERROR:
+				$error = 'Fatal Error';
+				$log = LOG_ERROR;
+			break;
+			case E_WARNING:
+			case E_USER_WARNING:
+			case E_COMPILE_WARNING:
+			case E_RECOVERABLE_ERROR:
+				$error = 'Warning';
+				$log = LOG_WARNING;
+			break;
+			case E_NOTICE:
+			case E_USER_NOTICE:
+				$error = 'Notice';
+				$log = LOG_NOTICE;
+			break;
+			case E_STRICT:
+				$error = 'Strict';
+				$log = LOG_NOTICE;
+			break;
+			default:
+				return array();
+			break;
+		}
+		return array($error, $log);
 	}
 
 /**
