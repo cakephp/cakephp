@@ -51,6 +51,25 @@
 	Configure::write('log', true);
 
 /**
+ * Configure the Error handler used to handle errors for your application.  By default
+ * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
+ * and log errors with CakeLog when debug = 0.  You can set it to any static method that is built to handle 
+ * errors.
+ */
+	Configure::write('Error', array(
+		'handler' => 'ErrorHandler::handleError',
+	));
+
+/**
+ * Configure the default Exception handler.  This method will be invoked each time there is an uncaught exception
+ * by default, ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
+ * while debug > 0, framework errors like Missing Controller will be displayed.
+ */
+	Configure::write('Exception', array(
+		'handler' => 'ErrorHandler::handleException'
+	));
+
+/**
  * Application wide charset encoding
  */
 	Configure::write('App.encoding', 'UTF-8');
