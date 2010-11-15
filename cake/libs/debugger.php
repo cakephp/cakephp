@@ -291,7 +291,7 @@ class Debugger {
 		$data = compact(
 			'level', 'error', 'code', 'helpID', 'description', 'file', 'path', 'line', 'context'
 		);
-		echo $_this->_output($data);
+		echo $_this->outputError($data);
 
 		if (Configure::read('log')) {
 			$tpl = $_this->_templates['log']['error'];
