@@ -36,11 +36,13 @@ class AllRoutingTest extends PHPUnit_Framework_TestSuite {
 	public static function suite() {
 		$suite = new CakeTestSuite('All Router and Dispatcher class tests');
 
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'dispatcher.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'router.test.php');
-		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'route' . DS);
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_response.test.php');
-		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_request.test.php');
+		$libs = CORE_TEST_CASES . DS . 'libs' . DS;
+
+		$suite->addTestFile($libs . 'dispatcher.test.php');
+		$suite->addTestFile($libs . 'router.test.php');
+		$suite->addTestDirectory($libs . 'route' . DS);
+		$suite->addTestFile($libs . 'cake_response.test.php');
+		$suite->addTestFile($libs . 'cake_request.test.php');
 		return $suite;
 	}
 }

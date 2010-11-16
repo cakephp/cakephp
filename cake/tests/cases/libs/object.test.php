@@ -716,7 +716,7 @@ class ObjectTest extends CakeTestCase {
 		$result = $this->object->requestAction('/request_action/normal_request_action');
 		$expected = 'Hello World';
 		$this->assertEqual($result, $expected);
-		
+
 		App::build();
 	}
 
@@ -824,7 +824,7 @@ class ObjectTest extends CakeTestCase {
 	function testRequestActionParamParseAndPass() {
 		$result = $this->object->requestAction('/request_action/params_pass');
 		$this->assertTrue(isset($result['url']['url']));
-		$this->assertEqual($result['url']['url'], '/request_action/params_pass');
+		$this->assertEqual($result['url']['url'], 'request_action/params_pass');
 		$this->assertEqual($result['controller'], 'request_action');
 		$this->assertEqual($result['action'], 'params_pass');
 		$this->assertEqual($result['form'], array());
@@ -855,9 +855,12 @@ class ObjectTest extends CakeTestCase {
 		));
 		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'));
 		$expected = null;
-		$this->assertEqual($expected, $result);
+		$this->assertEmpty($result);
 
-		$result = $this->object->requestAction(array('controller' => 'request_action', 'action' => 'post_pass'), array('data' => $_POST['data']));
+		$result = $this->object->requestAction(
+			array('controller' => 'request_action', 'action' => 'post_pass'),
+			array('data' => $_POST['data'])
+		);
 		$expected = $_POST['data'];
 		$this->assertEqual($expected, $result);
 

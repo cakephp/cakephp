@@ -47,6 +47,7 @@ class DebuggerTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setup();
+		Configure::write('debug', 2);
 		Configure::write('log', false);
 	}
 
