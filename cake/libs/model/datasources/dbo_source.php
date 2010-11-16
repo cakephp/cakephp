@@ -299,8 +299,7 @@ class DboSource extends DataSource {
 
 		if ($options['log']) {
 			$this->took = round((microtime(true) - $t) * 1000, 0);
-			$this->affected = $this->lastAffected();
-			//$this->numRows = $this->lastNumRows();
+			$this->numRows = $this->affected = $this->lastAffected();
 			$this->logQuery($sql);
 		}
 
@@ -376,14 +375,7 @@ class DboSource extends DataSource {
  * @return integer Number of rows in resultset
  */
 	function lastNumRows($source = null) {
-		if ($this->hasResult()) {
-			$i = 0;
-			foreach ($this->_result as $row) {
-				$i++;
-			}
-			return $i;
-		}
-		return null;
+		return $this->lastAffected($source);
 	}
 
 /**
