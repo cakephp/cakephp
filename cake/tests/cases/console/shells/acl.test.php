@@ -206,8 +206,9 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->expects($this->at(0))->method('out')
 			->with($this->matchesRegularExpression('/granted/'), true);
 		$this->Task->grant();
+		$node = $this->Task->Acl->Aro->node(array('model' => 'AuthUser', 'foreign_key' => 2));
+		$node = $this->Task->Acl->Aro->read(null, $node[0]['Aro']['id']);
 
-		$node = $this->Task->Acl->Aro->read(null, 4);
 		$this->assertFalse(empty($node['Aco'][0]));
 		$this->assertEqual($node['Aco'][0]['Permission']['_create'], 1);
 	}
@@ -224,7 +225,8 @@ class AclShellTest extends CakeTestCase {
 	
 		$this->Task->deny();
 
-		$node = $this->Task->Acl->Aro->read(null, 4);
+		$node = $this->Task->Acl->Aro->node(array('model' => 'AuthUser', 'foreign_key' => 2));
+		$node = $this->Task->Acl->Aro->read(null, $node[0]['Aro']['id']);
 		$this->assertFalse(empty($node['Aco'][0]));
 		$this->assertEqual($node['Aco'][0]['Permission']['_create'], -1);
 	}
@@ -274,7 +276,8 @@ class AclShellTest extends CakeTestCase {
 		$this->Task->args = array('AuthUser.2', 'ROOT/Controller1', 'all');
 		$this->Task->inherit();
 
-		$node = $this->Task->Acl->Aro->read(null, 4);
+		$node = $this->Task->Acl->Aro->node(array('model' => 'AuthUser', 'foreign_key' => 2));
+		$node = $this->Task->Acl->Aro->read(null, $node[0]['Aro']['id']);
 		$this->assertFalse(empty($node['Aco'][0]));
 		$this->assertEqual($node['Aco'][0]['Permission']['_create'], 0);
 	}
@@ -286,9 +289,13 @@ class AclShellTest extends CakeTestCase {
  */
 	public function testGetPath() {
 		$this->Task->args = array('aro', 'AuthUser.2');
-		$this->Task->expects($this->at(2))->method('out')->with('[1] ROOT');
-		$this->Task->expects($this->at(3))->method('out')->with('  [2] admins');
-		$this->Task->expects($this->at(4))->method('out')->with('    [4] Elrond');
+		$node = $this->Task->Acl->Aro->node(array('model' => 'AuthUser', 'foreign_key' => 2));
+		$first = $node[0]['Aro']['id'];
+		$second = $node[1]['Aro']['id'];
+		$last = $node[2]['Aro']['id'];
+		$this->Task->expects($this->at(2))->method('out')->with('['.$last.'] ROOT');
+		$this->Task->expects($this->at(3))->method('out')->with('  ['.$second.'] admins');
+		$this->Task->expects($this->at(4))->method('out')->with('    ['.$first.'] Elrond');
 		$this->Task->getPath();
 	}
 
