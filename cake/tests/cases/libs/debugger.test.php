@@ -243,7 +243,8 @@ class DebuggerTest extends CakeTestCase {
 		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
-		View::$request = NULL';
+		View::$request = NULL
+		View::$elementCache = "default"';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
 		$this->assertEqual($result, $expected);

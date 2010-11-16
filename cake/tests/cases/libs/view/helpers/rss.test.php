@@ -36,6 +36,7 @@ class RssHelperTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
+		$controller = null;
 		$this->View = new View($controller);
 		$this->Rss = new RssHelper($this->View);
 	}

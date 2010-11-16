@@ -1451,17 +1451,18 @@ class AuthTest extends CakeTestCase {
  * @return void
  */
 	function testAjaxLogin() {
-		App::build(array('views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)));
+		App::build(array(
+			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
-		if (!class_exists('dispatcher')) {
-			require CAKE . 'dispatcher.php';
-		}
+		App::import('Core', 'Dispatcher');
 
 		ob_start();
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch('/ajax_auth/add', array('return' => 1));
+		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), array('return' => 1));
 		$result = ob_get_clean();
+
 		$this->assertEqual("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}
