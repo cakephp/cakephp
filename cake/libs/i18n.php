@@ -148,11 +148,11 @@ class I18n extends Object {
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
-		if (empty($_this->__domains[$domain][$_this->__lang])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang])) {
 			$_this->__domains[$domain][$_this->__lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
-		if (empty($_this->__domains[$domain][$_this->__lang][$_this->category])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang][$_this->category])) {
 			$_this->__bindTextDomain($domain);
 			Cache::write($_this->domain, $_this->__domains[$domain][$_this->__lang], '_cake_core_');
 		}
