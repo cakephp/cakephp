@@ -355,14 +355,13 @@ class Helper extends Object {
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$keys = array_diff(array_keys($options), array_merge($exclude, array('escape')));
-			$values = array_intersect_key(array_values($options), $keys);
+			$filtered = array_diff_key($options, array_merge(array_flip($exclude), array('escape' => true)));
 			$escape = $options['escape'];
 			$attributes = array();
 
-			foreach ($keys as $index => $key) {
-				if ($values[$index] !== false && $values[$index] !== null) {
-					$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
+			foreach ($filtered as $key => $value) {
+				if ($value !== false && $value !== null) {
+					$attributes[] = $this->__formatAttribute($key, $value, $escape);
 				}
 			}
 			$out = implode(' ', $attributes);
