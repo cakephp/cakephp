@@ -1895,14 +1895,14 @@ class DboSource extends DataSource {
 /**
  * Begin a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function begin(&$model) {
-		if (parent::begin($model) && $this->execute($this->_commands['begin'])) {
+	public function begin() {
+		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
 			$this->_transactionStarted = true;
+			$this->_transactionNesting++;
 			return true;
 		}
 		return false;
@@ -1911,14 +1911,18 @@ class DboSource extends DataSource {
 /**
  * Commit a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function commit(&$model) {
-		if (parent::commit($model) && $this->execute($this->_commands['commit'])) {
-			$this->_transactionStarted = false;
+	public function commit() {
+		if ($this->_transactionStarted) {
+			$this->_transactionNesting--;
+			if ($this->_transactionNesting <= 0) {
+				$this->_transactionStarted = false;
+				$this->_transactionNesting = 0;
+				return $this->_connection->commit();
+			}
 			return true;
 		}
 		return false;
@@ -1927,14 +1931,14 @@ class DboSource extends DataSource {
 /**
  * Rollback a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function rollback(&$model) {
-		if (parent::rollback($model) && $this->execute($this->_commands['rollback'])) {
+	public function rollback() {
+		if ($this->_transactionStarted && $this->_connection->rollBack()) {
 			$this->_transactionStarted = false;
+			$this->_transactionNesting = 0;
 			return true;
 		}
 		return false;
