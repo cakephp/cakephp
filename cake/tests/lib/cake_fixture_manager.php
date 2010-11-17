@@ -206,6 +206,7 @@ class CakeFixtureManager {
 			return;
 		}
 
+		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -213,6 +214,7 @@ class CakeFixtureManager {
 				$fixture->insert($test->db);
 			}
 		}
+		$test->db->commit();
 	}
 
 /**
