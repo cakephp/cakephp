@@ -111,7 +111,7 @@ class CommandListShell extends Shell {
 				continue;
 			}
 			foreach ($shells as $shell) {
-				if ($shell !== 'shell.php') {
+				if ($shell !== 'shell.php' && $shell !== 'app_shell.php') {
 					$shell = str_replace('.php', '', $shell);
 					$shellList[$shell][$type] = $type;
 				}
