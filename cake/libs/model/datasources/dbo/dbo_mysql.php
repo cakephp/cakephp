@@ -187,6 +187,7 @@ class DboMysql extends DboSource {
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
 
 		if (!$result) {
+			$result->closeCursor();
 			return array();
 		} else {
 			$tables = array();
@@ -194,6 +195,8 @@ class DboMysql extends DboSource {
 			while ($line = $result->fetch()) {
 				$tables[] = $line[0];
 			}
+
+			$result->closeCursor();
 			parent::listSources($tables);
 			return $tables;
 		}
@@ -245,6 +248,7 @@ class DboMysql extends DboSource {
 			}
 			return $resultRow;
 		} else {
+			$this->_result->closeCursor();
 			return false;
 		}
 	}
@@ -322,6 +326,7 @@ class DboMysql extends DboSource {
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$cols->closeCursor();
 		return $fields;
 	}
 
@@ -437,6 +442,7 @@ class DboMysql extends DboSource {
 					$index[$idx->Key_name]['column'] = $col;
 				}
 			}
+			$indices->closeCursor();
 		}
 		return $index;
 	}
@@ -596,6 +602,7 @@ class DboMysql extends DboSource {
 		$result = $this->_execute('SHOW TABLE STATUS ' . $condition, $params);
 
 		if (!$result) {
+			$result->closeCursor();
 			return array();
 		} else {
 			$tables = array();
@@ -609,6 +616,7 @@ class DboMysql extends DboSource {
 					}
 				}
 			}
+			$result->closeCursor();
 			if (is_string($name)) {
 				return $tables[$name];
 			}

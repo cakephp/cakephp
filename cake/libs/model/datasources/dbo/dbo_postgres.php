@@ -164,6 +164,7 @@ class DboPostgres extends DboSource {
 		$result = $this->_execute($sql, array($schema));
 
 		if (!$result) {
+			$result->closeCursor();
 			return array();
 		} else {
 			$tables = array();
@@ -172,6 +173,7 @@ class DboPostgres extends DboSource {
 				$tables[] = $item->name;
 			}
 
+			$result->closeCursor();
 			parent::listSources($tables);
 			return $tables;
 		}
@@ -247,6 +249,8 @@ class DboPostgres extends DboSource {
 		if (isset($model->sequence)) {
 			$this->_sequenceMap[$table][$model->primaryKey] = $model->sequence;
 		}
+
+		$cols->closeCursor();
 		return $fields;
 	}
 
@@ -717,6 +721,7 @@ class DboPostgres extends DboSource {
 			}
 			return $resultRow;
 		} else {
+			$this->_result->closeCursor();
 			return false;
 		}
 	}

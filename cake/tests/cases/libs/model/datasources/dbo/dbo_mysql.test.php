@@ -62,6 +62,7 @@ class DboMysqlTest extends CakeTestCase {
  */
 	public function setUp() {
 		$this->Dbo = ConnectionManager::getDataSource('test');
+		$this->skipIf(!($this->Dbo instanceof DboMysql));
 		if ($this->Dbo->config['driver'] !== 'mysql') {
 			$this->markTestSkipped('The MySQL extension is not available.');
 		}

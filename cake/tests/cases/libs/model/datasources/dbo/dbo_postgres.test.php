@@ -244,6 +244,7 @@ class DboPostgresTest extends CakeTestCase {
 	public function setUp() {
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
+		$this->skipIf(!($this->Dbo instanceof DboPostgres));
 		$this->Dbo2 = new DboPostgresTestDb($this->Dbo->config, false);
 		$this->skipUnless($this->Dbo->config['driver'] == 'postgres', 'PostgreSQL connection not available');
 		$this->model = new PostgresTestModel();

@@ -333,9 +333,11 @@ class DboSource extends DataSource {
 		if (!$query->execute($params)) {
 			$this->_results = $query;
 			$this->error = $this->lastError($query);
+			$query->closeCursor();
 			return false;
 		}
 		if (!$query->columnCount()) {
+			$query->closeCursor();
 			return true;
 		}
 		return $query;
