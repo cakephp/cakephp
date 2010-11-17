@@ -280,8 +280,7 @@ class TestSuiteShell extends Shell {
 
 		if (empty($testCases)) {
 			$this->out(__("No test cases available \n\n"));
-			$this->help();
-			$this->_stop();
+			return $this->out($this->OptionParser->help());
 		}
 
 		$this->out($title);
