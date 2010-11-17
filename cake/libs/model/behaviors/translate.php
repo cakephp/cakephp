@@ -52,7 +52,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return mixed
  */
 	public function setup(&$model, $config = array()) {
-		$db =& ConnectionManager::getDataSource($model->useDbConfig);
+		$db = ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
 			trigger_error(
 				sprintf(__('Datasource %s for TranslateBehavior of model %s is not connected'), $model->useDbConfig, $model->alias),
@@ -92,8 +92,8 @@ class TranslateBehavior extends ModelBehavior {
 		if (empty($locale)) {
 			return $query;
 		}
-		$db =& ConnectionManager::getDataSource($model->useDbConfig);
-		$RuntimeModel =& $this->translateModel($model);
+		$db = ConnectionManager::getDataSource($model->useDbConfig);
+		$RuntimeModel = $this->translateModel($model);
 		if (!empty($RuntimeModel->tablePrefix)) {
 			$tablePrefix = $RuntimeModel->tablePrefix;
 		} else {

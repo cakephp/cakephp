@@ -1,5 +1,5 @@
 <div class="users form">
-<cake:nocache>
+<!--nocache-->
 	<?php echo $this->Form->create('User');?>
 		<fieldset>
 	 		<legend><?php echo __('Add User');?></legend>
@@ -10,5 +10,5 @@
 		?>
 		</fieldset>
 	<?php echo $this->Form->end('Submit');?>
-</cake:nocache>
+<!--/nocache-->
 </div>

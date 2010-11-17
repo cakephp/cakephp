@@ -41,15 +41,7 @@
 /**
  * Set the include path or define app and core path
  */
-	if (function_exists('ini_set')) {
-		ini_set('include_path',
-			ini_get('include_path') . PATH_SEPARATOR . CAKE_CORE_INCLUDE_PATH
-			. PATH_SEPARATOR . ROOT . DS . APP_DIR . DS
-		);
-		define('APP_PATH', null);
-		define('CORE_PATH', null);
-	} else {
-		define('APP_PATH', ROOT . DS . APP_DIR . DS);
-		define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-	}
+	define('APP_PATH', ROOT . DS . APP_DIR . DS);
+	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
+
 	require APP_DIR . DS . WEBROOT_DIR . DS . 'index.php';

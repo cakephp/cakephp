@@ -220,7 +220,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->dump();
 
-		$this->file =& new File(TMP . 'tests' . DS . 'i18n.sql');
+		$this->file = new File(TMP . 'tests' . DS . 'i18n.sql');
 		$contents = $this->file->read();
 		$this->assertPattern('/DROP TABLE/', $contents);
 		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
@@ -250,7 +250,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->expects($this->once())->method('_stop');
 		$this->Shell->dump();
 
-		$this->file =& new File(TMP . 'tests' . DS . 'dump_test.sql');
+		$this->file = new File(TMP . 'tests' . DS . 'dump_test.sql');
 		$contents = $this->file->read();
 
 		$this->assertPattern('/CREATE TABLE `test_plugin_acos`/', $contents);

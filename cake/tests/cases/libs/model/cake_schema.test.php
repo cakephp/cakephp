@@ -833,13 +833,13 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testCompareEmptyStringAndNull() {
-		$One =& new CakeSchema(array(
+		$One = new CakeSchema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => '')
 			)
 		));
-		$Two =& new CakeSchema(array(
+		$Two = new CakeSchema(array(
 			'posts' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => NULL, 'key' => 'primary'),
 				'name' => array('type' => 'string', 'null' => false, 'default' => null)

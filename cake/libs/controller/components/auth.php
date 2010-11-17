@@ -322,7 +322,7 @@ class AuthComponent extends Component {
 		if (!$this->__setDefaults()) {
 			return false;
 		}
-		$request =& $controller->request;
+		$request = $controller->request;
 		
 		$this->request->data = $controller->request->data = $this->hashPasswords($request->data);
 		$url = '';

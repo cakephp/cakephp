@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title><?php echo $title_for_layout; ?></title>
-	<cake:nocache><?php $x = 1; ?></cake:nocache>
+	<!--nocache--><?php $x = 1; ?><!--/nocache-->
 </head>
 <body>
-	<cake:nocache><?php $x++; ?></cake:nocache>
-	<cake:nocache><?php $x++; ?></cake:nocache>
+	<!--nocache--><?php $x++; ?><!--/nocache-->
+	<!--nocache--><?php $x++; ?><!--/nocache-->
 	<?php echo $content_for_layout;	?>
-	<cake:nocache><?php echo 'cached count is: ' . $x; ?></cake:nocache>
+	<!--nocache--><?php echo 'cached count is: ' . $x; ?><!--/nocache-->
 </body>
 </html>

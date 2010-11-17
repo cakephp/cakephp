@@ -99,7 +99,7 @@ class SchemaShell extends Shell {
 				$name = $plugin;
 			}
 		}
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
+		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -151,7 +151,7 @@ class SchemaShell extends Shell {
 		$content['file'] = $this->params['file'];
 
 		if ($snapshot === true) {
-			$Folder =& new Folder($this->Schema->path);
+			$Folder = new Folder($this->Schema->path);
 			$result = $Folder->read();
 
 			$numToUse = false;
@@ -209,7 +209,7 @@ class SchemaShell extends Shell {
 				$write = $this->params['write'];
 			}
 		}
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 
@@ -218,9 +218,9 @@ class SchemaShell extends Shell {
 				$write .= '.sql';
 			}
 			if (strpos($write, DS) !== false) {
-				$File =& new File($write, true);
+				$File = new File($write, true);
 			} else {
-				$File =& new File($this->Schema->path . DS . $write, true);
+				$File = new File($this->Schema->path . DS . $write, true);
 			}
 
 			if ($File->write($contents)) {
@@ -280,7 +280,7 @@ class SchemaShell extends Shell {
 			$options['file'] = $fileName . '_' . $this->params['snapshot'] . '.php';
 		}
 
-		$Schema =& $this->Schema->load($options);
+		$Schema = $this->Schema->load($options);
 
 		if (!$Schema) {
 			$this->err(sprintf(__('%s could not be loaded'), $this->Schema->path . DS . $this->Schema->file));
@@ -300,7 +300,7 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __create(&$Schema, $table = null) {
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
 
@@ -343,7 +343,7 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __update(&$Schema, $table = null) {
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__('Comparing Database to Schema...'));
 		$options = array();
@@ -390,7 +390,7 @@ class SchemaShell extends Shell {
 			return;
 		}
 		Configure::write('debug', 2);
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {

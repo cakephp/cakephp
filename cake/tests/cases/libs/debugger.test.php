@@ -47,6 +47,7 @@ class DebuggerTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setup();
+		Configure::write('debug', 2);
 		Configure::write('log', false);
 	}
 
@@ -242,7 +243,8 @@ class DebuggerTest extends CakeTestCase {
 		View::$modelId = NULL
 		View::$uuids = array
 		View::$output = false
-		View::$request = NULL';
+		View::$request = NULL
+		View::$elementCache = "default"';
 		$result = str_replace(array("\t", "\r\n", "\n"), "", strtolower($result));
 		$expected =  str_replace(array("\t", "\r\n", "\n"), "", strtolower($expected));
 		$this->assertEqual($result, $expected);

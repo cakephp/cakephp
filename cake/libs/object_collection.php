@@ -38,12 +38,14 @@ abstract class ObjectCollection {
 /**
  * Loads a new object onto the collection. Can throw a variety of exceptions
  *
+ * Implementations of this class support a `$options['callbacks']` flag which enables/disables
+ * a loaded object.
+ *
  * @param string $name Name of object to load.
  * @param array $options Array of configuration options for the object to be constructed.
- * @param boolean $enable Whether or not this helper should be enabled by default
  * @return object the constructed object
  */
-	abstract public function load($name, $options = array(), $enable = true);
+	abstract public function load($name, $options = array());
 
 /**
  * Trigger a callback method on every object in the collection.

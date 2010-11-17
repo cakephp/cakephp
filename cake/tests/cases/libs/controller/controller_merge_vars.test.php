@@ -145,7 +145,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	function testComponentParamMergingNoDuplication() {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
 		
-		$Controller =& new MergeVariablesController();
+		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
 		$expected = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
@@ -160,7 +160,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	function testComponentMergingWithRedeclarations() {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
 
-		$Controller =& new MergeVariablesController();
+		$Controller = new MergeVariablesController();
 		$Controller->components['MergeVar'] = array('remote', 'redirect' => true);
 		$Controller->constructClasses();
 
@@ -176,7 +176,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	function testHelperSettingMergingNoDuplication() {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
 
-		$Controller =& new MergeVariablesController();
+		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
 		$expected = array('MergeVar' => array('format' => 'html', 'terse'));
@@ -191,7 +191,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	function testMergeVarsWithPlugin() {
 		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
 
-		$Controller =& new MergePostsController();
+		$Controller = new MergePostsController();
 		$Controller->components = array('Email' => array('ports' => 'open'));
 		$Controller->plugin = 'MergeVarPlugin';
 		$Controller->constructClasses();
@@ -209,7 +209,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 		);
 		$this->assertEqual($Controller->helpers, $expected, 'Helpers are unexpected %s');
 
-		$Controller =& new MergePostsController();
+		$Controller = new MergePostsController();
 		$Controller->components = array();
 		$Controller->plugin = 'MergeVarPlugin';
 		$Controller->constructClasses();

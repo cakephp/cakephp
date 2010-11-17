@@ -967,7 +967,7 @@ class CakeRequestTestCase extends CakeTestCase {
  * @return void
  */
 	public function testEnvironmentDetection() {
-		$dispatcher =& new Dispatcher();
+		$dispatcher = new Dispatcher();
 
 		$environments = array(
 			'IIS' => array(
@@ -1336,6 +1336,27 @@ class CakeRequestTestCase extends CakeTestCase {
 		
 		$request->data('Post.empty', '');
 		$this->assertSame('', $request->data['Post']['empty']);
+	}
+
+/**
+ * test accept language
+ *
+ * @return void
+ */
+	function testAcceptLanguage() {
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
+
+		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx;en_ca';
+		$result = CakeRequest::acceptLanguage();
+		$this->assertEquals(array('es-mx', 'en-ca'), $result, 'Languages do not match');
+		
+		$result = CakeRequest::acceptLanguage('en-ca');
+		$this->assertTrue($result);
+
+		$result = CakeRequest::acceptLanguage('en-us');
+		$this->assertFalse($result);
 	}
 
 /**

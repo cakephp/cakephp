@@ -51,9 +51,9 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Get the name of the argument
+ * Get the value of the name attribute.
  *
- * @return string
+ * @return string Value of this->_name.
  */
 	public function name() {
 		return $this->_name;

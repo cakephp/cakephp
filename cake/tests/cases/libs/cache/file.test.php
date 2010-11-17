@@ -280,12 +280,12 @@ class FileEngineTest extends CakeTestCase {
  * @return void
  */
 	function testClearWithPrefixes() {
-		$FileOne =& new FileEngine();
+		$FileOne = new FileEngine();
 		$FileOne->init(array(
 			'prefix' => 'prefix_one_',
 			'duration' => DAY
 		));
-		$FileTwo =& new FileEngine();
+		$FileTwo = new FileEngine();
 		$FileTwo->init(array(
 			'prefix' => 'prefix_two_',
 			'duration' => DAY

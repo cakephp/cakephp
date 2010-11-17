@@ -399,7 +399,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testPatternOnAction() {
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/blog/:action/*', 
 			array('controller' => 'blog_posts'), 
 			array('action' => 'other|actions')

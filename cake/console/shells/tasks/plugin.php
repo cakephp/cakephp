@@ -104,7 +104,7 @@ class PluginTask extends Shell {
 		$looksGood = $this->in(__('Look okay?'), array('y', 'n', 'q'), 'y');
 
 		if (strtolower($looksGood) == 'y') {
-			$Folder =& new Folder($this->path . $pluginPath);
+			$Folder = new Folder($this->path . $pluginPath);
 			$directories = array(
 				'config' . DS . 'schema',
 				'models' . DS . 'behaviors',
@@ -127,7 +127,7 @@ class PluginTask extends Shell {
 			foreach ($directories as $directory) {
 				$dirPath = $this->path . $pluginPath . DS . $directory;
 				$Folder->create($dirPath);
-				$File =& new File($dirPath . DS . 'empty', true);
+				$File = new File($dirPath . DS . 'empty', true);
 			}
 
 			foreach ($Folder->messages() as $message) {
