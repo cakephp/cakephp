@@ -292,7 +292,7 @@ class Article extends CakeTestModel {
  */
 class BeforeDeleteComment extends CakeTestModel {
 	var $name = 'BeforeDeleteComment';
-	
+
 	var $useTable = 'comments';
 
 	function beforeDelete($cascade = true) {
@@ -3559,6 +3559,7 @@ class FruitNoWith extends CakeTestModel {
 		)
 	);
 }
+
 class UuidTagNoWith extends CakeTestModel {
 	public $name = 'UuidTag';
 	public $useTable = 'uuid_tags';
@@ -3581,5 +3582,16 @@ class ProductUpdateAll extends CakeTestModel {
 class GroupUpdateAll extends CakeTestModel {
 	public $name = 'GroupUpdateAll';
 	public $useTable = 'group_update_all';
+}
 
+class TransactionTestModel extends CakeTestModel {
+	var $name = 'TransactionTestModel';
+	var $useTable = 'samples';
+
+	function afterSave($created) {
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample6'),
+		);
+		$this->saveAll($data, array('atomic' => true, 'callbacks' => false));
+	}
 }

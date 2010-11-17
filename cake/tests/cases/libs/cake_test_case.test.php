@@ -60,7 +60,6 @@ class CakeTestCaseTest extends CakeTestCase {
  */
 	function tearDown() {
 		Configure::write('debug', $this->_debug);
-		unset($this->Case);
 		unset($this->Result);
 		unset($this->Reporter);
 	}
@@ -77,6 +76,30 @@ class CakeTestCaseTest extends CakeTestCase {
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertTrue($result->wasSuccessful());
 		$this->assertEquals(0, $result->failureCount());
+
+		$input = '<a href="/test.html" class="active">My link</a>';
+		$pattern = array(
+			'a' => array('href' => '/test.html', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($test->assertTags($input, $pattern), 'Double quoted attributes %s');
+
+		$input = "<a href='/test.html' class='active'>My link</a>";
+		$pattern = array(
+			'a' => array('href' => '/test.html', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+
+		$input = "<a href='/test.html' class='active'>My link</a>";
+		$pattern = array(
+			'a' => array('href' => 'preg:/.*\.html/', 'class' => 'active'),
+			'My link',
+			'/a'
+		);
+		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
 	}
 
 /**
@@ -181,6 +204,7 @@ class CakeTestCaseTest extends CakeTestCase {
 		$manager->expects($this->once())->method('unload');
 		$result = $test->run();
 		$this->assertEquals(1, $result->errorCount());
+
 	}
 /**
  * testSkipIf

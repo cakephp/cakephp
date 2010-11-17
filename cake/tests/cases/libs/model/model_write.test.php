@@ -3060,6 +3060,22 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test saveAll with nested saveAll call.
+ *
+ * @return void
+ */
+	function testSaveAllNestedSaveAll() {
+		$this->loadFixtures('Sample');
+		$TransactionTestModel =& new TransactionTestModel();
+
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample5'),
+		);
+
+		$this->assertTrue($TransactionTestModel->saveAll($data, array('atomic' => true)));
+	}
+
+/**
  * testSaveAllTransaction method
  *
  * @access public

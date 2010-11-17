@@ -520,7 +520,6 @@ class AuthComponent extends Component {
 				$valid = $this->Acl->check($user, $this->action());
 			break;
 			case 'crud':
-				$this->mapActions();
 				if (!isset($this->actionMap[$this->request['action']])) {
 					trigger_error(
 						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->request['action'], $this->request['controller']),
@@ -535,7 +534,6 @@ class AuthComponent extends Component {
 				}
 			break;
 			case 'model':
-				$this->mapActions();
 				$action = $this->request['action'];
 				if (isset($this->actionMap[$action])) {
 					$action = $this->actionMap[$action];
