@@ -110,13 +110,6 @@ class Configure extends Object {
  */
 	var $debug = null;
 /**
- * Determines if $__objects cache should be written.
- *
- * @var boolean
- * @access private
- */
-	var $__cache = false;
-/**
  * Holds and key => value array of objects' types.
  *
  * @var array
@@ -203,7 +196,7 @@ class Configure extends Object {
 			}
 			if ($cache === true && !empty($objects)) {
 				$_this->__objects[$name] = $objects;
-				$_this->__cache = true;
+				$_this->__resetCache(true);
 			} else {
 				return $objects;
 			}
@@ -686,12 +679,26 @@ class Configure extends Object {
 		}
 	}
 /**
+ * Determines if $__objects cache should be reset.
+ *
+ * @param boolean $reset 
+ * @return boolean
+ * @access private
+ */	
+	function __resetCache($reset = null) {
+		static $cache = array();
+		if (!$cache && $reset === true) {
+			$cache = true;	
+		}
+		return $cache;
+	}
+/**
  * Caches the object map when the instance of the Configure class is destroyed
  *
  * @access public
  */
 	function __destruct() {
-		if ($this->__cache) {
+		if ($this->__resetCache() === true) {
 			Cache::write('object_map', array_filter($this->__objects), '_cake_core_');
 		}
 	}
@@ -719,13 +726,6 @@ class App extends Object {
  * @access public
  */
 	var $return = false;
-/**
- * Determines if $__maps and $__paths cache should be written.
- *
- * @var boolean
- * @access private
- */
-	var $__cache = false;
 /**
  * Holds key/value pairs of $type => file path.
  *
@@ -835,7 +835,7 @@ class App extends Object {
 					return true;
 				} else {
 					$_this->__remove($name . $ext['class'], $type, $plugin);
-					$_this->__cache = true;
+					$_this->__resetCache(true);
 				}
 			}
 			if (!empty($search)) {
@@ -867,7 +867,7 @@ class App extends Object {
 			}
 
 			if ($directory !== null) {
-				$_this->__cache = true;
+				$_this->__resetCache(true);
 				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
 				$_this->__overload($type, $name . $ext['class']);
 
@@ -1162,6 +1162,20 @@ class App extends Object {
 		}
 	}
 /**
+ * Determines if $__maps and $__paths cache should be reset.
+ *
+ * @param boolean $reset 
+ * @return boolean
+ * @access private
+ */	
+	function __resetCache($reset = null) {
+		static $cache = array();
+		if (!$cache && $reset === true) {
+			$cache = true;	
+		}
+		return $cache;
+	}
+/**
  * Object destructor.
  *
  * Writes cache file if changes have been made to the $__map or $__paths
@@ -1170,7 +1184,7 @@ class App extends Object {
  * @access private
  */
 	function __destruct() {
-		if ($this->__cache) {
+		if ($this->__resetCache() === true) {
 			$core = Configure::corePaths('cake');
 			unset($this->__paths[rtrim($core[0], DS)]);
 			Cache::write('dir_map', array_filter($this->__paths), '_cake_core_');
