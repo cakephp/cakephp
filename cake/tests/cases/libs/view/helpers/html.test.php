@@ -90,6 +90,8 @@ class HtmlHelperTest extends CakeTestCase {
 		$this->Html = new HtmlHelper($this->View);
 		$this->Html->request = new CakeRequest(null, false);
 		$this->Html->request->webroot = '';
+
+		Configure::write('Asset.timestamp', false);
 	}
 
 /**
@@ -262,7 +264,6 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function testImageTag() {
 		$this->Html->request->webroot = '';
-		Configure::write('Asset.timestamp', false);
 
 		$result = $this->Html->image('test.gif');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif', 'alt' => '')));
@@ -354,7 +355,6 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testThemeAssetsInMainWebrootPath() {
-		Configure::write('Asset.timestamp', false);
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
@@ -402,7 +402,6 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testCssLink() {
-		Configure::write('Asset.timestamp', false);
 		Configure::write('Asset.filter.css', false);
 
 		$result = $this->Html->css('screen');
@@ -528,7 +527,6 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	function testScript() {
-		Configure::write('Asset.timestamp', false);
 		$result = $this->Html->script('foo');
 		$expected = array(
 			'script' => array('type' => 'text/javascript', 'src' => 'js/foo.js')
