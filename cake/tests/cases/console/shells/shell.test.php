@@ -69,6 +69,20 @@ class TestShell extends Shell {
 	protected function no_access() {
 		
 	}
+	
+	public function mergeVars($properties, $class) {
+		return $this->_mergeVars($properties, $class);
+	}
+}
+
+/**
+ * Class for testing merging vars
+ *
+ * @package cake.tests.cases.console
+ */
+class TestMergeShell extends Shell {
+	var $tasks = array('DbConfig', 'Fixture');
+	var $uses = array('Comment');
 }
 
 /**
@@ -132,6 +146,22 @@ class ShellTest extends CakeTestCase {
 		$this->assertType('ConsoleInput', $this->Shell->stdin);
 		$this->assertType('ConsoleOutput', $this->Shell->stdout);
 		$this->assertType('ConsoleOutput', $this->Shell->stderr);
+	}
+
+/**
+ * test merging vars
+ *
+ * @return void
+ */
+	function testMergeVars() {
+		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
+		$this->Shell->uses = array('Posts');
+		$this->Shell->mergeVars(array('tasks', 'uses'), 'TestMergeShell');
+
+		$this->assertEquals(array('DbConfig', 'Fixture', 'DbConfig' => array('one', 'two')), $this->Shell->tasks);
+		$expected = array('Fixture' => null, 'DbConfig' => array('one', 'two'));
+		$this->assertEquals($expected, Set::normalize($this->Shell->tasks), 'Normalized results are wrong.');
+		$this->assertEquals(array('Comment', 'Posts'), $this->Shell->uses, 'Merged models are wrong.');
 	}
 
 /**
