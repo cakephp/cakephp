@@ -257,7 +257,6 @@ class ShellDispatcher {
 			Configure::buildPaths(array());
 		}
 
-		Configure::write('debug', 1);
 		return true;
 	}
 /**
