@@ -19,7 +19,7 @@
  */
 
 App::import('Core', 'HttpSocket');
-App::import('Lib', 'http/BasicMethod');
+App::import('Lib', 'http/BasicAuthentication');
 
 /**
  * BasicMethodTest class
@@ -42,7 +42,7 @@ class BasicMethodTest extends CakeTestCase {
 			'pass' => 'secret'
 		);
 
-		BasicMethod::authentication($http);
+		BasicAuthentication::authentication($http);
 		$this->assertEqual($http->request['header']['Authorization'], 'Basic bWFyazpzZWNyZXQ=');
 	}
 

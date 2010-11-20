@@ -24,7 +24,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.http
  */
-class DigestMethod {
+class DigestAuthentication {
 
 /**
  * Authentication

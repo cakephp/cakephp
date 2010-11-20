@@ -455,7 +455,7 @@ class HttpSocket extends CakeSocket {
 				return;
 			}
 		}
-		$authClass = Inflector::camelize($this->request['auth']['method']) . 'Method';
+		$authClass = Inflector::camelize($this->request['auth']['method']) . 'Authentication';
 		if (!App::import('Lib', 'http/' . $authClass)) {
 			throw new Exception(__('Unknown authentication method.'));
 		}
