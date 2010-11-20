@@ -19,6 +19,8 @@
  * @since         CakePHP(tm) v 1.2.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'Controller');
+
 if (!class_exists('AppController')) {
 
 /**
@@ -220,13 +222,13 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'Auth' => array('setting' => 'val', 'otherVal'),
 			'Email' => array('ports' => 'open')
 		);
-		$this->assertEqual($Controller->components, $expected, 'Components are unexpected %s');
+		$this->assertEquals($expected, $Controller->components, 'Components are unexpected.');
 
 		$expected = array(
 			'MergeVar' => array('format' => 'html', 'terse'),
 			'Javascript' => null
 		);
-		$this->assertEqual($Controller->helpers, $expected, 'Helpers are unexpected %s');
+		$this->assertEquals($expected, $Controller->helpers, 'Helpers are unexpected.');
 
 		$Controller = new MergePostsController();
 		$Controller->components = array();
@@ -237,7 +239,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'MergeVar' => array('flag', 'otherFlag', 'redirect' => false),
 			'Auth' => array('setting' => 'val', 'otherVal'),
 		);
-		$this->assertEqual($Controller->components, $expected, 'Components are unexpected %s');
+		$this->assertEqual($expected, $Controller->components, 'Components are unexpected.');
 	}
 
 /**

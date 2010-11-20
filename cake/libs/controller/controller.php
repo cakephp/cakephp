@@ -410,28 +410,51 @@ class Controller extends Object {
 	}
 
 /**
+ * Merges this objects $property with the property in $class' definition.
+ * This classes value for the property will be merged on top of $class'
+ *
+ * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
+ * this method as an empty function.
+ *
+ * @param array $properties The name of the properties to merge.
+ * @param sting $class The class to merge the property with.
+ * @return void
+ */
+	protected function _mergeVars($properties, $class) {
+		$classProperties = get_class_vars($class);
+		foreach ($properties as $var) {
+			if (
+				isset($classProperties[$var]) &&
+				!empty($classProperties[$var]) && 
+				is_array($this->{$var}) &&
+				$this->{$var} != $classProperties[$var]
+			) {
+				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
+			}
+		}
+	}
+
+/**
  * Merge components, helpers, and uses vars from AppController and PluginAppController.
  *
  * @return void
  */
 	protected function __mergeVars() {
-		$pluginName = Inflector::camelize($this->plugin);
-		$pluginController = $pluginName . 'AppController';
+		$pluginName = $pluginController = null;
 
-		if (is_subclass_of($this, 'AppController') || is_subclass_of($this, $pluginController)) {
+		if (!empty($this->plugin)) {
+			$pluginName = Inflector::camelize($this->plugin);
+			$pluginController = $pluginName . 'AppController';
+			if (!is_subclass_of($this, $pluginController)) {
+				$pluginController = null;
+			}
+			$plugin = $pluginName . '.';
+		}
+		
+		if (is_subclass_of($this, 'AppController') || !empty($pluginController)) {
 			$appVars = get_class_vars('AppController');
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
-			$plugin = null;
-
-			if (!empty($this->plugin)) {
-				$plugin = $pluginName . '.';
-				if (!is_subclass_of($this, $pluginController)) {
-					$pluginController = null;
-				}
-			} else {
-				$pluginController = null;
-			}
 
 			if ($uses == $this->uses && !empty($this->uses)) {
 				if (!in_array($plugin . $this->modelClass, $this->uses)) {
@@ -445,20 +468,11 @@ class Controller extends Object {
 			} elseif ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
 			}
-
-			foreach ($merge as $var) {
-				if (!empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var !== 'uses') {
-						$normal = Set::normalize($this->{$var});
-						$app = Set::normalize($appVars[$var]);
-						if ($app !== $normal) {
-							$this->{$var} = Set::merge($app, $normal);
-						}
-					} else {
-						$this->{$var} = Set::merge(
-							array_diff($appVars[$var], $this->{$var}), $this->{$var}
-						);
-					}
+			
+			$this->_mergeVars($merge, 'AppController');
+			foreach ($merge as $prop) {
+				if ($prop !== 'components') {
+					$this->{$prop} = array_unique($this->{$prop});
 				}
 			}
 		}
@@ -471,20 +485,10 @@ class Controller extends Object {
 			if ($this->uses !== null || $this->uses !== false) {
 				$merge[] = 'uses';
 			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var !== 'uses') {
-						$normal = Set::normalize($this->{$var});
-						$app = Set::normalize($appVars[$var]);
-						if ($app !== $normal) {
-							$this->{$var} = Set::merge($app, $normal);
-						}
-					} else {
-						$this->{$var} = Set::merge(
-							array_diff($appVars[$var], $this->{$var}), $this->{$var}
-						);
-					}
+			$this->_mergeVars($merge, $pluginController);
+			foreach ($merge as $prop) {
+				if ($prop !== 'components') {
+					$this->{$prop} = array_unique($this->{$prop});
 				}
 			}
 		}
