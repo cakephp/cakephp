@@ -406,10 +406,15 @@ class FormHelper extends AppHelper {
 		$fields += $locked;
 
 		$fields = Security::hash(serialize($fields) . Configure::read('Security.salt'));
-		$locked = str_rot13(serialize(array_keys($locked)));
+		$locked = serialize(array_keys($locked));
+
+		$Session = ClassRegistry::getObject('Session');
+		if (is_object($Session)) {
+			$Session->write('_locked', $locked);
+		}
 
 		$out = $this->hidden('_Token.fields', array(
-			'value' => urlencode($fields . ':' . $locked),
+			'value' => urlencode($fields),
 			'id' => 'TokenFields' . mt_rand()
 		));
 		$out = sprintf($this->Html->tags['block'], ' style="display:none;"', $out);
@@ -1423,7 +1428,7 @@ class FormHelper extends AppHelper {
 		$style = null;
 		$tag = null;
 		$attributes += array(
-			'class' => null, 
+			'class' => null,
 			'escape' => true,
 			'secure' => null,
 			'empty' => '',

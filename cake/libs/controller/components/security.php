@@ -612,13 +612,9 @@ class SecurityComponent extends Object {
 		$locked = null;
 		$check = $controller->data;
 		$token = urldecode($check['_Token']['fields']);
-
-		if (strpos($token, ':')) {
-			list($token, $locked) = explode(':', $token, 2);
-		}
 		unset($check['_Token']);
 
-		$locked = str_rot13($locked);
+		$locked = $this->Session->read('_locked', $locked);
 		if (preg_match('/(\A|;|{|})O\:[0-9]+/', $locked)) {
 			return false;
 		}

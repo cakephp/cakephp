@@ -829,10 +829,10 @@ class FormHelperTest extends CakeTestCase {
 		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
 		$this->Form->params['_Token']['key'] = $key;
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($fields);
 
 		$expected = Security::hash(serialize($fields) . Configure::read('Security.salt'));
-		$expected .= ':' . str_rot13(serialize(array('Model.valid')));
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
@@ -843,6 +843,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$Session = ClassRegistry::getObject('Session');
+		$locked = 'a:1:{i:0;s:11:"Model.valid";}';
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -892,11 +896,10 @@ class FormHelperTest extends CakeTestCase {
 			'Model.1.hidden' => 'value', 'Model.1.valid' => '0'
 		);
 		$this->Form->params['_Token']['key'] = $key;
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($fields);
 
-		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3An%3A4%3A%7Bv%3A0%3Bf%3A14%3A%22Zbqry.';
-		$hash .= '0.uvqqra%22%3Bv%3A1%3Bf%3A13%3A%22Zbqry.0.inyvq%22%3Bv%3A2%3Bf%3A14%3A%22Zbqry.1';
-		$hash .= '.uvqqra%22%3Bv%3A3%3Bf%3A13%3A%22Zbqry.1.inyvq%22%3B%7D';
+		$hash  = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5';
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
@@ -907,6 +910,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$Session = ClassRegistry::getObject('Session');
+		$locked = 'a:4:{i:0;s:14:"Model.0.hidden";i:1;s:13:"Model.0.valid";i:2;s:14:"Model.1.hidden";i:3;s:13:"Model.1.valid";}';
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -983,10 +990,10 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.1.phone');
 		$this->Form->input('Addresses.1.primary', array('type' => 'checkbox'));
 
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($this->Form->fields);
 
-		$hash = 'c9118120e680a7201b543f562e5301006ccfcbe2%3An%3A2%3A%7Bv%3A0%3Bf%3A14%';
-		$hash .= '3A%22Nqqerffrf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
+		$hash = 'c9118120e680a7201b543f562e5301006ccfcbe2';
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
@@ -997,6 +1004,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$locked = 'a:2:{i:0;s:14:"Addresses.0.id";i:1;s:14:"Addresses.1.id";}';
+		$Session = ClassRegistry::getObject('Session');
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -1028,9 +1039,9 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.1.city');
 		$this->Form->input('Addresses.1.phone');
 
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($this->Form->fields);
-		$hash = '774df31936dc850b7d8a5277dc0b890123788b09%3An%3A2%3A%7Bv%3A0%3Bf%3A14%3A%22Nqqerf';
-		$hash .= 'frf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
+		$hash = '774df31936dc850b7d8a5277dc0b890123788b09';
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
@@ -1041,6 +1052,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$locked = 'a:2:{i:0;s:14:"Addresses.0.id";i:1;s:14:"Addresses.1.id";}';
+		$Session = ClassRegistry::getObject('Session');
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -1072,10 +1087,10 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($expected);
 
-		$hash = '449b7e889128e8e52c5e81d19df68f5346571492%3An%3A1%3A%';
-		$hash .= '7Bv%3A0%3Bf%3A12%3A%22Nqqerffrf.vq%22%3B%7D';
+		$hash = '449b7e889128e8e52c5e81d19df68f5346571492';
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			'input' => array(
@@ -1085,6 +1100,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$locked = 'a:1:{i:0;s:12:"Addresses.id";}';
+		$Session = ClassRegistry::getObject('Session');
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -1179,9 +1198,9 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 
-		$hash = 'bd7c4a654e5361f9a433a43f488ff9a1065d0aaf%3An%3A2%3A%7Bv%3A0%3Bf%3A15%3';
-		$hash .= 'A%22HfreSbez.uvqqra%22%3Bv%3A1%3Bf%3A14%3A%22HfreSbez.fghss%22%3B%7D';
+		$hash = 'bd7c4a654e5361f9a433a43f488ff9a1065d0aaf';
 
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
@@ -1192,6 +1211,10 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$locked = 'a:2:{i:0;s:15:"UserForm.hidden";i:1;s:14:"UserForm.stuff";}';
+		$Session = ClassRegistry::getObject('Session');
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -3137,7 +3160,7 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
-		
+
 		$options = array(
 			'>< Key' => array(
 				1 => 'One',
@@ -3515,7 +3538,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	function testSelectMultipleCheckboxDiv() {
 		$result = $this->Form->select(
-			'Model.tags', 
+			'Model.tags',
 			array('first', 'second'),
 			null,
 			array('multiple' => 'checkbox', 'class' => 'my-class')
@@ -3544,7 +3567,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->input('Model.tags', array(
 			'options' => array('first', 'second'),
-			'multiple' => 'checkbox', 
+			'multiple' => 'checkbox',
 			'class' => 'my-class',
 			'div' => false,
 			'label' => false
@@ -3568,9 +3591,14 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertEqual($this->Form->fields, array('Model.multi_field'));
 
+		ClassRegistry::addObject('Session', new FormHelperTestSessionMock());
 		$result = $this->Form->secure($this->Form->fields);
-		$key = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
+		$key = 'f7d573650a295b94e0938d32b323fde775e5f32b';
 		$this->assertPattern('/"' . $key . '"/', $result);
+
+		$Session = ClassRegistry::getObject('Session');
+		$locked = 'a:0:{}';
+		$this->assertEqual($locked, $Session->read('_locked'));
 	}
 
 /**
@@ -6615,4 +6643,19 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
+}
+
+class FormHelperTestSessionMock {
+  var $values = array();
+
+  function write($key, $value) {
+		$this->values[$key] = $value;
+  }
+
+  function read($key) {
+		if (!empty($this->values[$key])) {
+		  return $this->values[$key];
+		}
+		return null;
+  }
 }
