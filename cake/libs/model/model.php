@@ -438,27 +438,15 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$appVars = get_class_vars('AppModel');
 			$merge = array('_findMethods');
-
 			if ($this->actsAs !== null || $this->actsAs !== false) {
 				$merge[] = 'actsAs';
 			}
 			$parentClass = get_parent_class($this);
-			if (strtolower($parentClass) !== 'appmodel') {
-				$parentVars = get_class_vars($parentClass);
-				foreach ($merge as $var) {
-					if (isset($parentVars[$var]) && !empty($parentVars[$var])) {
-						$appVars[$var] = Set::merge($appVars[$var], $parentVars[$var]);
-					}
-				}
+			if ($parentClass !== 'AppModel') {
+				$this->_mergeVars($merge, $parentClass);
 			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
-				}
-			}
+			$this->_mergeVars($merge, 'AppModel');
 		}
 		$this->Behaviors = new BehaviorCollection();
 
@@ -479,6 +467,27 @@ class Model extends Object {
 		$this->__createLinks();
 		$this->Behaviors->init($this->alias, $this->actsAs);
 	}
+
+/**
+ * Merges this objects $property with the property in $class' definition.
+ * This classes value for the property will be merged on top of $class'
+ *
+ * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
+ * this method as an empty function.
+ *
+ * @param array $properties The name of the properties to merge.
+ * @param sting $class The class to merge the property with.
+ * @return void
+ */
+	protected function _mergeVars($properties, $class) {
+		$classProperties = get_class_vars($class);
+		foreach ($properties as $var) {
+			if (isset($classProperties[$var]) && !empty($classProperties[$var]) && is_array($this->{$var})) {
+				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
+			}
+		}
+	}
+
 
 /**
  * Handles custom method calls, like findBy<field> for DB models,
