@@ -345,6 +345,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertFalse(Folder::isWindowsPath('0:\\cake\\is\\awesome'));
 		$this->assertTrue(Folder::isWindowsPath('C:\\cake\\is\\awesome'));
 		$this->assertTrue(Folder::isWindowsPath('d:\\cake\\is\\awesome'));
+		$this->assertTrue(Folder::isWindowsPath('\\\\vmware-host\\Shared Folders\\file'));
 	}
 /**
  * testIsAbsolute method
@@ -365,6 +366,7 @@ class FolderTest extends CakeTestCase {
 		$this->assertTrue(Folder::isAbsolute('C:\\cake'));
 		$this->assertTrue(Folder::isAbsolute('C:\\path\\to\\file'));
 		$this->assertTrue(Folder::isAbsolute('d:\\path\\to\\file'));
+		$this->assertTrue(Folder::isAbsolute('\\\\vmware-host\\Shared Folders\\file'));
 	}
 /**
  * testIsSlashTerm method

@@ -235,10 +235,7 @@ class Folder extends Object {
  * @static
  */
 	function isWindowsPath($path) {
-		if (preg_match('/^[A-Z]:\\\\/i', $path)) {
-			return true;
-		}
-		return false;
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 /**
  * Returns true if given $path is an absolute path.
@@ -249,8 +246,7 @@ class Folder extends Object {
  * @static
  */
 	function isAbsolute($path) {
-		$match = preg_match('/^\\//', $path) || preg_match('/^[A-Z]:\\\\/i', $path);
-		return $match;
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 /**
  * Returns a correct set of slashes for given $path. (\\ for Windows paths and / for other paths.)
