@@ -410,37 +410,12 @@ class Controller extends Object {
 	}
 
 /**
- * Merges this objects $property with the property in $class' definition.
- * This classes value for the property will be merged on top of $class'
- *
- * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
- * this method as an empty function.
- *
- * @param array $properties The name of the properties to merge.
- * @param sting $class The class to merge the property with.
- * @return void
- */
-	protected function _mergeVars($properties, $class) {
-		$classProperties = get_class_vars($class);
-		foreach ($properties as $var) {
-			if (
-				isset($classProperties[$var]) &&
-				!empty($classProperties[$var]) && 
-				is_array($this->{$var}) &&
-				$this->{$var} != $classProperties[$var]
-			) {
-				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
-			}
-		}
-	}
-
-/**
  * Merge components, helpers, and uses vars from AppController and PluginAppController.
  *
  * @return void
  */
 	protected function __mergeVars() {
-		$pluginName = $pluginController = null;
+		$pluginName = $pluginController = $plugin = null;
 
 		if (!empty($this->plugin)) {
 			$pluginName = Inflector::camelize($this->plugin);
@@ -472,7 +447,7 @@ class Controller extends Object {
 			$this->_mergeVars($merge, 'AppController');
 			foreach ($merge as $prop) {
 				if ($prop !== 'components') {
-					$this->{$prop} = array_unique($this->{$prop});
+					$this->{$prop} = array_unique((array)$this->{$prop});
 				}
 			}
 		}
@@ -488,7 +463,7 @@ class Controller extends Object {
 			$this->_mergeVars($merge, $pluginController);
 			foreach ($merge as $prop) {
 				if ($prop !== 'components') {
-					$this->{$prop} = array_unique($this->{$prop});
+					$this->{$prop} = array_unique((array)$this->{$prop});
 				}
 			}
 		}

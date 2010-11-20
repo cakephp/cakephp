@@ -469,27 +469,6 @@ class Model extends Object {
 	}
 
 /**
- * Merges this objects $property with the property in $class' definition.
- * This classes value for the property will be merged on top of $class'
- *
- * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
- * this method as an empty function.
- *
- * @param array $properties The name of the properties to merge.
- * @param sting $class The class to merge the property with.
- * @return void
- */
-	protected function _mergeVars($properties, $class) {
-		$classProperties = get_class_vars($class);
-		foreach ($properties as $var) {
-			if (isset($classProperties[$var]) && !empty($classProperties[$var]) && is_array($this->{$var})) {
-				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
-			}
-		}
-	}
-
-
-/**
  * Handles custom method calls, like findBy<field> for DB models,
  * and custom RPC calls for remote data sources.
  *
