@@ -513,7 +513,6 @@ class App {
 		if ($name != null && !class_exists($name . $ext['class'])) {
 			if ($load = self::__mapped($name . $ext['class'], $type, $plugin)) {
 				if (self::__load($load)) {
-
 					if (self::$return) {
 						return include($load);
 					}
