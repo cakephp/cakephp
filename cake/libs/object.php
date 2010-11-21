@@ -207,9 +207,10 @@ class Object {
  *
  * @param array $properties The name of the properties to merge.
  * @param sting $class The class to merge the property with.
+ * @param boolean $normalize Set to true to run the properties through Set::normalize() before merging.
  * @return void
  */
-	protected function _mergeVars($properties, $class) {
+	protected function _mergeVars($properties, $class, $normalize = true) {
 		$classProperties = get_class_vars($class);
 		foreach ($properties as $var) {
 			if (
@@ -218,6 +219,10 @@ class Object {
 				is_array($this->{$var}) &&
 				$this->{$var} != $classProperties[$var]
 			) {
+				if ($normalize) {
+					$classProperties[$var] = Set::normalize($classProperties[$var]);
+					$this->{$var} = Set::normalize($this->{$var});
+				}
 				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
 			}
 		}

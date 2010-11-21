@@ -201,7 +201,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'Custom' => null,
 			'Foo' => array('something')
 		);
-		$this->assertIdentical($Controller->helpers, $expected, 'Order is incorrect. %s');
+		$this->assertSame($Controller->helpers, $expected, 'Order is incorrect.');
 	}
 
 /**
@@ -239,7 +239,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'MergeVar' => array('flag', 'otherFlag', 'redirect' => false),
 			'Auth' => array('setting' => 'val', 'otherVal'),
 		);
-		$this->assertEqual($expected, $Controller->components, 'Components are unexpected.');
+		$this->assertEquals($expected, $Controller->components, 'Components are unexpected.');
 	}
 
 /**

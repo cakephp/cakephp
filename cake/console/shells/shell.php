@@ -164,15 +164,13 @@ class Shell extends Object {
 		if ($this->stdin == null) {
 			$this->stdin = new ConsoleInput('php://stdin');
 		}
-		$merge = array();
+		
+		$parent = get_parent_class($this);
 		if ($this->tasks !== null && $this->tasks !== false) {
-			$merge[] = 'tasks';
+			$this->_mergeVars(array('tasks'), $parent, true);
 		}
 		if ($this->uses !== null && $this->uses !== false) {
-			$merge[] = 'uses';
-		}
-		if (!empty($merge)) {
-			$this->_mergeVars($merge, get_parent_class($this));
+			$this->_mergeVars(array('uses'), $parent, false);
 		}
 	}
 

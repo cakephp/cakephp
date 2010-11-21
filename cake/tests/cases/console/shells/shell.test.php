@@ -70,8 +70,8 @@ class TestShell extends Shell {
 		
 	}
 	
-	public function mergeVars($properties, $class) {
-		return $this->_mergeVars($properties, $class);
+	public function mergeVars($properties, $class, $normalize = true) {
+		return $this->_mergeVars($properties, $class, $normalize);
 	}
 }
 
@@ -156,9 +156,12 @@ class ShellTest extends CakeTestCase {
 	function testMergeVars() {
 		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
 		$this->Shell->uses = array('Posts');
-		$this->Shell->mergeVars(array('tasks', 'uses'), 'TestMergeShell');
+		$this->Shell->mergeVars(array('tasks'), 'TestMergeShell');
+		$this->Shell->mergeVars(array('uses'), 'TestMergeShell', false);
 
-		$this->assertEquals(array('DbConfig', 'Fixture', 'DbConfig' => array('one', 'two')), $this->Shell->tasks);
+		$expected = array('DbConfig' => null, 'Fixture' => null, 'DbConfig' => array('one', 'two'));
+		$this->assertEquals($expected, $this->Shell->tasks);
+
 		$expected = array('Fixture' => null, 'DbConfig' => array('one', 'two'));
 		$this->assertEquals($expected, Set::normalize($this->Shell->tasks), 'Normalized results are wrong.');
 		$this->assertEquals(array('Comment', 'Posts'), $this->Shell->uses, 'Merged models are wrong.');

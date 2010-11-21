@@ -441,31 +441,18 @@ class Controller extends Object {
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
 			} elseif ($this->uses !== null || $this->uses !== false) {
-				$merge[] = 'uses';
+				$this->_mergeVars(array('uses'), 'AppController', false);
 			}
-			
-			$this->_mergeVars($merge, 'AppController');
-			foreach ($merge as $prop) {
-				if ($prop !== 'components') {
-					$this->{$prop} = array_unique((array)$this->{$prop});
-				}
-			}
+			$this->_mergeVars($merge, 'AppController', true);
 		}
 
 		if ($pluginController && $pluginName != null) {
-			$appVars = get_class_vars($pluginController);
-			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
 			if ($this->uses !== null || $this->uses !== false) {
-				$merge[] = 'uses';
+				$this->_mergeVars(array('uses'), $pluginController, false);
 			}
 			$this->_mergeVars($merge, $pluginController);
-			foreach ($merge as $prop) {
-				if ($prop !== 'components') {
-					$this->{$prop} = array_unique((array)$this->{$prop});
-				}
-			}
 		}
 	}
 
