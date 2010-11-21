@@ -192,6 +192,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testHelperOrderPrecedence() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
 		$Controller =& new MergeVariablesController();
 		$Controller->helpers = array('Custom', 'Foo' => array('something'));
 		$Controller->constructClasses();
