@@ -162,8 +162,6 @@ class BakeShell extends Shell {
 		$modelBaked = $this->Model->bake($object, false);
 
 		if ($modelBaked && $modelExists === false) {
-			$this->out(sprintf(__('%s Model was baked.'), $model));
-			
 			if ($this->_checkUnitTest()) {
 				$this->Model->bakeFixture($model);
 				$this->Model->bakeTest($model);
@@ -173,7 +171,6 @@ class BakeShell extends Shell {
 
 		if ($modelExists === true) {
 			$controller = $this->_controllerName($name);
-			$this->out(sprintf(__('Baking %s Controller...', 1), $controller));
 			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
 				if ($this->_checkUnitTest()) {
 					$this->Controller->bakeTest($controller);
@@ -182,9 +179,9 @@ class BakeShell extends Shell {
 			if (App::import('Controller', $controller)) {
 				$this->View->args = array($controller);
 				$this->View->execute();
-				$this->out(sprintf(__('%s Views were baked.'), $controller));
 			}
-			$this->out(__('Bake All complete'));
+			$this->out('', 1, Shell::QUIET);
+			$this->out(__('<success>Bake All complete</success>'), 1, Shell::QUIET);
 			array_shift($this->args);
 		} else {
 			$this->error(__('Bake All could not continue without a valid model'));

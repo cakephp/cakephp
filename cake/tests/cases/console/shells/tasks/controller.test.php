@@ -304,11 +304,11 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')->with(
+		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
 			new PHPUnit_Framework_Constraint_IsAnything()
 		);
-		$this->Task->expects($this->at(1))->method('createFile')->with(
+		$this->Task->expects($this->at(3))->method('createFile')->with(
 			$path,
 			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
 		);

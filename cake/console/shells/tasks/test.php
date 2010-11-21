@@ -115,7 +115,7 @@ class TestTask extends BakeTask {
  */
 	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
-			$this->out(__('Bake is detecting possible fixtures..'));
+			$this->out(__('Bake is detecting possible fixtures...'));
 			$testSubject = $this->buildTestSubject($type, $className);
 			$this->generateFixtureList($testSubject);
 		} elseif ($this->interactive) {
@@ -134,6 +134,7 @@ class TestTask extends BakeTask {
 		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
 		}
+		$this->out("\nBaking test case for $className $type...", 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
