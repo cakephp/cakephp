@@ -42,7 +42,10 @@ class ModelTaskTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	public $fixtures = array('core.article', 'core.comment', 'core.articles_tag', 'core.tag', 'core.category_thread');
+	public $fixtures = array(
+		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
+		'core.bake_tag', 'core.category_thread'
+	);
 
 /**
  * setUp method
@@ -116,25 +119,25 @@ class ModelTaskTest extends CakeTestCase {
 		}
 		$this->_useMockedOut();
 
-		$this->Task->expects($this->at(1))->method('out')->with('1. Article');
-		$this->Task->expects($this->at(2))->method('out')->with('2. ArticlesTag');
-		$this->Task->expects($this->at(3))->method('out')->with('3. CategoryThread');
-		$this->Task->expects($this->at(4))->method('out')->with('4. Comment');
-		$this->Task->expects($this->at(5))->method('out')->with('5. Tag');
+		$this->Task->expects($this->at(1))->method('out')->with('1. BakeArticle');
+		$this->Task->expects($this->at(2))->method('out')->with('2. BakeArticlesBakeTag');
+		$this->Task->expects($this->at(3))->method('out')->with('3. BakeComment');
+		$this->Task->expects($this->at(4))->method('out')->with('4. BakeTag');
+		$this->Task->expects($this->at(5))->method('out')->with('5. CategoryThread');
 
-		$this->Task->expects($this->at(7))->method('out')->with('1. Article');
-		$this->Task->expects($this->at(8))->method('out')->with('2. ArticlesTag');
-		$this->Task->expects($this->at(9))->method('out')->with('3. CategoryThread');
-		$this->Task->expects($this->at(10))->method('out')->with('4. Comment');
-		$this->Task->expects($this->at(11))->method('out')->with('5. Tag');
+		$this->Task->expects($this->at(7))->method('out')->with('1. BakeArticle');
+		$this->Task->expects($this->at(8))->method('out')->with('2. BakeArticlesBakeTag');
+		$this->Task->expects($this->at(9))->method('out')->with('3. BakeComment');
+		$this->Task->expects($this->at(10))->method('out')->with('4. BakeTag');
+		$this->Task->expects($this->at(11))->method('out')->with('5. CategoryThread');
 
 		$result = $this->Task->listAll('test');
-		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
+		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
 		$this->assertEqual($result, $expected);
 
 		$this->Task->connection = 'test';
 		$result = $this->Task->listAll();
-		$expected = array('articles', 'articles_tags', 'category_threads', 'comments', 'tags');
+		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags', 'category_threads');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -155,20 +158,14 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	function testGetNameValidOption() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-	
+		$listing = $this->Task->listAll('test');
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
 
 		$result = $this->Task->getName('test');
-		$expected = 'Article';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals(Inflector::classify($listing[0]), $result);
 
 		$result = $this->Task->getName('test');
-		$expected = 'Comment';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals(Inflector::classify($listing[3]), $result);
 	}
 
 /**
@@ -190,8 +187,8 @@ class ModelTaskTest extends CakeTestCase {
  */
 	public function testGetTableName() {
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->getTable('Article', 'test');
-		$expected = 'articles';
+		$result = $this->Task->getTable('BakeArticle', 'test');
+		$expected = 'bake_articles';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -202,7 +199,7 @@ class ModelTaskTest extends CakeTestCase {
  */
 	function testGetTableNameCustom() {
 		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
-		$result = $this->Task->getTable('Article', 'test');
+		$result = $this->Task->getTable('BakeArticle', 'test');
 		$expected = 'my_table';
 		$this->assertEqual($result, $expected);
 	}
@@ -419,19 +416,19 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testBelongsToGeneration() {
-		$model = new Model(array('ds' => 'test', 'name' => 'Comment'));
+		$model = new Model(array('ds' => 'test', 'name' => 'BakeComment'));
 		$result = $this->Task->findBelongsTo($model, array());
 		$expected = array(
 			'belongsTo' => array(
 				array(
-					'alias' => 'Article',
-					'className' => 'Article',
-					'foreignKey' => 'article_id',
+					'alias' => 'BakeArticle',
+					'className' => 'BakeArticle',
+					'foreignKey' => 'bake_article_id',
 				),
 				array(
-					'alias' => 'User',
-					'className' => 'User',
-					'foreignKey' => 'user_id',
+					'alias' => 'BakeUser',
+					'className' => 'BakeUser',
+					'foreignKey' => 'bake_user_id',
 				),
 			)
 		);
@@ -457,23 +454,23 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testHasManyHasOneGeneration() {
-		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
+		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$this->Task->connection = 'test';
 		$this->Task->listAll();
 		$result = $this->Task->findHasOneAndMany($model, array());
 		$expected = array(
 			'hasMany' => array(
 				array(
-					'alias' => 'Comment',
-					'className' => 'Comment',
-					'foreignKey' => 'article_id',
+					'alias' => 'BakeComment',
+					'className' => 'BakeComment',
+					'foreignKey' => 'bake_article_id',
 				),
 			),
 			'hasOne' => array(
 				array(
-					'alias' => 'Comment',
-					'className' => 'Comment',
-					'foreignKey' => 'article_id',
+					'alias' => 'BakeComment',
+					'className' => 'BakeComment',
+					'foreignKey' => 'bake_article_id',
 				),
 			),
 		);
@@ -506,23 +503,18 @@ class ModelTaskTest extends CakeTestCase {
  * @return void
  */
 	public function testHasAndBelongsToManyGeneration() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
+		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$this->Task->connection = 'test';
 		$this->Task->listAll();
 		$result = $this->Task->findHasAndBelongsToMany($model, array());
 		$expected = array(
 			'hasAndBelongsToMany' => array(
 				array(
-					'alias' => 'Tag',
-					'className' => 'Tag',
-					'foreignKey' => 'article_id',
-					'joinTable' => 'articles_tags',
-					'associationForeignKey' => 'tag_id',
+					'alias' => 'BakeTag',
+					'className' => 'BakeTag',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'associationForeignKey' => 'bake_tag_id',
 				),
 			),
 		);
@@ -537,23 +529,23 @@ class ModelTaskTest extends CakeTestCase {
 	public function testDoAssociationsNonInteractive() {
 		$this->Task->connection = 'test';
 		$this->Task->interactive = false;
-		$model = new Model(array('ds' => 'test', 'name' => 'Article'));
+		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$result = $this->Task->doAssociations($model);
 		$expected = array(
 			'hasMany' => array(
 				array(
-					'alias' => 'Comment',
-					'className' => 'Comment',
-					'foreignKey' => 'article_id',
+					'alias' => 'BakeComment',
+					'className' => 'BakeComment',
+					'foreignKey' => 'bake_article_id',
 				),
 			),
 			'hasAndBelongsToMany' => array(
 				array(
-					'alias' => 'Tag',
-					'className' => 'Tag',
-					'foreignKey' => 'article_id',
-					'joinTable' => 'articles_tags',
-					'associationForeignKey' => 'tag_id',
+					'alias' => 'BakeTag',
+					'className' => 'BakeTag',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'associationForeignKey' => 'bake_tag_id',
 				),
 			),
 		);
@@ -567,8 +559,8 @@ class ModelTaskTest extends CakeTestCase {
 	public function testBakeFixture() {
 		$this->Task->plugin = 'test_plugin';
 		$this->Task->interactive = true;
-		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('Article', 'articles');
-		$this->Task->bakeFixture('Article', 'articles');
+		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('BakeArticle', 'bake_articles');
+		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Fixture->connection);
@@ -583,8 +575,8 @@ class ModelTaskTest extends CakeTestCase {
 	public function testBakeTest() {
 		$this->Task->plugin = 'test_plugin';
 		$this->Task->interactive = true;
-		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'Article');
-		$this->Task->bakeTest('Article');
+		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'BakeArticle');
+		$this->Task->bakeTest('BakeArticle');
 
 		$this->assertEqual($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEqual($this->Task->connection, $this->Task->Test->connection);
@@ -676,9 +668,9 @@ class ModelTaskTest extends CakeTestCase {
 				'time' => 'time'
 			)
 		);
-		$result = $this->Task->bake('Article', compact('validate'));
-		$this->assertPattern('/class Article extends AppModel \{/', $result);
-		$this->assertPattern('/\$name \= \'Article\'/', $result);
+		$result = $this->Task->bake('BakeArticle', compact('validate'));
+		$this->assertPattern('/class BakeArticle extends AppModel \{/', $result);
+		$this->assertPattern('/\$name \= \'BakeArticle\'/', $result);
 		$this->assertPattern('/\$validate \= array\(/', $result);
 		$expected = <<< STRINGEND
 array(
@@ -708,9 +700,9 @@ STRINGEND;
 					'foreignKey' => 'something_else_id',
 				),
 				array(
-					'alias' => 'User',
-					'className' => 'User',
-					'foreignKey' => 'user_id',
+					'alias' => 'BakeUser',
+					'className' => 'BakeUser',
+					'foreignKey' => 'bake_user_id',
 				),
 			),
 			'hasOne' => array(
@@ -722,30 +714,30 @@ STRINGEND;
 			),
 			'hasMany' => array(
 				array(
-					'alias' => 'Comment',
-					'className' => 'Comment',
+					'alias' => 'BakeComment',
+					'className' => 'BakeComment',
 					'foreignKey' => 'parent_id',
 				),
 			),
 			'hasAndBelongsToMany' => array(
 				array(
-					'alias' => 'Tag',
-					'className' => 'Tag',
-					'foreignKey' => 'article_id',
-					'joinTable' => 'articles_tags',
-					'associationForeignKey' => 'tag_id',
+					'alias' => 'BakeTag',
+					'className' => 'BakeTag',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'associationForeignKey' => 'bake_tag_id',
 				),
 			)
 		);
-		$result = $this->Task->bake('Article', compact('associations'));
+		$result = $this->Task->bake('BakeArticle', compact('associations'));
 		$this->assertPattern('/\$hasAndBelongsToMany \= array\(/', $result);
 		$this->assertPattern('/\$hasMany \= array\(/', $result);
 		$this->assertPattern('/\$belongsTo \= array\(/', $result);
 		$this->assertPattern('/\$hasOne \= array\(/', $result);
-		$this->assertPattern('/Tag/', $result);
+		$this->assertPattern('/BakeTag/', $result);
 		$this->assertPattern('/OtherModel/', $result);
 		$this->assertPattern('/SomethingElse/', $result);
-		$this->assertPattern('/Comment/', $result);
+		$this->assertPattern('/BakeComment/', $result);
 	}
 
 /**
@@ -756,11 +748,11 @@ STRINGEND;
 	public function testBakeWithPlugin() {
 		$this->Task->plugin = 'controllerTest';
 
-		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'article.php';
+		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'models' . DS . 'bake_article.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/Article extends ControllerTestAppModel/'));
+			->with($path, new PHPUnit_Framework_Constraint_PCREMatch('/BakeArticle extends ControllerTestAppModel/'));
 	
-		$this->Task->bake('Article', array(), array());
+		$this->Task->bake('BakeArticle', array(), array());
 
 		$this->assertEqual(count(ClassRegistry::keys()), 0);
 		$this->assertEqual(count(ClassRegistry::mapKeys()), 0);
@@ -774,12 +766,12 @@ STRINGEND;
 	public function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('article');
-		$filename = '/my/path/article.php';
+		$this->Task->args = array('bake_article');
+		$filename = '/my/path/bake_article.php';
 		
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article extends AppModel/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle extends AppModel/'));
 
 		$this->Task->execute();
 
@@ -794,7 +786,7 @@ STRINGEND;
  */
 	static function nameVariations() {
 		return array(
-			array('Articles'), array('Article'), array('article'), array('articles')
+			array('BakeArticles'), array('BakeArticle'), array('bake_article'), array('bake_articles')
 		);
 	}
 
@@ -810,10 +802,10 @@ STRINGEND;
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 
 		$this->Task->args = array($name);
-		$filename = '/my/path/article.php';
+		$filename = '/my/path/bake_article.php';
 
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article extends AppModel/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle extends AppModel/'));
 		$this->Task->execute();
 	}
 
@@ -825,12 +817,12 @@ STRINGEND;
 	public function testExecuteWithNamedModelHasManyCreated() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('article');
-		$filename = '/my/path/article.php';
+		$this->Task->args = array('bake_article');
+		$filename = '/my/path/bake_article.php';
 	
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch("/'Comment' \=\> array\(/"));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch("/'BakeComment' \=\> array\(/"));
 
 		$this->Task->execute();
 	}
@@ -854,25 +846,25 @@ STRINGEND;
 		$this->Task->Fixture->expects($this->exactly(5))->method('bake');
 		$this->Task->Test->expects($this->exactly(5))->method('bake');
 
-		$filename = '/my/path/article.php';
+		$filename = '/my/path/bake_article.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
 
-		$filename = '/my/path/articles_tag.php';
+		$filename = '/my/path/bake_articles_bake_tag.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesTag/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesBakeTag/'));
 
-		$filename = '/my/path/category_thread.php';
+		$filename = '/my/path/bake_comment.php';
 		$this->Task->expects($this->at(3))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeComment/'));
+
+		$filename = '/my/path/bake_tag.php';
+		$this->Task->expects($this->at(4))
+			->method('createFile')->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeTag/'));
+		
+		$filename = '/my/path/category_thread.php';
+		$this->Task->expects($this->at(5))->method('createFile')
 			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
-
-		$filename = '/my/path/comment.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Comment/'));
-
-		$filename = '/my/path/tag.php';
-		$this->Task->expects($this->at(5))
-			->method('createFile')->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Tag/'));
 
 		$this->Task->execute();
 
@@ -895,26 +887,26 @@ STRINGEND;
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('all');
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->skipTables = array('tags');
+		$this->Task->skipTables = array('bake_tags');
 
 		$this->Task->Fixture->expects($this->exactly(4))->method('bake');
 		$this->Task->Test->expects($this->exactly(4))->method('bake');
 
-		$filename = '/my/path/article.php';
+		$filename = '/my/path/bake_article.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
 
-		$filename = '/my/path/articles_tag.php';
+		$filename = '/my/path/bake_articles_bake_tag.php';
 		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class ArticlesTag/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticlesBakeTag/'));
+
+		$filename = '/my/path/bake_comment.php';
+		$this->Task->expects($this->at(3))->method('createFile')
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeComment/'));
 
 		$filename = '/my/path/category_thread.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
-
-		$filename = '/my/path/comment.php';
 		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Comment/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class CategoryThread/'));
 
 		$this->Task->execute();
 	}
@@ -950,10 +942,10 @@ STRINGEND;
 		$this->Task->Test->expects($this->once())->method('bake');
 		$this->Task->Fixture->expects($this->once())->method('bake');
 
-		$filename = '/my/path/article.php';
+		$filename = '/my/path/bake_article.php';
 
 		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class Article/'));
+			->with($filename, new PHPUnit_Framework_Constraint_PCREMatch('/class BakeArticle/'));
 
 		$this->Task->execute();
 
