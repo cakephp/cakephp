@@ -49,6 +49,18 @@
  * Finally, in your `app/config/bootstrap.php` you can configure use `set_exception_handler()`
  * to take total control over application exception handling.
  *
+ * #### Logging exceptions
+ *
+ * You can log all the exceptions that are dealt with by ErrorHandler by setting `Exception.log` to true
+ * in your core.php.  Enabling this will log every exception to CakeLog and the configured loggers.
+ *
+ * ### PHP errors
+ *
+ * Error handler also provides the built in features for handling php errors (trigger_error).
+ * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
+ * errors will be logged to CakeLog.  You can control which errors are logged by setting
+ * `Error.level` in your core.php.
+ *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
