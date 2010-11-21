@@ -40,7 +40,14 @@ class BakeShell extends Shell {
 	public $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
 
 /**
- * Override loadTasks() to handle paths
+ * The connection being used.
+ *
+ * @var string
+ */
+	public $connection = 'default';
+
+/**
+ * Assign $this->connection to the active task if a connection param is set.
  *
  */
 	public function startup() {
@@ -121,7 +128,6 @@ class BakeShell extends Shell {
  *
  */
 	public function all() {
-		$this->hr();
 		$this->out('Bake All');
 		$this->hr();
 
@@ -157,6 +163,7 @@ class BakeShell extends Shell {
 
 		if ($modelBaked && $modelExists === false) {
 			$this->out(sprintf(__('%s Model was baked.'), $model));
+			
 			if ($this->_checkUnitTest()) {
 				$this->Model->bakeFixture($model);
 				$this->Model->bakeTest($model);
@@ -166,8 +173,8 @@ class BakeShell extends Shell {
 
 		if ($modelExists === true) {
 			$controller = $this->_controllerName($name);
+			$this->out(sprintf(__('Baking %s Controller...', 1), $controller));
 			if ($this->Controller->bake($controller, $this->Controller->bakeActions($controller))) {
-				$this->out(sprintf(__('%s Controller was baked.'), $name));
 				if ($this->_checkUnitTest()) {
 					$this->Controller->bakeTest($controller);
 				}
@@ -175,7 +182,7 @@ class BakeShell extends Shell {
 			if (App::import('Controller', $controller)) {
 				$this->View->args = array($controller);
 				$this->View->execute();
-				$this->out(sprintf(__('%s Views were baked.'), $name));
+				$this->out(sprintf(__('%s Views were baked.'), $controller));
 			}
 			$this->out(__('Bake All complete'));
 			array_shift($this->args);
