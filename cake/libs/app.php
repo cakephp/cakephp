@@ -324,9 +324,6 @@ class App {
  */
 	public static function core($type = null) {
 		static $paths = false;
-		if ($paths === false) {
-			$paths = Cache::read('core_paths', '_cake_core_');
-		}
 		if (!$paths) {
 			$paths = array();
 			$libs = dirname(__FILE__) . DS;
@@ -347,8 +344,6 @@ class App {
 			$paths['shells'][] = $cake . 'console' . DS . 'shells' . DS;
 			// Provide BC path to vendors/shells
 			$paths['shells'][] = $path . 'vendors' . DS . 'shells' . DS;
-
-			Cache::write('core_paths', array_filter($paths), '_cake_core_');
 		}
 		if ($type && isset($paths[$type])) {
 			return $paths[$type];
