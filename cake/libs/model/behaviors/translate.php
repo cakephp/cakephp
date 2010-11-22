@@ -115,6 +115,8 @@ class TranslateBehavior extends ModelBehavior {
 				)
 			);
 			return $query;
+		} elseif (is_string($query['fields'])) {
+			$query['fields'] = array($query['fields']);
 		}
 		$autoFields = false;
 
