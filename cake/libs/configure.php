@@ -580,14 +580,6 @@ class App extends Object {
 	var $return = false;
 
 /**
- * Determines if $__maps and $__paths cache should be written.
- *
- * @var boolean
- * @access private
- */
-	var $__cache = false;
-
-/**
  * Holds key/value pairs of $type => file path.
  *
  * @var array
@@ -836,7 +828,7 @@ class App extends Object {
 			}
 
 			if ($cache === true) {
-				$_this->__cache = true;
+				$_this->__resetCache(true);
 			}
 			$_this->__objects[$name] = $objects;
 		}
@@ -932,7 +924,7 @@ class App extends Object {
 					return true;
 				} else {
 					$_this->__remove($name . $ext['class'], $type, $plugin);
-					$_this->__cache = true;
+					$_this->__resetCache(true);
 				}
 			}
 			if (!empty($search)) {
@@ -963,7 +955,7 @@ class App extends Object {
 			}
 
 			if ($directory !== null) {
-				$_this->__cache = true;
+				$_this->__resetCache(true);
 				$_this->__map($directory . $file, $name . $ext['class'], $type, $plugin);
 				$_this->__overload($type, $name . $ext['class'], $parent);
 
@@ -1292,6 +1284,21 @@ class App extends Object {
 		}
 		return $items;
 	}
+	
+/**
+ * Determines if $__maps, $__objects and $__paths cache should be reset.
+ *
+ * @param boolean $reset 
+ * @return boolean
+ * @access private
+ */	
+	function __resetCache($reset = null) {
+		static $cache = array();
+		if (!$cache && $reset === true) {
+			$cache = true;	
+		}
+		return $cache;
+	}
 
 /**
  * Object destructor.
@@ -1302,7 +1309,7 @@ class App extends Object {
  * @access private
  */
 	function __destruct() {
-		if ($this->__cache) {
+		if ($this->__resetCache() === true) {
 			$core = App::core('cake');
 			unset($this->__paths[rtrim($core[0], DS)]);
 			Cache::write('dir_map', array_filter($this->__paths), '_cake_core_');

@@ -618,10 +618,11 @@ class SecurityComponent extends Object {
 		}
 		unset($check['_Token']);
 
+		$locked = explode('|', $locked);
+
 		$lockedFields = array();
 		$fields = Set::flatten($check);
 		$fieldList = array_keys($fields);
-		$locked = unserialize(str_rot13($locked));
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {

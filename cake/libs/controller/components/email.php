@@ -261,6 +261,9 @@ class EmailComponent extends Object{
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
  *
+ * If you are sending Email from a shell, be sure to set this value.  As you
+ * could encounter delivery issues if you do not.
+ *
  * @var mixed
  * @access public
  */
@@ -944,11 +947,6 @@ class EmailComponent extends Object{
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
 			$to = $this->to;
-		}
-		if ($this->delivery == 'smtp') {
-			$fm .= sprintf('%s %s%s', 'Host:', $this->smtpOptions['host'], $nl);
-			$fm .= sprintf('%s %s%s', 'Port:', $this->smtpOptions['port'], $nl);
-			$fm .= sprintf('%s %s%s', 'Timeout:', $this->smtpOptions['timeout'], $nl);
 		}
 		$fm .= sprintf('%s %s%s', 'To:', $to, $nl);
 		$fm .= sprintf('%s %s%s', 'From:', $this->from, $nl);

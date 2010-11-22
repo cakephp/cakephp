@@ -21,6 +21,10 @@ App::import('Helper', array('Html', 'Paginator', 'Form', 'Ajax', 'Javascript', '
 
 Mock::generate('JsHelper', 'PaginatorMockJsHelper');
 
+if (!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', 'http://cakephp.org');
+}
+
 /**
  * PaginatorHelperTest class
  *
@@ -1715,6 +1719,16 @@ class PaginatorHelperTest extends CakeTestCase {
 			' | ',
 			'<span',
 			array('a' => array('href' => '/index/page:15/sort:Client.name/direction:DESC')), '15', '/a',
+			'/span',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->options(array('url' => array('full_base' => true)));
+		$result = $this->Paginator->first();
+
+		$expected = array(
+			'<span',
+			array('a' => array('href' => FULL_BASE_URL . '/index/page:1/sort:Client.name/direction:DESC')), '&lt;&lt; first', '/a',
 			'/span',
 		);
 		$this->assertTags($result, $expected);

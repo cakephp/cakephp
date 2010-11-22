@@ -42,5 +42,5 @@ class <?php echo $controller;?> extends AppController {
 </pre>
 <p class="notice">
 	<strong><?php __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s.', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_action.ctp'); ?>
+	<?php printf(__('If you want to customize this error message, create %s', true), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_action.ctp'); ?>
 </p>
