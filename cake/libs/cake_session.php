@@ -141,7 +141,7 @@ class CakeSession {
  * @param boolean $start Should session be started right now
  */
 	public static function init($base = null, $start = true) {
-		App::import('Core', array('Set', 'Security'));
+		App::import('Core', 'Security');
 		self::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');

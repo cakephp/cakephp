@@ -21,7 +21,8 @@
 /**
  * Included libraries.
  */
-App::import('Core', array('l10n', 'Multibyte'));
+App::import('Core', 'L10n');
+App::import('Core', 'Multibyte');
 
 /**
  * I18n handles translation of Text and time format strings.

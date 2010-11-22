@@ -810,7 +810,7 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _smtp() {
-		App::import('Core', array('CakeSocket'));
+		App::import('Core', 'CakeSocket');
 
 		$defaults = array(
 			'host' => 'localhost',

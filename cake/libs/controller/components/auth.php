@@ -20,7 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', array('Router', 'Security'), false);
+App::import('Core', 'Router', false);
+App::import('Core', 'Security', false);
 
 /**
  * Authentication control component class

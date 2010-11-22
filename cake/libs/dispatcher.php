@@ -24,7 +24,9 @@
 /**
  * List of helpers to include
  */
-App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'), false);
+App::import('Core', 'Router', false);
+App::import('Core', 'CakeRequest', false);
+App::import('Core', 'CakeResponse', false);
 App::import('Controller', 'Controller', false);
 
 /**
