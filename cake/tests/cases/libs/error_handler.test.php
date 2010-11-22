@@ -84,6 +84,36 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * provides errors for mapping tests.
+ *
+ * @return void
+ */
+	public static function errorProvider() {
+		return array(
+			array(E_USER_NOTICE, 'Notice'),
+			array(E_USER_WARNING, 'Warning'),
+			array(E_USER_ERROR, 'Fatal Error'),
+		);
+	}
+
+/**
+ * test error mappings
+ *
+ * @dataProvider errorProvider
+ * @return void
+ */
+	function testErrorMapping($error, $expected) {
+		set_error_handler('ErrorHandler::handleError');
+		$this->_restoreError = true;
+
+		ob_start();
+		trigger_error('Test error', $error);
+
+		$result = ob_get_clean();
+		$this->assertPattern('/<b>' . $expected . '<\/b>/', $result);
+	}
+
+/**
  * Test that errors go into CakeLog when debug = 0.
  *
  * @return void

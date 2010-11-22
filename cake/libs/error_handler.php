@@ -185,9 +185,6 @@ class ErrorHandler {
 				$error = 'Deprecated';
 				$log = LOG_NOTICE;
 			break;
-			default:
-				return array();
-			break;
 		}
 		return array($error, $log);
 	}
