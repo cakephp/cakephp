@@ -56,7 +56,7 @@ class TestSuiteShell extends Shell {
 		))->addOption('log-dbus', array(
 			'help' => __('Log test execution to DBUS.'),
 			'default' => false
-		))->addOption('--coverage-html', array(
+		))->addOption('coverage-html', array(
 			'help' => __('<dir> Generate code coverage report in HTML format.'),
 			'default' => false
 		))->addOption('coverage-clover', array(
