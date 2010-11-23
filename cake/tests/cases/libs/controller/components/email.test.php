@@ -315,6 +315,7 @@ TEMPDOC;
 		$this->Controller->EmailTest->template = null;
 		$this->Controller->EmailTest->delivery = 'debug';
 
+		$date = date(DATE_RFC2822);
 		$message = <<<MSGBLOC
 <pre>To: postmaster@localhost
 From: noreply@example.com
@@ -323,6 +324,7 @@ Header:
 
 From: noreply@example.com
 Reply-To: noreply@example.com
+Date: $date
 X-Mailer: CakePHP Email Component
 Content-Type: {CONTENTTYPE}
 Content-Transfer-Encoding: 7bitParameters:
@@ -365,6 +367,7 @@ MSGBLOC;
 
 		$this->Controller->EmailTest->delivery = 'debug';
 
+		$date = date(DATE_RFC2822);
 		$header = <<<HEADBLOC
 To: postmaster@localhost
 From: noreply@example.com
@@ -373,6 +376,7 @@ Header:
 
 From: noreply@example.com
 Reply-To: noreply@example.com
+Date: $date
 X-Mailer: CakePHP Email Component
 Content-Type: {CONTENTTYPE}
 Content-Transfer-Encoding: 7bitParameters:
@@ -500,12 +504,70 @@ TEXTBLOC;
 		$this->Controller->EmailTest->reset();
 		$this->Controller->EmailTest->to = 'postmaster@localhost';
 		$this->Controller->EmailTest->from = 'noreply@example.com';
-		$this->Controller->EmailTest->subject = 'Cake SMTP test';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
 		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 		$this->Controller->EmailTest->template = null;
 
 		$this->Controller->EmailTest->delivery = 'debug';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/To: postmaster@localhost\n/', $result);
+		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
+		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
+		$this->assertPattern('/From: noreply@example.com\n/', $result);
+		$this->assertPattern('/Date: ' . date(DATE_RFC2822) . '\n/', $result);
+		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
+		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
+		$this->assertPattern('/This is the body of the message/', $result);
+	}
+/**
+ * testContentArray method
+ *
+ * @access public
+ * @return void
+ */
+	function testSendContentArray() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+
+		$content = array('First line', 'Second line', 'Third line');
+		$this->assertTrue($this->Controller->EmailTest->send($content));
+		$result = $this->Controller->Session->read('Message.email.message');
+
+		$this->assertPattern('/To: postmaster@localhost\n/', $result);
+		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
+		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
+		$this->assertPattern('/From: noreply@example.com\n/', $result);
+		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
+		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
+		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
+		$this->assertPattern('/First line\n/', $result);
+		$this->assertPattern('/Second line\n/', $result);
+		$this->assertPattern('/Third line\n/', $result);
+	}
+
+/**
+ * test setting a custom date.
+ *
+ * @return void
+ */
+	function testDateProperty() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake Debug Test';
+		$this->Controller->EmailTest->date = 'Today!';
+		$this->Controller->EmailTest->template = null;
+		$this->Controller->EmailTest->delivery = 'debug';
+
+		$this->assertTrue($this->Controller->EmailTest->send('test message'));
+		$result = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/Date: Today!\n/', $result);
 	}
 /**
  * testContentStripping method
@@ -639,6 +701,7 @@ TEXTBLOC;
 		$this->Controller->EmailTest->return = 'test.return@example.com';
 		$this->Controller->EmailTest->cc = array('cc1@example.com', 'cc2@example.com');
 		$this->Controller->EmailTest->bcc = array('bcc1@example.com', 'bcc2@example.com');
+		$this->Controller->EmailTest->date = 'Today!';
 		$this->Controller->EmailTest->subject = 'Test subject';
 		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
 		$this->Controller->EmailTest->delivery = 'smtp';
@@ -656,6 +719,7 @@ TEXTBLOC;
 		$this->assertNull($this->Controller->EmailTest->return);
 		$this->assertIdentical($this->Controller->EmailTest->cc, array());
 		$this->assertIdentical($this->Controller->EmailTest->bcc, array());
+		$this->assertNull($this->Controller->EmailTest->date);
 		$this->assertNull($this->Controller->EmailTest->subject);
 		$this->assertNull($this->Controller->EmailTest->additionalParams);
 		$this->assertIdentical($this->Controller->EmailTest->getHeaders(), array());
