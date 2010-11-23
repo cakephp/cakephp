@@ -22,6 +22,9 @@
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+if (!class_exists('Security')) {
+	App::import('Core', 'Security');
+}
 
 /**
  * Session class for Cake.
@@ -193,9 +196,6 @@ class CakeSession extends Object {
 			}
 		}
 		if (isset($_SESSION) || $start === true) {
-			if (!class_exists('Security')) {
-				App::import('Core', 'Security');
-			}
 			$this->sessionTime = $this->time + (Security::inactiveMins() * Configure::read('Session.timeout'));
 			$this->security = Configure::read('Security.level');
 		}
