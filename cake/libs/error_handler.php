@@ -21,7 +21,9 @@
  */
 
 /**
- * Error Handler.
+ * Error Handler provides basic error and exception handling for your application.
+ *
+ * ### Uncaught exception handling
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
  * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
@@ -31,6 +33,7 @@
  *
  * You can implement application specific exception handling in one of a few ways:
  *
+ * - Set Configure::write('Exception.handler', 'YourClass::yourMethod');
  * - Create a AppController::appError();
  * - Create an AppError class.
  *
@@ -63,6 +66,7 @@
  *
  * @package       cake
  * @subpackage    cake.cake.libs
+ * @see ExceptionRenderer for more information on how to customize exception rendering.
  */
 class ErrorHandler {
 
