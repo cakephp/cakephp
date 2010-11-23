@@ -777,7 +777,7 @@ class App {
 				if (!class_exists('Shell')) {
 					App::import($type, 'Shell', false);
 				}
-				if (!class_exists('AppModel')) {
+				if (!class_exists('AppShell')) {
 					App::import($type, 'AppShell', false);
 				}
 				if ($plugin) {
