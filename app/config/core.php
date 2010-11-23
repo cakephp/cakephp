@@ -63,10 +63,13 @@
  *
  * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type, 
  *   including anonymous functions.
+ * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
+ *   should place the file for that class in app/libs. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
  */
 	Configure::write('Exception', array(
 		'handler' => 'ErrorHandler::handleException',
+		'renderer' => 'ExceptionRenderer',
 		'log' => true
 	));
 

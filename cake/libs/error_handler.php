@@ -21,41 +21,45 @@
  */
 
 /**
- * Error Handler provides basic error and exception handling for your application.
- *
- * ### Uncaught exception handling
- *
- * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
+ * Error Handler provides basic error and exception handling for your application. It Captures and 
+ * handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
  * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling
  *
- * You can implement application specific exception handling in one of a few ways:
+ * You can implement application specific exception handling in one of a few ways.  Each approach
+ * gives you different amounts of control over the exception handling process.
  *
  * - Set Configure::write('Exception.handler', 'YourClass::yourMethod');
- * - Create a AppController::appError();
- * - Create an AppError class.
+ * - Create AppController::appError();
+ * - Set Configure::write('Exception.renderer', 'YourClass');
  *
- * #### Using AppController::appError();
+ * #### Create your own Exception handler with `Exception.handler`
  *
- * This controller method is called instead of the default exception handling.  It receives the 
+ * This gives you full control over the exception handling process.  The class you choose should be
+ * loaded in your app/config/bootstrap.php, so its available to handle any exceptions.  You can
+ * define the handler as any callback type. You can't combine this with other Exception settings.
+ *
+ * #### Using `AppController::appError();`
+ *
+ * This controller method is called instead of the default exception rendering.  It receives the
  * thrown exception as its only argument.  You should implement your error handling in that method.
  *
- * #### Using an AppError class
+ * #### Using a custom renderer with `Exception.renderer`
  *
- * This approach gives more flexibility and power in how you handle exceptions.  You can create 
- * `app/libs/app_error.php` and create a class called `AppError`.  The core ErrorHandler class
- * will attempt to construct this class and let it handle the exception. This provides a more
- * flexible way to handle exceptions in your application.
+ * If you don't want to take control of the exception handling, but want to change how exceptions are
+ * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
+ * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/libs.
  *
- * Finally, in your `app/config/bootstrap.php` you can configure use `set_exception_handler()`
- * to take total control over application exception handling.
+ * Your custom renderer should expect an exception in its constructor, and implement a render method.
+ * Failing to do so will cause additional errors.
  *
  * #### Logging exceptions
  *
- * You can log all the exceptions that are dealt with by ErrorHandler by setting `Exception.log` to true
- * in your core.php.  Enabling this will log every exception to CakeLog and the configured loggers.
+ * Using the built-in exception handling, you can log all the exceptions 
+ * that are dealt with by ErrorHandler by setting `Exception.log` to true in your core.php. 
+ * Enabling this will log every exception to CakeLog and the configured loggers.
  *
  * ### PHP errors
  *
@@ -81,20 +85,17 @@ class ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		App::import('Core', 'ExceptionRenderer');
-		if (file_exists(APP . 'app_error.php') || class_exists('AppError')) {
-			if (!class_exists('AppError')) {
-				require(APP . 'app_error.php');
-			}
-			$AppError = new AppError($exception);
-			return $AppError->render();
-		}
-		if (Configure::read('Exception.log')) {
+		$config = Configure::read('Exception');
+		if (!empty($config['log'])) {
 			if (!class_exists('CakeLog')) {
 				require LIBS . 'cake_log.php';
 			}
 			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
 		}
-		$error = new ExceptionRenderer($exception);
+		if ($config['renderer'] !== 'ExceptionRenderer') {
+			App::import('Lib', $config['renderer']);
+		}
+		$error = new $config['renderer']($exception);
 		$error->render();
 	}
 
