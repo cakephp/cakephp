@@ -261,6 +261,9 @@ class EmailComponent extends Object{
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
  *
+ * If you are sending Email from a shell, be sure to set this value.  As you
+ * could encounter delivery issues if you do not.
+ *
  * @var mixed
  * @access public
  */
