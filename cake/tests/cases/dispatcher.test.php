@@ -1017,6 +1017,13 @@ class DispatcherTest extends CakeTestCase {
 		$expected = '?/home';
 		$this->assertEqual($expected, $result);
 
+		$_GET['url'] = array();
+		$Dispatcher =& new Dispatcher();
+		$Dispatcher->base = '/shop';
+		$uri = '/shop/fr/pages/shop';
+		$result = $Dispatcher->getUrl($uri);
+		$expected = 'fr/pages/shop';
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -1367,11 +1374,11 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'test_dispatch_pages/camelCased';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual('TestDispatchPages', $controller->name);
-	
+
 		$url = 'test_dispatch_pages/camelCased/something. .';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual($controller->params['pass'][0], 'something. .', 'Period was chopped off. %s');
-		
+
 	}
 
 /**
@@ -1395,7 +1402,7 @@ class DispatcherTest extends CakeTestCase {
 
 		$expected = array('0' => 'home', 'param' => 'value', 'param2' => 'value2');
 		$this->assertIdentical($expected, $controller->passedArgs);
-		
+
 		$this->assertEqual($Dispatcher->base . '/pages/display/home/param:value/param2:value2', $Dispatcher->here);
 	}
 
@@ -1441,7 +1448,7 @@ class DispatcherTest extends CakeTestCase {
 		Router::reload();
 		$Dispatcher =& new TestDispatcher();
 		Router::connect(
-			'/my_plugin/:controller/*', 
+			'/my_plugin/:controller/*',
 			array('plugin' => 'my_plugin', 'controller' => 'pages', 'action' => 'display')
 		);
 
@@ -1598,7 +1605,7 @@ class DispatcherTest extends CakeTestCase {
 			'action' => 'admin_index',
 			'prefix' => 'admin',
 			'admin' =>  true,
-			'form' => array(), 
+			'form' => array(),
 			'url' => array('url' => 'admin/articles_test'),
 			'return' => 1
 		);
@@ -1980,7 +1987,7 @@ class DispatcherTest extends CakeTestCase {
 	}
 
 /**
- * test that asset filters work for theme and plugin assets	
+ * test that asset filters work for theme and plugin assets
  *
  * @return void
  */
@@ -2008,7 +2015,7 @@ class DispatcherTest extends CakeTestCase {
 		$Dispatcher->stopped = false;
 		$Dispatcher->asset('css/ccss/debug_kit.css');
 		$this->assertFalse($Dispatcher->stopped);
-		
+
 		$Dispatcher->stopped = false;
 		$Dispatcher->asset('js/cjs/debug_kit.js');
 		$this->assertFalse($Dispatcher->stopped);
