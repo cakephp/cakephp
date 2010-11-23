@@ -552,8 +552,8 @@ class Dispatcher extends Object {
 			if ($tmpUri === '/' || $tmpUri == $baseDir || $tmpUri == $base) {
 				$url = $_GET['url'] = '/';
 			} else {
-				if ($base && strpos($uri, $base) !== false) {
-					$elements = explode($base, $uri);
+				if ($base && strpos($uri, $base) === 0) {
+					$elements = explode($base, $uri, 2);
 				} elseif (preg_match('/^[\/\?\/|\/\?|\?\/]/', $uri)) {
 					$elements = array(1 => preg_replace('/^[\/\?\/|\/\?|\?\/]/', '', $uri));
 				} else {

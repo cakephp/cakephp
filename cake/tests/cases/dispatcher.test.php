@@ -956,6 +956,13 @@ class DispatcherTest extends CakeTestCase {
 		$expected = '?/home';
 		$this->assertEqual($expected, $result);
 
+		$_GET['url'] = array();
+		$Dispatcher =& new Dispatcher();
+		$Dispatcher->base = '/shop';
+		$uri = '/shop/fr/pages/shop';
+		$result = $Dispatcher->getUrl($uri);
+		$expected = 'fr/pages/shop';
+		$this->assertEqual($expected, $result);
 	}
 /**
  * testBaseUrlAndWebrootWithModRewrite method
@@ -1296,11 +1303,11 @@ class DispatcherTest extends CakeTestCase {
 		$url = 'test_dispatch_pages/camelCased';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual('TestDispatchPages', $controller->name);
-	
+
 		$url = 'test_dispatch_pages/camelCased/something. .';
 		$controller = $Dispatcher->dispatch($url, array('return' => 1));
 		$this->assertEqual($controller->params['pass'][0], 'something. .', 'Period was chopped off. %s');
-		
+
 	}
 /**
  * testDispatchWithArray method
