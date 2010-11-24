@@ -258,7 +258,7 @@ class Folder extends Object {
  * @static
  */
 	function isWindowsPath($path) {
-		return (bool)preg_match('/^[A-Z]:\\\\/i', $path);
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**
@@ -270,7 +270,7 @@ class Folder extends Object {
  * @static
  */
 	function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path));
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**

@@ -396,7 +396,7 @@ class DataSource extends Object {
 	}
 
 /**
- * Returns the ID generated from the previous INSERT operation.
+ * Returns the number of rows returned by last operation.
  *
  * @param unknown_type $source
  * @return integer Number of rows returned by last operation
@@ -407,7 +407,7 @@ class DataSource extends Object {
 	}
 
 /**
- * Returns the ID generated from the previous INSERT operation.
+ * Returns the number of rows affected by last query.
  *
  * @param unknown_type $source
  * @return integer Number of rows affected by last query.
@@ -428,6 +428,7 @@ class DataSource extends Object {
 	function enabled() {
 		return true;
 	}
+
 /**
  * Returns true if the DataSource supports the given interface (method)
  *

@@ -2988,4 +2988,50 @@ class SetTest extends CakeTestCase {
 		);
 		$this->assertEqual($result, $expected);
 	}
+
+/**
+ * test normalization
+ *
+ * @return void
+ */
+	function testNormalizeStrings() {
+		$result = Set::normalize('one,two,three');
+		$expected = array('one' => null, 'two' => null, 'three' => null);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize('one two three', true, ' ');
+		$expected = array('one' => null, 'two' => null, 'three' => null);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize('one  ,  two   ,  three   ', true, ',', true);
+		$expected = array('one' => null, 'two' => null, 'three' => null);
+		$this->assertEqual($expected, $result);
+	}
+
+/**
+ * test normalizing arrays
+ *
+ * @return void
+ */
+	function testNormalizeArrays() {
+		$result = Set::normalize(array('one', 'two', 'three'));
+		$expected = array('one' => null, 'two' => null, 'three' => null);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize(array('one', 'two', 'three'), false);
+		$expected = array('one', 'two', 'three');
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize(array('one' => 1, 'two' => 2, 'three' => 3, 'four'), false);
+		$expected = array('one' => 1, 'two' => 2, 'three' => 3, 'four' => null);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize(array('one' => 1, 'two' => 2, 'three' => 3, 'four'));
+		$expected = array('one' => 1, 'two' => 2, 'three' => 3, 'four' => null);
+		$this->assertEqual($expected, $result);
+
+		$result = Set::normalize(array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three'));
+		$expected = array('one' => array('a', 'b', 'c' => 'cee'), 'two' => 2, 'three' => null);
+		$this->assertEqual($expected, $result);
+	}
 }
