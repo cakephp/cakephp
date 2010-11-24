@@ -2246,6 +2246,27 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * test updating records and saving blank values.
+ *
+ * @return void
+ */
+	function testUpdateSavingBlankValues() {
+		$this->loadFixtures('Article');
+		$Article =& new Article();
+		$Article->validate = array();
+		$Article->create();
+		$result = $Article->save(array(
+			'id' => 1,
+			'title' => '',
+			'body' => ''
+		));
+		$this->assertTrue($result);
+		$result = $Article->find('first', array('conditions' => array('Article.id' => 1)));
+		$this->assertEqual('', $result['Article']['title'], 'Title is not blank');
+		$this->assertEqual('', $result['Article']['body'], 'Body is not blank');
+	}
+
+/**
  * testUpdateMultiple method
  *
  * @access public
@@ -3098,6 +3119,22 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		$Post->saveAll($data);
+	}
+
+/**
+ * test saveAll with nested saveAll call.
+ *
+ * @return void
+ */
+	function testSaveAllNestedSaveAll() {
+		$this->loadFixtures('Sample');
+		$TransactionTestModel =& new TransactionTestModel();
+
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample5'),
+		);
+
+		$this->assertTrue($TransactionTestModel->saveAll($data, array('atomic' => true)));
 	}
 
 /**
