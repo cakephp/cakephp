@@ -37,6 +37,12 @@ class DigestHttpSocket extends HttpSocket {
  * @return void
  */
 	public function request($request) {
+		if ($request === false) {
+			if (isset($this->response['header']['WWW-Authenticate'])) {
+				unset($this->response['header']['WWW-Authenticate']);
+			}
+			return;
+		}
 		$this->response['header']['WWW-Authenticate'] = $this->nextHeader;
 	}
 
@@ -177,6 +183,19 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
 		$this->assertNotEqual($response, 'da7e2a46b471d77f70a9bb3698c8902b');
+	}
+
+/**
+ * testNoDigestResponse method
+ *
+ * @return void
+ */
+	public function testNoDigestResponse() {
+		$this->HttpSocket->nextHeader = false;
+		$this->HttpSocket->request['uri']['path'] = '/admin';
+		$this->HttpSocket->config['request']['auth'] = array();
+		DigestAuthentication::authentication($this->HttpSocket);
+		$this->assertFalse(isset($this->HttpSocket->request['header']['Authorization']));
 	}
 
 }
