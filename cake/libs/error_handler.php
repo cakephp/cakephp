@@ -21,8 +21,12 @@
  */
 
 /**
- * Error Handler provides basic error and exception handling for your application. It Captures and 
- * handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
+ *
+ * Error Handler provides basic error and exception handling for your application. It captures and 
+ * handles all unhandled exceptions and errors. Displays helpful framework errors when debug > 1.
+ *
+ * ### Uncaught exceptions
+ *
  * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
@@ -67,6 +71,20 @@
  * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
  * errors will be logged to CakeLog.  You can control which errors are logged by setting
  * `Error.level` in your core.php.
+ *
+ * #### Logging errors
+ *
+ * When ErrorHandler is used for handling errors, you can enable error logging by setting `Error.log` to true.
+ * This will log all errors to the configured log handlers.
+ *
+ * #### Controlling what errors are logged/displayed
+ *
+ * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`.  Setting this
+ * to one or a combination of a few of the E_* constants will only enable the specified errors.
+ *
+ * e.g. `Configure::write('Error.level', E_ALL & ~E_NOTICE);`
+ *
+ * Would enable handling for all non Notice errors.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
