@@ -355,6 +355,33 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test sorting with out of order keys.
+ *
+ * @return void
+ */
+	function testSortWithOutOfOrderKeys() {
+		$data = array(
+			9 => array('class' => 510, 'test2' => 2),
+			1 => array('class' => 500, 'test2' => 1),
+			2 => array('class' => 600, 'test2' => 2),
+			5 => array('class' => 625, 'test2' => 4),
+			0 => array('class' => 605, 'test2' => 3),
+		);
+		$expected = array(
+			array('class' => 500, 'test2' => 1),
+			array('class' => 510, 'test2' => 2),
+			array('class' => 600, 'test2' => 2),
+			array('class' => 605, 'test2' => 3),
+			array('class' => 625, 'test2' => 4),
+		);
+		$result = Set::sort($data, '{n}.class', 'asc');
+		$this->assertEqual($expected, $result);
+
+		$result = Set::sort($data, '{n}.test2', 'asc');
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testExtract method
  *
  * @access public
