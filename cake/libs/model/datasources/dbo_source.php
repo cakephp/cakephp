@@ -542,7 +542,7 @@ class DboSource extends DataSource {
 			return $return;
 		}
 		$data = trim($data);
-		if (preg_match('/^[\w-]+(\.[\w-]+)*$/', $data)) { // string, string.string
+		if (preg_match('/^[\w-]+(?:\.[^ \*]*)*$/', $data)) { // string, string.string
 			if (strpos($data, '.') === false) { // string
 				return $this->cacheMethod(__FUNCTION__, $cacheKey, $this->startQuote . $data . $this->endQuote);
 			}

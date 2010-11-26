@@ -437,6 +437,19 @@ class CookieComponentTest extends CakeTestCase {
 		unset($_COOKIE['CakeTestCookie']);
 	}
 
+
+/**
+ * test that no error is issued for non array data.
+ *
+ * @return void
+ */
+	function testNoErrorOnNonArrayData() {
+		$this->Controller->Cookie->destroy();
+		$_COOKIE['CakeTestCookie'] = 'kaboom';
+
+		$this->assertNull($this->Controller->Cookie->read('value'));
+	}
+
 /**
  * encrypt method
  *
