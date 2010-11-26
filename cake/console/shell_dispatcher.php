@@ -80,8 +80,6 @@ class ShellDispatcher {
  */
 	function __initConstants() {
 		if (function_exists('ini_set')) {
-			ini_set('display_errors', '1');
-			ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
@@ -90,7 +88,6 @@ class ShellDispatcher {
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 			define('DS', DIRECTORY_SEPARATOR);
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
-			define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 			define('CAKEPHP_SHELL', true);
 			if (!defined('CORE_PATH')) {
 				if (function_exists('ini_set') && ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ini_get('include_path'))) {
