@@ -516,7 +516,7 @@ TEXTBLOC;
 		$this->assertPattern('/Subject: Cake Debug Test\n/', $result);
 		$this->assertPattern('/Reply-To: noreply@example.com\n/', $result);
 		$this->assertPattern('/From: noreply@example.com\n/', $result);
-		$this->assertPattern('/Date: ' . date(DATE_RFC2822) . '\n/', $result);
+		$this->assertPattern('/Date: ' . preg_quote(date(DATE_RFC2822)) . '\n/', $result);
 		$this->assertPattern('/X-Mailer: CakePHP Email Component\n/', $result);
 		$this->assertPattern('/Content-Type: text\/plain; charset=UTF-8\n/', $result);
 		$this->assertPattern('/Content-Transfer-Encoding: 7bitParameters:\n/', $result);
@@ -759,10 +759,10 @@ TEXTBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('email@example.com', true);
 		$this->assertEqual($result, '<email@example.com>');
-		
+
 		$result = $this->Controller->EmailTest->formatAddress('<email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
-		
+
 		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
 	}
