@@ -77,7 +77,7 @@ class DboPostgres extends DboSource {
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'bytea'),
 		'boolean' => array('name' => 'boolean'),
-		'number' => array('name' => 'numeric', 'length' => '4,2'),
+		'number' => array('name' => 'numeric', 'length' => '12,2'),
 		'inet' => array('name'  => 'inet')
 	);
 
@@ -728,7 +728,7 @@ class DboPostgres extends DboSource {
 		}
 
 		$floats = array(
-			'float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real', 'numeric'
+			'float', 'float4', 'float8', 'double', 'double precision', 'decimal', 'real'
 		);
 
 		switch (true) {
@@ -748,6 +748,8 @@ class DboPostgres extends DboSource {
 				return 'binary';
 			case (in_array($col, $floats)):
 				return 'float';
+			case (strpos($col, 'numeric') !== false):
+				return 'number';
 			default:
 				return 'text';
 			break;
