@@ -94,7 +94,7 @@ class EmailComponent extends Object{
  */
 	var $bcc = array();
 /**
- * The date to put in the Date: header.  This should be a date 
+ * The date to put in the Date: header.  This should be a date
  * conformant with the RFC2822 standard.  Leave null, to have
  * today's date generated.
  *
@@ -147,6 +147,19 @@ class EmailComponent extends Object{
  * @access public
  */
 	var $lineLength = 70;
+
+/**
+ * Line feed character(s) to be used when sending using mail() function
+ * If null PHP_EOL is used.
+ * RFC2822 requires it to be CRLF but some Unix
+ * mail transfer agents replace LF by CRLF automatically
+ * (which leads to doubling CR if CRLF is used).
+ *
+ * @var string
+ * @access public
+ */
+	var $lineFeed = null;
+
 /**
  * @deprecated see lineLength
  */
@@ -674,8 +687,13 @@ class EmailComponent extends Object{
  * @access private
  */
 	function __mail() {
-		$header = implode("\n", $this->__header);
-		$message = implode("\n", $this->__message);
+		if ($this->lineFeed === null) {
+			$lineFeed = PHP_EOL;
+		} else {
+			$lineFeed = $this->lineFeed;
+		}
+		$header = implode($lineFeed, $this->__header);
+		$message = implode($lineFeed, $this->__message);
 		if (ini_get('safe_mode')) {
 			return @mail($this->to, $this->__encode($this->subject), $message, $header);
 		}
