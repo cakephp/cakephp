@@ -1092,6 +1092,10 @@ class Set {
  * @static
  */
 	function sort($data, $path, $dir) {
+		$originalKeys = array_keys($data);
+		if (is_numeric(implode('', $originalKeys))) {
+			$data = array_values($data);
+		}
 		$result = Set::__flatten(Set::extract($data, $path));
 		list($keys, $values) = array(Set::extract($result, '{n}.id'), Set::extract($result, '{n}.value'));
 
@@ -1103,7 +1107,6 @@ class Set {
 		}
 		array_multisort($values, $dir, $keys, $dir);
 		$sorted = array();
-
 		$keys = array_unique($keys);
 
 		foreach ($keys as $k) {

@@ -4077,6 +4077,10 @@ class DboSourceTest extends CakeTestCase {
 		$result = $this->testDb->name(array('my-name', 'Foo-Model.*'));
 		$expected = array('`my-name`', '`Foo-Model`.*');
 		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->name(array('Team.P%', 'Team.G/G'));
+		$expected = array('`Team`.`P%`', '`Team`.`G/G`');
+		$this->assertEqual($result, $expected);
 	}
 
 /**

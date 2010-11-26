@@ -98,6 +98,15 @@ class EmailComponent extends Object{
 	var $bcc = array();
 
 /**
+ * The date to put in the Date: header.  This should be a date 
+ * conformant with the RFC2822 standard.  Leave null, to have
+ * today's date generated.
+ *
+ * @var string
+ */
+	var $date = null;
+
+/**
  * The subject of the email
  *
  * @var string
@@ -410,6 +419,7 @@ class EmailComponent extends Object{
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->date = null;
 		$this->smtpError = null;
 		$this->attachments = array();
 		$this->htmlMessage = null;
@@ -573,6 +583,12 @@ class EmailComponent extends Object{
 				$headers['Message-ID'] = $this->messageId;
 			}
 		}
+
+		$date = $this->date;
+		if ($date == false) {
+			$date = date(DATE_RFC2822);
+		}
+		$headers['Date'] = $date;
 
 		$headers['X-Mailer'] = $this->xMailer;
 
