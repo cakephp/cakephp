@@ -113,7 +113,7 @@ class DboSqlite extends DboSource {
 		$config = $this->config;
 		$flags = array(PDO::ATTR_PERSISTENT => $config['persistent']);
 		try {
-			$this->_connection = new PDO('sqlite:'.$config['database'], null, null, $flags);
+			$this->_connection = new PDO('sqlite:' . $config['database'], null, null, $flags);
 			$this->_connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->connected = true;
 		}
@@ -178,59 +178,33 @@ class DboSqlite extends DboSource {
 			return $cache;
 		}
 		$fields = array();
-		$result = $this->fetchAll('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
+		$result = $this->_execute('PRAGMA table_info(' . $model->tablePrefix . $model->table . ')');
 
 		foreach ($result as $column) {
-			$fields[$column[0]['name']] = array(
-				'type'		=> $this->column($column[0]['type']),
-				'null'		=> !$column[0]['notnull'],
-				'default'	=> $column[0]['dflt_value'],
-				'length'	=> $this->length($column[0]['type'])
+			$column = (array) $column;
+			$default = ($column['dflt_value'] === 'NULL') ? null : trim($column['dflt_value'], "'");
+
+			$fields[$column['name']] = array(
+				'type'		=> $this->column($column['type']),
+				'null'		=> !$column['notnull'],
+				'default'	=> $default,
+				'length'	=> $this->length($column['type'])
 			);
-			if($column[0]['pk'] == 1) {
-				$fields[$column[0]['name']] = array(
-					'type'		=> $fields[$column[0]['name']]['type'],
+			if($column['pk'] == 1) {
+				$fields[$column['name']] = array(
+					'type'		=> $fields[$column['name']]['type'],
 					'null'		=> false,
-					'default'	=> $column[0]['dflt_value'],
+					'default'	=> $default,
 					'key'		=> $this->index['PRI'],
 					'length'	=> 11
 				);
 			}
 		}
 
+
+		$result->closeCursor();
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
 		return $fields;
-	}
-
-/**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @return string Quoted and escaped
- * @access public
- */
-	function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
-
-		if ($parent != null) {
-			return $parent;
-		}
-		if ($data === null || (is_array($data) && empty($data))) {
-			return 'NULL';
-		}
-		if ($data === '') {
-			return  "''";
-		}
-		switch ($column) {
-			case 'boolean':
-				$data = $this->boolean((bool)$data);
-			break;
-			default:
-				$data = $this->_connection->quote($data);
-				return $data;
-			break;
-		}
-		return "'" . $data . "'";
 	}
 
 /**
@@ -243,10 +217,6 @@ class DboSqlite extends DboSource {
  */
 	protected function _execute($sql, $params = array()) {
 		$this->_result = parent::_execute($sql, $params);
-		//if (is_object($this->_result)) {
-		//	$this->rows = $this->_result->fetchAll(PDO::FETCH_NUM);
-		//	$this->row_count = count($this->rows);
-		//}
 		return $this->_result;
 	}
 
