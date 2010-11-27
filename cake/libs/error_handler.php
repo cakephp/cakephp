@@ -134,9 +134,6 @@ class ErrorHandler {
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
 		$errorConfig = Configure::read('Error');
-		if (isset($errorConfig['level']) && ($code & ~$errorConfig['level'])) {
-			return;
-		}
 		list($error, $log) = self::_mapErrorCode($code);
 
 		$debug = Configure::read('debug');
