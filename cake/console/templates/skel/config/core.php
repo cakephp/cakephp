@@ -36,19 +36,42 @@
 	Configure::write('debug', 2);
 
 /**
- * CakePHP Log Level:
+ * Configure the Error handler used to handle errors for your application.  By default
+ * ErrorHandler::handleError() is used.  It will display errors using Debugger, when debug > 0
+ * and log errors with CakeLog when debug = 0.
  *
- * In case of Production Mode CakePHP gives you the possibility to continue logging errors.
+ * Options:
  *
- * The following parameters can be used:
- *  Boolean: Set true/false to activate/deactivate logging
- *    Configure::write('log', true);
- *
- *  Integer: Use built-in PHP constants to set the error level (see error_reporting)
- *    Configure::write('log', E_ERROR | E_WARNING);
- *    Configure::write('log', E_ALL ^ E_NOTICE);
+ * - `handler` - callback - The callback to handle errors. You can set this to any callback type, 
+ *    including anonymous functions.
+ * - `level` - int - The level of errors you are interested in capturing.
+ * - `trace` - boolean - Include stack traces for errors in log files.
  */
-	Configure::write('log', true);
+	Configure::write('Error', array(
+		'handler' => 'ErrorHandler::handleError',
+		'level' => E_ALL & ~E_DEPRECATED,
+		'trace' => true
+	));
+
+/**
+ * Configure the Exception handler used for uncaught exceptions.  By default, 
+ * ErrorHandler::handleException() is used. It will display a HTML page for the exception, and 
+ * while debug > 0, framework errors like Missing Controller will be displayed.  When debug = 0, 
+ * framework errors will be coerced into generic HTTP errors.
+ *
+ * Options:
+ *
+ * - `handler` - callback - The callback to handle exceptions. You can set this to any callback type, 
+ *   including anonymous functions.
+ * - `renderer` - string - The class responsible for rendering uncaught exceptions.  If you choose a custom class you
+ *   should place the file for that class in app/libs. This class needs to implement a render method.
+ * - `log` - boolean - Should Exceptions be logged?
+ */
+	Configure::write('Exception', array(
+		'handler' => 'ErrorHandler::handleException',
+		'renderer' => 'ExceptionRenderer',
+		'log' => true
+	));
 
 /**
  * Application wide charset encoding
@@ -121,14 +144,14 @@
  * - `Session.name` - The name of the cookie to use. Defaults to 'CAKEPHP'
  * - `Session.timeout` - The number of minutes you want sessions to live for. This timeout is handled by CakePHP
  * - `Session.cookieTimeout` - The number of minutes you want session cookies to live for.
- * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the 
+ * - `Session.checkAgent` - Do you want the user agent to be checked when starting sessions? You might want to set the    
  *    value to false, when dealing with older versions of IE, Chrome Frame or certain web-browsing devices and AJAX
  * - `Session.defaults` - The default configuration set to use as a basis for your session.
  *    There are four builtins: php, cake, cache, database.
  * - `Session.handler` - Can be used to enable a custom session handler.  Expects an array of of callables,
  *    that can be used with `session_save_handler`.  Using this option will automatically add `session.save_handler`
  *    to the ini array.
- * - `Session.autoRegenerate` - Enabling this setting, turns on automatic regeneration of sessions, and 
+ * - `Session.autoRegenerate` - Enabling this setting, turns on automatic renewal of sessions, and 
  *    sessionids that change frequently. See CakeSession::$requestCountdown.
  * - `Session.ini` - An associative array of additional ini values to set.
  *
