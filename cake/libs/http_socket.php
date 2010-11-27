@@ -459,7 +459,7 @@ class HttpSocket extends CakeSocket {
 		if (!App::import('Lib', 'http/' . $authClass)) {
 			throw new Exception(__('Unknown authentication method.'));
 		}
-		$authClass::authentication($this);
+		call_user_func("$authClass::authentication", $this);
 	}
 
 /**
