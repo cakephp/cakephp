@@ -159,7 +159,9 @@ class ExceptionRenderer {
  * @return void
  */
 	public function render() {
-		call_user_func_array(array($this, $this->method), array($this->error));
+		if ($this->method) {
+			call_user_func_array(array($this, $this->method), array($this->error));
+		}
 	}
 
 /**
