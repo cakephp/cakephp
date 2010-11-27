@@ -902,9 +902,6 @@ class Model extends Object {
 
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
-
-			$db = $this->getDataSource();
-			$format = $db->columns[$type]['format'];
 			$date = array();
 
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
@@ -947,9 +944,13 @@ class Model extends Object {
 					}
 				}
 			}
-			$date = str_replace(array_keys($date), array_values($date), $format);
+
+			$format = $this->getDataSource()->columns[$type]['format'];
+			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
+			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
+			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date;
+				return $date->format($format);
 			}
 		}
 		return $data;

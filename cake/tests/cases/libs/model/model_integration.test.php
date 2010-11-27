@@ -1947,8 +1947,8 @@ class ModelIntegrationTest extends BaseModelTest {
 			'Featured' => array(
 				'article_featured_id' => 1,
 				'category_id' => 1,
-				'published_date' => '2008-6-11 00:00:00',
-				'end_date' => '2008-6-20 00:00:00'
+				'published_date' => '2008-06-11 00:00:00',
+				'end_date' => '2008-06-20 00:00:00'
 		));
 
 		$this->assertEqual($FeaturedModel->create($data), $expected);
@@ -1970,8 +1970,8 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$expected = array(
 			'Featured' => array(
-				'published_date' => '2008-6-11 00:00:00',
-				'end_date' => '2008-6-20 00:00:00',
+				'published_date' => '2008-06-11 00:00:00',
+				'end_date' => '2008-06-20 00:00:00',
 				'article_featured_id' => 1,
 				'category_id' => 1
 		));
