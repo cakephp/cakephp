@@ -56,6 +56,8 @@ class RouterTest extends CakeTestCase {
 		}
 		$this->assertPattern('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertPattern('/^http(s)?:\/\//', Router::url(null, true));
+		$this->assertPattern('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
+		$this->assertIdentical(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
 	}
 
 /**
@@ -1707,8 +1709,8 @@ class RouterTest extends CakeTestCase {
 	function testParsingWithPatternOnAction() {
 		Router::reload();
 		Router::connect(
-			'/blog/:action/*', 
-			array('controller' => 'blog_posts'), 
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')
 		);
 		$result = Router::parse('/blog/other');
@@ -1730,7 +1732,7 @@ class RouterTest extends CakeTestCase {
 			'named' => array()
 		);
 		$this->assertEqual($expected, $result);
-		
+
 		$result = Router::url(array('controller' => 'blog_posts', 'action' => 'foo'));
 		$this->assertEqual('/blog_posts/foo', $result);
 
@@ -2263,6 +2265,31 @@ class RouterTest extends CakeTestCase {
 
 		$url = 'svn+ssh://example.com';
 		$this->assertEqual($url, Router::url($url));
+	}
+
+/**
+ * Testing that patterns on the :action param work properly.
+ *
+ * @return void
+ */
+	function testPatternOnAction() {
+		$route =& new CakeRoute(
+			'/blog/:action/*',
+			array('controller' => 'blog_posts'),
+			array('action' => 'other|actions')
+		);
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'foo'));
+		$this->assertFalse($result);
+
+		$result = $route->match(array('controller' => 'blog_posts', 'action' => 'actions'));
+		$this->assertEquals('/blog/actions/', $result);
+
+		$result = $route->parse('/blog/other');
+		$expected = array('controller' => 'blog_posts', 'action' => 'other', 'pass' => array(), 'named' => array());
+		$this->assertEqual($expected, $result);
+
+		$result = $route->parse('/blog/foobar');
+		$this->assertFalse($result);
 	}
 
 /**

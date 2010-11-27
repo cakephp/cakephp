@@ -19,6 +19,8 @@
  * @since         CakePHP(tm) v 1.2.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'Controller');
+
 if (!class_exists('AppController')) {
 
 /**
@@ -184,6 +186,27 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	}
 
 /**
+ * Test that helpers declared in appcontroller come before those in the subclass
+ * orderwise
+ *
+ * @return void
+ */
+	function testHelperOrderPrecedence() {
+		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
+
+		$Controller =& new MergeVariablesController();
+		$Controller->helpers = array('Custom', 'Foo' => array('something'));
+		$Controller->constructClasses();
+
+		$expected = array(
+			'MergeVar' => array('format' => 'html', 'terse'),
+			'Custom' => null,
+			'Foo' => array('something')
+		);
+		$this->assertSame($Controller->helpers, $expected, 'Order is incorrect.');
+	}
+
+/**
  * test merging of vars with plugin
  *
  * @return void
@@ -201,13 +224,13 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'Auth' => array('setting' => 'val', 'otherVal'),
 			'Email' => array('ports' => 'open')
 		);
-		$this->assertEqual($Controller->components, $expected, 'Components are unexpected %s');
+		$this->assertEquals($expected, $Controller->components, 'Components are unexpected.');
 
 		$expected = array(
-			'Javascript',
-			'MergeVar' => array('format' => 'html', 'terse')
+			'MergeVar' => array('format' => 'html', 'terse'),
+			'Javascript' => null
 		);
-		$this->assertEqual($Controller->helpers, $expected, 'Helpers are unexpected %s');
+		$this->assertEquals($expected, $Controller->helpers, 'Helpers are unexpected.');
 
 		$Controller = new MergePostsController();
 		$Controller->components = array();
@@ -218,7 +241,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 			'MergeVar' => array('flag', 'otherFlag', 'redirect' => false),
 			'Auth' => array('setting' => 'val', 'otherVal'),
 		);
-		$this->assertEqual($Controller->components, $expected, 'Components are unexpected %s');
+		$this->assertEquals($expected, $Controller->components, 'Components are unexpected.');
 	}
 
 /**

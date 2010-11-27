@@ -64,8 +64,8 @@ class BehaviorCollection extends ObjectCollection {
 		$this->modelName = $modelName;
 
 		if (!empty($behaviors)) {
-			foreach (Set::normalize($behaviors) as $behavior => $config) {
-				$this->load($behavior, $config);
+			foreach (BehaviorCollection::normalizeObjectArray($behaviors) as $behavior => $config) {
+				$this->load($config['class'], $config['settings']);
 			}
 		}
 	}

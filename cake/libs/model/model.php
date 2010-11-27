@@ -438,27 +438,15 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$appVars = get_class_vars('AppModel');
 			$merge = array('_findMethods');
-
 			if ($this->actsAs !== null || $this->actsAs !== false) {
 				$merge[] = 'actsAs';
 			}
 			$parentClass = get_parent_class($this);
-			if (strtolower($parentClass) !== 'appmodel') {
-				$parentVars = get_class_vars($parentClass);
-				foreach ($merge as $var) {
-					if (isset($parentVars[$var]) && !empty($parentVars[$var])) {
-						$appVars[$var] = Set::merge($appVars[$var], $parentVars[$var]);
-					}
-				}
+			if ($parentClass !== 'AppModel') {
+				$this->_mergeVars($merge, $parentClass);
 			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
-				}
-			}
+			$this->_mergeVars($merge, 'AppModel');
 		}
 		$this->Behaviors = new BehaviorCollection();
 
@@ -629,9 +617,9 @@ class Model extends Object {
  *
  * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
- * 
+ *
  * `$this->User->unbindModel( array('hasMany' => array('Supportrequest')) );`
- * 
+ *
  * unbound models that are not made permanent will reset with the next call to Model::find()
  *
  * @param array $params Set of bindings to unbind (indexed by binding type)
@@ -1631,7 +1619,7 @@ class Model extends Object {
 		}
 
 		if ($options['atomic'] && $options['validate'] !== 'only') {
-			$db->begin($this);
+			$transactionBegun = $db->begin($this);
 		}
 
 		if (Set::numeric(array_keys($data))) {
@@ -1671,8 +1659,12 @@ class Model extends Object {
 					break;
 					default:
 						if ($options['atomic']) {
-							if ($validates && ($db->commit($this) !== false)) {
-								return true;
+							if ($validates) {
+								if ($transactionBegun) {
+									return $db->commit($this) !== false;
+								} else {
+									return true;
+								}
 							}
 							$db->rollback($this);
 							return false;
@@ -1782,7 +1774,11 @@ class Model extends Object {
 				default:
 					if ($options['atomic']) {
 						if ($validates) {
-							return ($db->commit($this) !== false);
+							if ($transactionBegun) {
+								return $db->commit($this) !== false;
+							} else {
+								return true;
+							}
 						} else {
 							$db->rollback($this);
 						}
@@ -1865,7 +1861,7 @@ class Model extends Object {
 				));
 			}
 
-			if ($db->delete($this)) {
+			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}

@@ -19,9 +19,6 @@
  * @since         CakePHP(tm) v 1.2.0.6464
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
@@ -292,7 +289,7 @@ class Article extends CakeTestModel {
  */
 class BeforeDeleteComment extends CakeTestModel {
 	var $name = 'BeforeDeleteComment';
-	
+
 	var $useTable = 'comments';
 
 	function beforeDelete($cascade = true) {
@@ -3559,6 +3556,7 @@ class FruitNoWith extends CakeTestModel {
 		)
 	);
 }
+
 class UuidTagNoWith extends CakeTestModel {
 	public $name = 'UuidTag';
 	public $useTable = 'uuid_tags';
@@ -3581,7 +3579,18 @@ class ProductUpdateAll extends CakeTestModel {
 class GroupUpdateAll extends CakeTestModel {
 	public $name = 'GroupUpdateAll';
 	public $useTable = 'group_update_all';
+}
 
+class TransactionTestModel extends CakeTestModel {
+	var $name = 'TransactionTestModel';
+	var $useTable = 'samples';
+
+	function afterSave($created) {
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample6'),
+		);
+		$this->saveAll($data, array('atomic' => true, 'callbacks' => false));
+	}
 }
 
 /**

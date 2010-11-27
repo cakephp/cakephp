@@ -609,6 +609,29 @@ DIGEST;
 	}
 
 /**
+ * Test that objects can't be passed into the serialized string. This was a vector for RFI and LFI 
+ * attacks. Thanks to Felix Wilhelm
+ *
+ * @return void
+ */
+	function testValidatePostObjectDeserialize() {
+		$this->Controller->Security->startup($this->Controller);
+		$key = $this->Controller->request->params['_Token']['key'];
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877';
+
+		// a corrupted serialized object, so we can see if it ever gets to deserialize
+		$attack = 'O:3:"App":1:{s:5:"__map";a:1:{s:3:"foo";s:7:"Hacked!";s:1:"fail"}}';
+		$fields .= urlencode(':' . str_rot13($attack));
+
+		$this->Controller->request->data = array(
+			'Model' => array('username' => 'mark', 'password' => 'foo', 'valid' => '0'),
+			'_Token' => compact('key', 'fields')
+		);
+		$result = $this->Controller->Security->validatePost($this->Controller);
+		$this->assertFalse($result, 'validatePost passed when key was missing. %s');
+	}
+
+/**
  * Tests validation of checkbox arrays
  *
  * @access public

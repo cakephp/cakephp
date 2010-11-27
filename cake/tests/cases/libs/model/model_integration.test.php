@@ -1309,12 +1309,12 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
-		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));
+		$this->assertEqual($TestModel->actsAs, array('Containable' => null, 'Tree' => null));
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
 
 		$TestModel = ClassRegistry::init('MergeVarPluginComment');
-		$expected = array('Containable', 'Containable' => array('some_settings'));
+		$expected = array('Containable' => array('some_settings'));
 		$this->assertEqual($TestModel->actsAs, $expected);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}

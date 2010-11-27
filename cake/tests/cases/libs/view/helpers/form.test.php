@@ -5680,6 +5680,31 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test that create() doesn't cause errors by multiple id's being in the primary key
+ * as could happen with multiple select or checkboxes.
+ *
+ * @return void
+ */
+	function testCreateWithMultipleIdInData() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$this->Form->request->data['Contact']['id'] = array(1, 2);
+		$result = $this->Form->create('Contact');
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/add',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that create() doesn't add in extra passed params.
  *
  * @return void

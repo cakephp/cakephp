@@ -264,14 +264,14 @@ if (!function_exists('sortByKey')) {
  * @link http://book.cakephp.org/view/1130/env
  */
 	function env($key) {
-		if ($key == 'HTTPS') {
+		if ($key === 'HTTPS') {
 			if (isset($_SERVER['HTTPS'])) {
 				return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 			}
 			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
 
-		if ($key == 'SCRIPT_NAME') {
+		if ($key === 'SCRIPT_NAME') {
 			if (env('CGI_MODE') && isset($_ENV['SCRIPT_URL'])) {
 				$key = 'SCRIPT_URL';
 			}

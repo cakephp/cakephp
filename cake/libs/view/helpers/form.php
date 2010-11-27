@@ -218,7 +218,8 @@ class FormHelper extends AppHelper {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
-				!empty($this->request->data[$model][$data['key']])
+				!empty($this->request->data[$model][$data['key']]) &&
+				!is_array($this->request->data[$model][$data['key']])
 			);
 
 			if ($recordExists) {
