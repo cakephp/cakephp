@@ -52,6 +52,7 @@ class ModelReadTest extends BaseModelTest {
 			)
 		);
 
+
 		$Something->JoinThing->create($joinThingData);
 		$Something->JoinThing->save();
 
@@ -61,6 +62,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEqual((bool)$result[1]['JoinThing']['doomed'], false);
 
 		$result = $Something->find('first');
+
 		$this->assertEqual(count($result['SomethingElse']), 2);
 
 		$doomed = Set::extract('/JoinThing/doomed', $result['SomethingElse']);
@@ -79,7 +81,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
+		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle', 'sqlite'));
 		$message = '%s Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
@@ -7463,7 +7465,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->field('other_field');
 		$this->assertEqual($result, 4);
 
-		if ($this->skipIf($this->db->config['driver'] == 'postgres', 'The rest of virtualFieds test is not compatible with Postgres')) {
+		if ($this->skipIf($this->db->config['driver'] != 'mysql', 'The rest of virtualFieds test is not compatible with Postgres')) {
 			return;
 		}
 		ClassRegistry::flush();
@@ -7471,20 +7473,20 @@ class ModelReadTest extends BaseModelTest {
 
 		$Post->create();
 		$Post->virtualFields = array(
-			'year' => 'YEAR(Post.created)',
+			'low_title' => 'lower(Post.title)',
 			'unique_test_field' => 'COUNT(Post.id)'
 		);
 
 		$expectation = array(
 			'Post' => array(
-				'year' => 2007,
-				'unique_test_field' => 3
+				'low_title' => 'first post',
+				'unique_test_field' => 1
 			)
 		);
 
 		$result = $Post->find('first', array(
 			'fields' => array_keys($Post->virtualFields),
-			'group' => array('year')
+			'group' => array('low_title')
 		));
 
 		$this->assertEqual($result, $expectation);

@@ -89,6 +89,22 @@ class DboSource extends DataSource {
 	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
+ * Indicates that a transaction have been started
+ *
+ * @var boolean
+ * @access protected
+ */
+	protected $_transactionStarted = false;
+
+/**
+ * Indicates the level of nested transactions
+ *
+ * @var integer
+ * @access protected
+ */
+	protected $_transactionNesting = 0;
+
+/**
  * Index of basic SQL commands
  *
  * @var array
