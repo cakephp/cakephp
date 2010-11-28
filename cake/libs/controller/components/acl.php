@@ -622,7 +622,7 @@ class IniAcl extends Object implements AclInterface {
 			foreach ($userGroups as $group) {
 				if (array_key_exists($group, $aclConfig)) {
 					if (isset($aclConfig[$group]['deny'])) {
-						$groupDenies=$this->arrayTrim(explode(",", $aclConfig[$group]['deny']));
+						$groupDenies = $this->arrayTrim(explode(",", $aclConfig[$group]['deny']));
 
 						if (array_search($aco, $groupDenies)) {
 							return false;
@@ -669,13 +669,13 @@ class IniAcl extends Object implements AclInterface {
 							$value = substr($value, 1, -1);
 						}
 
-						$iniSetting[$sectionName][$key]=stripcslashes($value);
+						$iniSetting[$sectionName][$key] = stripcslashes($value);
 					} else {
 						if (!isset($sectionName)) {
 							$sectionName = '';
 						}
 
-						$iniSetting[$sectionName][strtolower(trim($dataLine))]='';
+						$iniSetting[$sectionName][strtolower(trim($dataLine))] = '';
 					}
 				}
 			}
