@@ -43,12 +43,14 @@
  *
  * This gives you full control over the exception handling process.  The class you choose should be
  * loaded in your app/config/bootstrap.php, so its available to handle any exceptions.  You can
- * define the handler as any callback type. You can't combine this with other Exception settings.
+ * define the handler as any callback type. Using Exception.handler overrides all other exception 
+ * handling settings and logic.
  *
  * #### Using `AppController::appError();`
  *
  * This controller method is called instead of the default exception rendering.  It receives the
  * thrown exception as its only argument.  You should implement your error handling in that method.
+ * Using AppController::appError(), will superseed any configuration for Exception.renderer.
  *
  * #### Using a custom renderer with `Exception.renderer`
  *
