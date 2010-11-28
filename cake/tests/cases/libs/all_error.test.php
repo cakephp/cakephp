@@ -38,8 +38,8 @@ class AllErrorTest extends PHPUnit_Framework_TestSuite {
 
 		$libs = CORE_TEST_CASES . DS . 'libs' . DS;
 
-		$suite->addTestFile($libs . 'error_handler.test.php');
-		$suite->addTestFile($libs . 'exception_renderer.test.php');
+		$suite->addTestFile($libs . 'error' . DS . 'error_handler.test.php');
+		$suite->addTestFile($libs . 'error' . DS . 'exception_renderer.test.php');
 		return $suite;
 	}
 }
