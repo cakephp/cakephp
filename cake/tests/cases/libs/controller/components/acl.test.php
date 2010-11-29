@@ -261,53 +261,6 @@ class AclComponentTest extends CakeTestCase {
 class IniAclTest extends CakeTestCase {
 
 /**
- * testIniReadConfigFile
- *
- * @access public
- * @return void
- */
-	function testReadConfigFile() {
-		$Ini = new IniAcl();
-		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
-		$result = $Ini->readConfigFile($iniFile);
-		$expected = array(
-			'admin' => array(
-				'groups' => 'administrators',
-				'allow' => '',
-				'deny' => 'ads',
-			),
-			'paul' => array(
-				'groups' => 'users',
-				'allow' =>'',
-				'deny' => '',
-			),
-			'jenny' => array(
-				'groups' => 'users',
-				'allow' => 'ads',
-				'deny' => 'images, files',
-			),
-			'nobody' => array(
-				'groups' => 'anonymous',
-				'allow' => '',
-				'deny' => '',
-			),
-			'administrators' => array(
-				'deny' => '',
-				'allow' => 'posts, comments, images, files, stats, ads',
-			),
-			'users' => array(
-				'allow' => 'posts, comments, images, files',
-				'deny' => 'stats, ads',
-			),
-			'anonymous' => array(
-				'allow' => '',
-				'deny' => 'posts, comments, images, files, stats, ads',
-			),
-		);
-		$this->assertEqual($result, $expected);
-	}
-
-/**
  * testIniCheck method
  *
  * @access public
