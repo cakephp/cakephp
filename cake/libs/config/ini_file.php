@@ -19,9 +19,12 @@
  */
 
 /**
- * Ini file configuration parser.
+ * Ini file configuration parser.  Since IniFile uses parse_ini_file underneath, 
+ * you should be aware that this class shares the same behavior, especially with
+ * regards to boolean and null values.
  *
  * @package cake.config
+ * @see http://php.net/parse_ini_file
  */
 class IniFile implements ArrayAccess {
 
@@ -37,27 +40,61 @@ class IniFile implements ArrayAccess {
  * file as an object.
  *
  * @param string $filename Full path to the file to parse.
+ * @param string $section Only get one section.
  */
-	public function __construct($filename) {
+	public function __construct($filename, $section = null) {
 		$contents = parse_ini_file($filename, true);
-		$this->_values = $contents;
+		if (!empty($section) && isset($contents[$section])) {
+			$this->_values = $contents[$section];
+		} else {
+			$this->_values = $contents;
+		}
 	}
 
+/**
+ * Get the contents of the ini file as a plain array.
+ *
+ * @return array
+ */
+	public function asArray() {
+		return $this->_values;
+	}
+
+/**
+ * Part of ArrayAccess implementation.
+ *
+ * @param string $name 
+ */
 	public function offsetExists($name) {
 		return isset($this->_values[$name]);
 	}
-	
+
+/**
+ * Part of ArrayAccess implementation.
+ *
+ * @param string $name 
+ */
 	public function offsetGet($name) {
 		if (!isset($this->_values[$name])) {
 			return null;
 		}
 		return $this->_values[$name];
 	}
-	
+
+/**
+ * Part of ArrayAccess implementation.
+ *
+ * @param string $name 
+ */
 	public function offsetSet($name, $value) {
-		$this->_values[$name] = $value;
+		throw new LogicException('You cannot modify an IniFile parse result.');
 	}
-	
+
+/**
+ * Part of ArrayAccess implementation.
+ *
+ * @param string $name 
+ */
 	public function offsetUnset($name) {
 		unset($this->_values[$name]);
 	}
