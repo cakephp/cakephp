@@ -145,7 +145,7 @@ class ShellDispatcher {
 		}
 		require_once CONSOLE_LIBS . 'console_error_handler.php';
 		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
-		set_error_handler(array('ConsoleErrorHandler', 'handleError'));
+		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
 
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', '/');
