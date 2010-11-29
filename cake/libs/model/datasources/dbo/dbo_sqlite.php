@@ -208,19 +208,6 @@ class DboSqlite extends DboSource {
 	}
 
 /**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @param array $params list of params to be bound to query
- * @return PDOStatement if query executes with no problem, true as the result of a succesfull
- * query returning no rows, suchs as a CREATE statement, false otherwise
- */
-	protected function _execute($sql, $params = array()) {
-		$this->_result = parent::_execute($sql, $params);
-		return $this->_result;
-	}
-
-/**
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  *
  * @param Model $model

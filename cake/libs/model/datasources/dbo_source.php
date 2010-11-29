@@ -344,19 +344,25 @@ class DboSource extends DataSource {
 			}
 		}
 
-		$query = $this->_connection->prepare($sql);
-		$query->setFetchMode(PDO::FETCH_LAZY);
-		if (!$query->execute($params)) {
-			$this->_results = $query;
-			$this->error = $this->lastError($query);
-			$query->closeCursor();
-			return false;
+		try {
+			$query = $this->_connection->prepare($sql);
+			$query->setFetchMode(PDO::FETCH_LAZY);
+			if (!$query->execute($params)) {
+				$this->_results = $query;
+				$this->error = $this->lastError($query);
+				$query->closeCursor();
+				return false;
+			}
+			if (!$query->columnCount()) {
+				$query->closeCursor();
+				return true;
+			}
+			return $query;
+		} catch (PDOException $e) {
+			$this->_results = null;
+			$this->error = $e->getMessage();
 		}
-		if (!$query->columnCount()) {
-			$query->closeCursor();
-			return true;
-		}
-		return $query;
+		
 	}
 
 /**
