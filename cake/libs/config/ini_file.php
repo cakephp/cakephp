@@ -23,7 +23,14 @@
  *
  * @package cake.config
  */
-class IniFile {
+class IniFile implements ArrayAccess {
+
+/**
+ * Values inside the ini file.
+ *
+ * @var array
+ */
+	protected $_values = array();
 
 /**
  * Build and construct a new ini file parser, the parser will be a representation of the ini 
@@ -32,6 +39,26 @@ class IniFile {
  * @param string $filename Full path to the file to parse.
  */
 	public function __construct($filename) {
-		
+		$contents = parse_ini_file($filename, true);
+		$this->_values = $contents;
+	}
+
+	public function offsetExists($name) {
+		return isset($this->_values[$name]);
+	}
+	
+	public function offsetGet($name) {
+		if (!isset($this->_values[$name])) {
+			return null;
+		}
+		return $this->_values[$name];
+	}
+	
+	public function offsetSet($name, $value) {
+		$this->_values[$name] = $value;
+	}
+	
+	public function offsetUnset($name) {
+		unset($this->_values[$name]);
 	}
 }

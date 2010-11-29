@@ -4,6 +4,11 @@ App::import('Core', 'config/IniFile');
 
 class IniFileTest extends CakeTestCase {
 
+/**
+ * The test file that will be read.
+ *
+ * @var string
+ */
 	var $file;
 
 /**
@@ -15,6 +20,7 @@ class IniFileTest extends CakeTestCase {
 		parent::setup();
 		$this->file = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
 	}
+
 /**
  * test constrction
  *
@@ -22,6 +28,9 @@ class IniFileTest extends CakeTestCase {
  */
 	function testConstruct() {
 		$config = new IniFile($this->file);
-		$this->assertTrue(isset($config->admin));
+
+		$this->assertTrue(isset($config['admin']));
+		$this->assertTrue(isset($config['paul']['groups']));
+		$this->assertEquals('ads', $config['admin']['deny']);
 	}
 }
