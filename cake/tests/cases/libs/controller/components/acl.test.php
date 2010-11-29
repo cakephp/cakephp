@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
+App::import('Component', 'Acl');
+App::import('model' . DS . 'db_acl');
 
 /**
  * AclNodeTwoTestBase class
