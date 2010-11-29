@@ -3841,8 +3841,8 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testProductUpdateAll() {
 		$this->skipIf(
-			$this->db->config['driver'] == 'postgres',
-			'%s Currently, there is no way of doing joins in an update statement in postgresql'
+			$this->db->config['driver'] != 'mysql',
+			'%s Currently, there is no way of doing joins in an update statement in postgresql or sqlite'
 		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
 		$ProductUpdateAll = new ProductUpdateAll();
@@ -3892,7 +3892,7 @@ class ModelWriteTest extends BaseModelTest {
  */
     function testProductUpdateAllWithoutForeignKey() {
 		$this->skipIf(
-			$this->db->config['driver'] == 'postgres',
+			$this->db->config['driver'] != 'mysql',
 			'%s Currently, there is no way of doing joins in an update statement in postgresql'
 		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
