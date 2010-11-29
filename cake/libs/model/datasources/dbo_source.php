@@ -1963,6 +1963,16 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastInsertId($source = null) {
+		return $this->_connection->lastInsertId();
+	}
+
+/**
  * Creates a default set of conditions from the model if $conditions is null/empty.
  * If conditions are supplied then they will be returned.  If a model doesn't exist and no conditions
  * were provided either null or false will be returned based on what was input.

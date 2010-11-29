@@ -203,16 +203,6 @@ class DboMysql extends DboSource {
 	}
 
 /**
- * Returns the ID generated from the previous INSERT operation.
- *
- * @param unknown_type $source
- * @return in
- */
-	function lastInsertId($source = null) {
-		return $this->_connection->lastInsertId();
-	}
-
-/**
  * Builds a map of the columns contained in a result
  *
  * @param PDOStatement $results
