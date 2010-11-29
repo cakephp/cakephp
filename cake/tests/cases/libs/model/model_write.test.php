@@ -1581,7 +1581,7 @@ class ModelWriteTest extends BaseModelTest {
 				'DoomedSomethingElse' => array(
 					'className' => 'SomethingElse',
 					'joinTable' => 'join_things',
-					'conditions' => 'JoinThing.doomed = true',
+					'conditions' => array('JoinThing.doomed' => true),
 					'unique' => true
 				),
 				'NotDoomedSomethingElse' => array(
