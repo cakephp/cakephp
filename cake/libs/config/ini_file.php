@@ -19,7 +19,7 @@
  */
 
 /**
- * Ini file configuration parser.  Since IniFile uses parse_ini_file underneath, 
+ * Ini file configuration parser.  Since IniFile uses parse_ini_file underneath,
  * you should be aware that this class shares the same behavior, especially with
  * regards to boolean and null values.
  *
@@ -36,7 +36,7 @@ class IniFile implements ArrayAccess {
 	protected $_values = array();
 
 /**
- * Build and construct a new ini file parser, the parser will be a representation of the ini 
+ * Build and construct a new ini file parser, the parser will be a representation of the ini
  * file as an object.
  *
  * @param string $filename Full path to the file to parse.
@@ -63,7 +63,7 @@ class IniFile implements ArrayAccess {
 /**
  * Part of ArrayAccess implementation.
  *
- * @param string $name 
+ * @param string $name
  */
 	public function offsetExists($name) {
 		return isset($this->_values[$name]);
@@ -72,7 +72,7 @@ class IniFile implements ArrayAccess {
 /**
  * Part of ArrayAccess implementation.
  *
- * @param string $name 
+ * @param string $name
  */
 	public function offsetGet($name) {
 		if (!isset($this->_values[$name])) {
@@ -84,7 +84,7 @@ class IniFile implements ArrayAccess {
 /**
  * Part of ArrayAccess implementation.
  *
- * @param string $name 
+ * @param string $name
  */
 	public function offsetSet($name, $value) {
 		throw new LogicException('You cannot modify an IniFile parse result.');
@@ -93,7 +93,7 @@ class IniFile implements ArrayAccess {
 /**
  * Part of ArrayAccess implementation.
  *
- * @param string $name 
+ * @param string $name
  */
 	public function offsetUnset($name) {
 		unset($this->_values[$name]);
