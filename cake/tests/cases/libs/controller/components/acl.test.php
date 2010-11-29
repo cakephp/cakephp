@@ -283,6 +283,24 @@ class IniAclTest extends CakeTestCase {
 
 		$this->assertFalse($Ini->check('nobody', 'comments'));
 	}
+
+/**
+ * check should accept a user array.
+ *
+ * @return void
+ */
+	function testCheckArray() {
+		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
+
+		$Ini = new IniAcl();
+		$Ini->config = $Ini->readConfigFile($iniFile);
+		$Ini->userPath = 'User.username';
+
+		$user = array(
+			'User' => array('username' => 'admin')
+		);
+		$this->assertTrue($Ini->check($user, 'posts'));
+	}
 }
 
 
