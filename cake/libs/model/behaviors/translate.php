@@ -368,8 +368,7 @@ class TranslateBehavior extends ModelBehavior {
 		} elseif (empty($model->translateTable) && empty($model->translateModel)) {
 			$this->runtime[$model->alias]['model']->setSource('i18n');
 		}
-		$model =& $this->runtime[$model->alias]['model'];
-		return $model;
+		return $this->runtime[$model->alias]['model'];
 	}
 
 /**
