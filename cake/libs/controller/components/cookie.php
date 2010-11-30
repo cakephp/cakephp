@@ -174,7 +174,7 @@ class CookieComponent extends Object {
 /**
  * Write a value to the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key, optional $value, optional $encrypt, optional $expires
+ * Optional [Name.], required key, optional $value, optional $encrypt, optional $expires
  * $this->Cookie->write('[Name.]key, $value);
  *
  * By default all values are encrypted.
@@ -225,7 +225,7 @@ class CookieComponent extends Object {
 /**
  * Read the value of the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read(Name.key);
  *
  * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
@@ -260,7 +260,7 @@ class CookieComponent extends Object {
 /**
  * Delete a cookie value
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read('Name.key);
  *
  * You must use this method before any output is sent to the browser.
