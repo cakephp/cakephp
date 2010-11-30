@@ -44,8 +44,6 @@ class AclShellTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		parent::setUp();
-
 		Configure::write('Acl.database', 'test');
 		Configure::write('Acl.classname', 'DbAcl');
 
@@ -59,7 +57,6 @@ class AclShellTest extends CakeTestCase {
 		);
 		$collection = new ComponentCollection();
 		$this->Task->Acl = new AclComponent($collection);
-
 		$this->Task->params['datasource'] = 'test';
 	}
 

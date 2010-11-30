@@ -139,9 +139,6 @@ class DboSqlite extends DboSource {
  * @access public
  */
 	function listSources() {
-		$db = $this->config['database'];
-		$this->config['database'] = basename($this->config['database']);
-
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
@@ -157,11 +154,8 @@ class DboSqlite extends DboSource {
 				$tables[] = $table[0]['name'];
 			}
 			parent::listSources($tables);
-
-			$this->config['database'] = $db;
 			return $tables;
 		}
-		$this->config['database'] = $db;
 		return array();
 	}
 

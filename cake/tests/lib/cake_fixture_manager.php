@@ -177,8 +177,8 @@ class CakeFixtureManager {
 
 		$cacheSources = $db->cacheSources;
 		$db->cacheSources = false;
-		$db->cacheSources = $cacheSources;
 		$sources = $db->listSources();
+		$db->cacheSources = $cacheSources;
 		$table = $db->config['prefix'] . $fixture->table;
 
 		if ($drop && in_array($table, $sources)) {
