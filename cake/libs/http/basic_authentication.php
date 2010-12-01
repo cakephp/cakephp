@@ -31,12 +31,36 @@ class BasicAuthentication {
  *
  * @param HttpSocket $http
  * @return void
- * @throws Exception
+ * @see http://www.ietf.org/rfc/rfc2617.txt
  */
 	public static function authentication(HttpSocket $http) {
 		if (isset($http->request['auth']['user'], $http->request['auth']['pass'])) {
-			$http->request['header']['Authorization'] = 'Basic ' . base64_encode($http->request['auth']['user'] . ':' . $http->request['auth']['pass']);
+			$http->request['header']['Authorization'] = self::_generateHeader($http->request['auth']['user'], $http->request['auth']['pass']);
 		}
+	}
+
+/**
+ * Proxy Authentication
+ *
+ * @param HttpSocket $http
+ * @return void
+ * @see http://www.ietf.org/rfc/rfc2617.txt
+ */
+	public static function proxyAuthentication(HttpSocket $http) {
+		if (isset($http->request['proxy']['user'], $http->request['proxy']['pass'])) {
+			$http->request['header']['Proxy-Authorization'] = self::_generateHeader($http->request['proxy']['user'], $http->request['proxy']['pass']);
+		}
+	}
+
+/**
+ * Generate basic [proxy] authentication header
+ *
+ * @param string $user
+ * @param string $pass
+ * @return string
+ */
+	protected static function _generateHeader($user, $pass) {
+		return 'Basic ' . base64_encode($user . ':' . $pass);
 	}
 
 }
