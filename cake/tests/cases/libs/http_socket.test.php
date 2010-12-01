@@ -19,6 +19,36 @@
  */
 App::import('Core', 'HttpSocket');
 
+/**
+ * TestAuthentication class
+ *
+ * @package cake
+ * @subpackage cake.tests.cases.libs
+ */
+class TestAuthentication {
+
+/**
+ * authentication method
+ *
+ * @param HttpSocket $http
+ * @return void
+ */
+	public static function authentication(HttpSocket $http) {
+		$http->request['header']['Authorization'] = 'Test ' . $http->request['auth']['user'] . '.' . $http->request['auth']['pass'];
+	}
+
+/**
+ * proxyAuthentication method
+ *
+ * @param HttpSocket $http
+ * @return void
+ */
+	public static function proxyAuthentication(HttpSocket $http) {
+		$http->request['header']['Proxy-Authorization'] = 'Test ' . $http->request['proxy']['user'] . '.' . $http->request['proxy']['pass'];
+	}
+
+}
+
 class TestHttpSocket extends HttpSocket {
 
 /**
@@ -261,6 +291,13 @@ class HttpSocketTest extends CakeTestCase {
 					, 'user' => 'bob'
 					, 'pass' => 'secret'
 				),
+				'proxy' => array(
+					'method' => 'Basic',
+					'host' => null,
+					'port' => 3128,
+					'user' => null,
+					'pass' => null
+				),
 				'cookies' => array(),
 			)
 		);
@@ -289,6 +326,13 @@ class HttpSocketTest extends CakeTestCase {
 					'method' => 'Basic'
 					, 'user' => null
 					, 'pass' => null
+				),
+				'proxy' => array(
+					'method' => 'Basic',
+					'host' => null,
+					'port' => 3128,
+					'user' => null,
+					'pass' => null
 				),
 				'cookies' => array()
 			)
@@ -336,6 +380,13 @@ class HttpSocketTest extends CakeTestCase {
 								,'user' => null
 								,'pass' => null
 							),
+							'proxy' => array(
+								'method' => 'Basic',
+								'host' => null,
+								'port' => 3128,
+								'user' => null,
+								'pass' => null
+							),
 							'cookies' => array(),
 						),
 					)
@@ -355,6 +406,13 @@ class HttpSocketTest extends CakeTestCase {
 							'method' => 'Basic'
 							, 'user' => null
 							, 'pass' => null
+						),
+						'proxy' => array(
+							'method' => 'Basic',
+							'host' => null,
+							'port' => 3128,
+							'user' => null,
+							'pass' => null
 						)
 						, 'version' => '1.1'
 						, 'body' => ''
@@ -586,6 +644,47 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($result, $expect);
 		$this->assertEqual($this->Socket->config['request']['cookies'], $expect);
 		$this->assertFalse($this->Socket->connected);
+	}
+
+/**
+ * testProxy method
+ *
+ * @return void
+ */
+	function testProxy() {
+		$this->Socket->reset();
+		$this->Socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+		$this->Socket->expects($this->any())->method('read')->will($this->returnValue(false));
+		$request = array(
+			'uri' => 'http://www.cakephp.org/',
+			'proxy' => array(
+				'host' => 'proxy.server',
+				'port' => 123
+			)
+		);
+		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n";
+		$this->Socket->request($request);
+		$this->assertEqual($this->Socket->request['raw'], $expected);
+		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
+		$this->assertEqual($this->Socket->config['port'], 123);
+
+		$request['proxy']['method'] = 'Test';
+		$request['proxy']['user'] = 'mark';
+		$request['proxy']['pass'] = 'secret';
+		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
+		$this->Socket->request($request);
+		$this->assertEqual($this->Socket->request['raw'], $expected);
+		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
+		$this->assertEqual($this->Socket->config['port'], 123);
+
+		$request['auth'] = array(
+			'method' => 'Test',
+			'user' => 'login',
+			'pass' => 'passwd'
+		);
+		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nAuthorization: Test login.passwd\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
+		$this->Socket->request($request);
+		$this->assertEqual($this->Socket->request['raw'], $expected);
 	}
 
 /**

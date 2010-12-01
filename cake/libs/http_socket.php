@@ -64,6 +64,13 @@ class HttpSocket extends CakeSocket {
 			'user' => null,
 			'pass' => null
 		),
+		'proxy' => array(
+			'method' => 'Basic',
+			'host' => null,
+			'port' => 3128,
+			'user' => null,
+			'pass' => null
+		),
 		'version' => '1.1',
 		'body' => '',
 		'line' => null,
@@ -118,6 +125,13 @@ class HttpSocket extends CakeSocket {
 			),
 			'auth' => array(
 				'method' => 'Basic',
+				'user' => null,
+				'pass' => null
+			),
+			'proxy' => array(
+				'method' => 'Basic',
+				'host' => null,
+				'port' => 3128,
 				'user' => null,
 				'pass' => null
 			),
@@ -238,6 +252,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$this->_setAuth();
+		$this->_setProxyConfig();
 
 		if (is_array($this->request['body'])) {
 			$this->request['body'] = $this->_httpSerialize($this->request['body']);
@@ -461,6 +476,28 @@ class HttpSocket extends CakeSocket {
 			throw new Exception(__('Unknown authentication method.'));
 		}
 		call_user_func("$authClass::authentication", $this);
+	}
+
+/**
+ * Set the proxy configuration and authentication
+ *
+ * @return void
+ */
+	protected function _setProxyConfig() {
+		if (empty($this->request['proxy']['host'])) {
+			return;
+		}
+		$this->config['host'] = $this->request['proxy']['host'];
+		$this->config['port'] = $this->request['proxy']['port'];
+
+		if (empty($this->request['proxy']['method']) || !isset($this->request['proxy']['user'], $this->request['proxy']['pass'])) {
+			return;
+		}
+		$authClass = Inflector::camelize($this->request['proxy']['method']) . 'Authentication';
+		if (!App::import('Lib', 'http/' . $authClass)) {
+			throw new Exception(__('Unknown authentication method for proxy.'));
+		}
+		call_user_func("$authClass::proxyAuthentication", $this);
 	}
 
 /**
@@ -837,7 +874,11 @@ class HttpSocket extends CakeSocket {
 
 		$request['uri']	= $this->_parseUri($request['uri']);
 		$request = array_merge(array('method' => 'GET'), $request);
-		$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
+		if (!empty($request['proxy']['host'])) {
+			$request['uri'] = $this->_buildUri($request['uri'], '%scheme://%host:%port/%path?%query');
+		} else {
+			$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
+		}
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
 			throw new Exception(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.'), join(',', $asteriskMethods)));
