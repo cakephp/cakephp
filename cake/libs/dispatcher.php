@@ -24,34 +24,20 @@
 /**
  * List of helpers to include
  */
-App::import('Core', array('Router', 'CakeRequest', 'CakeResponse'));
+App::import('Core', 'Router', false);
+App::import('Core', 'CakeRequest', false);
+App::import('Core', 'CakeResponse', false);
 App::import('Controller', 'Controller', false);
 
 /**
- * Dispatcher translates URLs to controller-action-paramter triads.
- *
- * Dispatches the request, creating appropriate models and controllers.
+ * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
+ * to locate and load the correct controller.  If found, the requested action is called on 
+ * the controller.
  *
  * @package       cake
  * @subpackage    cake.cake
  */
 class Dispatcher {
-
-/**
- * Base URL
- *
- * @var string
- * @access public
- */
-	public $base = false;
-
-/**
- * webroot path
- *
- * @var string
- * @access public
- */
-	public $webroot = '/';
 
 /**
  * Current URL
@@ -60,14 +46,6 @@ class Dispatcher {
  * @access public
  */
 	public $here = false;
-
-/**
- * the params for this request
- *
- * @var string
- * @access public
- */
-	public $params = null;
 
 /**
  * The request object
@@ -97,40 +75,32 @@ class Dispatcher {
 	}
 
 /**
- * Dispatches and invokes given URL, handing over control to the involved controllers, and then renders the 
- * results (if autoRender is set).
+ * Dispatches and invokes given Request, handing over control to the involved controller. If the controller is set
+ * to autoRender, via Controller::$autoRender, then Dispatcher will render the view.
  *
- * If no controller of given name can be found, invoke() shows error messages in
- * the form of Missing Controllers information. It does the same with Actions (methods of Controllers are called
- * Actions).
+ * Actions in CakePHP can be any public method on a controller, that is not declared in Controller.  If you
+ * want controller methods to be public and in-accesible by URL, then prefix them with a `_`.  
+ * For example `public function _loadPosts() { }` would not be accessible via URL.  Private and protected methods
+ * are also not accessible via URL.
  *
- * @param mixed $url Either a string url or a CakeRequest object information to work on.  If $url is a string
- *   It will be used to create the request object.
+ * If no controller of given name can be found, invoke() will throw an exception.
+ * If the controller is found, and the action is not found an exception will be thrown.
+ *
+ * @param CakeRequest $request Request object to dispatch.
  * @param array $additionalParams Settings array ("bare", "return") which is melded with the GET and POST params
  * @return boolean Success
  * @throws MissingControllerException, MissingActionException, PrivateActionException if any of those error states
  *    are encountered.
  */
-	public function dispatch($url = null, $additionalParams = array()) {
-		if (is_array($url)) {
-			$url = $this->_extractParams($url, $additionalParams);
-		}
-		if ($url instanceof CakeRequest) {
-			$request = $url;
-		} else {
-			$request = new CakeRequest($url);
-		}
+	public function dispatch(CakeRequest $request, $additionalParams = array()) {
 		$this->here = $request->here;
-
 
 		if ($this->asset($request->url) || $this->cached($request->url)) {
 			return;
 		}
 
 		$request = $this->parseParams($request, $additionalParams);
-		$this->request = $request;
-
-		$controller = $this->_getController();
+		$controller = $this->_getController($request);
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
@@ -138,6 +108,27 @@ class Dispatcher {
 				'controller' => Inflector::camelize($request->params['controller']) . 'Controller'
 			));
 		}
+
+		Router::setRequestInfo($request);
+
+		if ($this->_isPrivateAction($request)) {
+			throw new PrivateActionException(array(
+				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
+				'action' => $request->params['action']
+			));
+		}
+
+		return $this->_invoke($controller, $request);
+	}
+
+/**
+ * Check if the request's action is marked as private, with an underscore, of if the request is attempting to 
+ * directly accessing a prefixed action.
+ *
+ * @param CakeRequest $request The request to check
+ * @return boolean
+ */
+	protected function _isPrivateAction($request) {
 		$privateAction = $request->params['action'][0] === '_';
 		$prefixes = Router::prefixes();
 
@@ -149,17 +140,7 @@ class Dispatcher {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-
-		Router::setRequestInfo($request);
-
-		if ($privateAction) {
-			throw new PrivateActionException(array(
-				'controller' => Inflector::camelize($request->params['controller']) . "Controller",
-				'action' => $request->params['action']
-			));
-		}
-
-		return $this->_invoke($controller, $request);
+		return $privateAction;
 	}
 
 /**
@@ -167,17 +148,16 @@ class Dispatcher {
  * Triggers the controller action, and invokes the rendering if Controller::$autoRender is true and echo's the output.
  * Otherwise the return value of the controller action are returned.
  *
- * @param object $controller Controller to invoke
- * @param array $params Parameters with at least the 'action' to invoke
- * @param boolean $missingAction Set to true if missing action should be rendered, false otherwise
+ * @param Controller $controller Controller to invoke
+ * @param CakeRequest $request The request object to invoke the controller for.
  * @return string Output as sent by controller
+ * @throws MissingActionException when the action being called is missing.
  */
-	protected function _invoke(&$controller, $request) {
+	protected function _invoke(Controller $controller, CakeRequest $request) {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
 		$methods = array_flip($controller->methods);
-
 
 		if (!isset($methods[$request->params['action']])) {
 			if ($controller->scaffold !== false) {
@@ -206,32 +186,20 @@ class Dispatcher {
 	}
 
 /**
- * Sets the params when $url is passed as an array to Object::requestAction();
- * Merges the $url and $additionalParams and creates a string url.
+ * Applies Routing and additionalParameters to the request to be dispatched.
+ * If Routes have not been loaded they will be loaded, and app/config/routes.php will be run.
  *
- * @param array $url Array or request parameters
- * @param array $additionalParams Array of additional parameters.
- * @return string $url The generated url string.
- */
-	protected function _extractParams($url, $additionalParams = array()) {
-		$defaults = array('pass' => array(), 'named' => array(), 'form' => array());
-		$params = array_merge($defaults, $url, $additionalParams);
-		$this->params = $params;
-
-		$params += array('base' => false, 'url' => array());
-		return ltrim(Router::reverse($params), '/');
-	}
-
-/**
- * Returns array of GET and POST parameters. GET parameters are taken from given URL.
- *
- * @param CakeRequest $fromUrl CakeRequest object to mine for parameter information.
- * @return array Parameters found in POST and GET.
+ * @param CakeRequest $request CakeRequest object to mine for parameter information.
+ * @param array $additionalParams An array of additional parameters to set to the request.
+ *   Useful when Object::requestAction() is involved
+ * @return CakeRequest The request object with routing params set.
  */
 	public function parseParams(CakeRequest $request, $additionalParams = array()) {
-		$namedExpressions = Router::getNamedExpressions();
-		extract($namedExpressions);
-		include CONFIGS . 'routes.php';
+		if (count(Router::$routes) > 0) {
+			$namedExpressions = Router::getNamedExpressions();
+			extract($namedExpressions);
+			include CONFIGS . 'routes.php';
+		}
 
 		$params = Router::parse($request->url);
 		$request->addParams($params);
@@ -248,17 +216,15 @@ class Dispatcher {
  * @param array $params Array of parameters
  * @return mixed name of controller if not loaded, or object if loaded
  */
-	protected function &_getController() {
-		$controller = false;
-		$ctrlClass = $this->__loadController($this->request);
+	protected function _getController($request) {
+		$ctrlClass = $this->_loadController($request);
 		if (!$ctrlClass) {
-			return $controller;
+			return false;
 		}
 		$ctrlClass .= 'Controller';
 		if (class_exists($ctrlClass)) {
-			$controller = new $ctrlClass($this->request);
+			return new $ctrlClass($request);
 		}
-		return $controller;
 	}
 
 /**
@@ -266,9 +232,8 @@ class Dispatcher {
  *
  * @param array $params Array of parameters
  * @return string|bool Name of controller class name
- * @access private
  */
-	function __loadController($request) {
+	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;
 		if (!empty($request->params['plugin'])) {
 			$pluginName = $controller = Inflector::camelize($request->params['plugin']);

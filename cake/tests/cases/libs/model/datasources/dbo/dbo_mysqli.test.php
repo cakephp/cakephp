@@ -17,9 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
+
 App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysqli'));
 
 /**
@@ -295,7 +293,7 @@ class DboMysqliTest extends CakeTestCase {
  * @return void
  */
 	function testFloatParsing() {
-		$model =& new Model(array('ds' => 'test', 'table' => 'datatypes', 'name' => 'Datatype'));
+		$model = new Model(array('ds' => 'test', 'table' => 'datatypes', 'name' => 'Datatype'));
 		$result = $this->Dbo->describe($model);
 		$this->assertEqual((string)$result['float_field']['length'], '5,2');
 	}

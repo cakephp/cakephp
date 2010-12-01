@@ -93,7 +93,7 @@ class File {
  * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
-		$this->Folder =& new Folder(dirname($path), $create, $mode);
+		$this->Folder = new Folder(dirname($path), $create, $mode);
 		if (!is_dir($path)) {
 			$this->name = basename($path);
 		}

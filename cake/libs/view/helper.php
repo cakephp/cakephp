@@ -140,9 +140,8 @@ class Helper extends Object {
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
-			$this->{$name} = $this->_View->loadHelper(
-				$this->_helperMap[$name]['class'], $this->_helperMap[$name]['settings'], false
-			);
+			$settings = array_merge((array)$this->_helperMap[$name]['settings'], array('enabled' => false));
+			$this->{$name} = $this->_View->loadHelper($this->_helperMap[$name]['class'], $settings);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
@@ -356,14 +355,13 @@ class Helper extends Object {
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$keys = array_diff(array_keys($options), array_merge($exclude, array('escape')));
-			$values = array_intersect_key(array_values($options), $keys);
+			$filtered = array_diff_key($options, array_merge(array_flip($exclude), array('escape' => true)));
 			$escape = $options['escape'];
 			$attributes = array();
 
-			foreach ($keys as $index => $key) {
-				if ($values[$index] !== false && $values[$index] !== null) {
-					$attributes[] = $this->__formatAttribute($key, $values[$index], $escape);
+			foreach ($filtered as $key => $value) {
+				if ($value !== false && $value !== null) {
+					$attributes[] = $this->__formatAttribute($key, $value, $escape);
 				}
 			}
 			$out = implode(' ', $attributes);
@@ -801,9 +799,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $viewFile The view file that is going to be rendered
  * @return void
  */
-	public function beforeRender() {
+	public function beforeRender($viewFile) {
 	}
 
 /**
@@ -812,9 +811,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $viewFile The view file that was rendered.
  * @return void
  */
-	public function afterRender() {
+	public function afterRender($viewFile) {
 	}
 
 /**
@@ -822,9 +822,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $layoutFile The layout about to be rendered.
  * @return void
  */
-	public function beforeLayout() {
+	public function beforeLayout($layoutFile) {
 	}
 
 /**
@@ -832,9 +833,10 @@ class Helper extends Object {
  *
  * Overridden in subclasses.
  *
+ * @param string $layoutFile The layout file that was rendered.
  * @return void
  */
-	public function afterLayout() {
+	public function afterLayout($layoutFile) {
 	}
 
 /**

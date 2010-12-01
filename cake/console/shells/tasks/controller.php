@@ -278,7 +278,7 @@ class ControllerTask extends BakeTask {
 			$this->_stop();
 		}
 
-		$modelObj =& ClassRegistry::init($currentModelName);
+		$modelObj = ClassRegistry::init($currentModelName);
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
@@ -302,6 +302,8 @@ class ControllerTask extends BakeTask {
  * @return string Baked controller
  */
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+		$this->out("\nBaking controller class for $controllerName...", 1, Shell::QUIET);
+
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));

@@ -17,9 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
+
 App::import('Model', array('Model', 'DataSource', 'DboSource', 'DboMysql', 'App'));
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
@@ -2048,7 +2046,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testGenerateAssociationQueryHasManyAndAggregateFunction() {
-		$this->Model =& new TestModel5();
+		$this->Model = new TestModel5();
 		$this->Model->schema();
 		$this->_buildRelatedModels($this->Model);
 
@@ -4478,7 +4476,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testFieldsWithComplexVirtualFields() {
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->virtualFields = array(
 			'distance' => 'ACOS(SIN(20 * PI() / 180)
 					* SIN(Article.latitude * PI() / 180)
@@ -4505,7 +4503,7 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	function testReadVirtualFieldsWithNewLines() {
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->recursive = 1;
 		$Article->virtualFields = array(
 			'test' => '

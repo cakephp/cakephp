@@ -807,7 +807,7 @@ class DboPostgresTest extends CakeTestCase {
  */
 	function testUpdateAllWithNonQualifiedConditions() {
 		$this->loadFixtures('Article');
-		$Article =& new Article();
+		$Article = new Article();
 		$result = $Article->updateAll(array('title' => "'Awesome'"), array('title' => 'Third Article'));
 		$this->assertTrue($result);
 
@@ -823,7 +823,7 @@ class DboPostgresTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTwoTables() {
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(
@@ -835,7 +835,7 @@ class DboPostgresTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(

@@ -550,7 +550,7 @@ class CakeRequest implements ArrayAccess {
  * @param string $name Name of the header you want.
  * @return mixed Either false on no header being set or the value of the header.
  */
-	public function header($name) {
+	public static function header($name) {
 		$name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
 		if (!empty($_SERVER[$name])) {
 			return $_SERVER[$name];
@@ -582,7 +582,7 @@ class CakeRequest implements ArrayAccess {
  * @param int $tldLength Number of segments your tld contains
  * @return string Domain name without subdomains.
  */
-	function domain($tldLength = 1) {
+	public function domain($tldLength = 1) {
 		$segments = explode('.', $this->host());
 		$domain = array_slice($segments, -1 * ($tldLength + 1));
 		return implode('.', $domain);
@@ -594,7 +594,7 @@ class CakeRequest implements ArrayAccess {
  * @param int $tldLength Number of segments your tld contains.
  * @return array of subdomains.
  */
-	function subdomains($tldLength = 1) {
+	public function subdomains($tldLength = 1) {
 		$segments = explode('.', $this->host());
 		return array_slice($segments, 0, -1 * ($tldLength + 1));
 	}
@@ -627,6 +627,26 @@ class CakeRequest implements ArrayAccess {
 			return $acceptTypes;
 		}
 		return in_array($type, $acceptTypes);
+	}
+
+/**
+ * Get the lanaguages accepted by the client, or check if a specific language is accepted.
+ *
+ * @param string $language The language to test.
+ * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
+ */
+	public static function acceptLanguage($language = null) {
+		$accepts = preg_split('/[;,]/', self::header('Accept-Language'));
+		foreach ($accepts as &$accept) {
+			$accept = strtolower($accept);
+			if (strpos($accept, '_') !== false) {
+				$accept = str_replace('_', '-', $accept);
+			}
+		}
+		if ($language === null) {
+			return $accepts;
+		}
+		return in_array($language, $accepts);
 	}
 
 /**

@@ -18,7 +18,7 @@
  */
 ?>
 <h1>Content</h1>
-<cake:nocache>
+<!--nocache-->
 	<p>D. In View File</p>
 	<?php $this->log('4. in view file') ?>
-</cake:nocache>
+<!--/nocache-->

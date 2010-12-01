@@ -1,15 +1,15 @@
 --view start--
-<cake:nocache>
+<!--nocache-->
 	<?php echo $batman ?>
-</cake:nocache>
+<!--/nocache-->
 
 this view has 3 nocache blocks
 
-<cake:nocache>
+<!--nocache-->
 	<?php echo $spiderman; ?>
-</cake:nocache>
+<!--/nocache-->
 
-<cake:nocache>
+<!--nocache-->
 	<?php echo 'some string'; ?>
-</cake:nocache>
+<!--/nocache-->
 --view end--

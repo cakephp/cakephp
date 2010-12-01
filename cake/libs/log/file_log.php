@@ -67,9 +67,6 @@ class FileLog implements CakeLogInterface {
 			$filename = $this->_path . $type . '.log';
 		}
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
-		$log = new SplFileObject($filename, 'a+');
-		if ($log->isWritable()) {
-			return $log->fwrite($output);
-		}
+		return file_put_contents($filename, $output, FILE_APPEND);
 	}
 }

@@ -67,7 +67,7 @@ class Object {
 			return false;
 		}
 		if (!class_exists('dispatcher')) {
-			require CAKE . 'dispatcher.php';
+			require LIBS . 'dispatcher.php';
 		}
 		if (in_array('return', $extra, true)) {
 			$extra = array_merge($extra, array('return' => 0, 'autoRender' => 1));
@@ -75,9 +75,21 @@ class Object {
 		if (is_array($url) && !isset($extra['url'])) {
 			$extra['url'] = array();
 		}
-		$params = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
-		$dispatcher = new Dispatcher;
-		return $dispatcher->dispatch($url, $params);
+		$extra = array_merge(array('autoRender' => 0, 'return' => 1, 'bare' => 1, 'requested' => 1), $extra);
+		
+		if (is_string($url)) {
+			$request = new CakeRequest($url);
+		} elseif (is_array($url)) {
+			$params = $url + array('pass' => array(), 'named' => array(), 'base' => false);
+			$params = array_merge($params, $extra);
+			$request = new CakeRequest(Router::reverse($params), false);
+			if (isset($params['data'])) {
+				$request->data = $params['data'];
+			}
+		}
+
+		$dispatcher = new Dispatcher();
+		return $dispatcher->dispatch($request, $extra);
 	}
 
 /**
@@ -183,6 +195,36 @@ class Object {
 		} else {
 			$this->__openPersistent($name, $type);
 			return true;
+		}
+	}
+
+/**
+ * Merges this objects $property with the property in $class' definition.
+ * This classes value for the property will be merged on top of $class'
+ *
+ * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
+ * this method as an empty function.
+ *
+ * @param array $properties The name of the properties to merge.
+ * @param sting $class The class to merge the property with.
+ * @param boolean $normalize Set to true to run the properties through Set::normalize() before merging.
+ * @return void
+ */
+	protected function _mergeVars($properties, $class, $normalize = true) {
+		$classProperties = get_class_vars($class);
+		foreach ($properties as $var) {
+			if (
+				isset($classProperties[$var]) &&
+				!empty($classProperties[$var]) && 
+				is_array($this->{$var}) &&
+				$this->{$var} != $classProperties[$var]
+			) {
+				if ($normalize) {
+					$classProperties[$var] = Set::normalize($classProperties[$var]);
+					$this->{$var} = Set::normalize($this->{$var});
+				}
+				$this->{$var} = Set::merge($classProperties[$var], $this->{$var});
+			}
 		}
 	}
 

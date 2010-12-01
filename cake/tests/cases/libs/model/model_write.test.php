@@ -2171,7 +2171,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testUpdateSavingBlankValues() {
 		$this->loadFixtures('Article');
-		$Article =& new Article();
+		$Article = new Article();
 		$Article->validate = array();
 		$Article->create();
 		$result = $Article->save(array(
@@ -3037,7 +3037,7 @@ class ModelWriteTest extends BaseModelTest {
 				'published' => array('type' => 'string')
 			)));
 
-		$Post =& new Post();
+		$Post = new Post();
 		$Post->useDbConfig = 'mock_transaction_assoc';
 		$Post->Author->useDbConfig = 'mock_transaction_assoc';
 
@@ -3057,6 +3057,22 @@ class ModelWriteTest extends BaseModelTest {
 			)
 		);
 		$Post->saveAll($data);
+	}
+
+/**
+ * test saveAll with nested saveAll call.
+ *
+ * @return void
+ */
+	function testSaveAllNestedSaveAll() {
+		$this->loadFixtures('Sample');
+		$TransactionTestModel =& new TransactionTestModel();
+
+		$data = array(
+			array('apple_id' => 1, 'name' => 'sample5'),
+		);
+
+		$this->assertTrue($TransactionTestModel->saveAll($data, array('atomic' => true)));
 	}
 
 /**
@@ -3589,7 +3605,7 @@ class ModelWriteTest extends BaseModelTest {
  * @return void
  */
 	function testSaveAllValidateFirstAtomicFalse() {
-		$Something =& new Something();
+		$Something = new Something();
 		$invalidData = array(
 			array(
 				'title' => 'foo',
@@ -3620,7 +3636,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(true, false);
 		$this->assertEqual($result, $expected);
 
-		$Something =& new Something();
+		$Something = new Something();
 		$validData = array(
 			array(
 				'title' => 'title value',

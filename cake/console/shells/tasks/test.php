@@ -19,6 +19,7 @@
  */
 
 include_once dirname(__FILE__) . DS . 'bake.php';
+App::import('Model', 'ClassRegistry');
 
 /**
  * Task class for creating and updating test files.
@@ -114,8 +115,8 @@ class TestTask extends BakeTask {
  */
 	public function bake($type, $className) {
 		if ($this->typeCanDetectFixtures($type) && $this->isLoadableClass($type, $className)) {
-			$this->out(__('Bake is detecting possible fixtures..'));
-			$testSubject =& $this->buildTestSubject($type, $className);
+			$this->out(__('Bake is detecting possible fixtures...'));
+			$testSubject = $this->buildTestSubject($type, $className);
 			$this->generateFixtureList($testSubject);
 		} elseif ($this->interactive) {
 			$this->getUserFixtures();
@@ -133,6 +134,7 @@ class TestTask extends BakeTask {
 		if ($this->plugin) {
 			$plugin = $this->plugin . '.';
 		}
+		$this->out("\nBaking test case for $className $type...", 1, Shell::QUIET);
 
 		$this->Template->set('fixtures', $this->_fixtures);
 		$this->Template->set('plugin', $plugin);
@@ -228,9 +230,9 @@ class TestTask extends BakeTask {
 		App::import($type, $class);
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) == 'model') {
-			$instance =& ClassRegistry::init($class);
+			$instance = ClassRegistry::init($class);
 		} else {
-			$instance =& new $class();
+			$instance = new $class();
 		}
 		return $instance;
 	}

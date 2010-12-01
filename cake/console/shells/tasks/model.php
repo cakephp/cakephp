@@ -131,7 +131,7 @@ class ModelTask extends BakeTask {
 		if (!$table) {
 			$table = Inflector::tableize($className);
 		}
-		$object =& new Model(array('name' => $className, 'table' => $table, 'ds' => $this->connection));
+		$object = new Model(array('name' => $className, 'table' => $table, 'ds' => $this->connection));
 		return $object;
 	}
 
@@ -180,7 +180,7 @@ class ModelTask extends BakeTask {
 		}
 		$currentModelName = $this->getName();
 		$useTable = $this->getTable($currentModelName);
-		$db =& ConnectionManager::getDataSource($this->connection);
+		$db = ConnectionManager::getDataSource($this->connection);
 		$fullTableName = $db->fullTableName($useTable);
 
 		if (in_array($useTable, $this->_tables)) {
@@ -742,7 +742,7 @@ class ModelTask extends BakeTask {
 
 		$path = $this->getPath();
 		$filename = $path . Inflector::underscore($name) . '.php';
-		$this->out("\nBaking model class for $name...");
+		$this->out("\nBaking model class for $name...", 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		ClassRegistry::flush();
 		return $out;
@@ -793,7 +793,7 @@ class ModelTask extends BakeTask {
 		}
 		App::import('Model', 'ConnectionManager', false);
 
-		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$db = ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
 		$fullTableName = $db->fullTableName($useTable, false);
 		$tableIsGood = false;
@@ -823,7 +823,7 @@ class ModelTask extends BakeTask {
 		App::import('Model', 'ConnectionManager', false);
 
 		$tables = array();
-		$db =& ConnectionManager::getDataSource($useDbConfig);
+		$db = ConnectionManager::getDataSource($useDbConfig);
 		$db->cacheSources = false;
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
 		if ($usePrefix) {

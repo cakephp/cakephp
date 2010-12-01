@@ -363,7 +363,7 @@ TEMPDOC;
 			return;
 		}
 
-		$connection =& new CakeSocket(array('protocol'=>'smtp', 'host' => 'localhost', 'port' => 25));
+		$connection = new CakeSocket(array('protocol'=>'smtp', 'host' => 'localhost', 'port' => 25));
 		$this->Controller->EmailTest->setConnectionSocket($connection);
 		$this->Controller->EmailTest->smtpOptions['timeout'] = 10;
 		$this->assertTrue($connection->connect());

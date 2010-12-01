@@ -41,6 +41,7 @@ class TestSuiteShellTest extends CakeTestCase {
 			array('in', 'out', 'hr', 'help', 'error', 'err', '_stop', 'initialize', 'run', 'clear'),
 			array($out, $out, $in)
 		);
+		$this->Shell->OptionParser = $this->getMock('ConsoleOptionParser', array(), array(null, false));
 	}
 
 /**
@@ -61,7 +62,7 @@ class TestSuiteShellTest extends CakeTestCase {
 		$this->Shell->startup();
 		$this->Shell->args = array('unexistant-category');
 		$this->Shell->expects($this->at(0))->method('out')->with(__("No test cases available \n\n"));
-		$this->Shell->expects($this->once())->method('help');
+		$this->Shell->OptionParser->expects($this->once())->method('help');
 		$this->Shell->available();
 	}
 

@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('String', 'Security'));
+App::import('Core', 'String', false);
+App::import('Core', 'Security', false);
 
 /**
  * SecurityComponent
@@ -618,10 +619,15 @@ class SecurityComponent extends Component {
 		}
 		unset($check['_Token']);
 
+		$locked = str_rot13($locked);
+		if (preg_match('/(\A|;|{|})O\:[0-9]+/', $locked)) {
+			return false;
+		}
+
 		$lockedFields = array();
 		$fields = Set::flatten($check);
 		$fieldList = array_keys($fields);
-		$locked = unserialize(str_rot13($locked));
+		$locked = unserialize($locked);
 		$multi = array();
 
 		foreach ($fieldList as $i => $key) {

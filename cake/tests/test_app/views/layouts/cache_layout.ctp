@@ -18,15 +18,15 @@
  */
 ?>
 <p>This is regular text</p>
-<cake:nocache>
+<!--nocache-->
 	<?php echo microtime(); ?>
-</cake:nocache>
+<!--/nocache-->
 
 <?php echo $content_for_layout; ?>
 
 <?php echo $superman; ?>
 
-<cake:nocache>
+<!--nocache-->
 	<?php echo $variable; ?>
-</cake:nocache>
+<!--/nocache-->
 <p>Additional regular text.</p>

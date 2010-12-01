@@ -110,10 +110,10 @@ class PaginatorHelper extends AppHelper {
  *
  * @return void
  */
-	public function beforeRender() {
+	public function beforeRender($viewFile) {
 		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
 
-		parent::beforeRender();
+		parent::beforeRender($viewFile);
 	}
 
 /**

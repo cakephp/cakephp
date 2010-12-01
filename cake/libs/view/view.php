@@ -21,7 +21,6 @@
 /**
  * Included libraries.
  */
-App::import('Core', 'ClassRegistry');
 App::import('View', 'HelperCollection', false);
 App::import('View', 'Helper', false);
 
@@ -242,6 +241,16 @@ class View extends Object {
 	public $request;
 
 /**
+ * The Cache configuration View will use to store cached elements.  Changing this will change
+ * the default configuration elements are stored under.  You can also choose a cache config
+ * per element.
+ *
+ * @var string
+ * @see View::element()
+ */
+	public $elementCache = 'default';
+
+/**
  * List of variables to collect from the associated controller
  *
  * @var array
@@ -269,11 +278,18 @@ class View extends Object {
 	private $__paths = array();
 
 /**
+ * boolean to indicate that helpers have been loaded.
+ *
+ * @var boolean
+ */
+	protected $_helpersLoaded = false;
+
+/**
  * Constructor
  *
  * @param Controller $controller A controller object to pull View::__passedArgs from.
  */
-	function __construct(&$controller) {
+	function __construct($controller) {
 		if (is_object($controller)) {
 			$count = count($this->__passedVars);
 			for ($j = 0; $j < $count; $j++) {
@@ -294,68 +310,70 @@ class View extends Object {
  *
  * ### Special params
  *
- * - `cache` - enable caching for this element accepts boolean or strtotime compatible string.
- *   Can also be an array. If `cache` is an array,
- *   `time` is used to specify duration of cache.
- *   `key` can be used to create unique cache files.
+ * - `cache` - Can either be `true`, to enable caching using the config in View::$elementCache. Or an array
+ *   If an array, the following keys can be used:
+ *   - `config` - Used to store the cached element in a custom cache configuration.
+ *   - `key` - Used to define the key used in the Cache::write().  It will be prefixed with `element_`
  * - `plugin` - Load an element from a specific plugin.
  *
  * @param string $name Name of template file in the/app/views/elements/ folder
  * @param array $params Array of data to be made available to the for rendered
  *    view (i.e. the Element)
+ * @param boolean $callbacks Set to true to fire beforeRender and afterRender helper callbacks for this element.
+ *   Defaults to false.
  * @return string Rendered Element
  */
-	public function element($name, $params = array(), $loadHelpers = false) {
+	public function element($name, $params = array(), $callbacks = false) {
 		$file = $plugin = $key = null;
 
 		if (isset($params['plugin'])) {
 			$plugin = $params['plugin'];
 		}
-
 		if (isset($this->plugin) && !$plugin) {
 			$plugin = $this->plugin;
 		}
 
 		if (isset($params['cache'])) {
-			$expires = '+1 day';
-
+			$keys = array_merge(array($plugin, $name), array_keys($params));
+			$caching = array(
+				'config' => $this->elementCache,
+				'key' => implode('_', $keys)
+			);
 			if (is_array($params['cache'])) {
-				$expires = $params['cache']['time'];
-				$key = Inflector::slug($params['cache']['key']);
-			} elseif ($params['cache'] !== true) {
-				$expires = $params['cache'];
-				$key = implode('_', array_keys($params));
+				$defaults = array(
+					'config' => $this->elementCache,
+					'key' => $caching['key']
+				);
+				$caching = array_merge($defaults, $params['cache']);
 			}
-
-			if ($expires) {
-				$cacheFile = 'element_' . $key . '_' . $plugin . Inflector::slug($name);
-				$cache = cache('views' . DS . $cacheFile, null, $expires);
-
-				if (is_string($cache)) {
-					return $cache;
-				}
+			$key = 'element_' . $caching['key'];
+			$contents = Cache::read($key, $caching['config']);
+			if ($contents !== false) {
+				return $contents;
 			}
 		}
-		$paths = $this->_paths($plugin);
+		$file = $this->_getElementFilename($name, $plugin);
 
-		foreach ($paths as $path) {
-			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
-				$file = $path . 'elements' . DS . $name . $this->ext;
-				break;
+		if ($file) {
+			if (!$this->_helpersLoaded) {
+				$this->loadHelpers();
 			}
-		}
-
-		if (is_file($file)) {
-			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
-			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
-				cache('views' . DS . $cacheFile, $element, $expires);
+			if ($callbacks) {
+				$this->Helpers->trigger('beforeRender', array($file));
+			}
+			$element = $this->_render($file, array_merge($this->viewVars, $params));
+			if ($callbacks) {
+				$this->Helpers->trigger('afterRender', array($file, $element));
+			}
+			if (isset($params['cache'])) {
+				Cache::write($key, $element, $caching['config']);
 			}
 			return $element;
 		}
-		$file = $paths[0] . 'elements' . DS . $name . $this->ext;
+		$file = 'elements' . DS . $name . $this->ext;
 
 		if (Configure::read('debug') > 0) {
-			return "Not Found: " . $file;
+			return "Element Not Found: " . $file;
 		}
 	}
 
@@ -372,39 +390,32 @@ class View extends Object {
 		if ($this->hasRendered) {
 			return true;
 		}
-		$out = null;
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
+		}
+		$this->output = null;
 
 		if ($file != null) {
 			$action = $file;
 		}
 
 		if ($action !== false && $viewFileName = $this->_getViewFileName($action)) {
-			$out = $this->_render($viewFileName, $this->viewVars);
+			$this->Helpers->trigger('beforeRender', array($viewFileName));
+			$this->output = $this->_render($viewFileName);
+			$this->Helpers->trigger('afterRender', array($viewFileName));
 		}
 
 		if ($layout === null) {
 			$layout = $this->layout;
 		}
-
-		if ($out !== false) {
-			if ($layout && $this->autoLayout) {
-				$out = $this->renderLayout($out, $layout);
-				$isCached = (
-					isset($this->Helpers->Cache) ||
-					Configure::read('Cache.check') === true
-				);
-
-				if ($isCached) {
-					$replace = array('<cake:nocache>', '</cake:nocache>');
-					$out = str_replace($replace, '', $out);
-				}
-			}
-			$this->hasRendered = true;
-		} else {
-			$out = $this->_render($viewFileName, $this->viewVars);
-			trigger_error(sprintf(__("Error in view %s, got: <blockquote>%s</blockquote>"), $viewFileName, $out), E_USER_ERROR);
+		if ($this->output === false) {
+			throw new RuntimeException(sprintf(__("Error in view %s, got no content."), $viewFileName));
 		}
-		return $out;
+		if ($layout && $this->autoLayout) {
+			$this->output = $this->renderLayout($this->output, $layout);
+		}
+		$this->hasRendered = true;
+		return $this->output;
 	}
 
 /**
@@ -423,35 +434,27 @@ class View extends Object {
 		if (empty($layoutFileName)) {
 			return $this->output;
 		}
+		if (!$this->_helpersLoaded) {
+			$this->loadHelpers();
+		}
+		$this->Helpers->trigger('beforeLayout', array($layoutFileName));
 
-		$dataForLayout = array_merge($this->viewVars, array(
+		$this->viewVars = array_merge($this->viewVars, array(
 			'content_for_layout' => $content_for_layout,
 			'scripts_for_layout' => implode("\n\t", $this->_scripts),
 		));
 
-		if (!isset($dataForLayout['title_for_layout'])) {
-			$dataForLayout['title_for_layout'] = Inflector::humanize($this->viewPath);
-		}
-		
-		$attached = $this->Helpers->attached();
-		if (empty($attached) && !empty($this->helpers)) {
-			$loadHelpers = true;
-		} else {
-			$loadHelpers = false;
-			$dataForLayout = array_merge($dataForLayout);
+		if (!isset($this->viewVars['title_for_layout'])) {
+			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
 
-		$this->Helpers->trigger('beforeLayout', array(&$this));
-		$this->output = $this->_render($layoutFileName, $dataForLayout, $loadHelpers, true);
+		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
-			$this->output = $this->_render($layoutFileName, $data_for_layout);
-			trigger_error(sprintf(__("Error in layout %s, got: <blockquote>%s</blockquote>"), $layoutFileName, $this->output), E_USER_ERROR);
-			return false;
+			throw new RuntimeException(sprintf(__("Error in layout %s, got no content."), $layoutFileName));
 		}
-		
-		$this->Helpers->trigger('afterLayout', array(&$this));
 
+		$this->Helpers->trigger('afterLayout', array($layoutFileName));
 		return $this->output;
 	}
 
@@ -602,21 +605,6 @@ class View extends Object {
 	}
 
 /**
- * Displays an error page to the user. Uses layouts/error.ctp to render the page.
- *
- * @param integer $code HTTP Error code (for instance: 404)
- * @param string $name Name of the error (for instance: Not Found)
- * @param string $message Error message as a web page
- */
-	public function error($code, $name, $message) {
-		header ("HTTP/1.1 {$code} {$name}");
-		print ($this->_render(
-			$this->_getLayoutFileName('error'),
-			array('code' => $code, 'name' => $name, 'message' => $message)
-		));
-	}
-
-/**
  * Magic accessor for helpers. Provides access to attributes that were deprecated.
  *
  * @param string $name Name of the attribute to get.
@@ -650,6 +638,7 @@ class View extends Object {
 		foreach ($helpers as $name => $properties) {
 			$this->Helpers->load($properties['class'], $properties['settings'], true);
 		}
+		$this->_helpersLoaded = true;
 	}
 
 /**
@@ -662,12 +651,9 @@ class View extends Object {
  * @param boolean $cached Whether or not to trigger the creation of a cache file.
  * @return string Rendered output
  */
-	protected function _render($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
-		$attached = $this->Helpers->attached();
-		if (count($attached) === 0 && $loadHelpers === true) {
-			$this->loadHelpers();
-			$this->Helpers->trigger('beforeRender', array(&$this));
-			unset($attached);
+	protected function _render($___viewFn, $___dataForView = array(), $loadHelpers = true, $cached = false) {
+		if (empty($___dataForView)) {
+			$___dataForView = $this->viewVars;
 		}
 
 		extract($___dataForView, EXTR_SKIP);
@@ -675,41 +661,19 @@ class View extends Object {
 
 		include $___viewFn;
 
-		if ($loadHelpers === true) {
-			$this->Helpers->trigger('afterRender', array(&$this));
-		}
-
-		$out = ob_get_clean();
-		$caching = (
-			isset($this->Helpers->Cache) &&
-			(($this->cacheAction != false)) && (Configure::read('Cache.check') === true)
-		);
-
-		if ($caching) {
-			if (isset($this->Helpers->Cache)) {
-				$cache =& $this->Helpers->Cache;
-				$cache->base = $this->request->base;
-				$cache->here = $this->request->here;
-				$cache->helpers = $this->helpers;
-				$cache->action = $this->request->action;
-				$cache->controllerName = $this->name;
-				$cache->layout = $this->layout;
-				$cache->cacheAction = $this->cacheAction;
-				$cache->cache($___viewFn, $out, $cached);
-			}
-		}
-		return $out;
+		return ob_get_clean();
 	}
 
 /**
- * Loads a helper.  Delegates to the HelperCollection to load the helper
+ * Loads a helper.  Delegates to the `HelperCollection::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
  * @param array $settings Settings for the helper
  * @return Helper a constructed helper object.
+ * @see HelperCollection::load()
  */
-	public function loadHelper($helperName, $settings = array(), $attach = true) {
-		return $this->Helpers->load($helperName, $settings, $attach);
+	public function loadHelper($helperName, $settings = array()) {
+		return $this->Helpers->load($helperName, $settings);
 	}
 
 /**
@@ -747,7 +711,7 @@ class View extends Object {
 				$name = $this->viewPath . DS . $subDir . $name;
 			}
 		}
-		$paths = $this->_paths(Inflector::underscore($this->plugin));
+		$paths = $this->_paths($this->plugin);
 		
 		$exts = array($this->ext);
 		if ($this->ext !== '.ctp') {
@@ -790,7 +754,7 @@ class View extends Object {
 		if (!is_null($this->layoutPath)) {
 			$subDir = $this->layoutPath . DS;
 		}
-		$paths = $this->_paths(Inflector::underscore($this->plugin));
+		$paths = $this->_paths($this->plugin);
 		$file = 'layouts' . DS . $subDir . $name;
 		
 		$exts = array($this->ext);
@@ -805,6 +769,23 @@ class View extends Object {
 			}
 		}
 		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+	}
+
+/**
+ * Finds an element filename, returns false on failure.
+ *
+ * @param string $name The name of the element to find.
+ * @param string $plugin The plugin name the element is in.
+ * @return mixed Either a string to the element filename or false when one can't be found.
+ */
+	protected function _getElementFileName($name, $plugin = null) {
+		$paths = $this->_paths($plugin);
+		foreach ($paths as $path) {
+			if (file_exists($path . 'elements' . DS . $name . $this->ext)) {
+				return $path . 'elements' . DS . $name . $this->ext;
+			}
+		}
+		return false;
 	}
 
 /**

@@ -406,7 +406,7 @@ class ComponentTest extends CakeTestCase {
 			return;
 		}
 
-		$Controller =& new ComponentTestController();
+		$Controller = new ComponentTestController();
 		$Controller->uses = false;
 		$Controller->components = array('Session');
 		$Controller->constructClasses();

@@ -99,7 +99,7 @@ class CakeLog {
  * @return boolean success of configuration.
  * @throws Exception
  */
-	static function config($key, $config) {
+	public static function config($key, $config) {
 		if (empty($config['engine'])) {
 			throw new Exception(__('Missing logger classname'));
 		}
@@ -222,54 +222,4 @@ class CakeLog {
 		}
 		return true;
 	}
-
-/**
- * An error_handler that will log errors to file using CakeLog::write();
- * You can control how verbose and what type of errors this error_handler will 
- * catch using `Configure::write('log', $value)`.  See core.php for more information.
- *
- *
- * @param integer $code Code of error
- * @param string $description Error description
- * @param string $file File on which error occurred
- * @param integer $line Line that triggered the error
- * @param array $context Context
- * @return void
- */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if ($code === 2048 || $code === 8192) {
-			return;
-		}
-		switch ($code) {
-			case E_PARSE:
-			case E_ERROR:
-			case E_CORE_ERROR:
-			case E_COMPILE_ERROR:
-			case E_USER_ERROR:
-				$error = 'Fatal Error';
-				$level = LOG_ERROR;
-			break;
-			case E_WARNING:
-			case E_USER_WARNING:
-			case E_COMPILE_WARNING:
-			case E_RECOVERABLE_ERROR:
-				$error = 'Warning';
-				$level = LOG_WARNING;
-			break;
-			case E_NOTICE:
-			case E_USER_NOTICE:
-				$error = 'Notice';
-				$level = LOG_NOTICE;
-			break;
-			default:
-				return;
-			break;
-		}
-		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		CakeLog::write($level, $message);
-	}
-}
-
-if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
-	set_error_handler(array('CakeLog', 'handleError'));
 }

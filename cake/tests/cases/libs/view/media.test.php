@@ -19,13 +19,6 @@
  */
 App::import('Core', array('Media', 'Controller', 'CakeResponse'));
 
-if (!class_exists('ErrorHandler')) {
-	App::import('Core', array('Error'));
-}
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
-
 /**
  * MediaViewTest class
  *

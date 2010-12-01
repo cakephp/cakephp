@@ -21,7 +21,8 @@
 /**
  * Included libraries.
  */
-App::import('Core', array('l10n', 'Multibyte'));
+App::import('Core', 'L10n');
+App::import('Core', 'Multibyte');
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -139,11 +140,11 @@ class I18n {
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
-		if (empty($_this->__domains[$domain][$_this->__lang])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang])) {
 			$_this->__domains[$domain][$_this->__lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
-		if (empty($_this->__domains[$domain][$_this->__lang][$_this->category])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang][$_this->category])) {
 			$_this->__bindTextDomain($domain);
 			Cache::write($_this->domain, $_this->__domains[$domain][$_this->__lang], '_cake_core_');
 		}

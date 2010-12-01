@@ -254,7 +254,7 @@ class FixtureTask extends BakeTask {
 		$this->Template->set($vars);
 		$content = $this->Template->generate('classes', 'fixture');
 
-		$this->out("\nBaking test fixture for $model...");
+		$this->out("\nBaking test fixture for $model...", 1, Shell::QUIET);
 		$this->createFile($path . $filename, $content);
 		return $content;
 	}
@@ -394,12 +394,12 @@ class FixtureTask extends BakeTask {
 			$condition = 'WHERE 1=1 LIMIT ' . (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
 		App::import('Model', 'Model', false);
-		$modelObject =& new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
+		$modelObject = new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
 		$records = $modelObject->find('all', array(
 			'conditions' => $condition,
 			'recursive' => -1
 		));
-		$db =& ConnectionManager::getDataSource($modelObject->useDbConfig);
+		$db = ConnectionManager::getDataSource($modelObject->useDbConfig);
 		$schema = $modelObject->schema(true);
 		$out = array();
 		foreach ($records as $record) {

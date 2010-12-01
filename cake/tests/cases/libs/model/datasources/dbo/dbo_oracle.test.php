@@ -17,9 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
-	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
-}
+
 require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo_source.php';
 require_once LIBS . 'model' . DS . 'datasources' . DS . 'dbo' . DS . 'dbo_oracle.php';
 
@@ -105,7 +103,7 @@ class DboOracleTest extends CakeTestCase {
  */
 	function testName() {
 		$Db = $this->db;
-		#$Db =& new DboOracle($config = null, $autoConnect = false);
+		#$Db = new DboOracle($config = null, $autoConnect = false);
 
 		$r = $Db->name($Db->name($Db->name('foo.last_update_date')));
 		$e = 'foo.last_update_date';

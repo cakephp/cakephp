@@ -696,7 +696,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTwoTables() {
-		$schema1 =& new CakeSchema(array(
+		$schema1 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(
@@ -708,7 +708,7 @@ class DboMysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 			)
 		));
-		$schema2 =& new CakeSchema(array(
+		$schema2 = new CakeSchema(array(
 			'name' => 'AlterTest1',
 			'connection' => 'test',
 			'altertest' => array(
@@ -792,14 +792,14 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldSeparators() {
-		$model =& new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
+		$model = new CakeTestModel(array('table' => 'binary_tests', 'ds' => 'test', 'name' => 'BinaryTest'));
 		$model->virtualFields = array(
 			'other__field' => 'SUM(id)'
 		);
 		
 		$this->db->virtualFieldSeparator = '_$_';
 		$result = $this->db->fields($model, null, array('data', 'other__field'));
-		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  BinaryTest_$_other__field');
+		$expected = array('`BinaryTest`.`data`', '(SUM(id)) AS  `BinaryTest_$_other__field`');
 		$this->assertEqual($result, $expected);
 	}
 
@@ -809,7 +809,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testDescribeGettingFieldParameters() {
-		$schema =& new CakeSchema(array(
+		$schema = new CakeSchema(array(
 			'connection' => 'test',
 			'testdescribes' => array(
 				'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -829,7 +829,7 @@ class DboMysqlTest extends CakeTestCase {
 		));
 		$this->db->execute($this->db->createSchema($schema));
 
-		$model =& new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
+		$model = new CakeTestModel(array('table' => 'testdescribes', 'name' => 'Testdescribes'));
 		$result = $this->db->describe($model);
 		$this->assertEqual($result['stringy']['collate'], 'cp1250_general_ci');
 		$this->assertEqual($result['stringy']['charset'], 'cp1250');

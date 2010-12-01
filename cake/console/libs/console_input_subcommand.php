@@ -27,9 +27,7 @@
  */
 class ConsoleInputSubcommand {
 
-	protected $_name;
-	protected $_help;
-	protected $_parser;
+	protected $_name, $_help, $_parser;
 
 /**
  * Make a new Subcommand
@@ -56,9 +54,9 @@ class ConsoleInputSubcommand {
 	}
 
 /**
- * Get the name of the subcommand
+ * Get the value of the name attribute.
  *
- * @return string
+ * @return string Value of this->_name.
  */
 	public function name() {
 		return $this->_name;
