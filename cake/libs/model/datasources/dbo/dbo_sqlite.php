@@ -528,4 +528,22 @@ class DboSqlite extends DboSource {
 	function hasResult() {
 		return is_object($this->_result);
 	}
+
+/**
+ * Generate a "drop table" statement for the given Schema object
+ *
+ * @param object $schema An instance of a subclass of CakeSchema
+ * @param string $table Optional.  If specified only the table name given will be generated.
+ *   Otherwise, all tables defined in the schema are generated.
+ * @return string
+ */
+	public function dropSchema(CakeSchema $schema, $table = null) {
+		$out = '';
+		foreach ($schema->tables as $curTable => $columns) {
+			if (!$table || $table == $curTable) {
+				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
+			}
+		}
+		return $out;
+	}
 }
