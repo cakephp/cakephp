@@ -223,7 +223,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'i18n.sql');
 		$contents = $this->file->read();
 		$this->assertPattern('/DROP TABLE/', $contents);
-		$this->assertPattern('/CREATE TABLE `i18n`/', $contents);
+		$this->assertPattern('/CREATE TABLE.*?i18n/', $contents);
 		$this->assertPattern('/id/', $contents);
 		$this->assertPattern('/model/', $contents);
 		$this->assertPattern('/field/', $contents);
