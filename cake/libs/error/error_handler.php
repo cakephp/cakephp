@@ -135,6 +135,9 @@ class ErrorHandler {
  * @return boolean true if error was handled
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+		if (error_reporting() === 0) {
+			return false;
+		}
 		$errorConfig = Configure::read('Error');
 		list($error, $log) = self::_mapErrorCode($code);
 

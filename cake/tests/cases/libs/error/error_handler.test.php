@@ -114,6 +114,21 @@ class ErrorHandlerTest extends CakeTestCase {
 	}
 
 /**
+ * test error prepended by @
+ *
+ * @return void
+ */
+	function testErrorSuppressed() {
+		set_error_handler('ErrorHandler::handleError');
+		$this->_restoreError = true;
+
+		ob_start();
+		@include 'invalid.file';
+		$result = ob_get_clean();
+		$this->assertTrue(empty($result));
+	}
+
+/**
  * Test that errors go into CakeLog when debug = 0.
  *
  * @return void

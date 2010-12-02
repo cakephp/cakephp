@@ -70,6 +70,9 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @return void
  */
 	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+		if (error_reporting() === 0) {
+			return;
+		}
 		$stderr = self::getStderr();
 		list($name, $log) = self::_mapErrorCode($code);
 		$message = sprintf(__('%s in [%s, line %s]'), $description, $file, $line);
