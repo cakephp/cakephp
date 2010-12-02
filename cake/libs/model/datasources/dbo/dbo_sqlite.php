@@ -465,7 +465,10 @@ class DboSqlite extends DboSource {
 		$table = $this->fullTableName($model);
 		if ($table) {
 			$indexes = $this->query('PRAGMA index_list(' . $table . ')');
-			$tableInfo = $this->query('PRAGMA table_info(' . $table . ')');
+			
+		 	if (is_bool($indexes)) {
+				return array();
+			}
 			foreach ($indexes as $i => $info) {
 				$key = array_pop($info);
 				$keyInfo = $this->query('PRAGMA index_info("' . $key['name'] . '")');
@@ -502,11 +505,11 @@ class DboSqlite extends DboSource {
 		switch (strtolower($type)) {
 			case 'schema':
 				extract($data);
-
-				foreach (array('columns', 'indexes') as $var) {
-					if (is_array(${$var})) {
-						${$var} = "\t" . join(",\n\t", array_filter(${$var}));
-					}
+				if (is_array($columns)) {
+					$columns = "\t" . join(",\n\t", array_filter($columns));
+				}
+				if (is_array($indexes)) {
+					$indexes = "\t" . join("\n\t", array_filter($indexes));
 				}
 				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
 			break;

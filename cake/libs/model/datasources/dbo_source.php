@@ -361,6 +361,7 @@ class DboSource extends DataSource {
 		} catch (PDOException $e) {
 			$this->_results = null;
 			$this->error = $e->getMessage();
+			return false;
 		}
 		
 	}

@@ -299,7 +299,7 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __create(&$Schema, $table = null) {
+	function __create($Schema, $table = null) {
 		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
