@@ -443,7 +443,8 @@ class DboSqlite extends DboSource {
 			} else {
 				$value['column'] = $this->name($value['column']);
 			}
-			$out .= "INDEX {$name} ON {$table}({$value['column']});";
+			$t = trim($table, '"');
+			$out .= "INDEX {$t}_{$name} ON {$table}({$value['column']});";
 			$join[] = $out;
 		}
 		return $join;
