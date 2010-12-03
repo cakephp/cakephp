@@ -21,10 +21,10 @@
 /**
  * Include files
  */
-App::import('Core', 'CakeResponse', false);
-App::import('Core', 'ClassRegistry', false);
-App::import('Controller', 'Component', false);
-App::import('View', 'View', false);
+App::uses('CakeResponse', 'Core');
+App::uses('ClassRegistry', 'Core');
+App::uses('ComponentCollection', 'Controller');
+App::uses('View', 'View');
 
 /**
  * Controller
