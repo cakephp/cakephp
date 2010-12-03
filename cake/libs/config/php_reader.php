@@ -65,7 +65,9 @@ class PhpReader {
 		}
 		include $file;
 		if (!isset($config)) {
-			return array();
+			throw new RuntimeException(
+				sprintf(__('No variable $config found in %s.php'), $file)
+			);
 		}
 		return $config;
 	}

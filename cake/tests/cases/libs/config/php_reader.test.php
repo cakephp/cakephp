@@ -38,6 +38,7 @@ class PhpReaderTest extends CakeTestCase {
 		$reader = new PhpReader($this->path);
 		$values = $reader->read('var_test');
 		$this->assertEquals('value', $values['Read']);
+		$this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
 	}
 
 /**
@@ -49,6 +50,17 @@ class PhpReaderTest extends CakeTestCase {
 	function testReadWithNonExistantFile() {
 		$reader = new PhpReader($this->path);
 		$reader->read('fake_values');
+	}
+
+/**
+ * test reading an empty file.
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	function testReadEmptyFile() {
+		$reader = new PhpReader($this->path);
+		$reader->read('empty');
 	}
 
 /**
