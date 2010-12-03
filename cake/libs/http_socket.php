@@ -187,7 +187,7 @@ class HttpSocket extends CakeSocket {
  * @param string $pass Password for authentication
  * @return void
  */
-	public function setAuthConfig($method, $user, $pass = null) {
+	public function setAuthConfig($method, $user = null, $pass = null) {
 		if (empty($method)) {
 			$this->_auth = array();
 			return;

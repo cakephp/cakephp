@@ -756,6 +756,25 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * Test authentication
+ *
+ * @return void
+ */
+	public function testAuth() {
+		$socket = new MockHttpSocket();
+		$socket->get('http://mark:secret@example.com/test');
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+
+		$socket->setAuthConfig(false);
+		$socket->get('http://example.com/test');
+		$this->assertFalse(strpos($socket->request['header'], 'Authorization:'));
+
+		$socket->setAuthConfig('Test', 'mark', 'passwd');
+		$socket->get('http://example.com/test');
+		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Test mark.passwd') !== false);
+	}
+
+/**
  * test that two consecutive get() calls reset the authentication credentials.
  *
  * @return void
