@@ -1,0 +1,53 @@
+<?php
+/**
+ * PhpConfigReaderTest
+ *
+ * PHP 5
+ *
+ * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
+ * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * Redistributions of files must retain the above copyright notice
+ *
+ * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
+ * @package       cake
+ * @subpackage    cake.tests.cases
+ * @since         CakePHP(tm) v 2.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+App::import('Core', 'config/PhpReader');
+
+class PhpReaderTest extends CakeTestCase {
+/**
+ * setup
+ *
+ * @return void
+ */
+	function setUp() {
+		parent::setUp();
+		$this->path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
+	}
+/**
+ * test reading files
+ *
+ * @return void
+ */
+	function testRead() {
+		$reader = new PhpReader($this->path);
+		$values = $reader->read('var_test');
+		$this->assertEquals('value', $values['Read']);
+	}
+
+/**
+ * Test an exception is thrown by reading files that don't exist.
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	function testReadWithNonExistantFile() {
+		$reader = new PhpReader($this->path);
+		$reader->read('fake_values');
+	}
+}
