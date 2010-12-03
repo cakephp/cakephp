@@ -30,16 +30,17 @@ class DigestAuthentication {
  * Authentication
  *
  * @param HttpSocket $http
+ * @param array $authInfo
  * @return void
  * @throws Exception
  * @link http://www.ietf.org/rfc/rfc2617.txt
  */
-	public static function authentication(HttpSocket $http) {
-		if (isset($http->request['auth']['user'], $http->request['auth']['pass'])) {
-			if (!isset($http->config['request']['auth']['realm']) && !self::_getServerInformation($http)) {
+	public static function authentication(HttpSocket $http, &$authInfo) {
+		if (isset($authInfo['user'], $authInfo['pass'])) {
+			if (!isset($authInfo['realm']) && !self::_getServerInformation($http, $authInfo)) {
 				return;
 			}
-			$http->request['header']['Authorization'] = self::_generateHeader($http);
+			$http->request['header']['Authorization'] = self::_generateHeader($http, $authInfo);
 		}
 	}
 
@@ -47,23 +48,25 @@ class DigestAuthentication {
  * Retrive information about the authetication
  *
  * @param HttpSocket $http
+ * @parma array $authInfo
  * @return boolean
  */
-	protected static function _getServerInformation(HttpSocket $http) {
+	protected static function _getServerInformation(HttpSocket $http, &$authInfo) {
 		$originalRequest = $http->request;
-		$http->request['auth'] = array('method' => false);
+		$http->setAuthConfig(false);
 		$http->request($http->request);
 		$http->request = $originalRequest;
+		$http->setAuthConfig('Digest', $authInfo);
 
 		if (empty($http->response['header']['WWW-Authenticate'])) {
 			return false;
 		}
 		preg_match_all('@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@', $http->response['header']['WWW-Authenticate'], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
-			$http->config['request']['auth'][$match[1]] = $match[2];
+			$authInfo[$match[1]] = $match[2];
 		}
-		if (!empty($http->config['request']['auth']['qop']) && empty($http->config['request']['auth']['nc'])) {
-			$http->config['request']['auth']['nc'] = 1;
+		if (!empty($authInfo['qop']) && empty($authInfo['nc'])) {
+			$authInfo['nc'] = 1;
 		}
 		return true;
 	}
@@ -72,31 +75,32 @@ class DigestAuthentication {
  * Generate the header Authorization
  *
  * @param HttpSocket $http
+ * @param array $authInfo
  * @return string
  */
-	protected static function _generateHeader(HttpSocket $http) {
-		$a1 = md5($http->request['auth']['user'] . ':' . $http->config['request']['auth']['realm'] . ':' . $http->request['auth']['pass']);
+	protected static function _generateHeader(HttpSocket $http, &$authInfo) {
+		$a1 = md5($authInfo['user'] . ':' . $authInfo['realm'] . ':' . $authInfo['pass']);
 		$a2 = md5($http->request['method'] . ':' . $http->request['uri']['path']);
 
-		if (empty($http->config['request']['auth']['qop'])) {
-			$response = md5($a1 . ':' . $http->config['request']['auth']['nonce'] . ':' . $a2);
+		if (empty($authInfo['qop'])) {
+			$response = md5($a1 . ':' . $authInfo['nonce'] . ':' . $a2);
 		} else {
-			$http->config['request']['auth']['cnonce'] = uniqid();
-			$nc = sprintf('%08x', $http->config['request']['auth']['nc']++);
-			$response = md5($a1 . ':' . $http->config['request']['auth']['nonce'] . ':' . $nc . ':' . $http->config['request']['auth']['cnonce'] . ':auth:' . $a2);
+			$authInfo['cnonce'] = uniqid();
+			$nc = sprintf('%08x', $authInfo['nc']++);
+			$response = md5($a1 . ':' . $authInfo['nonce'] . ':' . $nc . ':' . $authInfo['cnonce'] . ':auth:' . $a2);
 		}
 
 		$authHeader = 'Digest ';
-		$authHeader .= 'username="' . str_replace(array('\\', '"'), array('\\\\', '\\"'), $http->request['auth']['user']) . '", ';
-		$authHeader .= 'realm="' . $http->config['request']['auth']['realm'] . '", ';
-		$authHeader .= 'nonce="' . $http->config['request']['auth']['nonce'] . '", ';
+		$authHeader .= 'username="' . str_replace(array('\\', '"'), array('\\\\', '\\"'), $authInfo['user']) . '", ';
+		$authHeader .= 'realm="' . $authInfo['realm'] . '", ';
+		$authHeader .= 'nonce="' . $authInfo['nonce'] . '", ';
 		$authHeader .= 'uri="' . $http->request['uri']['path'] . '", ';
 		$authHeader .= 'response="' . $response . '"';
-		if (!empty($http->config['request']['auth']['opaque'])) {
-			$authHeader .= ', opaque="' . $http->config['request']['auth']['opaque'] . '"';
+		if (!empty($authInfo['opaque'])) {
+			$authHeader .= ', opaque="' . $authInfo['opaque'] . '"';
 		}
-		if (!empty($http->config['request']['auth']['qop'])) {
-			$authHeader .= ', qop="auth", nc=' . $nc . ', cnonce="' . $http->config['request']['auth']['cnonce'] . '"';
+		if (!empty($authInfo['qop'])) {
+			$authHeader .= ', qop="auth", nc=' . $nc . ', cnonce="' . $authInfo['cnonce'] . '"';
 		}
 		return $authHeader;
 	}

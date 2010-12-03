@@ -72,11 +72,6 @@ class DigestAuthenticationTest extends CakeTestCase {
 		$this->HttpSocket = new DigestHttpSocket();
 		$this->HttpSocket->request['method'] = 'GET';
 		$this->HttpSocket->request['uri']['path'] = '/';
-		$this->HttpSocket->request['auth'] = array(
-			'method' => 'Digest',
-			'user' => 'admin',
-			'pass' => '1234'
-		);
 	}
 
 /**
@@ -95,12 +90,13 @@ class DigestAuthenticationTest extends CakeTestCase {
  */
 	public function testBasic() {
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51"';
-		$this->HttpSocket->config['request']['auth'] = array();
 		$this->assertFalse(isset($this->HttpSocket->request['header']['Authorization']));
-		DigestAuthentication::authentication($this->HttpSocket);
+
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(isset($this->HttpSocket->request['header']['Authorization']));
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['realm'], 'The batcave');
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['nonce'], '4cded326c6c51');
+		$this->assertEqual($auth['realm'], 'The batcave');
+		$this->assertEqual($auth['nonce'], '4cded326c6c51');
 	}
 
 /**
@@ -110,20 +106,20 @@ class DigestAuthenticationTest extends CakeTestCase {
  */
 	public function testQop() {
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51"';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$expected = 'Digest username="admin", realm="The batcave", nonce="4cded326c6c51", uri="/", response="da7e2a46b471d77f70a9bb3698c8902b"';
 		$this->assertEqual($expected, $this->HttpSocket->request['header']['Authorization']);
-		$this->assertFalse(isset($this->HttpSocket->config['request']['auth']['qop']));
-		$this->assertFalse(isset($this->HttpSocket->config['request']['auth']['nc']));
+		$this->assertFalse(isset($auth['qop']));
+		$this->assertFalse(isset($auth['nc']));
 
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51",qop="auth"';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$expected = '@Digest username="admin", realm="The batcave", nonce="4cded326c6c51", uri="/", response="[a-z0-9]{32}", qop="auth", nc=00000001, cnonce="[a-z0-9]+"@';
 		$this->assertPattern($expected, $this->HttpSocket->request['header']['Authorization']);
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['qop'], 'auth');
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['nc'], 2);
+		$this->assertEqual($auth['qop'], 'auth');
+		$this->assertEqual($auth['nc'], 2);
 	}
 
 /**
@@ -133,13 +129,13 @@ class DigestAuthenticationTest extends CakeTestCase {
  */
 	public function testOpaque() {
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51"';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertFalse(strpos($this->HttpSocket->request['header']['Authorization'], 'opaque="d8ea7aa61a1693024c4cc3a516f49b3c"'));
 
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51",opaque="d8ea7aa61a1693024c4cc3a516f49b3c"';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'opaque="d8ea7aa61a1693024c4cc3a516f49b3c"') > 0);
 	}
 
@@ -150,21 +146,21 @@ class DigestAuthenticationTest extends CakeTestCase {
  */
 	public function testMultipleRequest() {
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51",qop="auth"';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000001') > 0);
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['nc'], 2);
+		$this->assertEqual($auth['nc'], 2);
 
-		DigestAuthentication::authentication($this->HttpSocket);
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000002') > 0);
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['nc'], 3);
+		$this->assertEqual($auth['nc'], 3);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
 
 		$this->HttpSocket->nextHeader = '';
-		DigestAuthentication::authentication($this->HttpSocket);
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertTrue(strpos($this->HttpSocket->request['header']['Authorization'], 'nc=00000003') > 0);
-		$this->assertEqual($this->HttpSocket->config['request']['auth']['nc'], 4);
+		$this->assertEqual($auth['nc'], 4);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response2 = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
 		$this->assertNotEqual($response, $response2);
@@ -178,8 +174,8 @@ class DigestAuthenticationTest extends CakeTestCase {
 	public function testPathChanged() {
 		$this->HttpSocket->nextHeader = 'Digest realm="The batcave",nonce="4cded326c6c51"';
 		$this->HttpSocket->request['uri']['path'] = '/admin';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$responsePos = strpos($this->HttpSocket->request['header']['Authorization'], 'response=');
 		$response = substr($this->HttpSocket->request['header']['Authorization'], $responsePos + 10, 32);
 		$this->assertNotEqual($response, 'da7e2a46b471d77f70a9bb3698c8902b');
@@ -193,8 +189,8 @@ class DigestAuthenticationTest extends CakeTestCase {
 	public function testNoDigestResponse() {
 		$this->HttpSocket->nextHeader = false;
 		$this->HttpSocket->request['uri']['path'] = '/admin';
-		$this->HttpSocket->config['request']['auth'] = array();
-		DigestAuthentication::authentication($this->HttpSocket);
+		$auth = array('user' => 'admin', 'pass' => '1234');
+		DigestAuthentication::authentication($this->HttpSocket, $auth);
 		$this->assertFalse(isset($this->HttpSocket->request['header']['Authorization']));
 	}
 
