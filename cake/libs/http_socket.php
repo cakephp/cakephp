@@ -59,11 +59,6 @@ class HttpSocket extends CakeSocket {
 			'query' => null,
 			'fragment' => null
 		),
-		'auth' => array(
-			'method' => 'Basic',
-			'user' => null,
-			'pass' => null
-		),
 		'proxy' => array(
 			'method' => 'Basic',
 			'host' => null,
@@ -123,11 +118,6 @@ class HttpSocket extends CakeSocket {
 				'host' => 'localhost',
 				'port' => 80
 			),
-			'auth' => array(
-				'method' => 'Basic',
-				'user' => null,
-				'pass' => null
-			),
 			'proxy' => array(
 				'method' => 'Basic',
 				'host' => null,
@@ -146,6 +136,14 @@ class HttpSocket extends CakeSocket {
  * @access public
  */
 	public $lineBreak = "\r\n";
+
+/**
+ * Authentication settings
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_auth = array();
 
 /**
  * Build an HTTP Socket using the specified configuration.
@@ -182,6 +180,26 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
+ * Set authentication settings
+ *
+ * @param string $method Authentication method (ex. Basic, Digest). If empty, disable authentication
+ * @param mixed $user Username for authentication. Can be an array with settings to authentication class
+ * @param string $pass Password for authentication
+ * @return void
+ */
+	public function setAuthConfig($method, $user, $pass = null) {
+		if (empty($method)) {
+			$this->_auth = array();
+			return;
+		}
+		if (is_array($user)) {
+			$this->_auth = array($method => $user);
+			return;
+		}
+		$this->_auth = array($method => compact('user', 'pass'));
+	}
+
+/**
  * Issue the specified request. HttpSocket::get() and HttpSocket::post() wrap this
  * method and provide a more granular interface.
  *
@@ -201,10 +219,6 @@ class HttpSocket extends CakeSocket {
 			$request['uri'] = null;
 		}
 		$uri = $this->_parseUri($request['uri']);
-		$hadAuth = false;
-		if (is_array($uri) && array_key_exists('user', $uri)) {
-			$hadAuth = true;
-		}
 		if (!isset($uri['host'])) {
 			$host = $this->config['host'];
 		}
@@ -216,10 +230,6 @@ class HttpSocket extends CakeSocket {
 		$request['uri'] = $this->_parseUri($request['uri'], true);
 		$this->request = Set::merge($this->request, $this->config['request'], $request);
 
-		if (!$hadAuth && !empty($this->config['request']['auth']['user'])) {
-			$this->request['uri']['user'] = $this->config['request']['auth']['user'];
-			$this->request['uri']['pass'] = $this->config['request']['auth']['pass'];
-		}
 		$this->_configUri($this->request['uri']);
 
 		if (isset($host)) {
@@ -251,6 +261,9 @@ class HttpSocket extends CakeSocket {
 			$this->request['header'] = array_merge(compact('Host'), $this->request['header']);
 		}
 
+		if (isset($this->request['uri']['user'], $this->request['uri']['pass'])) {
+			$this->setAuthConfig('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
+		}
 		$this->_setAuth();
 		$this->_setProxyConfig();
 
@@ -457,28 +470,18 @@ class HttpSocket extends CakeSocket {
  * @throws Exception
  */
 	protected function _setAuth() {
-		if ($this->request['auth']['method'] === false) {
+		if (empty($this->_auth)) {
 			return;
 		}
-		if (empty($this->request['auth']['method'])) {
-			if (isset($this->request['uri']['user'], $this->request['uri']['pass']) && !isset($this->request['auth']['user'])) {
-				$this->request['auth'] = array(
-					'method' => 'Basic',
-					'user' => $this->request['uri']['user'],
-					'pass' => $this->request['uri']['pass']
-				);
-			} else {
-				return;
-			}
-		}
-		$authClass = Inflector::camelize($this->request['auth']['method']) . 'Authentication';
+		$method = key($this->_auth);
+		$authClass = Inflector::camelize($method) . 'Authentication';
 		if (!App::import('Lib', 'http/' . $authClass)) {
 			throw new Exception(__('Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
 			throw new Exception(sprintf(__('The %s do not support authentication.'), $authClass));
 		}
-		call_user_func("$authClass::authentication", $this);
+		call_user_func("$authClass::authentication", $this, &$this->_auth[$method]);
 	}
 
 /**
@@ -677,8 +680,7 @@ class HttpSocket extends CakeSocket {
 		}
 		$config = array(
 			'request' => array(
-				'uri' => array_intersect_key($uri, $this->config['request']['uri']),
-				'auth' => array_intersect_key($uri, $this->config['request']['auth'])
+				'uri' => array_intersect_key($uri, $this->config['request']['uri'])
 			)
 		);
 		$this->config = Set::merge($this->config, $config);

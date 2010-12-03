@@ -30,12 +30,13 @@ class BasicAuthentication {
  * Authentication
  *
  * @param HttpSocket $http
+ * @param array $authInfo
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
-	public static function authentication(HttpSocket $http) {
-		if (isset($http->request['auth']['user'], $http->request['auth']['pass'])) {
-			$http->request['header']['Authorization'] = self::_generateHeader($http->request['auth']['user'], $http->request['auth']['pass']);
+	public static function authentication(HttpSocket $http, &$authInfo) {
+		if (isset($authInfo['user'], $authInfo['pass'])) {
+			$http->request['header']['Authorization'] = self::_generateHeader($authInfo['user'], $authInfo['pass']);
 		}
 	}
 

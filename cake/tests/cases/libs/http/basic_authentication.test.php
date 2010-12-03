@@ -36,13 +36,13 @@ class BasicMethodTest extends CakeTestCase {
  */
 	public function testAuthentication() {
 		$http = new HttpSocket();
-		$http->request['auth'] = array(
+		$auth = array(
 			'method' => 'Basic',
 			'user' => 'mark',
 			'pass' => 'secret'
 		);
 
-		BasicAuthentication::authentication($http);
+		BasicAuthentication::authentication($http, $auth);
 		$this->assertEqual($http->request['header']['Authorization'], 'Basic bWFyazpzZWNyZXQ=');
 	}
 

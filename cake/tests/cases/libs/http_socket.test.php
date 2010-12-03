@@ -31,10 +31,11 @@ class TestAuthentication {
  * authentication method
  *
  * @param HttpSocket $http
+ * @param array $authInfo
  * @return void
  */
-	public static function authentication(HttpSocket $http) {
-		$http->request['header']['Authorization'] = 'Test ' . $http->request['auth']['user'] . '.' . $http->request['auth']['pass'];
+	public static function authentication(HttpSocket $http, &$authInfo) {
+		$http->request['header']['Authorization'] = 'Test ' . $authInfo['user'] . '.' . $authInfo['pass'];
 	}
 
 /**
@@ -286,11 +287,6 @@ class HttpSocketTest extends CakeTestCase {
 					, 'host' => 'www.cakephp.org'
 					, 'port' => 23
 				),
-				'auth' => array(
-					'method' => 'Basic'
-					, 'user' => 'bob'
-					, 'pass' => 'secret'
-				),
 				'proxy' => array(
 					'method' => 'Basic',
 					'host' => null,
@@ -321,11 +317,6 @@ class HttpSocketTest extends CakeTestCase {
 					'scheme' => 'http'
 					, 'host' => 'www.foo.com'
 					, 'port' => 80
-				),
-				'auth' => array(
-					'method' => 'Basic'
-					, 'user' => null
-					, 'pass' => null
 				),
 				'proxy' => array(
 					'method' => 'Basic',
@@ -374,11 +365,6 @@ class HttpSocketTest extends CakeTestCase {
 								'scheme' => 'http'
 								, 'host' => 'www.cakephp.org'
 								, 'port' => 80,
-							)
-							, 'auth' => array(
-								'method' => 'Basic'
-								,'user' => null
-								,'pass' => null
 							),
 							'proxy' => array(
 								'method' => 'Basic',
@@ -401,11 +387,6 @@ class HttpSocketTest extends CakeTestCase {
 							, 'path' => '/'
 							, 'query' => array('foo' => 'bar')
 							, 'fragment' => null
-						)
-						, 'auth' => array(
-							'method' => 'Basic'
-							, 'user' => null
-							, 'pass' => null
 						),
 						'proxy' => array(
 							'method' => 'Basic',
@@ -677,11 +658,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
 		$this->assertEqual($this->Socket->config['port'], 123);
 
-		$request['auth'] = array(
-			'method' => 'Test',
-			'user' => 'login',
-			'pass' => 'passwd'
-		);
+		$this->Socket->setAuthConfig('Test', 'login', 'passwd');
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nAuthorization: Test login.passwd\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
 		$this->Socket->request($request);
 		$this->assertEqual($this->Socket->request['raw'], $expected);
@@ -785,24 +762,15 @@ class HttpSocketTest extends CakeTestCase {
  */
 	function testConsecutiveGetResetsAuthCredentials() {
 		$socket = new MockHttpSocket();
-		$socket->config['request']['auth'] = array(
-			'method' => 'Basic',
-			'user' => 'mark',
-			'pass' => 'secret'
-		);
 		$socket->get('http://mark:secret@example.com/test');
 		$this->assertEqual($socket->request['uri']['user'], 'mark');
 		$this->assertEqual($socket->request['uri']['pass'], 'secret');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
 		$socket->get('/test2');
-		$this->assertEqual($socket->request['auth']['user'], 'mark');
-		$this->assertEqual($socket->request['auth']['pass'], 'secret');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
 		$socket->get('/test3');
-		$this->assertEqual($socket->request['auth']['user'], 'mark');
-		$this->assertEqual($socket->request['auth']['pass'], 'secret');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 	}
 
