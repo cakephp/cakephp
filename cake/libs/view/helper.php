@@ -20,9 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-if (!class_exists('Router')) {
-	App::import('Core', 'Router');
-}
+App::uses('Router', 'Core');
 
 /**
  * Abstract base class for all other Helpers in CakePHP.

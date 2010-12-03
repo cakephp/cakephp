@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Multibyte', 'Core');
+
 /**
  * Javascript Generator helper class for easy use of JavaScript.
  *
@@ -665,7 +667,6 @@ abstract class JsBaseEngineHelper extends AppHelper {
  * @return string Escaped string.
  */
 	public function escape($string) {
-		App::import('Core', 'Multibyte');
 		return $this->_utf8ToHex($string);
 	}
 

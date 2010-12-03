@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('String', 'Core');
+
 /**
  * Security Library contains utility methods related to security
  *
@@ -59,9 +61,6 @@ class Security {
  * @return string Hash
  */
 	public static function generateAuthKey() {
-		if (!class_exists('String')) {
-			App::import('Core', 'String');
-		}
 		return Security::hash(String::uuid());
 	}
 

@@ -17,9 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.3830
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('Multibyte')) {
-	App::import('Core', 'Multibyte', false);
-}
+
+App::uses('Multibyte', 'Core');
 
 /**
  * Offers different validation methods.

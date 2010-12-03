@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5714
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('View', 'View', false);
+App::uses('View', 'View');
+App::uses('CakeRequest', 'Core');
 
 class MediaView extends View {
 /**
@@ -45,7 +46,6 @@ class MediaView extends View {
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
 		} else {
-			App::import('Core', 'CakeRequest');
 			$this->response = new CakeResponse;
 		}
 	}

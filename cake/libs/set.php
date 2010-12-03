@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('String', 'Core');
+
 /**
  * Class used for manipulation of arrays.
  *
@@ -582,9 +584,6 @@ class Set {
 		}
 
 		if (!is_array($path)) {
-			if (!class_exists('String')) {
-				App::import('Core', 'String');
-			}
 			$path = String::tokenize($path, '.', '{', '}');
 		}
 		$tmp = array();

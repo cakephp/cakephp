@@ -22,7 +22,8 @@
  * @subpackage      cake.view.helpers
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', 'Js');
+
+App::uses('JsHelper', 'Helper');
 
 class JqueryEngineHelper extends JsBaseEngineHelper {
 /**

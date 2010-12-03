@@ -19,7 +19,7 @@
  * @since         Cake v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('View', 'Theme');
+App::uses('ThemeView', 'View');
 
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.

@@ -23,12 +23,13 @@
 /**
  * Included libs
  */
-App::import('Core', 'ClassRegistry', false);
-App::import('Core', 'Validation', false);
-App::import('Core', 'String', false);
-App::import('Model', 'BehaviorCollection', false);
-App::import('Model', 'ModelBehavior', false);
-App::import('Model', 'ConnectionManager', false);
+App::uses('ClassRegistry', 'Core');
+App::uses('Validation', 'Core');
+App::uses('String', 'Core');
+App::uses('BehaviorCollection', 'Model');
+App::uses('ModelBehavior', 'Model');
+App::uses('ConnectionManager', 'Model');
+App::uses('Xml', 'Core');
 
 /**
  * Object-relational mapper.
@@ -822,7 +823,6 @@ class Model extends Object {
 		}
 		if (is_object($one)) {
 			if ($one instanceof SimpleXMLElement || $one instanceof DOMNode) {
-				App::import('Core', 'Xml');
 				$one = $this->_normalizeXmlData(Xml::toArray($one));
 			} else {
 				$one = Set::reverse($one);

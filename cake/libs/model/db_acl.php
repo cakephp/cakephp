@@ -23,7 +23,7 @@
 /**
  * Load Model and AppModel
  */
-App::import('Model', 'App');
+App::uses('AppModel', 'Model');
 
 /**
  * ACL Node

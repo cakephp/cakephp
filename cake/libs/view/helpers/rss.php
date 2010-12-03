@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Xml');
+App::uses('Xml', 'Core');
 
 /**
  * RSS Helper class for easy output RSS structures.

@@ -24,12 +24,8 @@
  * Included libraries.
  *
  */
-if (!class_exists('HtmlHelper')) {
-	App::import('Helper', 'Html');
-}
-if (!class_exists('Multibyte')) {
-	App::import('Core', 'Multibyte');
-}
+App::uses('HtmlHelper', 'Helper');
+App::uses('Multibyte', 'Core');
 
 /**
  * Text helper library.

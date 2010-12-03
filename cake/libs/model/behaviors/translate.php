@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('I18n', 'Core');
+
 /**
  * Translate behavior
  *
@@ -346,9 +348,6 @@ class TranslateBehavior extends ModelBehavior {
  */
 	protected function _getLocale(&$model) {
 		if (!isset($model->locale) || is_null($model->locale)) {
-			if (!class_exists('I18n')) {
-				App::import('Core', 'i18n');
-			}
 			$I18n =& I18n::getInstance();
 			$I18n->l10n->get(Configure::read('Config.language'));
 			$model->locale = $I18n->l10n->locale;

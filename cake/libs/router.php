@@ -286,7 +286,7 @@ class Router {
  * @return array Array of routes
  */
 	public static function redirect($route, $url, $options) {
-		App::import('Core', 'route/RedirectRoute');
+		App::uses('RedirectRoute', 'Core');
 		$options['routeClass'] = 'RedirectRoute';
 		return self::connect($route, $url, $options);
 	}
@@ -565,7 +565,7 @@ class Router {
  */
 	private static function __connectDefaultRoutes() {
 		if ($plugins = App::objects('plugin')) {
-			App::import('Core', 'route/PluginShortRoute');
+			App::uses('PluginShortRoute', 'Core');
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}

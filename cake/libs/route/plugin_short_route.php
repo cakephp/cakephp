@@ -1,5 +1,5 @@
 <?php
-App::import('Core', 'route/CakeRoute');
+App::uses('CakeRoute', 'Core');
 /**
  * Plugin short route, that copies the plugin param to the controller parameters
  * It is used for supporting /:plugin routes.

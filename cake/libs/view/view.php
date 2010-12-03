@@ -21,8 +21,8 @@
 /**
  * Included libraries.
  */
-App::import('View', 'HelperCollection', false);
-App::import('View', 'Helper', false);
+App::uses('HelperCollection', 'View');
+App::uses('Helper', 'View');
 
 /**
  * View, the V in the MVC triad.
