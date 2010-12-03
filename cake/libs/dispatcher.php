@@ -24,10 +24,12 @@
 /**
  * List of helpers to include
  */
-App::import('Core', 'Router', false);
-App::import('Core', 'CakeRequest', false);
-App::import('Core', 'CakeResponse', false);
-App::import('Controller', 'Controller', false);
+App::uses('Router', 'Core');
+App::uses('CakeRequest', 'Core');
+App::uses('CakeResponse', 'Core');
+App::uses('Controller', 'Controller');
+App::uses('View', 'View');
+App::uses('Debugger', 'Core');
 
 /**
  * Dispatcher converts Requests into controller actions.  It uses the dispatched Request
@@ -270,9 +272,6 @@ class Dispatcher {
 			}
 
 			if (file_exists($filename)) {
-				if (!class_exists('View')) {
-					App::import('View', 'View', false);
-				}
 				$controller = null;
 				$view = new View($controller);
 				return $view->renderCache($filename, microtime(true));

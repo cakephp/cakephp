@@ -202,6 +202,12 @@ class App {
 	private static $__objects = array();
 
 /**
+ * Holds the location of each class
+ *
+ */
+	private static $__classMap = array();
+
+/**
  * Used to read information stored path
  *
  * Usage:
@@ -428,6 +434,17 @@ class App {
  */
 	public static function setObjects($type, $values) {
 		self::$__objects[$type] = $values;
+	}
+
+	public static function uses($className, $location) {
+		self::$__classMap[$className] = $location;
+	}
+
+	public static function load($className) {
+		if (isset(self::$__classMap[$className])) {
+			return App::import(self::$__classMap[$className], $className, false);
+		}
+		return false;
 	}
 
 /**
@@ -887,3 +904,5 @@ class App {
 		}
 	}
 }
+
+spl_autoload_register(array('App', 'load'));
