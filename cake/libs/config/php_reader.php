@@ -53,7 +53,13 @@ class PhpReader {
  * @return array Parsed configuration values.
  */
 	public function read($key) {
-		$file = $this->_path . $key . '.php';
+		list($plugin, $key) = pluginSplit($key);
+		
+		if ($plugin) {
+			$file = App::pluginPath($plugin) . 'config' . DS . $key . '.php';
+		} else {
+			$file = $this->_path . $key . '.php';
+		}
 		if (!file_exists($file)) {
 			throw new RuntimeException(__('Could not load configuration file: ') . $file);
 		}
