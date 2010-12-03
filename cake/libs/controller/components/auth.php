@@ -20,8 +20,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'Router', false);
-App::import('Core', 'Security', false);
+App::uses('Router', 'Core');
+App::uses('Security', 'Core');
+App::uses('Debugger', 'Core');
 
 /**
  * Authentication control component class
@@ -287,7 +288,6 @@ class AuthComponent extends Component {
 			}
 		}
 		if (Configure::read('debug') > 0) {
-			App::import('Debugger');
 			Debugger::checkSecurityKeys();
 		}
 	}

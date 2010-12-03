@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Xml', 'Core');
+
 /**
  * Request object for handling HTTP requests
  *
@@ -172,9 +174,6 @@ class RequestHandlerComponent extends Component {
 		}
 
 		if ($this->requestedWith('xml')) {
-			if (!class_exists('Xml')) {
-				App::import('Core', 'Xml');
-			}
 			try {
 				$xml = Xml::build(trim(file_get_contents('php://input')));
 

@@ -19,8 +19,6 @@
  * @since         CakePHP(tm) v 0.10.x.1402
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
-include_once CONFIGS . 'database.php';
 
 /**
  * Manages loaded instances of DataSource objects
@@ -59,6 +57,7 @@ class ConnectionManager {
  *
  */
 	function __construct() {
+		include_once CONFIGS . 'database.php';
 		if (class_exists('DATABASE_CONFIG')) {
 			$this->config = new DATABASE_CONFIG();
 			$this->_getConnectionObjects();
@@ -102,6 +101,7 @@ class ConnectionManager {
 		$conn = $_this->_connectionsEnum[$name];
 		$class = $conn['classname'];
 
+		require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
 		if ($_this->loadDataSource($name) === null) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s"), $class), E_USER_ERROR);
 			$null = null;

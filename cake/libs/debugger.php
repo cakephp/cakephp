@@ -24,12 +24,8 @@
  * Included libraries.
  *
  */
-if (!class_exists('CakeLog')) {
-	require_once LIBS . 'cake_log.php';
-}
-if (!class_exists('String')) {
-	require_once LIBS . 'string.php';
-}
+App::uses('CakeLog', 'Core');
+App::uses('String', 'Core');
 
 /**
  * Provide custom logging and error handling.

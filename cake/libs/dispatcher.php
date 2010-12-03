@@ -28,6 +28,7 @@ App::uses('Router', 'Core');
 App::uses('CakeRequest', 'Core');
 App::uses('CakeResponse', 'Core');
 App::uses('Controller', 'Controller');
+App::uses('Scaffold', 'Controller');
 App::uses('View', 'View');
 App::uses('Debugger', 'Core');
 
@@ -163,7 +164,6 @@ class Dispatcher {
 
 		if (!isset($methods[$request->params['action']])) {
 			if ($controller->scaffold !== false) {
-				App::import('Controller', 'Scaffold', false);
 				return new Scaffold($controller, $request);
 			}
 			throw new MissingActionException(array(

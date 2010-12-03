@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 0.10.8.2156
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'String', false);
-App::import('Core', 'Security', false);
+App::uses('String', 'Core');
+App::uses('Security', 'Core');
 
 /**
  * SecurityComponent
