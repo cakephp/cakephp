@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Model', 'ConnectionManager'));
+App::import('Core', 'Model');
+App::import('Core', 'ConnectionManager');
 
 /**
  * Base Class for Schema management

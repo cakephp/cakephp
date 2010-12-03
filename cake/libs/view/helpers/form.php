@@ -243,12 +243,12 @@ class FormHelper extends AppHelper {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
-				} elseif (!empty($this->request['controller'])) {
-					$options['url']['controller'] = Inflector::underscore($this->request['controller']);
+				} elseif (!empty($this->request->params['controller'])) {
+					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = $this->request['action'];
+				$options['action'] = $this->request->params['action'];
 			}
 
 			$actionDefaults = array(
@@ -307,9 +307,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
+		if (isset($this->request->params['_Token']) && !empty($this->request->params['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
-				'value' => $this->request['_Token']['key'], 'id' => 'Token' . mt_rand())
+				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
 		}
 

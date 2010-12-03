@@ -23,7 +23,9 @@
 /**
  * Included libs
  */
-App::import('Core', array('ClassRegistry', 'Validation', 'Set', 'String'));
+App::import('Core', 'ClassRegistry', false);
+App::import('Core', 'Validation', false);
+App::import('Core', 'String', false);
 App::import('Model', 'BehaviorCollection', false);
 App::import('Model', 'ModelBehavior', false);
 App::import('Model', 'ConnectionManager', false);

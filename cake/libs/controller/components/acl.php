@@ -539,6 +539,15 @@ class IniAcl extends Object implements AclInterface {
 	public $config = null;
 
 /**
+ * The Set::classicExtract() path to the user/aro identifier in the
+ * acl.ini file.  This path will be used to extract the string
+ * representation of a user used in the ini file.
+ *
+ * @var string
+ */
+	public $userPath = 'User.username';
+
+/**
  * Initialize method
  *
  * @param AclBase $component 
@@ -599,6 +608,10 @@ class IniAcl extends Object implements AclInterface {
 			$this->config = $this->readConfigFile(CONFIGS . 'acl.ini.php');
 		}
 		$aclConfig = $this->config;
+		
+		if (is_array($aro)) {
+			$aro = Set::classicExtract($aro, $this->userPath);
+		}
 
 		if (isset($aclConfig[$aro]['deny'])) {
 			$userDenies = $this->arrayTrim(explode(",", $aclConfig[$aro]['deny']));
@@ -622,7 +635,7 @@ class IniAcl extends Object implements AclInterface {
 			foreach ($userGroups as $group) {
 				if (array_key_exists($group, $aclConfig)) {
 					if (isset($aclConfig[$group]['deny'])) {
-						$groupDenies=$this->arrayTrim(explode(",", $aclConfig[$group]['deny']));
+						$groupDenies = $this->arrayTrim(explode(",", $aclConfig[$group]['deny']));
 
 						if (array_search($aco, $groupDenies)) {
 							return false;
@@ -645,43 +658,13 @@ class IniAcl extends Object implements AclInterface {
 /**
  * Parses an INI file and returns an array that reflects the INI file's section structure. Double-quote friendly.
  *
- * @param string $fileName File
+ * @param string $filename File
  * @return array INI section structure
  */
-	public function readConfigFile($fileName) {
-		$fileLineArray = file($fileName);
-
-		foreach ($fileLineArray as $fileLine) {
-			$dataLine = trim($fileLine);
-			$firstChar = substr($dataLine, 0, 1);
-
-			if ($firstChar != ';' && $dataLine != '') {
-				if ($firstChar == '[' && substr($dataLine, -1, 1) == ']') {
-					$sectionName = preg_replace('/[\[\]]/', '', $dataLine);
-				} else {
-					$delimiter = strpos($dataLine, '=');
-
-					if ($delimiter > 0) {
-						$key = strtolower(trim(substr($dataLine, 0, $delimiter)));
-						$value = trim(substr($dataLine, $delimiter + 1));
-
-						if (substr($value, 0, 1) == '"' && substr($value, -1) == '"') {
-							$value = substr($value, 1, -1);
-						}
-
-						$iniSetting[$sectionName][$key]=stripcslashes($value);
-					} else {
-						if (!isset($sectionName)) {
-							$sectionName = '';
-						}
-
-						$iniSetting[$sectionName][strtolower(trim($dataLine))]='';
-					}
-				}
-			}
-		}
-
-		return $iniSetting;
+	public function readConfigFile($filename) {
+		App::import('Core', 'config/IniFile');
+		$iniFile = new IniFile($filename);
+		return $iniFile->asArray();
 	}
 
 /**

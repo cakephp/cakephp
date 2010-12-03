@@ -186,11 +186,7 @@ if (!function_exists('sortByKey')) {
 		if (is_string($double)) {
 			$charset = $double;
 		}
-		if ($charset) {
-			return htmlspecialchars($text, ENT_QUOTES, $charset, $double);
-		} else {
-			return htmlspecialchars($text, ENT_QUOTES, $defaultCharset, $double);
-		}
+		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
 	}
 
 /**

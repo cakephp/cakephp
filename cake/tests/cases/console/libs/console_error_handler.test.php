@@ -27,14 +27,36 @@ require_once CONSOLE_LIBS . 'console_error_handler.php';
 class ConsoleErrorHandlerTest extends CakeTestCase {
 
 /**
- * Factory method for error handlers with stderr() mocked out.
+ * setup, create mocks
  *
  * @return Mock object
  */
-	function getErrorHandler($exception) {
-		$error = new ConsoleErrorHandler($exception);
-		$error->stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		return $error;
+	function setUp() {
+		parent::setUp();
+		ConsoleErrorHandler::$stderr = $this->getMock('ConsoleOutput', array(), array(), '', false);
+	}
+
+/**
+ * teardown
+ *
+ * @return void
+ */
+	function tearDown() {
+		parent::tearDown();
+		ConsoleErrorHandler::$stderr = null;
+	}
+
+/**
+ * test that the console error handler can deal with CakeExceptions.
+ *
+ * @return void
+ */
+	function testHandleError() {
+		$content = '<error>Notice Error:</error> This is a notice error in [/some/file, line 275]';
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+			->with($content);
+
+		ConsoleErrorHandler::handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
 	}
 
 /**
@@ -44,12 +66,10 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testCakeErrors() {
 		$exception = new MissingActionException('Missing action');
-		$error = $this->getErrorHandler($exception);
-
-		$error->stderr->expects($this->once())->method('write')
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
-		$error->render();
+		ConsoleErrorHandler::handleException($exception);
 	}
 
 /**
@@ -59,12 +79,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testNonCakeExceptions() {
 		$exception = new InvalidArgumentException('Too many parameters.');
-		$error = $this->getErrorHandler($exception);
 
-		$error->stderr->expects($this->once())->method('write')
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 		
-		$error->render();
+		ConsoleErrorHandler::handleException($exception);
 	}
 
 /**
@@ -74,12 +93,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testError404Exception() {
 		$exception = new NotFoundException('dont use me in cli.');
-		$error = $this->getErrorHandler($exception);
-
-		$error->stderr->expects($this->once())->method('write')
+		
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$error->render();
+		ConsoleErrorHandler::handleException($exception);
 	}
 
 /**
@@ -89,23 +107,11 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function testError500Exception() {
 		$exception = new InternalErrorException('dont use me in cli.');
-		$error = $this->getErrorHandler($exception);
 
-		$error->stderr->expects($this->once())->method('write')
+		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$error->render();
+		ConsoleErrorHandler::handleException($exception);
 	}
 
-/**
- * test that ConsoleErrorHandler has a stderr file handle.
- *
- * @return void
- */
-	function testStdErrFilehandle() {
-		$exception = new InternalErrorException('dont use me in cli.');
-		$error = new ConsoleErrorHandler($exception);
-
-		$this->assertType('ConsoleOutput', $error->stderr, 'No handle.');
-	}
 }

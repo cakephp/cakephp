@@ -42,11 +42,78 @@ class Configure {
 
 /**
  * Initializes configure and runs the bootstrap process.
+ * Bootstrapping includes the following steps:
+ *
+ * - Setup App array in Configure.
+ * - Include app/config/core.php.
+ * - Configure core cache configurations.
+ * - Load App cache files.
+ * - Include app/config/bootstrap.php.
+ * - Setup error/exception handlers.
  *
  * @return void
  */
 	public static function bootstrap($boot = true) {
-		self::__loadBootstrap($boot);
+		if ($boot) {
+			self::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
+
+			if (!include(CONFIGS . 'core.php')) {
+				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
+			}
+
+			if (Configure::read('Cache.disable') !== true) {
+				$cache = Cache::config('default');
+
+				if (empty($cache['settings'])) {
+					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php'), E_USER_WARNING);
+					$cache = Cache::config('default', array('engine' => 'File'));
+				}
+				$path = $prefix = $duration = null;
+
+				if (!empty($cache['settings']['path'])) {
+					$path = realpath($cache['settings']['path']);
+				} else {
+					$prefix = $cache['settings']['prefix'];
+				}
+
+				if (Configure::read('debug') >= 1) {
+					$duration = '+10 seconds';
+				} else {
+					$duration = '+999 days';
+				}
+
+				if (Cache::config('_cake_core_') === false) {
+					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
+						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
+						'serialize' => true, 'duration' => $duration
+					)));
+				}
+
+				if (Cache::config('_cake_model_') === false) {
+					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
+						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
+						'serialize' => true, 'duration' => $duration
+					)));
+				}
+			}
+
+			App::init();
+			App::build();
+			if (!include(CONFIGS . 'bootstrap.php')) {
+				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
+			}
+			$level = -1;
+			if (isset(self::$_values['Error']['level'])) {
+				error_reporting(self::$_values['Error']['level']);
+				$level = self::$_values['Error']['level'];
+			}
+			if (!empty(self::$_values['Error']['handler'])) {
+				set_error_handler(self::$_values['Error']['handler'], $level);
+			}
+			if (!empty(self::$_values['Exception']['handler'])) {
+				set_exception_handler(self::$_values['Exception']['handler']);
+			}
+		}
 	}
 
 /**
@@ -101,30 +168,13 @@ class Configure {
 		}
 
 		if (isset($config['debug']) || isset($config['log'])) {
-			$reporting = 0;
-			if (self::$_values['debug']) {
-				if (!class_exists('Debugger')) {
-					require LIBS . 'debugger.php';
-				}
-				$reporting = E_ALL & ~E_DEPRECATED;
-				if (function_exists('ini_set')) {
+			if (function_exists('ini_set')) {
+				if (self::$_values['debug']) {
 					ini_set('display_errors', 1);
-				}
-			} elseif (function_exists('ini_set')) {
-				ini_set('display_errors', 0);
-			}
-
-			if (isset(self::$_values['log']) && self::$_values['log']) {
-				if (!class_exists('CakeLog')) {
-					require LIBS . 'cake_log.php';
-				}
-				if (is_integer(self::$_values['log']) && !self::$_values['debug']) {
-					$reporting = self::$_values['log'];
 				} else {
-					$reporting = E_ALL & ~E_DEPRECATED;
+					ini_set('display_errors', 0);
 				}
 			}
-			error_reporting($reporting);
 		}
 		return true;
 	}
@@ -330,62 +380,4 @@ class Configure {
 		}
 	}
 
-/**
- * Loads app/config/bootstrap.php.
- * If the alternative paths are set in this file
- * they will be added to the paths vars.
- *
- * @param boolean $boot Load application bootstrap (if true)
- * @return void
- */
-	private static function __loadBootstrap($boot) {
-		if ($boot) {
-			Configure::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
-
-			if (!include(CONFIGS . 'core.php')) {
-				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
-			}
-
-			if (Configure::read('Cache.disable') !== true) {
-				$cache = Cache::config('default');
-
-				if (empty($cache['settings'])) {
-					trigger_error(__('Cache not configured properly. Please check Cache::config(); in APP/config/core.php'), E_USER_WARNING);
-					$cache = Cache::config('default', array('engine' => 'File'));
-				}
-				$path = $prefix = $duration = null;
-
-				if (!empty($cache['settings']['path'])) {
-					$path = realpath($cache['settings']['path']);
-				} else {
-					$prefix = $cache['settings']['prefix'];
-				}
-
-				if (Configure::read('debug') >= 1) {
-					$duration = '+10 seconds';
-				} else {
-					$duration = '+999 days';
-				}
-
-				if (Cache::config('_cake_core_') === false) {
-					Cache::config('_cake_core_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_core_', 'path' => $path . DS . 'persistent' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
-
-				if (Cache::config('_cake_model_') === false) {
-					Cache::config('_cake_model_', array_merge((array)$cache['settings'], array(
-						'prefix' => $prefix . 'cake_model_', 'path' => $path . DS . 'models' . DS,
-						'serialize' => true, 'duration' => $duration
-					)));
-				}
-			}
-			App::init();
-			App::build();
-			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
-			}
-		}
-	}
 }

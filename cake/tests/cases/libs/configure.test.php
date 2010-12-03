@@ -135,54 +135,18 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
- * testSetErrorReporting Level
+ * test setting display_errors with debug.
  *
  * @return void
  */
-	function testSetErrorReportingLevel() {
-		Configure::write('log', false);
-
+	function testDebugSettingDisplayErrors() {
 		Configure::write('debug', 0);
-		$result = ini_get('error_reporting');
+		$result = ini_get('display_errors');
 		$this->assertEqual($result, 0);
 
 		Configure::write('debug', 2);
-		$result = ini_get('error_reporting');
-		$this->assertEqual($result, E_ALL & ~E_DEPRECATED);
-
 		$result = ini_get('display_errors');
 		$this->assertEqual($result, 1);
-
-		Configure::write('debug', 0);
-		$result = ini_get('error_reporting');
-		$this->assertEqual($result, 0);
-	}
-
-/**
- * test that log and debug configure values interact well.
- *
- * @return void
- */
-	function testInteractionOfDebugAndLog() {
-		Configure::write('log', false);
-
-		Configure::write('debug', 0);
-		$this->assertEqual(ini_get('error_reporting'), 0);
-		$this->assertEqual(ini_get('display_errors'), 0);
-
-		Configure::write('log', E_WARNING);
-		Configure::write('debug', 0);
-		$this->assertEqual(ini_get('error_reporting'), E_WARNING);
-		$this->assertEqual(ini_get('display_errors'), 0);
-
-		Configure::write('debug', 2);
-		$this->assertEqual(ini_get('error_reporting'), E_ALL & ~E_DEPRECATED);
-		$this->assertEqual(ini_get('display_errors'), 1);
-
-		Configure::write('debug', 0);
-		Configure::write('log', false);
-		$this->assertEqual(ini_get('error_reporting'), 0);
-		$this->assertEqual(ini_get('display_errors'), 0);
 	}
 
 /**

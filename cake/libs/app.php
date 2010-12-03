@@ -505,7 +505,11 @@ class App {
 			$file = Inflector::underscore($name) . ".{$ext}";
 		}
 		$ext = self::__settings($type, $plugin, $parent);
-		if ($name != null && !class_exists($name . $ext['class'])) {
+		$className = $name;
+		if (strpos($className, '/') !== false) {
+			$className = substr($className, strrpos($className, '/') + 1);
+		}
+		if ($name != null && !class_exists($className . $ext['class'])) {
 			if ($load = self::__mapped($name . $ext['class'], $type, $plugin)) {
 				if (self::__load($load)) {
 					if (self::$return) {

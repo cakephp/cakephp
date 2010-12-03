@@ -1,8 +1,9 @@
 <?php
 /**
- * Error handler
+ * Exception Renderer
  *
- * Provides Error Capturing for Framework errors.
+ * Provides Exception rendering features.  Which allow exceptions to be rendered
+ * as HTML pages.
  *
  * PHP 5
  *
@@ -16,43 +17,38 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
  * @subpackage    cake.cake.libs
- * @since         CakePHP(tm) v 0.10.5.1732
+ * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 /**
- * Error Handler.
+ * Exception Renderer.
  *
  * Captures and handles all unhandled exceptions. Displays helpful framework errors when debug > 1.
  * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
- * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
+ * and it is a type that ExceptionHandler does not know about it will be treated as a 500 error.
  *
- * ### Implementing application specific exception handling
+ * ### Implementing application specific exception rendering
  *
  * You can implement application specific exception handling in one of a few ways:
  *
  * - Create a AppController::appError();
- * - Create an AppError class.
+ * - Create a subclass of ExceptionRenderer and configure it to be the `Exception.renderer`
  *
  * #### Using AppController::appError();
  *
  * This controller method is called instead of the default exception handling.  It receives the 
  * thrown exception as its only argument.  You should implement your error handling in that method.
  *
- * #### Using an AppError class
+ * #### Using a subclass of ExceptionRenderer
  *
- * This approach gives more flexibility and power in how you handle exceptions.  You can create 
- * `app/libs/app_error.php` and create a class called `AppError`.  The core ErrorHandler class
- * will attempt to construct this class and let it handle the exception. This provides a more
- * flexible way to handle exceptions in your application.
- *
- * Finally, in your `app/config/bootstrap.php` you can configure use `set_exception_handler()`
- * to take total control over application exception handling.
+ * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you 
+ * can configure your class in your core.php, with `Configure::write('Exception.renderer', 'MyClass');`
+ * You should place any custom exception renderers in `app/libs`.
  *
  * @package       cake
  * @subpackage    cake.cake.libs
  */
-class ErrorHandler {
+class ExceptionRenderer {
 
 /**
  * Controller instance.
@@ -118,7 +114,7 @@ class ErrorHandler {
 
 		if (Configure::read('debug') == 0) {
 			$parentClass = get_parent_class($this);
-			if ($parentClass != 'ErrorHandler') {
+			if ($parentClass != __CLASS__) {
 				$method = 'error400';
 			}
 			$parentMethods = (array)get_class_methods($parentClass);
@@ -158,33 +154,14 @@ class ErrorHandler {
 	}
 
 /**
- * Set as the default exception handler by the CakePHP bootstrap process.
- *
- * This will either use an AppError class if your application has one,
- * or use the default ErrorHandler.
- *
- * @return void
- * @see http://php.net/manual/en/function.set-exception-handler.php
- */
-	public static function handleException(Exception $exception) {
-		if (file_exists(APP . 'app_error.php') || class_exists('AppError')) {
-			if (!class_exists('AppError')) {
-				require(APP . 'app_error.php');
-			}
-			$AppError = new AppError($exception);
-			return $AppError->render();
-		}
-		$error = new ErrorHandler($exception);
-		$error->render();
-	}
-
-/**
  * Renders the response for the exception.
  *
  * @return void
  */
 	public function render() {
-		call_user_func_array(array($this, $this->method), array($this->error));
+		if ($this->method) {
+			call_user_func_array(array($this, $this->method), array($this->error));
+		}
 	}
 
 /**

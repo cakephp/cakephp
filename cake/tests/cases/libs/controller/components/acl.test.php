@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import(array('controller' .DS . 'components' . DS . 'acl', 'model' . DS . 'db_acl'));
+App::import('Component', 'Acl');
+App::import('model' . DS . 'db_acl');
 
 /**
  * AclNodeTwoTestBase class
@@ -260,53 +261,6 @@ class AclComponentTest extends CakeTestCase {
 class IniAclTest extends CakeTestCase {
 
 /**
- * testIniReadConfigFile
- *
- * @access public
- * @return void
- */
-	function testReadConfigFile() {
-		$Ini = new IniAcl();
-		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
-		$result = $Ini->readConfigFile($iniFile);
-		$expected = array(
-			'admin' => array(
-				'groups' => 'administrators',
-				'allow' => '',
-				'deny' => 'ads',
-			),
-			'paul' => array(
-				'groups' => 'users',
-				'allow' =>'',
-				'deny' => '',
-			),
-			'jenny' => array(
-				'groups' => 'users',
-				'allow' => 'ads',
-				'deny' => 'images, files',
-			),
-			'nobody' => array(
-				'groups' => 'anonymous',
-				'allow' => '',
-				'deny' => '',
-			),
-			'administrators' => array(
-				'deny' => '',
-				'allow' => 'posts, comments, images, files, stats, ads',
-			),
-			'users' => array(
-				'allow' => 'posts, comments, images, files',
-				'deny' => 'stats, ads',
-			),
-			'anonymous' => array(
-				'allow' => '',
-				'deny' => 'posts, comments, images, files, stats, ads',
-			),
-		);
-		$this->assertEqual($result, $expected);
-	}
-
-/**
  * testIniCheck method
  *
  * @access public
@@ -328,6 +282,24 @@ class IniAclTest extends CakeTestCase {
 		$this->assertFalse($Ini->check('paul', 'ads'));
 
 		$this->assertFalse($Ini->check('nobody', 'comments'));
+	}
+
+/**
+ * check should accept a user array.
+ *
+ * @return void
+ */
+	function testCheckArray() {
+		$iniFile = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
+
+		$Ini = new IniAcl();
+		$Ini->config = $Ini->readConfigFile($iniFile);
+		$Ini->userPath = 'User.username';
+
+		$user = array(
+			'User' => array('username' => 'admin')
+		);
+		$this->assertTrue($Ini->check($user, 'posts'));
 	}
 }
 
