@@ -339,6 +339,7 @@ class SchemaShellTest extends CakeTestCase {
 		), true);
 		App::objects('plugin', null, false);
 
+		$this->db->cacheSources = false;
 		$this->Shell->params = array(
 			'plugin' => 'TestPlugin',
 			'connection' => 'test'

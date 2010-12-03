@@ -96,9 +96,8 @@ class BakeShellTest extends CakeTestCase {
 
 		$this->Shell->expects($this->at(1))->method('out')->with('Bake All');
 		$this->Shell->expects($this->at(3))->method('out')->with('User Model was baked.');
-		$this->Shell->expects($this->at(5))->method('out')->with('User Controller was baked.');
+		$this->Shell->expects($this->at(5))->method('out')->with('<success>Bake All complete</success>');
 		$this->Shell->expects($this->at(7))->method('out')->with('User Views were baked.');
-		$this->Shell->expects($this->at(8))->method('out')->with('Bake All complete');
 
 		$this->Shell->params = array();
 		$this->Shell->args = array('User');
