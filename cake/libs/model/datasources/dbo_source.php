@@ -550,7 +550,7 @@ class DboSource extends DataSource {
 		if ($cache && ($cached = $this->getQueryCache($sql, $params)) !== false) {
 			return $cached;
 		}
-		if ($this->execute($sql, array(), $params)) {
+		if ($result = $this->execute($sql, array(), $params)) {
 			$out = array();
 
 			$first = $this->fetchRow();
@@ -562,7 +562,7 @@ class DboSource extends DataSource {
 				$out[] = $item;
 			}
 
-			if ($cache) {
+			if (!is_bool($result) && $cache) {
 				$this->_writeQueryCache($sql, $out, $params);
 			}
 

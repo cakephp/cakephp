@@ -184,17 +184,14 @@ class DboSqlite extends DboSource {
 				'default'	=> $default,
 				'length'	=> $this->length($column['type'])
 			);
-			if($column['pk'] == 1) {
-				$fields[$column['name']] = array(
-					'type'		=> $fields[$column['name']]['type'],
-					'null'		=> false,
-					'default'	=> $default,
-					'key'		=> $this->index['PRI'],
-					'length'	=> 11
-				);
+			if ($column['pk'] == 1) {
+				$fields[$column['name']]['key'] = $this->index['PRI'];
+				$fields[$column['name']]['null'] = false;
+				if (empty($fields[$column['name']]['length'])) {
+					$fields[$column['name']]['length'] = 11;
+				}
 			}
 		}
-
 
 		$result->closeCursor();
 		$this->__cacheDescription($model->tablePrefix . $model->table, $fields);
