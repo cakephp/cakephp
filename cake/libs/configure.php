@@ -298,15 +298,19 @@ class Configure {
 	}
 
 /**
- * Loads a file from app/config/configure_file.php.
+ * Loads stored configuration information from a resource.  You can add
+ * config file resource readers with `Configure::config()`.
  *
- * Config file variables should be formated like:
- *  `$config['name'] = 'value';`
- * These will be used to create dynamic Configure vars. load() is also used to
- * load stored config files created with Configure::store()
+ * Loaded configuration infomration will be merged with the current
+ * runtime configuration. You can load configuration files from plugins
+ * by preceeding the filename with the plugin name.
  *
- * - To load config files from app/config use `Configure::load('configure_file');`.
- * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
+ * `Configure::load('Users.user', 'default')` 
+ *
+ * Would load the 'user' config file using the default config reader.  You can load
+ * app config files by giving the name of the resource you want loaded.
+ *
+ * `Configure::load('setup', 'default');`
  *
  * @link http://book.cakephp.org/view/929/load
  * @param string $key name of configuration resource to load.  
