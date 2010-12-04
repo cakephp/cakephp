@@ -219,17 +219,21 @@ if (!defined('JS_URL')) {
 
 
 require LIBS . 'basics.php';
-require LIBS . 'app.php';
+require LIBS . 'Utility' . DS . 'Inflector.php';
+require LIBS . 'Utility' . DS . 'Folder.php';
+require LIBS . 'Core' . DS .'App.php';
+
+App::uses('Configure', 'Core');
+App::uses('Cache', 'Cache');
+
 //require LIBS . 'error' . DS . 'exceptions.php';
 //require LIBS . 'object.php';
-//require LIBS . 'inflector.php';
-//
 //require LIBS . 'configure.php';
 //require LIBS . 'set.php';
 //require LIBS . 'cache.php';
 //require LIBS . 'error' . DS . 'error_handler.php';
 
-//Configure::bootstrap(isset($boot) ? $boot : true);
+Configure::bootstrap(isset($boot) ? $boot : true);
 
 /**
  *  Full url prefix

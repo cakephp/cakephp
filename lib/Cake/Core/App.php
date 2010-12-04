@@ -442,7 +442,10 @@ class App {
 
 	public static function load($className) {
 		if (isset(self::$__classMap[$className])) {
-			return App::import(self::$__classMap[$className], $className, false);
+			$file = LIBS . self::$__classMap[$className] . DS . $className . '.php';
+			if (file_exists($file)) {
+				return include $file;
+			}
 		}
 		return false;
 	}
@@ -606,7 +609,7 @@ class App {
 		}
 
 		if (empty(self::$__paths)) {
-			self::$__paths = Cache::read('dir_map', '_cake_core_');
+			//self::$__paths = Cache::read('dir_map', '_cake_core_');
 		}
 
 		foreach (self::$search as $path) {

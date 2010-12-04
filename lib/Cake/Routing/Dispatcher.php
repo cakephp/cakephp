@@ -24,9 +24,9 @@
 /**
  * List of helpers to include
  */
-App::uses('Router', 'Core');
-App::uses('CakeRequest', 'Core');
-App::uses('CakeResponse', 'Core');
+App::uses('Router', 'Routing');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
 App::uses('View', 'View');
