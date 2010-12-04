@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('ObjectCollection', 'Core');
+App::uses('ObjectCollection', 'Utility');
 
 class ComponentCollection extends ObjectCollection {
 
@@ -70,13 +70,8 @@ class ComponentCollection extends ObjectCollection {
 			return $this->_loaded[$name];
 		}
 		$componentClass = $name . 'Component';
+		App::uses($componentClass, 'Controller/Component');
 		if (!class_exists($componentClass)) {
-			if (!App::import('Component', $component)) {
-				throw new MissingComponentFileException(array(
-					'file' => Inflector::underscore($component) . '.php',
-					'class' => $componentClass
-				));
-			}
 			if (!class_exists($componentClass)) {
 				throw new MissingComponentFileException(array(
 					'file' => Inflector::underscore($component) . '.php',

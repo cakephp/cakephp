@@ -21,7 +21,7 @@
 /**
  * Include files
  */
-App::uses('CakeResponse', 'Core');
+App::uses('CakeResponse', 'Network');
 App::uses('ClassRegistry', 'Core');
 App::uses('ComponentCollection', 'Controller');
 App::uses('View', 'View');
