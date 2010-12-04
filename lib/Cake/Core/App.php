@@ -733,9 +733,7 @@ class App {
 
 		switch ($load) {
 			case 'model':
-				if (!class_exists('Model')) {
-					require LIBS . 'model' . DS . 'model.php';
-				}
+				App::uses('Model', 'Model');
 				if (!class_exists('AppModel')) {
 					App::import($type, 'AppModel', false);
 				}

@@ -22,7 +22,7 @@
  * Include files
  */
 App::uses('CakeResponse', 'Network');
-App::uses('ClassRegistry', 'Core');
+App::uses('ClassRegistry', 'Utility');
 App::uses('ComponentCollection', 'Controller');
 App::uses('View', 'View');
 
