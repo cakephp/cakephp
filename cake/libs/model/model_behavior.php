@@ -59,7 +59,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param array $config Configuration settings for $model
  */
-	public function setup(&$model, $config = array()) { }
+	public function setup($model, $config = array()) { }
 
 /**
  * Clean up any initialization this behavior has done on a model.  Called when a behavior is dynamically
@@ -69,7 +69,7 @@ class ModelBehavior extends Object {
  * @access public
  * @see BehaviorCollection::detach()
  */
-	function cleanup(&$model) {
+	function cleanup($model) {
 		if (isset($this->settings[$model->alias])) {
 			unset($this->settings[$model->alias]);
 		}
@@ -83,7 +83,7 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. An array will replace the value of $query.
  * @access public
  */
-	public function beforeFind(&$model, $query) { }
+	public function beforeFind($model, $query) { }
 
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
@@ -94,7 +94,7 @@ class ModelBehavior extends Object {
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  * @access public
  */
-	public function afterFind(&$model, $results, $primary) { }
+	public function afterFind($model, $results, $primary) { }
 
 /**
  * Before validate callback
@@ -103,7 +103,7 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeValidate(&$model) { }
+	public function beforeValidate($model) { }
 
 /**
  * Before save callback
@@ -112,7 +112,7 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeSave(&$model) { }
+	public function beforeSave($model) { }
 
 /**
  * After save callback
@@ -120,7 +120,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param boolean $created True if this save created a new record
  */
-	public function afterSave(&$model, $created) { }
+	public function afterSave($model, $created) { }
 
 /**
  * Before delete callback
@@ -130,14 +130,14 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeDelete(&$model, $cascade = true) { }
+	public function beforeDelete($model, $cascade = true) { }
 
 /**
  * After delete callback
  *
  * @param object $model Model using this behavior
  */
-	public function afterDelete(&$model) { }
+	public function afterDelete($model) { }
 
 /**
  * DataSource error callback
@@ -145,7 +145,7 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param string $error Error generated in DataSource
  */
-	public function onError(&$model, $error) { }
+	public function onError($model, $error) { }
 
 /**
  * If $model's whitelist property is non-empty, $field will be added to it.
@@ -158,7 +158,7 @@ class ModelBehavior extends Object {
  * @access protected
  * @return void
  */
-	function _addToWhitelist(&$model, $field) {
+	function _addToWhitelist($model, $field) {
 		if (is_array($field)) {
 			foreach ($field as $f) {
 				$this->_addToWhitelist($model, $f);
