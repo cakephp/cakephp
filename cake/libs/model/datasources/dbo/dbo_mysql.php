@@ -19,19 +19,42 @@
  */
 
 /**
- * Provides common base for MySQL & MySQLi connections
+ * MySQL DBO driver object
+ *
+ * Provides connection and SQL generation for MySQL RDMS
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
-class DboMysqlBase extends DboSource {
+class DboMysql extends DboSource {
 
 /**
- * Description property.
+ * Datasource description
  *
  * @var string
  */
-	public $description = "MySQL DBO Base Driver";
+	public $description = "MySQL DBO Driver";
+
+/**
+ * Base configuration settings for MySQL driver
+ *
+ * @var array
+ */
+	protected $_baseConfig = array(
+		'persistent' => true,
+		'host' => 'localhost',
+		'login' => 'root',
+		'password' => '',
+		'database' => 'cake',
+		'port' => '3306'
+	);
+
+/**
+ * Reference to the PDO object connection
+ *
+ * @var PDO $_connection
+ */
+	protected $_connection = null;
 
 /**
  * Start quote
@@ -111,48 +134,189 @@ class DboMysqlBase extends DboSource {
 	);
 
 /**
+ * Connects to the database using options in the given configuration array.
+ *
+ * @return boolean True if the database could be connected, else false
+ */
+	function connect() {
+		$config = $this->config;
+		$this->connected = false;
+		try {
+			$flags = array(
+				PDO::ATTR_PERSISTENT => $config['persistent'],
+				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true
+			);
+			if (!empty($config['encoding'])) {
+				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
+			}
+			$this->_connection = new PDO(
+				"mysql:{$config['host']};port={$config['port']};dbname={$config['database']}",
+				$config['login'],
+				$config['password'],
+				$flags
+			);
+			$this->connected = true;
+		} catch (PDOException $e) {
+			$this->errors[] = $e->getMessage();
+		}
+
+		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
+
+		return $this->connected;
+	}
+
+/**
+ * Check whether the MySQL extension is installed/loaded
+ *
+ * @return boolean
+ */
+	function enabled() {
+		return in_array('mysql', PDO::getAvailableDrivers());
+	}
+
+/**
+ * Returns an array of sources (tables) in the database.
+ *
+ * @return array Array of tablenames in the database
+ */
+	function listSources($data = null) {
+		$cache = parent::listSources();
+		if ($cache != null) {
+			return $cache;
+		}
+		$result = $this->_execute('SHOW TABLES FROM ' . $this->config['database']);
+
+		if (!$result) {
+			$result->closeCursor();
+			return array();
+		} else {
+			$tables = array();
+
+			while ($line = $result->fetch()) {
+				$tables[] = $line[0];
+			}
+
+			$result->closeCursor();
+			parent::listSources($tables);
+			return $tables;
+		}
+	}
+
+/**
+ * Builds a map of the columns contained in a result
+ *
+ * @param PDOStatement $results
+ */
+	function resultSet($results) {
+		$this->map = array();
+		$numFields = $results->columnCount();
+		$index = 0;
+		$j = 0;
+
+		while ($j < $numFields) {
+			$column = $results->getColumnMeta($j);
+			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
+				$this->map[$index++] = array($column['table'], $column['name']);
+			} else {
+				$this->map[$index++] = array(0, $column['name']);
+			}
+			$j++;
+		}
+	}
+
+/**
+ * Fetches the next row from the current result set
+ *
+ * @return mixed array with results fetched and mapped to column names or false if there is no results left to fetch
+ */
+	function fetchResult() {
+		if ($row = $this->_result->fetch()) {
+			$resultRow = array();
+			foreach ($this->map as $col => $meta) {
+				list($table, $column) = $meta;
+				$resultRow[$table][$column] = $row[$col];
+			}
+			return $resultRow;
+		} else {
+			$this->_result->closeCursor();
+			return false;
+		}
+	}
+
+/**
+ * Gets the database encoding
+ *
+ * @return string The database encoding
+ */
+	public function getEncoding() {
+		return $this->_execute('SHOW VARIABLES LIKE ?', array('character_set_client'))->fetchObject()->Value;
+	}
+
+/**
+ * Gets the version string of the database server
+ *
+ * @return string The database encoding
+ */
+	public function getVersion() {
+		return $this->_connection->getAttribute(PDO::ATTR_SERVER_VERSION);
+	}
+
+/**
+ * Query charset by collation
+ *
+ * @param string $name Collation name
+ * @return string Character set name
+ */
+	public function getCharsetName($name) {
+		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
+			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
+			$cols = $r->fetch();
+
+			if (isset($cols['CHARACTER_SET_NAME'])) {
+				return $cols['CHARACTER_SET_NAME'];
+			}
+		}
+		return false;
+	}
+
+/**
  * Returns an array of the fields in given table name.
  *
- * @param string $tableName Name of database table to inspect
+ * @param mixed $tableName Name of database table to inspect or model instance
  * @return array Fields in table. Keys are name and type
  */
-	function describe(&$model) {
+	function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
 		}
 		$fields = false;
-		$cols = $this->query('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
+		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $this->fullTableName($model));
 
 		foreach ($cols as $column) {
-			$colKey = array_keys($column);
-			if (isset($column[$colKey[0]]) && !isset($column[0])) {
-				$column[0] = $column[$colKey[0]];
+			$fields[$column->Field] = array(
+				'type' => $this->column($column->Type),
+				'null' => ($column->Null == 'YES' ? true : false),
+				'default' => $column->Default,
+				'length' => $this->length($column->Type),
+			);
+			if (!empty($column->Key) && isset($this->index[$column->Key])) {
+				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}
-			if (isset($column[0])) {
-				$fields[$column[0]['Field']] = array(
-					'type' => $this->column($column[0]['Type']),
-					'null' => ($column[0]['Null'] == 'YES' ? true : false),
-					'default' => $column[0]['Default'],
-					'length' => $this->length($column[0]['Type']),
-				);
-				if (!empty($column[0]['Key']) && isset($this->index[$column[0]['Key']])) {
-					$fields[$column[0]['Field']]['key'] = $this->index[$column[0]['Key']];
+			foreach ($this->fieldParameters as $name => $value) {
+				if (!empty($column->{$value['column']})) {
+					$fields[$column->Field][$name] = $column->{$value['column']};
 				}
-				foreach ($this->fieldParameters as $name => $value) {
-					if (!empty($column[0][$value['column']])) {
-						$fields[$column[0]['Field']][$name] = $column[0][$value['column']];
-					}
-				}
-				if (isset($fields[$column[0]['Field']]['collate'])) {
-					$charset = $this->getCharsetName($fields[$column[0]['Field']]['collate']);
-					if ($charset) {
-						$fields[$column[0]['Field']]['charset'] = $charset;
-					}
+			}
+			if (isset($fields[$column->Field]['collate'])) {
+				$charset = $this->getCharsetName($fields[$column->Field]['collate']);
+				if ($charset) {
+					$fields[$column->Field]['charset'] = $charset;
 				}
 			}
 		}
 		$this->__cacheDescription($this->fullTableName($model, false), $fields);
+		$cols->closeCursor();
 		return $fields;
 	}
 
@@ -249,26 +413,26 @@ class DboMysqlBase extends DboSource {
 	function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
+		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
-			$indexes = $this->query('SHOW INDEX FROM ' . $table);
-			if (isset($indexes[0]['STATISTICS'])) {
-				$keys = Set::extract($indexes, '{n}.STATISTICS');
-			} else {
-				$keys = Set::extract($indexes, '{n}.0');
-			}
-			foreach ($keys as $i => $key) {
-				if (!isset($index[$key['Key_name']])) {
+			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
+			while ($idx = $indices->fetch()) {
+				if ($old) {
+					$idx = (object) current((array)$idx);
+				}
+				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
-					$index[$key['Key_name']]['column'] = $key['Column_name'];
-					$index[$key['Key_name']]['unique'] = intval($key['Non_unique'] == 0);
+					$index[$idx->Key_name]['column'] = $idx->Column_name;
+					$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
 				} else {
-					if (!is_array($index[$key['Key_name']]['column'])) {
-						$col[] = $index[$key['Key_name']]['column'];
+					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {
+						$col[] = $index[$idx->Key_name]['column'];
 					}
-					$col[] = $key['Column_name'];
-					$index[$key['Key_name']]['column'] = $col;
+					$col[] = $idx->Column_name;
+					$index[$idx->Key_name]['column'] = $col;
 				}
 			}
+			$indices->closeCursor();
 		}
 		return $index;
 	}
@@ -413,21 +577,6 @@ class DboMysqlBase extends DboSource {
 	}
 
 /**
- * Inserts multiple values into a table
- *
- * @param string $table
- * @param string $fields
- * @param array $values
- */
-	function insertMulti($table, $fields, $values) {
-		$table = $this->fullTableName($table);
-		if (is_array($fields)) {
-			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		}
-		$values = implode(', ', $values);
-		$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values}");
-	}
-/**
  * Returns an detailed array of sources (tables) in the database.
  *
  * @param string $name Table name to get parameters 
@@ -435,23 +584,29 @@ class DboMysqlBase extends DboSource {
  */
 	function listDetailedSources($name = null) {
 		$condition = '';
+		$params = array();
 		if (is_string($name)) {
-			$condition = ' LIKE ' . $this->value($name);
+			$condition = ' WHERE name = ?' ;
+			$params = array($name);
 		}
-		$result = $this->query('SHOW TABLE STATUS FROM ' . $this->name($this->config['database']) . $condition . ';');
+		$result = $this->_execute('SHOW TABLE STATUS ' . $condition, $params);
+
 		if (!$result) {
+			$result->closeCursor();
 			return array();
 		} else {
 			$tables = array();
-			foreach ($result as $row) {
-				$tables[$row['TABLES']['Name']] = $row['TABLES'];
-				if (!empty($row['TABLES']['Collation'])) {
-					$charset = $this->getCharsetName($row['TABLES']['Collation']);
+			while ($row = $result->fetch()) {
+				$tables[$row->Name] = (array) $row;
+				unset($tables[$row->Name]['queryString']);
+				if (!empty($row->Collation)) {
+					$charset = $this->getCharsetName($row->Collation);
 					if ($charset) {
-						$tables[$row['TABLES']['Name']]['charset'] = $charset;
+						$tables[$row->Name]['charset'] = $charset;
 					}
 				}
 			}
+			$result->closeCursor();
 			if (is_string($name)) {
 				return $tables[$name];
 			}
@@ -505,294 +660,5 @@ class DboMysqlBase extends DboSource {
 			return "enum($vals)";
 		}
 		return 'text';
-	}
-}
-
-/**
- * MySQL DBO driver object
- *
- * Provides connection and SQL generation for MySQL RDMS
- *
- * @package       cake
- * @subpackage    cake.cake.libs.model.datasources.dbo
- */
-class DboMysql extends DboMysqlBase {
-
-/**
- * Datasource description
- *
- * @var string
- */
-	public $description = "MySQL DBO Driver";
-
-/**
- * Base configuration settings for MySQL driver
- *
- * @var array
- */
-	protected $_baseConfig = array(
-		'persistent' => true,
-		'host' => 'localhost',
-		'login' => 'root',
-		'password' => '',
-		'database' => 'cake',
-		'port' => '3306'
-	);
-
-/**
- * Connects to the database using options in the given configuration array.
- *
- * @return boolean True if the database could be connected, else false
- */
-	function connect() {
-		$config = $this->config;
-		$this->connected = false;
-
-		if (!$config['persistent']) {
-			$this->connection = mysql_connect($config['host'] . ':' . $config['port'], $config['login'], $config['password'], true);
-			$config['connect'] = 'mysql_connect';
-		} else {
-			$this->connection = mysql_pconnect($config['host'] . ':' . $config['port'], $config['login'], $config['password']);
-		}
-
-		if (mysql_select_db($config['database'], $this->connection)) {
-			$this->connected = true;
-		}
-
-		if (!empty($config['encoding'])) {
-			$this->setEncoding($config['encoding']);
-		}
-
-		$this->_useAlias = (bool)version_compare(mysql_get_server_info($this->connection), "4.1", ">=");
-
-		return $this->connected;
-	}
-
-/**
- * Check whether the MySQL extension is installed/loaded
- *
- * @return boolean
- */
-	function enabled() {
-		return extension_loaded('mysql');
-	}
-/**
- * Disconnects from database.
- *
- * @return boolean True if the database could be disconnected, else false
- */
-	function disconnect() {
-		if (isset($this->results) && is_resource($this->results)) {
-			mysql_free_result($this->results);
-		}
-		$this->connected = !@mysql_close($this->connection);
-		return !$this->connected;
-	}
-
-/**
- * Executes given SQL statement.
- *
- * @param string $sql SQL statement
- * @return resource Result resource identifier
- */
-	protected function _execute($sql) {
-		return mysql_query($sql, $this->connection);
-	}
-
-/**
- * Returns an array of sources (tables) in the database.
- *
- * @return array Array of tablenames in the database
- */
-	function listSources() {
-		$cache = parent::listSources();
-		if ($cache != null) {
-			return $cache;
-		}
-		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']) . ';');
-
-		if (!$result) {
-			return array();
-		} else {
-			$tables = array();
-
-			while ($line = mysql_fetch_row($result)) {
-				$tables[] = $line[0];
-			}
-			parent::listSources($tables);
-			return $tables;
-		}
-	}
-
-/**
- * Returns a quoted and escaped string of $data for use in an SQL statement.
- *
- * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
- * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
- * @return string Quoted and escaped data
- */
-	function value($data, $column = null, $safe = false) {
-		$parent = parent::value($data, $column, $safe);
-
-		if ($parent != null) {
-			return $parent;
-		}
-		if ($data === null || (is_array($data) && empty($data))) {
-			return 'NULL';
-		}
-		if ($data === '' && $column !== 'integer' && $column !== 'float' && $column !== 'boolean') {
-			return  "''";
-		}
-		if (empty($column)) {
-			$column = $this->introspectType($data);
-		}
-
-		switch ($column) {
-			case 'boolean':
-				return $this->boolean((bool)$data);
-			break;
-			case 'integer':
-			case 'float':
-				if ($data === '') {
-					return 'NULL';
-				}
-				if (is_float($data)) {
-					return sprintf('%F', $data);
-				}
-				if ((is_int($data) || $data === '0') || (
-					is_numeric($data) && strpos($data, ',') === false &&
-					$data[0] != '0' && strpos($data, 'e') === false)
-				) {
-					return $data;
-				}
-			default:
-				return "'" . mysql_real_escape_string($data, $this->connection) . "'";
-			break;
-		}
-	}
-
-/**
- * Returns a formatted error message from previous database operation.
- *
- * @return string Error message with error number
- */
-	function lastError() {
-		if (mysql_errno($this->connection)) {
-			return mysql_errno($this->connection).': '.mysql_error($this->connection);
-		}
-		return null;
-	}
-
-/**
- * Returns number of affected rows in previous database operation. If no previous operation exists,
- * this returns false.
- *
- * @return integer Number of affected rows
- */
-	function lastAffected() {
-		if ($this->_result) {
-			return mysql_affected_rows($this->connection);
-		}
-		return null;
-	}
-
-/**
- * Returns number of rows in previous resultset. If no previous resultset exists,
- * this returns false.
- *
- * @return integer Number of rows in resultset
- */
-	function lastNumRows() {
-		if ($this->hasResult()) {
-			return mysql_num_rows($this->_result);
-		}
-		return null;
-	}
-
-/**
- * Returns the ID generated from the previous INSERT operation.
- *
- * @param unknown_type $source
- * @return in
- */
-	function lastInsertId($source = null) {
-		$id = $this->fetchRow('SELECT LAST_INSERT_ID() AS insertID', false);
-		if ($id !== false && !empty($id) && !empty($id[0]) && isset($id[0]['insertID'])) {
-			return $id[0]['insertID'];
-		}
-
-		return null;
-	}
-
-/**
- * Enter description here...
- *
- * @param unknown_type $results
- */
-	function resultSet(&$results) {
-		if (isset($this->results) && is_resource($this->results) && $this->results != $results) {
-			mysql_free_result($this->results);
-		}
-		$this->results =& $results;
-		$this->map = array();
-		$numFields = mysql_num_fields($results);
-		$index = 0;
-		$j = 0;
-
-		while ($j < $numFields) {
-			$column = mysql_fetch_field($results, $j);
-			if (!empty($column->table) && strpos($column->name, $this->virtualFieldSeparator) === false) {
-				$this->map[$index++] = array($column->table, $column->name);
-			} else {
-				$this->map[$index++] = array(0, $column->name);
-			}
-			$j++;
-		}
-	}
-
-/**
- * Fetches the next row from the current result set
- *
- * @return unknown
- */
-	function fetchResult() {
-		if ($row = mysql_fetch_row($this->results)) {
-			$resultRow = array();
-			$i = 0;
-			foreach ($row as $index => $field) {
-				list($table, $column) = $this->map[$index];
-				$resultRow[$table][$column] = $row[$index];
-				$i++;
-			}
-			return $resultRow;
-		} else {
-			return false;
-		}
-	}
-
-/**
- * Gets the database encoding
- *
- * @return string The database encoding
- */
-	function getEncoding() {
-		return mysql_client_encoding($this->connection);
-	}
-
-/**
- * Query charset by collation
- *
- * @param string $name Collation name
- * @return string Character set name
- */
-	function getCharsetName($name) {
-		if ((bool)version_compare(mysql_get_server_info($this->connection), "5", ">=")) {
-			$cols = $this->query('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME= ' . $this->value($name) . ';');
-			if (isset($cols[0]['COLLATIONS']['CHARACTER_SET_NAME'])) {
-				return $cols[0]['COLLATIONS']['CHARACTER_SET_NAME'];
-			}
-		}
-		return false;
 	}
 }

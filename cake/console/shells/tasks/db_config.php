@@ -106,7 +106,7 @@ class DbConfigTask extends Shell {
 				}
 			}
 
-			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'mysqli', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
+			$driver = $this->in('Driver:', array('db2', 'firebird', 'mssql', 'mysql', 'odbc', 'oracle', 'postgres', 'sqlite', 'sybase'), 'mysql');
 
 			$persistent = $this->in('Persistent Connection?', array('y', 'n'), 'n');
 			if (strtolower($persistent) == 'n') {

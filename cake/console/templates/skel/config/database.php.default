@@ -31,7 +31,6 @@
  *
  * driver => The name of a supported driver; valid options are as follows:
  *		mysql 		- MySQL 4 & 5,
- *		mysqli 		- MySQL 4 & 5 Improved Interface (PHP5 only),
  *		sqlite		- SQLite (PHP5 only),
  *		postgres	- PostgreSQL 7 and higher,
  *		mssql		- Microsoft SQL Server 2000 and higher,
@@ -67,7 +66,7 @@
  * 'public', DB2 defaults to empty.
  *
  * encoding =>
- * For MySQL, MySQLi, Postgres and DB2, specifies the character encoding to use when connecting to the
+ * For MySQL, Postgres and DB2, specifies the character encoding to use when connecting to the
  * database.  Uses database default.
  *
  */

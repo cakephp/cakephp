@@ -1431,7 +1431,6 @@ class ScopedTreeTest extends CakeTestCase {
 	function testTranslatingTree() {
 		$this->Tree = new FlagTree();
 		$this->Tree->cacheQueries = false;
-		$this->Tree->translateModel = 'TranslateTreeTestModel';
 		$this->Tree->Behaviors->attach('Translate', array('name'));
 
 		//Save

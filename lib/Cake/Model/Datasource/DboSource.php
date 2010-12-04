@@ -89,6 +89,22 @@ class DboSource extends DataSource {
 	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
+ * Indicates that a transaction have been started
+ *
+ * @var boolean
+ * @access protected
+ */
+	protected $_transactionStarted = false;
+
+/**
+ * Indicates the level of nested transactions
+ *
+ * @var integer
+ * @access protected
+ */
+	protected $_transactionNesting = 0;
+
+/**
  * Index of basic SQL commands
  *
  * @var array
@@ -160,18 +176,37 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Prepares a value, or an array of values for database queries by quoting and escaping them.
+ * Disconnects from database.
  *
- * @param mixed $data A value or an array of values to prepare.
- * @param string $column The column into which this data will be inserted
- * @param boolean $read Value to be used in READ or WRITE context
- * @return mixed Prepared value or array of values.
+ * @return boolean True if the database could be disconnected, else false
  */
-	public function value($data, $column = null, $read = true) {
+	function disconnect() {
+		if (is_a($this->_result, 'PDOStatement')) {
+			$this->_result->closeCursor();
+		}
+		unset($this->_connection);
+		$this->connected = false;
+		return !$this->connected;
+	}
+
+	public function getConnection() {
+		return $this->_connection;
+	}
+
+
+/**
+ * Returns a quoted and escaped string of $data for use in an SQL statement.
+ *
+ * @param string $data String to be prepared for use in an SQL statement
+ * @param string $column The column into which this data will be inserted
+ * @param boolean $safe Whether or not numeric data should be handled automagically if no column data is provided
+ * @return string Quoted and escaped data
+ */
+	function value($data, $column = null, $safe = false) {
 		if (is_array($data) && !empty($data)) {
 			return array_map(
 				array(&$this, 'value'),
-				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $read)
+				$data, array_fill(0, count($data), $column), array_fill(0, count($data), $safe)
 			);
 		} elseif (is_object($data) && isset($data->type)) {
 			if ($data->type == 'identifier') {
@@ -181,10 +216,44 @@ class DboSource extends DataSource {
 			}
 		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
-		} else {
-			return null;
+		} 
+
+		if ($data === null || (is_array($data) && empty($data))) {
+			return 'NULL';
+		}
+
+		if (empty($column)) {
+			$column = $this->introspectType($data);
+		}
+
+		switch ($column) {
+			case 'binary':
+				return $this->_connection->quote($data, PDO::PARAM_LOB);
+			break;
+			case 'boolean':
+				return $this->_connection->quote($this->boolean($data), PDO::PARAM_BOOL);
+			break;
+			case 'string':
+			case 'text':
+				return $this->_connection->quote($data, PDO::PARAM_STR);
+			default:
+				if ($data === '') {
+					return 'NULL';
+				}
+				if (is_float($data)) {
+					return sprintf('%F', $data);
+				}
+				if ((is_int($data) || $data === '0') || (
+					is_numeric($data) && strpos($data, ',') === false &&
+					$data[0] != '0' && strpos($data, 'e') === false)
+				) {
+					return $data;
+				}
+				return $this->_connection->quote($data);
+			break;
 		}
 	}
+
 
 /**
  * Returns an object to represent a database identifier in a query
@@ -218,9 +287,9 @@ class DboSource extends DataSource {
  * @param string $sql SQL statement
  * @return boolean
  */
-	public function rawQuery($sql) {
+	public function rawQuery($sql, $params = array()) {
 		$this->took = $this->error = $this->numRows = false;
-		return $this->execute($sql);
+		return $this->execute($sql, $params);
 	}
 
 /**
@@ -230,28 +299,23 @@ class DboSource extends DataSource {
  *
  * ### Options
  *
- * - stats - Collect meta data stats for this query. Stats include time take, rows affected,
- *   any errors, and number of rows returned. Defaults to `true`.
  * - log - Whether or not the query should be logged to the memory log.
  *
  * @param string $sql
  * @param array $options
+ * @param array $params values to be bided to the query
  * @return mixed Resource or object representing the result set, or false on failure
  */
-	public function execute($sql, $options = array()) {
-		$defaults = array('stats' => true, 'log' => $this->fullDebug);
-		$options = array_merge($defaults, $options);
+	public function execute($sql, $options = array(), $params = array()) {
+		$options = $options + array('log' => $this->fullDebug);
+		$this->error = null;
 
 		$t = microtime(true);
-		$this->_result = $this->_execute($sql);
-		if ($options['stats']) {
-			$this->took = round((microtime(true) - $t) * 1000, 0);
-			$this->affected = $this->lastAffected();
-			$this->error = $this->lastError();
-			$this->numRows = $this->lastNumRows();
-		}
+		$this->_result = $this->_execute($sql, $params);
 
 		if ($options['log']) {
+			$this->took = round((microtime(true) - $t) * 1000, 0);
+			$this->numRows = $this->affected = $this->lastAffected();
 			$this->logQuery($sql);
 		}
 
@@ -260,6 +324,83 @@ class DboSource extends DataSource {
 			return false;
 		}
 		return $this->_result;
+	}
+
+/**
+ * Executes given SQL statement.
+ *
+ * @param string $sql SQL statement
+ * @param array $params list of params to be bound to query
+ * @return PDOStatement if query executes with no problem, true as the result of a succesfull
+ * query returning no rows, suchs as a CREATE statement, false otherwise
+ */
+	protected function _execute($sql, $params = array()) {
+		$sql = trim($sql);
+		if (preg_match('/^CREATE|^ALTER|^DROP/i', $sql)) {
+			$statements = array_filter(explode(';', $sql));
+			if (count($statements) > 1) {
+				$result = array_map(array($this, '_execute'), $statements);
+				return array_search(false, $result) === false;
+			}
+		}
+
+		try {
+			$query = $this->_connection->prepare($sql);
+			$query->setFetchMode(PDO::FETCH_LAZY);
+			if (!$query->execute($params)) {
+				$this->_results = $query;
+				$this->error = $this->lastError($query);
+				$query->closeCursor();
+				return false;
+			}
+			if (!$query->columnCount()) {
+				$query->closeCursor();
+				return true;
+			}
+			return $query;
+		} catch (PDOException $e) {
+			$this->_results = null;
+			$this->error = $e->getMessage();
+			return false;
+		}
+		
+	}
+
+/**
+ * Returns a formatted error message from previous database operation.
+ *
+ * @param PDOStatement $query the query to extract the error from if any
+ * @return string Error message with error number
+ */
+	function lastError(PDOStatement $query = null) {
+		$error = $query->errorInfo();
+		if (empty($error[2])) {
+			return null;
+		}
+		return $error[1] . ': ' . $error[2];
+	}
+
+/**
+ * Returns number of affected rows in previous database operation. If no previous operation exists,
+ * this returns false.
+ *
+ * @return integer Number of affected rows
+ */
+	function lastAffected($source = null) {
+		if ($this->hasResult()) {
+			return $this->_result->rowCount();
+		}
+		return null;
+	}
+
+/**
+ * Returns number of rows in previous resultset. If no previous resultset exists,
+ * this returns false.
+ *
+ * @return integer Number of rows in resultset
+ */
+	function lastNumRows($source = null) {
+		return $this->lastAffected($source);
 	}
 
 /**
@@ -352,8 +493,7 @@ class DboSource extends DataSource {
 				} else {
 					$cache = true;
 				}
-				$args[1] = array_map(array(&$this, 'value'), $args[1]);
-				return $this->fetchAll(String::insert($args[0], $args[1]), $cache);
+				return $this->fetchAll($args[0], $args[1], array('cache' => $cache));
 			}
 		}
 	}
@@ -386,16 +526,31 @@ class DboSource extends DataSource {
  * Returns an array of all result rows for a given SQL query.
  * Returns false if no rows matched.
  *
+ *
+ * ### Options
+ *
+ * - cache - Returns the cached version of the query, if exists and stores the result in cache
+ *
  * @param string $sql SQL statement
- * @param boolean $cache Enables returning/storing cached query results
+ * @param array $params parameters to be bound as values for the SQL statement
+ * @param array $options additional options for the query.
  * @return array Array of resultset rows, or false if no rows matched
  */
-	public function fetchAll($sql, $cache = true, $modelName = null) {
-		if ($cache && ($cached = $this->getQueryCache($sql)) !== false) {
+	public function fetchAll($sql, $params = array(), $options = array()) {
+		if (is_string($options)) {
+			$options = array('modelName' => $options);
+		}
+		if (is_bool($params)) {
+			$options['cache'] = $params;
+			$params = array();
+		}
+		$defaults = array('cache' => true);
+		$options = $options + $defaults;
+		$cache = $options['cache'];
+		if ($cache && ($cached = $this->getQueryCache($sql, $params)) !== false) {
 			return $cached;
 		}
-
-		if ($this->execute($sql)) {
+		if ($result = $this->execute($sql, array(), $params)) {
 			$out = array();
 
 			$first = $this->fetchRow();
@@ -407,9 +562,10 @@ class DboSource extends DataSource {
 				$out[] = $item;
 			}
 
-			if ($cache) {
-				$this->_writeQueryCache($sql, $out);
+			if (!is_bool($result) && $cache) {
+				$this->_writeQueryCache($sql, $out, $params);
 			}
+
 			if (empty($out) && is_bool($this->_result)) {
 				return $this->_result;
 			}
@@ -576,7 +732,7 @@ class DboSource extends DataSource {
  * @return boolean True if the result is valid else false
  */
 	public function hasResult() {
-		return is_resource($this->_result);
+		return is_a($this->_result, 'PDOStatement');
 	}
 
 /**
@@ -784,7 +940,7 @@ class DboSource extends DataSource {
 
 		foreach ($_associations as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
-				$linkModel =& $model->{$assoc};
+				$linkModel = $model->{$assoc};
 				$external = isset($assocData['external']);
 
 				if ($model->useDbConfig == $linkModel->useDbConfig) {
@@ -795,9 +951,9 @@ class DboSource extends DataSource {
 			}
 		}
 
-		$query = $this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null);
+		$query = trim($this->generateAssociationQuery($model, $null, null, null, null, $queryData, false, $null));
 
-		$resultSet = $this->fetchAll($query, $model->cacheQueries, $model->alias);
+		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 
 		if ($resultSet === false) {
 			$model->onError();
@@ -809,16 +965,16 @@ class DboSource extends DataSource {
 		if ($model->recursive > -1) {
 			foreach ($_associations as $type) {
 				foreach ($model->{$type} as $assoc => $assocData) {
-					$linkModel =& $model->{$assoc};
+					$linkModel = $model->{$assoc};
 
 					if (empty($linkedModels[$type . '/' . $assoc])) {
 						if ($model->useDbConfig == $linkModel->useDbConfig) {
-							$db =& $this;
+							$db = $this;
 						} else {
-							$db =& ConnectionManager::getDataSource($linkModel->useDbConfig);
+							$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
 						}
 					} elseif ($model->recursive > 1 && ($type == 'belongsTo' || $type == 'hasOne')) {
-						$db =& $this;
+						$db = $this;
 					}
 
 					if (isset($db) && method_exists($db, 'queryAssociation')) {
@@ -924,14 +1080,14 @@ class DboSource extends DataSource {
 					if ($recursive > 0) {
 						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
-								$deepModel =& $linkModel->{$assoc1};
+								$deepModel = $linkModel->{$assoc1};
 								$tmpStack = $stack;
 								$tmpStack[] = $assoc1;
 
 								if ($linkModel->useDbConfig === $deepModel->useDbConfig) {
-									$db =& $this;
+									$db = $this;
 								} else {
-									$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+									$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
 								}
 								$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 							}
@@ -966,7 +1122,7 @@ class DboSource extends DataSource {
 				$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
 
 				if ($q != false) {
-					$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+					$fetch = $this->fetchAll($q, $model->cacheQueries);
 				} else {
 					$fetch = null;
 				}
@@ -978,7 +1134,7 @@ class DboSource extends DataSource {
 				if ($type !== 'hasAndBelongsToMany') {
 					$q = $this->insertQueryData($query, $resultSet[$i], $association, $assocData, $model, $linkModel, $stack);
 					if ($q != false) {
-						$fetch = $this->fetchAll($q, $model->cacheQueries, $model->alias);
+						$fetch = $this->fetchAll($q, $model->cacheQueries);
 					} else {
 						$fetch = null;
 					}
@@ -993,15 +1149,15 @@ class DboSource extends DataSource {
 					if ($recursive > 0) {
 						foreach ($linkModel->associations() as $type1) {
 							foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
-								$deepModel =& $linkModel->{$assoc1};
+								$deepModel = $linkModel->{$assoc1};
 
 								if (($type1 === 'belongsTo') || ($deepModel->alias === $model->alias && $type === 'belongsTo') || ($deepModel->alias != $model->alias)) {
 									$tmpStack = $stack;
 									$tmpStack[] = $assoc1;
 									if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
-										$db =& $this;
+										$db = $this;
 									} else {
-										$db =& ConnectionManager::getDataSource($deepModel->useDbConfig);
+										$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
 									}
 									$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 								}
@@ -1053,7 +1209,7 @@ class DboSource extends DataSource {
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
 		}
-		return $this->fetchAll($query, $model->cacheQueries, $model->alias);
+		return $this->fetchAll($query, $model->cacheQueries);
 	}
 
 /**
@@ -1764,14 +1920,14 @@ class DboSource extends DataSource {
 /**
  * Begin a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function begin(&$model) {
-		if (parent::begin($model) && $this->execute($this->_commands['begin'])) {
+	public function begin() {
+		if ($this->_transactionStarted || $this->_connection->beginTransaction()) {
 			$this->_transactionStarted = true;
+			$this->_transactionNesting++;
 			return true;
 		}
 		return false;
@@ -1780,14 +1936,18 @@ class DboSource extends DataSource {
 /**
  * Commit a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function commit(&$model) {
-		if (parent::commit($model) && $this->execute($this->_commands['commit'])) {
-			$this->_transactionStarted = false;
+	public function commit() {
+		if ($this->_transactionStarted) {
+			$this->_transactionNesting--;
+			if ($this->_transactionNesting <= 0) {
+				$this->_transactionStarted = false;
+				$this->_transactionNesting = 0;
+				return $this->_connection->commit();
+			}
 			return true;
 		}
 		return false;
@@ -1796,17 +1956,27 @@ class DboSource extends DataSource {
 /**
  * Rollback a transaction
  *
- * @param model $model
  * @return boolean True on success, false on fail
  * (i.e. if the database/model does not support transactions,
  * or a transaction has not started).
  */
-	public function rollback(&$model) {
-		if (parent::rollback($model) && $this->execute($this->_commands['rollback'])) {
+	public function rollback() {
+		if ($this->_transactionStarted && $this->_connection->rollBack()) {
 			$this->_transactionStarted = false;
+			$this->_transactionNesting = 0;
 			return true;
 		}
 		return false;
+	}
+
+/**
+ * Returns the ID generated from the previous INSERT operation.
+ *
+ * @param unknown_type $source
+ * @return in
+ */
+	function lastInsertId($source = null) {
+		return $this->_connection->lastInsertId();
 	}
 
 /**
@@ -2524,7 +2694,7 @@ class DboSource extends DataSource {
  * Translates between PHP boolean values and Database (faked) boolean values
  *
  * @param mixed $data Value to be translated
- * @return mixed Converted boolean value
+ * @return int Converted boolean value
  */
 	public function boolean($data) {
 		if ($data === true || $data === false) {
@@ -2533,7 +2703,7 @@ class DboSource extends DataSource {
 			}
 			return 0;
 		} else {
-			return !empty($data);
+			return (int) !empty($data);
 		}
 	}
 
@@ -2546,13 +2716,18 @@ class DboSource extends DataSource {
  */
 	public function insertMulti($table, $fields, $values) {
 		$table = $this->fullTableName($table);
-		if (is_array($fields)) {
-			$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
-		}
+		$holder = implode(',', array_fill(0, count($fields), '?'));
+		$fields = implode(', ', array_map(array(&$this, 'name'), $fields));
+
 		$count = count($values);
+		$sql = "INSERT INTO {$table} ({$fields}) VALUES ({$holder})";
+		$statement = $this->_connection->prepare($sql);
+		$this->begin();
 		for ($x = 0; $x < $count; $x++) {
-			$this->query("INSERT INTO {$table} ({$fields}) VALUES {$values[$x]}");
+			$statement->execute($values[$x]);
+			$statement->closeCursor();
 		}
+		return $this->commit();
 	}
 
 /**
@@ -2867,11 +3042,12 @@ class DboSource extends DataSource {
  *
  * @param string $sql SQL query
  * @param mixed $data result of $sql query
+ * @param array $params query params bound as values
  * @return void
  */
-	protected function _writeQueryCache($sql, $data) {
-		if (strpos(trim(strtolower($sql)), 'select') !== false) {
-			$this->_queryCache[$sql] = $data;
+	protected function _writeQueryCache($sql, $data, $params = array()) {
+		if (preg_match('/^\s*select/i', $sql)) {
+			$this->_queryCache[$sql][serialize($params)] = $data;
 		}
 	}
 
@@ -2879,11 +3055,15 @@ class DboSource extends DataSource {
  * Returns the result for a sql query if it is already cached
  *
  * @param string $sql SQL query
+ * @param array $params query params bound as values
  * @return mixed results for query if it is cached, false otherwise
  */
-	public function getQueryCache($sql = null) {
+	public function getQueryCache($sql, $params = array()) {
 		if (isset($this->_queryCache[$sql]) && preg_match('/^\s*select/i', $sql)) {
-			return $this->_queryCache[$sql];
+			$serialized = serialize($params);
+			if (isset($this->_queryCache[$sql][$serialized])) {
+				return $this->_queryCache[$sql][$serialized];
+			}
 		}
 		return false;
 	}

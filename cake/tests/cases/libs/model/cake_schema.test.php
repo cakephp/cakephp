@@ -210,7 +210,7 @@ class TestAppSchema extends CakeSchema {
  */
 	public $datatypes = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => 0, 'key' => 'primary'),
-		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => ''),
+		'float_field' => array('type' => 'float', 'null' => false, 'length' => '5,2', 'default' => '', 'collate' => null, 'comment' => null),
 		'indexes' => array('PRIMARY' => array('column' => 'id', 'unique' => true)),
 		'tableParameters' => array()
 	);
@@ -523,6 +523,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function setUp() {
 		parent::setUp();
+		ConnectionManager::getDataSource('test')->cacheSources = false;
 		$this->Schema = new TestAppSchema();
 	}
 
@@ -577,18 +578,28 @@ class CakeSchemaTest extends CakeTestCase {
 		}
 
 		$this->assertEqual(
-			$read['tables']['datatypes']['float_field'],
-			$this->Schema->tables['datatypes']['float_field']
+			$read['tables']['datatypes']['float_field']['length'],
+			$this->Schema->tables['datatypes']['float_field']['length']
 		);
 
-		$db =& ConnectionManager::getDataSource('test');
+		$this->assertEqual(
+			$read['tables']['datatypes']['float_field']['type'],
+			$this->Schema->tables['datatypes']['float_field']['type']
+		);
+
+		$this->assertEqual(
+			$read['tables']['datatypes']['float_field']['null'],
+			$this->Schema->tables['datatypes']['float_field']['null']
+		);
+
+		$db = ConnectionManager::getDataSource('test');
 		$config = $db->config;
 		$config['prefix'] = 'schema_test_prefix_';
 		ConnectionManager::create('schema_prefix', $config);
 		$read = $this->Schema->read(array('connection' => 'schema_prefix', 'models' => false));
 		$this->assertTrue(empty($read['tables']));
 
-		$SchemaPost =& ClassRegistry::init('SchemaPost');
+		$SchemaPost = ClassRegistry::init('SchemaPost');
 		$SchemaPost->table = 'sts';
 		$SchemaPost->tablePrefix = 'po';
 		$read = $this->Schema->read(array(
@@ -612,7 +623,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaReadWithTablePrefix() {
-		$model =& new SchemaPrefixAuthUser();
+		$model = new SchemaPrefixAuthUser();
 
 		$Schema = new CakeSchema();
 		$read = $Schema->read(array(
@@ -684,7 +695,7 @@ class CakeSchemaTest extends CakeTestCase {
 			return;
 		}
 
-		$db2 =& ConnectionManager::getDataSource('test2');
+		$db2 = ConnectionManager::getDataSource('test2');
 		$fixture = new SchemaCrossDatabaseFixture();
 		$fixture->create($db2);
 		$fixture->insert($db2);
@@ -953,7 +964,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaLoading() {
-		$Other =& $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
+		$Other = $this->Schema->load(array('name' => 'MyOtherApp', 'path' => TMP . 'tests'));
 		$this->assertEqual($Other->name, 'MyOtherApp');
 		$this->assertEqual($Other->tables, $this->Schema->tables);
 	}
@@ -967,7 +978,7 @@ class CakeSchemaTest extends CakeTestCase {
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
-		$Other =& $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
+		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
 		$this->assertEqual($Other->name, 'TestPluginApp');
 		$this->assertEqual(array_keys($Other->tables), array('test_plugin_acos'));
 
@@ -981,7 +992,7 @@ class CakeSchemaTest extends CakeTestCase {
  * @return void
  */
 	function testSchemaCreateTable() {
-		$db =& ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::getDataSource('test');
 		$db->cacheSources = false;
 
 		$Schema = new CakeSchema(array(

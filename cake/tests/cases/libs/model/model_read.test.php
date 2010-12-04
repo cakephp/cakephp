@@ -52,15 +52,17 @@ class ModelReadTest extends BaseModelTest {
 			)
 		);
 
+
 		$Something->JoinThing->create($joinThingData);
 		$Something->JoinThing->save();
 
 		$result = $Something->JoinThing->find('all', array('conditions' => array('something_else_id' => 2)));
 
-		$this->assertEqual($result[0]['JoinThing']['doomed'], '1');
-		$this->assertEqual($result[1]['JoinThing']['doomed'], '0');
+		$this->assertEqual((bool)$result[0]['JoinThing']['doomed'], true);
+		$this->assertEqual((bool)$result[1]['JoinThing']['doomed'], false);
 
 		$result = $Something->find('first');
+
 		$this->assertEqual(count($result['SomethingElse']), 2);
 
 		$doomed = Set::extract('/JoinThing/doomed', $result['SomethingElse']);
@@ -79,7 +81,7 @@ class ModelReadTest extends BaseModelTest {
  */
 	function testGroupBy() {
 		$db = ConnectionManager::getDataSource('test');
-		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle'));
+		$isStrictGroupBy = in_array($db->config['driver'], array('postgres', 'oracle', 'sqlite'));
 		$message = '%s Postgres and Oracle have strict GROUP BY and are incompatible with this test.';
 
 		if ($this->skipIf($isStrictGroupBy, $message )) {
@@ -279,13 +281,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
-		$finalQuery = 'SELECT title, published FROM ';
-		$finalQuery .= $this->db->fullTableName('articles');
-		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.id = ' . $this->db->value(1);
-		$finalQuery .= ' AND ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.published = ' . $this->db->value('Y');
-
 		$query = 'SELECT title, published FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
@@ -305,13 +300,8 @@ class ModelReadTest extends BaseModelTest {
 		}
 
 		$this->assertEqual($result, $expected);
-		$result = $this->db->getQueryCache($finalQuery);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
-
-		$finalQuery = 'SELECT id, created FROM ';
-		$finalQuery .= $this->db->fullTableName('articles');
-		$finalQuery .= ' WHERE ' . $this->db->fullTableName('articles');
-		$finalQuery .= '.title = ' . $this->db->value('First Article');
 
 		$query  = 'SELECT id, created FROM ';
 		$query .= $this->db->fullTableName('articles');
@@ -324,7 +314,7 @@ class ModelReadTest extends BaseModelTest {
 			   isset($result[0][$this->db->fullTableName('articles', false)])
 			|| isset($result[0][0])
 		);
-		$result = $this->db->getQueryCache($finalQuery);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
 
 		$query  = 'SELECT title FROM ';
@@ -345,10 +335,7 @@ class ModelReadTest extends BaseModelTest {
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
 
-		$expected  = 'SELECT title FROM ';
-		$expected .= $this->db->fullTableName('articles');
-		$expected .= " WHERE title = 'First? Article' AND published = 'Y'";
-		$result = $this->db->getQueryCache($expected);
+		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse($result === false);
 
 	}
@@ -5091,7 +5078,7 @@ class ModelReadTest extends BaseModelTest {
 					'typ' => 2
 		)));
 
-		$this->assertEqual($result, $expected);
+		$this->assertEqual($expected, $result);
 	}
 
 /**
@@ -5661,7 +5648,7 @@ class ModelReadTest extends BaseModelTest {
 								'name' => 'computer'
 		))))));
 
-		$this->assertIdentical($result, $expected);
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -7478,7 +7465,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Post->field('other_field');
 		$this->assertEqual($result, 4);
 
-		if ($this->skipIf($this->db->config['driver'] == 'postgres', 'The rest of virtualFieds test is not compatible with Postgres')) {
+		if ($this->skipIf($this->db->config['driver'] != 'mysql', 'The rest of virtualFieds test is not compatible with Postgres')) {
 			return;
 		}
 		ClassRegistry::flush();
@@ -7486,20 +7473,20 @@ class ModelReadTest extends BaseModelTest {
 
 		$Post->create();
 		$Post->virtualFields = array(
-			'year' => 'YEAR(Post.created)',
+			'low_title' => 'lower(Post.title)',
 			'unique_test_field' => 'COUNT(Post.id)'
 		);
 
 		$expectation = array(
 			'Post' => array(
-				'year' => 2007,
-				'unique_test_field' => 3
+				'low_title' => 'first post',
+				'unique_test_field' => 1
 			)
 		);
 
 		$result = $Post->find('first', array(
 			'fields' => array_keys($Post->virtualFields),
-			'group' => array('year')
+			'group' => array('low_title')
 		));
 
 		$this->assertEqual($result, $expectation);
