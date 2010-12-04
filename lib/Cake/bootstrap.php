@@ -219,14 +219,15 @@ if (!defined('JS_URL')) {
 
 
 require LIBS . 'basics.php';
-require LIBS . 'Utility' . DS . 'Inflector.php';
-require LIBS . 'Utility' . DS . 'Folder.php';
 require LIBS . 'Core' . DS .'App.php';
+require LIBS . 'Error' . DS . 'exceptions.php';
 
+App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
 App::uses('Cache', 'Cache');
 
-//require LIBS . 'error' . DS . 'exceptions.php';
+
+
 //require LIBS . 'object.php';
 //require LIBS . 'configure.php';
 //require LIBS . 'set.php';

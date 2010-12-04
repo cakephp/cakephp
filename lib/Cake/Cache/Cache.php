@@ -19,6 +19,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Inflector', 'Utility');
+
 /**
  * Caching for CakePHP.
  *
@@ -109,7 +111,8 @@ class Cache {
 
 		list($plugin, $class) = pluginSplit($config['engine']);
 		$cacheClass = $class . 'Engine';
-		if (!class_exists($cacheClass) && self::_loadEngine($class, $plugin) === false) {
+		App::uses($cacheClass, 'Cache/Engine');
+		if (!class_exists($cacheClass)) {
 			return false;
 		}
 		$cacheClass = $class . 'Engine';
@@ -149,26 +152,6 @@ class Cache {
 		}
 		unset(self::$_config[$name], self::$_engines[$name]);
 		return true;
-	}
-
-/**
- * Tries to find and include a file for a cache engine and returns object instance
- *
- * @param $name Name of the engine (without 'Engine')
- * @return mixed $engine object or null
- */
-	protected static function _loadEngine($name, $plugin = null) {
-		if ($plugin) {
-			return App::import('Lib', $plugin . '.cache' . DS . $name, false);
-		} else {
-			$core = App::core();
-			$path = $core['libs'][0] . 'cache' . DS . strtolower($name) . '.php';
-			if (file_exists($path)) {
-				require $path;
-				return true;
-			}
-			return App::import('Lib', 'cache' . DS . $name, false);
-		}
 	}
 
 /**
