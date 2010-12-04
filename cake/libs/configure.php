@@ -349,64 +349,37 @@ class Configure {
 	}
 
 /**
- * Used to write a config file to disk.
+ * Used to write runtime configuration into Cache.  Stored runtime configuration can be
+ * restored using `Configure::restore()`.  These methods can be used to enable configuration managers
+ * frontends, or other GUI type interfaces for configuration.
  *
- * {{{
- * Configure::store('Model', 'class_paths', array('Users' => array(
- *      'path' => 'users', 'plugin' => true
- * )));
- * }}}
- *
- * @param string $type Type of config file to write, ex: Models, Controllers, Helpers, Components
- * @param string $name file name.
- * @param array $data array of values to store.
- * @return void
+ * @param string $name The storage name for the saved configuration.
+ * @param string $cacheConfig The cache configuration to save into.  Defaults to 'default'
+ * @param array $data Either an array of data to store, or leave empty to store all values.
+ * @return boolean Success
  */
-	public static function store($type, $name, $data = array()) {
-		$write = true;
-		$content = '';
-
-		foreach ($data as $key => $value) {
-			$content .= "\$config['$type']['$key'] = " . var_export($value, true) . ";\n";
+	public static function store($name, $cacheConfig = 'default', $data = null) {
+		if ($data === null) {
+			$data = self::$_values;
 		}
-		if (is_null($type)) {
-			$write = false;
-		}
-		self::__writeConfig($content, $name, $write);
+		return Cache::write($name, $data, $cacheConfig);
 	}
 
 /**
- * Creates a cached version of a configuration file.
- * Appends values passed from Configure::store() to the cached file
+ * Restores configuration data stored in the Cache into configure.  Restored
+ * values will overwrite existing ones.
  *
- * @param string $content Content to write on file
- * @param string $name Name to use for cache file
- * @param boolean $write true if content should be written, false otherwise
- * @return void
- * @access private
+ * @param string $name Name of the stored config file to load.
+ * @param string $cacheConfig Name of the Cache configuration to read from.
+ * @return boolean Success.
  */
-	private static function __writeConfig($content, $name, $write = true) {
-		$file = CACHE . 'persistent' . DS . $name . '.php';
-
-		if (self::read('debug') > 0) {
-			$expires = "+10 seconds";
-		} else {
-			$expires = "+999 days";
+	public static function restore($name, $cacheConfig = 'default') {
+		$values = Cache::read($name, $cacheConfig);
+		if ($values) {
+			return self::write($values);
 		}
-		$cache = cache('persistent' . DS . $name . '.php', null, $expires);
-
-		if ($cache === null) {
-			cache('persistent' . DS . $name . '.php', "<?php\n\$config = array();\n", $expires);
-		}
-
-		if ($write === true) {
-			$fileClass = new SplFileObject($file, 'a');
-			if ($fileClass->isWritable()) {
-				$fileClass->fwrite($content);
-			}
-		}
+		return false;
 	}
-
 }
 
 /**

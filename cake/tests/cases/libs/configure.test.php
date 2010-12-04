@@ -237,26 +237,39 @@ class ConfigureTest extends CakeTestCase {
  * @access public
  * @return void
  */
-	function testStoreAndLoad() {
-		$this->markTestSkipped('Configure::store() is not working right now.');
+	function testStoreAndRestore() {
 		Configure::write('Cache.disable', false);
 
-		$expected = array('data' => 'value with backslash \, \'singlequote\' and "doublequotes"');
-		Configure::store('SomeExample', 'test', $expected);
+		Configure::write('Testing', 'yummy');
+		$this->assertTrue(Configure::store('store_test', 'default'));
 
-		Configure::load('test');
-		$config = Configure::read('SomeExample');
-		$this->assertEqual($config, $expected);
+		Configure::delete('Testing');
+		$this->assertNull(Configure::read('Testing'));
 
-		$expected = array(
-			'data' => array('first' => 'value with backslash \, \'singlequote\' and "doublequotes"', 'second' => 'value2'),
-			'data2' => 'value'
-		);
-		Configure::store('AnotherExample', 'test_config', $expected);
+		Configure::restore('store_test', 'default');
+		$this->assertEquals('yummy', Configure::read('Testing'));
 
-		Configure::load('test_config');
-		$config = Configure::read('AnotherExample');
-		$this->assertEqual($config, $expected);
+		Cache::delete('store_test', 'default');
+	}
+
+/**
+ * test that store and restore only store/restore the provided data.
+ *
+ * @return void
+ */
+	function testStoreAndRestoreWithData() {
+		Configure::write('Cache.disable', false);
+
+		Configure::write('testing', 'value');
+		Configure::store('store_test', 'default', array('store_test' => 'one'));
+		Configure::delete('testing');
+		$this->assertNull(Configure::read('store_test'), 'Calling store with data shouldnt modify runtime.');
+
+		Configure::restore('store_test', 'default');
+		$this->assertEquals('one', Configure::read('store_test'));
+		$this->assertNull(Configure::read('testing'), 'Values that were not stored are not restored.');
+
+		Cache::delete('store_test', 'default');
 	}
 
 /**
