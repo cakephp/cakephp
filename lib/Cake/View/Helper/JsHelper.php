@@ -19,7 +19,7 @@
  */
 
 App::uses('AppHelper', 'View/Helper');
-App::uses('Multibyte', 'Core');
+App::uses('Multibyte', 'I18n');
 
 /**
  * Javascript Generator helper class for easy use of JavaScript.

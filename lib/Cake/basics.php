@@ -469,9 +469,7 @@ if (!function_exists('sortByKey')) {
 		if (!$singular) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($singular);
 	}
 
@@ -489,9 +487,7 @@ if (!function_exists('sortByKey')) {
 		if (!$singular) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($singular, $plural, null, 6, $count);
 	}
 
@@ -507,9 +503,7 @@ if (!function_exists('sortByKey')) {
 		if (!$msg) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($msg, null, $domain);
 	}
 
@@ -529,9 +523,7 @@ if (!function_exists('sortByKey')) {
 		if (!$singular) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($singular, $plural, $domain, 6, $count);
 	}
 
@@ -562,9 +554,7 @@ if (!function_exists('sortByKey')) {
 		if (!$msg) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($msg, null, $domain, $category);
 	}
 
@@ -599,9 +589,7 @@ if (!function_exists('sortByKey')) {
 		if (!$singular) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($singular, $plural, $domain, $category, $count);
 	}
 
@@ -628,9 +616,7 @@ if (!function_exists('sortByKey')) {
 		if (!$msg) {
 			return;
 		}
-		if (!class_exists('I18n')) {
-			App::import('Core', 'i18n');
-		}
+		App::uses('I18n', 'I18n');
 		return I18n::translate($msg, null, null, $category);
 	}
 

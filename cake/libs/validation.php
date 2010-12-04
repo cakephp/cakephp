@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Multibyte', 'Core');
+App::uses('Multibyte', 'I18n');
 
 /**
  * Offers different validation methods.

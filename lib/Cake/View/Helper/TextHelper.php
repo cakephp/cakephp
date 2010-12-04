@@ -26,7 +26,7 @@
  */
 App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'Helper');
-App::uses('Multibyte', 'Utility');
+App::uses('Multibyte', 'I18n');
 
 /**
  * Text helper library.

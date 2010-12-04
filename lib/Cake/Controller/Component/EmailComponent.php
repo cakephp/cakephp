@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.3467
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('Multibyte', 'Core');
+App::uses('Multibyte', 'I18n');
 
 /**
  * EmailComponent
