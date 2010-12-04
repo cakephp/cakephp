@@ -22,6 +22,7 @@
 
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
+App::uses('ExceptionRenderer', 'Error');
 
 /**
  *
@@ -107,7 +108,6 @@ class ErrorHandler {
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
 	public static function handleException(Exception $exception) {
-		App::import('Core', 'error/ExceptionRenderer');
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
 			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
