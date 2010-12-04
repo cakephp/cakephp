@@ -65,4 +65,32 @@ class IniReaderTest extends CakeTestCase {
 		$this->assertEquals('administrators', $config['groups']);
 	}
 
+/**
+ * test that names with .'s get exploded into arrays.
+ *
+ * @return void
+ */
+	function testReadingValuesWithDots() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('nested.ini');
+
+		$this->assertTrue(isset($config['database']['db']['username']));
+		$this->assertEquals('mark', $config['database']['db']['username']);
+		$this->assertEquals(3, $config['nesting']['one']['two']['three']);
+	}
+
+/**
+ * test boolean reading
+ *
+ * @return void
+ */
+	function testBooleanReading() {
+		$reader = new IniReader($this->path);
+		$config = $reader->read('nested.ini');
+		
+		$this->assertTrue($config['bools']['test_on']);
+		$this->assertTrue($config['bools']['test_yes']);
+		$this->assertFalse($config['bools']['test_no']);
+		$this->assertFalse($config['bools']['test_off']);
+	}
 }
