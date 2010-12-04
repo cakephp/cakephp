@@ -89,14 +89,6 @@ class DboSource extends DataSource {
 	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
- * Indicates that a transaction have been started
- *
- * @var boolean
- * @access protected
- */
-	protected $_transactionStarted = false;
-
-/**
  * Indicates the level of nested transactions
  *
  * @var integer
@@ -181,7 +173,7 @@ class DboSource extends DataSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		if (is_a($this->_result, 'PDOStatement')) {
+		if ($this->_result instanceof PDOStatement) {
 			$this->_result->closeCursor();
 		}
 		unset($this->_connection);
@@ -189,6 +181,11 @@ class DboSource extends DataSource {
 		return !$this->connected;
 	}
 
+/**
+ * Get the underlying connection object.
+ *
+ * @return PDOConnection
+ */
 	public function getConnection() {
 		return $this->_connection;
 	}
@@ -336,7 +333,7 @@ class DboSource extends DataSource {
  */
 	protected function _execute($sql, $params = array()) {
 		$sql = trim($sql);
-		if (preg_match('/^CREATE|^ALTER|^DROP/i', $sql)) {
+		if (preg_match('/^(?:CREATE|ALTER|DROP)/i', $sql)) {
 			$statements = array_filter(explode(';', $sql));
 			if (count($statements) > 1) {
 				$result = array_map(array($this, '_execute'), $statements);
