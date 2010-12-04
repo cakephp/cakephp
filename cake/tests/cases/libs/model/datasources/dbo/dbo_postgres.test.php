@@ -44,7 +44,7 @@ class DboPostgresTestDb extends DboPostgres {
  * @access protected
  * @return void
  */
-	function _execute($sql) {
+	function _execute($sql, $params = array()) {
 		$this->simulated[] = $sql;
 		return null;
 	}
@@ -130,7 +130,7 @@ class PostgresTestModel extends Model {
  * @access public
  * @return void
  */
-	function schema() {
+	function schema($field = false) {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'client_id' => array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
@@ -184,7 +184,7 @@ class PostgresClientTestModel extends Model {
  * @access public
  * @return void
  */
-	function schema() {
+	function schema($field = false) {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8', 'key' => 'primary'),
 			'name'		=> array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
