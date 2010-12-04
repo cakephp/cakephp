@@ -732,7 +732,7 @@ class Controller extends Object {
  */
 	public function isAuthorized() {
 		trigger_error(sprintf(
-			__('%s::isAuthorized() is not defined.'), $this->name
+			__('%sController::isAuthorized() is not defined.'), $this->name
 		), E_USER_WARNING);
 		return false;
 	}
