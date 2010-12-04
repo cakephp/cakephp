@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('DataSource', 'Model/Datasource');
+
 /**
  * Manages loaded instances of DataSource objects
  *
@@ -101,7 +103,6 @@ class ConnectionManager {
 		$conn = $_this->_connectionsEnum[$name];
 		$class = $conn['classname'];
 
-		require LIBS . 'model' . DS . 'datasources' . DS . 'datasource.php';
 		if ($_this->loadDataSource($name) === null) {
 			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s"), $class), E_USER_ERROR);
 			$null = null;
