@@ -87,10 +87,16 @@ class IniReaderTest extends CakeTestCase {
 	function testBooleanReading() {
 		$reader = new IniReader($this->path);
 		$config = $reader->read('nested.ini');
-		
+
 		$this->assertTrue($config['bools']['test_on']);
+		$this->assertFalse($config['bools']['test_off']);
+
 		$this->assertTrue($config['bools']['test_yes']);
 		$this->assertFalse($config['bools']['test_no']);
-		$this->assertFalse($config['bools']['test_off']);
+
+		$this->assertTrue($config['bools']['test_true']);
+		$this->assertFalse($config['bools']['test_false']);
+
+		$this->assertFalse($config['bools']['test_null']);
 	}
 }
