@@ -41,6 +41,14 @@ class Configure {
 	);
 
 /**
+ * Configured reader classes, used to load config files from resources
+ *
+ * @var array
+ * @see Configure::load()
+ */
+	protected static $_readers = array();
+
+/**
  * Initializes configure and runs the bootstrap process.
  * Bootstrapping includes the following steps:
  *
@@ -250,6 +258,33 @@ class Configure {
 	}
 
 /**
+ * Add a new reader to Configure.  Readers allow you to read configuration 
+ * files in various formats/storage locations.  CakePHP comes with two built-in readers
+ * PhpReader and IniReader.  You can also implement your own reader classes in your application.
+ *
+ * To add a new reader to Configure:
+ *
+ * `Configure::reader('ini', new IniReader());`
+ *
+ * @param string $alias The name of the reader being configured.  This alias is used later to 
+ *   read values from a specific reader.
+ * @param ConfigReaderInterface $reader The reader to append.
+ * @return void
+ */
+	public static function reader($alias, ConfigReaderInterface $reader) {
+		self::$_readers[$alias] = $reader;
+	}
+
+/**
+ * Gets the names of the configured reader objects.
+ *
+ * @return array Array of the configured reader objects.
+ */
+	public static function configured() {
+		return array_keys(self::$_readers);
+	}
+
+/**
  * Loads a file from app/config/configure_file.php.
  *
  * Config file variables should be formated like:
@@ -380,4 +415,21 @@ class Configure {
 		}
 	}
 
+}
+
+/**
+ * An interface for creating objects compatible with Configure::load()
+ *
+ * @package cake.libs
+ */
+interface ConfigReaderInterface {
+/**
+ * Read method is used for reading configuration information from sources.
+ * These sources can either be static resources like files, or dynamic ones like
+ * a database, or other datasource.
+ *
+ * @param string $key 
+ * @return array An array of data to merge into the runtime configuration
+ */
+	function read($key);
 }

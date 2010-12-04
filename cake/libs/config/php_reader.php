@@ -24,7 +24,7 @@
  *
  * @package cake.libs.config
  */
-class PhpReader {
+class PhpReader implements ConfigReaderInterface {
 /**
  * The path this reader finds files on.
  *

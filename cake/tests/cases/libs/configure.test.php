@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+App::import('Core', 'config/PhpReader');
 
 /**
  * ConfigureTest
@@ -255,6 +256,30 @@ class ConfigureTest extends CakeTestCase {
 	function testVersion() {
 		$result = Configure::version();
 		$this->assertTrue(version_compare($result, '1.2', '>='));
+	}
+
+/**
+ * test adding new readers.
+ *
+ * @return void
+ */
+	function testReaderSetup() {
+		$reader = new PhpReader();
+		Configure::reader('test', $reader);
+		$configured = Configure::configured();
+
+		$this->assertTrue(in_array('test', $configured));
+	}
+
+/**
+ * test reader() throwing exceptions on missing interface.
+ *
+ * @expectedException Exception
+ * @return void
+ */
+	function testReaderExceptionOnIncorrectClass() {
+		$reader = new StdClass();
+		Configure::reader('test', $reader);
 	}
 }
 
