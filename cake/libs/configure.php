@@ -309,48 +309,16 @@ class Configure {
  * - To load config files from a plugin `Configure::load('plugin.configure_file');`.
  *
  * @link http://book.cakephp.org/view/929/load
- * @param string $fileName name of file to load, extension must be .php and only the name
- *     should be used, not the extenstion
+ * @param string $key name of configuration resource to load.  
+ * @param string $config Name of the configured reader to use to read the resource identfied by $key.
  * @return mixed false if file not found, void if load successful
  */
-	public static function load($fileName) {
-		$found = $plugin = $pluginPath = false;
-		list($plugin, $fileName) = pluginSplit($fileName);
-		if ($plugin) {
-			$pluginPath = App::pluginPath($plugin);
-		}
-		$pos = strpos($fileName, '..');
-
-		if ($pos === false) {
-			if ($pluginPath && file_exists($pluginPath . 'config' . DS . $fileName . '.php')) {
-				include($pluginPath . 'config' . DS . $fileName . '.php');
-				$found = true;
-			} elseif (file_exists(CONFIGS . $fileName . '.php')) {
-				include(CONFIGS . $fileName . '.php');
-				$found = true;
-			} elseif (file_exists(CACHE . 'persistent' . DS . $fileName . '.php')) {
-				include(CACHE . 'persistent' . DS . $fileName . '.php');
-				$found = true;
-			} else {
-				foreach (App::core('cake') as $key => $path) {
-					if (file_exists($path . DS . 'config' . DS . $fileName . '.php')) {
-						include($path . DS . 'config' . DS . $fileName . '.php');
-						$found = true;
-						break;
-					}
-				}
-			}
-		}
-
-		if (!$found) {
+	public static function load($key, $config = 'default') {
+		if (!isset(self::$_readers[$config])) {
 			return false;
 		}
-
-		if (!isset($config)) {
-			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php'), $fileName), E_USER_WARNING);
-			return false;
-		}
-		return self::write($config);
+		$values = self::$_readers[$config]->read($key);
+		return self::write($values);
 	}
 
 /**
