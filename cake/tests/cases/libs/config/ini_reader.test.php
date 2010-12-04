@@ -1,6 +1,6 @@
 <?php
 /**
- * IniFileTest
+ * IniReaderTest
  *
  * PHP 5
  *
@@ -17,9 +17,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'config/IniFile');
+App::import('Core', 'config/IniReader');
 
-class IniFileTest extends CakeTestCase {
+class IniReaderTest extends CakeTestCase {
 
 /**
  * The test file that will be read.
@@ -35,7 +35,7 @@ class IniFileTest extends CakeTestCase {
  */
 	function setup() {
 		parent::setup();
-		$this->file = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS . 'acl.ini.php';
+		$this->path = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config'. DS;
 	}
 
 /**
@@ -44,7 +44,8 @@ class IniFileTest extends CakeTestCase {
  * @return void
  */
 	function testConstruct() {
-		$config = new IniFile($this->file);
+		$reader = new IniReader($this->path);
+		$config = $reader->read('acl.ini.php');
 
 		$this->assertTrue(isset($config['admin']));
 		$this->assertTrue(isset($config['paul']['groups']));
@@ -57,32 +58,11 @@ class IniFileTest extends CakeTestCase {
  * @return void
  */
 	function testReadingOnlyOneSection() {
-		$config = new IniFile($this->file, 'admin');
+		$reader = new IniReader($this->path, 'admin');
+		$config = $reader->read('acl.ini.php');
 
 		$this->assertTrue(isset($config['groups']));
 		$this->assertEquals('administrators', $config['groups']);
 	}
 
-/**
- * test getting all the values as an array
- *
- * @return void
- */
-	function testAsArray() {
-		$config = new IniFile($this->file);
-		$content = $config->asArray();
-
-		$this->assertTrue(isset($content['admin']['groups']));
-		$this->assertTrue(isset($content['paul']['groups']));
-	}
-
-/**
- * test that values cannot be modified
- *
- * @expectedException LogicException
- */
-	function testNoModification() {
-		$config = new IniFile($this->file);
-		$config['admin'] = 'something';
-	}
 }
