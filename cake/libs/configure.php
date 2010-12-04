@@ -266,13 +266,13 @@ class Configure {
  *
  * `Configure::config('ini', new IniReader());`
  *
- * @param string $alias The name of the reader being configured.  This alias is used later to 
+ * @param string $name The name of the reader being configured.  This alias is used later to 
  *   read values from a specific reader.
  * @param ConfigReaderInterface $reader The reader to append.
  * @return void
  */
-	public static function config($alias, ConfigReaderInterface $reader) {
-		self::$_readers[$alias] = $reader;
+	public static function config($name, ConfigReaderInterface $reader) {
+		self::$_readers[$name] = $reader;
 	}
 
 /**
@@ -282,6 +282,21 @@ class Configure {
  */
 	public static function configured() {
 		return array_keys(self::$_readers);
+	}
+
+/**
+ * Remove a configured reader.  This will unset the reader 
+ * and make any future attempts to use it cause an Exception.
+ *
+ * @param string $name Name of the reader to drop.
+ * @return boolean Success
+ */
+	public static function drop($name) {
+		if (!isset(self::$_readers[$name])) {
+			return false;
+		}
+		unset(self::$_readers[$name]);
+		return true;
 	}
 
 /**

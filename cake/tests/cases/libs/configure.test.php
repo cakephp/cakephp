@@ -269,6 +269,8 @@ class ConfigureTest extends CakeTestCase {
 		$configured = Configure::configured();
 
 		$this->assertTrue(in_array('test', $configured));
+		$this->assertTrue(Configure::drop('test'));
+		$this->assertFalse(Configure::drop('test'), 'dropping things that do not exist should return false.');
 	}
 
 /**
