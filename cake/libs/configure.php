@@ -175,13 +175,11 @@ class Configure {
 			}
 		}
 
-		if (isset($config['debug']) || isset($config['log'])) {
-			if (function_exists('ini_set')) {
-				if (self::$_values['debug']) {
-					ini_set('display_errors', 1);
-				} else {
-					ini_set('display_errors', 0);
-				}
+		if (isset($config['debug']) && function_exists('ini_set')) {
+			if (self::$_values['debug']) {
+				ini_set('display_errors', 1);
+			} else {
+				ini_set('display_errors', 0);
 			}
 		}
 		return true;
