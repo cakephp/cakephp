@@ -63,13 +63,19 @@ class Configure {
  */
 	public static function bootstrap($boot = true) {
 		if ($boot) {
-			self::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
+			self::write('App', array(
+				'base' => false,
+				'baseUrl' => false,
+				'dir' => APP_DIR,
+				'webroot' => WEBROOT_DIR,
+				'www_root' => WWW_ROOT
+			));
 
 			if (!include(CONFIGS . 'core.php')) {
 				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
 			}
 
-			if (Configure::read('Cache.disable') !== true) {
+			if (empty(self::$_values['Cache']['disable'])) {
 				$cache = Cache::config('default');
 
 				if (empty($cache['settings'])) {
@@ -84,7 +90,7 @@ class Configure {
 					$prefix = $cache['settings']['prefix'];
 				}
 
-				if (Configure::read('debug') >= 1) {
+				if (self::$_values['debug'] >= 1) {
 					$duration = '+10 seconds';
 				} else {
 					$duration = '+999 days';
