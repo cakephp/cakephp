@@ -124,15 +124,9 @@ class CakeLog {
  * @return mixed boolean false on any failures, string of classname to use if search was successful.
  */
 	protected static function _getLogger($loggerName) {
-		list($plugin, $loggerName) = pluginSplit($loggerName);
+		list($plugin, $loggerName) = pluginSplit($loggerName, true);
 
-		if ($plugin) {
-			App::import('Lib', $plugin . '.log/' . $loggerName);
-		} else {
-			if (!App::import('Lib', 'log/' . $loggerName)) {
-				App::import('Core', 'log/' . $loggerName);
-			}
-		}
+		App::uses($loggerName, $plugin . 'Log/Engine');
 		if (!class_exists($loggerName)) {
 			throw new Exception(sprintf(__('Could not load class %s'), $loggerName));
 		}
@@ -165,9 +159,7 @@ class CakeLog {
  * @return void
  */
 	protected static function _autoConfig() {
-		if (!class_exists('FileLog')) {
-			App::import('Core', 'log/FileLog');
-		}
+		self::_getLogger('FileLog');
 		self::$_streams['default'] = new FileLog(array('path' => LOGS));
 	}
 
