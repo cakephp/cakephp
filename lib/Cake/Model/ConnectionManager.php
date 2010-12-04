@@ -165,14 +165,11 @@ class ConnectionManager {
 			return false;
 		}
 
-		if (!empty($conn['parent'])) {
-			$_this->loadDataSource($conn['parent']);
-		}
-
 		$conn = array_merge(array('plugin' => null, 'classname' => null, 'parent' => null), $conn);
-		$class = "{$conn['plugin']}.{$conn['classname']}";
+		$class = trim("{$conn['plugin']}.{$conn['classname']}", '.');
 
-		if (!App::import('Datasource', $class, !is_null($conn['plugin']))) {
+		App::uses($class, 'Model/Datasource');
+		if (class_exists($class)) {
 			trigger_error(sprintf(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s'), $class), E_USER_ERROR);
 			return null;
 		}
