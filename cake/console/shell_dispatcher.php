@@ -90,11 +90,7 @@ class ShellDispatcher {
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
 			define('CAKEPHP_SHELL', true);
 			if (!defined('CORE_PATH')) {
-				if (function_exists('ini_set') && ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ini_get('include_path'))) {
-					define('CORE_PATH', null);
-				} else {
-					define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-				}
+				define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 			}
 		}
 	}
