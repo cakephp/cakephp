@@ -141,7 +141,7 @@ class ExceptionRenderer {
  */
 	protected function _getController($exception) {
 		static $__previousError = null;
-		App::import('Controller', 'CakeError');
+		App::uses('CakeErrorController', 'Controller');
 
 		if ($__previousError != $exception) {
 			$__previousError = $exception;
