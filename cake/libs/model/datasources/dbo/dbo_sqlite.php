@@ -138,7 +138,7 @@ class DboSqlite extends DboSource {
  * @return array Array of tablenames in the database
  * @access public
  */
-	function listSources() {
+	function listSources($data = null) {
 		$cache = parent::listSources();
 		if ($cache != null) {
 			return $cache;
