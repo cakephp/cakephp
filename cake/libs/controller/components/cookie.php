@@ -184,7 +184,7 @@ class CookieComponent extends Object {
 /**
  * Write a value to the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key, optional $value, optional $encrypt, optional $expires
+ * Optional [Name.], required key, optional $value, optional $encrypt, optional $expires
  * $this->Cookie->write('[Name.]key, $value);
  *
  * By default all values are encrypted.
@@ -205,7 +205,7 @@ class CookieComponent extends Object {
 		}
 		$this->__encrypted = $encrypt;
 		$this->__expire($expires);
-		
+
 		if (!is_array($key)) {
 			$key = array($key => $value);
 		}
@@ -214,7 +214,7 @@ class CookieComponent extends Object {
 			if (strpos($name, '.') === false) {
 				$this->__values[$name] = $value;
 				$this->__write("[$name]", $value);
-				
+
 			} else {
 				$names = explode('.', $name, 2);
 				if (!isset($this->__values[$names[0]])) {
@@ -230,7 +230,7 @@ class CookieComponent extends Object {
 /**
  * Read the value of the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read(Name.key);
  *
  * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
@@ -245,7 +245,7 @@ class CookieComponent extends Object {
 		if (is_null($key)) {
 			return $this->__values;
 		}
-		
+
 		if (strpos($key, '.') !== false) {
 			$names = explode('.', $key, 2);
 			$key = $names[0];
@@ -263,7 +263,7 @@ class CookieComponent extends Object {
 /**
  * Delete a cookie value
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read('Name.key);
  *
  * You must use this method before any output is sent to the browser.
@@ -344,11 +344,11 @@ class CookieComponent extends Object {
 			return $this->__expires;
 		}
 		$this->__reset = $this->__expires;
-		
+
 		if ($expires == 0) {
 			return $this->__expires = 0;
 		}
-		
+
 		if (is_integer($expires) || is_numeric($expires)) {
 			return $this->__expires = $now + intval($expires);
 		}
