@@ -22,7 +22,6 @@
  * Included libraries.
  */
 App::uses('HelperCollection', 'View');
-App::uses('Helper', 'View');
 
 /**
  * View, the V in the MVC triad.

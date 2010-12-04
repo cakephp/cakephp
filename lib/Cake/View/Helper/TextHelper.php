@@ -24,8 +24,9 @@
  * Included libraries.
  *
  */
+App::uses('AppHelper', 'View/Helper');
 App::uses('HtmlHelper', 'Helper');
-App::uses('Multibyte', 'Core');
+App::uses('Multibyte', 'Utility');
 
 /**
  * Text helper library.

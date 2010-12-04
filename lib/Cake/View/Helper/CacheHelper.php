@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('AppHelper', 'View/Helper');
+
 /**
  * CacheHelper helps create full page view caching.
  *

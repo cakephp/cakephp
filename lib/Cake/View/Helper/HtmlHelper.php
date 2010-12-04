@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 0.9.1
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('AppHelper', 'View/Helper');
+
 /**
  * Html Helper class for easy use of HTML widgets.
  *

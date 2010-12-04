@@ -17,9 +17,10 @@
  * @since         CakePHP(tm) v 1.1.7.3328
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('CakeSession')) {
-	require LIBS . 'cake_session.php';
-}
+
+App::uses('AppHelper', 'View/Helper');
+App::uses('CakeSession', 'Model');
+
 /**
  * Session Helper.
  *
