@@ -461,8 +461,7 @@ if (!function_exists('sortByKey')) {
  * Returns a translated string if one is found; Otherwise, the submitted message.
  *
  * @param string $singular Text to translate
- * @param boolean $return Set to true to return translated string, or false to echo
- * @return mixed translated string if $return is false string will be echoed
+ * @return mixed translated string
  * @link http://book.cakephp.org/view/1121/__
  */
 	function __($singular) {
@@ -482,8 +481,7 @@ if (!function_exists('sortByKey')) {
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
  * @param integer $count Count
- * @param boolean $return true to return, false to echo
- * @return mixed plural form of translated string if $return is false string will be echoed
+ * @return mixed plural form of translated string
  */
 	function __n($singular, $plural, $count) {
 		if (!$singular) {
@@ -500,8 +498,7 @@ if (!function_exists('sortByKey')) {
  *
  * @param string $domain Domain
  * @param string $msg String to translate
- * @param string $return true to return, false to echo
- * @return translated string if $return is false string will be echoed
+ * @return translated string
  */
 	function __d($domain, $msg) {
 		if (!$msg) {
@@ -522,8 +519,7 @@ if (!function_exists('sortByKey')) {
  * @param string $singular Singular string to translate
  * @param string $plural Plural
  * @param integer $count Count
- * @param boolean $return true to return, false to echo
- * @return plural form of translated string if $return is false string will be echoed
+ * @return plural form of translated string
  */
 	function __dn($domain, $singular, $plural, $count) {
 		if (!$singular) {
@@ -555,8 +551,7 @@ if (!function_exists('sortByKey')) {
  * @param string $domain Domain
  * @param string $msg Message to translate
  * @param integer $category Category
- * @param boolean $return true to return, false to echo
- * @return translated string if $return is false string will be echoed
+ * @return translated string
  */
 	function __dc($domain, $msg, $category) {
 		if (!$msg) {
@@ -592,8 +587,7 @@ if (!function_exists('sortByKey')) {
  * @param string $plural Plural
  * @param integer $count Count
  * @param integer $category Category
- * @param boolean $return true to return, false to echo
- * @return plural form of translated string if $return is false string will be echoed
+ * @return plural form of translated string
  */
 	function __dcn($domain, $singular, $plural, $count, $category) {
 		if (!$singular) {
@@ -621,8 +615,7 @@ if (!function_exists('sortByKey')) {
  *
  * @param string $msg String to translate
  * @param integer $category Category
- * @param string $return true to return, false to echo
- * @return translated string if $return is false string will be echoed
+ * @return translated string
  */
 	function __c($msg, $category) {
 		if (!$msg) {
