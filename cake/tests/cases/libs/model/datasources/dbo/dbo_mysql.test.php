@@ -3111,7 +3111,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testVirtualFieldsComplexRead() {
-		$this->loadFixtures('DataTest', 'Article', 'Comment', 'User', 'Tag');
+		$this->loadFixtures('DataTest', 'Article', 'Comment', 'User', 'Tag', 'ArticlesTag');
 
 		$Article = ClassRegistry::init('Article');
 		$commentTable = $this->Dbo->fullTableName('comments');
@@ -3306,7 +3306,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testRealQueries() {
-		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag', 'Sample');
+		$this->loadFixtures('Apple', 'Article', 'User', 'Comment', 'Tag', 'Sample', 'ArticlesTag');
 
 		$Apple = ClassRegistry::init('Apple');
 		$Article = ClassRegistry::init('Article');
