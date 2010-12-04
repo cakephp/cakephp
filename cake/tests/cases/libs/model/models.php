@@ -262,7 +262,7 @@ class Article extends CakeTestModel {
  * @access public
  * @return void
  */
-	function beforeSave() {
+	function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 
@@ -560,7 +560,7 @@ class ModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['callback'] = 'Fire';
 		}
@@ -605,7 +605,7 @@ class AgainModifiedComment extends CakeTestModel {
  *
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		if (isset($results[0])) {
 			$results[0]['Comment']['querytype'] = $this->findQueryType;
 		}
@@ -921,7 +921,7 @@ class Post extends CakeTestModel {
 		return true;
 	}
 
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		$this->useDbConfig = 'test';
 		return $results;
 	}
@@ -958,7 +958,7 @@ class Author extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		$results[0]['Author']['test'] = 'working';
 		return $results;
 	}
@@ -987,7 +987,7 @@ class ModifiedAuthor extends Author {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		foreach($results as $index => $result) {
 			$results[$index]['Author']['user'] .= ' (CakePHP)';
 		}
@@ -1166,7 +1166,7 @@ class NodeAfterFind extends CakeTestModel {
  * @access public
  * @return void
  */
-	function afterFind($results) {
+	function afterFind($results, $primary = false) {
 		return $results;
 	}
 }
@@ -2075,7 +2075,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeSave($options) {
+	function beforeSave($options = array()) {
 		return $this->beforeSaveReturn;
 	}
 /**
@@ -2083,7 +2083,7 @@ class CallbackPostTestModel extends CakeTestModel {
  *
  * @return void
  */
-	function beforeValidate($options) {
+	function beforeValidate($options = array()) {
 		return $this->beforeValidateReturn;
 	}
 /**
@@ -2304,7 +2304,7 @@ class ValidationTest2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		return array();
 	}
 }
@@ -3801,7 +3801,7 @@ class TestModel4 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -3852,7 +3852,7 @@ class TestModel4TestModel7 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'test_model4_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -3923,7 +3923,7 @@ class TestModel5 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -3986,7 +3986,7 @@ class TestModel6 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -4038,7 +4038,7 @@ class TestModel7 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -4103,7 +4103,7 @@ class TestModel8 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -4167,7 +4167,7 @@ class TestModel9 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
@@ -4234,7 +4234,7 @@ class Level extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4299,7 +4299,7 @@ class Group extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4377,7 +4377,7 @@ class User2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4463,7 +4463,7 @@ class Category2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
@@ -4528,7 +4528,7 @@ class Article2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
@@ -4594,7 +4594,7 @@ class CategoryFeatured2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '10'),
@@ -4658,7 +4658,7 @@ class Featured2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4717,7 +4717,7 @@ class Comment2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4799,7 +4799,7 @@ class ArticleFeatured2 extends CakeTestModel {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		if (!isset($this->_schema)) {
 			$this->_schema = array(
 				'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => '10'),
@@ -4875,7 +4875,7 @@ class MysqlTestModel extends Model {
  * @access public
  * @return void
  */
-	function schema() {
+	public function schema($field = false) {
 		return array(
 			'id'		=> array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 			'client_id'	=> array('type' => 'integer', 'null' => '', 'default' => '0', 'length' => '11'),
