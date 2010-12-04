@@ -17,6 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('ObjectCollection', 'Utility');
+App::uses('Component', 'Controller');
 
 class ComponentCollection extends ObjectCollection {
 
