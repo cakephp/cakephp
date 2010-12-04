@@ -44,12 +44,13 @@ class BasicAuthentication {
  * Proxy Authentication
  *
  * @param HttpSocket $http
+ * @param array $proxyInfo
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */
-	public static function proxyAuthentication(HttpSocket $http) {
-		if (isset($http->request['proxy']['user'], $http->request['proxy']['pass'])) {
-			$http->request['header']['Proxy-Authorization'] = self::_generateHeader($http->request['proxy']['user'], $http->request['proxy']['pass']);
+	public static function proxyAuthentication(HttpSocket $http, &$proxyInfo) {
+		if (isset($proxyInfo['user'], $proxyInfo['pass'])) {
+			$http->request['header']['Proxy-Authorization'] = self::_generateHeader($proxyInfo['user'], $proxyInfo['pass']);
 		}
 	}
 

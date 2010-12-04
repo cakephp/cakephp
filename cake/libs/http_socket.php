@@ -59,13 +59,6 @@ class HttpSocket extends CakeSocket {
 			'query' => null,
 			'fragment' => null
 		),
-		'proxy' => array(
-			'method' => 'Basic',
-			'host' => null,
-			'port' => 3128,
-			'user' => null,
-			'pass' => null
-		),
 		'version' => '1.1',
 		'body' => '',
 		'line' => null,
@@ -118,13 +111,6 @@ class HttpSocket extends CakeSocket {
 				'host' => 'localhost',
 				'port' => 80
 			),
-			'proxy' => array(
-				'method' => 'Basic',
-				'host' => null,
-				'port' => 3128,
-				'user' => null,
-				'pass' => null
-			),
 			'cookies' => array()
 		)
 	);
@@ -144,6 +130,14 @@ class HttpSocket extends CakeSocket {
  * @access protected
  */
 	protected $_auth = array();
+
+/**
+ * Proxy settings
+ *
+ * @var array
+ * @access protected
+ */
+	protected $_proxy = array();
 
 /**
  * Build an HTTP Socket using the specified configuration.
@@ -182,7 +176,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Set authentication settings
  *
- * @param string $method Authentication method (ex. Basic, Digest). If empty, disable authentication
+ * @param string $method Authentication method (ie. Basic, Digest). If empty, disable authentication
  * @param mixed $user Username for authentication. Can be an array with settings to authentication class
  * @param string $pass Password for authentication
  * @return void
@@ -197,6 +191,28 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		$this->_auth = array($method => compact('user', 'pass'));
+	}
+
+/**
+ * Set proxy settings
+ *
+ * @param mixed $host Proxy host. Can be an array with settings to authentication class
+ * @param integer $port Port. Default 3128.
+ * @param string $method Proxy method (ie, Basic, Digest). If empty, disable proxy authentication
+ * @param string $user Username if your proxy need authentication
+ * @param string $pass Password to proxy authentication
+ * @return void
+ */
+	public function setProxyConfig($host, $port = 3128, $method = null, $user = null, $pass = null) {
+		if (empty($host)) {
+			$this->_proxy = array();
+			return;
+		}
+		if (is_array($host)) {
+			$this->_proxy = $host + array('host' => null);
+			return;
+		}
+		$this->_proxy = compact('host', 'port', 'method', 'user', 'pass');
 	}
 
 /**
@@ -490,23 +506,23 @@ class HttpSocket extends CakeSocket {
  * @return void
  */
 	protected function _setProxyConfig() {
-		if (empty($this->request['proxy']['host'])) {
+		if (empty($this->_proxy) || !isset($this->_proxy['host'], $this->_proxy['port'])) {
 			return;
 		}
-		$this->config['host'] = $this->request['proxy']['host'];
-		$this->config['port'] = $this->request['proxy']['port'];
+		$this->config['host'] = $this->_proxy['host'];
+		$this->config['port'] = $this->_proxy['port'];
 
-		if (empty($this->request['proxy']['method']) || !isset($this->request['proxy']['user'], $this->request['proxy']['pass'])) {
+		if (empty($this->_proxy['method']) || !isset($this->_proxy['user'], $this->_proxy['pass'])) {
 			return;
 		}
-		$authClass = Inflector::camelize($this->request['proxy']['method']) . 'Authentication';
+		$authClass = Inflector::camelize($this->_proxy['method']) . 'Authentication';
 		if (!App::import('Lib', 'http/' . $authClass)) {
 			throw new Exception(__('Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
 			throw new Exception(sprintf(__('The %s do not support proxy authentication.'), $authClass));
 		}
-		call_user_func("$authClass::proxyAuthentication", $this);
+		call_user_func("$authClass::proxyAuthentication", $this, &$this->_proxy);
 	}
 
 /**
@@ -882,7 +898,7 @@ class HttpSocket extends CakeSocket {
 
 		$request['uri']	= $this->_parseUri($request['uri']);
 		$request = array_merge(array('method' => 'GET'), $request);
-		if (!empty($request['proxy']['host'])) {
+		if (!empty($this->_proxy['host'])) {
 			$request['uri'] = $this->_buildUri($request['uri'], '%scheme://%host:%port/%path?%query');
 		} else {
 			$request['uri'] = $this->_buildUri($request['uri'], '/%path?%query');
