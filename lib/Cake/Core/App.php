@@ -629,9 +629,7 @@ class App {
 			}
 
 			if (!isset(self::$__paths[$path])) {
-				if (!class_exists('Folder')) {
-					require LIBS . 'folder.php';
-				}
+				App::uses('Folder', 'Utility');
 				$Folder = new Folder();
 				$directories = $Folder->tree($path, array('.svn', '.git', 'CVS', 'tests', 'templates'), 'dir');
 				sort($directories);
@@ -865,9 +863,7 @@ class App {
  * @return array  List of directories or files in directory
  */
 	private static function __list($path, $suffix = false, $extension = false) {
-		if (!class_exists('Folder')) {
-			require LIBS . 'folder.php';
-		}
+		App::uses('Folder', 'Utility');
 		$items = array();
 		$Folder = new Folder($path);
 		$contents = $Folder->read(false, true);

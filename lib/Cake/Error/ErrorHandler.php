@@ -20,6 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Debugger', 'Utility');
+
 /**
  *
  * Error Handler provides basic error and exception handling for your application. It captures and 
@@ -143,9 +145,6 @@ class ErrorHandler {
 
 		$debug = Configure::read('debug');
 		if ($debug) {
-			if (!class_exists('Debugger')) {
-				require LIBS . 'debugger.php';
-			}
 			$data = array(
 				'level' => $log,
 				'code' => $code,
@@ -164,9 +163,6 @@ class ErrorHandler {
 			}
 			$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 			if (!empty($errorConfig['trace'])) {
-				if (!class_exists('Debugger')) {
-					require LIBS . 'debugger.php';
-				}
 				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
 				$message .= "\nTrace:\n" . $trace . "\n";
 			}

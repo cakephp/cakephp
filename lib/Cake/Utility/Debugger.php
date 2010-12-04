@@ -24,8 +24,8 @@
  * Included libraries.
  *
  */
-App::uses('CakeLog', 'Core');
-App::uses('String', 'Core');
+App::uses('CakeLog', 'Log');
+App::uses('String', 'Utility');
 
 /**
  * Provide custom logging and error handling.

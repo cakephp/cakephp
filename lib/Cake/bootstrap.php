@@ -225,14 +225,7 @@ require LIBS . 'Error' . DS . 'exceptions.php';
 App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
 App::uses('Cache', 'Cache');
-
-
-
-//require LIBS . 'object.php';
-//require LIBS . 'configure.php';
-//require LIBS . 'set.php';
-//require LIBS . 'cache.php';
-//require LIBS . 'error' . DS . 'error_handler.php';
+App::uses('Object', 'Core');
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 

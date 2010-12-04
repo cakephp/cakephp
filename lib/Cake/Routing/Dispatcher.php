@@ -30,7 +30,7 @@ App::uses('CakeResponse', 'Network');
 App::uses('Controller', 'Controller');
 App::uses('Scaffold', 'Controller');
 App::uses('View', 'View');
-App::uses('Debugger', 'Core');
+App::uses('Debugger', 'Utility');
 
 /**
  * Dispatcher converts Requests into controller actions.  It uses the dispatched Request

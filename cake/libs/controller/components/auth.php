@@ -20,9 +20,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Router', 'Core');
+App::uses('Router', 'Routing');
 App::uses('Security', 'Core');
-App::uses('Debugger', 'Core');
+App::uses('Debugger', 'Utility');
 
 /**
  * Authentication control component class

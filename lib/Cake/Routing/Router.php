@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeRequest', 'Core');
-App::uses('CakeRoute', 'Core');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeRoute', 'Routing/Route');
 
 /**
  * Parses the request URL into controller, action, and parameters.
