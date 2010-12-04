@@ -55,7 +55,7 @@ class ConsoleErrorHandler extends ErrorHandler {
  *
  * @return void
  */
-	public static function handleException($exception) {
+	public static function handleException(Exception $exception) {
 		$stderr = self::getStderr();
 		$stderr->write(sprintf(
 			__("<error>Error:</error> %s\n%s"), 
