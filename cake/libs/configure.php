@@ -264,14 +264,14 @@ class Configure {
  *
  * To add a new reader to Configure:
  *
- * `Configure::reader('ini', new IniReader());`
+ * `Configure::config('ini', new IniReader());`
  *
  * @param string $alias The name of the reader being configured.  This alias is used later to 
  *   read values from a specific reader.
  * @param ConfigReaderInterface $reader The reader to append.
  * @return void
  */
-	public static function reader($alias, ConfigReaderInterface $reader) {
+	public static function config($alias, ConfigReaderInterface $reader) {
 		self::$_readers[$alias] = $reader;
 	}
 

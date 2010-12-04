@@ -265,7 +265,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	function testReaderSetup() {
 		$reader = new PhpReader();
-		Configure::reader('test', $reader);
+		Configure::config('test', $reader);
 		$configured = Configure::configured();
 
 		$this->assertTrue(in_array('test', $configured));
@@ -279,7 +279,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	function testReaderExceptionOnIncorrectClass() {
 		$reader = new StdClass();
-		Configure::reader('test', $reader);
+		Configure::config('test', $reader);
 	}
 }
 
