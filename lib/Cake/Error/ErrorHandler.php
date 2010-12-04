@@ -21,6 +21,7 @@
  */
 
 App::uses('Debugger', 'Utility');
+App::uses('CakeLog', 'Log');
 
 /**
  *
@@ -109,9 +110,6 @@ class ErrorHandler {
 		App::import('Core', 'error/ExceptionRenderer');
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
-			if (!class_exists('CakeLog')) {
-				require LIBS . 'cake_log.php';
-			}
 			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
 		}
 		if ($config['renderer'] !== 'ExceptionRenderer') {
@@ -158,9 +156,6 @@ class ErrorHandler {
 			);
 			return Debugger::getInstance()->outputError($data);
 		} else {
-			if (!class_exists('CakeLog')) {
-				require LIBS . 'cake_log.php';
-			}
 			$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 			if (!empty($errorConfig['trace'])) {
 				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));

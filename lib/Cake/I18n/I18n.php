@@ -21,8 +21,8 @@
 /**
  * Included libraries.
  */
-App::uses('L10n', 'Core');
-App::uses('Multibyte', 'Core');
+App::uses('L10n', 'I18n');
+App::uses('Multibyte', 'I18n');
 
 /**
  * I18n handles translation of Text and time format strings.
