@@ -416,14 +416,14 @@ class DboSource extends DataSource {
 		if (count($args) == 1) {
 			return $this->fetchAll($args[0]);
 
-		} elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0)) {
+		} elseif (count($args) > 1 && (strpos($args[0], 'findBy') === 0 || strpos($args[0], 'findAllBy') === 0)) {
 			$params = $args[1];
 
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
+			if (strpos($args[0], 'findBy') === 0) {
+				$all = false;
 				$field = Inflector::underscore(preg_replace('/^findBy/i', '', $args[0]));
 			} else {
-				$all  = true;
+				$all = true;
 				$field = Inflector::underscore(preg_replace('/^findAllBy/i', '', $args[0]));
 			}
 
