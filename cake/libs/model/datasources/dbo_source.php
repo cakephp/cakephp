@@ -854,7 +854,7 @@ class DboSource extends DataSource {
  *   be used to generate values.
  * @return boolean Success
  */
-	public function create(&$model, $fields = null, $values = null) {
+	public function create($model, $fields = null, $values = null) {
 		$id = null;
 
 		if ($fields == null) {
@@ -902,7 +902,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
-	public function read(&$model, $queryData = array(), $recursive = null) {
+	public function read($model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
 
 		$null = null;
@@ -1046,7 +1046,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	public function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
@@ -1342,7 +1342,7 @@ class DboSource extends DataSource {
  * @param array $resultSet
  * @return mixed
  */
-	public function generateAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
+	public function generateAssociationQuery($model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
 		$queryData = $this->__scrubQueryData($queryData);
 		$assocData = $this->__scrubQueryData($assocData);
 
@@ -1575,7 +1575,7 @@ class DboSource extends DataSource {
  * @access public
  * @see DboSource::renderStatement()
  */
-	public function buildStatement($query, &$model) {
+	public function buildStatement($query, $model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1694,7 +1694,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	public function update($model, $fields = array(), $values = null, $conditions = null) {
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -1728,7 +1728,7 @@ class DboSource extends DataSource {
  * @param boolean $alias Include the model alias in the field name
  * @return array Fields and values, quoted and preparted
  */
-	protected function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
+	protected function _prepareUpdateFields($model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
 		$updates = array();
@@ -1771,7 +1771,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete(&$model, $conditions = null) {
+	public function delete($model, $conditions = null) {
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
 		$conditions = $this->_matchRecords($model, $conditions);
@@ -1795,7 +1795,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return array List of record IDs
  */
-	protected function _matchRecords(&$model, $conditions = null) {
+	protected function _matchRecords($model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
@@ -1871,7 +1871,7 @@ class DboSource extends DataSource {
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string An SQL calculation function
  */
-	public function calculate(&$model, $func, $params = array()) {
+	public function calculate($model, $func, $params = array()) {
 		$params = (array)$params;
 
 		switch (strtolower($func)) {
@@ -1990,7 +1990,7 @@ class DboSource extends DataSource {
  * @see DboSource::update()
  * @see DboSource::conditions()
  */
-	public function defaultConditions(&$model, $conditions, $useAlias = true) {
+	public function defaultConditions($model, $conditions, $useAlias = true) {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
@@ -2049,7 +2049,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	protected function _constructVirtualFields(&$model, $alias, $fields) {
+	protected function _constructVirtualFields($model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
@@ -2068,7 +2068,7 @@ class DboSource extends DataSource {
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
-	public function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+	public function fields($model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -2361,7 +2361,7 @@ class DboSource extends DataSource {
  * @return string
  * @access private
  */
-	function __parseKey(&$model, $key, $value) {
+	function __parseKey($model, $key, $value) {
 		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
@@ -2612,7 +2612,7 @@ class DboSource extends DataSource {
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-	public function hasAny(&$Model, $sql) {
+	public function hasAny($Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
 		$alias = $this->alias . $this->name($Model->alias);

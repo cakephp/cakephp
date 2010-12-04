@@ -478,7 +478,7 @@ class DboOracle extends DboSource {
  * @param object instance of a model to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe(&$model) {
+	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
@@ -974,7 +974,7 @@ class DboOracle extends DboSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {

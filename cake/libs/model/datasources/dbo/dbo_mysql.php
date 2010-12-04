@@ -329,7 +329,7 @@ class DboMysql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -371,7 +371,7 @@ class DboMysql extends DboSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	function delete(&$model, $conditions = null) {
+	function delete($model, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::delete($model, $conditions);
 		}

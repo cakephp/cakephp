@@ -166,7 +166,7 @@ class DboSqlite extends DboSource {
  * @return array Fields in table. Keys are name and type
  * @access public
  */
-	function describe(&$model) {
+	function describe($model) {
 		$cache = parent::describe($model);
 		if ($cache != null) {
 			return $cache;
@@ -208,7 +208,7 @@ class DboSqlite extends DboSource {
  * @return array
  * @access public
  */
-	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (empty($values) && !empty($fields)) {
 			foreach ($fields as $field => $value) {
 				if (strpos($field, $model->alias . '.') !== false) {
@@ -458,7 +458,7 @@ class DboSqlite extends DboSource {
  * @return array Fields in table. Keys are column and unique
  * @access public
  */
-	function index(&$model) {
+	function index($model) {
 		$index = array();
 		$table = $this->fullTableName($model);
 		if ($table) {

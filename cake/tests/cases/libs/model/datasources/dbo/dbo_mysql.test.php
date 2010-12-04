@@ -2601,6 +2601,7 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testCalculations() {
+		$this->Model = new TestModel();
 		$result = $this->Dbo->calculate($this->Model, 'count');
 		$this->assertEqual($result, 'COUNT(*) AS `count`');
 
