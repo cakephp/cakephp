@@ -211,9 +211,9 @@ class AppImportTest extends CakeTestCase {
 		$this->assertTrue($file);
 		$this->assertTrue(class_exists('Shell'));
 
-		$file = App::import('Lib', 'cache/Apc');
+		$file = App::import('Lib', 'config/PhpReader');
 		$this->assertTrue($file);
-		$this->assertTrue(class_exists('ApcEngine'));
+		$this->assertTrue(class_exists('PhpReader'));
 
 		$file = App::import('Model', 'SomeRandomModelThatDoesNotExist', false);
 		$this->assertFalse($file);

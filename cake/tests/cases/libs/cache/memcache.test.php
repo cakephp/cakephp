@@ -20,8 +20,7 @@
 if (!class_exists('Cache')) {
 	require LIBS . 'cache.php';
 }
-App::import('Core', 'cache/Memcache');
-
+require_once LIBS . 'cache' . DS . 'memcache.php';
 
 class TestMemcacheEngine extends MemcacheEngine {
 /**
