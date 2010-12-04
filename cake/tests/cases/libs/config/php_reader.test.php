@@ -64,6 +64,17 @@ class PhpReaderTest extends CakeTestCase {
 	}
 
 /**
+ * test reading keys with ../ doesn't work
+ *
+ * @expectedException InvalidArgumentException
+ * @return void
+ */
+	function testReadWithDots() {
+		$reader = new PhpReader($this->path);
+		$reader->read('../empty');
+	}
+
+/**
  * test reading from plugins
  *
  * @return void
