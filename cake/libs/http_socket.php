@@ -1132,6 +1132,8 @@ class HttpSocket extends CakeSocket {
 			$this->response = $initalState['response'];
 			return true;
 		}
+		$this->_auth = array();
+		$this->_proxy = array();
 		parent::reset($initalState);
 		return true;
 	}
