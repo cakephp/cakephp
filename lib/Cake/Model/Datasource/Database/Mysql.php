@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('DboSource', 'Model/Datasource');
+
 /**
  * MySQL DBO driver object
  *
@@ -26,7 +28,7 @@
  * @package       cake
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
-class DboMysql extends DboSource {
+class Mysql extends DboSource {
 
 /**
  * Datasource description

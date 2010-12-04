@@ -161,15 +161,20 @@ class ConnectionManager {
 			$conn = $_this->_connectionsEnum[$connName];
 		}
 
-		if (class_exists($conn['classname'])) {
+		if (class_exists($conn['classname'], false)) {
 			return false;
 		}
 
-		$conn = array_merge(array('plugin' => null, 'classname' => null, 'parent' => null), $conn);
-		$class = trim("{$conn['plugin']}.{$conn['classname']}", '.');
+		$plugin = $package = null;
+		if (!empty($conn['plugin'])) {
+			$plugin .= '.';
+		}
+		if (!empty($conn['package'])) {
+			$package = '/' . $conn['package'];
+		}
 
-		App::uses($class, 'Model/Datasource');
-		if (class_exists($class)) {
+		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
+		if (!class_exists($conn['classname'])) {
 			trigger_error(sprintf(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s'), $class), E_USER_ERROR);
 			return null;
 		}
@@ -230,36 +235,14 @@ class ConnectionManager {
  * @return array An indexed array with: filename, classname, plugin and parent
  */
 	private function __connectionData($config) {
-		if (!isset($config['datasource'])) {
-			$config['datasource'] = 'dbo';
-		}
-		$filename = $classname = $parent = $plugin = null;
+		$package = $classname = $plugin = null;
 
-		if (!empty($config['driver'])) {
-			$parent = $this->__connectionData(array('datasource' => $config['datasource']));
-			$parentSource = preg_replace('/_source$/', '', $parent['filename']);
-
-			list($plugin, $classname) = pluginSplit($config['driver']);
-			if ($plugin) {
-				$source = Inflector::underscore($classname);
-			} else {
-				$source = $parentSource . '_' . $config['driver'];
-				$classname = Inflector::camelize(strtolower($source));
-			}
-			$filename = $parentSource . DS . $source;
-		} else {
-			list($plugin, $classname) = pluginSplit($config['datasource']);
-			if ($plugin) {
-				$filename = Inflector::underscore($classname);
-			} else {
-				$filename = Inflector::underscore($config['datasource']);
-			}
-			if (substr($filename, -7) != '_source') {
-				$filename .= '_source';
-			}
-			$classname = Inflector::camelize(strtolower($filename));
+		list($plugin, $classname) = pluginSplit($config['datasource']);
+		if (strpos($classname, '/') !== false) {
+			$package = dirname($classname);
+			$classname = basename($classname);
 		}
-		return compact('filename', 'classname', 'parent', 'plugin');
+		return compact('package', 'classname', 'plugin');
 	}
 
 /**
