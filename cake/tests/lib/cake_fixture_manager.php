@@ -251,7 +251,7 @@ class CakeFixtureManager {
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
-			throw new UnexpectedValueException(sprintf(__('Referenced fixture class %s not found'), $name));
+			throw new UnexpectedValueException(__('Referenced fixture class %s not found', $name));
 		}
 	}
 

@@ -662,7 +662,7 @@ class DboSource extends DataSource {
 			if ($error) {
 				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms'), $this->affected, $this->numRows, $this->took) . ']</small>');
+				$out = ('<small>[' . __('Aff:%s Num:%s Took:%sms', $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
 			pr(sprintf('<p style="text-align:left"><b>' . __('Query:') . '</b> %s %s</p>', $sql, $out));
 		}
@@ -897,7 +897,7 @@ class DboSource extends DataSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:'), $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __('SQL Error in model %s:', $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}
@@ -2666,7 +2666,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(sprintf(__('Column type %s does not exist'), $type), E_USER_WARNING);
+			trigger_error(__('Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 

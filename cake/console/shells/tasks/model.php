@@ -112,7 +112,7 @@ class ModelTask extends BakeTask {
 				continue;
 			}
 			$modelClass = Inflector::classify($table);
-			$this->out(sprintf(__('Baking %s'), $modelClass));
+			$this->out(__('Baking %s', $modelClass));
 			$object = $this->_getModelObject($modelClass);
 			if ($this->bake($object, false) && $unitTestExists) {
 				$this->bakeFixture($modelClass);
@@ -190,7 +190,7 @@ class ModelTask extends BakeTask {
 				$primaryKey = $this->findPrimaryKey($fields);
 			}
 		} else {
-			$this->err(sprintf(__('Table %s does not exist, cannot bake a model without a table.'), $useTable));
+			$this->err(__('Table %s does not exist, cannot bake a model without a table.', $useTable));
 			$this->_stop();
 			return false;
 		}
@@ -218,16 +218,16 @@ class ModelTask extends BakeTask {
 		$this->out("Name:       " . $currentModelName);
 
 		if ($this->connection !== 'default') {
-			$this->out(sprintf(__("DB Config:  %s"), $this->connection));
+			$this->out(__("DB Config:  %s", $this->connection));
 		}
 		if ($fullTableName !== Inflector::tableize($currentModelName)) {
-			$this->out(sprintf(__('DB Table:   %s'), $fullTableName));
+			$this->out(__('DB Table:   %s', $fullTableName));
 		}
 		if ($primaryKey != 'id') {
-			$this->out(sprintf(__('Primary Key: %s'), $primaryKey));
+			$this->out(__('Primary Key: %s', $primaryKey));
 		}
 		if (!empty($validate)) {
-			$this->out(sprintf(__('Validation: %s'), print_r($validate, true)));
+			$this->out(__('Validation: %s', print_r($validate, true)));
 		}
 		if (!empty($associations)) {
 			$this->out(__('Associations:'));
@@ -367,8 +367,8 @@ class ModelTask extends BakeTask {
 		while ($anotherValidator == 'y') {
 			if ($this->interactive) {
 				$this->out();
-				$this->out(sprintf(__('Field: %s'), $fieldName));
-				$this->out(sprintf(__('Type: %s'), $metaData['type']));
+				$this->out(__('Field: %s', $fieldName));
+				$this->out(__('Type: %s', $metaData['type']));
 				$this->hr();
 				$this->out(__('Please select one of the following validation options:'));
 				$this->hr();
@@ -378,7 +378,7 @@ class ModelTask extends BakeTask {
 			for ($i = 1; $i < $defaultChoice; $i++) {
 				$prompt .= $i . ' - ' . $this->_validations[$i] . "\n";
 			}
-			$prompt .=  sprintf(__("%s - Do not do any validation on this field.\n"), $defaultChoice);
+			$prompt .=  __("%s - Do not do any validation on this field.\n", $defaultChoice);
 			$prompt .= __("... or enter in a valid regex validation string.\n");
 
 			$methods = array_flip($this->_validations);
@@ -646,7 +646,7 @@ class ModelTask extends BakeTask {
 			$this->hr();
 
 			$alias = $this->in(__('What is the alias for this association?'));
-			$className = $this->in(sprintf(__('What className will %s use?'), $alias), null, $alias );
+			$className = $this->in(__('What className will %s use?', $alias), null, $alias );
 			$suggestedForeignKey = null;
 
 			if ($assocType == 0) {
@@ -800,7 +800,7 @@ class ModelTask extends BakeTask {
 
 		if (array_search($useTable, $this->_tables) === false) {
 			$this->out();
-			$this->out(sprintf(__("Given your model named '%s',\nCake would expect a database table named '%s'"), $modelName, $fullTableName));
+			$this->out(__("Given your model named '%s',\nCake would expect a database table named '%s'", $modelName, $fullTableName));
 			$tableIsGood = $this->in(__('Do you want to use this table?'), array('y','n'), 'y');
 		}
 		if (strtolower($tableIsGood) == 'n') {

@@ -138,7 +138,7 @@ class AclNode extends AppModel {
 			$model = ClassRegistry::init(array('class' => $name, 'alias' => $name));
 
 			if (empty($model)) {
-				trigger_error(sprintf(__("Model class '%s' not found in AclNode::node() when trying to bind %s object"), $type, $this->alias), E_USER_WARNING);
+				trigger_error(__("Model class '%s' not found in AclNode::node() when trying to bind %s object", $type, $this->alias), E_USER_WARNING);
 				return null;
 			}
 
@@ -183,7 +183,7 @@ class AclNode extends AppModel {
 			$result = $db->read($this, $queryData, -1);
 
 			if (!$result) {
-				trigger_error(sprintf(__("AclNode::node() - Couldn't find %s node identified by \"%s\""), $type, print_r($ref, true)), E_USER_WARNING);
+				trigger_error(__("AclNode::node() - Couldn't find %s node identified by \"%s\"", $type, print_r($ref, true)), E_USER_WARNING);
 			}
 		}
 		return $result;

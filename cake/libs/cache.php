@@ -274,7 +274,7 @@ class Cache {
 		self::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
-				sprintf(__("%s cache was unable to write '%s' to cache", true), $config, $key),
+				__("%s cache was unable to write '%s' to cache", $config, $key),
 				E_USER_WARNING
 			);
 		}

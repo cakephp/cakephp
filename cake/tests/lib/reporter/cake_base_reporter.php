@@ -201,7 +201,7 @@ class CakeBaseReporter implements PHPUnit_Framework_TestListener {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		echo sprintf(__('Running  %s'), $suite->getName()) . "\n";
+		echo __('Running  %s', $suite->getName()) . "\n";
 	}
 
 /**

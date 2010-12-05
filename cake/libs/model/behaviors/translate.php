@@ -55,7 +55,7 @@ class TranslateBehavior extends ModelBehavior {
 		$db = ConnectionManager::getDataSource($model->useDbConfig);
 		if (!$db->connected) {
 			trigger_error(
-				sprintf(__('Datasource %s for TranslateBehavior of model %s is not connected'), $model->useDbConfig, $model->alias),
+				__('Datasource %s for TranslateBehavior of model %s is not connected', $model->useDbConfig, $model->alias),
 				E_USER_ERROR
 			);
 			return false;
@@ -439,7 +439,7 @@ class TranslateBehavior extends ModelBehavior {
 				foreach (array('hasOne', 'hasMany', 'belongsTo', 'hasAndBelongsToMany') as $type) {
 					if (isset($model->{$type}[$association]) || isset($model->__backAssociation[$type][$association])) {
 						trigger_error(
-							sprintf(__('Association %s is already binded to model %s'), $association, $model->alias),
+							__('Association %s is already binded to model %s', $association, $model->alias),
 							E_USER_ERROR
 						);
 						return false;

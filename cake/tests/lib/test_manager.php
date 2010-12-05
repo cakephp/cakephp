@@ -152,10 +152,10 @@ class TestManager {
 		$testCaseFileWithPath = $this->_getTestsPath($this->params) . DS . $testCaseFile;
 
 		if (!file_exists($testCaseFileWithPath) || strpos($testCaseFileWithPath, '..')) {
-			throw new InvalidArgumentException(sprintf(__('Unable to load test file %s'), htmlentities($testCaseFile)));
+			throw new InvalidArgumentException(__('Unable to load test file %s', htmlentities($testCaseFile)));
 		}
 		if (!$suite) {
-			$suite = $this->getTestSuite(sprintf(__('Individual test case: %s', true), $testCaseFile));
+			$suite = $this->getTestSuite(__('Individual test case: %s', $testCaseFile));
 		}
 		$suite->addTestFile($testCaseFileWithPath);
 

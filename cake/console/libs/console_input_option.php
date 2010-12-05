@@ -82,10 +82,10 @@ class ConsoleInputOption {
 	public function help($width = 0) {
 		$default = $short = '';
 		if (!empty($this->_default) && $this->_default !== true) {
-			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->_default);
+			$default = __(' <comment>(default: %s)</comment>', $this->_default);
 		}
 		if (!empty($this->_choices)) {
-			$default .= sprintf(__(' <comment>(choices: %s)</comment>'), implode('|', $this->_choices));
+			$default .= __(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
 		}
 		if (!empty($this->_short)) {
 			$short = ', -' . $this->_short;
