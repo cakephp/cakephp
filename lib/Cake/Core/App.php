@@ -330,7 +330,7 @@ class App {
 		static $paths = false;
 		if (!$paths) {
 			$paths = array();
-			$libs = dirname(__FILE__) . DS;
+			$libs = LIBS;
 			$cake = dirname($libs) . DS;
 			$path = dirname($cake) . DS;
 
@@ -341,7 +341,7 @@ class App {
 			$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
 			$paths['controllers'][] = $libs . 'controller' . DS;
 			$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
-			$paths['views'][] = $libs . 'view' . DS;
+			$paths['views'][] = $libs . 'View' . DS;
 			$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
 			$paths['plugins'][] = $path . 'plugins' . DS;
 			$paths['vendors'][] = $path . 'vendors' . DS;

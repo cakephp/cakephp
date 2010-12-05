@@ -811,7 +811,8 @@ class View extends Object {
 			}
 			$paths[] = App::pluginPath($plugin) . 'views' . DS;
 		}
-		$this->__paths = array_merge($paths, $viewPaths);
+
+		$this->__paths = array_merge($paths, $viewPaths, array_flip($corePaths));
 		return $this->__paths;
 	}
 }

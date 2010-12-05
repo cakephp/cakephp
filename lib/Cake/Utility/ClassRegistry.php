@@ -140,11 +140,11 @@ class ClassRegistry {
 				if (class_exists($class)) {
 					${$class} = new $class($settings);
 				} elseif ($type === 'Model') {
-					//if ($plugin && class_exists($plugin . 'AppModel')) {
-					//	$appModel = $plugin . 'AppModel';
-					//} else {
+					if ($plugin && class_exists($plugin . 'AppModel')) {
+						$appModel = $plugin . 'AppModel';
+					} else {
 						$appModel = 'AppModel';
-					//}
+					}
 					$settings['name'] = $class;
 					${$class} = new $appModel($settings);
 				}
