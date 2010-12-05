@@ -461,17 +461,24 @@ if (!function_exists('sortByKey')) {
  * Returns a translated string if one is found; Otherwise, the submitted message.
  *
  * @param string $singular Text to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return mixed translated string
  * @link http://book.cakephp.org/view/1121/__
  */
-	function __($singular) {
+	function __($singular, $args = null) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($singular);
+		$translated = I18n::translate($singular);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 1);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -481,16 +488,23 @@ if (!function_exists('sortByKey')) {
  * @param string $singular Singular text to translate
  * @param string $plural Plural text
  * @param integer $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return mixed plural form of translated string
  */
-	function __n($singular, $plural, $count) {
+	function __n($singular, $plural, $count, $args = null) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($singular, $plural, null, 6, $count);
+		$translated = I18n::translate($singular, $plural, null, 6, $count);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 3);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -498,16 +512,23 @@ if (!function_exists('sortByKey')) {
  *
  * @param string $domain Domain
  * @param string $msg String to translate
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return translated string
  */
-	function __d($domain, $msg) {
+	function __d($domain, $msg, $args = null) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($msg, null, $domain);
+		$translated = I18n::translate($msg, null, $domain);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 2);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -519,16 +540,23 @@ if (!function_exists('sortByKey')) {
  * @param string $singular Singular string to translate
  * @param string $plural Plural
  * @param integer $count Count
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return plural form of translated string
  */
-	function __dn($domain, $singular, $plural, $count) {
+	function __dn($domain, $singular, $plural, $count, $args = null) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($singular, $plural, $domain, 6, $count);
+		$translated = I18n::translate($singular, $plural, $domain, 6, $count);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 4);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -551,16 +579,23 @@ if (!function_exists('sortByKey')) {
  * @param string $domain Domain
  * @param string $msg Message to translate
  * @param integer $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return translated string
  */
-	function __dc($domain, $msg, $category) {
+	function __dc($domain, $msg, $category, $args = null) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($msg, null, $domain, $category);
+		$translated = I18n::translate($msg, null, $domain, $category);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 3);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -587,16 +622,23 @@ if (!function_exists('sortByKey')) {
  * @param string $plural Plural
  * @param integer $count Count
  * @param integer $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return plural form of translated string
  */
-	function __dcn($domain, $singular, $plural, $count, $category) {
+	function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
 		if (!$singular) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($singular, $plural, $domain, $category, $count);
+		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 5);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
@@ -615,16 +657,23 @@ if (!function_exists('sortByKey')) {
  *
  * @param string $msg String to translate
  * @param integer $category Category
+ * @param mixed $args Array with arguments or multiple arguments in function
  * @return translated string
  */
-	function __c($msg, $category) {
+	function __c($msg, $category, $args = null) {
 		if (!$msg) {
 			return;
 		}
 		if (!class_exists('I18n')) {
 			App::import('Core', 'i18n');
 		}
-		return I18n::translate($msg, null, null, $category);
+		$translated = I18n::translate($msg, null, null, $category);
+		if ($args === null) {
+			return $translated;
+		} elseif (!is_array($args)) {
+			$args = array_slice(func_get_args(), 2);
+		}
+		return vsprintf($translated, $args);
 	}
 
 /**
