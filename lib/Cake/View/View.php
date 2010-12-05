@@ -799,7 +799,7 @@ class View extends Object {
 			return $this->__paths;
 		}
 		$paths = array();
-		$viewPaths = App::path('views');
+		$viewPaths = App::path('View');
 		$corePaths = array_flip(App::core('views'));
 
 		if (!empty($plugin)) {

@@ -208,6 +208,12 @@ class App {
 	private static $__classMap = array();
 
 /**
+ * Holds the possible paths for each package name
+ *
+ */
+	private static $__packages = array();
+
+/**
  * Used to read information stored path
  *
  * Usage:
@@ -218,10 +224,10 @@ class App {
  * @return string array
  */
 	public static function path($type) {
-		if (!isset(self::${$type})) {
+		if (!isset(self::$__packages[$type])) {
 			return array();
 		}
-		return self::${$type};
+		return self::$__packages[$type];
 	}
 
 /**
@@ -234,14 +240,14 @@ class App {
  */
 	public static function build($paths = array(), $reset = false) {
 		$defaults = array(
-			'models' => array(MODELS),
-			'behaviors' => array(BEHAVIORS),
-			'datasources' => array(MODELS . 'datasources'),
-			'controllers' => array(CONTROLLERS),
-			'components' => array(COMPONENTS),
+			'Model' => array(MODELS),
+			'Model/Behavior' => array(BEHAVIORS),
+			'Datasource' => array(MODELS . 'datasources'),
+			'Controller' => array(CONTROLLERS),
+			'Controller/Component' => array(COMPONENTS),
 			'libs' => array(APPLIBS),
-			'views' => array(VIEWS),
-			'helpers' => array(HELPERS),
+			'View' => array(VIEWS),
+			'View/Helper' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
 			'shells' => array(
 				APP . 'console' . DS . 'shells' . DS,
@@ -254,7 +260,7 @@ class App {
 
 		if ($reset == true) {
 			foreach ($paths as $type => $new) {
-				self::${$type} = (array)$new;
+				self::$__packages[$type] = (array)$new;
 			}
 			return $paths;
 		}
@@ -263,27 +269,19 @@ class App {
 		$app = array('models' => true, 'controllers' => true, 'helpers' => true);
 
 		foreach ($defaults as $type => $default) {
-			$merge = array();
 
-			if (isset($app[$type])) {
-				$merge = array(APP);
-			}
-			if (isset($core[$type])) {
-				$merge = array_merge($merge, (array)$core[$type]);
-			}
-
-			if (empty(self::${$type}) || empty($paths)) {
-				self::${$type} = $default;
+			if (empty(self::$__packages[$type]) || empty($paths)) {
+				self::$__packages[$type] = $default;
 			}
 
 			if (!empty($paths[$type])) {
 				$path = array_flip(array_flip(array_merge(
-					(array)$paths[$type], self::${$type}, $merge
+					(array)$paths[$type], self::$__packages[$type], $merge
 				)));
-				self::${$type} = array_values($path);
+				self::$__packages[$type] = array_values($path);
 			} else {
-				$path = array_flip(array_flip(array_merge(self::${$type}, $merge)));
-				self::${$type} = array_values($path);
+				$path = array_flip(array_flip(self::$__packages[$type]));
+				self::$__packages[$type] = array_values($path);
 			}
 		}
 	}
@@ -442,9 +440,15 @@ class App {
 
 	public static function load($className) {
 		if (isset(self::$__classMap[$className])) {
-			$file = LIBS . self::$__classMap[$className] . DS . $className . '.php';
-			if (file_exists($file)) {
-				return include $file;
+			$package = self::$__classMap[$className];
+			$paths = self::path($package);
+			$paths[] = LIBS . self::$__classMap[$className] . DS;
+
+			foreach ($paths as $path) {
+				$file = $path . $className . '.php';
+				if (file_exists($file)) {
+					return include $file;
+				}
 			}
 		}
 		return false;
@@ -901,5 +905,3 @@ class App {
 		}
 	}
 }
-
-spl_autoload_register(array('App', 'load'));

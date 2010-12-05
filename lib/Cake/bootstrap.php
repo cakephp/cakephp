@@ -222,6 +222,8 @@ require LIBS . 'basics.php';
 require LIBS . 'Core' . DS .'App.php';
 require LIBS . 'Error' . DS . 'exceptions.php';
 
+spl_autoload_register(array('App', 'load'));
+
 App::uses('ErrorHandler', 'Error');
 App::uses('Configure', 'Core');
 App::uses('Cache', 'Cache');

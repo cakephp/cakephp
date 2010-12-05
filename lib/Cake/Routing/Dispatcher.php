@@ -223,10 +223,7 @@ class Dispatcher {
 		if (!$ctrlClass) {
 			return false;
 		}
-		$ctrlClass .= 'Controller';
-		if (class_exists($ctrlClass)) {
-			return new $ctrlClass($request);
-		}
+		return new $ctrlClass($request);
 	}
 
 /**
@@ -245,8 +242,11 @@ class Dispatcher {
 			$controller = Inflector::camelize($request->params['controller']);
 		}
 		if ($pluginPath . $controller) {
-			if (App::import('Controller', $pluginPath . $controller)) {
-				return $controller;
+			$class = $controller . 'Controller';
+			App::uses('AppController', 'Controller');
+			App::uses($class, $pluginPath . 'Controller');
+			if (class_exists($class)) {
+				return $class;
 			}
 		}
 		return false;
