@@ -129,7 +129,7 @@ class Helper extends Object {
  * @param array $params Array of params for the method.
  */
 	public function __call($method, $params) {
-		trigger_error(sprintf(__('Method %1$s::%2$s does not exist'), get_class($this), $method), E_USER_WARNING);
+		trigger_error(__('Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
 	}
 
 /**

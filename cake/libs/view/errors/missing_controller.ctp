@@ -20,11 +20,11 @@
 <h2><?php echo __('Missing Controller'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('%s could not be found.'), '<em>' . $controller . '</em>'); ?>
+	<?php echo __('%s could not be found.', '<em>' . $controller . '</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create the class %s below in file: %s'), '<em>' . $controller . '</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
+	<?php echo __('Create the class %s below in file: %s', '<em>' . $controller . '</em>', APP_DIR . DS . 'controllers' . DS . Inflector::underscore($controller) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
@@ -35,7 +35,7 @@ class <?php echo $controller;?> extends AppController {
 </pre>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_controller.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_controller.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

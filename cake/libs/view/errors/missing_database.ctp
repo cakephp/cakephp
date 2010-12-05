@@ -24,11 +24,11 @@
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Confirm you have created the file: %s'), APP_DIR . DS . 'config' . DS . 'database.php'); ?>
+	<?php echo __('Confirm you have created the file: %s', APP_DIR . DS . 'config' . DS . 'database.php'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_scaffolddb.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_scaffolddb.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

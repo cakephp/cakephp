@@ -523,7 +523,7 @@ class AuthComponent extends Component {
 			case 'crud':
 				if (!isset($this->actionMap[$this->request['action']])) {
 					trigger_error(
-						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->request['action'], $this->request['controller']),
+						__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', $this->request['action'], $this->request['controller']),
 						E_USER_WARNING
 					);
 				} else {
@@ -547,13 +547,13 @@ class AuthComponent extends Component {
 					$action = $this->action(':action');
 				}
 				if (empty($object)) {
-					trigger_error(sprintf(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object'), get_class($object)), E_USER_WARNING);
+					trigger_error(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', get_class($object)), E_USER_WARNING);
 					return;
 				}
 				if (method_exists($object, 'isAuthorized')) {
 					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
 				} elseif ($object) {
-					trigger_error(sprintf(__('%s::isAuthorized() is not defined.'), get_class($object)), E_USER_WARNING);
+					trigger_error(__('%s::isAuthorized() is not defined.', get_class($object)), E_USER_WARNING);
 				}
 			break;
 			case null:

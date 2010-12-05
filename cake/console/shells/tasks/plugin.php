@@ -56,8 +56,8 @@ class PluginTask extends Shell {
 			$plugin = Inflector::camelize($this->args[0]);
 			$pluginPath = $this->_pluginPath($plugin);
 			if (is_dir($pluginPath)) {
-				$this->out(sprintf(__('Plugin: %s'), $plugin));
-				$this->out(sprintf(__('Path: %s'), $pluginPath));
+				$this->out(__('Plugin: %s', $plugin));
+				$this->out(__('Path: %s', $pluginPath));
 			} else {
 				$this->_interactive($plugin);
 			}
@@ -78,7 +78,7 @@ class PluginTask extends Shell {
 		}
 
 		if (!$this->bake($plugin)) {
-			$this->error(sprintf(__("An error occured trying to bake: %s in %s"), $plugin, $this->path . Inflector::underscore($pluginPath)));
+			$this->error(__("An error occured trying to bake: %s in %s", $plugin, $this->path . Inflector::underscore($pluginPath)));
 		}
 	}
 
@@ -97,8 +97,8 @@ class PluginTask extends Shell {
 			$this->findPath($pathOptions);
 		}
 		$this->hr();
-		$this->out(sprintf(__("<info>Plugin Name:</info> %s"),  $plugin));
-		$this->out(sprintf(__("<info>Plugin Directory:</info> %s"), $this->path . $pluginPath));
+		$this->out(__("<info>Plugin Name:</info> %s",  $plugin));
+		$this->out(__("<info>Plugin Directory:</info> %s", $this->path . $pluginPath));
 		$this->hr();
 
 		$looksGood = $this->in(__('Look okay?'), array('y', 'n', 'q'), 'y');
@@ -156,7 +156,7 @@ class PluginTask extends Shell {
 			$this->createFile($this->path . $pluginPath . DS . $modelFileName, $out);
 
 			$this->hr();
-			$this->out(sprintf(__('<success>Created:</success> %s in %s'), $plugin, $this->path . $pluginPath), 2);
+			$this->out(__('<success>Created:</success> %s in %s', $plugin, $this->path . $pluginPath), 2);
 		}
 
 		return true;

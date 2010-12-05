@@ -166,7 +166,7 @@ class FixtureTask extends BakeTask {
 			$options['records'] = true;
 		}
 		if ($doRecords == 'n') {
-			$prompt = sprintf(__("Would you like to build this fixture with data from %s's table?"), $modelName);
+			$prompt = __("Would you like to build this fixture with data from %s's table?", $modelName);
 			$fromTable = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($fromTable) == 'y') {
 				$options['fromTable'] = true;

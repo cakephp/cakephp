@@ -134,7 +134,7 @@ class CakeLog {
 			}
 		}
 		if (!class_exists($loggerName)) {
-			throw new Exception(sprintf(__('Could not load class %s'), $loggerName));
+			throw new Exception(__('Could not load class %s', $loggerName));
 		}
 		return $loggerName;
 	}
