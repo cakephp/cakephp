@@ -284,7 +284,10 @@ class Configure {
  *
  * @return array Array of the configured reader objects.
  */
-	public static function configured() {
+	public static function configured($name = null) {
+		if ($name) {
+			return isset(self::$_readers[$name]);
+		}
 		return array_keys(self::$_readers);
 	}
 
