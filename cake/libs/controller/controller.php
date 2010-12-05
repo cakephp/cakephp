@@ -1220,5 +1220,3 @@ class Controller extends Object {
 		return false;
 	}
 }
-
-class MissingModelException extends RuntimeException {}
