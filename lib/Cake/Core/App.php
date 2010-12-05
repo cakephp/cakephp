@@ -440,6 +440,11 @@ class App {
 
 	public static function load($className) {
 		if (isset(self::$__classMap[$className])) {
+
+			if ($file = self::__mapped($className)) {
+				return include $file;
+			}
+
 			$package = self::$__classMap[$className];
 			$paths = self::path($package);
 			$paths[] = LIBS . self::$__classMap[$className] . DS;
@@ -447,6 +452,7 @@ class App {
 			foreach ($paths as $path) {
 				$file = $path . $className . '.php';
 				if (file_exists($file)) {
+					self::__map($file, $className);
 					return include $file;
 				}
 			}
@@ -678,16 +684,15 @@ class App {
  *
  * @param string $file full path to file
  * @param string $name unique name for this map
- * @param string $type type object being mapped
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @return void
  * @access private
  */
-	private static function __map($file, $name, $type, $plugin) {
+	private static function __map($file, $name, $plugin = null) {
 		if ($plugin) {
-			self::$__map['Plugin'][$plugin][$type][$name] = $file;
+			self::$__map['Plugin'][$plugin][$name] = $file;
 		} else {
-			self::$__map[$type][$name] = $file;
+			self::$__map[$name] = $file;
 		}
 	}
 
@@ -695,21 +700,20 @@ class App {
  * Returns a file's complete path.
  *
  * @param string $name unique name
- * @param string $type type object
  * @param string $plugin camelized if object is from a plugin, the name of the plugin
  * @return mixed, file path if found, false otherwise
  * @access private
  */
-	private static function __mapped($name, $type, $plugin) {
+	private static function __mapped($name, $plugin = null) {
 		if ($plugin) {
-			if (isset(self::$__map['Plugin'][$plugin][$type]) && isset(self::$__map['Plugin'][$plugin][$type][$name])) {
-				return self::$__map['Plugin'][$plugin][$type][$name];
+			if (isset(self::$__map['Plugin'][$plugin][$name])) {
+				return self::$__map['Plugin'][$plugin][$name];
 			}
 			return false;
 		}
 
-		if (isset(self::$__map[$type]) && isset(self::$__map[$type][$name])) {
-			return self::$__map[$type][$name];
+		if (isset(self::$__map[$name])) {
+			return self::$__map[$name];
 		}
 		return false;
 	}
@@ -897,9 +901,6 @@ class App {
  */
 	public static function shutdown() {
 		if (self::$__cache) {
-			$core = App::core('cake');
-			unset(self::$__paths[rtrim($core[0], DS)]);
-			Cache::write('dir_map', array_filter(self::$__paths), '_cake_core_');
 			Cache::write('file_map', array_filter(self::$__map), '_cake_core_');
 			Cache::write('object_map', self::$__objects, '_cake_core_');
 		}
