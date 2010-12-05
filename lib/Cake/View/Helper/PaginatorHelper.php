@@ -96,9 +96,7 @@ class PaginatorHelper extends AppHelper {
 		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
-		if (!class_exists($ajaxProvider . 'Helper')) {
-			App::import('Helper', $ajaxProvider);
-		}
+		App::uses($ajaxProvider . 'Helper', 'View/Helper');
 		$classname = $ajaxProvider . 'Helper';
 		if (!method_exists($classname, 'link')) {
 			throw new Exception(sprintf(

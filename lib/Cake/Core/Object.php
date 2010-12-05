@@ -21,6 +21,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Set', 'Utility');
+
 /**
  * Object class provides a few generic methods used in several subclasses.
  *

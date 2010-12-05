@@ -609,7 +609,7 @@ class App {
 		}
 
 		if (empty(self::$__paths)) {
-			//self::$__paths = Cache::read('dir_map', '_cake_core_');
+			self::$__paths = Cache::read('dir_map', '_cake_core_');
 		}
 
 		foreach (self::$search as $path) {
