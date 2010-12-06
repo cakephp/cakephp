@@ -290,12 +290,12 @@ class HttpSocketTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($this->Socket->config, $expected);
-		$this->assertEquals($r, $expected);
+		$this->assertTrue($r);
 		$r = $this->Socket->configUri(array('host' => 'www.foo-bar.org'));
 		$expected['host'] = 'www.foo-bar.org';
 		$expected['request']['uri']['host'] = 'www.foo-bar.org';
 		$this->assertEquals($this->Socket->config, $expected);
-		$this->assertEquals($r, $expected);
+		$this->assertTrue($r);
 
 		$r = $this->Socket->configUri('http://www.foo.com');
 		$expected = array(
@@ -314,13 +314,13 @@ class HttpSocketTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($this->Socket->config, $expected);
-		$this->assertEquals($r, $expected);
+		$this->assertTrue($r);
 		$r = $this->Socket->configUri('/this-is-broken');
 		$this->assertEquals($this->Socket->config, $expected);
-		$this->assertEquals($r, false);
+		$this->assertFalse($r);
 		$r = $this->Socket->configUri(false);
 		$this->assertEquals($this->Socket->config, $expected);
-		$this->assertEquals($r, false);
+		$this->assertFalse($r);
 	}
 
 /**

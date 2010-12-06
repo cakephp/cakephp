@@ -674,7 +674,7 @@ class HttpSocket extends CakeSocket {
  * Parses and sets the specified URI into current request configuration.
  *
  * @param mixed $uri URI, See HttpSocket::_parseUri()
- * @return array Current configuration settings
+ * @return boolean If uri has merged in config
  */
 	protected function _configUri($uri = null) {
 		if (empty($uri)) {
@@ -697,7 +697,7 @@ class HttpSocket extends CakeSocket {
 		);
 		$this->config = Set::merge($this->config, $config);
 		$this->config = Set::merge($this->config, array_intersect_key($this->config['request']['uri'], $this->config));
-		return $this->config;
+		return true;
 	}
 
 /**
