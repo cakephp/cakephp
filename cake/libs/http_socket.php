@@ -213,15 +213,16 @@ class HttpSocket extends CakeSocket {
  * method and provide a more granular interface.
  *
  * @param mixed $request Either an URI string, or an array defining host/uri
- * @return mixed false on error, request body on success
+ * @return mixed null on error, reference to request body on success
  */
-	public function request($request = array()) {
+	public function &request($request = array()) {
 		$this->reset(false);
 
 		if (is_string($request)) {
 			$request = array('uri' => $request);
 		} elseif (!is_array($request)) {
-			return false;
+			$return = false;
+			return $return;
 		}
 
 		if (!isset($request['uri'])) {
@@ -354,7 +355,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
  */
-	public function get($uri = null, $query = array(), $request = array()) {
+	public function &get($uri = null, $query = array(), $request = array()) {
 		if (!empty($query)) {
 			$uri = $this->_parseUri($uri);
 			if (isset($uri['query'])) {
@@ -386,7 +387,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
  */
-	public function post($uri = null, $data = array(), $request = array()) {
+	public function &post($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'POST', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -399,7 +400,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
-	public function put($uri = null, $data = array(), $request = array()) {
+	public function &put($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -412,7 +413,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
-	public function delete($uri = null, $data = array(), $request = array()) {
+	public function &delete($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}

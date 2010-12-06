@@ -622,6 +622,22 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testRequestResultAsPointer method
+ *
+ * @return void
+ */
+	public function testRequestResultAsPointer() {
+		$request = array('uri' => 'htpp://www.cakephp.org/');
+		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->connected = true;
+		$data =& $this->Socket->request($request);
+		$this->assertEqual($data, $this->Socket->response['body']);
+		$data = 'new data';
+		$this->assertEqual($data, $this->Socket->response['body']);
+	}
+
+/**
  * testProxy method
  *
  * @return void
