@@ -904,9 +904,6 @@ class Model extends Object {
 
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
-
-			$db = $this->getDataSource();
-			$format = $db->columns[$type]['format'];
 			$date = array();
 
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
@@ -949,9 +946,13 @@ class Model extends Object {
 					}
 				}
 			}
-			$date = str_replace(array_keys($date), array_values($date), $format);
+
+			$format = $this->getDataSource()->columns[$type]['format'];
+			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
+			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
+			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date;
+				return $date->format($format);
 			}
 		}
 		return $data;
@@ -1449,15 +1450,11 @@ class Model extends Object {
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
-						$values = array(
-							$db->value($id, $this->getColumnType($this->primaryKey)),
-							$db->value($row)
-						);
+						$values = array($id, $row);
 						if ($isUUID && $primaryAdded) {
-							$values[] = $db->value(String::uuid());
+							$values[] = String::uuid();
 						}
-						$values = implode(',', $values);
-						$newValues[] = "({$values})";
+						$newValues[] = $values;
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
@@ -1496,7 +1493,6 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$fields = implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}

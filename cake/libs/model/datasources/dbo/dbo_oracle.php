@@ -478,7 +478,7 @@ class DboOracle extends DboSource {
  * @param object instance of a model to inspect
  * @return array Fields in table. Keys are name and type
  */
-	public function describe(&$model) {
+	public function describe($model) {
 		$table = $this->fullTableName($model, false);
 
 		if (!empty($model->sequence)) {
@@ -974,7 +974,7 @@ class DboOracle extends DboSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
@@ -1121,16 +1121,12 @@ class DboOracle extends DboSource {
 /**
  * Generate a "drop table" statement for the given Schema object
  *
- * @param object $schema An instance of a subclass of CakeSchema
+ * @param CakeSchema $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *						Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-		function dropSchema($schema, $table = null) {
-			if (!is_a($schema, 'CakeSchema')) {
-				trigger_error(__('Invalid schema object'), E_USER_WARNING);
-				return null;
-			}
+		function dropSchema(CakeSchema $schema, $table = null) {
 			$out = '';
 
 			foreach ($schema->tables as $curTable => $columns) {

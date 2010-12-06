@@ -95,11 +95,7 @@ class CakeSchema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			if (is_dir(CONFIGS . 'schema')) {
-				$this->path = CONFIGS . 'schema';
-			} else {
-				$this->path = CONFIGS . 'sql';
-			}
+			$this->path = CONFIGS . 'schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
@@ -161,7 +157,7 @@ class CakeSchema extends Object {
  * @param array $options schema object properties
  * @return array Set of name and tables
  */
-	public function &load($options = array()) {
+	public function load($options = array()) {
 		if (is_string($options)) {
 			$options = array('path' => $options);
 		}
@@ -183,8 +179,8 @@ class CakeSchema extends Object {
 			$Schema = new $class($options);
 			return $Schema;
 		}
-		$false = false;
-		return $false;
+
+		return false;
 	}
 
 /**
@@ -299,7 +295,9 @@ class CakeSchema extends Object {
 				$systemTables = array(
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
-
+				if (get_class($Object) === 'AppModel') {
+					continue;
+				}
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
