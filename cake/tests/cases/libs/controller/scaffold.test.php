@@ -347,7 +347,7 @@ class ScaffoldViewTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = $ScaffoldView->testGetFilename('error');
-		$expected = 'cake' . DS . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
+		$expected = CAKE . 'libs' . DS . 'view' . DS . 'errors' . DS . 'scaffold_error.ctp';
 		$this->assertEqual($result, $expected);
 
 		$Controller = new ScaffoldMockController($this->request);

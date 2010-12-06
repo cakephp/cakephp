@@ -43,7 +43,6 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  */
 	function tearDown() {
 		parent::tearDown();
-		ConsoleErrorHandler::$stderr = null;
 	}
 
 /**
@@ -52,7 +51,7 @@ class ConsoleErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	function testHandleError() {
-		$content = '<error>Notice Error:</error> This is a notice error in [/some/file, line 275]';
+		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
 		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
 			->with($content);
 

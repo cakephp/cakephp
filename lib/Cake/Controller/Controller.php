@@ -473,9 +473,10 @@ class Controller extends Object {
 			} else {
 				$id = $this->passedArgs['0'];
 			}
+			$plugin = $this->plugin ? $this->plugin . '.' : null;
 
 			if ($this->uses === false) {
-				$this->loadModel($this->modelClass, $id);
+				$this->loadModel($plugin . $this->modelClass, $id);
 			} elseif ($this->uses) {
 				$uses = is_array($this->uses) ? $this->uses : array($this->uses);
 				list($plugin, $modelClassName) = pluginSplit($uses[0]);
