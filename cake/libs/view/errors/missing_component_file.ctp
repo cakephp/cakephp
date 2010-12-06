@@ -24,7 +24,7 @@
 </p>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create the class %s in file: %s'), '<em>' . $class . '</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
+	<?php echo __('Create the class %s in file: %s', '<em>' . $class . '</em>', APP_DIR . DS . 'controllers' . DS . 'components' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -35,7 +35,7 @@ class <?php echo $class;?> extends Component {<br />
 </pre>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_component_file.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_component_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

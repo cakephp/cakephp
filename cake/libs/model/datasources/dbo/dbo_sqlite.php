@@ -382,7 +382,7 @@ class DboSqlite extends DboSource {
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error("Column type {$type} does not exist", E_USER_WARNING);
+			trigger_error(__('Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 

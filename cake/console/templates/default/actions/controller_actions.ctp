@@ -77,7 +77,7 @@
 			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 			$this->redirect(array('action' => 'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
+			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if ($this->request->is('post')) {
@@ -123,7 +123,7 @@
 			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
 			$this->redirect(array('action'=>'index'));
 <?php else: ?>
-			$this->flash(sprintf(__('Invalid <?php echo strtolower($singularHumanName); ?>')), array('action' => 'index'));
+			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
 <?php endif; ?>
 		}
 		if ($this-><?php echo $currentModelName; ?>->delete($id)) {

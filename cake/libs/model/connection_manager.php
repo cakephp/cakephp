@@ -95,7 +95,7 @@ class ConnectionManager {
 		}
 
 		if (empty($_this->_connectionsEnum[$name])) {
-			trigger_error(sprintf(__("ConnectionManager::getDataSource - Non-existent data source %s"), $name), E_USER_ERROR);
+			trigger_error(__("ConnectionManager::getDataSource - Non-existent data source %s", $name), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
@@ -103,7 +103,7 @@ class ConnectionManager {
 		$class = $conn['classname'];
 
 		if ($_this->loadDataSource($name) === null) {
-			trigger_error(sprintf(__("ConnectionManager::getDataSource - Could not load class %s"), $class), E_USER_ERROR);
+			trigger_error(__("ConnectionManager::getDataSource - Could not load class %s", $class), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
@@ -172,7 +172,7 @@ class ConnectionManager {
 		$class = "{$conn['plugin']}.{$conn['classname']}";
 
 		if (!App::import('Datasource', $class, !is_null($conn['plugin']))) {
-			trigger_error(sprintf(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s'), $class), E_USER_ERROR);
+			trigger_error(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', $class), E_USER_ERROR);
 			return null;
 		}
 		return true;

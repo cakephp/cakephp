@@ -237,7 +237,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<li class='fail'>\n";
 		echo "<span>Failed</span>";
 		echo "<div class='msg'><pre>" . $this->_htmlEntities($message->toString()) . "</pre></div>\n";
-		echo "<div class='msg'>" . sprintf(__('Test case: %s'), $testName) . "</div>\n";
+		echo "<div class='msg'>" . __('Test case: %s', $testName) . "</div>\n";
 		echo "<div class='msg'>" . __('Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
@@ -275,7 +275,7 @@ class CakeHtmlReporter extends CakeBaseReporter {
 		echo "<span>Exception</span>";
 
 		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
-		echo "<div class='msg'>" . sprintf(__('Test case: %s'), $testName) . "</div>\n";
+		echo "<div class='msg'>" . __('Test case: %s', $testName) . "</div>\n";
 		echo "<div class='msg'>" . __('Stack trace:') . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
@@ -341,6 +341,6 @@ class CakeHtmlReporter extends CakeBaseReporter {
  * @param  PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(PHPUnit_Framework_TestSuite $suite) {
-		echo '<h2>' . sprintf(__('Running  %s'), $suite->getName())  . '</h2>';
+		echo '<h2>' . __('Running  %s', $suite->getName())  . '</h2>';
 	}
 }

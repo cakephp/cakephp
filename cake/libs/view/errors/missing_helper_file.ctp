@@ -20,11 +20,11 @@
 <h2><?php echo __('Missing Helper File'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The helper file %s can not be found or does not exist.'), APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<?php echo __('The helper file %s can not be found or does not exist.', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create the class below in file: %s'), APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
+	<?php echo __('Create the class below in file: %s', APP_DIR . DS . 'views' . DS . 'helpers' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -35,7 +35,7 @@ class <?php echo $class;?> extends AppHelper {
 </pre>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_helper_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

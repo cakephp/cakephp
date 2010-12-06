@@ -978,7 +978,7 @@ class DboOracle extends DboSource {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:'), $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __('SQL Error in model %s:', $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}

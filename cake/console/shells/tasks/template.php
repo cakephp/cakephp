@@ -206,7 +206,7 @@ class TemplateTask extends Shell {
 				return $templatePath;
 			}
 		}
-		$this->err(sprintf(__('Could not find template for %s'), $filename));
+		$this->err(__('Could not find template for %s', $filename));
 		return false;
 	}
 }

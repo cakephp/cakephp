@@ -19,7 +19,7 @@ class AppImportTest extends CakeTestCase {
 		$expected = array(
 			APP . 'models' . DS,
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			LIBS . 'model' . DS
 		);
 		$this->assertEqual($expected, $old);
 
@@ -31,7 +31,7 @@ class AppImportTest extends CakeTestCase {
 			'/path/to/models/',
 			APP . 'models' . DS,
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			LIBS . 'model' . DS
 		);
 		$this->assertEqual($expected, $new);
 
@@ -51,7 +51,7 @@ class AppImportTest extends CakeTestCase {
 		$expected = array(
 			APP . 'models' . DS,
 			APP,
-			ROOT . DS . LIBS . 'model' . DS
+			LIBS . 'model' . DS
 		);
 		$this->assertEqual($expected, $old);
 
@@ -77,13 +77,13 @@ class AppImportTest extends CakeTestCase {
  */
 	function testCore() {
 		$model = App::core('models');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'model' . DS), $model);
+		$this->assertEqual(array(LIBS . 'model' . DS), $model);
 
 		$view = App::core('views');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'view' . DS), $view);
+		$this->assertEqual(array(LIBS . 'view' . DS), $view);
 
 		$controller = App::core('controllers');
-		$this->assertEqual(array(ROOT . DS . LIBS . 'controller' . DS), $controller);
+		$this->assertEqual(array(LIBS . 'controller' . DS), $controller);
 
 	}
 
@@ -329,7 +329,9 @@ class AppImportTest extends CakeTestCase {
 		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper was not found because the path does not exist.');
 
 		App::build(array(
-			'helpers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS)
+			'helpers' => array(
+				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'helpers' . DS
+			)
 		));
 		App::build(array('vendors' => array(TEST_CAKE_CORE_INCLUDE_PATH)));
 		$this->assertFalse(class_exists('BananaHelper'), 'BananaHelper exists, cannot test importing it.');

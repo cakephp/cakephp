@@ -78,7 +78,7 @@ class AclShell extends Shell {
 			$out .= __('your core config to reflect your decision to use') . "\n";
 			$out .= __('DbAcl before attempting to use this script') . ".\n";
 			$out .= "--------------------------------------------------\n";
-			$out .= sprintf(__('Current ACL Classname: %s'), Configure::read('Acl.classname')) . "\n";
+			$out .= __('Current ACL Classname: %s', Configure::read('Acl.classname')) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
 			$this->_stop();
@@ -135,9 +135,9 @@ class AclShell extends Shell {
 		$data['parent_id'] = $parent;
 		$this->Acl->{$class}->create();
 		if ($this->Acl->{$class}->save($data)) {
-			$this->out(sprintf(__("<success>New %s</success> '%s' created."), $class, $this->args[2]), 2);
+			$this->out(__("<success>New %s</success> '%s' created.", $class, $this->args[2]), 2);
 		} else {
-			$this->err(sprintf(__("There was a problem creating a new %s '%s'."), $class, $this->args[2]));
+			$this->err(__("There was a problem creating a new %s '%s'.", $class, $this->args[2]));
 		}
 	}
 
@@ -152,9 +152,9 @@ class AclShell extends Shell {
 		$nodeId = $this->_getNodeId($class, $identifier);
 
 		if (!$this->Acl->{$class}->delete($nodeId)) {
-			$this->error(__('Node Not Deleted') . sprintf(__('There was an error deleting the %s. Check that the node exists'), $class) . ".\n");
+			$this->error(__('Node Not Deleted') . __('There was an error deleting the %s. Check that the node exists', $class) . ".\n");
 		}
-		$this->out(sprintf(__('<success>%s deleted.</success>'), $class), 2);
+		$this->out(__('<success>%s deleted.</success>', $class), 2);
 	}
 
 /**
@@ -176,7 +176,7 @@ class AclShell extends Shell {
 		if (!$this->Acl->{$class}->save($data)) {
 			$this->out(__('Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.'), true);
 		} else {
-			$this->out(sprintf(__('Node parent set to %s'), $this->args[2]) . "\n", true);
+			$this->out(__('Node parent set to %s', $this->args[2]) . "\n", true);
 		}
 	}
 
@@ -193,7 +193,7 @@ class AclShell extends Shell {
 
 		if (empty($nodes)) {
 			$this->error(
-				sprintf(__("Supplied Node '%s' not found"), $this->args[1]),
+				__("Supplied Node '%s' not found", $this->args[1]),
 				__('No tree returned.')
 			);
 		}
@@ -230,9 +230,9 @@ class AclShell extends Shell {
 		extract($this->__getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
-			$this->out(sprintf(__('%s is <success>allowed</success>.'), $aroName), true);
+			$this->out(__('%s is <success>allowed</success>.', $aroName), true);
 		} else {
-			$this->out(sprintf(__('%s is <error>not allowed</error>.'), $aroName), true);
+			$this->out(__('%s is <error>not allowed</error>.', $aroName), true);
 		}
 	}
 
@@ -305,9 +305,9 @@ class AclShell extends Shell {
 
 		if (empty($nodes)) {
 			if (isset($this->args[1])) {
-				$this->error(sprintf(__('%s not found'), $this->args[1]), __('No tree returned.'));
+				$this->error(__('%s not found', $this->args[1]), __('No tree returned.'));
 			} elseif (isset($this->args[0])) {
-				$this->error(sprintf(__('%s not found'), $this->args[0]), __('No tree returned.'));
+				$this->error(__('%s not found', $this->args[0]), __('No tree returned.'));
 			}
 		}
 		$this->out($class . " tree:");
@@ -522,7 +522,7 @@ class AclShell extends Shell {
 		$conditions = array($class . '.' . $key => $this->args[1]);
 		$possibility = $this->Acl->{$class}->find('all', compact('conditions'));
 		if (empty($possibility)) {
-			$this->error(sprintf(__('%s not found'), $this->args[1]), __('No tree returned.'));
+			$this->error(__('%s not found', $this->args[1]), __('No tree returned.'));
 		}
 		return $possibility;
 	}
@@ -558,7 +558,7 @@ class AclShell extends Shell {
 			if (is_array($identifier)) {
 				$identifier = var_export($identifier, true);
 			}
-			$this->error(sprintf(__('Could not find node using reference "%s"'), $identifier));
+			$this->error(__('Could not find node using reference "%s"', $identifier));
 		}
 		return Set::extract($node, "0.{$class}.id");
 	}

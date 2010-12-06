@@ -2634,7 +2634,7 @@ class Model extends Object {
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
-							trigger_error(sprintf(__('Could not find validation handler %s for %s'), $rule, $fieldName), E_USER_WARNING);
+							trigger_error(__('Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
@@ -2943,7 +2943,7 @@ class Model extends Object {
 			return array($with, array_unique(array_merge($assoc[$with], $keys)));
 		}
 		trigger_error(
-			sprintf(__('Invalid join model settings in %s'), $model->alias),
+			__('Invalid join model settings in %s', $model->alias),
 			E_USER_WARNING
 		);
 	}

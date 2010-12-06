@@ -505,7 +505,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = sprintf(__('Error in field %s'), Inflector::humanize($this->field()));
+				$error = __('Error in field %s', Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
@@ -1140,7 +1140,7 @@ class FormHelper extends AppHelper {
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new Exception(sprintf(__('Missing field name for FormHelper::%s'), $method));
+			throw new Exception(__('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
