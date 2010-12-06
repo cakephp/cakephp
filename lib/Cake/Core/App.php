@@ -265,9 +265,6 @@ class App {
 			return $paths;
 		}
 
-		$core = self::core();
-		$app = array('models' => true, 'controllers' => true, 'helpers' => true);
-
 		foreach ($defaults as $type => $default) {
 
 			if (empty(self::$__packages[$type]) || empty($paths)) {
