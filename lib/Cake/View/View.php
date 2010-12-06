@@ -408,7 +408,7 @@ class View extends Object {
 			$layout = $this->layout;
 		}
 		if ($this->output === false) {
-			throw new RuntimeException(sprintf(__("Error in view %s, got no content."), $viewFileName));
+			throw new RuntimeException(__("Error in view %s, got no content.", $viewFileName));
 		}
 		if ($layout && $this->autoLayout) {
 			$this->output = $this->renderLayout($this->output, $layout);
@@ -450,7 +450,7 @@ class View extends Object {
 		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
-			throw new RuntimeException(sprintf(__("Error in layout %s, got no content."), $layoutFileName));
+			throw new RuntimeException(__("Error in layout %s, got no content.", $layoutFileName));
 		}
 
 		$this->Helpers->trigger('afterLayout', array($layoutFileName));

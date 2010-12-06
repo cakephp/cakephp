@@ -58,7 +58,7 @@ class Configure {
 			self::write('App', array('base' => false, 'baseUrl' => false, 'dir' => APP_DIR, 'webroot' => WEBROOT_DIR, 'www_root' => WWW_ROOT));
 
 			if (!include(CONFIGS . 'core.php')) {
-				trigger_error(sprintf(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
+				trigger_error(__("Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
 			}
 
 			if (Configure::read('Cache.disable') !== true) {
@@ -100,7 +100,7 @@ class Configure {
 			App::init();
 			App::build();
 			if (!include(CONFIGS . 'bootstrap.php')) {
-				trigger_error(sprintf(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP."), CONFIGS), E_USER_ERROR);
+				trigger_error(__("Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", CONFIGS), E_USER_ERROR);
 			}
 			$level = -1;
 			if (isset(self::$_values['Error']['level'])) {
@@ -299,7 +299,7 @@ class Configure {
 		}
 
 		if (!isset($config)) {
-			trigger_error(sprintf(__('Configure::load() - no variable $config found in %s.php'), $fileName), E_USER_WARNING);
+			trigger_error(__('Configure::load() - no variable $config found in %s.php', $fileName), E_USER_WARNING);
 			return false;
 		}
 		return self::write($config);

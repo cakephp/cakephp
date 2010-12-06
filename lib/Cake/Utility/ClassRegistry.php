@@ -150,7 +150,7 @@ class ClassRegistry {
 				}
 
 				if (!isset(${$class})) {
-					trigger_error(sprintf(__('(ClassRegistry::init() could not create instance of %1$s class %2$s '), $class, $type), E_USER_WARNING);
+					trigger_error(__('(ClassRegistry::init() could not create instance of %1$s class %2$s ', $class, $type), E_USER_WARNING);
 					return $false;
 				}
 

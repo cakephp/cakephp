@@ -92,13 +92,13 @@ class TestTask extends BakeTask {
 		$this->interactive = true;
 		$this->hr();
 		$this->out(__('Bake Tests'));
-		$this->out(sprintf(__('Path: %s'), $this->path));
+		$this->out(__('Path: %s', $this->path));
 		$this->hr();
 
 		if ($type) {
 			$type = Inflector::camelize($type);
 			if (!in_array($type, $this->classTypes)) {
-				$this->error(sprintf('Incorrect type provided.  Please choose one of %s', implode(', ', $this->classTypes)));
+				$this->error(__('Incorrect type provided. Please choose one of %s', implode(', ', $this->classTypes)));
 			}
 		} else {
 			$type = $this->getObjectType();
@@ -180,7 +180,7 @@ class TestTask extends BakeTask {
  */
 	public function getClassName($objectType) {
 		$options = App::objects(strtolower($objectType));
-		$this->out(sprintf(__('Choose a %s class'), $objectType));
+		$this->out(__('Choose a %s class', $objectType));
 		$keys = array();
 		foreach ($options as $key => $option) {
 			$this->out(++$key . '. ' . $option);

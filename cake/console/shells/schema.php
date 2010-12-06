@@ -114,7 +114,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		} else {
 			$file = $this->Schema->path . DS . $this->params['file'];
-			$this->err(sprintf(__('Schema file (%s) could not be found.'), $file));
+			$this->err(__('Schema file (%s) could not be found.', $file));
 			$this->_stop();
 		}
 	}
@@ -179,7 +179,7 @@ class SchemaShell extends Shell {
 		}
 
 		if ($this->Schema->write($content)) {
-			$this->out(sprintf(__('Schema file: %s generated'), $content['file']));
+			$this->out(__('Schema file: %s generated', $content['file']));
 			$this->_stop();
 		} else {
 			$this->err(__('Schema file: %s generated'));
@@ -224,7 +224,7 @@ class SchemaShell extends Shell {
 			}
 
 			if ($File->write($contents)) {
-				$this->out(sprintf(__('SQL dump file created in %s'), $File->pwd()));
+				$this->out(__('SQL dump file created in %s', $File->pwd()));
 				$this->_stop();
 			} else {
 				$this->err(__('SQL dump could not be created'));
@@ -283,7 +283,7 @@ class SchemaShell extends Shell {
 		$Schema = $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded'), $this->Schema->path . DS . $this->Schema->file));
+			$this->err(__('%s could not be loaded', $this->Schema->path . DS . $this->Schema->file));
 			$this->_stop();
 		}
 		$table = null;
@@ -394,10 +394,10 @@ class SchemaShell extends Shell {
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
-				$this->out(sprintf(__('%s is up to date.'), $table));
+				$this->out(__('%s is up to date.', $table));
 			} else {
 				if ($this->__dry === true) {
-					$this->out(sprintf(__('Dry run for %s :'), $table));
+					$this->out(__('Dry run for %s :', $table));
 					$this->out($sql);
 				} else {
 					if (!$Schema->before(array($event => $table))) {
@@ -413,7 +413,7 @@ class SchemaShell extends Shell {
 					if (!empty($error)) {
 						$this->out($error);
 					} else {
-						$this->out(sprintf(__('%s updated.'), $table));
+						$this->out(__('%s updated.', $table));
 					}
 				}
 			}

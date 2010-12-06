@@ -89,14 +89,6 @@ class DboSource extends DataSource {
 	private $__sqlOps = array('like', 'ilike', 'or', 'not', 'in', 'between', 'regexp', 'similar to');
 
 /**
- * Indicates that a transaction have been started
- *
- * @var boolean
- * @access protected
- */
-	protected $_transactionStarted = false;
-
-/**
  * Indicates the level of nested transactions
  *
  * @var integer
@@ -181,7 +173,7 @@ class DboSource extends DataSource {
  * @return boolean True if the database could be disconnected, else false
  */
 	function disconnect() {
-		if (is_a($this->_result, 'PDOStatement')) {
+		if ($this->_result instanceof PDOStatement) {
 			$this->_result->closeCursor();
 		}
 		unset($this->_connection);
@@ -189,6 +181,11 @@ class DboSource extends DataSource {
 		return !$this->connected;
 	}
 
+/**
+ * Get the underlying connection object.
+ *
+ * @return PDOConnection
+ */
 	public function getConnection() {
 		return $this->_connection;
 	}
@@ -336,7 +333,7 @@ class DboSource extends DataSource {
  */
 	protected function _execute($sql, $params = array()) {
 		$sql = trim($sql);
-		if (preg_match('/^CREATE|^ALTER|^DROP/i', $sql)) {
+		if (preg_match('/^(?:CREATE|ALTER|DROP)/i', $sql)) {
 			$statements = array_filter(explode(';', $sql));
 			if (count($statements) > 1) {
 				$result = array_map(array($this, '_execute'), $statements);
@@ -419,14 +416,14 @@ class DboSource extends DataSource {
 		if (count($args) == 1) {
 			return $this->fetchAll($args[0]);
 
-		} elseif (count($args) > 1 && (strpos(strtolower($args[0]), 'findby') === 0 || strpos(strtolower($args[0]), 'findallby') === 0)) {
+		} elseif (count($args) > 1 && (strpos($args[0], 'findBy') === 0 || strpos($args[0], 'findAllBy') === 0)) {
 			$params = $args[1];
 
-			if (strpos(strtolower($args[0]), 'findby') === 0) {
-				$all  = false;
+			if (strpos($args[0], 'findBy') === 0) {
+				$all = false;
 				$field = Inflector::underscore(preg_replace('/^findBy/i', '', $args[0]));
 			} else {
-				$all  = true;
+				$all = true;
 				$field = Inflector::underscore(preg_replace('/^findAllBy/i', '', $args[0]));
 			}
 
@@ -818,7 +815,7 @@ class DboSource extends DataSource {
 			if ($error) {
 				trigger_error('<span style="color:Red;text-align:left"><b>' . __('SQL Error:') . "</b> {$this->error}</span>", E_USER_WARNING);
 			} else {
-				$out = ('<small>[' . sprintf(__('Aff:%s Num:%s Took:%sms'), $this->affected, $this->numRows, $this->took) . ']</small>');
+				$out = ('<small>[' . __('Aff:%s Num:%s Took:%sms', $this->affected, $this->numRows, $this->took) . ']</small>');
 			}
 			pr(sprintf('<p style="text-align:left"><b>' . __('Query:') . '</b> %s %s</p>', $sql, $out));
 		}
@@ -857,7 +854,7 @@ class DboSource extends DataSource {
  *   be used to generate values.
  * @return boolean Success
  */
-	public function create(&$model, $fields = null, $values = null) {
+	public function create($model, $fields = null, $values = null) {
 		$id = null;
 
 		if ($fields == null) {
@@ -905,7 +902,7 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure.  An array of results on success.
  */
-	public function read(&$model, $queryData = array(), $recursive = null) {
+	public function read($model, $queryData = array(), $recursive = null) {
 		$queryData = $this->__scrubQueryData($queryData);
 
 		$null = null;
@@ -1049,11 +1046,11 @@ class DboSource extends DataSource {
  * @param integer $recursive Number of levels of association
  * @param array $stack
  */
-	public function queryAssociation(&$model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
+	public function queryAssociation($model, &$linkModel, $type, $association, $assocData, &$queryData, $external = false, &$resultSet, $recursive, $stack) {
 		if ($query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
 			if (!isset($resultSet) || !is_array($resultSet)) {
 				if (Configure::read('debug') > 0) {
-					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . sprintf(__('SQL Error in model %s:'), $model->alias) . ' ';
+					echo '<div style = "font: Verdana bold 12px; color: #FF0000">' . __('SQL Error in model %s:', $model->alias) . ' ';
 					if (isset($this->error) && $this->error != null) {
 						echo $this->error;
 					}
@@ -1345,7 +1342,7 @@ class DboSource extends DataSource {
  * @param array $resultSet
  * @return mixed
  */
-	public function generateAssociationQuery(&$model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
+	public function generateAssociationQuery($model, &$linkModel, $type, $association = null, $assocData = array(), &$queryData, $external = false, &$resultSet) {
 		$queryData = $this->__scrubQueryData($queryData);
 		$assocData = $this->__scrubQueryData($assocData);
 
@@ -1578,7 +1575,7 @@ class DboSource extends DataSource {
  * @access public
  * @see DboSource::renderStatement()
  */
-	public function buildStatement($query, &$model) {
+	public function buildStatement($query, $model) {
 		$query = array_merge(array('offset' => null, 'joins' => array()), $query);
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
@@ -1697,7 +1694,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	public function update($model, $fields = array(), $values = null, $conditions = null) {
 		if ($values == null) {
 			$combined = $fields;
 		} else {
@@ -1731,7 +1728,7 @@ class DboSource extends DataSource {
  * @param boolean $alias Include the model alias in the field name
  * @return array Fields and values, quoted and preparted
  */
-	protected function _prepareUpdateFields(&$model, $fields, $quoteValues = true, $alias = false) {
+	protected function _prepareUpdateFields($model, $fields, $quoteValues = true, $alias = false) {
 		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
 
 		$updates = array();
@@ -1774,7 +1771,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete(&$model, $conditions = null) {
+	public function delete($model, $conditions = null) {
 		$alias = $joins = null;
 		$table = $this->fullTableName($model);
 		$conditions = $this->_matchRecords($model, $conditions);
@@ -1798,7 +1795,7 @@ class DboSource extends DataSource {
  * @param mixed $conditions
  * @return array List of record IDs
  */
-	protected function _matchRecords(&$model, $conditions = null) {
+	protected function _matchRecords($model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
@@ -1874,7 +1871,7 @@ class DboSource extends DataSource {
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string An SQL calculation function
  */
-	public function calculate(&$model, $func, $params = array()) {
+	public function calculate($model, $func, $params = array()) {
 		$params = (array)$params;
 
 		switch (strtolower($func)) {
@@ -1993,7 +1990,7 @@ class DboSource extends DataSource {
  * @see DboSource::update()
  * @see DboSource::conditions()
  */
-	public function defaultConditions(&$model, $conditions, $useAlias = true) {
+	public function defaultConditions($model, $conditions, $useAlias = true) {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
@@ -2052,7 +2049,7 @@ class DboSource extends DataSource {
  * @param mixed $fields virtual fields to be used on query
  * @return array
  */
-	protected function _constructVirtualFields(&$model, $alias, $fields) {
+	protected function _constructVirtualFields($model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
@@ -2071,7 +2068,7 @@ class DboSource extends DataSource {
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
-	public function fields(&$model, $alias = null, $fields = array(), $quote = true) {
+	public function fields($model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
 			$alias = $model->alias;
 		}
@@ -2364,7 +2361,7 @@ class DboSource extends DataSource {
  * @return string
  * @access private
  */
-	function __parseKey(&$model, $key, $value) {
+	function __parseKey($model, $key, $value) {
 		$operatorMatch = '/^((' . implode(')|(', $this->__sqlOps);
 		$operatorMatch .= '\\x20)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
@@ -2615,7 +2612,7 @@ class DboSource extends DataSource {
  * @param string $sql SQL WHERE clause (condition only, not the "WHERE" part)
  * @return boolean True if the table has a matching record, else false
  */
-	public function hasAny(&$Model, $sql) {
+	public function hasAny($Model, $sql) {
 		$sql = $this->conditions($sql);
 		$table = $this->fullTableName($Model);
 		$alias = $this->alias . $this->name($Model->alias);
@@ -2804,16 +2801,12 @@ class DboSource extends DataSource {
 /**
  * Generate a "drop table" statement for the given Schema object
  *
- * @param object $schema An instance of a subclass of CakeSchema
+ * @param CakeSchema $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *   Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	public function dropSchema($schema, $table = null) {
-		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object'), E_USER_WARNING);
-			return null;
-		}
+	public function dropSchema(CakeSchema $schema, $table = null) {
 		$out = '';
 
 		foreach ($schema->tables as $curTable => $columns) {
@@ -2841,7 +2834,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!isset($this->columns[$type])) {
-			trigger_error(sprintf(__('Column type %s does not exist'), $type), E_USER_WARNING);
+			trigger_error(__('Column type %s does not exist', $type), E_USER_WARNING);
 			return null;
 		}
 

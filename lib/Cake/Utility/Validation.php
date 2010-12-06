@@ -713,11 +713,11 @@ class Validation {
 	protected static function _pass($method, $check, $classPrefix) {
 		$className = ucwords($classPrefix) . 'Validation';
 		if (!class_exists($className)) {
-			trigger_error(sprintf(__('Could not find %s class, unable to complete validation.', true), $className), E_USER_WARNING);
+			trigger_error(__('Could not find %s class, unable to complete validation.', $className), E_USER_WARNING);
 			return false;
 		}
 		if (!method_exists($className, $method)) {
-			trigger_error(sprintf(__('Method %s does not exist on %s unable to complete validation.', true), $method, $className), E_USER_WARNING);
+			trigger_error(__('Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
 			return false;
 		}
 		$check = (array)$check;

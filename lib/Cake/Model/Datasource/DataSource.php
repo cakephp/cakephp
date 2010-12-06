@@ -286,7 +286,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is not in progress
  */
-	public function begin(&$model) {
+	public function begin() {
 		return !$this->_transactionStarted;
 	}
 
@@ -295,7 +295,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is in progress
  */
-	public function commit(&$model) {
+	public function commit() {
 		return $this->_transactionStarted;
 	}
 
@@ -304,7 +304,7 @@ class DataSource extends Object {
  *
  * @return boolean Returns true if a transaction is in progress
  */
-	public function rollback(&$model) {
+	public function rollback() {
 		return $this->_transactionStarted;
 	}
 
@@ -328,7 +328,7 @@ class DataSource extends Object {
  * @param array $values An Array of values to save.
  * @return boolean success
  */
-	public function create(&$model, $fields = null, $values = null) {
+	public function create($model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -341,7 +341,7 @@ class DataSource extends Object {
  * @param array $queryData An array of query data used to find the data you want
  * @return mixed
  */
-	public function read(&$model, $queryData = array()) {
+	public function read($model, $queryData = array()) {
 		return false;
 	}
 
@@ -355,7 +355,7 @@ class DataSource extends Object {
  * @param array $values Array of values to be update $fields to.
  * @return boolean Success
  */
-	public function update(&$model, $fields = null, $values = null) {
+	public function update($model, $fields = null, $values = null) {
 		return false;
 	}
 
@@ -367,7 +367,7 @@ class DataSource extends Object {
  * @param Model $model The model class having record(s) deleted
  * @param mixed $id Primary key of the model
  */
-	public function delete(&$model, $id = null) {
+	public function delete($model, $id = null) {
 		if ($id == null) {
 			$id = $model->id;
 		}

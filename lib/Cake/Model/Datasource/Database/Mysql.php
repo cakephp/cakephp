@@ -331,7 +331,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return array
  */
-	function update(&$model, $fields = array(), $values = null, $conditions = null) {
+	function update($model, $fields = array(), $values = null, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -373,7 +373,7 @@ class Mysql extends DboSource {
  * @param mixed $conditions
  * @return boolean Success
  */
-	function delete(&$model, $conditions = null) {
+	function delete($model, $conditions = null) {
 		if (!$this->_useAlias) {
 			return parent::delete($model, $conditions);
 		}
@@ -502,16 +502,12 @@ class Mysql extends DboSource {
 /**
  * Generate a MySQL "drop table" statement for the given Schema object
  *
- * @param object $schema An instance of a subclass of CakeSchema
+ * @param CakeSchema $schema An instance of a subclass of CakeSchema
  * @param string $table Optional.  If specified only the table name given will be generated.
  *                      Otherwise, all tables defined in the schema are generated.
  * @return string
  */
-	function dropSchema($schema, $table = null) {
-		if (!is_a($schema, 'CakeSchema')) {
-			trigger_error(__('Invalid schema object'), E_USER_WARNING);
-			return null;
-		}
+	function dropSchema(CakeSchema $schema, $table = null) {
 		$out = '';
 		foreach ($schema->tables as $curTable => $columns) {
 			if (!$table || $table == $curTable) {

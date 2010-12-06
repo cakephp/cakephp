@@ -20,11 +20,11 @@
 <h2><?php echo __('Missing Database Table'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Database table %1$s for model %2$s was not found.'), '<em>' . $table . '</em>',  '<em>' . $class . '</em>'); ?>
+	<?php echo __('Database table %1$s for model %2$s was not found.', '<em>' . $table . '</em>',  '<em>' . $class . '</em>'); ?>
 </p>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_table.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_table.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

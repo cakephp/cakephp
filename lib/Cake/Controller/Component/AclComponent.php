@@ -68,7 +68,7 @@ class AclComponent extends Component {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				throw new Exception(sprintf(__('Could not find %s.'), $name));
+				throw new Exception(__('Could not find %s.', $name));
 			}
 		}
 		$this->adapter($name);
@@ -316,7 +316,7 @@ class DbAcl extends Object implements AclInterface {
 		$acoNode = $acoPath[0];
 
 		if ($action != '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(sprintf(__("ACO permissions key %s does not exist in DbAcl::check()"), $action), E_USER_NOTICE);
+			trigger_error(__("ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
 			return false;
 		}
 

@@ -610,7 +610,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
@@ -700,7 +700,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->passedArgs = array('page' => '-1', 'contain' => array('ControllerComment'));
@@ -731,7 +731,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPaginateModel');
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->paginate = array(
 			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
@@ -757,10 +757,12 @@ class ControllerTest extends CakeTestCase {
  * @access public
  */
 	function testPaginateFieldsDouble(){
-		$Controller = new Controller($this->getMock('CakeRequest'));
+		$request = new CakeRequest('controller_posts/index');
+
+		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost');
 		$Controller->request = $this->getMock('CakeRequest');
-		$Controller->request->query = array();
+		$Controller->request->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array(
@@ -774,7 +776,7 @@ class ControllerTest extends CakeTestCase {
 			'recursive' => -1
 		);
 		$conditions = array();
-		$result = $Controller->paginate('ControllerPost', $conditions);
+		$result = $Controller->paginate('ControllerPost',$conditions);
 		$expected = array(
 			array(
 				'ControllerPost' => array(
@@ -801,7 +803,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost');
 		$Controller->passedArgs[] = array('1', '2', '3');
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array(
@@ -837,7 +839,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
@@ -861,7 +863,7 @@ class ControllerTest extends CakeTestCase {
 		
 		$Controller = new Controller($request);
 		$Controller->modelClass = 'ControllerPost';
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->paginate = array('order' => 'ControllerPost.id DESC');
 		$Controller->constructClasses();
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
@@ -881,7 +883,7 @@ class ControllerTest extends CakeTestCase {
 		
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->query = array();
+		$Controller->params['url'] = array();
 		$Controller->constructClasses();
 		$Controller->ControllerPost->virtualFields = array(
 			'offset_test' => 'ControllerPost.id + 1'
@@ -1241,7 +1243,7 @@ class ControllerTest extends CakeTestCase {
 					? array_merge($appVars['uses'], $testVars['uses'])
 					: $testVars['uses'];
 
-		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->helpers), Set::normalize($helpers))), 0);
+		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 
@@ -1499,7 +1501,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->components = array("RequestHandler");
 		$Controller->modelClass='ControllerPost';
-		$Controller->request->params['url'] = array('ext' => 'rss');
+		$Controller->params['url'] = array('ext' => 'rss');
 		$Controller->constructClasses();
 		$Controller->Components->trigger('initialize', array(&$Controller));
 		$Controller->beforeFilter();

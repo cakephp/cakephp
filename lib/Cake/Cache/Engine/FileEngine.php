@@ -298,7 +298,7 @@ class FileEngine extends CacheEngine {
 		$dir = new SplFileInfo($this->settings['path']);
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(sprintf(__('%s is not writable'), $this->settings['path']), E_USER_WARNING);
+			trigger_error(__('%s is not writable', $this->settings['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;

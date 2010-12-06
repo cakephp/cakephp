@@ -18,7 +18,7 @@
  */
 ?>
 <div class="<?php echo $pluralVar;?> view">
-<h2><?php printf(__('View %s'), $singularHumanName); ?></h2>
+<h2><?php echo __('View %s', $singularHumanName); ?></h2>
 	<dl>
 <?php
 $i = 0;
@@ -50,17 +50,17 @@ foreach ($scaffoldFields as $_field) {
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
 <?php
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('Edit %s'), $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('Delete %s'), $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('List %s'), $pluralHumanName), array('action' => 'index')). " </li>\n";
-	echo "\t\t<li>" .$this->Html->link(sprintf(__('New %s'), $singularHumanName), array('action' => 'add')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__('Edit %s', $singularHumanName),   array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__('Delete %s', $singularHumanName), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey] . '?'). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__('List %s', $pluralHumanName), array('action' => 'index')). " </li>\n";
+	echo "\t\t<li>" .$this->Html->link(__('New %s', $singularHumanName), array('action' => 'add')). " </li>\n";
 
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-				echo "\t\t<li>" . $this->Html->link(sprintf(__('List %s'), Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-				echo "\t\t<li>" . $this->Html->link(sprintf(__('New %s'), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
+				echo "\t\t<li>" . $this->Html->link(__('New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
 				$done[] = $_details['controller'];
 			}
 		}
@@ -72,7 +72,7 @@ foreach ($scaffoldFields as $_field) {
 if (!empty($associations['hasOne'])) :
 foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <div class="related">
-	<h3><?php printf(__("Related %s", true), Inflector::humanize($_details['controller'])); ?></h3>
+	<h3><?php echo __("Related %s", Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<dl>
 <?php
@@ -91,7 +91,7 @@ foreach ($associations['hasOne'] as $_alias => $_details): ?>
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(sprintf(__('Edit %s', true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
+			<li><?php echo $this->Html->link(__('Edit %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'edit', ${$singularVar}[$_alias][$_details['primaryKey']]))."</li>\n";?>
 		</ul>
 	</div>
 </div>
@@ -111,7 +111,7 @@ foreach ($relations as $_alias => $_details):
 $otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">
-	<h3><?php printf(__("Related %s", true), Inflector::humanize($_details['controller'])); ?></h3>
+	<h3><?php echo __("Related %s", Inflector::humanize($_details['controller'])); ?></h3>
 <?php if (!empty(${$singularVar}[$_alias])):?>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
@@ -152,7 +152,7 @@ $otherSingularVar = Inflector::variable($_alias);
 <?php endif; ?>
 	<div class="actions">
 		<ul>
-			<li><?php echo $this->Html->link(sprintf(__("New %s", true), Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
+			<li><?php echo $this->Html->link(__("New %s", Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add'));?> </li>
 		</ul>
 	</div>
 </div>

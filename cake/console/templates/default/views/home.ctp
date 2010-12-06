@@ -24,7 +24,7 @@ endif;
 	\$settings = Cache::settings();
 	if (!empty(\$settings)):
 		echo '<span class=\"notice success\">';
-				printf(__('The %s is being used for caching. To change the config edit APP/config/core.php '), '<em>'. \$settings['engine'] . 'Engine</em>');
+				echo __('The %s is being used for caching. To change the config edit APP/config/core.php ', '<em>'. \$settings['engine'] . 'Engine</em>');
 		echo '</span>';
 	else:
 		echo '<span class=\"notice\">';
@@ -75,9 +75,9 @@ $output .= "<?php endif;?>\n";
 $output .= "<h3><?php echo __('Editing this Page') ?></h3>\n";
 $output .= "<p>\n";
 $output .= "<?php\n";
-$output .= "\tprintf(__('To change the content of this page, edit: %s\n";
+$output .= "\techo __('To change the content of this page, edit: %s\n";
 $output .= "\t\tTo change its layout, edit: %s\n";
-$output .= "\t\tYou can also add some CSS styles for your pages at: %s'),\n";
+$output .= "\t\tYou can also add some CSS styles for your pages at: %s',\n";
 $output .= "\t\tAPP . 'views' . DS . 'pages' . DS . 'home.ctp.<br />',  APP . 'views' . DS . 'layouts' . DS . 'default.ctp.<br />', APP . 'webroot' . DS . 'css');\n";
 $output .= "?>\n";
 $output .= "</p>\n";

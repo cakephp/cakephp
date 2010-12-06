@@ -128,7 +128,7 @@ class CakeLog {
 
 		App::uses($loggerName, $plugin . 'Log/Engine');
 		if (!class_exists($loggerName)) {
-			throw new Exception(sprintf(__('Could not load class %s'), $loggerName));
+			throw new Exception(__('Could not load class %s', $loggerName));
 		}
 		return $loggerName;
 	}

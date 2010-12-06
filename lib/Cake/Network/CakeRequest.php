@@ -13,7 +13,6 @@
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       cake
- * @subpackage    cake.cake.libs
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -27,6 +26,7 @@ App::uses('Set', 'Core');
  *
  * `$request['controller']` or `$request->controller`.
  *
+ * @package cake.libs
  */
 class CakeRequest implements ArrayAccess {
 /**

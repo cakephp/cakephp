@@ -221,7 +221,7 @@ class ViewTask extends BakeTask {
 
 		$this->controllerPath = strtolower(Inflector::underscore($this->controllerName));
 
-		$prompt = sprintf(__("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist."),  $this->controllerName);
+		$prompt = __("Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.",  $this->controllerName);
 		$interactive = $this->in($prompt, array('y', 'n'), 'n');
 
 		if (strtolower($interactive) == 'n') {
@@ -278,7 +278,7 @@ class ViewTask extends BakeTask {
 
 		if (!App::import('Controller', $import)) {
 			$file = $this->controllerPath . '_controller.php';
-			$this->err(sprintf(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller."), $file));
+			$this->err(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
 			$this->_stop();
 		}
 		$controllerClassName = $this->controllerName . 'Controller';
@@ -339,9 +339,9 @@ class ViewTask extends BakeTask {
 		$this->hr();
 		$this->out(__('The following view will be created:'));
 		$this->hr();
-		$this->out(sprintf(__('Controller Name: %s'), $this->controllerName));
-		$this->out(sprintf(__('Action Name:     %s'), $action));
-		$this->out(sprintf(__('Path:            %s'), $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
+		$this->out(__('Controller Name: %s', $this->controllerName));
+		$this->out(__('Action Name:     %s', $action));
+		$this->out(__('Path:            %s', $this->params['app'] . DS . $this->controllerPath . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
 		$looksGood = $this->in(__('Look okay?'), array('y','n'), 'y');
 		if (strtolower($looksGood) == 'y') {

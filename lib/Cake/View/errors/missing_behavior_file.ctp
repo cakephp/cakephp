@@ -20,11 +20,11 @@
 <h2><?php echo __('Missing Behavior File'); ?></h2>
 <p class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('The Behavior file %s can not be found or does not exist.'), APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
+	<?php echo __('The Behavior file %s can not be found or does not exist.', APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
 </p>
 <p  class="error">
 	<strong><?php echo __('Error'); ?>: </strong>
-	<?php printf(__('Create the class below in file: %s'), APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
+	<?php echo __('Create the class below in file: %s', APP_DIR . DS . 'models' . DS . 'behaviors' . DS . $file); ?>
 </p>
 <pre>
 &lt;?php
@@ -35,7 +35,7 @@ class <?php echo $class;?> extends ModelBehavior {
 </pre>
 <p class="notice">
 	<strong><?php echo __('Notice'); ?>: </strong>
-	<?php printf(__('If you want to customize this error message, create %s'), APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_file.ctp'); ?>
+	<?php echo __('If you want to customize this error message, create %s', APP_DIR . DS . 'views' . DS . 'errors' . DS . 'missing_behavior_file.ctp'); ?>
 </p>
 
 <?php echo $this->element('exception_stack_trace'); ?>

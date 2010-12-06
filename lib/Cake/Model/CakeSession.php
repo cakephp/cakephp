@@ -263,12 +263,12 @@ class CakeSession {
 	public static function delete($name) {
 		if (self::check($name)) {
 			if (in_array($name, self::$watchKeys)) {
-				trigger_error(sprintf(__('Deleting session key {%s}'), $name), E_USER_NOTICE);
+				trigger_error(__('Deleting session key {%s}', $name), E_USER_NOTICE);
 			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
-		self::__setError(2, sprintf(__("%s doesn't exist"), $name));
+		self::__setError(2, __("%s doesn't exist", $name));
 		return false;
 	}
 
@@ -453,7 +453,7 @@ class CakeSession {
 		}
 		foreach ($write as $key => $val) {
 			if (in_array($key, self::$watchKeys)) {
-				trigger_error(sprintf(__('Writing session key {%s}: %s'), $key, Debugger::exportVar($val)), E_USER_NOTICE);
+				trigger_error(__('Writing session key {%s}: %s', $key, Debugger::exportVar($val)), E_USER_NOTICE);
 			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
@@ -563,7 +563,7 @@ class CakeSession {
 			App::import('Core', 'session/' . $class);
 		}
 		if (!class_exists($class)) {
-			throw new Exception(sprintf(__('Could not load %s to handle the session.'), $class));
+			throw new Exception(__('Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof CakeSessionHandlerInterface) {
