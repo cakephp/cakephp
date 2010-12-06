@@ -321,7 +321,7 @@ class HttpSocket extends CakeSocket {
 			$response .= $data;
 		}
 
-		if ($connectionType == 'close') {
+		if ($connectionType === 'close') {
 			$this->disconnect();
 		}
 

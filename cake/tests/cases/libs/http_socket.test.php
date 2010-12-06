@@ -251,13 +251,12 @@ class HttpSocketTest extends CakeTestCase {
 		$baseConfig['host']	 = 'foo-bar';
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
+
 		$this->Socket->reset();
 		$baseConfig = $this->Socket->config;
 		$this->Socket->__construct('http://www.cakephp.org:23/');
-		$baseConfig['host']	 = 'www.cakephp.org';
-		$baseConfig['request']['uri']['host'] = 'www.cakephp.org';
-		$baseConfig['port']	 = 23;
-		$baseConfig['request']['uri']['port'] = 23;
+		$baseConfig['host'] = $baseConfig['request']['uri']['host'] = 'www.cakephp.org';
+		$baseConfig['port'] = $baseConfig['request']['uri']['port'] = 23;
 		$baseConfig['protocol'] = getprotobyname($baseConfig['protocol']);
 		$this->assertEquals($this->Socket->config, $baseConfig);
 
