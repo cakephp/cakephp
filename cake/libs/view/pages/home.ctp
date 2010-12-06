@@ -20,8 +20,8 @@ if (Configure::read() == 0):
 	$this->cakeError('error404');
 endif;
 ?>
-<h2><?php echo sprintf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
-<a href="http://cakephp.lighthouseapp.com/projects/42648/changelog-1-3-5"><?php __('Read the changelog'); ?> </a>
+<h2><?php echo __('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
+<a href="http://cakephp.org/changelogs/1.3.6"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read() > 0):
 	Debugger::checkSecurityKeys();
@@ -45,7 +45,7 @@ endif;
 		$settings = Cache::settings();
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				printf(__('The %s is being used for caching. To change the config edit APP/config/core.php '), '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __('The %s is being used for caching. To change the config edit APP/config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';

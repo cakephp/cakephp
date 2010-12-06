@@ -185,6 +185,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'eng';
+
 		$result = $TestModel->read(null, 1);
 		$expected = array(
 			'TranslatedItem' => array(
@@ -313,17 +314,17 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$result = $TestModel->find('all', array('fields' => array('TranslatedItem.title')));
 		$expected = array(
 			array(
-				'TranslatedItem' => array('id' => 1, 'locale' => 'eng', 'title' => 'Title #1'),
+				'TranslatedItem' => array('id' => 1, 'locale' => 'eng', 'title' => 'Title #1', 'slug' => 'first_translated'),
 				'Title' => array(array('foreign_key' => 1, 'content' => 'Title #1')),
 				'Content' => array(array('foreign_key' => 1, 'content' => 'Content #1'))
 			),
 			array(
-				'TranslatedItem' => array('id' => 2, 'locale' => 'eng', 'title' => 'Title #2'),
+				'TranslatedItem' => array('id' => 2, 'locale' => 'eng', 'title' => 'Title #2', 'slug' => 'second_translated'),
 				'Title' => array(array('foreign_key' => 2, 'content' => 'Title #2')),
 				'Content' => array(array('foreign_key' => 2, 'content' => 'Content #2'))
 			),
 			array(
-				'TranslatedItem' => array('id' => 3, 'locale' => 'eng', 'title' => 'Title #3'),
+				'TranslatedItem' => array('id' => 3, 'locale' => 'eng', 'title' => 'Title #3','slug' => 'third_translated'),
 				'Title' => array(array('foreign_key' => 3, 'content' => 'Title #3')),
 				'Content' => array(array('foreign_key' => 3, 'content' => 'Content #3'))
 			)
@@ -342,16 +343,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = array('deu', 'eng', 'cze');
-		$delete = array(
-			array('locale' => 'deu'),
-			array('foreign_key' => 1, 'field' => 'title', 'locale' => 'eng'),
-			array('foreign_key' => 1, 'field' => 'content', 'locale' => 'cze'),
-			array('foreign_key' => 2, 'field' => 'title', 'locale' => 'cze'),
-			array('foreign_key' => 2, 'field' => 'content', 'locale' => 'eng'),
-			array('foreign_key' => 3, 'field' => 'title')
-		);
-		$I18nModel = ClassRegistry::getObject('TranslateTestModel');
-		$I18nModel->deleteAll(array('or' => $delete));
+
 
 		$result = $TestModel->read(null, 1);
 		$expected = array(
@@ -359,8 +351,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'id' => 1,
 				'slug' => 'first_translated',
 				'locale' => 'deu',
-				'title' => 'Titulek #1',
-				'content' => 'Content #1'
+				'title' => 'Titel #1',
+				'content' => 'Inhalt #1'
 			)
 		);
 		$this->assertEqual($result, $expected);
@@ -371,28 +363,29 @@ class TranslateBehaviorTest extends CakeTestCase {
 				'TranslatedItem' => array(
 					'slug' => 'first_translated',
 					'locale' => 'deu',
-					'title' => 'Titulek #1',
-					'content' => 'Content #1'
+					'content' => 'Inhalt #1',
+					'title' => 'Titel #1'
 				)
 			),
 			array(
 				'TranslatedItem' => array(
 					'slug' => 'second_translated',
 					'locale' => 'deu',
-					'title' => 'Title #2',
-					'content' => 'Obsah #2'
+					'title' => 'Titel #2',
+					'content' => 'Inhalt #2'
 				)
 			),
 			array(
 				'TranslatedItem' => array(
 					'slug' => 'third_translated',
 					'locale' => 'deu',
-					'title' => '',
-					'content' => 'Content #3'
+					'title' => 'Titel #3',
+					'content' => 'Inhalt #3'
 				)
 			)
 		);
-		$this->assertEqual($result, $expected);
+
+		$this->assertEquals($result, $expected);
 	}
 
 /**
@@ -640,6 +633,8 @@ class TranslateBehaviorTest extends CakeTestCase {
 		$translations = array('title' => 'Title', 'content' => 'Content');
 		$TestModel->bindTranslation($translations, false);
 		$result = $TestModel->read(null, 1);
+		$result['Title'] = Set::sort($result['Title'], '{n}.id', 'asc');
+		$result['Content'] = Set::sort($result['Content'], '{n}.id', 'asc');
 		$expected = array(
 			'TranslatedItem' => array('id' => 1, 'slug' => 'first_translated', 'locale' => 'cze', 'title' => 'Titulek #1', 'content' => 'Upraveny obsah #1'),
 			'Title' => array(

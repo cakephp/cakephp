@@ -87,7 +87,7 @@ class ApiShell extends Shell {
 			}
 
 		} else {
-			$this->error(sprintf(__('%s not found'), $class));
+			$this->error(__('%s not found', $class));
 		}
 
 		$parsed = $this->__parseClass($path . $file .'.php', $class);
@@ -95,7 +95,7 @@ class ApiShell extends Shell {
 		if (!empty($parsed)) {
 			if (isset($this->params['method'])) {
 				if (!isset($parsed[$this->params['method']])) {
-					$this->err(sprintf(__('%s::%s() could not be found'), $class, $this->params['method']));
+					$this->err(__('%s::%s() could not be found', $class, $this->params['method']));
 					$this->_stop();
 				}
 				$method = $parsed[$this->params['method']];
@@ -200,7 +200,7 @@ class ApiShell extends Shell {
 		$parsed = array();
 
 		if (!include_once($path)) {
-			$this->err(sprintf(__('%s could not be found'), $path));
+			$this->err(__('%s could not be found', $path));
 		}
 		$reflection = new ReflectionClass($class);
 

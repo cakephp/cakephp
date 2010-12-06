@@ -180,7 +180,7 @@ class Debugger {
 		static $instance = array();
 		if (!empty($class)) {
 			if (!$instance || strtolower($class) != strtolower(get_class($instance[0]))) {
-				$instance[0] = & new $class();
+				$instance[0] = new $class();
 				if (Configure::read('debug') > 0) {
 					Configure::version(); // Make sure the core config is loaded
 					$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
@@ -189,7 +189,7 @@ class Debugger {
 		}
 
 		if (!$instance) {
-			$instance[0] =& new Debugger();
+			$instance[0] = new Debugger();
 			if (Configure::read('debug') > 0) {
 				Configure::version(); // Make sure the core config is loaded
 				$instance[0]->helpPath = Configure::read('Cake.Debugger.HelpPath');
@@ -236,12 +236,8 @@ class Debugger {
  * @param array $context Context
  * @return boolean true if error was handled
  */
-	public function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (error_reporting() == 0 || $code === 2048 || $code === 8192) {
-			return;
-		}
-
-		$_this =& Debugger::getInstance();
+	public function showError($code, $description, $file = null, $line = null, $context = null) {
+		$_this = Debugger::getInstance();
 
 		if (empty($file)) {
 			$file = '[internal]';
@@ -295,13 +291,7 @@ class Debugger {
 		$data = compact(
 			'level', 'error', 'code', 'helpID', 'description', 'file', 'path', 'line', 'context'
 		);
-		echo self::_output($data);
-
-		if (Configure::read('log')) {
-			$tpl = $_this->_templates['log']['error'];
-			$options = array('before' => '{:', 'after' => '}');
-			CakeLog::write($level, String::insert($tpl, $data, $options));
-		}
+		echo $_this->outputError($data);
 
 		if ($error == 'Fatal Error') {
 			exit();
@@ -327,7 +317,7 @@ class Debugger {
  * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
  */
 	public static function trace($options = array()) {
-		$_this =& Debugger::getInstance();
+		$_this = Debugger::getInstance();
 		$defaults = array(
 			'depth'   => 999,
 			'format'  => $_this->_outputFormat,
@@ -551,7 +541,7 @@ class Debugger {
  * @param array $strings Template strings to be used for the output format.
  */
 	public function output($format = null, $strings = array()) {
-		$_this =& Debugger::getInstance();
+		$_this = Debugger::getInstance();
 		$data = null;
 
 		if (is_null($format)) {
@@ -585,11 +575,12 @@ class Debugger {
 	}
 
 /**
- * Renders error messages
+ * Takes a processed array of data from an error and displays it in the chosen format.
  *
- * @param array $data Data about the current error
+ * @param string $data 
+ * @return void
  */
-	protected function _output($data = array()) {
+	public function outputError($data) {
 		$defaults = array(
 			'level' => 0,
 			'error' => 0,
@@ -598,13 +589,14 @@ class Debugger {
 			'description' => '',
 			'file' => '',
 			'line' => 0,
-			'context' => array()
+			'context' => array(),
+			'start' => 2
 		);
 		$data += $defaults;
 
-		$files = $this->trace(array('start' => 2, 'format' => 'points'));
+		$files = $this->trace(array('start' => $data['start'], 'format' => 'points'));
 		$code = $this->excerpt($files[0]['file'], $files[0]['line'] - 1, 1);
-		$trace = $this->trace(array('start' => 2, 'depth' => '20'));
+		$trace = $this->trace(array('start' => $data['start'], 'depth' => '20'));
 		$insertOpts = array('before' => '{:', 'after' => '}');
 		$context = array();
 		$links = array();
@@ -672,20 +664,4 @@ class Debugger {
 		}
 	}
 
-/**
- * Invokes the given debugger object as the current error handler, taking over control from the
- * previous handler in a stack-like hierarchy.
- *
- * @param object $debugger A reference to the Debugger object
- * @access public
- * @static
- * @link http://book.cakephp.org/view/1191/Using-the-Debugger-Class
- */
-	function invoke(&$debugger) {
-		set_error_handler(array(&$debugger, 'handleError'));
-	}
-}
-
-if (!defined('DISABLE_DEFAULT_ERROR_HANDLING')) {
-	Debugger::invoke(Debugger::getInstance());
 }

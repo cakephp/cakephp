@@ -99,7 +99,7 @@ class SchemaShell extends Shell {
 				$name = $plugin;
 			}
 		}
-		$this->Schema =& new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
+		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -114,7 +114,7 @@ class SchemaShell extends Shell {
 			$this->_stop();
 		} else {
 			$file = $this->Schema->path . DS . $this->params['file'];
-			$this->err(sprintf(__('Schema file (%s) could not be found.'), $file));
+			$this->err(__('Schema file (%s) could not be found.', $file));
 			$this->_stop();
 		}
 	}
@@ -151,7 +151,7 @@ class SchemaShell extends Shell {
 		$content['file'] = $this->params['file'];
 
 		if ($snapshot === true) {
-			$Folder =& new Folder($this->Schema->path);
+			$Folder = new Folder($this->Schema->path);
 			$result = $Folder->read();
 
 			$numToUse = false;
@@ -179,7 +179,7 @@ class SchemaShell extends Shell {
 		}
 
 		if ($this->Schema->write($content)) {
-			$this->out(sprintf(__('Schema file: %s generated'), $content['file']));
+			$this->out(__('Schema file: %s generated', $content['file']));
 			$this->_stop();
 		} else {
 			$this->err(__('Schema file: %s generated'));
@@ -209,7 +209,7 @@ class SchemaShell extends Shell {
 				$write = $this->params['write'];
 			}
 		}
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 		$contents = "#" . $Schema->name . " sql generated on: " . date('Y-m-d H:i:s') . " : " . time() . "\n\n";
 		$contents .= $db->dropSchema($Schema) . "\n\n". $db->createSchema($Schema);
 
@@ -218,13 +218,13 @@ class SchemaShell extends Shell {
 				$write .= '.sql';
 			}
 			if (strpos($write, DS) !== false) {
-				$File =& new File($write, true);
+				$File = new File($write, true);
 			} else {
-				$File =& new File($this->Schema->path . DS . $write, true);
+				$File = new File($this->Schema->path . DS . $write, true);
 			}
 
 			if ($File->write($contents)) {
-				$this->out(sprintf(__('SQL dump file created in %s'), $File->pwd()));
+				$this->out(__('SQL dump file created in %s', $File->pwd()));
 				$this->_stop();
 			} else {
 				$this->err(__('SQL dump could not be created'));
@@ -280,10 +280,10 @@ class SchemaShell extends Shell {
 			$options['file'] = $fileName . '_' . $this->params['snapshot'] . '.php';
 		}
 
-		$Schema =& $this->Schema->load($options);
+		$Schema = $this->Schema->load($options);
 
 		if (!$Schema) {
-			$this->err(sprintf(__('%s could not be loaded'), $this->Schema->path . DS . $this->Schema->file));
+			$this->err(__('%s could not be loaded', $this->Schema->path . DS . $this->Schema->file));
 			$this->_stop();
 		}
 		$table = null;
@@ -299,8 +299,8 @@ class SchemaShell extends Shell {
  *
  * @access private
  */
-	function __create(&$Schema, $table = null) {
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+	function __create($Schema, $table = null) {
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$drop = $create = array();
 
@@ -343,7 +343,7 @@ class SchemaShell extends Shell {
  * @access private
  */
 	function __update(&$Schema, $table = null) {
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		$this->out(__('Comparing Database to Schema...'));
 		$options = array();
@@ -390,14 +390,14 @@ class SchemaShell extends Shell {
 			return;
 		}
 		Configure::write('debug', 2);
-		$db =& ConnectionManager::getDataSource($this->Schema->connection);
+		$db = ConnectionManager::getDataSource($this->Schema->connection);
 
 		foreach ($contents as $table => $sql) {
 			if (empty($sql)) {
-				$this->out(sprintf(__('%s is up to date.'), $table));
+				$this->out(__('%s is up to date.', $table));
 			} else {
 				if ($this->__dry === true) {
-					$this->out(sprintf(__('Dry run for %s :'), $table));
+					$this->out(__('Dry run for %s :', $table));
 					$this->out($sql);
 				} else {
 					if (!$Schema->before(array($event => $table))) {
@@ -413,7 +413,7 @@ class SchemaShell extends Shell {
 					if (!empty($error)) {
 						$this->out($error);
 					} else {
-						$this->out(sprintf(__('%s updated.'), $table));
+						$this->out(__('%s updated.', $table));
 					}
 				}
 			}

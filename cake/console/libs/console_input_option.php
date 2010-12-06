@@ -56,12 +56,21 @@ class ConsoleInputOption {
 	}
 
 /**
- * Get the name of the argument
+ * Get the value of the name attribute.
  *
- * @return string
+ * @return string Value of this->_name.
  */
 	public function name() {
 		return $this->_name;
+	}
+
+/**
+ * Get the value of the short attribute.
+ *
+ * @return string Value of this->_short.
+ */
+	public function short() {
+		return $this->_short;
 	}
 
 /**
@@ -73,10 +82,10 @@ class ConsoleInputOption {
 	public function help($width = 0) {
 		$default = $short = '';
 		if (!empty($this->_default) && $this->_default !== true) {
-			$default = sprintf(__(' <comment>(default: %s)</comment>'), $this->_default);
+			$default = __(' <comment>(default: %s)</comment>', $this->_default);
 		}
 		if (!empty($this->_choices)) {
-			$default .= sprintf(__(' <comment>(choices: %s)</comment>'), implode('|', $this->_choices));
+			$default .= __(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
 		}
 		if (!empty($this->_short)) {
 			$short = ', -' . $this->_short;

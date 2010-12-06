@@ -126,7 +126,7 @@ class FileTest extends CakeTestCase {
  */
 	function testRead() {
 		$file = __FILE__;
-		$this->File =& new File($file);
+		$this->File = new File($file);
 
 		$result = $this->File->read();
 		$expecting = file_get_contents(__FILE__);
@@ -484,8 +484,7 @@ class FileTest extends CakeTestCase {
 			$assertLine = $assertLine->traceMethod();
 			$shortPath = substr($tmpFile, strlen(ROOT));
 
-			$message = '[FileTest] Skipping %s because "%s" not writeable!';
-			$message = sprintf(__($message), $caller, $shortPath).$assertLine;
+			$message = __('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath).$assertLine;
 			$this->_reporter->paintSkip($message);
 		}
 		return false;

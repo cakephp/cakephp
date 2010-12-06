@@ -72,25 +72,6 @@ class ViewPostsController extends Controller {
 }
 
 /**
- * ViewTestErrorHandler class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.view
- */
-class ViewTestErrorHandler extends ErrorHandler {
-
-/**
- * stop method
- *
- * @access public
- * @return void
- */
-	function _stop() {
-		return;
-	}
-}
-
-/**
  * TestView class
  *
  * @package       cake
@@ -147,23 +128,9 @@ class TestView extends View {
 	}
 
 /**
- * cakeError method
- *
- * @param mixed $method
- * @param mixed $messages
- * @access public
- * @return void
- */
-	function cakeError($method, $messages) {
-		$error = new ViewTestErrorHandler($method, $messages);
-		return $error;
-	}
-
-/**
  * Test only function to return instance scripts.
  *
  * @return array Scripts
- * @access public
  */
 	function scripts() {
 		return $this->_scripts;
@@ -182,7 +149,6 @@ class TestAfterHelper extends Helper {
  * property property
  *
  * @var string ''
- * @access public
  */
 	public $property = '';
 
@@ -192,7 +158,7 @@ class TestAfterHelper extends Helper {
  * @access public
  * @return void
  */
-	function beforeLayout() {
+	function beforeLayout($viewFile) {
 		$this->property = 'Valuation';
 	}
 
@@ -202,9 +168,8 @@ class TestAfterHelper extends Helper {
  * @access public
  * @return void
  */
-	function afterLayout() {
-		$View = ClassRegistry::getObject('afterView');
-		$View->output .= 'modified in the afterlife';
+	function afterLayout($layoutFile) {
+		$this->_View->output .= 'modified in the afterlife';
 	}
 }
 
@@ -476,6 +441,21 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * test that elements can have callbacks
+ *
+ */
+	function testElementCallbacks() {
+		$this->getMock('HtmlHelper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
+		$this->View->helpers = array('ElementCallbackMockHtml');
+		$this->View->loadHelpers();
+
+		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
+		$this->View->ElementCallbackMockHtml->expects($this->at(1))->method('afterRender');
+
+		$this->View->element('test_element', array(), true);
+		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
+	}
+/**
  * testElementCacheHelperNoCache method
  *
  * @access public
@@ -484,9 +464,7 @@ class ViewTest extends CakeTestCase {
 	function testElementCacheHelperNoCache() {
 		$Controller = new ViewPostsController();
 		$View = new TestView($Controller);
-		$empty = array();
-		$helpers = $View->loadHelpers($empty, array('cache'));
-		$View->loaded = $helpers;
+		$helpers = $View->loadHelpers();
 		$result = $View->element('test_element', array('ram' => 'val', 'test' => array('foo', 'bar')));
 		$this->assertEqual($result, 'this is the test element');
 	}
@@ -498,49 +476,49 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	function testElementCache() {
-		$writable = is_writable(CACHE . 'views' . DS);
-		if ($this->skipIf(!$writable, 'CACHE/views dir is not writable, cannot test elementCache. %s')) {
-			return;
-		}
+		Cache::drop('test_view');
+		Cache::config('test_view', array(
+			'engine' => 'File',
+			'duration' => '+1 day',
+			'path' => CACHE . 'views' . DS,
+			'prefix' => ''
+		));
+		Cache::clear('test_view');
+
 		$View = new TestView($this->PostsController);
-		$element = 'test_element';
+		$View->elementCache = 'test_view';
+
+		$result = $View->element('test_element', array('cache' => true));
 		$expected = 'this is the test element';
-		$result = $View->element($element);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
-		$cached = false;
-		$result = $View->element($element, array('cache'=>'+1 second'));
-		if (file_exists(CACHE . 'views' . DS . 'element_cache_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_cache_'.$element);
-		}
-		$this->assertTrue($cached);
+		$result = Cache::read('element__test_element_cache', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$result = $View->element('test_element', array('cache' => true, 'param' => 'one', 'foo' => 'two'));
+		$this->assertEquals($expected, $result);
 
-		$cached = false;
-		$result = $View->element($element, array('cache'=>'+1 second', 'other_param'=> true, 'anotherParam'=> true));
-		if (file_exists(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_cache_other_param_anotherParam_'.$element);
-		}
-		$this->assertTrue($cached);
+		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$result = $View->element('test_element', array(
+			'cache' => array('key' => 'custom_key'),
+			'param' => 'one',
+			'foo' => 'two'
+		));
+		$result = Cache::read('element_custom_key', 'test_view');
+		$this->assertEquals($expected, $result);
+		
+		$View->elementCache = 'default';
+		$result = $View->element('test_element', array(
+			'cache' => array('config' => 'test_view'),
+			'param' => 'one',
+			'foo' => 'two'
+		));
+		$result = Cache::read('element__test_element_cache_param_foo', 'test_view');
+		$this->assertEquals($expected, $result);
 
-		$cached = false;
-		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'/whatever/here')));
-		if (file_exists(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_'.Inflector::slug('/whatever/here').'_'.$element);
-		}
-		$this->assertTrue($cached);
-
-		$cached = false;
-		$result = $View->element($element, array('cache'=>array('time'=>'+1 second', 'key'=>'whatever_here')));
-		if (file_exists(CACHE . 'views' . DS . 'element_whatever_here_'.$element)) {
-			$cached = true;
-			unlink(CACHE . 'views' . DS . 'element_whatever_here_'.$element);
-		}
-		$this->assertTrue($cached);
-		$this->assertEqual($result, $expected);
-
+		Cache::drop('test_view');
 	}
 
 /**
@@ -635,7 +613,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Session', 'Html', 'Form', 'Number');
 		$View = new TestView($this->PostsController);
 
-		$result = $View->render_($View->getViewFileName('index'), array());
+		$result = $View->render('index', false);
 		$this->assertEqual($result, 'posts index');
 
 		$attached = $View->Helpers->attached();
@@ -644,7 +622,7 @@ class ViewTest extends CakeTestCase {
 		$this->PostsController->helpers = array('Html', 'Form', 'Number', 'TestPlugin.PluggedHelper');
 		$View = new TestView($this->PostsController);
 
-		$result = $View->render_($View->getViewFileName('index'), array());
+		$result = $View->render('index', false);
 		$this->assertEqual($result, 'posts index');
 
 		$attached = $View->Helpers->attached();
@@ -665,6 +643,9 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
+		
+		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
+		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
 
 		$this->PostsController->set('url', 'flash');
 		$this->PostsController->set('message', 'yo what up');
@@ -691,30 +672,6 @@ class ViewTest extends CakeTestCase {
 		$this->assertPattern("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/><title>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
 		$this->assertPattern("/<div id=\"content\">posts index<\/div>/", $result);
-	}
-
-/**
- * test rendering layout with cache helper loaded
- *
- * @return void
- */
-	function testRenderLayoutWithMockCacheHelper() {
-		$_check = Configure::read('Cache.check');
-		Configure::write('Cache.check', true);
-
-		$Controller = new ViewPostsController($this->getMock('CakeRequest'));
-		$Controller->cacheAction = '1 day';
-		$View = new View($Controller);
-		$View->helpers = array('Cache', 'Html', 'Session');
-		$View->loadHelpers();
-
-		$View->Helpers->Cache = $this->getMock('CacheHelper', array(), array($View));
-		$View->Helpers->Cache->expects($this->exactly(2))->method('cache');
-
-		$result = $View->render('index');
-		$this->assertPattern('/posts index/', $result);
-
-		Configure::write('Cache.check', $_check);
 	}
 
 /**
@@ -806,7 +763,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testRenderStrippingNoCacheTagsOnlyCacheHelper() {
 		Configure::write('Cache.check', false);
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$View->set(array('superman' => 'clark', 'variable' => 'var'));
 		$View->helpers = array('Html', 'Form', 'Cache');
 		$View->layout = 'cache_layout';
@@ -821,7 +778,7 @@ class ViewTest extends CakeTestCase {
  */
 	function testRenderStrippingNoCacheTagsOnlyCacheCheck() {
 		Configure::write('Cache.check', true);
-		$View =& new View($this->PostsController);
+		$View = new View($this->PostsController);
 		$View->set(array('superman' => 'clark', 'variable' => 'var'));
 		$View->helpers = array('Html', 'Form');
 		$View->layout = 'cache_layout';

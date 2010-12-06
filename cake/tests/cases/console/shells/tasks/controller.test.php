@@ -304,11 +304,11 @@ class ControllerTaskTest extends CakeTestCase {
 
 		$path = APP . 'plugins' . DS . 'controller_test' . DS . 'controllers' . DS . 'articles_controller.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')->with(
+		$this->Task->expects($this->at(1))->method('createFile')->with(
 			$path,
 			new PHPUnit_Framework_Constraint_IsAnything()
 		);
-		$this->Task->expects($this->at(1))->method('createFile')->with(
+		$this->Task->expects($this->at(3))->method('createFile')->with(
 			$path,
 			new PHPUnit_Framework_Constraint_PCREMatch('/ArticlesController extends ControllerTestAppController/')
 		);
@@ -344,8 +344,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
-		$this->assertContains('if (!empty($this->data))', $result);
-		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
+		$this->assertContains("if (\$this->request->is('post'))", $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 		$this->assertContains("\$this->Session->setFlash(__('The bake article has been saved'));", $result);
 
 		$this->assertContains('function edit($id = null)', $result);
@@ -386,8 +386,8 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
-		$this->assertContains('if (!empty($this->data))', $result);
-		$this->assertContains('if ($this->BakeArticle->save($this->data))', $result);
+		$this->assertContains("if (\$this->request->is('post'))", $result);
+		$this->assertContains('if ($this->BakeArticle->save($this->request->data))', $result);
 
 		$this->assertContains("\$this->flash(__('The bake article has been saved.'), array('action' => 'index'))", $result);
 

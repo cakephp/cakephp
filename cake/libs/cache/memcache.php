@@ -78,7 +78,7 @@ class MemcacheEngine extends CacheEngine {
 		}
 		if (!isset($this->__Memcache)) {
 			$return = false;
-			$this->__Memcache =& new Memcache();
+			$this->__Memcache = new Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				list($host, $port) = $this->_parseServerString($server);
 				if ($this->__Memcache->addServer($host, $port)) {
@@ -153,7 +153,7 @@ class MemcacheEngine extends CacheEngine {
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			throw new RuntimeException(
-				sprintf(__('Method increment() not implemented for compressed cache in %s'), __CLASS__)
+				__('Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
 		return $this->__Memcache->increment($key, $offset);
@@ -171,7 +171,7 @@ class MemcacheEngine extends CacheEngine {
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
 			throw new RuntimeException(
-				sprintf(__('Method decrement() not implemented for compressed cache in %s'), __CLASS__)
+				__('Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
 		return $this->__Memcache->decrement($key, $offset);

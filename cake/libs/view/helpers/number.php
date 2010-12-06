@@ -48,7 +48,7 @@ class NumberHelper extends AppHelper {
 			'decimals' => '.', 'negative' => '()','escape' => false
 		),
 		'EUR' => array(
-			'before'=>'&#8364;', 'after' => 'c', 'zero' => 0, 'places' => 2, 'thousands' => '.',
+			'before'=>'&#8364;', 'after' => false, 'zero' => 0, 'places' => 2, 'thousands' => '.',
 			'decimals' => ',', 'negative' => '()', 'escape' => false
 		)
 	);
@@ -88,15 +88,15 @@ class NumberHelper extends AppHelper {
 	public function toReadableSize($size) {
 		switch (true) {
 			case $size < 1024:
-				return sprintf(__n('%d Byte', '%d Bytes', $size), $size);
+				return __n('%d Byte', '%d Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return sprintf(__('%d KB'), $this->precision($size / 1024, 0));
+				return __('%d KB', $this->precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
-				return sprintf(__('%.2f MB'), $this->precision($size / 1024 / 1024, 2));
+				return __('%.2f MB', $this->precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
-				return sprintf(__('%.2f GB'), $this->precision($size / 1024 / 1024 / 1024, 2));
+				return __('%.2f GB', $this->precision($size / 1024 / 1024 / 1024, 2));
 			default:
-				return sprintf(__('%.2f TB'), $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
+				return __('%.2f TB', $this->precision($size / 1024 / 1024 / 1024 / 1024, 2));
 		}
 	}
 

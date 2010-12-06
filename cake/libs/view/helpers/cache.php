@@ -32,29 +32,44 @@ class CacheHelper extends AppHelper {
 
 /**
  * Array of strings replaced in cached views.
- * The strings are found between <cake:nocache><cake:nocache> in views
+ * The strings are found between `<!--nocache--><!--/nocache-->` in views
  *
  * @var array
- * @access private
  */
-	private $__replace = array();
+	protected $_replace = array();
 
 /**
  * Array of string that are replace with there var replace above.
- * The strings are any content inside <cake:nocache><cake:nocache> and includes the tags in views
+ * The strings are any content inside `<!--nocache--><!--/nocache-->` and includes the tags in views
  *
  * @var array
- * @access private
  */
-	private $__match = array();
+	protected $_match = array();
 
 /**
- * cache action time
+ * Parses the view file and stores content for cache file building.
  *
- * @var object
- * @access public
+ * @return void
  */
-	public $cacheAction;
+	public function afterRender($viewFile) {
+		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		if ($caching) {
+			$this->cache($viewFile, $this->_View->output, false);
+		}
+	}
+
+/**
+ * Parses the layout file and stores content for cache file building.
+ *
+ * @return void
+ */
+	public function afterLayout($layoutFile) {
+		$caching = (($this->_View->cacheAction != false)) && (Configure::read('Cache.check') === true);
+		if ($caching) {
+			$this->cache($layoutFile, $this->_View->output, true);
+		}
+		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
+	}
 
 /**
  * Main method used to cache a view
@@ -64,11 +79,13 @@ class CacheHelper extends AppHelper {
  * @param boolean $cache Whether or not a cache file should be written.
  * @return string view ouput
  */
-	function cache($file, $out, $cache = false) {
+	public function cache($file, $out, $cache = false) {
 		$cacheTime = 0;
 		$useCallbacks = false;
-		if (is_array($this->cacheAction)) {
-			$keys = array_keys($this->cacheAction);
+		$cacheAction = $this->_View->cacheAction;
+
+		if (is_array($cacheAction)) {
+			$keys = array_keys($cacheAction);
 			$index = null;
 
 			foreach ($keys as $action) {
@@ -82,12 +99,12 @@ class CacheHelper extends AppHelper {
 				$index = 'index';
 			}
 
-			$options = $this->cacheAction;
-			if (isset($this->cacheAction[$index])) {
-				if (is_array($this->cacheAction[$index])) {
-					$options = array_merge(array('duration' => 0, 'callbacks' => false), $this->cacheAction[$index]);
+			$options = $cacheAction;
+			if (isset($cacheAction[$index])) {
+				if (is_array($cacheAction[$index])) {
+					$options = array_merge(array('duration' => 0, 'callbacks' => false), $cacheAction[$index]);
 				} else {
-					$cacheTime = $this->cacheAction[$index];
+					$cacheTime = $cacheAction[$index];
 				}
 			}
 			if (isset($options['duration'])) {
@@ -97,14 +114,14 @@ class CacheHelper extends AppHelper {
 				$useCallbacks = $options['callbacks'];
 			}
 		} else {
-			$cacheTime = $this->cacheAction;
+			$cacheTime = $cacheAction;
 		}
 
 		if ($cacheTime != '' && $cacheTime > 0) {
-			$this->__parseFile($file, $out);
+			$this->_parseFile($file, $out);
 			if ($cache === true) {
-				$cached = $this->__parseOutput($out);
-				$this->__writeFile($cached, $cacheTime, $useCallbacks);
+				$cached = $this->_parseOutput($out);
+				$this->_writeFile($cached, $cacheTime, $useCallbacks);
 			}
 			return $out;
 		} else {
@@ -117,22 +134,21 @@ class CacheHelper extends AppHelper {
  *
  * @param string $file The filename that needs to be parsed.
  * @param string $cache The cached content
- * @access private
  */
-	function __parseFile($file, $cache) {
+	protected function _parseFile($file, $cache) {
 		if (is_file($file)) {
 			$file = file_get_contents($file);
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<cake:nocache>(?<=<cake:nocache>)[\\s\\S]*?(?=<\/cake:nocache>)<\/cake:nocache>)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
-		preg_match_all('/(?<=<cake:nocache>)([\\s\\S]*?)(?=<\/cake:nocache>)/i', $file, $fileResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(<!--nocache-->(?<=<!--nocache-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
+		preg_match_all('/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i', $file, $fileResult, PREG_PATTERN_ORDER);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
 
-		if (!empty($this->__replace)) {
+		if (!empty($this->_replace)) {
 			foreach ($outputResult as $i => $element) {
-				$index = array_search($element, $this->__match);
+				$index = array_search($element, $this->_match);
 				if ($index !== false) {
 					unset($outputResult[$i]);
 				}
@@ -144,8 +160,8 @@ class CacheHelper extends AppHelper {
 			$i = 0;
 			foreach ($fileResult as $cacheBlock) {
 				if (isset($outputResult[$i])) {
-					$this->__replace[] = $cacheBlock;
-					$this->__match[] = $outputResult[$i];
+					$this->_replace[] = $cacheBlock;
+					$this->_match[] = $outputResult[$i];
 				}
 				$i++;
 			}
@@ -156,13 +172,12 @@ class CacheHelper extends AppHelper {
  * Parse the output and replace cache tags
  *
  * @param string $cache Output to replace content in.
- * @return string with all replacements made to <cake:nocache><cake:nocache>
- * @access private
+ * @return string with all replacements made to <!--nocache--><!--nocache-->
  */
-	function __parseOutput($cache) {
+	protected function _parseOutput($cache) {
 		$count = 0;
-		if (!empty($this->__match)) {
-			foreach ($this->__match as $found) {
+		if (!empty($this->_match)) {
+			foreach ($this->_match as $found) {
 				$original = $cache;
 				$length = strlen($found);
 				$position = 0;
@@ -172,7 +187,7 @@ class CacheHelper extends AppHelper {
 
 					if ($position !== false) {
 						$cache = substr($original, 0, $position);
-						$cache .= $this->__replace[$count];
+						$cache .= $this->_replace[$count];
 						$cache .= substr($original, $position + $length);
 					} else {
 						break;
@@ -191,9 +206,8 @@ class CacheHelper extends AppHelper {
  * @param string $content view content to write to a cache file.
  * @param sting $timestamp Duration to set for cache file.
  * @return boolean success of caching view.
- * @access private
  */
-	function __writeFile($content, $timestamp, $useCallbacks = false) {
+	protected function _writeFile($content, $timestamp, $useCallbacks = false) {
 		$now = time();
 
 		if (is_numeric($timestamp)) {
@@ -213,36 +227,28 @@ class CacheHelper extends AppHelper {
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
 
-		if (empty($this->plugin)) {
+		if (empty($this->_View->plugin)) {
 			$file .= '
-			App::import(\'Controller\', \'' . $this->controllerName. '\');
+			App::import(\'Controller\', \'' . $this->_View->name. '\');
 			';
 		} else {
 			$file .= '
-			App::import(\'Controller\', \'' . $this->plugin . '.' . $this->controllerName. '\');
+			App::import(\'Controller\', \'' . $this->_View->plugin . '.' . $this->_View->name. '\');
 			';
 		}
 
-		$file .= '$controller =& new ' . $this->controllerName . 'Controller();
-				$controller->plugin = $this->plugin = \''.$this->plugin.'\';
-				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->helpers) . '\');
-				$controller->base = $this->base = \'' . $this->base . '\';
-				$controller->layout = $this->layout = \'' . $this->layout. '\';
-				$controller->webroot = $this->webroot = \'' . $this->webroot . '\';
-				$controller->here = $this->here = \'' . $this->here . '\';
-				$controller->params = $this->params = unserialize(\'' . str_replace("'", "\\'", serialize($this->params)) . '\');
+		$file .= '$controller = new ' . $this->_View->name . 'Controller();
+				$controller->plugin = $this->plugin = \'' . $this->_View->plugin . '\';
+				$controller->helpers = $this->helpers = unserialize(\'' . serialize($this->_View->helpers) . '\');
+				$controller->layout = $this->layout = \'' . $this->_View->layout. '\';
 				$controller->request = $this->request = unserialize(\'' . str_replace("'", "\\'", serialize($this->request)) . '\');
-				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
-				$controller->data = $this->data = unserialize(\'' . str_replace("'", "\\'", serialize($this->data)) . '\');
-				$controller->theme = $this->theme = \'' . $this->theme . '\';
-				Router::setRequestInfo($this->params);';
+				$controller->theme = $this->theme = \'' . $this->_View->theme . '\';
+				Router::setRequestInfo($controller->request);';
 
 		if ($useCallbacks == true) {
 			$file .= '
 				$controller->constructClasses();
-				$controller->Component->initialize($controller);
-				$controller->beforeFilter();
-				$controller->Component->startup($controller);';
+				$controller->startupProcess();';
 		}
 
 		$file .= '

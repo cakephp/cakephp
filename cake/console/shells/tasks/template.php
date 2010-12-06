@@ -59,7 +59,7 @@ class TemplateTask extends Shell {
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
 		$paths[] = $core;
-		$Folder =& new Folder($core . 'templates' . DS . 'default');
+		$Folder = new Folder($core . 'templates' . DS . 'default');
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
 
@@ -76,14 +76,14 @@ class TemplateTask extends Shell {
 
 		$themes = array();
 		foreach ($paths as $path) {
-			$Folder =& new Folder($path . 'templates', false);
+			$Folder = new Folder($path . 'templates', false);
 			$contents = $Folder->read();
 			$subDirs = $contents[0];
 			foreach ($subDirs as $dir) {
 				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
 					continue;
 				}
-				$Folder =& new Folder($path . 'templates' . DS . $dir);
+				$Folder = new Folder($path . 'templates' . DS . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
 				if (array_intersect($contents[0], $themeFolders)) {
@@ -206,7 +206,7 @@ class TemplateTask extends Shell {
 				return $templatePath;
 			}
 		}
-		$this->err(sprintf(__('Could not find template for %s'), $filename));
+		$this->err(__('Could not find template for %s', $filename));
 		return false;
 	}
 }

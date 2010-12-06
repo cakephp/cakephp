@@ -174,7 +174,7 @@ class CakeException extends RuntimeException {
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
-			$message = vsprintf(__($this->_messageTemplate), $message);
+			$message = __($this->_messageTemplate, $message);
 		}
 		parent::__construct($message, $code);
 	}
@@ -301,6 +301,8 @@ class MissingHelperClassException extends CakeException {
 
 /**
  * Runtime Exceptions for ConnectionManager
+ *
+ * @package cake.libs
  */
 class MissingDatabaseException extends CakeException {
 	protected $_messageTemplate = 'Database connection "%s" could not be found.';
@@ -367,4 +369,13 @@ class MissingShellFileException extends CakeException {
  */
 class MissingTableException extends CakeException {
 	protected $_messageTemplate = 'Database table %s for model %s was not found.';
+}
+
+/**
+ * Exception Raised when a Model could not be found.
+ *
+ * @package cake.libs
+ */
+class MissingModelException extends CakeException {
+	protected $_messageTemplate = 'Model %s could not be found.';
 }

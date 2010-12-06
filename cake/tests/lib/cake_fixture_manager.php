@@ -177,8 +177,8 @@ class CakeFixtureManager {
 
 		$cacheSources = $db->cacheSources;
 		$db->cacheSources = false;
-		$db->cacheSources = $cacheSources;
 		$sources = $db->listSources();
+		$db->cacheSources = $cacheSources;
 		$table = $db->config['prefix'] . $fixture->table;
 
 		if ($drop && in_array($table, $sources)) {
@@ -206,6 +206,7 @@ class CakeFixtureManager {
 			return;
 		}
 
+		$test->db->begin();
 		foreach ($fixtures as $f) {
 			if (!empty($this->_loaded[$f])) {
 				$fixture = $this->_loaded[$f];
@@ -213,6 +214,7 @@ class CakeFixtureManager {
 				$fixture->insert($test->db);
 			}
 		}
+		$test->db->commit();
 	}
 
 /**
@@ -251,7 +253,7 @@ class CakeFixtureManager {
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
-			throw new UnexpectedValueException(sprintf(__('Referenced fixture class %s not found'), $name));
+			throw new UnexpectedValueException(__('Referenced fixture class %s not found', $name));
 		}
 	}
 

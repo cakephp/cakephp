@@ -35,17 +35,19 @@ class ConsoleErrorHandler extends ErrorHandler {
  * @var filehandle
  * @access public
  */
-	public $stderr;
+	public static $stderr;
 
 /**
- * Class constructor.
+ * Get the stderr object for the console error handling.
  *
  * @param Exception $error Exception to handle.
  * @param array $messages Error messages
  */
-	function __construct($error) {
-		$this->stderr = new ConsoleOutput('php://stderr');
-		parent::__construct($error);
+	public static function getStderr() {
+		if (empty(self::$stderr)) {
+			self::$stderr = new ConsoleOutput('php://stderr');
+		}
+		return self::$stderr;
 	}
 
 /**
@@ -53,58 +55,41 @@ class ConsoleErrorHandler extends ErrorHandler {
  *
  * @return void
  */
-	public static function handleException($exception) {
-		$error = new ConsoleErrorHandler($exception);
-		$error->render();
+	public static function handleException(Exception $exception) {
+		$stderr = self::getStderr();
+		$stderr->write(sprintf(
+			__("<error>Error:</error> %s\n%s"), 
+			$exception->getMessage(), 
+			$exception->getTraceAsString()
+		));
 	}
 
 /**
- * Do nothing, no controllers are needed in the console.
+ * Handle errors in the console environment.
  *
  * @return void
  */
-	protected function _getController($exception) {
-		return null;
+	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+		if (error_reporting() === 0) {
+			return;
+		}
+		$stderr = self::getStderr();
+		list($name, $log) = self::_mapErrorCode($code);
+		$message = __('%s in [%s, line %s]', $description, $file, $line);
+		$stderr->write(__("<error>%s Error:</error> %s\n", $name, $message));
+
+		if (Configure::read('debug') == 0) {
+			App::import('Core', 'CakeLog');
+			CakeLog::write($log, $message);
+		}
 	}
 
 /**
- * Overwrite how _cakeError behaves for console.  There is no reason
- * to prepare urls as they are not relevant for this.
+ * undocumented function
  *
- * @param $error Exception Exception being handled.
  * @return void
  */
-	protected function _cakeError($error) {
-		$this->_outputMessage();
-	}
-
-/**
- * Override error404 method
- *
- * @param Exception $error Exception
- * @return void
- */
-	public function error400($error) {
-		$this->_outputMessage();
-	}
-
-/**
- * Override error500 method
- *
- * @param Exception $error Exception
- * @return void
- */
-	public function error500($error) {
-		$this->_outputMessage();
-	}
-
-/**
- * Outputs the exception to STDERR.
- *
- * @param string $template The name of the template to render.
- * @return void
- */
-	public function _outputMessage($template = null) {
+	public function render() {
 		$this->stderr->write(sprintf(
 			__("<error>Error:</error> %s\n%s"), 
 			$this->error->getMessage(), 

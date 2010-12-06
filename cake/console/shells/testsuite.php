@@ -56,7 +56,7 @@ class TestSuiteShell extends Shell {
 		))->addOption('log-dbus', array(
 			'help' => __('Log test execution to DBUS.'),
 			'default' => false
-		))->addOption('--coverage-html', array(
+		))->addOption('coverage-html', array(
 			'help' => __('<dir> Generate code coverage report in HTML format.'),
 			'default' => false
 		))->addOption('coverage-clover', array(
@@ -253,6 +253,10 @@ class TestSuiteShell extends Shell {
  */
 	protected function run($runnerArgs, $options = array()) {
 		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
+
+		restore_error_handler();
+		restore_error_handler();
+
 		$testCli = new TestRunner($runnerArgs);
 		$testCli->run($options);
 	}
@@ -280,8 +284,7 @@ class TestSuiteShell extends Shell {
 
 		if (empty($testCases)) {
 			$this->out(__("No test cases available \n\n"));
-			$this->help();
-			$this->_stop();
+			return $this->out($this->OptionParser->help());
 		}
 
 		$this->out($title);

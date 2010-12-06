@@ -20,7 +20,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', array('Router', 'Security'), false);
+App::import('Core', 'Router', false);
+App::import('Core', 'Security', false);
 
 /**
  * Authentication control component class
@@ -322,7 +323,7 @@ class AuthComponent extends Component {
 		if (!$this->__setDefaults()) {
 			return false;
 		}
-		$request =& $controller->request;
+		$request = $controller->request;
 		
 		$this->request->data = $controller->request->data = $this->hashPasswords($request->data);
 		$url = '';
@@ -520,10 +521,9 @@ class AuthComponent extends Component {
 				$valid = $this->Acl->check($user, $this->action());
 			break;
 			case 'crud':
-				$this->mapActions();
 				if (!isset($this->actionMap[$this->request['action']])) {
 					trigger_error(
-						sprintf(__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"'), $this->request['action'], $this->request['controller']),
+						__('Auth::startup() - Attempted access of un-mapped action "%1$s" in controller "%2$s"', $this->request['action'], $this->request['controller']),
 						E_USER_WARNING
 					);
 				} else {
@@ -535,7 +535,6 @@ class AuthComponent extends Component {
 				}
 			break;
 			case 'model':
-				$this->mapActions();
 				$action = $this->request['action'];
 				if (isset($this->actionMap[$action])) {
 					$action = $this->actionMap[$action];
@@ -548,13 +547,13 @@ class AuthComponent extends Component {
 					$action = $this->action(':action');
 				}
 				if (empty($object)) {
-					trigger_error(sprintf(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object'), get_class($object)), E_USER_WARNING);
+					trigger_error(__('Could not find %s. Set AuthComponent::$object in beforeFilter() or pass a valid object', get_class($object)), E_USER_WARNING);
 					return;
 				}
 				if (method_exists($object, 'isAuthorized')) {
 					$valid = $object->isAuthorized($user, $this->action(':controller'), $action);
 				} elseif ($object) {
-					trigger_error(sprintf(__('%s::isAuthorized() is not defined.'), get_class($object)), E_USER_WARNING);
+					trigger_error(__('%s::isAuthorized() is not defined.', get_class($object)), E_USER_WARNING);
 				}
 			break;
 			case null:

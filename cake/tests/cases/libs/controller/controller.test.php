@@ -761,6 +761,7 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost');
+		$Controller->request = $this->getMock('CakeRequest');
 		$Controller->request->params['url'] = array();
 		$Controller->constructClasses();
 

@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Model', 'ConnectionManager'));
+App::import('Core', 'Model');
+App::import('Core', 'ConnectionManager');
 
 /**
  * Base Class for Schema management
@@ -94,11 +95,7 @@ class CakeSchema extends Object {
 		}
 
 		if (empty($options['path'])) {
-			if (is_dir(CONFIGS . 'schema')) {
-				$this->path = CONFIGS . 'schema';
-			} else {
-				$this->path = CONFIGS . 'sql';
-			}
+			$this->path = CONFIGS . 'schema';
 		}
 
 		$options = array_merge(get_object_vars($this), $options);
@@ -160,7 +157,7 @@ class CakeSchema extends Object {
  * @param array $options schema object properties
  * @return array Set of name and tables
  */
-	public function &load($options = array()) {
+	public function load($options = array()) {
 		if (is_string($options)) {
 			$options = array('path' => $options);
 		}
@@ -182,8 +179,8 @@ class CakeSchema extends Object {
 			$Schema = new $class($options);
 			return $Schema;
 		}
-		$false = false;
-		return $false;
+
+		return false;
 	}
 
 /**
@@ -298,7 +295,9 @@ class CakeSchema extends Object {
 				$systemTables = array(
 					'aros', 'acos', 'aros_acos', Configure::read('Session.table'), 'i18n'
 				);
-
+				if (get_class($Object) === 'AppModel') {
+					continue;
+				}
 				if (in_array($table, $systemTables)) {
 					$tables[$Object->table] = $this->__columns($Object);
 					$tables[$Object->table]['indexes'] = $db->index($Object);
@@ -586,7 +585,7 @@ class CakeSchema extends Object {
 				$value['key'] = 'primary';
 			}
 			if (!isset($db->columns[$value['type']])) {
-				trigger_error(sprintf(__('Schema generation error: invalid column type %s does not exist in DBO'), $value['type']), E_USER_NOTICE);
+				trigger_error(__('Schema generation error: invalid column type %s does not exist in DBO', $value['type']), E_USER_NOTICE);
 				continue;
 			} else {
 				$defaultCol = $db->columns[$value['type']];

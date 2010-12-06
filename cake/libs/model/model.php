@@ -23,7 +23,9 @@
 /**
  * Included libs
  */
-App::import('Core', array('ClassRegistry', 'Validation', 'Set', 'String'));
+App::import('Core', 'ClassRegistry', false);
+App::import('Core', 'Validation', false);
+App::import('Core', 'String', false);
 App::import('Model', 'BehaviorCollection', false);
 App::import('Model', 'ModelBehavior', false);
 App::import('Model', 'ConnectionManager', false);
@@ -438,27 +440,15 @@ class Model extends Object {
 		}
 
 		if (is_subclass_of($this, 'AppModel')) {
-			$appVars = get_class_vars('AppModel');
 			$merge = array('_findMethods');
-
 			if ($this->actsAs !== null || $this->actsAs !== false) {
 				$merge[] = 'actsAs';
 			}
 			$parentClass = get_parent_class($this);
-			if (strtolower($parentClass) !== 'appmodel') {
-				$parentVars = get_class_vars($parentClass);
-				foreach ($merge as $var) {
-					if (isset($parentVars[$var]) && !empty($parentVars[$var])) {
-						$appVars[$var] = Set::merge($appVars[$var], $parentVars[$var]);
-					}
-				}
+			if ($parentClass !== 'AppModel') {
+				$this->_mergeVars($merge, $parentClass);
 			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					$this->{$var} = Set::merge($appVars[$var], $this->{$var});
-				}
-			}
+			$this->_mergeVars($merge, 'AppModel');
 		}
 		$this->Behaviors = new BehaviorCollection();
 
@@ -629,9 +619,9 @@ class Model extends Object {
  *
  * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
- * 
+ *
  * `$this->User->unbindModel( array('hasMany' => array('Supportrequest')) );`
- * 
+ *
  * unbound models that are not made permanent will reset with the next call to Model::find()
  *
  * @param array $params Set of bindings to unbind (indexed by binding type)
@@ -914,9 +904,6 @@ class Model extends Object {
 
 			$dateFields = array('Y' => 'year', 'm' => 'month', 'd' => 'day', 'H' => 'hour', 'i' => 'min', 's' => 'sec');
 			$timeFields = array('H' => 'hour', 'i' => 'min', 's' => 'sec');
-
-			$db = $this->getDataSource();
-			$format = $db->columns[$type]['format'];
 			$date = array();
 
 			if (isset($data['hour']) && isset($data['meridian']) && $data['hour'] != 12 && 'pm' == $data['meridian']) {
@@ -959,9 +946,13 @@ class Model extends Object {
 					}
 				}
 			}
-			$date = str_replace(array_keys($date), array_values($date), $format);
+
+			$format = $this->getDataSource()->columns[$type]['format'];
+			$day = empty($date['Y']) ? null : $date['Y'] . '-' . $date['m'] . '-' . $date['d'] . ' ';
+			$hour = empty($date['H']) ? null : $date['H'] . ':' . $date['i'] . ':' . $date['s'];
+			$date = new DateTime($day . $hour);
 			if ($useNewDate && !empty($date)) {
-				return $date;
+				return $date->format($format);
 			}
 		}
 		return $data;
@@ -1459,15 +1450,11 @@ class Model extends Object {
 
 				foreach ((array)$data as $row) {
 					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
-						$values = array(
-							$db->value($id, $this->getColumnType($this->primaryKey)),
-							$db->value($row)
-						);
+						$values = array($id, $row);
 						if ($isUUID && $primaryAdded) {
-							$values[] = $db->value(String::uuid());
+							$values[] = String::uuid();
 						}
-						$values = implode(',', $values);
-						$newValues[] = "({$values})";
+						$newValues[] = $values;
 						unset($values);
 					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
 						$newData[] = $row;
@@ -1506,7 +1493,6 @@ class Model extends Object {
 				}
 
 				if (!empty($newValues)) {
-					$fields = implode(',', $fields);
 					$db->insertMulti($this->{$join}, $fields, $newValues);
 				}
 			}
@@ -1636,7 +1622,7 @@ class Model extends Object {
 		}
 
 		if ($options['atomic'] && $options['validate'] !== 'only') {
-			$db->begin($this);
+			$transactionBegun = $db->begin($this);
 		}
 
 		if (Set::numeric(array_keys($data))) {
@@ -1676,8 +1662,12 @@ class Model extends Object {
 					break;
 					default:
 						if ($options['atomic']) {
-							if ($validates && ($db->commit($this) !== false)) {
-								return true;
+							if ($validates) {
+								if ($transactionBegun) {
+									return $db->commit($this) !== false;
+								} else {
+									return true;
+								}
 							}
 							$db->rollback($this);
 							return false;
@@ -1787,7 +1777,11 @@ class Model extends Object {
 				default:
 					if ($options['atomic']) {
 						if ($validates) {
-							return ($db->commit($this) !== false);
+							if ($transactionBegun) {
+								return $db->commit($this) !== false;
+							} else {
+								return true;
+							}
 						} else {
 							$db->rollback($this);
 						}
@@ -1870,7 +1864,7 @@ class Model extends Object {
 				));
 			}
 
-			if ($db->delete($this)) {
+			if ($db->delete($this, array($this->alias . '.' . $this->primaryKey => $id))) {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
@@ -2640,7 +2634,7 @@ class Model extends Object {
 						} elseif (!is_array($validator['rule'])) {
 							$valid = preg_match($rule, $data[$fieldName]);
 						} elseif (Configure::read('debug') > 0) {
-							trigger_error(sprintf(__('Could not find validation handler %s for %s'), $rule, $fieldName), E_USER_WARNING);
+							trigger_error(__('Could not find validation handler %s for %s', $rule, $fieldName), E_USER_WARNING);
 						}
 
 						if (!$valid || (is_string($valid) && strlen($valid) > 0)) {
@@ -2949,7 +2943,7 @@ class Model extends Object {
 			return array($with, array_unique(array_merge($assoc[$with], $keys)));
 		}
 		trigger_error(
-			sprintf(__('Invalid join model settings in %s'), $model->alias),
+			__('Invalid join model settings in %s', $model->alias),
 			E_USER_WARNING
 		);
 	}

@@ -506,7 +506,7 @@ class Router {
  * @return array Returns an array containing the altered URL and the parsed extension.
  * @access private
  */
-	function __parseExtension($url) {
+	private static function __parseExtension($url) {
 		$ext = null;
 
 		if (self::$_parseExtensions) {
@@ -563,7 +563,7 @@ class Router {
  * @return void
  * @access private
  */
-	function __connectDefaultRoutes() {
+	private static function __connectDefaultRoutes() {
 		if ($plugins = App::objects('plugin')) {
 			App::import('Core', 'route/PluginShortRoute');
 			foreach ($plugins as $key => $value) {
@@ -886,10 +886,9 @@ class Router {
  *
  * @param array $url A url that didn't match any routes
  * @return string A generated url for the array
- * @access protected
  * @see Router::url()
  */
-	function _handleNoRoute($url) {
+	protected static function _handleNoRoute($url) {
 		$named = $args = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),

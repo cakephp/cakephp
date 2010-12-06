@@ -22,8 +22,8 @@
  * Include files
  */
 App::import('Core', 'CakeResponse', false);
+App::import('Core', 'ClassRegistry', false);
 App::import('Controller', 'Component', false);
-App::import('Core', 'CakeResponse', false);
 App::import('View', 'View', false);
 
 /**
@@ -415,23 +415,21 @@ class Controller extends Object {
  * @return void
  */
 	protected function __mergeVars() {
-		$pluginName = Inflector::camelize($this->plugin);
-		$pluginController = $pluginName . 'AppController';
+		$pluginName = $pluginController = $plugin = null;
 
-		if (is_subclass_of($this, 'AppController') || is_subclass_of($this, $pluginController)) {
+		if (!empty($this->plugin)) {
+			$pluginName = Inflector::camelize($this->plugin);
+			$pluginController = $pluginName . 'AppController';
+			if (!is_subclass_of($this, $pluginController)) {
+				$pluginController = null;
+			}
+			$plugin = $pluginName . '.';
+		}
+		
+		if (is_subclass_of($this, 'AppController') || !empty($pluginController)) {
 			$appVars = get_class_vars('AppController');
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
-			$plugin = null;
-
-			if (!empty($this->plugin)) {
-				$plugin = $pluginName . '.';
-				if (!is_subclass_of($this, $pluginController)) {
-					$pluginController = null;
-				}
-			} else {
-				$pluginController = null;
-			}
 
 			if ($uses == $this->uses && !empty($this->uses)) {
 				if (!in_array($plugin . $this->modelClass, $this->uses)) {
@@ -443,50 +441,18 @@ class Controller extends Object {
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
 			} elseif ($this->uses !== null || $this->uses !== false) {
-				$merge[] = 'uses';
+				$this->_mergeVars(array('uses'), 'AppController', false);
 			}
-
-			foreach ($merge as $var) {
-				if (!empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var === 'components') {
-						$normal = Set::normalize($this->{$var});
-						$app = Set::normalize($appVars[$var]);
-						if ($app !== $normal) {
-							$this->{$var} = Set::merge($app, $normal);
-						}
-					} else {
-						$this->{$var} = Set::merge(
-							$this->{$var}, array_diff($appVars[$var], $this->{$var})
-						);
-					}
-				}
-			}
+			$this->_mergeVars($merge, 'AppController', true);
 		}
 
 		if ($pluginController && $pluginName != null) {
-			$appVars = get_class_vars($pluginController);
-			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
 			if ($this->uses !== null || $this->uses !== false) {
-				$merge[] = 'uses';
+				$this->_mergeVars(array('uses'), $pluginController, false);
 			}
-
-			foreach ($merge as $var) {
-				if (isset($appVars[$var]) && !empty($appVars[$var]) && is_array($this->{$var})) {
-					if ($var === 'components') {
-						$normal = Set::normalize($this->{$var});
-						$app = Set::normalize($appVars[$var]);
-						if ($app !== $normal) {
-							$this->{$var} = Set::merge($app, $normal);
-						}
-					} else {
-						$this->{$var} = Set::merge(
-							$this->{$var}, array_diff($appVars[$var], $this->{$var})
-						);
-					}
-				}
-			}
+			$this->_mergeVars($merge, $pluginController);
 		}
 	}
 
@@ -627,7 +593,7 @@ class Controller extends Object {
 
 			if ($this->persistModel === true) {
 				$this->_persist($modelClass, true, $this->{$modelClass});
-				$registry =& ClassRegistry::getInstance();
+				$registry = ClassRegistry::getInstance();
 				$this->_persist($modelClass . 'registry', true, $registry->__objects, 'registry');
 			}
 		} else {
@@ -766,7 +732,7 @@ class Controller extends Object {
  */
 	public function isAuthorized() {
 		trigger_error(sprintf(
-			__('%s::isAuthorized() is not defined.'), $this->name
+			__('%sController::isAuthorized() is not defined.'), $this->name
 		), E_USER_WARNING);
 		return false;
 	}
@@ -1039,7 +1005,7 @@ class Controller extends Object {
 			), E_USER_WARNING);
 			return array();
 		}
-		$options = array_merge($this->request->params, $this->params['url'], $this->passedArgs);
+		$options = array_merge($this->request->params, $this->request->query, $this->passedArgs);
 
 		if (isset($this->paginate[$object->alias])) {
 			$defaults = $this->paginate[$object->alias];
@@ -1170,11 +1136,11 @@ class Controller extends Object {
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options
 		);
-		if (!isset($this->request['paging'])) {
-			$this->request['paging'] = array();
+		if (!isset($this->request->params['paging'])) {
+			$this->request->params['paging'] = array();
 		}
-		$this->request['paging'] = array_merge(
-			(array)$this->request['paging'],
+		$this->request->params['paging'] = array_merge(
+			(array)$this->request->params['paging'],
 			array($object->alias => $paging)
 		);
 
@@ -1254,5 +1220,3 @@ class Controller extends Object {
 		return false;
 	}
 }
-
-class MissingModelException extends RuntimeException {}

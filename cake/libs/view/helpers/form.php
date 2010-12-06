@@ -218,7 +218,8 @@ class FormHelper extends AppHelper {
 			$data = $this->fieldset[$modelEntity];
 			$recordExists = (
 				isset($this->request->data[$model]) &&
-				!empty($this->request->data[$model][$data['key']])
+				!empty($this->request->data[$model][$data['key']]) &&
+				!is_array($this->request->data[$model][$data['key']])
 			);
 
 			if ($recordExists) {
@@ -242,12 +243,12 @@ class FormHelper extends AppHelper {
 			if (empty($options['url']['controller'])) {
 				if (!empty($model) && $model != $this->defaultModel) {
 					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
-				} elseif (!empty($this->request['controller'])) {
-					$options['url']['controller'] = Inflector::underscore($this->request['controller']);
+				} elseif (!empty($this->request->params['controller'])) {
+					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
 				}
 			}
 			if (empty($options['action'])) {
-				$options['action'] = $this->request['action'];
+				$options['action'] = $this->request->params['action'];
 			}
 
 			$actionDefaults = array(
@@ -306,9 +307,9 @@ class FormHelper extends AppHelper {
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
 		$this->fields = array();
-		if (isset($this->request['_Token']) && !empty($this->request['_Token'])) {
+		if (isset($this->request->params['_Token']) && !empty($this->request->params['_Token'])) {
 			$append .= $this->hidden('_Token.key', array(
-				'value' => $this->request['_Token']['key'], 'id' => 'Token' . mt_rand())
+				'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand())
 			);
 		}
 
@@ -504,7 +505,7 @@ class FormHelper extends AppHelper {
 			if ($text != null) {
 				$error = $text;
 			} elseif (is_numeric($error)) {
-				$error = sprintf(__('Error in field %s'), Inflector::humanize($this->field()));
+				$error = __('Error in field %s', Inflector::humanize($this->field()));
 			}
 			if ($options['escape']) {
 				$error = h($error);
@@ -1139,7 +1140,7 @@ class FormHelper extends AppHelper {
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new Exception(sprintf(__('Missing field name for FormHelper::%s'), $method));
+			throw new Exception(__('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];

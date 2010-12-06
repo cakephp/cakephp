@@ -26,14 +26,14 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 
 require CORE_PATH . 'cake' . DS . 'basics.php';
 require CORE_PATH . 'cake' . DS . 'config' . DS . 'paths.php';
-require LIBS . 'exceptions.php';
+require LIBS . 'error' . DS . 'exceptions.php';
 require LIBS . 'object.php';
 require LIBS . 'inflector.php';
+require LIBS . 'app.php';
 require LIBS . 'configure.php';
 require LIBS . 'set.php';
 require LIBS . 'cache.php';
-require LIBS . 'error_handler.php';
-set_exception_handler(array('ErrorHandler', 'handleException'));
+require LIBS . 'error' . DS . 'error_handler.php';
 
 Configure::bootstrap(isset($boot) ? $boot : true);
 

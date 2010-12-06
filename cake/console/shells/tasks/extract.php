@@ -114,7 +114,7 @@ class ExtractTask extends Shell {
 			$this->__paths = explode(',', $this->params['paths']);
 		} else {
 			$defaultPath = APP_PATH;
-			$message = sprintf(__("What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one"), $this->Dispatch->params['root'] . DS . 'myapp');
+			$message = __("What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $this->Dispatch->params['root'] . DS . 'myapp');
 			while (true) {
 				$response = $this->in($message, null, $defaultPath);
 				if (strtoupper($response) === 'Q') {
@@ -136,7 +136,7 @@ class ExtractTask extends Shell {
 		if (isset($this->params['output'])) {
 			$this->__output = $this->params['output'];
 		} else {
-			$message = sprintf(__("What is the full path you would like to output?\nExample: %s\n[Q]uit"), $this->__paths[0] . DS . 'locale');
+			$message = __("What is the full path you would like to output?\nExample: %s\n[Q]uit", $this->__paths[0] . DS . 'locale');
 			while (true) {
 				$response = $this->in($message, null, $this->__paths[0] . DS . 'locale');
 				if (strtoupper($response) === 'Q') {
@@ -156,7 +156,7 @@ class ExtractTask extends Shell {
 			$this->__merge = !(strtolower($this->params['merge']) === 'no');
 		} else {
 			$this->out();
-			$response = $this->in(sprintf(__('Would you like to merge all domains strings into the default.pot file?')), array('y', 'n'), 'n');
+			$response = $this->in(__('Would you like to merge all domains strings into the default.pot file?'), array('y', 'n'), 'n');
 			$this->__merge = strtolower($response) === 'y';
 		}
 
@@ -250,7 +250,7 @@ class ExtractTask extends Shell {
 	function __extractTokens() {
 		foreach ($this->__files as $file) {
 			$this->__file = $file;
-			$this->out(sprintf(__('Processing %s...'), $file));
+			$this->out(__('Processing %s...', $file));
 
 			$code = file_get_contents($file);
 			$allTokens = token_get_all($code);
@@ -413,11 +413,11 @@ class ExtractTask extends Shell {
 			$response = '';
 			while ($overwriteAll === false && $File->exists() && strtoupper($response) !== 'Y') {
 				$this->out();
-				$response = $this->in(sprintf(__('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll'), $filename), array('y', 'n', 'a'), 'y');
+				$response = $this->in(__('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename), array('y', 'n', 'a'), 'y');
 				if (strtoupper($response) === 'N') {
 					$response = '';
 					while ($response == '') {
-						$response = $this->in(sprintf(__("What would you like to name this file?\nExample: %s"), 'new_' . $filename), null, 'new_' . $filename);
+						$response = $this->in(__("What would you like to name this file?\nExample: %s", 'new_' . $filename), null, 'new_' . $filename);
 						$File = new File($this->__output . $response);
 						$filename = $response;
 					}
@@ -485,7 +485,7 @@ class ExtractTask extends Shell {
  * @access private
  */
 	function __markerError($file, $line, $marker, $count) {
-		$this->out(sprintf(__("Invalid marker content in %s:%s\n* %s("), $file, $line, $marker), true);
+		$this->out(__("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker), true);
 		$count += 2;
 		$tokenCount = count($this->__tokens);
 		$parenthesis = 1;

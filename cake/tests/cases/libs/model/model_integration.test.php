@@ -184,7 +184,7 @@ class ModelIntegrationTest extends BaseModelTest {
  */
 	function testPkInHabtmLinkModel() {
 		//Test Nonconformant Models
-		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC');
+		$this->loadFixtures('Content', 'ContentAccount', 'Account', 'JoinC', 'JoinAC', 'ItemsPortfolio');
 		$TestModel = new Content();
 		$this->assertEqual($TestModel->ContentAccount->primaryKey, 'iContentAccountsId');
 
@@ -1309,12 +1309,12 @@ class ModelIntegrationTest extends BaseModelTest {
 		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
-		$this->assertEqual($TestModel->actsAs, array('Containable', 'Tree'));
+		$this->assertEqual($TestModel->actsAs, array('Containable' => null, 'Tree' => null));
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
 
 		$TestModel = ClassRegistry::init('MergeVarPluginComment');
-		$expected = array('Containable', 'Containable' => array('some_settings'));
+		$expected = array('Containable' => array('some_settings'));
 		$this->assertEqual($TestModel->actsAs, $expected);
 		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
@@ -1867,7 +1867,7 @@ class ModelIntegrationTest extends BaseModelTest {
  * @return void
  */
 	function testCreation() {
-		$this->loadFixtures('Article', 'ArticleFeaturedsTags');
+		$this->loadFixtures('Article', 'ArticleFeaturedsTags', 'User', 'Featured');
 		$TestModel = new Test();
 		$result = $TestModel->create();
 		$expected = array('Test' => array('notes' => 'write some notes here'));
@@ -1882,9 +1882,10 @@ class ModelIntegrationTest extends BaseModelTest {
 		} else {
 			$intLength = 11;
 		}
-		foreach (array('collate', 'charset') as $type) {
-			unset($result['user'][$type]);
-			unset($result['password'][$type]);
+		foreach (array('collate', 'charset', 'comment') as $type) {
+			foreach ($result as $i => $r) {
+				unset($result[$i][$type]);
+			}
 		}
 
 		$expected = array(
@@ -1946,8 +1947,8 @@ class ModelIntegrationTest extends BaseModelTest {
 			'Featured' => array(
 				'article_featured_id' => 1,
 				'category_id' => 1,
-				'published_date' => '2008-6-11 00:00:00',
-				'end_date' => '2008-6-20 00:00:00'
+				'published_date' => '2008-06-11 00:00:00',
+				'end_date' => '2008-06-20 00:00:00'
 		));
 
 		$this->assertEqual($FeaturedModel->create($data), $expected);
@@ -1969,8 +1970,8 @@ class ModelIntegrationTest extends BaseModelTest {
 
 		$expected = array(
 			'Featured' => array(
-				'published_date' => '2008-6-11 00:00:00',
-				'end_date' => '2008-6-20 00:00:00',
+				'published_date' => '2008-06-11 00:00:00',
+				'end_date' => '2008-06-20 00:00:00',
 				'article_featured_id' => 1,
 				'category_id' => 1
 		));

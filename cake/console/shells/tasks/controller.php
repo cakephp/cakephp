@@ -79,7 +79,7 @@ class ControllerTask extends BakeTask {
 			if (!empty($this->params['admin'])) {
 				$admin = $this->Project->getPrefix();
 				if ($admin) {
-					$this->out(sprintf(__('Adding %s methods'), $admin));
+					$this->out(__('Adding %s methods', $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
 			}
@@ -125,7 +125,7 @@ class ControllerTask extends BakeTask {
 	protected function _interactive() {
 		$this->interactive = true;
 		$this->hr();
-		$this->out(sprintf(__("Bake Controller\nPath: %s"), $this->path));
+		$this->out(__("Bake Controller\nPath: %s", $this->path));
 		$this->hr();
 
 		if (empty($this->connection)) {
@@ -134,7 +134,7 @@ class ControllerTask extends BakeTask {
 
 		$controllerName = $this->getName();
 		$this->hr();
-		$this->out(sprintf(__('Baking %sController'), $controllerName));
+		$this->out(__('Baking %sController', $controllerName));
 		$this->hr();
 
 		$helpers = $components = array();
@@ -148,7 +148,7 @@ class ControllerTask extends BakeTask {
 
 		$question[] = __("Would you like to build your controller interactively?");
 		if (file_exists($this->path . $controllerFile .'_controller.php')) {
-			$question[] = sprintf(__("Warning: Choosing no will overwrite the %sController."), $controllerName);
+			$question[] = __("Warning: Choosing no will overwrite the %sController.", $controllerName);
 		}
 		$doItInteractive = $this->in(implode("\n", $question), array('y','n'), 'y');
 
@@ -213,7 +213,7 @@ class ControllerTask extends BakeTask {
 		$this->hr();
 		$this->out(__('The following controller will be created:'));
 		$this->hr();
-		$this->out(sprintf(__("Controller Name:\n\t%s"), $controllerName));
+		$this->out(__("Controller Name:\n\t%s", $controllerName));
 
 		if (strtolower($useDynamicScaffold) == 'y') {
 			$this->out("var \$scaffold;");
@@ -278,7 +278,7 @@ class ControllerTask extends BakeTask {
 			$this->_stop();
 		}
 
-		$modelObj =& ClassRegistry::init($currentModelName);
+		$modelObj = ClassRegistry::init($currentModelName);
 		$controllerPath = $this->_controllerPath($controllerName);
 		$pluralName = $this->_pluralName($currentModelName);
 		$singularName = Inflector::variable($currentModelName);
@@ -302,6 +302,8 @@ class ControllerTask extends BakeTask {
  * @return string Baked controller
  */
 	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+		$this->out("\nBaking controller class for $controllerName...", 1, Shell::QUIET);
+
 		$isScaffold = ($actions === 'scaffold') ? true : false;
 
 		$this->Template->set('plugin', Inflector::camelize($this->plugin));

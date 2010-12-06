@@ -80,8 +80,6 @@ class ShellDispatcher {
  */
 	function __initConstants() {
 		if (function_exists('ini_set')) {
-			ini_set('display_errors', '1');
-			ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 			ini_set('html_errors', false);
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
@@ -90,14 +88,9 @@ class ShellDispatcher {
 		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 			define('DS', DIRECTORY_SEPARATOR);
 			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
-			define('DISABLE_DEFAULT_ERROR_HANDLING', false);
 			define('CAKEPHP_SHELL', true);
 			if (!defined('CORE_PATH')) {
-				if (function_exists('ini_set') && ini_set('include_path', CAKE_CORE_INCLUDE_PATH . PATH_SEPARATOR . ini_get('include_path'))) {
-					define('CORE_PATH', null);
-				} else {
-					define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-				}
+				define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 			}
 		}
 	}
@@ -141,13 +134,15 @@ class ShellDispatcher {
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
 		require CORE_PATH . 'cake' . DS . 'bootstrap.php';
-		require_once CONSOLE_LIBS . 'console_error_handler.php';
-		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 			App::build();
 		}
+		require_once CONSOLE_LIBS . 'console_error_handler.php';
+		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
+		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
+
 		if (!defined('FULL_BASE_URL')) {
 			define('FULL_BASE_URL', '/');
 		}

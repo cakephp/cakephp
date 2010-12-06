@@ -65,7 +65,7 @@ class ComponentCollectionTest extends CakeTestCase {
  * @return void
  */
 	function testLoadWithEnableFalse() {
-		$result = $this->Components->load('Cookie', array(), false);
+		$result = $this->Components->load('Cookie', array('enabled' => false));
 		$this->assertType('CookieComponent', $result);
 		$this->assertType('CookieComponent', $this->Components->Cookie);
 

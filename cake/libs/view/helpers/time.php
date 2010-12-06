@@ -224,9 +224,9 @@ class TimeHelper extends AppHelper {
 		$y = $this->isThisYear($date) ? '' : ' %Y';
 
 		if ($this->isToday($date)) {
-			$ret = sprintf(__('Today, %s'), strftime("%H:%M", $date));
+			$ret = __('Today, %s', strftime("%H:%M", $date));
 		} elseif ($this->wasYesterday($date)) {
-			$ret = sprintf(__('Yesterday, %s'), strftime("%H:%M", $date));
+			$ret = __('Yesterday, %s', strftime("%H:%M", $date));
 		} else {
 			$format = $this->convertSpecifiers("%b %eS{$y}, %H:%M", $date);
 			$ret = strftime($format, $date);
@@ -572,7 +572,7 @@ class TimeHelper extends AppHelper {
 		$diff = $futureTime - $pastTime;
 
 		if ($diff > abs($now - $this->fromString($end))) {
-			$relativeDate = sprintf(__('on %s'), date($format, $inSeconds));
+			$relativeDate = __('on %s', date($format, $inSeconds));
 		} else {
 			if ($years > 0) {
 				// years and months and days
@@ -606,7 +606,7 @@ class TimeHelper extends AppHelper {
 			}
 
 			if (!$backwards) {
-				$relativeDate = sprintf(__('%s ago'), $relativeDate);
+				$relativeDate = __('%s ago', $relativeDate);
 			}
 		}
 		return $relativeDate;

@@ -58,17 +58,18 @@ class HelperCollectionTest extends CakeTestCase {
 	}
 
 /**
- * test load and enable = false
+ * test that the enabled setting disables the helper.
  *
  * @return void
  */
-	function testLoadWithEnableFalse() {
-		$result = $this->Helpers->load('Html', array(), false);
+	function testLoadWithEnabledFalse() {
+		$result = $this->Helpers->load('Html', array('enabled' => false));
 		$this->assertType('HtmlHelper', $result);
 		$this->assertType('HtmlHelper', $this->Helpers->Html);
 
 		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
 	}
+
 /**
  * test missinghelper exception
  *

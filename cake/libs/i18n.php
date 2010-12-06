@@ -21,7 +21,8 @@
 /**
  * Included libraries.
  */
-App::import('Core', array('l10n', 'Multibyte'));
+App::import('Core', 'L10n');
+App::import('Core', 'Multibyte');
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -92,8 +93,8 @@ class I18n {
 	public static function &getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] =& new I18n();
-			$instance[0]->l10n =& new L10n();
+			$instance[0] = new I18n();
+			$instance[0]->l10n = new L10n();
 		}
 		return $instance[0];
 	}
@@ -110,7 +111,7 @@ class I18n {
  * @return string translated string.
  */
 	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null) {
-		$_this =& I18n::getInstance();
+		$_this = I18n::getInstance();
 		
 		if (strpos($singular, "\r\n") !== false) {
 			$singular = str_replace("\r\n", "\n", $singular);
@@ -139,11 +140,11 @@ class I18n {
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
-		if (empty($_this->__domains[$domain][$_this->__lang])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang])) {
 			$_this->__domains[$domain][$_this->__lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
-		if (empty($_this->__domains[$domain][$_this->__lang][$_this->category])) {
+		if (!isset($_this->__domains[$domain][$_this->__lang][$_this->category])) {
 			$_this->__bindTextDomain($domain);
 			Cache::write($_this->domain, $_this->__domains[$domain][$_this->__lang], '_cake_core_');
 		}
@@ -190,7 +191,7 @@ class I18n {
  * @return void
  */
 	public static function clear() {
-		$self =& I18n::getInstance();
+		$self = I18n::getInstance();
 		$self->__domains = array();
 	}
 
@@ -200,7 +201,7 @@ class I18n {
  * @return array
  */
 	public static function domains() {
-		$self =& I18n::getInstance();
+		$self = I18n::getInstance();
 		return $self->__domains;
 	}
 

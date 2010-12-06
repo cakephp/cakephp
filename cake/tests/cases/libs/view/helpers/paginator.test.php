@@ -20,6 +20,10 @@
 App::import('Core', 'View');
 App::import('Helper', array('Html', 'Paginator', 'Form', 'Js'));
 
+if (!defined('FULL_BASE_URL')) {
+	define('FULL_BASE_URL', 'http://cakephp.org');
+}
+
 /**
  * PaginatorHelperTest class
  *
@@ -657,7 +661,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$this->Paginator->request->params['pass'] = array(2);
 		$this->Paginator->request->params['named'] = array('foo' => 'bar');
-		$this->Paginator->beforeRender();
+		$this->Paginator->beforeRender('posts/index');
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
@@ -1574,7 +1578,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->params['paging']['Client']['page'] = 3;
+		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => ' ~~~ '));
 		$expected = array(
 			array('span' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
@@ -1591,7 +1595,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->params['paging']['Client']['page'] = 3;
+		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => '<span class="ellipsis">...</span>'));
 		$expected = array(
 			array('span' => array()), array('a' => array('href' => '/index/page:1')), '1', '/a', '/span',
@@ -1774,6 +1778,15 @@ class PaginatorHelperTest extends CakeTestCase {
 			' | ',
 			'<span',
 			array('a' => array('href' => '/index/page:15/sort:Client.name/direction:DESC')), '15', '/a',
+			'/span',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->options(array('url' => array('full_base' => true)));
+		$result = $this->Paginator->first();
+		$expected = array(
+			'<span',
+			array('a' => array('href' => FULL_BASE_URL . '/index/page:1/sort:Client.name/direction:DESC')), '&lt;&lt; first', '/a',
 			'/span',
 		);
 		$this->assertTags($result, $expected);

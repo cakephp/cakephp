@@ -141,7 +141,7 @@ class CakeSession {
  * @param boolean $start Should session be started right now
  */
 	public static function init($base = null, $start = true) {
-		App::import('Core', array('Set', 'Security'));
+		App::import('Core', 'Security');
 		self::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
@@ -262,12 +262,12 @@ class CakeSession {
 	public static function delete($name) {
 		if (self::check($name)) {
 			if (in_array($name, self::$watchKeys)) {
-				trigger_error(sprintf(__('Deleting session key {%s}'), $name), E_USER_NOTICE);
+				trigger_error(__('Deleting session key {%s}', $name), E_USER_NOTICE);
 			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
-		self::__setError(2, sprintf(__("%s doesn't exist"), $name));
+		self::__setError(2, __("%s doesn't exist", $name));
 		return false;
 	}
 
@@ -278,7 +278,7 @@ class CakeSession {
  * @param array $new New set of variable => value
  * @access private
  */
-	function __overwrite(&$old, $new) {
+	private static function __overwrite(&$old, $new) {
 		if (!empty($old)) {
 			foreach ($old as $key => $var) {
 				if (!isset($new[$key])) {
@@ -298,7 +298,7 @@ class CakeSession {
  * @return string Error as string
  * @access private
  */
-	function __error($errorNumber) {
+	private static function __error($errorNumber) {
 		if (!is_array(self::$error) || !array_key_exists($errorNumber, self::$error)) {
 			return false;
 		} else {
@@ -452,7 +452,7 @@ class CakeSession {
 		}
 		foreach ($write as $key => $val) {
 			if (in_array($key, self::$watchKeys)) {
-				trigger_error(sprintf(__('Writing session key {%s}: %s'), $key, Debugger::exportVar($val)), E_USER_NOTICE);
+				trigger_error(__('Writing session key {%s}: %s', $key, Debugger::exportVar($val)), E_USER_NOTICE);
 			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
@@ -562,7 +562,7 @@ class CakeSession {
 			App::import('Core', 'session/' . $class);
 		}
 		if (!class_exists($class)) {
-			throw new Exception(sprintf(__('Could not load %s to handle the session.'), $class));
+			throw new Exception(__('Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof CakeSessionHandlerInterface) {
@@ -650,7 +650,7 @@ class CakeSession {
  *
  * @return boolean Success
  */
-	protected function _startSession() {
+	protected static function _startSession() {
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
@@ -723,7 +723,7 @@ class CakeSession {
  * @return void
  * @access private
  */
-	function __setError($errorNumber, $errorMessage) {
+	private static function __setError($errorNumber, $errorMessage) {
 		if (self::$error === false) {
 			self::$error = array();
 		}

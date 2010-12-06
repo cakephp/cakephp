@@ -244,7 +244,7 @@ class Folder {
  * @static
  */
 	function isWindowsPath($path) {
-		return (bool)preg_match('/^[A-Z]:\\\\/i', $path);
+		return (preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**
@@ -256,7 +256,7 @@ class Folder {
  * @static
  */
 	function isAbsolute($path) {
-		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path));
+		return !empty($path) && ($path[0] === '/' || preg_match('/^[A-Z]:\\\\/i', $path) || substr($path, 0, 2) == '\\\\');
 	}
 
 /**
@@ -359,11 +359,11 @@ class Folder {
 
 		if ($recursive === false && is_dir($path)) {
 			if (@chmod($path, intval($mode, 8))) {
-				$this->__messages[] = sprintf(__('%s changed to %s'), $path, $mode);
+				$this->__messages[] = __('%s changed to %s', $path, $mode);
 				return true;
 			}
 
-			$this->__errors[] = sprintf(__('%s NOT changed to %s'), $path, $mode);
+			$this->__errors[] = __('%s NOT changed to %s', $path, $mode);
 			return false;
 		}
 
@@ -380,9 +380,9 @@ class Folder {
 					}
 
 					if (@chmod($fullpath, intval($mode, 8))) {
-						$this->__messages[] = sprintf(__('%s changed to %s'), $fullpath, $mode);
+						$this->__messages[] = __('%s changed to %s', $fullpath, $mode);
 					} else {
-						$this->__errors[] = sprintf(__('%s NOT changed to %s'), $fullpath, $mode);
+						$this->__errors[] = __('%s NOT changed to %s', $fullpath, $mode);
 					}
 				}
 			}
@@ -467,7 +467,7 @@ class Folder {
 		}
 
 		if (is_file($pathname)) {
-			$this->__errors[] = sprintf(__('%s is a file'), $pathname);
+			$this->__errors[] = __('%s is a file', $pathname);
 			return false;
 		}
 		$pathname = rtrim($pathname, DS);
@@ -478,11 +478,11 @@ class Folder {
 				$old = umask(0);
 				if (mkdir($pathname, $mode)) {
 					umask($old);
-					$this->__messages[] = sprintf(__('%s created'), $pathname);
+					$this->__messages[] = __('%s created', $pathname);
 					return true;
 				} else {
 					umask($old);
-					$this->__errors[] = sprintf(__('%s NOT created'), $pathname);
+					$this->__errors[] = __('%s NOT created', $pathname);
 					return false;
 				}
 			}
@@ -555,9 +555,9 @@ class Folder {
 					}
 					if (is_file($file) === true) {
 						if (@unlink($file)) {
-							$this->__messages[] = sprintf(__('%s removed'), $file);
+							$this->__messages[] = __('%s removed', $file);
 						} else {
-							$this->__errors[] = sprintf(__('%s NOT removed'), $file);
+							$this->__errors[] = __('%s NOT removed', $file);
 						}
 					} elseif (is_dir($file) === true && $this->delete($file) === false) {
 						return false;
@@ -566,10 +566,10 @@ class Folder {
 			}
 			$path = substr($path, 0, strlen($path) - 1);
 			if (rmdir($path) === false) {
-				$this->__errors[] = sprintf(__('%s NOT removed'), $path);
+				$this->__errors[] = __('%s NOT removed', $path);
 				return false;
 			} else {
-				$this->__messages[] = sprintf(__('%s removed'), $path);
+				$this->__messages[] = __('%s removed', $path);
 			}
 		}
 		return true;
@@ -604,7 +604,7 @@ class Folder {
 		$mode = $options['mode'];
 
 		if (!$this->cd($fromDir)) {
-			$this->__errors[] = sprintf(__('%s not found'), $fromDir);
+			$this->__errors[] = __('%s not found', $fromDir);
 			return false;
 		}
 
@@ -613,7 +613,7 @@ class Folder {
 		}
 
 		if (!is_writable($toDir)) {
-			$this->__errors[] = sprintf(__('%s not writable'), $toDir);
+			$this->__errors[] = __('%s not writable', $toDir);
 			return false;
 		}
 
@@ -627,9 +627,9 @@ class Folder {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
-							$this->__messages[] = sprintf(__('%s copied to %s'), $from, $to);
+							$this->__messages[] = __('%s copied to %s', $from, $to);
 						} else {
-							$this->__errors[] = sprintf(__('%s NOT copied to %s'), $from, $to);
+							$this->__errors[] = __('%s NOT copied to %s', $from, $to);
 						}
 					}
 
@@ -640,11 +640,11 @@ class Folder {
 							$old = umask(0);
 							chmod($to, $mode);
 							umask($old);
-							$this->__messages[] = sprintf(__('%s created'), $to);
+							$this->__messages[] = __('%s created', $to);
 							$options = array_merge($options, array('to'=> $to, 'from'=> $from));
 							$this->copy($options);
 						} else {
-							$this->__errors[] = sprintf(__('%s not created'), $to);
+							$this->__errors[] = __('%s not created', $to);
 						}
 					}
 				}

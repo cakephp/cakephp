@@ -51,9 +51,9 @@ class ConsoleInputArgument {
 	}
 
 /**
- * Get the name of the argument
+ * Get the value of the name attribute.
  *
- * @return string
+ * @return string Value of this->_name.
  */
 	public function name() {
 		return $this->_name;
@@ -75,7 +75,7 @@ class ConsoleInputArgument {
 			$optional = __(' <comment>(optional)</comment>');
 		}
 		if (!empty($this->_choices)) {
-			$optional .= sprintf(__(' <comment>(choices: %s)</comment>'), implode('|', $this->_choices));
+			$optional .= __(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
 		}
 		return sprintf('%s%s%s', $name, $this->_help, $optional);
 	}

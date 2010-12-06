@@ -18,7 +18,7 @@
  */
 ?>
 <p>
-	<cake:nocache>
+	<!--nocache-->
 	<span class="notice">
 		<?php
 			echo __('Your tmp directory is ');
@@ -29,7 +29,7 @@
 			endif;
 		?>
 	</span>
-	</cake:nocache>
+	<!--/nocache-->
 </p>
 <p>
 	<span class="notice">
@@ -96,7 +96,7 @@ if (!empty($filePresent)):
 	</span>
 </p>
 <?php endif; ?>
-<h2><?php printf(__('Release Notes for CakePHP %s.', true), Configure::version()); ?></h2>
+<h2><?php echo __('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <a href="https://trac.cakephp.org/wiki/notes/1.2.x.x"><?php __('Read the release notes and get the latest version'); ?> </a>
 <h2><?php __('Editing this Page'); ?></h2>
 <p>

@@ -68,7 +68,7 @@ class ProjectTask extends Shell {
 		if ($project) {
 			$response = false;
 			while ($response == false && is_dir($project) === true && file_exists($project . 'config' . 'core.php')) {
-				$prompt = sprintf(__('<warning>A project already exists in this location:</warning> %s Overwrite?'), $project);
+				$prompt = __('<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 				$response = $this->in($prompt, array('y','n'), 'n');
 				if (strtolower($response) === 'n') {
 					$response = $project = false;
@@ -89,23 +89,23 @@ class ProjectTask extends Shell {
 			if ($this->securitySalt($path) === true) {
 				$this->out(__(' * Random hash key created for \'Security.salt\''));
 			} else {
-				$this->err(sprintf(__('Unable to generate random hash for \'Security.salt\', you should change it in %s'), CONFIGS . 'core.php'));
+				$this->err(__('Unable to generate random hash for \'Security.salt\', you should change it in %s', CONFIGS . 'core.php'));
 				$success = false;
 			}
 
 			if ($this->securityCipherSeed($path) === true) {
 				$this->out(__(' * Random seed created for \'Security.cipherSeed\''));
 			} else {
-				$this->err(sprintf(__('Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s'), CONFIGS . 'core.php'));
+				$this->err(__('Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', CONFIGS . 'core.php'));
 				$success = false;
 			}
 
 			if ($this->corePath($path) === true) {
-				$this->out(sprintf(__(' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php'), CAKE_CORE_INCLUDE_PATH));
-				$this->out(sprintf(__(' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php'), CAKE_CORE_INCLUDE_PATH));
+				$this->out(__(' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__(' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
 				$this->out(__('   * <warning>Remember to check these value after moving to production server</warning>'));
 			} else {
-				$this->err(sprintf(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s'), $path . 'webroot' .DS .'index.php'));
+				$this->err(__('Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' .DS .'index.php'));
 				$success = false;
 			}
 			if ($this->consolePath($path) === true) {
@@ -117,8 +117,8 @@ class ProjectTask extends Shell {
 
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
-				$this->err(sprintf(__('Could not set permissions on %s'), $path . DS .'tmp'));
-				$this->out(sprintf(__('chmod -R 0777 %s'), $path . DS .'tmp'));
+				$this->err(__('Could not set permissions on %s', $path . DS .'tmp'));
+				$this->out(__('chmod -R 0777 %s', $path . DS .'tmp'));
 				$success = false;
 			}
 			if ($success) {
@@ -146,7 +146,7 @@ class ProjectTask extends Shell {
 			$skel = $this->params['skel'];
 		}
 		while (!$skel) {
-			$skel = $this->in(sprintf(__("What is the path to the directory layout you wish to copy?\nExample: %s"), APP, null, ROOT . DS . 'myapp' . DS));
+			$skel = $this->in(__("What is the path to the directory layout you wish to copy?\nExample: %s", APP, null, ROOT . DS . 'myapp' . DS));
 			if ($skel == '') {
 				$this->err(__('The directory path you supplied was empty. Please try again.'));
 			} else {
@@ -172,10 +172,10 @@ class ProjectTask extends Shell {
 
 			if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
 				$this->hr();
-				$this->out(sprintf(__('<success>Created:</success> %s in %s'), $app, $path));
+				$this->out(__('<success>Created:</success> %s in %s', $app, $path));
 				$this->hr();
 			} else {
-				$this->err(sprintf(__("<error>Could not create</error> '%s' properly."), $app));
+				$this->err(__("<error>Could not create</error> '%s' properly.", $app));
 				return false;
 			}
 
