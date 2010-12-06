@@ -245,6 +245,7 @@ class HttpSocket extends CakeSocket {
 		if (isset($host)) {
 			$this->config['host'] = $host;
 		}
+		$this->_setProxy();
 		$cookies = null;
 
 		if (is_array($this->request['header'])) {
@@ -275,7 +276,6 @@ class HttpSocket extends CakeSocket {
 			$this->setAuthConfig('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
 		}
 		$this->_setAuth();
-		$this->_setProxyConfig();
 
 		if (is_array($this->request['body'])) {
 			$this->request['body'] = $this->_httpSerialize($this->request['body']);
@@ -501,7 +501,7 @@ class HttpSocket extends CakeSocket {
  * @return void
  * @throws Exception
  */
-	protected function _setProxyConfig() {
+	protected function _setProxy() {
 		if (empty($this->_proxy) || !isset($this->_proxy['host'], $this->_proxy['port'])) {
 			return;
 		}

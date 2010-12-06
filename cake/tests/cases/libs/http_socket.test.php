@@ -662,7 +662,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->config['port'], 123);
 
 		$this->Socket->setAuthConfig('Test', 'login', 'passwd');
-		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nAuthorization: Test login.passwd\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
+		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\nAuthorization: Test login.passwd\r\n\r\n";
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($this->Socket->request['raw'], $expected);
 	}
