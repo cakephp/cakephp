@@ -303,6 +303,7 @@ class HttpSocket extends CakeSocket {
 			return $this->response = false;
 		}
 
+		$this->request['raw'] = '';
 		if ($this->request['line'] !== false) {
 			$this->request['raw'] = $this->request['line'];
 		}
