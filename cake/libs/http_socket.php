@@ -1120,13 +1120,11 @@ class HttpSocket extends CakeSocket {
 		if (empty($initalState)) {
 			$initalState = get_class_vars(__CLASS__);
 		}
-		if ($full == false) {
+		if (!$full) {
 			$this->request = $initalState['request'];
 			$this->response = $initalState['response'];
 			return true;
 		}
-		$this->_auth = array();
-		$this->_proxy = array();
 		parent::reset($initalState);
 		return true;
 	}
