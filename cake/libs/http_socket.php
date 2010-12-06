@@ -41,7 +41,7 @@ class HttpSocket extends CakeSocket {
 	public $quirksMode = false;
 
 /**
- * The default values to use for a request
+ * Contain information about the last request (read only)
  *
  * @var array
  */
@@ -69,7 +69,7 @@ class HttpSocket extends CakeSocket {
 	);
 
 /**
- * The default structure for storing the response
+ * Contain information about the last response (read only)
  *
  * @var array
  */
@@ -91,7 +91,7 @@ class HttpSocket extends CakeSocket {
 	);
 
 /**
- * Default configuration settings for the HttpSocket
+ * Configuration settings for the HttpSocket and the requests
  *
  * @var array
  */
