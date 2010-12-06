@@ -345,11 +345,12 @@ class CakeSession {
  * @return boolean
  */
 	protected static function _validAgentAndTime() {
+		$config = self::read('Config');
 		$validAgent = (
 			Configure::read('Session.checkAgent') === false ||
-			self::$_userAgent == self::read('Config.userAgent')
+			self::$_userAgent == $config['userAgent']
 		);
-		return ($validAgent && self::$time <= self::read('Config.time'));
+		return ($validAgent && self::$time <= $config['time']);
 	}
 
 /**
@@ -672,14 +673,14 @@ class CakeSession {
  * @return void
  */
 	protected static function _checkValid() {
-		if (self::read('Config')) {
+		if ($config = self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
 
 			if (self::_validAgentAndTime()) {
-				$time = self::read('Config.time');
+				$time = $config['time'];
 				self::write('Config.time', self::$sessionTime);
 				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
-					$check = self::read('Config.countdown');
+					$check = $config['countdown'];
 					$check -= 1;
 					self::write('Config.countdown', $check);
 

@@ -583,12 +583,14 @@ class Set {
 			return $data;
 		}
 
-		if (!is_array($path)) {
+		if (is_string($path) && strpos($path, '{') !== false) {
 			$path = String::tokenize($path, '.', '{', '}');
+		} else {
+			$path = explode('.', $path);
 		}
 		$tmp = array();
 
-		if (!is_array($path) || empty($path)) {
+		if (empty($path)) {
 			return null;
 		}
 
@@ -662,11 +664,12 @@ class Set {
 		}
 		$_list =& $list;
 
+		$count = count($path);
 		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
 				$key = intval($key);
 			}
-			if ($i === count($path) - 1) {
+			if ($i === $count - 1) {
 				$_list[$key] = $data;
 			} else {
 				if (!isset($_list[$key])) {

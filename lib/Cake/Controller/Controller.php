@@ -300,18 +300,15 @@ class Controller extends Object {
  */
 	public function __construct($request = null) {
 		if ($this->name === null) {
-			$r = null;
-			if (!preg_match('/(.*)Controller/i', get_class($this), $r)) {
-				echo __("Controller::__construct() : Can not get or parse my own class name, exiting.");
-				$this->_stop();
-			}
-			$this->name = $r[1];
+			$this->name = substr(get_class($this), 0, strlen(get_class($this)) -10);
 		}
 
 		if ($this->viewPath == null) {
 			$this->viewPath = Inflector::underscore($this->name);
 		}
-		$this->modelClass = Inflector::classify($this->name);
+		if (empty($this->uses)) {
+			$this->modelClass = Inflector::singularize($this->name);
+		}
 		$this->modelKey = Inflector::underscore($this->modelClass);
 		$this->Components = new ComponentCollection();
 
