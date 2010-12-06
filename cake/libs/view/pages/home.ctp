@@ -17,7 +17,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 if (Configure::read() == 0):
-	$this->cakeError('error404');
+	throw new NotFoundException();
 endif;
 ?>
 <h2><?php echo __('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
