@@ -214,10 +214,16 @@ class App {
 	private static $__packages = array();
 
 /**
- * Inicates whether the cache should be stored again because of an addition to it
+ * Inicates whether the class cache should be stored again because of an addition to it
  *
  */
 	private static $_cacheChange = false;
+
+/**
+ * Inicates whether the object cache should be stored again because of an addition to it
+ *
+ */
+	private static $_objectCacheChange = false;
 
 /**
  * Used to read information stored path
@@ -420,6 +426,7 @@ class App {
 				self::$__cache = true;
 			}
 			self::$__objects[$name] = $objects;
+			self::$_objectCacheChange = true;
 		}
 
 		return self::$__objects[$name];
@@ -906,6 +913,8 @@ class App {
 	public static function shutdown() {
 		if (self::$__cache && self::$_cacheChange) {
 			Cache::write('file_map', array_filter(self::$__map), '_cake_core_');
+		}
+		if (self::$__cache && self::$_objectCacheChange) {
 			Cache::write('object_map', self::$__objects, '_cake_core_');
 		}
 	}
