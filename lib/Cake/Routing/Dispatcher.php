@@ -143,7 +143,8 @@ class Dispatcher {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-		return $privateAction && ! in_array($request->params['action'], get_class_methods('Controller'));
+
+		return $privateAction || in_array($request->params['action'], get_class_methods('Controller'));
 	}
 
 /**
