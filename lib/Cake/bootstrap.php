@@ -40,7 +40,7 @@ error_reporting(E_ALL & ~E_DEPRECATED);
 /**
  * Path to the cake directory.
  */
-	define('CAKE', CORE_PATH . 'lib' . DS . 'Cake' . DS);
+	define('CAKE', CORE_PATH . 'Cake' . DS);
 
 /**
  * Path to the application's directory.
@@ -126,7 +126,7 @@ if (!defined('CONFIGS')) {
 /**
  * Path to the console libs direcotry.
  */
-	define('CONSOLE_LIBS', CAKE.'console'.DS.'libs'.DS);
+	define('CONSOLE_LIBS', CAKE . 'Console' . DS);
 
 /**
  * Path to the tests directory.

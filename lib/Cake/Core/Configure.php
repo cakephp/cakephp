@@ -345,7 +345,7 @@ class Configure {
  */
 	public static function version() {
 		if (!isset(self::$_values['Cake']['version'])) {
-			require(CORE_PATH . 'cake' . DS . 'config' . DS . 'config.php');
+			require(LIBS . 'config' . DS . 'config.php');
 			self::write($config);
 		}
 		return self::$_values['Cake']['version'];

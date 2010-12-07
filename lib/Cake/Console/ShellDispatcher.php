@@ -133,13 +133,13 @@ class ShellDispatcher {
 		}
 
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'config' . DS . 'bootstrap.php');
-		require CORE_PATH . 'cake' . DS . 'bootstrap.php';
+		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
 
 		if (!file_exists(APP_PATH . 'config' . DS . 'core.php')) {
 			include_once CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'templates' . DS . 'skel' . DS . 'config' . DS . 'core.php';
 			App::build();
 		}
-		require_once CONSOLE_LIBS . 'console_error_handler.php';
+		require_once CONSOLE_LIBS . 'ConsoleErrorHandler.php';
 		set_exception_handler(array('ConsoleErrorHandler', 'handleException'));
 		set_error_handler(array('ConsoleErrorHandler', 'handleError'), Configure::read('Error.level'));
 
@@ -209,14 +209,11 @@ class ShellDispatcher {
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
 
-		$loaded = App::import('Shell', $plugin . $shell);
 		$class = Inflector::camelize($shell) . 'Shell';
-	
-		if (!$loaded) {
-			throw new MissingShellFileException(array('shell' => $shell));
-		}
+		$loaded = App::uses($class, $plugin . 'Console/Command');
+
 		if (!class_exists($class)) {
-			throw new MissingShellClassException(array('shell' => $class));
+			throw new MissingShellFileException(array('shell' => $shell));
 		}
 		$Shell = new $class();
 		return $Shell;

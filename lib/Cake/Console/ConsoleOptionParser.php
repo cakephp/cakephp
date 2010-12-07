@@ -17,10 +17,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once CONSOLE_LIBS . 'console_input_option.php';
-require_once CONSOLE_LIBS . 'console_input_argument.php';
-require_once CONSOLE_LIBS . 'console_input_subcommand.php';
-require_once CONSOLE_LIBS . 'help_formatter.php';
+App::uses('TaskCollection', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
+App::uses('ConsoleInputOption', 'Console');
+App::uses('ConsoleOptionParser', 'Console');
 
 /**
  * Handles parsing the ARGV in the command line and provides support

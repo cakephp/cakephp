@@ -17,10 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once CONSOLE_LIBS . 'task_collection.php';
-require_once CONSOLE_LIBS . 'console_output.php';
-require_once CONSOLE_LIBS . 'console_input.php';
-require_once CONSOLE_LIBS . 'console_option_parser.php';
+
+App::uses('TaskCollection', 'Console');
+App::uses('ConsoleOutput', 'Console');
+App::uses('ConsoleInput', 'Console');
+App::uses('ConsoleOptionParser', 'Console');
 
 /**
  * Base class for command-line utilities for automating programmer chores.

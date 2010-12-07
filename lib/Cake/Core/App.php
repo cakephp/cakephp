@@ -354,7 +354,7 @@ class App {
 			$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
 			$paths['plugins'][] = $path . 'plugins' . DS;
 			$paths['vendors'][] = $path . 'vendors' . DS;
-			$paths['shells'][] = $cake . 'console' . DS . 'shells' . DS;
+			$paths['shells'][] = $libs . 'Console' . DS . 'Command' . DS;
 			// Provide BC path to vendors/shells
 			$paths['shells'][] = $path . 'vendors' . DS . 'shells' . DS;
 		}
