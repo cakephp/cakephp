@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::uses('String', 'Core');
+App::uses('String', 'Utility');
 
 /**
  * DboSource
