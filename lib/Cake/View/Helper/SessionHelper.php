@@ -19,7 +19,7 @@
  */
 
 App::uses('AppHelper', 'View/Helper');
-App::uses('CakeSession', 'Model');
+App::uses('CakeSession', 'Model/Datasource');
 
 /**
  * Session Helper.

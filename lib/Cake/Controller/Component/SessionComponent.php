@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('CakeSession', 'Model');
+App::uses('CakeSession', 'Model/Datasource');
 
 /**
  * Session Component.
