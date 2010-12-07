@@ -18,8 +18,6 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Shell', 'Console');
-
 /**
  * Shows a list of commands available from the console.
  *

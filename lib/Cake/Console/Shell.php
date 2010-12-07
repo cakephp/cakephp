@@ -21,6 +21,7 @@
 App::uses('TaskCollection', 'Console');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
+App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
 
 /**

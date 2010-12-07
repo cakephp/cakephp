@@ -23,13 +23,13 @@
 /**
  * Included libs
  */
-App::uses('ClassRegistry', 'Core');
-App::uses('Validation', 'Core');
-App::uses('String', 'Core');
+App::uses('ClassRegistry', 'Utility');
+App::uses('Validation', 'Utility');
+App::uses('String', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
 App::uses('ConnectionManager', 'Model');
-App::uses('Xml', 'Core');
+App::uses('Xml', 'Utility');
 
 /**
  * Object-relational mapper.

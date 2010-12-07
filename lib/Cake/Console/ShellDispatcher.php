@@ -209,8 +209,11 @@ class ShellDispatcher {
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell, true);
 
+
 		$class = Inflector::camelize($shell) . 'Shell';
-		$loaded = App::uses($class, $plugin . 'Console/Command');
+
+		App::uses('Shell', 'Console');
+		App::uses($class, $plugin . 'Console/Command');
 
 		if (!class_exists($class)) {
 			throw new MissingShellFileException(array('shell' => $shell));

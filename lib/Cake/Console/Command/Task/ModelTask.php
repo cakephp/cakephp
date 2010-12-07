@@ -18,7 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-include_once dirname(__FILE__) . DS . 'bake.php';
+App::uses('BakeTask', 'Console/Command/Task');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Task class for creating and updating model files.
@@ -791,7 +792,6 @@ class ModelTask extends BakeTask {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
 		}
-		App::import('Model', 'ConnectionManager', false);
 
 		$db = ConnectionManager::getDataSource($useDbConfig);
 		$useTable = Inflector::tableize($modelName);
@@ -820,7 +820,6 @@ class ModelTask extends BakeTask {
 		if (!isset($useDbConfig)) {
 			$useDbConfig = $this->connection;
 		}
-		App::import('Model', 'ConnectionManager', false);
 
 		$tables = array();
 		$db = ConnectionManager::getDataSource($useDbConfig);
