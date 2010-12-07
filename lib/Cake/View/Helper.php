@@ -257,11 +257,9 @@ class Helper extends Object {
  * @return string Path with a timestamp added, or not.
  */
 	public function assetTimestamp($path) {
-		$timestampEnabled = (
-			(Configure::read('Asset.timestamp') === true && Configure::read('debug') > 0) ||
-			Configure::read('Asset.timestamp') === 'force'
-		);
-		if (strpos($path, '?') === false && $timestampEnabled) {
+		$stamp = Configure::read('Asset.timestamp');
+		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug') > 0);
+		if ($timestampEnabled && strpos($path, '?') === false) {
 			$filepath = preg_replace('/^' . preg_quote($this->request->webroot, '/') . '/', '', $path);
 			$webrootPath = WWW_ROOT . str_replace('/', DS, $filepath);
 			if (file_exists($webrootPath)) {
@@ -347,18 +345,19 @@ class Helper extends Object {
  * @return string Composed attributes.
  */
 	public function _parseAttributes($options, $exclude = null, $insertBefore = ' ', $insertAfter = null) {
-		if (is_array($options)) {
-			$options = array_merge(array('escape' => true), $options);
+		if (!is_string($options)) {
+			$options = $options + array('escape' => true);
 
 			if (!is_array($exclude)) {
 				$exclude = array();
 			}
-			$filtered = array_diff_key($options, array_merge(array_flip($exclude), array('escape' => true)));
+
+			$exclude =  array('escape' => true) + array_flip($exclude);
 			$escape = $options['escape'];
 			$attributes = array();
 
-			foreach ($filtered as $key => $value) {
-				if ($value !== false && $value !== null) {
+			foreach ($options as $key => $value) {
+				if (!isset($exclude[$key]) && $value !== false && $value !== null) {
 					$attributes[] = $this->__formatAttribute($key, $value, $escape);
 				}
 			}
@@ -381,13 +380,20 @@ class Helper extends Object {
 	function __formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
 		$attributeFormat = '%s="%s"';
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled',
-			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
+		static $minimizedAttributes = array();
+		if (empty($minimizedAttributes)) {
+			$minimizedAttributes = array_flip(array(
+				'compact', 'checked', 'declare', 'readonly', 'disabled',
+				'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap',
+				'multiple', 'noresize'
+			));
+		}
+
 		if (is_array($value)) {
 			$value = '';
 		}
 
-		if (in_array($key, $minimizedAttributes)) {
+		if (isset($minimizedAttributes[$key])) {
 			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
 				$attribute = sprintf($attributeFormat, $key, $key);
 			}
