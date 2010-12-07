@@ -36,7 +36,7 @@ class ConnectionManager {
  * @var DATABASE_CONFIG
  * @access public
  */
-	public $config = null;
+	public static $config = null;
 
 /**
  * Holds instances DataSource objects
@@ -44,7 +44,7 @@ class ConnectionManager {
  * @var array
  * @access protected
  */
-	protected $_dataSources = array();
+	protected static $_dataSources = array();
 
 /**
  * Contains a list of all file and class names used in Connection settings
@@ -52,33 +52,27 @@ class ConnectionManager {
  * @var array
  * @access protected
  */
-	protected $_connectionsEnum = array();
+	protected static $_connectionsEnum = array();
 
 /**
- * Constructor.
+ * Indicates if the init code for this class has alredy been executed
+ *
+ * @var boolean
+ */
+	private static $_init = false;
+
+/**
+ * Loads connections configuration.
  *
  */
-	function __construct() {
+	private static function init() {
 		include_once CONFIGS . 'database.php';
 		if (class_exists('DATABASE_CONFIG')) {
-			$this->config = new DATABASE_CONFIG();
-			$this->_getConnectionObjects();
+			self::$config = new DATABASE_CONFIG();
+			self::_getConnectionObjects();
 		}
-	}
-
-/**
- * Gets a reference to the ConnectionManger object instance
- *
- * @return object Instance
- */
-	public static function &getInstance() {
-		static $instance = array();
-
-		if (!$instance) {
-			$instance[0] = new ConnectionManager();
-		}
-
-		return $instance[0];
+		register_shutdown_function('ConnectionManager::shutdown');
+		self::$_init = true;
 	}
 
 /**
@@ -87,32 +81,33 @@ class ConnectionManager {
  * @param string $name The name of the DataSource, as defined in app/config/database.php
  * @return object Instance
  */
-	public static function &getDataSource($name) {
-		$_this = ConnectionManager::getInstance();
+	public static function getDataSource($name) {
+		if (empty(self::$_init)) {
+			self::init();
+		}
 
-		if (!empty($_this->_dataSources[$name])) {
-			$return = $_this->_dataSources[$name];
+		if (!empty(self::$_dataSources[$name])) {
+			$return = self::$_dataSources[$name];
 			return $return;
 		}
 
-		if (empty($_this->_connectionsEnum[$name])) {
+		if (empty(self::$_connectionsEnum[$name])) {
 			trigger_error(__("ConnectionManager::getDataSource - Non-existent data source %s", $name), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
-		$conn = $_this->_connectionsEnum[$name];
+		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
-		if ($_this->loadDataSource($name) === null) {
+		if (self::loadDataSource($name) === null) {
 			trigger_error(__("ConnectionManager::getDataSource - Could not load class %s", $class), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
-		$_this->_dataSources[$name] = new $class($_this->config->{$name});
-		$_this->_dataSources[$name]->configKeyName = $name;
+		self::$_dataSources[$name] = new $class(self::$config->{$name});
+		self::$_dataSources[$name]->configKeyName = $name;
 
-		$return = $_this->_dataSources[$name];
-		return $return;
+		return self::$_dataSources[$name];
 	}
 
 /**
@@ -121,8 +116,10 @@ class ConnectionManager {
  * @return array List of available connections
  */
 	public static function sourceList() {
-		$_this = ConnectionManager::getInstance();
-		return array_keys($_this->_dataSources);
+		if (empty(self::$_init)) {
+			self::init();
+		}
+		return array_keys(self::$_dataSources);
 	}
 
 /**
@@ -135,8 +132,10 @@ class ConnectionManager {
  *    in the ConnectionManager.
  */
 	public static function getSourceName(&$source) {
-		$_this = ConnectionManager::getInstance();
-		foreach ($_this->_dataSources as $name => $ds) {
+		if (empty(self::$_init)) {
+			self::init();
+		}
+		foreach (self::$_dataSources as $name => $ds) {
 			if ($ds == $source) {
 				return $name;
 			}
@@ -153,12 +152,14 @@ class ConnectionManager {
  * @return boolean True on success, null on failure or false if the class is already loaded
  */
 	public static function loadDataSource($connName) {
-		$_this = ConnectionManager::getInstance();
+		if (empty(self::$_init)) {
+			self::init();
+		}
 
 		if (is_array($connName)) {
 			$conn = $connName;
 		} else {
-			$conn = $_this->_connectionsEnum[$connName];
+			$conn = self::$_connectionsEnum[$connName];
 		}
 
 		if (class_exists($conn['classname'], false)) {
@@ -188,8 +189,10 @@ class ConnectionManager {
  *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
  */
 	public static function enumConnectionObjects() {
-		$_this = ConnectionManager::getInstance();
-		return $_this->_connectionsEnum;
+		if (empty(self::$_init)) {
+			self::init();
+		}
+		return self::$_connectionsEnum;
 	}
 
 /**
@@ -199,16 +202,18 @@ class ConnectionManager {
  * @param array $config The DataSource configuration settings
  * @return object A reference to the DataSource object, or null if creation failed
  */
-	public static function &create($name = '', $config = array()) {
-		$_this = ConnectionManager::getInstance();
+	public static function create($name = '', $config = array()) {
+		if (empty(self::$_init)) {
+			self::init();
+		}
 
-		if (empty($name) || empty($config) || array_key_exists($name, $_this->_connectionsEnum)) {
+		if (empty($name) || empty($config) || array_key_exists($name, self::$_connectionsEnum)) {
 			$null = null;
 			return $null;
 		}
-		$_this->config->{$name} = $config;
-		$_this->_connectionsEnum[$name] = $_this->__connectionData($config);
-		$return = $_this->getDataSource($name);
+		self::$config->{$name} = $config;
+		self::$_connectionsEnum[$name] = self::_connectionData($config);
+		$return = self::getDataSource($name);
 		return $return;
 	}
 
@@ -217,12 +222,12 @@ class ConnectionManager {
  *
  * @return void
  */
-	protected function _getConnectionObjects() {
-		$connections = get_object_vars($this->config);
+	protected static function _getConnectionObjects() {
+		$connections = get_object_vars(self::$config);
 
 		if ($connections != null) {
 			foreach ($connections as $name => $config) {
-				$this->_connectionsEnum[$name] = $this->__connectionData($config);
+				self::$_connectionsEnum[$name] = self::_connectionData($config);
 			}
 		} else {
 			throw new MissingConnectionException(array('class' => 'ConnectionManager'));
@@ -234,7 +239,7 @@ class ConnectionManager {
  *
  * @return array An indexed array with: filename, classname, plugin and parent
  */
-	private function __connectionData($config) {
+	private static function _connectionData($config) {
 		$package = $classname = $plugin = null;
 
 		list($plugin, $classname) = pluginSplit($config['datasource']);
@@ -249,7 +254,7 @@ class ConnectionManager {
  * Destructor.
  *
  */
-	function __destruct() {
+	public static function shutdown() {
 		if (Configure::read('Session.defaults') == 'database' && function_exists('session_write_close')) {
 			session_write_close();
 		}
