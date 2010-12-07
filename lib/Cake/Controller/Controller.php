@@ -308,14 +308,11 @@ class Controller extends Object {
 		}
 		if (empty($this->uses)) {
 			$this->modelClass = Inflector::singularize($this->name);
+		} else {
+			$this->modelClass = current($this->uses);
 		}
 		$this->modelKey = Inflector::underscore($this->modelClass);
 		$this->Components = new ComponentCollection();
-
-		$childMethods = get_class_methods($this);
-		$parentMethods = get_class_methods('Controller');
-
-		$this->methods = array_diff($childMethods, $parentMethods);
 
 		if ($request instanceof CakeRequest) {
 			$this->_setRequest($request);

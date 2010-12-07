@@ -143,7 +143,7 @@ class Dispatcher {
 				$privateAction = in_array($prefix, $prefixes);
 			}
 		}
-		return $privateAction;
+		return $privateAction && ! in_array($request->params['action'], get_class_methods('Controller'));
 	}
 
 /**
@@ -160,7 +160,7 @@ class Dispatcher {
 		$controller->constructClasses();
 		$controller->startupProcess();
 
-		$methods = array_flip($controller->methods);
+		$methods = array_flip(get_class_methods($controller));
 
 		if (!isset($methods[$request->params['action']])) {
 			if ($controller->scaffold !== false) {
