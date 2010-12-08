@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Xml');
+App::uses('Xml', 'Utility');
+App::uses('CakeTestModel', 'TestSuite/Fixture');
 
 /**
  * Article class

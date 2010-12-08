@@ -19,6 +19,11 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('CakeTestSuiteDispatcher', 'TestSuite');
+App::uses('TestRunner', 'TestSuite');
+App::uses('TestManager', 'TestSuite');
+
 class TestSuiteShell extends Shell {
 
 /**
@@ -155,8 +160,6 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function initialize() {
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'cake_test_suite_dispatcher.php';
-
 		$corePath = App::core('cake');
 		if (isset($corePath[0])) {
 			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
@@ -166,7 +169,6 @@ class TestSuiteShell extends Shell {
 
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_manager.php';
 	}
 
 /**
@@ -252,8 +254,6 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	protected function run($runnerArgs, $options = array()) {
-		require_once CAKE . 'tests' . DS . 'lib' . DS . 'test_runner.php';
-
 		restore_error_handler();
 		restore_error_handler();
 

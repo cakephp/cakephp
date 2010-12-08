@@ -55,7 +55,7 @@ class CakeFixtureManager {
  * @param CakeTestCase $test the test case to inspect
  * @return void
  */
-	public function fixturize(CakeTestCase $test) {
+	public function fixturize($test) {
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
 			$test->db = $this->_db;
 			return;
@@ -81,22 +81,7 @@ class CakeFixtureManager {
 		if ($this->_initialized) {
 			return;
 		}
-		$testDbAvailable = in_array('test', array_keys(ConnectionManager::enumConnectionObjects()));
-
-		$_prefix = null;
-
-		if ($testDbAvailable) {
-			// Try for test DB
-			@$db = ConnectionManager::getDataSource('test');
-			$testDbAvailable = $db->isConnected();
-		} else {
-			throw new MissingConnectionException(__('You need to create a $test datasource connection to start using fixtures'));
-		}
-
-		if (!$testDbAvailable) {
-			throw new MissingConnectionException(__('Unable to connect to the $test datasource'));
-		}
-
+		$db = ConnectionManager::getDataSource('test');
 		$this->_db = $db;
 		ClassRegistry::config(array('ds' => 'test'));
 		$this->_initialized = true;

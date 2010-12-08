@@ -230,7 +230,7 @@ class ConnectionManager {
 		if (!empty(self::$config->{$name})) {
 			self::$_connectionsEnum[$name] = self::_connectionData(self::$config->{$name});
 		} else {
-			throw new MissingConnectionException(array('class' => 'ConnectionManager'));
+			throw new MissingConnectionException(array('class' => $name));
 		}
 	}
 

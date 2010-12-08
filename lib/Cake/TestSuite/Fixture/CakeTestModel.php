@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-require_once LIBS.'model'.DS.'model.php';
+
+App::uses('Model', 'Model');
 
 /**
  * Short description for class.

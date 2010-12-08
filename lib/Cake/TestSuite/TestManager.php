@@ -17,13 +17,15 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-define('CORE_TEST_CASES', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'cases');
-define('CORE_TEST_GROUPS', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'groups');
+define('CORE_TEST_CASES', LIBS . 'tests' . DS . 'cases');
+define('CORE_TEST_GROUPS', LIBS . 'tests' . DS . 'groups');
 define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
-require_once CAKE_TESTS_LIB . 'cake_test_suite.php';
+App::uses('CakeTestSuite', 'TestSuite');
+App::uses('CakeTestCase', 'TestSuite');
+App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 
 /**
  * TestManager is the base class that handles loading and initiating the running
@@ -88,8 +90,6 @@ class TestManager {
  * @return void
  */
 	public function __construct($params = array()) {
-		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
-
 		$this->params = $params;
 		if (isset($params['app'])) {
 			$this->appTest = true;

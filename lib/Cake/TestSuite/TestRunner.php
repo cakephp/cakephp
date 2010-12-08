@@ -20,7 +20,7 @@
 
 
 require 'PHPUnit/TextUI/Command.php';
-require_once 'test_manager.php';
+App::uses('TestManager', 'TestSuite');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 

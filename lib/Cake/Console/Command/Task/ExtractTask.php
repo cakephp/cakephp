@@ -114,7 +114,7 @@ class ExtractTask extends Shell {
 			$this->__paths = explode(',', $this->params['paths']);
 		} else {
 			$defaultPath = APP_PATH;
-			$message = __("What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $this->Dispatch->params['root'] . DS . 'myapp');
+			$message = __("What is the full path you would like to extract?\nExample: %s\n[Q]uit [D]one", $defaultPath);
 			while (true) {
 				$response = $this->in($message, null, $defaultPath);
 				if (strtoupper($response) === 'Q') {

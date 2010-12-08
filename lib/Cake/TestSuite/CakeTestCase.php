@@ -20,9 +20,9 @@
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
-require_once CAKE_TESTS_LIB . 'cake_fixture_manager.php';
-require_once CAKE_TESTS_LIB . 'cake_test_model.php';
-require_once CAKE_TESTS_LIB . 'cake_test_fixture.php';
+App::uses('CakeFixtureManager', 'TestSuite/Fixture');
+App::uses('CakeTestModel', 'TestSuite/Fixture');
+App::uses('CakeTestFixture', 'TestSuite/Fixture');
 
 /**
  * CakeTestCase class
