@@ -23,6 +23,7 @@ App::uses('ConsoleInput', 'Console');
 App::uses('ConsoleInputOption', 'Console');
 App::uses('ConsoleInputArgument', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
+App::uses('HelpFormatter', 'Console');
 
 /**
  * Handles parsing the ARGV in the command line and provides support

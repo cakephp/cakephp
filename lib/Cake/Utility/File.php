@@ -22,7 +22,7 @@
  * Included libraries.
  *
  */
-App::uses('File', 'Utility');
+App::uses('Folder', 'Utility');
 
 /**
  * Convenience class for reading, writing and appending to files.

@@ -53,7 +53,7 @@ class ConsoleShell extends Shell {
  *
  */
 	public function initialize() {
-		require_once CAKE . 'dispatcher.php';
+		App::uses('Dispatcher', 'Routing');
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('model');
 		App::import('Model', $this->models);
@@ -335,21 +335,20 @@ class ConsoleShell extends Shell {
  * @return boolean True if config reload was a success, otherwise false
  */
 	protected function _loadRoutes() {
-		$router = Router::getInstance();
-
-		$router->reload();
-		extract($router->getNamedExpressions());
+		Router::reload();
+		extract(Router::getNamedExpressions());
 
 		if (!@include(CONFIGS . 'routes.php')) {
 			return false;
 		}
-		$router->parse('/');
+		Router::parse('/');
 
-		foreach (array_keys($router->getNamedExpressions()) as $var) {
+		foreach (array_keys(Router::getNamedExpressions()) as $var) {
 			unset(${$var});
 		}
-		for ($i = 0, $len = count($router->routes); $i < $len; $i++) {
-			$router->routes[$i]->compile();
+
+		foreach (Router::$routes as $route) {
+			$route->compile();
 		}
 		return true;
 	}
