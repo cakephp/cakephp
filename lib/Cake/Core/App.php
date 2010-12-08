@@ -609,6 +609,7 @@ class App {
  */
 	public static function init() {
 		self::$__map = (array)Cache::read('file_map', '_cake_core_');
+		self::$__objects = (array)Cache::read('object_map', '_cake_core_');
 		register_shutdown_function(array('App', 'shutdown'));
 	}
 
