@@ -559,10 +559,7 @@ class CakeSession {
  */
 	protected static function _getHandler($handler) {
 		list($plugin, $class) = pluginSplit($handler, true);
-		$found = App::import('Lib', $plugin . 'session/' . $class);
-		if (!$found) {
-			App::import('Core', 'session/' . $class);
-		}
+		App::uses($class, $plugin . 'Model/Datasource/Session');
 		if (!class_exists($class)) {
 			throw new Exception(__('Could not load %s to handle the session.', $class));
 		}

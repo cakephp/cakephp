@@ -72,7 +72,7 @@ endif;
 	?>
 </p>
 <?php
-	App::import('Core', 'Validation');
+	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
 		__('PCRE has not been compiled with Unicode support.');
@@ -83,15 +83,12 @@ endif;
 ?>
 <?php
 if (isset($filePresent)):
-	if (!class_exists('ConnectionManager')) {
-		require LIBS . 'model' . DS . 'connection_manager.php';
-	}
-	$db = ConnectionManager::getInstance();
-	@$connected = $db->getDataSource('default');
+	App::uses('ConnectionManager', 'Model');
+	$connected = ConnectionManager::getDataSource('default');
 ?>
 <p>
 	<?php
-		if ($connected->isConnected()):
+		if ($connected && $connected->isConnected()):
 			echo '<span class="notice success">';
 	 			echo __('Cake is able to connect to the database.');
 			echo '</span>';

@@ -22,9 +22,7 @@
  * Included libraries.
  *
  */
-if (!class_exists('Folder')) {
-	require LIBS . 'folder.php';
-}
+App::uses('File', 'Utility');
 
 /**
  * Convenience class for reading, writing and appending to files.

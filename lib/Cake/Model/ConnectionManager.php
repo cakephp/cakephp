@@ -69,7 +69,6 @@ class ConnectionManager {
 		include_once CONFIGS . 'database.php';
 		if (class_exists('DATABASE_CONFIG')) {
 			self::$config = new DATABASE_CONFIG();
-			self::_getConnectionObjects();
 		}
 		register_shutdown_function('ConnectionManager::shutdown');
 		self::$_init = true;
@@ -92,10 +91,15 @@ class ConnectionManager {
 		}
 
 		if (empty(self::$_connectionsEnum[$name])) {
+			self::_getConnectionObject($name);
+		}
+
+		if (empty(self::$_connectionsEnum[$name])) {
 			trigger_error(__("ConnectionManager::getDataSource - Non-existent data source %s", $name), E_USER_ERROR);
 			$null = null;
 			return $null;
 		}
+
 		$conn = self::$_connectionsEnum[$name];
 		$class = $conn['classname'];
 
@@ -222,13 +226,9 @@ class ConnectionManager {
  *
  * @return void
  */
-	protected static function _getConnectionObjects() {
-		$connections = get_object_vars(self::$config);
-
-		if ($connections != null) {
-			foreach ($connections as $name => $config) {
-				self::$_connectionsEnum[$name] = self::_connectionData($config);
-			}
+	protected static function _getConnectionObject($name) {
+		if (!empty(self::$config->{$name})) {
+			self::$_connectionsEnum[$name] = self::_connectionData(self::$config->{$name});
 		} else {
 			throw new MissingConnectionException(array('class' => 'ConnectionManager'));
 		}

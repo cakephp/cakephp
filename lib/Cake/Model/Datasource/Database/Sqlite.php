@@ -18,6 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('DboSource', 'Model/Datasource');
+
 /**
  * DBO implementation for the SQLite3 DBMS.
  *
@@ -26,7 +28,7 @@
  * @package datasources
  * @subpackage    cake.cake.libs.model.datasources.dbo
  */
-class DboSqlite extends DboSource {
+class Sqlite extends DboSource {
 
 /**
  * Datasource Description
