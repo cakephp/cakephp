@@ -50,7 +50,7 @@
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
+		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS .'lib');
 	}
 
 /**
@@ -74,7 +74,7 @@
 	if (isset($_GET['url']) && $_GET['url'] === 'favicon.ico') {
 		return;
 	} else {
-		require LIBS . 'dispatcher.php';
+		require LIBS .  'Routing' . DS .'Dispatcher.php';
 		$Dispatcher = new Dispatcher();
 		$Dispatcher->dispatch(new CakeRequest(isset($_GET['url']) ? $_GET['url'] : null));
 	}
