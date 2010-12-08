@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-include_once dirname(__FILE__) . DS . 'bake.php';
+App::uses('BakeTask', 'Console/Command/Task');
 
 /**
  * Task class for creating and updating controller files.

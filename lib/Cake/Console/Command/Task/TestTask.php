@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-include_once dirname(__FILE__) . DS . 'bake.php';
-App::import('Model', 'ClassRegistry');
+App::uses('BakeTask', 'Console/Command/Task');
+App::uses('ClassRegistry', 'Utility');
 
 /**
  * Task class for creating and updating test files.

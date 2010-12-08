@@ -17,7 +17,8 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Folder');
+
+App::uses('Folder', 'Utility');
 
 class TemplateTask extends Shell {
 
