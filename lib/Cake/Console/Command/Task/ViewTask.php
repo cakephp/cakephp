@@ -191,7 +191,8 @@ class ViewTask extends BakeTask {
 			$model = $this->_modelName($table);
 			$this->controllerName = $this->_controllerName($model);
 			$this->controllerPath = Inflector::underscore($this->controllerName);
-			if (App::import('Model', $model)) {
+			App::uses($model, 'Model');
+			if (class_exists($model)) {
 				$vars = $this->__loadController();
 				if (!$actions) {
 					$actions = $this->_methodsToBake();
@@ -272,17 +273,18 @@ class ViewTask extends BakeTask {
 			$this->err(__('Controller not found'));
 		}
 
-		$import = $this->controllerName;
+		$plugin = null;
 		if ($this->plugin) {
-			$import = $this->plugin . '.' . $this->controllerName;
+			$plugin = $this->plugin . '.';
 		}
 
-		if (!App::import('Controller', $import)) {
-			$file = $this->controllerPath . '_controller.php';
+		$controllerClassName = $this->controllerName . 'Controller';
+		App::uses($controllerName, $plugin . 'Controller');
+		if (!class_exists($controllerClassName)) {
+			$file = $controllerClassName . '.php';
 			$this->err(__("The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
 			$this->_stop();
 		}
-		$controllerClassName = $this->controllerName . 'Controller';
 		$controllerObj = new $controllerClassName();
 		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();

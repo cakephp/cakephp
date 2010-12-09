@@ -207,9 +207,8 @@ class CakeSchema extends Object {
 		));
 		$db = ConnectionManager::getDataSource($connection);
 
-		App::import('Model', 'AppModel');
 		if (isset($this->plugin)) {
-			App::import('Model', Inflector::camelize($this->plugin) . 'AppModel');
+			App::uses(Inflector::camelize($this->plugin) . 'AppModel', $this->plugin . '.Model');
 		}
 
 		$tables = array();
@@ -234,7 +233,8 @@ class CakeSchema extends Object {
 				if (isset($this->plugin)) {
 					$importModel = $this->plugin . '.' . $model;
 				}
-				if (!App::import('Model', $importModel)) {
+				App::uses($importModel, 'Model');
+				if (!class_exists($importModel)) {
 					continue;
 				}
 				$vars = get_class_vars($model);

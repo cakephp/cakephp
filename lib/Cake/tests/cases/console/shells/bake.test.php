@@ -18,14 +18,14 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'Bake', false);
-App::import('Shell', 'tasks/model', false);
-App::import('Shell', 'tasks/controller', false);
-App::import('Shell', 'tasks/db_config', false);
 
-App::import('Core', 'Controller');
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('BakeShell', 'Console/Command');
+App::uses('ModelTask', 'Console/Command/Task');
+App::uses('ControllerTask', 'Console/Command/Task');
+App::uses('DbConfigTask', 'Console/Command/Task');
+App::uses('Controller', 'Controller');
 
 if (!class_exists('UsersController')) {
 	class UsersController extends Controller {
@@ -76,7 +76,7 @@ class BakeShellTest extends CakeTestCase {
  * @return void
  */
 	public function testAllWithModelName() {
-		App::import('Model', 'User');
+		App::uses('User', 'Model');
 		$userExists = class_exists('User');
 		if ($this->skipIf($userExists, 'User class exists, cannot test `bake all [param]`. %s')) {
 			return;

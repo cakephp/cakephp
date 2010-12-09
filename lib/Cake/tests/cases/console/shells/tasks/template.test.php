@@ -20,11 +20,10 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'tasks/template');
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('TemplateTask', 'Console/Command/Task');
 /**
  * TemplateTaskTest class
  *

@@ -585,7 +585,7 @@ class Set {
 
 		if (is_string($path) && strpos($path, '{') !== false) {
 			$path = String::tokenize($path, '.', '{', '}');
-		} else {
+		} elseif (is_string($path)) {
 			$path = explode('.', $path);
 		}
 		$tmp = array();

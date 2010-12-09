@@ -19,12 +19,11 @@
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'tasks/project');
 
-App::import('Core', 'File');
-
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('ProjecTask', 'Console/Command/Task');
+App::import('File', 'Utility');
 
 /**
  * ProjectTask Test class

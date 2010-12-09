@@ -19,14 +19,12 @@
  * @since         CakePHP v 1.2.6
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', array(
-	'tasks/model',
-	'tasks/fixture',
-	'tasks/template'
-));
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('FixtureTask', 'Console/Command/Task');
+App::uses('TemplateTask', 'Console/Command/Task');
+App::uses('ModelTask', 'Console/Command/Task');
 
 /**
  * ModelTaskTest class

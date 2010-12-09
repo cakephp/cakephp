@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Component', 'Acl');
-App::import('Model', 'DbAcl');
+App::uses('AclComponent', 'Controller/Component');
+App::uses('DbAcl', 'Model');
 
 /**
  * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode 

@@ -542,7 +542,8 @@ class RequestHandlerComponent extends Component {
 		);
 
 		if (!$isAdded) {
-			if (App::import('Helper', $helper)) {
+			App::uses($helper . 'Helper', 'Helper');
+			if (class_exists($helper . 'Helper')) {
 				$controller->helpers[] = $helper;
 			}
 		}

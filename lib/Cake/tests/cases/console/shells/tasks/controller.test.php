@@ -17,33 +17,27 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'ClassRegistry');
-App::import('View', 'Helper', false);
-App::import('Shell', 'Shell', false);
-App::import('Shell', array(
-	'tasks/project',
-	'tasks/controller',
-	'tasks/model',
-	'tasks/template',
-	'tasks/test'
-));
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('CakeSchema', 'Model');
+App::uses('ClassRegistry', 'Utility');
+App::uses('Helper', 'View/Helper');
+App::uses('ProjectTask', 'Console/Command/Task');
+App::uses('ControllerTask', 'Console/Command/Task');
+App::uses('ModelTask', 'Console/Command/Task');
+App::uses('TemplateTask', 'Console/Command/Task');
+App::uses('TestTask', 'Console/Command/Task');
+App::uses('Model', 'Model');
 
-$imported = App::import('Model', 'BakeArticle');
-$imported = $imported || App::import('Model', 'BakeComment');
-$imported = $imported || App::import('Model', 'BakeTag');
-
-if (!$imported) {
+if (class_exists('BakeArticle')) {
 	define('ARTICLE_MODEL_CREATED', true);
-	App::import('Core', 'Model');
 
 	class BakeArticle extends Model {
 		public $name = 'BakeArticle';
 		public $hasMany = array('BakeComment');
 		public $hasAndBelongsToMany = array('BakeTag');
 	}
-
 }
 
 /**

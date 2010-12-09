@@ -101,7 +101,7 @@ class I18n {
 
 /**
  * Used by the translation functions in basics.php
- * Can also be used like I18n::translate(); but only if the App::import('I18n'); has been used to load the class.
+ * Returns a translated string based on current language and translation files stored in locale folder
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)

@@ -20,6 +20,7 @@
 
 App::uses('BakeTask', 'Console/Command/Task');
 App::uses('ConnectionManager', 'Model');
+App::uses('Model', 'Model');
 
 /**
  * Task class for creating and updating model files.
@@ -74,7 +75,6 @@ class ModelTask extends BakeTask {
  *
  */
 	public function execute() {
-		App::import('Model', 'Model', false);
 		parent::execute();
 
 		if (empty($this->args)) {

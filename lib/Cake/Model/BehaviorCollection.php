@@ -94,12 +94,7 @@ class BehaviorCollection extends ObjectCollection {
 		list($plugin, $name) = pluginSplit($behavior);
 		$class = $name . 'Behavior';
 
-		if (!App::import('Behavior', $behavior)) {
-			throw new MissingBehaviorFileException(array(
-				'file' => Inflector::underscore($behavior) . '.php',
-				'class' => $class
-			));
-		}
+		App::uses($class, 'Model/Behavior');
 		if (!class_exists($class)) {
 			throw new MissingBehaviorClassException(array(
 				'file' => Inflector::underscore($behavior) . '.php',

@@ -17,7 +17,9 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 App::uses('String', 'Utility');
+App::uses('View', 'View');
 
 /**
  * DboSource
@@ -763,7 +765,6 @@ class DboSource extends DataSource {
 			return;
 		}
 		if (PHP_SAPI != 'cli') {
-			App::import('Core', 'View');
 			$controller = null;
 			$View = new View($controller, false);
 			$View->set('logs', array($this->configKeyName => $log));

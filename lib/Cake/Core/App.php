@@ -23,8 +23,8 @@
  * ### Adding paths 
  *
  * You can add paths to the search indexes App uses to find classes using `App::build()`.  Adding
- * additional controller paths for example would alter where CakePHP looks for controllers when you 
- * call App::import('Controller', 'Posts');  This allows you to split your application up across the filesystem.
+ * additional controller paths for example would alter where CakePHP looks for controllers.
+ * This allows you to split your application up across the filesystem.
  *
  * ### Inspecting loaded paths
  *
@@ -261,7 +261,7 @@ class App {
 			'View' => array(VIEWS),
 			'View/Helper' => array(HELPERS),
 			'locales' => array(APP . 'locale' . DS),
-			'shells' => array(
+			'Console' => array(
 				APP . 'console' . DS . 'shells' . DS,
 				APP . 'vendors' . DS . 'shells' . DS, 
 				VENDORS . 'shells' . DS

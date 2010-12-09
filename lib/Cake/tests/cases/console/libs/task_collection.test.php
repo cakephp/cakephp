@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Shell', 'TaskCollection', false);
-App::import('Shell', 'Shell', false);
+App::uses('TaskCollection', 'Console');
+App::uses('Shell', 'Console');
 
 class TaskCollectionTest extends CakeTestCase {
 /**

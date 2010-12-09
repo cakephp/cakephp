@@ -19,11 +19,11 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Folder');
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'tasks/Extract', false);
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('Folder', 'Utility');
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('ExtractTask', 'Console/Command/Task');
 
 /**
  * ExtractTaskTest class

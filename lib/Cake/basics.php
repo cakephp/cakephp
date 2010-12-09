@@ -670,9 +670,7 @@ if (!function_exists('sortByKey')) {
  * @param string $message Message to write to log
  */
 	function LogError($message) {
-		if (!class_exists('CakeLog')) {
-			App::import('Core', 'CakeLog');
-		}
+		App::uses('CakeLog', 'Log');
 		$bad = array("\n", "\r", "\t");
 		$good = ' ';
 		CakeLog::write('error', str_replace($bad, $good, $message));

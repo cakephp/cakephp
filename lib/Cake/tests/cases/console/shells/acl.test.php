@@ -17,10 +17,10 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'Acl');
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('AclShell', 'Console/Command');
 
 /**
  * AclShellTest class

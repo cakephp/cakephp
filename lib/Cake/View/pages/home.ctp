@@ -24,7 +24,7 @@ endif;
 <a href="http://cakephp.org/changelogs/1.3.6"><?php __('Read the changelog'); ?> </a>
 <?php
 if (Configure::read('debug') > 0):
-	Debugger::checkSecurityKeys();
+	//Debugger::checkSecurityKeys();
 endif;
 ?>
 <p>

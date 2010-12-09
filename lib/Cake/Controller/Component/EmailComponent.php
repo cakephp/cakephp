@@ -433,9 +433,9 @@ class EmailComponent extends Component {
 		$viewClass = $this->Controller->view;
 
 		if ($viewClass != 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass);
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass = $viewClass . 'View';
-			App::import('View', $this->Controller->view);
+			App::uses($viewClass, $plugin . 'View');
 		}
 
 		$View = new $viewClass($this->Controller, false);
@@ -810,7 +810,7 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _smtp() {
-		App::import('Core', 'CakeSocket');
+		App::uses('CakeSocket', 'Network');
 
 		$defaults = array(
 			'host' => 'localhost',

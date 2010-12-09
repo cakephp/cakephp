@@ -17,8 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 require_once CAKE . 'basics.php';
-App::import('Core', 'Folder');
+App::uses('Folder', 'Utility');
 
 /**
  * BasicsTest class

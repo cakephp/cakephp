@@ -19,10 +19,10 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Folder');
-App::import('Shell', 'Shell', false);
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('Folder', 'Utility');
 
 /**
  * ShellTestShell class

@@ -789,9 +789,9 @@ class Controller extends Object {
 
 		$viewClass = $this->view;
 		if ($this->view != 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass);
+			list($plugin, $viewClass) = pluginSplit($viewClass, true);
 			$viewClass = $viewClass . 'View';
-			App::import('View', $this->view);
+			App::uses($viewClass, $plugin . 'View');
 		}
 
 		$this->request->params['models'] = $this->modelNames;

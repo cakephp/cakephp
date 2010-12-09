@@ -56,11 +56,11 @@ class ConsoleShell extends Shell {
 		App::uses('Dispatcher', 'Routing');
 		$this->Dispatcher = new Dispatcher();
 		$this->models = App::objects('model');
-		App::import('Model', $this->models);
 
 		foreach ($this->models as $model) {
 			$class = Inflector::camelize(str_replace('.php', '', $model));
 			$this->models[$model] = $class;
+			App::uses($class, 'Model');
 			$this->{$class} = new $class();
 		}
 		$this->out('Model classes:');

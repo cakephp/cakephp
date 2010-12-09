@@ -19,15 +19,12 @@
  * @since         CakePHP v 1.3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', array(
-	'tasks/plugin',
-	'tasks/model'
-));
 
-App::import('Core', array('File'));
-
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('PluginTask', 'Console/Command/Task');
+App::uses('ModelTask', 'Console/Command/Task');
+App::import('File', 'Utility');
 
 /**
  * PluginTaskPlugin class

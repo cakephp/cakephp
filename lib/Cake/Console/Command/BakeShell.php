@@ -22,6 +22,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('Model', 'Model');
+
 /**
  * Bake is a command-line code generation utility for automating programmer chores.
  *
@@ -151,11 +153,11 @@ class BakeShell extends Shell {
 
 		$modelExists = false;
 		$model = $this->_modelName($name);
-		if (App::import('Model', $model)) {
+		App::uses($model, 'Model');
+		if (class_exists($model)) {
 			$object = new $model();
 			$modelExists = true;
 		} else {
-			App::import('Model', 'Model', false);
 			$object = new Model(array('name' => $name, 'ds' => $this->connection));
 		}
 
@@ -176,7 +178,8 @@ class BakeShell extends Shell {
 					$this->Controller->bakeTest($controller);
 				}
 			}
-			if (App::import('Controller', $controller)) {
+			App::uses($controller . 'Controller', 'Controller')
+			if (class_exists($controller . 'Controller')) {
 				$this->View->args = array($controller);
 				$this->View->execute();
 			}

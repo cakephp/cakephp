@@ -19,6 +19,7 @@
  */
 
 App::uses('BakeTask', 'Console/Command/Task');
+App::uses('Model', 'Model');
 
 /**
  * Task class for creating and updating fixtures files.
@@ -186,9 +187,7 @@ class FixtureTask extends BakeTask {
  * @return string Baked fixture content
  */
 	public function bake($model, $useTable = false, $importOptions = array()) {
-		if (!class_exists('CakeSchema')) {
-			App::import('Model', 'CakeSchema', false);
-		}
+		App::uses('CakeSchema', 'Model');
 		$table = $schema = $records = $import = $modelImport = $recordImport = null;
 		if (!$useTable) {
 			$useTable = Inflector::tableize($model);
@@ -394,7 +393,6 @@ class FixtureTask extends BakeTask {
 		} else {
 			$condition = 'WHERE 1=1 LIMIT ' . (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
-		App::import('Model', 'Model', false);
 		$modelObject = new Model(array('name' => $modelName, 'table' => $useTable, 'ds' => $this->connection));
 		$records = $modelObject->find('all', array(
 			'conditions' => $condition,

@@ -19,6 +19,7 @@
  */
 App::uses('ErrorHandler', 'Error');
 App::uses('ConsoleOutput', 'Console');
+App::uses('CakeLog', 'Log');
 
 /**
  * Error Handler for Cake console. Does simple printing of the 
@@ -79,7 +80,6 @@ class ConsoleErrorHandler extends ErrorHandler {
 		$stderr->write(__("<error>%s Error:</error> %s\n", $name, $message));
 
 		if (Configure::read('debug') == 0) {
-			App::import('Core', 'CakeLog');
 			CakeLog::write($log, $message);
 		}
 	}

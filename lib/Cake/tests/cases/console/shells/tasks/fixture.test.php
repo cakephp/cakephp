@@ -17,14 +17,12 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', array(
-	'tasks/fixture',
-	'tasks/template',
-	'tasks/db_config'
-));
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('FixtureTask', 'Console/Command/Task');
+App::uses('TemplateTask', 'Console/Command/Task');
+App::uses('DbConfigTask', 'Console/Command/Task');
 
 /**
  * FixtureTaskTest class

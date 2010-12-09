@@ -17,7 +17,7 @@
  * @since         CakePHP v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'CommandList', false);
+App::import('CommandListShell', 'Console/Command');
 
 
 class TestStringOutput extends ConsoleOutput {

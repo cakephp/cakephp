@@ -20,6 +20,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::import('Sanitize', 'Utility');
+
 /**
  * Exception Renderer.
  *
@@ -88,8 +91,6 @@ class ExceptionRenderer {
  * @param array $messages Error messages
  */
 	function __construct(Exception $exception) {
-		App::import('Core', 'Sanitize');
-
 		$this->controller = $this->_getController($exception);
 
 		if (method_exists($this->controller, 'apperror')) {

@@ -17,11 +17,10 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'tasks/DbConfig');
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('DbConfigTask', 'Console/Command/Task');
 
 class TEST_DATABASE_CONFIG {
 	public $default = array(

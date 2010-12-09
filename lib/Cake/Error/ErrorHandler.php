@@ -113,7 +113,7 @@ class ErrorHandler {
 			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
 		}
 		if ($config['renderer'] !== 'ExceptionRenderer') {
-			App::import('Lib', $config['renderer']);
+			App::uses($config['renderer'], 'Error');
 		}
 		$error = new $config['renderer']($exception);
 		$error->render();

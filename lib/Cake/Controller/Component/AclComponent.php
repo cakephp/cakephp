@@ -662,7 +662,7 @@ class IniAcl extends Object implements AclInterface {
  * @return array INI section structure
  */
 	public function readConfigFile($filename) {
-		App::import('Core', 'config/IniReader');
+		App::uses('IniReader', 'Configure');
 		$iniFile = new IniReader(dirname($filename) . DS);
 		return $iniFile->read(basename($filename));
 	}
