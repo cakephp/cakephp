@@ -1,6 +1,6 @@
 <?php
 
-App::import('Core', 'CakeResponse');
+App::uses('CakeResponse', 'Network');
 
 class CakeResponseTestCase extends CakeTestCase {
 

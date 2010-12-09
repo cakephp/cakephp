@@ -17,10 +17,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('dispatcher')) {
-	require CAKE . 'dispatcher.php';
-}
-App::import('Core', 'CakeRequest');
+
+App::uses('Dispatcher', 'Routing')
+App::uses('CakeRequest', 'Network');
 
 class CakeRequestTestCase extends CakeTestCase {
 /**

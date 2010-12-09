@@ -17,8 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Router'));
-App::import('Core', 'CakeResponse');
+
+App::uses('Router', 'Routing');
+App::uses('CakeResponse', 'Network');
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');

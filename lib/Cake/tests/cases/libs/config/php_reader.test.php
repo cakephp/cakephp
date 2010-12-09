@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'config/PhpReader');
+App::uses('PhpReader', 'Configure');
 
 class PhpReaderTest extends CakeTestCase {
 /**

@@ -23,7 +23,7 @@
 App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('ProjecTask', 'Console/Command/Task');
-App::import('File', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * ProjectTask Test class

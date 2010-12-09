@@ -19,16 +19,14 @@
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Shell', 'Shell', false);
-App::import('Shell', array(
-	'tasks/view',
-	'tasks/controller',
-	'tasks/template',
-	'tasks/project',
-	'tasks/db_config'
-));
 
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
+App::uses('ShellDispatcher', 'Console');
+App::uses('Shell', 'Console');
+App::uses('ViewTask', 'Console/Command/Task');
+App::uses('ControllerTask', 'Console/Command/Task');
+App::uses('TemplateTask', 'Console/Command/Task');
+App::uses('ProjectTask', 'Console/Command/Task');
+App::uses('DbConfigTask', 'Console/Command/Task');
 
 /**
  * Test View Task Comment Model

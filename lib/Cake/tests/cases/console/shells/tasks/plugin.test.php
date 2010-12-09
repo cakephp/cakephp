@@ -24,7 +24,7 @@ App::uses('ShellDispatcher', 'Console');
 App::uses('Shell', 'Console');
 App::uses('PluginTask', 'Console/Command/Task');
 App::uses('ModelTask', 'Console/Command/Task');
-App::import('File', 'Utility');
+App::uses('File', 'Utility');
 
 /**
  * PluginTaskPlugin class

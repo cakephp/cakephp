@@ -18,8 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Component', array('Cookie', 'Security'));
-App::import('Core', 'ComponentCollection');
+App::uses('CookieComponent', 'Controller/Component');
+App::uses('SecurityComponent', 'Controller/Component');
+App::uses('ComponentCollection', 'Controller');
 
 class ComponentCollectionTest extends CakeTestCase {
 /**

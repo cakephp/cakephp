@@ -1,7 +1,9 @@
 <?php
-App::import('Core', 'route/RedirectRoute');
-App::import('Core', 'CakeResponse');
-App::import('Core', 'Router');
+
+App::uses('RedirectRoute', 'Routing/Route');
+App::uses('CakeResponse', 'Network');
+App::uses('Router', 'Routing');
+
 /**
  * test case for RedirectRoute
  *

@@ -17,9 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('CakeSession')) {
-	App::import('Core', 'CakeSession');
-}
+
+App::uses('CakeSession', 'Model/Datasource');
 
 class TestCakeSession extends CakeSession {
 	public static function setUserAgent($value) {

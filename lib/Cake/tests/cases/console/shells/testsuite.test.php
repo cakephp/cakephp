@@ -18,11 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Shell', 'Shell', false);
-App::import('Shell', 'Testsuite');
-
-require_once CAKE . 'console' .  DS . 'shell_dispatcher.php';
-
+App::uses('ShellDispatcher', 'Console');
+App::uses('TestSuiteShell', 'Console/Command');
 
 class TestSuiteShellTest extends CakeTestCase {
 

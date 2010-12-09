@@ -17,8 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Log');
-App::import('Core', 'log/FileLog');
+
+App::uses('CakeLog', 'Log');
+App::uses('FileLog', 'Log/Engine');
 
 /**
  * CakeLogTest class

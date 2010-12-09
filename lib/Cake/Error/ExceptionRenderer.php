@@ -21,7 +21,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Sanitize', 'Utility');
+App::uses('Sanitize', 'Utility');
 
 /**
  * Exception Renderer.

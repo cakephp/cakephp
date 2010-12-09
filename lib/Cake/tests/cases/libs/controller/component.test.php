@@ -17,10 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Controller', 'Component', false);
 
-if (!class_exists('AppController')) {
+App::uses('Controller', 'Controller');
+App::uses('Component', 'Controller');
+
+if (!class_exists('AppController', false)) {
 
 /**
  * AppController class
