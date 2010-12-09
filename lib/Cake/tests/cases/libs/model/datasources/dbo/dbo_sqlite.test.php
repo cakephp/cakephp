@@ -17,7 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboSqlite'));
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('Sqlite', 'Model/Datasource/Database');
 
 /**
  * DboSqliteTestDb class

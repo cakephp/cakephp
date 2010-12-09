@@ -19,7 +19,8 @@
  * @since         1.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Model', 'AppModel');
+
+App::uses('AppModel', 'Model');
 require_once dirname(__FILE__) . DS . 'models.php';
 
 /**

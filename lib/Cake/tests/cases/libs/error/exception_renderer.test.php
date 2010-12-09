@@ -18,7 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', array('ExceptionRenderer', 'Controller', 'Component'));
+App::uses('ExceptionRenderer', 'Error');
+App::uses('Controller', 'Controller');
+App::uses('Component', 'Controller');
 
 /**
  * Short description for class.

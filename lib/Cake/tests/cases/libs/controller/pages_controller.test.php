@@ -17,12 +17,12 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('AppController')) {
-	require_once LIBS . 'controller' . DS . 'app_controller.php';
+if (!class_exists('AppController', false)) {
+	require_once LIBS . 'Controller' . DS . 'AppController.php';
 } elseif (!defined('APP_CONTROLLER_EXISTS')) {
 	define('APP_CONTROLLER_EXISTS', true);
 }
-App::import('Controller', 'Pages');
+App::uses('PagesController', 'Controller');
 
 /**
  * PagesControllerTest class

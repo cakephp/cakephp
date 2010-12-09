@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Debugger');
+App::uses('Debugger', 'Utility');
 
 /**
  * DebugggerTestCaseDebuggger class
@@ -217,7 +217,7 @@ class DebuggerTest extends CakeTestCase {
  * @return void
  */
 	function testExportVar() {
-		App::import('Controller');
+		App::uses('Controller', 'Controller');
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
 		$View = new View($Controller);

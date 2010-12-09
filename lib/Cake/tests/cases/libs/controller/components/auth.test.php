@@ -17,10 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Controller');
-App::import('Component', array('Auth', 'Acl'));
-App::import('Model', 'DbAcl');
-App::import('Core', 'Xml');
+App::uses('Controller', 'Controller');
+App::uses('AuthComponent', 'Controller/Component');
+App::uses('AclComponent', 'Controller/Component');
+App::uses('DbAcl', 'Model');
+App::uses('Xml', 'Utility');
 
 /**
 * TestAuthComponent class
@@ -1456,7 +1457,7 @@ class AuthTest extends CakeTestCase {
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 
-		App::import('Core', 'Dispatcher');
+		App::uses('Dispatcher', 'Routing');
 
 		ob_start();
 		$Dispatcher = new Dispatcher();

@@ -17,11 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Dispatcher', false);
-App::import('Core', 'CakeResponse', false);
+App::uses('Dispatcher', 'Routing');
+App::uses('CakeResponse', 'Network');
 
-if (!class_exists('AppController')) {
-	require_once LIBS . 'controller' . DS . 'app_controller.php';
+if (!class_exists('AppController', false)) {
+	require_once LIBS . 'Controller' . DS . 'AppController.php';
 } elseif (!defined('APP_CONTROLLER_EXISTS')){
 	define('APP_CONTROLLER_EXISTS', true);
 }

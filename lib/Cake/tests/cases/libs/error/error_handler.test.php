@@ -18,7 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', array('ErrorHandler', 'Controller', 'Router'));
+App::uses('ErrorHandler', 'Error');
+App::uses('Controller', 'Controller');
+App::uses('Router', 'Routing');
 
 /**
  * ErrorHandlerTest class

@@ -24,7 +24,7 @@
  * Included libraries.
  *
  */
-App::import('Core', 'Inflector');
+App::uses('Inflector', 'Utility');
 
 /**
  * Short description for class.

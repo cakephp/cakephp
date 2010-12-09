@@ -21,7 +21,8 @@ if (!defined('CAKEPHP_UNIT_TEST_EXECUTION')) {
 	define('CAKEPHP_UNIT_TEST_EXECUTION', 1);
 }
 
-App::import('Core', array('AppModel', 'Model'));
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
 require_once(dirname(dirname(__FILE__)) . DS . 'models.php');
 
 /**

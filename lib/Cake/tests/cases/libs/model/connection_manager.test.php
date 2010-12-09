@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'ConnectionManager');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * ConnectionManagerTest

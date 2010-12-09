@@ -19,7 +19,7 @@
  */
 App::import('View', 'View');
 App::import('View', 'Theme');
-App::import('Core', 'Controller');
+App::uses('Controller', 'Controller');
 
 
 /**

@@ -19,8 +19,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
 require_once dirname(__FILE__) . DS . 'model.test.php';
-App::import('Core', 'DboSource');
+App::uses('DboSource', 'Model/Datasource/Database');
 
 /**
  * DboMock class

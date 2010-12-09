@@ -17,8 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboMysql'));
-App::import('Model', 'App');
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('Mysql', 'Model/Datasource/Database');
+App::uses('CakeSchema', 'Model');
+
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 /**
@@ -457,7 +460,6 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlterSchemaIndexes() {
-		App::import('Model', 'CakeSchema');
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 
 		$schema1 = new CakeSchema(array(
@@ -577,7 +579,6 @@ class DboMysqlTest extends CakeTestCase {
  * @return void
  */
 	function testAlteringTableParameters() {
-		App::import('Model', 'CakeSchema');
 		$this->Dbo->cacheSources = $this->Dbo->testing = false;
 
 		$schema1 = new CakeSchema(array(

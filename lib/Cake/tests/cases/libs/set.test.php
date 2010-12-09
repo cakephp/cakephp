@@ -2708,7 +2708,7 @@ class SetTest extends CakeTestCase {
  * @return void
  */
 	function testXmlSetReverse() {
-		App::import('Core', 'Xml');
+		App::uses('Xml', 'Utility');
 
 		$string = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 		<rss version="2.0">

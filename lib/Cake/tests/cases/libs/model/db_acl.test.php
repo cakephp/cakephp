@@ -17,8 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Component', 'Acl');
-App::import('Core', 'db_acl');
+
+App::uses('AclComponent', 'Controller/Component');
+App::uses('DbAcl', 'Model');
 
 /**
  * DB ACL wrapper test class

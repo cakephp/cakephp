@@ -18,7 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Model', array('Model', 'DataSource', 'DboSource', 'DboMysql', 'App'));
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('DboSource', 'Model/Datasource');
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**

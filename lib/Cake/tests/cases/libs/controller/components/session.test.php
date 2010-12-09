@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Component', 'Session');
+App::uses('Controller', 'Controller');
+App::uses('SessionComponent', 'Controller/Component');
 
 /**
  * SessionTestController class

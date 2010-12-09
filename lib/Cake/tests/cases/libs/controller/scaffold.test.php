@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Scaffold', false);
-App::import('Core', 'Controller', false);
+App::uses('Scaffold', 'Controller');
+App::uses('Controller', 'Controller');
 
 /**
  * ScaffoldMockController class

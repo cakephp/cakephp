@@ -19,9 +19,9 @@
  * @since         CakePHP(tm) v 1.2.0.5347
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Controller');
-App::import('Component', 'Email');
-App::import('Core', 'CakeSocket');
+App::uses('Controller', 'Controller');
+App::uses('EmailComponent', 'Controller/Component');
+App::uses('CakeSocket', 'Network');
 
 /**
  * EmailTestComponent class

@@ -19,7 +19,7 @@
  * @since         CakePHP(tm) v 1.2.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Controller');
+App::uses('Controller', 'Controller');
 
 if (!class_exists('AppController')) {
 

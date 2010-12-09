@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('DboSource', 'Model/Datasource');
+App::uses('DboSource', 'Model/Datasource');
 
 /**
  * CakeTestFixtureTestFixture class

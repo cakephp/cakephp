@@ -17,8 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Model', 'DataSource', 'DboSource', 'DboPostgres'));
-App::import('Model', 'App');
+
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
+App::uses('Postgres', 'Model/Datasource/Database');
+
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
 /**

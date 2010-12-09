@@ -17,10 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Core', array('CakeRequest', 'CakeResponse'));
-App::import('Component', 'Security');
-App::import('Component', 'Cookie');
+App::uses('Controller', 'Controller');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
+App::uses('SecurityComponent', 'Controller/Component');
+App::uses('CookieComponent', 'Controller/Component');
 
 /**
  * AppController class
@@ -28,7 +29,7 @@ App::import('Component', 'Cookie');
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-if (!class_exists('AppController')) {
+if (!class_exists('AppController', false)) {
 	/**
 	 * AppController class
 	 *
@@ -498,7 +499,7 @@ class ControllerTest extends CakeTestCase {
 			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
 			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
 		));
-		App::import('Controller', 'TestPlugin.TestPlugin');
+		App::uses('TestPluginController', 'TestPlugin.Controller');
 
 		$Controller = new TestPluginController();
 		$Controller->plugin = 'TestPlugin';

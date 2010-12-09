@@ -17,9 +17,10 @@
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Controller', 'Controller', false);
-App::import('Component', array('RequestHandler'));
-App::import('Core', array('CakeRequest', 'CakeResponse'));
+App::uses('Controller', 'Controller');
+App::uses('RequestHandlerComponent', 'Controller/Component');
+App::uses('CakeRequest', 'Network');
+App::uses('CakeResponse', 'Network');
 
 /**
  * RequestHandlerTestController class

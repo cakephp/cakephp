@@ -19,8 +19,8 @@
  * @since         CakePHP v 1.2.0.4487
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Behavior', 'Acl');
-App::import('Core', 'db_acl');
+App::uses('AclBehavior', 'Model/Behavior');
+App::uses('DbAcl', 'Model');
 
 /**
 * Test Person class - self joined model

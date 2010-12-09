@@ -17,7 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('AppModel', 'Model'));
+
+App::uses('Model', 'Model');
+App::uses('AppModel', 'Model');
 require_once dirname(__FILE__) . DS . 'models.php';
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
