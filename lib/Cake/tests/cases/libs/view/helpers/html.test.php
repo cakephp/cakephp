@@ -18,7 +18,13 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Core', array('Helper', 'AppHelper', 'ClassRegistry', 'Controller'));
-App::import('Helper', array('Html', 'Form'));
+
+App::uses('Helper', 'View');
+App::uses('AppHelper', 'View/Helper');
+App::uses('ClassRegistry', 'Utility');
+App::uses('Controller', 'Controller');
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('FomrHelper', 'View/Helper');
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');
@@ -315,7 +321,7 @@ class HtmlHelperTest extends CakeTestCase {
 		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
 			return;
 		}
-		App::import('Core', 'File');
+		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'img' . DS . '__cake_test_image.gif';
 		$file = new File($testfile, true);
@@ -596,7 +602,7 @@ class HtmlHelperTest extends CakeTestCase {
 		if ($this->skipIf(!is_writable(WWW_ROOT . 'theme'), 'Cannot write to webroot/theme')) {
 			return;
 		}
-		App::import('Core', 'File');
+		App::uses('File', 'Utility');
 
 		$testfile = WWW_ROOT . 'theme' . DS . 'test_theme' . DS . 'js' . DS . '__test_js.js';
 		$file = new File($testfile, true);

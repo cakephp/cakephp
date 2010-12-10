@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5428
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Sanitize');
+App::uses('Sanitize', 'Utility');
 
 /**
  * DataTest class

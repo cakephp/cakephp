@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'ObjectCollection');
+App::uses('ObjectCollection', 'Utility');
 
 /**
  * A generic object class

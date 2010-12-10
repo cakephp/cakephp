@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'View');
-App::import('Helper', 'Text');
+App::uses('View', 'View');
+App::uses('TextHelper', 'Helper');
 
 /**
  * TextHelperTest class

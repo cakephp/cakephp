@@ -17,8 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Controller', 'Model', 'View'));
-App::import('Helper', 'Cache');
+
+App::uses('Controller', 'Controller');
+App::uses('Model', 'Model');
+App::uses('View', 'View');
+App::uses('CacheHelper', 'View/Helper');
 
 /**
  * CacheTestController class

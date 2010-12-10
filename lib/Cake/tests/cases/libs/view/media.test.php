@@ -17,7 +17,10 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('Media', 'Controller', 'CakeResponse'));
+
+App::uses('Controller', 'Controller');
+App::uses('MediaView', 'View');
+App::uses('CakeResponse', 'Network');
 
 /**
  * MediaViewTest class

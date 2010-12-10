@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'HelperCollection');
-App::import('View', 'View');
+App::uses('HelperCollection', 'View/Helper');
+App::uses('View', 'View');
 
 class HelperCollectionTest extends CakeTestCase {
 /**

@@ -18,9 +18,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'Model');
-App::import('Core', 'CakeSession');
-App::import('Core', 'session/DatabaseSession');
+App::uses('Model', 'Model');
+App::uses('CakeSession', 'Model/Session');
+App::uses('DatabaseSession', 'Model/Datasource/Session');
 
 class SessionTestModel extends Model {
 	var $name = 'SessionTestModel';

@@ -17,8 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', 'Time');
-App::import('Core', 'View');
+App::uses('TimeHelper', 'View/Helper');
+App::uses('View', 'View');
 
 /**
  * TimeHelperTest class

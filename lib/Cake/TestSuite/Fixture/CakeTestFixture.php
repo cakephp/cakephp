@@ -20,6 +20,8 @@
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
+App::uses('CakeSchema', 'Model');
+
 /**
  * Short description for class.
  *
@@ -52,7 +54,6 @@ class CakeTestFixture {
  *
  */
 	public function __construct() {
-		App::import('Model', 'CakeSchema');
 		$this->Schema = new CakeSchema(array('name' => 'TestSuite', 'connection' => 'test'));
 		$this->init();
 	}
@@ -68,9 +69,12 @@ class CakeTestFixture {
 				is_array($this->import) ? $this->import : array('model' => $this->import)
 			);
 
-			if (isset($import['model']) && App::import('Model', $import['model'])) {
-				App::import('Model', $import['model']);
-				list(, $modelClass) = pluginSplit($import['model']);
+			if (isset($import['model'])) {
+				list($plugin, $modelClass) = pluginSplit($import['model'], true);
+				App::uses($modelClass, $plugin . 'Model');
+				if (!class_exists($modelClass)) {
+					throw new MissingModelException(array('class' => $modelClass));
+				}
 				$model = new $modelClass(null, null, $import['connection']);
 				$db = $model->getDataSource();
 				if (empty($model->tablePrefix)) {

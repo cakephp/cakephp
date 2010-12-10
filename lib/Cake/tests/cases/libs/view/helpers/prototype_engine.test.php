@@ -18,7 +18,10 @@
  * @subpackage      cake.tests.cases.views.helpers
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', array('Html', 'Js', 'PrototypeEngine'));
+
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('JsHelper', 'View/Helper');
+App::uses('PrototypeEngineHelper', 'View/Helper');
 
 class PrototypeEngineHelperTest extends CakeTestCase {
 /**

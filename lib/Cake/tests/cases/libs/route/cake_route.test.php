@@ -1,7 +1,7 @@
 <?php
 
-App::import('Core', 'route/CakeRoute');
-App::import('Core', 'Router');
+App::uses('CakeRoute', 'Routing');
+App::uses('Router', 'Routing');
 
 /**
  * Test case for CakeRoute

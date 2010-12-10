@@ -1,6 +1,6 @@
 <?php
-App::import('Core', 'route/PluginShortRoute');
-App::import('Core', 'Router');
+App::uses('PluginShortRoute', 'Routing/Route');
+App::uses('Router', 'Routing');
 /**
  * test case for PluginShortRoute
  *

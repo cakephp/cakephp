@@ -20,7 +20,10 @@
  * @subpackage      cake.tests.cases.views.helpers
  * @license         MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', array('Html', 'Js', 'MootoolsEngine'));
+
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('JsHelper', 'View/Helper');
+App::uses('MooToolsEngineHelper', 'View/Helper');
 
 class MooEngineHelperTest extends CakeTestCase {
 /**

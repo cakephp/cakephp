@@ -27,7 +27,7 @@
 			</p>
  		</div>
 		<?php
-			App::import('Core', 'View');
+			App::uses('View', 'View');
 			$null = null;
 			$View = new View($null, false);
 			echo $View->element('sql_dump');

@@ -17,8 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'View');
-App::import('Helper', array('Html', 'Paginator', 'Form', 'Js'));
+App::uses('View', 'View');
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('JsHelper', 'View/Helper');
+App::uses('PaginatorHelper', 'View/Helper');
+App::uses('FormHelper', 'View/Helper');
 
 if (!defined('FULL_BASE_URL')) {
 	define('FULL_BASE_URL', 'http://cakephp.org');

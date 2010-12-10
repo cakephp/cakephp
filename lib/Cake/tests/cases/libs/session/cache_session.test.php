@@ -18,8 +18,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::import('Core', 'CakeSession');
-App::import('Core', 'session/CacheSession');
+App::uses('CakeSession', 'Model/Datasource');
+App::uses('CacheSession', 'Model/Datasource/Session');
 
 class CacheSessionTest extends CakeTestCase {
 

@@ -17,9 +17,11 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('View', 'Controller'));
-App::import('Helper', 'Cache');
-App::import('Core', array('ErrorHandler'));
+
+App::uses('View', 'View');
+App::uses('Controller', 'Controller');
+App::uses('CacheHelper', 'View/Helper');
+App::uses('ErrorHandler', 'Error');
 
 
 /**

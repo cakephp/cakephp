@@ -17,7 +17,10 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', array('View', 'Helper', 'Router'));
+
+App::uses('View', 'View');
+App::uses('Helper', 'View');
+App::uses('Router', 'Routing');
 
 /**
  * HelperTestPost class

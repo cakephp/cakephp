@@ -19,8 +19,11 @@
  * @since         CakePHP(tm) v 1.3
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Helper', array('Js', 'Html', 'Form'));
-App::import('Core', array('View', 'ClassRegistry'));
+App::uses('HtmlHelper', 'View/Helper');
+App::uses('JsHelper', 'View/Helper');
+App::uses('FormHelper', 'View/Helper');
+App::uses('View', 'View');
+App::uses('ClassRegistry', 'Utility');
 
 class OptionEngineHelper extends JsBaseEngineHelper {
 	protected $_optionMap = array(
