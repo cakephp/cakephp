@@ -1,10 +1,5 @@
 <?php
 /**
- * Deals with Collections of objects.  Keeping registries of those objects,
- * loading and constructing new objects and triggering callbacks.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,10 +8,20 @@
  *
  * @copyright     Copyright 2005-2010, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake
- * @subpackage    cake.cake.libs.view
- * @since         CakePHP(tm) v 0.10.0.1076
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+/**
+ * Deals with Collections of objects.  Keeping registries of those objects,
+ * loading and constructing new objects and triggering callbacks. Each subclass needs
+ * to implement its own load() functionality.
+ *
+ * All core subclasses of ObjectCollection by convention loaded objects are stored
+ * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`.  In addition
+ * the all support an `enabled` option that controls the enabled/disabled state of the object
+ * when loaded.
+ *
+ * @package cake.libs
+ * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {
 

@@ -112,7 +112,7 @@ class Controller extends Object {
  * @var array
  * @link http://book.cakephp.org/view/1231/Pagination
  */
-	public $paginate = array('limit' => 20, 'page' => 1);
+	public $paginate = array('limit' => 20, 'page' => 1, 'maxLimit' => 100);
 
 /**
  * The name of the views subfolder containing views for this controller.
@@ -1068,8 +1068,8 @@ class Controller extends Object {
 			unset($defaults[0]);
 		}
 
-		$options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options);
-		$options['limit'] = (int) $options['limit'];
+		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $defaults, $options);
+		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
 		}
@@ -1108,7 +1108,7 @@ class Controller extends Object {
 		} elseif (intval($page) < 1) {
 			$options['page'] = $page = 1;
 		}
-		$page = $options['page'] = (integer)$page;
+		$page = $options['page'] = (int)$page;
 
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate(

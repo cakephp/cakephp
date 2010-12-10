@@ -185,10 +185,40 @@ class TestHelper extends Helper {
 }
 
 /**
+ * Html5TestHelper class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs.view
+ */
+class Html5TestHelper extends TestHelper {
+
+/**
+ * Minimized
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array('require', 'checked');
+
+/**
+ * Allow compact use in HTML
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s';
+
+/**
+ * Test to attribute format
+ *
+ * @var string
+ */
+	protected $_attributeFormat = 'data-%s="%s"';
+}
+
+/**
  * HelperTest class
  *
  * @package       cake
- * @subpackage    cake.tests.cases.libs
+ * @subpackage    cake.tests.cases.libs.view
  */
 class HelperTest extends CakeTestCase {
 
@@ -809,6 +839,13 @@ class HelperTest extends CakeTestCase {
 				$this->assertEqual($helper->parseAttributes($attrs), $expected, '%s Failed on ' . $value);
 			}
 		}
+		$this->assertEqual($helper->parseAttributes(array('compact')), ' compact="compact"');
+
+		$helper = new Html5TestHelper($this->View);
+		$expected = ' require';
+		$this->assertEqual($helper->parseAttributes(array('require')), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => true)), $expected);
+		$this->assertEqual($helper->parseAttributes(array('require' => false)), '');
 	}
 
 /**

@@ -752,6 +752,45 @@ class ControllerTest extends CakeTestCase {
 	}
 
 /**
+ * testPaginateMaxLimit
+ *
+ * @return void
+ * @access public
+ */
+	function testPaginateMaxLimit() {
+		$request = new CakeRequest('controller_posts/index');
+		$request->params['pass'] = $request->params['named'] = array();
+
+		$Controller = new Controller($request);
+
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000');
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 100);
+
+		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000);
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 100);
+
+		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '10');
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 10);
+
+		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000');
+		$Controller->paginate = array('maxLimit' => 2000);
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 1000);
+
+		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '5000');
+		$result = $Controller->paginate('ControllerPost');
+		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 2000);
+	}
+
+/**
  * testPaginateFieldsDouble method
  *
  * @return void
@@ -821,6 +860,7 @@ class ControllerTest extends CakeTestCase {
 			'fields' => array(),
 			'order' => '',
 			'limit' => 5,
+			'maxLimit' => 100,
 			'page' => 1,
 			'recursive' => -1,
 			'conditions' => array()
