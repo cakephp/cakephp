@@ -108,6 +108,30 @@ class Helper extends Object {
 	protected $_View;
 
 /**
+ * Minimized attributes
+ *
+ * @var array
+ */
+	protected $_minimizedAttributes = array(
+		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
+		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize'
+	);
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_attributeFormat = '%s="%s"';
+
+/**
+ * Format to attribute
+ *
+ * @var string
+ */
+	protected $_minimizedAttributeFormat = '%s="%s"';
+
+/**
  * Default Constructor
  *
  * @param View $View The View this helper is being attached to.
@@ -361,7 +385,7 @@ class Helper extends Object {
 
 			foreach ($filtered as $key => $value) {
 				if ($value !== false && $value !== null) {
-					$attributes[] = $this->__formatAttribute($key, $value, $escape);
+					$attributes[] = $this->_formatAttribute($key, $value, $escape);
 				}
 			}
 			$out = implode(' ', $attributes);
@@ -378,23 +402,21 @@ class Helper extends Object {
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.
  * @return string The composed attribute.
- * @access private
  */
-	function __formatAttribute($key, $value, $escape = true) {
+	protected function _formatAttribute($key, $value, $escape = true) {
 		$attribute = '';
-		$attributeFormat = '%s="%s"';
-		$minimizedAttributes = array('compact', 'checked', 'declare', 'readonly', 'disabled',
-			'selected', 'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize');
 		if (is_array($value)) {
 			$value = '';
 		}
 
-		if (in_array($key, $minimizedAttributes)) {
+		if (is_numeric($key)) {
+			$attribute = sprintf($this->_minimizedAttributeFormat, $value, $value);
+		} elseif (in_array($key, $this->_minimizedAttributes)) {
 			if ($value === 1 || $value === true || $value === 'true' || $value === '1' || $value == $key) {
-				$attribute = sprintf($attributeFormat, $key, $key);
+				$attribute = sprintf($this->_minimizedAttributeFormat, $key, $key);
 			}
 		} else {
-			$attribute = sprintf($attributeFormat, $key, ($escape ? h($value) : $value));
+			$attribute = sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
 		}
 		return $attribute;
 	}
