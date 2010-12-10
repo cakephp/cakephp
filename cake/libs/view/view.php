@@ -381,8 +381,13 @@ class View extends Object {
 		}
 
 		if (is_file($file)) {
-			$params = array_merge_recursive($params, $this->loaded);
-			$element = $this->_render($file, array_merge($this->viewVars, $params), $loadHelpers);
+			$vars = array_merge($this->viewVars, $params);
+			foreach ($this->loaded as $name => $helper) {
+				if (!isset($vars[$name])) {
+					$vars[$name] =& $this->loaded[$name];
+				}
+			}
+			$element = $this->_render($file, $vars, $loadHelpers);
 			if (isset($params['cache']) && isset($cacheFile) && isset($expires)) {
 				cache('views' . DS . $cacheFile, $element, $expires);
 			}
