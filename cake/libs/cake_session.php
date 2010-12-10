@@ -151,14 +151,8 @@ class CakeSession {
 		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
-
-		if ($start === true) {
-			self::_setPath($base);
-			self::_setHost(env('HTTP_HOST'));
-		}
-		if (isset($_SESSION) || $start === true) {
-			self::start();
-		}
+		self::_setPath($base);
+		self::_setHost(env('HTTP_HOST'));
 	}
 
 /**
@@ -374,11 +368,11 @@ class CakeSession {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
-		if (is_null($name)) {
-			return self::__returnSessionVars();
-		}
 		if (empty($name)) {
 			return false;
+		}
+		if (is_null($name)) {
+			return self::__returnSessionVars();
 		}
 		$result = Set::classicExtract($_SESSION, $name);
 
