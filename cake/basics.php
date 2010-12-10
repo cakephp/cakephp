@@ -85,12 +85,12 @@
  * Only runs if debug level is greater than zero.
  *
  * @param boolean $var Variable to show debug information for.
- * @param boolean $showHtml If set to true, the method prints the debug data in a screen-friendly way.
+ * @param boolean $showHtml If set to true, the method prints the debug data in a browser-friendly way.
  * @param boolean $showFrom If set to true, the method prints from where the function was called.
  * @link http://book.cakephp.org/view/1190/Basic-Debugging
  * @link http://book.cakephp.org/view/1128/debug
  */
-	function debug($var = false, $showHtml = false, $showFrom = true) {
+	function debug($var = false, $showHtml = null, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
 			$file = '';
 			$line = '';
@@ -116,10 +116,14 @@ TEXT;
 			$template = $html;
 			if (php_sapi_name() == 'cli') {
 				$template = $text;
+			} else {
+				if ($showHtml === null) {
+					$showHtml = true;
+				}
 			}
 			$var = print_r($var, true);
 			if ($showHtml) {
-				$var = str_replace('<', '&lt;', str_replace('>', '&gt;', $var));
+				$var = str_replace(array('<', '>'), array('&lt;', '&gt;'), $var);
 			}
 			printf($template, $file, $line, $var);
 		}
