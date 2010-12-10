@@ -226,6 +226,9 @@ class CakeSession {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -368,11 +371,14 @@ class CakeSession {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
-		if (empty($name)) {
+		if (!self::started() && !self::start()) {
 			return false;
 		}
 		if (is_null($name)) {
 			return self::__returnSessionVars();
+		}
+		if (empty($name)) {
+			return false;
 		}
 		$result = Set::classicExtract($_SESSION, $name);
 
@@ -403,6 +409,9 @@ class CakeSession {
  * @return void
  */
 	public static function watch($var) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($var)) {
 			return false;
 		}
@@ -418,6 +427,9 @@ class CakeSession {
  * @return void
  */
 	public static function ignore($var) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (!in_array($var, self::$watchKeys)) {
 			return;
 		}
@@ -438,6 +450,9 @@ class CakeSession {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -666,6 +681,10 @@ class CakeSession {
  * @return void
  */
 	protected static function _checkValid() {
+		if (!self::started() && !self::start()) {
+			self::$valid = false;
+			return false;
+		}
 		if (self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
 
