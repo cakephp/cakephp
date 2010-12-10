@@ -639,6 +639,34 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
+ * testRequestWithResource
+ *
+ * @return void
+ */
+	public function testRequestWithResource() {
+		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+		$this->Socket->expects($this->at(4))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->connected = true;
+
+		$f = fopen(TMP . 'download.txt', 'w');
+		$this->skipUnless($f, 'Can not write in TMP directory.');
+
+		$this->Socket->setContentResource($f);
+		$result = $this->Socket->request('http://www.cakephp.org/');
+		$this->assertEqual($result, '');
+		$this->assertEqual($this->Socket->response['header']['Server'], 'CakeHttp Server');
+		fclose($f);
+		$this->assertEqual(file_get_contents(TMP . 'download.txt'), '<h1>This is a test!</h1>');
+		unlink(TMP . 'download.txt');
+
+		$this->Socket->setContentResource(false);
+		$result = $this->Socket->request('http://www.cakephp.org/');
+		$this->assertEqual($result, '<h1>This is a test!</h1>');
+	}
+
+/**
  * testProxy method
  *
  * @return void

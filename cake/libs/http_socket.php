@@ -133,6 +133,13 @@ class HttpSocket extends CakeSocket {
 	protected $_proxy = array();
 
 /**
+ * Resource to receive the content of request
+ *
+ * @var mixed
+ */
+	protected $_contentResource = null;
+
+/**
  * Build an HTTP Socket using the specified configuration.
  *
  * You can use a url string to set the url and use default configurations for
@@ -206,6 +213,24 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		$this->_proxy = compact('host', 'port', 'method', 'user', 'pass');
+	}
+
+/**
+ * Set the resource to receive the request content. This resource must support fwrite.
+ *
+ * @param mixed $resource Resource or false to disable the resource use
+ * @return void
+ * @throw Exception
+ */
+	public function setContentResource($resource) {
+		if ($resource === false) {
+			$this->_contentResource = null;
+			return;
+		}
+		if (!is_resource($resource)) {
+			throw new Exception(__('Invalid resource.'));
+		}
+		$this->_contentResource = $resource;
 	}
 
 /**
@@ -320,8 +345,27 @@ class HttpSocket extends CakeSocket {
 		$this->write($this->request['raw']);
 
 		$response = null;
+		$inHeader = true;
 		while ($data = $this->read()) {
-			$response .= $data;
+			if ($this->_contentResource) {
+				if ($inHeader) {
+					$response .= $data;
+					$pos = strpos($response, "\r\n\r\n");
+					if ($pos !== false) {
+						$pos += 4;
+						$data = substr($response, $pos);
+						fwrite($this->_contentResource, $data);
+
+						$response = substr($response, 0, $pos);
+						$inHeader = false;
+					}
+				} else {
+					fwrite($this->_contentResource, $data);
+					fflush($this->_contentResource);
+				}
+			} else {
+				$response .= $data;
+			}
 		}
 
 		if ($connectionType === 'close') {
