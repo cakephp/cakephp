@@ -629,22 +629,30 @@ HTMLBLOC;
 		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/html; charset=UTF-8', $header) . $html . '</pre>';
 		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'default', 'thin'));
 		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+	}
 
-		return;
+/**
+ * test that elements used in email templates get helpers.
+ *
+ * @return void
+ */
+	function testTemplateNestedElements() {
+		$this->Controller->EmailTest->to = 'postmaster@localhost';
+		$this->Controller->EmailTest->from = 'noreply@example.com';
+		$this->Controller->EmailTest->subject = 'Cake SMTP test';
+		$this->Controller->EmailTest->replyTo = 'noreply@example.com';
 
-		$text = <<<TEXTBLOC
+		$this->Controller->EmailTest->delivery = 'debug';
+		$this->Controller->EmailTest->messageId = false;
+		$this->Controller->EmailTest->layout = 'default';
+		$this->Controller->EmailTest->template = 'nested_element';
+		$this->Controller->EmailTest->sendAs = 'html';
+		$this->Controller->helpers = array('Html');
 
-This element has some text that is just too wide to comply with email
-standards.
-This is the body of the message
-
-This email was sent using the CakePHP Framework, http://cakephp.org.
-TEXTBLOC;
-
-		$this->Controller->EmailTest->sendAs = 'text';
-		$expect = '<pre>' . str_replace('{CONTENTTYPE}', 'text/plain; charset=UTF-8', $header) . $text . "\n" . '</pre>';
-		$this->assertTrue($this->Controller->EmailTest->send('This is the body of the message', 'wide', 'default'));
-		$this->assertEqual($this->Controller->Session->read('Message.email.message'), $this->__osFix($expect));
+		$this->Controller->EmailTest->send();
+		$result = $this->Controller->Session->read('Message.email.message');
+		$this->assertPattern('/Test/', $result);
+		$this->assertPattern('/http\:\/\/example\.com/', $result);
 	}
 
 /**
