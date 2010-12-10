@@ -349,7 +349,7 @@ class HttpSocketTest extends CakeTestCase {
 								'host' => 'www.cakephp.org',
 								'port' => 80
 							),
-							'cookies' => array()
+							'cookies' => array(),
 						)
 					),
 					'request' => array(
@@ -369,7 +369,9 @@ class HttpSocketTest extends CakeTestCase {
 						'line' => "GET /?foo=bar HTTP/1.1\r\n",
 						'header' => "Host: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n",
 						'raw' => "",
-						'cookies' => array()
+						'cookies' => array(),
+						'proxy' => array(),
+						'auth' => array()
 					)
 				)
 			),
@@ -621,11 +623,11 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * testRequestResultAsPointer method
+ * testRequestResultAsReference method
  *
  * @return void
  */
-	public function testRequestResultAsPointer() {
+	public function testRequestResultAsReference() {
 		$request = array('uri' => 'htpp://www.cakephp.org/');
 		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
@@ -652,6 +654,28 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->request['raw'], $expected);
 		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
 		$this->assertEqual($this->Socket->config['port'], 123);
+		$expected = array(
+			'host' => 'proxy.server',
+			'port' => 123,
+			'method' => null,
+			'user' => null,
+			'pass' => null
+		);
+		$this->assertEqual($this->Socket->request['proxy'], $expected);
+
+		$expected = "GET http://www.cakephp.org/bakery HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n";
+		$this->Socket->request('/bakery');
+		$this->assertEqual($this->Socket->request['raw'], $expected);
+		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
+		$this->assertEqual($this->Socket->config['port'], 123);
+		$expected = array(
+			'host' => 'proxy.server',
+			'port' => 123,
+			'method' => null,
+			'user' => null,
+			'pass' => null
+		);
+		$this->assertEqual($this->Socket->request['proxy'], $expected);
 
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
 		$this->Socket->setProxyConfig('proxy.server', 123, 'Test', 'mark', 'secret');
@@ -659,11 +683,34 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->request['raw'], $expected);
 		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
 		$this->assertEqual($this->Socket->config['port'], 123);
+		$expected = array(
+			'host' => 'proxy.server',
+			'port' => 123,
+			'method' => 'Test',
+			'user' => 'mark',
+			'pass' => 'secret'
+		);
+		$this->assertEqual($this->Socket->request['proxy'], $expected);
 
 		$this->Socket->setAuthConfig('Test', 'login', 'passwd');
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\nAuthorization: Test login.passwd\r\n\r\n";
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($this->Socket->request['raw'], $expected);
+		$expected = array(
+			'host' => 'proxy.server',
+			'port' => 123,
+			'method' => 'Test',
+			'user' => 'mark',
+			'pass' => 'secret'
+		);
+		$this->assertEqual($this->Socket->request['proxy'], $expected);
+		$expected = array(
+			'Test' => array(
+				'user' => 'login',
+				'pass' => 'passwd'
+			)
+		);
+		$this->assertEqual($this->Socket->request['auth'], $expected);
 	}
 
 /**

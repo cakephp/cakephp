@@ -246,6 +246,8 @@ class HttpSocket extends CakeSocket {
 			$this->config['host'] = $host;
 		}
 		$this->_setProxy();
+		$this->request['proxy'] = $this->_proxy;
+
 		$cookies = null;
 
 		if (is_array($this->request['header'])) {
@@ -276,6 +278,7 @@ class HttpSocket extends CakeSocket {
 			$this->setAuthConfig('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
 		}
 		$this->_setAuth();
+		$this->request['auth'] = $this->_auth;
 
 		if (is_array($this->request['body'])) {
 			$this->request['body'] = $this->_httpSerialize($this->request['body']);
