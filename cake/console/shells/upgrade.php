@@ -8,6 +8,41 @@ class UpgradeShell extends Shell {
 
 	protected $_files = array();
 	protected $_paths = array();
+
+
+/**
+ * Update helpers.
+ *
+ * - Converts helpers usage to new format.
+ *
+ * @return void
+ */
+	function helpers() {
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		} else {
+			$this->_paths = array(
+				VIEWS
+			);
+		}
+
+		$patterns = array();
+		foreach(App::objects('helper') as $helper) {
+			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
+			$patterns[] = array(
+				"\${$oldHelper} to \$this->{$helper}",
+				"/\\\${$oldHelper}->/",
+				"\\\$this->{$helper}->"
+			);
+		}
+		
+		$this->_findFiles();
+		foreach ($this->_files as $file) {
+			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
+			$this->_updateFile($file, $patterns);
+		}
+	}
+
 /**
  * Update i18n.
  *
@@ -25,10 +60,25 @@ class UpgradeShell extends Shell {
 				VIEWS
 			);
 		}
+
+		$patterns = array(
+			array(
+				'<?php __*(*) to <?php echo __*(*)',
+				'/<\?php\s*(__[a-z]*\(.*?\))/',
+				'<?php echo \1'
+			),
+			array(
+				'<?php __*(*, true) to <?php echo __*()',
+				'/<\?php\s*(__[a-z]*\(.*?)(,\s*true)(\))/',
+				'<?php echo \1\3'
+			),
+			array('__*(*, true) to __*(*)', '/(__[a-z]*\(.*?)(,\s*true)(\))/', '\1\3')
+		);
+
 		$this->_findFiles();
 		foreach ($this->_files as $file) {
 			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
-			$this->_updateFile($file);
+			$this->_updateFile($file, $patterns);
 		}
 	}
 
@@ -53,21 +103,9 @@ class UpgradeShell extends Shell {
  *
  * @return void
  */
-	protected function _updateFile($file) {
+	protected function _updateFile($file, $patterns) {
 		$contents = file_get_contents($file);
-		$patterns = array(
-			array(
-				'<?php __*(*) to <?php echo __*(*)',
-				'/<\?php\s*(__[a-z]*\(.*?\))/',
-				'<?php echo \1'
-			),
-			array(
-				'<?php __*(*, true) to <?php echo __*()',
-				'/<\?php\s*(__[a-z]*\(.*?)(,\s*true)(\))/',
-				'<?php echo \1\3'
-			),
-			array('__*(*, true) to __*(*)', '/(__[a-z]*\(.*?)(,\s*true)(\))/', '\1\3')
-		);
+		
 		foreach ($patterns as $pattern) {
 			$this->out(' * Updating ' . $pattern[0], 1, Shell::VERBOSE);
 			$contents = preg_replace($pattern[1], $pattern[2], $contents);
@@ -86,6 +124,14 @@ class UpgradeShell extends Shell {
 		return parent::getOptionParser()
 			->addSubcommand('i18n', array(
 				'help' => 'Update the i18n translation method calls.',
+				'parser' => array(
+					'options' => array(
+						'plugin' => array('short' => 'p', 'help' => __('The plugin to update.'))
+					)
+				)
+			))
+			->addSubcommand('helpers', array(
+				'help' => 'Update calls to helpers.',
 				'parser' => array(
 					'options' => array(
 						'plugin' => array('short' => 'p', 'help' => __('The plugin to update.'))
