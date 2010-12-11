@@ -18,13 +18,9 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	function helpers() {
-		if (!empty($this->params['plugin'])) {
-			$this->_paths = array(App::pluginPath($this->params['plugin']));
-		} else {
-			$this->_paths = array(
-				VIEWS
-			);
-		}
+		$this->_paths = array(
+			VIEWS
+		);
 
 		$patterns = array();
 		foreach(App::objects('helper') as $helper) {
@@ -36,11 +32,7 @@ class UpgradeShell extends Shell {
 			);
 		}
 		
-		$this->_findFiles();
-		foreach ($this->_files as $file) {
-			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
-			$this->_updateFile($file, $patterns);
-		}
+		$this->_filesRegexpUpdate($patterns);
 	}
 
 /**
@@ -51,15 +43,11 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	function i18n() {
-		if (!empty($this->params['plugin'])) {
-			$this->_paths = array(App::pluginPath($this->params['plugin']));
-		} else {
-			$this->_paths = array(
-				CONTROLLERS,
-				MODELS,
-				VIEWS
-			);
-		}
+		$this->_paths = array(
+			CONTROLLERS,
+			MODELS,
+			VIEWS
+		);
 
 		$patterns = array(
 			array(
@@ -74,6 +62,14 @@ class UpgradeShell extends Shell {
 			),
 			array('__*(*, true) to __*(*)', '/(__[a-z]*\(.*?)(,\s*true)(\))/', '\1\3')
 		);
+
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+	protected function _filesRegexpUpdate($patterns) {
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
 
 		$this->_findFiles();
 		foreach ($this->_files as $file) {
