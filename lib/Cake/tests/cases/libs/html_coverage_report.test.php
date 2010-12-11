@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-require_once CAKE . 'tests' . DS . 'lib' . DS . 'coverage' . DS . 'html_coverage_report.php';
+App::uses('HtmlCoverageReport', 'TestSuite/Coverage');
 
 class HtmlCoverageReportTest extends CakeTestCase {
 /**

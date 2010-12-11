@@ -21,7 +21,6 @@
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
-App::uses('CakeTestModel', 'TestSuite/Fixture');
 App::uses('CakeTestFixture', 'TestSuite/Fixture');
 
 /**
@@ -30,7 +29,7 @@ App::uses('CakeTestFixture', 'TestSuite/Fixture');
  * @package       cake
  * @subpackage    cake.cake.tests.lib
  */
-class CakeTestCase extends PHPUnit_Framework_TestCase {
+abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 
 /**
  * The class responsible for managinf the creation, loading and removing of fixtures

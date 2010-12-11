@@ -20,6 +20,7 @@
 
 App::uses('View', 'View');
 App::uses('Helper', 'View');
+App::uses('Model', 'Model');
 App::uses('Router', 'Routing');
 
 /**

@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('Set', 'Utility');
+App::uses('Model', 'Model');
 
 /**
  * SetTest class

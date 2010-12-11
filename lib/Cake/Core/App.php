@@ -285,8 +285,7 @@ class App {
 
 			if (!empty($paths[$type])) {
 				$path = array_flip(array_flip(array_merge(
-					(array)$paths[$type], self::$__packages[$type], $merge
-				)));
+					(array)$paths[$type], self::$__packages[$type])));
 				self::$__packages[$type] = array_values($path);
 			} else {
 				$path = array_flip(array_flip(self::$__packages[$type]));

@@ -20,7 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Router', 'Core');
+App::uses('Router', 'Routing');
 
 /**
  * Abstract base class for all other Helpers in CakePHP.

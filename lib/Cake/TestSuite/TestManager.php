@@ -23,9 +23,11 @@ define('APP_TEST_CASES', TESTS . 'cases');
 define('APP_TEST_GROUPS', TESTS . 'groups');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
+
 App::uses('CakeTestSuite', 'TestSuite');
 App::uses('CakeTestCase', 'TestSuite');
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
+App::uses('CakeTestModel', 'TestSuite/Fixture');
 
 /**
  * TestManager is the base class that handles loading and initiating the running

@@ -19,6 +19,9 @@
  */
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 
+App::uses('ConnectionManager', 'Model');
+App::uses('ClassRegistry', 'Utility');
+
 class CakeFixtureManager {
 
 /**
@@ -100,6 +103,7 @@ class CakeFixtureManager {
 			if (isset($this->_loaded[$fixture])) {
 				continue;
 			}
+
 			if (strpos($fixture, 'core.') === 0) {
 				$fixture = substr($fixture, strlen('core.'));
 				foreach (App::core('cake') as $key => $path) {

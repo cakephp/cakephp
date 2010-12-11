@@ -19,6 +19,7 @@
  */
 
 App::uses('View', 'View');
+App::uses('Helper', 'View');
 App::uses('Controller', 'Controller');
 App::uses('CacheHelper', 'View/Helper');
 App::uses('ErrorHandler', 'Error');

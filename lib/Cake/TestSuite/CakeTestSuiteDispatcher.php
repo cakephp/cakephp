@@ -18,6 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
+App::uses('TestManager', 'TestSuite');
 /**
  * CakeTestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
@@ -201,7 +202,6 @@ class CakeTestSuiteDispatcher {
  */
 	function &getManager() {
 		if (empty($this->Manager)) {
-			require_once CAKE_TESTS_LIB . 'test_manager.php';
 			$this->Manager = new $this->_managerClass($this->params);
 		}
 		return $this->Manager;
@@ -217,13 +217,13 @@ class CakeTestSuiteDispatcher {
 		if (!self::$_Reporter) {
 			$type = strtolower($this->params['output']);
 			$coreClass = 'Cake' . ucwords($this->params['output']) . 'Reporter';
-			$coreFile = CAKE_TESTS_LIB . 'reporter/cake_' . $type . '_reporter.php';
-
 			$appClass = $this->params['output'] . 'Reporter';
-			$appFile = APPLIBS . 'test_suite/reporter/' . $type . '_reporter.php';
-			if (include_once $coreFile) {
+			App::uses($coreClass, 'TestSuite/Reporter');
+			App::uses($appClass, 'TestSuite/Reporter');
+
+			if (class_exists($coreClass)) {
 				self::$_Reporter = new $coreClass(null, $this->params);
-			} elseif (include_once $appFile) {
+			} elseif (class_exists($appClass)) {
 				self::$_Reporter = new $appClass(null, $this->params);
 			}
 		}

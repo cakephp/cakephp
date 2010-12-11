@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-include_once dirname(__FILE__) . DS . 'cake_base_reporter.php';
+App::uses('CakeBaseReporter', 'TestSuite/Reporter');
 
 PHP_CodeCoverage_Filter::getInstance()->addFileToBlacklist(__FILE__, 'DEFAULT');
 

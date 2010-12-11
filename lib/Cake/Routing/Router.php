@@ -286,7 +286,7 @@ class Router {
  * @return array Array of routes
  */
 	public static function redirect($route, $url, $options) {
-		App::uses('RedirectRoute', 'Core');
+		App::uses('RedirectRoute', 'Routing/Route');
 		$options['routeClass'] = 'RedirectRoute';
 		return self::connect($route, $url, $options);
 	}
