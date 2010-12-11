@@ -20,11 +20,20 @@
  */
 
 /**
+ * Parent class for all of the HTTP related exceptions in CakePHP.
+ * All HTTP status/error related exceptions should extend this class so 
+ * catch blocks can be specifically typed.
+ *
+ * @package cake.libs
+ */
+class HttpException extends RuntimeException { }
+
+/**
  * Represents an HTTP 400 error.
  *
  * @package cake.libs
  */
-class BadRequestException extends RuntimeException {
+class BadRequestException extends HttpException {
 /**
  * Constructor
  *
@@ -44,7 +53,7 @@ class BadRequestException extends RuntimeException {
  *
  * @package cake.libs
  */
-class UnauthorizedException extends RuntimeException {
+class UnauthorizedException extends HttpException {
 /**
  * Constructor
  *
@@ -64,7 +73,7 @@ class UnauthorizedException extends RuntimeException {
  *
  * @package cake.libs
  */
-class ForbiddenException extends RuntimeException {
+class ForbiddenException extends HttpException {
 /**
  * Constructor
  *
@@ -84,7 +93,7 @@ class ForbiddenException extends RuntimeException {
  *
  * @package cake.libs
  */
-class NotFoundException extends RuntimeException {
+class NotFoundException extends HttpException {
 /**
  * Constructor
  *
@@ -104,7 +113,7 @@ class NotFoundException extends RuntimeException {
  *
  * @package cake.libs
  */
-class MethodNotAllowedException extends RuntimeException {
+class MethodNotAllowedException extends HttpException {
 /**
  * Constructor
  *
@@ -124,7 +133,7 @@ class MethodNotAllowedException extends RuntimeException {
  *
  * @package cake.libs
  */
-class InternalErrorException extends CakeException {
+class InternalErrorException extends HttpException {
 /**
  * Constructor
  *
