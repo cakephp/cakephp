@@ -16,8 +16,14 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	function i18n() {
-		if ($this->params['plugin']) {
+		if (!empty($this->params['plugin'])) {
 			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		} else {
+			$this->_paths = array(
+				CONTROLLERS,
+				MODELS,
+				VIEWS
+			);
 		}
 		$this->_findFiles();
 		foreach ($this->_files as $file) {
@@ -26,7 +32,7 @@ class UpgradeShell extends Shell {
 		}
 	}
 
-	protected function _findFiles() {
+	protected function _findFiles($pattern = '') {
 		foreach ($this->_paths as $path) {
 			$Folder = new Folder($path);
 			$files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
