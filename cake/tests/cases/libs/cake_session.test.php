@@ -305,13 +305,15 @@ class CakeSessionTest extends CakeTestCase {
  * @return void
  */
 	function testId() {
+		TestCakeSession::destroy();
+		
 		$result = TestCakeSession::id();
 		$expected = session_id();
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		TestCakeSession::id('MySessionId');
 		$result = TestCakeSession::id();
-		$this->assertEqual($result, 'MySessionId');
+		$this->assertEquals('MySessionId', $result);
 	}
 
 /**
