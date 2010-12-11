@@ -323,6 +323,24 @@ class ExceptionRendererTest extends CakeTestCase {
 	}
 
 /**
+ * test that unknown exception types with valid status codes are treated correctly.
+ *
+ * @return void
+ */
+	function testUnknownExceptionTypeWithCodeHigherThan500() {
+		$exception = new OutOfBoundsException('foul ball.', 501);
+		$ExceptionRenderer = new ExceptionRenderer($exception);
+		$ExceptionRenderer->controller->response = $this->getMock('CakeResponse', array('statusCode', '_sendHeader'));
+		$ExceptionRenderer->controller->response->expects($this->once())->method('statusCode')->with(501);
+
+		ob_start();
+		$ExceptionRenderer->render();
+		$results = ob_get_clean();
+
+		$this->assertEquals('error500', $ExceptionRenderer->method, 'incorrect method coercion.');
+	}
+
+/**
  * testerror400 method
  *
  * @access public
