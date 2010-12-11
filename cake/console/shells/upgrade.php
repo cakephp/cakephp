@@ -130,6 +130,7 @@ class UpgradeShell extends Shell {
 		);
 
 		return parent::getOptionParser()
+			->description("A shell to help automate upgrading from CakePHP 1.3 to 2.0. \nBe sure to have a backup of your application before running these commands.")
 			->addSubcommand('i18n', array(
 				'help' => 'Update the i18n translation method calls.',
 				'parser' => $subcommandParser
