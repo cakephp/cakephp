@@ -263,9 +263,20 @@ class HttpSocket extends CakeSocket {
 		}
 		$request['uri'] = $this->url($request['uri']);
 		$request['uri'] = $this->_parseUri($request['uri'], true);
-		$this->request = Set::merge($this->request, $this->config['request'], $request);
+		$this->request = Set::merge($this->request, array_diff_key($this->config['request'], array('cookies' => true)), $request);
 
 		$this->_configUri($this->request['uri']);
+
+		$Host = $this->request['uri']['host'];
+		if (!empty($this->config['request']['cookies'][$Host])) {
+			if (!isset($this->request['cookies'])) {
+				$this->request['cookies'] = array();
+			}
+			if (!isset($request['cookies'])) {
+				$request['cookies'] = array();
+			}
+			$this->request['cookies'] = array_merge($this->request['cookies'], $this->config['request']['cookies'][$Host], $request['cookies']);
+		}
 
 		if (isset($host)) {
 			$this->config['host'] = $host;
@@ -280,7 +291,6 @@ class HttpSocket extends CakeSocket {
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
-			$Host = $this->request['uri']['host'];
 			$schema = '';
 			$port = 0;
 			if (isset($this->request['uri']['schema'])) {
@@ -374,7 +384,10 @@ class HttpSocket extends CakeSocket {
 
 		$this->response = $this->_parseResponse($response);
 		if (!empty($this->response['cookies'])) {
-			$this->config['request']['cookies'] = array_merge($this->config['request']['cookies'], $this->response['cookies']);
+			if (!isset($this->config['request']['cookies'][$Host])) {
+				$this->config['request']['cookies'][$Host] = array();
+			}
+			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response['cookies']);
 		}
 
 		return $this->response['body'];

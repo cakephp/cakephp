@@ -618,7 +618,7 @@ class HttpSocketTest extends CakeTestCase {
 			)
 		);
 		$this->assertEqual($result, $expect);
-		$this->assertEqual($this->Socket->config['request']['cookies'], $expect);
+		$this->assertEqual($this->Socket->config['request']['cookies']['www.cakephp.org'], $expect);
 		$this->assertFalse($this->Socket->connected);
 	}
 
@@ -664,6 +664,45 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->setContentResource(false);
 		$result = $this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($result, '<h1>This is a test!</h1>');
+	}
+
+/**
+ * testRequestWithCrossCookie
+ *
+ * @return void
+ */
+	public function testRequestWithCrossCookie() {
+		$this->Socket->connected = true;
+		$this->Socket->config['request']['cookies'] = array();
+
+		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+		$expected = array('www.cakephp.org' => array('foo' => array('value' => 'bar')));
+		$this->Socket->request('http://www.cakephp.org/');
+		$this->assertEqual($this->Socket->config['request']['cookies'], $expected);
+
+		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: bar=foo\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+		$this->Socket->request('http://www.cakephp.org/other');
+		$this->assertEqual($this->Socket->request['cookies'], array('foo' => array('value' => 'bar')));
+		$expected['www.cakephp.org'] += array('bar' => array('value' => 'foo'));
+		$this->assertEqual($this->Socket->config['request']['cookies'], $expected);
+
+		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+		$this->Socket->request('/other2');
+		$this->assertEqual($this->Socket->config['request']['cookies'], $expected);
+
+		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foobar=ok\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+		$this->Socket->request('http://www.cake.com');
+		$this->assertTrue(empty($this->Socket->request['cookies']));
+		$expected['www.cake.com'] = array('foobar' => array('value' => 'ok'));
+		$this->assertEqual($this->Socket->config['request']['cookies'], $expected);
 	}
 
 /**
