@@ -455,7 +455,7 @@ class CakeSession {
 		}
 		foreach ($write as $key => $val) {
 			if (in_array($key, self::$watchKeys)) {
-				trigger_error(__('Writing session key {%s}: %s', $key, Debugger::exportVar($val)), E_USER_NOTICE);
+				trigger_error(__('Writing session key {%s}: %s', $key, var_export($val, true)), E_USER_NOTICE);
 			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {

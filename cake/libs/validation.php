@@ -670,10 +670,10 @@ class Validation {
 		self::__populateIp();
 		$validChars = '([' . preg_quote('!"$&\'()*+,-.@_:;=~') . '\/0-9a-z\p{L}\p{N}]|(%[0-9a-f]{2}))';
 		$regex = '/^(?:(?:https?|ftps?|file|news|gopher):\/\/)' . (!empty($strict) ? '' : '?') .
-			'(?:' . self::$__pattern['IPv4'] . '|' . self::$__pattern['hostname'] . ')(?::[1-9][0-9]{0,3})?' .
+			'(?:' . self::$__pattern['IPv4'] . '|\[' . self::$__pattern['IPv6'] . '\]|' . self::$__pattern['hostname'] . ')(?::[1-9][0-9]{0,4})?' .
 			'(?:\/?|\/' . $validChars . '*)?' .
 			'(?:\?' . $validChars . '*)?' .
-			'(?:#' . $validChars . '*)?$/i';
+			'(?:#' . $validChars . '*)?$/iu';
 		return self::_check($check, $regex);
 	}
 
@@ -699,6 +699,18 @@ class Validation {
  */
 	public static function userDefined($check, $object, $method, $args = null) {
 		return call_user_func_array(array($object, $method), array($check, $args));
+	}
+
+/**
+ * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * 
+ * @param string $check Value to check
+ * @return boolean Success
+ * @access public
+ */
+	public static function uuid($check) {
+		$regex = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i';
+		return self::_check($check, $regex);
 	}
 
 /**

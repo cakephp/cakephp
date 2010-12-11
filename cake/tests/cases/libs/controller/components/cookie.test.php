@@ -465,10 +465,10 @@ class CookieComponentTest extends CakeTestCase {
  * @return void
  */
 	function testNoErrorOnNonArrayData() {
-		$this->Controller->Cookie->destroy();
+		$this->Cookie->destroy();
 		$_COOKIE['CakeTestCookie'] = 'kaboom';
 
-		$this->assertNull($this->Controller->Cookie->read('value'));
+		$this->assertNull($this->Cookie->read('value'));
 	}
 
 /**

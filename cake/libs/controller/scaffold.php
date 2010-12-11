@@ -260,7 +260,7 @@ class Scaffold {
 				if ($this->ScaffoldModel->save($request->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
 						$message = sprintf(
-							__('The %1$s has been %2$s', true),
+							__('The %1$s has been %2$s'),
 							Inflector::humanize($this->modelKey),
 							$success
 						);
@@ -328,7 +328,7 @@ class Scaffold {
 				$message = sprintf(
 					__('There was an error deleting the %1$s with id: %2$d', true),
 					Inflector::humanize($this->modelClass), $id
-				));
+				);
 				return $this->_sendMessage($message);
 			}
 		} elseif ($this->controller->_scaffoldError('delete') === false) {
