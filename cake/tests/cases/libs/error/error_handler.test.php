@@ -220,6 +220,7 @@ class ErrorHandlerTest extends CakeTestCase {
 
 		$log = file(LOGS . 'error.log');
 		$this->assertPattern('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
+		$this->assertPattern('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[1], 'Stack trace missing.');
 	}
 
 }

@@ -110,7 +110,12 @@ class ErrorHandler {
 			if (!class_exists('CakeLog')) {
 				require LIBS . 'cake_log.php';
 			}
-			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
+			$message = sprintf("[%s] %s\n%s",
+				get_class($exception),
+				$exception->getMessage(),
+				$exception->getTraceAsString()
+			);
+			CakeLog::write(LOG_ERR, $message);
 		}
 		if ($config['renderer'] !== 'ExceptionRenderer') {
 			App::import('Lib', $config['renderer']);
