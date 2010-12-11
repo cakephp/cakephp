@@ -440,17 +440,24 @@ class Controller extends Object {
 					$this->uses = array_flip($this->uses);
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
-			} elseif ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), 'AppController', false);
+			} elseif (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
+				var_dump($this->uses);
 			}
 			$this->_mergeVars($merge, 'AppController', true);
 		}
 
 		if ($pluginController && $pluginName != null) {
 			$merge = array('components', 'helpers');
-
-			if ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), $pluginController, false);
+			$appVars = get_class_vars($pluginController);
+			if (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
 			$this->_mergeVars($merge, $pluginController);
 		}
