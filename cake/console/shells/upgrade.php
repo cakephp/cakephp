@@ -71,17 +71,22 @@ class UpgradeShell extends Shell {
 			$this->_paths = array(App::pluginPath($this->params['plugin']));
 		}
 
-		$this->_findFiles();
+		$extensions = 'php|ctp|thtml|inc|tpl';
+		if (!empty($this->params['ext'])) {
+			$extensions = $this->params['ext'];
+		}
+
+		$this->_findFiles($extensions);
 		foreach ($this->_files as $file) {
 			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
 			$this->_updateFile($file, $patterns);
 		}
 	}
 
-	protected function _findFiles($pattern = '') {
+	protected function _findFiles($extensions = '', $pattern = '') {
 		foreach ($this->_paths as $path) {
 			$Folder = new Folder($path);
-			$files = $Folder->findRecursive('.*\.(php|ctp|thtml|inc|tpl)', true);
+			$files = $Folder->findRecursive(".*\.($extensions)", true);
 			if (!empty($pattern)) {
 				foreach ($files as $i => $file) {
 					if (preg_match($pattern, $file)) {
@@ -117,22 +122,21 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	function getOptionParser() {
+		$subcommandParser = array(
+			'options' => array(
+				'plugin' => array('short' => 'p', 'help' => __('The plugin to update.')),
+				'ext' => array('short' => 'e', 'help' => __('The extension(s) to search.')),
+			)
+		);
+
 		return parent::getOptionParser()
 			->addSubcommand('i18n', array(
 				'help' => 'Update the i18n translation method calls.',
-				'parser' => array(
-					'options' => array(
-						'plugin' => array('short' => 'p', 'help' => __('The plugin to update.'))
-					)
-				)
+				'parser' => $subcommandParser
 			))
 			->addSubcommand('helpers', array(
 				'help' => 'Update calls to helpers.',
-				'parser' => array(
-					'options' => array(
-						'plugin' => array('short' => 'p', 'help' => __('The plugin to update.'))
-					)
-				)
+				'parser' => $subcommandParser
 			));
 	}
 }
