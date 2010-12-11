@@ -22,6 +22,9 @@
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+if (!class_exists('Security')) {
+	App::import('Core', 'Security');
+}
 
 /**
  * Session class for Cake.

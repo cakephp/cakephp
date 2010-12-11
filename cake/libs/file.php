@@ -90,7 +90,6 @@ class File {
  * @param string $path Path to file
  * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
- * @access private
  */
 	function __construct($path, $create = false, $mode = 0755) {
 		$this->Folder = new Folder(dirname($path), $create, $mode);
@@ -104,7 +103,6 @@ class File {
 /**
  * Closes the current file if it is opened
  *
- * @access private
  */
 	function __destruct() {
 		$this->close();

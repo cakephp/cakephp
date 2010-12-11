@@ -578,9 +578,9 @@ DIGEST;
  */
 	function testValidatePost() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%3B';
-		$fields .= 'f%3A11%3A%22Zbqry.inyvq%22%3B%7D';
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
@@ -597,8 +597,7 @@ DIGEST;
 	function testValidatePostFormHacking() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->params['_Token']['key'];
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%3B';
-		$fields .= 'f%3A11%3A%22Zbqry.inyvq%22%3B%7D';
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => 'nate', 'password' => 'foo', 'valid' => '0'),
@@ -639,8 +638,9 @@ DIGEST;
  */
 	function testValidatePostArray() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3An%3A0%3A%7B%7D';
+		$fields = 'f7d573650a295b94e0938d32b323fde775e5f32b%3A';
 
 		$this->Controller->request->data = array(
 			'Model' => array('multi_field' => array('1', '3')),
@@ -657,8 +657,9 @@ DIGEST;
  */
 	function testValidatePostNoModel() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '540ac9c60d323c22bafe997b72c0790f39a8bdef%3An%3A0%3A%7B%7D';
+		$fields = '540ac9c60d323c22bafe997b72c0790f39a8bdef%3A';
 
 		$this->Controller->request->data = array(
 			'anything' => 'some_data',
@@ -677,8 +678,9 @@ DIGEST;
  */
 	function testValidatePostSimple() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3An%3A0%3A%7B%7D';
+		$fields = '69f493434187b867ea14b901fdf58b55d27c935d%3A';
 
 		$this->Controller->request->data = $data = array(
 			'Model' => array('username' => '', 'password' => ''),
@@ -697,9 +699,9 @@ DIGEST;
  */
 	function testValidatePostComplex() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'c9118120e680a7201b543f562e5301006ccfcbe2%3An%3A2%3A%7Bv%3A0%3Bf%3A14%3A%';
-		$fields .= '22Nqqerffrf.0.vq%22%3Bv%3A1%3Bf%3A14%3A%22Nqqerffrf.1.vq%22%3B%7D';
+		$fields = 'c9118120e680a7201b543f562e5301006ccfcbe2%3AAddresses.0.id%7CAddresses.1.id';
 
 		$this->Controller->request->data = array(
 			'Addresses' => array(
@@ -725,8 +727,9 @@ DIGEST;
  */
 	function testValidatePostMultipleSelect() {
 		$this->Controller->Security->startup($this->Controller);
+
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '422cde416475abc171568be690a98cad20e66079%3An%3A0%3A%7B%7D';
+		$fields = '422cde416475abc171568be690a98cad20e66079%3A';
 
 		$this->Controller->request->data = array(
 			'Tag' => array('Tag' => array(1, 2)),
@@ -749,7 +752,7 @@ DIGEST;
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$fields = '19464422eafe977ee729c59222af07f983010c5f%3An%3A0%3A%7B%7D';
+		$fields = '19464422eafe977ee729c59222af07f983010c5f%3A';
 		$this->Controller->request->data = array(
 			'User.password' => 'bar', 'User.name' => 'foo', 'User.is_valid' => '1',
 			'Tag' => array('Tag' => array(1)), '_Token' => compact('key', 'fields'),
@@ -770,8 +773,7 @@ DIGEST;
 	function testValidatePostCheckbox() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3An%3A1%3A%7Bv%3A0%';
-		$fields .= '3Bf%3A11%3A%22Zbqry.inyvq%22%3B%7D';
+		$fields = 'a5475372b40f6e3ccbf9f8af191f20e1642fd877%3AModel.valid';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
@@ -781,7 +783,7 @@ DIGEST;
 		$result = $this->Controller->Security->validatePost($this->Controller);
 		$this->assertTrue($result);
 
-		$fields = '874439ca69f89b4c4a5f50fb9c36ff56a28f5d42%3An%3A0%3A%7B%7D';
+		$fields = '874439ca69f89b4c4a5f50fb9c36ff56a28f5d42%3A';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
@@ -814,8 +816,8 @@ DIGEST;
 	function testValidatePostHidden() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '51ccd8cb0997c7b3d4523ecde5a109318405ef8c%3An%3A2%3A%7Bv%3A0%3Bf%3A12%3A';
-		$fields .= '%22Zbqry.uvqqra%22%3Bv%3A1%3Bf%3A18%3A%22Zbqry.bgure_uvqqra%22%3B%7D';
+		$fields = '51ccd8cb0997c7b3d4523ecde5a109318405ef8c%3AModel.hidden%7CModel.other_hidden';
+		$fields .= '';
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -838,8 +840,7 @@ DIGEST;
 		$this->Controller->Security->disabledFields = array('Model.username', 'Model.password');
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'ef1082968c449397bcd849f963636864383278b1%3An%3A1%3A%7Bv%';
-		$fields .= '3A0%3Bf%3A12%3A%22Zbqry.uvqqra%22%3B%7D';
+		$fields = 'ef1082968c449397bcd849f963636864383278b1%3AModel.hidden';
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -861,9 +862,7 @@ DIGEST;
 	function testValidateHiddenMultipleModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = 'a2d01072dc4660eea9d15007025f35a7a5b58e18%3An%3A3%3A%7Bv%3A0%3Bf%3A11';
-		$fields .= '%3A%22Zbqry.inyvq%22%3Bv%3A1%3Bf%3A12%3A%22Zbqry2.inyvq%22%3Bv%3A2%';
-		$fields .= '3Bf%3A12%3A%22Zbqry3.inyvq%22%3B%7D';
+		$fields = 'a2d01072dc4660eea9d15007025f35a7a5b58e18%3AModel.valid%7CModel2.valid%7CModel3.valid';
 
 		$this->Controller->request->data = array(
 			'Model' => array('username' => '', 'password' => '', 'valid' => '0'),
@@ -884,9 +883,8 @@ DIGEST;
 	function testValidateHasManyModel() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3An%3A4%3A%7Bv%3A0%3Bf%3A14%3A%2';
-		$fields .= '2Zbqry.0.uvqqra%22%3Bv%3A1%3Bf%3A13%3A%22Zbqry.0.inyvq%22%3Bv%3A2%3Bf%3';
-		$fields .= 'A14%3A%22Zbqry.1.uvqqra%22%3Bv%3A3%3Bf%3A13%3A%22Zbqry.1.inyvq%22%3B%7D';
+		$fields = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
+		$fields .= '%7CModel.1.hidden%7CModel.1.valid';
 
 		$this->Controller->request->data = array(
 			'Model' => array(
@@ -915,9 +913,8 @@ DIGEST;
 	function testValidateHasManyRecordsPass() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3An%3A4%3A%7Bv%3A0%3Bf%3A12%3A%2';
-		$fields .= '2Nqqerff.0.vq%22%3Bv%3A1%3Bf%3A17%3A%22Nqqerff.0.cevznel%22%3Bv%3A2%3Bf%';
-		$fields .= '3A12%3A%22Nqqerff.1.vq%22%3Bv%3A3%3Bf%3A17%3A%22Nqqerff.1.cevznel%22%3B%7D';
+		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3AAddress.0.id%7CAddress.0.primary%7C';
+		$fields .= 'Address.1.id%7CAddress.1.primary';
 
 		$this->Controller->request->data = array(
 			'Address' => array(
@@ -960,9 +957,8 @@ DIGEST;
 	function testValidateHasManyRecordsFail() {
 		$this->Controller->Security->startup($this->Controller);
 		$key = $this->Controller->request->params['_Token']['key'];
-		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3An%3A4%3A%7Bv%3A0%3Bf%3A12%3A%2';
-		$fields .= '2Nqqerff.0.vq%22%3Bv%3A1%3Bf%3A17%3A%22Nqqerff.0.cevznel%22%3Bv%3A2%3Bf%';
-		$fields .= '3A12%3A%22Nqqerff.1.vq%22%3Bv%3A3%3Bf%3A17%3A%22Nqqerff.1.cevznel%22%3B%7D';
+		$fields = '7a203edb3d345bbf38fe0dccae960da8842e11d7%3AAddress.0.id%7CAddress.0.primary%7C';
+		$fields .= 'Address.1.id%7CAddress.1.primary';
 
 		$this->Controller->request->data = array(
 			'Address' => array(

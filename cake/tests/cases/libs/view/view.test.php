@@ -456,6 +456,24 @@ class ViewTest extends CakeTestCase {
 		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
 	}
 /**
+ * test that additional element viewVars don't get overwritten with helpers.
+ *
+ * @return void
+ */
+	function testElementParamsDontOverwriteHelpers() {
+		$Controller = new ViewPostsController();
+		$Controller->helpers = array('Form');
+
+		$View = new View($Controller);
+		$result = $View->element('type_check', array('form' => 'string'), true);
+		$this->assertEqual('string', $result);
+
+		$View->set('form', 'string');
+		$result = $View->element('type_check', array(), true);
+		$this->assertEqual('string', $result);
+	}
+
+/**
  * testElementCacheHelperNoCache method
  *
  * @access public

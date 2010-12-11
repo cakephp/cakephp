@@ -98,6 +98,15 @@ class EmailComponent extends Component {
 	public $bcc = array();
 
 /**
+ * The date to put in the Date: header.  This should be a date
+ * conformant with the RFC2822 standard.  Leave null, to have
+ * today's date generated.
+ *
+ * @var string
+ */
+	var $date = null;
+
+/**
  * The subject of the email
  *
  * @var string
@@ -147,6 +156,18 @@ class EmailComponent extends Component {
  * @access public
  */
 	public $lineLength = 70;
+
+/**
+ * Line feed character(s) to be used when sending using mail() function
+ * If null PHP_EOL is used.
+ * RFC2822 requires it to be CRLF but some Unix
+ * mail transfer agents replace LF by CRLF automatically
+ * (which leads to doubling CR if CRLF is used).
+ *
+ * @var string
+ * @access public
+ */
+	var $lineFeed = null;
 
 /**
  * @deprecated see lineLength
@@ -260,6 +281,9 @@ class EmailComponent extends Component {
  * e-mail. True to generate a Message-ID, False to let
  * it be handled by sendmail (or similar) or a string
  * to completely override the Message-ID.
+ *
+ * If you are sending Email from a shell, be sure to set this value.  As you
+ * could encounter delivery issues if you do not.
  *
  * @var mixed
  * @access public
@@ -412,6 +436,7 @@ class EmailComponent extends Component {
 		$this->bcc = array();
 		$this->subject = null;
 		$this->additionalParams = null;
+		$this->date = null;
 		$this->smtpError = null;
 		$this->attachments = array();
 		$this->htmlMessage = null;
@@ -575,6 +600,12 @@ class EmailComponent extends Component {
 				$headers['Message-ID'] = $this->messageId;
 			}
 		}
+
+		$date = $this->date;
+		if ($date == false) {
+			$date = date(DATE_RFC2822);
+		}
+		$headers['Date'] = $date;
 
 		$headers['X-Mailer'] = $this->xMailer;
 
@@ -790,8 +821,13 @@ class EmailComponent extends Component {
  * @access private
  */
 	function _mail() {
-		$header = implode("\r\n", $this->_header);
-		$message = implode("\r\n", $this->_message);
+		if ($this->lineFeed === null) {
+			$lineFeed = PHP_EOL;
+		} else {
+			$lineFeed = $this->lineFeed;
+		}
+		$header = implode($lineFeed, $this->_header);
+		$message = implode($lineFeed, $this->_message);
 		if (is_array($this->to)) {
 			$to = implode(', ', array_map(array($this, '_formatAddress'), $this->to));
 		} else {
