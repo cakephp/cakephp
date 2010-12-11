@@ -339,8 +339,7 @@ class App {
 		static $paths = false;
 		if (!$paths) {
 			$paths = array();
-			$libs = LIBS;
-			$cake = dirname($libs) . DS;
+			$cake = $libs = LIBS;
 			$path = dirname($cake) . DS;
 
 			$paths['cake'][] = $cake;
