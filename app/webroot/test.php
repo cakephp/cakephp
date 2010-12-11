@@ -50,7 +50,7 @@ ini_set('display_errors', 1);
  *
  */
 	if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-		define('CAKE_CORE_INCLUDE_PATH', ROOT);
+		define('CAKE_CORE_INCLUDE_PATH', ROOT . DS .'lib');
 	}
 
 /**
@@ -68,7 +68,7 @@ if (!defined('CORE_PATH')) {
 	define('APP_PATH', ROOT . DS . APP_DIR . DS);
 	define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 }
-if (!include(CORE_PATH . 'cake' . DS . 'bootstrap.php')) {
+if (!include(CORE_PATH . 'Cake' . DS . 'bootstrap.php')) {
 	trigger_error("CakePHP core could not be found.  Check the value of CAKE_CORE_INCLUDE_PATH in APP/webroot/index.php.  It should point to the directory containing your " . DS . "cake core directory and your " . DS . "vendors root directory.", E_USER_ERROR);
 }
 
@@ -83,6 +83,6 @@ if (Configure::read('debug') < 1) {
 	die(__('Debug setting does not allow access to this url.', true));
 }
 
-require_once CAKE_TESTS_LIB . 'cake_test_suite_dispatcher.php';
+require_once CAKE_TESTS_LIB . 'CakeTestSuiteDispatcher.php';
 
 CakeTestSuiteDispatcher::run();
