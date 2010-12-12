@@ -2115,20 +2115,6 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($class);
 		$this->assertEquals($result, $expected);
 
-		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
-		$expected = array(
-			'Behaviors' => array('modelName' => 'Model'),
-			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => 'models', 'primaryKey' => 'id', 'validate' => array(),
-			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'cacheQueries' => false,
-			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'whitelist' =>  array(), 'cacheSources' => true,
-			'findQueryType' => null, 'recursive' => 1, 'order' => null, 'virtualFields' => array(),
-);
-		$result = Set::reverse($model);
-
-		ksort($result);
-		ksort($expected);
-		$this->assertEquals($result, $expected);
-
 		$class = new stdClass;
 		$class->User = new stdClass;
 		$class->User->id = 100;

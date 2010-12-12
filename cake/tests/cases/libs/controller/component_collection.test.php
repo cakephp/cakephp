@@ -150,7 +150,7 @@ class ComponentCollectionTest extends CakeTestCase {
 		$this->mockObjects[] = $this->Components->TriggerMockCookie;
 		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
-		$this->assertTrue($this->Components->trigger('startup', array(&$controller)));
+		$this->assertNull($this->Components->trigger('startup', array(&$controller)));
 	}
 
 /**
@@ -174,7 +174,7 @@ class ComponentCollectionTest extends CakeTestCase {
 		$this->mockObjects[] = $this->Components->TriggerMockSecurity;
 
 		$result = $this->Components->trigger('initialize', array(&$controller), array('triggerDisabled' => true));
-		$this->assertTrue($result);
+		$this->assertNull($result);
 	}
 
 /**
@@ -197,7 +197,7 @@ class ComponentCollectionTest extends CakeTestCase {
 
 		$this->Components->disable('TriggerMockSecurity');
 
-		$this->assertTrue($this->Components->trigger('startup', array(&$controller)));
+		$this->assertNull($this->Components->trigger('startup', array(&$controller)));
 	}
 
 /**

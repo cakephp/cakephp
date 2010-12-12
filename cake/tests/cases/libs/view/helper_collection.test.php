@@ -137,7 +137,7 @@ class HelperCollectionTest extends CakeTestCase {
 		
 		$this->mockObjects[] = $this->Helpers->TriggerMockForm;
 
-		$this->assertTrue($this->Helpers->trigger('beforeRender', array('one', 'two')));
+		$this->assertNull($this->Helpers->trigger('beforeRender', array('one', 'two')));
 	}
 
 /**
@@ -163,7 +163,7 @@ class HelperCollectionTest extends CakeTestCase {
 
 		$this->Helpers->disable('TriggerMockForm');
 
-		$this->assertTrue($this->Helpers->trigger('beforeRender', array('one', 'two')));
+		$this->assertNull($this->Helpers->trigger('beforeRender', array('one', 'two')));
 	}
 
 /**
