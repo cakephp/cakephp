@@ -334,7 +334,7 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->TriggerMockSecond->expects($this->once())
 			->method('callback')
 			->with(array('value'))
-			->will($this->returnValue('new value'));
+			->will($this->returnValue(array('new value')));
 
 		$result = $this->Objects->trigger(
 			'callback',

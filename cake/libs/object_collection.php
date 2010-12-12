@@ -107,18 +107,17 @@ abstract class ObjectCollection {
 		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
 			throw new CakeException(__('Cannot use modParams with indexes that do not exist.'));
 		}
-
 		foreach ($list as $name) {
 			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}
 			if (
-				$options['break'] && ($result === $options['breakOn'] || 
+				$options['break'] && ($result === $options['breakOn'] ||
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
-				break;
-			} elseif ($options['modParams'] !== false && $result !== null) {
+				return $result;
+			} elseif ($options['modParams'] !== false && is_array($result)) {
 				$params[$options['modParams']] = $result;
 			}
 		}
