@@ -457,7 +457,7 @@ class ConsoleOptionParser {
 		}
 		foreach ($this->_args as $i => $arg) {
 			if ($arg->isRequired() && !isset($args[$i]) && empty($params['help'])) {
-				throw new RuntimeException(
+				throw new ConsoleException(
 					__('Missing required arguments. %s is required.', $arg->name())
 				);
 			}
@@ -552,7 +552,7 @@ class ConsoleOptionParser {
  */
 	protected function _parseOption($name, $params) {
 		if (!isset($this->_options[$name])) {
-			throw new InvalidArgumentException(__('Unknown option `%s`', $name));
+			throw new ConsoleException(__('Unknown option `%s`', $name));
 		}
 		$option = $this->_options[$name];
 		$isBoolean = $option->isBoolean();
@@ -586,7 +586,7 @@ class ConsoleOptionParser {
 		}
 		$next = count($args);
 		if (!isset($this->_args[$next])) {
-			throw new InvalidArgumentException(__('Too many arguments.'));
+			throw new ConsoleException(__('Too many arguments.'));
 		}
 
 		if ($this->_args[$next]->validChoice($argument)) {

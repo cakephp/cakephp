@@ -17,9 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-if (!class_exists('dispatcher')) {
-	require CAKE . 'dispatcher.php';
-}
+App::import('Core', 'Dispatcher');
 App::import('Core', 'CakeRequest');
 
 class CakeRequestTestCase extends CakeTestCase {
@@ -614,7 +612,7 @@ class CakeRequestTestCase extends CakeTestCase {
 /**
  * test __call expcetions
  *
- * @expectedException Exception
+ * @expectedException CakeException
  * @return void
  */
 	function test__callExceptionOnUnknownMethod() {

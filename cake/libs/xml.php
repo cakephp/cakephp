@@ -73,7 +73,7 @@ class Xml {
  * @param mixed $input XML string, a path to a file, an URL or an array
  * @param array $options The options to use
  * @return object SimpleXMLElement or DOMDocument
- * @throws Exception
+ * @throws XmlException
  */
 	public static function build($input, $options = array()) {
 		if (!is_array($options)) {
@@ -101,9 +101,9 @@ class Xml {
 			$dom->load($input);
 			return $dom;
 		} elseif (!is_string($input)) {
-			throw new Exception(__('Invalid input.'));
+			throw new XmlException(__('Invalid input.'));
 		}
-		throw new Exception(__('XML cannot be read.'));
+		throw new XmlException(__('XML cannot be read.'));
 	}
 
 /**
@@ -141,14 +141,15 @@ class Xml {
  * @param array $input Array with data
  * @param array $options The options to use
  * @return object SimpleXMLElement or DOMDocument
+ * @throws XmlException
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
-			throw new Exception(__('Invalid input.'));
+			throw new XmlException(__('Invalid input.'));
 		}
 		$key = key($input);
 		if (is_integer($key)) {
-			throw new Exception(__('The key of input must be alphanumeric'));
+			throw new XmlException(__('The key of input must be alphanumeric'));
 		}
 
 		if (!is_array($options)) {
@@ -212,7 +213,7 @@ class Xml {
 					}
 				} else {
 					if ($key[0] === '@') {
-						throw new Exception(__('Invalid array'));
+						throw new XmlException(__('Invalid array'));
 					}
 					if (array_keys($value) === range(0, count($value) - 1)) { // List
 						foreach ($value as $item) {
@@ -225,7 +226,7 @@ class Xml {
 					}
 				}
 			} else {
-				throw new Exception(__('Invalid array'));
+				throw new XmlException(__('Invalid array'));
 			}
 		}
 	}
@@ -270,13 +271,14 @@ class Xml {
  *
  * @param object $obj SimpleXMLElement, DOMDocument or DOMNode instance
  * @return array Array representation of the XML structure.
+ * @throws XmlException
  */
 	public static function toArray($obj) {
 		if ($obj instanceof DOMNode) {
 			$obj = simplexml_import_dom($obj);
 		}
 		if (!($obj instanceof SimpleXMLElement)) {
-			throw new Exception(__('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
+			throw new XmlException(__('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));

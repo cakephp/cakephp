@@ -148,11 +148,11 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to increment
  * @param integer $duration How long to cache the data, in seconds
  * @return New incremented value, false otherwise
- * @throws RuntimeException when you try to increment with compress = true
+ * @throws CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new RuntimeException(
+			throw new CacheException(
 				__('Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
@@ -166,11 +166,11 @@ class MemcacheEngine extends CacheEngine {
  * @param integer $offset How much to substract
  * @param integer $duration How long to cache the data, in seconds
  * @return New decremented value, false otherwise
- * @throws RuntimeException when you try to decrement with compress = true
+ * @throws CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new RuntimeException(
+			throw new CacheException(
 				__('Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}

@@ -1133,14 +1133,15 @@ class FormHelper extends AppHelper {
  * The first argument to an input type should always be the fieldname, in `Model.field` format.
  * The second argument should always be an array of attributes for the input.
  *
- * @param string $method Method name / input type to make. 
+ * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
+ * @throws CakeException When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new Exception(__('Missing field name for FormHelper::%s', $method));
+			throw new CakeException(__('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];

@@ -388,3 +388,61 @@ class MissingTableException extends CakeException {
 class MissingModelException extends CakeException {
 	protected $_messageTemplate = 'Model %s could not be found.';
 }
+
+
+/**
+ * Exception class for Cache.  This exception will be thrown from Cache when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CacheException extends CakeException { }
+
+/**
+ * Exception class for Router.  This exception will be thrown from Router when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class RouterException extends CakeException { }
+
+/**
+ * Exception class for CakeLog.  This exception will be thrown from CakeLog when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CakeLogException extends CakeException { }
+
+/**
+ * Exception class for CakeSession.  This exception will be thrown from CakeSession when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class CakeSessionException extends CakeException { }
+
+/**
+ * Exception class for Configure.  This exception will be thrown from Configure when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class ConfigureException extends CakeException { }
+
+/**
+ * Exception class for Xml.  This exception will be thrown from Xml when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class XmlException extends CakeException { }
+
+/**
+ * Exception class for Console libraries.  This exception will be thrown from Console library
+ * classes when they encounter an error.
+ *
+ * @package cake.libs
+ */
+class ConsoleException extends CakeException { }
+

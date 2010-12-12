@@ -226,7 +226,7 @@ class Router {
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
  * @see routes
  * @return array Array of routes
- * @throws Exception
+ * @throws RouterException
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		foreach (self::$_prefixes as $prefix) {
@@ -246,13 +246,12 @@ class Router {
 		$routeClass = 'CakeRoute';
 		if (isset($options['routeClass'])) {
 			$routeClass = $options['routeClass'];
+			if (!is_subclass_of($routeClass, 'CakeRoute')) {
+				throw new RouterException(__('Route classes must extend CakeRoute'));
+			}
 			unset($options['routeClass']);
 		}
-		$Route = new $routeClass($route, $defaults, $options);
-		if (!$Route instanceof CakeRoute) {
-			throw new Exception(__('Route classes must extend CakeRoute'));
-		}
-		self::$routes[] =& $Route;
+		self::$routes[] = new $routeClass($route, $defaults, $options);
 		return self::$routes;
 	}
 

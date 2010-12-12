@@ -265,7 +265,7 @@ class CakeSession {
 	public static function delete($name) {
 		if (self::check($name)) {
 			if (in_array($name, self::$watchKeys)) {
-				trigger_error(__('Deleting session key {%s}', $name), E_USER_NOTICE);
+				throw new CakeSessionException(__('Deleting session key {%s}', $name));
 			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
@@ -426,7 +426,6 @@ class CakeSession {
  */
 	public static function ignore($var) {
 		if (!in_array($var, self::$watchKeys)) {
-			debug("NOT");
 			return;
 		}
 		foreach (self::$watchKeys as $i => $key) {
@@ -455,7 +454,7 @@ class CakeSession {
 		}
 		foreach ($write as $key => $val) {
 			if (in_array($key, self::$watchKeys)) {
-				trigger_error(__('Writing session key {%s}: %s', $key, var_export($val, true)), E_USER_NOTICE);
+				throw new CakeSessionException(__('Writing session key {%s}: %s', $key, var_export($val, true)));
 			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
@@ -495,7 +494,7 @@ class CakeSession {
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
  *
  * @return void
- * @throws Exception Throws exceptions when ini_set() fails.
+ * @throws CakeSessionException Throws exceptions when ini_set() fails.
  */
 	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
@@ -527,7 +526,7 @@ class CakeSession {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
-						throw new Exception(sprintf(
+						throw new CakeSessionException(sprintf(
 							__('Unable to configure the session, setting %s failed.'),
 							$setting
 						));
@@ -565,13 +564,13 @@ class CakeSession {
 			App::import('Core', 'session/' . $class);
 		}
 		if (!class_exists($class)) {
-			throw new Exception(__('Could not load %s to handle the session.', $class));
+			throw new CakeSessionException(__('Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof CakeSessionHandlerInterface) {
 			return $handler;
 		}
-		throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
+		throw new CakeSessionException(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
 	}
 
 /**

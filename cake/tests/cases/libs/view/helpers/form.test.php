@@ -6700,7 +6700,7 @@ class FormHelperTest extends CakeTestCase {
 
 /**
  * 
- * @expectedException Exception
+ * @expectedException CakeException
  * @return void
  */
 	function testHtml5InputException() {

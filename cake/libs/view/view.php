@@ -385,6 +385,7 @@ class View extends Object {
  * @param string $layout Layout to use
  * @param string $file Custom filename for view
  * @return string Rendered Element
+ * @throws CakeException if there is an error in the view.
  */
 	public function render($action = null, $layout = null, $file = null) {
 		if ($this->hasRendered) {
@@ -409,7 +410,7 @@ class View extends Object {
 			$layout = $this->layout;
 		}
 		if ($this->output === false) {
-			throw new RuntimeException(__("Error in view %s, got no content.", $viewFileName));
+			throw new CakeException(__("Error in view %s, got no content.", $viewFileName));
 		}
 		if ($layout && $this->autoLayout) {
 			$this->output = $this->renderLayout($this->output, $layout);
@@ -428,6 +429,7 @@ class View extends Object {
  *
  * @param string $content_for_layout Content to render in a view, wrapped by the surrounding layout.
  * @return mixed Rendered output, or false on error
+ * @throws CakeException if there is an error in the view.
  */
 	public function renderLayout($content_for_layout, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -451,7 +453,7 @@ class View extends Object {
 		$this->output = $this->_render($layoutFileName);
 
 		if ($this->output === false) {
-			throw new RuntimeException(__("Error in layout %s, got no content.", $layoutFileName));
+			throw new CakeException(__("Error in layout %s, got no content.", $layoutFileName));
 		}
 
 		$this->Helpers->trigger('afterLayout', array($layoutFileName));

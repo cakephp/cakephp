@@ -55,7 +55,7 @@ class CakeResponseTestCase extends CakeTestCase {
 /**
 * Tests the statusCode method
 *
-* @expectedException OutOfRangeException
+* @expectedException CakeException
 */
 	public function testStatusCode() {
 		$response = new CakeResponse();

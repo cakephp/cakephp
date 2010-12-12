@@ -58,7 +58,7 @@ class AclComponent extends Component {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
- * @throws Exception when Acl.classname could not be loaded.
+ * @throws CakeException when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
@@ -68,7 +68,7 @@ class AclComponent extends Component {
 				list($plugin, $name) = pluginSplit($name);
 				$name .= 'Component';
 			} else {
-				throw new Exception(__('Could not find %s.', $name));
+				throw new CakeException(__('Could not find %s.', $name));
 			}
 		}
 		$this->adapter($name);
@@ -84,7 +84,7 @@ class AclComponent extends Component {
  *
  * @param mixed $adapter Instance of AclBase or a string name of the class to use. (optional)
  * @return mixed either null, or instance of AclBase
- * @throws Exception when the given class is not an AclBase
+ * @throws CakeException when the given class is not an AclBase
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {
@@ -92,7 +92,7 @@ class AclComponent extends Component {
 				$adapter = new $adapter();
 			}
 			if (!$adapter instanceof AclInterface) {
-				throw new Exception(__('AclComponent adapters must implement AclInterface'));
+				throw new CakeException(__('AclComponent adapters must implement AclInterface'));
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);

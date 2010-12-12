@@ -17,7 +17,7 @@
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-App::import('Core', 'Log');
+App::import('Core', 'CakeLog');
 App::import('Core', 'log/FileLog');
 
 /**
@@ -70,7 +70,7 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test all the errors from failed logger imports
  *
- * @expectedException Exception
+ * @expectedException CakeLogException
  * @return void
  */
 	function testImportingLoggerFailure() {
@@ -80,7 +80,7 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test that loggers have to implement the correct interface.
  *
- * @expectedException Exception
+ * @expectedException CakeLogException
  * @return void
  */
 	function testNotImplementingInterface() {

@@ -367,7 +367,7 @@ class CakeSessionTest extends CakeTestCase {
 /**
  * testWatchVar method
  *
- * @expectedException Exception
+ * @expectedException CakeSessionException
  * @access public
  * @return void
  */
@@ -380,16 +380,16 @@ class CakeSessionTest extends CakeTestCase {
 	}
 
 /**
- * undocumented function
+ * Test that deleting watched vars causes exceptions
  *
- * @expectedException Exception
+ * @expectedException CakeSessionException
  * @return void
  */
 	function testWatchVarDelete() {
+		TestCakeSession::write('Watching', 'I am watching you.');
+
 		TestCakeSession::watch('Watching');
 		TestCakeSession::delete('Watching');
-
-		$this->assertFalse(TestCakeSession::watch('Invalid.key'));
 	}
 
 /**
