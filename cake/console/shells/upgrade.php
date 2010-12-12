@@ -25,7 +25,17 @@ class UpgradeShell extends Shell {
 		}
 
 		$patterns = array();
-		foreach (App::objects('helper') as $helper) {
+		$helpers = App::objects('helper');
+		$plugins = App::objects('plugin');
+		$pluginHelpers = array();
+		foreach ($plugins as $plugin) {
+			$pluginHelpers = array_merge(
+				$pluginHelpers,
+				App::objects('helper', App::pluginPath($plugin) . DS . 'views' . DS . 'helpers' . DS, false)
+			);
+		}
+		$helpers = array_merge($pluginHelpers, $helpers);
+		foreach ($helpers as $helper) {
 			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",
