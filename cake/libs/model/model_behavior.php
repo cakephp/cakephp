@@ -80,10 +80,13 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return mixed False or null will abort the operation. You should array will replace the value of $query.
+ * @return mixed False or null will abort the operation. You can return an array to replace the 
+ *   $query that will be eventually run.
  * @access public
  */
-	public function beforeFind($model, $query) { }
+	public function beforeFind($model, $query) {
+		return true;
+	}
 
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
