@@ -96,7 +96,10 @@ class ContainableBehavior extends ModelBehavior {
  */
 	public function beforeFind($Model, $query) {
 		$reset = (isset($query['reset']) ? $query['reset'] : true);
-		$noContain = ((isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) || (isset($query['contain']) && empty($query['contain'])));
+		$noContain = (
+			(isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) ||
+			(isset($query['contain']) && empty($query['contain']))
+		);
 		$contain = array();
 		if (isset($this->runtime[$Model->alias]['contain'])) {
 			$contain = $this->runtime[$Model->alias]['contain'];
@@ -105,7 +108,10 @@ class ContainableBehavior extends ModelBehavior {
 		if (isset($query['contain'])) {
 			$contain = array_merge($contain, (array)$query['contain']);
 		}
-		if ($noContain || !$contain || in_array($contain, array(null, false), true) || (isset($contain[0]) && $contain[0] === null)) {
+		if (
+			$noContain || !$contain || in_array($contain, array(null, false), true) || 
+			(isset($contain[0]) && $contain[0] === null)
+		) {
 			if ($noContain) {
 				$query['recursive'] = -1;
 			}
@@ -177,6 +183,7 @@ class ContainableBehavior extends ModelBehavior {
 		$autoFields = ($this->settings[$Model->alias]['autoFields']
 					&& !in_array($Model->findQueryType, array('list', 'count'))
 					&& !empty($query['fields']));
+
 		if (!$autoFields) {
 			return $query;
 		}
@@ -264,7 +271,7 @@ class ContainableBehavior extends ModelBehavior {
 		$Model->resetAssociations();
 		if (!empty($Model->__backInnerAssociation)) {
 			$assocs = $Model->__backInnerAssociation;
-			unset($Model->__backInnerAssociation);
+			$Model->__backInnerAssociation = array();
 			foreach ($assocs as $currentModel) {
 				$this->resetBindings($Model->$currentModel);
 			}

@@ -330,7 +330,13 @@ class Model extends Object {
  * @var array
  * @access private
  */
-	private $__backAssociation = array();
+	public $__backAssociation = array();
+
+	public $__backInnerAssociation = array();
+	
+	public $__backOriginalAssociation = array();
+	
+	public $__backContainableAssociation = array();
 
 /**
  * The ID of the model record that was last inserted.
@@ -2139,6 +2145,7 @@ class Model extends Object {
 				array(&$this, $query), 
 				array('break' => true, 'breakOn' => false, 'modParams' => 1)
 			);
+
 			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
@@ -2403,7 +2410,7 @@ class Model extends Object {
 	function __filterResults($results, $primary = true) {
 		$return = $this->Behaviors->trigger(
 			'afterFind',
-			array(&$this, $results, $primary), 
+			array(&$this, $results, $primary),
 			array('modParams' => 1)
 		);
 		if ($return !== true) {
