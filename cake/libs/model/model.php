@@ -1322,7 +1322,7 @@ class Model extends Object {
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
 			$result = $this->Behaviors->trigger('beforeSave', array(&$this, $options), array(
-				'break' => true, 'breakOn' => false
+				'break' => true, 'breakOn' => array(false, null)
 			));
 			if (!$result || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
@@ -1854,7 +1854,7 @@ class Model extends Object {
 			$filters = $this->Behaviors->trigger(
 				'beforeDelete',
 				array(&$this, $cascade),
-				array('break' => true, 'breakOn' => false)
+				array('break' => true, 'breakOn' => array(false, null))
 			);
 			if (!$filters || !$this->exists()) {
 				return false;
@@ -1876,7 +1876,7 @@ class Model extends Object {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->Behaviors->trigger($this, 'afterDelete');
+				$this->Behaviors->trigger('afterDelete', array(&$this));
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -2142,8 +2142,8 @@ class Model extends Object {
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
 			$return = $this->Behaviors->trigger(
 				'beforeFind', 
-				array(&$this, $query), 
-				array('break' => true, 'breakOn' => false, 'modParams' => 1)
+				array(&$this, $query),
+				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
 			);
 
 			$query = (is_array($return)) ? $return : $query;
