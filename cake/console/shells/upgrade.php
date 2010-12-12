@@ -9,7 +9,6 @@ class UpgradeShell extends Shell {
 	protected $_files = array();
 	protected $_paths = array();
 
-
 /**
  * Update helpers.
  *
@@ -21,9 +20,12 @@ class UpgradeShell extends Shell {
 		$this->_paths = array(
 			VIEWS
 		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']) . 'views' . DS);
+		}
 
 		$patterns = array();
-		foreach(App::objects('helper') as $helper) {
+		foreach (App::objects('helper') as $helper) {
 			$oldHelper = strtolower(substr($helper, 0, 1)).substr($helper, 1);
 			$patterns[] = array(
 				"\${$oldHelper} to \$this->{$helper}",
@@ -39,15 +41,17 @@ class UpgradeShell extends Shell {
  * Update i18n.
  *
  * - Removes extra true param.
+ * - Add the echo to __*() calls that didn't need them before.
  *
  * @return void
  */
 	function i18n() {
 		$this->_paths = array(
-			CONTROLLERS,
-			MODELS,
-			VIEWS
+			APP
 		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
 
 		$patterns = array(
 			array(
@@ -66,34 +70,38 @@ class UpgradeShell extends Shell {
 		$this->_filesRegexpUpdate($patterns);
 	}
 
+/**
+ * Updates files based on regular expressions.
+ *
+ * @param array $patterns Array of search and replacement patterns.
+ * @return void
+ */
 	protected function _filesRegexpUpdate($patterns) {
-		if (!empty($this->params['plugin'])) {
-			$this->_paths = array(App::pluginPath($this->params['plugin']));
-		}
-
-		$extensions = 'php|ctp|thtml|inc|tpl';
-		if (!empty($this->params['ext'])) {
-			$extensions = $this->params['ext'];
-		}
-
-		$this->_findFiles($extensions);
+		$this->_findFiles($this->params['ext']);
 		foreach ($this->_files as $file) {
 			$this->out('Updating ' . $file . '...', 1, Shell::VERBOSE);
 			$this->_updateFile($file, $patterns);
 		}
 	}
 
-	protected function _findFiles($extensions = '', $pattern = '') {
+/**
+ * Searches the paths and finds files based on extension.
+ *
+ * @param string $extensions 
+ * @return void
+ */
+	protected function _findFiles($extensions = '') {
 		foreach ($this->_paths as $path) {
-			$Folder = new Folder($path);
-			$files = $Folder->findRecursive(".*\.($extensions)", true);
-			if (!empty($pattern)) {
-				foreach ($files as $i => $file) {
-					if (preg_match($pattern, $file)) {
-						unset($files[$i]);
-					}
+			$files = array();
+			$Iterator = new RegexIterator(
+				new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)),
+				'/^.+\.(' . $extensions . ')$/i',
+				RegexIterator::MATCH
+			);
+			foreach ($Iterator as $file) {
+				if ($file->isFile()) {
+					$files[] = $file->getPathname();
 				}
-				$files = array_values($files);
 			}
 			$this->_files = array_merge($this->_files, $files);
 		}
@@ -102,6 +110,8 @@ class UpgradeShell extends Shell {
 /**
  * Update a single file.
  *
+ * @param string $file The file to update
+ * @param array $patterns The replacement patterns to run.
  * @return void
  */
 	protected function _updateFile($file, $patterns) {
@@ -119,13 +129,20 @@ class UpgradeShell extends Shell {
 /**
  * get the option parser
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	function getOptionParser() {
 		$subcommandParser = array(
 			'options' => array(
-				'plugin' => array('short' => 'p', 'help' => __('The plugin to update.')),
-				'ext' => array('short' => 'e', 'help' => __('The extension(s) to search.')),
+				'plugin' => array(
+					'short' => 'p',
+					'help' => __('The plugin to update. Only the specified plugin will be updated.'
+				)),
+				'ext' => array(
+					'short' => 'e',
+					'help' => __('The extension(s) to search. A pipe delimited list, or a preg_match compatible subpattern'),
+					'default' => 'php|ctp|thtml|inc|tpl'
+				),
 			)
 		);
 
