@@ -1017,7 +1017,7 @@ class Set {
  * @param string $key
  * @return array
  */
-	private function __flatten($results, $key = null) {
+	private static function __flatten($results, $key = null) {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			$id = $k;
