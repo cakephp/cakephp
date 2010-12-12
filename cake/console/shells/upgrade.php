@@ -138,7 +138,53 @@ class UpgradeShell extends Shell {
 				'microtime(true)'
 			),
 		);
+		$this->_filesRegexpUpdate($patterns);
+	}
 
+/**
+ * Update the properties moved to CakeRequest.
+ *
+ * @return void
+ */
+	public function request() {
+		$this->_paths = array(
+			APP
+		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
+		$patterns = array(
+			array(
+				'$this->data -> $this->request->data',
+				'/(\$this->data)/',
+				'$this->request->data'
+			),
+			array(
+				'$this->params -> $this->request->params',
+				'/(\$this->params)/',
+				'$this->request->params'
+			),
+			array(
+				'$this->webroot -> $this->request->webroot',
+				'/(\$this->webroot)/',
+				'$this->request->webroot'
+			),
+			array(
+				'$this->base -> $this->request->base',
+				'/(\$this->base)/',
+				'$this->request->base'
+			),
+			array(
+				'$this->here -> $this->request->here',
+				'/(\$this->here)/',
+				'$this->request->here'
+			),
+			array(
+				'$this->action -> $this->request->action',
+				'/(\$this->action)/',
+				'$this->request->action'
+			),
+		);
 		$this->_filesRegexpUpdate($patterns);
 	}
 
@@ -230,6 +276,10 @@ class UpgradeShell extends Shell {
 			))
 			->addSubcommand('basics', array(
 				'help' => 'Update removed basics functions to PHP native functions.',
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('request', array(
+				'help' => 'Update removed request access, and replace with $this->request.',
 				'parser' => $subcommandParser
 			));
 	}
