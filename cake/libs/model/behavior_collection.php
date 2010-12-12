@@ -231,43 +231,6 @@ class BehaviorCollection extends ObjectCollection {
 	}
 
 /**
- * Dispatches a behavior callback on all attached behavior objects
- *
- * @param model $model
- * @param string $callback
- * @param array $params
- * @param array $options
- * @return mixed
- */
-	public function trigger(&$model, $callback, $params = array(), $options = array()) {
-		if (empty($this->_enabled)) {
-			return true;
-		}
-		$options = array_merge(
-			array('break' => false, 'breakOn' => array(null, false), 'modParams' => false), 
-			$options
-		);
-		foreach ($this->_enabled as $name) {
-			$result = call_user_func_array(
-				array(&$this->_loaded[$name], $callback),
-				array_merge(array(&$model), $params)
-			);
-			if (
-				$options['break'] && ($result === $options['breakOn'] || 
-				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
-			) {
-				return $result;
-			} elseif ($options['modParams'] && is_array($result)) {
-				$params[0] = $result;
-			}
-		}
-		if ($options['modParams'] && isset($params[0])) {
-			return $params[0];
-		}
-		return true;
-	}
-
-/**
  * Gets the method list for attached behaviors, i.e. all public, non-callback methods
  *
  * @return array All public methods for all behaviors attached to this collection
