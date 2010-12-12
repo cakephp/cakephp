@@ -172,15 +172,14 @@ class Scaffold {
  */
 	protected function _scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
-
-			$message = __("No id set for %s::view()", Inflector::humanize($this->modelKey));
 			if (isset($request->params['pass'][0])) {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
-			} else {
-				return $this->_sendMessage($message);
+			}
+			if (!$this->ScaffoldModel->exists()) {
+				throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelKey)));
 			}
 			$this->ScaffoldModel->recursive = 1;
-			$this->controller->request->data = $this->controller->data = $this->ScaffoldModel->read();
+			$this->controller->request->data = $this->ScaffoldModel->read();
 			$this->controller->set(
 				Inflector::variable($this->controller->modelClass), $this->request->data
 			);
@@ -245,10 +244,8 @@ class Scaffold {
 				if (isset($request->params['pass'][0])) {
 					$this->ScaffoldModel->id = $request['pass'][0];
 				}
-
 				if (!$this->ScaffoldModel->exists()) {
-					$message = __("Invalid id for %s::edit()", Inflector::humanize($this->modelKey));
-					return $this->_sendMessage($message);
+					throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelKey)));
 				}
 			}
 
@@ -308,14 +305,18 @@ class Scaffold {
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
-			$message = __("No id set for %s::delete()", Inflector::humanize($this->modelKey));
+			if (!$request->is('post')) {
+				throw new MethodNotAllowedException();
+			}
+			$id = false;
 			if (isset($request->params['pass'][0])) {
 				$id = $request->params['pass'][0];
-			} else {
-				return $this->_sendMessage($message);
 			}
-
-			if ($this->ScaffoldModel->delete($id)) {
+			$this->ScaffoldModel->id = $id;
+			if (!$this->ScaffoldModel->exists()) {
+				throw new NotFoundException(__('Invalid %s', Inflector::humanize($this->modelClass)));
+			}
+			if ($this->ScaffoldModel->delete()) {
 				$message = __('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
 				return $this->_sendMessage($message);
 			} else {
