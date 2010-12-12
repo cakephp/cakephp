@@ -63,7 +63,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param object $Model Model using the behavior
  * @param array $settings Settings to override for model.
  */
-	public function setup(&$Model, $settings = array()) {
+	public function setup($Model, $settings = array()) {
 		if (!isset($this->settings[$Model->alias])) {
 			$this->settings[$Model->alias] = array('recursive' => true, 'notices' => true, 'autoFields' => true);
 		}
@@ -94,7 +94,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param array $query Query parameters as set by cake
  * @return array
  */
-	public function beforeFind(&$Model, $query) {
+	public function beforeFind($Model, $query) {
 		$reset = (isset($query['reset']) ? $query['reset'] : true);
 		$noContain = ((isset($this->runtime[$Model->alias]['contain']) && empty($this->runtime[$Model->alias]['contain'])) || (isset($query['contain']) && empty($query['contain'])));
 		$contain = array();
@@ -225,7 +225,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param array $results Results of the find operation
  * @param bool $primary true if this is the primary model that issued the find operation, false otherwise
  */
-	public function afterFind(&$Model, $results, $primary) {
+	public function afterFind($Model, $results, $primary) {
 		if (!empty($Model->__backContainableAssociation)) {
 			foreach ($Model->__backContainableAssociation as $relation => $bindings) {
 				$Model->{$relation} = $bindings;
@@ -242,7 +242,7 @@ class ContainableBehavior extends ModelBehavior {
  * @return void
  * @link http://book.cakephp.org/view/1323/Containable#Using-Containable-1324
  */
-	public function contain(&$Model) {
+	public function contain($Model) {
 		$args = func_get_args();
 		$contain = call_user_func_array('am', array_slice($args, 1));
 		$this->runtime[$Model->alias]['contain'] = $contain;
@@ -256,7 +256,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param object $Model Model on which to reset bindings
  * @return void
  */
-	public function resetBindings(&$Model) {
+	public function resetBindings($Model) {
 		if (!empty($Model->__backOriginalAssociation)) {
 			$Model->__backAssociation = $Model->__backOriginalAssociation;
 			unset($Model->__backOriginalAssociation);
@@ -280,7 +280,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param bool $throwErrors Wether unexisting bindings show throw errors
  * @return array Containments
  */
-	public function containments(&$Model, $contain, $containments = array(), $throwErrors = null) {
+	public function containments($Model, $contain, $containments = array(), $throwErrors = null) {
 		$options = array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery');
 		$keep = array();
 		$depth = array();
@@ -383,7 +383,7 @@ class ContainableBehavior extends ModelBehavior {
  * @param mixed $fields If array, fields to initially load, if false use $Model as primary model
  * @return array Fields
  */
-	public function fieldDependencies(&$Model, $map, $fields = array()) {
+	public function fieldDependencies($Model, $map, $fields = array()) {
 		if ($fields === false) {
 			foreach ($map as $parent => $children) {
 				foreach ($children as $type => $bindings) {
