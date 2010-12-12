@@ -81,6 +81,68 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Upgrade the removed basics functions.
+ *
+ * - a(*) -> array(*)
+ * - e(*) -> echo *
+ * - ife(*, *, *) -> empty(*) ? * : *
+ * - a(*) -> array(*)
+ * - r(*, *, *) -> str_replace(*, *, *)
+ * - up(*) -> strtoupper(*)
+ * - low(*, *, *) -> strtolower(*)
+ * - getMicrotime() -> microtime(true)
+ *
+ * @return void
+ */
+	public function basics() {
+		$this->_paths = array(
+			APP
+		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
+		$patterns = array(
+			array(
+				'a(*) -> array(*)',
+				'/a\((.*)\)/',
+				'array(\1)'
+			),
+			array(
+				'e(*) -> echo *',
+				'/\be\((.*)\)/',
+				'echo \1'
+			),
+			array(
+				'ife(*, *, *) -> empty(*) ? * : *',
+				'/ife\((.*), (.*), (.*)\)/',
+				'empty(\1) ? \2 : \3'
+			),
+			array(
+				'r(*, *, *) -> str_replace(*, *, *)',
+				'/\br\(/',
+				'str_replace('
+			),
+			array(
+				'up(*) -> strtoupper(*)',
+				'/\bup\(/',
+				'strtoupper('
+			),
+			array(
+				'low(*) -> strtolower(*)',
+				'/\blow\(/',
+				'strtolower('
+			),
+			array(
+				'getMicrotime() -> microtime(true)',
+				'/getMicrotime\(\)/',
+				'microtime(true)'
+			),
+		);
+
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
  * Updates files based on regular expressions.
  *
  * @param array $patterns Array of search and replacement patterns.
@@ -164,6 +226,10 @@ class UpgradeShell extends Shell {
 			))
 			->addSubcommand('helpers', array(
 				'help' => 'Update calls to helpers.',
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('basics', array(
+				'help' => 'Update removed basics functions to PHP native functions.',
 				'parser' => $subcommandParser
 			));
 	}
