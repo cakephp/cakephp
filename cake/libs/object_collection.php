@@ -79,7 +79,8 @@ abstract class ObjectCollection {
  *   the method you are calling.
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
- * @return mixed true.
+ * @return mixed Either the last result or all results if collectReturn is on.
+ * @throws CakeException when modParams is used with an index that does not exist.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {
