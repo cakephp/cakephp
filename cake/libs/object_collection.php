@@ -73,7 +73,10 @@ abstract class ObjectCollection {
  *    objects. Defaults to false.
  *
  * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
- *    Setting modParams to an integer value will allow you to modify the parameter with that index. Defaults to false.
+ *    Setting modParams to an integer value will allow you to modify the parameter with that index.
+ *    Any non-null value will modify the parameter index indicated.
+ *    Defaults to false.
+ *   
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
@@ -115,7 +118,7 @@ abstract class ObjectCollection {
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
 				break;
-			} elseif ($options['modParams'] !== false) {
+			} elseif ($options['modParams'] !== false && $result !== null) {
 				$params[$options['modParams']] = $result;
 			}
 		}

@@ -316,6 +316,35 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * test that returrning null doesn't modify parameters.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	function testTriggerModParamsNullIgnored() {
+		$this->_makeMockClasses();
+		$this->Objects->load('TriggerMockFirst');
+		$this->Objects->load('TriggerMockSecond');
+
+		$this->Objects->TriggerMockFirst->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(null));
+
+		$this->Objects->TriggerMockSecond->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue('new value'));
+
+		$result = $this->Objects->trigger(
+			'callback',
+			array(array('value')),
+			array('modParams' => 2)
+		);
+		$this->assertEquals('new value', $result);
+	}
+
+/**
  * test normalizeObjectArray
  *
  * @return void
