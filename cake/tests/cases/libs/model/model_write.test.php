@@ -3068,7 +3068,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testSaveAllNestedSaveAll() {
 		$this->loadFixtures('Sample');
-		$TransactionTestModel =& new TransactionTestModel();
+		$TransactionTestModel = new TransactionTestModel();
 
 		$data = array(
 			array('apple_id' => 1, 'name' => 'sample5'),

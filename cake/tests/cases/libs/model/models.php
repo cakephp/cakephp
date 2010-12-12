@@ -293,7 +293,7 @@ class BeforeDeleteComment extends CakeTestModel {
 	var $useTable = 'comments';
 
 	function beforeDelete($cascade = true) {
-		$db =& $this->getDataSource();
+		$db = $this->getDataSource();
 		$db->delete($this, array($this->alias . '.' . $this->primaryKey => array(1, 3)));
 		return true;
 	}
