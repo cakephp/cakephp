@@ -2591,38 +2591,6 @@ class MyCategoriesMyProduct extends CakeTestModel {
 	public $name = 'MyCategoriesMyProduct';
 }
 
-/**
- * I18nModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.model
- */
-class I18nModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string 'I18nModel'
- * @access public
- */
-	public $name = 'I18nModel';
-
-/**
- * useTable property
- *
- * @var string 'i18n'
- * @access public
- */
-	public $useTable = 'i18n';
-
-/**
- * displayField property
- *
- * @var string 'field'
- * @access public
- */
-	public $displayField = 'field';
-}
 
 /**
  * NumberTree class
@@ -2662,7 +2630,7 @@ class NumberTree extends CakeTestModel {
  */
 	function initialize($levelLimit = 3, $childLimit = 3, $currentLevel = null, $parent_id = null, $prefix = '1', $hierachial = true) {
 		if (!$parent_id) {
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = ConnectionManager::getDataSource($this->useDbConfig);
 			$db->truncate($this->table);
 			$this->save(array($this->name => array('name' => '1. Root')));
 			$this->initialize($levelLimit, $childLimit, 1, $this->id, '1', $hierachial);
