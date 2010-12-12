@@ -173,7 +173,7 @@ class Scaffold {
 	protected function _scaffoldView(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('view')) {
 
-			$message = __(sprintf("No id set for %s::view()", Inflector::humanize($this->modelKey)));
+			$message = __("No id set for %s::view()", Inflector::humanize($this->modelKey));
 			if (isset($request->params['pass'][0])) {
 				$this->ScaffoldModel->id = $request->params['pass'][0];
 			} else {
@@ -247,7 +247,7 @@ class Scaffold {
 				}
 
 				if (!$this->ScaffoldModel->exists()) {
-					$message = sprintf(__("Invalid id for %s::edit()", true), Inflector::humanize($this->modelKey));
+					$message = __("Invalid id for %s::edit()", Inflector::humanize($this->modelKey));
 					return $this->_sendMessage($message);
 				}
 			}
@@ -259,8 +259,8 @@ class Scaffold {
 
 				if ($this->ScaffoldModel->save($request->data)) {
 					if ($this->controller->_afterScaffoldSave($action)) {
-						$message = sprintf(
-							__('The %1$s has been %2$s'),
+						$message = __(
+							'The %1$s has been %2$s',
 							Inflector::humanize($this->modelKey),
 							$success
 						);
@@ -308,10 +308,7 @@ class Scaffold {
  */
 	protected function _scaffoldDelete(CakeRequest $request) {
 		if ($this->controller->_beforeScaffold('delete')) {
-			$message = sprintf(
-				__("No id set for %s::delete()", true),
-				Inflector::humanize($this->modelKey)
-			);
+			$message = __("No id set for %s::delete()", Inflector::humanize($this->modelKey));
 			if (isset($request->params['pass'][0])) {
 				$id = $request->params['pass'][0];
 			} else {
@@ -319,15 +316,13 @@ class Scaffold {
 			}
 
 			if ($this->ScaffoldModel->delete($id)) {
-				$message = sprintf(
-					__('The %1$s with id: %2$d has been deleted.', true),
-					Inflector::humanize($this->modelClass), $id
-				);
+				$message = __('The %1$s with id: %2$d has been deleted.', Inflector::humanize($this->modelClass), $id);
 				return $this->_sendMessage($message);
 			} else {
-				$message = sprintf(
-					__('There was an error deleting the %1$s with id: %2$d', true),
-					Inflector::humanize($this->modelClass), $id
+				$message = __(
+					'There was an error deleting the %1$s with id: %2$d', 
+					Inflector::humanize($this->modelClass), 
+					$id
 				);
 				return $this->_sendMessage($message);
 			}
