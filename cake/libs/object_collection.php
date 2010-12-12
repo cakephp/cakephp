@@ -60,12 +60,20 @@ abstract class ObjectCollection {
  * ### Options
  *
  * - `breakOn` Set to the value or values you want the callback propagation to stop on.
- *    Defaults to `false`
- * - `break` Set to true to enabled breaking. Defaults to `false`.
+ *    Can either be a scalar value, or an array of values to break on. Defaults to `false`.
+ *
+ * - `break` Set to true to enabled breaking. When a trigger is broken, the last returned value
+ *    will be returned.  If used in combination with `collectReturn` the collected results will be returned.
+ *    Defaults to `false`.
+ *
  * - `collectReturn` Set to true to collect the return of each object into an array.
  *    This array of return values will be returned from the trigger() call. Defaults to `false`.
+ *
  * - `triggerDisabled` Will trigger the callback on all objects in the collection even the non-enabled
- *   objects. Defaults to false.
+ *    objects. Defaults to false.
+ *
+ * - `modParams` Allows each object the callback gets called on to modify the parameters to the next object.
+ *    Setting modParams to an integer value will allow you to modify the parameter with that index. Defaults to false.
  * 
  * @param string $callback Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling.
@@ -78,7 +86,13 @@ abstract class ObjectCollection {
 			return true;
 		}
 		$options = array_merge(
-			array('break' => false, 'breakOn' => false, 'collectReturn' => false, 'triggerDisabled' => false),
+			array(
+				'break' => false,
+				'breakOn' => false,
+				'collectReturn' => false,
+				'triggerDisabled' => false,
+				'modParams' => false
+			),
 			$options
 		);
 		$collected = array();
@@ -86,8 +100,12 @@ abstract class ObjectCollection {
 		if ($options['triggerDisabled'] === true) {
 			$list = array_keys($this->_loaded);
 		}
+		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
+			throw new CakeException(__('Cannot use modParams with indexes that do not exist.'));
+		}
+
 		foreach ($list as $name) {
-			$result = call_user_func_array(array(&$this->_loaded[$name], $callback), $params);
+			$result = call_user_func_array(array($this->_loaded[$name], $callback), $params);
 			if ($options['collectReturn'] === true) {
 				$collected[] = $result;
 			}
@@ -95,10 +113,15 @@ abstract class ObjectCollection {
 				$options['break'] && ($result === $options['breakOn'] || 
 				(is_array($options['breakOn']) && in_array($result, $options['breakOn'], true)))
 			) {
-				return ($options['collectReturn'] === true) ? $collected : $result;
+				break;
+			} elseif ($options['modParams'] !== false) {
+				$params[$options['modParams']] = $result;
 			}
 		}
-		return $options['collectReturn'] ? $collected : true;
+		if ($options['modParams'] !== false) {
+			return $params[$options['modParams']];
+		}
+		return $options['collectReturn'] ? $collected : $result;
 	}
 
 /**
