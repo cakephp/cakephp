@@ -806,7 +806,7 @@ class HtmlHelper extends AppHelper {
 /**
  * Internal function to build a nested list (UL/OL) out of an associative array.
  *
- * @param array $list Set of elements to list
+ * @param array $items Set of elements to list
  * @param array $options Additional HTML attributes of the list (ol/ul) tag
  * @param array $itemOptions Additional HTML attributes of the list item (LI) tag
  * @param string $tag Type of list tag to use (ol/ul)
