@@ -49,12 +49,11 @@ class TestDispatcher extends Dispatcher {
  * invoke method
  *
  * @param mixed $controller
- * @param mixed $params
- * @param mixed $missingAction
+ * @param mixed $request
  * @return void
  */
-	protected function _invoke(&$controller, $params) {
-		if ($result = parent::_invoke($controller, $params)) {
+	protected function _invoke(Controller $controller, CakeRequest $request) {
+		if ($result = parent::_invoke($controller, $request)) {
 			if ($result[0] === 'missingAction') {
 				return $result;
 			}
@@ -192,7 +191,7 @@ class SomePagesController extends AppController {
  *
  * @return void
  */
-	public function redirect() {
+	public function redirect($url, $status = null, $exit = true) {
 		echo 'this should not be accessible';
 	}
 }

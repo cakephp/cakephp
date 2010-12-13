@@ -212,7 +212,7 @@ class File {
  * @param string $data Data to prepare for writing.
  * @return string The with converted line endings.
  */
-	public function prepare($data, $forceWindows = false) {
+	public static function prepare($data, $forceWindows = false) {
 		$lineBreak = "\n";
 		if (DIRECTORY_SEPARATOR == '\\' || $forceWindows === true) {
 			$lineBreak = "\r\n";

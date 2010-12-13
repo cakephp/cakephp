@@ -315,7 +315,8 @@ class Dispatcher {
 			$this->_stop();
 		}
 		$controller = null;
-		$ext = array_pop(explode('.', $url));
+		$pathSegments = explode('.', $url);
+		$ext = array_pop($pathSegments);
 		$parts = explode('/', $url);
 		$assetFile = null;
 
