@@ -501,6 +501,7 @@ class JsBaseEngineHelper extends AppHelper {
  * @return void
  */
 	function __construct() {
+		parent::__construct();
 		$this->useNative = function_exists('json_encode');
 	}
 

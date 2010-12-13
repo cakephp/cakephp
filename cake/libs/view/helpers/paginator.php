@@ -88,6 +88,7 @@ class PaginatorHelper extends AppHelper {
  * @return void
  */
 	function __construct($config = array()) {
+		parent::__construct($config);
 		$ajaxProvider = isset($config['ajax']) ? $config['ajax'] : 'Js';
 		$this->helpers[] = $ajaxProvider;
 		$this->_ajaxHelperClass = $ajaxProvider;
