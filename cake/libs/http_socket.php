@@ -181,7 +181,7 @@ class HttpSocket extends CakeSocket {
  * @param string $pass Password for authentication
  * @return void
  */
-	public function setAuthConfig($method, $user = null, $pass = null) {
+	public function configAuth($method, $user = null, $pass = null) {
 		if (empty($method)) {
 			$this->_auth = array();
 			return;
@@ -203,7 +203,7 @@ class HttpSocket extends CakeSocket {
  * @param string $pass Password to proxy authentication
  * @return void
  */
-	public function setProxyConfig($host, $port = 3128, $method = null, $user = null, $pass = null) {
+	public function configProxy($host, $port = 3128, $method = null, $user = null, $pass = null) {
 		if (empty($host)) {
 			$this->_proxy = array();
 			return;
@@ -310,7 +310,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if (isset($this->request['uri']['user'], $this->request['uri']['pass'])) {
-			$this->setAuthConfig('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
+			$this->configAuth('Basic', $this->request['uri']['user'], $this->request['uri']['pass']);
 		}
 		$this->_setAuth();
 		$this->request['auth'] = $this->_auth;

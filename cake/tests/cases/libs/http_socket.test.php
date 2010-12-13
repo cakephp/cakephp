@@ -715,7 +715,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$this->Socket->expects($this->any())->method('read')->will($this->returnValue(false));
 
-		$this->Socket->setProxyConfig('proxy.server', 123);
+		$this->Socket->configProxy('proxy.server', 123);
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n";
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($this->Socket->request['raw'], $expected);
@@ -745,7 +745,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertEqual($this->Socket->request['proxy'], $expected);
 
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\n\r\n";
-		$this->Socket->setProxyConfig('proxy.server', 123, 'Test', 'mark', 'secret');
+		$this->Socket->configProxy('proxy.server', 123, 'Test', 'mark', 'secret');
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($this->Socket->request['raw'], $expected);
 		$this->assertEqual($this->Socket->config['host'], 'proxy.server');
@@ -759,7 +759,7 @@ class HttpSocketTest extends CakeTestCase {
 		);
 		$this->assertEqual($this->Socket->request['proxy'], $expected);
 
-		$this->Socket->setAuthConfig('Test', 'login', 'passwd');
+		$this->Socket->configAuth('Test', 'login', 'passwd');
 		$expected = "GET http://www.cakephp.org/ HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\nProxy-Authorization: Test mark.secret\r\nAuthorization: Test login.passwd\r\n\r\n";
 		$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($this->Socket->request['raw'], $expected);
@@ -879,11 +879,11 @@ class HttpSocketTest extends CakeTestCase {
 		$socket->get('http://mark:secret@example.com/test');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
-		$socket->setAuthConfig(false);
+		$socket->configAuth(false);
 		$socket->get('http://example.com/test');
 		$this->assertFalse(strpos($socket->request['header'], 'Authorization:'));
 
-		$socket->setAuthConfig('Test', 'mark', 'passwd');
+		$socket->configAuth('Test', 'mark', 'passwd');
 		$socket->get('http://example.com/test');
 		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Test mark.passwd') !== false);
 	}
