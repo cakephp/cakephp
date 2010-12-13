@@ -415,7 +415,8 @@ class Validation {
 		if (is_array($check)) {
 			return self::extension(array_shift($check), $extensions);
 		}
-		$extension = strtolower(array_pop(explode('.', $check)));
+		$pathSegments = explode('.', $check);
+		$extension = strtolower(array_pop($pathSegments));
 		foreach ($extensions as $value) {
 			if ($extension == strtolower($value)) {
 				return true;
@@ -431,7 +432,7 @@ class Validation {
  * @param string $ipVersion The IP Protocol version to validate against
  * @return boolean Success
  */
-	public function ip($check, $type = 'both') {
+	public static function ip($check, $type = 'both') {
 		$type = strtolower($type);
 		$flags = array();
 		if ($type === 'ipv4' || $type === 'both') {

@@ -393,9 +393,8 @@ class CakeSession {
  * Returns all session variables.
  *
  * @return mixed Full $_SESSION array, or false on error.
- * @access private
  */
-	function __returnSessionVars() {
+	private static function __returnSessionVars() {
 		if (!empty($_SESSION)) {
 			return $_SESSION;
 		}

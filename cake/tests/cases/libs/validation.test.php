@@ -34,7 +34,7 @@ class CustomValidator {
  * @return boolean
  * @access public
  */
-	function customValidate($check) {
+	static function customValidate($check) {
 		return (bool)preg_match('/^[0-9]{3}$/', $check);
 	}
 }
@@ -53,7 +53,7 @@ class TestNlValidation {
  * @param string $check
  * @return void
  */
-	function postal($check) {
+	static function postal($check) {
 		return true;
 	}
 /**
@@ -61,7 +61,7 @@ class TestNlValidation {
  *
  * @return void
  */
-	function ssn($check) {
+	static function ssn($check) {
 		return true;
 	}
 }
@@ -80,7 +80,7 @@ class TestDeValidation {
  * @param string $check
  * @return void
  */
-	function phone($check) {
+	static function phone($check) {
 		return true;
 	}
 }

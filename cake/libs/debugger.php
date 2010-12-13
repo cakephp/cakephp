@@ -236,7 +236,7 @@ class Debugger {
  * @param array $context Context
  * @return boolean true if error was handled
  */
-	public function showError($code, $description, $file = null, $line = null, $context = null) {
+	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$_this = Debugger::getInstance();
 
 		if (empty($file)) {

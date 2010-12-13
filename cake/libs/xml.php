@@ -182,7 +182,7 @@ class Xml {
  * @param string $format Either 'attribute' or 'tags'.  This determines where nested keys go.
  * @return void
  */
-	protected function _fromArray(&$dom, &$node, &$data, $format) {
+	protected static function _fromArray(&$dom, &$node, &$data, $format) {
 		if (empty($data) || !is_array($data)) {
 			return;
 		}
@@ -237,7 +237,7 @@ class Xml {
  * @param array $data Array with informations to create childs
  * @return void
  */
-	private function __createChild($data) {
+	private static function __createChild($data) {
 		extract($data);
 		$childNS = $childValue = null;
 		if (is_array($value)) {
