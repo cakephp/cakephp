@@ -701,7 +701,7 @@ class ModelTask extends BakeTask {
 	protected function _generatePossibleKeys() {
 		$possible = array();
 		foreach ($this->_tables as $otherTable) {
-			$tempOtherModel = & new Model(array('table' => $otherTable, 'ds' => $this->connection));
+			$tempOtherModel = new Model(array('table' => $otherTable, 'ds' => $this->connection));
 			$modelFieldsTemp = $tempOtherModel->schema(true);
 			foreach ($modelFieldsTemp as $fieldName => $field) {
 				if ($field['type'] == 'integer' || $field['type'] == 'string') {

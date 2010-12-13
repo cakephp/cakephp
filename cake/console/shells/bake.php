@@ -186,7 +186,7 @@ class BakeShell extends Shell {
 		} else {
 			$this->error(__('Bake All could not continue without a valid model'));
 		}
-		$this->_stop();
+		return $this->_stop();
 	}
 
 /**
