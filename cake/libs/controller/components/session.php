@@ -34,17 +34,6 @@ if (!class_exists('cakesession')) {
 class SessionComponent extends Component {
 
 /**
- * Constructor automatically starts the session.
- *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
- * @param array $settings Array of configuration settings.
- */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
-		CakeSession::start();
-	}
-
-/**
  * Get / Set the userAgent 
  *
  * @param string $userAgent Set the userAgent
