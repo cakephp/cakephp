@@ -125,16 +125,6 @@ class TestHttpSocket extends HttpSocket {
 /**
  * Convenience method for testing protected method
  *
- * @param array $header Header as an indexed array (field => value)
- * @return array Parsed header
- */
-	public function parseHeader($header) {
-		return parent::_parseHeader($header);
-	}
-
-/**
- * Convenience method for testing protected method
- *
  * @param mixed $query A query string to parse into an array or an array to return directly "as is"
  * @return array The $query parsed into a possibly multi-level array. If an empty $query is given, an empty array is returned.
  */
@@ -171,16 +161,6 @@ class TestHttpSocket extends HttpSocket {
  */
 	public function EscapeToken($token, $chars = null) {
 		return parent::_escapeToken($token, $chars);
-	}
-
-/**
- * Convenience method for testing protected method
- *
- * @param string $token Token to unescape
- * @return string Unescaped token
- */
-	public function unescapeToken($token, $chars = null) {
-		return parent::_unescapeToken($token, $chars);
 	}
 
 }
@@ -1376,67 +1356,6 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * Test that HttpSocket::parseHeader can take apart a given (and valid) $header string and turn it into an array.
- *
- * @return void
- */
-	public function testParseHeader() {
-		$this->Socket->reset();
-
-		$r = $this->Socket->parseHeader(array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
-		$this->assertEquals($r, array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
-
-		$r = $this->Socket->parseHeader(true);
-		$this->assertEquals($r, false);
-
-		$header = "Host: cakephp.org\t\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'Host' => 'cakephp.org'
-		);
-		$this->assertEquals($r, $expected);
-
-		$header = "Date:Sat, 07 Apr 2007 10:10:25 GMT\r\nX-Powered-By: PHP/5.1.2\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'Date' => 'Sat, 07 Apr 2007 10:10:25 GMT',
-			'X-Powered-By' => 'PHP/5.1.2'
-		);
-		$this->assertEquals($r, $expected);
-
-		$header = "people: Jim,John\r\nfoo-LAND: Bar\r\ncAKe-PHP: rocks\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'people' => 'Jim,John',
-			'foo-LAND' => 'Bar',
-			'cAKe-PHP' => 'rocks'
-		);
-		$this->assertEquals($r, $expected);
-
-		$header = "People: Jim,John,Tim\r\nPeople: Lisa,Tina,Chelsea\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'People' => array('Jim,John,Tim', 'Lisa,Tina,Chelsea')
-		);
-		$this->assertEquals($r, $expected);
-
-		$header = "Multi-Line: I am a \r\nmulti line\t\r\nfield value.\r\nSingle-Line: I am not\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'Multi-Line' => "I am a\r\nmulti line\r\nfield value.",
-			'Single-Line' => 'I am not'
-		);
-		$this->assertEquals($r, $expected);
-
-		$header = "Esc\"@\"ped: value\r\n";
-		$r = $this->Socket->parseHeader($header);
-		$expected = array(
-			'Esc@ped' => 'value'
-		);
-		$this->assertEquals($r, $expected);
-	}
-
-/**
  * testBuildCookies method
  *
  * @return void
@@ -1504,31 +1423,6 @@ class HttpSocketTest extends CakeTestCase {
 		$token = 'Extreme-:Token-	-"@-test';
 		$escapedToken = $this->Socket->escapeToken($token);
 		$expectedToken = 'Extreme-":"Token-"	"-""""@"-test';
-		$this->assertEquals($expectedToken, $escapedToken);
-	}
-
-/**
- * Test that escaped token strings are properly unescaped by HttpSocket::unescapeToken
- *
- * @return void
- */
-	public function testUnescapeToken() {
-		$this->Socket->reset();
-
-		$this->assertEquals($this->Socket->unescapeToken('Foo'), 'Foo');
-
-		$escape = $this->Socket->tokenEscapeChars(false);
-		foreach ($escape as $char) {
-			$token = 'My-special-"' . $char . '"-Token';
-			$unescapedToken = $this->Socket->unescapeToken($token);
-			$expectedToken = 'My-special-' . $char . '-Token';
-
-			$this->assertEquals($unescapedToken, $expectedToken, 'Test token unescaping for ASCII '.ord($char));
-		}
-
-		$token = 'Extreme-":"Token-"	"-""""@"-test';
-		$escapedToken = $this->Socket->unescapeToken($token);
-		$expectedToken = 'Extreme-:Token-	-"@-test';
 		$this->assertEquals($expectedToken, $escapedToken);
 	}
 

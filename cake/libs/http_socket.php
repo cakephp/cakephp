@@ -279,7 +279,6 @@ class HttpSocket extends CakeSocket {
 		$cookies = null;
 
 		if (is_array($this->request['header'])) {
-			$this->request['header'] = $this->_parseHeader($this->request['header']);
 			if (!empty($this->request['cookies'])) {
 				$cookies = $this->buildCookies($this->request['cookies']);
 			}
@@ -870,39 +869,6 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
- * Parses an array based header.
- *
- * @param array $header Header as an indexed array (field => value)
- * @return array Parsed header
- */
-	protected function _parseHeader($header) {
-		if (is_array($header)) {
-			return $header;
-		} elseif (!is_string($header)) {
-			return false;
-		}
-
-		preg_match_all("/(.+):(.+)(?:(?<![\t ])\r\n|\$)/Uis", $header, $matches, PREG_SET_ORDER);
-
-		$header = array();
-		foreach ($matches as $match) {
-			list(, $field, $value) = $match;
-
-			$value = trim($value);
-			$value = preg_replace("/[\t ]\r\n/", "\r\n", $value);
-
-			$field = $this->_unescapeToken($field);
-
-			if (!isset($header[$field])) {
-				$header[$field] = $value;
-			} else {
-				$header[$field] = array_merge((array)$header[$field], (array)$value);
-			}
-		}
-		return $header;
-	}
-
-/**
  * Builds cookie headers for a request.
  *
  * @param array $cookies Array of cookies to send with the request.
@@ -915,20 +881,6 @@ class HttpSocket extends CakeSocket {
 			$header[] = $name . '=' . $this->_escapeToken($cookie['value'], array(';'));
 		}
 		return $this->_buildHeader(array('Cookie' => implode('; ', $header)), 'pragmatic');
-	}
-
-/**
- * Unescapes a given $token according to RFC 2616 (HTTP 1.1 specs)
- *
- * @param string $token Token to unescape
- * @param array $chars
- * @return string Unescaped token
- * @todo Test $chars parameter
- */
-	protected function _unescapeToken($token, $chars = null) {
-		$regex = '/"([' . implode('', $this->_tokenEscapeChars(true, $chars)) . '])"/';
-		$token = preg_replace($regex, '\\1', $token);
-		return $token;
 	}
 
 /**

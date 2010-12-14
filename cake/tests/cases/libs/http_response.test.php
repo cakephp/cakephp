@@ -30,6 +30,16 @@ class TestHttpResponse extends HttpResponse {
 /**
  * Convenience method for testing protected method
  *
+ * @param array $header Header as an indexed array (field => value)
+ * @return array Parsed header
+ */
+	public function parseHeader($header) {
+		return parent::_parseHeader($header);
+	}
+
+/**
+ * Convenience method for testing protected method
+ *
  * @param string $body A string continaing the body to decode
  * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding
  * @return mixed Array or false
@@ -46,6 +56,26 @@ class TestHttpResponse extends HttpResponse {
  */
 	public function decodeChunkedBody($body) {
 		return parent::_decodeChunkedBody($body);
+	}
+
+/**
+ * Convenience method for testing protected method
+ *
+ * @param string $token Token to unescape
+ * @return string Unescaped token
+ */
+	public function unescapeToken($token, $chars = null) {
+		return parent::_unescapeToken($token, $chars);
+	}
+
+/**
+ * Convenience method for testing protected method
+ *
+ * @param boolean $hex true to get them as HEX values, false otherwise
+ * @return array Escape chars
+ */
+	public function tokenEscapeChars($hex = true, $chars = null) {
+		return parent::_tokenEscapeChars($hex, $chars);
 	}
 
 }
@@ -134,6 +164,65 @@ class HttpResponseTest extends CakeTestCase {
 		$this->assertFalse($this->HttpResponse->isOk());
 		$this->HttpResponse->code = 200;
 		$this->assertTrue($this->HttpResponse->isOk());
+	}
+
+/**
+ * Test that HttpSocket::parseHeader can take apart a given (and valid) $header string and turn it into an array.
+ *
+ * @return void
+ */
+	public function testParseHeader() {
+		$r = $this->HttpResponse->parseHeader(array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
+		$this->assertEquals($r, array('foo' => 'Bar', 'fOO-bAr' => 'quux'));
+
+		$r = $this->HttpResponse->parseHeader(true);
+		$this->assertEquals($r, false);
+
+		$header = "Host: cakephp.org\t\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Host' => 'cakephp.org'
+		);
+		$this->assertEquals($r, $expected);
+
+		$header = "Date:Sat, 07 Apr 2007 10:10:25 GMT\r\nX-Powered-By: PHP/5.1.2\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Date' => 'Sat, 07 Apr 2007 10:10:25 GMT',
+			'X-Powered-By' => 'PHP/5.1.2'
+		);
+		$this->assertEquals($r, $expected);
+
+		$header = "people: Jim,John\r\nfoo-LAND: Bar\r\ncAKe-PHP: rocks\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'people' => 'Jim,John',
+			'foo-LAND' => 'Bar',
+			'cAKe-PHP' => 'rocks'
+		);
+		$this->assertEquals($r, $expected);
+
+		$header = "People: Jim,John,Tim\r\nPeople: Lisa,Tina,Chelsea\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'People' => array('Jim,John,Tim', 'Lisa,Tina,Chelsea')
+		);
+		$this->assertEquals($r, $expected);
+
+		$header = "Multi-Line: I am a \r\nmulti line\t\r\nfield value.\r\nSingle-Line: I am not\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Multi-Line' => "I am a\r\nmulti line\r\nfield value.",
+			'Single-Line' => 'I am not'
+		);
+		$this->assertEquals($r, $expected);
+
+		$header = "Esc\"@\"ped: value\r\n";
+		$r = $this->HttpResponse->parseHeader($header);
+		$expected = array(
+			'Esc@ped' => 'value'
+		);
+		$this->assertEquals($r, $expected);
 	}
 
 /**
@@ -337,6 +426,29 @@ class HttpResponseTest extends CakeTestCase {
 		unset($expected['people'], $expected['cakephp'], $expected['google']);
 		$cookies = $this->HttpResponse->parseCookies($header);
 		$this->assertEqual($cookies, $expected);
+	}
+
+/**
+ * Test that escaped token strings are properly unescaped by HttpSocket::unescapeToken
+ *
+ * @return void
+ */
+	public function testUnescapeToken() {
+		$this->assertEquals($this->HttpResponse->unescapeToken('Foo'), 'Foo');
+
+		$escape = $this->HttpResponse->tokenEscapeChars(false);
+		foreach ($escape as $char) {
+			$token = 'My-special-"' . $char . '"-Token';
+			$unescapedToken = $this->HttpResponse->unescapeToken($token);
+			$expectedToken = 'My-special-' . $char . '-Token';
+
+			$this->assertEquals($unescapedToken, $expectedToken, 'Test token unescaping for ASCII '.ord($char));
+		}
+
+		$token = 'Extreme-":"Token-"	"-""""@"-test';
+		$escapedToken = $this->HttpResponse->unescapeToken($token);
+		$expectedToken = 'Extreme-:Token-	-"@-test';
+		$this->assertEquals($expectedToken, $escapedToken);
 	}
 
 /**
