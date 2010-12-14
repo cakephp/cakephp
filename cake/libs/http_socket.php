@@ -19,7 +19,6 @@
  */
 App::import('Core', 'CakeSocket');
 App::import('Core', 'Router');
-App::import('Lib', 'HttpResponse');
 
 /**
  * Cake network socket connection class.
