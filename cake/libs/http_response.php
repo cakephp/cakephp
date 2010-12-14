@@ -94,11 +94,14 @@ class HttpResponse implements ArrayAccess {
  * @param string $name Header name
  * @return mixed String if header exists or null
  */
-	public function getHeader($name) {
-		if (isset($this->headers[$name])) {
-			return $this->headers[$name];
+	public function getHeader($name, $headers = null) {
+		if (!is_array($headers)) {
+			$headers =& $this->headers;
 		}
-		foreach ($this->headers as $key => $value) {
+		if (isset($headers[$name])) {
+			return $headers[$name];
+		}
+		foreach ($headers as $key => $value) {
 			if (strcasecmp($key, $name) == 0) {
 				return $value;
 			}
@@ -278,12 +281,13 @@ class HttpResponse implements ArrayAccess {
  * @todo Make this 100% RFC 2965 confirm
  */
 	public function parseCookies($header) {
-		if (!isset($header['Set-Cookie'])) {
+		$cookieHeader = $this->getHeader('Set-Cookie', $header);
+		if (!$cookieHeader) {
 			return false;
 		}
 
 		$cookies = array();
-		foreach ((array)$header['Set-Cookie'] as $cookie) {
+		foreach ((array)$cookieHeader as $cookie) {
 			if (strpos($cookie, '";"') !== false) {
 				$cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
 				$parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));

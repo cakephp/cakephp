@@ -113,6 +113,9 @@ class HttpResponseTest extends CakeTestCase {
 		$this->assertEqual($this->HttpResponse->getHeader('header'), 'value');
 		$this->assertEqual($this->HttpResponse->getHeader('Content-Type'), 'text/plain');
 		$this->assertIdentical($this->HttpResponse->getHeader(0), null);
+
+		$this->assertEqual($this->HttpResponse->getHeader('foo', false), 'Bar');
+		$this->assertEqual($this->HttpResponse->getHeader('foo', array('foo' => 'not from class')), 'not from class');
 	}
 
 /**
