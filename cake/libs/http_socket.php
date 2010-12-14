@@ -19,6 +19,7 @@
  */
 App::import('Core', 'CakeSocket');
 App::import('Core', 'Router');
+App::import('Lib', 'HttpResponse');
 
 /**
  * Cake network socket connection class.
@@ -73,22 +74,7 @@ class HttpSocket extends CakeSocket {
  *
  * @var array
  */
-	public $response = array(
-		'raw' => array(
-			'status-line' => null,
-			'header' => null,
-			'body' => null,
-			'response' => null
-		),
-		'status' => array(
-			'http-version' => null,
-			'code' => null,
-			'reason-phrase' => null
-		),
-		'header' => array(),
-		'body' => '',
-		'cookies' => array()
-	);
+	public $response = null;
 
 /**
  * Configuration settings for the HttpSocket and the requests
@@ -238,16 +224,15 @@ class HttpSocket extends CakeSocket {
  * method and provide a more granular interface.
  *
  * @param mixed $request Either an URI string, or an array defining host/uri
- * @return mixed null on error, reference to request body on success
+ * @return mixed false on error, HttpResponse on success
  */
-	public function &request($request = array()) {
+	public function request($request = array()) {
 		$this->reset(false);
 
 		if (is_string($request)) {
 			$request = array('uri' => $request);
 		} elseif (!is_array($request)) {
-			$return = false;
-			return $return;
+			return false;
 		}
 
 		if (!isset($request['uri'])) {
@@ -338,7 +323,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if ($this->quirksMode === false && $this->request['line'] === false) {
-			return $this->response = false;
+			return false;
 		}
 
 		$this->request['raw'] = '';
@@ -383,14 +368,14 @@ class HttpSocket extends CakeSocket {
 		}
 
 		$this->response = $this->_parseResponse($response);
-		if (!empty($this->response['cookies'])) {
+		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
 			}
-			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response['cookies']);
+			$this->config['request']['cookies'][$Host] = array_merge($this->config['request']['cookies'][$Host], $this->response->cookies);
 		}
 
-		return $this->response['body'];
+		return $this->response;
 	}
 
 /**
@@ -416,7 +401,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
  */
-	public function &get($uri = null, $query = array(), $request = array()) {
+	public function get($uri = null, $query = array(), $request = array()) {
 		if (!empty($query)) {
 			$uri = $this->_parseUri($uri);
 			if (isset($uri['query'])) {
@@ -448,7 +433,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
  */
-	public function &post($uri = null, $data = array(), $request = array()) {
+	public function post($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'POST', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -461,7 +446,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
-	public function &put($uri = null, $data = array(), $request = array()) {
+	public function put($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -474,7 +459,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
-	public function &delete($uri = null, $data = array(), $request = array()) {
+	public function delete($uri = null, $data = array(), $request = array()) {
 		$request = Set::merge(array('method' => 'DELETE', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
@@ -585,58 +570,40 @@ class HttpSocket extends CakeSocket {
  * Parses the given message and breaks it down in parts.
  *
  * @param string $message Message to parse
- * @return array Parsed message (with indexed elements such as raw, status, header, body)
+ * @return object Parsed message as HttpResponse
  */
 	protected function _parseResponse($message) {
-		if (is_array($message)) {
-			return $message;
-		} elseif (!is_string($message)) {
-			return false;
+		if (!is_string($message)) {
+			throw new Exception(__('Invalid response.'));
 		}
-
-		static $responseTemplate;
-
-		if (empty($responseTemplate)) {
-			$classVars = get_class_vars(__CLASS__);
-			$responseTemplate = $classVars['response'];
-		}
-
-		$response = $responseTemplate;
 
 		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			return false;
+			throw new Exception(__('Invalid HTTP response.'));
 		}
 
-		list($null, $response['raw']['status-line'], $response['raw']['header']) = $match;
-		$response['raw']['response'] = $message;
-		$response['raw']['body'] = substr($message, strlen($match[0]));
+		$response = new HttpResponse();
 
-		if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $response['raw']['status-line'], $match)) {
-			$response['status']['http-version'] = $match[1];
-			$response['status']['code'] = (int)$match[2];
-			$response['status']['reason-phrase'] = $match[3];
+		list(, $statusLine, $header) = $match;
+		$response->raw = $message;
+		$response->body = (string)substr($message, strlen($match[0]));
+
+		if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $statusLine, $match)) {
+			$response->httpVersion = $match[1];
+			$response->code = $match[2];
+			$response->reasonPhrase = $match[3];
 		}
 
-		$response['header'] = $this->_parseHeader($response['raw']['header']);
-		$transferEncoding = null;
-		if (isset($response['header']['Transfer-Encoding'])) {
-			$transferEncoding = $response['header']['Transfer-Encoding'];
-		}
-		$decoded = $this->_decodeBody($response['raw']['body'], $transferEncoding);
-		$response['body'] = $decoded['body'];
+		$response->headers = $this->_parseHeader($header);
+		$transferEncoding = $response->getHeader('Transfer-Encoding');
+		$decoded = $this->_decodeBody($response->body, $transferEncoding);
+		$response->body = $decoded['body'];
 
 		if (!empty($decoded['header'])) {
-			$response['header'] = $this->_parseHeader($this->_buildHeader($response['header']) . $this->_buildHeader($decoded['header']));
+			$response->headers = $this->_parseHeader($this->_buildHeader($response->headers) . $this->_buildHeader($decoded['header']));
 		}
 
-		if (!empty($response['header'])) {
-			$response['cookies'] = $this->parseCookies($response['header']);
-		}
-
-		foreach ($response['raw'] as $field => $val) {
-			if ($val === '') {
-				$response['raw'][$field] = null;
-			}
+		if (!empty($response->headers)) {
+			$response->cookies = $this->parseCookies($response->headers);
 		}
 
 		return $response;

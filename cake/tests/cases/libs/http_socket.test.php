@@ -190,6 +190,19 @@ class TestHttpSocket extends HttpSocket {
 	public function unescapeToken($token, $chars = null) {
 		return parent::_unescapeToken($token, $chars);
 	}
+
+/**
+ * Convenience method for testing protected method
+ *
+ * @param string $message
+ * @return object HttpResponse
+ */
+	protected function _parseResponse($message) {
+		if (!is_string($message)) {
+			return false;
+		}
+		return parent::_parseResponse($message);
+	}
 }
 
 /**
@@ -596,7 +609,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
 		$this->Socket->expects($this->once())->method('write')
 			->with("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n");
-		$response = $this->Socket->request($request);
+		$response = (string)$this->Socket->request($request);
 		$this->assertEquals($response, "<h1>Hello, your lucky number is " . $number . "</h1>");
 	}
 
@@ -623,22 +636,6 @@ class HttpSocketTest extends CakeTestCase {
 	}
 
 /**
- * testRequestResultAsReference method
- *
- * @return void
- */
-	public function testRequestResultAsReference() {
-		$request = array('uri' => 'htpp://www.cakephp.org/');
-		$serverResponse = "HTTP/1.x 200 OK\r\nSet-Cookie: foo=bar\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a cookie test!</h1>";
-		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
-		$this->Socket->connected = true;
-		$data =& $this->Socket->request($request);
-		$this->assertEqual($data, $this->Socket->response['body']);
-		$data = 'new data';
-		$this->assertEqual($data, $this->Socket->response['body']);
-	}
-
-/**
  * testRequestWithResource
  *
  * @return void
@@ -654,7 +651,7 @@ class HttpSocketTest extends CakeTestCase {
 		$this->skipUnless($f, 'Can not write in TMP directory.');
 
 		$this->Socket->setContentResource($f);
-		$result = $this->Socket->request('http://www.cakephp.org/');
+		$result = (string)$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($result, '');
 		$this->assertEqual($this->Socket->response['header']['Server'], 'CakeHttp Server');
 		fclose($f);
@@ -662,7 +659,7 @@ class HttpSocketTest extends CakeTestCase {
 		unlink(TMP . 'download.txt');
 
 		$this->Socket->setContentResource(false);
-		$result = $this->Socket->request('http://www.cakephp.org/');
+		$result = (string)$this->Socket->request('http://www.cakephp.org/');
 		$this->assertEqual($result, '<h1>This is a test!</h1>');
 	}
 
@@ -987,15 +984,6 @@ class HttpSocketTest extends CakeTestCase {
 	public function testParseResponse() {
 		$this->Socket->reset();
 
-		$r = $this->Socket->parseResponse(array('foo' => 'bar'));
-		$this->assertEquals($r, array('foo' => 'bar'));
-
-		$r = $this->Socket->parseResponse(true);
-		$this->assertEquals($r, false);
-
-		$r = $this->Socket->parseResponse("HTTP Foo\r\nBar: La");
-		$this->assertEquals($r, false);
-
 		$tests = array(
 			'simple-request' => array(
 				'response' => array(
@@ -1004,10 +992,10 @@ class HttpSocketTest extends CakeTestCase {
 					'body' => "<h1>Hello World</h1>\r\n<p>It's good to be html</p>"
 				),
 				'expectations' => array(
-					'status.http-version' => 'HTTP/1.x',
-					'status.code' => 200,
-					'status.reason-phrase' => 'OK',
-					'header' => $this->Socket->parseHeader("Date: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\n"),
+					'httpVersion' => 'HTTP/1.x',
+					'code' => 200,
+					'reasonPhrase' => 'OK',
+					'headers' => array('Date' => 'Mon, 16 Apr 2007 04:14:16 GMT', 'Server' => 'CakeHttp Server'),
 					'body' => "<h1>Hello World</h1>\r\n<p>It's good to be html</p>"
 				)
 			),
@@ -1017,34 +1005,8 @@ class HttpSocketTest extends CakeTestCase {
 					'header' => null
 				),
 				'expectations' => array(
-					'status.code' => 404,
-					'header' => array()
-				)
-			),
-			'chunked' => array(
-				'response' => array(
-					'header' => "Transfer-Encoding: chunked\r\n",
-					'body' => "19\r\nThis is a chunked message\r\n0\r\n"
-				),
-				'expectations' => array(
-					'body' => "This is a chunked message",
-					'header' => $this->Socket->parseHeader("Transfer-Encoding: chunked\r\n")
-				)
-			),
-			'enitity-header' => array(
-				'response' => array(
-					'body' => "19\r\nThis is a chunked message\r\n0\r\nFoo: Bar\r\n"
-				),
-				'expectations' => array(
-					'header' => $this->Socket->parseHeader("Transfer-Encoding: chunked\r\nFoo: Bar\r\n")
-				)
-			),
-			'enitity-header-combine' => array(
-				'response' => array(
-					'header' => "Transfer-Encoding: chunked\r\nFoo: Foobar\r\n"
-				),
-				'expectations' => array(
-					'header' => $this->Socket->parseHeader("Transfer-Encoding: chunked\r\nFoo: Foobar\r\nFoo: Bar\r\n")
+					'code' => 404,
+					'headers' => array()
 				)
 			)
 		);
@@ -1059,14 +1021,38 @@ class HttpSocketTest extends CakeTestCase {
 			$expectations = array_merge($expectations, $test['expectations']);
 
 			foreach ($expectations as $property => $expectedVal) {
-				$val = Set::extract($r, $property);
-				$this->assertEquals($val, $expectedVal, 'Test "' . $name . '": response.' . $property . ' - %s');
+				$this->assertEquals($r->{$property}, $expectedVal, 'Test "' . $name . '": response.' . $property . ' - %s');
 			}
 
 			foreach (array('status-line', 'header', 'body', 'response') as $field) {
 				$this->assertEquals($r['raw'][$field], $testResponse[$field], 'Test response.raw.' . $field . ': %s');
 			}
 		}
+	}
+
+/**
+ * data provider function for testInvalidParseResponseData
+ *
+ * @return array
+ */
+	public static function invalidParseResponseDataProvider() {
+		return array(
+			array(array('foo' => 'bar')),
+			array(true),
+			array("HTTP Foo\r\nBar: La"),
+			array('HTTP/1.1 TEST ERROR')
+		);
+	}
+
+/**
+ * testInvalidParseResponseData
+ *
+ * @dataProvider invalidParseResponseDataProvider
+ * @expectedException Exception
+ * return void
+ */
+	public function testInvalidParseResponseData($value) {
+		$this->Socket->parseResponse($value);
 	}
 
 /**
