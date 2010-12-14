@@ -77,6 +77,13 @@ class HttpSocket extends CakeSocket {
 	public $response = null;
 
 /**
+ * Response classname
+ *
+ * @var string
+ */
+	public $responseClass = 'HttpResponse';
+
+/**
  * Configuration settings for the HttpSocket and the requests
  *
  * @var array
@@ -367,7 +374,11 @@ class HttpSocket extends CakeSocket {
 			$this->disconnect();
 		}
 
-		$this->response = new HttpResponse($response);
+		if (!App::import('Lib', $this->responseClass)) {
+			throw new Exception(__('Class %s not found.', $this->responseClass));
+		}
+		$responseClass = $this->responseClass;
+		$this->response = new $responseClass($response);
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();

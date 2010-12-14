@@ -52,6 +52,29 @@ class TestAuthentication {
 }
 
 /**
+ * CustomResponse
+ *
+ */
+class CustomResponse {
+
+/**
+ * First 10 chars
+ *
+ * @var string
+ */
+	public $first10;
+
+/**
+ * Constructor
+ *
+ */
+	public function __construct($message) {
+		$this->first10 = substr($message, 0, 10);
+	}
+
+}
+
+/**
  * TestHttpSocket
  *
  */
@@ -657,6 +680,23 @@ class HttpSocketTest extends CakeTestCase {
 		$this->assertTrue(empty($this->Socket->request['cookies']));
 		$expected['www.cake.com'] = array('foobar' => array('value' => 'ok'));
 		$this->assertEqual($this->Socket->config['request']['cookies'], $expected);
+	}
+
+/**
+ * testRequestCustomResponse
+ *
+ * @return void
+ */
+	public function testRequestCustomResponse() {
+		$this->Socket->connected = true;
+		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+
+		$this->Socket->responseClass = 'CustomResponse';
+		$response = $this->Socket->request('http://www.cakephp.org/');
+		$this->assertIsA($response, 'CustomResponse');
+		$this->assertEqual($response->first10, 'HTTP/1.x 2');
 	}
 
 /**
