@@ -38,6 +38,7 @@ class AllSocketTest extends PHPUnit_Framework_TestSuite {
 
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_socket.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'http_socket.test.php');
+		$suite->addTestFile(CAKE_TEST_CASES . DS . 'libs' . DS . 'http_response.test.php');
 		$suite->addTestDirectory(CORE_TEST_CASES . DS . 'libs' . DS . 'http');
 		return $suite;
 	}
