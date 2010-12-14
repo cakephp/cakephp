@@ -1216,6 +1216,9 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('alias <email@example.com>');
 		$this->assertEqual($result, 'alias <email@example.com>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('alias<email@example.com>');
+		$this->assertEqual($result, 'alias <email@example.com>');
 
 		$result = $this->Controller->EmailTest->formatAddress('email@example.com');
 		$this->assertEqual($result, 'email@example.com');
@@ -1231,5 +1234,22 @@ HTMLBLOC;
 
 		$result = $this->Controller->EmailTest->formatAddress('alias name <email@example.com>', true);
 		$this->assertEqual($result, '<email@example.com>');
+	}
+
+/**
+ * test formatting addresses with multibyte chars
+ *
+ * @return void
+ */
+	function testFormatAddressMultibyte() {
+		$this->Controller->EmailTest->charset = 'UTF-8';
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdCA=?= <email@domain.de>');
+		
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest<email@domain.de>');
+		$this->assertEqual($result, '=?UTF-8?B?w4TDlsOcVGVzdA==?= <email@domain.de>');
+
+		$result = $this->Controller->EmailTest->formatAddress('ÄÖÜTest <email@domain.de>', true);
+		$this->assertEqual($result, '<email@domain.de>');
 	}
 }
