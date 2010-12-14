@@ -105,13 +105,6 @@ class HttpSocket extends CakeSocket {
 	);
 
 /**
- * String that represents a line break.
- *
- * @var string
- */
-	public $lineBreak = "\r\n";
-
-/**
  * Authentication settings
  *
  * @var array
@@ -809,7 +802,7 @@ class HttpSocket extends CakeSocket {
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
 			throw new Exception(sprintf(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.'), join(',', $asteriskMethods)));
 		}
-		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . $this->lineBreak;
+		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . "\r\n";
 	}
 
 /**
@@ -862,7 +855,7 @@ class HttpSocket extends CakeSocket {
 				$contents = preg_replace("/\r\n(?![\t ])/", "\r\n ", $content);
 				$field = $this->_escapeToken($field);
 
-				$returnHeader .= $field . ': ' . $contents . $this->lineBreak;
+				$returnHeader .= $field . ': ' . $contents . "\r\n";
 			}
 		}
 		return $returnHeader;
