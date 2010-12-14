@@ -367,7 +367,7 @@ class HttpSocket extends CakeSocket {
 			$this->disconnect();
 		}
 
-		$this->response = $this->_parseResponse($response);
+		$this->response = new HttpResponse($response);
 		if (!empty($this->response->cookies)) {
 			if (!isset($this->config['request']['cookies'][$Host])) {
 				$this->config['request']['cookies'][$Host] = array();
@@ -564,137 +564,6 @@ class HttpSocket extends CakeSocket {
 			throw new Exception(sprintf(__('The %s do not support proxy authentication.'), $authClass));
 		}
 		call_user_func("$authClass::proxyAuthentication", $this, &$this->_proxy);
-	}
-
-/**
- * Parses the given message and breaks it down in parts.
- *
- * @param string $message Message to parse
- * @return object Parsed message as HttpResponse
- */
-	protected function _parseResponse($message) {
-		if (!is_string($message)) {
-			throw new Exception(__('Invalid response.'));
-		}
-
-		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			throw new Exception(__('Invalid HTTP response.'));
-		}
-
-		$response = new HttpResponse();
-
-		list(, $statusLine, $header) = $match;
-		$response->raw = $message;
-		$response->body = (string)substr($message, strlen($match[0]));
-
-		if (preg_match("/(.+) ([0-9]{3}) (.+)\r\n/DU", $statusLine, $match)) {
-			$response->httpVersion = $match[1];
-			$response->code = $match[2];
-			$response->reasonPhrase = $match[3];
-		}
-
-		$response->headers = $this->_parseHeader($header);
-		$transferEncoding = $response->getHeader('Transfer-Encoding');
-		$decoded = $this->_decodeBody($response->body, $transferEncoding);
-		$response->body = $decoded['body'];
-
-		if (!empty($decoded['header'])) {
-			$response->headers = $this->_parseHeader($this->_buildHeader($response->headers) . $this->_buildHeader($decoded['header']));
-		}
-
-		if (!empty($response->headers)) {
-			$response->cookies = $this->parseCookies($response->headers);
-		}
-
-		return $response;
-	}
-
-/**
- * Generic function to decode a $body with a given $encoding. Returns either an array with the keys
- * 'body' and 'header' or false on failure.
- *
- * @param string $body A string continaing the body to decode.
- * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding.
- * @return mixed Array of response headers and body or false.
- */
-	protected function _decodeBody($body, $encoding = 'chunked') {
-		if (!is_string($body)) {
-			return false;
-		}
-		if (empty($encoding)) {
-			return array('body' => $body, 'header' => false);
-		}
-		$decodeMethod = '_decode'.Inflector::camelize(str_replace('-', '_', $encoding)) . 'Body';
-
-		if (!is_callable(array(&$this, $decodeMethod))) {
-			if (!$this->quirksMode) {
-				trigger_error(sprintf(__('HttpSocket::_decodeBody - Unknown encoding: %s. Activate quirks mode to surpress error.'), h($encoding)), E_USER_WARNING);
-			}
-			return array('body' => $body, 'header' => false);
-		}
-		return $this->{$decodeMethod}($body);
-	}
-
-/**
- * Decodes a chunked message $body and returns either an array with the keys 'body' and 'header' or false as
- * a result.
- *
- * @param string $body A string continaing the chunked body to decode.
- * @return mixed Array of response headers and body or false.
- * @throws Exception
- */
-	protected function _decodeChunkedBody($body) {
-		if (!is_string($body)) {
-			return false;
-		}
-
-		$decodedBody = null;
-		$chunkLength = null;
-
-		while ($chunkLength !== 0) {
-			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
-				if (!$this->quirksMode) {
-					throw new Exception(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk. Activate quirks mode to do this.'));
-				}
-				break;
-			}
-
-			$chunkSize = 0;
-			$hexLength = 0;
-			$chunkExtensionName = '';
-			$chunkExtensionValue = '';
-			if (isset($match[0])) {
-				$chunkSize = $match[0];
-			}
-			if (isset($match[1])) {
-				$hexLength = $match[1];
-			}
-			if (isset($match[2])) {
-				$chunkExtensionName = $match[2];
-			}
-			if (isset($match[3])) {
-				$chunkExtensionValue = $match[3];
-			}
-
-			$body = substr($body, strlen($chunkSize));
-			$chunkLength = hexdec($hexLength);
-			$chunk = substr($body, 0, $chunkLength);
-			if (!empty($chunkExtensionName)) {
-				/**
-				 * @todo See if there are popular chunk extensions we should implement
-				 */
-			}
-			$decodedBody .= $chunk;
-			if ($chunkLength !== 0) {
-				$body = substr($body, $chunkLength + strlen("\r\n"));
-			}
-		}
-
-		$entityHeader = false;
-		if (!empty($body)) {
-			$entityHeader = $this->_parseHeader($body);
-		}
-		return array('body' => $decodedBody, 'header' => $entityHeader);
 	}
 
 /**
@@ -1002,7 +871,7 @@ class HttpSocket extends CakeSocket {
 			return false;
 		}
 
-		preg_match_all("/(.+):(.+)(?:(?<![\t ])" . $this->lineBreak . "|\$)/Uis", $header, $matches, PREG_SET_ORDER);
+		preg_match_all("/(.+):(.+)(?:(?<![\t ])\r\n|\$)/Uis", $header, $matches, PREG_SET_ORDER);
 
 		$header = array();
 		foreach ($matches as $match) {
@@ -1020,47 +889,6 @@ class HttpSocket extends CakeSocket {
 			}
 		}
 		return $header;
-	}
-
-/**
- * Parses cookies in response headers.
- *
- * @param array $header Header array containing one ore more 'Set-Cookie' headers.
- * @return mixed Either false on no cookies, or an array of cookies recieved.
- * @todo Make this 100% RFC 2965 confirm
- */
-	public function parseCookies($header) {
-		if (!isset($header['Set-Cookie'])) {
-			return false;
-		}
-
-		$cookies = array();
-		foreach ((array)$header['Set-Cookie'] as $cookie) {
-			if (strpos($cookie, '";"') !== false) {
-				$cookie = str_replace('";"', "{__cookie_replace__}", $cookie);
-				$parts = str_replace("{__cookie_replace__}", '";"', explode(';', $cookie));
-			} else {
-				$parts = preg_split('/\;[ \t]*/', $cookie);
-			}
-
-			list($name, $value) = explode('=', array_shift($parts), 2);
-			$cookies[$name] = compact('value');
-
-			foreach ($parts as $part) {
-				if (strpos($part, '=') !== false) {
-					list($key, $value) = explode('=', $part);
-				} else {
-					$key = $part;
-					$value = true;
-				}
-
-				$key = strtolower($key);
-				if (!isset($cookies[$name][$key])) {
-					$cookies[$name][$key] = $value;
-				}
-			}
-		}
-		return $cookies;
 	}
 
 /**

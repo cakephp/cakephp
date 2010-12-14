@@ -20,6 +20,37 @@
 App::import('Core', 'HttpResponse');
 
 /**
+ * TestHttpResponse class
+ *
+ * @package       cake
+ * @subpackage    cake.tests.cases.libs
+ */
+class TestHttpResponse extends HttpResponse {
+
+/**
+ * Convenience method for testing protected method
+ *
+ * @param string $body A string continaing the body to decode
+ * @param mixed $encoding Can be false in case no encoding is being used, or a string representing the encoding
+ * @return mixed Array or false
+ */
+	public function decodeBody($body, $encoding = 'chunked') {
+		return parent::_decodeBody($body, $encoding);
+	}
+
+/**
+ * Convenience method for testing protected method
+ *
+ * @param string $body A string continaing the chunked body to decode
+ * @return mixed Array or false
+ */
+	public function decodeChunkedBody($body) {
+		return parent::_decodeChunkedBody($body);
+	}
+
+}
+
+/**
  * HttpResponseTest class
  *
  * @package       cake
@@ -32,7 +63,7 @@ class HttpResponseTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
-		$this->HttpResponse = new HttpResponse();
+		$this->HttpResponse = new TestHttpResponse();
 	}
 
 /**
@@ -100,6 +131,209 @@ class HttpResponseTest extends CakeTestCase {
 		$this->assertFalse($this->HttpResponse->isOk());
 		$this->HttpResponse->code = 200;
 		$this->assertTrue($this->HttpResponse->isOk());
+	}
+
+/**
+ * testParseResponse method
+ *
+ * @return void
+ */
+	public function testParseResponse() {
+		$tests = array(
+			'simple-request' => array(
+				'response' => array(
+					'status-line' => "HTTP/1.x 200 OK\r\n",
+					'header' => "Date: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\n",
+					'body' => "<h1>Hello World</h1>\r\n<p>It's good to be html</p>"
+				),
+				'expectations' => array(
+					'httpVersion' => 'HTTP/1.x',
+					'code' => 200,
+					'reasonPhrase' => 'OK',
+					'headers' => array('Date' => 'Mon, 16 Apr 2007 04:14:16 GMT', 'Server' => 'CakeHttp Server'),
+					'body' => "<h1>Hello World</h1>\r\n<p>It's good to be html</p>"
+				)
+			),
+			'no-header' => array(
+				'response' => array(
+					'status-line' => "HTTP/1.x 404 OK\r\n",
+					'header' => null
+				),
+				'expectations' => array(
+					'code' => 404,
+					'headers' => array()
+				)
+			)
+		);
+
+		$testResponse = array();
+		$expectations = array();
+
+		foreach ($tests as $name => $test) {
+			$testResponse = array_merge($testResponse, $test['response']);
+			$testResponse['response'] = $testResponse['status-line'] . $testResponse['header'] . "\r\n" . $testResponse['body'];
+			$this->HttpResponse->parseResponse($testResponse['response']);
+			$expectations = array_merge($expectations, $test['expectations']);
+
+			foreach ($expectations as $property => $expectedVal) {
+				$this->assertEquals($this->HttpResponse->{$property}, $expectedVal, 'Test "' . $name . '": response.' . $property . ' - %s');
+			}
+
+			foreach (array('status-line', 'header', 'body', 'response') as $field) {
+				$this->assertEquals($this->HttpResponse['raw'][$field], $testResponse[$field], 'Test response.raw.' . $field . ': %s');
+			}
+		}
+	}
+
+/**
+ * data provider function for testInvalidParseResponseData
+ *
+ * @return array
+ */
+	public static function invalidParseResponseDataProvider() {
+		return array(
+			array(array('foo' => 'bar')),
+			array(true),
+			array("HTTP Foo\r\nBar: La"),
+			array('HTTP/1.1 TEST ERROR')
+		);
+	}
+
+/**
+ * testInvalidParseResponseData
+ *
+ * @dataProvider invalidParseResponseDataProvider
+ * @expectedException Exception
+ * return void
+ */
+	public function testInvalidParseResponseData($value) {
+		$this->HttpResponse->parseResponse($value);
+	}
+
+/**
+ * testDecodeBody method
+ *
+ * @return void
+ */
+	public function testDecodeBody() {
+		$r = $this->HttpResponse->decodeBody(true);
+		$this->assertEquals($r, false);
+
+		$r = $this->HttpResponse->decodeBody('Foobar', false);
+		$this->assertEquals($r, array('body' => 'Foobar', 'header' => false));
+
+		$encoding = 'chunked';
+		$sample = array(
+			'encoded' => "19\r\nThis is a chunked message\r\n0\r\n",
+			'decoded' => array('body' => "This is a chunked message", 'header' => false)
+		);
+
+		$r = $this->HttpResponse->decodeBody($sample['encoded'], $encoding);
+		$this->assertEquals($r, $sample['decoded']);
+	}
+
+/**
+ * testDecodeFooCoded
+ *
+ * @return void
+ */
+	public function testDecodeFooCoded() {
+		$r = $this->HttpResponse->decodeBody(true);
+		$this->assertEquals($r, false);
+
+		$r = $this->HttpResponse->decodeBody('Foobar', false);
+		$this->assertEquals($r, array('body' => 'Foobar', 'header' => false));
+
+		$encoding = 'foo-bar';
+		$sample = array(
+			'encoded' => '!Foobar!',
+			'decoded' => array('body' => '!Foobar!', 'header' => false),
+		);
+
+		$r = $this->HttpResponse->decodeBody($sample['encoded'], $encoding);
+		$this->assertEquals($r, $sample['decoded']);
+	}
+
+/**
+ * testDecodeChunkedBody method
+ *
+ * @return void
+ */
+	public function testDecodeChunkedBody() {
+		$r = $this->HttpResponse->decodeChunkedBody(true);
+		$this->assertEquals($r, false);
+
+		$encoded = "19\r\nThis is a chunked message\r\n0\r\n";
+		$decoded = "This is a chunked message";
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r['body'], $decoded);
+		$this->assertEquals($r['header'], false);
+
+		$encoded = "19 \r\nThis is a chunked message\r\n0\r\n";
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r['body'], $decoded);
+
+		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n0\r\n";
+		$decoded = "This is a chunked message\nThat is cool\n";
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r['body'], $decoded);
+		$this->assertEquals($r['header'], false);
+
+		$encoded = "19\r\nThis is a chunked message\r\nE;foo-chunk=5\r\n\nThat is cool\n\r\n0\r\n";
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r['body'], $decoded);
+		$this->assertEquals($r['header'], false);
+
+		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n0\r\nfoo-header: bar\r\ncake: PHP\r\n\r\n";
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r['body'], $decoded);
+		$this->assertEquals($r['header'], array('foo-header' => 'bar', 'cake' => 'PHP'));
+
+		$encoded = "19\r\nThis is a chunked message\r\nE\r\n\nThat is cool\n\r\n";
+		$this->expectError();
+		$r = $this->HttpResponse->decodeChunkedBody($encoded);
+		$this->assertEquals($r, false);
+	}
+
+/**
+ * testParseCookies method
+ *
+ * @return void
+ */
+	public function testParseCookies() {
+		$header = array(
+			'Set-Cookie' => array(
+				'foo=bar',
+				'people=jim,jack,johnny";";Path=/accounts',
+				'google=not=nice'
+			),
+			'Transfer-Encoding' => 'chunked',
+			'Date' => 'Sun, 18 Nov 2007 18:57:42 GMT',
+		);
+		$cookies = $this->HttpResponse->parseCookies($header);
+		$expected = array(
+			'foo' => array(
+				'value' => 'bar'
+			),
+			'people' => array(
+				'value' => 'jim,jack,johnny";"',
+				'path' => '/accounts',
+			),
+			'google' => array(
+				'value' => 'not=nice',
+			)
+		);
+		$this->assertEqual($cookies, $expected);
+
+		$header['Set-Cookie'][] = 'cakephp=great; Secure';
+		$expected['cakephp'] = array('value' => 'great', 'secure' => true);
+		$cookies = $this->HttpResponse->parseCookies($header);
+		$this->assertEqual($cookies, $expected);
+
+		$header['Set-Cookie'] = 'foo=bar';
+		unset($expected['people'], $expected['cakephp'], $expected['google']);
+		$cookies = $this->HttpResponse->parseCookies($header);
+		$this->assertEqual($cookies, $expected);
 	}
 
 /**
