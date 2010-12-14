@@ -122,13 +122,13 @@ class HttpResponseTest extends CakeTestCase {
 		$this->HttpResponse->body = 'This is a test!';
 		$this->HttpResponse->raw = "HTTP/1.1 200 OK\r\nServer: CakePHP\r\nContEnt-Type: text/plain\r\n\r\nThis is a test!";
 
-		$expected1 = 'HTTP/1.1 200 OK';
+		$expected1 = "HTTP/1.1 200 OK\r\n";
 		$this->assertEqual($this->HttpResponse['raw']['status-line'], $expected1);
-		$expected2 = "Server: CakePHP\r\nContEnt-Type: text/plain";
+		$expected2 = "Server: CakePHP\r\nContEnt-Type: text/plain\r\n";
 		$this->assertEqual($this->HttpResponse['raw']['header'], $expected2);
 		$expected3 = 'This is a test!';
 		$this->assertEqual($this->HttpResponse['raw']['body'], $expected3);
-		$expected = $expected1 . "\r\n" . $expected2 . "\r\n\r\n" . $expected3;
+		$expected = $expected1 . $expected2 . "\r\n" . $expected3;
 		$this->assertEqual($this->HttpResponse['raw']['response'], $expected);
 
 		$expected = 'HTTP/1.1';
@@ -152,6 +152,9 @@ class HttpResponseTest extends CakeTestCase {
 			'bar' => array('value' => 'foo')
 		);
 		$this->assertEqual($this->HttpResponse['cookies'], $expected);
+
+		$this->HttpResponse->raw = "HTTP/1.1 200 OK\r\n\r\nThis is a test!";
+		$this->assertIdentical($this->HttpResponse['raw']['header'], null);
 	}
 
 }

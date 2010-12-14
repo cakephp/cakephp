@@ -125,9 +125,14 @@ class HttpResponse implements ArrayAccess {
 		switch ($offset) {
 			case 'raw':
 				$firstLineLength = strpos($this->raw, "\r\n") + 2;
+				if ($this->raw[$firstLineLength] === "\r") {
+					$header = null;
+				} else {
+					$header = substr($this->raw, $firstLineLength, strpos($this->raw, "\r\n\r\n") - $firstLineLength) . "\r\n";
+				}
 				return array(
-					'status-line' => $this->httpVersion . ' ' . $this->code . ' ' . $this->reasonPhrase,
-					'header' => substr($this->raw, $firstLineLength, strpos($this->raw, "\r\n\r\n") - $firstLineLength),
+					'status-line' => $this->httpVersion . ' ' . $this->code . ' ' . $this->reasonPhrase . "\r\n",
+					'header' => $header,
 					'body' => $this->body,
 					'response' => $this->raw
 				);
