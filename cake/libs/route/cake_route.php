@@ -343,7 +343,13 @@ class CakeRoute {
 		if (!empty($params['named']) && is_array($params['named'])) {
 			$named = array();
 			foreach ($params['named'] as $key => $value) {
-				$named[] = $key . $separator . $value;
+				if (is_array($value)) {
+					foreach ($value as $namedKey => $namedValue) {
+						$named[] = $key . "[$namedKey]" . $separator . $namedValue;
+					}
+				} else {
+					$named[] = $key . $separator . $value;
+				}
 			}
 			$params['pass'] = $params['pass'] . '/' . implode('/', $named);
 		}

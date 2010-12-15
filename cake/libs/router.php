@@ -937,8 +937,15 @@ class Router {
 		}
 
 		if (!empty($named)) {
-			foreach ($named as $name => $value) {
-				$output .= '/' . $name . self::$named['separator'] . $value;
+			foreach ($named as $name => $value) {				
+				if (is_array($value)) {
+					$flattend = Set::flatten($value, '][');
+					foreach ($flattend as $namedKey => $namedValue) {
+						$output .= '/' . $name . "[$namedKey]" . self::$named['separator'] . $namedValue;
+					}
+				} else {
+					$output .= '/' . $name . self::$named['separator'] . $value;
+				}
 			}
 		}
 		return $output;
@@ -1202,7 +1209,22 @@ class Router {
 				if ($passIt) {
 					$pass[] = $param;
 				} else {
-					$named[$key] = $val;
+					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
+						$matches = array_reverse($matches);
+						$key = array_shift(explode('[', $key));
+						$arr = $val;
+						foreach ($matches as $match) {
+							if (empty($match[1])) {
+								$arr = array($arr);
+							} else {
+								$arr = array(
+									$match[1] => $arr
+								);
+							}
+						}
+						$val = $arr;
+					}
+					$named = array_merge_recursive($named, array($key => $val));
 				}
 			} else {
 				$pass[] = $param;
