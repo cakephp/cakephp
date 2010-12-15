@@ -25,13 +25,9 @@
 	}
 
 	public function <?php echo $admin ?>view($id = null) {
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName) ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
 		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->read(null, $id));
 	}
@@ -72,15 +68,11 @@
 
 <?php $compact = array(); ?>
 	public function <?php echo $admin; ?>edit($id = null) {
-		if (!$id && empty($this->request->data)) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action' => 'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this->request->is('post')) {
+		if ($this->request->is('post') || $this->request->is('put')) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved'));
@@ -93,8 +85,7 @@
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php endif; ?>
 			}
-		}
-		if (!$this->request->is('post')) {
+		} else {
 			$this->data = $this-><?php echo $currentModelName; ?>->read(null, $id);
 		}
 <?php
@@ -118,15 +109,11 @@
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
-		if (!$id) {
-<?php if ($wannaUseSession): ?>
-			$this->Session->setFlash(__('Invalid id for <?php echo strtolower($singularHumanName); ?>'));
-			$this->redirect(array('action'=>'index'));
-<?php else: ?>
-			$this->flash(__('Invalid <?php echo strtolower($singularHumanName); ?>'), array('action' => 'index'));
-<?php endif; ?>
+		$this-><?php echo $currentModelName; ?>->id = $id;
+		if (!$this-><?php echo $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this-><?php echo $currentModelName; ?>->delete($id)) {
+		if ($this-><?php echo $currentModelName; ?>->delete()) {
 <?php if ($wannaUseSession): ?>
 			$this->Session->setFlash(__('<?php echo ucfirst(strtolower($singularHumanName)); ?> deleted'));
 			$this->redirect(array('action'=>'index'));

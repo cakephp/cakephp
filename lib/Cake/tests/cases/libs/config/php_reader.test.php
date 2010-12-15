@@ -44,7 +44,7 @@ class PhpReaderTest extends CakeTestCase {
 /**
  * Test an exception is thrown by reading files that don't exist.
  *
- * @expectedException RuntimeException
+ * @expectedException ConfigureException
  * @return void
  */
 	function testReadWithNonExistantFile() {
@@ -66,7 +66,7 @@ class PhpReaderTest extends CakeTestCase {
 /**
  * test reading keys with ../ doesn't work
  *
- * @expectedException InvalidArgumentException
+ * @expectedException ConfigureException
  * @return void
  */
 	function testReadWithDots() {

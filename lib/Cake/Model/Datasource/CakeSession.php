@@ -24,6 +24,7 @@
  */
 
 App::uses('Set', 'Utility');
+App::uses('Security', 'Utility');
 
 /**
  * Session class for Cake.
@@ -100,13 +101,6 @@ class CakeSession {
 	public static $sessionTime = false;
 
 /**
- * Keeps track of keys to watch for writes on
- *
- * @var array
- */
-	public static $watchKeys = array();
-
-/**
  * Current Session id
  *
  * @var string
@@ -149,14 +143,8 @@ class CakeSession {
 		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
-
-		if ($start === true) {
-			self::_setPath($base);
-			self::_setHost(env('HTTP_HOST'));
-		}
-		if (isset($_SESSION) || $start === true) {
-			self::start();
-		}
+		self::_setPath($base);
+		self::_setHost(env('HTTP_HOST'));
 	}
 
 /**
@@ -230,6 +218,9 @@ class CakeSession {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -262,9 +253,6 @@ class CakeSession {
  */
 	public static function delete($name) {
 		if (self::check($name)) {
-			if (in_array($name, self::$watchKeys)) {
-				trigger_error(__('Deleting session key {%s}', $name), E_USER_NOTICE);
-			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
@@ -373,6 +361,9 @@ class CakeSession {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (is_null($name)) {
 			return self::__returnSessionVars();
 		}
@@ -392,49 +383,13 @@ class CakeSession {
  * Returns all session variables.
  *
  * @return mixed Full $_SESSION array, or false on error.
- * @access private
  */
-	function __returnSessionVars() {
+	private static function __returnSessionVars() {
 		if (!empty($_SESSION)) {
 			return $_SESSION;
 		}
 		self::__setError(2, 'No Session vars set');
 		return false;
-	}
-
-/**
- * Tells Session to write a notification when a certain session path or subpath is written to
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function watch($var) {
-		if (empty($var)) {
-			return false;
-		}
-		if (!in_array($var, self::$watchKeys, true)) {
-			self::$watchKeys[] = $var;
-		}
-	}
-
-/**
- * Tells Session to stop watching a given key path
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function ignore($var) {
-		if (!in_array($var, self::$watchKeys)) {
-			debug("NOT");
-			return;
-		}
-		foreach (self::$watchKeys as $i => $key) {
-			if ($key == $var) {
-				unset(self::$watchKeys[$i]);
-				self::$watchKeys = array_values(self::$watchKeys);
-				return;
-			}
-		}
 	}
 
 /**
@@ -445,6 +400,9 @@ class CakeSession {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -453,9 +411,6 @@ class CakeSession {
 			$write = array($name => $value);
 		}
 		foreach ($write as $key => $val) {
-			if (in_array($key, self::$watchKeys)) {
-				trigger_error(__('Writing session key {%s}: %s', $key, Debugger::exportVar($val)), E_USER_NOTICE);
-			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
 				return false;
@@ -494,7 +449,7 @@ class CakeSession {
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
  *
  * @return void
- * @throws Exception Throws exceptions when ini_set() fails.
+ * @throws CakeSessionException Throws exceptions when ini_set() fails.
  */
 	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
@@ -526,7 +481,7 @@ class CakeSession {
 			if (!empty($sessionConfig['ini']) && is_array($sessionConfig['ini'])) {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
-						throw new Exception(sprintf(
+						throw new CakeSessionException(sprintf(
 							__('Unable to configure the session, setting %s failed.'),
 							$setting
 						));
@@ -561,13 +516,13 @@ class CakeSession {
 		list($plugin, $class) = pluginSplit($handler, true);
 		App::uses($class, $plugin . 'Model/Datasource/Session');
 		if (!class_exists($class)) {
-			throw new Exception(__('Could not load %s to handle the session.', $class));
+			throw new CakeSessionException(__('Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof CakeSessionHandlerInterface) {
 			return $handler;
 		}
-		throw new Exception(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
+		throw new CakeSessionException(__('Chosen SessionHandler does not implement CakeSessionHandlerInterface it cannot be used with an engine key.'));
 	}
 
 /**
@@ -670,6 +625,10 @@ class CakeSession {
  * @return void
  */
 	protected static function _checkValid() {
+		if (!self::started() && !self::start()) {
+			self::$valid = false;
+			return false;
+		}
 		if ($config = self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
 

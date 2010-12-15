@@ -110,7 +110,12 @@ class ErrorHandler {
 	public static function handleException(Exception $exception) {
 		$config = Configure::read('Exception');
 		if (!empty($config['log'])) {
-			CakeLog::write(LOG_ERR, '[' . get_class($exception) . '] ' . $exception->getMessage());
+			$message = sprintf("[%s] %s\n%s",
+				get_class($exception),
+				$exception->getMessage(),
+				$exception->getTraceAsString()
+			);
+			CakeLog::write(LOG_ERR, $message);
 		}
 		if ($config['renderer'] !== 'ExceptionRenderer') {
 			App::uses($config['renderer'], 'Error');

@@ -195,8 +195,8 @@ class FolderTest extends CakeTestCase {
 		$this->assertFalse($result);
 
 		$expected = $new . ' is a file';
-		$result = array_pop($Folder->errors());
-		$this->assertEqual($result, $expected);
+		$result = $Folder->errors();
+		$this->assertEqual($result[0], $expected);
 
 		$new = TMP . 'test_folder_new';
 		$result = $Folder->create($new);

@@ -102,8 +102,8 @@ class Dispatcher {
 			return;
 		}
 
-		$request = $this->parseParams($request, $additionalParams);
-		$controller = $this->_getController($request);
+		$this->request = $this->parseParams($request, $additionalParams);
+		$controller = $this->_getController($this->request);
 
 		if (!is_object($controller)) {
 			Router::setRequestInfo($request);
@@ -201,7 +201,7 @@ class Dispatcher {
 		if (count(Router::$routes) > 0) {
 			$namedExpressions = Router::getNamedExpressions();
 			extract($namedExpressions);
-			include CONFIGS . 'routes.php';
+			$this->__loadRoutes();
 		}
 
 		$params = Router::parse($request->url);
@@ -251,6 +251,16 @@ class Dispatcher {
 			}
 		}
 		return false;
+	}
+
+/**
+ * Loads route configuration
+ *
+ * @return void
+ * @access protected
+ */
+	protected function __loadRoutes() {
+		include CONFIGS . 'routes.php';
 	}
 
 /**
@@ -315,7 +325,8 @@ class Dispatcher {
 			$this->_stop();
 		}
 		$controller = null;
-		$ext = array_pop(explode('.', $url));
+		$pathSegments = explode('.', $url);
+		$ext = array_pop($pathSegments);
 		$parts = explode('/', $url);
 		$assetFile = null;
 

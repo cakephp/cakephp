@@ -448,13 +448,14 @@ class CakeResponse {
  *
  * @param integer $code
  * @return integer current status code
+ * @throws CakeException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if (is_null($code)) {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new OutOfRangeException(__('Unknown status code'));
+			throw new CakeException(__('Unknown status code'));
 		}
 		return $this->_status = $code;
 	}

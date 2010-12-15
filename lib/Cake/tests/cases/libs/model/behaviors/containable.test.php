@@ -37,7 +37,8 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @access public
  */
 	public $fixtures = array(
-		'core.article', 'core.article_featured', 'core.article_featureds_tags', 'core.articles_tag', 'core.attachment', 'core.category',
+		'core.article', 'core.article_featured', 'core.article_featureds_tags', 
+		'core.articles_tag', 'core.attachment', 'core.category',
 		'core.comment', 'core.featured', 'core.tag', 'core.user'
 	);
 
@@ -45,10 +46,11 @@ class ContainableBehaviorTest extends CakeTestCase {
  * Method executed before each test
  *
  */
-	public function startTest() {
-		$this->User =& ClassRegistry::init('User');
-		$this->Article =& ClassRegistry::init('Article');
-		$this->Tag =& ClassRegistry::init('Tag');
+	public function setUp() {
+		parent::setUp();
+		$this->User = ClassRegistry::init('User');
+		$this->Article = ClassRegistry::init('Article');
+		$this->Tag = ClassRegistry::init('Tag');
 
 		$this->User->bindModel(array(
 			'hasMany' => array('Article', 'ArticleFeatured', 'Comment')
@@ -69,12 +71,11 @@ class ContainableBehaviorTest extends CakeTestCase {
  * Method executed after each test
  *
  */
-	public function endTest() {
+	public function tearDown() {
 		unset($this->Article);
 		unset($this->User);
 		unset($this->Tag);
-
-		ClassRegistry::flush();
+		parent::tearDown();
 	}
 
 /**
@@ -118,15 +119,23 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$r = $this->__containments($this->Article, array('Comment' => array('limit' => 1)));
 		$this->assertEqual(array_keys($r), array('Comment', 'Article'));
-		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array()));
+		$result = Set::extract('/Comment/keep', $r);
+		$this->assertEqual(array_shift($result), array('keep' => array()));
 		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
-		$this->assertEqual(array_shift(Set::extract('/Article/keep/Comment/.', $r)), array('limit' => 1));
+		$result = Set::extract('/Article/keep/Comment/.', $r);
+		$this->assertEqual(array_shift($result), array('limit' => 1));
 
 		$r = $this->__containments($this->Article, array('Comment.User'));
 		$this->assertEqual(array_keys($r), array('User', 'Comment', 'Article'));
-		$this->assertEqual(array_shift(Set::extract('/User/keep', $r)), array('keep' => array()));
-		$this->assertEqual(array_shift(Set::extract('/Comment/keep', $r)), array('keep' => array('User' => array())));
-		$this->assertEqual(array_shift(Set::extract('/Article/keep', $r)), array('keep' => array('Comment' => array())));
+
+		$result = Set::extract('/User/keep', $r);
+		$this->assertEqual(array_shift($result), array('keep' => array()));
+
+		$result = Set::extract('/Comment/keep', $r);
+		$this->assertEqual(array_shift($result), array('keep' => array('User' => array())));
+		
+		$result = Set::extract('/Article/keep', $r);
+		$this->assertEqual(array_shift($result), array('keep' => array('Comment' => array())));
 
 		$r = $this->__containments($this->Tag, array('Article' => array('User' => array('Comment' => array(
 			'Attachment' => array('conditions' => array('Attachment.id >' => 1))
@@ -3191,10 +3200,11 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	function testPaginate() {
-		$Controller = new Controller();
+		App::import('Core', 'Controller');
+		$Controller = new Controller($this->getMock('CakeRequest'));
 		$Controller->uses = array('Article');
 		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
+		$Controller->request->params['url'] = array();
 		$Controller->constructClasses();
 
 		$Controller->paginate = array('Article' => array('fields' => array('title'), 'contain' => array('User(user)')));
@@ -3398,6 +3408,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'conditions' => array('Article.id' => 1),
 			'contain' => array('ArticlesTag')
 		));
+
 		$expected = array('Article', 'ArticlesTag');
 		$this->assertTrue(!empty($result));
 		$this->assertEqual('First Article', $result['Article']['title']);
@@ -3607,7 +3618,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			return;
 		}
 
-		$db =& ConnectionManager::getDataSource('test2');
+		$db = ConnectionManager::getDataSource('test2');
 		$this->_fixtures[$this->_fixtureClassMap['User']]->create($db);
 		$this->_fixtures[$this->_fixtureClassMap['User']]->insert($db);
 
@@ -3643,7 +3654,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$result = $this->Article->find('all', array(
 			'conditions' => array('Article.id' => 999999999)
 		));
-		$this->assertEqual($result, array(), 'Should be empty.');
+		$this->assertEmpty($result, 'Should be empty.');
 	}
 
 /**

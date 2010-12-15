@@ -17,6 +17,8 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
+
+App::uses('View', 'View');
 App::uses('NumberHelper', 'View/Helper');
 
 /**
@@ -320,6 +322,14 @@ class NumberHelperTest extends CakeTestCase {
 
 		$result = $this->Number->currency($value, 'GBP', array('places' => 0));
 		$expected = '&#163;1,234,568';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->currency('1234567.8912345', null, array('before' => 'GBP', 'places' => 3));
+		$expected = 'GBP1,234,567.891';
+		$this->assertEqual($expected, $result);
+
+		$result = $this->Number->currency('650.120001', null, array('before' => 'GBP', 'places' => 4));
+		$expected = 'GBP650.1200';
 		$this->assertEqual($expected, $result);
 
 		$result = $this->Number->currency($value, 'GBP', array('escape' => true));

@@ -331,7 +331,13 @@ class Model extends Object {
  * @var array
  * @access private
  */
-	private $__backAssociation = array();
+	public $__backAssociation = array();
+
+	public $__backInnerAssociation = array();
+	
+	public $__backOriginalAssociation = array();
+	
+	public $__backContainableAssociation = array();
 
 /**
  * The ID of the model record that was last inserted.
@@ -1315,8 +1321,8 @@ class Model extends Object {
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
-			$result = $this->Behaviors->trigger($this, 'beforeSave', array($options), array(
-				'break' => true, 'breakOn' => false
+			$result = $this->Behaviors->trigger('beforeSave', array(&$this, $options), array(
+				'break' => true, 'breakOn' => array(false, null)
 			));
 			if (!$result || !$this->beforeSave($options)) {
 				$this->whitelist = $_whitelist;
@@ -1399,7 +1405,7 @@ class Model extends Object {
 				$success = $this->data;
 			}
 			if ($options['callbacks'] === true || $options['callbacks'] === 'after') {
-				$this->Behaviors->trigger($this, 'afterSave', array($created, $options));
+				$this->Behaviors->trigger('afterSave', array(&$this, $created, $options));
 				$this->afterSave($created);
 			}
 			if (!empty($this->data)) {
@@ -1845,13 +1851,15 @@ class Model extends Object {
 		$id = $this->id;
 
 		if ($this->beforeDelete($cascade)) {
-			$filters = $this->Behaviors->trigger($this, 'beforeDelete', array($cascade), array(
-				'break' => true, 'breakOn' => false
-			));
+			$filters = $this->Behaviors->trigger(
+				'beforeDelete',
+				array(&$this, $cascade),
+				array('break' => true, 'breakOn' => array(false, null))
+			);
 			if (!$filters || !$this->exists()) {
 				return false;
 			}
-			$db =& ConnectionManager::getDataSource($this->useDbConfig);
+			$db = ConnectionManager::getDataSource($this->useDbConfig);
 
 			$this->_deleteDependent($id, $cascade);
 			$this->_deleteLinks($id);
@@ -1868,7 +1876,7 @@ class Model extends Object {
 				if (!empty($this->belongsTo)) {
 					$this->updateCounterCache($keys[$this->alias]);
 				}
-				$this->Behaviors->trigger($this, 'afterDelete');
+				$this->Behaviors->trigger('afterDelete', array(&$this));
 				$this->afterDelete();
 				$this->_clearCache();
 				$this->id = false;
@@ -2132,9 +2140,12 @@ class Model extends Object {
 		$query['order'] = array($query['order']);
 
 		if ($query['callbacks'] === true || $query['callbacks'] === 'before') {
-			$return = $this->Behaviors->trigger($this, 'beforeFind', array($query), array(
-				'break' => true, 'breakOn' => false, 'modParams' => true
-			));
+			$return = $this->Behaviors->trigger(
+				'beforeFind', 
+				array(&$this, $query),
+				array('break' => true, 'breakOn' => array(false, null), 'modParams' => 1)
+			);
+
 			$query = (is_array($return)) ? $return : $query;
 
 			if ($return === false) {
@@ -2397,7 +2408,11 @@ class Model extends Object {
  * @access private
  */
 	function __filterResults($results, $primary = true) {
-		$return = $this->Behaviors->trigger($this, 'afterFind', array($results, $primary), array('modParams' => true));
+		$return = $this->Behaviors->trigger(
+			'afterFind',
+			array(&$this, $results, $primary),
+			array('modParams' => 1)
+		);
 		if ($return !== true) {
 			$results = $return;
 		}
@@ -2522,9 +2537,8 @@ class Model extends Object {
 	function invalidFields($options = array()) {
 		if (
 			!$this->Behaviors->trigger(
-				$this,
 				'beforeValidate',
-				array($options),
+				array(&$this, $options),
 				array('break' => true, 'breakOn' => false)
 			) ||
 			$this->beforeValidate($options) === false

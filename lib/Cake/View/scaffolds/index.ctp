@@ -33,33 +33,37 @@ foreach (${$pluralVar} as ${$singularVar}):
 	if ($i++ % 2 == 0) {
 		$class = ' class="altrow"';
 	}
-echo "\n";
-	echo "\t<tr{$class}>\n";
+	echo "<tr{$class}>";
 		foreach ($scaffoldFields as $_field) {
 			$isKey = false;
 			if (!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $_alias => $_details) {
 					if ($_field === $_details['foreignKey']) {
 						$isKey = true;
-						echo "\t\t<td>\n\t\t\t" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "\n\t\t</td>\n";
+						echo "<td>" . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . "</td>";
 						break;
 					}
 				}
 			}
 			if ($isKey !== true) {
-				echo "\t\t<td>" . h(${$singularVar}[$modelClass][$_field]) . "</td>\n";
+				echo "<td>" . h(${$singularVar}[$modelClass][$_field]) . "</td>";
 			}
 		}
 
-		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t" . $this->Html->link(__('View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
-		echo "\t\t\t" . $this->Html->link(__('Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey])) . "\n";
-		echo "\t\t\t" . $this->Html->link(__('Delete'), array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), null, __('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]) . "\n";
-		echo "\t\t</td>\n";
-	echo "\t</tr>\n";
+		echo '<td class="actions">';
+		echo $this->Html->link(__('View'), array('action' => 'view', ${$singularVar}[$modelClass][$primaryKey]));
+		echo $this->Html->link(__('Edit'), array('action' => 'edit', ${$singularVar}[$modelClass][$primaryKey]));
+		echo $this->Form->postLink(
+			__('Delete'), 
+			array('action' => 'delete', ${$singularVar}[$modelClass][$primaryKey]), 
+			null,
+			__('Are you sure you want to delete').' #' . ${$singularVar}[$modelClass][$primaryKey]
+		);
+		echo '</td>';
+	echo '</tr>';
 
 endforeach;
-echo "\n";
+
 ?>
 </table>
 	<p><?php
@@ -68,9 +72,9 @@ echo "\n";
 	));
 	?></p>
 	<div class="paging">
-	<?php echo "\t" . $this->Paginator->prev('<< ' . __('previous'), array(), null, array('class' => 'disabled')) . "\n";?>
-	 | <?php echo $this->Paginator->numbers() . "\n"?>
-	<?php echo "\t ". $this->Paginator->next(__('next') .' >>', array(), null, array('class' => 'disabled')) . "\n";?>
+	<?php echo $this->Paginator->prev('<< ' . __('previous'), array(), null, array('class' => 'disabled')); ?>
+	 | <?php echo $this->Paginator->numbers(); ?>
+	<?php echo $this->Paginator->next(__('next') .' >>', array(), null, array('class' => 'disabled')); ?>
 	</div>
 </div>
 <div class="actions">
@@ -82,8 +86,8 @@ echo "\n";
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
-					echo "\t\t<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>\n";
-					echo "\t\t<li>" . $this->Html->link(__('New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>\n";
+					echo "<li>" . $this->Html->link(__('List %s', Inflector::humanize($_details['controller'])), array('controller' => $_details['controller'], 'action' => 'index')) . "</li>";
+					echo "<li>" . $this->Html->link(__('New %s', Inflector::humanize(Inflector::underscore($_alias))), array('controller' => $_details['controller'], 'action' => 'add')) . "</li>";
 					$done[] = $_details['controller'];
 				}
 			}

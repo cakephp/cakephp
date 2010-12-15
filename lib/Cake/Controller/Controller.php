@@ -95,26 +95,6 @@ class Controller extends Object {
 	protected $_responseClass = 'CakeResponse';
 
 /**
- * Holds pagination defaults for controller actions. The keys that can be included
- * in this array are: 'conditions', 'fields', 'order', 'limit', 'page', and 'recursive',
- * similar to the keys in the second parameter of Model::find().
- *
- * Pagination defaults can also be supplied in a model-by-model basis by using
- * the name of the model as a key for a pagination array:
- *
- * {{{
- * public $paginate = array(
- * 		'Post' => array(...),
- * 		'Comment' => array(...)
- * 	);
- * }}}
- *
- * @var array
- * @link http://book.cakephp.org/view/1231/Pagination
- */
-	public $paginate = array('limit' => 20, 'page' => 1, 'maxLimit' => 100);
-
-/**
  * The name of the views subfolder containing views for this controller.
  *
  * @var string
@@ -315,7 +295,7 @@ class Controller extends Object {
 		$this->Components = new ComponentCollection();
 
 		if ($request instanceof CakeRequest) {
-			$this->_setRequest($request);
+			$this->setRequest($request);
 		}
 		$this->getResponse();
 		parent::__construct();
@@ -356,6 +336,8 @@ class Controller extends Object {
 				return isset($this->request->params['action']) ? $this->request->params['action'] : '';
 			case 'params':
 				return $this->request;
+			case 'paginate':
+				return $this->Components->load('Paginator')->settings;
 		}
 		return null;
 	}
@@ -376,6 +358,8 @@ class Controller extends Object {
 				return $this->request->params['action'] = $value;
 			case 'params':
 				return $this->request->params = $value;
+			case 'paginate':
+				return $this->Components->load('Paginator')->settings = $value;
 		}
 		return $this->{$name} = $value;
 	}
@@ -387,7 +371,7 @@ class Controller extends Object {
  * @param CakeRequest $request
  * @return void
  */
-	protected function _setRequest(CakeRequest $request) {
+	public function setRequest(CakeRequest $request) {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 
@@ -434,17 +418,23 @@ class Controller extends Object {
 					$this->uses = array_flip($this->uses);
 					array_unshift($this->uses, $plugin . $this->modelClass);
 				}
-			} elseif ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), 'AppController', false);
+			} elseif (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
 			$this->_mergeVars($merge, 'AppController', true);
 		}
 
 		if ($pluginController && $pluginName != null) {
 			$merge = array('components', 'helpers');
-
-			if ($this->uses !== null || $this->uses !== false) {
-				$this->_mergeVars(array('uses'), $pluginController, false);
+			$appVars = get_class_vars($pluginController);
+			if (
+				($this->uses !== null || $this->uses !== false) && 
+				is_array($this->uses) && !empty($appVars['uses'])
+			) {
+				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
 			$this->_mergeVars($merge, $pluginController);
 		}
@@ -948,201 +938,10 @@ class Controller extends Object {
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @link http://book.cakephp.org/view/1232/Controller-Setup
+ * @deprecated Use PaginatorComponent instead
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
-		if (is_array($object)) {
-			$whitelist = $scope;
-			$scope = $object;
-			$object = null;
-		}
-		$assoc = null;
-
-		if (is_string($object)) {
-			$assoc = null;
-			if (strpos($object, '.')  !== false) {
-				list($object, $assoc) = pluginSplit($object);
-			}
-
-			if ($assoc && isset($this->{$object}->{$assoc})) {
-				$object = $this->{$object}->{$assoc};
-			} elseif (
-				$assoc && isset($this->{$this->modelClass}) &&
-				isset($this->{$this->modelClass}->{$assoc}
-			)) {
-				$object = $this->{$this->modelClass}->{$assoc};
-			} elseif (isset($this->{$object})) {
-				$object = $this->{$object};
-			} elseif (
-				isset($this->{$this->modelClass}) && isset($this->{$this->modelClass}->{$object}
-			)) {
-				$object = $this->{$this->modelClass}->{$object};
-			}
-		} elseif (empty($object) || $object === null) {
-			if (isset($this->{$this->modelClass})) {
-				$object = $this->{$this->modelClass};
-			} else {
-				$className = null;
-				$name = $this->uses[0];
-				if (strpos($this->uses[0], '.') !== false) {
-					list($name, $className) = explode('.', $this->uses[0]);
-				}
-				if ($className) {
-					$object = $this->{$className};
-				} else {
-					$object = $this->{$name};
-				}
-			}
-		}
-
-		if (!is_object($object)) {
-			trigger_error(sprintf(
-				__('Controller::paginate() - can\'t find model %1$s in controller %2$sController'), $object, $this->name
-			), E_USER_WARNING);
-			return array();
-		}
-		$options = array_merge($this->request->params, $this->request->query, $this->passedArgs);
-
-		if (isset($this->paginate[$object->alias])) {
-			$defaults = $this->paginate[$object->alias];
-		} else {
-			$defaults = $this->paginate;
-		}
-
-		if (isset($options['show'])) {
-			$options['limit'] = $options['show'];
-		}
-
-		if (isset($options['sort'])) {
-			$direction = null;
-			if (isset($options['direction'])) {
-				$direction = strtolower($options['direction']);
-			}
-			if ($direction != 'asc' && $direction != 'desc') {
-				$direction = 'asc';
-			}
-			$options['order'] = array($options['sort'] => $direction);
-		}
-
-		if (!empty($options['order']) && is_array($options['order'])) {
-			$alias = $object->alias ;
-			$key = $field = key($options['order']);
-
-			if (strpos($key, '.') !== false) {
-				list($alias, $field) = explode('.', $key);
-			}
-			$value = $options['order'][$key];
-			unset($options['order'][$key]);
-
-			if ($object->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field, true)) {
-				$options['order'][$field] = $value;
-			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			}
-		}
-		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
-		$keys = array_keys($options);
-		$count = count($keys);
-
-		for ($i = 0; $i < $count; $i++) {
-			if (!in_array($keys[$i], $vars, true)) {
-				unset($options[$keys[$i]]);
-			}
-			if (empty($whitelist) && ($keys[$i] === 'fields' || $keys[$i] === 'recursive')) {
-				unset($options[$keys[$i]]);
-			} elseif (!empty($whitelist) && !in_array($keys[$i], $whitelist)) {
-				unset($options[$keys[$i]]);
-			}
-		}
-		$conditions = $fields = $order = $limit = $page = $recursive = null;
-
-		if (!isset($defaults['conditions'])) {
-			$defaults['conditions'] = array();
-		}
-
-		$type = 'all';
-
-		if (isset($defaults[0])) {
-			$type = $defaults[0];
-			unset($defaults[0]);
-		}
-
-		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $defaults, $options);
-		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
-		if (empty($options['limit']) || $options['limit'] < 1) {
-			$options['limit'] = 1;
-		}
-
-		extract($options);
-
-		if (is_array($scope) && !empty($scope)) {
-			$conditions = array_merge($conditions, $scope);
-		} elseif (is_string($scope)) {
-			$conditions = array($conditions, $scope);
-		}
-		if ($recursive === null) {
-			$recursive = $object->recursive;
-		}
-
-		$extra = array_diff_key($defaults, compact(
-			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
-		));
-		if ($type !== 'all') {
-			$extra['type'] = $type;
-		}
-
-		if (method_exists($object, 'paginateCount')) {
-			$count = $object->paginateCount($conditions, $recursive, $extra);
-		} else {
-			$parameters = compact('conditions');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$count = $object->find('count', array_merge($parameters, $extra));
-		}
-		$pageCount = intval(ceil($count / $limit));
-
-		if ($page === 'last' || $page >= $pageCount) {
-			$options['page'] = $page = $pageCount;
-		} elseif (intval($page) < 1) {
-			$options['page'] = $page = 1;
-		}
-		$page = $options['page'] = (int)$page;
-
-		if (method_exists($object, 'paginate')) {
-			$results = $object->paginate(
-				$conditions, $fields, $order, $limit, $page, $recursive, $extra
-			);
-		} else {
-			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$results = $object->find($type, array_merge($parameters, $extra));
-		}
-		$paging = array(
-			'page'		=> $page,
-			'current'	=> count($results),
-			'count'		=> $count,
-			'prevPage'	=> ($page > 1),
-			'nextPage'	=> ($count > ($page * $limit)),
-			'pageCount'	=> $pageCount,
-			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options
-		);
-		if (!isset($this->request->params['paging'])) {
-			$this->request->params['paging'] = array();
-		}
-		$this->request->params['paging'] = array_merge(
-			(array)$this->request->params['paging'],
-			array($object->alias => $paging)
-		);
-
-		if (!in_array('Paginator', $this->helpers) && !array_key_exists('Paginator', $this->helpers)) {
-			$this->helpers[] = 'Paginator';
-		}
-		return $results;
+		return $this->Components->load('Paginator', $this->paginate)->paginate($object, $scope, $whitelist);
 	}
 
 /**

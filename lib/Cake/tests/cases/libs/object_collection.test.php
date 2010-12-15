@@ -134,6 +134,26 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * Tests set()
+ *
+ * @return void
+ */
+	function testSet() {
+		$this->Objects->load('First');
+
+		$result = $this->Objects->attached();
+		$this->assertEquals(array('First'), $result, 'loaded objects are wrong');
+
+		$result = $this->Objects->set('First', new SecondGenericObject());
+		$this->assertIsA($result['First'], 'SecondGenericObject', 'set failed');
+
+		$result = $this->Objects->set('Second', new SecondGenericObject());
+		$this->assertIsA($result['Second'], 'SecondGenericObject', 'set failed');
+
+		$this->assertEquals(count($result), 2);
+	}
+
+/**
  * creates mock classes for testing
  *
  * @return void
@@ -158,9 +178,11 @@ class ObjectCollectionTest extends CakeTestCase {
 		$this->Objects->load('TriggerMockSecond');
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 		$this->Objects->TriggerMockSecond->expects($this->once())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 
 		$this->assertTrue($this->Objects->trigger('callback'));
 	}
@@ -170,34 +192,38 @@ class ObjectCollectionTest extends CakeTestCase {
  *
  * @return void
  */
-	function testTriggerWithTriggerDisabledObjects() {		
+	function testTriggerWithTriggerDisabledObjects() {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst', array(), false);
 		$this->Objects->load('TriggerMockSecond');
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 		$this->Objects->TriggerMockSecond->expects($this->once())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 
 		$result = $this->Objects->trigger('callback', array(), array('triggerDisabled' => true));
 		$this->assertTrue($result);
 	}
 
 /**
- * test trigger and disabled helpers.
+ * test trigger and disabled objects
  *
  * @return void
  */
-	function testTriggerWithDisabledComponents() {
+	function testTriggerWithDisabledObjects() {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');
 
 		$this->Objects->TriggerMockFirst->expects($this->once())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 		$this->Objects->TriggerMockSecond->expects($this->never())
-			->method('callback');
+			->method('callback')
+			->will($this->returnValue(true));
 
 		$this->Objects->disable('TriggerMockSecond');
 
@@ -247,10 +273,95 @@ class ObjectCollectionTest extends CakeTestCase {
 
 		$result = $this->Objects->trigger(
 			'callback',
-			array(&$controller), 
+			array(),
 			array('break' => true, 'breakOn' => false)
 		);
 		$this->assertFalse($result);
+	}
+
+/**
+ * test that trigger with modParams works.
+ *
+ * @return void
+ */
+	function testTriggerWithModParams() {
+		$this->_makeMockClasses();
+		$this->Objects->load('TriggerMockFirst');
+		$this->Objects->load('TriggerMockSecond');
+
+		$this->Objects->TriggerMockFirst->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(array('new value')));
+
+		$this->Objects->TriggerMockSecond->expects($this->once())
+			->method('callback')
+			->with(array('new value'))
+			->will($this->returnValue(array('newer value')));
+
+		$result = $this->Objects->trigger(
+			'callback',
+			array(array('value')),
+			array('modParams' => 0)
+		);
+		$this->assertEquals(array('newer value'), $result);
+	}
+
+/**
+ * test that setting modParams to an index that doesn't exist doesn't cause errors.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	function testTriggerModParamsInvalidIndex() {
+		$this->_makeMockClasses();
+		$this->Objects->load('TriggerMockFirst');
+		$this->Objects->load('TriggerMockSecond');
+
+		$this->Objects->TriggerMockFirst->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(array('new value')));
+
+		$this->Objects->TriggerMockSecond->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(array('newer value')));
+
+		$result = $this->Objects->trigger(
+			'callback',
+			array(array('value')),
+			array('modParams' => 2)
+		);
+	}
+
+/**
+ * test that returrning null doesn't modify parameters.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	function testTriggerModParamsNullIgnored() {
+		$this->_makeMockClasses();
+		$this->Objects->load('TriggerMockFirst');
+		$this->Objects->load('TriggerMockSecond');
+
+		$this->Objects->TriggerMockFirst->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(null));
+
+		$this->Objects->TriggerMockSecond->expects($this->once())
+			->method('callback')
+			->with(array('value'))
+			->will($this->returnValue(array('new value')));
+
+		$result = $this->Objects->trigger(
+			'callback',
+			array(array('value')),
+			array('modParams' => 2)
+		);
+		$this->assertEquals('new value', $result);
 	}
 
 /**
@@ -265,7 +376,7 @@ class ObjectCollectionTest extends CakeTestCase {
 			'Something',
 			'Banana.Apple' => array('foo' => 'bar')
 		);
-		$result = ComponentCollection::normalizeObjectArray($components);
+		$result = ObjectCollection::normalizeObjectArray($components);
 		$expected = array(
 			'Html' => array('class' => 'Html', 'settings' => array()),
 			'Bar' => array('class' => 'Foo.Bar', 'settings' => array('one', 'two')),

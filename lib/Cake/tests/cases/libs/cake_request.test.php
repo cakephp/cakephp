@@ -613,7 +613,7 @@ class CakeRequestTestCase extends CakeTestCase {
 /**
  * test __call expcetions
  *
- * @expectedException Exception
+ * @expectedException CakeException
  * @return void
  */
 	function test__callExceptionOnUnknownMethod() {

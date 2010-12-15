@@ -249,20 +249,20 @@ class FileEngine extends CacheEngine {
  * Not implemented
  *
  * @return void
- * @throws BadMethodCallException
+ * @throws CacheException
  */
 	public function decrement($key, $offset = 1) {
-		throw new BadMethodCallException(__('Files cannot be atomically decremented.'));
+		throw new CacheException(__('Files cannot be atomically decremented.'));
 	}
 
 /**
  * Not implemented
  *
  * @return void
- * @throws BadMethodCallException
+ * @throws CacheException
  */
 	public function increment($key, $offset = 1) {
-		throw new BadMethodCallException(__('Files cannot be atomically incremented.'));
+		throw new CacheException(__('Files cannot be atomically incremented.'));
 	}
 
 /**

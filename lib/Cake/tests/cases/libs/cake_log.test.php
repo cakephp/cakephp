@@ -71,7 +71,7 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test all the errors from failed logger imports
  *
- * @expectedException Exception
+ * @expectedException CakeLogException
  * @return void
  */
 	function testImportingLoggerFailure() {
@@ -81,7 +81,7 @@ class CakeLogTest extends CakeTestCase {
 /**
  * test that loggers have to implement the correct interface.
  *
- * @expectedException Exception
+ * @expectedException CakeLogException
  * @return void
  */
 	function testNotImplementingInterface() {

@@ -80,10 +80,13 @@ class ModelBehavior extends Object {
  *
  * @param object $model Model using this behavior
  * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
- * @return mixed False if the operation should abort. An array will replace the value of $query.
+ * @return mixed False or null will abort the operation. You can return an array to replace the 
+ *   $query that will be eventually run.
  * @access public
  */
-	public function beforeFind($model, $query) { }
+	public function beforeFind($model, $query) {
+		return true;
+	}
 
 /**
  * After find callback. Can be used to modify any results returned by find and findAll.
@@ -100,10 +103,12 @@ class ModelBehavior extends Object {
  * Before validate callback
  *
  * @param object $model Model using this behavior
- * @return mixed False if the operation should abort. Any other result will continue.
+ * @return mixed False or null will abort the operation. Any other result will continue.
  * @access public
  */
-	public function beforeValidate($model) { }
+	public function beforeValidate($model) { 
+		return true;
+	}
 
 /**
  * Before save callback
@@ -112,7 +117,9 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeSave($model) { }
+	public function beforeSave($model) { 
+		return true;
+	}
 
 /**
  * After save callback
@@ -120,7 +127,9 @@ class ModelBehavior extends Object {
  * @param object $model Model using this behavior
  * @param boolean $created True if this save created a new record
  */
-	public function afterSave($model, $created) { }
+	public function afterSave($model, $created) {
+		return true;
+	}
 
 /**
  * Before delete callback
@@ -130,7 +139,9 @@ class ModelBehavior extends Object {
  * @return mixed False if the operation should abort. Any other result will continue.
  * @access public
  */
-	public function beforeDelete($model, $cascade = true) { }
+	public function beforeDelete($model, $cascade = true) { 
+		return true;
+	}
 
 /**
  * After delete callback

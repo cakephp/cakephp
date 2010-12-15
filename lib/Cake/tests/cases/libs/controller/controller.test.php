@@ -224,50 +224,6 @@ class ControllerAlias extends CakeTestModel {
 }
 
 /**
- * ControllerPaginateModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
- */
-class ControllerPaginateModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string
- * @access public
- */
-	public $name = 'ControllerPaginateModel';
-
-/**
- * useTable property
- *
- * @var string'
- * @access public
- */
-	public $useTable = 'comments';
-
-/**
- * paginate method
- *
- * @return void
- */
-	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
-		$this->extra = $extra;
-	}
-
-/**
- * paginateCount
- *
- * @access public
- * @return void
- */
-	function paginateCount($conditions, $recursive, $extra) {
-		$this->extraCount = $extra;
-	}
-}
-
-/**
  * NameTest class
  *
  * @package       cake
@@ -596,350 +552,6 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 		Configure::write('Cache.disable', true);
-	}
-
-/**
- * testPaginate method
- *
- * @access public
- * @return void
- */
-	function testPaginate() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($results, array(1, 2, 3));
-
-		$results = Set::extract($Controller->paginate('ControllerComment'), '{n}.ControllerComment.id');
-		$this->assertEqual($results, array(1, 2, 3, 4, 5, 6));
-
-		$Controller->modelClass = null;
-
-		$Controller->uses[0] = 'Plugin.ControllerPost';
-		$results = Set::extract($Controller->paginate(), '{n}.ControllerPost.id');
-		$this->assertEqual($results, array(1, 2, 3));
-
-		$Controller->passedArgs = array('page' => '-1');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual($results, array(1, 2, 3));
-
-		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'asc');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual($results, array(1, 2, 3));
-
-		$Controller->passedArgs = array('sort' => 'ControllerPost.id', 'direction' => 'desc');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual($results, array(3, 2, 1));
-
-		$Controller->passedArgs = array('sort' => 'id', 'direction' => 'desc');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual($results, array(3, 2, 1));
-
-		$Controller->passedArgs = array('sort' => 'NotExisting.field', 'direction' => 'desc');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1, 'Invalid field in query %s');
-		$this->assertEqual($results, array(1, 2, 3));
-
-		$Controller->passedArgs = array('sort' => 'ControllerPost.author_id', 'direction' => 'allYourBase');
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->ControllerPost->lastQuery['order'][0], array('ControllerPost.author_id' => 'asc'));
-		$this->assertEqual($results, array(1, 3, 2));
-
-		$Controller->passedArgs = array('page' => '1 " onclick="alert(\'xss\');">');
-		$Controller->paginate = array('limit' => 1);
-		$Controller->paginate('ControllerPost');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1, 'XSS exploit opened %s');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['options']['page'], 1, 'XSS exploit opened %s');
-
-		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => 0);
-		$Controller->paginate('ControllerPost');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
-
-		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => 'garbage!');
-		$Controller->paginate('ControllerPost');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
-
-		$Controller->passedArgs = array();
-		$Controller->paginate = array('limit' => '-1');
-		$Controller->paginate('ControllerPost');
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
-	}
-
-/**
- * testPaginateExtraParams method
- *
- * @access public
- * @return void
- */
-	function testPaginateExtraParams() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new Controller($request);
-
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->passedArgs = array('page' => '-1', 'contain' => array('ControllerComment'));
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
-		$this->assertTrue(!isset($Controller->ControllerPost->lastQuery['contain']));
-
-		$Controller->passedArgs = array('page' => '-1');
-		$Controller->paginate = array('ControllerPost' => array('contain' => array('ControllerComment')));
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['page'], 1);
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(1, 2, 3));
-		$this->assertTrue(isset($Controller->ControllerPost->lastQuery['contain']));
-
-		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
-		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
-
-		$Controller->passedArgs = array('limit' => 12);
-		$Controller->paginate = array('limit' => 30);
-		$result = $Controller->paginate('ControllerPost');
-		$paging = $Controller->params['paging']['ControllerPost'];
-
-		$this->assertEqual($Controller->ControllerPost->lastQuery['limit'], 12);
-		$this->assertEqual($paging['options']['limit'], 12);
-
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPaginateModel');
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-		$Controller->paginate = array(
-			'ControllerPaginateModel' => array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
-		);
-		$result = $Controller->paginate('ControllerPaginateModel');
-		$expected = array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id');
-		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
-		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
-
-		$Controller->paginate = array(
-			'ControllerPaginateModel' => array('foo', 'contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id')
-		);
-		$Controller->paginate('ControllerPaginateModel');
-		$expected = array('contain' => array('ControllerPaginateModel'), 'group' => 'Comment.author_id', 'type' => 'foo');
-		$this->assertEqual($Controller->ControllerPaginateModel->extra, $expected);
-		$this->assertEqual($Controller->ControllerPaginateModel->extraCount, $expected);
-	}
-
-/**
- * testPaginateMaxLimit
- *
- * @return void
- * @access public
- */
-	function testPaginateMaxLimit() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new Controller($request);
-
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000');
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 100);
-
-		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000);
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 100);
-
-		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '10');
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 10);
-
-		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '1000');
-		$Controller->paginate = array('maxLimit' => 2000);
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 1000);
-
-		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '5000');
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['limit'], 2000);
-	}
-
-/**
- * testPaginateFieldsDouble method
- *
- * @return void
- * @access public
- */
-	function testPaginateFieldsDouble(){
-		$request = new CakeRequest('controller_posts/index');
-
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost');
-		$Controller->request = $this->getMock('CakeRequest');
-		$Controller->request->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->paginate = array(
-			'fields' => array(
-				'ControllerPost.id',
-				'radians(180.0) as floatvalue'
-			),
-			'order' => array('ControllerPost.created'=>'DESC'),
-			'limit' => 1,
-			'page' => 1,
-			'recursive' => -1
-		);
-		$conditions = array();
-		$result = $Controller->paginate('ControllerPost',$conditions);
-		$expected = array(
-			array(
-				'ControllerPost' => array(
-					'id' => 3,
-				),
-				0 => array(
-					'floatvalue' => '3.14159265358979',
-				),
-			),
-		);
-		$this->assertEqual($result, $expected);
-	}
-
-
-/**
- * testPaginatePassedArgs method
- *
- * @return void
- */
-	public function testPaginatePassedArgs() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-		
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost');
-		$Controller->passedArgs[] = array('1', '2', '3');
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->paginate = array(
-			'fields' => array(),
-			'order' => '',
-			'limit' => 5,
-			'page' => 1,
-			'recursive' => -1
-		);
-		$conditions = array();
-		$Controller->paginate('ControllerPost',$conditions);
-
-		$expected = array(
-			'fields' => array(),
-			'order' => '',
-			'limit' => 5,
-			'maxLimit' => 100,
-			'page' => 1,
-			'recursive' => -1,
-			'conditions' => array()
-		);
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options'],$expected);
-	}
-
-/**
- * Test that special paginate types are called and that the type param doesn't leak out into defaults or options.
- *
- * @return void
- */
-	function testPaginateSpecialType() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-		
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->paginate = array('ControllerPost' => array('popular', 'fields' => array('id', 'title')));
-		$result = $Controller->paginate('ControllerPost');
-
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.id'), array(2, 3));
-		$this->assertEqual($Controller->ControllerPost->lastQuery['conditions'], array('ControllerPost.id > ' => '1'));
-		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['defaults'][0]));
-		$this->assertFalse(isset($Controller->params['paging']['ControllerPost']['options'][0]));
-	}
-
-/**
- * testDefaultPaginateParams method
- *
- * @access public
- * @return void
- */
-	function testDefaultPaginateParams() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-		
-		$Controller = new Controller($request);
-		$Controller->modelClass = 'ControllerPost';
-		$Controller->params['url'] = array();
-		$Controller->paginate = array('order' => 'ControllerPost.id DESC');
-		$Controller->constructClasses();
-		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['defaults']['order'], 'ControllerPost.id DESC');
-		$this->assertEqual($Controller->params['paging']['ControllerPost']['options']['order'], 'ControllerPost.id DESC');
-		$this->assertEqual($results, array(3, 2, 1));
-	}
-
-/**
- * test paginate() and virtualField interactions
- *
- * @return void
- */
-	function testPaginateOrderVirtualField() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-		
-		$Controller = new Controller($request);
-		$Controller->uses = array('ControllerPost', 'ControllerComment');
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-		$Controller->ControllerPost->virtualFields = array(
-			'offset_test' => 'ControllerPost.id + 1'
-		);
-
-		$Controller->paginate = array(
-			'fields' => array('id', 'title', 'offset_test'),
-			'order' => array('offset_test' => 'DESC')
-		);
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(4, 3, 2));
-
-		$Controller->passedArgs = array('sort' => 'offset_test', 'direction' => 'asc');
-		$result = $Controller->paginate('ControllerPost');
-		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3, 4));
 	}
 
 /**
@@ -1284,10 +896,12 @@ class ControllerTest extends CakeTestCase {
 					? array_merge($appVars['uses'], $testVars['uses'])
 					: $testVars['uses'];
 
-		$this->assertEqual(count(array_diff($TestController->helpers, $helpers)), 0);
+		$this->assertEqual(count(array_diff_key($TestController->helpers, array_flip($helpers))), 0);
 		$this->assertEqual(count(array_diff($TestController->uses, $uses)), 0);
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 
+		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
+		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, AppController models should be last.');
 
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
@@ -1646,5 +1260,34 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 		$this->assertType('SecurityComponent', $Controller->Security);
 		$this->assertType('ControllerComment', $Controller->ControllerComment);
+	}
+
+/**
+ * test that using Controller::paginate() falls back to PaginatorComponent
+ *
+ * @return void
+ */
+	function testPaginateBackwardsCompatibility() {
+		$request = new CakeRequest('controller_posts/index');
+		$request->params['pass'] = $request->params['named'] = array();
+
+		$Controller = new Controller($request);
+		$Controller->uses = array('ControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$this->assertEqual($Controller->paginate, array('page' => 1, 'limit' => 20));
+
+		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
+		$this->assertEqual($results, array(1, 2, 3));
+
+		$Controller->passedArgs = array();
+		$Controller->paginate = array('limit' => '-1');
+		$this->assertEqual($Controller->paginate, array('limit' => '-1'));
+		$Controller->paginate('ControllerPost');
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['page'], 1);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['pageCount'], 3);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['prevPage'], false);
+		$this->assertIdentical($Controller->params['paging']['ControllerPost']['nextPage'], true);
 	}
 }

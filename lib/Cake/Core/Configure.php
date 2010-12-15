@@ -325,7 +325,7 @@ class Configure {
  * @param string $key name of configuration resource to load.
  * @param string $config Name of the configured reader to use to read the resource identfied by $key.
  * @return mixed false if file not found, void if load successful.
- * @throws Exception Will throw any exceptions the reader raises.
+ * @throws ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default') {
 		if (!isset(self::$_readers[$config])) {

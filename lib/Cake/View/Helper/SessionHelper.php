@@ -33,19 +33,6 @@ App::uses('CakeSession', 'Model/Datasource');
 class SessionHelper extends AppHelper {
 
 /**
- * Constructor.  Starts the session if it has not already been started
- *
- * @param View $view View instance for this helper
- * @param array $settings Settings for the helper.
- * @return void
- */
-	public function __construct(View $view, $settings = array()) {
-		parent::__construct($view, $settings);
-		if (!CakeSession::started()) {
-			CakeSession::start();
-		}
-	}
-/**
  * Used to read a session values set in a controller for a key or return values for all keys.
  *
  * In your view: `$session->read('Controller.sessKey');`

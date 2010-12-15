@@ -108,7 +108,7 @@ class ExceptionRenderer {
 			}
 		} elseif (!$methodExists) {
 			$method = 'error500';
-			if ($code >= 400) {
+			if ($code >= 400 && $code < 500) {
 				$method = 'error400';
 			}
 		}

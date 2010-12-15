@@ -51,12 +51,12 @@ class PhpReader implements ConfigReaderInterface {
  * @param string $key The identifier to read from.  If the key has a . it will be treated
  *   as a plugin prefix.
  * @return array Parsed configuration values.
- * @throws RuntimeException when files don't exist or they don't contain `$config`.
- *    InvalidArgumentException when files contain '..' as this could lead to abusive reads.
+ * @throws ConfigureException when files don't exist or they don't contain `$config`.
+ *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new InvalidArgumentException(__('Cannot load configuration files with ../ in them.'));
+			throw new ConfigureException(__('Cannot load configuration files with ../ in them.'));
 		}
 		list($plugin, $key) = pluginSplit($key);
 		
@@ -66,11 +66,11 @@ class PhpReader implements ConfigReaderInterface {
 			$file = $this->_path . $key . '.php';
 		}
 		if (!file_exists($file)) {
-			throw new RuntimeException(__('Could not load configuration file: ') . $file);
+			throw new ConfigureException(__('Could not load configuration file: ') . $file);
 		}
 		include $file;
 		if (!isset($config)) {
-			throw new RuntimeException(
+			throw new ConfigureException(
 				sprintf(__('No variable $config found in %s.php'), $file)
 			);
 		}

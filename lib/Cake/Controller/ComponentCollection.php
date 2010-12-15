@@ -74,7 +74,7 @@ class ComponentCollection extends ObjectCollection {
 		App::uses($componentClass, 'Controller/Component');
 		if (!class_exists($componentClass)) {
 			if (!class_exists($componentClass)) {
-				throw new MissingComponentFileException(array(
+				throw new MissingComponentClassException(array(
 					'file' => Inflector::underscore($component) . '.php',
 					'class' => $componentClass
 				));

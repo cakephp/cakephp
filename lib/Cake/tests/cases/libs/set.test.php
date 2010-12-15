@@ -356,6 +356,33 @@ class SetTest extends CakeTestCase {
 	}
 
 /**
+ * test sorting with out of order keys.
+ *
+ * @return void
+ */
+	function testSortWithOutOfOrderKeys() {
+		$data = array(
+			9 => array('class' => 510, 'test2' => 2),
+			1 => array('class' => 500, 'test2' => 1),
+			2 => array('class' => 600, 'test2' => 2),
+			5 => array('class' => 625, 'test2' => 4),
+			0 => array('class' => 605, 'test2' => 3),
+		);
+		$expected = array(
+			array('class' => 500, 'test2' => 1),
+			array('class' => 510, 'test2' => 2),
+			array('class' => 600, 'test2' => 2),
+			array('class' => 605, 'test2' => 3),
+			array('class' => 625, 'test2' => 4),
+		);
+		$result = Set::sort($data, '{n}.class', 'asc');
+		$this->assertEqual($expected, $result);
+
+		$result = Set::sort($data, '{n}.test2', 'asc');
+		$this->assertEqual($expected, $result);
+	}
+
+/**
  * testExtract method
  *
  * @access public
@@ -2089,20 +2116,6 @@ class SetTest extends CakeTestCase {
 		$result = Set::reverse($class);
 		$this->assertEquals($result, $expected);
 
-		$model = new Model(array('id' => false, 'name' => 'Model', 'table' => false));
-		$expected = array(
-			'Behaviors' => array('modelName' => 'Model'),
-			'useDbConfig' => 'default', 'useTable' => false, 'displayField' => null, 'id' => false, 'data' => array(), 'table' => 'models', 'primaryKey' => 'id', 'validate' => array(),
-			'validationErrors' => array(), 'tablePrefix' => null, 'name' => 'Model', 'alias' => 'Model', 'tableToModel' => array(), 'logTransactions' => false, 'cacheQueries' => false,
-			'belongsTo' => array(), 'hasOne' =>  array(), 'hasMany' =>  array(), 'hasAndBelongsToMany' =>  array(), 'actsAs' => null, 'whitelist' =>  array(), 'cacheSources' => true,
-			'findQueryType' => null, 'recursive' => 1, 'order' => null, 'virtualFields' => array(),
-);
-		$result = Set::reverse($model);
-
-		ksort($result);
-		ksort($expected);
-		$this->assertEquals($result, $expected);
-
 		$class = new stdClass;
 		$class->User = new stdClass;
 		$class->User->id = 100;
@@ -2694,10 +2707,9 @@ class SetTest extends CakeTestCase {
 /**
  * Helper method to test Set::apply()
  *
- * @access protected
  * @return void
  */
-	function _method($val1, $val2) {
+	static function _method($val1, $val2) {
 		$val1 += $val2;
 		return $val1;
 	}

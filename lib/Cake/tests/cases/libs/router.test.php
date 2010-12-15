@@ -385,6 +385,113 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * Tests using arrays in named parameters
+ *
+ * @return void
+ */
+	function testArrayNamedParameters() {
+		$result = Router::url(array('controller' => 'tests', 'pages' => array(
+			1, 2, 3
+		)));
+		$expected = '/tests/index/pages[0]:1/pages[1]:2/pages[2]:3';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'tests',
+			'pages' => array(
+				'param1' => array(
+					'one',
+					'two'
+				),
+				'three'
+			)
+		));
+		$expected = '/tests/index/pages[param1][0]:one/pages[param1][1]:two/pages[0]:three';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'tests',
+			'pages' => array(
+				'param1' => array(
+					'one' => 1,
+					'two' => 2
+				),
+				'three'
+			)
+		));
+		$expected = '/tests/index/pages[param1][one]:1/pages[param1][two]:2/pages[0]:three';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'tests',
+			'super' => array(
+				'nested' => array(
+					'array' => 'awesome',
+					'something' => 'else'
+				),
+				'cool'
+			)
+		));
+		$expected = '/tests/index/super[nested][array]:awesome/super[nested][something]:else/super[0]:cool';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::url(array('controller' => 'tests', 'namedParam' => array(
+			'keyed' => 'is an array',
+			'test'
+		)));
+		$expected = '/tests/index/namedParam[keyed]:is an array/namedParam[0]:test';
+		$this->assertEqual($result, $expected);
+
+		$result = Router::parse('/tests/action/var[]:val1/var[]:val2');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'var' => array(
+					'val1',
+					'val2'
+				)
+			),
+			'pass' => array(),
+			'plugin' => null
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = Router::parse('/tests/action/theanswer[is]:42/var[]:val2/var[]:val3');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'theanswer' => array(
+					'is' => 42
+				),
+				'var' => array(
+					'val2',
+					'val3'
+				)
+			),
+			'pass' => array(),
+			'plugin' => null
+		);
+		$this->assertEqual($result, $expected);
+
+		$result = Router::parse('/tests/action/theanswer[is][not]:42/theanswer[]:5/theanswer[is]:6');
+		$expected = array(
+			'controller' => 'tests',
+			'action' => 'action',
+			'named' => array(
+				'theanswer' => array(
+					5,
+					'is' => array(
+						6,
+						'not' => 42
+					)
+				),
+			),
+			'pass' => array(),
+			'plugin' => null
+		);
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * Test generation of routes with query string parameters.
  *
  * @return void
@@ -2274,7 +2381,7 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testPatternOnAction() {
-		$route =& new CakeRoute(
+		$route = new CakeRoute(
 			'/blog/:action/*',
 			array('controller' => 'blog_posts'),
 			array('action' => 'other|actions')

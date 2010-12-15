@@ -116,10 +116,9 @@ TEXT;
 			$template = $html;
 			if (php_sapi_name() == 'cli') {
 				$template = $text;
-			} else {
-				if ($showHtml === null) {
-					$showHtml = true;
-				}
+			}
+			if ($showHtml === null) {
+				$showHtml = true;
 			}
 			$var = print_r($var, true);
 			if ($showHtml) {

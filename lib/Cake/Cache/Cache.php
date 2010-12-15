@@ -69,7 +69,7 @@ class Cache {
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
  * @return array(engine, settings) on success, false on failure
- * @throws Exception
+ * @throws CacheException
  */
 	public static function config($name = null, $settings = array()) {
 		if (is_array($name)) {
@@ -116,10 +116,10 @@ class Cache {
 			return false;
 		}
 		$cacheClass = $class . 'Engine';
-		self::$_engines[$name] = new $cacheClass();
-		if (!self::$_engines[$name] instanceof CacheEngine) {
-			throw new Exception(__('Cache engines must use CacheEngine as a base class.'));
+		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
+			throw new CacheException(__('Cache engines must use CacheEngine as a base class.'));
 		}
+		self::$_engines[$name] = new $cacheClass();
 		if (self::$_engines[$name]->init($config)) {
 			if (time() % self::$_engines[$name]->settings['probability'] === 0) {
 				self::$_engines[$name]->gc();

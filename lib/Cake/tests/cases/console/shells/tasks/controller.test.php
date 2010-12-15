@@ -334,7 +334,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("\$this->Session->setFlash(__('Invalid bake article'));", $result);
+		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
@@ -346,7 +346,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
-		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains('if ($this->BakeArticle->delete())', $result);
 		$this->assertContains("\$this->Session->setFlash(__('Bake article deleted'));", $result);
 
 		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
@@ -376,7 +376,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
-		$this->assertContains("\$this->flash(__('Invalid bake article'), array('action' => 'index'))", $result);
+		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
 		$this->assertContains("\$this->set('bakeArticle', \$this->BakeArticle->read(null, \$id)", $result);
 
 		$this->assertContains('function add()', $result);
@@ -390,7 +390,7 @@ class ControllerTaskTest extends CakeTestCase {
 		$this->assertContains("\$this->set(compact('bakeTags'))", $result);
 
 		$this->assertContains('function delete($id = null)', $result);
-		$this->assertContains('if ($this->BakeArticle->delete($id))', $result);
+		$this->assertContains('if ($this->BakeArticle->delete())', $result);
 		$this->assertContains("\$this->flash(__('Bake article deleted'), array('action' => 'index'))", $result);
 	}
 

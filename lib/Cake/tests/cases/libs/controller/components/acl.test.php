@@ -219,7 +219,7 @@ class AclComponentTest extends CakeTestCase {
  * test that construtor throws an exception when Acl.classname is a 
  * non-existant class
  *
- * @expectedException Exception
+ * @expectedException CakeException
  * @return void
  */
 	function testConstrutorException() {
@@ -244,7 +244,7 @@ class AclComponentTest extends CakeTestCase {
 /**
  * test that adapter() whines when the class is not an AclBase
  *
- * @expectedException Exception
+ * @expectedException CakeException
  * @return void
  */
 	function testAdapterException() {

@@ -193,7 +193,7 @@ class CookieComponent extends Component {
 /**
  * Write a value to the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key, optional $value, optional $encrypt, optional $expires
+ * Optional [Name.], required key, optional $value, optional $encrypt, optional $expires
  * $this->Cookie->write('[Name.]key, $value);
  *
  * By default all values are encrypted.
@@ -222,7 +222,6 @@ class CookieComponent extends Component {
 			if (strpos($name, '.') === false) {
 				$this->_values[$name] = $value;
 				$this->_write("[$name]", $value);
-				
 			} else {
 				$names = explode('.', $name, 2);
 				if (!isset($this->_values[$names[0]])) {
@@ -238,7 +237,7 @@ class CookieComponent extends Component {
 /**
  * Read the value of the $_COOKIE[$key];
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read(Name.key);
  *
  * @param mixed $key Key of the value to be obtained. If none specified, obtain map key => values
@@ -252,7 +251,7 @@ class CookieComponent extends Component {
 		if (is_null($key)) {
 			return $this->_values;
 		}
-		
+
 		if (strpos($key, '.') !== false) {
 			$names = explode('.', $key, 2);
 			$key = $names[0];
@@ -270,7 +269,7 @@ class CookieComponent extends Component {
 /**
  * Delete a cookie value
  *
- * Optional [Name.], reguired key
+ * Optional [Name.], required key
  * $this->Cookie->read('Name.key);
  *
  * You must use this method before any output is sent to the browser.
@@ -348,11 +347,11 @@ class CookieComponent extends Component {
 			return $this->_expires;
 		}
 		$this->_reset = $this->_expires;
-		
+
 		if ($expires == 0) {
 			return $this->_expires = 0;
 		}
-		
+
 		if (is_integer($expires) || is_numeric($expires)) {
 			return $this->_expires = $now + intval($expires);
 		}
@@ -433,7 +432,7 @@ class CookieComponent extends Component {
 		$decrypted = array();
 		$type = $this->_type;
 
-		foreach ($values as $name => $value) {
+		foreach ((array)$values as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
 					$pos = strpos($val, 'Q2FrZQ==.');

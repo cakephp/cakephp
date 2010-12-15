@@ -50,8 +50,8 @@ class ScaffoldView extends ThemeView {
 			}
 		}
 
-		if ($name === 'add') {
-			$name = 'edit';
+		if ($name === 'add' || $name == 'edit') {
+			$name = 'form';
 		}
 
 		$scaffoldAction = 'scaffold.' . $name;
