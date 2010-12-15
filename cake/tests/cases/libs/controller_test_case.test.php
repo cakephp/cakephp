@@ -65,24 +65,28 @@ if (!class_exists('AppController')) {
 /**
  * PostsController class
  */
-class PostsController extends AppController {
+if (!class_exists('PostsController')) {
+	class PostsController extends AppController {
 
-/**
- * Components array
- *
- * @var array
- */
-	public $components = array(
-		'RequestHandler',
-		'Email',
-		'Auth'
-	);
+	/**
+	 * Components array
+	 *
+	 * @var array
+	 */
+		public $components = array(
+			'RequestHandler',
+			'Email',
+			'Auth'
+		);
+	}
 }
 
 /**
  * Post model
  */
-class Post extends CakeTestModel {
+if (!class_exists('Post')) {
+	class Post extends CakeTestModel {
+	}
 }
 
 /**

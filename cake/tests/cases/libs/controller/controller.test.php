@@ -223,50 +223,6 @@ class ControllerAlias extends CakeTestModel {
 }
 
 /**
- * ControllerPaginateModel class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
- */
-class ControllerPaginateModel extends CakeTestModel {
-
-/**
- * name property
- *
- * @var string
- * @access public
- */
-	public $name = 'ControllerPaginateModel';
-
-/**
- * useTable property
- *
- * @var string'
- * @access public
- */
-	public $useTable = 'comments';
-
-/**
- * paginate method
- *
- * @return void
- */
-	public function paginate($conditions, $fields, $order, $limit, $page, $recursive, $extra) {
-		$this->extra = $extra;
-	}
-
-/**
- * paginateCount
- *
- * @access public
- * @return void
- */
-	function paginateCount($conditions, $recursive, $extra) {
-		$this->extraCount = $extra;
-	}
-}
-
-/**
  * NameTest class
  *
  * @package       cake
