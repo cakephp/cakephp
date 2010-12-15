@@ -209,11 +209,11 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
- * test trigger and disabled helpers.
+ * test trigger and disabled objects
  *
  * @return void
  */
-	function testTriggerWithDisabledComponents() {
+	function testTriggerWithDisabledObjects() {
 		$this->_makeMockClasses();
 		$this->Objects->load('TriggerMockFirst');
 		$this->Objects->load('TriggerMockSecond');

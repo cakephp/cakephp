@@ -429,7 +429,6 @@ class Controller extends Object {
 				is_array($this->uses) && !empty($appVars['uses'])
 			) {
 				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
-				var_dump($this->uses);
 			}
 			$this->_mergeVars($merge, 'AppController', true);
 		}

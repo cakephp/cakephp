@@ -143,6 +143,7 @@ class SessionComponentTest extends CakeTestCase {
  */
 	function testSessionIdConsistentAcrossRequestAction() {
 		$Session = new SessionComponent($this->ComponentCollection);
+		$Session->check('Test');
 		$this->assertTrue(isset($_SESSION));
 
 		$Object = new Object();
@@ -287,6 +288,7 @@ class SessionComponentTest extends CakeTestCase {
 	function testSessionId() {
 		unset($_SESSION);
 		$Session = new SessionComponent($this->ComponentCollection);
+		$Session->check('test');
 		$this->assertEquals(session_id(), $Session->id());
 	}
 

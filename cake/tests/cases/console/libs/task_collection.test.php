@@ -118,25 +118,4 @@ class TaskCollectionTest extends CakeTestCase {
 		$this->assertEquals(array('Extract'), $result, 'loaded tasks is wrong');
 	}
 
-/**
- * test normalizeObjectArray
- *
- * @return void
- */
-	function testnormalizeObjectArray() {
-		$tasks = array(
-			'Html', 
-			'Foo.Bar' => array('one', 'two'),
-			'Something',
-			'Banana.Apple' => array('foo' => 'bar')
-		);
-		$result = TaskCollection::normalizeObjectArray($tasks);
-		$expected = array(
-			'Html' => array('class' => 'Html', 'settings' => array()),
-			'Bar' => array('class' => 'Foo.Bar', 'settings' => array('one', 'two')),
-			'Something' => array('class' => 'Something', 'settings' => array()),
-			'Apple' => array('class' => 'Banana.Apple', 'settings' => array('foo' => 'bar')),
-		);
-		$this->assertEquals($expected, $result);
-	}
 }

@@ -101,13 +101,6 @@ class CakeSession {
 	public static $sessionTime = false;
 
 /**
- * Keeps track of keys to watch for writes on
- *
- * @var array
- */
-	public static $watchKeys = array();
-
-/**
  * Current Session id
  *
  * @var string
@@ -151,14 +144,8 @@ class CakeSession {
 		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT') != null) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
-
-		if ($start === true) {
-			self::_setPath($base);
-			self::_setHost(env('HTTP_HOST'));
-		}
-		if (isset($_SESSION) || $start === true) {
-			self::start();
-		}
+		self::_setPath($base);
+		self::_setHost(env('HTTP_HOST'));
 	}
 
 /**
@@ -232,6 +219,9 @@ class CakeSession {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -264,9 +254,6 @@ class CakeSession {
  */
 	public static function delete($name) {
 		if (self::check($name)) {
-			if (in_array($name, self::$watchKeys)) {
-				throw new CakeSessionException(__('Deleting session key {%s}', $name));
-			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
@@ -374,6 +361,9 @@ class CakeSession {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (is_null($name)) {
 			return self::__returnSessionVars();
 		}
@@ -403,40 +393,6 @@ class CakeSession {
 	}
 
 /**
- * Tells Session to write a notification when a certain session path or subpath is written to
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function watch($var) {
-		if (empty($var)) {
-			return false;
-		}
-		if (!in_array($var, self::$watchKeys, true)) {
-			self::$watchKeys[] = $var;
-		}
-	}
-
-/**
- * Tells Session to stop watching a given key path
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function ignore($var) {
-		if (!in_array($var, self::$watchKeys)) {
-			return;
-		}
-		foreach (self::$watchKeys as $i => $key) {
-			if ($key == $var) {
-				unset(self::$watchKeys[$i]);
-				self::$watchKeys = array_values(self::$watchKeys);
-				return;
-			}
-		}
-	}
-
-/**
  * Writes value to given session variable name.
  *
  * @param mixed $name Name of variable
@@ -444,6 +400,9 @@ class CakeSession {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
+		if (!self::started() && !self::start()) {
+			return false;
+		}
 		if (empty($name)) {
 			return false;
 		}
@@ -452,9 +411,6 @@ class CakeSession {
 			$write = array($name => $value);
 		}
 		foreach ($write as $key => $val) {
-			if (in_array($key, self::$watchKeys)) {
-				throw new CakeSessionException(__('Writing session key {%s}: %s', $key, var_export($val, true)));
-			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
 				return false;
@@ -672,6 +628,10 @@ class CakeSession {
  * @return void
  */
 	protected static function _checkValid() {
+		if (!self::started() && !self::start()) {
+			self::$valid = false;
+			return false;
+		}
 		if (self::read('Config')) {
 			$sessionConfig = Configure::read('Session');
 
