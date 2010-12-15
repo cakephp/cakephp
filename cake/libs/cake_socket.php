@@ -100,6 +100,7 @@ class CakeSocket {
  * Connect the socket to the given host and port.
  *
  * @return boolean Success
+ * @throws Exception
  */
 	public function connect() {
 		if ($this->connection != null) {
@@ -112,7 +113,6 @@ class CakeSocket {
 		}
 
 		if ($this->config['persistent'] == true) {
-			$tmp = null;
 			$this->connection = @pfsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
 		} else {
 			$this->connection = @fsockopen($scheme.$this->config['host'], $this->config['port'], $errNum, $errStr, $this->config['timeout']);
@@ -120,6 +120,7 @@ class CakeSocket {
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errStr, $errNum);
+			throw new Exception($errStr, $errNum);
 		}
 
 		$this->connected = is_resource($this->connection);
@@ -137,9 +138,8 @@ class CakeSocket {
 	public function host() {
 		if (Validation::ip($this->config['host'])) {
 			return gethostbyaddr($this->config['host']);
-		} else {
-			return gethostbyaddr($this->address());
 		}
+		return gethostbyaddr($this->address());
 	}
 
 /**
@@ -150,9 +150,8 @@ class CakeSocket {
 	public function address() {
 		if (Validation::ip($this->config['host'])) {
 			return $this->config['host'];
-		} else {
-			return gethostbyname($this->config['host']);
 		}
+		return gethostbyname($this->config['host']);
 	}
 
 /**
@@ -163,9 +162,8 @@ class CakeSocket {
 	public function addresses() {
 		if (Validation::ip($this->config['host'])) {
 			return array($this->config['host']);
-		} else {
-			return gethostbynamel($this->config['host']);
 		}
+		return gethostbynamel($this->config['host']);
 	}
 
 /**
@@ -176,9 +174,8 @@ class CakeSocket {
 	public function lastError() {
 		if (!empty($this->lastError)) {
 			return $this->lastError['num'] . ': ' . $this->lastError['str'];
-		} else {
-			return null;
 		}
+		return null;
 	}
 
 /**
@@ -186,6 +183,7 @@ class CakeSocket {
  *
  * @param integer $errNum Error code
  * @param string $errStr Error string
+ * @return void
  */
 	public function setLastError($errNum, $errStr) {
 		$this->lastError = array('num' => $errNum, 'str' => $errStr);
@@ -229,17 +227,8 @@ class CakeSocket {
 				return false;
 			}
 			return $buffer;
-		} else {
-			return false;
 		}
-	}
-
-/**
- * Abort socket operation.
- *
- * @return boolean Success
- */
-	public function abort() {
+		return false;
 	}
 
 /**
@@ -272,6 +261,7 @@ class CakeSocket {
 /**
  * Resets the state of this Socket instance to it's initial state (before Object::__construct got executed)
  *
+ * @param array $state Array with key and values to reset
  * @return boolean True on success
  */
 	public function reset($state = null) {
