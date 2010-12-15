@@ -893,7 +893,7 @@ class EmailComponent extends Object{
 		}
 
 		if (!is_array($this->to)) {
-			$tos = array($this->to);
+			$tos = array_map('trim', explode(',', $this->to));
 		} else {
 			$tos = $this->to;
 		}
