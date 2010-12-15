@@ -53,10 +53,10 @@ class DigestAuthentication {
  */
 	protected static function _getServerInformation(HttpSocket $http, &$authInfo) {
 		$originalRequest = $http->request;
-		$http->setAuthConfig(false);
+		$http->configAuth(false);
 		$http->request($http->request);
 		$http->request = $originalRequest;
-		$http->setAuthConfig('Digest', $authInfo);
+		$http->configAuth('Digest', $authInfo);
 
 		if (empty($http->response['header']['WWW-Authenticate'])) {
 			return false;
