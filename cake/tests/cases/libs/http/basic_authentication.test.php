@@ -53,13 +53,13 @@ class BasicMethodTest extends CakeTestCase {
  */
 	public function testProxyAuthentication() {
 		$http = new HttpSocket();
-		$http->request['proxy'] = array(
+		$proxy = array(
 			'method' => 'Basic',
 			'user' => 'mark',
 			'pass' => 'secret'
 		);
 
-		BasicAuthentication::proxyAuthentication($http);
+		BasicAuthentication::proxyAuthentication($http, $proxy);
 		$this->assertEqual($http->request['header']['Proxy-Authorization'], 'Basic bWFyazpzZWNyZXQ=');
 	}
 
