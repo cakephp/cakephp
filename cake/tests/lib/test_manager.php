@@ -89,6 +89,7 @@ class TestManager {
  */
 	public function __construct($params = array()) {
 		require_once(CAKE_TESTS_LIB . 'cake_test_case.php');
+		require_once(CAKE_TESTS_LIB . 'controller_test_case.php');
 
 		$this->params = $params;
 		if (isset($params['app'])) {

@@ -32,4 +32,8 @@ class TestsAppsController extends AppController {
 		$this->set('var', 'string');
 		$this->render('index');
 	}
+
+	function redirect_to() {
+		$this->redirect('http://cakephp.org');
+	}
 }

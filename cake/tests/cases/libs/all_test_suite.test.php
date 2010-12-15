@@ -40,6 +40,7 @@ class AllTestSuiteTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_case.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'cake_test_fixture.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'html_coverage_report.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'controller_test_case.test.php');
 		return $suite;
 	}
 }

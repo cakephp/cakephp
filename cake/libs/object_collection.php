@@ -222,6 +222,20 @@ abstract class ObjectCollection {
 	}
 
 /**
+ * Adds or overwrites an instatiated object to the collection
+ *
+ * @param string $name Name of the object
+ * @param Object $object The object to use
+ */
+	public function set($name = null, $object = null) {
+		if (!empty($name) && !empty($object)) {
+			list($plugin, $name) = pluginSplit($name);
+			$this->_loaded[$name] = $object;
+		}
+		return $this->_loaded;
+	}
+
+/**
  * Normalizes an object array, creates an array that makes lazy loading
  * easier
  *

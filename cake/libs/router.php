@@ -250,6 +250,9 @@ class Router {
 				throw new RouterException(__('Route classes must extend CakeRoute'));
 			}
 			unset($options['routeClass']);
+			if ($routeClass == 'RedirectRoute' && isset($defaults['redirect'])) {
+				$defaults = $defaults['redirect'];
+			}
 		}
 		self::$routes[] = new $routeClass($route, $defaults, $options);
 		return self::$routes;
@@ -284,9 +287,12 @@ class Router {
  * @see routes
  * @return array Array of routes
  */
-	public static function redirect($route, $url, $options) {
+	public static function redirect($route, $url, $options = array()) {
 		App::import('Core', 'route/RedirectRoute');
 		$options['routeClass'] = 'RedirectRoute';
+		if (is_string($url)) {
+			$url = array('redirect' => $url);
+		}
 		return self::connect($route, $url, $options);
 	}
 

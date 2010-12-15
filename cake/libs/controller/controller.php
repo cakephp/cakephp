@@ -301,7 +301,7 @@ class Controller extends Object {
 		$this->methods = array_diff($childMethods, $parentMethods);
 
 		if ($request instanceof CakeRequest) {
-			$this->_setRequest($request);
+			$this->setRequest($request);
 		}
 		$this->getResponse();
 		parent::__construct();
@@ -377,7 +377,7 @@ class Controller extends Object {
  * @param CakeRequest $request
  * @return void
  */
-	protected function _setRequest(CakeRequest $request) {
+	public function setRequest(CakeRequest $request) {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? $request->params['plugin'] : null;
 

@@ -134,6 +134,26 @@ class ObjectCollectionTest extends CakeTestCase {
 	}
 
 /**
+ * Tests set()
+ *
+ * @return void
+ */
+	function testSet() {
+		$this->Objects->load('First');
+
+		$result = $this->Objects->attached();
+		$this->assertEquals(array('First'), $result, 'loaded objects are wrong');
+
+		$result = $this->Objects->set('First', new SecondGenericObject());
+		$this->assertIsA($result['First'], 'SecondGenericObject', 'set failed');
+
+		$result = $this->Objects->set('Second', new SecondGenericObject());
+		$this->assertIsA($result['Second'], 'SecondGenericObject', 'set failed');
+
+		$this->assertEquals(count($result), 2);
+	}
+
+/**
  * creates mock classes for testing
  *
  * @return void
