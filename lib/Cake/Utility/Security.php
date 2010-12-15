@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('String', 'Core');
+App::uses('String', 'Utility');
 
 /**
  * Security Library contains utility methods related to security

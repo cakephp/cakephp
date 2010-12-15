@@ -570,7 +570,7 @@ class Router {
  */
 	private static function __connectDefaultRoutes() {
 		if ($plugins = App::objects('plugin')) {
-			App::uses('PluginShortRoute', 'Core');
+			App::uses('PluginShortRoute', 'Routing/Route');
 			foreach ($plugins as $key => $value) {
 				$plugins[$key] = Inflector::underscore($value);
 			}

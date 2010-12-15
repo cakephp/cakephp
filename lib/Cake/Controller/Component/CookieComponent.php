@@ -21,7 +21,7 @@
 /**
  * Load Security class
  */
-App::uses('Security', 'Core');
+App::uses('Security', 'Utility');
 
 /**
  * Cookie Component.

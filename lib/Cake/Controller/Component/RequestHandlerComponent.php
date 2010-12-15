@@ -20,7 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Xml', 'Core');
+App::uses('Xml', 'Utility');
 
 /**
  * Request object for handling HTTP requests

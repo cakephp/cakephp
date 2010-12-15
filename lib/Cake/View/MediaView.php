@@ -18,7 +18,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::uses('View', 'View');
-App::uses('CakeRequest', 'Core');
+App::uses('CakeRequest', 'Network');
 
 class MediaView extends View {
 /**

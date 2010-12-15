@@ -21,7 +21,7 @@
  */
 
 App::uses('Router', 'Routing');
-App::uses('Security', 'Core');
+App::uses('Security', 'Utility');
 App::uses('Debugger', 'Utility');
 
 /**

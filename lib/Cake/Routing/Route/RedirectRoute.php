@@ -1,6 +1,6 @@
 <?php
-App::uses('CakeResponse', 'Core');
-App::uses('CakeRoute', 'Core');
+App::uses('CakeResponse', 'Network');
+App::uses('CakeRoute', 'Routing/Route');
 
 /**
  * Redirect route will perform an immediate redirect
