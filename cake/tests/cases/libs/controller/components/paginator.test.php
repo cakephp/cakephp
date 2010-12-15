@@ -473,13 +473,17 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertEqual(Set::extract($result, '{n}.ControllerPost.offset_test'), array(2, 3, 4));
 	}
 
+/**
+ * Tests for missing models
+ *
+ * @expectedException MissingModelException
+ */
 	function testPaginateMissingModel() {
 		$request = new CakeRequest('controller_posts/index');
 		$request->params['pass'] = $request->params['named'] = array();
 
 		$Controller = new PaginatorTestController($request);
 		$Controller->constructClasses();
-		$this->expectException('MissingModelException');
 		$Controller->Paginator->paginate('MissingModel');		
 	}
 }
