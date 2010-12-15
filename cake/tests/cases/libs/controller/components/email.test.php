@@ -268,7 +268,7 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpConfig() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 		$this->Controller->EmailTest->delivery = 'smtp';
@@ -295,7 +295,7 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testBadSmtpSend() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
@@ -310,7 +310,7 @@ class EmailComponentTest extends CakeTestCase {
  * @return void
  */
 	function testSmtpSend() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
@@ -359,7 +359,7 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpEhlo() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
@@ -416,7 +416,7 @@ TEMPDOC;
  * @return void
  */
 	function testSmtpSendMultipleTo() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 		$this->Controller->EmailTest->reset();
@@ -465,7 +465,7 @@ TEMPDOC;
  * @return void
  */
 	function testAuthenticatedSmtpSend() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
@@ -670,7 +670,7 @@ HTMLBLOC;
  * @return void
  */
 	function testSmtpSendSocket() {
-		if ($this->skipIf(!@fsockopen('localhost', 25), '%s No SMTP server running on localhost')) {
+		if ($this->skipIf(!@fsockopen('localhost', 25, $err, $errstr, .01), '%s No SMTP server running on localhost')) {
 			return;
 		}
 
