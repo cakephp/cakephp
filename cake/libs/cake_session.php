@@ -101,13 +101,6 @@ class CakeSession {
 	public static $sessionTime = false;
 
 /**
- * Keeps track of keys to watch for writes on
- *
- * @var array
- */
-	public static $watchKeys = array();
-
-/**
  * Current Session id
  *
  * @var string
@@ -261,9 +254,6 @@ class CakeSession {
  */
 	public static function delete($name) {
 		if (self::check($name)) {
-			if (in_array($name, self::$watchKeys)) {
-				throw new CakeSessionException(__('Deleting session key {%s}', $name));
-			}
 			self::__overwrite($_SESSION, Set::remove($_SESSION, $name));
 			return (self::check($name) == false);
 		}
@@ -403,46 +393,6 @@ class CakeSession {
 	}
 
 /**
- * Tells Session to write a notification when a certain session path or subpath is written to
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function watch($var) {
-		if (!self::started() && !self::start()) {
-			return false;
-		}
-		if (empty($var)) {
-			return false;
-		}
-		if (!in_array($var, self::$watchKeys, true)) {
-			self::$watchKeys[] = $var;
-		}
-	}
-
-/**
- * Tells Session to stop watching a given key path
- *
- * @param mixed $var The variable path to watch
- * @return void
- */
-	public static function ignore($var) {
-		if (!self::started() && !self::start()) {
-			return false;
-		}
-		if (!in_array($var, self::$watchKeys)) {
-			return;
-		}
-		foreach (self::$watchKeys as $i => $key) {
-			if ($key == $var) {
-				unset(self::$watchKeys[$i]);
-				self::$watchKeys = array_values(self::$watchKeys);
-				return;
-			}
-		}
-	}
-
-/**
  * Writes value to given session variable name.
  *
  * @param mixed $name Name of variable
@@ -461,9 +411,6 @@ class CakeSession {
 			$write = array($name => $value);
 		}
 		foreach ($write as $key => $val) {
-			if (in_array($key, self::$watchKeys)) {
-				throw new CakeSessionException(__('Writing session key {%s}: %s', $key, var_export($val, true)));
-			}
 			self::__overwrite($_SESSION, Set::insert($_SESSION, $key, $val));
 			if (Set::classicExtract($_SESSION, $key) !== $val) {
 				return false;

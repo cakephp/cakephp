@@ -88,7 +88,6 @@ class CakeSessionTest extends CakeTestCase {
 			'ini' => array(),
 		));
 		TestCakeSession::init();
-		TestCakeSession::$watchKeys = array();
 	}
 
 /**
@@ -363,47 +362,6 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertTrue(TestCakeSession::delete('Clearing'));
 		$this->assertFalse(TestCakeSession::check('Clearing.sale'));
 		$this->assertFalse(TestCakeSession::check('Clearing'));
-	}
-
-/**
- * testWatchVar method
- *
- * @expectedException CakeSessionException
- * @access public
- * @return void
- */
-	function testWatchVarWrite() {
-		$this->assertFalse(TestCakeSession::watch(null));
-
-		TestCakeSession::write('Watching', "I'm watching you");
-		TestCakeSession::watch('Watching');
-		TestCakeSession::write('Watching', 'They found us!');
-	}
-
-/**
- * Test that deleting watched vars causes exceptions
- *
- * @expectedException CakeSessionException
- * @return void
- */
-	function testWatchVarDelete() {
-		TestCakeSession::write('Watching', 'I am watching you.');
-
-		TestCakeSession::watch('Watching');
-		TestCakeSession::delete('Watching');
-	}
-
-/**
- * testIgnore method
- *
- * @access public
- * @return void
- */
-	function testIgnore() {
-		TestCakeSession::write('Watching', "I'm watching you");
-		TestCakeSession::watch('Watching');
-		TestCakeSession::ignore('Watching');
-		$this->assertTrue(TestCakeSession::write('Watching', 'They found us!'));
 	}
 
 /**
