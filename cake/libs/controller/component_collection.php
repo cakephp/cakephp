@@ -78,7 +78,7 @@ class ComponentCollection extends ObjectCollection {
 				));
 			}
 			if (!class_exists($componentClass)) {
-				throw new MissingComponentFileException(array(
+				throw new MissingComponentClassException(array(
 					'file' => Inflector::underscore($component) . '.php',
 					'class' => $componentClass
 				));
