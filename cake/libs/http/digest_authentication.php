@@ -32,7 +32,6 @@ class DigestAuthentication {
  * @param HttpSocket $http
  * @param array $authInfo
  * @return void
- * @throws Exception
  * @link http://www.ietf.org/rfc/rfc2617.txt
  */
 	public static function authentication(HttpSocket $http, &$authInfo) {
