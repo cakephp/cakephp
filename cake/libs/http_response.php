@@ -123,15 +123,15 @@ class HttpResponse implements ArrayAccess {
  *
  * @param string $message Message to parse
  * @return void
- * @throw Exception
+ * @throw SocketException
  */
 	public function parseResponse($message) {
 		if (!is_string($message)) {
-			throw new Exception(__('Invalid response.'));
+			throw new SocketException(__('Invalid response.'));
 		}
 
 		if (!preg_match("/^(.+\r\n)(.*)(?<=\r\n)\r\n/Us", $message, $match)) {
-			throw new Exception(__('Invalid HTTP response.'));
+			throw new SocketException(__('Invalid HTTP response.'));
 		}
 
 		list(, $statusLine, $header) = $match;
@@ -187,7 +187,7 @@ class HttpResponse implements ArrayAccess {
  *
  * @param string $body A string continaing the chunked body to decode.
  * @return mixed Array of response headers and body or false.
- * @throws Exception
+ * @throws SocketException
  */
 	protected function _decodeChunkedBody($body) {
 		if (!is_string($body)) {
@@ -199,7 +199,7 @@ class HttpResponse implements ArrayAccess {
 
 		while ($chunkLength !== 0) {
 			if (!preg_match("/^([0-9a-f]+) *(?:;(.+)=(.+))?\r\n/iU", $body, $match)) {
-				throw new Exception(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
+				throw new SocketException(__('HttpSocket::_decodeChunkedBody - Could not parse malformed chunk.'));
 			}
 
 			$chunkSize = 0;

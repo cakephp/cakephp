@@ -295,7 +295,7 @@ class HttpResponseTest extends CakeTestCase {
  * testInvalidParseResponseData
  *
  * @dataProvider invalidParseResponseDataProvider
- * @expectedException Exception
+ * @expectedException SocketException
  * return void
  */
 	public function testInvalidParseResponseData($value) {

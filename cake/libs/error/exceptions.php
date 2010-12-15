@@ -431,6 +431,14 @@ class CakeSessionException extends CakeException { }
 class ConfigureException extends CakeException { }
 
 /**
+ * Exception class for Socket. This exception will be thrown from CakeSocket, HttpSocket and HttpResponse when it
+ * encounters an error.
+ *
+ * @package cake.libs
+ */
+class SocketException extends CakeException { }
+
+/**
  * Exception class for Xml.  This exception will be thrown from Xml when it
  * encounters an error.
  *

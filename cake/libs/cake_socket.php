@@ -100,7 +100,7 @@ class CakeSocket {
  * Connect the socket to the given host and port.
  *
  * @return boolean Success
- * @throws Exception
+ * @throws SocketException
  */
 	public function connect() {
 		if ($this->connection != null) {
@@ -120,7 +120,7 @@ class CakeSocket {
 
 		if (!empty($errNum) || !empty($errStr)) {
 			$this->setLastError($errStr, $errNum);
-			throw new Exception($errStr, $errNum);
+			throw new SocketException($errStr, $errNum);
 		}
 
 		$this->connected = is_resource($this->connection);

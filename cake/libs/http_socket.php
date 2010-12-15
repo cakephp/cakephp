@@ -205,7 +205,7 @@ class HttpSocket extends CakeSocket {
  *
  * @param mixed $resource Resource or false to disable the resource use
  * @return void
- * @throw Exception
+ * @throw SocketException
  */
 	public function setContentResource($resource) {
 		if ($resource === false) {
@@ -213,7 +213,7 @@ class HttpSocket extends CakeSocket {
 			return;
 		}
 		if (!is_resource($resource)) {
-			throw new Exception(__('Invalid resource.'));
+			throw new SocketException(__('Invalid resource.'));
 		}
 		$this->_contentResource = $resource;
 	}
@@ -366,7 +366,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if (!App::import('Lib', $this->responseClass)) {
-			throw new Exception(__('Class %s not found.', $this->responseClass));
+			throw new SocketException(__('Class %s not found.', $this->responseClass));
 		}
 		$responseClass = $this->responseClass;
 		$this->response = new $responseClass($response);
@@ -525,7 +525,7 @@ class HttpSocket extends CakeSocket {
  * Set authentication in request
  *
  * @return void
- * @throws Exception
+ * @throws SocketException
  */
 	protected function _setAuth() {
 		if (empty($this->_auth)) {
@@ -534,10 +534,10 @@ class HttpSocket extends CakeSocket {
 		$method = key($this->_auth);
 		$authClass = Inflector::camelize($method) . 'Authentication';
 		if (!App::import('Lib', 'http/' . $authClass)) {
-			throw new Exception(__('Unknown authentication method.'));
+			throw new SocketException(__('Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
-			throw new Exception(sprintf(__('The %s do not support authentication.'), $authClass));
+			throw new SocketException(sprintf(__('The %s do not support authentication.'), $authClass));
 		}
 		call_user_func("$authClass::authentication", $this, &$this->_auth[$method]);
 	}
@@ -546,7 +546,7 @@ class HttpSocket extends CakeSocket {
  * Set the proxy configuration and authentication
  *
  * @return void
- * @throws Exception
+ * @throws SocketException
  */
 	protected function _setProxy() {
 		if (empty($this->_proxy) || !isset($this->_proxy['host'], $this->_proxy['port'])) {
@@ -560,10 +560,10 @@ class HttpSocket extends CakeSocket {
 		}
 		$authClass = Inflector::camelize($this->_proxy['method']) . 'Authentication';
 		if (!App::import('Lib', 'http/' . $authClass)) {
-			throw new Exception(__('Unknown authentication method for proxy.'));
+			throw new SocketException(__('Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
-			throw new Exception(sprintf(__('The %s do not support proxy authentication.'), $authClass));
+			throw new SocketException(sprintf(__('The %s do not support proxy authentication.'), $authClass));
 		}
 		call_user_func("$authClass::proxyAuthentication", $this, &$this->_proxy);
 	}
@@ -773,7 +773,7 @@ class HttpSocket extends CakeSocket {
  * @param array $request Needs to contain a 'uri' key. Should also contain a 'method' key, otherwise defaults to GET.
  * @param string $versionToken The version token to use, defaults to HTTP/1.1
  * @return string Request line
- * @throws Exception
+ * @throws SocketException
  */
 	protected function _buildRequestLine($request = array(), $versionToken = 'HTTP/1.1') {
 		$asteriskMethods = array('OPTIONS');
@@ -781,7 +781,7 @@ class HttpSocket extends CakeSocket {
 		if (is_string($request)) {
 			$isValid = preg_match("/(.+) (.+) (.+)\r\n/U", $request, $match);
 			if (!$this->quirksMode && (!$isValid || ($match[2] == '*' && !in_array($match[3], $asteriskMethods)))) {
-				throw new Exception(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
+				throw new SocketException(__('HttpSocket::_buildRequestLine - Passed an invalid request line string. Activate quirks mode to do this.'));
 			}
 			return $request;
 		} elseif (!is_array($request)) {
@@ -799,7 +799,7 @@ class HttpSocket extends CakeSocket {
 		}
 
 		if (!$this->quirksMode && $request['uri'] === '*' && !in_array($request['method'], $asteriskMethods)) {
-			throw new Exception(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
+			throw new SocketException(__('HttpSocket::_buildRequestLine - The "*" asterisk character is only allowed for the following methods: %s. Activate quirks mode to work outside of HTTP/1.1 specs.', implode(',', $asteriskMethods)));
 		}
 		return $request['method'] . ' ' . $request['uri'] . ' ' . $versionToken . "\r\n";
 	}
