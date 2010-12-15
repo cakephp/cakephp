@@ -49,6 +49,7 @@ class AllLibsTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'set.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'string.test.php');
 		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'validation.test.php');
+		$suite->addTestFile(CORE_TEST_CASES . DS . 'libs' . DS . 'object_collection.test.php');
 		return $suite;
 	}
 }
