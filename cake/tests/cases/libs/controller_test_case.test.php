@@ -137,41 +137,42 @@ class ControllerTestCaseTest extends CakeTestCase {
  */
 	function testGenerate() {
 		$Posts = $this->Case->generate('Posts');
-		$this->Case->assertEquals($Posts->name, 'Posts');
-		$this->Case->assertEquals($Posts->modelClass, 'Post');
-		$this->Case->assertNull($Posts->response->send());
+		$this->assertEquals($Posts->name, 'Posts');
+		$this->assertEquals($Posts->modelClass, 'Post');
+		$this->assertNull($Posts->response->send());
 
 		$Posts = $this->Case->generate('Posts', array(
 			'methods' => array(
 				'render'
 			)
 		));
-		$this->Case->assertNull($Posts->render('index'));
+		$this->assertNull($Posts->render('index'));
 
 		$Posts = $this->Case->generate('Posts', array(
 			'models' => array('Post'),
 			'components' => array('RequestHandler')
 		));
-		$this->Case->assertNull($Posts->Post->save(array()));
-		$this->Case->assertNull($Posts->Post->find('all'));
-		$this->Case->assertEquals($Posts->Post->useTable, 'posts');
-		$this->Case->assertNull($Posts->RequestHandler->isAjax());
+
+		$this->assertNull($Posts->Post->save(array()));
+		$this->assertNull($Posts->Post->find('all'));
+		$this->assertEquals($Posts->Post->useTable, 'posts');
+		$this->assertNull($Posts->RequestHandler->isAjax());
 
 		$Posts = $this->Case->generate('Posts', array(
 			'models' => array(
 				'Post' => true
 			)
 		));
-		$this->Case->assertNull($Posts->Post->save(array()));
-		$this->Case->assertNull($Posts->Post->find('all'));
+		$this->assertNull($Posts->Post->save(array()));
+		$this->assertNull($Posts->Post->find('all'));
 
 		$Posts = $this->Case->generate('Posts', array(
 			'models' => array(
 				'Post' => array('save'),
 			)
 		));
-		$this->Case->assertNull($Posts->Post->save(array()));
-		$this->Case->assertIsA($Posts->Post->find('all'), 'array');
+		$this->assertNull($Posts->Post->save(array()));
+		$this->assertIsA($Posts->Post->find('all'), 'array');
 
 		$Posts = $this->Case->generate('Posts', array(
 			'models' => array('Post'),
@@ -198,24 +199,24 @@ class ControllerTestCaseTest extends CakeTestCase {
 	function testTestAction() {
 		$Controller = $this->Case->generate('TestsApps');
 		$this->Case->testAction('/tests_apps/index');
-		$this->Case->assertIsA($this->Case->controller->viewVars, 'array');
+		$this->assertIsA($this->Case->controller->viewVars, 'array');
 
 		$this->Case->testAction('/tests_apps/set_action');
 		$results = $this->Case->controller->viewVars;
 		$expected = array(
 			'var' => 'string'
 		);
-		$this->Case->assertEquals($expected, $results);
+		$this->assertEquals($expected, $results);
 		
 		$result = $this->Case->controller->response->body();
-		$this->Case->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertPattern('/This is the TestsAppsController index view/', $result);
 
 		$this->Case->testAction('/tests_apps/redirect_to');
 		$results = $this->Case->headers;
 		$expected = array(
 			'Location' => 'http://cakephp.org'
 		);
-		$this->Case->assertEquals($expected, $results);
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -228,32 +229,33 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
 		$result = json_decode($result, true);
 		$expected = array('cakephp' => 'cool');
-		$this->Case->assertEquals($result, $expected);
+		$this->assertEquals($result, $expected);
 
 		include TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
 		$result = $this->Case->testAction('/some_alias');
-		$this->Case->assertEquals($result, 5);
+		$this->assertEquals($result, 5);
 
 		include TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
 		$this->Case->testAction('/redirect_me_now');
 		$result = $this->Case->headers['Location'];
-		$this->Case->assertEquals($result, 'http://cakephp.org');
+		$this->assertEquals($result, 'http://cakephp.org');
 
 		include TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
 		$this->Case->testAction('/redirect_me');
 		$result = $this->Case->headers['Location'];
-		$this->Case->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));		
+		$this->assertEquals($result, Router::url(array('controller' => 'tests_apps', 'action' => 'some_method'), true));		
 	}
 
 /**
  * Tests not using loaded routes during tests
+ *
+ * @expectedException MissingActionException
  */
 	function testSkipRoutes() {
 		include TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS . 'routes.php';
 
 		$this->Case->loadRoutes = false;
 
-		$this->expectException('MissingActionException');
 		$result = $this->Case->testAction('/tests_apps/index.json', array('return' => 'view'));
 	}
 
@@ -264,26 +266,26 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->Case->autoMock = true;
 
 		$result = $this->Case->testAction('/tests_apps/some_method');
-		$this->Case->assertEquals($result, 5);
+		$this->assertEquals($result, 5);
 
 		$data = array('var' => 'set');
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
 			'data' => $data,
 			'return' => 'vars'
 		));
-		$this->Case->assertEquals($result['data'], $data);
+		$this->assertEquals($result['data'], $data);
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->Case->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->Case->assertPattern('/<html/', $result);
-		$this->Case->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->Case->assertPattern('/<\/html>/', $result);
+		$this->assertPattern('/<html/', $result);
+		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertPattern('/<\/html>/', $result);
 	}
 
 /**
@@ -300,8 +302,8 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$this->Case->testAction('/tests_apps_posts/post_var', array(
 			'data' => $data
 		));
-		$this->Case->assertEquals($this->Case->controller->viewVars['data'], $data);
-		$this->Case->assertEquals($this->Case->controller->data, $data);
+		$this->assertEquals($this->Case->controller->viewVars['data'], $data);
+		$this->assertEquals($this->Case->controller->data, $data);
 
 		$this->Case->testAction('/tests_apps_posts/post_var/named:param', array(
 			'data' => $data
@@ -309,8 +311,8 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$expected = array(
 			'named' => 'param'
 		);
-		$this->Case->assertEqual($this->Case->controller->request->named, $expected);
-		$this->Case->assertEquals($this->Case->controller->data, $data);
+		$this->assertEqual($this->Case->controller->request->named, $expected);
+		$this->assertEquals($this->Case->controller->data, $data);
 
 		$result = $this->Case->testAction('/tests_apps_posts/post_var', array(
 			'return' => 'vars',
@@ -340,8 +342,8 @@ class ControllerTestCaseTest extends CakeTestCase {
 				'lackof' => 'creativity'
 			)
 		));
-		$this->Case->assertEquals($this->Case->controller->request->query['some'], 'var');
-		$this->Case->assertEquals($this->Case->controller->request->query['lackof'], 'creativity');
+		$this->assertEquals($this->Case->controller->request->query['some'], 'var');
+		$this->assertEquals($this->Case->controller->request->query['lackof'], 'creativity');
 
 		$result = $this->Case->testAction('/tests_apps_posts/url_var/var1:value1/var2:val2', array(
 			'return' => 'vars',
@@ -379,7 +381,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 		$expected = array(
 			'var' => 'string'
 		);
-		$this->Case->assertEquals($expected, $results);
+		$this->assertEquals($expected, $results);
 	}
 
 /**
@@ -394,19 +396,19 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'data' => $data,
 			'return' => 'vars'
 		));
-		$this->Case->assertEquals($result['data'], $data);
+		$this->assertEquals($result['data'], $data);
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'view'
 		));
-		$this->Case->assertEquals($result, 'This is the TestsAppsController index view');
+		$this->assertEquals($result, 'This is the TestsAppsController index view');
 
 		$result = $this->Case->testAction('/tests_apps/set_action', array(
 			'return' => 'contents'
 		));
-		$this->Case->assertPattern('/<html/', $result);
-		$this->Case->assertPattern('/This is the TestsAppsController index view/', $result);
-		$this->Case->assertPattern('/<\/html>/', $result);
+		$this->assertPattern('/<html/', $result);
+		$this->assertPattern('/This is the TestsAppsController index view/', $result);
+		$this->assertPattern('/<\/html>/', $result);
 	}
 
 }
