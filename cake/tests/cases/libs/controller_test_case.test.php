@@ -20,7 +20,9 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'Controller', false);
+App::import('Core', array('AppModel', 'Model'));
 require_once TEST_CAKE_CORE_INCLUDE_PATH  . 'tests' . DS . 'lib' . DS . 'reporter' . DS . 'cake_html_reporter.php';
+require_once dirname(__FILE__) . DS . 'model' . DS . 'models.php';
 
 /**
  * AppController class
@@ -81,13 +83,6 @@ if (!class_exists('PostsController')) {
 	}
 }
 
-/**
- * Post model
- */
-if (!class_exists('Post')) {
-	class Post extends CakeTestModel {
-	}
-}
 
 /**
  * ControllerTestCaseTest
@@ -103,7 +98,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @var array
  * @access public
  */
-	public $fixtures = array('core.post');
+	public $fixtures = array('core.post', 'core.author');
 
 /**
  * reset environment.
@@ -136,6 +131,9 @@ class ControllerTestCaseTest extends CakeTestCase {
  * Test that ControllerTestCase::generate() creates mock objects correctly
  */
 	function testGenerate() {
+		if (defined('APP_CONTROLLER_EXISTS')) {
+			$this->markTestSkipped('AppController exists, cannot run.');
+		}
 		$Posts = $this->Case->generate('Posts');
 		$this->assertEquals($Posts->name, 'Posts');
 		$this->assertEquals($Posts->modelClass, 'Post');
@@ -153,6 +151,7 @@ class ControllerTestCaseTest extends CakeTestCase {
 			'components' => array('RequestHandler')
 		));
 
+		$this->assertInstanceOf('Post', $Posts->Post);
 		$this->assertNull($Posts->Post->save(array()));
 		$this->assertNull($Posts->Post->find('all'));
 		$this->assertEquals($Posts->Post->useTable, 'posts');
