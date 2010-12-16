@@ -34,7 +34,8 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
-		$this->Socket = new CakeSocket();
+		parent::setUp();
+		$this->Socket = new CakeSocket(array('timeout' => 1));
 	}
 
 /**
@@ -44,6 +45,7 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		unset($this->Socket);
 	}
 
@@ -54,7 +56,7 @@ class CakeSocketTest extends CakeTestCase {
  * @return void
  */
 	function testConstruct() {
-		$this->Socket->__construct();
+		$this->Socket = new CakeSocket();
 		$config = $this->Socket->config;
 		$this->assertIdentical($config, array(
 			'persistent'	=> false,
@@ -108,8 +110,8 @@ class CakeSocketTest extends CakeTestCase {
  */
 	public static function invalidConnections() {
 		return array(
-			array(array('host' => 'invalid.host')),
-			array(array('host' => '127.0.0.1', 'port' => '70000'))
+			array(array('host' => 'invalid.host', 'timeout' => 1)),
+			array(array('host' => '127.0.0.1', 'port' => '70000', 'timeout' => 1))
 		);
 	}
 

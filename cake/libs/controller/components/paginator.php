@@ -104,7 +104,11 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
 		}
-		$options = array_merge($this->Controller->request->params, $this->Controller->params['url'], $this->Controller->passedArgs);
+		$options = array_merge(
+			$this->Controller->request->params,
+			$this->Controller->request->query,
+			$this->Controller->passedArgs
+		);
 
 		if (isset($this->settings[$object->alias])) {
 			$defaults = $this->settings[$object->alias];

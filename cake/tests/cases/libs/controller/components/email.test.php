@@ -1087,13 +1087,18 @@ HTMLBLOC;
 		$this->Controller->EmailTest->additionalParams = 'X-additional-header';
 		$this->Controller->EmailTest->delivery = 'smtp';
 		$this->Controller->EmailTest->smtpOptions['host'] = 'blah';
-		$this->Controller->EmailTest->smtpOptions['timeout'] = 0.5;
+		$this->Controller->EmailTest->smtpOptions['timeout'] = 0.2;
 		$this->Controller->EmailTest->attachments = array('attachment1', 'attachment2');
 		$this->Controller->EmailTest->textMessage = 'This is the body of the message';
 		$this->Controller->EmailTest->htmlMessage = 'This is the body of the message';
 		$this->Controller->EmailTest->messageId = false;
 
-		$this->assertFalse($this->Controller->EmailTest->send('Should not work'));
+		try {
+			$this->Controller->EmailTest->send('Should not work');
+			$this->fail('No exception');
+		} catch (SocketException $e) {
+			$this->assertTrue(true, 'SocketException raised');
+		}
 
 		$this->Controller->EmailTest->reset();
 
