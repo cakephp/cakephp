@@ -20,52 +20,6 @@
 App::import('Controller', 'Controller', false);
 App::import('Controller', 'Component', false);
 
-if (!class_exists('AppController')) {
-
-/**
- * AppController class
- *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
- */
-	class AppController extends Controller {
-
-/**
- * name property
- *
- * @var string 'App'
- * @access public
- */
-		public $name = 'App';
-
-/**
- * uses property
- *
- * @var array
- * @access public
- */
-		public $uses = array();
-
-/**
- * helpers property
- *
- * @var array
- * @access public
- */
-		public $helpers = array();
-
-/**
- * components property
- *
- * @var array
- * @access public
- */
-		public $components = array('Orange' => array('colour' => 'blood orange'));
-	}
-} elseif (!defined('APP_CONTROLLER_EXISTS')){
-	define('APP_CONTROLLER_EXISTS', true);
-}
-
 /**
  * ParamTestComponent
  *
@@ -115,7 +69,7 @@ class ParamTestComponent extends Component {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class ComponentTestController extends AppController {
+class ComponentTestController extends Controller {
 
 /**
  * name property
@@ -132,6 +86,7 @@ class ComponentTestController extends AppController {
  * @access public
  */
 	public $uses = array();
+
 }
 
 /**
@@ -394,24 +349,6 @@ class ComponentTest extends CakeTestCase {
 		$this->assertType('SomethingWithEmailComponent', $Controller->SomethingWithEmail);
 		$this->assertType('EmailComponent', $Controller->SomethingWithEmail->Email);
 		$this->assertType('ComponentTestController', $Controller->SomethingWithEmail->Email->Controller);
-	}
-
-/**
- * Test that SessionComponent doesn't get added if its already in the components array.
- *
- * @return void
- */
-	public function testDoubleLoadingOfSessionComponent() {
-		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
-			return;
-		}
-
-		$Controller = new ComponentTestController();
-		$Controller->uses = false;
-		$Controller->components = array('Session');
-		$Controller->constructClasses();
-
-		$this->assertEqual($Controller->components, array('Session' => '', 'Orange' => array('colour' => 'blood orange')));
 	}
 
 }
