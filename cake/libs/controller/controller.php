@@ -273,6 +273,15 @@ class Controller extends Object {
 	public $validationErrors = null;
 
 /**
+ * The class name of the parent class you wish to merge with.
+ * Typically this is AppController, but you may wish to merge vars with a different
+ * parent class.
+ *
+ * @var string
+ */
+	protected $_mergeParent = 'AppController';
+
+/**
  * Constructor.
  *
  * @param CakeRequest $request Request object for this controller can be null for testing.
@@ -394,7 +403,7 @@ class Controller extends Object {
 	}
 
 /**
- * Merge components, helpers, and uses vars from AppController and PluginAppController.
+ * Merge components, helpers, and uses vars from Controller::$_mergeParent and PluginAppController.
  *
  * @return void
  */
@@ -410,8 +419,8 @@ class Controller extends Object {
 			$plugin = $pluginName . '.';
 		}
 		
-		if (is_subclass_of($this, 'AppController') || !empty($pluginController)) {
-			$appVars = get_class_vars('AppController');
+		if (is_subclass_of($this, $this->_mergeParent) || !empty($pluginController)) {
+			$appVars = get_class_vars($this->_mergeParent);
 			$uses = $appVars['uses'];
 			$merge = array('components', 'helpers');
 
@@ -430,7 +439,7 @@ class Controller extends Object {
 			) {
 				$this->uses = array_merge($this->uses, array_diff($appVars['uses'], $this->uses));
 			}
-			$this->_mergeVars($merge, 'AppController', true);
+			$this->_mergeVars($merge, $this->_mergeParent, true);
 		}
 
 		if ($pluginController && $pluginName != null) {
