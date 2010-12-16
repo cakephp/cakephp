@@ -111,6 +111,7 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function setUp() {
+		parent::setUp();
 		App::build(array(
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
@@ -127,8 +128,8 @@ class ControllerTestCaseTest extends CakeTestCase {
  * @return void
  */
 	function tearDown() {
+		parent::tearDown();
 		$this->Case->controller = null;
-		App::build();
 	}
 
 /**
