@@ -168,25 +168,6 @@ class BasicsTest extends CakeTestCase {
 	}
 
 /**
- * test uses()
- *
- * @return void
- * @access public
- * @deprecated
- */
-	function testUses() {
-		$this->skipIf(class_exists('Security') || class_exists('Sanitize'), '%s Security and/or Sanitize class already loaded');
-
-		$this->assertFalse(class_exists('Security'));
-		$this->assertFalse(class_exists('Sanitize'));
-
-		uses('Security', 'Sanitize');
-
-		$this->assertTrue(class_exists('Security'));
-		$this->assertTrue(class_exists('Sanitize'));
-	}
-
-/**
  * Test h()
  *
  * @return void
