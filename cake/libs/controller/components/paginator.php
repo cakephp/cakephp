@@ -64,42 +64,7 @@ class PaginatorComponent extends Component {
 		}
 		$assoc = null;
 
-		if (is_string($object)) {
-			$assoc = null;
-			if (strpos($object, '.')  !== false) {
-				list($object, $assoc) = pluginSplit($object);
-			}
-
-			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
-				$object = $this->Controller->{$object}->{$assoc};
-			} elseif (
-				$assoc && isset($this->Controller->{$this->Controller->modelClass}) &&
-				isset($this->Controller->{$this->Controller->modelClass}->{$assoc}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$assoc};
-			} elseif (isset($this->Controller->{$object})) {
-				$object = $this->Controller->{$object};
-			} elseif (
-				isset($this->Controller->{$this->Controller->modelClass}) && isset($this->Controller->{$this->Controller->modelClass}->{$object}
-			)) {
-				$object = $this->Controller->{$this->Controller->modelClass}->{$object};
-			}
-		} elseif (empty($object) || $object === null) {
-			if (isset($this->Controller->{$this->Controller->modelClass})) {
-				$object = $this->Controller->{$this->Controller->modelClass};
-			} else {
-				$className = null;
-				$name = $this->Controller->uses[0];
-				if (strpos($this->Controller->uses[0], '.') !== false) {
-					list($name, $className) = explode('.', $this->Controller->uses[0]);
-				}
-				if ($className) {
-					$object = $this->Controller->{$className};
-				} else {
-					$object = $this->Controller->{$name};
-				}
-			}
-		}
+		$object = $this->_getObject($object);
 
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
@@ -251,5 +216,51 @@ class PaginatorComponent extends Component {
 			$this->Controller->helpers[] = 'Paginator';
 		}
 		return $results;
+	}
+
+/**
+ * Get the object pagination will occur on.
+ *
+ * @param mixed $object The object you are looking for.
+ * @return mixed The model object to paginate on.
+ */
+	protected function _getObject($object) {
+		if (is_string($object)) {
+			$assoc = null;
+			if (strpos($object, '.')  !== false) {
+				list($object, $assoc) = pluginSplit($object);
+			}
+
+			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
+				$object = $this->Controller->{$object}->{$assoc};
+			} elseif (
+				$assoc && isset($this->Controller->{$this->Controller->modelClass}) &&
+				isset($this->Controller->{$this->Controller->modelClass}->{$assoc}
+			)) {
+				$object = $this->Controller->{$this->Controller->modelClass}->{$assoc};
+			} elseif (isset($this->Controller->{$object})) {
+				$object = $this->Controller->{$object};
+			} elseif (
+				isset($this->Controller->{$this->Controller->modelClass}) && isset($this->Controller->{$this->Controller->modelClass}->{$object}
+			)) {
+				$object = $this->Controller->{$this->Controller->modelClass}->{$object};
+			}
+		} elseif (empty($object) || $object === null) {
+			if (isset($this->Controller->{$this->Controller->modelClass})) {
+				$object = $this->Controller->{$this->Controller->modelClass};
+			} else {
+				$className = null;
+				$name = $this->Controller->uses[0];
+				if (strpos($this->Controller->uses[0], '.') !== false) {
+					list($name, $className) = explode('.', $this->Controller->uses[0]);
+				}
+				if ($className) {
+					$object = $this->Controller->{$className};
+				} else {
+					$object = $this->Controller->{$name};
+				}
+			}
+		}
+		return $object;
 	}
 }
