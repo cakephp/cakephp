@@ -89,7 +89,7 @@ class Router {
  * @access public
  */
 	public static $named = array(
-		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
+		'default' => array(':page', ':fields', ':order', ':limit', ':recursive', ':sort', ':direction', ':step'),
 		'greedy' => true,
 		'separator' => ':',
 		'rules' => false,
@@ -972,7 +972,7 @@ class Router {
 			if (isset(self::$named['rules'][$param])) {
 				$rule = self::$named['rules'][$param];
 				if (Router::matchNamed($param, $val, $rule, compact('controller', 'action'))) {
-					$named[$param] = $val;
+					$named[substr($param, 1)] = $val;
 					unset($params[$param]);
 				}
 			}

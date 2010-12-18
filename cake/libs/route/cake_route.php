@@ -263,6 +263,15 @@ class CakeRoute {
 		if (array_intersect_key($keyNames, $url) != $keyNames) {
 			return false;
 		}
+		
+		//pull out named params so comparisons later on are faster.
+		$named = array();
+		foreach ($url as $key => $value) {
+			if ($key[0] === ':') {
+				$named[$key] = $value;
+				unset($url[$key]);
+			}
+		}
 
 		$diffUnfiltered = Set::diff($url, $defaults);
 		$diff = array();
@@ -289,7 +298,7 @@ class CakeRoute {
 			return false;
 		}
 
-		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames);
+		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames) + $named;
 		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
 
 		//remove any pass params, they have numeric indexes, skip any params that are in the defaults

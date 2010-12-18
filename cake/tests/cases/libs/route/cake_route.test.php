@@ -298,13 +298,13 @@ class CakeRouteTestCase extends CakeTestCase {
 		Router::connectNamed(true);
 
 		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
-		$result = $route->match(array('controller' => 'posts', 'action' => 'index', 'plugin' => null, 'page' => 1));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', 'plugin' => null, ':page' => 1));
 		$this->assertEqual($result, '/posts/index/page:1');
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5));
 		$this->assertEqual($result, '/posts/view/5');
 
-		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, ':page' => 1, ':limit' => 20, ':order' => 'title'));
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
 
 
