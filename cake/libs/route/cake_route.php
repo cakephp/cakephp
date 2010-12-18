@@ -280,7 +280,7 @@ class CakeRoute {
 				continue;
 			}
 			// keys that don't exist are different.
-			if (!$keyExists) {
+			if (!$keyExists && !empty($value)) {
 				$diff[$key] = $value;
 			}
 			

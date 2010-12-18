@@ -290,6 +290,19 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that falsey values do not interrupt a match.
+ *
+ * @return void
+ */
+	function testMatchWithFalseyValues() {
+		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+		$result = $route->match(array(
+			'controller' => 'posts', 'action' => 'index', 'plugin' => null, 'admin' => false
+		));
+		$this->assertEqual($result, '/posts/index/');
+	}
+
+/**
  * test match() with greedy routes, named parameters and passed args.
  *
  * @return void
