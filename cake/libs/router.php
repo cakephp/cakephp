@@ -269,15 +269,18 @@ class Router {
  *
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view', array('persist' => true));`
  *
- * Redirects /home/* to /posts/view and passes the parameters to /posts/view
+ * Redirects /home/* to /posts/view and passes the parameters to /posts/view.  Using an array as the 
+ * redirect destination allows you to use other routes to define where a url string should be redirected ot.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *
  * Redirects /posts/* to http://google.com with a HTTP status of 302
  *
  * ### Options:
+ *
  * - `status` Sets the HTTP status (default 301)
- * - `persist` Passes the params to the redirected route, if it can
+ * - `persist` Passes the params to the redirected route, if it can.  This is useful with greedy routes,
+ *   routes that end in `*` are greedy.  As you can remap urls and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url A url to redirect to. Can be a string or a Cake array-based url

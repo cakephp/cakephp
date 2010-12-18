@@ -2,7 +2,9 @@
 App::import('Core', 'CakeResponse');
 App::import('Core', 'route/CakeRoute');
 /**
- * Redirect route will perform an immediate redirect
+ * Redirect route will perform an immediate redirect.  Redirect routes
+ * are useful when you want to have Routing layer redirects occur in your 
+ * application, for when URLs move.
  *
  * PHP5
  *
@@ -29,6 +31,25 @@ class RedirectRoute extends CakeRoute {
 	public $response = null;
 
 /**
+ * The location to redirect to.  Either a string or a cake array url.
+ *
+ * @var mixed
+ */
+	public $redirect;
+
+/**
+ * Constructor
+ *
+ * @param string $template Template string with parameter placeholders
+ * @param array $defaults Array of defaults for the route.
+ * @param string $params Array of parameters and additional options for the Route
+ */
+	public function __construct($template, $defaults = array(), $options = array()) {
+		parent::__construct($template, $defaults, $options);
+		$this->redirect = (array)$defaults;
+	}
+
+/**
  * Parses a string url into an array. Parsed urls will result in an automatic
  * redirection
  *
@@ -43,16 +64,16 @@ class RedirectRoute extends CakeRoute {
 		if (!$this->response) {
 			$this->response = new CakeResponse();
 		}
-		$redirect = $this->defaults;
-		if (count($this->defaults) == 1 && !isset($this->defaults['controller'])) {
-			$redirect = $this->defaults[0];
+		$redirect = $this->redirect;
+		if (count($this->redirect) == 1 && !isset($this->redirect['controller'])) {
+			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
 			$argOptions['context'] = array('action' => $redirect['action'], 'controller' => $redirect['controller']);
 			$args = Router::getArgs($params['_args_'], $argOptions);
 			$redirect += $args['pass'];
 			$redirect += $args['named'];
-		}		
+		}
 		$status = 301;
 		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
 			$status = $this->options['status'];
