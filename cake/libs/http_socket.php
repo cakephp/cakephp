@@ -537,7 +537,7 @@ class HttpSocket extends CakeSocket {
 		if (!method_exists($authClass, 'authentication')) {
 			throw new SocketException(sprintf(__('The %s do not support authentication.'), $authClass));
 		}
-		call_user_func("$authClass::authentication", $this, &$this->_auth[$method]);
+		call_user_func("$authClass::authentication", $this, $this->_auth[$method]);
 	}
 
 /**
@@ -563,7 +563,7 @@ class HttpSocket extends CakeSocket {
 		if (!method_exists($authClass, 'proxyAuthentication')) {
 			throw new SocketException(sprintf(__('The %s do not support proxy authentication.'), $authClass));
 		}
-		call_user_func("$authClass::proxyAuthentication", $this, &$this->_proxy);
+		call_user_func("$authClass::proxyAuthentication", $this, $this->_proxy);
 	}
 
 /**
