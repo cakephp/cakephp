@@ -43,7 +43,7 @@ class PaginatorComponent extends Component {
  * @param array $settings Array of configuration settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$settings = array_merge(array('page' => 1, 'limit' => 20), (array)$settings);
+		$settings = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), (array)$settings);
 		$this->Controller = $collection->getController();
 		parent::__construct($collection, $settings);
 	}
@@ -146,6 +146,7 @@ class PaginatorComponent extends Component {
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
 		}
+		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 
 		extract($options);
 
@@ -181,7 +182,7 @@ class PaginatorComponent extends Component {
 		} elseif (intval($page) < 1) {
 			$options['page'] = $page = 1;
 		}
-		$page = $options['page'] = (integer)$page;
+		$page = $options['page'] = (int)$page;
 
 		if (method_exists($object, 'paginate')) {
 			$results = $object->paginate(
