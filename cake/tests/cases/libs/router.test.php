@@ -1350,7 +1350,7 @@ class RouterTest extends CakeTestCase {
 		Router::reload();
 		Router::connect('/:controller/:action/*');
 		Router::connectNamed(array('page'), array('default' => false, 'greedy' => false));
-		$result = Router::parse('/categories/index?limit=5');
+		$result = Router::parse('/categories/index/limit=5');
 		$this->assertTrue(empty($result['named']));
 	}
 
