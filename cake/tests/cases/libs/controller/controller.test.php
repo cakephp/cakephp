@@ -113,13 +113,13 @@ class ControllerPost extends CakeTestModel {
  * @access public
  * @return void
  */
-	function find($type, $options = array()) {
-		if ($type == 'popular') {
+	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
+		if ($conditions == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
-			$options = Set::merge($options, compact('conditions'));
-			return parent::find('all', $options);
+			$options = Set::merge($fields, compact('conditions'));
+			return parent::find('all', $fields);
 		}
-		return parent::find($type, $options);
+		return parent::find($conditions, $fields);
 	}
 }
 
@@ -326,7 +326,7 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function initialize(&$controller) {
+	function initialize($controller) {
 	}
 
 /**
@@ -335,7 +335,7 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function startup(&$controller) {
+	function startup($controller) {
 	}
 /**
  * shutdown method
@@ -343,14 +343,14 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function shutdown(&$controller) {
+	function shutdown($controller) {
 	}
 /**
  * beforeRender callback
  *
  * @return void
  */
-	function beforeRender(&$controller) {
+	function beforeRender($controller) {
 		if ($this->viewclass) {
 			$controller->view = $this->viewclass;
 		}

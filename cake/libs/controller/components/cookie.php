@@ -182,7 +182,7 @@ class CookieComponent extends Component {
  * Start CookieComponent for use in the controller
  *
  */
-	public function startup() {
+	public function startup($controller) {
 		$this->_expire($this->time);
 
 		if (isset($_COOKIE[$this->name])) {

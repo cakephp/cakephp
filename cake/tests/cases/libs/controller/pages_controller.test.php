@@ -28,16 +28,6 @@ App::import('Controller', 'Pages');
 class PagesControllerTest extends CakeTestCase {
 
 /**
- * endTest method
- *
- * @access public
- * @return void
- */
-	function endTest() {
-		App::build();
-	}
-
-/**
  * testDisplay method
  *
  * @access public

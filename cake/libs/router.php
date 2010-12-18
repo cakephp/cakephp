@@ -1217,7 +1217,8 @@ class Router {
 				} else {
 					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
 						$matches = array_reverse($matches);
-						$key = array_shift(explode('[', $key));
+						$parts = explode('[', $key);
+						$key = array_shift($parts);
 						$arr = $val;
 						foreach ($matches as $match) {
 							if (empty($match[1])) {

@@ -383,7 +383,7 @@ class CookieComponentTest extends CakeTestCase {
 						'name' => 'CakePHP',
 						'version' => '1.2.0.x',
 						'tag' => 'CakePHP Rocks!'));
-		$this->Cookie->startup();
+		$this->Cookie->startup(null);
 
 		$data = $this->Cookie->read('Encrytped_array');
 		$expected = array('name' => 'CakePHP', 'version' => '1.2.0.x', 'tag' =>'CakePHP Rocks!');
