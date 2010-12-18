@@ -269,6 +269,11 @@ class CakeRoute {
 			return false;
 		}
 
+		// Missing defaults is a fail.
+		if (array_diff_key($defaults, $url) !== array()) {
+			return false;
+		}
+
 		$named = $pass = $diff = array();
 
 		foreach ($url as $key => $value) {
@@ -306,7 +311,6 @@ class CakeRoute {
 				$diff[$key] = $value;
 			}
 		}
-
 
 		//if a not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && ( (!empty($pass) || !empty($named)) || array_diff_key($diff, $keyNames) != array()) ) {
