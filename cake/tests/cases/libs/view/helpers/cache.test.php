@@ -336,7 +336,7 @@ class CacheHelperTest extends CakeTestCase {
 		$this->assertTrue(file_exists($filename));
 
 		$contents = file_get_contents($filename);
-		$this->assertPattern('/\$this\-\>viewVars.*variable/', $contents);
+		$this->assertPattern('/\$this\-\>viewVars/', $contents);
 		$this->assertPattern('/extract\(\$this\-\>viewVars, EXTR_SKIP\);/', $contents);
 		$this->assertPattern('/php echo \$variable/', $contents);
 		$this->assertPattern('/variableValue/', $contents);
