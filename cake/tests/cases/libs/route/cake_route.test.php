@@ -496,4 +496,16 @@ class CakeRouteTestCase extends CakeTestCase {
 		$expected = '/posts/index/?test=value&other=value';
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * test that querystring params work with non greedy routes.
+ *
+ * @return void
+ */
+	function testQueryStringNonGreedy() {
+		$route = new CakeRoute('/:controller/:action');
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', '?test' => 'value'));
+		$expected = '/posts/index?test=value';
+		$this->assertEquals($expected, $result);
+	}
 }
