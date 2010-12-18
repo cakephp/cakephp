@@ -25,9 +25,7 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 /**
  * Ensure required classes are available.
  */
-if (!class_exists('File')) {
-	uses('file');
-}
+App::import('Core', 'File');
 
 /**
  * Make clean CSS

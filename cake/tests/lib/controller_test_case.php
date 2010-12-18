@@ -242,6 +242,7 @@ class ControllerTestCase extends CakeTestCase {
  * interfere with testing.
  * 
  * ### Mocks:
+ *
  * - `methods` Methods to mock on the controller. `_stop()` is mocked by default
  * - `models` Models to mock. Models are added to the ClassRegistry so they any
  *   time they are instatiated the mock will be created. Pass as key value pairs
@@ -270,6 +271,7 @@ class ControllerTestCase extends CakeTestCase {
 		$_controller->name = $controller;
 		$_controller->__construct();
 
+		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {
 			if (is_string($methods)) {
 				$model = $methods;
@@ -278,10 +280,8 @@ class ControllerTestCase extends CakeTestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			ClassRegistry::init($model);
-			$_model = $this->getMock($model, $methods, array(), '', false);
-			$_model->name = $model;
-			$_model->__construct();
+			$config = array_merge((array)$config, array('name' => $model));
+			$_model = $this->getMock($model, $methods, array($config));
 			ClassRegistry::removeObject($model);
 			ClassRegistry::addObject($model, $_model);
 		}

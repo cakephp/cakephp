@@ -23,45 +23,30 @@ App::uses('CakeResponse', 'Network');
 App::uses('SecurityComponent', 'Controller/Component');
 App::uses('CookieComponent', 'Controller/Component');
 
+class ControllerTestAppController extends Controller {
 /**
- * AppController class
+ * helpers property
  *
- * @package       cake
- * @subpackage    cake.tests.cases.libs.controller
+ * @var array
+ * @access public
  */
-if (!class_exists('AppController', false)) {
-	/**
-	 * AppController class
-	 *
-	 * @package       cake
-	 * @subpackage    cake.tests.cases.libs.controller
-	 */
-	class AppController extends Controller {
-	/**
-	 * helpers property
-	 *
-	 * @var array
-	 * @access public
-	 */
-		public $helpers = array('Html');
-	/**
-	 * uses property
-	 *
-	 * @var array
-	 * @access public
-	 */
-		public $uses = array('ControllerPost');
-	/**
-	 * components property
-	 *
-	 * @var array
-	 * @access public
-	 */
-		public $components = array('Cookie');
-	}
-} elseif (!defined('APP_CONTROLLER_EXISTS')) {
-	define('APP_CONTROLLER_EXISTS', true);
+	public $helpers = array('Html');
+/**
+ * uses property
+ *
+ * @var array
+ * @access public
+ */
+	public $uses = array('ControllerPost');
+/**
+ * components property
+ *
+ * @var array
+ * @access public
+ */
+	public $components = array('Cookie');
 }
+
 
 /**
  * ControllerPost class
@@ -138,7 +123,7 @@ class ControllerPost extends CakeTestModel {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class ControllerCommentsController extends AppController {
+class ControllerCommentsController extends ControllerTestAppController {
 
 /**
  * name property
@@ -147,6 +132,8 @@ class ControllerCommentsController extends AppController {
  * @access public
  */
 	public $name = 'ControllerComments';
+	
+	protected $_mergeParent = 'ControllerTestAppController';
 }
 
 /**
@@ -260,7 +247,7 @@ class NameTest extends CakeTestModel {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class TestController extends AppController {
+class TestController extends ControllerTestAppController {
 
 /**
  * name property
@@ -292,6 +279,8 @@ class TestController extends AppController {
  * @access public
  */
 	public $uses = array('ControllerComment', 'ControllerAlias');
+	
+	protected $_mergeParent = 'ControllerTestAppController';
 
 /**
  * index method
@@ -368,7 +357,7 @@ class TestComponent extends Object {
  * @package       cake
  * @subpackage    cake.tests.cases.libs.controller
  */
-class AnotherTestController extends AppController {
+class AnotherTestController extends ControllerTestAppController {
 
 /**
  * name property
@@ -383,6 +372,8 @@ class AnotherTestController extends AppController {
  * @access public
  */
 	public $uses = null;
+	
+	protected $_mergeParent = 'ControllerTestAppController';
 }
 
 /**
@@ -871,17 +862,13 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVars() {
-		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
-			return;
-		}
 		$request = new CakeRequest('controller_posts/index');
-
 
 		$TestController = new TestController($request);
 		$TestController->constructClasses();
 
 		$testVars = get_class_vars('TestController');
-		$appVars = get_class_vars('AppController');
+		$appVars = get_class_vars('ControllerTestAppController');
 
 		$components = is_array($appVars['components'])
 						? array_merge($appVars['components'], $testVars['components'])
@@ -901,12 +888,12 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual(count(array_diff_assoc(Set::normalize($TestController->components), Set::normalize($components))), 0);
 
 		$expected = array('ControllerComment', 'ControllerAlias', 'ControllerPost');
-		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, AppController models should be last.');
+		$this->assertEquals($expected, $TestController->uses, '$uses was merged incorrectly, ControllerTestAppController models should be last.');
 
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
 
-		$appVars = get_class_vars('AppController');
+		$appVars = get_class_vars('ControllerTestAppController');
 		$testVars = get_class_vars('AnotherTestController');
 
 
@@ -919,7 +906,7 @@ class ControllerTest extends CakeTestCase {
 		$TestController = new ControllerCommentsController($request);
 		$TestController->constructClasses();
 
-		$appVars = get_class_vars('AppController');
+		$appVars = get_class_vars('ControllerTestAppController');
 		$testVars = get_class_vars('ControllerCommentsController');
 
 
@@ -937,9 +924,6 @@ class ControllerTest extends CakeTestCase {
  * @return void
  */
 	function testChildComponentOptionsSupercedeParents() {
-		if ($this->skipIf(defined('APP_CONTROLLER_EXISTS'), '%s Need a non-existent AppController')) {
-			return;
-		}
 		$request = new CakeRequest('controller_posts/index');
 
 		$TestController = new TestController($request);
@@ -952,7 +936,7 @@ class ControllerTest extends CakeTestCase {
 
 /**
  * Ensure that __mergeVars is not being greedy and merging with
- * AppController when you make an instance of Controller
+ * ControllerTestAppController when you make an instance of Controller
  *
  * @return void
  */

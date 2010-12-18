@@ -21,32 +21,28 @@
  */
 App::uses('Controller', 'Controller');
 
-if (!class_exists('AppController')) {
-
 /**
  * Test case AppController
  *
  * @package cake
  * @subpackage cake.tests.cases.libs.controller
  */
-	class AppController extends Controller {
+class MergeVarsAppController extends Controller {
 
 /**
  * components
  *
  * @var array
  */
-		public $components = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
+	public $components = array('MergeVar' => array('flag', 'otherFlag', 'redirect' => false));
 /**
  * helpers
  *
  * @var array
  */
-		public $helpers = array('MergeVar' => array('format' => 'html', 'terse'));
-	}
-} elseif (!defined('APP_CONTROLLER_EXISTS')) {
-	define('APP_CONTROLLER_EXISTS', true);
+	public $helpers = array('MergeVar' => array('format' => 'html', 'terse'));
 }
+
 
 /**
  * MergeVar Component
@@ -62,7 +58,7 @@ class MergeVarComponent extends Object {
  *
  * @package cake.tests.cases.libs.controller
  */
-class MergeVariablesController extends AppController {
+class MergeVariablesController extends MergeVarsAppController {
 
 /**
  * name
@@ -77,6 +73,13 @@ class MergeVariablesController extends AppController {
  * @var arrays
  */
 	public $uses = array();
+
+/**
+ * parent for mergeVars
+ *
+ * @var string
+ */
+	protected $_mergeParent = 'MergeVarsAppController';
 }
 
 /**
@@ -84,7 +87,7 @@ class MergeVariablesController extends AppController {
  *
  * @package cake.tests.cases.libs.controller
  */
-class MergeVarPluginAppController extends AppController {
+class MergeVarPluginAppController extends MergeVarsAppController {
 
 /**
  * components
@@ -99,6 +102,13 @@ class MergeVarPluginAppController extends AppController {
  * @var array
  */
 	public $helpers = array('Javascript');
+
+/**
+ * parent for mergeVars
+ *
+ * @var string
+ */
+	protected $_mergeParent = 'MergeVarsAppController';
 }
 
 /**
@@ -130,14 +140,6 @@ class MergePostsController extends MergeVarPluginAppController {
  * @package cake.tests.cases.libs.controller
  */
 class ControllerMergeVarsTest extends CakeTestCase {
-/**
- * end test
- *
- * @return void
- */
-	function endTest() {
-		ClassRegistry::flush();
-	}
 
 /**
  * test that component settings are not duplicated when merging component settings
@@ -145,8 +147,6 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testComponentParamMergingNoDuplication() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-		
 		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -160,8 +160,6 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testComponentMergingWithRedeclarations() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-
 		$Controller = new MergeVariablesController();
 		$Controller->components['MergeVar'] = array('remote', 'redirect' => true);
 		$Controller->constructClasses();
@@ -176,8 +174,6 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testHelperSettingMergingNoDuplication() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-
 		$Controller = new MergeVariablesController();
 		$Controller->constructClasses();
 
@@ -192,9 +188,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testHelperOrderPrecedence() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-
-		$Controller =& new MergeVariablesController();
+		$Controller = new MergeVariablesController();
 		$Controller->helpers = array('Custom', 'Foo' => array('something'));
 		$Controller->constructClasses();
 
@@ -212,8 +206,6 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVarsWithPlugin() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-
 		$Controller = new MergePostsController();
 		$Controller->components = array('Email' => array('ports' => 'open'));
 		$Controller->plugin = 'MergeVarPlugin';
@@ -251,9 +243,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
  * @return void
  */
 	function testMergeVarsNotGreedy() {
-		$this->skipIf(defined('APP_CONTROLLER_EXISTS'), "APP_CONTROLLER_EXISTS cannot run {$this->name}");
-
-		$Controller =& new Controller();
+		$Controller = new Controller();
 		$Controller->components = array();
 		$Controller->uses = array();
 		$Controller->constructClasses();

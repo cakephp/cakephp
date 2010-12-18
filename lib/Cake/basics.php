@@ -62,24 +62,6 @@
 	}
 
 /**
- * Loads component/components from LIBS. Takes optional number of parameters.
- *
- * Example:
- *
- * `uses('flay', 'time');`
- *
- * @param string $name Filename without the .php part
- * @deprecated Will be removed in 2.0
- * @link http://book.cakephp.org/view/1140/uses
- */
-	function uses() {
-		$args = func_get_args();
-		foreach ($args as $file) {
-			require_once(LIBS . strtolower($file) . '.php');
-		}
-	}
-
-/**
  * Prints out debug information about given variable.
  *
  * Only runs if debug level is greater than zero.
