@@ -74,6 +74,16 @@ class CakeRoute {
 	protected $_compiledRoute = null;
 
 /**
+ * Constant for the sigil that indicates a route param is a named parameter.
+ */
+	const SIGIL_NAMED = ':';
+
+/**
+ * Constant for the sigil that indicates a route param is a query string parameter.
+ */
+	const SIGIL_QUERYSTRING = '?';
+
+/**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
  * @var array
@@ -274,12 +284,19 @@ class CakeRoute {
 			return false;
 		}
 
-		$named = $pass = $diff = array();
+		$named = $pass = $_query = array();
 
 		foreach ($url as $key => $value) {
 			// pull out named params so comparisons later on are faster.
-			if ($key[0] === ':' && ($value !== false && $value !== null)) {
+			if ($key[0] === CakeRoute::SIGIL_NAMED && ($value !== false && $value !== null)) {
 				$named[substr($key, 1)] = $value;
+				unset($url[$key]);
+				continue;
+			}
+			
+			// pull out querystring params
+			if ($key[0] === CakeRoute::SIGIL_QUERYSTRING && ($value !== false && $value !== null)) {
+				$_query[substr($key, 1)] = $value;
 				unset($url[$key]);
 				continue;
 			}
@@ -288,8 +305,6 @@ class CakeRoute {
 			$keyExists = array_key_exists($key, $defaults);
 			if ($keyExists && $defaults[$key] != $value) {
 				return false;
-				$diff[$key] = $value;
-				continue;
 			}
 			
 			// If the key is a routed key, its not different yet.
@@ -310,17 +325,11 @@ class CakeRoute {
 			// keys that don't exist are different.
 			if (!$keyExists && !empty($value)) {
 				return false;
-				$diff[$key] = $value;
 			}
 		}
 
 		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && ( (!empty($pass) || !empty($named)) || array_diff_key($diff, $keyNames) != array()) ) {
-			return false;
-		}
-
-		//still some left over parameters that weren't named or passed args, bail.
-		if (!empty($diff)) {
+		if (!$this->_greedy && (!empty($pass) || !empty($named))) {
 			return false;
 		}
 
@@ -332,7 +341,7 @@ class CakeRoute {
 				}
 			}
 		}
-		return $this->_writeUrl(array_merge($url, compact('pass', 'named')));
+		return $this->_writeUrl(array_merge($url, compact('pass', 'named', '_query')));
 	}
 
 /**
@@ -385,7 +394,27 @@ class CakeRoute {
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
 		}
+		if (!empty($params['_query'])) {
+			$out .= $this->queryString($params['_query']);
+		}
 		$out = str_replace('//', '/', $out);
 		return $out;
+	}
+
+/**
+ * Generates a well-formed querystring from $q
+ * 
+ * Will compose an array or nested array into a proper querystring.
+ *
+ * @param mixed $q An array of parameters to compose into a query string.
+ * @param bool $escape Whether or not to use escaped &
+ * @return string
+ */
+	public function queryString($q, $escape = false) {
+		$join = '&';
+		if ($escape === true) {
+			$join = '&amp;';
+		}
+		return '?' . http_build_query($q, null, $join);
 	}
 }

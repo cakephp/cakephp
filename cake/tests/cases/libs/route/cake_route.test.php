@@ -472,4 +472,28 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->parse('/blog/foobar');
 		$this->assertFalse($result);
 	}
+
+/**
+ * test sigil based query string params
+ *
+ * @return void
+ */
+	function testQueryStringParams() {
+		$route = new CakeRoute('/:controller/:action/*');
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', '?test' => 'value'));
+		$expected = '/posts/index/?test=value';
+		$this->assertEquals($expected, $result);
+
+		$result = $route->match(array(
+			'controller' => 'posts', 'action' => 'index', '?test' => array(1, 2, 3)
+		));
+		$expected = '/posts/index/?test%5B0%5D=1&test%5B1%5D=2&test%5B2%5D=3';
+		$this->assertEquals($expected, $result);
+		
+		$result = $route->match(array(
+			'controller' => 'posts', 'action' => 'index', '?test' => 'value', '?other' => 'value'
+		));
+		$expected = '/posts/index/?test=value&other=value';
+		$this->assertEquals($expected, $result);
+	}
 }
