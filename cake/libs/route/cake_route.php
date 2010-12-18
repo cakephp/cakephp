@@ -265,7 +265,7 @@ class CakeRoute {
 
 		//check that all the key names are in the url
 		$keyNames = array_flip($this->keys);
-		if (array_intersect_key($keyNames, $url) != $keyNames) {
+		if (array_intersect_key($keyNames, $url) !== $keyNames) {
 			return false;
 		}
 
@@ -287,6 +287,7 @@ class CakeRoute {
 			// keys that exist in the defaults and have different values cause match failures.
 			$keyExists = array_key_exists($key, $defaults);
 			if ($keyExists && $defaults[$key] != $value) {
+				return false;
 				$diff[$key] = $value;
 				continue;
 			}
@@ -308,6 +309,7 @@ class CakeRoute {
 
 			// keys that don't exist are different.
 			if (!$keyExists && !empty($value)) {
+				return false;
 				$diff[$key] = $value;
 			}
 		}

@@ -219,7 +219,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMatchBasic() {
-/*		$route = new CakeRoute('/:controller/:action/:id', array('plugin' => null));
+		$route = new CakeRoute('/:controller/:action/:id', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null));
 		$this->assertFalse($result);
 
@@ -235,7 +235,7 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'about'));
 		$this->assertFalse($result);
-*/
+
 
 		$route = new CakeRoute('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -369,7 +369,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  */
 	function testNamedParamsWithNullFalse() {
-		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+		$route = new CakeRoute('/:controller/:action/*');
 		$result = $route->match(array('controller' => 'posts', 'action' => 'index', ':page' => null, 'sort' => false));
 		$this->assertEquals('/posts/index/', $result);
 	}
