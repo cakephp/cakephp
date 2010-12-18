@@ -339,6 +339,17 @@ class CakeRouteTestCase extends CakeTestCase {
 	}
 
 /**
+ * test that named params with null/false are excluded
+ *
+ * @return void
+ */
+	function testNamedParamsWithNullFalse() {
+		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'index', ':page' => null, 'sort' => false));
+		$this->assertEquals('/posts/index/', $result);
+	}
+
+/**
  * test that match with patterns works.
  *
  * @return void

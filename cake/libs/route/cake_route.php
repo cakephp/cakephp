@@ -267,7 +267,7 @@ class CakeRoute {
 		$named = $pass = $diff = array();
 		foreach ($url as $key => $value) {
 			// pull out named params so comparisons later on are faster.
-			if ($key[0] === ':') {
+			if ($key[0] === ':' && ($value !== false && $value !== null)) {
 				$named[substr($key, 1)] = $value;
 				unset($url[$key]);
 				continue;
