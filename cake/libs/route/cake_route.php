@@ -165,6 +165,11 @@ class CakeRoute {
 		$parsed = str_replace(array_keys($routeParams), array_values($routeParams), $parsed);
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
+
+		//remove defaults that are also keys. They can cause match failures
+		foreach ($this->keys as $key) {
+			unset($this->defaults[$key]);
+		}
 	}
 
 /**
@@ -265,6 +270,7 @@ class CakeRoute {
 		}
 
 		$named = $pass = $diff = array();
+
 		foreach ($url as $key => $value) {
 			// pull out named params so comparisons later on are faster.
 			if ($key[0] === ':' && ($value !== false && $value !== null)) {
@@ -279,11 +285,12 @@ class CakeRoute {
 				$diff[$key] = $value;
 				continue;
 			}
-			// keys that don't exist are different.
-			if (!$keyExists && !empty($value)) {
-				$diff[$key] = $value;
-			}
 			
+			// If the key is a routed key, its not different yet.
+			if (array_key_exists($key, $keyNames)) {
+				continue;
+			}
+
 			// pull out passed args
 			$numeric = is_numeric($key);
 			if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
@@ -293,26 +300,21 @@ class CakeRoute {
 				unset($url[$key]);
 				continue;
 			}
+
+			// keys that don't exist are different.
+			if (!$keyExists && !empty($value)) {
+				$diff[$key] = $value;
+			}
 		}
+
 
 		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && (!empty($pass) || array_diff_key($diff, $keyNames) != array())) {
-			return false;
-		}
-
-		//remove defaults that are also keys. They can cause match failures
-		foreach ($this->keys as $key) {
-			unset($defaults[$key]);
-		}
-		$filteredDefaults = array_filter($defaults);
-
-		//if the difference between the url diff and defaults contains keys from defaults its not a match
-		if (array_intersect_key($filteredDefaults, $diff) !== array()) {
+		if (!$this->_greedy && ( (!empty($pass) || !empty($named)) || array_diff_key($diff, $keyNames) != array()) ) {
 			return false;
 		}
 
 		//still some left over parameters that weren't named or passed args, bail.
-		if (!empty($params)) {
+		if (!empty($diff)) {
 			return false;
 		}
 

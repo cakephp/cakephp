@@ -191,8 +191,7 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertEqual($route->options, array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'));
 		$expected = array(
 			'controller' => 'pages',
-			'action' => 'view',
-			'extra' => null,
+			'action' => 'view'
 		);
 		$this->assertEqual($route->defaults, $expected);
 
@@ -220,7 +219,7 @@ class CakeRouteTestCase extends CakeTestCase {
  * @return void
  **/
 	function testMatchBasic() {
-		$route = new CakeRoute('/:controller/:action/:id', array('plugin' => null));
+/*		$route = new CakeRoute('/:controller/:action/:id', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null));
 		$this->assertFalse($result);
 
@@ -236,7 +235,7 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'about'));
 		$this->assertFalse($result);
-
+*/
 
 		$route = new CakeRoute('/pages/*', array('controller' => 'pages', 'action' => 'display'));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 'home'));
@@ -287,6 +286,32 @@ class CakeRouteTestCase extends CakeTestCase {
 		$result = $route->match($url);
 		$expected = '/admin/subscriptions/edit/1';
 		$this->assertEqual($result, $expected);
+	}
+
+/**
+ * test that non-greedy routes fail with extra passed args
+ *
+ * @return void
+ */
+	function testGreedyRouteFailurePassedArg() {
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', '0'));
+		$this->assertFalse($result);
+
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'test'));
+		$this->assertFalse($result);
+	}
+
+/**
+ * test that non-greedy routes fail with extra passed args
+ *
+ * @return void
+ */
+	function testGreedyRouteFailureNamedParam() {
+		$route = new CakeRoute('/:controller/:action', array('plugin' => null));
+		$result = $route->match(array('controller' => 'posts', 'action' => 'view', ':page' => 1));
+		$this->assertFalse($result);
 	}
 
 /**

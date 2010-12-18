@@ -943,7 +943,8 @@ class Router {
 		}
 
 		if (!empty($named)) {
-			foreach ($named as $name => $value) {				
+			foreach ($named as $name => $value) {
+				$name = trim($name, ':');
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {

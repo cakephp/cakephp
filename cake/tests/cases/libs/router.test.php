@@ -328,7 +328,7 @@ class RouterTest extends CakeTestCase {
 		Router::connect('short_controller_name/:action/*', array('controller' => 'real_controller_name'));
 		Router::parse('/');
 
-		$result = Router::url(array('controller' => 'real_controller_name', 'page' => '1'));
+		$result = Router::url(array('controller' => 'real_controller_name', ':page' => '1'));
 		$expected = '/short_controller_name/index/page:1';
 		$this->assertEqual($result, $expected);
 
@@ -389,14 +389,14 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testArrayNamedParameters() {
-		$result = Router::url(array('controller' => 'tests', 'pages' => array(
+		$result = Router::url(array('controller' => 'tests', ':pages' => array(
 			1, 2, 3
 		)));
 		$expected = '/tests/index/pages[0]:1/pages[1]:2/pages[2]:3';
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'tests',
-			'pages' => array(
+			':pages' => array(
 				'param1' => array(
 					'one',
 					'two'
@@ -408,7 +408,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'tests',
-			'pages' => array(
+			':pages' => array(
 				'param1' => array(
 					'one' => 1,
 					'two' => 2
@@ -420,7 +420,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'tests',
-			'super' => array(
+			':super' => array(
 				'nested' => array(
 					'array' => 'awesome',
 					'something' => 'else'
@@ -431,7 +431,7 @@ class RouterTest extends CakeTestCase {
 		$expected = '/tests/index/super[nested][array]:awesome/super[nested][something]:else/super[0]:cool';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'tests', 'namedParam' => array(
+		$result = Router::url(array('controller' => 'tests', ':namedParam' => array(
 			'keyed' => 'is an array',
 			'test'
 		)));
@@ -648,9 +648,9 @@ class RouterTest extends CakeTestCase {
 
 		Router::parse('/');
 
-		$result = Router::url(array('page' => 3));
+		$result = Router::url(array(':page' => 3));
 		$expected = '/magazine/admin/subscriptions/index/page:3';
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		Router::reload();
 		Router::connect('/admin/subscriptions/:action/*', array('controller' => 'subscribe', 'admin' => true, 'prefix' => 'admin'));
@@ -860,7 +860,7 @@ class RouterTest extends CakeTestCase {
 
 		$result = Router::url(array(
 			'lang' => 'en',
-			'controller' => 'shows', 'action' => 'index', 'page' => '1',
+			'controller' => 'shows', 'action' => 'index', ':page' => '1',
 		));
 		$expected = '/en/shows/shows/page:1';
 		$this->assertEqual($result, $expected);
@@ -1361,11 +1361,11 @@ class RouterTest extends CakeTestCase {
  * @return void
  */
 	function testNamedArgsUrlGeneration() {
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'published' => 1, 'deleted' => 1));
+		$result = Router::url(array('controller' => 'posts', 'action' => 'index', ':published' => 1, ':deleted' => 1));
 		$expected = '/posts/index/published:1/deleted:1';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'posts', 'action' => 'index', 'published' => 0, 'deleted' => 0));
+		$result = Router::url(array('controller' => 'posts', 'action' => 'index', ':published' => 0, ':deleted' => 0));
 		$expected = '/posts/index/published:0/deleted:0';
 		$this->assertEqual($result, $expected);
 
@@ -1375,11 +1375,11 @@ class RouterTest extends CakeTestCase {
 		Router::connect('/', array('controller' => 'graphs', 'action' => 'index'));
 		Router::connect('/:id/*', array('controller' => 'graphs', 'action' => 'view'), array('id' => $ID));
 
-		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 'id' => 12, 'file' => 'asdf.png'));
+		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 'id' => 12, ':file' => 'asdf.png'));
 		$expected = '/12/file:asdf.png';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 12, 'file' => 'asdf.foo'));
+		$result = Router::url(array('controller' => 'graphs', 'action' => 'view', 12, ':file' => 'asdf.foo'));
 		$expected = '/graphs/view/12/file:asdf.foo';
 		$this->assertEqual($result, $expected);
 
@@ -1398,7 +1398,7 @@ class RouterTest extends CakeTestCase {
 		);
 		Router::parse('/');
 
-		$result = Router::url(array('page' => 1, 0 => null, 'sort' => 'controller', 'direction' => 'asc', 'order' => null));
+		$result = Router::url(array(':page' => 1, 0 => null, ':sort' => 'controller', ':direction' => 'asc', ':order' => null));
 		$expected = "/admin/controller/index/page:1/sort:controller/direction:asc";
 		$this->assertEqual($result, $expected);
 
@@ -1411,7 +1411,7 @@ class RouterTest extends CakeTestCase {
 		Router::setRequestInfo($request);
 
 		$result = Router::parse('/admin/controller/index/type:whatever');
-		$result = Router::url(array('type'=> 'new'));
+		$result = Router::url(array(':type'=> 'new'));
 		$expected = "/admin/controller/index/type:new";
 		$this->assertEqual($result, $expected);
 	}
