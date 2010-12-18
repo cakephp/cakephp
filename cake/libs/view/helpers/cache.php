@@ -233,6 +233,7 @@ class CacheHelper extends AppHelper {
 				$controller->params = $this->params = unserialize(stripslashes(\'' . addslashes(serialize($this->params)) . '\'));
 				$controller->action = $this->action = unserialize(\'' . serialize($this->action) . '\');
 				$controller->data = $this->data = unserialize(stripslashes(\'' . addslashes(serialize($this->data)) . '\'));
+				$controller->viewVars = $this->viewVars = unserialize(stripslashes(\'' . addslashes(serialize($this->viewVars)) . '\'));
 				$controller->theme = $this->theme = \'' . $this->theme . '\';
 				Router::setRequestInfo(array($this->params, array(\'base\' => $this->base, \'webroot\' => $this->webroot)));';
 
@@ -253,6 +254,7 @@ class CacheHelper extends AppHelper {
 					$this->loaded[$camelBackedHelper] =& ${$camelBackedHelper};
 					$this->{$helper} =& $loadedHelpers[$helper];
 				}
+				extract($this->viewVars, EXTR_SKIP);
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1';?>",$content);
 		$file .= $content;
