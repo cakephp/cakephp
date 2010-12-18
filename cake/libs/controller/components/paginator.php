@@ -141,7 +141,7 @@ class PaginatorComponent extends Component {
 			unset($defaults[0]);
 		}
 
-		$options = array_merge(array('page' => 1, 'limit' => 20), $defaults, $options);
+		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $defaults, $options);
 		$options['limit'] = (int) $options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
