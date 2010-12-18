@@ -263,27 +263,40 @@ class CakeRoute {
 		if (array_intersect_key($keyNames, $url) != $keyNames) {
 			return false;
 		}
-		
-		//pull out named params so comparisons later on are faster.
-		$named = array();
+
+		$named = $pass = $diff = array();
 		foreach ($url as $key => $value) {
+			// pull out named params so comparisons later on are faster.
 			if ($key[0] === ':') {
-				$named[$key] = $value;
+				$named[substr($key, 1)] = $value;
 				unset($url[$key]);
+				continue;
 			}
-		}
 
-		$diffUnfiltered = Set::diff($url, $defaults);
-		$diff = array();
-
-		foreach ($diffUnfiltered as $key => $var) {
-			if ($var === 0 || $var === '0' || !empty($var)) {
-				$diff[$key] = $var;
+			// keys that exist in the defaults and have different values cause match failures.
+			$keyExists = array_key_exists($key, $defaults);
+			if ($keyExists && $defaults[$key] != $value) {
+				$diff[$key] = $value;
+				continue;
+			}
+			// keys that don't exist are different.
+			if (!$keyExists) {
+				$diff[$key] = $value;
+			}
+			
+			// pull out passed args
+			$numeric = is_numeric($key);
+			if ($numeric && isset($defaults[$key]) && $defaults[$key] == $value) {
+				continue;
+			} elseif ($numeric) {
+				$pass[] = $value;
+				unset($url[$key]);
+				continue;
 			}
 		}
 
 		//if a not a greedy route, no extra params are allowed.
-		if (!$this->_greedy && array_diff_key($diff, $keyNames) != array()) {
+		if (!$this->_greedy && (!empty($pass) || array_diff_key($diff, $keyNames) != array())) {
 			return false;
 		}
 
@@ -294,24 +307,8 @@ class CakeRoute {
 		$filteredDefaults = array_filter($defaults);
 
 		//if the difference between the url diff and defaults contains keys from defaults its not a match
-		if (array_intersect_key($filteredDefaults, $diffUnfiltered) !== array()) {
+		if (array_intersect_key($filteredDefaults, $diff) !== array()) {
 			return false;
-		}
-
-		$passedArgsAndParams = array_diff_key($diff, $filteredDefaults, $keyNames) + $named;
-		list($named, $params) = Router::getNamedElements($passedArgsAndParams, $url['controller'], $url['action']);
-
-		//remove any pass params, they have numeric indexes, skip any params that are in the defaults
-		$pass = array();
-		$i = 0;
-		while (isset($url[$i])) {
-			if (!isset($diff[$i])) {
-				$i++;
-				continue;
-			}
-			$pass[] = $url[$i];
-			unset($url[$i], $params[$i]);
-			$i++;
 		}
 
 		//still some left over parameters that weren't named or passed args, bail.
