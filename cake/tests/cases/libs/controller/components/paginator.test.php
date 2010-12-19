@@ -223,6 +223,8 @@ class PaginatorTest extends CakeTestCase {
 		$this->Controller = new Controller($this->request);
 		$this->Paginator = new PaginatorComponent($this->getMock('ComponentCollection'), array());
 		$this->Paginator->Controller = $this->Controller;
+		$this->Controller->Post = $this->getMock('Model');
+		$this->Controller->Post->alias = 'Post';
 	}
 
 /**
@@ -282,11 +284,6 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertEqual($Controller->PaginatorControllerPost->lastQuery['order'][0], array('PaginatorControllerPost.author_id' => 'asc'));
 		$this->assertEqual($results, array(1, 3, 2));
 
-		$Controller->request->params['named'] = array('page' => '1 " onclick="alert(\'xss\');">');
-		$Controller->Paginator->settings = array('limit' => 1, 'maxLimit' => 10, 'paramType' => 'named');
-		$Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['page'], 1, 'XSS exploit opened');
-
 		$Controller->request->params['named'] = array();
 		$Controller->Paginator->settings = array('limit' => 0, 'maxLimit' => 10, 'paramType' => 'named');
 		$Controller->Paginator->paginate('PaginatorControllerPost');
@@ -312,6 +309,26 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['prevPage'], false);
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['nextPage'], true);
+	}
+
+/**
+ * Test that non-numeric values are rejected for page, and limit
+ *
+ * @return void
+ */
+	function testPageParamCasting() {
+		$this->Controller->Post->expects($this->at(0))
+			->method('find')
+			->will($this->returnValue(2));
+		
+		$this->Controller->Post->expects($this->at(1))
+			->method('find')
+			->will($this->returnValue(array('stuff')));
+	
+		$this->request->params['named'] = array('page' => '1 " onclick="alert(\'xss\');">');
+		$this->Paginator->settings = array('limit' => 1, 'maxLimit' => 10, 'paramType' => 'named');
+		$this->Paginator->paginate('Post');
+		$this->assertSame(1, $this->request->params['paging']['Post']['page'], 'XSS exploit opened');
 	}
 
 /**
@@ -494,46 +511,6 @@ class PaginatorTest extends CakeTestCase {
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->constructClasses();
 		$Controller->Paginator->paginate('MissingModel');
-	}
-
-/**
- * testPaginateMaxLimit
- *
- * @return void
- * @access public
- */
-	function testPaginateMaxLimit() {
-		$Controller = new Controller($this->request);
-
-		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
-		$Controller->passedArgs[] = '1';
-		$Controller->params['url'] = array();
-		$Controller->constructClasses();
-
-		$Controller->request->params['named'] = array(
-			'contain' => array('ControllerComment'), 'limit' => '1000'
-		);
-		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 100);
-
-		$Controller->request->params['named'] = array(
-			'contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000
-		);
-		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 100);
-
-		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '10');
-		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 10);
-
-		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '1000');
-		$Controller->paginate = array('maxLimit' => 2000, 'paramType' => 'named');
-		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 1000);
-
-		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '5000');
-		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
 	}
 
 /**
@@ -721,5 +698,45 @@ class PaginatorTest extends CakeTestCase {
 
 		$result = $this->Paginator->checkLimit(array('limit' => 0, 'maxLimit' => 100));
 		$this->assertEquals(1, $result['limit']);
+	}
+
+/**
+ * testPaginateMaxLimit
+ *
+ * @return void
+ * @access public
+ */
+	function testPaginateMaxLimit() {
+		$Controller = new Controller($this->request);
+
+		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
+		$Controller->passedArgs[] = '1';
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+
+		$Controller->request->params['named'] = array(
+			'contain' => array('ControllerComment'), 'limit' => '1000'
+		);
+		$result = $Controller->paginate('PaginatorControllerPost');
+		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 100);
+
+		$Controller->request->params['named'] = array(
+			'contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000
+		);
+		$result = $Controller->paginate('PaginatorControllerPost');
+		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 100);
+
+		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '10');
+		$result = $Controller->paginate('PaginatorControllerPost');
+		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 10);
+
+		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '1000');
+		$Controller->paginate = array('maxLimit' => 2000, 'paramType' => 'named');
+		$result = $Controller->paginate('PaginatorControllerPost');
+		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 1000);
+
+		$Controller->request->params['named'] = array('contain' => array('ControllerComment'), 'limit' => '5000');
+		$result = $Controller->paginate('PaginatorControllerPost');
+		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
 	}
 }
