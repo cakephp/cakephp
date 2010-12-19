@@ -160,13 +160,7 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function initialize() {
-		$corePath = App::core('cake');
-		if (isset($corePath[0])) {
-			define('TEST_CAKE_CORE_INCLUDE_PATH', rtrim($corePath[0], DS) . DS);
-		} else {
-			define('TEST_CAKE_CORE_INCLUDE_PATH', CAKE_CORE_INCLUDE_PATH);
-		}
-
+		define('TEST_CAKE_CORE_INCLUDE_PATH', LIBS);
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
 	}
