@@ -214,6 +214,27 @@ class App {
 	private static $__packages = array();
 
 /**
+ * 
+ *
+ */
+	private static $__packageFormat = array();
+
+/**
+ * Maps an old style cakephp class type to the corresponding package
+ *
+ */
+	public static $legacy = array(
+		'models' => 'Model',
+		'behaviors' => 'Model/Behavior',
+		'datasources' => 'Model/Datasource',
+		'controllers' => 'Controller',
+		'components' => 'Model/Datasource',
+		'views' => 'View',
+		'helpers' => 'View/Helper',
+		'shells' => 'Console'
+	);
+
+/**
  * Inicates whether the class cache should be stored again because of an addition to it
  *
  */
@@ -235,7 +256,24 @@ class App {
  * @param string $type type of path
  * @return string array
  */
-	public static function path($type) {
+	public static function path($type, $plugin = null) {
+		if (!empty(self::$legacy[$type])) {
+			$type = self::$legacy[$type];
+		}
+
+		if (!empty($plugin)) {
+			$path = array();
+			$pluginPath = self::pluginPath($plugin);
+			if (!empty(self::$__packageFormat[$type])) {
+				foreach (self::$__packageFormat[$type] as $f) {
+					$path[] = sprintf($f, $pluginPath);
+				}
+				return $path;
+			}
+
+			return $pluginPath . 'libs' . DS . $type;
+		}
+
 		if (!isset(self::$__packages[$type])) {
 			return array();
 		}
@@ -251,31 +289,49 @@ class App {
  * @return void
  */
 	public static function build($paths = array(), $reset = false) {
-		$defaults = array(
-			'Model' => array(MODELS),
-			'Model/Behavior' => array(BEHAVIORS),
-			'Datasource' => array(MODELS . 'datasources'),
-			'Controller' => array(CONTROLLERS),
-			'Controller/Component' => array(COMPONENTS),
-			'libs' => array(APPLIBS),
-			'View' => array(VIEWS),
-			'View/Helper' => array(HELPERS),
-			'locales' => array(APP . 'locale' . DS),
-			'Console' => array(
-				APP . 'console' . DS . 'shells' . DS,
-				APP . 'vendors' . DS . 'shells' . DS, 
-				VENDORS . 'shells' . DS
-			),
-			'vendors' => array(APP . 'vendors' . DS, VENDORS),
-			'plugins' => array(APP . 'plugins' . DS)
-		);
+		if (empty(self::$__packageFormat)) {
+			self::$__packageFormat = array(
+				'Model' => array('%s' . 'models' . DS),
+				'Model/Behavior' => array('%s' . 'models' . DS . 'behaviors' . DS),
+				'Model/Datasource' => array('%s' . 'models' . DS . 'datasources' . DS),
+				'Model/Datasource/Database' => array('%s' . 'models' . DS . 'datasources' . DS . 'database' . DS),
+				'Controller' => array('%s' . 'controllers' . DS),
+				'Controller/Component' => array('%s' . 'controllers' . DS . 'components' . DS),
+				'View' => array('%s' . 'views' . DS),
+				'View/Helper' => array('%s' . 'views' . DS . 'helpers' . DS),
+				'Console' => array(
+					'%s' . 'console' . DS . 'shells' . DS,
+					'%s' . 'vendors' . DS . 'shells' . DS, 
+					VENDORS . 'shells' . DS
+				),
+				'libs' => array('%s' . 'libs' . DS),
+				'locales' => array('%s' . 'locale' . DS),
+				'vendors' => array('%s' . 'vendors' . DS, VENDORS),
+				'plugins' => array(APP . 'plugins' . DS)
+			);
+
+			self::$__packageFormat['Console/Command'] = self::$__packageFormat['Console'];
+		}
 
 		if ($reset == true) {
 			foreach ($paths as $type => $new) {
+				if (!empty(self::$legacy[$type])) {
+					$type = self::$legacy[$type];
+				}
 				self::$__packages[$type] = (array)$new;
 			}
 			return $paths;
 		}
+
+		$defaults = array();
+		foreach (self::$__packageFormat as $package => $format) {
+			foreach ($format as $f) {
+				$defaults[$package][] = sprintf($f, APP);
+			}
+		}
+
+		$mergeExclude = array('libs', 'locales', 'vendors', 'plugins');
+		$appLibs = empty($paths['libs']) ? $defaults['libs'] : $paths['libs'];
 
 		foreach ($defaults as $type => $default) {
 
@@ -284,13 +340,12 @@ class App {
 			}
 
 			if (!empty($paths[$type])) {
-				$path = array_flip(array_flip(array_merge(
-					(array)$paths[$type], self::$__packages[$type])));
-				self::$__packages[$type] = array_values($path);
+				$path = array_merge((array)$paths[$type], self::$__packages[$type]);
 			} else {
-				$path = array_flip(array_flip(self::$__packages[$type]));
-				self::$__packages[$type] = array_values($path);
+				$path = self::$__packages[$type];
 			}
+
+			self::$__packages[$type] = array_values(array_unique($path));
 		}
 	}
 
@@ -302,12 +357,12 @@ class App {
  */
 	public static function pluginPath($plugin) {
 		$pluginDir = Inflector::underscore($plugin);
-		for ($i = 0, $length = count(self::$plugins); $i < $length; $i++) {
-			if (is_dir(self::$plugins[$i] . $pluginDir)) {
-				return self::$plugins[$i] . $pluginDir . DS ;
+		foreach (self::$__packages['plugins'] as $pluginPath) {
+			if (is_dir($pluginPath . $pluginDir)) {
+				return $pluginPath . $pluginDir . DS ;
 			}
 		}
-		return self::$plugins[0] . $pluginDir . DS;
+		return self::$__packages['plugins'][0] . $pluginDir . DS;
 	}
 
 /**
@@ -318,46 +373,35 @@ class App {
  */
 	public static function themePath($theme) {
 		$themeDir = 'themed' . DS . Inflector::underscore($theme);
-		for ($i = 0, $length = count(self::$views); $i < $length; $i++) {
-			if (is_dir(self::$views[$i] . $themeDir)) {
-				return self::$views[$i] . $themeDir . DS ;
+		foreach (self::$__packages['View'] as $path) {
+			if (is_dir($path . $themeDir)) {
+				return $path . $themeDir . DS ;
 			}
 		}
-		return self::$views[0] . $themeDir . DS;
+		return self::$__packages['View'][0] . $themeDir . DS;
 	}
 
 /**
  * Returns a key/value list of all paths where core libs are found.
  * Passing $type only returns the values for a given value of $key.
  *
- * @param string $type valid values are: 'model', 'behavior', 'controller', 'component',
- *    'view', 'helper', 'datasource', 'libs', and 'cake'
+ * @param string $type valid values are: 'cake' ,'plugins', 'vendors' and 'shells'
  * @return array numeric keyed array of core lib paths
  */
 	public static function core($type = null) {
 		static $paths = false;
 		if (!$paths) {
 			$paths = array();
-			$cake = $libs = LIBS;
-			$path = dirname($cake) . DS;
-
-			$paths['cake'][] = $cake;
-			$paths['libs'][] = $libs;
-			$paths['models'][] = $libs . 'model' . DS;
-			$paths['datasources'][] = $libs . 'model' . DS . 'datasources' . DS;
-			$paths['behaviors'][] = $libs . 'model' . DS . 'behaviors' . DS;
-			$paths['controllers'][] = $libs . 'controller' . DS;
-			$paths['components'][] = $libs . 'controller' . DS . 'components' . DS;
-			$paths['views'][] = $libs . 'View' . DS;
-			$paths['helpers'][] = $libs . 'view' . DS . 'helpers' . DS;
-			$paths['plugins'][] = $path . 'plugins' . DS;
-			$paths['vendors'][] = $path . 'vendors' . DS;
-			$paths['shells'][] = $libs . 'Console' . DS . 'Command' . DS;
+			$root = dirname(dirname(LIBS)) . DS;
+			$paths['cake'][] = $root;
+			$paths['plugins'][] = $root . 'plugins' . DS;
+			$paths['vendors'][] = $root . 'vendors' . DS;
+			$paths['shells'][] = LIBS . 'Console' . DS . 'Command' . DS;
 			// Provide BC path to vendors/shells
-			$paths['shells'][] = $path . 'vendors' . DS . 'shells' . DS;
+			$paths['shells'][] = $root . 'vendors' . DS . 'shells' . DS;
 		}
-		if ($type && isset($paths[$type])) {
-			return $paths[$type];
+		if ($type) {
+			return isset($paths[$type]) ? $paths[$type] : array(LIBS . $type . DS);
 		}
 		return $paths;
 	}
@@ -453,9 +497,14 @@ class App {
 				return include $file;
 			}
 
-			$package = self::$__classMap[$className];
-			$paths = self::path($package);
-			$paths[] = LIBS . self::$__classMap[$className] . DS;
+			list($plugin, $package) = pluginSplit(self::$__classMap[$className]);
+			$paths = self::path($package, $plugin);
+
+			if (empty($plugin)) {
+				$appLibs = empty(self::$__packages['libs']) ? APPLIBS : self::$__packages['libs'];
+				$paths[] =  $appLibs . self::$__classMap[$className] . DS;
+				$paths[] = LIBS . self::$__classMap[$className] . DS;	
+			}
 
 			foreach ($paths as $path) {
 				$file = $path . $className . '.php';
@@ -464,7 +513,25 @@ class App {
 					return include $file;
 				}
 			}
+
+			//To help apps migrate to 2.0 old style file names are allowed
+			foreach ($paths as $path) {
+				$underscored = Inflector::underscore($className);
+				$tries = array($path . $underscored . '.php');
+				$parts = explode('_', $underscored);
+				if (count($parts) > 1) {
+					array_pop($parts);
+					$tries[] = $path . implode('_', $parts) . '.php';
+				}
+				foreach ($tries as $file) {
+					if (file_exists($file)) {
+						self::__map($file, $className);
+						return include $file;
+					}
+				}
+			}
 		}
+
 		return false;
 	}
 
