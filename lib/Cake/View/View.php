@@ -803,7 +803,7 @@ class View extends Object {
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
-		$corePaths = array_flip(App::core('views'));
+		$corePaths = array_flip(App::core('View'));
 
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
@@ -812,10 +812,10 @@ class View extends Object {
 					$paths[] = $viewPaths[$i] . 'plugins' . DS . $plugin . DS;
 				}
 			}
-			$paths[] = App::pluginPath($plugin) . 'views' . DS;
+			$paths = array_merge($paths, App::path('View', $plugin));
 		}
 
-		$this->__paths = array_merge($paths, $viewPaths, array_flip($corePaths));
+		$this->__paths = array_unique(array_merge($paths, $viewPaths, array_keys($corePaths)));
 		return $this->__paths;
 	}
 }

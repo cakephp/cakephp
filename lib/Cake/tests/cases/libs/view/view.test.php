@@ -204,7 +204,7 @@ class ViewTest extends CakeTestCase {
 			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 			'views' => array(
 				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+				TEST_CAKE_CORE_INCLUDE_PATH . 'View' . DS
 			)
 		), true);
 
@@ -268,7 +268,7 @@ class ViewTest extends CakeTestCase {
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'plugins' . DS . 'test_plugin' . DS,
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS . 'test_plugin' . DS . 'views' . DS,
 			TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS,
-			TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+			TEST_CAKE_CORE_INCLUDE_PATH . 'View' . DS
 		);
 		$this->assertEqual($paths, $expected);
 	}

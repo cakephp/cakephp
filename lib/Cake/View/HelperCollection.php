@@ -54,11 +54,11 @@ class HelperCollection extends ObjectCollection {
 			return $this->_loaded[$name];
 		}
 		$helperClass = $name . 'Helper';
-		App::uses($helperClass, 'View/Helper');
+		App::uses($helperClass, $plugin . 'View/Helper');
 		if (!class_exists($helperClass)) {
 			throw new MissingHelperClassException(array(
 				'class' => $helperClass,
-				'file' => Inflector::underscore($name) . '.php'
+				'file' => $helperClass . '.php'
 			));
 		}
 		$this->_loaded[$name] = new $helperClass($this->_View, $settings);
