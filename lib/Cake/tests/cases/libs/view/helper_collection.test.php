@@ -73,7 +73,7 @@ class HelperCollectionTest extends CakeTestCase {
 /**
  * test missinghelper exception
  *
- * @expectedException MissingHelperFileException
+ * @expectedException MissingHelperClassException
  * @return void
  */
 	function testLoadMissingHelperFile() {
