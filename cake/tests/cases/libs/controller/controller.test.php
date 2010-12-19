@@ -1266,7 +1266,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
-		$this->assertEqual($Controller->paginate, array('page' => 1, 'limit' => 20));
+		$expected = array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named');
+		$this->assertEqual($Controller->paginate, $expected);
 
 		$results = Set::extract($Controller->paginate('ControllerPost'), '{n}.ControllerPost.id');
 		$this->assertEqual($results, array(1, 2, 3));

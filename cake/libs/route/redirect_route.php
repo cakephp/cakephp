@@ -70,16 +70,15 @@ class RedirectRoute extends CakeRoute {
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
 			$argOptions['context'] = array('action' => $redirect['action'], 'controller' => $redirect['controller']);
-			$args = Router::getArgs($params['_args_'], $argOptions);
-			$redirect += $args['pass'];
-			$redirect += $args['named'];
+			$redirect += Router::getArgs($params['_args_'], $argOptions) + array('url' => array());
+			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;
 		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
 			$status = $this->options['status'];
 		}
 		$this->response->header(array('Location' => Router::url($redirect, true)));
-		$this->response->statusCode($status);		
+		$this->response->statusCode($status);
 		$this->response->send();
 	}
 
