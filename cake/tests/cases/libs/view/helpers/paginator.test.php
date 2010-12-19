@@ -53,8 +53,6 @@ class PaginatorHelperTest extends CakeTestCase {
 					'nextPage' => true,
 					'pageCount' => 7,
 					'options' => array(
-						'order' => array('Article.date' => 'asc'),
-						'limit' => 9,
 						'page' => 1,
 						'conditions' => array()
 					)
@@ -138,6 +136,21 @@ class PaginatorHelperTest extends CakeTestCase {
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/')
 		));
 		$this->Paginator->options(array('url' => array('param')));
+		$this->Paginator->request['paging'] = array(
+			'Article' => array(
+				'current' => 9,
+				'count' => 62,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 7,
+				'options' => array(
+					'page' => 1,
+					'order' => array('date' => 'asc'),
+					'conditions' => array()
+				)
+			)
+		);
+		
 		$result = $this->Paginator->sort('title');
 		$expected = array(
 			'a' => array('href' => '/officespace/accounts/index/param/page:1/sort:title/direction:asc'),
@@ -645,7 +658,9 @@ class PaginatorHelperTest extends CakeTestCase {
 				'page' => 1, 'current' => 3, 'count' => 13,
 				'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
 				'options' => array(
-					'page' => 1, 'limit' => 3, 'order' => array(), 'conditions' => array()
+					'page' => 1, 
+					'order' => array(), 
+					'conditions' => array()
 				)
 			)
 		);
@@ -708,9 +723,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1,
-					'limit' => 3,
-					'order' => array('Client.name' => 'DESC'),
-					'conditions' => array()
 				)
 			)
 		);
@@ -792,9 +804,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -834,8 +843,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array(
 					'page' => 1, 
 					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'order' => array('Client.name' => 'DESC'),
 				)
 			)
 		);
@@ -873,7 +881,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array(
 					'page' => 2, 
 					'limit' => 10, 
-					'order' => array(), 
+					'order' => array(),
 					'conditions' => array()
 				)
 			)
@@ -926,7 +934,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => true, 
 				'pageCount' => 5,
 				'options' => array(
-					'page' => 1, 'limit' => 3, 'order' => array('Client.name' => 'DESC'), 'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -969,9 +977,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			),
 			'Server' => array(
@@ -983,9 +988,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-					'limit' => 5, 
-					'order' => array('Server.name' => 'ASC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1094,10 +1096,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1194,10 +1193,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1233,10 +1229,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1271,10 +1264,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 9,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1332,10 +1322,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1374,10 +1361,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 1,
 				)
 			)
 		);
@@ -1418,9 +1402,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 42,
 				'options' => array(
 					'page' => 6, 
-					'limit' => 15, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1460,10 +1441,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => 1, 
 				'pageCount' => 42,
 				'options' => array(
-					'page' => 37, 
-					'limit' => 15, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
+					'page' => 37,
 				)
 			)
 		);
@@ -1502,17 +1480,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'prevPage' => false,
 				'nextPage' => 2,
 				'pageCount' => 3,
-				'defaults' => array(
-					'limit' => 3,
-					'step' => 1,
-					'order' => array('Client.name' => 'DESC'),
-					'conditions' => array()
-				),
 				'options' => array(
 					'page' => 1,
-					'limit' => 3,
-					'order' => array('Client.name' => 'DESC'),
-					'conditions' => array()
 				)
 			)
 		);
@@ -1538,7 +1507,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array(
 					'page' => 1, 
 					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1565,9 +1533,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 4897,
 				'options' => array(
 					'page' => 4894, 
-					'limit' => 10, 
-					'order' => 'Client.name DESC', 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1791,12 +1756,7 @@ class PaginatorHelperTest extends CakeTestCase {
 				'prevPage' => false, 
 				'nextPage' => 2, 
 				'pageCount' => 15,
-				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
-				)
+				'options' => array()
 			)
 		);
 
@@ -1814,9 +1774,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1898,9 +1855,6 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1, 
-					'limit' => 3, 
-					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -1913,14 +1867,12 @@ class PaginatorHelperTest extends CakeTestCase {
 				'page' => 4, 
 				'current' => 3, 
 				'count' => 30, 
-				'prevPage' => false, 
+				'prevPage' => false,
 				'nextPage' => 2, 
 				'pageCount' => 15,
 				'options' => array(
-					'page' => 1, 
-					'limit' => 3, 
+					'page' => 1,
 					'order' => array('Client.name' => 'DESC'), 
-					'conditions' => array()
 				)
 			)
 		);
@@ -2139,7 +2091,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::reload();
 		Router::parse('/');
 		Router::setRequestInfo(array(
-			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true')),
+			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'url' => array('url' => 'accounts/')),
 			array('base' => '/officespace', 'here' => '/officespace/accounts/', 'webroot' => '/officespace/', 'passedArgs' => array())
 		));
 
