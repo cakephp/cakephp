@@ -104,7 +104,7 @@ class UpgradeShell extends Shell {
 		$patterns = array(
 			array(
 				'a(*) -> array(*)',
-				'/a\((.*)\)/',
+				'/\ba\((.*)\)/',
 				'array(\1)'
 			),
 			array(
@@ -183,6 +183,28 @@ class UpgradeShell extends Shell {
 				'$this->action -> $this->request->action',
 				'/(\$this->action)/',
 				'$this->request->action'
+			),
+		);
+		$this->_filesRegexpUpdate($patterns);
+	}
+
+/**
+ * Update Configure::read() calls with no params.
+ *
+ * @return void
+ */
+	public function configure() {
+		$this->_paths = array(
+			APP
+		);
+		if (!empty($this->params['plugin'])) {
+			$this->_paths = array(App::pluginPath($this->params['plugin']));
+		}
+		$patterns = array(
+			array(
+				"Configure::read() -> Configure::read('debug')",
+				'/Configure::read\(\)/',
+				'Configure::read(\'debug\')'
 			),
 		);
 		$this->_filesRegexpUpdate($patterns);
@@ -280,6 +302,10 @@ class UpgradeShell extends Shell {
 			))
 			->addSubcommand('request', array(
 				'help' => 'Update removed request access, and replace with $this->request.',
+				'parser' => $subcommandParser
+			))
+			->addSubcommand('configure', array(
+				'help' => "Update Configure::read() to Configure::read('debug')",
 				'parser' => $subcommandParser
 			));
 	}
