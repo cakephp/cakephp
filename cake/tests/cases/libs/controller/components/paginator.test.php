@@ -696,4 +696,45 @@ class PaginatorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
+/**
+ * test that invalid directions are ignored.
+ *
+ * @return void
+ */
+	function testValidateSortInvalidDirection() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array('sort' => 'something', 'direction' => 'boogers');
+		$result = $this->Paginator->validateSort($model, $options);
+
+		$this->assertEquals('asc', $result['order']['model.something']);
+	}
+
+/**
+ * test that virtual fields work.
+ *
+ * @return void
+ */
+	function testValidateSortVirtualField() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+
+		$model->expects($this->at(0))
+			->method('hasField')
+			->with('something')
+			->will($this->returnValue(false));
+			
+		$model->expects($this->at(1))
+			->method('hasField')
+			->with('something', true)
+			->will($this->returnValue(true));
+
+		$options = array('sort' => 'something', 'direction' => 'desc');
+		$result = $this->Paginator->validateSort($model, $options);
+
+		$this->assertEquals('desc', $result['order']['something']);
+	}
 }

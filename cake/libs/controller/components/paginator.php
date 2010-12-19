@@ -95,41 +95,12 @@ class PaginatorComponent extends Component {
 			throw new MissingModelException($object);
 		}
 
-		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
-
 		if (isset($options['show'])) {
 			$options['limit'] = $options['show'];
 		}
 
-		if (isset($options['sort'])) {
-			$direction = null;
-			if (isset($options['direction'])) {
-				$direction = strtolower($options['direction']);
-			}
-			if ($direction != 'asc' && $direction != 'desc') {
-				$direction = 'asc';
-			}
-			$options['order'] = array($options['sort'] => $direction);
-		}
-
-		if (!empty($options['order']) && is_array($options['order'])) {
-			$alias = $object->alias ;
-			$key = $field = key($options['order']);
-
-			if (strpos($key, '.') !== false) {
-				list($alias, $field) = explode('.', $key);
-			}
-			$value = $options['order'][$key];
-			unset($options['order'][$key]);
-
-			if ($object->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			} elseif ($object->hasField($field, true)) {
-				$options['order'][$field] = $value;
-			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
-				$options['order'][$alias . '.' . $field] = $value;
-			}
-		}
+		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
+		$options = $this->validateSort($object, $options);
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 
@@ -311,5 +282,48 @@ class PaginatorComponent extends Component {
 		$request = array_intersect_key($request, $whitelist);
 
 		return array_merge($defaults, $request, $options);
+	}
+
+/**
+ * Validate that the desired sorting can be performed on the $object.  Only fields or 
+ * virtualFields can be sorted on.  The direction param will also be sanitized.  Lastly
+ * sort + direction keys will be converted into the model friendly order key.
+ *
+ * @param Model $object The model being paginated.
+ * @param array $options The pagination options being used for this request.
+ * @return array An array of options with sort + direction removed and replaced with order if possible.
+ */
+	public function validateSort($object, $options) {
+		if (isset($options['sort'])) {
+			$direction = null;
+			if (isset($options['direction'])) {
+				$direction = strtolower($options['direction']);
+			}
+			if ($direction != 'asc' && $direction != 'desc') {
+				$direction = 'asc';
+			}
+			$options['order'] = array($options['sort'] => $direction);
+		}
+	
+		if (!empty($options['order']) && is_array($options['order'])) {
+			$alias = $object->alias ;
+			$key = $field = key($options['order']);
+
+			if (strpos($key, '.') !== false) {
+				list($alias, $field) = explode('.', $key);
+			}
+			$value = $options['order'][$key];
+			unset($options['order'][$key]);
+
+			if ($object->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
+			} elseif ($object->hasField($field, true)) {
+				$options['order'][$field] = $value;
+			} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field)) {
+				$options['order'][$alias . '.' . $field] = $value;
+			}
+		}
+	
+		return $options;
 	}
 }
