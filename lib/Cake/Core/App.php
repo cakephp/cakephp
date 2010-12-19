@@ -393,7 +393,7 @@ class App {
 		if (!$paths) {
 			$paths = array();
 			$root = dirname(dirname(LIBS)) . DS;
-			$paths['cake'][] = $root;
+			$paths['cake'][] = LIBS;
 			$paths['plugins'][] = $root . 'plugins' . DS;
 			$paths['vendors'][] = $root . 'vendors' . DS;
 			$paths['shells'][] = LIBS . 'Console' . DS . 'Command' . DS;
