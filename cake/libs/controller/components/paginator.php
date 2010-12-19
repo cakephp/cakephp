@@ -51,6 +51,17 @@ class PaginatorComponent extends Component {
 	);
 
 /**
+ * A list of request parameters users are allowed to set.  Modifying
+ * this list will allow users to have more influence over pagination,
+ * be careful with what you permit.
+ *
+ * @var array
+ */
+	public $whitelist = array(
+		'limit', 'sort', 'page', 'direction'
+	);
+
+/**
  * Constructor
  *
  * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
@@ -83,6 +94,9 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
 		}
+		
+		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
+
 		$options = array_merge(
 			$this->Controller->request->params,
 			$this->Controller->request->query,
@@ -278,5 +292,50 @@ class PaginatorComponent extends Component {
 			}
 		}
 		return $object;
+	}
+
+/**
+ * Merges the various options that Pagination uses.
+ * Pulls settings together from the following places:
+ *
+ * - General pagination settings
+ * - Model specific settings.
+ * - Request parameters
+ * - $options argument.
+ *
+ * The result of this method is the aggregate of all the option sets combined together.
+ *
+ * @param string $alias Model alias being paginated, if the general settings has a key with this value
+ *   that key's settings will be used for pagination instead of the general ones.
+ * @param string $options Per call options.
+ * @param string $whitelist A whitelist of options that are allowed from the request parameters.  Modifying
+ *   this array will allow you to permit more or less input from the user.
+ * @return array Array of merged options.
+ */
+	public function mergeOptions($alias, $options, $whitelist = array()) {
+		if (isset($this->settings[$alias])) {
+			$defaults = $this->settings[$alias];
+		} else {
+			$defaults = $this->settings;
+		}
+		if (empty($defaults['paramType'])) {
+			$defaults['paramType'] = 'named';
+		}
+		switch ($defaults['paramType']) {
+			case 'named':
+				$request = $this->Controller->request->params['named'];
+				break;
+			case 'querystring':
+				$request = $this->Controller->request->query;
+				break;
+			case 'route':
+				$request = $this->Controller->request->params;
+				unset($request['pass'], $request['named']);
+		}
+
+		$whitelist = array_flip(array_merge($this->whitelist, $whitelist));
+		$request = array_intersect_key($request, $whitelist);
+
+		return array_merge($defaults, $request, $options);
 	}
 }

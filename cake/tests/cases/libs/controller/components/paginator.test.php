@@ -20,6 +20,7 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 App::import('Controller', 'Controller', false);
+App::import('Component', 'Paginator');
 App::import('Core', array('CakeRequest', 'CakeResponse'));
 
 /**
@@ -211,16 +212,27 @@ class PaginatorTest extends CakeTestCase {
 	public $fixtures = array('core.post', 'core.comment');
 
 /**
+ * setup
+ *
+ * @return void
+ */
+	function setUp() {
+		parent::setUp();
+		$this->request = new CakeRequest('controller_posts/index');
+		$this->request->params['pass'] = $this->request->params['named'] = array();
+		$this->Controller = new Controller($this->request);
+		$this->Paginator = new PaginatorComponent($this->getMock('ComponentCollection'), array());
+		$this->Paginator->Controller = $this->Controller;
+	}
+
+/**
  * testPaginate method
  *
  * @access public
  * @return void
  */
 	function testPaginate() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
@@ -306,10 +318,7 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	function testPaginateExtraParams() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->passedArgs[] = '1';
@@ -352,7 +361,7 @@ class PaginatorTest extends CakeTestCase {
 		$this->assertEqual($Controller->PaginatorControllerPost->lastQuery['limit'], 12);
 		$this->assertEqual($paging['options']['limit'], 12);
 
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('ControllerPaginateModel');
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
@@ -400,10 +409,7 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	public function testPaginatePassedArgs() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->passedArgs[] = array('1', '2', '3');
 		$Controller->params['url'] = array();
@@ -440,10 +446,7 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	function testPaginateSpecialType() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->passedArgs[] = '1';
 		$Controller->params['url'] = array();
@@ -469,10 +472,7 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	function testDefaultPaginateParams() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->modelClass = 'PaginatorControllerPost';
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
@@ -491,10 +491,7 @@ class PaginatorTest extends CakeTestCase {
  * @return void
  */
 	function testPaginateOrderVirtualField() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->params['url'] = array();
 		$Controller->constructClasses();
@@ -522,10 +519,7 @@ class PaginatorTest extends CakeTestCase {
  * @expectedException MissingModelException
  */
 	function testPaginateMissingModel() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new PaginatorTestController($request);
+		$Controller = new PaginatorTestController($this->request);
 		$Controller->constructClasses();
 		$Controller->Paginator->paginate('MissingModel');
 	}
@@ -537,10 +531,7 @@ class PaginatorTest extends CakeTestCase {
  * @access public
  */
 	function testPaginateMaxLimit() {
-		$request = new CakeRequest('controller_posts/index');
-		$request->params['pass'] = $request->params['named'] = array();
-
-		$Controller = new Controller($request);
+		$Controller = new Controller($this->request);
 
 		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
 		$Controller->passedArgs[] = '1';
@@ -567,5 +558,138 @@ class PaginatorTest extends CakeTestCase {
 		$Controller->passedArgs = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
 		$this->assertEqual($Controller->params['paging']['PaginatorControllerPost']['options']['limit'], 2000);
+	}
+
+/**
+ * test that option merging prefers specific models 
+ *
+ * @return void
+ */
+	function testMergeOptionsModelSpecific() {
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named',
+			'Post' => array(
+				'page' => 1,
+				'limit' => 10,
+				'maxLimit' => 50,
+				'paramType' => 'named',
+			)
+		);
+		$result = $this->Paginator->mergeOptions('Silly', array());
+		$this->assertEquals($this->Paginator->settings, $result);
+
+		$result = $this->Paginator->mergeOptions('Silly', array('limit' => 10));
+		$this->assertEquals(10, $result['limit']);
+
+		$result = $this->Paginator->mergeOptions('Post', array('sort' => 'title'));
+		$expected = array('page' => 1, 'limit' => 10, 'paramType' => 'named', 'sort' => 'title', 'maxLimit' => 50);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test mergeOptions with named params.
+ *
+ * @return void
+ */
+	function testMergeOptionsNamedParams() {
+		$this->request->params['named'] = array(
+			'page' => 10,
+			'limit' => 10
+		);
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post', array());
+		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Paginator->mergeOptions('Post', array('page' => 100));
+		$this->assertEquals(100, $result['page'], 'Passed options should replace request params');
+	}
+
+/**
+ * test merging options from the querystring.
+ *
+ * @return void
+ */
+	function testMergeOptionsQueryString() {
+		$this->request->params['named'] = array(
+			'page' => 10,
+			'limit' => 10
+		);
+		$this->request->query = array(
+			'page' => 99,
+			'limit' => 75
+		);
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'querystring',
+		);
+		$result = $this->Paginator->mergeOptions('Post', array());
+		$expected = array('page' => 99, 'limit' => 75, 'maxLimit' => 100, 'paramType' => 'querystring');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Paginator->mergeOptions('Post', array('page' => 100));
+		$this->assertEquals(100, $result['page'], 'Passed options should replace request params');
+	}
+
+/**
+ * test that the default whitelist doesn't let people screw with things they should not be allowed to.
+ *
+ * @return void
+ */
+	function testMergeOptionsDefaultWhiteList() {
+		$this->request->params['named'] = array(
+			'page' => 10,
+			'limit' => 10,
+			'fields' => array('bad.stuff'),
+			'recursive' => 1000,
+			'conditions' => array('bad.stuff'),
+			'contain' => array('bad')
+		);
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post', array());
+		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named');
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that modifying the whitelist works.
+ *
+ * @return void
+ */
+	function testMergeOptionsExtraWhitelist() {
+		$this->request->params['named'] = array(
+			'page' => 10,
+			'limit' => 10,
+			'fields' => array('bad.stuff'),
+			'recursive' => 1000,
+			'conditions' => array('bad.stuff'),
+			'contain' => array('bad')
+		);
+		$this->Paginator->settings = array(
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 100,
+			'paramType' => 'named',
+		);
+		$result = $this->Paginator->mergeOptions('Post', array(), array('fields'));
+		$expected = array(
+			'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named', 'fields' => array('bad.stuff')
+		);
+		$this->assertEquals($expected, $result);
 	}
 }
