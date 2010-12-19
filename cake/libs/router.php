@@ -897,7 +897,7 @@ class Router {
  * @see Router::url()
  */
 	protected static function _handleNoRoute($url) {
-		$named = $args = array();
+		$named = $args = $query = array();
 		$skip = array_merge(
 			array('bare', 'action', 'controller', 'plugin', 'prefix'),
 			self::$_prefixes
@@ -908,10 +908,13 @@ class Router {
 
 		// Remove this once parsed URL parameters can be inserted into 'pass'
 		for ($i = 0; $i < $count; $i++) {
+			$key = $keys[$i];
 			if (is_numeric($keys[$i])) {
-				$args[] = $url[$keys[$i]];
-			} else {
-				$named[$keys[$i]] = $url[$keys[$i]];
+				$args[] = $url[$key];
+			} elseif ($key[0] === CakeRoute::SIGIL_NAMED) {
+				$named[substr($key, 1)] = $url[$key];
+			} elseif ($key[0] === CakeRoute::SIGIL_QUERYSTRING) {
+				$query[substr($key, 1)] = $url[$key];
 			}
 		}
 
@@ -923,7 +926,7 @@ class Router {
 			}
 		}
 
-		if (empty($named) && empty($args) && (!isset($url['action']) || $url['action'] === 'index')) {
+		if (empty($named) && empty($args) && empty($query) && (!isset($url['action']) || $url['action'] === 'index')) {
 			$url['action'] = null;
 		}
 
@@ -947,7 +950,6 @@ class Router {
 
 		if (!empty($named)) {
 			foreach ($named as $name => $value) {
-				$name = trim($name, ':');
 				if (is_array($value)) {
 					$flattend = Set::flatten($value, '][');
 					foreach ($flattend as $namedKey => $namedValue) {
@@ -957,6 +959,9 @@ class Router {
 					$output .= '/' . $name . self::$named['separator'] . $value;
 				}
 			}
+		}
+		if (!empty($query)) {
+			$output .= Router::queryString($query);
 		}
 		return $output;
 	}
@@ -1070,6 +1075,10 @@ class Router {
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
 			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
 		);
+		foreach ($named as $key => $value) {
+			$named[CakeRoute::SIGIL_NAMED . $key] = $value;
+			unset($named[$key]);
+		}
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
 			$params['?'] = $url;

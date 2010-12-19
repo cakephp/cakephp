@@ -630,7 +630,7 @@ class RouterTest extends CakeTestCase {
 		$request->webroot = '/';
 		Router::setRequestInfo($request);
 
-		$result = Router::url(array('page' => 2));
+		$result = Router::url(array(':page' => 2));
 		$expected = '/admin/registrations/index/page:2';
 		$this->assertEqual($result, $expected);
 
@@ -1546,12 +1546,12 @@ class RouterTest extends CakeTestCase {
 		$expected = '/protected/others/edit/1';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'page' => 1));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, ':page' => 1));
 		$expected = '/protected/others/edit/1/page:1';
 		$this->assertEqual($result, $expected);
 
 		Router::connectNamed(array('random'));
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'random' => 'my-value'));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, ':random' => 'my-value'));
 		$expected = '/protected/others/edit/1/random:my-value';
 		$this->assertEqual($result, $expected);
 	}
@@ -1610,12 +1610,12 @@ class RouterTest extends CakeTestCase {
 		$expected = '/protected/others/edit/1';
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'page' => 1));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, ':page' => 1));
 		$expected = '/protected/others/edit/1/page:1';
 		$this->assertEqual($result, $expected);
 
 		Router::connectNamed(array('random'));
-		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, 'random' => 'my-value'));
+		$result = Router::url(array('controller' => 'others', 'action' => 'edit', 1, 'protected' => true, ':random' => 'my-value'));
 		$expected = '/protected/others/edit/1/random:my-value';
 		$this->assertEqual($result, $expected);
 	}
@@ -1721,7 +1721,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('controller' => 'my_controller', 'action' => 'my_action', 'base' => true));
-		$expected = '/base/my_controller/my_action/base:1';
+		$expected = '/base/my_controller/my_action';
 		$this->assertEqual($result, $expected);
 	}
 
@@ -1908,7 +1908,7 @@ class RouterTest extends CakeTestCase {
 		$expected = array('pass' => array(), 'named' => array(), 'prefix' => 'members', 'plugin' => null, 'controller' => 'posts', 'action' => 'index', 'members' => true);
 		$this->assertEqual($result, $expected);
 
-		$result = Router::url(array('members' => true, 'controller' => 'posts', 'action' =>'index', 'page' => 2));
+		$result = Router::url(array('members' => true, 'controller' => 'posts', 'action' =>'index', ':page' => 2));
 		$expected = '/base/members/posts/index/page:2';
 		$this->assertEqual($result, $expected);
 
@@ -2083,7 +2083,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		$result = Router::url(array('action' => 'test_another_action', 'locale' => 'badness'));
-		$expected = '/test/test_another_action/locale:badness';
+		$expected = '/test/test_another_action';
 		$this->assertEqual($result, $expected);
 	}
 
