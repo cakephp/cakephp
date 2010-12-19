@@ -184,14 +184,18 @@ class PaginatorComponent extends Component {
 			}
 			$results = $object->find($type, array_merge($parameters, $extra));
 		}
+		$defaults = $this->getDefaults($object->alias);
+		unset($defaults[0]);
+
 		$paging = array(
-			'page'		=> $page,
-			'current'	=> count($results),
-			'count'		=> $count,
-			'prevPage'	=> ($page > 1),
-			'nextPage'	=> ($count > ($page * $limit)),
-			'pageCount'	=> $pageCount,
-			'options'	=> $options,
+			'page' => $page,
+			'current' => count($results),
+			'count' => $count,
+			'prevPage' => ($page > 1),
+			'nextPage' => ($count > ($page * $limit)),
+			'pageCount' => $pageCount,
+			'order' => $order,
+			'options' => Set::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);
 		if (!isset($this->Controller->request['paging'])) {
@@ -275,15 +279,7 @@ class PaginatorComponent extends Component {
  * @return array Array of merged options.
  */
 	public function mergeOptions($alias, $whitelist = array()) {
-		if (isset($this->settings[$alias])) {
-			$defaults = $this->settings[$alias];
-		} else {
-			$defaults = $this->settings;
-		}
-		$defaults = array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
-			$defaults
-		);
+		$defaults = $this->getDefaults($alias);
 		switch ($defaults['paramType']) {
 			case 'named':
 				$request = $this->Controller->request->params['named'];
@@ -300,6 +296,25 @@ class PaginatorComponent extends Component {
 		$request = array_intersect_key($request, $whitelist);
 
 		return array_merge($defaults, $request);
+	}
+
+/**
+ * Get the default settings for a $model.  If there are no settings for a specific model, the general settings
+ * will be used.
+ *
+ * @param string $alias Model name to get default settings for.
+ * @return array
+ */
+	public function getDefaults($alias) {
+		if (isset($this->settings[$alias])) {
+			$defaults = $this->settings[$alias];
+		} else {
+			$defaults = $this->settings;
+		}
+		return array_merge(
+			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
+			$defaults
+		);
 	}
 
 /**
