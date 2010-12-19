@@ -94,21 +94,9 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
 		}
-		
+
 		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
 
-		$options = array_merge(
-			$this->Controller->request->params,
-			$this->Controller->request->query,
-			$this->Controller->passedArgs
-		);
-
-		if (isset($this->settings[$object->alias])) {
-			$defaults = $this->settings[$object->alias];
-		} else {
-			$defaults = $this->settings;
-		}
-		
 		if (isset($options['show'])) {
 			$options['limit'] = $options['show'];
 		}
@@ -142,34 +130,21 @@ class PaginatorComponent extends Component {
 				$options['order'][$alias . '.' . $field] = $value;
 			}
 		}
-		$vars = array('fields', 'order', 'limit', 'page', 'recursive');
-		$keys = array_keys($options);
-		$count = count($keys);
 
-		for ($i = 0; $i < $count; $i++) {
-			if (!in_array($keys[$i], $vars, true)) {
-				unset($options[$keys[$i]]);
-			}
-			if (empty($whitelist) && ($keys[$i] === 'fields' || $keys[$i] === 'recursive')) {
-				unset($options[$keys[$i]]);
-			} elseif (!empty($whitelist) && !in_array($keys[$i], $whitelist)) {
-				unset($options[$keys[$i]]);
-			}
-		}
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 
-		if (!isset($defaults['conditions'])) {
-			$defaults['conditions'] = array();
+		if (!isset($options['conditions'])) {
+			$options['conditions'] = array();
 		}
 
 		$type = 'all';
 
-		if (isset($defaults[0])) {
-			$type = $defaults[0];
-			unset($defaults[0]);
+		if (isset($options[0])) {
+			$type = $options[0];
+			unset($options[0]);
 		}
 
-		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $defaults, $options);
+		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $options);
 		$options['limit'] = (int) $options['limit'];
 		if (empty($options['limit']) || $options['limit'] < 1) {
 			$options['limit'] = 1;
@@ -187,7 +162,7 @@ class PaginatorComponent extends Component {
 			$recursive = $object->recursive;
 		}
 
-		$extra = array_diff_key($defaults, compact(
+		$extra = array_diff_key($options, compact(
 			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
 		));
 		if ($type !== 'all') {
@@ -230,7 +205,6 @@ class PaginatorComponent extends Component {
 			'prevPage'	=> ($page > 1),
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
-			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
 			'options'	=> $options,
 			'paramType' => $options['paramType']
 		);
