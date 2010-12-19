@@ -95,10 +95,6 @@ class PaginatorComponent extends Component {
 			throw new MissingModelException($object);
 		}
 
-		if (isset($options['show'])) {
-			$options['limit'] = $options['show'];
-		}
-
 		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
 		$options = $this->validateSort($object, $options);
 
