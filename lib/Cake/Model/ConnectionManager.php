@@ -180,7 +180,7 @@ class ConnectionManager {
 
 		App::uses($conn['classname'], $plugin . 'Model/Datasource' . $package);
 		if (!class_exists($conn['classname'])) {
-			trigger_error(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', $class), E_USER_ERROR);
+			trigger_error(__('ConnectionManager::loadDataSource - Unable to import DataSource class %s', $conn['classname']), E_USER_ERROR);
 			return null;
 		}
 		return true;
