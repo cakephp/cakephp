@@ -55,7 +55,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'options' => array(
 						'page' => 1,
 						'conditions' => array()
-					)
+					),
+					'paramType' => 'named'
 				)
 			)
 		));
@@ -147,7 +148,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'page' => 1,
 					'order' => array('date' => 'asc'),
 					'conditions' => array()
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		
@@ -651,7 +653,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::parse('/');
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'articles', 'action' => 'index', 'pass' => array('2'), 'named' => array('foo' => 'bar'), 'url' => array('url' => 'articles/index/2/foo:bar')),
-			array('base' => '/', 'here' => '/articles/', 'webroot' => '/', 'passedArgs' => array(0 => '2', 'foo' => 'bar'))
+			array('base' => '/', 'here' => '/articles/', 'webroot' => '/')
 		));
 		$this->Paginator->request->params['paging'] = array(
 			'Article' => array(
@@ -661,7 +663,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'page' => 1, 
 					'order' => array(), 
 					'conditions' => array()
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -671,7 +674,7 @@ class PaginatorHelperTest extends CakeTestCase {
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/articles/index/2/page:1/foo:bar/sort:title/direction:asc'),
+			'a' => array('href' => '/articles/index/2/foo:bar/page:1/sort:title/direction:asc'),
 			'Title',
 			'/a'
 		);
@@ -681,24 +684,24 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = array(
 			array('span' => array('class' => 'current')), '1', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:2/foo:bar')), '2', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:2')), '2', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:3/foo:bar')), '3', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:3')), '3', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:4/foo:bar')), '4', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:4')), '4', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:5/foo:bar')), '5', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:5')), '5', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:6/foo:bar')), '6', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:6')), '6', '/a', '/span',
 			' | ',
-			array('span' => array()), array('a' => array('href' => '/articles/index/2/page:7/foo:bar')), '7', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/articles/index/2/foo:bar/page:7')), '7', '/a', '/span',
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->next('Next');
 		$expected = array(
 			'<span',
-			'a' => array('href' => '/articles/index/2/page:2/foo:bar', 'class' => 'next'),
+			'a' => array('href' => '/articles/index/2/foo:bar/page:2', 'class' => 'next'),
 			'Next',
 			'/a',
 			'/span'
@@ -723,7 +726,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
@@ -804,7 +808,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -844,7 +849,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'page' => 1, 
 					'limit' => 3, 
 					'order' => array('Client.name' => 'DESC'),
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -883,7 +889,8 @@ class PaginatorHelperTest extends CakeTestCase {
 					'limit' => 10, 
 					'order' => array(),
 					'conditions' => array()
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->prev('Prev');
@@ -903,14 +910,15 @@ class PaginatorHelperTest extends CakeTestCase {
 				'defaults' => array(),
 				'options' => array(
 					'page' => 2, 'limit' => 10, 'order' => array(), 'conditions' => array()
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$this->Paginator->options(array('url' => array(12, 'page' => 3)));
-		$result = $this->Paginator->prev('Prev', array('url' => array('foo' => 'bar')));
+		$result = $this->Paginator->prev('Prev', array('url' => array(':foo' => 'bar')));
 		$expected = array(
 			'<span',
-			'a' => array('href' => '/index/12/page:1/limit:10/foo:bar', 'class' => 'prev'),
+			'a' => array('href' => '/index/12/foo:bar/page:1/limit:10', 'class' => 'prev'),
 			'Prev',
 			'/a',
 			'/span'
@@ -935,7 +943,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->prev('<< Previous', array('escape' => false));
@@ -977,7 +986,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-				)
+				),
+				'paramType' => 'named'
 			),
 			'Server' => array(
 				'page' => 1, 
@@ -988,7 +998,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 5,
 				'options' => array(
 					'page' => 1, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->next('Next', array('model' => 'Client'));
@@ -1097,7 +1108,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->numbers();
@@ -1194,7 +1206,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->numbers();
@@ -1230,7 +1243,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->numbers();
@@ -1265,7 +1279,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 9,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1323,7 +1338,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1362,7 +1378,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1402,7 +1419,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 42,
 				'options' => array(
 					'page' => 6, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1442,7 +1460,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 42,
 				'options' => array(
 					'page' => 37,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1482,7 +1501,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 3,
 				'options' => array(
 					'page' => 1,
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$options = array('modulus' => 10);
@@ -1507,7 +1527,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array(
 					'page' => 1, 
 					'order' => array('Client.name' => 'DESC'), 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->numbers();
@@ -1533,7 +1554,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 4897,
 				'options' => array(
 					'page' => 4894, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1756,7 +1778,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'prevPage' => false, 
 				'nextPage' => 2, 
 				'pageCount' => 15,
-				'options' => array()
+				'options' => array(),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1774,7 +1797,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1855,7 +1879,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'pageCount' => 15,
 				'options' => array(
 					'page' => 1, 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 		$result = $this->Paginator->last();
@@ -1873,7 +1898,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'options' => array(
 					'page' => 1,
 					'order' => array('Client.name' => 'DESC'), 
-				)
+				),
+				'paramType' => 'named'
 			)
 		);
 
@@ -1971,6 +1997,7 @@ class PaginatorHelperTest extends CakeTestCase {
 					'page' => 1,
 					'order' => array('Client.name' => 'DESC'),
 				),
+				'paramType' => 'named'
 			)
 		);
 		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, ';
@@ -2152,7 +2179,8 @@ class PaginatorHelperTest extends CakeTestCase {
 				'nextPage' => true,
 				'pageCount' => 7,
 				'defaults' => array(),
-				'options' => array()
+				'options' => array(),
+				'paramType' => 'named'
 			)
 		);
 		$Paginator->PaginatorMockJs = $mock;
@@ -2162,4 +2190,17 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->expectException();
 		$Paginator = new PaginatorHelper($this->View, array('ajax' => 'Form'));
 	}
+
+/**
+ * test that querystring links can be generated.
+ *
+ * @return void
+ */
+	function testQuerystringLinkGeneration() {
+		$this->Paginator->request->params['paging']['Article']['paramType'] = 'querystring';
+		$result = $this->Paginator->url(array('page' => '4'));
+		$expected = '/index?page=4';
+		$this->assertEquals($expected, $result);
+	}
+
 }

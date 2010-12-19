@@ -68,13 +68,21 @@ class PaginatorHelper extends AppHelper {
  *  - `$options['escape']` Defines if the title field for the link should be escaped (default: true).
  *  - `$options['update']` DOM id of the element updated with the results of the AJAX call.
  *     If this key isn't specified Paginator will use plain HTML links.
- *  - `$options['indicator']` DOM id of the element that will be shown when doing AJAX requests. **Only supported by
- *     AjaxHelper**
+ *  - `$options['paramType']` The type of parameters to use when creating links.  Valid options are 
+ *     'querystring', 'named', and 'route'.  See PaginatorComponent::$settings for more information.
  *
  * @var array
  * @access public
  */
 	public $options = array();
+
+/**
+ * A list of keys that will be turned into `$this->options['paramType']` url parameters when links
+ * are generated
+ *
+ * @var array
+ */
+	public $convertKeys = array('page', 'limit', 'sort', 'direction');
 
 /**
  * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
@@ -111,7 +119,12 @@ class PaginatorHelper extends AppHelper {
  * @return void
  */
 	public function beforeRender($viewFile) {
-		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
+		$named = $this->request->params['named'];
+		foreach ($named as $key => $val) {
+			$named[CakeRoute::SIGIL_NAMED . $key] = $val;
+			unset($named[$key]);
+		}
+		$this->options['url'] = array_merge($this->request->params['pass'], $named);
 		parent::beforeRender($viewFile);
 	}
 
@@ -377,11 +390,37 @@ class PaginatorHelper extends AppHelper {
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
+		$url = $this->_convertUrlKeys($url, $paging['paramType']);
 
 		if ($asArray) {
 			return $url;
 		}
 		return parent::url($url);
+	}
+
+/**
+ * Converts the keys being used into the format set by options.paramType
+ *
+ * @param array $url Array of url params to convert
+ * @return converted url params.
+ */
+	protected function _convertUrlKeys($url, $type) {
+		$prefix = '';
+		switch ($type) {
+			case 'named':
+				$prefix = CakeRoute::SIGIL_NAMED;
+				break;
+			case 'querystring':
+				$prefix = CakeRoute::SIGIL_QUERYSTRING;
+				break;
+		}
+		foreach ($this->convertKeys as $key) {
+			if (isset($url[$key])) {
+				$url[$prefix . $key] = $url[$key];
+				unset($url[$key]);
+			}
+		}
+		return $url;
 	}
 
 /**
