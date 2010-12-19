@@ -525,9 +525,9 @@ class PaginatorHelper extends AppHelper {
 		}
 		$start = 0;
 		if ($paging['count'] >= 1) {
-			$start = (($paging['page'] - 1) * $paging['options']['limit']) + 1;
+			$start = (($paging['page'] - 1) * $paging['limit']) + 1;
 		}
-		$end = $start + $paging['options']['limit'] - 1;
+		$end = $start + $paging['limit'] - 1;
 		if ($paging['count'] < $end) {
 			$end = $paging['count'];
 		}

@@ -1966,18 +1966,10 @@ class PaginatorHelperTest extends CakeTestCase {
 				'prevPage' => false,
 				'nextPage' => true,
 				'pageCount' => 5,
-				'defaults' => array(
-					'limit' => 3,
-					'step' => 1,
-					'order' => array('Client.name' => 'DESC'),
-					'conditions' => array()
-				),
+				'limit' => 3,
 				'options' => array(
 					'page' => 1,
-					'limit' => 3,
 					'order' => array('Client.name' => 'DESC'),
-					'conditions' => array(),
-					'separator' => 'of'
 				),
 			)
 		);

@@ -195,6 +195,7 @@ class PaginatorComponent extends Component {
 			'nextPage' => ($count > ($page * $limit)),
 			'pageCount' => $pageCount,
 			'order' => $order,
+			'limit' => $limit,
 			'options' => Set::diff($options, $defaults),
 			'paramType' => $options['paramType']
 		);

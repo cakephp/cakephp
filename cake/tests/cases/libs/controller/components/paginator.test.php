@@ -306,6 +306,8 @@ class PaginatorTest extends CakeTestCase {
 		$Controller->request->params['named'] = array();
 		$Controller->Paginator->settings = array('limit' => '-1', 'maxLimit' => 10, 'paramType' => 'named');
 		$Controller->Paginator->paginate('PaginatorControllerPost');
+
+		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['limit'], 1);
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['page'], 1);
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['pageCount'], 3);
 		$this->assertIdentical($Controller->params['paging']['PaginatorControllerPost']['prevPage'], false);
