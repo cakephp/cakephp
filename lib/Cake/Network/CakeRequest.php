@@ -273,7 +273,7 @@ class CakeRequest implements ArrayAccess {
 		$config = Configure::read('App');
 		extract($config);
 
-		if (!$base) {
+		if (empty($base)) {
 			$base = $this->base;
 		}
 
@@ -281,7 +281,7 @@ class CakeRequest implements ArrayAccess {
 			$this->webroot = $base . '/';
 			return $base;
 		}
-		if (!$baseUrl) {
+		if (empty($baseUrl)) {
 			$replace = array('<', '>', '*', '\'', '"');
 			$base = str_replace($replace, '', dirname(env('PHP_SELF')));
 
