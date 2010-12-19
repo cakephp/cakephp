@@ -30,11 +30,25 @@
 class PaginatorComponent extends Component {
 
 /**
- * Pagination settings
+ * Pagination settings.  These settings control pagination at a general level.
+ * You can also define sub arrays for pagination settings for specific models.
+ *
+ * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
+ * - `limit` The initial number of items per page.  Defaults to 20.
+ * - `page` The starting page, defaults to 1.
+ * - `paramType` What type of parameters you want pagination to use?
+ *      - `named` Use named parameters.
+ *      - `querystring` Use query string parameters.
+ *      - `route` Use routed parameters, these require you to setup routes that include the pagination params
  *
  * @var array
  */
-	public $settings = array();
+	public $settings = array(
+		'page' => 1,
+		'limit' => 20,
+		'maxLimit' => 100,
+		'paramType' => 'named'
+	);
 
 /**
  * Constructor
@@ -43,7 +57,7 @@ class PaginatorComponent extends Component {
  * @param array $settings Array of configuration settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$settings = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), (array)$settings);
+		$settings = array_merge($this->settings, (array)$settings);
 		$this->Controller = $collection->getController();
 		parent::__construct($collection, $settings);
 	}
@@ -203,7 +217,8 @@ class PaginatorComponent extends Component {
 			'nextPage'	=> ($count > ($page * $limit)),
 			'pageCount'	=> $pageCount,
 			'defaults'	=> array_merge(array('limit' => 20, 'step' => 1), $defaults),
-			'options'	=> $options
+			'options'	=> $options,
+			'paramType' => $options['paramType']
 		);
 		if (!isset($this->Controller->request['paging'])) {
 			$this->Controller->request['paging'] = array();
