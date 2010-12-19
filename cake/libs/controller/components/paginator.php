@@ -19,13 +19,39 @@
  */
 
 /**
- * PaginatorComponent
+ * This component is used to handle automatic model data pagination.  The primary way to use this
+ * component is to call the paginate() method. There is a convience wrapper on Controller as well.
  *
- * This component is used to handle automatic model data pagination
+ * ### Configuring pagination
+ *
+ * You configure pagination using the PaginatorComponent::$settings.  This allows you to configure
+ * the default pagination behavior in general or for a specific model. General settings are used when there
+ * are no specific model configuration, or the model you are paginating does not have specific settings.
+ *
+ * {{{
+ *	$this->Paginator->settings = array(
+ *		'limit' => 20,
+ *		'maxLimit' => 100
+ *	);
+ * }}}
+ *
+ * The above settings will be used to paginate any model.  You can configure model specific settings by
+ * keying the settings with the model name.
+ *
+ * {{{
+ *	$this->Paginator->settings = array(
+ *		'Post' => array(
+ *			'limit' => 20,
+ *			'maxLimit' => 100
+ *		),
+ *		'Comment' => array( ... )
+ *	);
+ * }}}
+ *
+ * This would allow you to have different pagination settings for `Comment` and `Post` models.
  *
  * @package       cake
  * @subpackage    cake.cake.libs.controller.components
- *
  */
 class PaginatorComponent extends Component {
 
