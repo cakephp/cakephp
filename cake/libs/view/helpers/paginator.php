@@ -112,7 +112,6 @@ class PaginatorHelper extends AppHelper {
  */
 	public function beforeRender($viewFile) {
 		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
-
 		parent::beforeRender($viewFile);
 	}
 
@@ -191,7 +190,7 @@ class PaginatorHelper extends AppHelper {
 	public function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = array_merge($params['defaults'], $params['options']);
+			$options = $params['options'];
 		}
 
 		if (isset($options['sort']) && !empty($options['sort'])) {
@@ -217,7 +216,7 @@ class PaginatorHelper extends AppHelper {
 
 		if (empty($options)) {
 			$params = $this->params($model);
-			$options = array_merge($params['defaults'], $params['options']);
+			$options = $params['options'];
 		}
 
 		if (isset($options['direction'])) {
