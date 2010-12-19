@@ -582,14 +582,11 @@ class PaginatorTest extends CakeTestCase {
 				'paramType' => 'named',
 			)
 		);
-		$result = $this->Paginator->mergeOptions('Silly', array());
+		$result = $this->Paginator->mergeOptions('Silly');
 		$this->assertEquals($this->Paginator->settings, $result);
 
-		$result = $this->Paginator->mergeOptions('Silly', array('limit' => 10));
-		$this->assertEquals(10, $result['limit']);
-
-		$result = $this->Paginator->mergeOptions('Post', array('sort' => 'title'));
-		$expected = array('page' => 1, 'limit' => 10, 'paramType' => 'named', 'sort' => 'title', 'maxLimit' => 50);
+		$result = $this->Paginator->mergeOptions('Post');
+		$expected = array('page' => 1, 'limit' => 10, 'paramType' => 'named', 'maxLimit' => 50);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -609,12 +606,9 @@ class PaginatorTest extends CakeTestCase {
 			'maxLimit' => 100,
 			'paramType' => 'named',
 		);
-		$result = $this->Paginator->mergeOptions('Post', array());
+		$result = $this->Paginator->mergeOptions('Post');
 		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $result);
-
-		$result = $this->Paginator->mergeOptions('Post', array('page' => 100));
-		$this->assertEquals(100, $result['page'], 'Passed options should replace request params');
 	}
 
 /**
@@ -637,12 +631,9 @@ class PaginatorTest extends CakeTestCase {
 			'maxLimit' => 100,
 			'paramType' => 'querystring',
 		);
-		$result = $this->Paginator->mergeOptions('Post', array());
+		$result = $this->Paginator->mergeOptions('Post');
 		$expected = array('page' => 99, 'limit' => 75, 'maxLimit' => 100, 'paramType' => 'querystring');
 		$this->assertEquals($expected, $result);
-
-		$result = $this->Paginator->mergeOptions('Post', array('page' => 100));
-		$this->assertEquals(100, $result['page'], 'Passed options should replace request params');
 	}
 
 /**
@@ -665,7 +656,7 @@ class PaginatorTest extends CakeTestCase {
 			'maxLimit' => 100,
 			'paramType' => 'named',
 		);
-		$result = $this->Paginator->mergeOptions('Post', array());
+		$result = $this->Paginator->mergeOptions('Post');
 		$expected = array('page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named');
 		$this->assertEquals($expected, $result);
 	}
@@ -690,7 +681,7 @@ class PaginatorTest extends CakeTestCase {
 			'maxLimit' => 100,
 			'paramType' => 'named',
 		);
-		$result = $this->Paginator->mergeOptions('Post', array(), array('fields'));
+		$result = $this->Paginator->mergeOptions('Post', array('fields'));
 		$expected = array(
 			'page' => 10, 'limit' => 10, 'maxLimit' => 100, 'paramType' => 'named', 'fields' => array('bad.stuff')
 		);
@@ -736,5 +727,27 @@ class PaginatorTest extends CakeTestCase {
 		$result = $this->Paginator->validateSort($model, $options);
 
 		$this->assertEquals('desc', $result['order']['something']);
+	}
+
+/**
+ * test that maxLimit is respected
+ *
+ * @return void
+ */
+	function testCheckLimit() {
+		$result = $this->Paginator->checkLimit(array('limit' => 1000000, 'maxLimit' => 100));
+		$this->assertEquals(100, $result['limit']);
+
+		$result = $this->Paginator->checkLimit(array('limit' => 'sheep!', 'maxLimit' => 100));
+		$this->assertEquals(1, $result['limit']);
+
+		$result = $this->Paginator->checkLimit(array('limit' => '-1', 'maxLimit' => 100));
+		$this->assertEquals(1, $result['limit']);
+
+		$result = $this->Paginator->checkLimit(array('limit' => null, 'maxLimit' => 100));
+		$this->assertEquals(1, $result['limit']);
+
+		$result = $this->Paginator->checkLimit(array('limit' => 0, 'maxLimit' => 100));
+		$this->assertEquals(1, $result['limit']);
 	}
 }

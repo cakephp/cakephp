@@ -77,7 +77,7 @@ class PaginatorComponent extends Component {
  * Handles automatic pagination of model records.
  *
  * @param mixed $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
- * @param mixed $scope Conditions to use while paginating
+ * @param mixed $scope Additional find conditions to use while paginating
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  */
@@ -87,7 +87,6 @@ class PaginatorComponent extends Component {
 			$scope = $object;
 			$object = null;
 		}
-		$assoc = null;
 
 		$object = $this->_getObject($object);
 
@@ -95,8 +94,9 @@ class PaginatorComponent extends Component {
 			throw new MissingModelException($object);
 		}
 
-		$options = $this->mergeOptions($object->alias, $scope, $whitelist);
+		$options = $this->mergeOptions($object->alias, $whitelist);
 		$options = $this->validateSort($object, $options);
+		$options = $this->checkLimit($options);
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
 
@@ -110,13 +110,6 @@ class PaginatorComponent extends Component {
 			$type = $options[0];
 			unset($options[0]);
 		}
-
-		$options = array_merge(array('page' => 1, 'limit' => 20, 'maxLimit' => 100), $options);
-		$options['limit'] = (int) $options['limit'];
-		if (empty($options['limit']) || $options['limit'] < 1) {
-			$options['limit'] = 1;
-		}
-		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 
 		extract($options);
 
@@ -248,20 +241,20 @@ class PaginatorComponent extends Component {
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
- * @param string $options Per call options.
  * @param string $whitelist A whitelist of options that are allowed from the request parameters.  Modifying
  *   this array will allow you to permit more or less input from the user.
  * @return array Array of merged options.
  */
-	public function mergeOptions($alias, $options, $whitelist = array()) {
+	public function mergeOptions($alias, $whitelist = array()) {
 		if (isset($this->settings[$alias])) {
 			$defaults = $this->settings[$alias];
 		} else {
 			$defaults = $this->settings;
 		}
-		if (empty($defaults['paramType'])) {
-			$defaults['paramType'] = 'named';
-		}
+		$defaults = array_merge(
+			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
+			$defaults
+		);
 		switch ($defaults['paramType']) {
 			case 'named':
 				$request = $this->Controller->request->params['named'];
@@ -277,7 +270,7 @@ class PaginatorComponent extends Component {
 		$whitelist = array_flip(array_merge($this->whitelist, $whitelist));
 		$request = array_intersect_key($request, $whitelist);
 
-		return array_merge($defaults, $request, $options);
+		return array_merge($defaults, $request);
 	}
 
 /**
@@ -320,6 +313,21 @@ class PaginatorComponent extends Component {
 			}
 		}
 	
+		return $options;
+	}
+
+/**
+ * Check the limit parameter and ensure its within the maxLimit bounds.
+ *
+ * @param array $options An array of options with a limit key to be checked.
+ * @return array An array of options for pagination
+ */
+	public function checkLimit($options) {
+		$options['limit'] = (int) $options['limit'];
+		if (empty($options['limit']) || $options['limit'] < 1) {
+			$options['limit'] = 1;
+		}
+		$options['limit'] = min((int)$options['limit'], $options['maxLimit']);
 		return $options;
 	}
 }
