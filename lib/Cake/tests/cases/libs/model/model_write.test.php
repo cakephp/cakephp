@@ -148,7 +148,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testAutoSaveUuid() {
 		// SQLite does not support non-integer primary keys
-		$this->skipIf($this->db->config['driver'] == 'sqlite');
+		$this->skipIf($this->db instanceof Sqlite);
 
 		$this->loadFixtures('Uuid');
 		$TestModel = new Uuid();
@@ -170,7 +170,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testSaveUuidNull() {
 		// SQLite does not support non-integer primary keys
-		$this->skipIf($this->db->config['driver'] == 'sqlite');
+		$this->skipIf($this->db instanceof Sqlite);
 
 		$this->loadFixtures('Uuid');
 		$TestModel = new Uuid();
@@ -192,7 +192,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testZeroDefaultFieldValue() {
 		$this->skipIf(
-			$this->db->config['driver'] == 'sqlite',
+			$this->db instanceof Sqlite,
 			'%s SQLite uses loose typing, this operation is unsupported'
 		);
 		$this->loadFixtures('DataTest');
@@ -409,7 +409,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testCounterCacheWithSelfJoin() {
 		$skip = $this->skipIf(
-			($this->db->config['driver'] == 'sqlite'),
+			($this->db instanceof Sqlite),
 			'SQLite 2.x does not support ALTER TABLE ADD COLUMN'
 		);
 		if ($skip) {
@@ -2988,7 +2988,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$this->getMock('DboSource', array(), array(), 'MockTransactionDboSource');
 		$db = ConnectionManager::create('mock_transaction', array(
-			'datasource' => 'MockTransactionDbo',
+			'datasource' => 'MockTransactionDboSource',
 		));
 		$db->expects($this->at(2))
 			->method('isInterfaceSupported')
@@ -3023,7 +3023,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$mock = $this->getMock('DboSource', array(), array(), 'MockTransactionAssociatedDboSource', false);
 		$db =& ConnectionManager::create('mock_transaction_assoc', array(
-			'datasource' => 'MockTransactionAssociatedDbo',
+			'datasource' => 'MockTransactionAssociatedDboSource',
 		));
 		$this->mockObjects[] = $db;
 		$db->columns = $testDb->columns;
@@ -3841,7 +3841,7 @@ class ModelWriteTest extends BaseModelTest {
  */
 	function testProductUpdateAll() {
 		$this->skipIf(
-			$this->db->config['driver'] != 'mysql',
+			!$this->db instanceof Mysql,
 			'%s Currently, there is no way of doing joins in an update statement in postgresql or sqlite'
 		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
@@ -3892,7 +3892,7 @@ class ModelWriteTest extends BaseModelTest {
  */
     function testProductUpdateAllWithoutForeignKey() {
 		$this->skipIf(
-			$this->db->config['driver'] != 'mysql',
+			!$this->db instanceof Mysql,
 			'%s Currently, there is no way of doing joins in an update statement in postgresql'
 		);
 		$this->loadFixtures('ProductUpdateAll', 'GroupUpdateAll');
