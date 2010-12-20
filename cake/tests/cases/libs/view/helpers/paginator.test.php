@@ -47,6 +47,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->Paginator->request->addParams(array(
 			'paging' => array(
 				'Article' => array(
+					'page' => 2,
 					'current' => 9,
 					'count' => 62,
 					'prevPage' => false,
@@ -1764,6 +1765,51 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
+ * test first() and last() with tag options
+ *
+ * @return void
+ */
+	function testFirstAndLastTag() {
+		$result = $this->Paginator->first('<<', array('tag' => 'li'));
+		$expected = array(
+			'<li',
+			'a' => array('href' => '/index/page:1'),
+			'&lt;&lt;',
+			'/a',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->last(2, array('tag' => 'li'));
+
+		$expected = array(
+			'...',
+			'<li',
+			array('a' => array('href' => '/index/page:6')), '6', '/a',
+			'/li',
+			' | ',
+			'<li',
+			array('a' => array('href' => '/index/page:7')), '7', '/a',
+			'/li',
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that on the last page you don't get a link ot the last page.
+ *
+ * @return void
+ */
+	function testLastNoOutput() {
+		$this->Paginator->request->params['paging']['Article']['page'] = 15;
+		$this->Paginator->request->params['paging']['Article']['pageCount'] = 15;
+
+		$result = $this->Paginator->last();
+		$expected = '';
+		$this->assertEqual($result, $expected);
+	}
+
+/**
  * testFirstAndLast method
  *
  * @access public
@@ -1787,20 +1833,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		$expected = '';
 		$this->assertEqual($result, $expected);
 
-		$this->Paginator->request->params['paging'] = array(
-			'Client' => array(
-				'page' => 4,
-				'current' => 3, 
-				'count' => 30, 
-				'prevPage' => false, 
-				'nextPage' => 2, 
-				'pageCount' => 15,
-				'options' => array(
-					'page' => 1, 
-				),
-				'paramType' => 'named'
-			)
-		);
+		$this->Paginator->request->params['paging']['Client']['page'] = 4;
 
 		$result = $this->Paginator->first();
 		$expected = array(
@@ -1809,16 +1842,6 @@ class PaginatorHelperTest extends CakeTestCase {
 			'&lt;&lt; first',
 			'/a',
 			'/span'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Paginator->first('<<', array('tag' => 'li'));
-		$expected = array(
-			'<li',
-			'a' => array('href' => '/index/page:1'),
-			'&lt;&lt;',
-			'/a',
-			'/li'
 		);
 		$this->assertTags($result, $expected);
 
@@ -1855,37 +1878,6 @@ class PaginatorHelperTest extends CakeTestCase {
 			'/span',
 		);
 		$this->assertTags($result, $expected);
-
-		$result = $this->Paginator->last(2, array('tag' => 'li'));
-		$expected = array(
-			'...',
-			'<li',
-			array('a' => array('href' => '/index/page:14')), '14', '/a',
-			'/li',
-			' | ',
-			'<li',
-			array('a' => array('href' => '/index/page:15')), '15', '/a',
-			'/li',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->request->params['paging'] = array(
-			'Client' => array(
-				'page' => 15, 
-				'current' => 3, 
-				'count' => 30, 
-				'prevPage' => false, 
-				'nextPage' => 2, 
-				'pageCount' => 15,
-				'options' => array(
-					'page' => 1, 
-				),
-				'paramType' => 'named'
-			)
-		);
-		$result = $this->Paginator->last();
-		$expected = '';
-		$this->assertEqual($result, $expected);
 
 		$this->Paginator->request->params['paging'] = array(
 			'Client' => array(
@@ -2192,14 +2184,18 @@ class PaginatorHelperTest extends CakeTestCase {
 	}
 
 /**
- * test that querystring links can be generated.
+ * test that querystring urls can be generated.
  *
  * @return void
  */
-	function testQuerystringLinkGeneration() {
+	function testQuerystringUrlGeneration() {
 		$this->Paginator->request->params['paging']['Article']['paramType'] = 'querystring';
 		$result = $this->Paginator->url(array('page' => '4'));
 		$expected = '/?page=4';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Paginator->url(array('page' => '4', 'limit' => 10, 'something' => 'else'));
+		$expected = '/index/something:else?page=4&amp;limit=10';
 		$this->assertEquals($expected, $result);
 	}
 
