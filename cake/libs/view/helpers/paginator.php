@@ -357,11 +357,10 @@ class PaginatorHelper extends AppHelper {
 			$url = array_merge((array)$options['url'], (array)$url);
 			unset($options['url']);
 		}
+
 		$url = $this->url($url, true, $model);
 
 		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
-		$url = array_merge(array('page' => $this->current($model)), $url);
-		$url = array_merge(Set::filter($url, true), array_intersect_key($url, array('plugin' => true)));
 		return $this->{$obj}->link($title, $url, $options);
 	}
 

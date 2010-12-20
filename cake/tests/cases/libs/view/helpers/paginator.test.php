@@ -2199,4 +2199,36 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * test querystring paging link.
+ *
+ * @return void
+ */
+	function testQuerystringNextAndPrev() {
+		$this->Paginator->request->params['paging']['Article']['paramType'] = 'querystring';
+		$this->Paginator->request->params['paging']['Article']['page'] = 2;
+		$this->Paginator->request->params['paging']['Article']['nextPage'] = true;
+		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
+		
+		$result = $this->Paginator->next('Next');
+		$expected = array(
+			'<span',
+			'a' => array('href' => '/?page=3', 'class' => 'next'),
+			'Next',
+			'/a',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+		
+		$result = $this->Paginator->prev('Prev');
+		$expected = array(
+			'<span',
+			'a' => array('href' => '/?page=1', 'class' => 'prev'),
+			'Prev',
+			'/a',
+			'/span'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 }
