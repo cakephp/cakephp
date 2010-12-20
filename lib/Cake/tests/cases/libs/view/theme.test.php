@@ -122,7 +122,7 @@ class ThemeViewTest extends CakeTestCase {
 		$this->ThemeView = new ThemeView($this->PostsController);
 		App::build(array(
 			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 	}
 
@@ -156,7 +156,6 @@ class ThemeViewTest extends CakeTestCase {
 		$ThemeView = new TestThemeView($this->Controller);
 		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'tests' . DS .'index.ctp';
 		$result = $ThemeView->getViewFileName('index');
-		debug($expected);
 		$this->assertEqual($result, $expected);
 
 		$expected = LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS . 'themed' . DS . 'test_theme' . DS . 'plugins' . DS . 'test_plugin' . DS . 'layouts' . DS .'plugin_default.ctp';
