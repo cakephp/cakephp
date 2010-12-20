@@ -53,7 +53,7 @@ class ParamTestComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize($controllerz) {
+	function initialize(&$controller, $settings) {
 		foreach ($settings as $key => $value) {
 			if (is_numeric($key)) {
 				$this->{$value} = true;
@@ -121,7 +121,7 @@ class AppleComponent extends Component {
  * @access public
  * @return void
  */
-	function startup($controller) {
+	function startup(&$controller) {
 		$this->testName = $controller->name;
 	}
 }
@@ -149,7 +149,7 @@ class OrangeComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize($controller) {
+	function initialize(&$controller) {
 		$this->Controller = $controller;
 		$this->Banana->testField = 'OrangeField';
 	}
@@ -160,7 +160,7 @@ class OrangeComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(&$controller) {
 		$controller->foo = 'pass';
 	}
 }
@@ -187,7 +187,7 @@ class BananaComponent extends Component {
  * @param Controller $controller
  * @return string
  */
-	public function startup($controller) {
+	public function startup(&$controller) {
 		$controller->bar = 'fail';
 	}
 }
@@ -261,7 +261,7 @@ class ComponentTest extends CakeTestCase {
 	function setUp() {
 		$this->_pluginPaths = App::path('plugins');
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 	}
 

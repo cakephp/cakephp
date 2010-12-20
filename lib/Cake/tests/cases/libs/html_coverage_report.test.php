@@ -41,7 +41,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
 	function testGetPathFilter() {
 		$this->Coverage->appTest = false;
 		$result = $this->Coverage->getPathFilter();
-		$this->assertEquals(TEST_CAKE_CORE_INCLUDE_PATH, $result);
+		$this->assertEquals(LIBS, $result);
 
 		$this->Coverage->appTest = true;
 		$result = $this->Coverage->getPathFilter();
@@ -60,7 +60,7 @@ class HtmlCoverageReportTest extends CakeTestCase {
  */
 	function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
-			TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php' => array(
+			LIBS . 'dispatcher.php' => array(
 				10 => -1,
 				12 => 1
 			),
@@ -70,8 +70,8 @@ class HtmlCoverageReportTest extends CakeTestCase {
 			)
 		);
 		$this->Coverage->setCoverage($data);
-		$result = $this->Coverage->filterCoverageDataByPath(TEST_CAKE_CORE_INCLUDE_PATH);
-		$this->assertTrue(isset($result[TEST_CAKE_CORE_INCLUDE_PATH . 'dispatcher.php']));
+		$result = $this->Coverage->filterCoverageDataByPath(LIBS);
+		$this->assertTrue(isset($result[LIBS . 'dispatcher.php']));
 		$this->assertFalse(isset($result[APP . 'app_model.php']));
 	}
 

@@ -129,7 +129,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$result = $this->Session->flash('notification', true);
 		$result = str_replace("\r\n", "\n", $result);

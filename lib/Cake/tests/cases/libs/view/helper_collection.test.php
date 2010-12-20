@@ -87,7 +87,7 @@ class HelperCollectionTest extends CakeTestCase {
  */
 	function testLoadPluginHelper() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
 		$result = $this->Helpers->load('TestPlugin.OtherHelper');
 		$this->assertType('OtherHelperHelper', $result, 'Helper class is wrong.');

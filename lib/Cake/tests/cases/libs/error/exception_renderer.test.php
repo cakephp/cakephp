@@ -69,7 +69,7 @@ class BlueberryComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize($controller) {
+	function initialize(&$controller) {
 		$this->testName = 'BlueberryComponent';
 	}
 }
@@ -162,8 +162,8 @@ class ExceptionRendererTest extends CakeTestCase {
 	function setUp() {
 		App::build(array(
 			'views' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				LIBS . 'libs' . DS . 'view' . DS
 			)
 		), true);
 		Router::reload();

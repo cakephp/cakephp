@@ -327,7 +327,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$file = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
@@ -362,10 +362,10 @@ class HtmlHelperTest extends CakeTestCase {
  */
 	function testThemeAssetsInMainWebrootPath() {
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
+		Configure::write('App.www_root', LIBS . 'tests' . DS . 'test_app' . DS . 'webroot' . DS);
 
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
@@ -608,7 +608,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$file = new File($testfile, true);
 
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 
 		$this->Html->webroot = '/';

@@ -137,7 +137,7 @@ class XmlTest extends CakeTestCase {
 		$this->assertEqual($obj->firstChild->nodeName, 'tag');
 		$this->assertEqual($obj->firstChild->nodeValue, 'value');
 
-		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
+		$xml = LIBS . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
 		$this->assertEqual($obj->getName(), 'tags');
 		$this->assertEqual(count($obj), 2);
@@ -378,7 +378,7 @@ class XmlTest extends CakeTestCase {
 		$obj = Xml::build($xml);
 		$this->assertEqual(Xml::toArray($obj), array('tag' => 'name'));
 
-		$xml = TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
+		$xml = LIBS . 'tests' . DS . 'fixtures' . DS . 'sample.xml';
 		$obj = Xml::build($xml);
 		$expected = array(
 			'tags' => array(
@@ -520,7 +520,7 @@ class XmlTest extends CakeTestCase {
  * @return void
  */
 	public function testRss() {
-		$rss = file_get_contents(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'rss.xml');
+		$rss = file_get_contents(LIBS . 'tests' . DS . 'fixtures' . DS . 'rss.xml');
 		$rssAsArray = Xml::toArray(Xml::build($rss));
 		$this->assertEqual($rssAsArray['rss']['@version'], '2.0');
 		$this->assertEqual(count($rssAsArray['rss']['channel']['item']), 2);
@@ -651,7 +651,7 @@ class XmlTest extends CakeTestCase {
  * @return void
  */
 	public function testSoap() {
-		$xmlRequest = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_request.xml');
+		$xmlRequest = Xml::build(LIBS . 'tests' . DS . 'fixtures' . DS . 'soap_request.xml');
 		$expected = array(
 			'Envelope' => array(
 				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',
@@ -664,7 +664,7 @@ class XmlTest extends CakeTestCase {
 		);
 		$this->assertEqual(Xml::toArray($xmlRequest), $expected);
 
-		$xmlResponse = Xml::build(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'fixtures' . DS . 'soap_response.xml');
+		$xmlResponse = Xml::build(LIBS . 'tests' . DS . 'fixtures' . DS . 'soap_response.xml');
 		$expected = array(
 			'Envelope' => array(
 				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',

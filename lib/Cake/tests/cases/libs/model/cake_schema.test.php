@@ -659,7 +659,7 @@ class CakeSchemaTest extends CakeTestCase {
 	function testSchemaReadWithPlugins() {
 		App::objects('model', null, false);
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
 		$Schema = new CakeSchema();
@@ -977,7 +977,7 @@ class CakeSchemaTest extends CakeTestCase {
  */
 	function testSchemaLoadingFromPlugin() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 		$Other = $this->Schema->load(array('name' => 'TestPluginApp', 'plugin' => 'TestPlugin'));
 		$this->assertEqual($Other->name, 'TestPluginApp');

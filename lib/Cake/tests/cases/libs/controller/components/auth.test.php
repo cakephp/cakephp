@@ -53,7 +53,7 @@ class TestAuthComponent extends AuthComponent {
  * @access public
  * @return void
  */
-	function _stop($status = 0) {
+	function _stop() {
 		$this->testStop = true;
 	}
 }
@@ -499,8 +499,7 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->beforeFilter();
 
-		$view = new View($this->Controller);
-		ClassRegistry::addObject('view', $view);
+		ClassRegistry::addObject('view', new View($this->Controller));
 
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');
@@ -1396,8 +1395,8 @@ class AuthTest extends CakeTestCase {
 		// Adding plugins
 		Cache::delete('object_map', '_cake_core_');
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
 		), true);
 		App::objects('plugin', null, false);
 
@@ -1454,7 +1453,7 @@ class AuthTest extends CakeTestCase {
  */
 	function testAjaxLogin() {
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = "XMLHttpRequest";
 

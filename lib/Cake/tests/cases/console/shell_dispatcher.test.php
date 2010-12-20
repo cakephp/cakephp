@@ -119,11 +119,11 @@ class ShellDispatcherTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			),
 			'shells' => array(
 				CORE_PATH ? CONSOLE_LIBS : ROOT . DS . CONSOLE_LIBS,
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
 	}

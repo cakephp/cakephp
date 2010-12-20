@@ -74,7 +74,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testRender() {
 		$this->MediaView->viewVars = array(
-			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'path' =>  LIBS . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);
@@ -120,7 +120,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testConnectionAborted() {
 		$this->MediaView->viewVars = array(
-			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'path' =>  LIBS . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);
@@ -146,7 +146,7 @@ class MediaViewTest extends CakeTestCase {
  */
 	function testConnectionAbortedOnBuffering() {
 		$this->MediaView->viewVars = array(
-			'path' =>  TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
+			'path' =>  LIBS . 'tests' . DS . 'test_app' . DS . 'vendors' . DS .'css' . DS,
 			'id' => 'test_asset.css',
 			'extension' => 'css',
 		);

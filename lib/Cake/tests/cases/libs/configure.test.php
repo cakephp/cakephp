@@ -200,7 +200,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoad() {
-		Configure::config('test', new PhpReader(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'config' . DS));
+		Configure::config('test', new PhpReader(LIBS . 'tests' . DS . 'test_app' . DS . 'config' . DS));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -215,7 +215,7 @@ class ConfigureTest extends CakeTestCase {
  * @return void
  */
 	function testLoadPlugin() {
-		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
+		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)), true);
 		Configure::config('test', new PhpReader());
 
 		$result = Configure::load('test_plugin.load', 'test');

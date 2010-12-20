@@ -128,7 +128,7 @@ class CakeFixtureManager {
 				$fixturePaths = array(
 					TESTS . 'fixtures',
 					VENDORS . 'tests' . DS . 'fixtures',
-					TEST_CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
+					LIBS . DS . 'cake' . DS . 'tests' . DS . 'fixtures'
 				);
 			}
 

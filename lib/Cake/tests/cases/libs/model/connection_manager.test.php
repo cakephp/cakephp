@@ -99,7 +99,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSource() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
 		$name = 'test_source';
@@ -121,7 +121,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSourceAndPluginDriver() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
 		$name = 'test_plugin_source_and_driver';
@@ -145,7 +145,7 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetLocalDataSourceAndPluginDriver() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)
 		));
 
 		$name = 'test_local_source_and_plugin_driver';
@@ -168,8 +168,8 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testGetPluginDataSourceAndLocalDriver() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'datasources' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'datasources' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
 		));
 
 		$name = 'test_plugin_source_and_local_driver';
@@ -284,8 +284,8 @@ class ConnectionManagerTest extends CakeTestCase {
  */
 	function testConnectionData() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'datasources' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'datasources' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS . 'datasources' . DS)
 		));
 
 		$expected = array(

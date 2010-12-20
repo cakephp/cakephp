@@ -39,13 +39,13 @@ class CommandListTest extends CakeTestCase {
 		parent::setUp();
 		App::build(array(
 			'plugins' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS
 			),
 			'shells' => array(
 				CORE_PATH ? 
 					CORE_PATH . CAKE . 'console' . DS . 'shells' . DS : 
 					CAKE_CORE_INCLUDE_PATH . DS . 'cake' . DS . 'console' . DS . 'shells' .DS, 
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
+				LIBS . 'tests' . DS . 'test_app' . DS . 'console' . DS . 'shells' . DS
 			)
 		), true);
 		App::objects('plugin', null, false);

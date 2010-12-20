@@ -107,13 +107,13 @@ class ControllerPost extends CakeTestModel {
  * @access public
  * @return void
  */
-	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
-		if ($conditions == 'popular') {
+	function find($type, $options = array()) {
+		if ($type == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
-			$options = Set::merge($fields, compact('conditions'));
-			return parent::find('all', $fields);
+			$options = Set::merge($options, compact('conditions'));
+			return parent::find('all', $options);
 		}
-		return parent::find($conditions, $fields);
+		return parent::find($type, $options);
 	}
 }
 
@@ -320,7 +320,7 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function initialize($controller) {
+	function initialize(&$controller) {
 	}
 
 /**
@@ -329,7 +329,7 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function startup($controller) {
+	function startup(&$controller) {
 	}
 /**
  * shutdown method
@@ -337,14 +337,14 @@ class TestComponent extends Object {
  * @access public
  * @return void
  */
-	function shutdown($controller) {
+	function shutdown(&$controller) {
 	}
 /**
  * beforeRender callback
  *
  * @return void
  */
-	function beforeRender($controller) {
+	function beforeRender(&$controller) {
 		if ($this->viewclass) {
 			$controller->view = $this->viewclass;
 		}
@@ -442,9 +442,9 @@ class ControllerTest extends CakeTestCase {
  */
 	function testLoadModelInPlugins() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
-			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS)
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS),
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS)
 		));
 		App::uses('TestPluginController', 'TestPlugin.Controller');
 
@@ -491,7 +491,7 @@ class ControllerTest extends CakeTestCase {
 
 		unset($Controller);
 
-		App::build(array('plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
+		App::build(array('plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS)));
 
 		$Controller = new Controller($request);
 		$Controller->uses = array('TestPlugin.TestPluginPost');
@@ -581,7 +581,7 @@ class ControllerTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('CakeResponse', array('_sendHeader'));
@@ -643,7 +643,7 @@ class ControllerTest extends CakeTestCase {
  */
 	function testRender() {
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		), true);
 		$request = new CakeRequest('controller_posts/index');
 
@@ -685,7 +685,7 @@ class ControllerTest extends CakeTestCase {
 		$core = App::core('views');
 		App::build(array(
 			'views' => array(
-				TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS,
+				LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS,
 				$core[0]
 			)
 		), true);

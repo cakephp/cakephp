@@ -29,6 +29,16 @@ App::uses('PagesController', 'Controller');
 class PagesControllerTest extends CakeTestCase {
 
 /**
+ * endTest method
+ *
+ * @access public
+ * @return void
+ */
+	function endTest() {
+		App::build();
+	}
+
+/**
  * testDisplay method
  *
  * @access public
@@ -36,7 +46,7 @@ class PagesControllerTest extends CakeTestCase {
  */
 	function testDisplay() {
 		App::build(array(
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS, TEST_CAKE_CORE_INCLUDE_PATH . 'libs' . DS . 'view' . DS)
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS, LIBS . 'libs' . DS . 'view' . DS)
 		));
 		$Pages = new PagesController(new CakeRequest(null, false));
 

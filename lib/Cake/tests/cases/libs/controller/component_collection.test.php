@@ -89,7 +89,7 @@ class ComponentCollectionTest extends CakeTestCase {
  */
 	function testLoadPluginComponent() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
 		$result = $this->Components->load('TestPlugin.OtherComponent');
 		$this->assertType('OtherComponentComponent', $result, 'Component class is wrong.');

@@ -102,7 +102,7 @@ abstract class BaseCoverageReport {
 		} elseif ($this->pluginTest) {
 			$path = App::pluginPath($this->pluginTest);
 		} else {
-			$path = TEST_CAKE_CORE_INCLUDE_PATH;
+			$path = LIBS;
 		}
 		return $path;
 	}

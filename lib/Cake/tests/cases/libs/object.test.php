@@ -485,9 +485,9 @@ class ObjectTest extends CakeTestCase {
 		Configure::write('Cache.disable', false);
 
 		App::build(array(
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins'. DS),
-			'behaviors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins'. DS),
+			'behaviors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
 		), true);
 
 		$this->assertFalse(class_exists('PersisterOneBehaviorBehavior'));
@@ -546,8 +546,8 @@ class ObjectTest extends CakeTestCase {
 		$this->assertFalse(class_exists('ContainableBehavior'));
 
 		App::build(array(
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'behaviors' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'behaviors' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models'. DS . 'behaviors' . DS),
 		), true);
 
 		$this->assertFalse(class_exists('PersistOneBehaviorBehavior'));
@@ -690,9 +690,9 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestAction() {
 		App::build(array(
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
-			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
 		));
 		$result = $this->object->requestAction('');
 		$this->assertFalse($result);
@@ -730,7 +730,7 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionPlugins() {
 		App::build(array(
-			'plugins' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
+			'plugins' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'plugins' . DS),
 		));
 		App::objects('plugin', null, false);
 		Router::reload();
@@ -770,9 +770,9 @@ class ObjectTest extends CakeTestCase {
  */
 	function testRequestActionArray() {
 		App::build(array(
-			'models' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'models' . DS),
-			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views' . DS),
-			'controllers' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
+			'models' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'models' . DS),
+			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views' . DS),
+			'controllers' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'controllers' . DS)
 		));
 	
 		$result = $this->object->requestAction(

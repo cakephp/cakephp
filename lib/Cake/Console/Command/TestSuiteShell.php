@@ -160,7 +160,6 @@ class TestSuiteShell extends Shell {
  * @return void
  */
 	public function initialize() {
-		define('TEST_CAKE_CORE_INCLUDE_PATH', LIBS);
 		$this->_dispatcher = new CakeTestSuiteDispatcher();
 		$this->_dispatcher->loadTestFramework();
 	}
