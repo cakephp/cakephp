@@ -2231,4 +2231,17 @@ class PaginatorHelperTest extends CakeTestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * test the current() method
+ *
+ * @return void
+ */
+	function testCurrent() {
+		$result = $this->Paginator->current();
+		$this->assertEquals($this->Paginator->request->params['paging']['Article']['page'], $result);
+
+		$result = $this->Paginator->current('Incorrect');
+		$this->assertEquals(1, $result);
+	}
+
 }
