@@ -63,9 +63,8 @@ class PaginatorComponent extends Component {
  * - `limit` The initial number of items per page.  Defaults to 20.
  * - `page` The starting page, defaults to 1.
  * - `paramType` What type of parameters you want pagination to use?
- *      - `named` Use named parameters.
+ *      - `named` Use named parameters / routed parameters.
  *      - `querystring` Use query string parameters.
- *      - `route` Use routed parameters, these require you to setup routes that include the pagination params
  *
  * @var array
  */

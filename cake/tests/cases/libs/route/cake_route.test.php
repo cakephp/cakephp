@@ -334,7 +334,7 @@ class CakeRouteTestCase extends CakeTestCase {
  */
 	function testMatchWithNamedParametersAndPassedArgs() {
 		Router::connectNamed(true);
-/*
+
 		$route = new CakeRoute('/:controller/:action/*', array('plugin' => null));
 		$result = $route->match(array('controller' => 'posts', 'action' => 'index', 'plugin' => null, 'page' => 1));
 		$this->assertEqual($result, '/posts/index/page:1');
@@ -350,7 +350,7 @@ class CakeRouteTestCase extends CakeTestCase {
 
 		$result = $route->match(array('controller' => 'posts', 'action' => 'view', 'plugin' => null, 5, 'page' => 1, 'limit' => 20, 'order' => 'title'));
 		$this->assertEqual($result, '/posts/view/5/page:1/limit:20/order:title');
-*/
+
 
 		$route = new CakeRoute('/test2/*', array('controller' => 'pages', 'action' => 'display', 2));
 		$result = $route->match(array('controller' => 'pages', 'action' => 'display', 1));
@@ -473,39 +473,4 @@ class CakeRouteTestCase extends CakeTestCase {
 		$this->assertFalse($result);
 	}
 
-/**
- * test sigil based query string params
- *
- * @return void
- */
-	function testQueryStringParams() {
-		$route = new CakeRoute('/:controller/:action/*');
-		$result = $route->match(array('controller' => 'posts', 'action' => 'index', '?test' => 'value'));
-		$expected = '/posts/index/?test=value';
-		$this->assertEquals($expected, $result);
-
-		$result = $route->match(array(
-			'controller' => 'posts', 'action' => 'index', '?test' => array(1, 2, 3)
-		));
-		$expected = '/posts/index/?test%5B0%5D=1&test%5B1%5D=2&test%5B2%5D=3';
-		$this->assertEquals($expected, $result);
-		
-		$result = $route->match(array(
-			'controller' => 'posts', 'action' => 'index', '?test' => 'value', '?other' => 'value'
-		));
-		$expected = '/posts/index/?test=value&other=value';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that querystring params work with non greedy routes.
- *
- * @return void
- */
-	function testQueryStringNonGreedy() {
-		$route = new CakeRoute('/:controller/:action');
-		$result = $route->match(array('controller' => 'posts', 'action' => 'index', '?test' => 'value'));
-		$expected = '/posts/index?test=value';
-		$this->assertEquals($expected, $result);
-	}
 }

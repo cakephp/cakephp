@@ -914,8 +914,6 @@ class Router {
 			$key = $keys[$i];
 			if (is_numeric($keys[$i])) {
 				$args[] = $url[$key];
-			} elseif ($key[0] === CakeRoute::SIGIL_QUERYSTRING) {
-				$query[substr($key, 1)] = $url[$key];
 			} else {
 				$named[$key] = $url[$key];
 			}
@@ -1078,10 +1076,6 @@ class Router {
 			$params['pass'], $params['named'], $params['paging'], $params['models'], $params['url'], $url['url'],
 			$params['autoRender'], $params['bare'], $params['requested'], $params['return']
 		);
-		foreach ($named as $key => $value) {
-			$named[CakeRoute::SIGIL_NAMED . $key] = $value;
-			unset($named[$key]);
-		}
 		$params = array_merge($params, $pass, $named);
 		if (!empty($url)) {
 			$params['?'] = $url;

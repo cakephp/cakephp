@@ -74,16 +74,6 @@ class CakeRoute {
 	protected $_compiledRoute = null;
 
 /**
- * Constant for the sigil that indicates a route param is a named parameter.
- */
-	const SIGIL_NAMED = ':';
-
-/**
- * Constant for the sigil that indicates a route param is a query string parameter.
- */
-	const SIGIL_QUERYSTRING = '?';
-
-/**
  * HTTP header shortcut map.  Used for evaluating header-based route expressions.
  *
  * @var array
@@ -314,13 +304,6 @@ class CakeRoute {
 				continue;
 			}
 
-			// pull out querystring params
-			if ($key[0] === CakeRoute::SIGIL_QUERYSTRING && ($value !== false && $value !== null)) {
-				$_query[substr($key, 1)] = $value;
-				unset($url[$key]);
-				continue;
-			}
-
 			// pull out named params if named params are greedy or a rule exists.
 			if (
 				($greedyNamed || isset($allowedNamedParams[$key])) &&
@@ -401,9 +384,6 @@ class CakeRoute {
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
-		}
-		if (!empty($params['_query'])) {
-			$out .= $this->queryString($params['_query']);
 		}
 		$out = str_replace('//', '/', $out);
 		return $out;

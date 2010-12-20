@@ -119,12 +119,7 @@ class PaginatorHelper extends AppHelper {
  * @return void
  */
 	public function beforeRender($viewFile) {
-		$named = $this->request->params['named'];
-		foreach ($named as $key => $val) {
-			$named[CakeRoute::SIGIL_NAMED . $key] = $val;
-			unset($named[$key]);
-		}
-		$this->options['url'] = array_merge($this->request->params['pass'], $named);
+		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
 		parent::beforeRender($viewFile);
 	}
 
@@ -405,18 +400,15 @@ class PaginatorHelper extends AppHelper {
  * @return converted url params.
  */
 	protected function _convertUrlKeys($url, $type) {
-		$prefix = '';
-		switch ($type) {
-			case 'named':
-				$prefix = CakeRoute::SIGIL_NAMED;
-				break;
-			case 'querystring':
-				$prefix = CakeRoute::SIGIL_QUERYSTRING;
-				break;
+		if ($type == 'named') {
+			return $url;
+		}
+		if (!isset($url['?'])) {
+			$url['?'] = array();
 		}
 		foreach ($this->convertKeys as $key) {
 			if (isset($url[$key])) {
-				$url[$prefix . $key] = $url[$key];
+				$url['?'][$key] = $url[$key];
 				unset($url[$key]);
 			}
 		}
