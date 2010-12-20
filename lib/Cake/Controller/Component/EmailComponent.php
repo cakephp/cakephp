@@ -338,7 +338,7 @@ class EmailComponent extends Component {
  *
  * @param object $controller Instantiating controller
  */
-	public function initialize(&$controller) {
+	public function initialize($controller) {
 		if (Configure::read('App.encoding') !== null) {
 			$this->charset = Configure::read('App.encoding');
 		}
@@ -349,7 +349,7 @@ class EmailComponent extends Component {
  *
  * @param object $controller Instantiating controller
  */
-	public function startup(&$controller) {}
+	public function startup($controller) {}
 
 /**
  * Send an email using the specified content, template and layout

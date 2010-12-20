@@ -120,7 +120,7 @@ class RequestHandlerComponent extends Component {
  * @return void
  * @see Router::parseExtensions()
  */
-	public function initialize(&$controller, $settings = array()) {
+	public function initialize($controller, $settings = array()) {
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		if (isset($this->request->params['url']['ext'])) {
@@ -158,7 +158,7 @@ class RequestHandlerComponent extends Component {
  * @param object $controller A reference to the controller
  * @return void
  */
-	public function startup(&$controller) {
+	public function startup($controller) {
 		$controller->request->params['isAjax'] = $this->request->is('ajax');
 		$isRecognized = (
 			!in_array($this->ext, array('html', 'htm')) &&
@@ -193,7 +193,7 @@ class RequestHandlerComponent extends Component {
  * @param mixed $url A string or array containing the redirect location
  * @param mixed HTTP Status for redirect
  */
-	public function beforeRedirect(&$controller, $url, $status = null) {
+	public function beforeRedirect($controller, $url, $status = null, $exit = true) {
 		if (!$this->request->is('ajax')) {
 			return;
 		}
@@ -508,7 +508,7 @@ class RequestHandlerComponent extends Component {
  * @see RequestHandlerComponent::setContent()
  * @see RequestHandlerComponent::respondAs()
  */
-	public function renderAs(&$controller, $type, $options = array()) {
+	public function renderAs($controller, $type, $options = array()) {
 		$defaults = array('charset' => 'UTF-8');
 
 		if (Configure::read('App.encoding') !== null) {

@@ -34,7 +34,7 @@ class TestSecurityComponent extends SecurityComponent {
  * @param Controller $controller
  * @return unknown
  */
-	function validatePost(&$controller) {
+	function validatePost($controller) {
 		return $this->_validatePost($controller);
 	}
 }
@@ -98,8 +98,8 @@ class SecurityTestController extends Controller {
  * @access public
  * @return void
  */
-	function redirect($option, $code, $exit) {
-		return $code;
+	function redirect($url, $status = null, $exit = true) {
+		return $status;
 	}
 
 /**

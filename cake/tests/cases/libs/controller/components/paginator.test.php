@@ -113,13 +113,13 @@ class PaginatorControllerPost extends CakeTestModel {
  * @access public
  * @return void
  */
-	function find($type, $options = array()) {
-		if ($type == 'popular') {
+	function find($conditions = null, $fields = array(), $order = null, $recursive = null) {
+		if ($conditions == 'popular') {
 			$conditions = array($this->name . '.' . $this->primaryKey .' > ' => '1');
-			$options = Set::merge($options, compact('conditions'));
+			$options = Set::merge($fields, compact('conditions'));
 			return parent::find('all', $options);
 		}
-		return parent::find($type, $options);
+		return parent::find($conditions, $fields);
 	}
 }
 

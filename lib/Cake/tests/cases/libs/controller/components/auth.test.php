@@ -53,7 +53,7 @@ class TestAuthComponent extends AuthComponent {
  * @access public
  * @return void
  */
-	function _stop() {
+	function _stop($status = 0) {
 		$this->testStop = true;
 	}
 }
@@ -499,7 +499,8 @@ class AuthTest extends CakeTestCase {
 		);
 		$this->Controller->beforeFilter();
 
-		ClassRegistry::addObject('view', new View($this->Controller));
+		$view = new View($this->Controller);
+		ClassRegistry::addObject('view', $view);
 
 		$this->Controller->Session->delete('Auth');
 		$this->Controller->Session->delete('Message.auth');

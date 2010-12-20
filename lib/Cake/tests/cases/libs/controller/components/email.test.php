@@ -230,7 +230,8 @@ class EmailComponentTest extends CakeTestCase {
 		$this->Controller->Components->init($this->Controller);
 
 		$this->Controller->EmailTest->initialize($this->Controller, array());
-		ClassRegistry::addObject('view', new View($this->Controller));
+		$view = new View($this->Controller);
+		ClassRegistry::addObject('view', $view);
 
 		App::build(array(
 			'views' => array(TEST_CAKE_CORE_INCLUDE_PATH . 'tests' . DS . 'test_app' . DS . 'views'. DS)

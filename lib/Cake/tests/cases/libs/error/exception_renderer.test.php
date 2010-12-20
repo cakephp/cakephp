@@ -69,7 +69,7 @@ class BlueberryComponent extends Component {
  * @access public
  * @return void
  */
-	function initialize(&$controller) {
+	function initialize($controller) {
 		$this->testName = 'BlueberryComponent';
 	}
 }

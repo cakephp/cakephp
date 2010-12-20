@@ -93,8 +93,8 @@ class TestScaffoldMock extends Scaffold {
  *
  * @param unknown_type $params
  */
-    function _scaffold($params) {
-        $this->_params = $params;
+    function _scaffold(CakeRequest $request) {
+        $this->_params = $request;
     }
 
 /**
