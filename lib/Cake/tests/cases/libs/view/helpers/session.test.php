@@ -41,6 +41,7 @@ class SessionHelperTest extends CakeTestCase {
 		$controller = null;
 		$this->View = new View($controller);
 		$this->Session = new SessionHelper($this->View);
+		CakeSession::start();
 
 		$_SESSION = array(
 			'test' => 'info',
@@ -129,7 +130,7 @@ class SessionHelperTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 
 		App::build(array(
-			'views' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
+			'View' => array(LIBS . 'tests' . DS . 'test_app' . DS . 'views'. DS)
 		));
 		$result = $this->Session->flash('notification', true);
 		$result = str_replace("\r\n", "\n", $result);
