@@ -914,10 +914,10 @@ class Router {
 			$key = $keys[$i];
 			if (is_numeric($keys[$i])) {
 				$args[] = $url[$key];
-			} elseif ($key[0] === CakeRoute::SIGIL_NAMED) {
-				$named[substr($key, 1)] = $url[$key];
 			} elseif ($key[0] === CakeRoute::SIGIL_QUERYSTRING) {
 				$query[substr($key, 1)] = $url[$key];
+			} else {
+				$named[$key] = $url[$key];
 			}
 		}
 

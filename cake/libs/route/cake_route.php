@@ -284,27 +284,19 @@ class CakeRoute {
 			return false;
 		}
 
+		$greedyNamed = Router::$named['greedy'];
+		$allowedNamedParams = Router::$named['rules'];
+
 		$named = $pass = $_query = array();
 
 		foreach ($url as $key => $value) {
-			// pull out named params so comparisons later on are faster.
-			if ($key[0] === CakeRoute::SIGIL_NAMED && ($value !== false && $value !== null)) {
-				$named[substr($key, 1)] = $value;
-				unset($url[$key]);
-				continue;
-			}
-			
-			// pull out querystring params
-			if ($key[0] === CakeRoute::SIGIL_QUERYSTRING && ($value !== false && $value !== null)) {
-				$_query[substr($key, 1)] = $value;
-				unset($url[$key]);
-				continue;
-			}
 
-			// keys that exist in the defaults and have different values cause match failures.
-			$keyExists = array_key_exists($key, $defaults);
-			if ($keyExists && $defaults[$key] != $value) {
+			// keys that exist in the defaults and have different values is a match failure.
+			$defaultExists = array_key_exists($key, $defaults);
+			if ($defaultExists && $defaults[$key] != $value) {
 				return false;
+			} elseif ($defaultExists) {
+				continue;
 			}
 			
 			// If the key is a routed key, its not different yet.
@@ -322,8 +314,24 @@ class CakeRoute {
 				continue;
 			}
 
+			// pull out querystring params
+			if ($key[0] === CakeRoute::SIGIL_QUERYSTRING && ($value !== false && $value !== null)) {
+				$_query[substr($key, 1)] = $value;
+				unset($url[$key]);
+				continue;
+			}
+
+			// pull out named params if named params are greedy or a rule exists.
+			if (
+				($greedyNamed || isset($allowedNamedParams[$key])) &&
+				($value !== false && $value !== null)
+			) {
+				$named[$key] = $value;
+				continue;
+			}
+
 			// keys that don't exist are different.
-			if (!$keyExists && !empty($value)) {
+			if (!$defaultExists && !empty($value)) {
 				return false;
 			}
 		}
