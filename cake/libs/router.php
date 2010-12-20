@@ -89,7 +89,7 @@ class Router {
  * @access public
  */
 	public static $named = array(
-		'default' => array(':page', ':fields', ':order', ':limit', ':recursive', ':sort', ':direction', ':step'),
+		'default' => array('page', 'fields', 'order', 'limit', 'recursive', 'sort', 'direction', 'step'),
 		'greedy' => true,
 		'separator' => ':',
 		'rules' => false,
@@ -316,7 +316,7 @@ class Router {
  *
  * {{{ Router::connectNamed(array('page' => '[\d]+'), array('default' => false, 'greedy' => false)); }}}
  *
- * Parse only the page parameter no mater what.
+ * Parse only the page parameter no matter what.
  *
  * {{{ Router::connectNamed(array('page'), array('default' => false, 'greedy' => false)); }}}
  *
@@ -338,15 +338,23 @@ class Router {
  * ); 
  * }}}
  *
+ * ### Options
+ *
+ * - `greedy` Setting this to true will make Router parse all named params.  Setting it to false will 
+ *    parse only the connected named params.
+ * - `default` Set this to true to merge in the default set of named parameters.
+ * - `reset` Set to true to clear existing rules and start fresh.
+ * - `separator` Change the string used to separate the key & value in a named parameter.  Defaults to `:`
+ *
  * @param array $named A list of named parameters. Key value pairs are accepted where values are 
  *    either regex strings to match, or arrays as seen above.
  * @param array $options Allows to control all settings: separator, greedy, reset, default
  * @return array
  */
 	public static function connectNamed($named, $options = array()) {
-		if (isset($options['argSeparator'])) {
-			self::$named['separator'] = $options['argSeparator'];
-			unset($options['argSeparator']);
+		if (isset($options['separator'])) {
+			self::$named['separator'] = $options['separator'];
+			unset($options['separator']);
 		}
 
 		if ($named === true || $named === false) {
