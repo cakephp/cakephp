@@ -754,7 +754,7 @@ class PaginatorHelper extends AppHelper {
 
 		$out = '';
 
-		if (is_int($first) && $params['page'] > $first) {
+		if (is_int($first) && $params['page'] >= $first) {
 			if ($after === null) {
 				$after = $ellipsis;
 			}
@@ -811,7 +811,7 @@ class PaginatorHelper extends AppHelper {
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
-		if (is_int($last) && $params['page'] < $lower) {
+		if (is_int($last) && $params['page'] <= $lower) {
 			if ($before === null) {
 				$before = $ellipsis;
 			}
