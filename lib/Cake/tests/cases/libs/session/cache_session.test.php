@@ -20,6 +20,7 @@
 
 App::uses('CakeSession', 'Model/Datasource');
 App::uses('CacheSession', 'Model/Datasource/Session');
+class_exists('CakeSession');
 
 class CacheSessionTest extends CakeTestCase {
 
