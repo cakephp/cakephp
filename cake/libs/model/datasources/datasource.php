@@ -437,6 +437,7 @@ class DataSource extends Object {
 
 		foreach ($keys as $key) {
 			$val = null;
+			$type = null;
 
 			if (strpos($query, $key) !== false) {
 				switch ($key) {
@@ -460,6 +461,7 @@ class DataSource extends Object {
 								$val = '';
 							}
 						}
+						$type = $model->getColumnType($model->primaryKey);
 					break;
 					case '{$__cakeForeignKey__$}':
 						foreach ($model->__associations as $id => $name) {
@@ -467,6 +469,8 @@ class DataSource extends Object {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {
 										$foreignKey = $assoc['foreignKey'];
+										$assocModel = $model->$assocName;
+										$type = $assocModel->getColumnType($assocModel->primaryKey);
 
 										if (isset($data[$model->alias][$foreignKey])) {
 											$val = $data[$model->alias][$foreignKey];
@@ -495,7 +499,7 @@ class DataSource extends Object {
 				if (empty($val) && $val !== '0') {
 					return false;
 				}
-				$query = str_replace($key, $this->value($val, $model->getColumnType($model->primaryKey)), $query);
+				$query = str_replace($key, $this->value($val, $type), $query);
 			}
 		}
 		return $query;
