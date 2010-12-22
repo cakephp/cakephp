@@ -21,7 +21,7 @@
  */
 
 require_once dirname(__FILE__) . DS . 'model.test.php';
-App::uses('DboSource', 'Model/Datasource/Database');
+App::uses('DboSource', 'Model/Datasource');
 
 /**
  * DboMock class
@@ -2003,7 +2003,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEqual($result, $expected);
 
-		ConnectionManager::create('mock', array('driver' => 'mock'));
+		ConnectionManager::create('mock', array('datasource' => 'DboMock'));
 		$TestModel->setDataSource('mock');
 		$db = $TestModel->getDataSource();
 
