@@ -50,7 +50,6 @@ interface CakeLogInterface {
  * @param string $type 
  * @param string $message 
  * @return void
- * @author Mark Story
  */
 	public function write($type, $message);
 }

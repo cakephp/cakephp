@@ -121,7 +121,6 @@ class TestView extends View {
  * @param string $loadHelpers 
  * @param string $cached 
  * @return void
- * @author Mark Story
  */
 	function render_($___viewFn, $___dataForView, $loadHelpers = true, $cached = false) {
 		return $this->_render($___viewFn, $___dataForView, $loadHelpers, $cached);
