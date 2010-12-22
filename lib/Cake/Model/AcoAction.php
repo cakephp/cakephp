@@ -1,9 +1,5 @@
 <?php
 /**
- * Application model for Cake.
- *
- * This file is application-wide model file. You can put all
- * application-wide model-related methods here.
  *
  * PHP 5
  *
@@ -21,17 +17,32 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-App::uses('Model', 'Model');
+/**
+ * Load Model and AppModel
+ */
+App::uses('AppModel', 'Model');
 
 /**
- * Application model for Cake.
- *
- * This is a placeholder class.
- * Create the same file in app/app_model.php
- * Add your application-wide methods to the class, your models will inherit them.
+ * Action for Access Control Object
  *
  * @package       cake
  * @subpackage    cake.cake.libs.model
  */
-class AppModel extends Model {
+class AcoAction extends AppModel {
+
+/**
+ * Model name
+ *
+ * @var string
+ * @access public
+ */
+	public $name = 'AcoAction';
+
+/**
+ * ACO Actions belong to ACOs
+ *
+ * @var array
+ * @access public
+ */
+	public $belongsTo = array('Aco');
 }
