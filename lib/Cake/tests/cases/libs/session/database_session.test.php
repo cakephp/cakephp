@@ -19,8 +19,9 @@
  */
 
 App::uses('Model', 'Model');
-App::uses('CakeSession', 'Model/Session');
+App::uses('CakeSession', 'Model/Datasource');
 App::uses('DatabaseSession', 'Model/Datasource/Session');
+class_exists('CakeSession');
 
 class SessionTestModel extends Model {
 	var $name = 'SessionTestModel';
