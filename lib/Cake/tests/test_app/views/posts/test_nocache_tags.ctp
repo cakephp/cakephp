@@ -79,8 +79,7 @@ if (!empty($filePresent)):
 	if (!class_exists('ConnectionManager')) {
 		require LIBS . 'model' . DS . 'connection_manager.php';
 	}
-	$db = ConnectionManager::getInstance();
- 	$connected = $db->getDataSource('default');
+ 	$connected = ConnectionManager::getDataSource('default');
 ?>
 <p>
 	<span class="notice">
