@@ -319,7 +319,6 @@ class SecurityComponent extends Component {
 		}
 		$this->loginOptions = array_merge($base, $this->loginOptions);
 		$this->_requireMethod('Login', $args);
-
 		if (isset($this->loginOptions['users'])) {
 			$this->loginUsers =& $this->loginOptions['users'];
 		}
@@ -555,9 +554,9 @@ class SecurityComponent extends Component {
  */
 	protected function _loginRequired($controller) {
 		if (is_array($this->requireLogin) && !empty($this->requireLogin)) {
-			$requireLogin = array_map('strtolower', $this->requireLogin);
+			$requireLogin = $this->requireLogin;
 
-			if (in_array($this->_action, $requireLogin) || $this->requireLogin == array('*')) {
+			if (in_array($this->_action, $this->requireLogin) || $this->requireLogin == array('*')) {
 				$login = $this->loginCredentials($this->loginOptions['type']);
 
 				if ($login == null) {
